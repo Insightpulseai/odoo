@@ -31,6 +31,7 @@
         # Wizards (load after views)
         'wizards/spectra_export_wizard_views.xml',
     ],
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
 }
