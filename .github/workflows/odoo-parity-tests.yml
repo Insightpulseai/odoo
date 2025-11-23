@@ -65,12 +65,22 @@ jobs:
           pip install -r requirements.txt || echo "requirements.txt not found, installing odoo dependencies"
           pip install psycopg2-binary wheel
 
+      - name: Install Odoo 18 CE from source
+        run: |
+          scripts/ci/install_odoo_18.sh
+
       - name: Wait for PostgreSQL
         run: |
           until pg_isready -h localhost -p 5432 -U odoo; do
             echo "Waiting for PostgreSQL..."
             sleep 2
           done
+
+      - name: Run module migrations
+        run: |
+          chmod +x scripts/run_odoo_migrations.sh
+          # Note: migrations would run here if modules were already installed
+          echo "Skipping migrations (fresh database)"
 
       - name: Run Cheqroom parity tests
         env:
@@ -81,7 +91,8 @@ jobs:
           PGDATABASE: test_cheqroom
         run: |
           echo "Testing Cheqroom parity (ipai_equipment)..."
-          python odoo-bin -d test_cheqroom \
+          chmod +x odoo-bin
+          ./odoo-bin -d test_cheqroom \
             -i ipai_equipment \
             --test-enable \
             --stop-after-init \
@@ -104,7 +115,7 @@ jobs:
           PGDATABASE: test_concur
         run: |
           echo "Testing Concur parity (ipai_expense)..."
-          python odoo-bin -d test_concur \
+          ./odoo-bin -d test_concur \
             -i ipai_expense \
             --test-enable \
             --stop-after-init \
@@ -127,7 +138,7 @@ jobs:
           PGDATABASE: test_workspace
         run: |
           echo "Testing Workspace parity (ipai_docs)..."
-          python odoo-bin -d test_workspace \
+          ./odoo-bin -d test_workspace \
             -i ipai_docs \
             --test-enable \
             --stop-after-init \
@@ -152,3 +163,11 @@ jobs:
           echo "Workspace (ipai_docs): ${{ job.status }}"
           echo "==================================================="
           echo "See docs/SAAS_PARITY_READINESS.md for validation details"
+
+      - name: Report CI telemetry
+        if: always()
+        env:
+          N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
+        run: |
+          chmod +x scripts/report_ci_telemetry.sh
+          scripts/report_ci_telemetry.sh "${{ job.status }}"
