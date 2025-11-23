@@ -11,7 +11,8 @@ if [ ! -d "$ODOO_SRC_DIR" ]; then
 fi
 
 pip install --upgrade pip
-pip install -r "$ODOO_SRC_DIR/requirements.txt"
+# Apply CI-only constraints so gevent doesn't try to build with Cython 3
+pip install -c scripts/ci/constraints-gevent.txt -r "$ODOO_SRC_DIR/requirements.txt"
 # For safety – often needed by tests
 pip install psycopg2-binary
 
