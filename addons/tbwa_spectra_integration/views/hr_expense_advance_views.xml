@@ -55,6 +55,8 @@
                         <field name="description" readonly="state != 'draft'" nolabel="1"/>
                         <field name="analytic_account_id" readonly="state != 'draft'"
                                string="Project/Cost Center"/>
+                        <field name="tag_ids" widget="many2many_tags" readonly="state != 'draft'"
+                               string="Expense Categories"/>
                     </group>
                     <notebook>
                         <page string="Approval Workflow" name="approval">
