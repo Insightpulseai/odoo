@@ -46,6 +46,8 @@ class HRExpenseAdvance(models.Model):
     analytic_account_id = fields.Many2one('account.analytic.account',
                                           string='Project/Cost Center',
                                           tracking=True)
+    tag_ids = fields.Many2many('tbwa.tag.vocabulary', string='Expense Categories',
+                               help='Categorize expense for GL mapping and reporting')
 
     # Approval workflow
     state = fields.Selection([
