@@ -7,7 +7,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.2.0] - 2025-11-24 — Production Readiness Bundle
+## [1.2.0] - 2025-11-24 — Monitoring & BI Integration
+
+### Added
+- **Monitoring Schema** (`deploy/monitoring_schema.sql`)
+  - `monitoring.service_health_checks` - Service uptime and latency tracking
+  - `monitoring.backup_verifications` - Backup success/failure tracking
+  - Optimized indexes for time-series queries
+
+- **Superset-Ready Views** (`deploy/monitoring_views.sql`)
+  - `monitoring.v_service_uptime_daily` - Daily uptime percentage calculations
+  - `monitoring.v_backup_status_daily` - Daily backup success rates
+
+- **n8n Integration Ready**
+  - Extended healthcheck and backup scripts with n8n webhook support
+  - JSON payload format optimized for n8n workflow ingestion
+  - Prepared for n8n → Postgres → Superset monitoring pipeline
+
+### Technical Details
+- **Schema Design**: Time-series optimized with JSONB for raw payload storage
+- **View Optimization**: Pre-aggregated daily metrics for Superset dashboards
+- **Integration Path**: Scripts → n8n webhooks → Postgres → Superset visualizations
+- **SLO Tracking**: Ready for uptime and backup success rate monitoring
+
+### Files Created
+```
+deploy/monitoring_schema.sql
+deploy/monitoring_views.sql
+```
+
+### Database Setup
+```bash
+# Apply monitoring schema
+docker compose exec db psql -U odoo -d odoo_ce_prod -f /docker-entrypoint-initdb.d/monitoring_schema.sql
+
+# Apply monitoring views
+docker compose exec db psql -U odoo -d odoo_ce_prod -f /docker-entrypoint-initdb.d/monitoring_views.sql
+```
+
+### Superset Dashboard Recommendations
+1. **Dataset**: `monitoring.v_service_uptime_daily`
+   - Chart 1: Line chart – `uptime_pct` over `day`, series by `service_name`
+   - Chart 2: Big Number with Trendline – `uptime_pct` (latest day) with history
+
+2. **Dataset**: `monitoring.v_backup_status_daily`
+   - Chart 1: Bar chart – `success_pct` by `day` (filter `source_db='odoo_ce_prod'`)
+   - Chart 2: Big Number – last `success_pct` (shows if last backup passed)
+
+3. **Dashboard**: `Odoo CE – Prod SLO`
+   - Row 1: Uptime big number + trend
+   - Row 2: Backup success big number + trend
+   - Row 3: Table of last 20 health checks and last 10 backup runs
+
+---
+
+## [1.1.0] - 2025-11-24 — Production Readiness Bundle
 
 ### Added
 - **Database & Worker Tuning** (`docs/DB_TUNING.md`)
