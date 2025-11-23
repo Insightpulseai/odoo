@@ -1,0 +1,54 @@
+version: 1.0
+name: "InsightPulse Agentic Cloud"
+type: "agent-runtime-config"
+
+models:
+  primary:
+    - name: claude-3.5-sonnet
+      provider: anthropic
+  secondary:
+    - name: gpt-4.1
+      provider: openai
+    - name: deepseek-r1
+      provider: deepseek
+  local:
+    - name: nous-hermes-llama3
+      provider: local
+      endpoint: "http://gpu.insightpulseai.net:7000/v1"
+
+model_routing:
+  reasoning: claude-3.5-sonnet
+  code: claude-code-3.7
+  fallback_order: ["claude","gpt4","deepseek","local"]
+  multimodal: gpt-4o
+
+knowledge_base:
+  provider: supabase
+  tables:
+    - kb_sources
+    - kb_documents
+    - kb_chunks
+  embedder: "text-embedding-3-large"
+
+tools:
+  - name: odoo
+    type: mcp
+    endpoint: https://erp.insightpulseai.net/mcp
+  - name: supabase
+    type: mcp
+    endpoint: https://mcp.insightpulseai.net/supabase
+  - name: n8n
+    type: webhook
+    endpoint: https://n8n.insightpulseai.net/webhook/
+  - name: ocr
+    type: http
+    endpoint: https://ocr.insightpulseai.net/ocr
+  - name: github
+    type: mcp
+    endpoint: https://api.github.com
+
+execution_policies:
+  logs: true
+  retries: 3
+  escalation: mattermost
+  observability: enabled

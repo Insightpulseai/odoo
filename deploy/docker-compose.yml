@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: odoo
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
+      POSTGRES_MAX_CONNECTIONS: 100
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:

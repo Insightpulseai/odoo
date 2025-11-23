@@ -7,7 +7,172 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.2.0] - 2025-11-23 — Equipment MVP + CI/CD Automation
+## [1.2.0] - 2025-11-24 — Monitoring & BI Integration
+
+### Added
+- **Monitoring Schema** (`deploy/monitoring_schema.sql`)
+  - `monitoring.service_health_checks` - Service uptime and latency tracking
+  - `monitoring.backup_verifications` - Backup success/failure tracking
+  - Optimized indexes for time-series queries
+
+- **Superset-Ready Views** (`deploy/monitoring_views.sql`)
+  - `monitoring.v_service_uptime_daily` - Daily uptime percentage calculations
+  - `monitoring.v_backup_status_daily` - Daily backup success rates
+
+- **n8n Integration Ready**
+  - Extended healthcheck and backup scripts with n8n webhook support
+  - JSON payload format optimized for n8n workflow ingestion
+  - Prepared for n8n → Postgres → Superset monitoring pipeline
+
+### Technical Details
+- **Schema Design**: Time-series optimized with JSONB for raw payload storage
+- **View Optimization**: Pre-aggregated daily metrics for Superset dashboards
+- **Integration Path**: Scripts → n8n webhooks → Postgres → Superset visualizations
+- **SLO Tracking**: Ready for uptime and backup success rate monitoring
+
+### Files Created
+```
+deploy/monitoring_schema.sql
+deploy/monitoring_views.sql
+```
+
+### Database Setup
+```bash
+# Apply monitoring schema
+docker compose exec db psql -U odoo -d odoo_ce_prod -f /docker-entrypoint-initdb.d/monitoring_schema.sql
+
+# Apply monitoring views
+docker compose exec db psql -U odoo -d odoo_ce_prod -f /docker-entrypoint-initdb.d/monitoring_views.sql
+```
+
+### Superset Dashboard Recommendations
+1. **Dataset**: `monitoring.v_service_uptime_daily`
+   - Chart 1: Line chart – `uptime_pct` over `day`, series by `service_name`
+   - Chart 2: Big Number with Trendline – `uptime_pct` (latest day) with history
+
+2. **Dataset**: `monitoring.v_backup_status_daily`
+   - Chart 1: Bar chart – `success_pct` by `day` (filter `source_db='odoo_ce_prod'`)
+   - Chart 2: Big Number – last `success_pct` (shows if last backup passed)
+
+3. **Dashboard**: `Odoo CE – Prod SLO`
+   - Row 1: Uptime big number + trend
+   - Row 2: Backup success big number + trend
+   - Row 3: Table of last 20 health checks and last 10 backup runs
+
+---
+
+## [1.1.0] - 2025-11-24 — Production Readiness Bundle
+
+### Added
+- **Database & Worker Tuning** (`docs/DB_TUNING.md`)
+  - PostgreSQL connection limit: 100
+  - Odoo worker configuration: 4 HTTP workers, 2 cron workers
+  - Connection pool alignment to prevent exhaustion
+
+- **Installation Safety**
+  - `scripts/pre_install_snapshot.sh` - Pre-install database backups
+  - `scripts/install_ipai_finance_ppm.sh` - Safe module installation wrapper
+
+- **Configuration Updates**
+  - `deploy/odoo.conf` - Added worker tuning parameters
+  - `deploy/docker-compose.yml` - Added PostgreSQL connection limits
+
+- **Documentation & Procedures**
+  - `docs/N8N_CREDENTIALS_BOOTSTRAP.md` - n8n credential management
+  - `docs/MATTERMOST_ALERTING_SETUP.md` - Alert routing and payload conventions
+  - `docs/APP_ICONS_README.md` - Branding and icon standardization
+
+- **Regression Test Scaffolding**
+  - Complete test suite for `ipai_equipment`, `ipai_expense`, and `ipai_finance_ppm`
+  - Tagged for post-install regression testing
+
+### Technical Details
+- **Module Installation Safety**: Pre-install snapshots prevent data loss
+- **Connection Pool Management**: Prevents database exhaustion during heavy operations
+- **Alerting Infrastructure**: Complete Mattermost integration ready
+- **Branding Consistency**: App icon standardization guidelines
+- **Test Coverage**: Regression test foundation for core modules
+
+### Files Created
+```
+docs/DB_TUNING.md
+scripts/pre_install_snapshot.sh (executable)
+scripts/install_ipai_finance_ppm.sh (executable)
+docs/N8N_CREDENTIALS_BOOTSTRAP.md
+docs/MATTERMOST_ALERTING_SETUP.md
+docs/APP_ICONS_README.md
+tests/regression/
+├── __init__.py
+├── test_ipai_equipment_flow.py
+├── test_ipai_expense_flow.py
+└── test_finance_ppm_install.py
+```
+
+### Next Actions
+1. Review and merge branch: `chore/finalize-prod-readiness-v1`
+2. Deploy changes and restart containers to apply new configuration
+3. Test installation using new wrapper script to safely install `ipai_finance_ppm`
+
+---
+
+## [1.1.0] - 2025-11-24 — Hardening Pack
+
+### Added
+- **Load Testing Infrastructure**
+  - `tests/load/odoo_login_and_nav.js` - k6-based load tests simulating realistic Odoo usage
+  - Simulates login + core menu navigation under 50 concurrent users
+
+- **Automated Backup Verification**
+  - `scripts/verify_backup.sh` - Daily backup verification with Mattermost notifications
+  - Creates fresh backup, restores to verification DB, runs sanity checks
+  - Includes n8n webhook integration for metrics collection
+
+- **Synthetic Monitoring**
+  - `scripts/healthcheck_odoo.sh` - 5-minute cron heartbeat with failure alerts
+  - Measures HTTP response codes and latency
+  - Includes n8n webhook integration for metrics collection
+
+### Technical Details
+- **Load Testing**: k6 with Docker for consistent execution environment
+- **Backup Verification**: Automated daily verification with rollback capability
+- **Health Monitoring**: Continuous uptime monitoring with chat-level heartbeat
+- **Integration Ready**: Prepared for n8n + Superset monitoring dashboards
+
+### Files Created
+```
+tests/load/odoo_login_and_nav.js
+scripts/verify_backup.sh (executable)
+scripts/healthcheck_odoo.sh (executable)
+```
+
+### Usage Examples
+```bash
+# Load testing
+docker run --rm -i loadimpact/k6 run - \
+  -e ODOO_BASE_URL="https://erp.insightpulseai.net" \
+  -e ODOO_LOGIN="admin" \
+  -e ODOO_PASSWORD="your_admin_password" \
+  < tests/load/odoo_login_and_nav.js
+
+# Backup verification
+./scripts/verify_backup.sh
+
+# Health monitoring
+./scripts/healthcheck_odoo.sh
+```
+
+### Cron Configuration
+```cron
+# Health check every 5 minutes
+*/5 * * * * ODOO_URL="https://erp.insightpulseai.net/web/login" MM_WEBHOOK_URL="..." SERVICE_NAME="odoo-ce-prod" /opt/odoo-ce/scripts/healthcheck_odoo.sh >> /var/log/odoo_healthcheck.log 2>&1
+
+# Backup verification daily at 3 AM
+0 3 * * * cd /opt/odoo-ce && DB_CONTAINER=db DB_USER=odoo SOURCE_DB=odoo_ce_prod BACKUP_DIR=/var/backups/odoo ./scripts/verify_backup.sh >> /var/log/odoo_backup_verify.log 2>&1
+```
+
+---
+
+## [1.0.0] - 2025-11-23 — Equipment MVP + CI/CD Automation
 
 ### Fixed
 - **Odoo 18 Compatibility Issue** - ipai_equipment module installation
