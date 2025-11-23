@@ -29,7 +29,7 @@
         'views/approval_matrix_views.xml',
         'views/tbwa_menu.xml',
         # Wizards (load after views)
-        # 'wizards/spectra_export_wizard_views.xml',  # TODO: Create
+        'wizards/spectra_export_wizard_views.xml',
     ],
     "installable": True,
     "application": False,
