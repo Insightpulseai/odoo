@@ -215,6 +215,27 @@ skills:
       - ruff
       - pylint
 
+  - id: fix_oca_ci_violations
+    name: "Fix OCA CI/CD Violations"
+    domain: deployment
+    description: "Automatically diagnose and fix CI/CD pipeline issues for Odoo CE/OCA repositories"
+    inputs:
+      - repo_snapshot
+      - ci_logs
+      - target_branches
+    outputs:
+      - corrected_workflows
+      - fix_report
+      - pr_patch
+    tools:
+      - github_actions
+      - yaml_parser
+      - python_ast
+    knowledge_refs:
+      - odoo_oca_patterns
+      - odoo_ce_18_docs
+      - oca_maintainer_tools
+
   # --- Finance Ops Skills ---
   - id: import_monthly_tasks
     name: "Import Monthly Closing Tasks"
@@ -434,6 +455,34 @@ capabilities:
       - enterprise_feature_gap
       - saas_feature_matrix
       - odoo_reverse_mapper_spec
+
+  - id: oca_ci_guardian
+    name: "OCA CI Guardian - Automated CI/CD Fixer"
+    description: "Autonomous agent that audits, fixes, and maintains GitHub Actions workflows for Odoo 18 CE and OCA-style repositories. Enforces OCA conventions, prevents Enterprise contamination, and keeps CI pipelines green."
+    skills:
+      - fix_oca_ci_violations
+      - run_ci_checks
+      - deploy_odoo_module
+      - analyze_odoo_logs
+    features:
+      - enterprise_contamination_detection
+      - oca_compliance_enforcement
+      - workflow_auto_repair
+      - openupgrade_compatibility_validation
+      - automated_pr_generation
+    preconditions:
+      - github_repository_exists
+      - workflows_directory_present
+    validation:
+      - no_enterprise_dependencies
+      - all_ci_checks_pass
+      - oca_structure_compliant
+      - workflows_valid_yaml
+    knowledge_refs:
+      - odoo_oca_patterns
+      - odoo_ce_18_docs
+      - oca_maintainer_tools
+      - oca_ci_guardian_docs
 
 # ============================================================================
 # PROCEDURES - High-level orchestration macros
@@ -705,6 +754,16 @@ knowledge_sources:
     type: specification
     location: "/home/user/odoo-ce/agents/odoo_reverse_mapper.yaml"
     description: "Complete reverse mapping agent specification with capabilities, workflows, and validation"
+
+  - id: oca_maintainer_tools
+    type: tools
+    location: "https://github.com/OCA/maintainer-tools"
+    description: "OCA maintainer tools for CI/CD, code quality, and repository management"
+
+  - id: oca_ci_guardian_docs
+    type: documentation
+    location: "/home/user/odoo-ce/docs/deployment/OCA_CI_GUARDIAN.md"
+    description: "OCA CI Guardian agent documentation with troubleshooting and examples"
 
 # ============================================================================
 # EXECUTION RULES - Decision logic for autonomous operation
