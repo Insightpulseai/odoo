@@ -23,7 +23,7 @@ class TestIpaiExpenseBusinessFlow(TransactionCase):
             'name': 'Test Manager',
         })
 
-        cls.Expense = cls.env['ipai.expense']
+        cls.Expense = cls.env['ipai.travel.request']
 
     def test_01_expense_creation(self):
         """Test expense can be created with required fields"""

@@ -6,7 +6,7 @@ from odoo import fields
 class TestIpaiExpenseOCR(TransactionCase):
     def setUp(self):
         super().setUp()
-        self.Expense = self.env["ipai.expense"]
+        self.Expense = self.env["ipai.travel.request"]
         self.user = self.env.ref("base.user_admin")
 
     def test_expense_ocr_fields_exist_and_flow(self):
@@ -20,7 +20,7 @@ class TestIpaiExpenseOCR(TransactionCase):
 
         # Make sure OCR-related fields exist (schema sanity check)
         for field in ["ocr_status", "ocr_vendor_detected", "ocr_amount_detected"]:
-            self.assertIn(field, self.Expense._fields, f"Field {field} should exist in ipai.expense model")
+            self.assertIn(field, self.Expense._fields, f"Field {field} should exist in ipai.travel.request model")
 
         # Simulate OCR completion (you can later replace this with real HTTP stub)
         expense.write({
