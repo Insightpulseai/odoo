@@ -3,8 +3,8 @@ set -euo pipefail
 
 DB_CONTAINER="${DB_CONTAINER:-db}"
 DB_USER="${DB_USER:-odoo}"
-SOURCE_DB="${SOURCE_DB:-odoo_ce_prod}"
-VERIFY_DB="${VERIFY_DB:-odoo_ce_verify}"
+SOURCE_DB="${SOURCE_DB:-odoo}"
+VERIFY_DB="${VERIFY_DB:-odoo_verify}"
 BACKUP_DIR="${BACKUP_DIR:-/var/backups/odoo}"
 MM_WEBHOOK_URL="${MM_WEBHOOK_URL:-}"
 N8N_WEBHOOK_URL="${N8N_WEBHOOK_URL:-}"
