@@ -2,48 +2,83 @@
 from . import models
 from . import wizards
 
-def post_init_hook(cr, registry):
+
+def post_init_hook(env):
     """
-    Post-installation hook to configure Okta SSO and Spectra settings.
+    Post-installation hook to create standard tag vocabulary.
+    Creates common expense categories for GL mapping.
     """
-    from odoo import api, SUPERUSER_ID
+    TagVocabulary = env['tbwa.tag.vocabulary']
 
-    env = api.Environment(cr, SUPERUSER_ID, {})
+    # Check if tags already exist (avoid duplicates on upgrade)
+    existing = TagVocabulary.search([])
+    if existing:
+        return  # Tags already created, skip
 
-    # Set default Spectra export path
-    IrConfigParam = env['ir.config_parameter']
-    IrConfigParam.set_param('tbwa.spectra.export_path', '/exports/spectra')
-    IrConfigParam.set_param('tbwa.spectra.archive_bucket', 'tbwa-spectra-exports')
+    # Standard expense category tags
+    standard_tags = [
+        {
+            'name': 'Travel',
+            'tag_category': 'travel',
+            'tag_color': 1,  # Red
+            'description': 'Travel and transportation expenses',
+        },
+        {
+            'name': 'Meals',
+            'tag_category': 'meals',
+            'tag_color': 3,  # Yellow
+            'description': 'Meals and entertainment',
+        },
+        {
+            'name': 'Accommodation',
+            'tag_category': 'accommodation',
+            'tag_color': 2,  # Orange
+            'description': 'Hotel and lodging',
+        },
+        {
+            'name': 'Office Supplies',
+            'tag_category': 'office',
+            'tag_color': 4,  # Blue
+            'description': 'Office supplies and materials',
+        },
+        {
+            'name': 'Professional Fees',
+            'tag_category': 'professional',
+            'tag_color': 9,  # Purple
+            'description': 'Professional services and consulting',
+        },
+        {
+            'name': 'Rent',
+            'tag_category': 'rent',
+            'tag_color': 6,  # Green
+            'description': 'Office rent and lease',
+        },
+        {
+            'name': 'Utilities',
+            'tag_category': 'utilities',
+            'tag_color': 5,  # Pink
+            'description': 'Electricity, water, utilities',
+        },
+        {
+            'name': 'Communication',
+            'tag_category': 'communication',
+            'tag_color': 7,  # Cyan
+            'description': 'Phone, internet, telecommunications',
+        },
+        {
+            'name': 'Equipment',
+            'tag_category': 'equipment',
+            'tag_color': 8,  # Gray
+            'description': 'Equipment purchase and repairs',
+        },
+        {
+            'name': 'Miscellaneous',
+            'tag_category': 'miscellaneous',
+            'tag_color': 0,  # Default
+            'description': 'Other business expenses',
+        },
+    ]
 
-    # Enable Okta SSO provider
-    oauth_provider = env['auth.oauth.provider'].search([('name', '=', 'Okta TBWA')], limit=1)
-    if not oauth_provider:
-        env['auth.oauth.provider'].create({
-            'name': 'Okta TBWA',
-            'client_id': 'OKTA_CLIENT_ID',  # To be configured
-            'auth_endpoint': 'https://tbwa.okta.com/oauth2/v1/authorize',
-            'scope': 'openid profile email groups',
-            'validation_endpoint': 'https://tbwa.okta.com/oauth2/v1/userinfo',
-            'data_endpoint': 'https://tbwa.okta.com/oauth2/v1/userinfo',
-            'enabled': True,
-            'body': 'Login with Okta',
-        })
-
-    # Create default approval matrix
-    ApprovalMatrix = env['tbwa.approval.matrix']
-    if not ApprovalMatrix.search_count([]):
-        # Default approval rules (will be customizable)
-        ApprovalMatrix.create({
-            'name': 'Cash Advance - Standard',
-            'amount_min': 0.0,
-            'amount_max': 50000.0,
-            'approver_level_1': 'manager',
-            'approver_level_2': 'finance_head',
-        })
-        ApprovalMatrix.create({
-            'name': 'Cash Advance - High Value',
-            'amount_min': 50000.01,
-            'amount_max': 999999999.99,
-            'approver_level_1': 'finance_head',
-            'approver_level_2': 'cfo',
-        })
+    # Create tags
+    for tag_data in standard_tags:
+        TagVocabulary.create(tag_data)
