@@ -19,9 +19,9 @@
         # Data files (load after security, before views)
         "data/users_data.xml",
         "data/tbwa_cron.xml",
-        # 'data/spectra_mapping_data.xml',  # TODO: Create
-        # 'data/approval_matrix_data.xml',  # TODO: Create
-        # 'data/export_templates_data.xml',  # TODO: Create
+        'data/spectra_mapping_data.xml',
+        'data/approval_matrix_data.xml',
+        'data/export_templates_data.xml',
         # Views (load last, comment out until created)
         'views/hr_expense_advance_views.xml',
         'views/spectra_export_views.xml',
