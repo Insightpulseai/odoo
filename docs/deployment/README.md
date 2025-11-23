@@ -34,10 +34,12 @@ grep -R "enterprise\|web_studio\|documents\|iap" addons/ || echo "✅ Clean"
 - Repository structure validation
 
 #### ci-odoo-oca.yml (OCA Guardian)
-- Comprehensive OCA compliance
-- Full test suite with PostgreSQL
-- OpenUpgrade compatibility
-- Static analysis and linting
+- **Test Matrix:** Unit Tests, Integration Tests, All Tests
+- **Coverage Reporting:** Code coverage with HTML reports
+- **Performance Testing:** Module installation timing and DB size
+- **OCA Compliance:** Full compliance checking
+- **OpenUpgrade Compatibility:** Migration script validation
+- **Static Analysis:** Enterprise detection and linting
 
 ## 🛡️ Guardrails
 
@@ -96,14 +98,32 @@ odoo-ce/
 
 ### scripts/ci/run_odoo_tests.sh
 ```bash
-# Run Odoo tests for all modules
-DB_NAME=odoo ODOO_MODULES=all ./scripts/ci/run_odoo_tests.sh
+# Run all tests
+./scripts/ci/run_odoo_tests.sh
+
+# Run unit tests only
+TEST_TAGS="/unit" ./scripts/ci/run_odoo_tests.sh
+
+# Run integration tests only
+TEST_TAGS="/integration" ./scripts/ci/run_odoo_tests.sh
 
 # Run specific modules
 ODOO_MODULES=ipai_docs,ipai_expense ./scripts/ci/run_odoo_tests.sh
 
-# Debug mode
-LOG_LEVEL=debug ./scripts/ci/run_odoo_tests.sh
+# Run with coverage reporting
+WITH_COVERAGE=true COVERAGE_HTML=true ./scripts/ci/run_odoo_tests.sh
+
+# Debug mode with specific tags
+LOG_LEVEL=debug TEST_TAGS="/unit" ./scripts/ci/run_odoo_tests.sh
+
+# Full example with all options
+DB_NAME=test_db \
+ODOO_MODULES=ipai_docs,ipai_expense \
+TEST_TAGS="/unit" \
+WITH_COVERAGE=true \
+COVERAGE_HTML=true \
+LOG_LEVEL=test \
+./scripts/ci/run_odoo_tests.sh
 ```
 
 ### scripts/gen_repo_tree.sh

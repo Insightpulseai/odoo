@@ -96,8 +96,21 @@ jobs:
           python -m compileall addons oca 2>/dev/null || echo "Some modules failed syntax check"
 
   tests:
-    name: Unit & Odoo Tests
+    name: ${{ matrix.test-suite.name }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test-suite:
+          - name: "Unit Tests"
+            tags: "/unit"
+            description: "Fast unit tests"
+          - name: "Integration Tests"
+            tags: "/integration"
+            description: "Database integration tests"
+          - name: "All Tests"
+            tags: ""
+            description: "Complete test suite"
     services:
       postgres:
         image: postgres:15
@@ -158,6 +171,9 @@ jobs:
           # Install Odoo Python dependencies
           pip install -r /tmp/odoo/requirements.txt
 
+          # Install testing and coverage tools
+          pip install coverage pytest-cov
+
           # Install custom module requirements if exists
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
@@ -181,16 +197,57 @@ jobs:
             exit 0
           fi
 
+          echo "========================================="
+          echo "Test Suite: ${{ matrix.test-suite.description }}"
+          echo "Test Tags: ${{ matrix.test-suite.tags }}"
           echo "Testing modules: $MODULES"
+          echo "========================================="
 
-          # Use odoo-bin from cloned repository
-          python /tmp/odoo/odoo-bin \
-            -d "$DB_NAME" \
-            -i "$MODULES" \
-            --stop-after-init \
-            --log-level=test \
-            --test-enable \
-            --addons-path=/tmp/odoo/addons,addons,oca
+          # Prepare test command
+          TEST_CMD="python /tmp/odoo/odoo-bin -d $DB_NAME -i $MODULES --stop-after-init --log-level=test --test-enable --addons-path=/tmp/odoo/addons,addons,oca"
+
+          # Add test tags if specified
+          if [ -n "${{ matrix.test-suite.tags }}" ]; then
+            TEST_CMD="$TEST_CMD --test-tags=${{ matrix.test-suite.tags }}"
+          fi
+
+          # Run tests with coverage if this is the full test suite
+          if [ "${{ matrix.test-suite.name }}" == "All Tests" ]; then
+            echo "Running with coverage analysis..."
+            coverage run --source=addons --omit='*/tests/*' /tmp/odoo/odoo-bin \
+              -d "$DB_NAME" \
+              -i "$MODULES" \
+              --stop-after-init \
+              --log-level=test \
+              --test-enable \
+              --addons-path=/tmp/odoo/addons,addons,oca
+
+            # Generate coverage report
+            echo ""
+            echo "========================================="
+            echo "Coverage Report"
+            echo "========================================="
+            coverage report -m
+            coverage html -d coverage_html
+          else
+            # Run tests without coverage for faster execution
+            eval $TEST_CMD
+          fi
+
+      - name: Upload coverage report
+        if: matrix.test-suite.name == 'All Tests'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage_html/
+          retention-days: 30
+
+      - name: Comment coverage on PR
+        if: matrix.test-suite.name == 'All Tests' && github.event_name == 'pull_request'
+        run: |
+          COVERAGE_PCT=$(coverage report | tail -1 | awk '{print $NF}')
+          echo "Test coverage: $COVERAGE_PCT"
+          # Coverage percentage can be used in PR comments if needed
 
   openupgrade-smoke:
     name: OpenUpgrade Smoke (optional)
@@ -221,6 +278,105 @@ jobs:
           else
             echo "No openupgrade_scripts directory; skipping."
           fi
+
+  performance:
+    name: Performance Tests
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo
+        options: >-
+          --health-cmd="pg_isready -U odoo"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        ports: ["5432:5432"]
+
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: odoo
+      PGPASSWORD: odoo
+      PGDATABASE: odoo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev
+
+          # Clone Odoo
+          git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo.git /tmp/odoo
+          pip install -r /tmp/odoo/requirements.txt
+
+          # Install performance testing tools
+          pip install locust psutil memory_profiler
+
+      - name: Module installation performance test
+        run: |
+          echo "========================================="
+          echo "Performance Test: Module Installation"
+          echo "========================================="
+
+          MODULES=$(find addons -name "__manifest__.py" -exec dirname {} \; | xargs -I {} basename {} | tr '\n' ',' | sed 's/,$//')
+
+          if [ -z "$MODULES" ]; then
+            echo "No modules found to test"
+            exit 0
+          fi
+
+          # Time the installation
+          START_TIME=$(date +%s)
+
+          python /tmp/odoo/odoo-bin \
+            -d "$DB_NAME" \
+            -i "$MODULES" \
+            --stop-after-init \
+            --log-level=warn \
+            --addons-path=/tmp/odoo/addons,addons,oca
+
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+
+          echo ""
+          echo "========================================="
+          echo "Performance Results"
+          echo "========================================="
+          echo "Module installation took: ${DURATION} seconds"
+          echo "Modules tested: $MODULES"
+
+          # Warn if installation takes too long
+          if [ $DURATION -gt 300 ]; then
+            echo "::warning::Module installation took longer than 5 minutes (${DURATION}s)"
+          fi
+
+      - name: Database size check
+        run: |
+          echo "========================================="
+          echo "Database Size Analysis"
+          echo "========================================="
+
+          psql -h localhost -U odoo -d odoo -c "
+            SELECT
+              pg_size_pretty(pg_database_size('odoo')) as database_size,
+              pg_size_pretty(pg_total_relation_size('ir_model')) as ir_model_size;
+          "
 
   repo-structure:
     name: Repository Structure Check
