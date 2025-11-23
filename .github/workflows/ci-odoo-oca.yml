@@ -135,10 +135,30 @@ jobs:
         run: |
           python -m pip install --upgrade pip
 
-          # Install Odoo 18 CE
-          pip install odoo==18.0
+          # Install system dependencies for Odoo
+          sudo apt-get update
+          sudo apt-get install -y \
+            libpq-dev \
+            libsasl2-dev \
+            libldap2-dev \
+            libssl-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libjpeg-dev \
+            libfreetype6-dev \
+            liblcms2-dev \
+            libwebp-dev \
+            libharfbuzz-dev \
+            libfribidi-dev \
+            libxcb1-dev
 
-          # Install requirements if exists
+          # Clone Odoo 18.0 from official repository
+          git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo.git /tmp/odoo
+
+          # Install Odoo Python dependencies
+          pip install -r /tmp/odoo/requirements.txt
+
+          # Install custom module requirements if exists
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           fi
@@ -163,13 +183,14 @@ jobs:
 
           echo "Testing modules: $MODULES"
 
-          odoo \
+          # Use odoo-bin from cloned repository
+          python /tmp/odoo/odoo-bin \
             -d "$DB_NAME" \
             -i "$MODULES" \
             --stop-after-init \
             --log-level=test \
             --test-enable \
-            --addons-path=addons,oca
+            --addons-path=/tmp/odoo/addons,addons,oca
 
   openupgrade-smoke:
     name: OpenUpgrade Smoke (optional)
