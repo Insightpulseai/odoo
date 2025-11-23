@@ -4,6 +4,15 @@ This directory contains documentation for deploying and maintaining the Odoo 18 
 
 ## 📚 Documentation
 
+### Testing
+- **[../TESTING_ODOO_18.md](../TESTING_ODOO_18.md)** - Odoo 18 Testing Guide ⭐
+  - Official Odoo 18 testing patterns
+  - `TransactionCase` examples
+  - Test tags and filtering
+  - JavaScript testing (HOOT)
+  - `bin/odoo-tests.sh` usage
+  - Best practices
+
 ### CI/CD
 - **[OCA_CI_GUARDIAN.md](./OCA_CI_GUARDIAN.md)** - OCA CI Guardian agent documentation
   - Enterprise contamination prevention
@@ -22,8 +31,17 @@ pre-commit run --all-files
 # Check for Enterprise dependencies
 grep -R "enterprise\|web_studio\|documents\|iap" addons/ || echo "✅ Clean"
 
-# Run module tests
+# Run module tests (CI script)
 ./scripts/ci/run_odoo_tests.sh
+
+# Run Odoo 18 tests (recommended)
+./bin/odoo-tests.sh
+
+# Run specific module
+./bin/odoo-tests.sh ipai_expense
+
+# Run with tags
+./bin/odoo-tests.sh ipai_expense /ipai_expense
 ```
 
 ### CI Workflows
