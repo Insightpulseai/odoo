@@ -9,7 +9,7 @@ BACKUP_DIR="${BACKUP_DIR:-/var/backups/odoo}"
 MM_WEBHOOK_URL="${MM_WEBHOOK_URL:-}"
 N8N_WEBHOOK_URL="${N8N_WEBHOOK_URL:-}"
 
-timestamp=$(date +%Y%m%d_%H%M%S)
+timestamp=$(date -Iseconds)
 backup_file="${BACKUP_DIR}/backup_${SOURCE_DB}_${timestamp}.sql.gz"
 status="success"
 message="✅ Backup verification succeeded for ${SOURCE_DB} at ${timestamp}"

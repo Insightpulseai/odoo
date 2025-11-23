@@ -78,8 +78,8 @@ docker compose exec db psql -U odoo -d odoo -f /docker-entrypoint-initdb.d/monit
 
 ### Superset Dashboards
 **Views Available**:
-- `monitoring.v_service_uptime_daily` - Daily uptime percentages
-- `monitoring.v_backup_status_daily` - Backup success rates
+- `ipai_monitoring.v_service_uptime_daily` - Daily uptime percentages
+- `ipai_monitoring.v_backup_status_daily` - Backup success rates
 
 ---
 

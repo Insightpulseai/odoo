@@ -1,7 +1,7 @@
--- schema: monitoring
-CREATE SCHEMA IF NOT EXISTS monitoring;
+-- Schema for Odoo-side monitoring
+CREATE SCHEMA IF NOT EXISTS ipai_monitoring;
 
-CREATE TABLE IF NOT EXISTS monitoring.service_health_checks (
+CREATE TABLE IF NOT EXISTS ipai_monitoring.service_health_checks (
     id              bigserial PRIMARY KEY,
     service_name    text        NOT NULL,
     checked_at      timestamptz NOT NULL DEFAULT now(),
@@ -13,9 +13,9 @@ CREATE TABLE IF NOT EXISTS monitoring.service_health_checks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_service_health_checks_service_time
-    ON monitoring.service_health_checks (service_name, checked_at DESC);
+    ON ipai_monitoring.service_health_checks (service_name, checked_at DESC);
 
-CREATE TABLE IF NOT EXISTS monitoring.backup_verifications (
+CREATE TABLE IF NOT EXISTS ipai_monitoring.backup_verifications (
     id              bigserial PRIMARY KEY,
     source_db       text        NOT NULL,
     verify_db       text        NOT NULL,
@@ -27,4 +27,4 @@ CREATE TABLE IF NOT EXISTS monitoring.backup_verifications (
 );
 
 CREATE INDEX IF NOT EXISTS idx_backup_verifications_time
-    ON monitoring.backup_verifications (verified_at DESC);
+    ON ipai_monitoring.backup_verifications (verified_at DESC);
