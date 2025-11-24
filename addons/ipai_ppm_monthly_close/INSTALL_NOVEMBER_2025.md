@@ -19,7 +19,7 @@ ssh root@erp.insightpulseai.net
 cd /opt/odoo-ce/addons
 
 # Pull latest from Git
-git pull origin feature/add-expense-equipment-prd
+git pull origin main
 
 # Restart Odoo
 systemctl restart odoo

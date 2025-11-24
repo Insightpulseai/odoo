@@ -87,7 +87,7 @@ ls -d ipai_* tbwa_* 2>/dev/null | tr '\n' ','
   "job": "test-parity",
   "run_id": "1234567890",
   "run_number": "42",
-  "branch": "feature/add-expense-equipment-prd",
+  "branch": "main",
   "sha": "d1b4e51abc123..."
 }
 ```
