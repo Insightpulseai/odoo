@@ -26,9 +26,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: odoo
           POSTGRES_USER: odoo
           POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo
         ports:
           - 5432:5432
         options: >-
@@ -36,6 +36,13 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: odoo
+      PGDATABASE: odoo
+      PGPASSWORD: odoo
 
     steps:
       - name: Checkout repository
@@ -51,6 +58,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            postgresql-client \
             libpq-dev \
             libxml2-dev \
             libxslt1-dev \
@@ -72,11 +80,8 @@ jobs:
           scripts/ci/install_odoo_18.sh
 
       - name: Wait for PostgreSQL
-        run: |
-          until pg_isready -h localhost -p 5432 -U odoo; do
-            echo "Waiting for PostgreSQL..."
-            sleep 2
-          done
+        run: scripts/ci/wait_for_postgres.sh
+        shell: bash
 
       - name: Run module migrations
         run: |
@@ -168,8 +173,9 @@ jobs:
 
       - name: Report CI telemetry
         if: always()
+        shell: bash
         env:
           N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
         run: |
           chmod +x scripts/report_ci_telemetry.sh
-          scripts/report_ci_telemetry.sh "${{ job.status }}"
+          ./scripts/report_ci_telemetry.sh "${{ job.status }}"
