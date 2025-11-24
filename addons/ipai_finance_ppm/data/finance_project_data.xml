@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="finance_month_end_project" model="project.project">
+        <field name="name">Finance Month-End &amp; Compliance</field>
+        <field name="privacy_visibility">followers</field>
+        <field name="sequence">10</field>
+    </record>
+</odoo>

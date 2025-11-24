@@ -201,13 +201,3 @@ class FinanceBIRSchedule(models.Model):
             schedule.status = "in_progress"
         elif schedule.filing_deadline < date.today():
             schedule.status = "late"
-
-
-class ProjectTask(models.Model):
-    """Extend project.task to link to finance logframe"""
-
-    _inherit = "project.task"
-
-    finance_logframe_id = fields.Many2one("ipai.finance.logframe",
-                                         string="Finance Logframe",
-                                         help="Link to logical framework entry")

@@ -185,6 +185,19 @@ docker run --rm -i loadimpact/k6 run - \
 
 ---
 
+## [1.0.3] - 2025-11-24 — Equipment Cron max_calls Hardening
+
+### Fixed
+- **Cron compatibility alignment** (`addons/ipai_equipment/data/ipai_equipment_cron.xml`)
+  - Explicitly set `max_calls` to `0` (unlimited) to replace deprecated `numbercall`
+  - Retains explicit cron owner to avoid missing user errors on installs
+
+### Changed
+- **Module version bump** (`addons/ipai_equipment/__manifest__.py`)
+  - Incremented to `18.0.1.0.3` to ship the cron compatibility hardening
+
+---
+
 ## [1.0.2] - 2025-11-24 — Equipment Cron Owner & Compatibility Cleanup
 
 ### Fixed

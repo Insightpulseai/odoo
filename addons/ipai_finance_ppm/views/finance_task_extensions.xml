@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_task_form_finance_extensions" model="ir.ui.view">
+        <field name="name">project.task.form.finance.extensions</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Finance Control">
+                    <group>
+                        <group>
+                            <field name="finance_code"/>
+                            <field name="finance_deadline_type"/>
+                        </group>
+                        <group>
+                            <field name="reviewer_id"/>
+                            <field name="approver_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="finance_logframe_id"/>
+                            <field name="bir_schedule_id"/>
+                        </group>
+                        <group>
+                            <field name="is_finance_ppm" readonly="1"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_task_search_finance_extensions" model="ir.ui.view">
+        <field name="name">project.task.search.finance.extensions</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_search_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="group_by_approver" string="Approver" context="{'group_by': 'approver_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_finance_month_end_tasks" model="ir.actions.act_window">
+        <field name="name">Finance Month-End Tasks</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[("project_id", "=", ref("ipai_finance_ppm.finance_month_end_project"))]</field>
+        <field name="context">{
+            "default_project_id": ref("ipai_finance_ppm.finance_month_end_project"),
+            "search_default_project_id": ref("ipai_finance_ppm.finance_month_end_project"),
+            "default_finance_deadline_type": "monthly"
+        }</field>
+    </record>
+</odoo>

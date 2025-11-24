@@ -10,6 +10,7 @@ class FinancePerson(models.Model):
     code = fields.Char(string='Code', required=True, tracking=True, help="e.g. CKVC, RIM")
     name = fields.Char(string='Name', required=True, tracking=True)
     email = fields.Char(string='Email')
+    responsibility = fields.Char(string='Responsibility', tracking=True)
     role = fields.Selection([
         ('staff', 'Staff'),
         ('supervisor', 'Supervisor'),
