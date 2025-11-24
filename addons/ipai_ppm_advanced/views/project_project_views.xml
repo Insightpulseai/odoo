@@ -1,0 +1,17 @@
+<odoo>
+    <record id="view_project_form_portfolio" model="ir.ui.view">
+        <field name="name">project.project.form.portfolio</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook/page[@name='misc_settings']/group" position="inside">
+                <group string="Portfolio">
+                    <field name="portfolio_status"/>
+                    <field name="health_indicator" readonly="1"/>
+                    <field name="total_baseline_cost"/>
+                    <field name="total_actual_cost" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
