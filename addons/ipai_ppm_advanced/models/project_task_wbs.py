@@ -15,6 +15,7 @@ class ProjectTaskWBS(models.Model):
         'project_id',
         'parent_id',
         'sequence',
+        'parent_id.wbs_code',  # CRITICAL: Ensures children update when parent moves
         'parent_id.child_ids.sequence',
         'parent_id.child_ids.id',
     )

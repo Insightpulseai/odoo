@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_open_superset_finance" model="ir.actions.act_url">
+        <field name="name">Finance Command Center</field>
+        <field name="url">https://superset.insightpulseai.net/superset/dashboard/p/AbC123xyz/?standalone=true</field>
+        <field name="target">self</field>
+    </record>
+
+    <menuitem id="menu_finance_analytics"
+              name="Analytics"
+              parent="menu_finance_ppm_root"
+              action="action_open_superset_finance"
+              sequence="99"/>
+</odoo>
