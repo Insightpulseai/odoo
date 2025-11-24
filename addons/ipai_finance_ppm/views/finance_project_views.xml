@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_project_kanban_health" model="ir.ui.view">
+        <field name="name">project.project.kanban.health</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="health_status"/>
+            </xpath>
+
+            <xpath expr="//div[contains(@class, 'o_kanban_record_bottom')]" position="before">
+                <div class="o_kanban_record_body o_ppm_health_status">
+                    <span class="badge text-bg-success" invisible="health_status != 'green'">
+                        <i class="fa fa-check-circle"/> On Track
+                    </span>
+                    <span class="badge text-bg-warning" invisible="health_status != 'amber'">
+                        <i class="fa fa-exclamation-triangle"/> At Risk
+                    </span>
+                    <span class="badge text-bg-danger" invisible="health_status != 'red'">
+                        <i class="fa fa-fire"/> Critical
+                    </span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_project_tree_health" model="ir.ui.view">
+        <field name="name">project.project.tree.health</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field
+                    name="health_status"
+                    widget="badge"
+                    decoration-success="health_status == 'green'"
+                    decoration-warning="health_status == 'amber'"
+                    decoration-danger="health_status == 'red'"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -68,6 +68,50 @@ ls -d ipai_* tbwa_* 2>/dev/null | tr '\n' ','
 
 ---
 
+## 🔁 Production Deployment Paths (Recommended vs. Emergency)
+
+With `deploy_prod.yml` wired to `main`, you have two operational paths. Default to the automated path for day-to-day releases, and reserve the manual path for emergencies or live debugging.
+
+### Option 1: Automated (Recommended)
+
+**Trigger:** Merging any `feature/...` branch into `main`.
+
+**Workflow:**
+
+1. Create a feature branch (`git checkout -b feature/new-payroll-rule`).
+2. Push changes and open a PR to `main`.
+3. Merge (Squash & Merge). CI runs, then `deploy_prod.yml` SSHs to `159.223.75.148`, updates code, and restarts Odoo automatically.
+
+**When to choose:** Routine Python/XML/data updates where GitHub Actions handles the restart and module updates.
+
+### Option 2: Manual (Emergency / Live Debugging)
+
+**Trigger:** CI unavailable or you need to watch logs in real time.
+
+**Workflow:**
+
+1. SSH to prod: `ssh ubuntu@159.223.75.148`.
+2. Pull latest code under addons: `cd ~/odoo-prod && cd addons && git pull origin main && cd ..`.
+3. Apply the right update:
+   - **Python-only changes:** `docker compose -f docker-compose.prod.yml restart odoo`.
+   - **XML/View/Data changes:**
+     ```bash
+     docker compose -f docker-compose.prod.yml exec odoo odoo-bin -c /etc/odoo.conf -d odoo -u ipai_finance_ppm --stop-after-init
+     docker compose -f docker-compose.prod.yml restart odoo
+     ```
+4. Verify: `docker compose -f docker-compose.prod.yml logs -f --tail=50 odoo`.
+
+### Decision Table
+
+| Change type | Use method | Rationale |
+| --- | --- | --- |
+| Python logic | **Automated (GitHub)** | Workflow restarts Odoo; safe & fast. |
+| XML / Views / Data | **Automated (GitHub)** | `deploy_prod.yml` already includes module update flags. |
+| Server config (e.g., `odoo.conf`, `docker-compose`) | **Manual (SSH)** | Often requires full container recreation. |
+| Secrets / Keys | **Manual (Odoo UI)** | Adjust via System Parameters; no deploy required. |
+
+---
+
 #### C. `scripts/report_ci_telemetry.sh` - CI Health Monitoring
 **Location**: `scripts/report_ci_telemetry.sh`
 **Purpose**: Send CI job status to n8n webhook for dashboards/alerts
@@ -87,7 +131,7 @@ ls -d ipai_* tbwa_* 2>/dev/null | tr '\n' ','
   "job": "test-parity",
   "run_id": "1234567890",
   "run_number": "42",
-  "branch": "feature/add-expense-equipment-prd",
+  "branch": "main",
   "sha": "d1b4e51abc123..."
 }
 ```
