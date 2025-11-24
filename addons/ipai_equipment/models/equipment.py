@@ -194,6 +194,12 @@ class IpaiEquipmentBooking(models.Model):
                     note=f'Booking {booking.name} is overdue. Expected return: {booking.end_datetime.strftime("%Y-%m-%d %H:%M")}',
                 )
 
+    @api.model
+    def run_overdue_check_from_n8n(self):
+        """Entry point to trigger the overdue check via external schedulers (e.g., n8n)."""
+        self._cron_check_overdue_bookings()
+        return {"status": "ok"}
+
 
 class IpaiEquipmentIncident(models.Model):
     _name = "ipai.equipment.incident"

@@ -2,7 +2,7 @@
 {
     "name": "IPAI Expense & Travel (PH)",
     "summary": "PH-focused expense & travel workflows (SAP Concur-style) on Odoo CE + OCA.",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.2",
     "category": "Human Resources/Expenses",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.net",
