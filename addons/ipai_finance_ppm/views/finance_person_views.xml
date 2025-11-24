@@ -7,6 +7,7 @@
             <list string="Finance Directory">
                 <field name="code"/>
                 <field name="name"/>
+                <field name="responsibility"/>
                 <field name="role"/>
                 <field name="email"/>
             </list>
@@ -25,6 +26,7 @@
                     </div>
                     <group>
                         <group>
+                            <field name="responsibility" placeholder="Responsibility (e.g. Tax Filing Owner)"/>
                             <field name="role"/>
                             <field name="email"/>
                         </group>

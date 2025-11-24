@@ -1,27 +1,18 @@
-# -*- coding: utf-8 -*-
-{
-    "name": "IPAI Finance PPM",
-    "summary": "Finance Project Portfolio Management (Notion Parity).",
-    "version": "18.0.1.0.3",
-    "category": "Accounting/Finance",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
-    "license": "AGPL-3",
-    "depends": [
-        "base",
-        "mail",
-        "project",
-    ],
-    "data": [
-        "security/ir.model.access.csv",
-        "data/finance_person_directory.xml",
-        "views/finance_person_views.xml",
-        "views/finance_task_views.xml",
-        "views/bir_schedule_views.xml",
-        "views/ppm_dashboard_views.xml",
-        "views/menus.xml",
-        "data/bir_schedule_seed.xml",
-    ],
-    "installable": True,
-    "application": True,
-}
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="cron_check_overdue_bookings" model="ir.cron">
+            <field name="name">IPAI Equipment: Check Overdue Bookings</field>
+            <field name="model_id" ref="model_ipai_equipment_booking"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_check_overdue_bookings()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+            <field name="priority">10</field>
+            <field name="user_id" ref="base.user_root"/>
+        </record>
+
+    </data>
+</odoo>

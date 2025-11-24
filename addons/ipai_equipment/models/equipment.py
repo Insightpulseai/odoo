@@ -171,28 +171,45 @@ class IpaiEquipmentBooking(models.Model):
 
     def _cron_check_overdue_bookings(self):
         """Create activities for overdue bookings (called by cron)"""
-        overdue = self.search([('is_overdue', '=', True)])
-        activity_type = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+        overdue = self.search([("is_overdue", "=", True)])
+        activity_type = self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
 
         if not activity_type:
             return
 
         for booking in overdue:
-            # Check if activity already exists for this booking
-            existing = self.env['mail.activity'].search([
-                ('res_id', '=', booking.id),
-                ('res_model', '=', 'ipai.equipment.booking'),
-                ('activity_type_id', '=', activity_type.id),
-            ], limit=1)
+            if not booking.requester_id:
+                continue
+
+            equipment_names = ", ".join(booking.equipment_ids.mapped("name"))
+
+            existing = self.env["mail.activity"].search(
+                [
+                    ("res_id", "=", booking.id),
+                    ("res_model", "=", "ipai.equipment.booking"),
+                    ("activity_type_id", "=", activity_type.id),
+                ],
+                limit=1,
+            )
 
             if not existing:
-                # Create activity for the borrower
-                booking.activity_schedule(
-                    'mail.mail_activity_data_todo',
-                    user_id=booking.borrower_id.id,
-                    summary=f'Overdue: {booking.asset_id.name}',
-                    note=f'Booking {booking.name} is overdue. Expected return: {booking.end_datetime.strftime("%Y-%m-%d %H:%M")}',
+                summary = f"Overdue: {equipment_names or booking.name}"
+                note = "Booking {name} is overdue. Expected return: {expected}".format(
+                    name=booking.name,
+                    expected=booking.end_datetime and booking.end_datetime.strftime("%Y-%m-%d %H:%M") or "",
                 )
+                booking.activity_schedule(
+                    activity_type.xml_id,
+                    user_id=booking.requester_id.id,
+                    summary=summary,
+                    note=note,
+                )
+
+    @api.model
+    def run_overdue_check_from_n8n(self):
+        """Entry point to trigger the overdue check via external schedulers (e.g., n8n)."""
+        self._cron_check_overdue_bookings()
+        return {"status": "ok"}
 
     @api.model
     def run_overdue_check_from_n8n(self):

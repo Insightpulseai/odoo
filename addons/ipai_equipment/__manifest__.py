@@ -8,6 +8,7 @@
     "website": "https://insightpulseai.net",
     "license": "AGPL-3",
     "depends": [
+        "base",
         "maintenance",
         "project",
         "mail",
