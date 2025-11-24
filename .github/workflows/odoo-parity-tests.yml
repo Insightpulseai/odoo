@@ -82,14 +82,40 @@ jobs:
 
       - name: Wait for PostgreSQL
         run: |
-          until pg_isready -h localhost -p 5432 -U odoo; do
-            echo "Waiting for PostgreSQL..."
-            sleep 2
-          done
+          python - << 'PY'
+          import sys
+          import time
+
+          import psycopg2
+
+
+          host = "localhost"
+          port = 5432
+          user = "odoo"
+          dbname = "postgres"
+
+          max_tries = 30
+          for attempt in range(1, max_tries + 1):
+            try:
+              conn = psycopg2.connect(
+                host=host,
+                port=port,
+                user=user,
+                dbname=dbname,
+              )
+              conn.close()
+              print(f"PostgreSQL is ready after {attempt} attempts.")
+              sys.exit(0)
+            except Exception as exc:  # noqa: PERF203
+              print(f"[{attempt}/{max_tries}] Waiting for PostgreSQL... {exc}")
+              time.sleep(2)
+
+          print("PostgreSQL did not become ready in time.")
+          sys.exit(1)
+          PY
 
       - name: Run module migrations
         run: |
-          chmod +x scripts/run_odoo_migrations.sh
           # Note: migrations would run here if modules were already installed
           echo "Skipping migrations (fresh database)"
 
@@ -102,8 +128,7 @@ jobs:
           PGDATABASE: test_cheqroom
         run: |
           echo "Testing Cheqroom parity (ipai_equipment)..."
-          chmod +x odoo-bin
-          ./odoo-bin -d test_cheqroom \
+          bash ./odoo-bin -d test_cheqroom \
             -i ipai_equipment \
             --test-enable \
             --stop-after-init \
@@ -126,7 +151,7 @@ jobs:
           PGDATABASE: test_concur
         run: |
           echo "Testing Concur parity (ipai_expense)..."
-          ./odoo-bin -d test_concur \
+          bash ./odoo-bin -d test_concur \
             -i ipai_expense \
             --test-enable \
             --stop-after-init \
@@ -149,7 +174,7 @@ jobs:
           PGDATABASE: test_workspace
         run: |
           echo "Testing Workspace parity (ipai_docs)..."
-          ./odoo-bin -d test_workspace \
+          bash ./odoo-bin -d test_workspace \
             -i ipai_docs \
             --test-enable \
             --stop-after-init \
@@ -180,5 +205,5 @@ jobs:
         env:
           N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
         run: |
-          chmod +x scripts/report_ci_telemetry.sh
-          scripts/report_ci_telemetry.sh "${{ job.status }}"
+          bash scripts/report_ci_telemetry.sh "${{ job.status }}"
+        shell: bash
