@@ -60,10 +60,21 @@ jobs:
             zlib1g-dev
 
       - name: Install Python dependencies
+        env:
+          PIP_CONSTRAINT: scripts/ci/constraints-gevent.txt
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt || echo "requirements.txt not found, installing odoo dependencies"
-          pip install psycopg2-binary wheel
+
+          # Apply CI-only constraints to avoid gevent/Cython build issues
+          pip install -c "$PIP_CONSTRAINT" "Cython<3" "greenlet<3" "gevent==22.10.2"
+
+          if [ -f requirements.txt ]; then
+            pip install -c "$PIP_CONSTRAINT" -r requirements.txt
+          else
+            echo "requirements.txt not found, installing odoo dependencies"
+          fi
+
+          pip install -c "$PIP_CONSTRAINT" psycopg2-binary wheel
 
       - name: Install Odoo 18 CE from source
         run: |

@@ -1,0 +1,4 @@
+# CI-only constraints to keep gevent compatible with prebuilt Cython wheels
+Cython<3
+greenlet<3
+gevent==22.10.2
