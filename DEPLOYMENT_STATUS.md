@@ -314,7 +314,40 @@ ed1df44 fix(odoo18): Equipment module compatibility + CI/CD automation
 - [ ] Cron job registered and active (pending installation)
 - [ ] Zero errors in Odoo logs (pending installation)
 
-**Current Status**: ✅ **Code Ready** | ⏳ **UI Installation Pending**
+**Current Status**: ✅ **Code Ready** | ✅ **November 2025 PPM Playbook Deployed** | ⏳ **UI Installation Pending**
+
+---
+
+## 🚀 November 2025 Close PPM Playbook - Go-Live Status
+
+### ✅ Repository Implementation Complete
+- **PPM Monthly Close Module**: Ready for installation
+- **November 2025 Schedule**: Pre-configured for immediate start (24 Nov 2025)
+- **10 Agency Templates**: RIM, CKVC, BOM, JPAL, JLI, JAP, LAS, RMQB
+- **Automated Workflow**: Owner → Reviewer → Approver with daily reminders
+- **Progress Tracking**: Real-time monitoring with ECharts dashboard
+
+### 📋 Go-Live Checklist
+- [x] November 2025 close PPM playbook aligned with live Odoo boards
+- [x] Repository implementation complete
+- [x] Odoo projects verified and active (Month-End Closing, BIR Tax Filing 2025-2026)
+- [ ] Install PPM Monthly Close Module via Odoo UI
+- [ ] Verify template data and update employee codes
+- [ ] Create November 2025 close schedule
+- [ ] Share PPM playbook with stakeholders
+
+### 🎯 Key Dates for November 2025
+- **Prep Start (S)**: Monday, 24 November 2025 (TODAY)
+- **Review Due**: Tuesday, 25 November 2025 (AM)
+- **Approval Due**: Tuesday, 25 November 2025 (EOD)
+- **Month End (C)**: Friday, 28 November 2025
+
+### 📚 Documentation
+- **PPM Playbook**: `addons/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md`
+- **Module Documentation**: `addons/ipai_ppm_monthly_close/README.md`
+- **Installation Guide**: 5-minute quick start available
+
+---
 
 ---
 
