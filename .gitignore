@@ -30,12 +30,14 @@ filestore/
 sessions/
 *.log
 
-# Odoo addons - only track ipai_* modules
+# Odoo addons - only track ipai_* and tbwa_* modules
 addons/*
 !addons/ipai_*/
 !addons/ipai_*/**
 !addons/tbwa_*/
 !addons/tbwa_*/**
+addons/**/__pycache__/
+addons/**/*.pyc
 
 # Docker
 .env
