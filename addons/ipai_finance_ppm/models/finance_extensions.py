@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ProjectTaskFinance(models.Model):
@@ -43,6 +43,14 @@ class ProjectTaskFinance(models.Model):
         string="Is Finance PPM Task",
     )
 
+    @api.depends(
+        "finance_logframe_id",
+        "bir_schedule_id",
+        "finance_code",
+        "approver_id",
+        "reviewer_id",
+        "finance_deadline_type",
+    )
     def _compute_is_finance_ppm(self):
         for task in self:
             task.is_finance_ppm = bool(
