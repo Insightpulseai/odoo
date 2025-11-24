@@ -14,13 +14,13 @@ This document summarizes the complete production readiness bundle with three ver
 **Key Features**:
 - Database & worker tuning (100 connections, 4 HTTP + 2 cron workers)
 - Installation safety with pre-install snapshots
-- Configuration updates for odoo.conf and docker-compose.yml
+- Configuration updates for odoo.conf and docker-compose.prod.yml
 - Documentation for n8n credentials, Mattermost alerts, and app icons
 - Regression test scaffolding for core modules
 
 **Files**:
 - `deploy/odoo.conf` - Production-optimized configuration
-- `deploy/docker-compose.yml` - Worker scaling and resource limits
+- `docker-compose.prod.yml` - Worker scaling and resource limits
 - `scripts/pre_install_snapshot.sh` - Safe module installation
 - `scripts/install_ipai_finance_ppm.sh` - Installation wrapper
 - `tests/regression/` - Test scaffolding for core modules

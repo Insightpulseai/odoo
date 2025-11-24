@@ -19,7 +19,7 @@ Status: Draft checklist aligned with plan.md
 
 ## Phase 1 – CE/OCA Base Stack
 
-- [ ] Create `deploy/docker-compose.yml` with:
+- [ ] Create root-level `docker-compose.prod.yml` with:
   - [ ] Odoo CE 18 service.
   - [ ] PostgreSQL service.
   - [ ] Volumes for `addons/` and `oca/`.

@@ -75,7 +75,7 @@ docker compose exec db psql -U odoo -d odoo_ce_prod -f /docker-entrypoint-initdb
 
 - **Configuration Updates**
   - `deploy/odoo.conf` - Added worker tuning parameters
-  - `deploy/docker-compose.yml` - Added PostgreSQL connection limits
+  - `docker-compose.prod.yml` - Added PostgreSQL connection limits
 
 - **Documentation & Procedures**
   - `docs/N8N_CREDENTIALS_BOOTSTRAP.md` - n8n credential management

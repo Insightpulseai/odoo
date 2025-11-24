@@ -73,7 +73,7 @@
 
 ### v1.0 - Production Readiness Bundle ✅
 - ✅ `deploy/odoo.conf` - Production configuration
-- ✅ `deploy/docker-compose.yml` - Worker scaling
+- ✅ `docker-compose.prod.yml` - Worker scaling
 - ✅ `scripts/pre_install_snapshot.sh` - Safe installation
 - ✅ `scripts/install_ipai_finance_ppm.sh` - Installation wrapper
 - ✅ `tests/regression/` - Test scaffolding

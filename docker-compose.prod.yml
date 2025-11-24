@@ -29,7 +29,7 @@ services:
           memory: 512M
 
   odoo:
-    image: odoo:18.0
+    image: ghcr.io/jgtolentino/odoo-ce:latest
     container_name: odoo-ce
     restart: unless-stopped
     depends_on:
@@ -43,11 +43,11 @@ services:
       ODOO_RC: /etc/odoo/odoo.conf
     volumes:
       # Main config
-      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./deploy/odoo.conf:/etc/odoo/odoo.conf:ro
 
       # Custom CE/OCA addons only – NO Enterprise mounts
-      - ../addons:/mnt/extra-addons
-      - ../oca:/mnt/oca-addons
+      - ./addons:/mnt/extra-addons
+      - ./oca:/mnt/oca-addons
 
       # Filestore
       - odoo-filestore:/var/lib/odoo

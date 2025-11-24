@@ -45,7 +45,7 @@ log "Backing up configuration files..."
 tar czf "$BACKUP_DIR/odoo-config-$TIMESTAMP.tar.gz" \
     -C "$INSTALL_DIR" \
     deploy/odoo.conf \
-    deploy/docker-compose.yml \
+    docker-compose.prod.yml \
     deploy/nginx/ \
     addons/ \
     2>/dev/null || true

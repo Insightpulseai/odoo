@@ -34,7 +34,7 @@ Aligned PRD: specs/002-odoo-expense-equipment-mvp.prd.md
 
 - Provision target runtime:
   - Docker Compose or K8s (DigitalOcean/DOKS acceptable).
-- Add `deploy/docker-compose.yml`:
+- Add `docker-compose.prod.yml` at repo root:
   - Odoo CE 18 container.
   - PostgreSQL container.
   - Volume mounts for `addons/` and `oca/`.
