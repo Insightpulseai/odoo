@@ -1,0 +1,136 @@
+name: Odoo SaaS Parity Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-parity:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        # Smart Health Check: Ensures DB is up before runner starts
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          pip install psycopg2-binary
+          # Add other dependencies here if needed
+
+      - name: Wait for PostgreSQL (Smart Check)
+        shell: python
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          import time
+          import psycopg2
+          import sys
+          import os
+
+          host = os.environ['PGHOST']
+          port = os.environ['PGPORT']
+          user = os.environ['PGUSER']
+          password = os.environ['PGPASSWORD']
+          dbname = 'postgres'
+
+          print(f"🔍 Connecting to PostgreSQL at {host}:{port}...")
+
+          for i in range(30):
+              try:
+                  conn = psycopg2.connect(
+                      host=host,
+                      port=port,
+                      user=user,
+                      password=password,  # <--- FIX 1: Explicit Password Auth
+                      dbname=dbname,
+                  )
+                  conn.close()
+                  print("✅ PostgreSQL is ready!")
+                  sys.exit(0)
+              except psycopg2.OperationalError:
+                  time.sleep(1)
+              except Exception as e:
+                  print(f"⚠️ Connection failed: {e}")
+                  time.sleep(1)
+
+          print("❌ PostgreSQL did not become ready in time.")
+          sys.exit(1)
+
+      - name: Run Cheqroom Parity Tests
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          echo "🧪 Testing Cheqroom parity (ipai_equipment)..."
+          # FIX 2: Use python3 directly instead of bash wrapper
+          python3 ./odoo-bin -d test_cheqroom \
+            -i ipai_equipment \
+            --test-enable \
+            --stop-after-init \
+            --log-level=test \
+            --db_host=localhost \
+            --db_port=5432 \
+            --db_user=odoo \
+            --db_password=odoo || {
+              echo "❌ Cheqroom parity tests FAILED"
+              exit 1
+            }
+          echo "✅ Cheqroom parity tests PASSED"
+
+      - name: Run Concur Parity Tests
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          echo "🧪 Testing Concur parity (ipai_expense)..."
+          python3 ./odoo-bin -d test_concur \
+            -i ipai_expense \
+            --test-enable \
+            --stop-after-init \
+            --log-level=test \
+            --db_host=localhost \
+            --db_port=5432 \
+            --db_user=odoo \
+            --db_password=odoo || {
+              echo "❌ Concur parity tests FAILED"
+              exit 1
+            }
+          echo "✅ Concur parity tests PASSED"
+
+      - name: Report CI Telemetry
+        if: always()
+        run: |
+          # FIX 3: Use 'sh' (POSIX standard) instead of 'bash'
+          if [ -f scripts/report_ci_telemetry.sh ]; then
+            sh scripts/report_ci_telemetry.sh "${{ job.status }}"
+          else
+            echo "⚠️ Telemetry script not found, skipping."
+          fi
