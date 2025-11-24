@@ -18,6 +18,7 @@
         "views/finance_task_views.xml",
         "views/bir_schedule_views.xml",
         "views/ppm_dashboard_views.xml",
+        "views/project_task_views.xml",
         "views/menus.xml",
         "data/bir_schedule_seed.xml",
     ],
