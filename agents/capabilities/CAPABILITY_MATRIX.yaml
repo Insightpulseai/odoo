@@ -227,7 +227,7 @@ capabilities:
     preconditions:
       - digitalocean_account: "doctl configured"
       - dns_configured: "Domain DNS points to droplet IP"
-      - docker_compose_ready: "deploy/docker-compose.yml exists"
+      - docker_compose_ready: "docker-compose.prod.yml exists"
 
     skills_required:
       - deploy_to_digitalocean
