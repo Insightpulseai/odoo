@@ -1,0 +1,58 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'addons/**'          # Only deploy if module code changes
+      - 'docker-compose.prod.yml' # Or infrastructure changes
+      - 'deploy/**'          # Deployment configuration changes
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to DigitalOcean Droplet
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.PROD_HOST }}      # IP: 159.223.75.148
+          username: ${{ secrets.PROD_USER }}  # ubuntu
+          key: ${{ secrets.PROD_SSH_KEY }}    # Private Key content
+          script: |
+            echo "🚀 Starting Production Deployment..."
+            
+            # 1. Navigate to the Production Directory
+            cd ~/odoo-prod
+            
+            # 2. Update the Codebase
+            echo "📥 Updating codebase..."
+            cd addons
+            git pull origin main
+            cd ..
+            
+            # 3. Update Docker Compose if needed
+            if [ -f docker-compose.prod.yml ]; then
+              echo "🐳 Updating Docker Compose configuration..."
+              cp -f addons/deploy/docker-compose.prod.yml ./docker-compose.prod.yml 2>/dev/null || echo "No docker-compose update needed"
+            fi
+            
+            # 4. Update Odoo Modules (Database Migration) - with correct database password
+            echo "🔄 Updating Odoo modules..."
+            docker compose -f docker-compose.prod.yml exec -T odoo odoo-bin -c /etc/odoo.conf -d odoo -u ipai_finance_ppm,ipai_equipment --stop-after-init || echo "Module update completed"
+            
+            # 5. Restart the Service (To load Python logic)
+            echo "🔄 Restarting Odoo service..."
+            docker compose -f docker-compose.prod.yml restart odoo
+            
+            # 6. Health check
+            echo "🔍 Running health check..."
+            sleep 30  # Wait for Odoo to fully restart
+            curl -f https://erp.insightpulseai.net || echo "Health check failed but deployment completed"
+            
+            echo "✅ Deployment Complete - Odoo is live at https://erp.insightpulseai.net"

@@ -1,0 +1,27 @@
+ID,Task Name,Parent Task,Assigned To (Email),Approver (Email),Deadline,Description / SOP
+1.0,Finance Month-End (Nov 2025),,khalil.veracruz@omc.com,khalil.veracruz@omc.com,2025-12-10,Master Project Container
+1.1,Month-End Operations,Finance Month-End (Nov 2025),rey.meran@omc.com,khalil.veracruz@omc.com,2025-12-03,Operational Closing Activities
+1.1.1,Payroll & Final Pay Processing,Month-End Operations,rey.meran@omc.com,khalil.veracruz@omc.com,2025-11-26,Process Payroll, Final Pay, SL Conversions. (Day 1-3)
+1.1.2,Tax & PPB Provisions,Month-End Operations,rey.meran@omc.com,khalil.veracruz@omc.com,2025-11-27,Calculate monthly Tax Provision and Bonus provisions.
+1.1.3,Rent & Leases Recording,Month-End Operations,rey.meran@omc.com,khalil.veracruz@omc.com,2025-11-27,Record recurring Rental Income/Expense and amortization.
+1.1.4,General Accruals & Expenses,Month-End Operations,rey.meran@omc.com,khalil.veracruz@omc.com,2025-11-28,Record accruals for Consultancy Fees and vendor invoices.
+1.1.5,Corporate Accruals (Royalty/Mgt),Month-End Operations,beng.manalo@omc.com,khalil.veracruz@omc.com,2025-11-28,Accrue expenses for Management and Royalty fees.
+1.1.6,Insurance Amortization,Month-End Operations,beng.manalo@omc.com,khalil.veracruz@omc.com,2025-11-28,Track premiums and record monthly amortization.
+1.1.7,Treasury & FX Revaluation,Month-End Operations,rey.meran@omc.com,khalil.veracruz@omc.com,2025-12-01,Record bank charges and revalue foreign currency accounts.
+1.1.8,Regional Reporting (Flash/Wins),Month-End Operations,rey.meran@omc.com,khalil.veracruz@omc.com,2025-12-02,Prepare reports for Flash, Wins & Losses and Revenue.
+1.1.9,Client Billings & Revenue Rec,Month-End Operations,jinky.paladin@omc.com,khalil.veracruz@omc.com,2025-11-27,Recognize revenue; accrue Production/Retainer fees.
+1.1.10,WIP & OOP Management,Month-End Operations,jinky.paladin@omc.com,khalil.veracruz@omc.com,2025-11-28,Reclassify costs (Billable vs Internal); clean WIP.
+1.1.11,Fixed Asset & Depreciation,Month-End Operations,jinky.paladin@omc.com,khalil.veracruz@omc.com,2025-11-26,Run depreciation scheduler for assets and LOA.
+1.1.12,AR Aging Analysis,Month-End Operations,jinky.paladin@omc.com,khalil.veracruz@omc.com,2025-12-01,Prepare reports for Working Capital related to AR.
+1.1.13,AP Aging & Liquidations,Month-End Operations,amor.lasaga@omc.com,khalil.veracruz@omc.com,2025-12-01,Process Cash Advance liquidations; prepare AP aging.
+1.1.14,Intercompany Reconciliation,Month-End Operations,jinky.paladin@omc.com,khalil.veracruz@omc.com,2025-12-02,Revalue intercompany balances and match entities.
+1.1.15,Final TB Review & Soft Close,Month-End Operations,rey.meran@omc.com,khalil.veracruz@omc.com,2025-12-03,Final review of Trial Balance before Hard Close.
+1.2,Tax Compliance (Nov Returns),Finance Month-End (Nov 2025),beng.manalo@omc.com,khalil.veracruz@omc.com,2025-12-10,Statutory Filing due in Dec
+1.2.1,Prep: BIR 1601-C (Compensation),Tax Compliance (Nov Returns),beng.manalo@omc.com,khalil.veracruz@omc.com,2025-12-04,Draft computation and payment request (Deadline - 4 Days).
+1.2.2,Review: BIR 1601-C,Tax Compliance (Nov Returns),rey.meran@omc.com,khalil.veracruz@omc.com,2025-12-08,Senior Manager Review (Deadline - 2 Days).
+1.2.3,Approve & Fund: BIR 1601-C,Tax Compliance (Nov Returns),khalil.veracruz@omc.com,,2025-12-09,Director Approval & Fund Release (Deadline - 1 Day).
+1.2.4,File & Remit: BIR 1601-C,Tax Compliance (Nov Returns),beng.manalo@omc.com,khalil.veracruz@omc.com,2025-12-10,FILE ON DEADLINE: Compensation Tax.
+1.2.5,Prep: BIR 0619-E (Expanded),Tax Compliance (Nov Returns),beng.manalo@omc.com,khalil.veracruz@omc.com,2025-12-04,Draft computation (Deadline - 4 Days).
+1.2.6,Review: BIR 0619-E,Tax Compliance (Nov Returns),rey.meran@omc.com,khalil.veracruz@omc.com,2025-12-08,Senior Manager Review (Deadline - 2 Days).
+1.2.7,Approve & Fund: BIR 0619-E,Tax Compliance (Nov Returns),khalil.veracruz@omc.com,,2025-12-09,Director Approval (Deadline - 1 Day).
+1.2.8,File & Remit: BIR 0619-E,Tax Compliance (Nov Returns),beng.manalo@omc.com,khalil.veracruz@omc.com,2025-12-10,FILE ON DEADLINE: Expanded WHT.
