@@ -29,6 +29,10 @@ export POSTGRES_PRISMA_URL=postgres://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI
 # Direct Connection (Port 5432)
 export POSTGRES_URL_NON_POOLING=postgres://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@aws-1-us-east-1.pooler.supabase.com:5432/postgres?sslmode=require
 
+# Alternative Connection String Format (for reference)
+export DATABASE_URL="postgresql://postgres.spdtwktxdalcfigzeqrz:[YOUR-PASSWORD]@aws-1-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+export DIRECT_URL="postgresql://postgres.spdtwktxdalcfigzeqrz:[YOUR-PASSWORD]@aws-1-us-east-1.pooler.supabase.com:5432/postgres"
+
 # CLI Access Token
 export SUPABASE_ACCESS_TOKEN=sbp_5d3b419ed91215372f8a8fb7b0a478cc1ec90eca
 ```
