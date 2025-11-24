@@ -55,8 +55,7 @@ jobs:
         env:
           N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
         run: |
-          chmod +x scripts/report_ci_telemetry.sh
-          scripts/report_ci_telemetry.sh "${{ job.status }}"
+          sh scripts/report_ci_telemetry.sh "${{ job.status }}"
 
   repo-structure:
     runs-on: ubuntu-latest
@@ -85,5 +84,4 @@ jobs:
         env:
           N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
         run: |
-          chmod +x scripts/report_ci_telemetry.sh
-          scripts/report_ci_telemetry.sh "${{ job.status }}"
+          sh scripts/report_ci_telemetry.sh "${{ job.status }}"
