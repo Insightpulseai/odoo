@@ -172,6 +172,32 @@ docker run --rm -i loadimpact/k6 run - \
 
 ---
 
+## [1.0.1] - 2025-11-24 — Equipment Cron Compatibility
+
+### Fixed
+- **Odoo 18 cron install error** (`addons/ipai_equipment/data/ipai_equipment_cron.xml`)
+  - Replaced deprecated `numbercall` with `max_calls` to avoid `Invalid field 'numbercall' on model 'ir.cron'` during installation
+  - Added inline note to prevent regressions on future cron definitions
+
+### Changed
+- **Module version bump** (`addons/ipai_equipment/__manifest__.py`)
+  - Incremented to `18.0.1.0.1` to deliver the cron compatibility fix
+
+---
+
+## [1.0.2] - 2025-11-24 — Equipment Cron Owner & Compatibility Cleanup
+
+### Fixed
+- **Cron compatibility alignment** (`addons/ipai_equipment/data/ipai_equipment_cron.xml`)
+  - Removed obsolete `numbercall`/`max_calls` override to rely on Odoo 18 defaults
+  - Explicitly set `user_id` to `base.user_root` to avoid missing owner issues on installs
+
+### Changed
+- **Module version bump** (`addons/ipai_equipment/__manifest__.py`)
+  - Incremented to `18.0.1.0.2` to ship the cron XML cleanup
+
+---
+
 ## [1.0.0] - 2025-11-23 — Equipment MVP + CI/CD Automation
 
 ### Fixed
