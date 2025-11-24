@@ -26,9 +26,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: odoo
           POSTGRES_USER: odoo
           POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo
         ports:
           - 5432:5432
         options: >-
@@ -36,6 +36,13 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: odoo
+      PGDATABASE: odoo
+      PGPASSWORD: odoo
 
     steps:
       - name: Checkout repository
@@ -51,6 +58,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
+            postgresql-client \
             libpq-dev \
             libxml2-dev \
             libxslt1-dev \
@@ -64,55 +72,18 @@ jobs:
           PIP_CONSTRAINT: scripts/ci/constraints-gevent.txt
         run: |
           pip install --upgrade pip
-
-          # Apply CI-only constraints to avoid gevent/Cython build issues
-          pip install -c "$PIP_CONSTRAINT" "Cython<3" "greenlet<3" "gevent==22.10.2"
-
-          if [ -f requirements.txt ]; then
-            pip install -c "$PIP_CONSTRAINT" -r requirements.txt
-          else
-            echo "requirements.txt not found, installing odoo dependencies"
-          fi
-
-          pip install -c "$PIP_CONSTRAINT" psycopg2-binary wheel
+          # Apply CI-only constraints so gevent doesn't try to build with Cython 3
+          pip install -c scripts/ci/constraints-gevent.txt gevent greenlet Cython
+          pip install -r requirements.txt || echo "requirements.txt not found, installing odoo dependencies"
+          pip install psycopg2-binary wheel
 
       - name: Install Odoo 18 CE from source
         run: |
           scripts/ci/install_odoo_18.sh
 
       - name: Wait for PostgreSQL
-        run: |
-          python - << 'PY'
-          import sys
-          import time
-
-          import psycopg2
-
-
-          host = "localhost"
-          port = 5432
-          user = "odoo"
-          dbname = "postgres"
-
-          max_tries = 30
-          for attempt in range(1, max_tries + 1):
-            try:
-              conn = psycopg2.connect(
-                host=host,
-                port=port,
-                user=user,
-                dbname=dbname,
-              )
-              conn.close()
-              print(f"PostgreSQL is ready after {attempt} attempts.")
-              sys.exit(0)
-            except Exception as exc:  # noqa: PERF203
-              print(f"[{attempt}/{max_tries}] Waiting for PostgreSQL... {exc}")
-              time.sleep(2)
-
-          print("PostgreSQL did not become ready in time.")
-          sys.exit(1)
-          PY
+        run: scripts/ci/wait_for_postgres.sh
+        shell: bash
 
       - name: Run module migrations
         run: |
@@ -202,8 +173,9 @@ jobs:
 
       - name: Report CI telemetry
         if: always()
+        shell: bash
         env:
           N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
         run: |
-          bash scripts/report_ci_telemetry.sh "${{ job.status }}"
-        shell: bash
+          chmod +x scripts/report_ci_telemetry.sh
+          ./scripts/report_ci_telemetry.sh "${{ job.status }}"
