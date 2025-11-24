@@ -21,6 +21,11 @@ jobs:
   test-parity:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: odoo
+      PGPASSWORD: odoo
 
     services:
       postgres:
@@ -85,13 +90,15 @@ jobs:
           python - << 'PY'
           import sys
           import time
+          import os
 
           import psycopg2
 
 
-          host = "localhost"
-          port = 5432
-          user = "odoo"
+          host = os.environ.get("PGHOST", "localhost")
+          port = os.environ.get("PGPORT", 5432)
+          user = os.environ.get("PGUSER", "odoo")
+          password = os.environ.get("PGPASSWORD", "")
           dbname = "postgres"
 
           max_tries = 30
@@ -101,6 +108,7 @@ jobs:
                 host=host,
                 port=port,
                 user=user,
+                password=password,
                 dbname=dbname,
               )
               conn.close()
