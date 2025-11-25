@@ -1,86 +1,115 @@
-# IPAI Module Deprecation Plan
+# IPAI OCA-First Module Strategy
 
 > **Principle**: Extend OCA modules, minimize custom delta code.
 
-## OCA Modules Added (external-src/)
+## Enterprise Parity Mapping
 
-| OCA Repository | Key Modules | Replaces |
-|----------------|-------------|----------|
-| `reporting-engine` | `bi_sql_editor` | `ipai_finance_ppm_dashboard` |
-| `account-closing` | `account_fiscal_year_closing`, `account_cutoff_base` | `ipai_finance_monthly_closing` |
-| `project` | `project_milestone_status`, `project_stage_last_update_date` | Parts of `ipai_ppm_monthly_close` |
+### Target Systems → OCA Replacements
 
-## Deprecation Schedule
+| Enterprise System | OCA Repository | Key Modules | Coverage |
+|-------------------|----------------|-------------|----------|
+| **SAP Concur** | `hr-expense` | `hr_expense_tier_validation`, `hr_expense_invoice`, `hr_expense_payment` | 60% |
+| **SAP Ariba SRM** | `purchase-workflow` | `purchase_request`, `purchase_request_to_rfq` | 65% |
+| **Cheqroom** | `maintenance` | `maintenance_request_*`, `resource_booking` | 70% |
+| **Notion AI** | `dms` + Native Knowledge | `dms`, `dms_portal`, Knowledge app | 75% |
+| **Clarity PPM** | `project` + `calendar` | `resource_booking`, `project_milestone_status` | 55% |
+| **MS Project** | `web` + `project` | `web_timeline`, `project_timeline` | 70% |
 
-### Phase 1: Immediate Removal (No Data Migration Needed)
+### Gap Analysis (Delta Code Needed)
+
+| Gap | Enterprise Reference | Priority | Complexity |
+|-----|---------------------|----------|------------|
+| Travel booking integration | SAP Concur | Medium | High |
+| Supplier scoring/rating | SAP Ariba | High | Medium |
+| Critical path (migrate 11.0→18.0) | MS Project | High | Medium |
+| Project baselines | MS Project | High | Medium |
+| Asset audit trails | Cheqroom | Medium | Low |
+| Portfolio-level dashboards | Clarity PPM | High | Medium |
+
+---
+
+## OCA Submodules (external-src/)
+
+| Repository | Branch | Key Modules | Replaces |
+|------------|--------|-------------|----------|
+| `reporting-engine` | 18.0 | `bi_sql_editor` | `ipai_finance_ppm_dashboard` |
+| `account-closing` | 18.0 | `account_fiscal_year_closing` | `ipai_finance_monthly_closing` |
+| `project` | 18.0 | `project_milestone_status`, `project_timeline` | Parts of `ipai_ppm_monthly_close` |
+| `hr-expense` | 18.0 | `hr_expense_tier_validation` | Expense workflows |
+| `purchase-workflow` | 18.0 | `purchase_request` | RFQ/procurement |
+| `maintenance` | 18.0 | `maintenance_request_*` | Asset tracking |
+| `dms` | 18.0 | `dms`, `dms_portal` | `ipai_docs` |
+| `calendar` | 18.0 | `resource_booking` | Resource planning |
+| `web` | 18.0 | `web_timeline` | Gantt views |
+
+---
+
+## ipai* Module Deprecation Schedule
+
+### Phase 1: Immediate Removal
 
 | Module | Status | Replacement |
 |--------|--------|-------------|
-| `ipai_finance_ppm_dashboard` | **DEPRECATED** | Use `bi_sql_editor` from OCA |
-| `ipai_docs` | **DEPRECATED** | Use native Odoo 18 Knowledge app |
-| `ipai_docs_project` | **DEPRECATED** | Native Knowledge has project integration |
+| `ipai_finance_ppm_dashboard` | **DEPRECATED** | `bi_sql_editor` (OCA) |
+| `ipai_docs` | **DEPRECATED** | Native Odoo 18 Knowledge |
+| `ipai_docs_project` | **DEPRECATED** | Native Knowledge integration |
 
-### Phase 2: Consolidate (Data Migration Required)
+### Phase 2: Consolidate
 
 | Module | Status | Action |
 |--------|--------|--------|
-| `ipai_ppm_monthly_close` | **CONSOLIDATE** | Keep task templates, extend `account_fiscal_year_closing` |
-| `ipai_finance_monthly_closing` | **MERGE** | Merge into `ipai_ppm_monthly_close` |
-| `ipai_finance_ppm` | **REDUCE** | Keep only BIR-specific logic, extend OCA project modules |
+| `ipai_ppm_monthly_close` | **CONSOLIDATE** | Extend `account_fiscal_year_closing` |
+| `ipai_finance_monthly_closing` | **MERGE** | Into above |
+| `ipai_finance_ppm` | **REDUCE** | Keep BIR-specific only |
 
 ### Phase 3: Keep (Legitimate Deltas)
 
 | Module | Status | Reason |
 |--------|--------|--------|
-| `ipai_ce_cleaner` | **KEEP** | No OCA equivalent for hiding Enterprise upsells |
-| `tbwa_spectra_integration` | **KEEP** | Company-specific Spectra export format |
+| `ipai_ce_cleaner` | **KEEP** | No OCA equivalent |
+| `tbwa_spectra_integration` | **KEEP** | Company-specific export |
 
-## Migration Steps
+---
 
-### For ipai_docs Users:
-```bash
-# Install native Knowledge
-./odoo-bin -d your_db -i knowledge --stop-after-init
+## Updated odoo.conf
 
-# Data export (if needed)
-./odoo-bin shell -d your_db << 'EOF'
-docs = env['ipai.doc'].search([])
-for doc in docs:
-    env['knowledge.article'].create({
-        'name': doc.name,
-        'body': doc.body_html,
-        'sequence': doc.sequence,
-    })
-env.cr.commit()
-EOF
-```
-
-### For ipai_finance_ppm_dashboard Users:
-```sql
--- Create equivalent view in bi_sql_editor
--- See external-src/reporting-engine/bi_sql_editor/README.rst
-```
-
-## Updated addons_path
-
-After migration, update `odoo.conf`:
 ```ini
-addons_path = /mnt/extra-addons,/mnt/external-src/reporting-engine,/mnt/external-src/account-closing,/mnt/external-src/project
+[options]
+addons_path =
+    /mnt/extra-addons,
+    /mnt/external-src/reporting-engine,
+    /mnt/external-src/account-closing,
+    /mnt/external-src/project,
+    /mnt/external-src/hr-expense,
+    /mnt/external-src/purchase-workflow,
+    /mnt/external-src/maintenance,
+    /mnt/external-src/dms,
+    /mnt/external-src/calendar,
+    /mnt/external-src/web
 ```
+
+---
 
 ## Final Target State
 
 ```
-addons/
-├── ipai_ce_cleaner/           # KEEP - unique delta
-├── ipai_bir_compliance/       # NEW - thin delta extending OCA account-closing
+addons/                        # Thin deltas only
+├── ipai_ce_cleaner/           # KEEP - hides Enterprise upsells
+├── ipai_bir_compliance/       # NEW - extends OCA account-closing
 └── tbwa_spectra_integration/  # KEEP - company-specific export
 
-external-src/
-├── reporting-engine/          # OCA - dashboards, BI
-├── account-closing/           # OCA - fiscal close, cutoffs
-└── project/                   # OCA - project extensions
+external-src/                  # OCA modules (git submodules)
+├── reporting-engine/          # BI dashboards
+├── account-closing/           # Fiscal close
+├── project/                   # Project extensions
+├── hr-expense/                # Expense management (SAP Concur)
+├── purchase-workflow/         # Procurement (SAP Ariba)
+├── maintenance/               # Asset tracking (Cheqroom)
+├── dms/                       # Document management (Notion)
+├── calendar/                  # Resource booking (Clarity)
+└── web/                       # Timeline/Gantt (MS Project)
 ```
 
 ---
+
 **Last Updated**: 2025-11-25
