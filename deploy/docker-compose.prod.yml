@@ -1,15 +1,25 @@
 version: "3.9"
 
+# ===========================================
+# ODOO CE PRODUCTION STACK
+# ===========================================
+# Target Image: ghcr.io/jgtolentino/odoo-ce:latest
+# Database: PostgreSQL 16
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml --env-file ../.env up -d
+# ===========================================
+
 services:
   db:
     image: postgres:16
     container_name: odoo-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: odoo
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
-      POSTGRES_MAX_CONNECTIONS: 100
+      POSTGRES_DB: ${DB_NAME:-odoo}
+      POSTGRES_USER: ${DB_USER:-odoo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      POSTGRES_MAX_CONNECTIONS: ${POSTGRES_MAX_CONNECTIONS:-100}
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:
@@ -29,29 +39,24 @@ services:
           memory: 512M
 
   odoo:
-    # --- CUSTOM IMAGE ---
-    image: ghcr.io/jgtolentino/odoo-ce:latest
+    # --- CUSTOM IMAGE (Immutable) ---
+    image: ${APP_IMAGE:-ghcr.io/jgtolentino/odoo-ce}:${APP_IMAGE_VERSION:-latest}
     container_name: odoo-ce
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
     environment:
-      # Odoo talks to Postgres using these
-      HOST: db
-      USER: odoo
-      PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
+      # Database connection
+      HOST: ${DB_HOST:-db}
+      USER: ${DB_USER:-odoo}
+      PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       ODOO_RC: /etc/odoo/odoo.conf
     volumes:
-      # Main config (optional - can be baked into image)
-      # - ./odoo.conf:/etc/odoo/odoo.conf:ro
-
-      # Custom CE/OCA addons are now BAKED INTO THE IMAGE
-      # - ../addons:/mnt/extra-addons
-      # - ../oca:/mnt/oca-addons
-
-      # Filestore
+      # Filestore only - code is BAKED INTO THE IMAGE
       - odoo-filestore:/var/lib/odoo
+      # Log volume for persistence
+      - odoo-logs:/var/log/odoo
 
     # Expose only inside the droplet; Nginx on host will proxy 443 → 8069
     ports:
@@ -78,4 +83,8 @@ networks:
 
 volumes:
   odoo-db-data:
+    name: odoo-db-data
   odoo-filestore:
+    name: odoo-filestore
+  odoo-logs:
+    name: odoo-logs
