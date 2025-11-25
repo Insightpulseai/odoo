@@ -40,6 +40,7 @@ Features:
 
         # TEST: Single record to verify data loading works
         'data/bir_calendar_test_single.xml',
+        'data/bir_calendar_test_no_prefix.xml',
 
         # # Seed data (TEMPORARILY DISABLED FOR TESTING)
         # 'data/finance_team_seed.xml',
