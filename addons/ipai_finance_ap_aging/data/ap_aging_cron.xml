@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- System Parameter: n8n Webhook URL -->
+        <record id="param_n8n_webhook_url" model="ir.config_parameter">
+            <field name="key">ipai_finance_ap_aging.n8n_webhook_url</field>
+            <field name="value">https://ipa.insightpulseai.net/webhook/ap-aging-webhook</field>
+        </record>
+
+        <!-- AP Aging Daily Cron Job (9 AM PHT = 1 AM UTC) -->
+        <record id="ir_cron_ap_aging_rim" model="ir.cron">
+            <field name="name">AP Aging RIM - Daily Snapshot (9 AM PHT)</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="state">code</field>
+            <field name="code">
+# Generate AP Aging snapshot for RIM employee context
+env['account.move.line'].cron_generate_ap_aging_snapshot('RIM')
+            </field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+            <field name="doall" eval="False"/>
+            <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=1, minute=0, second=0)"/>
+            <field name="priority">5</field>
+            <field name="user_id" ref="base.user_admin"/>
+        </record>
+
+        <!-- Server Action for Manual Trigger from Menu -->
+        <record id="action_server_ap_aging_manual" model="ir.actions.server">
+            <field name="name">Generate AP Aging Heatmap Now</field>
+            <field name="model_id" ref="account.model_account_move_line"/>
+            <field name="binding_model_id" ref="account.model_account_move_line"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">
+# Get employee code from current user or default to RIM
+employee_code = env.user.employee_id.code if env.user.employee_id else 'RIM'
+
+# Generate snapshot
+result = env['account.move.line'].cron_generate_ap_aging_snapshot(employee_code)
+
+# Show notification
+title = f"AP Aging Snapshot Generated ({employee_code})"
+message = f"""
+Total Payables: ₱{result['total_payables']:,.2f}
+Vendor Count: {result['vendor_count']}
+Overdue (90+): ₱{result['total_overdue_90plus']:,.2f}
+Snapshot Date: {result['snapshot_date']}
+
+View heatmap at: /ipai/finance/ap_aging/heatmap?employee_code={employee_code}
+"""
+
+action = {
+    'type': 'ir.actions.client',
+    'tag': 'display_notification',
+    'params': {
+        'title': title,
+        'message': message,
+        'type': 'success',
+        'sticky': False,
+    }
+}
+            </field>
+        </record>
+    </data>
+</odoo>

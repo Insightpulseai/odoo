@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Finance Controller Dashboard Menu -->
+    <menuitem
+        id="menu_finance_controller_dashboard"
+        name="Finance Controller Dashboard"
+        parent="ipai_finance_ppm_tdi.menu_finance_ppm_root"
+        action="action_open_controller_dashboard"
+        sequence="15"
+        groups="account.group_account_user"
+    />
+
+    <!-- Server Action to open dashboard in new tab -->
+    <record id="action_open_controller_dashboard" model="ir.actions.act_url">
+        <field name="name">Open Finance Controller Dashboard</field>
+        <field name="url">/ipai/finance/controller/dashboard</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

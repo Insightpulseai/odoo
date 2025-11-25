@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ipai_finance_controller_dashboard.calendar_heatmap">
+        <!-- Calendar Heatmap: Workload density + BIR/BOOK LOCK milestones -->
+        <div class="viz-card viz-full">
+            <h3 class="viz-card-title">Calendar Heatmap - Workload Density &amp; Compliance Deadlines</h3>
+            <div id="chart-calendar-heatmap" class="chart-container-large"></div>
+        </div>
+
+        <script type="text/javascript">
+            (function() {
+                function loadCalendarHeatmap(employeeCode) {
+                    fetch('/ipai/finance/controller/api/calendar_heatmap', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            method: 'call',
+                            params: { employee_code: employeeCode || 'RIM' }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const heatmapData = data.result;
+                        renderCalendarHeatmap(heatmapData);
+                    })
+                    .catch(error => console.error('Error loading calendar heatmap:', error));
+                }
+
+                function renderCalendarHeatmap(heatmapData) {
+                    const chart = echarts.init(document.getElementById('chart-calendar-heatmap'));
+
+                    // Get date range
+                    const today = new Date();
+                    const startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 90);
+                    const endDate = new Date(today);
+                    endDate.setDate(today.getDate() + 30);
+
+                    // Prepare heatmap data (date, task count)
+                    const heatmapDataFormatted = heatmapData.heatmap_data;
+
+                    // Find max task count for visual map
+                    const maxTaskCount = Math.max(...heatmapDataFormatted.map(d => d[1]));
+
+                    // Prepare milestone markers
+                    const milestoneMarkers = heatmapData.milestones.map(m => ({
+                        coord: [m.date, 0],
+                        symbol: m.type === 'BIR' ? 'pin' : 'diamond',
+                        symbolSize: m.type === 'BIR' ? 30 : 20,
+                        itemStyle: {
+                            color: m.type === 'BIR' ? '#f44336' : '#ff9800'
+                        },
+                        label: {
+                            show: true,
+                            formatter: m.label,
+                            position: 'top',
+                            fontSize: 10,
+                            color: '#333'
+                        }
+                    }));
+
+                    chart.setOption({
+                        title: {
+                            text: 'Task Workload Density Calendar',
+                            left: 'center',
+                            textStyle: { fontSize: 18, fontWeight: 'bold' }
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: function(params) {
+                                if (params.componentType === 'series' &amp;&amp; params.seriesType === 'heatmap') {
+                                    return params.value[0] + '<br/>Tasks: ' + params.value[1];
+                                }
+                                return '';
+                            }
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: maxTaskCount,
+                            calculable: true,
+                            orient: 'horizontal',
+                            left: 'center',
+                            bottom: '5%',
+                            inRange: {
+                                color: ['#e8f5e9', '#a5d6a7', '#66bb6a', '#43a047', '#2e7d32', '#d32f2f']
+                            },
+                            text: ['High Workload', 'Low Workload']
+                        },
+                        calendar: {
+                            top: 80,
+                            left: 50,
+                            right: 30,
+                            cellSize: ['auto', 20],
+                            range: [startDate.toISOString().split('T')[0], endDate.toISOString().split('T')[0]],
+                            itemStyle: {
+                                borderWidth: 1,
+                                borderColor: '#ccc'
+                            },
+                            yearLabel: { show: true },
+                            monthLabel: { show: true, fontSize: 12 },
+                            dayLabel: { show: true, fontSize: 10 }
+                        },
+                        series: [
+                            {
+                                type: 'heatmap',
+                                coordinateSystem: 'calendar',
+                                data: heatmapDataFormatted,
+                                label: {
+                                    show: false
+                                }
+                            },
+                            {
+                                type: 'scatter',
+                                coordinateSystem: 'calendar',
+                                data: milestoneMarkers.map(m => m.coord),
+                                symbolSize: function(val, params) {
+                                    const milestone = heatmapData.milestones[params.dataIndex];
+                                    return milestone.type === 'BIR' ? 30 : 20;
+                                },
+                                itemStyle: {
+                                    color: function(params) {
+                                        const milestone = heatmapData.milestones[params.dataIndex];
+                                        return milestone.type === 'BIR' ? '#f44336' : '#ff9800';
+                                    }
+                                },
+                                label: {
+                                    show: true,
+                                    position: 'top',
+                                    fontSize: 9,
+                                    formatter: function(params) {
+                                        const milestone = heatmapData.milestones[params.dataIndex];
+                                        return milestone.label;
+                                    }
+                                },
+                                z: 10
+                            }
+                        ]
+                    });
+
+                    window.addEventListener('resize', () => chart.resize());
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const employeeCode = urlParams.get('employee_code') || 'RIM';
+                    loadCalendarHeatmap(employeeCode);
+                });
+            })();
+        </script>
+    </t>
+</templates>

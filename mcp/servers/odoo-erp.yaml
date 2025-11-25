@@ -1,0 +1,55 @@
+---
+# MCP Server Configuration: Odoo Production ERP
+# Finance SSC and multi-employee operations
+
+name: odoo-erp
+description: Odoo CE 18.0 production ERP for Finance SSC operations
+version: "0.1.0"
+
+# Connection settings (via coordinator)
+connection:
+  type: http
+  url: https://mcp.insightpulseai.net
+  api_key: ${MCP_REMOTE_TOKEN}
+  timeout: 60
+  coordinator: true
+
+# Capabilities
+capabilities:
+  - skills_registry
+  - rag_search
+  - usage_metrics
+  - semantic_search
+
+# Odoo instance configuration
+odoo:
+  url: https://odoo.insightpulseai.net
+  database: production
+  username: admin
+  password: ${ODOO_ADMIN_PASSWORD}
+  instance_type: production
+  modules:
+    - base
+    - account
+    - hr
+    - hr_expense
+    - ipai_expense
+    - ipai_finance_ppm
+
+# Use cases
+use_cases:
+  - finance_ssc
+  - multi_employee_ops
+  - bir_compliance
+  - expense_automation
+  - production_support
+
+# Priority
+priority: 1  # Primary production server
+
+# Tags
+tags:
+  - production
+  - finance
+  - erp
+  - bir

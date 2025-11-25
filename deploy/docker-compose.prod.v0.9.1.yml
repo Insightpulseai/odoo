@@ -1,0 +1,91 @@
+version: "3.9"
+
+# Production Docker Compose for Odoo CE v0.9.1
+# Date: 2025-11-25
+# Target: VPS at 159.223.75.148 (8GB RAM after upgrade)
+# Domain: erp.insightpulseai.net
+
+services:
+  db:
+    image: postgres:16
+    container_name: odoo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      # CRITICAL: Override via .env.production
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-CHANGE_ME_STRONG_DB_PASSWORD}
+      POSTGRES_MAX_CONNECTIONS: 100
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    networks:
+      - odoo_backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2G
+        reservations:
+          cpus: '0.2'
+          memory: 512M
+
+  odoo:
+    # PRODUCTION IMAGE: v0.9.1 with security fixes
+    # DO NOT use :latest in production
+    image: ghcr.io/jgtolentino/odoo-ce:v0.9.1
+    container_name: odoo-ce
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database connection (from Dockerfile ENV defaults, overridable)
+      HOST: db
+      USER: odoo
+      PASSWORD: ${DB_PASSWORD:-CHANGE_ME_STRONG_DB_PASSWORD}
+      ODOO_RC: /etc/odoo/odoo.conf
+    volumes:
+      # Main config (read-only for security)
+      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+
+      # Persistent filestore
+      - odoo-filestore:/var/lib/odoo
+
+      # Log persistence (recommended for troubleshooting)
+      - odoo-logs:/var/log/odoo
+
+    # Expose only to localhost; nginx/traefik on host proxies 443 → 8069
+    ports:
+      - "127.0.0.1:8069:8069"
+    networks:
+      - odoo_backend
+    # Health check now in Dockerfile, but can be overridden here
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        # Adjusted for 2-CPU VPS (total: 0.5 db + 1.5 odoo = 2.0)
+        # Allows ~3GB memory for Odoo (8GB VPS)
+        limits:
+          cpus: '1.5'
+          memory: 3G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+networks:
+  odoo_backend:
+
+volumes:
+  odoo-db-data:
+  odoo-filestore:
+  odoo-logs:  # NEW: Persistent logs for audit trail

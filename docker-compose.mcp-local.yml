@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  mcp-local:
+    build: ./mcp/local
+    container_name: ipai-mcp-local
+    restart: unless-stopped
+    environment:
+      MCP_LOCAL_API_KEY: ${MCP_LOCAL_API_KEY:-dev-only-insecure-key}
+      ODOO_LAB_URL: http://odoo:8069
+      ODOO_LAB_DB: odoo
+      ODOO_LAB_USERNAME: admin
+      ODOO_LAB_PASSWORD: ${ODOO_ADMIN_PASSWORD}
+    volumes:
+      # SQLite data directory
+      - ./mcp/local/data/sqlite:/data
+      # Access to addons for indexing
+      - ./addons:/mnt/addons:ro
+      # Access to OCA addons
+      - ./oca:/mnt/oca-addons:ro
+      # Access to git repo for commit indexing
+      - ./.git:/mnt/.git:ro
+    ports:
+      - "127.0.0.1:8765:8765"
+    networks:
+      - ipai_backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      odoo:
+        condition: service_healthy
+
+networks:
+  ipai_backend:
+    external: true
+
+# Usage:
+# docker-compose -f docker-compose.prod.yml -f docker-compose.mcp-local.yml up -d
