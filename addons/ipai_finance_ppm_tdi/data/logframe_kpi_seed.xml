@@ -329,7 +329,7 @@
         <record id="logframe_activity_12_variance_analysis" model="finance.ppm.logframe">
             <field name="level">activity</field>
             <field name="code">ACT-012</field>
-            <field name="name">Variance Analysis & Investigation</field>
+            <field name="name">Variance Analysis &amp; Investigation</field>
             <field name="description">Analyze significant variances (budget vs actual, prior period, etc.)</field>
             <field name="kpi_measure">Variances Investigated / Total</field>
             <field name="kpi_target">100%</field>
