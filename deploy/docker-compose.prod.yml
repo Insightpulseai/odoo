@@ -1,24 +1,70 @@
-version: "3.9"
+# ===========================================
+# ODOO CE PRODUCTION STACK
+# ===========================================
+# Target Image: ghcr.io/jgtolentino/odoo-ce:latest
+# Database: PostgreSQL 16
+# Architecture: Immutable Image + Persistent Volumes
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml --env-file ../.env up -d
+#
+# Prerequisites:
+#   - Copy ../.env.example to ../.env
+#   - Set DB_PASSWORD and ADMIN_PASSWD
+#   - Login to GHCR: echo $GHCR_TOKEN | docker login ghcr.io -u USER --password-stdin
+# ===========================================
 
 services:
+  # -----------------------------------------
+  # PostgreSQL 16 Database
+  # -----------------------------------------
   db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: odoo-db
     restart: unless-stopped
+
     environment:
-      POSTGRES_DB: odoo
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
-      POSTGRES_MAX_CONNECTIONS: 100
+      POSTGRES_DB: ${DB_NAME:-odoo}
+      POSTGRES_USER: ${DB_USER:-odoo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      # Performance tuning
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+
+    # PostgreSQL configuration overrides
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=${POSTGRES_MAX_CONNECTIONS:-100}"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=1GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=128MB"
+      - "-c"
+      - "random_page_cost=1.1"
+      - "-c"
+      - "effective_io_concurrency=200"
+      - "-c"
+      - "log_statement=none"
+      - "-c"
+      - "log_min_duration_statement=1000"
+
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
+
     networks:
       - odoo_backend
+
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-odoo} -d ${DB_NAME:-odoo}"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
+
     deploy:
       resources:
         limits:
@@ -28,42 +74,55 @@ services:
           cpus: '0.5'
           memory: 512M
 
+  # -----------------------------------------
+  # Odoo 18 CE Application (Immutable Image)
+  # -----------------------------------------
   odoo:
-    # --- CUSTOM IMAGE ---
-    image: ghcr.io/jgtolentino/odoo-ce:latest
+    image: ${APP_IMAGE:-ghcr.io/jgtolentino/odoo-ce}:${APP_IMAGE_VERSION:-latest}
     container_name: odoo-ce
     restart: unless-stopped
+
     depends_on:
       db:
         condition: service_healthy
+
     environment:
-      # Odoo talks to Postgres using these
-      HOST: db
-      USER: odoo
-      PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
+      # Database connection (Odoo expects these specific names)
+      HOST: ${DB_HOST:-db}
+      USER: ${DB_USER:-odoo}
+      PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+
+      # Odoo configuration
       ODOO_RC: /etc/odoo/odoo.conf
+
+      # Optional: Override workers at runtime
+      # WORKERS: ${WORKERS:-4}
+
     volumes:
-      # Main config (optional - can be baked into image)
-      # - ./odoo.conf:/etc/odoo/odoo.conf:ro
-
-      # Custom CE/OCA addons are now BAKED INTO THE IMAGE
-      # - ../addons:/mnt/extra-addons
-      # - ../oca:/mnt/oca-addons
-
-      # Filestore
+      # Filestore - MUST be persistent (attachments, images)
       - odoo-filestore:/var/lib/odoo
 
-    # Expose only inside the droplet; Nginx on host will proxy 443 → 8069
+      # Logs - optional but recommended for debugging
+      - odoo-logs:/var/log/odoo
+
+      # NOTE: Do NOT mount addons in production!
+      # Code is BAKED INTO the image for immutability
+
+    # Bind to localhost only - Nginx handles SSL termination
     ports:
-      - "127.0.0.1:8069:8069"
+      - "127.0.0.1:${ODOO_PORT:-8069}:8069"
+
     networks:
       - odoo_backend
+
+    # Odoo health check endpoint (available since v12)
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8069/web/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 120s  # Odoo needs time to initialize
+
     deploy:
       resources:
         limits:
@@ -73,9 +132,40 @@ services:
           cpus: '1.0'
           memory: 1G
 
+    # Security: Drop unnecessary capabilities
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETUID
+      - SETGID
+
+    # Security: Read-only root filesystem (optional, strict)
+    # read_only: true
+    # tmpfs:
+    #   - /tmp
+    #   - /run
+
+# -----------------------------------------
+# Networks
+# -----------------------------------------
 networks:
   odoo_backend:
+    driver: bridge
+    name: odoo_backend
 
+# -----------------------------------------
+# Named Volumes (Persistent Storage)
+# -----------------------------------------
 volumes:
   odoo-db-data:
+    name: odoo-db-data
+    driver: local
+
   odoo-filestore:
+    name: odoo-filestore
+    driver: local
+
+  odoo-logs:
+    name: odoo-logs
+    driver: local
