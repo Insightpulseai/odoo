@@ -301,8 +301,59 @@ class SpectraExport(models.Model):
 
     def _generate_journal_entry_export(self):
         """Generate TBWA_JE_MMYY.csv file."""
-        # TODO: Implement journal entry export format
-        pass
+        output = io.StringIO()
+        writer = csv.writer(output)
+
+        # Header row (Spectra journal entry format)
+        headers = [
+            'DOC_DATE', 'DOC_REF', 'ACCOUNT_CODE', 'ACCOUNT_NAME',
+            'DEBIT', 'CREDIT', 'PARTNER', 'ANALYTIC_ACCOUNT',
+            'DESCRIPTION', 'CURRENCY', 'AMOUNT_CURRENCY'
+        ]
+        writer.writerow(headers)
+
+        # Data rows - export each journal entry line
+        for move in self.journal_entry_ids:
+            for line in move.line_ids:
+                # Skip lines with zero amounts
+                if line.debit == 0 and line.credit == 0:
+                    continue
+
+                # Get analytic account code if exists
+                analytic_code = ''
+                if line.analytic_distribution:
+                    # Get first analytic account from distribution
+                    analytic_ids = list(line.analytic_distribution.keys())
+                    if analytic_ids:
+                        analytic = self.env['account.analytic.account'].browse(int(analytic_ids[0]))
+                        analytic_code = analytic.code or ''
+
+                # Handle foreign currency amounts
+                currency_code = ''
+                amount_currency = ''
+                if line.currency_id and line.currency_id != line.company_currency_id:
+                    currency_code = line.currency_id.name
+                    amount_currency = "{:.2f}".format(line.amount_currency)
+
+                row = [
+                    fields.Date.to_string(move.date),
+                    move.name,
+                    line.account_id.code or '',
+                    line.account_id.name or '',
+                    "{:.2f}".format(line.debit),
+                    "{:.2f}".format(line.credit),
+                    line.partner_id.name if line.partner_id else '',
+                    analytic_code,
+                    line.name or '',
+                    currency_code,
+                    amount_currency,
+                ]
+                writer.writerow(row)
+
+        # Save file
+        filename = f"TBWA_JE_{self.export_month}{self.export_year[-2:]}.csv"
+        self.export_file_je = base64.b64encode(output.getvalue().encode('utf-8'))
+        self.export_file_je_name = filename
 
     def _generate_audit_trail(self):
         """Generate TBWA_AUDIT_MMYY.csv file with approval history."""
