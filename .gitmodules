@@ -1,0 +1,12 @@
+[submodule "external-src/reporting-engine"]
+	path = external-src/reporting-engine
+	url = https://github.com/OCA/reporting-engine.git
+	branch = 18.0
+[submodule "external-src/account-closing"]
+	path = external-src/account-closing
+	url = https://github.com/OCA/account-closing.git
+	branch = 18.0
+[submodule "external-src/project"]
+	path = external-src/project
+	url = https://github.com/OCA/project.git
+	branch = 18.0
