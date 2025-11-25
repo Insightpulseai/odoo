@@ -34,3 +34,23 @@
 	path = external-src/web
 	url = https://github.com/OCA/web.git
 	branch = 18.0
+[submodule "external-src/account-invoicing"]
+	path = external-src/account-invoicing
+	url = https://github.com/OCA/account-invoicing.git
+	branch = 18.0
+[submodule "external-src/account-financial-reporting"]
+	path = external-src/account-financial-reporting
+	url = https://github.com/OCA/account-financial-reporting.git
+	branch = 18.0
+[submodule "external-src/account-financial-tools"]
+	path = external-src/account-financial-tools
+	url = https://github.com/OCA/account-financial-tools.git
+	branch = 18.0
+[submodule "external-src/contract"]
+	path = external-src/contract
+	url = https://github.com/OCA/contract.git
+	branch = 18.0
+[submodule "external-src/server-tools"]
+	path = external-src/server-tools
+	url = https://github.com/OCA/server-tools.git
+	branch = 18.0
