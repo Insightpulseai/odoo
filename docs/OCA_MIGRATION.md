@@ -30,6 +30,29 @@
 | **MS Project** | `web` + `project` | `web_timeline`, `project_timeline` | 70% |
 | **BIR/PH Tax** | `account-invoicing` | `account_invoice_tax_witholding` | 80% |
 
+### Remaining Gaps (Delta Code Needed)
+
+| Gap | Priority | Complexity | Notes |
+|-----|----------|------------|-------|
+| BIR Form 2307 QWeb template | High | Low | PDF layout for withholding certificate |
+| Alphalist/RELIEF DAT generator | High | Medium | Python server action for BIR file format |
+| Critical path (port 11.0→18.0) | Medium | Medium | OCA module exists, needs migration |
+| Project baselines | Medium | Medium | Snapshot comparison for variance |
+| Supplier scoring/rating | Low | Low | RFQ response evaluation |
+
+### NOT Gaps (Use Native Odoo)
+
+| Feature | Native Module | Status |
+|---------|---------------|--------|
+| Shipping (DHL, FedEx, UPS, USPS, etc.) | `delivery_*` | ✅ Native |
+| Knowledge/Wiki | `knowledge` | ✅ Native Odoo 18 |
+| Expenses | `hr_expense` | ✅ Installed |
+| Invoicing | `account` | ✅ Installed |
+| CRM | `crm` | ✅ Native |
+| Employees | `hr` | ✅ Installed |
+| Skills Management | `hr_skills` | ✅ Installed |
+| Discuss/Chat | `mail` | ✅ Installed |
+
 ---
 
 ## Tax Shield Protocol (Philippines)
