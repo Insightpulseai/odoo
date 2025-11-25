@@ -34,9 +34,12 @@ Features:
         # 'date_range',
     ],
     'data': [
-        # Security ONLY - minimal test to isolate model loading issue
+        # Security
         'security/security_groups.xml',
         'security/ir.model.access.csv',
+
+        # TEST: Single record to verify data loading works
+        'data/bir_calendar_test_single.xml',
 
         # # Seed data (TEMPORARILY DISABLED FOR TESTING)
         # 'data/finance_team_seed.xml',
