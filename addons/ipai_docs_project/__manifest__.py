@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {
     "name": "IPAI Docs – Project & Task Integration",
     "summary": "Link IPAI documents to projects and tasks",
@@ -14,4 +15,5 @@
     ],
     "installable": True,
     "application": False,
+    "auto_install": False,
 }

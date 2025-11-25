@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'PPM Monthly Close Scheduler',
-    'version': '1.0.0',
+    'version': '18.0.1.0.0',
     'category': 'Project Management',
     'summary': 'Automated monthly financial close scheduling with PPM and Notion workspace parity',
     'description': """
@@ -34,7 +34,7 @@ Integration:
     """,
     'author': 'InsightPulse AI',
     'website': 'https://insightpulseai.net',
-    'license': 'LGPL-3',
+    'license': 'AGPL-3',
     'depends': [
         'base',
         'project',
