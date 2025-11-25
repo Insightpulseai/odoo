@@ -10,3 +10,27 @@
 	path = external-src/project
 	url = https://github.com/OCA/project.git
 	branch = 18.0
+[submodule "external-src/hr-expense"]
+	path = external-src/hr-expense
+	url = https://github.com/OCA/hr-expense.git
+	branch = 18.0
+[submodule "external-src/purchase-workflow"]
+	path = external-src/purchase-workflow
+	url = https://github.com/OCA/purchase-workflow.git
+	branch = 18.0
+[submodule "external-src/maintenance"]
+	path = external-src/maintenance
+	url = https://github.com/OCA/maintenance.git
+	branch = 18.0
+[submodule "external-src/dms"]
+	path = external-src/dms
+	url = https://github.com/OCA/dms.git
+	branch = 18.0
+[submodule "external-src/calendar"]
+	path = external-src/calendar
+	url = https://github.com/OCA/calendar.git
+	branch = 18.0
+[submodule "external-src/web"]
+	path = external-src/web
+	url = https://github.com/OCA/web.git
+	branch = 18.0
