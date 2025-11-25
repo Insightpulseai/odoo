@@ -4,6 +4,24 @@ All notable changes to the Odoo CE Docker image for InsightPulse ERP.
 
 ---
 
+## [Unreleased]
+
+### 🔧 Fixed
+
+#### Production HTTPS Fix: Mixed Content Asset Loading (2025-11-26)
+- **Issue**: Mixed Content errors causing broken CSS/JS on production HTTPS site
+- **Root Cause**: `web.base.url` not set to HTTPS in database, causing asset URLs to use HTTP
+- **Impact**: CRITICAL - Login page displayed without styling (white screen)
+- **Fix**:
+  - Set `web.base.url = https://erp.insightpulseai.net` in `ir_config_parameter` table
+  - Added `web.base.url.freeze = True` to prevent auto-updates
+  - Cleared cached HTTP asset bundles via Odoo shell
+- **Verification**: Browser console shows no "Mixed Content" warnings, all assets load via HTTPS
+- **Documentation**: See `docs/MIXED_CONTENT_FIX.md` for complete fix and prevention guide
+- **Production Impact**: Zero downtime (applied during container restart)
+
+---
+
 ## [v0.9.1] - 2025-11-25
 
 ### 🔒 Security & Compliance Release
