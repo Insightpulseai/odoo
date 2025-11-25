@@ -108,7 +108,7 @@ The Docker image includes these custom modules:
 The CD workflow automatically applies database migrations:
 
 ```bash
-docker compose -f docker-compose.prod.yml exec odoo odoo-bin -c /etc/odoo.conf -d odoo -u ipai_finance_ppm --stop-after-init
+docker compose -f docker-compose.prod.yml exec odoo odoo -d odoo -u ipai_finance_ppm --stop-after-init
 ```
 
 ## Monitoring & Troubleshooting
