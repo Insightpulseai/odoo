@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
         <!-- LogFrame (Logical Framework) KPI Definitions -->
         <!-- Hierarchical framework for Finance PPM performance measurement -->
         <!-- Structure: Goal → Outcomes → Outputs → Activities with KPIs -->
