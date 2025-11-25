@@ -3,16 +3,18 @@ version: "3.9"
 services:
   db:
     image: postgres:16
-    container_name: odoo-db
+    container_name: ipai-db
     restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
       POSTGRES_DB: odoo
       POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
-      - odoo-db-data:/var/lib/postgresql/data
+      - ipai-db-data:/var/lib/postgresql/data
     networks:
-      - odoo_backend
+      - ipai_backend
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U odoo"]
       interval: 10s
@@ -21,37 +23,43 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '2.0'
-          memory: 2G
-        reservations:
           cpus: '0.5'
-          memory: 512M
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
 
   odoo:
-    image: odoo:18.0
-    container_name: odoo-ce
+    image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+    container_name: ipai-ce
     restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env.production
     environment:
       # Odoo talks to Postgres using these
       HOST: db
       USER: odoo
-      PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
+      PASSWORD: ${POSTGRES_PASSWORD}
       ODOO_RC: /etc/odoo/odoo.conf
     volumes:
       # Main config
-      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./deploy/odoo.conf:/etc/odoo/odoo.conf:ro
 
-      # Filestore only - addons are baked into the image
-      - odoo-filestore:/var/lib/odoo
+      # Addons directories
+      - ./addons:/mnt/extra-addons:ro
+      - ./oca:/mnt/oca-addons:ro
+
+      # Filestore
+      - ipai-filestore:/var/lib/odoo
 
     # Expose only inside the droplet; Nginx on host will proxy 443 → 8069
     ports:
       - "127.0.0.1:8069:8069"
     networks:
-      - odoo_backend
+      - ipai_backend
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
       interval: 30s
@@ -61,15 +69,15 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '4.0'
-          memory: 4G
+          cpus: '1.5'
+          memory: 2G
         reservations:
-          cpus: '1.0'
-          memory: 1G
+          cpus: '0.5'
+          memory: 512M
 
 networks:
-  odoo_backend:
+  ipai_backend:
 
 volumes:
-  odoo-db-data:
-  odoo-filestore:
+  ipai-db-data:
+  ipai-filestore:

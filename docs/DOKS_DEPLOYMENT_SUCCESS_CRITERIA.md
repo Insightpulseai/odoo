@@ -187,7 +187,7 @@ Exit code must be `0`.
 
 ---
 
-### 6.6 Image-Based CD (Image Deployment / `deploy.yml`)
+### 6.6 Image-Based CD (Image Deployment / `deploy/k8s/`)
 
 * **Condition**
   * The DOKS workload actually runs your custom image with the baked-in modules, not `odoo:18.0`
@@ -199,10 +199,10 @@ Exit code must be `0`.
     ```
   * From the cluster:
     ```bash
-    kubectl get deploy odoo -o jsonpath='{.spec.template.spec.containers[0].image}'
+    kubectl get deploy odoo-deployment -n odoo-prod -o jsonpath='{.spec.template.spec.containers[0].image}'
     ```
     * Returns `ghcr.io/jgtolentino/odoo-ce:latest` (or `:sha` tag)
-  * A new push of main triggers CI → new image → new pods with updated image digest (confirmed via `kubectl rollout status deployment/odoo` and image digest change)
+  * A new push of main triggers CI → new image → new pods with updated image digest (confirmed via `kubectl rollout status deployment/odoo-deployment -n odoo-prod` and image digest change)
 
 ---
 
@@ -257,7 +257,7 @@ That's **image A now running as B (prod Odoo container)**.
 
 Assuming your **Odoo Deployment** in DOKS uses this image:
 ```yaml
-# k8s/odoo-deployment.yaml (spec snippet)
+# deploy/k8s/odoo-deployment.yaml (spec snippet)
 containers:
   - name: odoo
     image: ghcr.io/jgtolentino/odoo-ce:latest
@@ -269,12 +269,12 @@ Apply or bump the image like this:
 doctl kubernetes cluster kubeconfig save <cluster-name>
 
 # Option 1: Apply manifests (GitOps-style)
-kubectl apply -f k8s/odoo-deployment.yaml
-kubectl rollout status deployment/odoo
+kubectl apply -f deploy/k8s/
+kubectl rollout status deployment/odoo-deployment -n odoo-prod
 
 # Option 2: Imperative image bump
-kubectl set image deployment/odoo odoo=ghcr.io/jgtolentino/odoo-ce:latest
-kubectl rollout status deployment/odoo
+kubectl set image deployment/odoo-deployment -n odoo-prod odoo=ghcr.io/jgtolentino/odoo-ce:latest
+kubectl rollout status deployment/odoo-deployment -n odoo-prod
 ```
 
 Now **the same image A** is running in **B = DOKS cluster**.
