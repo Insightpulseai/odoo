@@ -1,0 +1,101 @@
+version: "3.9"
+
+# Production Docker Compose for Odoo CE v0.10.0 with OCA Modules
+# Date: 2025-11-25
+# Target: VPS at 159.223.75.148 (8GB RAM)
+# Domain: erp.insightpulseai.net
+# Features: OCA modules baked into image (project, mis-builder, purchase-workflow, reporting-engine, server-ux)
+
+services:
+  db:
+    image: postgres:16
+    container_name: odoo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      # CRITICAL: Override via .env.production
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-CHANGE_ME_STRONG_DB_PASSWORD}
+      POSTGRES_MAX_CONNECTIONS: 100
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    networks:
+      - odoo_backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  odoo:
+    # PRODUCTION IMAGE: v0.10.0 with OCA modules (immutable artifact)
+    # OCA modules are BAKED INTO THE IMAGE (not volume-mounted)
+    # Only custom modules are volume-mounted for development flexibility
+    image: ghcr.io/jgtolentino/odoo-ce:v0.10.0
+    container_name: odoo-ce
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database connection
+      HOST: db
+      USER: odoo
+      PASSWORD: ${DB_PASSWORD:-CHANGE_ME_STRONG_DB_PASSWORD}
+    command: -- --config /etc/odoo/odoo.conf
+    volumes:
+      # Main config (read-only for security)
+      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+
+      # CUSTOM modules only (OCA modules are in the image)
+      - ../addons/ipai_finance_monthly_closing:/mnt/extra-addons/ipai_finance_monthly_closing
+      - ../addons/ipai_finance_ppm_tdi:/mnt/extra-addons/ipai_finance_ppm_tdi
+      - ../addons/ipai_finance_ap_aging:/mnt/extra-addons/ipai_finance_ap_aging
+      - ../addons/ipai_expense:/mnt/extra-addons/ipai_expense
+      - ../addons/ipai_equipment:/mnt/extra-addons/ipai_equipment
+      - ../addons/ipai_ocr_expense:/mnt/extra-addons/ipai_ocr_expense
+
+      # Persistent filestore
+      - odoo-filestore:/var/lib/odoo
+
+      # Log persistence (recommended for troubleshooting)
+      - odoo-logs:/var/log/odoo
+
+    # Expose only to localhost; nginx/traefik on host proxies 443 → 8069
+    ports:
+      - "127.0.0.1:8069:8069"
+    networks:
+      - odoo_backend
+    # Health check defined in Dockerfile
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        # Adjusted for 2-CPU, 8GB VPS
+        # Conservative limits to prevent deployment errors
+        limits:
+          cpus: '1.5'
+          memory: 3G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+networks:
+  odoo_backend:
+
+volumes:
+  odoo-db-data:
+  odoo-filestore:
+  odoo-logs:
