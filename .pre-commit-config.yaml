@@ -1,0 +1,88 @@
+# OCA Pre-commit Configuration for Odoo 18
+# Ensures code quality before commit
+#
+# Usage:
+#   pip install pre-commit
+#   pre-commit install
+#   pre-commit run --all-files
+#
+repos:
+  # OCA Official Hooks - Odoo-specific validation
+  - repo: https://github.com/OCA/odoo-pre-commit-hooks
+    rev: v0.0.32
+    hooks:
+      - id: oca-check-manifest
+        description: Check __manifest__.py for OCA compliance
+      - id: oca-check-csv
+        description: Validate CSV files (security, data)
+      - id: oca-xml-lint
+        description: Lint XML files for syntax errors
+
+  # Python Code Formatting (Black)
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        args: [--line-length=88]
+        files: ^addons/
+
+  # Import Sorting (isort)
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: [--profile=black, --line-length=88]
+        files: ^addons/
+
+  # Flake8 Linting (PEP8)
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        args: [--max-line-length=88, --extend-ignore=E501,W503]
+        files: ^addons/
+
+  # YAML Validation
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        args: [-d, relaxed]
+        files: \.(yaml|yml)$
+
+  # Standard Pre-commit Hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: \.po$|\.pot$
+      - id: end-of-file-fixer
+        exclude: \.po$|\.pot$
+      - id: check-yaml
+        args: [--unsafe]
+      - id: check-xml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: debug-statements
+        files: ^addons/
+
+  # Pylint Odoo (Optional - can be slow)
+  # Uncomment for stricter OCA compliance
+  # - repo: https://github.com/OCA/pylint-odoo
+  #   rev: v9.0.5
+  #   hooks:
+  #     - id: pylint-odoo
+  #       args: [--rcfile=.pylintrc]
+  #       files: ^addons/
+
+# CI Configuration
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit hooks
+  autofix_prs: true
+  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false
