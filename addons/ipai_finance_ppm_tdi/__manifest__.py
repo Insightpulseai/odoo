@@ -34,25 +34,25 @@ Features:
         # 'date_range',
     ],
     'data': [
-        # Security
+        # Security ONLY - minimal test to isolate model loading issue
         'security/security_groups.xml',
         'security/ir.model.access.csv',
 
-        # Seed data (loaded first)
-        'data/finance_team_seed.xml',
-        'data/month_end_tasks_seed.xml',
-        'data/bir_calendar_seed.xml',
-        'data/logframe_kpi_seed.xml',
-        'data/ph_holiday_calendar_seed.xml',
+        # # Seed data (TEMPORARILY DISABLED FOR TESTING)
+        # 'data/finance_team_seed.xml',
+        # 'data/month_end_tasks_seed.xml',
+        # 'data/bir_calendar_seed.xml',
+        # 'data/logframe_kpi_seed.xml',
+        # 'data/ph_holiday_calendar_seed.xml',
 
-        # Wizard views
-        'wizard/finance_ppm_import_wizard_views.xml',
+        # # Wizard views (TEMPORARILY DISABLED)
+        # 'wizard/finance_ppm_import_wizard_views.xml',
 
-        # Audit log views
-        'views/finance_ppm_tdi_audit_views.xml',
+        # # Audit log views (TEMPORARILY DISABLED)
+        # 'views/finance_ppm_tdi_audit_views.xml',
 
-        # Menu
-        'views/menu.xml',
+        # # Menu (TEMPORARILY DISABLED)
+        # 'views/menu.xml',
     ],
     'demo': [],
     'installable': True,
