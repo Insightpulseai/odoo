@@ -38,25 +38,21 @@ Features:
         'security/security_groups.xml',
         'security/ir.model.access.csv',
 
-        # TEST: Single record to verify data loading works
-        'data/bir_calendar_test_single.xml',
-        'data/bir_calendar_test_no_prefix.xml',
+        # Seed data (noupdate=0 for initial installation compatibility)
+        'data/finance_team_seed.xml',
+        'data/month_end_tasks_seed.xml',
+        'data/bir_calendar_seed.xml',
+        'data/logframe_kpi_seed.xml',
+        'data/ph_holiday_calendar_seed.xml',
 
-        # # Seed data (TEMPORARILY DISABLED FOR TESTING)
-        # 'data/finance_team_seed.xml',
-        # 'data/month_end_tasks_seed.xml',
-        # 'data/bir_calendar_seed.xml',
-        # 'data/logframe_kpi_seed.xml',
-        # 'data/ph_holiday_calendar_seed.xml',
+        # Wizard views
+        'wizard/finance_ppm_import_wizard_views.xml',
 
-        # # Wizard views (TEMPORARILY DISABLED)
-        # 'wizard/finance_ppm_import_wizard_views.xml',
+        # Audit log views
+        'views/finance_ppm_tdi_audit_views.xml',
 
-        # # Audit log views (TEMPORARILY DISABLED)
-        # 'views/finance_ppm_tdi_audit_views.xml',
-
-        # # Menu (TEMPORARILY DISABLED)
-        # 'views/menu.xml',
+        # Menu
+        'views/menu.xml',
     ],
     'demo': [],
     'installable': True,
