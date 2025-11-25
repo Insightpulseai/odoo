@@ -27,11 +27,11 @@ Features:
         'project',
         'hr',
         'account',
-        # OCA dependencies (must be installed first)
-        'project_timeline',
-        'mis_builder',
-        'purchase_request',
-        'date_range',
+        # OCA dependencies temporarily disabled for initial deployment
+        # 'project_timeline',
+        # 'mis_builder',
+        # 'purchase_request',
+        # 'date_range',
     ],
     'data': [
         # Security
