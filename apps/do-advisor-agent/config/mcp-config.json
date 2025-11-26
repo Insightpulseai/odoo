@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schema/config.json",
-  "version": "1.0",
-  "description": "MCP Configuration for DO Advisor + fin-workspace integration",
+  "version": "1.1",
+  "description": "MCP Configuration for DO Advisor + fin-workspace integration with Architecture Diagrams and Superset Copilot",
   "mcpServers": {
     "do-advisor": {
       "description": "Unified DigitalOcean Infrastructure Advisor",
@@ -33,6 +33,185 @@
         "networking",
         "observability"
       ]
+    },
+    "diagram-ai-generator": {
+      "description": "AI-powered cloud architecture diagram generator with draw.io integration",
+      "command": "python3",
+      "args": ["-m", "src.application.mcp.server_modular"],
+      "transport": "stdio",
+      "env": {
+        "DIAGRAM_OUTPUT_DIR": "${REPO_ROOT}/docs/diagrams/architecture"
+      },
+      "capabilities": [
+        "diagram-generation",
+        "multi-cloud",
+        "draw-io-export"
+      ],
+      "tools": [
+        {
+          "name": "step1_list_providers",
+          "description": "List available diagram providers (azure, aws, gcp, k8s, digitalocean, generic)"
+        },
+        {
+          "name": "step2_get_categories",
+          "description": "Get service categories for a provider (e.g., compute, storage, networking)"
+        },
+        {
+          "name": "step3_get_nodes",
+          "description": "Get available node types/icons for a provider category"
+        },
+        {
+          "name": "create_diagram_from_json",
+          "description": "Create a diagram from JSON spec with components, connections, and clusters",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "provider": { "type": "string", "enum": ["azure", "aws", "gcp", "kubernetes", "digitalocean", "generic"] },
+              "title": { "type": "string" },
+              "components": { "type": "array" },
+              "connections": { "type": "array" },
+              "clusters": { "type": "array" }
+            },
+            "required": ["provider", "title", "components"]
+          }
+        },
+        {
+          "name": "multicloud_helper",
+          "description": "Helper for creating multi-cloud diagrams with mixed providers"
+        }
+      ],
+      "metadata": {
+        "iconLibraries": [
+          "https://github.com/jgraph/drawio-libs",
+          "https://www.drawio.com/blog/azure-diagrams"
+        ],
+        "outputFormats": ["drawio", "png", "svg"],
+        "githubIntegration": {
+          "urlPattern": "https://app.diagrams.net/?mode=github#H{org}/{repo}/{branch}/{path}"
+        }
+      }
+    },
+    "superset-mcp": {
+      "description": "Apache Superset analytics with MCP integration (FastMCP 2.13.0)",
+      "url": "${SUPERSET_ENDPOINT}:5008",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${SUPERSET_MCP_API_KEY}"
+      },
+      "capabilities": [
+        "dashboard-management",
+        "chart-generation",
+        "sql-execution",
+        "dataset-discovery"
+      ],
+      "tools": [
+        {
+          "name": "list_dashboards",
+          "description": "List all Superset dashboards. Use select_columns to reduce payload.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "select_columns": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "name": "list_charts",
+          "description": "List all Superset charts",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "select_columns": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "name": "list_datasets",
+          "description": "List all Superset datasets (tables/views)",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "select_columns": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "name": "get_dashboard_info",
+          "description": "Get detailed info about a specific dashboard by numeric ID",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "dashboard_id": { "type": "integer" }
+            },
+            "required": ["dashboard_id"]
+          }
+        },
+        {
+          "name": "get_chart_info",
+          "description": "Get detailed info about a specific chart by numeric ID",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "chart_id": { "type": "integer" }
+            },
+            "required": ["chart_id"]
+          }
+        },
+        {
+          "name": "get_dataset_info",
+          "description": "Get detailed info about a specific dataset by numeric ID",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "dataset_id": { "type": "integer" }
+            },
+            "required": ["dataset_id"]
+          }
+        },
+        {
+          "name": "generate_chart",
+          "description": "Generate a new chart. chart_type is MANDATORY.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "chart_type": { "type": "string", "description": "MANDATORY: Chart visualization type" },
+              "datasource_id": { "type": "integer" },
+              "metrics": { "type": "array" },
+              "groupby": { "type": "array" },
+              "filters": { "type": "array" }
+            },
+            "required": ["chart_type", "datasource_id"]
+          }
+        },
+        {
+          "name": "execute_sql",
+          "description": "Execute SQL query against a database. NOT cached - use sparingly.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "database_id": { "type": "integer" },
+              "sql": { "type": "string" },
+              "schema": { "type": "string" }
+            },
+            "required": ["database_id", "sql"]
+          }
+        }
+      ],
+      "metadata": {
+        "notes": [
+          "Resource identifiers must be numeric IDs or UUIDs; do not use names or schema.table patterns.",
+          "When calling generate_chart, chart_type is mandatory.",
+          "Use select_columns in list_* tools to reduce payload size.",
+          "Caching enabled for list_* and get_*_info tools, NOT for execute_sql or generate_chart."
+        ],
+        "theming": {
+          "designSystem": "Ant Design v5",
+          "darkModeSupport": true,
+          "chartOverrides": "echartsOptionsOverrides"
+        },
+        "sipReferences": ["SIP-155", "SIP-157"]
+      }
     },
     "odoo-erp": {
       "description": "Odoo CE ERP integration via JSON-RPC",
@@ -191,6 +370,14 @@
     "strategy": "intelligent",
     "rules": [
       {
+        "pattern": "diagram|architecture|draw|visualize|topology",
+        "target": ["diagram-ai-generator"]
+      },
+      {
+        "pattern": "dashboard|chart|analytics|superset|kpi|report",
+        "target": ["superset-mcp", "do-advisor"]
+      },
+      {
         "pattern": "kubernetes|k8s|doks|cluster|pod|deployment|node",
         "target": ["do-advisor", "kubernetes-genius"]
       },
@@ -216,6 +403,13 @@
       }
     ],
     "fallback": "do-advisor"
+  },
+  "skills": {
+    "registry": "./skills/",
+    "enabled": [
+      "architecture_diagrams",
+      "superset_mcp"
+    ]
   },
   "localDevelopment": {
     "enabled": true,

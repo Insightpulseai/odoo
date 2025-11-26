@@ -58,6 +58,15 @@
                 <span class="nav-icon">&#9635;</span>
                 <span class="nav-text">Odoo ERP</span>
             </li>
+            <li class="nav-divider"></li>
+            <li class="nav-item" data-view="architecture">
+                <span class="nav-icon">&#9633;</span>
+                <span class="nav-text">Architecture</span>
+            </li>
+            <li class="nav-item" data-view="superset">
+                <span class="nav-icon">&#128200;</span>
+                <span class="nav-text">Superset Copilot</span>
+            </li>
         </ul>
 
         <div class="sidebar-footer">
@@ -297,6 +306,16 @@
                 </div>
             </div>
         </div>
+
+        <!-- Architecture View -->
+        <div class="view" id="view-architecture">
+            <!-- Populated by architecture.js -->
+        </div>
+
+        <!-- Superset Copilot View -->
+        <div class="view" id="view-superset">
+            <!-- Populated by superset-copilot.js -->
+        </div>
     </main>
 
     <!-- Config -->
@@ -306,6 +325,8 @@
     <script src="../src/components/recommendations.js"></script>
     <script src="../src/components/jobs-monitor.js"></script>
     <script src="../src/components/metrics-charts.js"></script>
+    <script src="../src/views/architecture.js"></script>
+    <script src="../src/views/superset-copilot.js"></script>
     <script src="../src/app.js"></script>
 </body>
 </html>

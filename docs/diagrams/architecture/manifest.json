@@ -1,0 +1,66 @@
+{
+  "version": "1.0.0",
+  "description": "Architecture diagrams manifest for fin-workspace / mybrick platform",
+  "lastUpdated": "2025-11-26T00:00:00Z",
+  "diagrams": [
+    {
+      "id": "fin-workspace-overview",
+      "title": "fin-workspace Platform Overview",
+      "description": "High-level architecture of the fin-workspace platform including DO Advisor, n8n, Superset, and Odoo",
+      "providers": ["digitalocean", "generic"],
+      "source": "manual",
+      "file_drawio": "fin-workspace-overview.drawio",
+      "file_image": "previews/fin-workspace-overview.png",
+      "last_updated": "2025-11-26T00:00:00Z",
+      "tags": ["overview", "platform", "do-advisor"],
+      "components": {
+        "count": 12,
+        "types": ["droplet", "kubernetes", "database", "app"]
+      }
+    },
+    {
+      "id": "do-advisor-architecture",
+      "title": "DO Advisor Agent Architecture",
+      "description": "Internal architecture of the DO Advisor unified agent and UI",
+      "providers": ["digitalocean", "generic"],
+      "source": "manual",
+      "file_drawio": "do-advisor-architecture.drawio",
+      "file_image": "previews/do-advisor-architecture.png",
+      "last_updated": "2025-11-26T00:00:00Z",
+      "tags": ["do-advisor", "agent", "mcp"],
+      "components": {
+        "count": 8,
+        "types": ["agent", "ui", "mcp", "api"]
+      }
+    }
+  ],
+  "providers": {
+    "azure": {
+      "iconLibrary": "https://github.com/jgraph/drawio-libs/tree/master/azure",
+      "docUrl": "https://www.drawio.com/blog/azure-diagrams"
+    },
+    "digitalocean": {
+      "iconLibrary": "custom",
+      "docUrl": "https://docs.digitalocean.com/"
+    },
+    "kubernetes": {
+      "iconLibrary": "https://github.com/jgraph/drawio-libs/tree/master/kubernetes",
+      "docUrl": "https://kubernetes.io/docs/"
+    },
+    "aws": {
+      "iconLibrary": "https://github.com/jgraph/drawio-libs/tree/master/aws",
+      "docUrl": "https://aws.amazon.com/architecture/"
+    },
+    "gcp": {
+      "iconLibrary": "https://github.com/jgraph/drawio-libs/tree/master/gcp",
+      "docUrl": "https://cloud.google.com/docs"
+    }
+  },
+  "githubIntegration": {
+    "org": "jgtolentino",
+    "repo": "odoo-ce",
+    "branch": "main",
+    "basePath": "docs/diagrams/architecture",
+    "drawioUrlPattern": "https://app.diagrams.net/?mode=github#H{org}/{repo}/{branch}/{path}"
+  }
+}
