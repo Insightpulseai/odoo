@@ -24,11 +24,10 @@ class IrQweb(models.AbstractModel):
         if values is None:
             values = {}
 
-        # Only inject if 'website' key is missing
+        # ALWAYS inject 'website' key if missing - even as False
+        # This prevents KeyError when templates try to access website variable
         if 'website' not in values:
-            website = self._get_safe_website()
-            if website is not None:
-                values['website'] = website
+            values['website'] = self._get_safe_website()
 
         # Also ensure main_object has a safe fallback
         if 'main_object' not in values:
@@ -37,6 +36,10 @@ class IrQweb(models.AbstractModel):
         # Ensure edit_in_backend has a default
         if 'edit_in_backend' not in values:
             values['edit_in_backend'] = False
+
+        # Ensure html_data dict exists for template updates
+        if 'html_data' not in values:
+            values['html_data'] = {}
 
         return values
 
@@ -48,12 +51,12 @@ class IrQweb(models.AbstractModel):
             - The current website if available
             - The first website found
             - An empty website recordset as fallback
-            - None if website module is not installed
+            - False if website module is not installed (safe for template checks)
         """
         try:
             # Check if website module is installed
             if 'website.website' not in self.env.registry:
-                return None
+                return False  # Safe falsy value for template checks
 
             Website = self.env['website.website'].sudo()
 
@@ -71,8 +74,8 @@ class IrQweb(models.AbstractModel):
             return Website.search([], limit=1) or Website
 
         except Exception:
-            # If anything fails, return None (website module might not be ready)
-            return None
+            # If anything fails, return False (safe for template checks)
+            return False
 
     def _render(self, template, values=None, **options):
         """
