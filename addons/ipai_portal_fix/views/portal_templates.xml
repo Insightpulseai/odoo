@@ -3,67 +3,23 @@
     <!--
         Portal Frontend Layout Fix
 
-        This template inherits from portal.frontend_layout and adds defensive
-        checks to prevent KeyError: 'website' errors when the website context
-        is missing.
+        This module fixes KeyError: 'website' in portal.frontend_layout template.
 
-        The fix works by:
-        1. Setting a safe default for 'website' if not present
-        2. Wrapping website-dependent code in conditional checks
+        The PRIMARY fix is in models/ir_qweb.py which overrides _render() to
+        inject safe default values for website, main_object, edit_in_backend,
+        and html_data BEFORE template rendering begins.
+
+        This template file is kept minimal to avoid evaluation errors.
+        The Python-level fix handles all context injection.
     -->
-
-    <!-- Inject safe website default at the beginning of frontend_layout -->
-    <template id="portal_frontend_layout_fix"
-              inherit_id="portal.frontend_layout"
-              name="Portal Frontend Layout - Website Fix"
-              priority="1">
-
-        <!-- Add a safe website variable at the start of the template -->
-        <xpath expr="//t[@t-call='web.frontend_layout']" position="before">
-            <!--
-                Set a safe default for website variable if not present.
-                This prevents KeyError when templates try to access website.
-            -->
-            <t t-if="website is not defined or not website">
-                <t t-set="website" t-value="request.env['website.website'].sudo().search([], limit=1) if 'website.website' in request.env.registry else False"/>
-            </t>
-
-            <!-- Set safe default for main_object if not defined -->
-            <t t-if="main_object is not defined">
-                <t t-set="main_object" t-value="request.env['ir.ui.view']"/>
-            </t>
-
-            <!-- Set safe default for edit_in_backend if not defined -->
-            <t t-if="edit_in_backend is not defined">
-                <t t-set="edit_in_backend" t-value="False"/>
-            </t>
-
-            <!-- Set safe default for html_data if not defined -->
-            <t t-if="html_data is not defined">
-                <t t-set="html_data" t-value="{}"/>
-            </t>
-        </xpath>
-
-    </template>
 
     <!--
-        Web Frontend Layout Fix
+        Note: Template-level fixes using expressions like "website if website"
+        can cause KeyError if the variable doesn't exist yet in context.
+        Therefore, we rely on the Python ir_qweb._render() override to inject
+        all required variables before template evaluation.
 
-        Similar fix for the base web.frontend_layout template which may also
-        try to access website-related variables.
+        These template overrides are intentionally minimal/empty.
     -->
-    <template id="web_frontend_layout_fix"
-              inherit_id="web.frontend_layout"
-              name="Web Frontend Layout - Website Fix"
-              priority="1">
-
-        <xpath expr="//html" position="before">
-            <!-- Ensure website variable exists -->
-            <t t-if="website is not defined">
-                <t t-set="website" t-value="request.env['website.website'].sudo().search([], limit=1) if 'website.website' in request.env.registry else False"/>
-            </t>
-        </xpath>
-
-    </template>
 
 </odoo>
