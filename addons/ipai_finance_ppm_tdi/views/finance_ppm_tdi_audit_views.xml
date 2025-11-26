@@ -6,7 +6,7 @@
         <field name="name">finance.ppm.tdi.audit.tree</field>
         <field name="model">finance.ppm.tdi.audit</field>
         <field name="arch" type="xml">
-            <tree string="Finance PPM Import History" decoration-success="state=='done'"
+            <list string="Finance PPM Import History" decoration-success="state=='done'"
                   decoration-warning="state=='partial'" decoration-danger="state=='failed'">
                 <field name="import_date"/>
                 <field name="import_type"/>
@@ -18,7 +18,7 @@
                 <field name="success_rate" widget="progressbar"/>
                 <field name="state" widget="badge" decoration-success="state=='done'"
                        decoration-warning="state=='partial'" decoration-danger="state=='failed'"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -30,11 +30,11 @@
             <form string="Finance PPM Import Audit" create="false" edit="false">
                 <header>
                     <button name="action_view_errors" string="View Errors" type="object"
-                            class="btn-warning" attrs="{'invisible': [('has_errors', '=', False)]}"/>
+                            class="btn-warning" invisible="not has_errors"/>
                     <button name="action_revert_import" string="Revert Import" type="object"
                             class="btn-danger" groups="ipai_finance_ppm_tdi.group_finance_ppm_admin"
                             confirm="Revert this import? This will delete all records created by this import."
-                            attrs="{'invisible': [('records_created', '=', 0)]}"/>
+                            invisible="records_created == 0"/>
                     <field name="state" widget="statusbar"/>
                 </header>
                 <sheet>
@@ -74,7 +74,7 @@
                         <page name="summary" string="Import Summary">
                             <field name="import_summary" widget="text" nolabel="1"/>
                         </page>
-                        <page name="errors" string="Error Log" attrs="{'invisible': [('error_log', '=', False)]}">
+                        <page name="errors" string="Error Log" invisible="not error_log">
                             <field name="error_log" widget="text" nolabel="1"/>
                         </page>
                     </notebook>
