@@ -1,0 +1,232 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schema/config.json",
+  "version": "1.0",
+  "description": "MCP Configuration for DO Advisor + fin-workspace integration",
+  "mcpServers": {
+    "do-advisor": {
+      "description": "Unified DigitalOcean Infrastructure Advisor",
+      "url": "https://wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${DO_ADVISOR_API_KEY}"
+      },
+      "capabilities": [
+        "recommendations",
+        "jobs-monitoring",
+        "kubernetes",
+        "cost-analysis",
+        "security-audit"
+      ]
+    },
+    "kubernetes-genius": {
+      "description": "Kubernetes RAG Agent for DOKS clusters",
+      "url": "https://lft4hlniueapplqk6yio3vqj.agents.do-ai.run",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${K8S_GENIUS_API_KEY}"
+      },
+      "capabilities": [
+        "cluster-management",
+        "workload-operations",
+        "networking",
+        "observability"
+      ]
+    },
+    "odoo-erp": {
+      "description": "Odoo CE ERP integration via JSON-RPC",
+      "url": "${ODOO_ENDPOINT}",
+      "transport": "jsonrpc",
+      "authentication": {
+        "type": "session",
+        "database": "${ODOO_DATABASE}",
+        "username": "${ODOO_USERNAME}",
+        "password": "${ODOO_PASSWORD}"
+      },
+      "capabilities": [
+        "finance-ppm",
+        "expense-management",
+        "equipment-tracking",
+        "monthly-closing",
+        "bir-compliance"
+      ],
+      "tools": [
+        {
+          "name": "odoo_search_read",
+          "description": "Search and read records from Odoo models",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string", "description": "Odoo model name (e.g., hr.expense)" },
+              "domain": { "type": "array", "description": "Search domain filter" },
+              "fields": { "type": "array", "description": "Fields to return" },
+              "limit": { "type": "integer", "default": 100 }
+            },
+            "required": ["model"]
+          }
+        },
+        {
+          "name": "odoo_create",
+          "description": "Create a new record in Odoo",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string" },
+              "values": { "type": "object" }
+            },
+            "required": ["model", "values"]
+          }
+        },
+        {
+          "name": "odoo_export",
+          "description": "Export records from Odoo model to CSV/JSON",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string" },
+              "domain": { "type": "array" },
+              "fields": { "type": "array" },
+              "format": { "type": "string", "enum": ["csv", "json"], "default": "csv" }
+            },
+            "required": ["model", "fields"]
+          }
+        },
+        {
+          "name": "odoo_import",
+          "description": "Import records into Odoo from CSV/JSON",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string" },
+              "data": { "type": "array" },
+              "format": { "type": "string", "enum": ["csv", "json"] }
+            },
+            "required": ["model", "data"]
+          }
+        }
+      ]
+    },
+    "n8n-automation": {
+      "description": "n8n workflow automation engine",
+      "url": "${N8N_ENDPOINT}",
+      "transport": "http",
+      "authentication": {
+        "type": "apiKey",
+        "header": "X-N8N-API-KEY",
+        "key": "${N8N_API_KEY}"
+      },
+      "capabilities": [
+        "workflow-management",
+        "execution-monitoring",
+        "webhook-triggers"
+      ],
+      "tools": [
+        {
+          "name": "n8n_list_workflows",
+          "description": "List all n8n workflows",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "active": { "type": "boolean", "description": "Filter by active status" }
+            }
+          }
+        },
+        {
+          "name": "n8n_trigger_workflow",
+          "description": "Trigger a workflow execution",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "workflowId": { "type": "string" },
+              "data": { "type": "object", "description": "Input data for the workflow" }
+            },
+            "required": ["workflowId"]
+          }
+        },
+        {
+          "name": "n8n_get_executions",
+          "description": "Get workflow execution history",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "workflowId": { "type": "string" },
+              "status": { "type": "string", "enum": ["success", "error", "running", "waiting"] },
+              "limit": { "type": "integer", "default": 20 }
+            }
+          }
+        }
+      ]
+    },
+    "supabase": {
+      "description": "Supabase PostgreSQL + Storage integration",
+      "url": "${SUPABASE_URL}",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${SUPABASE_SERVICE_ROLE_KEY}"
+      },
+      "capabilities": [
+        "database-queries",
+        "file-storage",
+        "realtime-subscriptions"
+      ]
+    },
+    "mattermost": {
+      "description": "Mattermost team communication",
+      "url": "${MATTERMOST_ENDPOINT}",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${MATTERMOST_BOT_TOKEN}"
+      },
+      "capabilities": [
+        "send-messages",
+        "create-channels",
+        "post-alerts"
+      ]
+    }
+  },
+  "routing": {
+    "strategy": "intelligent",
+    "rules": [
+      {
+        "pattern": "kubernetes|k8s|doks|cluster|pod|deployment|node",
+        "target": ["do-advisor", "kubernetes-genius"]
+      },
+      {
+        "pattern": "expense|invoice|finance|ppm|budget|bir|closing",
+        "target": ["odoo-erp", "do-advisor"]
+      },
+      {
+        "pattern": "workflow|automation|n8n|scheduled|job",
+        "target": ["n8n-automation", "do-advisor"]
+      },
+      {
+        "pattern": "cost|spending|billing|savings",
+        "target": ["do-advisor"]
+      },
+      {
+        "pattern": "security|ssl|firewall|rbac|vulnerability",
+        "target": ["do-advisor", "kubernetes-genius"]
+      },
+      {
+        "pattern": "alert|notify|message|chat",
+        "target": ["mattermost"]
+      }
+    ],
+    "fallback": "do-advisor"
+  },
+  "localDevelopment": {
+    "enabled": true,
+    "sqlite": {
+      "path": "./data/local-rag.db",
+      "syncStrategy": "on-success"
+    },
+    "syncToProduction": {
+      "skills": true,
+      "embeddings": false,
+      "conversationHistory": false
+    }
+  }
+}
