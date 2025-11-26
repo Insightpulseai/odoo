@@ -92,6 +92,59 @@ services:
           cpus: '0.5'
           memory: 1G
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.2
+    container_name: odoo-keycloak
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database configuration (shared PostgreSQL)
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: odoo
+      KC_DB_PASSWORD: ${DB_PASSWORD:-CHANGE_ME_STRONG_DB_PASSWORD}
+      KC_DB_SCHEMA: public
+
+      # Hostname configuration
+      KC_HOSTNAME: auth.insightpulseai.net
+      KC_HOSTNAME_STRICT: "false"
+      KC_HOSTNAME_STRICT_HTTPS: "true"
+
+      # Proxy configuration (behind Nginx)
+      KC_PROXY_HEADERS: xforwarded
+      KC_HTTP_ENABLED: "true"
+      KC_HEALTH_ENABLED: "true"
+
+      # Admin credentials
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-CHANGE_ME_ADMIN_PASSWORD}
+
+      # Performance tuning
+      KC_LOG_LEVEL: info
+    command:
+      - start
+      - --proxy-headers=xforwarded
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - odoo_backend
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+
 networks:
   odoo_backend:
 
