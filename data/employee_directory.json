@@ -1,0 +1,104 @@
+{
+  "employees": [
+    {
+      "code": "CKVC",
+      "name": "Khalil Veracruz",
+      "email": "khalil.veracruz@omc.com",
+      "role": "Finance Director",
+      "responsibilities": "Final approvals, strategic decisions, CFO-level tasks"
+    },
+    {
+      "code": "RIM",
+      "name": "Rey Meran",
+      "email": "rey.meran@omc.com",
+      "role": "Senior Finance Manager",
+      "responsibilities": "VAT, tax compliance, complex accruals, management fees"
+    },
+    {
+      "code": "LAS",
+      "name": "Amor Lasaga",
+      "email": "amor.lasaga@omc.com",
+      "role": "Finance Manager",
+      "responsibilities": "Revenue recognition, billable costs, reconciliations"
+    },
+    {
+      "code": "BOM",
+      "name": "Beng Manalo",
+      "email": "beng.manalo@omc.com",
+      "role": "Finance Supervisor",
+      "responsibilities": "Bank reconciliation, payroll, routine closing tasks"
+    },
+    {
+      "code": "JPAL",
+      "name": "Jinky Paladin",
+      "email": "jinky.paladin@omc.com",
+      "role": "Finance Assistant (VAT/Reporting)",
+      "responsibilities": "VAT support, reporting assistance"
+    },
+    {
+      "code": "JPL",
+      "name": "Jerald Loterte",
+      "email": "jerald.loterte@omc.com",
+      "role": "Finance Assistant (AP/Billing)",
+      "responsibilities": "AP processing, billing support"
+    },
+    {
+      "code": "JI",
+      "name": "Jasmin Ignacio",
+      "email": "jasmin.ignacio@omc.com",
+      "role": "Finance Assistant (Expense/Assets)",
+      "responsibilities": "Expense tracking, fixed asset management, depreciation"
+    },
+    {
+      "code": "JO",
+      "name": "Jhoee Oliva",
+      "email": "jhoee.oliva@omc.com",
+      "role": "Finance Assistant (General Support)",
+      "responsibilities": "General finance support tasks"
+    },
+    {
+      "code": "JM",
+      "name": "Joana Maravillas",
+      "email": "joana.maravillas@omc.com",
+      "role": "Finance Assistant (General Support)",
+      "responsibilities": "General finance support tasks"
+    },
+    {
+      "code": "RMQB",
+      "name": "Sally Brillantes",
+      "email": "sally.brillantes@omc.com",
+      "role": "Finance Assistant (AP/Payments)",
+      "responsibilities": "AP processing, payment support"
+    }
+  ],
+  "bir_filing_workflow": {
+    "step_1": {
+      "name": "Preparation",
+      "responsible_role": "Finance Supervisor",
+      "employee_code": "BOM",
+      "deadline": "BIR Deadline - 4 Business Days",
+      "description": "Gather data, prepare the BIR Form, and draft the payment request (e.g., check voucher)."
+    },
+    "step_2": {
+      "name": "Report Approval",
+      "responsible_role": "Senior Finance Manager",
+      "employee_code": "RIM",
+      "deadline": "BIR Deadline - 2 Business Days",
+      "description": "Senior Finance Manager (SFM) reviews and approves the report data for accuracy and compliance. (File Request is submitted to SFM.)"
+    },
+    "step_3": {
+      "name": "Payment Approval",
+      "responsible_role": "Finance Director",
+      "employee_code": "CKVC",
+      "deadline": "BIR Deadline - 1 Business Day",
+      "description": "The approved report and payment request are routed. Finance Director (FD) reviews and approves the release of funds for remittance."
+    },
+    "step_4": {
+      "name": "Filing & Payment",
+      "responsible_role": "Finance Supervisor",
+      "employee_code": "CKVC",
+      "deadline": "On or before the BIR Deadline",
+      "description": "The approved form is Filed and the payment is Remitted (either electronically or over the counter)."
+    }
+  }
+}
