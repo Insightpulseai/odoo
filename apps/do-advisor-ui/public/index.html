@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DO Advisor - Infrastructure Intelligence</title>
+    <link rel="stylesheet" href="../src/assets/styles/azure-dark.css">
+    <link rel="stylesheet" href="../src/assets/styles/components.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+                <span class="logo-text">DO Advisor</span>
+            </div>
+        </div>
+
+        <ul class="nav-menu">
+            <li class="nav-item active" data-view="dashboard">
+                <span class="nav-icon">&#9632;</span>
+                <span class="nav-text">Overview</span>
+            </li>
+            <li class="nav-item" data-view="recommendations">
+                <span class="nav-icon">&#9733;</span>
+                <span class="nav-text">Recommendations</span>
+            </li>
+            <li class="nav-item" data-view="jobs">
+                <span class="nav-icon">&#9881;</span>
+                <span class="nav-text">Jobs & Automations</span>
+            </li>
+            <li class="nav-item" data-view="cost">
+                <span class="nav-icon">$</span>
+                <span class="nav-text">Cost Analysis</span>
+            </li>
+            <li class="nav-item" data-view="security">
+                <span class="nav-icon">&#128274;</span>
+                <span class="nav-text">Security</span>
+            </li>
+            <li class="nav-item" data-view="performance">
+                <span class="nav-icon">&#9889;</span>
+                <span class="nav-text">Performance</span>
+            </li>
+            <li class="nav-divider"></li>
+            <li class="nav-item" data-view="kubernetes">
+                <span class="nav-icon">&#9096;</span>
+                <span class="nav-text">Kubernetes</span>
+            </li>
+            <li class="nav-item" data-view="n8n">
+                <span class="nav-icon">&#8644;</span>
+                <span class="nav-text">n8n Workflows</span>
+            </li>
+            <li class="nav-item" data-view="odoo">
+                <span class="nav-icon">&#9635;</span>
+                <span class="nav-text">Odoo ERP</span>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div class="advisor-score">
+                <span class="score-label">Advisor Score</span>
+                <span class="score-value" id="advisor-score">78</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menu-toggle">&#9776;</button>
+                <div class="breadcrumb">
+                    <span>fin-workspace</span>
+                    <span class="separator">/</span>
+                    <span class="current">DO Advisor</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="header-actions">
+                    <button class="action-btn" id="refresh-btn" title="Refresh">&#8635;</button>
+                    <button class="action-btn" id="notifications-btn" title="Notifications">
+                        &#128276;
+                        <span class="badge" id="notification-count">3</span>
+                    </button>
+                    <button class="action-btn" id="settings-btn" title="Settings">&#9881;</button>
+                </div>
+                <div class="last-updated">
+                    Last updated: <span id="last-updated-time">--</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard View -->
+        <div class="view active" id="view-dashboard">
+            <!-- Summary Cards -->
+            <div class="summary-cards">
+                <div class="card summary-card critical">
+                    <div class="card-icon">&#9888;</div>
+                    <div class="card-content">
+                        <span class="card-value" id="critical-count">2</span>
+                        <span class="card-label">Critical</span>
+                    </div>
+                </div>
+                <div class="card summary-card warning">
+                    <div class="card-icon">&#9888;</div>
+                    <div class="card-content">
+                        <span class="card-value" id="warning-count">5</span>
+                        <span class="card-label">Warnings</span>
+                    </div>
+                </div>
+                <div class="card summary-card healthy">
+                    <div class="card-icon">&#10003;</div>
+                    <div class="card-content">
+                        <span class="card-value" id="healthy-count">23</span>
+                        <span class="card-label">Healthy</span>
+                    </div>
+                </div>
+                <div class="card summary-card score">
+                    <div class="card-icon">&#9733;</div>
+                    <div class="card-content">
+                        <span class="card-value" id="score-value">78</span>
+                        <span class="card-label">Score</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="dashboard-grid">
+                <!-- Recommendations Panel -->
+                <div class="card panel recommendations-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Recommendations</h2>
+                        <a href="#" class="panel-link" data-view="recommendations">View all</a>
+                    </div>
+                    <div class="panel-content">
+                        <div class="recommendations-list" id="recommendations-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Jobs & Automations Panel -->
+                <div class="card panel jobs-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Jobs & Automations</h2>
+                        <a href="#" class="panel-link" data-view="jobs">View all</a>
+                    </div>
+                    <div class="panel-content">
+                        <div class="jobs-tabs">
+                            <button class="tab-btn active" data-tab="running">Running</button>
+                            <button class="tab-btn" data-tab="scheduled">Scheduled</button>
+                            <button class="tab-btn" data-tab="stale">Stale</button>
+                            <button class="tab-btn" data-tab="failed">Failed</button>
+                        </div>
+                        <div class="jobs-list" id="jobs-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resource Usage Chart -->
+                <div class="card panel chart-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Resource Usage</h2>
+                        <select class="time-range" id="resource-time-range">
+                            <option value="1h">Last 1 hour</option>
+                            <option value="24h" selected>Last 24 hours</option>
+                            <option value="7d">Last 7 days</option>
+                            <option value="30d">Last 30 days</option>
+                        </select>
+                    </div>
+                    <div class="panel-content">
+                        <div class="chart-container" id="resource-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Cost Trend Chart -->
+                <div class="card panel chart-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Cost Trend</h2>
+                        <div class="cost-summary">
+                            <span class="current-cost">$<span id="current-month-cost">127.45</span></span>
+                            <span class="cost-change positive" id="cost-change">-12%</span>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="chart-container" id="cost-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Job Success Rate Chart -->
+                <div class="card panel chart-panel wide">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Job Success Rate</h2>
+                        <div class="chart-legend">
+                            <span class="legend-item"><span class="dot success"></span> Success</span>
+                            <span class="legend-item"><span class="dot failed"></span> Failed</span>
+                            <span class="legend-item"><span class="dot skipped"></span> Skipped</span>
+                        </div>
+                    </div>
+                    <div class="panel-content">
+                        <div class="chart-container wide" id="jobs-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Infrastructure Status -->
+                <div class="card panel infra-panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title">Infrastructure</h2>
+                    </div>
+                    <div class="panel-content">
+                        <div class="infra-grid" id="infra-status">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations View -->
+        <div class="view" id="view-recommendations">
+            <div class="view-header">
+                <h1>Recommendations</h1>
+                <div class="view-filters">
+                    <select class="filter-select" id="rec-category-filter">
+                        <option value="all">All Categories</option>
+                        <option value="cost">Cost</option>
+                        <option value="security">Security</option>
+                        <option value="reliability">Reliability</option>
+                        <option value="performance">Performance</option>
+                        <option value="operational">Operational Excellence</option>
+                    </select>
+                    <select class="filter-select" id="rec-impact-filter">
+                        <option value="all">All Impact</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+            </div>
+            <div class="recommendations-full-list" id="recommendations-full-list">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Jobs View -->
+        <div class="view" id="view-jobs">
+            <div class="view-header">
+                <h1>Jobs & Automations</h1>
+                <div class="view-actions">
+                    <button class="btn btn-primary" id="run-job-btn">Run Job</button>
+                    <button class="btn btn-secondary" id="export-jobs-btn">Export</button>
+                </div>
+            </div>
+            <div class="jobs-dashboard">
+                <div class="jobs-summary-cards">
+                    <div class="mini-card">
+                        <span class="mini-value running" id="jobs-running">3</span>
+                        <span class="mini-label">Running</span>
+                    </div>
+                    <div class="mini-card">
+                        <span class="mini-value scheduled" id="jobs-scheduled">12</span>
+                        <span class="mini-label">Scheduled</span>
+                    </div>
+                    <div class="mini-card">
+                        <span class="mini-value stale" id="jobs-stale">2</span>
+                        <span class="mini-label">Stale</span>
+                    </div>
+                    <div class="mini-card">
+                        <span class="mini-value failed" id="jobs-failed">1</span>
+                        <span class="mini-label">Failed (24h)</span>
+                    </div>
+                </div>
+                <div class="jobs-table-container">
+                    <table class="data-table" id="jobs-table">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Name</th>
+                                <th>Source</th>
+                                <th>Schedule</th>
+                                <th>Last Run</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobs-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Config -->
+    <script src="config.js"></script>
+
+    <!-- App Scripts -->
+    <script src="../src/components/recommendations.js"></script>
+    <script src="../src/components/jobs-monitor.js"></script>
+    <script src="../src/components/metrics-charts.js"></script>
+    <script src="../src/app.js"></script>
+</body>
+</html>

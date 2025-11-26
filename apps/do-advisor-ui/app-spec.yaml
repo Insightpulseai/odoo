@@ -1,0 +1,57 @@
+# DigitalOcean App Platform Specification
+# Deploy: doctl apps create --spec app-spec.yaml
+
+name: do-advisor-ui
+
+region: tor  # Toronto (same as fin-workspace)
+
+services:
+  - name: web
+    source_dir: /apps/do-advisor-ui
+    dockerfile_path: Dockerfile
+    http_port: 80
+
+    instance_count: 1
+    instance_size_slug: basic-xxs  # $5/month
+
+    routes:
+      - path: /
+
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 30
+
+    envs:
+      # Agent endpoints (set in App Platform dashboard)
+      - key: DO_ADVISOR_ENDPOINT
+        scope: RUN_TIME
+        value: ${DO_ADVISOR_ENDPOINT}
+      - key: DO_ADVISOR_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+
+      # Self-hosted stack
+      - key: N8N_ENDPOINT
+        scope: RUN_TIME
+        value: ${N8N_ENDPOINT}
+      - key: N8N_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+
+      - key: ODOO_ENDPOINT
+        scope: RUN_TIME
+        value: ${ODOO_ENDPOINT}
+      - key: ODOO_DATABASE
+        scope: RUN_TIME
+        value: odooprod
+
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+  - rule: DEPLOYMENT_LIVE
+
+# Optional: Custom domain
+# domains:
+#   - domain: advisor.insightpulseai.net
+#     type: PRIMARY
