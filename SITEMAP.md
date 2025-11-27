@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: effbb494a5fb85cacde343075100c9d56bdcc769
+> Commit: d8db998c22804122a459b9b511d00cdbb9824e51
 
 ## 📚 Documentation
 
@@ -71,6 +71,7 @@
 | [SAP Concur Parity Feature - Expense Management on Odoo CE](docs/FEATURE_CONCUR_PARITY.md) | docs |
 | [Notion Workspace Parity Feature - Docs, Projects, Tasks on Odoo CE](docs/FEATURE_WORKSPACE_PARITY.md) | docs |
 | [Final Operability Checklist](docs/FINAL_OPERABILITY_CHECKLIST.md) | docs |
+| [Finance PPM Implementation - Clarity/Notion-Style in Odoo CE](docs/FINANCE_PPM_IMPLEMENTATION.md) | docs |
 | [Finance Stack Health Check System](docs/HEALTH_CHECK.md) | docs |
 | [Target Image Documentation](docs/IMAGE_GUIDE.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |

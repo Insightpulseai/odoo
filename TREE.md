@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: effbb494a5fb85cacde343075100c9d56bdcc769
+> Commit: d8db998c22804122a459b9b511d00cdbb9824e51
 
 ```
 .
@@ -268,6 +268,7 @@
 │   ├── FEATURE_CONCUR_PARITY.md
 │   ├── FEATURE_WORKSPACE_PARITY.md
 │   ├── FINAL_OPERABILITY_CHECKLIST.md
+│   ├── FINANCE_PPM_IMPLEMENTATION.md
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
@@ -506,7 +507,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-126 directories, 375 files
+126 directories, 376 files
 ```
 
 ## 📊 Stats
@@ -514,7 +515,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 134 |
-| Files | 396 |
+| Files | 397 |
 | Python files | 86 |
 | XML files | 47 |
-| Markdown files | 110 |
+| Markdown files | 111 |
