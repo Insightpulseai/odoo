@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- LogFrame (Logical Framework) KPI Definitions -->
+        <!-- Hierarchical framework for Finance PPM performance measurement -->
+        <!-- Structure: Goal → Outcomes → Outputs → Activities with KPIs -->
+
+        <!-- ============================================ -->
+        <!-- GOAL LEVEL: Overall Program Objective       -->
+        <!-- ============================================ -->
+
+        <record id="logframe_goal_finance_excellence" model="finance.ppm.logframe">
+            <field name="level">goal</field>
+            <field name="code">GOAL-001</field>
+            <field name="name">Financial Excellence in TBWA Operations</field>
+            <field name="description">Achieve operational excellence in financial management, compliance, and reporting across all TBWA agencies</field>
+            <field name="kpi_measure">Composite Financial Health Score</field>
+            <field name="kpi_target">≥90%</field>
+            <field name="kpi_baseline">75%</field>
+            <field name="measurement_frequency">quarterly</field>
+            <field name="responsible_role">Finance Director</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- OUTCOME LEVEL: Program-Level Results        -->
+        <!-- ============================================ -->
+
+        <record id="logframe_outcome_01_compliance" model="finance.ppm.logframe">
+            <field name="level">outcome</field>
+            <field name="code">OUT-001</field>
+            <field name="name">100% BIR Compliance with Zero Penalties</field>
+            <field name="description">Timely and accurate filing of all BIR forms with no penalties or interest charges</field>
+            <field name="kpi_measure">On-Time Filing Rate</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">92%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_goal_finance_excellence"/>
+        </record>
+
+        <record id="logframe_outcome_02_closing" model="finance.ppm.logframe">
+            <field name="level">outcome</field>
+            <field name="code">OUT-002</field>
+            <field name="name">Month-End Closing within 5 Business Days</field>
+            <field name="description">Complete month-end close process within 5 business days for all 8 agencies</field>
+            <field name="kpi_measure">Average Closing Days</field>
+            <field name="kpi_target">≤5 days</field>
+            <field name="kpi_baseline">8 days</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_goal_finance_excellence"/>
+        </record>
+
+        <record id="logframe_outcome_03_accuracy" model="finance.ppm.logframe">
+            <field name="level">outcome</field>
+            <field name="code">OUT-003</field>
+            <field name="name">Financial Reporting Accuracy ≥98%</field>
+            <field name="description">Maintain high accuracy in financial statements and regulatory reports</field>
+            <field name="kpi_measure">Report Accuracy Rate</field>
+            <field name="kpi_target">≥98%</field>
+            <field name="kpi_baseline">94%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="parent_id" ref="logframe_goal_finance_excellence"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- OUTPUT LEVEL: Deliverables from Activities  -->
+        <!-- ============================================ -->
+
+        <!-- Output 1: BIR Forms Filed -->
+        <record id="logframe_output_01_bir_forms" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-001</field>
+            <field name="name">Monthly BIR Forms Filed On Time</field>
+            <field name="description">1601-C and 0619-E filed by deadlines for all 8 agencies</field>
+            <field name="kpi_measure">Forms Filed / Forms Due</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">95%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="parent_id" ref="logframe_outcome_01_compliance"/>
+        </record>
+
+        <record id="logframe_output_02_quarterly_bir" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-002</field>
+            <field name="name">Quarterly BIR Forms Submitted</field>
+            <field name="description">2550Q, 1601-EQ, 1601-FQ filed within 60-day deadline</field>
+            <field name="kpi_measure">Quarterly Forms Filed / Due</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">100%</field>
+            <field name="measurement_frequency">quarterly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_outcome_01_compliance"/>
+        </record>
+
+        <!-- Output 2: Month-End Tasks Completed -->
+        <record id="logframe_output_03_phase1_tasks" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-003</field>
+            <field name="name">Pre-Closing Tasks Completed (Phase 1)</field>
+            <field name="description">Bank reconciliation, AR/AP review, cutoffs completed by Day 2</field>
+            <field name="kpi_measure">Phase 1 Tasks Completed / Total Phase 1</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">90%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="parent_id" ref="logframe_outcome_02_closing"/>
+        </record>
+
+        <record id="logframe_output_04_phase2_tasks" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-004</field>
+            <field name="name">Journal Entries Posted (Phase 2)</field>
+            <field name="description">Depreciation, accruals, provisions, tax JEs posted by Day 5</field>
+            <field name="kpi_measure">Phase 2 Tasks Completed / Total Phase 2</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">88%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="parent_id" ref="logframe_outcome_02_closing"/>
+        </record>
+
+        <record id="logframe_output_05_phase3_tasks" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-005</field>
+            <field name="name">GL Reconciliations Completed (Phase 3)</field>
+            <field name="description">All GL accounts reconciled and trial balance balanced by Day 8</field>
+            <field name="kpi_measure">Phase 3 Tasks Completed / Total Phase 3</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">85%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_outcome_02_closing"/>
+        </record>
+
+        <record id="logframe_output_06_phase4_tasks" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-006</field>
+            <field name="name">Financial Statements Approved (Phase 4)</field>
+            <field name="description">BS, IS, CF prepared, reviewed, and approved by Day 12</field>
+            <field name="kpi_measure">Phase 4 Tasks Completed / Total Phase 4</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">90%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="parent_id" ref="logframe_outcome_02_closing"/>
+        </record>
+
+        <!-- Output 3: Data Quality -->
+        <record id="logframe_output_07_data_quality" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-007</field>
+            <field name="name">Data Quality Score ≥95%</field>
+            <field name="description">Financial data passes all validation rules (completeness, accuracy, consistency)</field>
+            <field name="kpi_measure">Data Quality Score</field>
+            <field name="kpi_target">≥95%</field>
+            <field name="kpi_baseline">89%</field>
+            <field name="measurement_frequency">weekly</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="parent_id" ref="logframe_outcome_03_accuracy"/>
+        </record>
+
+        <record id="logframe_output_08_reconciliation" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">OP-008</field>
+            <field name="name">Zero Unreconciled Items >30 Days</field>
+            <field name="description">All suspense accounts and unreconciled items cleared within 30 days</field>
+            <field name="kpi_measure">Unreconciled Items >30 Days</field>
+            <field name="kpi_target">0</field>
+            <field name="kpi_baseline">5</field>
+            <field name="measurement_frequency">weekly</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="parent_id" ref="logframe_outcome_03_accuracy"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ACTIVITY LEVEL: Operational Tasks          -->
+        <!-- ============================================ -->
+
+        <!-- Activity Group 1: Tax Computation & Filing -->
+        <record id="logframe_activity_01_tax_computation" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-001</field>
+            <field name="name">Withholding Tax Computation</field>
+            <field name="description">Calculate 1601-C withholding taxes for compensation, professional fees, rentals</field>
+            <field name="kpi_measure">Computation Accuracy Rate</field>
+            <field name="kpi_target">≥99%</field>
+            <field name="kpi_baseline">96%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Assistant</field>
+            <field name="parent_id" ref="logframe_output_01_bir_forms"/>
+        </record>
+
+        <record id="logframe_activity_02_vat_computation" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-002</field>
+            <field name="name">VAT Input/Output Computation</field>
+            <field name="description">Calculate 0619-E VAT from sales and purchases</field>
+            <field name="kpi_measure">VAT Computation Accuracy</field>
+            <field name="kpi_target">≥99%</field>
+            <field name="kpi_baseline">97%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Accounting Staff</field>
+            <field name="parent_id" ref="logframe_output_01_bir_forms"/>
+        </record>
+
+        <record id="logframe_activity_03_bir_filing" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-003</field>
+            <field name="name">Online BIR Form Submission</field>
+            <field name="description">Submit forms via eBIRForms system and obtain confirmation receipts</field>
+            <field name="kpi_measure">Submissions Successful / Attempted</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">98%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Assistant</field>
+            <field name="parent_id" ref="logframe_output_01_bir_forms"/>
+        </record>
+
+        <!-- Activity Group 2: Month-End Reconciliations -->
+        <record id="logframe_activity_04_bank_recon" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-004</field>
+            <field name="name">Bank Reconciliation - All Accounts</field>
+            <field name="description">Reconcile all bank accounts with statements, clear outstanding items</field>
+            <field name="kpi_measure">Bank Accounts Reconciled / Total</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">95%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Assistant</field>
+            <field name="parent_id" ref="logframe_output_03_phase1_tasks"/>
+        </record>
+
+        <record id="logframe_activity_05_ar_review" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-005</field>
+            <field name="name">AR Aging Review</field>
+            <field name="description">Review accounts receivable aging, confirm balances, identify bad debts</field>
+            <field name="kpi_measure">AR Accuracy Rate</field>
+            <field name="kpi_target">≥98%</field>
+            <field name="kpi_baseline">94%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Accounting Staff</field>
+            <field name="parent_id" ref="logframe_output_03_phase1_tasks"/>
+        </record>
+
+        <record id="logframe_activity_06_ap_review" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-006</field>
+            <field name="name">AP Aging Review</field>
+            <field name="description">Review accounts payable aging, confirm balances, accrue unrecorded liabilities</field>
+            <field name="kpi_measure">AP Accuracy Rate</field>
+            <field name="kpi_target">≥98%</field>
+            <field name="kpi_baseline">95%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Accounting Staff</field>
+            <field name="parent_id" ref="logframe_output_03_phase1_tasks"/>
+        </record>
+
+        <record id="logframe_activity_07_gl_recon" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-007</field>
+            <field name="name">GL Account Reconciliations</field>
+            <field name="description">Reconcile all GL accounts (assets, liabilities, equity, revenue, expenses)</field>
+            <field name="kpi_measure">GL Accounts Reconciled / Total</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">92%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="parent_id" ref="logframe_output_05_phase3_tasks"/>
+        </record>
+
+        <!-- Activity Group 3: Financial Statement Preparation -->
+        <record id="logframe_activity_08_bs_prep" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-008</field>
+            <field name="name">Balance Sheet Preparation</field>
+            <field name="description">Prepare consolidated balance sheet for all 8 agencies</field>
+            <field name="kpi_measure">BS Preparation Time (hours)</field>
+            <field name="kpi_target">≤4 hours</field>
+            <field name="kpi_baseline">6 hours</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_output_06_phase4_tasks"/>
+        </record>
+
+        <record id="logframe_activity_09_is_prep" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-009</field>
+            <field name="name">Income Statement Preparation</field>
+            <field name="description">Prepare consolidated income statement with YTD comparatives</field>
+            <field name="kpi_measure">IS Preparation Time (hours)</field>
+            <field name="kpi_target">≤3 hours</field>
+            <field name="kpi_baseline">5 hours</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_output_06_phase4_tasks"/>
+        </record>
+
+        <record id="logframe_activity_10_cf_prep" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-010</field>
+            <field name="name">Cash Flow Statement Preparation</field>
+            <field name="description">Prepare statement of cash flows using indirect method</field>
+            <field name="kpi_measure">CF Preparation Time (hours)</field>
+            <field name="kpi_target">≤3 hours</field>
+            <field name="kpi_baseline">4 hours</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_output_06_phase4_tasks"/>
+        </record>
+
+        <!-- Activity Group 4: Data Validation & Quality Control -->
+        <record id="logframe_activity_11_data_validation" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-011</field>
+            <field name="name">Automated Data Validation Rules</field>
+            <field name="description">Run automated validation checks for completeness, accuracy, consistency</field>
+            <field name="kpi_measure">Validation Rules Passed</field>
+            <field name="kpi_target">≥95%</field>
+            <field name="kpi_baseline">87%</field>
+            <field name="measurement_frequency">daily</field>
+            <field name="responsible_role">Accounting Staff</field>
+            <field name="parent_id" ref="logframe_output_07_data_quality"/>
+        </record>
+
+        <record id="logframe_activity_12_variance_analysis" model="finance.ppm.logframe">
+            <field name="level">activity</field>
+            <field name="code">ACT-012</field>
+            <field name="name">Variance Analysis &amp; Investigation</field>
+            <field name="description">Analyze significant variances (budget vs actual, prior period, etc.)</field>
+            <field name="kpi_measure">Variances Investigated / Total</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">90%</field>
+            <field name="measurement_frequency">monthly</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="parent_id" ref="logframe_output_07_data_quality"/>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- MONITORING & REPORTING KPIs                 -->
+        <!-- ============================================ -->
+
+        <record id="logframe_kpi_dashboard_usage" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">MON-001</field>
+            <field name="name">Finance Dashboard Active Users</field>
+            <field name="description">Number of finance team members actively using PPM dashboards</field>
+            <field name="kpi_measure">Active Users / Total Finance Team</field>
+            <field name="kpi_target">≥90%</field>
+            <field name="kpi_baseline">60%</field>
+            <field name="measurement_frequency">weekly</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="parent_id" ref="logframe_goal_finance_excellence"/>
+        </record>
+
+        <record id="logframe_kpi_automation" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">MON-002</field>
+            <field name="name">Process Automation Rate</field>
+            <field name="description">Percentage of repetitive tasks automated via Odoo + n8n</field>
+            <field name="kpi_measure">Automated Tasks / Total Repetitive Tasks</field>
+            <field name="kpi_target">≥70%</field>
+            <field name="kpi_baseline">30%</field>
+            <field name="measurement_frequency">quarterly</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="parent_id" ref="logframe_goal_finance_excellence"/>
+        </record>
+
+        <record id="logframe_kpi_training" model="finance.ppm.logframe">
+            <field name="level">output</field>
+            <field name="code">MON-003</field>
+            <field name="name">Finance Team Training Completion</field>
+            <field name="description">Completion rate for Odoo CE 18 and BIR compliance training</field>
+            <field name="kpi_measure">Training Completed / Required</field>
+            <field name="kpi_target">100%</field>
+            <field name="kpi_baseline">75%</field>
+            <field name="measurement_frequency">quarterly</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="parent_id" ref="logframe_goal_finance_excellence"/>
+        </record>
+
+    </data>
+</odoo>

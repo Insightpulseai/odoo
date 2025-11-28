@@ -1,0 +1,188 @@
+{
+  "name": "OCR Expense → Odoo Expense Record",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ocr-expense",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "",
+          "rawBody": false
+        }
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "ocr-expense-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.body.confidence }}",
+              "operation": "largerEqual",
+              "value2": 0.6
+            }
+          ]
+        }
+      },
+      "name": "Confidence Check (≥60%)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "resource": "expense",
+        "operation": "create",
+        "name": "={{ 'Expense from ' + $json.body.vendor_name }}",
+        "additionalFields": {
+          "total_amount": "={{ $json.body.amount }}",
+          "date": "={{ $json.body.date }}",
+          "employee_id": "={{ $json.body.employee_id }}",
+          "description": "={{ 'OCR Confidence: ' + $json.body.confidence + '% | Receipt ID: ' + $json.body.receipt_id }}",
+          "product_id": "={{ $json.body.category_id || 1 }}",
+          "unit_amount": "={{ $json.body.amount }}",
+          "quantity": 1
+        }
+      },
+      "name": "Create Odoo Expense",
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [650, 200],
+      "credentials": {
+        "odooApi": {
+          "id": "1",
+          "name": "Odoo Production (erp.insightpulseai.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Store low-confidence OCR results for manual review\nconst lowConfidenceData = {\n  vendor_name: $json.body.vendor_name,\n  amount: $json.body.amount,\n  confidence: $json.body.confidence,\n  receipt_id: $json.body.receipt_id,\n  date: $json.body.date,\n  status: 'needs_review',\n  reason: 'OCR confidence below 60% threshold'\n};\n\nreturn { json: lowConfidenceData };"
+      },
+      "name": "Log Low Confidence",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "resource": "task",
+        "operation": "create",
+        "name": "={{ 'Review OCR: ' + $json.vendor_name + ' ($' + $json.amount + ')' }}",
+        "project_id": "={{ $env.FINANCE_PPM_PROJECT_ID }}",
+        "additionalFields": {
+          "description": "={{ 'Low OCR confidence (' + $json.confidence + '%). Manual review required.\\n\\nReceipt ID: ' + $json.receipt_id }}",
+          "priority": "2",
+          "user_ids": ["={{ $env.FINANCE_SUPERVISOR_USER_ID }}"]
+        }
+      },
+      "name": "Create Review Task",
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [850, 400],
+      "credentials": {
+        "odooApi": {
+          "id": "1",
+          "name": "Odoo Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "#finance-alerts",
+        "text": "={{ '✅ Expense created: ' + $json.name + ' ($' + $json.total_amount + ')' }}",
+        "otherOptions": {
+          "icon_emoji": ":receipt:"
+        }
+      },
+      "name": "Mattermost Notify (Success)",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [850, 200],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1",
+          "name": "Mattermost (ipa.insightpulseai.net)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "#finance-alerts",
+        "text": "={{ '⚠️ Low OCR confidence: ' + $json.vendor_name + ' (' + $json.confidence + '%). Review required.' }}",
+        "otherOptions": {
+          "icon_emoji": ":warning:"
+        }
+      },
+      "name": "Mattermost Notify (Low Confidence)",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [1050, 400],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1",
+          "name": "Mattermost"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'ok', expense_id: $json.id, message: 'Expense created successfully' } }}"
+      },
+      "name": "Response (Success)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'review', message: 'Low confidence - manual review required', task_id: $json.id } }}"
+      },
+      "name": "Response (Review Required)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{ "node": "Confidence Check (≥60%)", "type": "main", "index": 0 }]]
+    },
+    "Confidence Check (≥60%)": {
+      "main": [
+        [{ "node": "Create Odoo Expense", "type": "main", "index": 0 }],
+        [{ "node": "Log Low Confidence", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Odoo Expense": {
+      "main": [[{ "node": "Mattermost Notify (Success)", "type": "main", "index": 0 }]]
+    },
+    "Log Low Confidence": {
+      "main": [[{ "node": "Create Review Task", "type": "main", "index": 0 }]]
+    },
+    "Create Review Task": {
+      "main": [[{ "node": "Mattermost Notify (Low Confidence)", "type": "main", "index": 0 }]]
+    },
+    "Mattermost Notify (Success)": {
+      "main": [[{ "node": "Response (Success)", "type": "main", "index": 0 }]]
+    },
+    "Mattermost Notify (Low Confidence)": {
+      "main": [[{ "node": "Response (Review Required)", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["finance", "ocr", "expenses"],
+  "meta": {
+    "instanceId": "ipa.insightpulseai.net"
+  }
+}

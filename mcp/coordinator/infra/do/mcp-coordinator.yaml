@@ -1,0 +1,95 @@
+---
+# DigitalOcean App Platform Spec - MCP Coordinator
+# Intelligent routing and aggregation for MCP servers
+# Deploy: doctl apps create --spec mcp/coordinator/infra/do/mcp-coordinator.yaml
+
+name: mcp-coordinator
+region: sfo
+
+services:
+  - name: coordinator
+
+    # Source configuration
+    github:
+      repo: jgtolentino/odoo-ce
+      branch: main
+      deploy_on_push: true
+
+    # Build configuration
+    source_dir: /mcp/coordinator
+    dockerfile_path: /mcp/coordinator/Dockerfile
+
+    # Runtime configuration
+    instance_count: 1
+    instance_size_slug: basic-xxs  # 512MB RAM, $5/month
+
+    # HTTP configuration
+    http_port: 8766
+
+    # Health check
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 30
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+
+    # Environment variables
+    envs:
+      # API Configuration
+      - key: COORDINATOR_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: ${COORDINATOR_API_KEY}
+
+      - key: ENVIRONMENT
+        scope: RUN_TIME
+        value: production
+
+      # MCP Target URLs
+      - key: ODOO_PROD_MCP_URL
+        scope: RUN_TIME
+        value: http://odoo-prod-mcp:8767
+
+      - key: ODOO_LAB_MCP_URL
+        scope: RUN_TIME
+        value: http://localhost:8765  # Will be updated when lab MCP is deployed
+
+      # Supabase Configuration
+      - key: SUPABASE_URL
+        scope: RUN_TIME
+        value: https://spdtwktxdalcfigzeqrz.supabase.co
+
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        scope: RUN_TIME
+        type: SECRET
+        value: ${SUPABASE_SERVICE_ROLE_KEY}
+
+      # Optional Redis (commented out for now)
+      # - key: REDIS_URL
+      #   scope: RUN_TIME
+      #   type: SECRET
+      #   value: ${REDIS_URL}
+
+      # Routing Configuration
+      - key: DEFAULT_TARGET
+        scope: RUN_TIME
+        value: odoo_prod
+
+      - key: ENABLE_AGGREGATION
+        scope: RUN_TIME
+        value: "true"
+
+      - key: CACHE_TTL
+        scope: RUN_TIME
+        value: "300"
+
+    # Routes
+    routes:
+      - path: /
+
+# Domain configuration (to be added via dashboard after deployment)
+# domains:
+#   - domain: mcp.insightpulseai.net
+#     type: PRIMARY

@@ -61,6 +61,7 @@ License: AGPL-3
     'data': [
         'security/ir.model.access.csv',
         'data/clarity_data.xml',
+        'data/bir_schedule_2025_2026.xml',
         'views/project_project_views.xml',
         'views/project_phase_views.xml',
         'views/project_milestone_views.xml',

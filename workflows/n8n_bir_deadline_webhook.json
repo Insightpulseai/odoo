@@ -1,0 +1,170 @@
+{
+  "name": "BIR Deadline Alert → Odoo Task + Mattermost",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bir-deadline",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "bir-deadline-webhook"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Map BIR form to responsible employee\nconst birForm = $json.body.bir_form;\nconst employeeMapping = {\n  '1601-C': 'BOM',  // Finance Supervisor\n  '0619-E': 'BOM',\n  '2550Q': 'RIM',   // Senior Finance Manager (VAT)\n  '1702-RT': 'RIM',\n  '1601-EQ': 'RIM',\n  '1601-FQ': 'RIM',\n  '1702Q': 'RIM'\n};\n\n// Get employee code\nconst employeeCode = employeeMapping[birForm] || 'CKVC';  // Default: Finance Director\n\n// Calculate priority based on days until deadline\nconst deadline = new Date($json.body.deadline);\nconst today = new Date();\nconst daysUntil = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));\n\nlet priority = '3';  // Normal\nif (daysUntil <= 3) priority = '1';  // High\nelse if (daysUntil <= 7) priority = '2';  // Medium\n\nreturn {\n  json: {\n    bir_form: birForm,\n    deadline: $json.body.deadline,\n    employee_code: employeeCode,\n    priority: priority,\n    days_until: daysUntil,\n    period: $json.body.period || 'Current Period'\n  }\n};"
+      },
+      "name": "Map Employee + Priority",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "resource": "user",
+        "operation": "search",
+        "filters": {
+          "search": "={{ 'employee_code = ' + $json.employee_code }}"
+        }
+      },
+      "name": "Get Odoo User ID",
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "odooApi": {
+          "id": "1",
+          "name": "Odoo Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "task",
+        "operation": "create",
+        "name": "={{ 'BIR ' + $json.bir_form + ' Filing - ' + $json.period }}",
+        "project_id": "={{ $env.FINANCE_PPM_PROJECT_ID }}",
+        "additionalFields": {
+          "date_deadline": "={{ $json.deadline }}",
+          "priority": "={{ $json.priority }}",
+          "user_ids": ["={{ $json.id }}"],
+          "description": "={{ 'BIR Form: ' + $json.bir_form + '\\nPeriod: ' + $json.period + '\\nDeadline: ' + $json.deadline + '\\nDays Remaining: ' + $json.days_until + '\\n\\nAssigned to: ' + $json.employee_code }}",
+          "tag_ids": [[6, 0, ["={{ $env.BIR_TASK_TAG_ID }}"]]]
+        }
+      },
+      "name": "Create BIR Task",
+      "type": "n8n-nodes-base.odoo",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "credentials": {
+        "odooApi": {
+          "id": "1",
+          "name": "Odoo Production"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.days_until }}",
+              "operation": "smallerEqual",
+              "value2": 7
+            }
+          ]
+        }
+      },
+      "name": "Urgent? (≤7 days)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "channel": "#finance-alerts",
+        "text": "={{ '🚨 URGENT: BIR ' + $json.bir_form + ' due in ' + $json.days_until + ' days!\\n\\nDeadline: ' + $json.deadline + '\\nAssigned: ' + $json.employee_code + '\\nTask ID: ' + $json.id }}",
+        "otherOptions": {
+          "icon_emoji": ":warning:"
+        }
+      },
+      "name": "Mattermost Alert (Urgent)",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [1250, 200],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1",
+          "name": "Mattermost"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "#finance-tasks",
+        "text": "={{ '📋 BIR ' + $json.bir_form + ' task created (due: ' + $json.deadline + ')' }}",
+        "otherOptions": {
+          "icon_emoji": ":clipboard:"
+        }
+      },
+      "name": "Mattermost Notify (Standard)",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [1250, 400],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1",
+          "name": "Mattermost"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'ok', task_id: $json.id, message: 'BIR task created successfully' } }}"
+      },
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{ "node": "Map Employee + Priority", "type": "main", "index": 0 }]]
+    },
+    "Map Employee + Priority": {
+      "main": [[{ "node": "Get Odoo User ID", "type": "main", "index": 0 }]]
+    },
+    "Get Odoo User ID": {
+      "main": [[{ "node": "Create BIR Task", "type": "main", "index": 0 }]]
+    },
+    "Create BIR Task": {
+      "main": [[{ "node": "Urgent? (≤7 days)", "type": "main", "index": 0 }]]
+    },
+    "Urgent? (≤7 days)": {
+      "main": [
+        [{ "node": "Mattermost Alert (Urgent)", "type": "main", "index": 0 }],
+        [{ "node": "Mattermost Notify (Standard)", "type": "main", "index": 0 }]
+      ]
+    },
+    "Mattermost Alert (Urgent)": {
+      "main": [[{ "node": "Response", "type": "main", "index": 0 }]]
+    },
+    "Mattermost Notify (Standard)": {
+      "main": [[{ "node": "Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["finance", "bir", "compliance"],
+  "meta": {
+    "instanceId": "ipa.insightpulseai.net"
+  }
+}

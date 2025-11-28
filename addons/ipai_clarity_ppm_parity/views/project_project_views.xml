@@ -52,7 +52,7 @@
                     <button name="action_view_phases" string="View All Phases" type="object" class="btn-primary"/>
                     <separator/>
                     <field name="task_ids" domain="[('is_phase', '=', True)]" context="{'default_is_phase': True}">
-                        <list>
+                        <tree>
                             <field name="name"/>
                             <field name="phase_type"/>
                             <field name="phase_progress" widget="progressbar"/>
@@ -60,7 +60,7 @@
                             <field name="milestone_count"/>
                             <field name="date_deadline"/>
                             <field name="phase_status" decoration-success="phase_status == 'completed'" decoration-warning="phase_status == 'in_progress'" decoration-danger="phase_status == 'on_hold'"/>
-                        </list>
+                        </tree>
                     </field>
                 </page>
 

@@ -1,6 +1,10 @@
-# Repository Structure
+# InsightPulse Odoo CE – Project Spec
 
-Last updated: 2025-11-23 05:18:19 UTC
+Repo: https://github.com/jgtolentino/odoo-ce
+Owner: InsightPulseAI – ERP Platform Team
+Status: Active
+
+## 1. Overview
 
 This repository contains the **InsightPulse Odoo CE** stack: a fully self-hosted, Odoo Community Edition + OCA–based ERP for expense management and equipment booking.
 
@@ -12,177 +16,50 @@ The system is designed to:
 - Avoid all Odoo Enterprise codepaths, IAP services, and odoo.com upsell links.
 - Serve exclusively under InsightPulse domains (e.g. `erp.insightpulseai.net`).
 
-## 2. Repository Structure
+## 2. PRDs in This Repo
 
-<!-- REPO_TREE_START -->
-```text
-.
-|-- .agent
-|   |-- workflows
-|   `-- rules.md
-|-- .claude
-|   `-- settings.local.json
-|-- .github
-|   `-- workflows
-|-- addons
-|   |-- flutter_receipt_ocr
-|   |-- ipai_cash_advance
-|   |-- ipai_ce_cleaner
-|   |-- ipai_docs
-|   |-- ipai_docs_project
-|   |-- ipai_equipment
-|   |-- ipai_expense
-|   |-- ipai_finance_monthly_closing
-|   |-- ipai_finance_ppm
-|   |-- ipai_ocr_expense
-|   |-- ipai_ppm_monthly_close
-|   `-- tbwa_spectra_integration
-|-- agents
-|   |-- capabilities
-|   |-- knowledge
-|   |-- loops
-|   |-- personas
-|   |-- procedures
-|   |-- AGENT_SKILLS_REGISTRY.yaml
-|   |-- ORCHESTRATOR.md
-|   |-- PRIORITIZED_ROADMAP.md
-|   |-- README.md
-|   `-- odoo_reverse_mapper.yaml
-|-- automations
-|   `-- n8n
-|-- baselines
-|   `-- v0.2.1-quality-baseline-20251121.txt
-|-- bin
-|   |-- README.md
-|   |-- finance-cli.sh
-|   |-- import_bir_schedules.py
-|   `-- postdeploy-finance.sh
-|-- calendar
-|   |-- 2026_FinanceClosing_Master.csv
-|   `-- FinanceClosing_RecurringTasks.ics
-|-- data
-|   `-- month_end_tasks.csv
-|-- deploy
-|   |-- nginx
-|   |-- docker-compose.yml
-|   |-- monitoring_schema.sql
-|   |-- monitoring_views.sql
-|   `-- odoo.conf
-|-- docs
-|   |-- AGENTIC_CLOUD_PRD.md
-|   |-- AGENT_FRAMEWORK_SESSION_REPORT.md
-|   |-- APP_ICONS_README.md
-|   |-- DB_TUNING.md
-|   |-- DEPLOYMENT.md
-|   |-- DEPLOYMENT_GUIDE.md
-|   |-- ENTERPRISE_FEATURE_GAP.yaml
-|   |-- FEATURE_CHEQROOM_PARITY.md
-|   |-- FEATURE_CONCUR_PARITY.md
-|   |-- FEATURE_WORKSPACE_PARITY.md
-|   |-- HEALTH_CHECK.md
-|   |-- MATTERMOST_ALERTING_SETUP.md
-|   |-- N8N_CREDENTIALS_BOOTSTRAP.md
-|   |-- ODOO_ARCHITECT_PERSONA.md
-|   |-- ODOO_CE_DEPLOYMENT_SUMMARY.md
-|   |-- ODOO_MODULE_DEPLOYMENT.md
-|   |-- PRD_ipai_ppm_portfolio.md
-|   |-- PROD_READINESS_GAPS.md
-|   `-- SAAS_PARITY_READINESS.md
-|-- mcp
-|   `-- agentic-cloud.yaml
-|-- notion-n8n-monthly-close
-|   |-- scripts
-|   |-- supabase
-|   |-- workflows
-|   |-- DEPLOYMENT_STATUS.md
-|   |-- N8N_CLI_README.md
-|   `-- WORKFLOW_CONVENTIONS.md
-|-- ocr-adapter
-|   |-- scripts
-|   |-- test_receipts
-|   |-- .gitignore
-|   |-- DEPLOYMENT.md
-|   |-- Dockerfile
-|   |-- README.md
-|   |-- docker-compose.yml
-|   |-- main.py
-|   |-- nginx-site.conf
-|   |-- requirements.txt
-|   `-- test-ocr.sh
-|-- odoo
-|   `-- ipai_finance_closing_seed.json
-|-- scripts
-|   |-- ci
-|   |-- README.md
-|   |-- apply-supabase-schema.sh
-|   |-- backup_odoo.sh
-|   |-- baseline-validation.sh
-|   |-- check_project_tasks.py
-|   |-- convert_csv_to_xml.py
-|   |-- convert_seed_to_xml.py
-|   |-- deploy-odoo-modules.sh
-|   |-- deploy-to-server.sh
-|   |-- deployment-checklist.sh
-|   |-- gen_repo_tree.sh
-|   |-- generate_2026_finance_calendar.py
-|   |-- generate_2026_schedule.py
-|   |-- generate_finance_dashboard.py
-|   |-- healthcheck_odoo.sh
-|   |-- import_month_end_tasks.py
-|   |-- install-git-hooks.sh
-|   |-- install_ipai_finance_ppm.sh
-|   |-- pre_install_snapshot.sh
-|   |-- report_ci_telemetry.sh
-|   |-- run_clarity_ppm_reverse.sh
-|   |-- run_odoo_migrations.sh
-|   |-- validate_m1.sh
-|   `-- verify_backup.sh
-|-- specs
-|   |-- 002-odoo-expense-equipment-mvp.prd.md
-|   |-- 003-finance-ppm.prd.md
-|   |-- INSTALL_SEQUENCE.md
-|   |-- MODULE_SERVICE_MATRIX.md
-|   |-- README.md
-|   `-- tasks.md
-|-- supabase
-|   |-- migrations
-|   `-- seed
-|-- tests
-|   |-- load
-|   `-- regression
-|-- workflows
-|   `-- finance_ppm
-|-- .agentignore
-|-- .gitignore
-|-- CHANGELOG.md
-|-- CI_CD_AUTOMATION_SUMMARY.md
-|-- COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
-|-- DEPLOYMENT_MVP.md
-|-- DEPLOYMENT_STATUS.md
-|-- MATTERMOST_OPEX_INTEGRATION.md
-|-- OCR_PROJECT_COMPLETE.md
-|-- ODOO_OCR_SETUP.md
-|-- README.md
-|-- TAG_LABEL_VOCABULARY.md
-|-- TBWA_IPAI_MODULE_STANDARD.md
-|-- bir_deadlines_2026.csv
-|-- custom_module_inventory.md
-|-- deploy_m1.sh.template
-|-- deployment_readiness_assessment.md
-|-- finance_calendar_2026.csv
-|-- finance_calendar_2026.html
-|-- finance_events_2026.json
-|-- implementation_plan.md
-|-- implementation_plan_agent.md
-|-- n8n_automation_strategy.md
-|-- n8n_opex_cli.sh
-|-- odoo-bin
-|-- odoo_ce_expert_prompt.md
-|-- ph_holidays_2026.csv
-|-- plan.md
-|-- spec.md
-|-- task.md
-|-- tasks.md
-|-- verify_finance_ppm.py
-|-- walkthrough.md
-`-- workflow_template.csv
+- [002 – InsightPulse ERP Expense & Equipment MVP](specs/002-odoo-expense-equipment-mvp.prd.md)
+
+(Additional PRDs will be added under `specs/00x-*.prd.md` as the platform grows.)
+
+## 3. In-Scope (Current Wave)
+
+- Odoo CE 18 deployment (Docker/K8s friendly).
+- OCA module integration for accounting, expense, and stock/maintenance.
+- Custom modules:
+  - `ipai_expense` – PH-specific expense + travel workflows.
+  - `ipai_equipment` – Cheqroom-style equipment booking.
+  - `ipai_ce_cleaner` – removal of Enterprise/IAP UI and odoo.com links.
+- Reverse proxy and SSL termination via Nginx or equivalent.
+- CI guardrails to enforce:
+  - No Enterprise modules present/installed.
+  - No `odoo.com` links or IAP references in templates/code.
+
+## 4. Explicitly Out of Scope (MVP)
+
+- Odoo Enterprise modules or licenses.
+- Any use of Odoo IAP (SMS, email, or credits) in production.
+- Full HR/payroll, manufacturing, or advanced warehouse flows.
+- Multi-company consolidations and group reporting.
+
+## 5. Success Criteria (MVP)
+
+- Expense and travel workflows complete from creation → approval → posting, using CE/OCA only.
+- Equipment booking lifecycle (reserve → checkout → check-in → incident) works end-to-end.
+- UI does **not** display any Enterprise or IAP banners, menus, or upsells.
+- Grep across the repo for `odoo.com` returns **no user-facing** links.
+- `erp.insightpulseai.net` is the canonical entry point for all users.
+- CI/CD fails if Enterprise/IAP traces are introduced.
+
+## 6. Dependencies & Integrations
+
+- PostgreSQL (single instance for MVP).
+- Nginx (or equivalent) reverse proxy and SSL termination.
+- Optional: centralized logging/monitoring stack (to be defined in a later PRD).
+
+## 7. Roadmap Link
+
+Implementation details and milestones are tracked in:
+
+- [plan.md](plan.md) – phases and milestones.
+- [tasks.md](tasks.md) – actionable task checklist.

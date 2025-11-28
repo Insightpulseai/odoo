@@ -1,0 +1,54 @@
+---
+# MCP Server Configuration: Odoo Lab Instance
+# Development and testing environment
+
+name: odoo-lab
+description: Odoo CE 18.0 lab instance for development and OCA testing
+version: "0.1.0"
+
+# Connection settings
+connection:
+  type: http
+  url: http://localhost:8765
+  api_key: ${MCP_LOCAL_API_KEY}
+  timeout: 30
+
+# Capabilities
+capabilities:
+  - skills_registry
+  - rag_search
+  - conversation_memory
+  - commit_embeddings
+  - odoo_introspection
+
+# Odoo instance configuration
+odoo:
+  url: http://odoo:8069
+  database: odoo
+  username: admin
+  password: ${ODOO_ADMIN_PASSWORD}
+  instance_type: lab
+  modules:
+    - base
+    - account
+    - hr
+    - hr_expense
+    - ipai_expense
+
+# Use cases
+use_cases:
+  - development
+  - testing
+  - oca_module_evaluation
+  - migration_testing
+  - skill_development
+
+# Priority
+priority: 2  # Fallback after production
+
+# Tags
+tags:
+  - development
+  - testing
+  - oca
+  - lab

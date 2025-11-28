@@ -1,0 +1,52 @@
+# Dockerfile for Odoo CE v0.10.0 with OCA Modules
+# Date: 2025-11-25
+# Base: Official Odoo 18.0 Community Edition
+# Features: Finance PPM + OCA modules (project, mis-builder, purchase-workflow, reporting-engine, server-ux)
+
+FROM odoo:18.0
+
+# Metadata
+LABEL maintainer="Jake Tolentino <jgtolentino@insightpulseai.net>"
+LABEL version="0.10.0"
+LABEL description="Odoo 18 CE with Finance PPM + OCA modules for TBWA Finance SSC"
+
+# Switch to root for system-level operations
+USER root
+
+# Install Python dependencies required by OCA modules
+# Note: --break-system-packages is safe in Docker containers (PEP 668 compliance)
+RUN pip3 install --no-cache-dir --break-system-packages \
+    xlsxwriter \
+    python-dateutil \
+    openpyxl \
+    pandas \
+    num2words \
+    freezegun \
+    werkzeug
+
+# Create directory structure for OCA modules
+RUN mkdir -p /mnt/extra-addons/oca && chown -R odoo:odoo /mnt/extra-addons/oca
+
+# Copy OCA modules into image (immutable artifact approach)
+COPY --chown=odoo:odoo oca-addons/project /mnt/extra-addons/oca/project
+COPY --chown=odoo:odoo oca-addons/mis-builder /mnt/extra-addons/oca/mis-builder
+COPY --chown=odoo:odoo oca-addons/purchase-workflow /mnt/extra-addons/oca/purchase-workflow
+COPY --chown=odoo:odoo oca-addons/reporting-engine /mnt/extra-addons/oca/reporting-engine
+COPY --chown=odoo:odoo oca-addons/server-ux /mnt/extra-addons/oca/server-ux
+
+# Switch back to odoo user for security
+USER odoo
+
+# Set addons_path to include OCA modules
+# Note: Custom modules will be volume-mounted at /mnt/extra-addons/custom in docker-compose
+ENV ODOO_ADDONS_PATH="/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/extra-addons/oca/project,/mnt/extra-addons/oca/mis-builder,/mnt/extra-addons/oca/purchase-workflow,/mnt/extra-addons/oca/reporting-engine,/mnt/extra-addons/oca/server-ux"
+
+# Health check endpoint
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=60s \
+  CMD curl -f http://localhost:8069/web/health || exit 1
+
+# Expose Odoo port
+EXPOSE 8069
+
+# Default command (can be overridden in docker-compose)
+CMD ["odoo"]

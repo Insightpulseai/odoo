@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ipai_finance_controller_dashboard.raci_sunburst">
+        <!-- RACI Sunburst: Responsibility distribution -->
+        <div class="viz-card viz-half">
+            <h3 class="viz-card-title">RACI Sunburst - Responsibility Distribution</h3>
+            <div id="chart-raci-sunburst" class="chart-container"></div>
+        </div>
+
+        <script type="text/javascript">
+            (function() {
+                function loadRACISunburst(employeeCode) {
+                    fetch('/ipai/finance/controller/api/raci_sunburst', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            method: 'call',
+                            params: { employee_code: employeeCode || 'RIM' }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const sunburstData = data.result;
+                        renderRACISunburst(sunburstData);
+                    })
+                    .catch(error => console.error('Error loading RACI sunburst:', error));
+                }
+
+                function renderRACISunburst(sunburstData) {
+                    const chart = echarts.init(document.getElementById('chart-raci-sunburst'));
+
+                    // RACI color scheme
+                    const raciColors = {
+                        'Responsible': '#5470C6',
+                        'Accountable': '#91CC75',
+                        'Consulted': '#FAC858',
+                        'Informed': '#EE6666',
+                        'Unassigned': '#9E9E9E'
+                    };
+
+                    chart.setOption({
+                        title: {
+                            text: 'RACI Distribution by Cluster & Owner',
+                            left: 'center',
+                            textStyle: { fontSize: 16, fontWeight: 'bold' }
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: function(params) {
+                                return params.name + '<br/>Tasks: ' + params.value;
+                            }
+                        },
+                        series: [
+                            {
+                                type: 'sunburst',
+                                data: [sunburstData],
+                                radius: [0, '90%'],
+                                label: {
+                                    rotate: 'radial',
+                                    fontSize: 11,
+                                    color: '#fff'
+                                },
+                                itemStyle: {
+                                    borderWidth: 2,
+                                    borderColor: '#fff'
+                                },
+                                levels: [
+                                    {},
+                                    {
+                                        r0: '15%',
+                                        r: '35%',
+                                        itemStyle: {
+                                            borderWidth: 2
+                                        },
+                                        label: {
+                                            rotate: 0,
+                                            fontSize: 12,
+                                            fontWeight: 'bold'
+                                        }
+                                    },
+                                    {
+                                        r0: '35%',
+                                        r: '65%',
+                                        label: {
+                                            align: 'right',
+                                            fontSize: 11
+                                        },
+                                        itemStyle: {
+                                            borderWidth: 1
+                                        }
+                                    },
+                                    {
+                                        r0: '65%',
+                                        r: '90%',
+                                        label: {
+                                            position: 'outside',
+                                            padding: 3,
+                                            silent: false,
+                                            fontSize: 10
+                                        },
+                                        itemStyle: {
+                                            borderWidth: 1,
+                                            color: function(params) {
+                                                return raciColors[params.name] || '#5470C6';
+                                            }
+                                        }
+                                    }
+                                ],
+                                emphasis: {
+                                    focus: 'ancestor'
+                                }
+                            }
+                        ]
+                    });
+
+                    window.addEventListener('resize', () => chart.resize());
+                }
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const employeeCode = urlParams.get('employee_code') || 'RIM';
+                    loadRACISunburst(employeeCode);
+                });
+            })();
+        </script>
+    </t>
+</templates>

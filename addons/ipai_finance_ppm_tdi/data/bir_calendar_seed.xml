@@ -1,0 +1,458 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- BIR Filing Calendar Seed Data -->
+        <!-- Philippine Bureau of Internal Revenue (BIR) tax forms for 2025-2026 -->
+        <!-- Filing deadlines and responsible personnel for Finance SSC operations -->
+
+        <!-- ============================================ -->
+        <!-- BIR Form 1601-C: Monthly Withholding Tax    -->
+        <!-- Deadline: 10th of following month           -->
+        <!-- ============================================ -->
+
+        <!-- 2025 Monthly Filings -->
+        <record id="bir_1601c_2025_01" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-01</field>
+            <field name="filing_deadline">2025-02-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for January 2025 - Compensation, professional fees, rentals</field>
+        </record>
+
+        <record id="bir_1601c_2025_02" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-02</field>
+            <field name="filing_deadline">2025-03-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for February 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_03" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-03</field>
+            <field name="filing_deadline">2025-04-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for March 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_04" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-04</field>
+            <field name="filing_deadline">2025-05-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for April 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_05" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-05</field>
+            <field name="filing_deadline">2025-06-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for May 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_06" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-06</field>
+            <field name="filing_deadline">2025-07-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for June 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_07" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-07</field>
+            <field name="filing_deadline">2025-08-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for July 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_08" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-08</field>
+            <field name="filing_deadline">2025-09-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for August 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_09" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-09</field>
+            <field name="filing_deadline">2025-10-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for September 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_10" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-10</field>
+            <field name="filing_deadline">2025-11-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for October 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_11" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-11</field>
+            <field name="filing_deadline">2025-12-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for November 2025</field>
+        </record>
+
+        <record id="bir_1601c_2025_12" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2025-12</field>
+            <field name="filing_deadline">2026-01-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for December 2025</field>
+        </record>
+
+        <!-- 2026 Monthly Filings (First 6 months) -->
+        <record id="bir_1601c_2026_01" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2026-01</field>
+            <field name="filing_deadline">2026-02-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for January 2026</field>
+        </record>
+
+        <record id="bir_1601c_2026_02" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2026-02</field>
+            <field name="filing_deadline">2026-03-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for February 2026</field>
+        </record>
+
+        <record id="bir_1601c_2026_03" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2026-03</field>
+            <field name="filing_deadline">2026-04-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for March 2026</field>
+        </record>
+
+        <record id="bir_1601c_2026_04" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2026-04</field>
+            <field name="filing_deadline">2026-05-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for April 2026</field>
+        </record>
+
+        <record id="bir_1601c_2026_05" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2026-05</field>
+            <field name="filing_deadline">2026-06-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for May 2026</field>
+        </record>
+
+        <record id="bir_1601c_2026_06" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-C</field>
+            <field name="form_name">Monthly Remittance Return of Income Taxes Withheld</field>
+            <field name="period">2026-06</field>
+            <field name="filing_deadline">2026-07-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Withholding tax remittance for June 2026</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- BIR Form 0619-E: Monthly VAT Declaration    -->
+        <!-- Deadline: 20th of following month           -->
+        <!-- ============================================ -->
+
+        <!-- 2025 Monthly VAT -->
+        <record id="bir_0619e_2025_01" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-01</field>
+            <field name="filing_deadline">2025-02-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for January 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_02" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-02</field>
+            <field name="filing_deadline">2025-03-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for February 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_03" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-03</field>
+            <field name="filing_deadline">2025-04-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for March 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_04" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-04</field>
+            <field name="filing_deadline">2025-05-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for April 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_05" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-05</field>
+            <field name="filing_deadline">2025-06-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for May 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_06" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-06</field>
+            <field name="filing_deadline">2025-07-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for June 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_07" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-07</field>
+            <field name="filing_deadline">2025-08-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for July 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_08" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-08</field>
+            <field name="filing_deadline">2025-09-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for August 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_09" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-09</field>
+            <field name="filing_deadline">2025-10-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for September 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_10" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-10</field>
+            <field name="filing_deadline">2025-11-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for October 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_11" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-11</field>
+            <field name="filing_deadline">2025-12-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for November 2025</field>
+        </record>
+
+        <record id="bir_0619e_2025_12" model="finance.ppm.bir.calendar">
+            <field name="form_code">0619-E</field>
+            <field name="form_name">Monthly Value-Added Tax Declaration</field>
+            <field name="period">2025-12</field>
+            <field name="filing_deadline">2026-01-20</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">VAT input/output declaration for December 2025</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- BIR Form 2550Q: Quarterly Income Tax        -->
+        <!-- Deadline: 60 days after quarter end         -->
+        <!-- ============================================ -->
+
+        <!-- 2025 Quarterly -->
+        <record id="bir_2550q_2025_q1" model="finance.ppm.bir.calendar">
+            <field name="form_code">2550Q</field>
+            <field name="form_name">Quarterly Income Tax Return</field>
+            <field name="period">2025-Q1</field>
+            <field name="filing_deadline">2025-05-30</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Quarterly income tax for Q1 2025 (Jan-Mar) - 60 days after quarter-end</field>
+        </record>
+
+        <record id="bir_2550q_2025_q2" model="finance.ppm.bir.calendar">
+            <field name="form_code">2550Q</field>
+            <field name="form_name">Quarterly Income Tax Return</field>
+            <field name="period">2025-Q2</field>
+            <field name="filing_deadline">2025-08-29</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Quarterly income tax for Q2 2025 (Apr-Jun) - 60 days after quarter-end</field>
+        </record>
+
+        <record id="bir_2550q_2025_q3" model="finance.ppm.bir.calendar">
+            <field name="form_code">2550Q</field>
+            <field name="form_name">Quarterly Income Tax Return</field>
+            <field name="period">2025-Q3</field>
+            <field name="filing_deadline">2025-11-29</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Quarterly income tax for Q3 2025 (Jul-Sep) - 60 days after quarter-end</field>
+        </record>
+
+        <record id="bir_2550q_2025_q4" model="finance.ppm.bir.calendar">
+            <field name="form_code">2550Q</field>
+            <field name="form_name">Quarterly Income Tax Return</field>
+            <field name="period">2025-Q4</field>
+            <field name="filing_deadline">2026-02-28</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Quarterly income tax for Q4 2025 (Oct-Dec) - 60 days after quarter-end</field>
+        </record>
+
+        <!-- 2026 Quarterly (First 2 quarters) -->
+        <record id="bir_2550q_2026_q1" model="finance.ppm.bir.calendar">
+            <field name="form_code">2550Q</field>
+            <field name="form_name">Quarterly Income Tax Return</field>
+            <field name="period">2026-Q1</field>
+            <field name="filing_deadline">2026-05-30</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Quarterly income tax for Q1 2026 (Jan-Mar) - 60 days after quarter-end</field>
+        </record>
+
+        <record id="bir_2550q_2026_q2" model="finance.ppm.bir.calendar">
+            <field name="form_code">2550Q</field>
+            <field name="form_name">Quarterly Income Tax Return</field>
+            <field name="period">2026-Q2</field>
+            <field name="filing_deadline">2026-08-29</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Quarterly income tax for Q2 2026 (Apr-Jun) - 60 days after quarter-end</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- BIR Form 1702-RT: Annual Income Tax         -->
+        <!-- Deadline: April 15 of following year        -->
+        <!-- ============================================ -->
+
+        <record id="bir_1702rt_2024" model="finance.ppm.bir.calendar">
+            <field name="form_code">1702-RT</field>
+            <field name="form_name">Annual Income Tax Return for Corporations</field>
+            <field name="period">2024</field>
+            <field name="filing_deadline">2025-04-15</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Annual corporate income tax for fiscal year 2024</field>
+        </record>
+
+        <record id="bir_1702rt_2025" model="finance.ppm.bir.calendar">
+            <field name="form_code">1702-RT</field>
+            <field name="form_name">Annual Income Tax Return for Corporations</field>
+            <field name="period">2025</field>
+            <field name="filing_deadline">2026-04-15</field>
+            <field name="responsible_role">Finance Director</field>
+            <field name="description">Annual corporate income tax for fiscal year 2025</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- BIR Form 1601-EQ: Expanded Withholding Tax  -->
+        <!-- Deadline: 10th of following quarter         -->
+        <!-- ============================================ -->
+
+        <record id="bir_1601eq_2025_q1" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-EQ</field>
+            <field name="form_name">Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)</field>
+            <field name="period">2025-Q1</field>
+            <field name="filing_deadline">2025-04-10</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">Expanded withholding tax for Q1 2025 - Goods/services purchases</field>
+        </record>
+
+        <record id="bir_1601eq_2025_q2" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-EQ</field>
+            <field name="form_name">Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)</field>
+            <field name="period">2025-Q2</field>
+            <field name="filing_deadline">2025-07-10</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">Expanded withholding tax for Q2 2025 - Goods/services purchases</field>
+        </record>
+
+        <record id="bir_1601eq_2025_q3" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-EQ</field>
+            <field name="form_name">Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)</field>
+            <field name="period">2025-Q3</field>
+            <field name="filing_deadline">2025-10-10</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">Expanded withholding tax for Q3 2025 - Goods/services purchases</field>
+        </record>
+
+        <record id="bir_1601eq_2025_q4" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-EQ</field>
+            <field name="form_name">Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)</field>
+            <field name="period">2025-Q4</field>
+            <field name="filing_deadline">2026-01-10</field>
+            <field name="responsible_role">Senior Finance Manager</field>
+            <field name="description">Expanded withholding tax for Q4 2025 - Goods/services purchases</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- BIR Form 1601-FQ: Final Withholding Tax     -->
+        <!-- Deadline: 10th of following quarter         -->
+        <!-- ============================================ -->
+
+        <record id="bir_1601fq_2025_q1" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-FQ</field>
+            <field name="form_name">Quarterly Remittance Return of Final Income Taxes Withheld</field>
+            <field name="period">2025-Q1</field>
+            <field name="filing_deadline">2025-04-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Final withholding tax for Q1 2025 - Interest, dividends, royalties</field>
+        </record>
+
+        <record id="bir_1601fq_2025_q2" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-FQ</field>
+            <field name="form_name">Quarterly Remittance Return of Final Income Taxes Withheld</field>
+            <field name="period">2025-Q2</field>
+            <field name="filing_deadline">2025-07-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Final withholding tax for Q2 2025 - Interest, dividends, royalties</field>
+        </record>
+
+        <record id="bir_1601fq_2025_q3" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-FQ</field>
+            <field name="form_name">Quarterly Remittance Return of Final Income Taxes Withheld</field>
+            <field name="period">2025-Q3</field>
+            <field name="filing_deadline">2025-10-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Final withholding tax for Q3 2025 - Interest, dividends, royalties</field>
+        </record>
+
+        <record id="bir_1601fq_2025_q4" model="finance.ppm.bir.calendar">
+            <field name="form_code">1601-FQ</field>
+            <field name="form_name">Quarterly Remittance Return of Final Income Taxes Withheld</field>
+            <field name="period">2025-Q4</field>
+            <field name="filing_deadline">2026-01-10</field>
+            <field name="responsible_role">Finance Supervisor</field>
+            <field name="description">Final withholding tax for Q4 2025 - Interest, dividends, royalties</field>
+        </record>
+
+    </data>
+</odoo>

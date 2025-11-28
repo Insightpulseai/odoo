@@ -1,0 +1,202 @@
+{
+  "name": "W403_AP_AGING_HEATMAP",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ap-aging-webhook",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - AP Aging Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "ap-aging-heatmap-webhook"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO task_queue (kind, status, payload, created_at) VALUES ('AP_AGING_SNAPSHOT', 'completed', $1::jsonb, NOW()) RETURNING id",
+        "additionalFields": {
+          "queryParams": "={{ JSON.stringify([$json.body]) }}"
+        }
+      },
+      "id": "store-task-queue",
+      "name": "Store in task_queue",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.4,
+      "position": [450, 300],
+      "credentials": {
+        "postgres": {
+          "id": "supabase_production",
+          "name": "Supabase Production DB (xkxyvboeubffxxbebsll)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://mattermost.insightpulseai.net/hooks/ap-aging-alert",
+        "options": {
+          "bodyContentType": "json"
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"📊 **AP Aging Heatmap Ready** (@{{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\\n\\n**Snapshot Date**: {{ $node['Webhook - AP Aging Trigger'].json.body.snapshot_date }}\\n**Total Payables**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_payables).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n**Vendor Count**: {{ $node['Webhook - AP Aging Trigger'].json.body.vendor_count }}\\n**Overdue (90+)**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_overdue_90plus).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n\\n🔗 [View Heatmap](https://odoo.insightpulseai.net/ipai/finance/ap_aging/heatmap?employee_code={{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\",\n  \"username\": \"AP Aging Bot\",\n  \"icon_emoji\": \":chart_with_upwards_trend:\"\n}"
+      },
+      "id": "notify-mattermost",
+      "name": "Notify Mattermost (CKVC)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "overdue-check",
+              "leftValue": "={{ Number($node['Webhook - AP Aging Trigger'].json.body.total_overdue_90plus) }}",
+              "rightValue": 100000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-overdue-threshold",
+      "name": "Check Overdue Threshold",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "url": "https://mattermost.insightpulseai.net/hooks/ap-aging-alert",
+        "options": {
+          "bodyContentType": "json"
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"🚨 **URGENT: High Overdue AP Balance** (@channel)\\n\\n**Employee**: {{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }}\\n**Overdue (90+ days)**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_overdue_90plus).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n\\n⚠️ **Action Required**: Overdue balance exceeds ₱100,000 threshold.\\n\\n🔗 [Review Heatmap](https://odoo.insightpulseai.net/ipai/finance/ap_aging/heatmap?employee_code={{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\",\n  \"username\": \"AP Aging Alert\",\n  \"icon_emoji\": \":rotating_light:\"\n}"
+      },
+      "id": "escalate-overdue",
+      "name": "Escalate Overdue (Finance Director)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1050, 250]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ \n  success: true, \n  snapshot_date: $node['Webhook - AP Aging Trigger'].json.body.snapshot_date,\n  task_queue_id: $node['Store in task_queue'].json[0].id,\n  employee_code: $node['Webhook - AP Aging Trigger'].json.body.employee_code\n}) }}"
+      },
+      "id": "respond-to-odoo",
+      "name": "Respond to Odoo",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1050, 350]
+    }
+  ],
+  "connections": {
+    "Webhook - AP Aging Trigger": {
+      "main": [
+        [
+          {
+            "node": "Store in task_queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store in task_queue": {
+      "main": [
+        [
+          {
+            "node": "Notify Mattermost (CKVC)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Mattermost (CKVC)": {
+      "main": [
+        [
+          {
+            "node": "Check Overdue Threshold",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Overdue Threshold": {
+      "main": [
+        [
+          {
+            "node": "Escalate Overdue (Finance Director)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Odoo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Escalate Overdue (Finance Director)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Odoo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "createdAt": "2025-11-25T00:00:00.000Z",
+      "updatedAt": "2025-11-25T00:00:00.000Z",
+      "id": "finance",
+      "name": "finance"
+    },
+    {
+      "createdAt": "2025-11-25T00:00:00.000Z",
+      "updatedAt": "2025-11-25T00:00:00.000Z",
+      "id": "ap-aging",
+      "name": "ap-aging"
+    },
+    {
+      "createdAt": "2025-11-25T00:00:00.000Z",
+      "updatedAt": "2025-11-25T00:00:00.000Z",
+      "id": "automation",
+      "name": "automation"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-25T00:00:00.000Z",
+  "versionId": "1"
+}

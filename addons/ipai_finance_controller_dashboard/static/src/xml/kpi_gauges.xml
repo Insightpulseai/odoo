@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ipai_finance_controller_dashboard.kpi_gauges">
+        <!-- KPI Gauges: 3 gauge charts + operational velocity combo chart -->
+        <div class="viz-card viz-full">
+            <h3 class="viz-card-title">Finance Controller KPIs - Operational Velocity</h3>
+
+            <!-- KPI Gauge Row -->
+            <div class="kpi-row" id="kpi-gauge-row">
+                <!-- Timeliness Gauge -->
+                <div class="kpi-card">
+                    <div id="gauge-timeliness" class="chart-container-small"></div>
+                </div>
+
+                <!-- Reconciliation Gauge -->
+                <div class="kpi-card">
+                    <div id="gauge-reconciliation" class="chart-container-small"></div>
+                </div>
+
+                <!-- Filing Rate Gauge -->
+                <div class="kpi-card">
+                    <div id="gauge-filing" class="chart-container-small"></div>
+                </div>
+            </div>
+
+            <!-- Operational Velocity Combo Chart -->
+            <div id="chart-operational-velocity" class="chart-container"></div>
+        </div>
+
+        <script type="text/javascript">
+            (function() {
+                // Fetch KPI data via AJAX
+                function loadKPIGauges(employeeCode) {
+                    fetch('/ipai/finance/controller/api/kpi_gauges', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            method: 'call',
+                            params: {
+                                employee_code: employeeCode || 'RIM'
+                            }
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        const kpiData = data.result;
+                        renderGauges(kpiData);
+                        renderOperationalVelocity(kpiData);
+                    })
+                    .catch(error => console.error('Error loading KPI data:', error));
+                }
+
+                function renderGauges(kpiData) {
+                    // Gauge 1: Timeliness (% on time)
+                    const gaugeTimeliness = echarts.init(document.getElementById('gauge-timeliness'));
+                    gaugeTimeliness.setOption({
+                        series: [{
+                            type: 'gauge',
+                            startAngle: 180,
+                            endAngle: 0,
+                            min: 0,
+                            max: 100,
+                            splitNumber: 10,
+                            axisLine: {
+                                lineStyle: {
+                                    width: 20,
+                                    color: [
+                                        [0.7, '#FF6E76'],
+                                        [0.85, '#FDDD60'],
+                                        [1, '#58D9F9']
+                                    ]
+                                }
+                            },
+                            pointer: {
+                                itemStyle: { color: 'auto' }
+                            },
+                            axisTick: { distance: -20, length: 5 },
+                            splitLine: { distance: -25, length: 15 },
+                            axisLabel: { color: 'auto', distance: 30, fontSize: 12 },
+                            detail: {
+                                valueAnimation: true,
+                                formatter: '{value}%',
+                                color: 'auto',
+                                fontSize: 24,
+                                offsetCenter: [0, '70%']
+                            },
+                            title: {
+                                fontSize: 14,
+                                offsetCenter: [0, '90%']
+                            },
+                            data: [{
+                                value: kpiData.timeliness,
+                                name: '% Tasks On Time'
+                            }]
+                        }]
+                    });
+
+                    // Gauge 2: Reconciliation (% reconciled)
+                    const gaugeReconciliation = echarts.init(document.getElementById('gauge-reconciliation'));
+                    gaugeReconciliation.setOption({
+                        series: [{
+                            type: 'gauge',
+                            startAngle: 180,
+                            endAngle: 0,
+                            min: 0,
+                            max: 100,
+                            splitNumber: 10,
+                            axisLine: {
+                                lineStyle: {
+                                    width: 20,
+                                    color: [
+                                        [0.7, '#FF6E76'],
+                                        [0.85, '#FDDD60'],
+                                        [1, '#7CFFB2']
+                                    ]
+                                }
+                            },
+                            pointer: { itemStyle: { color: 'auto' } },
+                            axisTick: { distance: -20, length: 5 },
+                            splitLine: { distance: -25, length: 15 },
+                            axisLabel: { color: 'auto', distance: 30, fontSize: 12 },
+                            detail: {
+                                valueAnimation: true,
+                                formatter: '{value}%',
+                                color: 'auto',
+                                fontSize: 24,
+                                offsetCenter: [0, '70%']
+                            },
+                            title: {
+                                fontSize: 14,
+                                offsetCenter: [0, '90%']
+                            },
+                            data: [{
+                                value: kpiData.reconciliation,
+                                name: '% Reconciled'
+                            }]
+                        }]
+                    });
+
+                    // Gauge 3: BIR Filing Rate (% filed before deadline)
+                    const gaugeFiling = echarts.init(document.getElementById('gauge-filing'));
+                    gaugeFiling.setOption({
+                        series: [{
+                            type: 'gauge',
+                            startAngle: 180,
+                            endAngle: 0,
+                            min: 0,
+                            max: 100,
+                            splitNumber: 10,
+                            axisLine: {
+                                lineStyle: {
+                                    width: 20,
+                                    color: [
+                                        [0.7, '#FF6E76'],
+                                        [0.85, '#FDDD60'],
+                                        [1, '#91CC75']
+                                    ]
+                                }
+                            },
+                            pointer: { itemStyle: { color: 'auto' } },
+                            axisTick: { distance: -20, length: 5 },
+                            splitLine: { distance: -25, length: 15 },
+                            axisLabel: { color: 'auto', distance: 30, fontSize: 12 },
+                            detail: {
+                                valueAnimation: true,
+                                formatter: '{value}%',
+                                color: 'auto',
+                                fontSize: 24,
+                                offsetCenter: [0, '70%']
+                            },
+                            title: {
+                                fontSize: 14,
+                                offsetCenter: [0, '90%']
+                            },
+                            data: [{
+                                value: kpiData.filing_rate,
+                                name: '% Filed Before Deadline'
+                            }]
+                        }]
+                    });
+
+                    // Responsive resize
+                    window.addEventListener('resize', () => {
+                        gaugeTimeliness.resize();
+                        gaugeReconciliation.resize();
+                        gaugeFiling.resize();
+                    });
+                }
+
+                function renderOperationalVelocity(kpiData) {
+                    const chartVelocity = echarts.init(document.getElementById('chart-operational-velocity'));
+
+                    const dates = kpiData.daily_completion_pct.map(d => d.date);
+                    const tasksCompleted = kpiData.daily_completion_pct.map(d => d.tasks);
+                    const completionPct = kpiData.daily_completion_pct.map(d => d.completion_pct);
+
+                    chartVelocity.setOption({
+                        title: {
+                            text: 'Operational Velocity (Last 7 Days)',
+                            left: 'center',
+                            textStyle: { fontSize: 16, fontWeight: 'bold' }
+                        },
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: { type: 'cross' }
+                        },
+                        legend: {
+                            data: ['Tasks Completed', 'Closing Adjustments (JEs)', 'Daily Completion %'],
+                            top: 30
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: dates,
+                            axisLabel: {
+                                formatter: function(value) {
+                                    const date = new Date(value);
+                                    return (date.getMonth() + 1) + '/' + date.getDate();
+                                }
+                            }
+                        },
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: 'Count',
+                                position: 'left',
+                                axisLabel: { formatter: '{value}' }
+                            },
+                            {
+                                type: 'value',
+                                name: 'Completion %',
+                                position: 'right',
+                                axisLabel: { formatter: '{value}%' },
+                                min: 0,
+                                max: 100
+                            }
+                        ],
+                        series: [
+                            {
+                                name: 'Tasks Completed',
+                                type: 'bar',
+                                data: tasksCompleted,
+                                itemStyle: { color: '#5470C6' }
+                            },
+                            {
+                                name: 'Closing Adjustments (JEs)',
+                                type: 'bar',
+                                data: [kpiData.closing_adjustments / 7, kpiData.closing_adjustments / 7,
+                                       kpiData.closing_adjustments / 7, kpiData.closing_adjustments / 7,
+                                       kpiData.closing_adjustments / 7, kpiData.closing_adjustments / 7,
+                                       kpiData.closing_adjustments / 7],
+                                itemStyle: { color: '#91CC75' }
+                            },
+                            {
+                                name: 'Daily Completion %',
+                                type: 'line',
+                                yAxisIndex: 1,
+                                data: completionPct,
+                                smooth: true,
+                                itemStyle: { color: '#EE6666' },
+                                lineStyle: { width: 3 }
+                            }
+                        ]
+                    });
+
+                    window.addEventListener('resize', () => chartVelocity.resize());
+                }
+
+                // Auto-load on page ready
+                document.addEventListener('DOMContentLoaded', function() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const employeeCode = urlParams.get('employee_code') || 'RIM';
+                    loadKPIGauges(employeeCode);
+                });
+            })();
+        </script>
+    </t>
+</templates>

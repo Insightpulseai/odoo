@@ -1,0 +1,134 @@
+{
+  "name": "Scout Transaction Sync → Supabase Bronze",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "scout-sync",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "scout-sync-webhook"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract and transform Scout transactions\nconst transactions = $json.body.transactions || [];\nconst employeeCode = $json.body.employee_code;\nconst syncTimestamp = new Date().toISOString();\n\n// Transform each transaction to Bronze layer format\nconst transformedTransactions = transactions.map(txn => ({\n  employee_code: employeeCode,\n  transaction_id: txn.id,\n  date: txn.date,\n  vendor: txn.vendor || 'Unknown',\n  category: txn.category || 'Uncategorized',\n  amount: parseFloat(txn.amount),\n  currency: txn.currency || 'PHP',\n  description: txn.description || '',\n  payment_method: txn.payment_method || 'Unknown',\n  sync_timestamp: syncTimestamp,\n  source: 'scout',\n  data_layer: 'bronze',\n  quality_score: null  // Will be calculated by Silver layer\n}));\n\nreturn transformedTransactions.map(txn => ({ json: txn }));"
+      },
+      "name": "Transform to Bronze Layer",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "scout_transactions_bronze",
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        },
+        "options": {
+          "onConflict": "DO UPDATE"
+        }
+      },
+      "name": "Insert to Supabase Bronze",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase (xkxyvboeubffxxbebsll)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "functionCode": "// Aggregate sync results\nconst items = $input.all();\nconst successCount = items.filter(i => i.json.status === 'success' || i.json.id).length;\nconst failCount = items.length - successCount;\n\nreturn {\n  json: {\n    employee_code: items[0].json.employee_code,\n    total_transactions: items.length,\n    successful: successCount,\n    failed: failCount,\n    sync_timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": "scout_etl_sync_log",
+        "columns": {
+          "mappingMode": "autoMapInputData"
+        }
+      },
+      "name": "Log Sync to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1050, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "1",
+          "name": "Supabase"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "#finance-data",
+        "text": "={{ '📊 Scout sync completed\\n\\nEmployee: ' + $json.employee_code + '\\nTransactions: ' + $json.total_transactions + '\\n✅ Success: ' + $json.successful + '\\n❌ Failed: ' + $json.failed }}",
+        "otherOptions": {
+          "icon_emoji": ":bar_chart:"
+        }
+      },
+      "name": "Mattermost Notify",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [1250, 300],
+      "credentials": {
+        "mattermostApi": {
+          "id": "1",
+          "name": "Mattermost"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'ok', synced: $json.successful, failed: $json.failed, message: 'Scout transactions synced to Bronze layer' } }}"
+      },
+      "name": "Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1450, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{ "node": "Transform to Bronze Layer", "type": "main", "index": 0 }]]
+    },
+    "Transform to Bronze Layer": {
+      "main": [[{ "node": "Insert to Supabase Bronze", "type": "main", "index": 0 }]]
+    },
+    "Insert to Supabase Bronze": {
+      "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]]
+    },
+    "Aggregate Results": {
+      "main": [[{ "node": "Log Sync to Supabase", "type": "main", "index": 0 }]]
+    },
+    "Log Sync to Supabase": {
+      "main": [[{ "node": "Mattermost Notify", "type": "main", "index": 0 }]]
+    },
+    "Mattermost Notify": {
+      "main": [[{ "node": "Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["finance", "scout", "etl", "bronze"],
+  "meta": {
+    "instanceId": "ipa.insightpulseai.net"
+  }
+}

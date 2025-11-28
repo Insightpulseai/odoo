@@ -121,3 +121,14 @@ workflows:
     integrations: ["Odoo", "Mattermost"]
     critical: false
     envs: [prod]
+
+  # Odoo System Maintenance & Monitoring (W900-W999)
+  - code: W902_OD_VIEW_HEALTHCHECK
+    id: 902
+    file: workflows/odoo/W902_OD_VIEW_HEALTHCHECK.json
+    name: "odoo_view_healthcheck"
+    description: "Validate Odoo views for invalid field references"
+    trigger: "Cron: Daily 3 AM PHT"
+    integrations: ["Odoo", "Mattermost"]
+    critical: false
+    envs: [dev, prod]

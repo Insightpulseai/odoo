@@ -87,3 +87,4 @@ temp/
 *.sqlite
 # Exception: Claude external memory
 !.claude/project_memory.db
+.claude/settings.local.json
