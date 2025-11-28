@@ -5,4 +5,13 @@
     <menuitem id="menu_finance_directory" name="Directory" parent="menu_finance_ppm_root" action="action_finance_person" sequence="10"/>
     <menuitem id="menu_finance_tasks" name="Monthly Tasks" parent="menu_finance_ppm_root" action="action_finance_task_template" sequence="20"/>
     <menuitem id="menu_finance_calendar" name="Compliance Calendar" parent="menu_finance_ppm_root" action="action_bir_form_schedule" sequence="30"/>
+
+    <!-- Semantic Search Action (Client Action) -->
+    <record id="action_monthly_revenue_search" model="ir.actions.client">
+        <field name="name">Revenue Insights Search</field>
+        <field name="tag">ipai_finance_ppm.monthly_revenue_search</field>
+        <field name="target">current</field>
+    </record>
+
+    <menuitem id="menu_revenue_search" name="Revenue Insights" parent="menu_finance_ppm_root" action="action_monthly_revenue_search" sequence="5"/>
 </odoo>
