@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6c572eef8cfd39043f9169a3e3c64f6876e1e7a3
+> Commit: 92858d71f9c180e32ec6ab50a249f8407dd65d96
 
 ```
 .
@@ -272,6 +272,33 @@
 │   ├── monitoring_views.sql
 │   ├── odoo-auto-heal.service
 │   └── odoo.conf
+├── dev-docker
+│   ├── config
+│   │   └── odoo.conf
+│   ├── ipai_finance_ppm
+│   │   ├── data
+│   │   │   └── finance_ppm_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── finance_canvas.py
+│   │   │   └── finance_ppm_task.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── description
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_finance_canvas.py
+│   │   ├── views
+│   │   │   ├── finance_canvas_views.xml
+│   │   │   └── finance_ppm_task_views.xml
+│   │   ├── README.rst
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── .env.example
+│   ├── Dockerfile
+│   ├── README.md
+│   └── docker-compose.yml
 ├── docs
 │   ├── deployment
 │   │   ├── OCA_CI_GUARDIAN.md
@@ -529,15 +556,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-131 directories, 393 files
+141 directories, 410 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 139 |
-| Files | 414 |
-| Python files | 94 |
-| XML files | 49 |
-| Markdown files | 115 |
+| Directories | 149 |
+| Files | 432 |
+| Python files | 101 |
+| XML files | 52 |
+| Markdown files | 116 |

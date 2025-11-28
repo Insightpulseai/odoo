@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6c572eef8cfd39043f9169a3e3c64f6876e1e7a3
+> Commit: 92858d71f9c180e32ec6ab50a249f8407dd65d96
 
 ## 📚 Documentation
 
@@ -61,6 +61,7 @@
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
 | [Deployment Guide](deploy/README.md) | deploy |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
+| [Odoo 18 CE Docker Development Environment](dev-docker/README.md) | dev-docker |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
 | [Agent Skills Framework - Session Report](docs/AGENT_FRAMEWORK_SESSION_REPORT.md) | docs |
@@ -137,6 +138,7 @@
 | [ipai_finance_ppm_dashboard](./addons/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ | Fixes KeyError: website in portal.frontend_layout template |
 | [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ | Automated monthly financial close scheduling with PPM and Notion workspace parity |
+| [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 
 ## 🔧 Configuration Files
 
