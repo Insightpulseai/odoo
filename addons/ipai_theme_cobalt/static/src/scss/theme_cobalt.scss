@@ -1,0 +1,16 @@
+.o_web_client {
+  --ipai-primary: #0f172a;
+  --ipai-accent: #38bdf8;
+  --ipai-bg: #020617;
+
+  background-color: var(--ipai-bg);
+}
+
+.o_main_navbar {
+  background-color: var(--ipai-primary);
+}
+
+.btn-primary {
+  background-color: var(--ipai-accent);
+  border-color: var(--ipai-accent);
+}

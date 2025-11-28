@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Replace footer branding -->
+    <template id="ipai_portal_footer" inherit_id="portal.frontend_layout">
+        <xpath expr="//footer//span[contains(text(),'Odoo')]" position="replace">
+            <span>Powered by InsightPulse AI</span>
+        </xpath>
+    </template>
+</odoo>

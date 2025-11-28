@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Window title -->
+    <template id="ipai_webclient_title" inherit_id="web.webclient_bootstrap">
+        <xpath expr="//title" position="replace">
+            <title>InsightPulse ERP</title>
+        </xpath>
+    </template>
+
+    <!-- Optional: favicon / logo debranding -->
+    <template id="ipai_web_layout" inherit_id="web.layout">
+        <xpath expr="//link[@rel='shortcut icon']" position="replace">
+            <link rel="shortcut icon" href="/ipai_ce_branding/static/img/favicon.ico"/>
+        </xpath>
+    </template>
+</odoo>

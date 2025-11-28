@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ipai_branding_title" model="ir.config_parameter">
+        <field name="key">web.base.title</field>
+        <field name="value">InsightPulse ERP</field>
+    </record>
+</odoo>
