@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9d8646b1ab3e8301ad43d1e41ee66dfcefdf21be
+> Commit: 319ef995674c71b683fe92c23fb38242a8fa8371
 
 ```
 .
@@ -134,6 +134,7 @@
 │   │   ├── models
 │   │   │   ├── __init__.py
 │   │   │   ├── bir_schedule.py
+│   │   │   ├── finance_bir_deadline.py
 │   │   │   ├── finance_person.py
 │   │   │   ├── finance_ppm.py
 │   │   │   ├── finance_task.py
@@ -148,6 +149,7 @@
 │   │   │   └── src
 │   │   ├── views
 │   │   │   ├── bir_schedule_views.xml
+│   │   │   ├── finance_bir_deadline_views.xml
 │   │   │   ├── finance_person_views.xml
 │   │   │   ├── finance_ppm_views.xml
 │   │   │   ├── finance_task_views.xml
@@ -613,7 +615,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-163 directories, 445 files
+163 directories, 447 files
 ```
 
 ## 📊 Stats
@@ -621,7 +623,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 176 |
-| Files | 483 |
-| Python files | 107 |
-| XML files | 53 |
+| Files | 485 |
+| Python files | 108 |
+| XML files | 54 |
 | Markdown files | 120 |
