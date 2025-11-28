@@ -1,0 +1,138 @@
+// =============================================================================
+// TBWA DESIGN TOKENS - Primary Variables
+// =============================================================================
+// This file defines the core "Design Tokens" for the TBWA brand.
+// These variables are injected into Odoo's `web._assets_primary_variables`
+// bundle, which means they are processed BEFORE the main Odoo styles.
+//
+// By overriding these variables, the entire Odoo backend will adopt
+// your brand colors, typography, and spacing automatically.
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// BRAND COLORS (The Palette)
+// -----------------------------------------------------------------------------
+// TBWA typically uses a bold, high-contrast palette.
+// Primary: Black/White for structure
+// Accent: Bold Red and Yellow for highlights
+
+$o-brand-odoo: #1A1A1A !default;          // Main brand color (replaces Odoo Purple)
+$o-brand-primary: #E60012 !default;        // Primary accent (TBWA Red)
+$o-brand-secondary: #FFD100 !default;      // Secondary accent (TBWA Yellow)
+
+// Light mode base colors
+$o-brand-lightsecondary: lighten($o-brand-secondary, 35%) !default;
+
+// -----------------------------------------------------------------------------
+// INTERFACE COLORS (The Structure)
+// -----------------------------------------------------------------------------
+// These control the main app shell: navbar, sidebar, backgrounds.
+
+// Main background color for the application content area
+$o-webclient-background-color: #F5F5F5 !default;  // Warm gray, not pure white
+
+// Navbar (Top Bar) - The brand anchor
+$o-navbar-background-color: #1A1A1A !default;     // Deep black
+$o-navbar-text-color: #FFFFFF !default;           // Pure white text
+$o-navbar-badge-bg: $o-brand-primary !default;    // Red badges pop
+
+// Sidebar (Left Menu) - Navigation
+$o-horizontal-padding: 16px !default;
+$o-menu-bg: #2D2D2D !default;                     // Slightly lighter black for depth
+$o-menu-text-color: #E0E0E0 !default;             // Off-white for readability
+$o-menu-item-hover-bg: #3A3A3A !default;          // Hover state
+$o-menu-item-active-bg: $o-brand-primary !default; // Active item uses accent
+
+// -----------------------------------------------------------------------------
+// TYPOGRAPHY (The Voice)
+// -----------------------------------------------------------------------------
+// Modern, clean sans-serif stack. Inter is highly recommended for UI.
+// Fallback to system fonts for performance.
+
+$o-font-family-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                           Roboto, 'Helvetica Neue', Arial, sans-serif !default;
+$o-font-family-monospace: 'JetBrains Mono', 'SF Mono', 'Fira Code',
+                          Menlo, Monaco, Consolas, monospace !default;
+
+// Base font size and weight
+$o-font-size-base: 14px !default;
+$o-font-weight-normal: 400 !default;
+$o-font-weight-bold: 600 !default;
+
+// Line height for readability
+$o-line-height-base: 1.5 !default;
+
+// -----------------------------------------------------------------------------
+// BUTTONS & INTERACTIVE ELEMENTS
+// -----------------------------------------------------------------------------
+// Primary buttons use the brand accent (Red)
+// Secondary/Default buttons use a neutral approach
+
+$o-btn-primary-bg: $o-brand-primary !default;
+$o-btn-primary-border: $o-brand-primary !default;
+$o-btn-primary-color: #FFFFFF !default;
+
+$o-btn-secondary-bg: #F0F0F0 !default;
+$o-btn-secondary-border: #D0D0D0 !default;
+$o-btn-secondary-color: #333333 !default;
+
+// Hover states
+$o-btn-primary-hover-bg: darken($o-brand-primary, 10%) !default;
+
+// Border radius (modern = slightly rounded, not pill-shaped)
+$o-btn-border-radius: 6px !default;
+
+// -----------------------------------------------------------------------------
+// CARDS, MODALS & SURFACES
+// -----------------------------------------------------------------------------
+// Clean, elevated surfaces with subtle shadows
+
+$o-card-bg: #FFFFFF !default;
+$o-card-border-radius: 8px !default;
+$o-card-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !default;
+
+$o-modal-backdrop-bg: rgba(0, 0, 0, 0.5) !default;
+
+// -----------------------------------------------------------------------------
+// FORM ELEMENTS
+// -----------------------------------------------------------------------------
+$o-input-border-color: #D0D0D0 !default;
+$o-input-focus-border-color: $o-brand-primary !default;
+$o-input-border-radius: 6px !default;
+
+// -----------------------------------------------------------------------------
+// KANBAN & LIST VIEWS
+// -----------------------------------------------------------------------------
+$o-kanban-record-bg: $o-card-bg !default;
+$o-kanban-record-border: 1px solid #E5E5E5 !default;
+
+$o-list-row-hover-bg: #F9F9F9 !default;
+$o-list-header-bg: #FAFAFA !default;
+
+// -----------------------------------------------------------------------------
+// STATUS COLORS (Semantic)
+// -----------------------------------------------------------------------------
+// Keep these standard for accessibility and user expectation
+
+$o-enterprise-color: $o-brand-primary !default;  // Override enterprise purple
+$o-success: #28A745 !default;
+$o-info: #17A2B8 !default;
+$o-warning: #FFC107 !default;
+$o-danger: #DC3545 !default;
+
+// -----------------------------------------------------------------------------
+// TRANSITIONS (The Feel)
+// -----------------------------------------------------------------------------
+// Smooth, subtle transitions for a polished experience
+
+$o-transition-duration: 0.2s !default;
+$o-transition-timing: ease-in-out !default;
+
+// -----------------------------------------------------------------------------
+// SPACING SCALE (8-point grid)
+// -----------------------------------------------------------------------------
+$o-spacing-xs: 4px !default;
+$o-spacing-sm: 8px !default;
+$o-spacing-md: 16px !default;
+$o-spacing-lg: 24px !default;
+$o-spacing-xl: 32px !default;
