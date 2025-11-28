@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 319ef995674c71b683fe92c23fb38242a8fa8371
+> Commit: 46ef7a80aa00b333cc2849640c5359a9205d5213
 
 ```
 .
@@ -16,11 +16,12 @@
 │   ├── query_memory.py
 │   └── settings.local.json
 ├── .github
-│   └── workflows
-│       ├── auto-sitemap-tree.yml
-│       ├── ci-odoo-ce.yml
-│       ├── ci-odoo-oca.yml
-│       └── health-check.yml
+│   ├── workflows
+│   │   ├── auto-sitemap-tree.yml
+│   │   ├── ci-odoo-ce.yml
+│   │   ├── ci-odoo-oca.yml
+│   │   └── health-check.yml
+│   └── copilot-instructions.md
 ├── addons
 │   ├── flutter_receipt_ocr
 │   │   ├── lib
@@ -57,6 +58,7 @@
 │   │   └── __manifest__.py
 │   ├── ipai_clarity_ppm_parity
 │   │   ├── data
+│   │   │   ├── bir_schedule_2025_2026.xml
 │   │   │   └── clarity_data.xml
 │   │   ├── models
 │   │   │   ├── __init__.py
@@ -105,6 +107,77 @@
 │   │   ├── views
 │   │   │   ├── project_views.xml
 │   │   │   └── task_views.xml
+│   │   ├── README.rst
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_equipment
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── equipment.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── ipai_equipment_menus.xml
+│   │   │   └── ipai_equipment_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_expense
+│   │   ├── data
+│   │   │   └── ipai_expense_categories.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── expense.py
+│   │   ├── security
+│   │   │   ├── ipai_expense_security.xml
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── ipai_expense_menus.xml
+│   │   │   └── ipai_expense_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_finance_ap_aging
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── main.py
+│   │   ├── data
+│   │   │   └── ap_aging_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── account_move_line.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_ap_aging.py
+│   │   ├── views
+│   │   │   ├── ap_aging_menu.xml
+│   │   │   └── ap_aging_views.xml
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── README.rst
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_finance_controller_dashboard
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── main.py
+│   │   ├── data
+│   │   │   └── controller_dashboard_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── finance_controller_kpi.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_controller_kpi.py
+│   │   ├── views
+│   │   │   ├── controller_dashboard_menu.xml
+│   │   │   └── controller_dashboard_views.xml
+│   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
@@ -170,13 +243,62 @@
 │   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_finance_ppm_tdi
+│   │   ├── data
+│   │   │   ├── bir_calendar_seed.xml
+│   │   │   ├── finance_team_seed.xml
+│   │   │   ├── logframe_kpi_seed.xml
+│   │   │   ├── month_end_tasks_notion_import.xml
+│   │   │   ├── month_end_tasks_seed.xml
+│   │   │   └── ph_holiday_calendar_seed.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── finance_ppm_bir_calendar.py
+│   │   │   ├── finance_ppm_logframe.py
+│   │   │   ├── finance_ppm_ph_holiday.py
+│   │   │   └── finance_ppm_tdi_audit.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security_groups.xml
+│   │   ├── static
+│   │   │   └── description
+│   │   ├── views
+│   │   │   ├── finance_ppm_tdi_audit_views.xml
+│   │   │   └── menu.xml
+│   │   ├── wizard
+│   │   │   ├── __init__.py
+│   │   │   ├── finance_ppm_import_wizard.py
+│   │   │   └── finance_ppm_import_wizard_views.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── __manifest__.py
+│   │   └── hooks.py
+│   ├── ipai_ocr_expense
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── hr_expense_ocr.py
+│   │   │   ├── ocr_expense_log.py
+│   │   │   └── res_config_settings.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── ipai_ocr_expense_views.xml
+│   │   │   ├── ipai_ocr_settings_views.xml
+│   │   │   └── ocr_expense_log_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_portal_fix
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── portal.py
 │   │   ├── models
 │   │   │   ├── __init__.py
 │   │   │   ├── ir_http.py
 │   │   │   └── ir_qweb.py
 │   │   ├── views
 │   │   │   └── portal_templates.xml
+│   │   ├── DEPLOYMENT_VERIFICATION.md
+│   │   ├── README.md
 │   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
@@ -295,11 +417,28 @@
 │   ├── 2026_FinanceClosing_Master.csv
 │   └── FinanceClosing_RecurringTasks.ics
 ├── data
-│   └── month_end_tasks.csv
+│   ├── bir_calendar_2026.json
+│   ├── employee_directory.json
+│   ├── month_end_tasks.csv
+│   ├── notion_tasks_deduplicated.json
+│   ├── notion_tasks_parsed.json
+│   └── notion_tasks_with_logframe.json
 ├── deploy
+│   ├── k8s
+│   │   ├── namespace.yaml
+│   │   ├── odoo-configmap.yaml
+│   │   ├── odoo-deployment.yaml
+│   │   ├── odoo-ingress.yaml
+│   │   ├── odoo-secrets.yaml
+│   │   ├── odoo-service.yaml
+│   │   ├── postgres-service.yaml
+│   │   └── postgres-statefulset.yaml
 │   ├── nginx
 │   │   └── erp.insightpulseai.net.conf
+│   ├── .env.production.template
 │   ├── README.md
+│   ├── docker-compose.prod.v0.10.0.yml
+│   ├── docker-compose.prod.v0.9.1.yml
 │   ├── docker-compose.prod.yml
 │   ├── docker-compose.yml
 │   ├── keycloak-integration.yml
@@ -348,37 +487,61 @@
 │   │   └── architecture
 │   │       ├── README.md
 │   │       └── manifest.json
+│   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
+│   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
 │   ├── DEPLOYMENT.md
 │   ├── DEPLOYMENT_GUIDE.md
+│   ├── DEPLOYMENT_NAMING_MATRIX.md
+│   ├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
+│   ├── DOCKERFILE_COMPARISON.md
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
+│   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
 │   ├── ENTERPRISE_FEATURE_GAP.yaml
+│   ├── EXECUTIVE_SUMMARY.md
 │   ├── FEATURE_CHEQROOM_PARITY.md
 │   ├── FEATURE_CONCUR_PARITY.md
 │   ├── FEATURE_WORKSPACE_PARITY.md
+│   ├── FINAL_DEPLOYMENT_GUIDE.md
 │   ├── FINAL_OPERABILITY_CHECKLIST.md
 │   ├── FINANCE_PPM_IMPLEMENTATION.md
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
+│   ├── IMPLEMENTATION_SUMMARY.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
 │   ├── MATTERMOST_ALERTING_SETUP.md
 │   ├── MATTERMOST_CHATOPS_DEPLOYMENT.md
+│   ├── MCP_IMPLEMENTATION_STATUS.md
+│   ├── MIXED_CONTENT_FIX.md
+│   ├── MVP_GO_LIVE_CHECKLIST.md
 │   ├── N8N_CREDENTIALS_BOOTSTRAP.md
 │   ├── OCA_MIGRATION.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_ARCHITECT_PERSONA.md
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
+│   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
+│   ├── ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
 │   ├── ODOO_MODULE_DEPLOYMENT.md
+│   ├── OFFLINE_TARBALL_DEPLOYMENT.md
 │   ├── PRD_ipai_ppm_portfolio.md
 │   ├── PROD_READINESS_GAPS.md
+│   ├── QUICK_REFERENCE_SSO_SETUP.md
+│   ├── README.md
+│   ├── README_MCP_STACK.md
 │   ├── SAAS_PARITY_READINESS.md
-│   └── TESTING_ODOO_18.md
+│   ├── SECRETS_NAMING_AND_STORAGE.md
+│   ├── SEMANTIC_VERSIONING_STRATEGY.md
+│   ├── SSO_VALIDATION_CHECKLIST.md
+│   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
+│   ├── TESTING_ODOO_18.md
+│   ├── WBS_LOGFRAME_MAPPING.md
+│   └── v0.9.1_DEPLOYMENT_GUIDE.md
 ├── docs-assistant
 │   ├── api
 │   │   ├── Dockerfile
@@ -410,9 +573,34 @@
 │   ├── server-tools
 │   └── web
 ├── mcp
+│   ├── coordinator
+│   │   ├── app
+│   │   │   ├── __init__.py
+│   │   │   ├── config.py
+│   │   │   ├── main.py
+│   │   │   └── routing.py
+│   │   ├── infra
+│   │   │   └── do
+│   │   ├── DEPLOYMENT.md
+│   │   ├── Dockerfile
+│   │   ├── README.md
+│   │   └── requirements.txt
+│   ├── local
+│   │   ├── app
+│   │   │   ├── __init__.py
+│   │   │   ├── config.py
+│   │   │   ├── database.py
+│   │   │   └── main.py
+│   │   ├── Dockerfile
+│   │   ├── README.md
+│   │   └── requirements.txt
+│   ├── servers
+│   │   ├── odoo-erp.yaml
+│   │   └── odoo-lab.yaml
 │   └── agentic-cloud.yaml
 ├── notion-n8n-monthly-close
 │   ├── scripts
+│   │   ├── deduplicate_closing_tasks.py
 │   │   ├── n8n-sync.sh
 │   │   └── verify_finance_stack.sh
 │   ├── src
@@ -432,7 +620,8 @@
 │   │   │   ├── W001_OD_MNTH_CLOSE_SYNC.json
 │   │   │   ├── W002_OD_BIR_ALERTS.json
 │   │   │   ├── W401_CC_EXPENSE_IMPORT.json
-│   │   │   └── W501_EQ_BOOKING_SYNC.json
+│   │   │   ├── W501_EQ_BOOKING_SYNC.json
+│   │   │   └── W902_OD_VIEW_HEALTHCHECK.json
 │   │   ├── supabase
 │   │   │   └── W101_SB_CLOSE_SNAPSHOT.json
 │   │   ├── ODOO_BIR_PREP.json
@@ -442,8 +631,16 @@
 │   │   ├── W150_FINANCE_HEALTH_CHECK.json
 │   │   └── index.yaml
 │   ├── DEPLOYMENT_STATUS.md
+│   ├── DEPLOYMENT_SUMMARY.md
 │   ├── N8N_CLI_README.md
 │   └── WORKFLOW_CONVENTIONS.md
+├── oca-addons
+│   ├── mis-builder
+│   ├── project
+│   ├── purchase-workflow
+│   ├── reporting-engine
+│   ├── server-ux
+│   └── oca-addons-extra.tar.gz
 ├── ocr-adapter
 │   ├── scripts
 │   │   ├── README.md
@@ -474,39 +671,61 @@
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
+│   ├── build_and_push_version.sh
+│   ├── build_v0.10.0.sh
+│   ├── build_v0.9.1.sh
 │   ├── check_project_tasks.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
 │   ├── deploy-odoo-modules.sh
 │   ├── deploy-to-server.sh
+│   ├── deploy_custom_image.sh
+│   ├── deploy_notion_tasks.sh
+│   ├── deploy_prod.sh
 │   ├── deployment-checklist.sh
 │   ├── enhanced_health_check.sh
 │   ├── erp_config_cli.sh
+│   ├── full_deploy_sanity.sh
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
 │   ├── generate_2026_finance_calendar.py
 │   ├── generate_2026_schedule.py
 │   ├── generate_finance_dashboard.py
+│   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
 │   ├── install_ipai_finance_ppm.sh
+│   ├── install_module_xmlrpc.py
+│   ├── map_logframe.py
 │   ├── odoo_mattermost_integration.py
+│   ├── package_image_tarball.sh
+│   ├── parse_notion_tasks.py
 │   ├── pre_install_snapshot.sh
 │   ├── report_ci_telemetry.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
+│   ├── simple_deploy.sh
+│   ├── smoketest.sh
+│   ├── test_deploy_local.sh
 │   ├── update_diagram_manifest.py
 │   ├── validate_m1.sh
-│   └── verify_backup.sh
+│   ├── verify-https.sh
+│   ├── verify_backup.sh
+│   └── verify_phase3.py
 ├── skills
 │   ├── architecture_diagrams.skill.json
 │   └── superset_mcp.skill.json
 ├── specs
+│   ├── 003-ai-enrichment
+│   │   ├── DEPLOYMENT.md
+│   │   ├── odoo_automation_action.py
+│   │   └── spec.md
 │   ├── 002-odoo-expense-equipment-mvp.prd.md
 │   ├── 003-finance-ppm.prd.md
+│   ├── 003-odoo-custom-image.prd.md
 │   ├── INSTALL_SEQUENCE.md
 │   ├── MODULE_SERVICE_MATRIX.md
 │   ├── README.md
@@ -520,24 +739,37 @@
 ├── tests
 │   ├── load
 │   │   └── odoo_login_and_nav.js
+│   ├── playwright
+│   │   └── ap_aging_print_report.spec.js
 │   └── regression
 │       ├── __init__.py
 │       └── test_finance_ppm_install.py
 ├── workflows
-│   └── finance_ppm
-│       ├── DEPLOYMENT.md
-│       ├── DEPLOYMENT_SUMMARY.md
-│       ├── FINAL_DEPLOYMENT_REPORT.md
-│       ├── N8N_IMPORT_CHECKLIST.md
-│       ├── bir_deadline_alert.json
-│       ├── monthly_report.json
-│       ├── task_escalation.json
-│       └── verify_deployment.sh
+│   ├── finance_ppm
+│   │   ├── DEPLOYMENT.md
+│   │   ├── DEPLOYMENT_SUMMARY.md
+│   │   ├── FINAL_DEPLOYMENT_REPORT.md
+│   │   ├── N8N_IMPORT_CHECKLIST.md
+│   │   ├── bir_deadline_alert.json
+│   │   ├── monthly_report.json
+│   │   ├── task_escalation.json
+│   │   └── verify_deployment.sh
+│   ├── odoo
+│   │   └── W403_AP_AGING_HEATMAP.json
+│   ├── SHADOW_ENTERPRISE_STACK.md
+│   ├── WEBHOOK_DEPLOYMENT_GUIDE.md
+│   ├── n8n_bir_deadline_webhook.json
+│   ├── n8n_enrichment_agent.json
+│   ├── n8n_ocr_expense_webhook.json
+│   └── n8n_scout_sync_webhook.json
 ├── .agentignore
 ├── .env.example
+├── .env.production
 ├── .gitignore
 ├── .gitmodules
 ├── .pre-commit-config.yaml
+├── ANALYTICS_ACTIVATION_SEQUENCE.md
+├── AUDIT_FIXES_APPLIED.md
 ├── AUTO_HEALING_SYSTEM_SUMMARY.md
 ├── CHANGELOG.md
 ├── CI_CD_AUTOMATION_SUMMARY.md
@@ -547,8 +779,13 @@
 ├── COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
 ├── DEPLOYMENT_MVP.md
 ├── DEPLOYMENT_STATUS.md
+├── DEPLOYMENT_VALIDATION_REPORT.md
+├── DEPLOYMENT_VERIFICATION.md
+├── DEPLOYMENT_WORKFLOW.md
 ├── Dockerfile
+├── Dockerfile.v0.10.0
 ├── ERP_CONFIGURATION_SUMMARY.md
+├── EXECUTE_NOW.md
 ├── FINANCE_PPM_CE_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_IMPORT_GUIDE.md
@@ -556,6 +793,7 @@
 ├── INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 ├── KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
 ├── MATTERMOST_OPEX_INTEGRATION.md
+├── MCP_QUICK_START.md
 ├── NOVEMBER_2025_CLOSE_TIMELINE.md
 ├── NOVEMBER_2025_PPM_GO_LIVE_SUMMARY.md
 ├── OCR_PROJECT_COMPLETE.md
@@ -565,7 +803,9 @@
 ├── PROJECT_WRAPPER_IMPLEMENTATION.md
 ├── PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md
 ├── README.md
+├── RELEASE_v0.9.0.md
 ├── SITEMAP.md
+├── STRATEGIC_PPM_ANALYTICS_SUMMARY.md
 ├── TAG_LABEL_VOCABULARY.md
 ├── TBWA_IPAI_MODULE_STANDARD.md
 ├── TREE.md
@@ -577,10 +817,13 @@
 ├── deploy_ppm_dashboard.sh
 ├── deploy_ppm_dashboard_direct.sh
 ├── deployment_readiness_assessment.md
+├── docker-compose.mcp-local.yml
+├── docker-compose.prod.yml
 ├── final_verification.sh
 ├── finance_calendar_2026.csv
 ├── finance_calendar_2026.html
 ├── finance_compliance_calendar_template.csv
+├── finance_directory.csv
 ├── finance_directory_template.csv
 ├── finance_events_2026.json
 ├── finance_monthly_tasks_template.csv
@@ -589,6 +832,7 @@
 ├── implementation_plan.md
 ├── implementation_plan_agent.md
 ├── import_finance_data.py
+├── import_finance_directory.py
 ├── import_november_wbs.py
 ├── install_module.py
 ├── install_ppm_module.py
@@ -615,15 +859,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-163 directories, 447 files
+220 directories, 634 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 176 |
-| Files | 485 |
-| Python files | 108 |
-| XML files | 54 |
-| Markdown files | 120 |
+| Directories | 236 |
+| Files | 683 |
+| Python files | 166 |
+| XML files | 88 |
+| Markdown files | 168 |
