@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SEARCH VIEW -->
+    <record id="view_finance_ppm_task_search" model="ir.ui.view">
+        <field name="name">finance.ppm.task.search</field>
+        <field name="model">finance.ppm.task</field>
+        <field name="arch" type="xml">
+            <search string="Search Tasks">
+                <field name="name"/>
+                <field name="role_id"/>
+                <field name="date_deadline"/>
+                <filter string="My Tasks" name="my_tasks" domain="[('role_id.email', '=', uid)]"/>
+                <filter string="Due This Month" name="due_this_month" domain="[('date_deadline', '&gt;=', context_today().strftime('%Y-%m-01')), ('date_deadline', '&lt;', (context_today() + relativedelta(months=1)).strftime('%Y-%m-01'))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Phase" name="group_parent" context="{'group_by': 'parent_id'}"/>
+                    <filter string="Deadline Month" name="group_date" context="{'group_by': 'date_deadline:month'}"/>
+                    <filter string="Assigned Role" name="group_role" context="{'group_by': 'role_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- TREE VIEW -->
+    <record id="view_finance_ppm_task_tree" model="ir.ui.view">
+        <field name="name">finance.ppm.task.tree</field>
+        <field name="model">finance.ppm.task</field>
+        <field name="arch" type="xml">
+            <tree string="Task List" decoration-danger="date_deadline and date_deadline &lt; current_date and state != 'done'" decoration-muted="state == 'done'">
+                <field name="sequence" widget="handle"/>
+                <field name="complete_name" string="Task / Tax Form"/>
+                <field name="date_deadline" string="Deadline" optional="show"/>
+                <field name="role_id" string="Prep"/>
+                <field name="reviewer_id" string="Rev" optional="hide"/>
+                <field name="approver_id" string="Appr" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-warning="state == 'in_progress'" decoration-info="state == 'review'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- FORM VIEW -->
+    <record id="view_finance_ppm_task_form" model="ir.ui.view">
+        <field name="name">finance.ppm.task.form</field>
+        <field name="model">finance.ppm.task</field>
+        <field name="arch" type="xml">
+            <form string="Task Details">
+                <header>
+                    <button name="action_start_task" string="Start" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_review_task" string="Submit for Review" type="object" class="oe_highlight" invisible="state != 'in_progress'"/>
+                    <button name="action_approve_task" string="Submit for Approval" type="object" class="oe_highlight" invisible="state != 'review'"/>
+                    <button name="action_complete_task" string="Mark Done / Filed" type="object" class="oe_highlight" invisible="state != 'approval'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,review,approval,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name"/></h1>
+                        <h3>
+                            <span class="o_form_label">Parent: </span>
+                            <field name="parent_id" options="{'no_create': True}"/>
+                        </h3>
+                    </div>
+                    <group>
+                        <group string="Schedule">
+                            <field name="date_deadline"/>
+                            <field name="deadline_offset" invisible="date_deadline != False"/>
+                        </group>
+                        <group string="Responsibility">
+                            <field name="role_id"/>
+                            <field name="reviewer_id"/>
+                            <field name="approver_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Instructions">
+                            <field name="description"/>
+                        </page>
+                        <page string="Sub-Items">
+                            <field name="child_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="date_deadline"/>
+                                    <field name="role_id"/>
+                                    <field name="state" widget="badge"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_finance_ppm_task" model="ir.actions.act_window">
+        <field name="name">Finance Tasks</field>
+        <field name="res_model">finance.ppm.task</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_group_date': 1}</field>
+    </record>
+
+    <menuitem id="menu_finance_ppm_root" name="Finance PPM" sequence="10"/>
+    <menuitem id="menu_finance_ppm_tasks" name="Tasks &amp; Calendar" parent="menu_finance_ppm_root" action="action_finance_ppm_task" sequence="1"/>
+</odoo>
