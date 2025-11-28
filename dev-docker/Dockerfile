@@ -96,6 +96,61 @@ RUN git clone --depth 1 -b 18.0 https://github.com/OCA/server-tools.git /mnt/ext
 COPY ./ipai_finance_ppm /mnt/extra-addons/custom/ipai_finance_ppm
 
 # ----------------------------------------------------------------------------------------
+# 4.5. DEBRANDING - Remove Odoo.com Upsell & IAP Prompts (The Clean UI)
+# ----------------------------------------------------------------------------------------
+# The standard Odoo CE includes hardcoded links to Odoo.com services in the user menu
+# and various IAP (In-App Purchase) prompts throughout the interface.
+# These `sed` commands patch the source code to remove these annoyances.
+#
+# This approach is cleaner than maintaining a fork - it applies every build.
+# ----------------------------------------------------------------------------------------
+
+# Define the core addons path for easier reference
+ENV ODOO_CORE_ADDONS=/usr/lib/python3/dist-packages/odoo/addons
+
+# A. Remove "My Odoo.com Account" and "Support" from user dropdown menu
+#    These are defined in web/static/src/webclient/user_menu/user_menu_items.js
+RUN find ${ODOO_CORE_ADDONS}/web -name "user_menu_items.js" -exec sed -i \
+    -e '/odoo.com\/my/d' \
+    -e '/documentation/d' \
+    -e '/support/d' \
+    -e '/odoo_account/d' \
+    {} \; 2>/dev/null || true
+
+# B. Remove "Upgrade" / "Enterprise" upsell banners from Settings
+#    Located in base/static/src/js/ and web/static/src/
+RUN find ${ODOO_CORE_ADDONS}/base -name "*.js" -exec sed -i \
+    -e 's/this\.isEnterprise/true/g' \
+    -e '/upgrade/Id' \
+    {} \; 2>/dev/null || true
+
+# C. Remove IAP (In-App Purchase) service prompts from mail module
+#    The mail module often prompts for SMS credits, email validation, etc.
+RUN find ${ODOO_CORE_ADDONS}/mail -name "*.js" -exec sed -i \
+    -e '/iap/Id' \
+    -e '/buy_credits/Id' \
+    {} \; 2>/dev/null || true
+
+# D. Remove "Powered by Odoo" from website footer (if website module is installed)
+RUN find ${ODOO_CORE_ADDONS}/website -name "*.xml" -exec sed -i \
+    -e 's/Powered by <a[^>]*>Odoo<\/a>//g' \
+    {} \; 2>/dev/null || true
+
+# E. Remove database expiration warnings and enterprise upsell in web client
+RUN find ${ODOO_CORE_ADDONS}/web -name "*.xml" -name "*.js" -exec sed -i \
+    -e '/database_expiration/d' \
+    -e '/enterprise.*upgrade/Id' \
+    {} \; 2>/dev/null || true
+
+# F. Patch Python files to disable enterprise checks (optional but thorough)
+RUN find ${ODOO_CORE_ADDONS} -name "*.py" -path "*/controllers/*" -exec sed -i \
+    -e 's/if not has_enterprise/if False/g' \
+    {} \; 2>/dev/null || true
+
+# Note: The '|| true' ensures the build doesn't fail if a file isn't found
+# (e.g., website module not present in minimal install)
+
+# ----------------------------------------------------------------------------------------
 # 5. CREATE LOG DIRECTORY
 # ----------------------------------------------------------------------------------------
 RUN mkdir -p /var/log/odoo && chown -R odoo:odoo /var/log/odoo
