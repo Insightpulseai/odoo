@@ -5,7 +5,7 @@
         <field name="name">ppm.close.task.tree</field>
         <field name="model">ppm.close.task</field>
         <field name="arch" type="xml">
-            <tree string="Closing Tasks">
+            <list string="Closing Tasks">
                 <field name="monthly_close_id"/>
                 <field name="name"/>
                 <field name="agency_code"/>
@@ -16,7 +16,7 @@
                 <field name="review_due"/>
                 <field name="approval_due"/>
                 <field name="state"/>
-            </tree>
+            </list>
         </field>
     </record>
 

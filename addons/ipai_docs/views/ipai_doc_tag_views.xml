@@ -3,10 +3,10 @@
         <field name="name">ipai.doc.tag.tree</field>
         <field name="model">ipai.doc.tag</field>
         <field name="arch" type="xml">
-            <tree string="Document Tags">
+            <list string="Document Tags">
                 <field name="name"/>
                 <field name="color"/>
-            </tree>
+            </list>
         </field>
     </record>
 
