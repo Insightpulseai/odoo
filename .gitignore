@@ -82,5 +82,6 @@ temp/
 
 # Database
 *.sql
+!supabase/migrations/*.sql
 *.db
 *.sqlite

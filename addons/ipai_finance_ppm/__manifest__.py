@@ -22,6 +22,13 @@
         "views/menus.xml",
         "data/bir_schedule_seed.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ipai_finance_ppm/static/src/js/semantic-search/api.js",
+            "ipai_finance_ppm/static/src/js/semantic-search/MonthlyRevenueSearch.js",
+            "ipai_finance_ppm/static/src/xml/monthly_revenue_search.xml",
+        ],
+    },
     "installable": True,
     "application": True,
     "auto_install": False,
