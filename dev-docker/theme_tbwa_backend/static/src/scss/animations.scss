@@ -1,0 +1,240 @@
+// =============================================================================
+// TBWA ANIMATIONS
+// =============================================================================
+// Framer-like micro-animations for a polished, modern feel.
+// These animations are subtle but add perceived quality to the UI.
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// KEYFRAME DEFINITIONS
+// -----------------------------------------------------------------------------
+
+// Fade in with slight upward movement
+@keyframes tbwa-fade-in-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Fade in with scale
+@keyframes tbwa-fade-in-scale {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+// Subtle pulse for attention
+@keyframes tbwa-pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+// Slide in from right (for notifications)
+@keyframes tbwa-slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// Slide in from left (for sidebars)
+@keyframes tbwa-slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+// Bounce for success states
+@keyframes tbwa-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-4px);
+    }
+    75% {
+        transform: translateY(2px);
+    }
+}
+
+// Shimmer effect for loading states
+@keyframes tbwa-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+// Spin for loading indicators
+@keyframes tbwa-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// ANIMATION UTILITY CLASSES
+// -----------------------------------------------------------------------------
+
+.tbwa-animate-fade-in-up {
+    animation: tbwa-fade-in-up 0.3s ease-out forwards;
+}
+
+.tbwa-animate-fade-in-scale {
+    animation: tbwa-fade-in-scale 0.2s ease-out forwards;
+}
+
+.tbwa-animate-pulse {
+    animation: tbwa-pulse 2s ease-in-out infinite;
+}
+
+.tbwa-animate-slide-in-right {
+    animation: tbwa-slide-in-right 0.3s ease-out forwards;
+}
+
+.tbwa-animate-slide-in-left {
+    animation: tbwa-slide-in-left 0.3s ease-out forwards;
+}
+
+.tbwa-animate-bounce {
+    animation: tbwa-bounce 0.4s ease-in-out;
+}
+
+// -----------------------------------------------------------------------------
+// COMPONENT-SPECIFIC ANIMATIONS
+// -----------------------------------------------------------------------------
+
+// Form view sheet animation
+.o_form_view .o_form_sheet {
+    animation: tbwa-fade-in-up 0.25s ease-out;
+}
+
+// Modal entrance
+.modal.show .modal-content {
+    animation: tbwa-fade-in-scale 0.2s ease-out;
+}
+
+// Kanban record stagger animation (via nth-child delay)
+.o_kanban_view .o_kanban_record {
+    animation: tbwa-fade-in-up 0.3s ease-out forwards;
+
+    @for $i from 1 through 20 {
+        &:nth-child(#{$i}) {
+            animation-delay: #{$i * 0.03}s;
+        }
+    }
+}
+
+// Dropdown menu
+.dropdown-menu.show {
+    animation: tbwa-fade-in-scale 0.15s ease-out;
+}
+
+// Notification toast
+.o_notification {
+    animation: tbwa-slide-in-right 0.3s ease-out;
+}
+
+// Sidebar slide-in
+.o_action_manager {
+    animation: tbwa-fade-in-up 0.2s ease-out;
+}
+
+// Loading skeleton shimmer
+.o_field_widget.o_readonly_modifier::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.4) 50%,
+        transparent 100%
+    );
+    background-size: 200% 100%;
+    animation: tbwa-shimmer 1.5s infinite;
+    pointer-events: none;
+}
+
+// Spinner for loading states
+.o_loading_indicator,
+.o_spinner {
+    animation: tbwa-spin 0.8s linear infinite;
+}
+
+// -----------------------------------------------------------------------------
+// HOVER TRANSITIONS (Enhanced)
+// -----------------------------------------------------------------------------
+
+// Cards and records
+.o_kanban_record,
+.o_data_row,
+.o_app {
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.2s ease;
+}
+
+// Buttons with spring effect
+.btn {
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1),
+                background-color 0.15s ease,
+                box-shadow 0.15s ease;
+}
+
+// Links
+a {
+    transition: color 0.15s ease;
+}
+
+// Form inputs
+.form-control,
+.o_input {
+    transition: border-color 0.15s ease,
+                box-shadow 0.15s ease;
+}
+
+// -----------------------------------------------------------------------------
+// REDUCED MOTION (Accessibility)
+// -----------------------------------------------------------------------------
+// Respect user preference for reduced motion
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

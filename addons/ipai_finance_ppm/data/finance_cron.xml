@@ -11,7 +11,7 @@
 
         <!-- Daily cron job to sync BIR tasks -->
         <record id="ir_cron_sync_bir_tasks" model="ir.cron">
-            <field name="cron_name">Finance PPM: Sync BIR Tasks</field>
+            <field name="name">Finance PPM: Sync BIR Tasks</field>
             <field name="ir_actions_server_id" ref="ir_actions_server_sync_bir_tasks"/>
             <field name="user_id" ref="base.user_root"/>
             <field name="interval_number">1</field>
