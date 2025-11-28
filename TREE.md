@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 314f2583abf65c629a116ee4b824b4a9a5359799
+> Commit: dd11d594378b152f71eb48a3a5ceb8fc0e8c675d
 
 ```
 .
@@ -41,6 +41,7 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── bir_dat_file_wizard.py
 │   │   │   └── bir_dat_file_wizard_view.xml
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_ce_cleaner
@@ -49,6 +50,7 @@
 │   │   ├── views
 │   │   │   ├── ipai_ce_cleaner_assets.xml
 │   │   │   └── ipai_ce_cleaner_views.xml
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_clarity_ppm_parity
@@ -87,6 +89,7 @@
 │   │   │   ├── ipai_doc_tag_views.xml
 │   │   │   ├── ipai_doc_views.xml
 │   │   │   └── menu.xml
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_docs_project
@@ -100,6 +103,7 @@
 │   │   ├── views
 │   │   │   ├── project_views.xml
 │   │   │   └── task_views.xml
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_monthly_closing
@@ -112,6 +116,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── project_task_views.xml
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_ppm
@@ -149,6 +154,7 @@
 │   │   │   ├── ppm_dashboard_views.xml
 │   │   │   └── project_task_views.xml
 │   │   ├── README.md
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_ppm_dashboard
@@ -157,6 +163,7 @@
 │   │   │   └── src
 │   │   ├── views
 │   │   │   └── ipai_finance_ppm_dashboard_views.xml
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_portal_fix
@@ -166,6 +173,7 @@
 │   │   │   └── ir_qweb.py
 │   │   ├── views
 │   │   │   └── portal_templates.xml
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_ppm_monthly_close
@@ -191,6 +199,7 @@
 │   │   │   └── __init__.py
 │   │   ├── INSTALL_NOVEMBER_2025.md
 │   │   ├── README.md
+│   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   └── tbwa_spectra_integration
@@ -221,6 +230,7 @@
 │       │   ├── spectra_export_wizard.py
 │       │   └── spectra_export_wizard_views.xml
 │       ├── README.md
+│       ├── README.rst
 │       ├── __init__.py
 │       └── __manifest__.py
 ├── agents
@@ -401,9 +411,17 @@
 │   ├── scripts
 │   │   ├── n8n-sync.sh
 │   │   └── verify_finance_stack.sh
+│   ├── src
+│   │   ├── api
+│   │   │   └── searchMonthlyRevenueInsights.ts
+│   │   ├── components
+│   │   │   └── MonthlyRevenueSearch.tsx
+│   │   └── index.ts
 │   ├── supabase
 │   │   ├── functions
-│   │   │   └── closing-snapshot
+│   │   │   ├── closing-snapshot
+│   │   │   ├── embed-monthly-revenue
+│   │   │   └── search-monthly-revenue
 │   │   └── SUPABASE_DEPLOYMENT.md
 │   ├── workflows
 │   │   ├── odoo
@@ -491,7 +509,8 @@
 │   └── tasks.md
 ├── supabase
 │   ├── migrations
-│   │   └── 20251123_saas_feature_matrix.sql
+│   │   ├── 20251123_saas_feature_matrix.sql
+│   │   └── 20251128_semantic_query_layer.sql
 │   └── seed
 │       └── 001_saas_feature_seed.sql
 ├── tests
@@ -579,6 +598,7 @@
 ├── ph_holidays_2026.csv
 ├── plan.md
 ├── ppm_dashboard_views.xml
+├── query_memory.py
 ├── requirements.txt
 ├── spec.md
 ├── task.md
@@ -591,15 +611,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-158 directories, 428 files
+163 directories, 443 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 169 |
-| Files | 461 |
-| Python files | 105 |
-| XML files | 52 |
+| Directories | 176 |
+| Files | 481 |
+| Python files | 106 |
+| XML files | 53 |
 | Markdown files | 120 |
