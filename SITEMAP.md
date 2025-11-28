@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d8db998c22804122a459b9b511d00cdbb9824e51
+> Commit: 6c572eef8cfd39043f9169a3e3c64f6876e1e7a3
 
 ## 📚 Documentation
 
@@ -44,6 +44,10 @@
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
 | [Flutter Receipt OCR Module - Deployment Guide](addons/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | addons/flutter_receipt_ocr |
 | [Receipt OCR Module for InsightPulse AI](addons/flutter_receipt_ocr/README.md) | addons/flutter_receipt_ocr |
+| [Clarity PPM Parity - Implementation Complete ✅](addons/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai_clarity_ppm_parity |
+| [Clarity PPM Parity - Quick Start Guide](addons/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai_clarity_ppm_parity |
+| [Clarity PPM Parity Module - Final Status](addons/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai_clarity_ppm_parity |
+| [Clarity PPM Parity Module - Test Report](addons/ipai_clarity_ppm_parity/TEST_REPORT.md) | addons/ipai_clarity_ppm_parity |
 | [IPAI Finance PPM](addons/ipai_finance_ppm/README.md) | addons/ipai_finance_ppm |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai_ppm_monthly_close/README.md) | addons/ipai_ppm_monthly_close |
@@ -125,6 +129,7 @@
 |--------|--------|-------------|
 | [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ | BIR 2307 Generator & Alphalist/RELIEF DAT File Engine |
 | [ipai_ce_cleaner](./addons/ipai_ce_cleaner) | ✅ |  |
+| [ipai_clarity_ppm_parity](./addons/ipai_clarity_ppm_parity) | ✅ | Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy |
 | [ipai_docs](./addons/ipai_docs) | ✅ |  |
 | [ipai_docs_project](./addons/ipai_docs_project) | ✅ |  |
 | [ipai_finance_monthly_closing](./addons/ipai_finance_monthly_closing) | ✅ |  |

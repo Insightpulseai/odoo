@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d8db998c22804122a459b9b511d00cdbb9824e51
+> Commit: 6c572eef8cfd39043f9169a3e3c64f6876e1e7a3
 
 ```
 .
@@ -51,6 +51,28 @@
 │   │   │   └── ipai_ce_cleaner_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_clarity_ppm_parity
+│   │   ├── data
+│   │   │   └── clarity_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── project_checklist.py
+│   │   │   ├── project_milestone.py
+│   │   │   ├── project_phase.py
+│   │   │   ├── project_project.py
+│   │   │   └── project_task.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── project_project_views.xml
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── QUICK_START.md
+│   │   ├── README.rst
+│   │   ├── STATUS.md
+│   │   ├── TEST_REPORT.md
+│   │   ├── __init__.py
+│   │   ├── __manifest__.py
+│   │   └── install.sh
 │   ├── ipai_docs
 │   │   ├── models
 │   │   │   ├── __init__.py
@@ -507,15 +529,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-126 directories, 376 files
+131 directories, 393 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 134 |
-| Files | 397 |
-| Python files | 86 |
-| XML files | 47 |
-| Markdown files | 111 |
+| Directories | 139 |
+| Files | 414 |
+| Python files | 94 |
+| XML files | 49 |
+| Markdown files | 115 |
