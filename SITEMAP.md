@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd11d594378b152f71eb48a3a5ceb8fc0e8c675d
+> Commit: 9d8646b1ab3e8301ad43d1e41ee66dfcefdf21be
 
 ## 📚 Documentation
 
@@ -15,7 +15,7 @@
 | [Odoo CE 18.0 - Finance PPM Deployment Changelog](CHANGELOG.md) | . |
 | [CI/CD Automation Infrastructure - Deployment Summary](CI_CD_AUTOMATION_SUMMARY.md) | . |
 | [CI/CD Troubleshooting Guide - GitHub Actions Database Connection](CI_CD_TROUBLESHOOTING_GUIDE.md) | . |
-| [CLAUDE.md — Odoo CE Project Configuration](CLAUDE.md) | . |
+| [CLAUDE.md — Odoo CE Project](CLAUDE.md) | . |
 | [InsightPulse Odoo (Delta Architecture)](CLAUDE_NEW.md) | . |
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
 | [Odoo CE Equipment MVP Deployment Guide](DEPLOYMENT_MVP.md) | . |

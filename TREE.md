@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd11d594378b152f71eb48a3a5ceb8fc0e8c675d
+> Commit: 9d8646b1ab3e8301ad43d1e41ee66dfcefdf21be
 
 ```
 .
@@ -12,6 +12,8 @@
 │   │   └── test.md
 │   └── rules.md
 ├── .claude
+│   ├── project_memory.db
+│   ├── query_memory.py
 │   └── settings.local.json
 ├── .github
 │   └── workflows
@@ -611,7 +613,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-163 directories, 443 files
+163 directories, 445 files
 ```
 
 ## 📊 Stats
@@ -619,7 +621,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 176 |
-| Files | 481 |
-| Python files | 106 |
+| Files | 483 |
+| Python files | 107 |
 | XML files | 53 |
 | Markdown files | 120 |
