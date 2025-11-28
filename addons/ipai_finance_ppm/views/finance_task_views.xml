@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_finance_task_template_tree" model="ir.ui.view">
+        <field name="name">ipai.finance.task.template.tree</field>
+        <field name="model">ipai.finance.task.template</field>
+        <field name="arch" type="xml">
+            <list string="Monthly Tasks">
+                <field name="category" widget="badge"/>
+                <field name="name"/>
+                <field name="trigger_type"/>
+                <field name="day_of_month" invisible="trigger_type != 'fixed_date'"/>
+                <field name="bir_form_id" invisible="trigger_type != 'bir_dependency'"/>
+                <field name="employee_code_id" widget="many2one_avatar"/>
+                <field name="reviewed_by_id" widget="many2one_avatar"/>
+                <field name="approved_by_id" widget="many2one_avatar"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_finance_task_template_form" model="ir.ui.view">
+        <field name="name">ipai.finance.task.template.form</field>
+        <field name="model">ipai.finance.task.template</field>
+        <field name="arch" type="xml">
+            <form string="Task Template">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_finance_bir_deadline)d" type="action"
+                                class="oe_stat_button" icon="fa-calendar"
+                                invisible="trigger_type != 'bir_dependency'">
+                            <span class="o_stat_text">View BIR Deadline</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <group>
+                        <group string="Task Details">
+                            <field name="category"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Responsibility">
+                            <field name="employee_code_id"/>
+                            <field name="reviewed_by_id"/>
+                            <field name="approved_by_id"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Scheduling">
+                            <field name="trigger_type" widget="radio"/>
+                            <field name="day_of_month" invisible="trigger_type != 'fixed_date'"/>
+                            <field name="bir_form_id" invisible="trigger_type != 'bir_dependency'"/>
+                        </group>
+                        <group string="SLA (Days)">
+                            <field name="prep_duration"/>
+                            <field name="review_duration"/>
+                            <field name="approval_duration"/>
+                        </group>
+                    </group>
+                    <separator string="Task Description"/>
+                    <field name="name" placeholder="Task Description (required)..."/>
+                    <separator string="Detailed Description"/>
+                    <field name="description" placeholder="Optional detailed description for the task..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_finance_task_template_search" model="ir.ui.view">
+        <field name="name">ipai.finance.task.template.search</field>
+        <field name="model">ipai.finance.task.template</field>
+        <field name="arch" type="xml">
+            <search string="Search Task Templates">
+                <field name="name"/>
+                <field name="category"/>
+                <field name="employee_code_id"/>
+                <separator/>
+                <filter string="Fixed Date" name="fixed_date" domain="[('trigger_type', '=', 'fixed_date')]"/>
+                <filter string="BIR Dependency" name="bir_dependency" domain="[('trigger_type', '=', 'bir_dependency')]"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
+                    <filter string="Trigger Type" name="group_trigger" context="{'group_by': 'trigger_type'}"/>
+                    <filter string="Owner" name="group_owner" context="{'group_by': 'employee_code_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_finance_task_template" model="ir.actions.act_window">
+        <field name="name">Task Templates (PPM)</field>
+        <field name="res_model">ipai.finance.task.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first task template
+            </p>
+            <p>
+                Task templates define recurring finance tasks that can be triggered
+                either on a fixed day of month or linked to BIR deadlines.
+            </p>
+        </field>
+    </record>
+</odoo>

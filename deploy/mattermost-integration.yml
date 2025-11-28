@@ -1,0 +1,36 @@
+# Mattermost Integration Deployment Package
+# For InsightPulse AI ChatOps Ecosystem
+# Deploy to: 159.223.75.148 (Odoo Hub Droplet)
+
+version: '3.8'
+
+services:
+  mattermost:
+    image: mattermost/mattermost-team-edition:9.5
+    restart: always
+    volumes:
+      - ./mattermost-config:/mattermost/config:rw
+      - ./mattermost-data:/mattermost/data:rw
+    environment:
+      - MM_SERVICESETTINGS_SITEURL=https://chat.insightpulseai.net
+      - MM_SQLSETTINGS_DRIVERNAME=postgres
+      - MM_SQLSETTINGS_DATASOURCE=postgres://mmuser:mm_password@db:5432/mattermost?sslmode=disable&connect_timeout=10
+      - MM_EMAILSETTINGS_SENDEMAILNOTIFICATIONS=false
+      - MM_LOGSETTINGS_CONSOLELEVEL=INFO
+    networks:
+      - web
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mattermost.rule=Host(`chat.insightpulseai.net`)"
+      - "traefik.http.routers.mattermost.entrypoints=websecure"
+      - "traefik.http.routers.mattermost.tls.certresolver=myresolver"
+      - "traefik.http.services.mattermost.loadbalancer.server.port=8065"
+    depends_on:
+      - db
+
+networks:
+  web:
+    external: true
+  internal:
+    external: true

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================ -->
+    <!-- Spectra Export Wizard Form View -->
+    <!-- ============================================ -->
+    <record id="view_tbwa_spectra_export_wizard_form" model="ir.ui.view">
+        <field name="name">tbwa.spectra.export.wizard.form</field>
+        <field name="model">tbwa.spectra.export.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Spectra Export Wizard">
+                <group invisible="state != 'configure'">
+                    <group colspan="2">
+                        <div class="alert alert-info" role="alert">
+                            <p><strong>Create Spectra Export Batch</strong></p>
+                            <p>Select the period and export type to generate a CSV file for import into Spectra.</p>
+                        </div>
+                    </group>
+                    <group string="Export Configuration">
+                        <field name="period_start"/>
+                        <field name="period_end"/>
+                        <field name="export_type"/>
+                    </group>
+                </group>
+
+                <group invisible="state != 'preview'">
+                    <group colspan="2">
+                        <div class="alert alert-warning" role="alert">
+                            <p><strong>Preview Export</strong></p>
+                            <p>Review the records that will be included in this export batch.</p>
+                        </div>
+                    </group>
+                    <group string="Export Summary">
+                        <field name="period_start" readonly="1"/>
+                        <field name="period_end" readonly="1"/>
+                        <field name="export_type" readonly="1"/>
+                    </group>
+                    <group string="Records to Export">
+                        <field name="preview_count" readonly="1"/>
+                        <field name="preview_total_amount" readonly="1"/>
+                        <field name="currency_id" invisible="1"/>
+                    </group>
+                </group>
+
+                <group invisible="state != 'done'">
+                    <group colspan="2">
+                        <div class="alert alert-success" role="alert">
+                            <p><strong>Export Batch Created Successfully!</strong></p>
+                            <p>The export batch has been created and the CSV file has been generated.</p>
+                        </div>
+                    </group>
+                    <group string="Export Details">
+                        <field name="export_batch_id" readonly="1"/>
+                        <field name="preview_count" string="Exported Records" readonly="1"/>
+                        <field name="preview_total_amount" string="Total Amount" readonly="1"/>
+                    </group>
+                </group>
+
+                <field name="state" invisible="1"/>
+
+                <footer>
+                    <!-- Configure step buttons -->
+                    <button name="action_preview" string="Preview" type="object"
+                            class="btn-primary" invisible="state != 'configure'"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            class="btn-secondary" invisible="state != 'configure'"/>
+
+                    <!-- Preview step buttons -->
+                    <button name="action_generate" string="Generate Export" type="object"
+                            class="btn-primary" invisible="state != 'preview'"/>
+                    <button name="%(action_tbwa_spectra_export_wizard)d" string="Back" type="action"
+                            class="btn-secondary" invisible="state != 'preview'"/>
+
+                    <!-- Done step buttons -->
+                    <button name="action_view_export_batch" string="View Export Batch" type="object"
+                            class="btn-primary" invisible="state != 'done'"/>
+                    <button string="Close" special="cancel" class="btn-secondary" invisible="state != 'done'"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- Spectra Export Wizard Action -->
+    <!-- ============================================ -->
+    <record id="action_tbwa_spectra_export_wizard" model="ir.actions.act_window">
+        <field name="name">Create Spectra Export</field>
+        <field name="res_model">tbwa.spectra.export.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="binding_model_id" ref="model_tbwa_spectra_export"/>
+        <field name="binding_view_types">list,form</field>
+    </record>
+
+</odoo>

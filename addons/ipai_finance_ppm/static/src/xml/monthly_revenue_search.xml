@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- MonthlyRevenueSearch Component Template -->
+    <t t-name="ipai_finance_ppm.MonthlyRevenueSearch" owl="1">
+        <div class="o_monthly_revenue_search h-100 d-flex flex-column">
+            <!-- Header -->
+            <div class="o_search_header p-3 border-bottom bg-light">
+                <h4 class="mb-2">
+                    <i class="fa fa-search me-2"/>
+                    Revenue Insights Search
+                </h4>
+                <p class="text-muted mb-0 small">
+                    Search monthly revenue data using natural language queries
+                </p>
+            </div>
+
+            <!-- Search Form -->
+            <div class="o_search_form p-3 border-bottom">
+                <form t-on-submit="onSearch" class="d-flex gap-2">
+                    <div class="flex-grow-1">
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="e.g., months where revenue dipped after a spike..."
+                            t-att-value="state.query"
+                            t-on-input="onQueryChange"
+                            t-on-keydown="onKeyDown"
+                            t-att-disabled="state.loading"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        t-att-disabled="state.loading or !state.query.trim()"
+                    >
+                        <t t-if="state.loading">
+                            <i class="fa fa-spinner fa-spin me-1"/>
+                            Searching...
+                        </t>
+                        <t t-else="">
+                            <i class="fa fa-search me-1"/>
+                            Search
+                        </t>
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        t-on-click="onClear"
+                        t-att-disabled="state.loading"
+                    >
+                        <i class="fa fa-times"/>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Error State -->
+            <t t-if="state.error">
+                <div class="alert alert-danger m-3 mb-0" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2"/>
+                    <strong>Error:</strong> <t t-esc="state.error"/>
+                </div>
+            </t>
+
+            <!-- Results -->
+            <div class="o_search_results flex-grow-1 overflow-auto p-3">
+                <!-- Empty State - Before Search -->
+                <t t-if="!state.hasSearched and !state.loading">
+                    <div class="text-center text-muted py-5">
+                        <i class="fa fa-lightbulb-o fa-3x mb-3 d-block"/>
+                        <p class="mb-2">Try searching for insights like:</p>
+                        <ul class="list-unstyled small">
+                            <li>"Months with highest revenue growth"</li>
+                            <li>"Revenue dips in Q3"</li>
+                            <li>"Best performing months last year"</li>
+                        </ul>
+                    </div>
+                </t>
+
+                <!-- Empty State - No Results -->
+                <t t-if="state.hasSearched and state.results.length === 0 and !state.loading">
+                    <div class="text-center text-muted py-5">
+                        <i class="fa fa-search fa-3x mb-3 d-block"/>
+                        <p>No matching revenue records found.</p>
+                        <p class="small">Try a different query or broader search terms.</p>
+                    </div>
+                </t>
+
+                <!-- Results List -->
+                <t t-if="state.results.length > 0">
+                    <div class="mb-3 text-muted small">
+                        Found <strong t-esc="state.results.length"/> matching records
+                    </div>
+
+                    <div class="list-group">
+                        <t t-foreach="state.results" t-as="result" t-key="result.id">
+                            <div class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-0">
+                                            <i class="fa fa-calendar me-2 text-muted"/>
+                                            <t t-esc="result.formattedMonth"/>
+                                        </h6>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge" t-att-class="getRelevanceClass(result.relevance)">
+                                            <t t-esc="result.relevance"/>% match
+                                        </span>
+                                        <span class="fs-5 fw-bold text-success">
+                                            <t t-esc="result.formattedRevenue"/>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <t t-if="result.summary">
+                                    <p class="mb-0 text-muted small">
+                                        <i class="fa fa-quote-left me-1 opacity-50"/>
+                                        <t t-esc="result.summary"/>
+                                    </p>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Footer -->
+            <div class="o_search_footer p-2 border-top bg-light text-center">
+                <small class="text-muted">
+                    Powered by semantic vector search
+                    <i class="fa fa-bolt ms-1"/>
+                </small>
+            </div>
+        </div>
+    </t>
+
+</templates>

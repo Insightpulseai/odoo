@@ -1,59 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-
     <!--
-    Portal Layout Fix for Website-Free Instances
-    ============================================
-    This inherited view patches portal.frontend_layout to work without
-    the 'website' context variable that causes KeyError when Website
-    module is not installed.
+        Portal Frontend Layout Fix
 
-    The fix adds defensive checks before accessing website-related variables.
+        This module fixes KeyError: 'website' in portal.frontend_layout template.
+
+        The PRIMARY fix is in models/ir_qweb.py which overrides _render() to
+        inject safe default values for website, main_object, edit_in_backend,
+        and html_data BEFORE template rendering begins.
+
+        This template file is kept minimal to avoid evaluation errors.
+        The Python-level fix handles all context injection.
     -->
 
-    <template id="frontend_layout_safe" name="Safe Portal Layout (No Website Required)" inherit_id="portal.frontend_layout" priority="20">
-
-        <!-- Remove any website-dependent attributes from wrapwrap -->
-        <xpath expr="//div[@id='wrapwrap']" position="attributes">
-            <!-- Keep only essential portal attributes, remove website dependencies -->
-            <attribute name="t-attf-class" add="#{request.env['res.lang']._get_data(code=request.env.lang).direction == 'rtl' and 'o_rtl' or ''}" separator=" "/>
-            <attribute name="t-attf-class" add="#{'o_portal' if is_portal else ''}" separator=" "/>
-        </xpath>
-
-        <!--
-        If there's a website-dependent block in the original template,
-        we would wrap it with a conditional check like:
-        <t t-if="website">...</t>
-
-        However, based on the template we saw, the KeyError is likely coming from
-        a different inherited template or a controller context issue.
-        -->
-
-    </template>
-
     <!--
-    Alternative: If the error is specifically in a meta tag block,
-    we can override the problematic xpath with a safe version.
+        Note: Template-level fixes using expressions like "website if website"
+        can cause KeyError if the variable doesn't exist yet in context.
+        Therefore, we rely on the Python ir_qweb._render() override to inject
+        all required variables before template evaluation.
 
-    Example defensive pattern for any website-dependent content:
+        These template overrides are intentionally minimal/empty.
     -->
-    <!--
-    Remove Website/SEO Metadata Block from Portal Layout
-    =====================================================
-    The website module adds SEO/publishing metadata to html_data that's useless
-    for finance-only portal deployments and causes KeyError when 'website' context
-    is missing. This completely removes that block.
-    -->
-    <template id="portal_frontend_layout_remove_website_meta"
-              inherit_id="website.layout"
-              name="Portal Layout - Remove Website Meta Block"
-              priority="99">
-        <!-- Remove the website/SEO html_data.update block entirely -->
-        <xpath expr="//t[@t-if='not request.env.user._is_public()'][@t-set='nothing']"
-               position="replace">
-            <!-- Intentionally left empty: completely remove the html_data.update website block -->
-            <t/>
-        </xpath>
-    </template>
 
 </odoo>

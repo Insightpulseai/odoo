@@ -1,0 +1,24 @@
+WBS ID,Task Name,Parent Task,Assigned To,Description,Planned Days,Approver
+1.0,Finance Month-End & Tax Cycle,,khalil.veracruz@omc.com,Master Project Container,0,CKVC
+1.1,Resource & System Setup,Finance Month-End & Tax Cycle,khalil.veracruz@omc.com,Define routes and access rights,1,CKVC
+1.1.1,Configure Directory & Users,Resource & System Setup,khalil.veracruz@omc.com,Create users for JLI JAP JRMO,0.5,CKVC
+2.0,Month-End Close Operations,Finance Month-End & Tax Cycle,rey.meran@omc.com,Operational closing tasks,0,CKVC
+2.1,Payroll & Personnel,Month-End Close Operations,rey.meran@omc.com,Process Payroll Final Pay SL Conversions,2,CKVC
+2.2,Tax & Provisions,Month-End Close Operations,rey.meran@omc.com,Calculate monthly Tax Provision and PPB,2,CKVC
+2.3,Rent & Leases,Month-End Close Operations,rey.meran@omc.com,Record monthly Rental Income/Expense,2,CKVC
+2.4,Accruals & Expenses (General),Month-End Close Operations,rey.meran@omc.com,Consultancy Fees and General Expense Accruals,2,CKVC
+2.5,Corporate Accruals & Insurance,Month-End Close Operations,beng.manalo@omc.com,Royalty fees consulting internal projects,2,CKVC
+2.6,Treasury & Banking,Month-End Close Operations,rey.meran@omc.com,Bank charges FX revaluation,2,CKVC
+2.7,Client Billings & Revenue,Month-End Close Operations,jinky.paladin@omc.com,Revenue recognition and billable costs,2,CKVC
+2.8,WIP & OOP Management,Month-End Close Operations,jinky.paladin@omc.com,Reclassifying costs (Billable vs Internal),2,CKVC
+2.9,Amortization & Audit Fees,Month-End Close Operations,jinky.paladin@omc.com,Prepaid expenses LOA Business Permit,2,CKVC
+2.10,AR Aging - Working Capital,Month-End Close Operations,jinky.paladin@omc.com,Prepare reports for Working Capital,2,CKVC
+2.11,CA Liquidations,Month-End Close Operations,amor.lasaga@omc.com,Process Cash Advance Liquidations,2,CKVC
+2.12,Asset & Lease Entries,Month-End Close Operations,amor.lasaga@omc.com,Financed assets and long-term commitments,2,CKVC
+2.13,VAT & Taxes (Input),Month-End Close Operations,jinky.paladin@omc.com,Compile monthly Input VAT entries,2,CKVC
+2.14,AP Aging,Month-End Close Operations,amor.lasaga@omc.com,Detailed status per invoice,2,CKVC
+3.0,Tax Compliance (BIR),Finance Month-End & Tax Cycle,beng.manalo@omc.com,Statutory Filing,0,CKVC
+3.1,BIR Form 1601-C (Compensation),Tax Compliance (BIR),beng.manalo@omc.com,Deadline: Jan 15 (Recurring),4,CKVC
+3.2,BIR Form 0619-E (Expanded),Tax Compliance (BIR),beng.manalo@omc.com,Deadline: Monthly 10th,4,CKVC
+3.3,BIR Form 2550Q (VAT),Tax Compliance (BIR),beng.manalo@omc.com,Deadline: Quarterly 25th,4,CKVC
+3.4,BIR Form 1702Q (Income Tax),Tax Compliance (BIR),beng.manalo@omc.com,Deadline: Quarterly 30th,4,CKVC

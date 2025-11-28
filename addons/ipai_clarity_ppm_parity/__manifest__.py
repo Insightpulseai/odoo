@@ -48,6 +48,15 @@ License: AGPL-3
     'license': 'AGPL-3',
     'depends': [
         'project',
+        'project_key',
+        'project_category',
+        'project_wbs',
+        'project_parent_task_filter',
+        'project_milestone',
+        'project_task_milestone',
+        'project_task_dependency',
+        'project_task_checklist',
+        'project_timeline',
     ],
     'data': [
         'security/ir.model.access.csv',

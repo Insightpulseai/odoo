@@ -254,7 +254,7 @@ ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
 ## Development Workflow
 
 ### 1. Create/Edit Workflow in UI
-1. Login to n8n UI at https://n8n.insightpulseai.net
+1. Login to n8n UI at https://ipa.insightpulseai.net
 2. Create/edit workflow with visual editor
 3. Test with sample data
 4. Save and activate

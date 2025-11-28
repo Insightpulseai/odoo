@@ -2,7 +2,7 @@
 
 **Date**: 2025-11-21
 **Status**: ✅ Workflows deployed to production n8n
-**Environment**: https://n8n.insightpulseai.net
+**Environment**: https://ipa.insightpulseai.net
 **Container**: odoo-ipa-1
 
 ---
@@ -133,7 +133,7 @@ Source: n8n automation
 
 ### Step 1: Configure Credentials in n8n UI
 
-Login to https://n8n.insightpulseai.net and configure these credentials:
+Login to https://ipa.insightpulseai.net and configure these credentials:
 
 #### 1.1 Odoo Basic Auth (ID: 1)
 ```yaml

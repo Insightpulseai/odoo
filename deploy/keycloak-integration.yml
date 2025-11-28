@@ -1,0 +1,44 @@
+# Keycloak Identity Provider Deployment Package
+# For InsightPulse AI Unified Authentication
+# Deploy to: 159.223.75.148 (Odoo Hub Droplet)
+
+version: '3.8'
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0
+    command: start --optimized --proxy edge --hostname=auth.insightpulseai.net
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://db:5432/keycloak
+      - KC_DB_USERNAME=keycloak
+      - KC_DB_PASSWORD=keycloak_password
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=YOUR_SECURE_PASSWORD_HERE
+      - KC_PROXY=edge
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+    depends_on:
+      - db
+    networks:
+      - web
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.keycloak.rule=Host(`auth.insightpulseai.net`)"
+      - "traefik.http.routers.keycloak.entrypoints=websecure"
+      - "traefik.http.routers.keycloak.tls.certresolver=myresolver"
+      - "traefik.http.services.keycloak.loadbalancer.server.port=8080"
+    volumes:
+      - ./keycloak-data:/opt/keycloak/data
+      - ./keycloak-themes:/opt/keycloak/themes
+
+networks:
+  web:
+    external: true
+  internal:
+    external: true
+
+volumes:
+  keycloak-data:
+  keycloak-themes:

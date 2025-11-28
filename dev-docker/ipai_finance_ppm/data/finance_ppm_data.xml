@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ROLES -->
+        <record id="role_ckvc" model="finance.team"><field name="code">CKVC</field><field name="name">Khalil Veracruz</field></record>
+        <record id="role_rim" model="finance.team"><field name="code">RIM</field><field name="name">Rey Meran</field></record>
+        <record id="role_bom" model="finance.team"><field name="code">BOM</field><field name="name">Beng Manalo</field></record>
+
+        <!-- ROOT CALENDAR PHASE -->
+        <record id="phase_bir_2026" model="finance.ppm.task">
+            <field name="name">BIR Tax Calendar 2026</field>
+            <field name="logframe_level">phase</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- ============================================== -->
+        <!-- JAN 2026 DEADLINES (Dec 2025 Period) -->
+        <!-- ============================================== -->
+        <record id="bir_1601c_dec25" model="finance.ppm.task">
+            <field name="name">1601-C (Dec 2025)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-01-15</field>
+            <field name="role_id" ref="role_bom"/>
+            <field name="reviewer_id" ref="role_rim"/>
+            <field name="approver_id" ref="role_ckvc"/>
+        </record>
+            <record id="sub_1601c_dec25_prep" model="finance.ppm.task">
+                <field name="name">Prep &amp; File Request</field>
+                <field name="parent_id" ref="bir_1601c_dec25"/>
+                <field name="role_id" ref="role_bom"/>
+                <field name="date_deadline">2026-01-09</field>
+            </record>
+            <record id="sub_1601c_dec25_rev" model="finance.ppm.task">
+                <field name="name">Report Approval (RIM)</field>
+                <field name="parent_id" ref="bir_1601c_dec25"/>
+                <field name="role_id" ref="role_rim"/>
+                <field name="date_deadline">2026-01-12</field>
+            </record>
+            <record id="sub_1601c_dec25_pay" model="finance.ppm.task">
+                <field name="name">Payment Approval (CKVC)</field>
+                <field name="parent_id" ref="bir_1601c_dec25"/>
+                <field name="role_id" ref="role_ckvc"/>
+                <field name="date_deadline">2026-01-13</field>
+            </record>
+
+        <!-- 1601-EQ Q4 2025 -->
+        <record id="bir_1601eq_q425" model="finance.ppm.task">
+            <field name="name">1601-EQ (Q4 2025)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-01-30</field>
+            <field name="role_id" ref="role_bom"/>
+        </record>
+            <record id="sub_1601eq_q425_prep" model="finance.ppm.task">
+                <field name="name">Prep &amp; File Request</field>
+                <field name="parent_id" ref="bir_1601eq_q425"/>
+                <field name="role_id" ref="role_bom"/>
+                <field name="date_deadline">2026-01-26</field>
+            </record>
+            <record id="sub_1601eq_q425_rev" model="finance.ppm.task">
+                <field name="name">Report Approval</field>
+                <field name="parent_id" ref="bir_1601eq_q425"/>
+                <field name="role_id" ref="role_rim"/>
+                <field name="date_deadline">2026-01-27</field>
+            </record>
+            <record id="sub_1601eq_q425_pay" model="finance.ppm.task">
+                <field name="name">Payment Approval</field>
+                <field name="parent_id" ref="bir_1601eq_q425"/>
+                <field name="role_id" ref="role_ckvc"/>
+                <field name="date_deadline">2026-01-28</field>
+            </record>
+
+        <!-- ============================================== -->
+        <!-- FEB 2026 DEADLINES (Jan 2026 Period) -->
+        <!-- ============================================== -->
+        <record id="bir_1601c_jan26" model="finance.ppm.task">
+            <field name="name">1601-C / 0619-E (Jan 2026)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-02-10</field>
+            <field name="role_id" ref="role_bom"/>
+        </record>
+            <record id="sub_1601c_jan26_prep" model="finance.ppm.task">
+                <field name="name">Prep &amp; File Request</field>
+                <field name="parent_id" ref="bir_1601c_jan26"/>
+                <field name="role_id" ref="role_bom"/>
+                <field name="date_deadline">2026-02-04</field>
+            </record>
+            <record id="sub_1601c_jan26_rev" model="finance.ppm.task">
+                <field name="name">Report Approval</field>
+                <field name="parent_id" ref="bir_1601c_jan26"/>
+                <field name="role_id" ref="role_rim"/>
+                <field name="date_deadline">2026-02-06</field>
+            </record>
+            <record id="sub_1601c_jan26_pay" model="finance.ppm.task">
+                <field name="name">Payment Approval</field>
+                <field name="parent_id" ref="bir_1601c_jan26"/>
+                <field name="role_id" ref="role_ckvc"/>
+                <field name="date_deadline">2026-02-09</field>
+            </record>
+
+        <!-- ============================================== -->
+        <!-- MAR 2026 DEADLINES (Feb 2026 Period) -->
+        <!-- ============================================== -->
+        <record id="bir_1601c_feb26" model="finance.ppm.task">
+            <field name="name">1601-C / 0619-E (Feb 2026)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-03-10</field>
+            <field name="role_id" ref="role_bom"/>
+        </record>
+            <record id="sub_1601c_feb26_prep" model="finance.ppm.task">
+                <field name="name">Prep &amp; File Request</field>
+                <field name="parent_id" ref="bir_1601c_feb26"/>
+                <field name="role_id" ref="role_bom"/>
+                <field name="date_deadline">2026-03-04</field>
+            </record>
+            <record id="sub_1601c_feb26_rev" model="finance.ppm.task">
+                <field name="name">Report Approval</field>
+                <field name="parent_id" ref="bir_1601c_feb26"/>
+                <field name="role_id" ref="role_rim"/>
+                <field name="date_deadline">2026-03-06</field>
+            </record>
+            <record id="sub_1601c_feb26_pay" model="finance.ppm.task">
+                <field name="name">Payment Approval</field>
+                <field name="parent_id" ref="bir_1601c_feb26"/>
+                <field name="role_id" ref="role_ckvc"/>
+                <field name="date_deadline">2026-03-09</field>
+            </record>
+
+        <!-- ============================================== -->
+        <!-- APR 2026 DEADLINES (Annual 2025 & Mar 2026) -->
+        <!-- ============================================== -->
+        <record id="bir_1601c_mar26" model="finance.ppm.task">
+            <field name="name">1601-C / 0619-E (Mar 2026)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-04-10</field>
+        </record>
+            <record id="sub_1601c_mar26_prep" model="finance.ppm.task"><field name="name">Prep</field><field name="parent_id" ref="bir_1601c_mar26"/><field name="date_deadline">2026-04-06</field></record>
+            <record id="sub_1601c_mar26_rev" model="finance.ppm.task"><field name="name">Review</field><field name="parent_id" ref="bir_1601c_mar26"/><field name="date_deadline">2026-04-08</field></record>
+            <record id="sub_1601c_mar26_pay" model="finance.ppm.task"><field name="name">Approve</field><field name="parent_id" ref="bir_1601c_mar26"/><field name="date_deadline">2026-04-09</field></record>
+
+        <record id="bir_1702rt_2025" model="finance.ppm.task">
+            <field name="name">1702-RT/EX Annual ITR (2025)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-04-15</field>
+        </record>
+            <record id="sub_1702rt_25_prep" model="finance.ppm.task"><field name="name">Prep</field><field name="parent_id" ref="bir_1702rt_2025"/><field name="date_deadline">2026-04-09</field></record>
+            <record id="sub_1702rt_25_rev" model="finance.ppm.task"><field name="name">Review</field><field name="parent_id" ref="bir_1702rt_2025"/><field name="date_deadline">2026-04-13</field></record>
+            <record id="sub_1702rt_25_pay" model="finance.ppm.task"><field name="name">Approve</field><field name="parent_id" ref="bir_1702rt_2025"/><field name="date_deadline">2026-04-14</field></record>
+
+        <record id="bir_2550q_q126" model="finance.ppm.task">
+            <field name="name">2550Q VAT (Q1 2026)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-04-27</field>
+        </record>
+            <record id="sub_2550q_q1_prep" model="finance.ppm.task"><field name="name">Prep</field><field name="parent_id" ref="bir_2550q_q126"/><field name="date_deadline">2026-04-21</field></record>
+            <record id="sub_2550q_q1_rev" model="finance.ppm.task"><field name="name">Review</field><field name="parent_id" ref="bir_2550q_q126"/><field name="date_deadline">2026-04-23</field></record>
+            <record id="sub_2550q_q1_pay" model="finance.ppm.task"><field name="name">Approve</field><field name="parent_id" ref="bir_2550q_q126"/><field name="date_deadline">2026-04-24</field></record>
+
+        <record id="bir_1601eq_q126" model="finance.ppm.task">
+            <field name="name">1601-EQ (Q1 2026)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-04-30</field>
+        </record>
+            <record id="sub_1601eq_q1_prep" model="finance.ppm.task"><field name="name">Prep</field><field name="parent_id" ref="bir_1601eq_q126"/><field name="date_deadline">2026-04-24</field></record>
+            <record id="sub_1601eq_q1_rev" model="finance.ppm.task"><field name="name">Review</field><field name="parent_id" ref="bir_1601eq_q126"/><field name="date_deadline">2026-04-28</field></record>
+            <record id="sub_1601eq_q1_pay" model="finance.ppm.task"><field name="name">Approve</field><field name="parent_id" ref="bir_1601eq_q126"/><field name="date_deadline">2026-04-29</field></record>
+
+        <!-- ============================================== -->
+        <!-- MAY 2026 DEADLINES (Apr 2026 Period) -->
+        <!-- ============================================== -->
+        <record id="bir_1601c_apr26" model="finance.ppm.task">
+            <field name="name">1601-C / 0619-E (Apr 2026)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-05-10</field>
+        </record>
+            <record id="sub_1601c_apr26_prep" model="finance.ppm.task"><field name="name">Prep</field><field name="parent_id" ref="bir_1601c_apr26"/><field name="date_deadline">2026-05-06</field></record>
+            <record id="sub_1601c_apr26_rev" model="finance.ppm.task"><field name="name">Review</field><field name="parent_id" ref="bir_1601c_apr26"/><field name="date_deadline">2026-05-07</field></record>
+            <record id="sub_1601c_apr26_pay" model="finance.ppm.task"><field name="name">Approve</field><field name="parent_id" ref="bir_1601c_apr26"/><field name="date_deadline">2026-05-08</field></record>
+
+        <record id="bir_1702q_q2" model="finance.ppm.task">
+            <field name="name">1702Q Income Tax (Q2 2026)</field>
+            <field name="parent_id" ref="phase_bir_2026"/>
+            <field name="date_deadline">2026-05-30</field>
+        </record>
+            <record id="sub_1702q_q2_prep" model="finance.ppm.task"><field name="name">Prep</field><field name="parent_id" ref="bir_1702q_q2"/><field name="date_deadline">2026-05-26</field></record>
+            <record id="sub_1702q_q2_rev" model="finance.ppm.task"><field name="name">Review</field><field name="parent_id" ref="bir_1702q_q2"/><field name="date_deadline">2026-05-27</field></record>
+            <record id="sub_1702q_q2_pay" model="finance.ppm.task"><field name="name">Approve</field><field name="parent_id" ref="bir_1702q_q2"/><field name="date_deadline">2026-05-28</field></record>
+
+    </data>
+</odoo>

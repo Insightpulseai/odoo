@@ -1,0 +1,426 @@
+{
+  "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/specification/main/schema/config.json",
+  "version": "1.1",
+  "description": "MCP Configuration for DO Advisor + fin-workspace integration with Architecture Diagrams and Superset Copilot",
+  "mcpServers": {
+    "do-advisor": {
+      "description": "Unified DigitalOcean Infrastructure Advisor",
+      "url": "https://wr2azp5dsl6mu6xvxtpglk5v.agents.do-ai.run",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${DO_ADVISOR_API_KEY}"
+      },
+      "capabilities": [
+        "recommendations",
+        "jobs-monitoring",
+        "kubernetes",
+        "cost-analysis",
+        "security-audit"
+      ]
+    },
+    "kubernetes-genius": {
+      "description": "Kubernetes RAG Agent for DOKS clusters",
+      "url": "https://lft4hlniueapplqk6yio3vqj.agents.do-ai.run",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${K8S_GENIUS_API_KEY}"
+      },
+      "capabilities": [
+        "cluster-management",
+        "workload-operations",
+        "networking",
+        "observability"
+      ]
+    },
+    "diagram-ai-generator": {
+      "description": "AI-powered cloud architecture diagram generator with draw.io integration",
+      "command": "python3",
+      "args": ["-m", "src.application.mcp.server_modular"],
+      "transport": "stdio",
+      "env": {
+        "DIAGRAM_OUTPUT_DIR": "${REPO_ROOT}/docs/diagrams/architecture"
+      },
+      "capabilities": [
+        "diagram-generation",
+        "multi-cloud",
+        "draw-io-export"
+      ],
+      "tools": [
+        {
+          "name": "step1_list_providers",
+          "description": "List available diagram providers (azure, aws, gcp, k8s, digitalocean, generic)"
+        },
+        {
+          "name": "step2_get_categories",
+          "description": "Get service categories for a provider (e.g., compute, storage, networking)"
+        },
+        {
+          "name": "step3_get_nodes",
+          "description": "Get available node types/icons for a provider category"
+        },
+        {
+          "name": "create_diagram_from_json",
+          "description": "Create a diagram from JSON spec with components, connections, and clusters",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "provider": { "type": "string", "enum": ["azure", "aws", "gcp", "kubernetes", "digitalocean", "generic"] },
+              "title": { "type": "string" },
+              "components": { "type": "array" },
+              "connections": { "type": "array" },
+              "clusters": { "type": "array" }
+            },
+            "required": ["provider", "title", "components"]
+          }
+        },
+        {
+          "name": "multicloud_helper",
+          "description": "Helper for creating multi-cloud diagrams with mixed providers"
+        }
+      ],
+      "metadata": {
+        "iconLibraries": [
+          "https://github.com/jgraph/drawio-libs",
+          "https://www.drawio.com/blog/azure-diagrams"
+        ],
+        "outputFormats": ["drawio", "png", "svg"],
+        "githubIntegration": {
+          "urlPattern": "https://app.diagrams.net/?mode=github#H{org}/{repo}/{branch}/{path}"
+        }
+      }
+    },
+    "superset-mcp": {
+      "description": "Apache Superset analytics with MCP integration (FastMCP 2.13.0)",
+      "url": "${SUPERSET_ENDPOINT}:5008",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${SUPERSET_MCP_API_KEY}"
+      },
+      "capabilities": [
+        "dashboard-management",
+        "chart-generation",
+        "sql-execution",
+        "dataset-discovery"
+      ],
+      "tools": [
+        {
+          "name": "list_dashboards",
+          "description": "List all Superset dashboards. Use select_columns to reduce payload.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "select_columns": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "name": "list_charts",
+          "description": "List all Superset charts",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "select_columns": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "name": "list_datasets",
+          "description": "List all Superset datasets (tables/views)",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "select_columns": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        {
+          "name": "get_dashboard_info",
+          "description": "Get detailed info about a specific dashboard by numeric ID",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "dashboard_id": { "type": "integer" }
+            },
+            "required": ["dashboard_id"]
+          }
+        },
+        {
+          "name": "get_chart_info",
+          "description": "Get detailed info about a specific chart by numeric ID",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "chart_id": { "type": "integer" }
+            },
+            "required": ["chart_id"]
+          }
+        },
+        {
+          "name": "get_dataset_info",
+          "description": "Get detailed info about a specific dataset by numeric ID",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "dataset_id": { "type": "integer" }
+            },
+            "required": ["dataset_id"]
+          }
+        },
+        {
+          "name": "generate_chart",
+          "description": "Generate a new chart. chart_type is MANDATORY.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "chart_type": { "type": "string", "description": "MANDATORY: Chart visualization type" },
+              "datasource_id": { "type": "integer" },
+              "metrics": { "type": "array" },
+              "groupby": { "type": "array" },
+              "filters": { "type": "array" }
+            },
+            "required": ["chart_type", "datasource_id"]
+          }
+        },
+        {
+          "name": "execute_sql",
+          "description": "Execute SQL query against a database. NOT cached - use sparingly.",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "database_id": { "type": "integer" },
+              "sql": { "type": "string" },
+              "schema": { "type": "string" }
+            },
+            "required": ["database_id", "sql"]
+          }
+        }
+      ],
+      "metadata": {
+        "notes": [
+          "Resource identifiers must be numeric IDs or UUIDs; do not use names or schema.table patterns.",
+          "When calling generate_chart, chart_type is mandatory.",
+          "Use select_columns in list_* tools to reduce payload size.",
+          "Caching enabled for list_* and get_*_info tools, NOT for execute_sql or generate_chart."
+        ],
+        "theming": {
+          "designSystem": "Ant Design v5",
+          "darkModeSupport": true,
+          "chartOverrides": "echartsOptionsOverrides"
+        },
+        "sipReferences": ["SIP-155", "SIP-157"]
+      }
+    },
+    "odoo-erp": {
+      "description": "Odoo CE ERP integration via JSON-RPC",
+      "url": "${ODOO_ENDPOINT}",
+      "transport": "jsonrpc",
+      "authentication": {
+        "type": "session",
+        "database": "${ODOO_DATABASE}",
+        "username": "${ODOO_USERNAME}",
+        "password": "${ODOO_PASSWORD}"
+      },
+      "capabilities": [
+        "finance-ppm",
+        "expense-management",
+        "equipment-tracking",
+        "monthly-closing",
+        "bir-compliance"
+      ],
+      "tools": [
+        {
+          "name": "odoo_search_read",
+          "description": "Search and read records from Odoo models",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string", "description": "Odoo model name (e.g., hr.expense)" },
+              "domain": { "type": "array", "description": "Search domain filter" },
+              "fields": { "type": "array", "description": "Fields to return" },
+              "limit": { "type": "integer", "default": 100 }
+            },
+            "required": ["model"]
+          }
+        },
+        {
+          "name": "odoo_create",
+          "description": "Create a new record in Odoo",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string" },
+              "values": { "type": "object" }
+            },
+            "required": ["model", "values"]
+          }
+        },
+        {
+          "name": "odoo_export",
+          "description": "Export records from Odoo model to CSV/JSON",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string" },
+              "domain": { "type": "array" },
+              "fields": { "type": "array" },
+              "format": { "type": "string", "enum": ["csv", "json"], "default": "csv" }
+            },
+            "required": ["model", "fields"]
+          }
+        },
+        {
+          "name": "odoo_import",
+          "description": "Import records into Odoo from CSV/JSON",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "model": { "type": "string" },
+              "data": { "type": "array" },
+              "format": { "type": "string", "enum": ["csv", "json"] }
+            },
+            "required": ["model", "data"]
+          }
+        }
+      ]
+    },
+    "n8n-automation": {
+      "description": "n8n workflow automation engine",
+      "url": "${N8N_ENDPOINT}",
+      "transport": "http",
+      "authentication": {
+        "type": "apiKey",
+        "header": "X-N8N-API-KEY",
+        "key": "${N8N_API_KEY}"
+      },
+      "capabilities": [
+        "workflow-management",
+        "execution-monitoring",
+        "webhook-triggers"
+      ],
+      "tools": [
+        {
+          "name": "n8n_list_workflows",
+          "description": "List all n8n workflows",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "active": { "type": "boolean", "description": "Filter by active status" }
+            }
+          }
+        },
+        {
+          "name": "n8n_trigger_workflow",
+          "description": "Trigger a workflow execution",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "workflowId": { "type": "string" },
+              "data": { "type": "object", "description": "Input data for the workflow" }
+            },
+            "required": ["workflowId"]
+          }
+        },
+        {
+          "name": "n8n_get_executions",
+          "description": "Get workflow execution history",
+          "inputSchema": {
+            "type": "object",
+            "properties": {
+              "workflowId": { "type": "string" },
+              "status": { "type": "string", "enum": ["success", "error", "running", "waiting"] },
+              "limit": { "type": "integer", "default": 20 }
+            }
+          }
+        }
+      ]
+    },
+    "supabase": {
+      "description": "Supabase PostgreSQL + Storage integration",
+      "url": "${SUPABASE_URL}",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${SUPABASE_SERVICE_ROLE_KEY}"
+      },
+      "capabilities": [
+        "database-queries",
+        "file-storage",
+        "realtime-subscriptions"
+      ]
+    },
+    "mattermost": {
+      "description": "Mattermost team communication",
+      "url": "${MATTERMOST_ENDPOINT}",
+      "transport": "http",
+      "authentication": {
+        "type": "bearer",
+        "token": "${MATTERMOST_BOT_TOKEN}"
+      },
+      "capabilities": [
+        "send-messages",
+        "create-channels",
+        "post-alerts"
+      ]
+    }
+  },
+  "routing": {
+    "strategy": "intelligent",
+    "rules": [
+      {
+        "pattern": "diagram|architecture|draw|visualize|topology",
+        "target": ["diagram-ai-generator"]
+      },
+      {
+        "pattern": "dashboard|chart|analytics|superset|kpi|report",
+        "target": ["superset-mcp", "do-advisor"]
+      },
+      {
+        "pattern": "kubernetes|k8s|doks|cluster|pod|deployment|node",
+        "target": ["do-advisor", "kubernetes-genius"]
+      },
+      {
+        "pattern": "expense|invoice|finance|ppm|budget|bir|closing",
+        "target": ["odoo-erp", "do-advisor"]
+      },
+      {
+        "pattern": "workflow|automation|n8n|scheduled|job",
+        "target": ["n8n-automation", "do-advisor"]
+      },
+      {
+        "pattern": "cost|spending|billing|savings",
+        "target": ["do-advisor"]
+      },
+      {
+        "pattern": "security|ssl|firewall|rbac|vulnerability",
+        "target": ["do-advisor", "kubernetes-genius"]
+      },
+      {
+        "pattern": "alert|notify|message|chat",
+        "target": ["mattermost"]
+      }
+    ],
+    "fallback": "do-advisor"
+  },
+  "skills": {
+    "registry": "./skills/",
+    "enabled": [
+      "architecture_diagrams",
+      "superset_mcp"
+    ]
+  },
+  "localDevelopment": {
+    "enabled": true,
+    "sqlite": {
+      "path": "./data/local-rag.db",
+      "syncStrategy": "on-success"
+    },
+    "syncToProduction": {
+      "skills": true,
+      "embeddings": false,
+      "conversationHistory": false
+    }
+  }
+}

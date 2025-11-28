@@ -1,0 +1,43 @@
+<odoo>
+    <record id="board_finance_ppm_view" model="ir.ui.view">
+        <field name="name">finance.ppm.dashboard</field>
+        <field name="model">board.board</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="PPM Command Center">
+                <board style="2-1">
+                    <column>
+                        <action name="%(project.open_view_project_all)d" 
+                                string="Active Projects Portfolio" 
+                                view_mode="kanban"
+                                context="{'group_by': 'stage_id'}"/>
+                        
+                        <action name="%(project.action_view_task)d" 
+                                string="Resource Capacity (Tasks per Person)" 
+                                view_mode="graph"
+                                context="{'graph_mode': 'bar', 'group_by': 'user_id'}"/>
+                    </column>
+
+                    <column>
+                        <action name="%(account.action_account_analytic_line_tree)d" 
+                                string="Financial Performance (Budget vs Actual)" 
+                                view_mode="pivot"/>
+
+                        <action name="%(project.action_view_task)d" 
+                                string="Upcoming Tax Deadlines" 
+                                view_mode="tree,calendar"
+                                domain="[('project_id', '=', 20)]"/>
+                    </column>
+                </board>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_open_ppm_dashboard" model="ir.actions.act_window">
+        <field name="name">PPM Command Center</field>
+        <field name="res_model">board.board</field>
+        <field name="view_mode">form</field>
+        <field name="usage">menu</field>
+        <field name="view_id" ref="board_finance_ppm_view"/>
+    </record>
+</odoo>

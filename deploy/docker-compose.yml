@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: odoo
       POSTGRES_USER: odoo
       POSTGRES_PASSWORD: CHANGE_ME_STRONG_DB_PASSWORD
+      POSTGRES_MAX_CONNECTIONS: 100
     volumes:
       - odoo-db-data:/var/lib/postgresql/data
     networks:
@@ -44,7 +45,11 @@ services:
       # Main config
       - ./odoo.conf:/etc/odoo/odoo.conf:ro
 
-      # Filestore only - addons are baked into the image
+      # Custom CE/OCA addons only – NO Enterprise mounts
+      - ../addons:/mnt/extra-addons
+      - ../oca:/mnt/oca-addons
+
+      # Filestore
       - odoo-filestore:/var/lib/odoo
 
     # Expose only inside the droplet; Nginx on host will proxy 443 → 8069

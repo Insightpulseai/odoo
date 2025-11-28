@@ -1,0 +1,56 @@
+[submodule "external-src/reporting-engine"]
+	path = external-src/reporting-engine
+	url = https://github.com/OCA/reporting-engine.git
+	branch = 18.0
+[submodule "external-src/account-closing"]
+	path = external-src/account-closing
+	url = https://github.com/OCA/account-closing.git
+	branch = 18.0
+[submodule "external-src/project"]
+	path = external-src/project
+	url = https://github.com/OCA/project.git
+	branch = 18.0
+[submodule "external-src/hr-expense"]
+	path = external-src/hr-expense
+	url = https://github.com/OCA/hr-expense.git
+	branch = 18.0
+[submodule "external-src/purchase-workflow"]
+	path = external-src/purchase-workflow
+	url = https://github.com/OCA/purchase-workflow.git
+	branch = 18.0
+[submodule "external-src/maintenance"]
+	path = external-src/maintenance
+	url = https://github.com/OCA/maintenance.git
+	branch = 18.0
+[submodule "external-src/dms"]
+	path = external-src/dms
+	url = https://github.com/OCA/dms.git
+	branch = 18.0
+[submodule "external-src/calendar"]
+	path = external-src/calendar
+	url = https://github.com/OCA/calendar.git
+	branch = 18.0
+[submodule "external-src/web"]
+	path = external-src/web
+	url = https://github.com/OCA/web.git
+	branch = 18.0
+[submodule "external-src/account-invoicing"]
+	path = external-src/account-invoicing
+	url = https://github.com/OCA/account-invoicing.git
+	branch = 18.0
+[submodule "external-src/account-financial-reporting"]
+	path = external-src/account-financial-reporting
+	url = https://github.com/OCA/account-financial-reporting.git
+	branch = 18.0
+[submodule "external-src/account-financial-tools"]
+	path = external-src/account-financial-tools
+	url = https://github.com/OCA/account-financial-tools.git
+	branch = 18.0
+[submodule "external-src/contract"]
+	path = external-src/contract
+	url = https://github.com/OCA/contract.git
+	branch = 18.0
+[submodule "external-src/server-tools"]
+	path = external-src/server-tools
+	url = https://github.com/OCA/server-tools.git
+	branch = 18.0
