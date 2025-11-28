@@ -1,14 +1,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+from odoo.tools.safe_eval import safe_eval
 import json
-
-
-def safe_eval(expr):
-    """Safely evaluate domain expressions"""
-    try:
-        return eval(expr) if expr else []
-    except Exception:
-        return []
 
 
 class FinancePPMCanvas(models.Model):
@@ -38,23 +31,13 @@ class FinancePPMCanvas(models.Model):
             rec.widget_count = len(rec.widget_ids)
             rec.table_count = len(rec.widget_ids.filtered(lambda w: w.widget_type == 'table'))
 
-    @api.constrains('widget_ids')
-    def _check_governance_limits(self):
-        for rec in self:
-            if len(rec.widget_ids) > 10:
-                raise ValidationError(_("Governance Limit: Max 10 widgets allowed per Canvas."))
-
-            tables = rec.widget_ids.filtered(lambda w: w.widget_type == 'table')
-            if len(tables) > 7:
-                raise ValidationError(_("Governance Limit: Max 7 table widgets allowed per Canvas."))
-
 
 class FinancePPMWidget(models.Model):
     _name = 'finance.ppm.widget'
     _description = 'Canvas Widget'
     _order = 'sequence, id'
 
-    canvas_id = fields.Many2one('finance.ppm.canvas', string='Canvas', ondelete='cascade')
+    canvas_id = fields.Many2one('finance.ppm.canvas', string='Canvas', ondelete='cascade', required=True)
     sequence = fields.Integer(default=10)
     name = fields.Char(string='Title', required=True)
 
@@ -100,6 +83,56 @@ class FinancePPMWidget(models.Model):
     # --- Output ---
     echarts_config = fields.Text(string='ECharts JSON', compute='_compute_echarts_json')
 
+    # -------------------------------------------------------------------------
+    # GOVERNANCE CONSTRAINTS (enforced on widget create/write)
+    # -------------------------------------------------------------------------
+    @api.constrains('canvas_id', 'widget_type')
+    def _check_canvas_governance_limits(self):
+        """
+        Enforce governance limits when widgets are created or modified.
+        - Max 10 widgets per canvas
+        - Max 7 table widgets per canvas
+        """
+        for widget in self:
+            if not widget.canvas_id:
+                continue
+
+            canvas = widget.canvas_id
+            total_widgets = self.search_count([('canvas_id', '=', canvas.id)])
+            table_widgets = self.search_count([
+                ('canvas_id', '=', canvas.id),
+                ('widget_type', '=', 'table')
+            ])
+
+            if total_widgets > 10:
+                raise ValidationError(
+                    _("Governance Limit: Max 10 widgets allowed per Canvas. "
+                      "Canvas '%s' already has %d widgets.") % (canvas.name, total_widgets)
+                )
+
+            if table_widgets > 7:
+                raise ValidationError(
+                    _("Governance Limit: Max 7 table widgets allowed per Canvas. "
+                      "Canvas '%s' already has %d table widgets.") % (canvas.name, table_widgets)
+                )
+
+    # -------------------------------------------------------------------------
+    # DATA FETCHING
+    # -------------------------------------------------------------------------
+    def _parse_domain_filter(self):
+        """
+        Safely parse the domain filter using Odoo's safe_eval.
+        Returns empty list if parsing fails or domain is empty.
+        """
+        self.ensure_one()
+        if not self.domain_filter or self.domain_filter.strip() in ('', '[]'):
+            return []
+        try:
+            # Use Odoo's safe_eval which restricts dangerous operations
+            return safe_eval(self.domain_filter, {'uid': self.env.uid})
+        except Exception:
+            return []
+
     def _fetch_widget_data(self):
         """
         Standardized method to fetch data.
@@ -111,7 +144,7 @@ class FinancePPMWidget(models.Model):
             return [], []
 
         Model = self.env[self.target_object]
-        domain = safe_eval(self.domain_filter) if self.domain_filter else []
+        domain = self._parse_domain_filter()
 
         # Determine Aggregate Function
         measure = self.measure_field.name if self.measure_field else None
@@ -144,6 +177,9 @@ class FinancePPMWidget(models.Model):
 
         return labels, values
 
+    # -------------------------------------------------------------------------
+    # ECHARTS CONFIG GENERATION
+    # -------------------------------------------------------------------------
     @api.depends('chart_type', 'group_by_field', 'measure_field', 'operation_type', 'target_object', 'domain_filter')
     def _compute_echarts_json(self):
         for rec in self:
