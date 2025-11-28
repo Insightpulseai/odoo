@@ -1,0 +1,91 @@
+version: '3.9'
+
+services:
+  # ==========================================================================
+  # ODOO WEB APPLICATION
+  # ==========================================================================
+  web:
+    build: .
+    container_name: odoo-agency-erp
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8069:8069"
+      - "8072:8072"  # Longpolling port for live chat/notifications
+    volumes:
+      # Mount the config file so you can tune Odoo without rebuilding the image
+      - ./config:/etc/odoo:ro
+      # Persistent filestore (uploaded files, session data)
+      - odoo-web-data:/var/lib/odoo
+      # Log directory
+      - odoo-logs:/var/log/odoo
+    env_file:
+      - .env
+    environment:
+      - ODOO_RC=/etc/odoo/odoo.conf
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+    networks:
+      - odoo_network
+
+  # ==========================================================================
+  # POSTGRESQL DATABASE
+  # ==========================================================================
+  db:
+    image: postgres:16
+    container_name: postgres-agency-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_MAX_CONNECTIONS=100
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    networks:
+      - odoo_network
+
+# ==========================================================================
+# NETWORKS
+# ==========================================================================
+networks:
+  odoo_network:
+    driver: bridge
+
+# ==========================================================================
+# VOLUMES
+# ==========================================================================
+volumes:
+  odoo-web-data:
+    name: odoo-filestore
+  odoo-db-data:
+    name: odoo-postgres
+  odoo-logs:
+    name: odoo-logs

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_finance_team,finance.team,model_finance_team,,1,1,1,1
+access_finance_ppm_task,finance.ppm.task,model_finance_ppm_task,,1,1,1,1
+access_finance_ppm_canvas,finance.ppm.canvas,model_finance_ppm_canvas,,1,1,1,1
+access_finance_ppm_widget,finance.ppm.widget,model_finance_ppm_widget,,1,1,1,1

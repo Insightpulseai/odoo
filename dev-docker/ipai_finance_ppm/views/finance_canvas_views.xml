@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- WIDGET FORM VIEW (The Configuration Popup) -->
+    <record id="view_finance_ppm_widget_form" model="ir.ui.view">
+        <field name="name">finance.ppm.widget.form</field>
+        <field name="model">finance.ppm.widget</field>
+        <field name="arch" type="xml">
+            <form string="Configure Widget">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="Widget Title"/></h1>
+                    </div>
+                    <group>
+                        <group string="Data Source">
+                            <field name="target_object"/>
+                            <field name="widget_type"/>
+                            <field name="chart_type" invisible="widget_type == 'table'"/>
+                        </group>
+                        <group string="Metrics">
+                            <field name="group_by_field" options="{'no_create': True}"/>
+                            <field name="operation_type" invisible="widget_type == 'table'"/>
+                            <field name="measure_field" invisible="operation_type == 'count' or widget_type == 'table'"/>
+                        </group>
+                    </group>
+                    <group string="Filters">
+                        <field name="domain_filter" placeholder="e.g. [('state','=','done')]"/>
+                    </group>
+                    <notebook invisible="widget_type == 'table'">
+                        <page string="ECharts Preview">
+                            <field name="echarts_config" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- CANVAS FORM VIEW (The Dashboard Layout) -->
+    <record id="view_finance_ppm_canvas_form" model="ir.ui.view">
+        <field name="name">finance.ppm.canvas.form</field>
+        <field name="model">finance.ppm.canvas</field>
+        <field name="arch" type="xml">
+            <form string="Project Canvas">
+                <header>
+                    <button string="Add Chart Widget" type="action" name="%(action_create_widget_wizard)d" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-th-large">
+                            <field string="Widgets" name="widget_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-table">
+                            <field string="Tables" name="table_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="My Investment Dashboard"/></h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="layout_columns" widget="radio" options="{'horizontal': true}"/>
+                        </group>
+                    </group>
+
+                    <!-- The Canvas Area -->
+                    <separator string="Canvas Area"/>
+                    <field name="widget_ids" mode="kanban" context="{'default_canvas_id': active_id}">
+                        <kanban>
+                            <field name="name"/>
+                            <field name="widget_type"/>
+                            <field name="chart_type"/>
+                            <field name="echarts_config"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <div class="o_kanban_card_header">
+                                            <div class="o_kanban_card_header_title">
+                                                <div class="h5 text-primary"><field name="name"/></div>
+                                            </div>
+                                        </div>
+                                        <div class="o_kanban_card_content mt-2">
+                                            <t t-if="record.widget_type.raw_value == 'chart'">
+                                                <span class="badge text-bg-info"><i class="fa fa-area-chart"/> <field name="chart_type"/></span>
+                                                <div class="text-muted small mt-1">Config JSON Generated</div>
+                                            </t>
+                                            <t t-if="record.widget_type.raw_value == 'table'">
+                                                <span class="badge text-bg-warning"><i class="fa fa-table"/> Table</span>
+                                            </t>
+                                            <t t-if="record.widget_type.raw_value == 'tile'">
+                                                <span class="badge text-bg-success"><i class="fa fa-hashtag"/> Metric</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <form>
+                            <group>
+                                <field name="name"/>
+                                <field name="widget_type"/>
+                            </group>
+                        </form>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION TO CREATE WIDGET (Wizard style) -->
+    <record id="action_create_widget_wizard" model="ir.actions.act_window">
+        <field name="name">Add Widget</field>
+        <field name="res_model">finance.ppm.widget</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_canvas_id': active_id}</field>
+    </record>
+
+    <!-- MAIN ACTION -->
+    <record id="action_finance_ppm_canvas" model="ir.actions.act_window">
+        <field name="name">Dashboards</field>
+        <field name="res_model">finance.ppm.canvas</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Canvas Dashboard
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_finance_ppm_canvas" name="Dashboards" parent="menu_finance_ppm_root" action="action_finance_ppm_canvas" sequence="5"/>
+
+</odoo>
