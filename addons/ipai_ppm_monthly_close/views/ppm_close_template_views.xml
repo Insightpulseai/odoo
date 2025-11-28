@@ -4,7 +4,7 @@
         <field name="name">ppm.close.template.tree</field>
         <field name="model">ppm.close.template</field>
         <field name="arch" type="xml">
-            <tree string="Task Templates">
+            <list string="Task Templates">
                 <field name="sequence" widget="handle"/>
                 <field name="active" widget="boolean_toggle"/>
                 <field name="task_category"/>
@@ -13,7 +13,7 @@
                 <field name="reviewer_code"/>
                 <field name="approver_code"/>
                 <field name="total_days"/>
-            </tree>
+            </list>
         </field>
     </record>
 
