@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 92858d71f9c180e32ec6ab50a249f8407dd65d96
+> Commit: 8bca8d7c21a28a2019c1ae71821a7004b205e4c1
 
 ```
 .
@@ -242,6 +242,28 @@
 │   ├── README.md
 │   ├── odoo_oca_ci_fixer.yaml
 │   └── odoo_reverse_mapper.yaml
+├── apps
+│   ├── do-advisor-agent
+│   │   ├── config
+│   │   │   └── mcp-config.json
+│   │   ├── prompts
+│   │   │   └── unified_advisor.md
+│   │   ├── tools
+│   │   │   └── odoo_finance_ppm.py
+│   │   └── README.md
+│   └── do-advisor-ui
+│       ├── public
+│       │   ├── config.js
+│       │   └── index.html
+│       ├── src
+│       │   ├── assets
+│       │   ├── components
+│       │   ├── views
+│       │   └── app.js
+│       ├── Dockerfile
+│       ├── README.md
+│       ├── app-spec.yaml
+│       └── nginx.conf
 ├── automations
 │   └── n8n
 │       └── workflows
@@ -303,6 +325,10 @@
 │   ├── deployment
 │   │   ├── OCA_CI_GUARDIAN.md
 │   │   └── README.md
+│   ├── diagrams
+│   │   └── architecture
+│   │       ├── README.md
+│   │       └── manifest.json
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
 │   ├── APP_ICONS_README.md
@@ -445,8 +471,12 @@
 │   ├── run_odoo_migrations.sh
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
+│   ├── update_diagram_manifest.py
 │   ├── validate_m1.sh
 │   └── verify_backup.sh
+├── skills
+│   ├── architecture_diagrams.skill.json
+│   └── superset_mcp.skill.json
 ├── specs
 │   ├── 002-odoo-expense-equipment-mvp.prd.md
 │   ├── 003-finance-ppm.prd.md
@@ -556,15 +586,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-141 directories, 410 files
+155 directories, 426 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 149 |
-| Files | 432 |
-| Python files | 101 |
+| Directories | 164 |
+| Files | 455 |
+| Python files | 103 |
 | XML files | 52 |
-| Markdown files | 116 |
+| Markdown files | 120 |

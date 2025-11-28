@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 92858d71f9c180e32ec6ab50a249f8407dd65d96
+> Commit: 8bca8d7c21a28a2019c1ae71821a7004b205e4c1
 
 ## 📚 Documentation
 
@@ -56,6 +56,9 @@
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
+| [DO Advisor Agent](apps/do-advisor-agent/README.md) | apps/do-advisor-agent |
+| [DO Advisor - Unified Infrastructure Intelligence](apps/do-advisor-agent/prompts/unified_advisor.md) | apps/do-advisor-agent/prompts |
+| [DO Advisor UI](apps/do-advisor-ui/README.md) | apps/do-advisor-ui |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
@@ -95,6 +98,7 @@
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [Odoo CE/OCA CI Guardian](docs/deployment/OCA_CI_GUARDIAN.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
+| [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
