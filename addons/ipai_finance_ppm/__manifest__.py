@@ -15,12 +15,14 @@
     "data": [
         "security/ir.model.access.csv",
         "views/finance_person_views.xml",
+        "views/finance_bir_deadline_views.xml",
         "views/finance_task_views.xml",
         "views/bir_schedule_views.xml",
         "views/ppm_dashboard_views.xml",
         "views/project_task_views.xml",
         "views/menus.xml",
         "data/bir_schedule_seed.xml",
+        "data/finance_cron.xml",
     ],
     "assets": {
         "web.assets_backend": [
