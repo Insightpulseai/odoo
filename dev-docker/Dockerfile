@@ -91,9 +91,15 @@ RUN git clone --depth 1 -b 18.0 https://github.com/OCA/server-tools.git /mnt/ext
 # ----------------------------------------------------------------------------------------
 # 4. CUSTOM MODULE INSTALLATION (Your IP)
 # ----------------------------------------------------------------------------------------
-# We copy your custom 'ipai_finance_ppm' module into the container.
+# We copy your custom modules into the container.
 # This "bakes" your code into the image, making the artifact immutable.
+
+# 4.1. Finance PPM Module - Core business logic
 COPY ./ipai_finance_ppm /mnt/extra-addons/custom/ipai_finance_ppm
+
+# 4.2. TBWA Brand Token Theme - Design system
+# Applies TBWA design tokens (colors, typography, animations) to the backend
+COPY ./theme_tbwa_backend /mnt/extra-addons/custom/theme_tbwa_backend
 
 # ----------------------------------------------------------------------------------------
 # 4.5. DEBRANDING - Remove Odoo.com Upsell & IAP Prompts (The Clean UI)

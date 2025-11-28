@@ -1,0 +1,309 @@
+// =============================================================================
+// TBWA BACKEND OVERRIDES
+// =============================================================================
+// This file contains specific component overrides that can't be achieved
+// with variables alone. Use sparingly - prefer token-based theming.
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// LOADING SCREEN
+// -----------------------------------------------------------------------------
+// Custom loading screen with TBWA branding
+
+.o_loading {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%) !important;
+
+    .o_loading_indicator {
+        background: #E60012 !important;
+    }
+
+    // Add TBWA wordmark if desired (via ::before pseudo-element)
+    &::before {
+        content: "TBWA";
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 48px;
+        font-weight: 900;
+        letter-spacing: 8px;
+        color: #FFFFFF;
+        opacity: 0.1;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// BADGES & STATUS PILLS
+// -----------------------------------------------------------------------------
+// Override badge colors for brand consistency
+
+.badge {
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 10px;
+    padding: 4px 8px;
+
+    &.text-bg-primary,
+    &.bg-primary {
+        background-color: #E60012 !important;
+        color: #FFFFFF !important;
+    }
+
+    &.text-bg-secondary,
+    &.bg-secondary {
+        background-color: #FFD100 !important;
+        color: #1A1A1A !important;
+    }
+
+    &.text-bg-success,
+    &.bg-success {
+        background-color: #28A745 !important;
+    }
+
+    &.text-bg-warning,
+    &.bg-warning {
+        background-color: #FFD100 !important;
+        color: #1A1A1A !important;
+    }
+
+    &.text-bg-danger,
+    &.bg-danger {
+        background-color: #DC3545 !important;
+    }
+
+    &.text-bg-info,
+    &.bg-info {
+        background-color: #17A2B8 !important;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// BUTTONS
+// -----------------------------------------------------------------------------
+// Enhanced button styling with micro-interactions
+
+.btn {
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.btn-primary {
+    background-color: #E60012;
+    border-color: #E60012;
+
+    &:hover {
+        background-color: darken(#E60012, 10%);
+        border-color: darken(#E60012, 10%);
+    }
+
+    &:focus {
+        box-shadow: 0 0 0 3px rgba(230, 0, 18, 0.3);
+    }
+}
+
+// -----------------------------------------------------------------------------
+// NAVBAR CUSTOMIZATION
+// -----------------------------------------------------------------------------
+
+.o_main_navbar {
+    background-color: #1A1A1A !important;
+    border-bottom: 2px solid #E60012;
+
+    .o_menu_brand {
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .dropdown-menu {
+        border-radius: 8px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: none;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// SIDEBAR / APP MENU
+// -----------------------------------------------------------------------------
+
+.o_action_manager {
+    .o_cp_top_left {
+        // Control panel title styling
+        h1, .breadcrumb {
+            font-weight: 700;
+        }
+    }
+}
+
+// App switcher styling
+.o_home_menu {
+    background: linear-gradient(135deg, #1A1A1A 0%, #2D2D2D 100%);
+
+    .o_app {
+        transition: transform 0.2s ease;
+
+        &:hover {
+            transform: scale(1.05);
+        }
+
+        .o_caption {
+            font-weight: 600;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// FORM VIEWS
+// -----------------------------------------------------------------------------
+
+.o_form_view {
+    .o_form_sheet {
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .o_group {
+        .o_label {
+            font-weight: 600;
+            color: #666666;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// KANBAN VIEWS
+// -----------------------------------------------------------------------------
+
+.o_kanban_view {
+    .o_kanban_record {
+        border-radius: 8px;
+        border: 1px solid #E5E5E5;
+        transition: all 0.2s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+    }
+
+    .o_kanban_group {
+        .o_kanban_header {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// LIST VIEWS
+// -----------------------------------------------------------------------------
+
+.o_list_view {
+    .o_data_row {
+        transition: background-color 0.15s ease;
+
+        &:hover {
+            background-color: #F9F9F9;
+        }
+
+        &.o_selected_row {
+            background-color: rgba(230, 0, 18, 0.1);
+        }
+    }
+
+    th {
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+        color: #666666;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// CHATTER
+// -----------------------------------------------------------------------------
+
+.o_ChatterContainer {
+    .o_Message {
+        border-radius: 8px;
+
+        &:hover {
+            background-color: #F9F9F9;
+        }
+    }
+}
+
+// -----------------------------------------------------------------------------
+// DIALOGS & MODALS
+// -----------------------------------------------------------------------------
+
+.modal {
+    .modal-content {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #E5E5E5;
+
+        .modal-title {
+            font-weight: 700;
+        }
+    }
+
+    .modal-footer {
+        border-top: 1px solid #E5E5E5;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// SCROLLBAR STYLING (WebKit browsers)
+// -----------------------------------------------------------------------------
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F5F5F5;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #D0D0D0;
+    border-radius: 4px;
+
+    &:hover {
+        background: #B0B0B0;
+    }
+}
+
+// -----------------------------------------------------------------------------
+// PRINT STYLES
+// -----------------------------------------------------------------------------
+
+@media print {
+    .o_main_navbar,
+    .o_action_manager > .o_cp_left {
+        background-color: #FFFFFF !important;
+        color: #1A1A1A !important;
+    }
+}
