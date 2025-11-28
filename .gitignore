@@ -85,3 +85,5 @@ temp/
 !supabase/migrations/*.sql
 *.db
 *.sqlite
+# Exception: Claude external memory
+!.claude/project_memory.db
