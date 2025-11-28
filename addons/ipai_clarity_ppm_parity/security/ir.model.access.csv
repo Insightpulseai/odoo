@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_project_project_user,project.project.user,project.model_project_project,project.group_project_user,1,1,1,0
+access_project_project_manager,project.project.manager,project.model_project_project,project.group_project_manager,1,1,1,1
+access_project_task_user,project.task.user,project.model_project_task,project.group_project_user,1,1,1,0
+access_project_task_manager,project.task.manager,project.model_project_task,project.group_project_manager,1,1,1,1
+access_project_milestone_user,project.milestone.user,project_milestone.model_project_milestone,project.group_project_user,1,1,1,0
+access_project_milestone_manager,project.milestone.manager,project_milestone.model_project_milestone,project.group_project_manager,1,1,1,1
+access_project_checklist_user,project.task.checklist.item.user,project_task_checklist.model_project_task_checklist_item,project.group_project_user,1,1,1,1
+access_project_checklist_manager,project.task.checklist.item.manager,project_task_checklist.model_project_task_checklist_item,project.group_project_manager,1,1,1,1
