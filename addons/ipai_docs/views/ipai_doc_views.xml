@@ -3,13 +3,13 @@
         <field name="name">ipai.doc.tree</field>
         <field name="model">ipai.doc</field>
         <field name="arch" type="xml">
-            <tree string="Documents">
+            <list string="Documents">
                 <field name="name"/>
                 <field name="doc_type"/>
                 <field name="state"/>
                 <field name="owner_id"/>
                 <field name="company_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -20,13 +20,13 @@
             <form string="Document" class="o_ipai_doc_form">
                 <header>
                     <button name="action_set_in_review" type="object"
-                            string="Send for Review" states="draft"
+                            string="Send for Review" invisible="state != 'draft'"
                             class="btn-primary"/>
                     <button name="action_publish" type="object"
-                            string="Publish" states="in_review"
+                            string="Publish" invisible="state != 'in_review'"
                             class="btn-primary"/>
                     <button name="action_archive" type="object"
-                            string="Archive" states="published"
+                            string="Archive" invisible="state != 'published'"
                             class="btn-secondary"/>
                     <field name="state" widget="statusbar"/>
                 </header>
