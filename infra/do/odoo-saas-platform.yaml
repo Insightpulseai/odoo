@@ -9,7 +9,7 @@ services:
   - name: odoo-web
     # GitHub source configuration
     github:
-      repo: jgtolentino/insightpulse-odoo
+      repo: jgtolentino/odoo-ce
       branch: main
       deploy_on_push: true
 

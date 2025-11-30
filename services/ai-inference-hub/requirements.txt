@@ -1,6 +1,6 @@
 # OCR Framework (PaddleOCR - lightweight, 25MB total)
 paddleocr==2.7.3
-paddlepaddle==2.6.2
+paddlepaddle==2.5.1
 
 # API framework
 fastapi==0.115.0
