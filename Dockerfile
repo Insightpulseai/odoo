@@ -25,34 +25,7 @@ WORKDIR /opt/odoo
 COPY requirements.txt requirements-auto.txt ./
 RUN python -m pip install --upgrade pip wheel && \
     pip wheel --wheel-dir /wheels -r requirements.txt && \
-    pip wheel --wheel-dir /wheels -r requirements-auto.txt && \
-    # Additional AI/OCR dependencies
-    pip wheel --wheel-dir /wheels \
-        paddlepaddle==2.6.0 \
-        paddleocr==2.7.3 \
-        anthropic==0.7.8 \
-        openai==1.6.1 \
-        supabase==2.0.3 \
-        fastapi==0.109.0 \
-        uvicorn[standard]==0.27.0 \
-        pydantic==2.5.3 \
-        pillow==10.2.0 \
-        opencv-python-headless==4.9.0.80 \
-        pandas==2.1.4 \
-        numpy==1.24.3 \
-        openpyxl==3.1.2 \
-        prometheus-client==0.19.0 \
-        sentry-sdk==1.39.2
-
-# Install additional production dependencies
-RUN pip wheel --wheel-dir /wheels \
-    paddleocr==2.7.0 \
-    anthropic==0.7.8 \
-    supabase==2.0.3 \
-    fastapi==0.109.0 \
-    uvicorn==0.27.0 \
-    pydantic==2.5.3 \
-    python-dotenv==1.0.0
+    pip wheel --wheel-dir /wheels -r requirements-auto.txt
 
 # Clone OCA modules if enabled (Odoo 18.0 branches)
 RUN if [ "$INCLUDE_OCA_MODULES" = "true" ]; then \
