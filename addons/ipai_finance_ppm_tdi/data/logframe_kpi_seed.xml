@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
         <!-- LogFrame (Logical Framework) KPI Definitions -->
         <!-- Hierarchical framework for Finance PPM performance measurement -->
         <!-- Structure: Goal → Outcomes → Outputs → Activities with KPIs -->
@@ -381,6 +380,4 @@
             <field name="responsible_role">Senior Finance Manager</field>
             <field name="parent_id" ref="logframe_goal_finance_excellence"/>
         </record>
-
-    </data>
 </odoo>

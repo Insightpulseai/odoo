@@ -22,7 +22,7 @@
 ### Step 1.1 - Prepare Your Data
 From your **Directory** sheet, ensure columns:
 - `Code` (e.g., CKVC, RIM, BOM)
-- `Name` (e.g., CKVC, RIM, BOM)  
+- `Name` (e.g., CKVC, RIM, BOM)
 - `Email` (e.g., ckvc@insightpulseai.net)
 - `Role` (e.g., Finance Supervisor, Tax Specialist)
 
@@ -33,7 +33,7 @@ From your **Directory** sheet, ensure columns:
 4. Upload your CSV file
 5. **Field Mapping**:
    - `Code` → **Code**
-   - `Name` → **Name** 
+   - `Name` → **Name**
    - `Email` → **Email**
    - `Role` → **Role**
 6. Click **Test** → **Import**
@@ -52,7 +52,7 @@ From your **Monthly Tasks** sheet, ensure columns:
 - `Category` (e.g., Foundation & Corp, Revenue/WIP, VAT & Tax Reporting, Working Capital)
 - `Name` (task description)
 - `prep_duration` (days for preparation)
-- `review_duration` (days for review)  
+- `review_duration` (days for review)
 - `approval_duration` (days for approval)
 
 ### Step 2.2 - Import Process
@@ -90,7 +90,7 @@ From your **Compliance Calendar** sheet, ensure columns:
 
 ### Step 3.2 - Import Process
 1. Go to **Finance PPM → Compliance Calendar**
-2. Click **List** view  
+2. Click **List** view
 3. Click **Favorites ▸ Import records**
 4. Upload your CSV file
 5. **Field Mapping**:
@@ -115,14 +115,14 @@ From your **Compliance Calendar** sheet, ensure columns:
 ### After Import Completion
 Your Finance PPM will have:
 - ✅ **Team Directory** with roles and responsibilities
-- ✅ **Monthly Tasks** assigned to team members  
+- ✅ **Monthly Tasks** assigned to team members
 - ✅ **Compliance Calendar** with BIR deadlines
 - ✅ **Automatic scheduling** based on durations
 - ✅ **Role-based assignments** for all activities
 
 ### Next Steps for November Close
 1. **Review assigned tasks** in Finance PPM → Monthly Tasks
-2. **Check BIR deadlines** in Finance PPM → Compliance Calendar  
+2. **Check BIR deadlines** in Finance PPM → Compliance Calendar
 3. **Monitor progress** through the Finance PPM dashboard
 4. **Use existing Odoo Projects** for detailed task management
 
@@ -144,7 +144,7 @@ Your Finance PPM will have:
 
 ## 📝 Template Files Provided
 - `finance_directory_template.csv` - Directory structure
-- `finance_monthly_tasks_template.csv` - Task assignments  
+- `finance_monthly_tasks_template.csv` - Task assignments
 - `finance_compliance_calendar_template.csv` - BIR deadlines
 
 Use these as references for your actual data export from the Finance Framework Unified Workbook.

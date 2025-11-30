@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'Finance PPM Transaction Data Ingestion (TDI)',
-    'version': '1.0.0',
-    'category': 'Finance',
-    'summary': 'Import finance team, tasks, BIR calendar, and LogFrame data',
-    'description': """
+    "name": "Finance PPM Transaction Data Ingestion (TDI)",
+    "version": "1.0.0",
+    "category": "Finance",
+    "summary": "Import finance team, tasks, BIR calendar, and LogFrame data",
+    "description": """
 Finance PPM TDI Module
 ======================
 Provides CSV/Excel import wizards for:
@@ -19,44 +19,40 @@ Features:
 - Audit trail for all imports
 - Integration with ipai_finance_monthly_closing module
     """,
-    'author': 'InsightPulse AI - Jake Tolentino',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        'project',
-        'hr',
-        'account',
+    "author": "InsightPulse AI - Jake Tolentino",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "base",
+        "project",
+        "hr",
+        "account",
         # OCA dependencies temporarily disabled for initial deployment
         # 'project_timeline',
         # 'mis_builder',
         # 'purchase_request',
         # 'date_range',
     ],
-    'data': [
+    "data": [
         # Security
-        'security/security_groups.xml',
-        'security/ir.model.access.csv',
-
+        "security/security_groups.xml",
+        "security/ir.model.access.csv",
         # Seed data (noupdate=0 for initial installation compatibility)
-        'data/finance_team_seed.xml',
-        'data/month_end_tasks_seed.xml',
-        'data/bir_calendar_seed.xml',
-        'data/logframe_kpi_seed.xml',
-        'data/ph_holiday_calendar_seed.xml',
-
+        "data/finance_team_seed.xml",
+        "data/month_end_tasks_seed.xml",
+        "data/bir_calendar_seed.xml",
+        "data/logframe_kpi_seed.xml",
+        "data/ph_holiday_calendar_seed.xml",
         # Wizard views
-        'wizard/finance_ppm_import_wizard_views.xml',
-
+        "wizard/finance_ppm_import_wizard_views.xml",
         # Audit log views
-        'views/finance_ppm_tdi_audit_views.xml',
-
+        "views/finance_ppm_tdi_audit_views.xml",
         # Menu
-        'views/menu.xml',
+        "views/menu.xml",
     ],
-    'demo': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
-    'post_init_hook': 'post_init_hook',
+    "demo": [],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
+    "post_init_hook": "post_init_hook",
 }

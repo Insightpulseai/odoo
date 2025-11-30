@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api, fields
-from datetime import datetime, timedelta
-import requests
 import json
 import logging
+from datetime import datetime, timedelta
+
+import requests
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -19,10 +21,11 @@ class AccountMoveLine(models.Model):
     - n8n webhook integration
     - Automated snapshot generation
     """
-    _inherit = 'account.move.line'
+
+    _inherit = "account.move.line"
 
     @api.model
-    def cron_generate_ap_aging_snapshot(self, employee_code='RIM'):
+    def cron_generate_ap_aging_snapshot(self, employee_code="RIM"):
         """
         Calculate AP Aging buckets for specified employee context.
         Trigger n8n webhook with heatmap data.
@@ -33,7 +36,9 @@ class AccountMoveLine(models.Model):
         Returns:
             dict: Heatmap data with vendors and aging buckets
         """
-        _logger.info(f"Starting AP Aging snapshot generation for employee: {employee_code}")
+        _logger.info(
+            f"Starting AP Aging snapshot generation for employee: {employee_code}"
+        )
 
         # SQL Query for Aging Buckets with optimized indexing
         query = """
@@ -92,18 +97,24 @@ class AccountMoveLine(models.Model):
 
             # Format for n8n webhook and heatmap
             heatmap_data = {
-                'employee_code': employee_code,
-                'snapshot_date': fields.Date.today().isoformat(),
-                'vendors': results,
-                'total_payables': sum(float(r['total_outstanding'] or 0) for r in results),
-                'total_overdue_90plus': sum(float(r['bucket_90_plus'] or 0) for r in results),
-                'vendor_count': len(results),
-                'generated_at': datetime.now().isoformat(),
+                "employee_code": employee_code,
+                "snapshot_date": fields.Date.today().isoformat(),
+                "vendors": results,
+                "total_payables": sum(
+                    float(r["total_outstanding"] or 0) for r in results
+                ),
+                "total_overdue_90plus": sum(
+                    float(r["bucket_90_plus"] or 0) for r in results
+                ),
+                "vendor_count": len(results),
+                "generated_at": datetime.now().isoformat(),
             }
 
             # Trigger n8n webhook
-            n8n_url = self.env['ir.config_parameter'].sudo().get_param(
-                'ipai_finance_ap_aging.n8n_webhook_url'
+            n8n_url = (
+                self.env["ir.config_parameter"]
+                .sudo()
+                .get_param("ipai_finance_ap_aging.n8n_webhook_url")
             )
 
             if n8n_url:
@@ -112,33 +123,43 @@ class AccountMoveLine(models.Model):
                     response = requests.post(
                         n8n_url,
                         json=heatmap_data,
-                        headers={'Content-Type': 'application/json'},
-                        timeout=10
+                        headers={"Content-Type": "application/json"},
+                        timeout=10,
                     )
                     response.raise_for_status()
-                    _logger.info(f"n8n webhook triggered successfully: {response.status_code}")
+                    _logger.info(
+                        f"n8n webhook triggered successfully: {response.status_code}"
+                    )
                 except requests.exceptions.RequestException as e:
                     # Log error but don't fail cron
-                    _logger.error(f'Failed to trigger n8n webhook: {str(e)}', exc_info=True)
-                    self.env['ir.logging'].sudo().create({
-                        'name': 'AP Aging Webhook Error',
-                        'type': 'server',
-                        'level': 'error',
-                        'message': f'Failed to trigger n8n webhook: {str(e)}',
-                        'func': 'cron_generate_ap_aging_snapshot',
-                        'path': 'ipai_finance_ap_aging.models.account_move_line',
-                    })
+                    _logger.error(
+                        f"Failed to trigger n8n webhook: {str(e)}", exc_info=True
+                    )
+                    self.env["ir.logging"].sudo().create(
+                        {
+                            "name": "AP Aging Webhook Error",
+                            "type": "server",
+                            "level": "error",
+                            "message": f"Failed to trigger n8n webhook: {str(e)}",
+                            "func": "cron_generate_ap_aging_snapshot",
+                            "path": "ipai_finance_ap_aging.models.account_move_line",
+                        }
+                    )
             else:
-                _logger.warning('n8n webhook URL not configured (ir.config_parameter: ipai_finance_ap_aging.n8n_webhook_url)')
+                _logger.warning(
+                    "n8n webhook URL not configured (ir.config_parameter: ipai_finance_ap_aging.n8n_webhook_url)"
+                )
 
             return heatmap_data
 
         except Exception as e:
-            _logger.error(f'AP Aging snapshot generation failed: {str(e)}', exc_info=True)
+            _logger.error(
+                f"AP Aging snapshot generation failed: {str(e)}", exc_info=True
+            )
             raise
 
     @api.model
-    def get_ap_aging_summary(self, employee_code='RIM'):
+    def get_ap_aging_summary(self, employee_code="RIM"):
         """
         Get AP Aging summary for dashboard KPIs.
 
@@ -151,8 +172,8 @@ class AccountMoveLine(models.Model):
         data = self.cron_generate_ap_aging_snapshot(employee_code)
 
         return {
-            'total_payables': data['total_payables'],
-            'vendor_count': data['vendor_count'],
-            'total_overdue_90plus': data['total_overdue_90plus'],
-            'snapshot_date': data['snapshot_date'],
+            "total_payables": data["total_payables"],
+            "vendor_count": data["vendor_count"],
+            "total_overdue_90plus": data["total_overdue_90plus"],
+            "snapshot_date": data["snapshot_date"],
         }

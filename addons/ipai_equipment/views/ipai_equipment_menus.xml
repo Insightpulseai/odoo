@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
 
         <menuitem
             id="ipai_equipment_root_menu"
@@ -40,6 +39,4 @@
             action="ipai_equipment_utilization_action"
             sequence="40"
         />
-
-    </data>
 </odoo>

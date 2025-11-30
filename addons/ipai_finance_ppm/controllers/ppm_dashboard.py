@@ -1,7 +1,9 @@
-from odoo import http
-from odoo.http import request
-from datetime import date
 import json
+from datetime import date
+
+from odoo.http import request
+
+from odoo import http
 
 
 class FinancePPMDashboard(http.Controller):
@@ -23,19 +25,37 @@ class FinancePPMDashboard(http.Controller):
         # Prepare chart data
         chart_data = []
         for bir in bir_schedules:
-            chart_data.append({
-                "form": bir.name,
-                "period": bir.period_covered,
-                "filing_deadline": bir.filing_deadline.isoformat() if bir.filing_deadline else None,
-                "prep_deadline": bir.prep_deadline.isoformat() if bir.prep_deadline else None,
-                "review_deadline": bir.review_deadline.isoformat() if bir.review_deadline else None,
-                "approval_deadline": bir.approval_deadline.isoformat() if bir.approval_deadline else None,
-                "completion": bir.completion_pct or 0,
-                "status": bir.status,
-                "supervisor": bir.supervisor_id.name if bir.supervisor_id else "Unassigned",
-                "reviewer": bir.reviewer_id.name if bir.reviewer_id else "Unassigned",
-                "approver": bir.approver_id.name if bir.approver_id else "Unassigned",
-            })
+            chart_data.append(
+                {
+                    "form": bir.name,
+                    "period": bir.period_covered,
+                    "filing_deadline": (
+                        bir.filing_deadline.isoformat() if bir.filing_deadline else None
+                    ),
+                    "prep_deadline": (
+                        bir.prep_deadline.isoformat() if bir.prep_deadline else None
+                    ),
+                    "review_deadline": (
+                        bir.review_deadline.isoformat() if bir.review_deadline else None
+                    ),
+                    "approval_deadline": (
+                        bir.approval_deadline.isoformat()
+                        if bir.approval_deadline
+                        else None
+                    ),
+                    "completion": bir.completion_pct or 0,
+                    "status": bir.status,
+                    "supervisor": (
+                        bir.supervisor_id.name if bir.supervisor_id else "Unassigned"
+                    ),
+                    "reviewer": (
+                        bir.reviewer_id.name if bir.reviewer_id else "Unassigned"
+                    ),
+                    "approver": (
+                        bir.approver_id.name if bir.approver_id else "Unassigned"
+                    ),
+                }
+            )
 
         # Calculate status distribution
         status_counts = {}
@@ -48,9 +68,12 @@ class FinancePPMDashboard(http.Controller):
             for status, count in status_counts.items()
         ]
 
-        return request.render("ipai_finance_ppm.ppm_dashboard_template", {
-            "chart_data": json.dumps(chart_data),
-            "status_data": json.dumps(status_data),
-            "today": date.today().isoformat(),
-            "schedule_count": len(bir_schedules),
-        })
+        return request.render(
+            "ipai_finance_ppm.ppm_dashboard_template",
+            {
+                "chart_data": json.dumps(chart_data),
+                "status_data": json.dumps(status_data),
+                "today": date.today().isoformat(),
+                "schedule_count": len(bir_schedules),
+            },
+        )

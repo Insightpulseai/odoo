@@ -355,14 +355,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -372,7 +372,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha,prefix={{branch}}-
-      
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
@@ -461,7 +461,7 @@ docker run --rm -p 8069:8069 \
   -e PASSWORD=test \
   ghcr.io/jgtolentino/odoo-ce:v0.9.0
 ```
-✅ Pass if: 
+✅ Pass if:
 - Container starts without crash
 - `/web` endpoint responds with HTTP 200/302
 - No fatal errors in logs

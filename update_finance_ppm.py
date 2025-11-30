@@ -16,7 +16,7 @@ models = xmlrpc.client.ServerProxy('{}/xmlrpc/2/object'.format(url))
 try:
     result = models.execute_kw(db, uid, password, 'ir.module.module', 'update_list', [])
     print('Module list updated successfully')
-    
+
     # Search for the module
     module_ids = models.execute_kw(db, uid, password, 'ir.module.module', 'search', [[['name', '=', 'ipai_finance_ppm']]])
     if module_ids:

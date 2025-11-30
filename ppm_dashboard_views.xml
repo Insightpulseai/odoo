@@ -7,24 +7,24 @@
             <form string="PPM Command Center">
                 <board style="2-1">
                     <column>
-                        <action name="%(project.open_view_project_all)d" 
-                                string="Active Projects Portfolio" 
+                        <action name="%(project.open_view_project_all)d"
+                                string="Active Projects Portfolio"
                                 view_mode="kanban"
                                 context="{'group_by': 'stage_id'}"/>
-                        
-                        <action name="%(project.action_view_task)d" 
-                                string="Resource Capacity (Tasks per Person)" 
+
+                        <action name="%(project.action_view_task)d"
+                                string="Resource Capacity (Tasks per Person)"
                                 view_mode="graph"
                                 context="{'graph_mode': 'bar', 'group_by': 'user_id'}"/>
                     </column>
 
                     <column>
-                        <action name="%(account.action_account_analytic_line_tree)d" 
-                                string="Financial Performance (Budget vs Actual)" 
+                        <action name="%(account.action_account_analytic_line_tree)d"
+                                string="Financial Performance (Budget vs Actual)"
                                 view_mode="pivot"/>
 
-                        <action name="%(project.action_view_task)d" 
-                                string="Upcoming Tax Deadlines" 
+                        <action name="%(project.action_view_task)d"
+                                string="Upcoming Tax Deadlines"
                                 view_mode="tree,calendar"
                                 domain="[('project_id', '=', 20)]"/>
                     </column>

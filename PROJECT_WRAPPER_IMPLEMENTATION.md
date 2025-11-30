@@ -42,42 +42,42 @@ from odoo import models, fields, api
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
-    
+
     # Finance-specific fields
     finance_code = fields.Char(
         string='Finance Code',
         help='Employee code like RIM, BOM, CKVC'
     )
-    
+
     reviewer_id = fields.Many2one(
         'res.users',
         string='Reviewer/Consulted',
         help='Person responsible for reviewing the task'
     )
-    
+
     approver_id = fields.Many2one(
         'res.users',
         string='Approver/Accountable',
         help='Person responsible for final approval'
     )
-    
+
     finance_deadline_type = fields.Selection([
         ('monthly', 'Monthly'),
         ('quarterly', 'Quarterly'),
         ('annual', 'Annual'),
     ], string='Finance Deadline Type')
-    
+
     # Link to finance person directory
     finance_person_id = fields.Many2one(
         'ipai_finance_person',
         string='Finance Person'
     )
-    
+
     # Duration fields for finance workflow
     prep_duration = fields.Float(string='Prep Duration (Days)')
     review_duration = fields.Float(string='Review Duration (Days)')
     approval_duration = fields.Float(string='Approval Duration (Days)')
-    
+
     # Finance categories
     finance_category = fields.Selection([
         ('foundation_corp', 'Foundation & Corp'),
@@ -123,7 +123,7 @@ class ProjectTask(models.Model):
                     </group>
                 </page>
             </xpath>
-            
+
             <!-- Add finance code to main form -->
             <xpath expr="//field[@name='name']" position="after">
                 <field name="finance_code" class="oe_inline"/>
@@ -165,8 +165,8 @@ class ProjectTask(models.Model):
     </record>
 
     <!-- Update Menu Structure -->
-    <menuitem id="menu_finance_operations" 
-              name="Monthly Tasks" 
+    <menuitem id="menu_finance_operations"
+              name="Monthly Tasks"
               parent="menu_finance_ppm_main"
               action="action_finance_operations"
               sequence="10"/>
@@ -184,17 +184,17 @@ class ProjectTask(models.Model):
         <field name="name">To Do</field>
         <field name="sequence">1</field>
     </record>
-    
+
     <record id="project_task_type_finance_in_progress" model="project.task.type">
         <field name="name">In Progress</field>
         <field name="sequence">2</field>
     </record>
-    
+
     <record id="project_task_type_finance_in_review" model="project.task.type">
         <field name="name">In Review</field>
         <field name="sequence">3</field>
     </record>
-    
+
     <record id="project_task_type_finance_done" model="project.task.type">
         <field name="name">Done</field>
         <field name="sequence">4</field>
@@ -212,13 +212,13 @@ from odoo import api, SUPERUSER_ID
 
 def migrate_finance_tasks(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
-    
+
     # Get finance master project
     finance_project = env.ref('ipai_finance_ppm.project_finance_master')
-    
+
     # Migrate existing tasks from old model to project.task
     old_tasks = env['ipai_finance_task_template'].search([])
-    
+
     for old_task in old_tasks:
         # Create new project task
         new_task = env['project.task'].create({
@@ -231,7 +231,7 @@ def migrate_finance_tasks(cr, registry):
             'approval_duration': old_task.approval_duration,
             'stage_id': env.ref('ipai_finance_ppm.project_task_type_finance_todo').id,
         })
-    
+
     print(f"Migrated {len(old_tasks)} tasks to project module")
 ```
 
@@ -243,10 +243,10 @@ from odoo import api, SUPERUSER_ID
 
 def clean_install(cr, registry):
     env = api.Environment(cr, SUPERUSER_ID, {})
-    
+
     # Drop old model tables if they exist
     cr.execute("DROP TABLE IF EXISTS ipai_finance_task_template CASCADE")
-    
+
     print("Clean install completed - old model removed")
 ```
 

@@ -25,7 +25,7 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 
 ## 3. Installed Modules Count by License
 ---------------------------------------------------
- license | count 
+ license | count
 ---------+-------
  AGPL-3  |    15
  LGPL-3  |   166
@@ -34,7 +34,7 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 
 ## 4. Total Installed Modules
 ---------------------------------------------------
- total_installed 
+ total_installed
 -----------------
              181
 (1 row)
@@ -42,7 +42,7 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 
 ## 5. Enterprise License Validation (Should be 0)
 ---------------------------------------------------
- enterprise_modules 
+ enterprise_modules
 --------------------
                   0
 (1 row)
@@ -50,7 +50,7 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 
 ## 6. odoo.com Links Validation (Should be 0)
 ---------------------------------------------------
- odoo_com_links 
+ odoo_com_links
 ----------------
               0
 (1 row)
@@ -58,19 +58,19 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 
 ## 7. Custom InsightPulse Modules
 ---------------------------------------------------
-             name             |   state   | license |          website           
+             name             |   state   | license |          website
 ------------------------------+-----------+---------+----------------------------
  ipai_branding_cleaner        | installed | LGPL-3  | https://insightpulseai.net
  ipai_ce_cleaner              | installed | AGPL-3  | https://insightpulseai.net
  ipai_finance_monthly_closing | installed | AGPL-3  | https://insightpulseai.net
  ipai_ocr_expense             | installed | AGPL-3  | https://insightpulseai.net
- ipai_ocr_webhook             | installed | LGPL-3  | 
+ ipai_ocr_webhook             | installed | LGPL-3  |
 (5 rows)
 
 
 ## 8. OCR Expense Log Records (Quality Metrics)
 ---------------------------------------------------
- total_ocr_scans 
+ total_ocr_scans
 -----------------
                0
 (1 row)
@@ -99,7 +99,7 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 
 ## 10. Database Size
 ---------------------------------------------------
- database_size 
+ database_size
 ---------------
  112 MB
 (1 row)
@@ -107,20 +107,20 @@ e4b6e8b4f854   redis:7-alpine                              "docker-entrypoint.sâ
 
 ## 11. Odoo Version
 ---------------------------------------------------
-2025-11-21 07:02:21,165 39 INFO ? odoo: Odoo version 18.0-20251106 
+2025-11-21 07:02:21,165 39 INFO ? odoo: Odoo version 18.0-20251106
 
 ## 12. Worker Status
 ---------------------------------------------------
-2025-11-21 05:35:42,089 33 INFO ? odoo.service.server: Worker WorkerHTTP (33) alive 
-2025-11-21 05:35:42,113 34 INFO ? odoo.service.server: Worker WorkerHTTP (34) alive 
-2025-11-21 05:35:42,129 36 INFO ? odoo.service.server: Worker WorkerHTTP (36) alive 
-2025-11-21 05:35:42,139 38 INFO ? odoo.service.server: Worker WorkerHTTP (38) alive 
-2025-11-21 05:35:42,152 42 INFO ? odoo.service.server: Worker WorkerCron (42) alive 
-2025-11-21 07:02:18,528 33 INFO ? odoo.service.server: Worker WorkerHTTP (33) alive 
-2025-11-21 07:02:18,544 34 INFO ? odoo.service.server: Worker WorkerHTTP (34) alive 
-2025-11-21 07:02:18,566 36 INFO ? odoo.service.server: Worker WorkerHTTP (36) alive 
-2025-11-21 07:02:18,572 38 INFO ? odoo.service.server: Worker WorkerHTTP (38) alive 
-2025-11-21 07:02:18,596 41 INFO ? odoo.service.server: Worker WorkerCron (41) alive 
+2025-11-21 05:35:42,089 33 INFO ? odoo.service.server: Worker WorkerHTTP (33) alive
+2025-11-21 05:35:42,113 34 INFO ? odoo.service.server: Worker WorkerHTTP (34) alive
+2025-11-21 05:35:42,129 36 INFO ? odoo.service.server: Worker WorkerHTTP (36) alive
+2025-11-21 05:35:42,139 38 INFO ? odoo.service.server: Worker WorkerHTTP (38) alive
+2025-11-21 05:35:42,152 42 INFO ? odoo.service.server: Worker WorkerCron (42) alive
+2025-11-21 07:02:18,528 33 INFO ? odoo.service.server: Worker WorkerHTTP (33) alive
+2025-11-21 07:02:18,544 34 INFO ? odoo.service.server: Worker WorkerHTTP (34) alive
+2025-11-21 07:02:18,566 36 INFO ? odoo.service.server: Worker WorkerHTTP (36) alive
+2025-11-21 07:02:18,572 38 INFO ? odoo.service.server: Worker WorkerHTTP (38) alive
+2025-11-21 07:02:18,596 41 INFO ? odoo.service.server: Worker WorkerCron (41) alive
 
 ==================================================
 Baseline Validation Complete
@@ -134,4 +134,3 @@ Status: 2025-11-21 07:19:40 UTC
   - Custom ipai modules: 2-5 installed
   - Odoo version: 18.0-20251106
   - Workers: 4 HTTP + 1 Cron alive
-

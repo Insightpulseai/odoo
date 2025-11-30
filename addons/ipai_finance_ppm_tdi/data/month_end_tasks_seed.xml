@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
         <!-- Month-End Closing Tasks Seed Data -->
         <!-- 50+ tasks across 5 phases for TBWA Finance SSC -->
 
@@ -415,6 +414,4 @@
             <field name="description">Update LogFrame KPIs with month-end actuals</field>
             <field name="priority">1</field>
         </record>
-
-    </data>
 </odoo>

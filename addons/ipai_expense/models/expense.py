@@ -10,7 +10,9 @@ class IpaiTravelRequest(models.Model):
     name = fields.Char(
         string="Reference",
         required=True,
-        default=lambda self: self.env["ir.sequence"].next_by_code("ipai.travel.request"),
+        default=lambda self: self.env["ir.sequence"].next_by_code(
+            "ipai.travel.request"
+        ),
     )
     employee_id = fields.Many2one("hr.employee", string="Employee", required=True)
     project_id = fields.Many2one("project.project", string="Project / Job")
@@ -64,35 +66,37 @@ class HrExpense(models.Model):
     travel_request_id = fields.Many2one(
         "ipai.travel.request",
         string="Travel Request",
-        help="Link to travel request if this expense is travel-related"
+        help="Link to travel request if this expense is travel-related",
     )
     project_id = fields.Many2one(
         "project.project",
         string="Project / Job",
-        help="Required for certain expense categories to track project costs"
+        help="Required for certain expense categories to track project costs",
     )
     requires_project = fields.Boolean(
         string="Requires Project",
         compute="_compute_requires_project",
         store=True,
-        help="Indicates if this expense category requires a project code"
+        help="Indicates if this expense category requires a project code",
     )
 
-    @api.depends('product_id')
+    @api.depends("product_id")
     def _compute_requires_project(self):
         """Certain expense categories require project tracking"""
         project_required_categories = [
-            'Meals & Entertainment',
-            'Office Supplies',
-            'Miscellaneous Expense',
+            "Meals & Entertainment",
+            "Office Supplies",
+            "Miscellaneous Expense",
         ]
         for expense in self:
             if expense.product_id and expense.product_id.categ_id:
-                expense.requires_project = expense.product_id.categ_id.name in project_required_categories
+                expense.requires_project = (
+                    expense.product_id.categ_id.name in project_required_categories
+                )
             else:
                 expense.requires_project = False
 
-    @api.constrains('project_id', 'requires_project')
+    @api.constrains("project_id", "requires_project")
     def _check_project_required(self):
         """Enforce project requirement for certain categories"""
         for expense in self:
@@ -101,10 +105,10 @@ class HrExpense(models.Model):
                     f"Project/Job code is required for expense category: {expense.product_id.categ_id.name}"
                 )
 
-    @api.constrains('travel_request_id', 'product_id')
+    @api.constrains("travel_request_id", "product_id")
     def _check_travel_request_consistency(self):
         """Travel-related expenses should have a travel request"""
-        travel_categories = ['Travel & Accommodation']
+        travel_categories = ["Travel & Accommodation"]
         for expense in self:
             if expense.product_id and expense.product_id.categ_id:
                 is_travel = expense.product_id.categ_id.name in travel_categories
