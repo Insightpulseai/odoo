@@ -71,7 +71,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libpq5 libpq-dev libxml2 libxslt1.1 libldap2 libsasl2-2 \
     libjpeg62-turbo zlib1g tzdata gosu curl ca-certificates \
     fonts-dejavu fonts-liberation fonts-noto-cjk \
-    postgresql-client redis-tools libgomp1 \
+    postgresql-client-17 redis-tools libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Create user and dirs
@@ -101,18 +101,28 @@ RUN mkdir -p /mnt/extra-addons/oca && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/server-auth.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/server-tools.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/server-backend.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/server-brand.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/account-financial-reporting.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/account-financial-tools.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/account-invoicing.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/account-payment.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/account-reconcile.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/account-consolidation.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/bank-payment.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/purchase-workflow.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/sale-workflow.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/partner-contact.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/hr.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/queue.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/reporting-engine.git && \
     git clone -b 18.0 --depth 1 https://github.com/OCA/web.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/mail.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/management-system.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/iot.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/connector-telephony.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/automation.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/manufacture.git && \
+    git clone -b 18.0 --depth 1 https://github.com/OCA/maintenance.git && \
     git clone -b 16.0 --depth 1 https://github.com/OCA/rest-framework.git && \
     chown -R odoo:odoo /mnt/extra-addons/oca
 
@@ -124,15 +134,20 @@ COPY --chown=odoo:odoo --from=build /src/scripts /opt/odoo/scripts
 # Copy and setup entrypoint (must be before USER odoo)
 COPY --from=build /src/scripts/entrypoint-oca.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh && \
-    mkdir -p /etc/odoo /var/lib/odoo /var/log/odoo /mnt/oca-addons && \
-    chown -R odoo:odoo /etc/odoo /var/lib/odoo /var/log/odoo /mnt/oca-addons
+    mkdir -p /etc/odoo /var/lib/odoo /var/log/odoo && \
+    chown -R odoo:odoo /etc/odoo /var/lib/odoo /var/log/odoo
 
 # Healthcheck endpoint (Odoo supports /web/health from 16+)
 HEALTHCHECK --interval=30s --timeout=5s --retries=10 \
   CMD curl -fsS http://localhost:8069/web/health || exit 1
 
-# Default config path (mounted via compose)
-VOLUME ["/var/lib/odoo", "/var/log/odoo", "/mnt/extra-addons", "/mnt/oca-addons"]
+# Default config path and addon directories (mounted via compose)
+# Structure:
+#   /mnt/extra-addons/        - Custom InsightPulse modules
+#   /mnt/extra-addons/oca/    - OCA community modules (cloned above)
+#   /var/lib/odoo/            - Odoo data directory
+#   /var/log/odoo/            - Odoo logs
+VOLUME ["/var/lib/odoo", "/var/log/odoo", "/mnt/extra-addons"]
 
 # Run as non-root
 USER odoo

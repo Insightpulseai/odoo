@@ -11,6 +11,11 @@ gradient>=0.1.0  # Gradient AI SDK for LLM fallback
 # Odoo upgrade automation
 openupgradelib>=3.3.0  # OCA migration support library
 
+# Odoo 18 CE Enterprise parity dependencies
+openpyxl>=3.1.0  # XLSX reporting and Excel file handling
+python-ldap>=3.4.0  # LDAP authentication support
+xlsxwriter>=3.1.0  # Advanced XLSX export for financial reports
+
 # Optional dependencies for development
 # Uncomment if needed for development/testing
 
