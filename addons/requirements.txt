@@ -1,0 +1,15 @@
+# Python dependencies for InsightPulse AI custom Odoo modules
+# Add any additional Python packages required by your custom modules here
+
+# Example dependencies (uncomment and add as needed):
+# pandas>=2.0.0
+# requests>=2.31.0
+# python-dateutil>=2.8.0
+# openpyxl>=3.1.0
+
+# Odoo-related packages that might be needed
+# odoo-addon-base>=18.0.0
+# odoo-addon-web>=18.0.0
+
+# Keep this file empty if no additional dependencies are needed
+# The Dockerfile will still copy this file for layer caching optimization

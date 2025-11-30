@@ -1,0 +1,10 @@
+services:
+  odoo:
+    image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+    platform: linux/arm64
+    env_file:
+      - .env.production
+  db:
+    platform: linux/amd64
+    env_file:
+      - .env.production

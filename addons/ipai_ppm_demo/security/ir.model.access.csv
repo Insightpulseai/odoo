@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ppm_financial_period_user,ppm.financial.period.user,model_ppm_financial_period,project.group_project_user,1,1,1,0
+access_ppm_financial_period_manager,ppm.financial.period.manager,model_ppm_financial_period,project.group_project_manager,1,1,1,1
+access_ppm_dependency_node_user,ppm.dependency.node.user,model_ppm_dependency_node,project.group_project_user,1,1,1,0
+access_ppm_dependency_node_manager,ppm.dependency.node.manager,model_ppm_dependency_node,project.group_project_manager,1,1,1,1
+access_ppm_intake_request_user,ppm.intake.request.user,model_ppm_intake_request,project.group_project_user,1,1,1,0
+access_ppm_intake_request_manager,ppm.intake.request.manager,model_ppm_intake_request,project.group_project_manager,1,1,1,1
+access_ppm_ai_insight_user,ppm.ai.insight.user,model_ppm_ai_insight,project.group_project_user,1,0,0,0
+access_ppm_ai_insight_manager,ppm.ai.insight.manager,model_ppm_ai_insight,project.group_project_manager,1,1,1,1
+access_ppm_kanban_column_user,ppm.kanban.column.user,model_ppm_kanban_column,project.group_project_user,1,0,0,0
+access_ppm_kanban_column_manager,ppm.kanban.column.manager,model_ppm_kanban_column,project.group_project_manager,1,1,1,1
+access_ppm_kanban_card_user,ppm.kanban.card.user,model_ppm_kanban_card,project.group_project_user,1,1,1,0
+access_ppm_kanban_card_manager,ppm.kanban.card.manager,model_ppm_kanban_card,project.group_project_manager,1,1,1,1
+access_ppm_dashboard_kpi_user,ppm.dashboard.kpi.user,model_ppm_dashboard_kpi,project.group_project_user,1,0,0,0
+access_ppm_dashboard_kpi_manager,ppm.dashboard.kpi.manager,model_ppm_dashboard_kpi,project.group_project_manager,1,1,1,1
+access_ppm_strategy_spend_user,ppm.strategy.spend.user,model_ppm_strategy_spend,project.group_project_user,1,0,0,0
+access_ppm_strategy_spend_manager,ppm.strategy.spend.manager,model_ppm_strategy_spend,project.group_project_manager,1,1,1,1

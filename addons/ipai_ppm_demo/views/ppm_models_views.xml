@@ -1,0 +1,89 @@
+<odoo>
+
+  <!-- Intake Requests -->
+  <record id="view_ppm_intake_tree" model="ir.ui.view">
+    <field name="name">ppm.intake.request.tree</field>
+    <field name="model">ppm.intake.request</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="business_value_score"/>
+        <field name="ease_of_implementation"/>
+        <field name="strategic_alignment_score"/>
+        <field name="approval_stage"/>
+        <field name="status"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_ppm_intake_form" model="ir.ui.view">
+    <field name="name">ppm.intake.request.form</field>
+    <field name="model">ppm.intake.request</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="request_id"/>
+            <field name="approval_stage"/>
+            <field name="status"/>
+          </group>
+          <group>
+            <field name="business_value_score"/>
+            <field name="ease_of_implementation"/>
+            <field name="strategic_alignment_score"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_ppm_intake_requests" model="ir.actions.act_window">
+    <field name="name">Intake Requests</field>
+    <field name="res_model">ppm.intake.request</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Financial Periods -->
+  <record id="view_ppm_financial_period_tree" model="ir.ui.view">
+    <field name="name">ppm.financial.period.tree</field>
+    <field name="model">ppm.financial.period</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="period_code"/>
+        <field name="cost_type"/>
+        <field name="planned_value"/>
+        <field name="actual_cost"/>
+        <field name="earned_value"/>
+        <field name="scenario"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_ppm_financial_periods" model="ir.actions.act_window">
+    <field name="name">Financial Periods</field>
+    <field name="res_model">ppm.financial.period</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- Kanban Columns -->
+  <record id="view_ppm_kanban_column_tree" model="ir.ui.view">
+    <field name="name">ppm.kanban.column.tree</field>
+    <field name="model">ppm.kanban.column</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="code"/>
+        <field name="sequence"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="action_ppm_kanban_columns" model="ir.actions.act_window">
+    <field name="name">Kanban Columns</field>
+    <field name="res_model">ppm.kanban.column</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+</odoo>

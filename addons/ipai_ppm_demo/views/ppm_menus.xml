@@ -1,0 +1,30 @@
+<odoo>
+  <menuitem id="menu_ppm_root"
+            name="PPM Demo"
+            parent="project.menu_main_pm"
+            sequence="90"/>
+
+  <menuitem id="menu_ppm_intake"
+            name="Intake Requests"
+            parent="menu_ppm_root"
+            action="action_ppm_intake_requests"
+            sequence="10"/>
+
+  <menuitem id="menu_ppm_financial_periods"
+            name="Financial Periods"
+            parent="menu_ppm_root"
+            action="action_ppm_financial_periods"
+            sequence="20"/>
+
+  <menuitem id="menu_ppm_kanban"
+            name="Kanban Demo"
+            parent="menu_ppm_root"
+            action="action_ppm_kanban_columns"
+            sequence="30"/>
+
+  <menuitem id="menu_ppm_dashboard"
+            name="PPM Dashboard"
+            parent="menu_ppm_root"
+            action="action_ppm_dashboard"
+            sequence="40"/>
+</odoo>

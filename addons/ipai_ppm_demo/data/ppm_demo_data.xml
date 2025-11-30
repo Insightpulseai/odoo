@@ -1,0 +1,260 @@
+<!-- ipai_ppm_demo/data/ppm_demo_data.xml -->
+<odoo noupdate="1">
+
+  <!-- Portfolio items as projects -->
+  <record id="proj_digital_banking_revamp" model="project.project">
+    <field name="name">Digital Banking Revamp</field>
+    <field name="ppm_strategy_category">Customer Experience</field>
+    <field name="ppm_total_budget">1500000</field>
+    <field name="ppm_total_spend">480000</field>
+    <field name="ppm_health_status">on_track</field>
+    <field name="ppm_roi_percentage">32.5</field>
+  </record>
+
+  <record id="proj_core_system_migration" model="project.project">
+    <field name="name">Core System Migration</field>
+    <field name="ppm_strategy_category">Risk &amp; Compliance</field>
+    <field name="ppm_total_budget">2200000</field>
+    <field name="ppm_total_spend">1900000</field>
+    <field name="ppm_health_status">at_risk</field>
+    <field name="ppm_roi_percentage">12.0</field>
+  </record>
+
+  <record id="proj_analytics_self_service" model="project.project">
+    <field name="name">Analytics Self-Service Platform</field>
+    <field name="ppm_strategy_category">Data &amp; Insights</field>
+    <field name="ppm_total_budget">900000</field>
+    <field name="ppm_total_spend">520000</field>
+    <field name="ppm_health_status">off_track</field>
+    <field name="ppm_roi_percentage">-5.0</field>
+  </record>
+
+  <record id="proj_branch_experience_kiosk" model="project.project">
+    <field name="name">Branch Experience Kiosk</field>
+    <field name="ppm_strategy_category">Branch Transformation</field>
+    <field name="ppm_total_budget">600000</field>
+    <field name="ppm_total_spend">210000</field>
+    <field name="ppm_health_status">on_track</field>
+    <field name="ppm_roi_percentage">18.4</field>
+  </record>
+
+  <!-- Financial Period Data -->
+  <record id="fin_period_q1_capex" model="ppm.financial.period">
+    <field name="name">2025 Q1 Capex</field>
+    <field name="period_code">2025-Q1</field>
+    <field name="cost_type">capex</field>
+    <field name="planned_value">800000</field>
+    <field name="actual_cost">750000</field>
+    <field name="earned_value">780000</field>
+    <field name="scenario">actuals</field>
+  </record>
+
+  <record id="fin_period_q2_capex" model="ppm.financial.period">
+    <field name="name">2025 Q2 Capex</field>
+    <field name="period_code">2025-Q2</field>
+    <field name="cost_type">capex</field>
+    <field name="planned_value">900000</field>
+    <field name="actual_cost">980000</field>
+    <field name="earned_value">860000</field>
+    <field name="scenario">actuals</field>
+  </record>
+
+  <record id="fin_period_q3_capex" model="ppm.financial.period">
+    <field name="name">2025 Q3 Capex</field>
+    <field name="period_code">2025-Q3</field>
+    <field name="cost_type">capex</field>
+    <field name="planned_value">950000</field>
+    <field name="actual_cost">1030000</field>
+    <field name="earned_value">910000</field>
+    <field name="scenario">actuals</field>
+  </record>
+
+  <record id="fin_period_q1_opex" model="ppm.financial.period">
+    <field name="name">2025 Q1 Opex</field>
+    <field name="period_code">2025-Q1</field>
+    <field name="cost_type">opex</field>
+    <field name="planned_value">200000</field>
+    <field name="actual_cost">180000</field>
+    <field name="earned_value">190000</field>
+    <field name="scenario">actuals</field>
+  </record>
+
+  <record id="fin_period_q2_opex" model="ppm.financial.period">
+    <field name="name">2025 Q2 Opex</field>
+    <field name="period_code">2025-Q2</field>
+    <field name="cost_type">opex</field>
+    <field name="planned_value">220000</field>
+    <field name="actual_cost">230000</field>
+    <field name="earned_value">215000</field>
+    <field name="scenario">actuals</field>
+  </record>
+
+  <!-- Dependency Nodes -->
+  <record id="dep_mvp_api_layer" model="ppm.dependency.node">
+    <field name="name">MVP API Layer</field>
+    <field name="project_id" ref="proj_digital_banking_revamp"/>
+    <field name="dependency_type">finish_to_start</field>
+    <field name="critical_path">True</field>
+    <field name="risk_score">0.75</field>
+    <field name="assigned_resource">Senior Backend Dev</field>
+  </record>
+
+  <record id="dep_customer_pilot" model="ppm.dependency.node">
+    <field name="name">Customer Pilot Rollout</field>
+    <field name="project_id" ref="proj_digital_banking_revamp"/>
+    <field name="dependency_type">start_to_start</field>
+    <field name="critical_path">True</field>
+    <field name="risk_score">0.6</field>
+    <field name="assigned_resource">Project Manager</field>
+  </record>
+
+  <record id="dep_dw_upgrade" model="ppm.dependency.node">
+    <field name="name">Data Warehouse Upgrade</field>
+    <field name="project_id" ref="proj_analytics_self_service"/>
+    <field name="dependency_type">finish_to_finish</field>
+    <field name="critical_path">False</field>
+    <field name="risk_score">0.4</field>
+    <field name="assigned_resource">Data Engineer</field>
+  </record>
+
+  <record id="dep_training_change" model="ppm.dependency.node">
+    <field name="name">Training &amp; Change Management</field>
+    <field name="project_id" ref="proj_core_system_migration"/>
+    <field name="dependency_type">finish_to_start</field>
+    <field name="critical_path">False</field>
+    <field name="risk_score">0.3</field>
+    <field name="assigned_resource">Change Lead</field>
+  </record>
+
+  <!-- Intake Requests -->
+  <record id="intake_ai_close" model="ppm.intake.request">
+    <field name="name">AI-Assisted Financial Close</field>
+    <field name="request_id">R001</field>
+    <field name="business_value_score">5</field>
+    <field name="ease_of_implementation">3</field>
+    <field name="strategic_alignment_score">9</field>
+    <field name="approval_stage">screening</field>
+    <field name="status">proposed</field>
+  </record>
+
+  <record id="intake_legacy_decommission" model="ppm.intake.request">
+    <field name="name">Legacy Archive Decommission</field>
+    <field name="request_id">R002</field>
+    <field name="business_value_score">3</field>
+    <field name="ease_of_implementation">4</field>
+    <field name="strategic_alignment_score">7</field>
+    <field name="approval_stage">approved</field>
+    <field name="status">approved</field>
+  </record>
+
+  <record id="intake_branch_kiosk" model="ppm.intake.request">
+    <field name="name">Branch Experience Kiosk Network</field>
+    <field name="request_id">R003</field>
+    <field name="business_value_score">4</field>
+    <field name="ease_of_implementation">2</field>
+    <field name="strategic_alignment_score">6</field>
+    <field name="approval_stage">backlog</field>
+    <field name="status">in_work</field>
+  </record>
+
+  <!-- AI Insights -->
+  <record id="ai_insight_portfolio_risks" model="ppm.ai.insight">
+    <field name="name">Portfolio Risks Summary</field>
+    <field name="prompt">Summarize portfolio risks across all active projects.</field>
+    <field name="insight_summary">3 projects are tracking over budget; 1 project is off-track on schedule due to API dependency.</field>
+    <field name="severity">high</field>
+  </record>
+
+  <record id="ai_insight_high_roi" model="ppm.ai.insight">
+    <field name="name">High ROI Low Risk</field>
+    <field name="prompt">Which investments have highest ROI impact but low execution risk?</field>
+    <field name="insight_summary">Digital Banking Revamp and Branch Experience Kiosk show ROI &gt; 15% with medium risk.</field>
+    <field name="severity">medium</field>
+  </record>
+
+  <!-- Kanban Columns and Cards -->
+  <record id="kanban_col_on_track" model="ppm.kanban.column">
+    <field name="name">On Track</field>
+    <field name="code">on_track</field>
+    <field name="sequence">10</field>
+  </record>
+
+  <record id="kanban_col_at_risk" model="ppm.kanban.column">
+    <field name="name">At Risk</field>
+    <field name="code">at_risk</field>
+    <field name="sequence">20</field>
+  </record>
+
+  <record id="kanban_col_off_track" model="ppm.kanban.column">
+    <field name="name">Off Track</field>
+    <field name="code">off_track</field>
+    <field name="sequence">30</field>
+  </record>
+
+  <record id="kanban_card_digital_banking" model="ppm.kanban.card">
+    <field name="name">Digital Banking Revamp</field>
+    <field name="column_id" ref="kanban_col_on_track"/>
+    <field name="project_id" ref="proj_digital_banking_revamp"/>
+    <field name="owner">PMO Lead</field>
+    <field name="progress_percent">45</field>
+  </record>
+
+  <record id="kanban_card_branch_kiosk" model="ppm.kanban.card">
+    <field name="name">Branch Experience Kiosk</field>
+    <field name="column_id" ref="kanban_col_on_track"/>
+    <field name="project_id" ref="proj_branch_experience_kiosk"/>
+    <field name="owner">CX Manager</field>
+    <field name="progress_percent">30</field>
+  </record>
+
+  <record id="kanban_card_core_migration" model="ppm.kanban.card">
+    <field name="name">Core System Migration</field>
+    <field name="column_id" ref="kanban_col_at_risk"/>
+    <field name="project_id" ref="proj_core_system_migration"/>
+    <field name="owner">Infra Lead</field>
+    <field name="progress_percent">65</field>
+    <field name="risk_reason">Data migration slippage</field>
+  </record>
+
+  <record id="kanban_card_analytics_platform" model="ppm.kanban.card">
+    <field name="name">Analytics Self-Service Platform</field>
+    <field name="column_id" ref="kanban_col_off_track"/>
+    <field name="project_id" ref="proj_analytics_self_service"/>
+    <field name="owner">Analytics Lead</field>
+    <field name="progress_percent">25</field>
+    <field name="risk_reason">Vendor dependency</field>
+  </record>
+
+  <!-- Dashboard KPI Snapshot -->
+  <record id="dashboard_kpi_portfolio" model="ppm.dashboard.kpi">
+    <field name="name">Portfolio Overview 2025</field>
+    <field name="projects_ongoing">406</field>
+    <field name="total_cost">48820000</field>
+    <field name="cost_variance">-12810000</field>
+    <field name="project_health_score">78</field>
+    <field name="budget_health_score">72</field>
+  </record>
+
+  <!-- Spend by Strategy -->
+  <record id="strategy_spend_cx" model="ppm.strategy.spend">
+    <field name="name">CX Spend</field>
+    <field name="strategy">Customer Experience</field>
+    <field name="spend">12000000</field>
+  </record>
+  <record id="strategy_spend_risk" model="ppm.strategy.spend">
+    <field name="name">Risk &amp; Compliance Spend</field>
+    <field name="strategy">Risk &amp; Compliance</field>
+    <field name="spend">14500000</field>
+  </record>
+  <record id="strategy_spend_data" model="ppm.strategy.spend">
+    <field name="name">Data &amp; Insights Spend</field>
+    <field name="strategy">Data &amp; Insights</field>
+    <field name="spend">8000000</field>
+  </record>
+  <record id="strategy_spend_branch" model="ppm.strategy.spend">
+    <field name="name">Branch Transformation Spend</field>
+    <field name="strategy">Branch Transformation</field>
+    <field name="spend">6500000</field>
+  </record>
+
+</odoo>
