@@ -4,7 +4,7 @@
 # This workflow automatically regenerates:
 # - SITEMAP.md (navigable documentation map)
 # - TREE.md (repository structure)
-# 
+#
 # Triggers: Every push to main/develop branches
 # =============================================================================
 
@@ -21,7 +21,7 @@ permissions:
 jobs:
   update-docs:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -33,27 +33,27 @@ jobs:
         run: |
           cat > TREE.md << 'HEADER'
           # 📁 Repository Structure
-          
+
           > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
           > Commit: ${{ github.sha }}
-          
+
           ```
           HEADER
-          
+
           # Generate tree, excluding common noise
           tree -a -I '.git|node_modules|__pycache__|*.pyc|.DS_Store|.env|*.egg-info|dist|build|.mypy_cache|.pytest_cache|.coverage|htmlcov|*.lock' --dirsfirst -L 4 >> TREE.md
-          
+
           echo '```' >> TREE.md
-          
+
           # Add stats
           cat >> TREE.md << 'STATS'
-          
+
           ## 📊 Stats
-          
+
           | Metric | Count |
           |--------|-------|
           STATS
-          
+
           echo "| Directories | $(find . -type d -not -path './.git/*' | wc -l) |" >> TREE.md
           echo "| Files | $(find . -type f -not -path './.git/*' | wc -l) |" >> TREE.md
           echo "| Python files | $(find . -name '*.py' -not -path './.git/*' | wc -l) |" >> TREE.md
@@ -64,16 +64,16 @@ jobs:
         run: |
           cat > SITEMAP.md << 'EOF'
           # 🗺️ Sitemap - InsightPulse ERP
-          
+
           > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
           > Commit: ${{ github.sha }}
-          
+
           ## 📚 Documentation
-          
+
           | Document | Description |
           |----------|-------------|
           EOF
-          
+
           # Find all markdown files and add to sitemap
           find . -name "*.md" -not -path "./.git/*" | sort | while read file; do
             # Get first heading or filename
@@ -82,15 +82,15 @@ jobs:
             path="${file#./}"
             echo "| [$title]($path) | $(dirname $path) |" >> SITEMAP.md
           done
-          
+
           cat >> SITEMAP.md << 'EOF'
-          
+
           ## 📦 Modules (ipai_*)
-          
+
           | Module | Status | Description |
           |--------|--------|-------------|
           EOF
-          
+
           # Find all ipai modules
           find . -type d -name "ipai_*" | sort | while read dir; do
             name=$(basename "$dir")
@@ -103,15 +103,15 @@ jobs:
               echo "| [$name]($dir) | ⚠️ | Missing manifest |" >> SITEMAP.md
             fi
           done
-          
+
           cat >> SITEMAP.md << 'EOF'
-          
+
           ## 🔧 Configuration Files
-          
+
           | File | Purpose |
           |------|---------|
           EOF
-          
+
           # Key config files
           [ -f "docker-compose.yml" ] && echo "| [docker-compose.yml](docker-compose.yml) | Docker orchestration |" >> SITEMAP.md
           [ -f "docker-compose.prod.yml" ] && echo "| [docker-compose.prod.yml](docker-compose.prod.yml) | Production Docker |" >> SITEMAP.md
@@ -120,17 +120,17 @@ jobs:
           [ -f "config/odoo.conf" ] && echo "| [config/odoo.conf](config/odoo.conf) | Odoo configuration |" >> SITEMAP.md
           [ -f "requirements.txt" ] && echo "| [requirements.txt](requirements.txt) | Python dependencies |" >> SITEMAP.md
           [ -f ".github/workflows/ci.yml" ] && echo "| [.github/workflows/ci.yml](.github/workflows/ci.yml) | CI/CD pipeline |" >> SITEMAP.md
-          
+
           cat >> SITEMAP.md << 'EOF'
-          
+
           ## 🔗 Quick Links
-          
+
           - **Production**: https://erp.insightpulseai.net
           - **Repository**: https://github.com/jgtolentino/odoo-ce
           - **OCA Modules**: https://github.com/OCA
-          
+
           ---
-          
+
           *This sitemap auto-updates on every commit via GitHub Actions.*
           EOF
 
@@ -144,7 +144,7 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          
+
           # Check if there are changes
           if git diff --quiet SITEMAP.md TREE.md 2>/dev/null; then
             echo "No changes to commit"

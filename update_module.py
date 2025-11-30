@@ -13,7 +13,7 @@ registry = Registry.new('odoo')
 # Update the module
 with registry.cursor() as cr:
     env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
-    
+
     # Find the module
     module = env['ir.module.module'].search([('name', '=', 'ipai_finance_ppm')])
     if module:

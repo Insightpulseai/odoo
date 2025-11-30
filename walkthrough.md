@@ -75,5 +75,3 @@ This walkthrough covers the installation and usage of the new `ipai_docs` and `i
     - You will see a "Send to OCR" button (if in Draft).
     - Clicking it sets the status to "Pending OCR".
     - (Integration Note: This is currently a skeleton waiting for the n8n webhook connection).
-
-

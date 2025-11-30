@@ -83,7 +83,7 @@ export DATABASE_URL="postgresql://user:password@host:port/database"
 ### Web Widget Integration
 Add to your documentation site:
 ```html
-<script 
+<script
   src="http://localhost/docs-assistant/docs-widget.js"
   data-api-url="http://localhost/api"
   data-api-key="YOUR_API_KEY_FROM_SETUP"
@@ -212,10 +212,10 @@ curl -X POST "http://localhost/api/v1/ingest/github" \
 Monitor usage through the database:
 ```sql
 -- Top questions
-SELECT query, COUNT(*) as frequency 
-FROM docs_questions 
-GROUP BY query 
-ORDER BY frequency DESC 
+SELECT query, COUNT(*) as frequency
+FROM docs_questions
+GROUP BY query
+ORDER BY frequency DESC
 LIMIT 10;
 
 -- Answer quality
@@ -247,5 +247,5 @@ For production deployment:
 
 ---
 
-**Deployment Status**: ✅ Ready  
+**Deployment Status**: ✅ Ready
 **Last Updated**: $(date)

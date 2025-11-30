@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
 
         <!-- Main IPAI Expense menu -->
         <menuitem
@@ -18,6 +17,4 @@
             action="ipai_travel_request_action"
             sequence="10"
         />
-
-    </data>
 </odoo>

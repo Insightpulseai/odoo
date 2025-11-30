@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
 
         <!-- ============================================================ -->
         <!-- COMPLETE Monthly Close Task Templates                       -->
@@ -435,6 +434,4 @@
             <field name="review_days">0.5</field>
             <field name="approval_days">0.5</field>
         </record>
-
-    </data>
 </odoo>

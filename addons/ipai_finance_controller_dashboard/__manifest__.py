@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'IPAI Finance Controller Dashboard',
-    'version': '18.0.1.0.0',
-    'category': 'Accounting/Finance',
-    'summary': 'Finance Controller Dashboard with 6 ECharts Visualizations for Month-End Close KPI Monitoring',
-    'description': """
+    "name": "IPAI Finance Controller Dashboard",
+    "version": "18.0.1.0.0",
+    "category": "Accounting/Finance",
+    "summary": "Finance Controller Dashboard with 6 ECharts Visualizations for Month-End Close KPI Monitoring",
+    "description": """
 Finance Controller Dashboard
 =============================
 
@@ -30,37 +30,37 @@ Integration:
 - Month-End Close tasks from ipai_finance_monthly_closing
 - Shared ECharts patterns from ipai_finance_ap_aging
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        'account',
-        'project',
-        'hr',
-        'ipai_finance_ppm_tdi',
-        'ipai_finance_monthly_closing',
-        'ipai_finance_ap_aging',
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "base",
+        "account",
+        "project",
+        "hr",
+        "ipai_finance_ppm_tdi",
+        "ipai_finance_monthly_closing",
+        "ipai_finance_ap_aging",
     ],
-    'data': [
-        'security/ir.model.access.csv',
-        'data/controller_dashboard_cron.xml',
-        'views/controller_dashboard_views.xml',
-        'views/controller_dashboard_menu.xml',
+    "data": [
+        "security/ir.model.access.csv",
+        "data/controller_dashboard_cron.xml",
+        "views/controller_dashboard_views.xml",
+        "views/controller_dashboard_menu.xml",
     ],
-    'assets': {
-        'web.assets_frontend': [
-            'ipai_finance_controller_dashboard/static/src/xml/dashboard_template.xml',
-            'ipai_finance_controller_dashboard/static/src/xml/kpi_gauges.xml',
-            'ipai_finance_controller_dashboard/static/src/xml/calendar_heatmap.xml',
-            'ipai_finance_controller_dashboard/static/src/xml/wbs_tree.xml',
-            'ipai_finance_controller_dashboard/static/src/xml/gantt_chart.xml',
-            'ipai_finance_controller_dashboard/static/src/xml/raci_sunburst.xml',
-            'ipai_finance_controller_dashboard/static/src/xml/dependency_graph.xml',
-            'ipai_finance_controller_dashboard/static/src/css/dashboard_styles.css',
+    "assets": {
+        "web.assets_frontend": [
+            "ipai_finance_controller_dashboard/static/src/xml/dashboard_template.xml",
+            "ipai_finance_controller_dashboard/static/src/xml/kpi_gauges.xml",
+            "ipai_finance_controller_dashboard/static/src/xml/calendar_heatmap.xml",
+            "ipai_finance_controller_dashboard/static/src/xml/wbs_tree.xml",
+            "ipai_finance_controller_dashboard/static/src/xml/gantt_chart.xml",
+            "ipai_finance_controller_dashboard/static/src/xml/raci_sunburst.xml",
+            "ipai_finance_controller_dashboard/static/src/xml/dependency_graph.xml",
+            "ipai_finance_controller_dashboard/static/src/css/dashboard_styles.css",
         ],
     },
-    'installable': True,
-    'application': False,
-    'auto_install': False,
+    "installable": True,
+    "application": False,
+    "auto_install": False,
 }

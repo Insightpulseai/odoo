@@ -11,11 +11,11 @@ def install_module():
     # Get database cursor
     db_name = 'odoo'
     registry = api.registry(db_name)
-    
+
     with registry.cursor() as cr:
         env = api.Environment(cr, SUPERUSER_ID, {})
         module = env['ir.module.module'].search([('name', '=', 'ipai_finance_ppm_dashboard')])
-        
+
         if module:
             print(f'Found module: {module.name}, state: {module.state}')
             if module.state != 'installed':

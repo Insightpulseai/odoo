@@ -59,7 +59,7 @@ You'll need to add a `stage_id` selection field:
 - **Group By (Sub-group):** `stage_id` (Status)
 
 **Bottleneck Detection Chart:**
-- **Type:** Bar Chart  
+- **Type:** Bar Chart
 - **Measure:** Count of Tasks
 - **Group By (X-axis):** `approver_id` (Approver)
 - **Group By (Sub-group):** `stage_id` (Status)
@@ -90,7 +90,7 @@ You'll need to add a `stage_id` selection field:
 **Chart:** Bar chart showing tasks per owner grouped by status
 **Field:** `employee_code_id` grouped by `stage_id`
 
-### 2. Bottleneck Detection  
+### 2. Bottleneck Detection
 **Question:** Does CKVC have 50 items waiting for sign-off?
 **Chart:** Bar chart showing tasks per approver grouped by status
 **Field:** `approver_id` grouped by `stage_id`
@@ -113,7 +113,7 @@ To make the dashboard fully functional, add these fields to your `ipai_finance_t
 ```python
 stage_id = fields.Selection([
     ('todo', 'To Do'),
-    ('in_progress', 'In Progress'), 
+    ('in_progress', 'In Progress'),
     ('in_review', 'In Review'),
     ('done', 'Done')
 ], default='todo', string='Stage')
@@ -124,7 +124,7 @@ stage_id = fields.Selection([
 deadline = fields.Date(string='Deadline')
 ```
 
-### 3. Approver Field  
+### 3. Approver Field
 ```python
 approver_id = fields.Many2one('ipai_finance_person', string='Approver')
 ```

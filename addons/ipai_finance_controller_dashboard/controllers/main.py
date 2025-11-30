@@ -2,8 +2,10 @@
 
 import json
 import logging
-from odoo import http
+
 from odoo.http import request
+
+from odoo import http
 
 _logger = logging.getLogger(__name__)
 
@@ -22,7 +24,9 @@ class FinanceControllerDashboardController(http.Controller):
     7. Dependency Graph API (/ipai/finance/controller/api/dependency_graph)
     """
 
-    @http.route('/ipai/finance/controller/dashboard', type='http', auth='user', website=True)
+    @http.route(
+        "/ipai/finance/controller/dashboard", type="http", auth="user", website=True
+    )
     def controller_dashboard(self, employee_code=None, **kwargs):
         """
         Main Finance Controller Dashboard page
@@ -35,14 +39,17 @@ class FinanceControllerDashboardController(http.Controller):
             Rendered QWeb template with all 6 ECharts visualizations
         """
         if not employee_code:
-            employee_code = request.env.user.employee_id.code or 'RIM'
+            employee_code = request.env.user.employee_id.code or "RIM"
 
-        return request.render('ipai_finance_controller_dashboard.dashboard_template', {
-            'employee_code': employee_code,
-        })
+        return request.render(
+            "ipai_finance_controller_dashboard.dashboard_template",
+            {
+                "employee_code": employee_code,
+            },
+        )
 
-    @http.route('/ipai/finance/controller/api/kpi_gauges', type='json', auth='user')
-    def api_kpi_gauges(self, employee_code='RIM'):
+    @http.route("/ipai/finance/controller/api/kpi_gauges", type="json", auth="user")
+    def api_kpi_gauges(self, employee_code="RIM"):
         """
         KPI Gauges API - 3 gauge charts
 
@@ -56,10 +63,16 @@ class FinanceControllerDashboardController(http.Controller):
                 'daily_completion_pct': list of dict (7 days)
             }
         """
-        return request.env['finance.controller.kpi'].sudo().get_kpi_gauge_data(employee_code)
+        return (
+            request.env["finance.controller.kpi"]
+            .sudo()
+            .get_kpi_gauge_data(employee_code)
+        )
 
-    @http.route('/ipai/finance/controller/api/calendar_heatmap', type='json', auth='user')
-    def api_calendar_heatmap(self, employee_code='RIM'):
+    @http.route(
+        "/ipai/finance/controller/api/calendar_heatmap", type="json", auth="user"
+    )
+    def api_calendar_heatmap(self, employee_code="RIM"):
         """
         Calendar Heatmap API - Workload density + BIR milestones
 
@@ -69,10 +82,14 @@ class FinanceControllerDashboardController(http.Controller):
                 'milestones': list of dict with {date, type, label}
             }
         """
-        return request.env['finance.controller.kpi'].sudo().get_calendar_heatmap_data(employee_code)
+        return (
+            request.env["finance.controller.kpi"]
+            .sudo()
+            .get_calendar_heatmap_data(employee_code)
+        )
 
-    @http.route('/ipai/finance/controller/api/wbs_tree', type='json', auth='user')
-    def api_wbs_tree(self, employee_code='RIM'):
+    @http.route("/ipai/finance/controller/api/wbs_tree", type="json", auth="user")
+    def api_wbs_tree(self, employee_code="RIM"):
         """
         WBS Tree API - Task hierarchy
 
@@ -82,10 +99,14 @@ class FinanceControllerDashboardController(http.Controller):
                 'children': list of nested dict with task hierarchy
             }
         """
-        return request.env['finance.controller.kpi'].sudo().get_wbs_tree_data(employee_code)
+        return (
+            request.env["finance.controller.kpi"]
+            .sudo()
+            .get_wbs_tree_data(employee_code)
+        )
 
-    @http.route('/ipai/finance/controller/api/gantt', type='json', auth='user')
-    def api_gantt(self, employee_code='RIM'):
+    @http.route("/ipai/finance/controller/api/gantt", type="json", auth="user")
+    def api_gantt(self, employee_code="RIM"):
         """
         Gantt Chart API - Task execution timeline
 
@@ -100,10 +121,12 @@ class FinanceControllerDashboardController(http.Controller):
                 }
             ]
         """
-        return request.env['finance.controller.kpi'].sudo().get_gantt_data(employee_code)
+        return (
+            request.env["finance.controller.kpi"].sudo().get_gantt_data(employee_code)
+        )
 
-    @http.route('/ipai/finance/controller/api/raci_sunburst', type='json', auth='user')
-    def api_raci_sunburst(self, employee_code='RIM'):
+    @http.route("/ipai/finance/controller/api/raci_sunburst", type="json", auth="user")
+    def api_raci_sunburst(self, employee_code="RIM"):
         """
         RACI Sunburst API - Responsibility distribution
 
@@ -113,10 +136,16 @@ class FinanceControllerDashboardController(http.Controller):
                 'children': list of nested dict with RACI hierarchy
             }
         """
-        return request.env['finance.controller.kpi'].sudo().get_raci_sunburst_data(employee_code)
+        return (
+            request.env["finance.controller.kpi"]
+            .sudo()
+            .get_raci_sunburst_data(employee_code)
+        )
 
-    @http.route('/ipai/finance/controller/api/dependency_graph', type='json', auth='user')
-    def api_dependency_graph(self, employee_code='RIM'):
+    @http.route(
+        "/ipai/finance/controller/api/dependency_graph", type="json", auth="user"
+    )
+    def api_dependency_graph(self, employee_code="RIM"):
         """
         Dependency Graph API - Task prerequisite network
 
@@ -126,4 +155,8 @@ class FinanceControllerDashboardController(http.Controller):
                 'links': list of dict {source, target}
             }
         """
-        return request.env['finance.controller.kpi'].sudo().get_dependency_graph_data(employee_code)
+        return (
+            request.env["finance.controller.kpi"]
+            .sudo()
+            .get_dependency_graph_data(employee_code)
+        )

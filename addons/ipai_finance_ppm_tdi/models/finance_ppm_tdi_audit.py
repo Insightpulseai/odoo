@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
-from odoo import models, fields, api
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -10,115 +11,118 @@ class FinancePPMTDIAudit(models.Model):
     Audit trail for Finance PPM Transaction Data Ingestion (TDI) operations.
     Tracks all data imports with detailed statistics and error logging.
     """
-    _name = 'finance.ppm.tdi.audit'
-    _description = 'Finance PPM TDI Audit Log'
-    _order = 'import_date desc, id desc'
-    _rec_name = 'display_name'
+
+    _name = "finance.ppm.tdi.audit"
+    _description = "Finance PPM TDI Audit Log"
+    _order = "import_date desc, id desc"
+    _rec_name = "display_name"
 
     # Import metadata
-    import_type = fields.Selection([
-        ('team', 'Finance Team Members'),
-        ('tasks', 'Month-End Closing Tasks'),
-        ('bir', 'BIR Filing Calendar'),
-        ('logframe', 'LogFrame KPI Definitions'),
-    ], string='Import Type', required=True, index=True)
-
-    file_name = fields.Char(string='File Name', required=True)
-    import_date = fields.Datetime(
-        string='Import Date',
+    import_type = fields.Selection(
+        [
+            ("team", "Finance Team Members"),
+            ("tasks", "Month-End Closing Tasks"),
+            ("bir", "BIR Filing Calendar"),
+            ("logframe", "LogFrame KPI Definitions"),
+        ],
+        string="Import Type",
         required=True,
-        default=fields.Datetime.now,
-        index=True
+        index=True,
+    )
+
+    file_name = fields.Char(string="File Name", required=True)
+    import_date = fields.Datetime(
+        string="Import Date", required=True, default=fields.Datetime.now, index=True
     )
 
     user_id = fields.Many2one(
-        'res.users',
-        string='Imported By',
+        "res.users",
+        string="Imported By",
         required=True,
         default=lambda self: self.env.user,
-        ondelete='restrict'
+        ondelete="restrict",
     )
 
     # Import statistics
     records_created = fields.Integer(
-        string='Records Created',
-        default=0,
-        help='Number of new records created'
+        string="Records Created", default=0, help="Number of new records created"
     )
     records_updated = fields.Integer(
-        string='Records Updated',
-        default=0,
-        help='Number of existing records updated'
+        string="Records Updated", default=0, help="Number of existing records updated"
     )
     records_skipped = fields.Integer(
-        string='Records Skipped',
+        string="Records Skipped",
         default=0,
-        help='Number of records skipped (already exist, update disabled)'
+        help="Number of records skipped (already exist, update disabled)",
     )
     records_failed = fields.Integer(
-        string='Records Failed',
+        string="Records Failed",
         default=0,
-        help='Number of records that failed to import'
+        help="Number of records that failed to import",
     )
 
     total_records = fields.Integer(
-        string='Total Records',
-        compute='_compute_total_records',
+        string="Total Records",
+        compute="_compute_total_records",
         store=True,
-        help='Total number of records processed'
+        help="Total number of records processed",
     )
 
     success_rate = fields.Float(
-        string='Success Rate (%)',
-        compute='_compute_success_rate',
+        string="Success Rate (%)",
+        compute="_compute_success_rate",
         store=True,
-        help='Percentage of successfully imported records'
+        help="Percentage of successfully imported records",
     )
 
     # Import results
-    state = fields.Selection([
-        ('draft', 'Draft'),
-        ('done', 'Completed'),
-        ('partial', 'Partial Success'),
-        ('failed', 'Failed'),
-    ], string='State', default='draft', required=True, index=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("done", "Completed"),
+            ("partial", "Partial Success"),
+            ("failed", "Failed"),
+        ],
+        string="State",
+        default="draft",
+        required=True,
+        index=True,
+    )
 
     import_summary = fields.Text(
-        string='Import Summary',
-        help='Summary of import operation'
+        string="Import Summary", help="Summary of import operation"
     )
 
     error_log = fields.Text(
-        string='Error Log',
-        help='Detailed error messages from failed imports'
+        string="Error Log", help="Detailed error messages from failed imports"
     )
 
     has_errors = fields.Boolean(
-        string='Has Errors',
-        compute='_compute_has_errors',
+        string="Has Errors",
+        compute="_compute_has_errors",
         store=True,
-        help='True if import had any errors or failures'
+        help="True if import had any errors or failures",
     )
 
     # Display fields
     display_name = fields.Char(
-        string='Display Name',
-        compute='_compute_display_name',
-        store=True
+        string="Display Name", compute="_compute_display_name", store=True
     )
 
-    @api.depends('records_created', 'records_updated', 'records_skipped', 'records_failed')
+    @api.depends(
+        "records_created", "records_updated", "records_skipped", "records_failed"
+    )
     def _compute_total_records(self):
         """Calculate total number of records processed."""
         for audit in self:
             audit.total_records = (
-                audit.records_created +
-                audit.records_updated +
-                audit.records_skipped +
-                audit.records_failed
+                audit.records_created
+                + audit.records_updated
+                + audit.records_skipped
+                + audit.records_failed
             )
 
-    @api.depends('records_created', 'records_updated', 'total_records')
+    @api.depends("records_created", "records_updated", "total_records")
     def _compute_success_rate(self):
         """Calculate success rate percentage."""
         for audit in self:
@@ -128,19 +132,19 @@ class FinancePPMTDIAudit(models.Model):
             else:
                 audit.success_rate = 0.0
 
-    @api.depends('error_log', 'records_failed')
+    @api.depends("error_log", "records_failed")
     def _compute_has_errors(self):
         """Check if import had any errors."""
         for audit in self:
             audit.has_errors = bool(audit.error_log) or audit.records_failed > 0
 
-    @api.depends('import_type', 'file_name', 'import_date')
+    @api.depends("import_type", "file_name", "import_date")
     def _compute_display_name(self):
         """Generate display name for audit record."""
         for audit in self:
-            import_type_label = dict(
-                self._fields['import_type'].selection
-            ).get(audit.import_type, 'Unknown')
+            import_type_label = dict(self._fields["import_type"].selection).get(
+                audit.import_type, "Unknown"
+            )
 
             date_str = fields.Datetime.to_string(audit.import_date)
             audit.display_name = f"{import_type_label} - {audit.file_name} ({date_str})"
@@ -149,12 +153,12 @@ class FinancePPMTDIAudit(models.Model):
         """Open form view with import details."""
         self.ensure_one()
         return {
-            'type': 'ir.actions.act_window',
-            'name': 'Import Details',
-            'res_model': 'finance.ppm.tdi.audit',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'target': 'current',
+            "type": "ir.actions.act_window",
+            "name": "Import Details",
+            "res_model": "finance.ppm.tdi.audit",
+            "res_id": self.id,
+            "view_mode": "form",
+            "target": "current",
         }
 
     def action_view_errors(self):
@@ -162,26 +166,26 @@ class FinancePPMTDIAudit(models.Model):
         self.ensure_one()
         if not self.error_log:
             return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': 'No Errors',
-                    'message': 'This import completed without errors.',
-                    'type': 'success',
-                    'sticky': False,
-                }
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": "No Errors",
+                    "message": "This import completed without errors.",
+                    "type": "success",
+                    "sticky": False,
+                },
             }
 
         # Return a wizard displaying the error log
         return {
-            'type': 'ir.actions.act_window',
-            'name': 'Error Log',
-            'res_model': 'finance.ppm.tdi.audit',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'views': [(False, 'form')],
-            'target': 'new',
-            'context': {'show_error_log': True},
+            "type": "ir.actions.act_window",
+            "name": "Error Log",
+            "res_model": "finance.ppm.tdi.audit",
+            "res_id": self.id,
+            "view_mode": "form",
+            "views": [(False, "form")],
+            "target": "new",
+            "context": {"show_error_log": True},
         }
 
     def action_revert_import(self):
@@ -190,16 +194,18 @@ class FinancePPMTDIAudit(models.Model):
         Would delete records created by this import operation.
         """
         self.ensure_one()
-        _logger.warning(f"Revert import requested for audit {self.id} - not yet implemented")
+        _logger.warning(
+            f"Revert import requested for audit {self.id} - not yet implemented"
+        )
         return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Not Implemented',
-                'message': 'Import rollback functionality is not yet available.',
-                'type': 'warning',
-                'sticky': False,
-            }
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": "Not Implemented",
+                "message": "Import rollback functionality is not yet available.",
+                "type": "warning",
+                "sticky": False,
+            },
         }
 
     @api.model
@@ -218,33 +224,35 @@ class FinancePPMTDIAudit(models.Model):
         domain = []
 
         if import_type:
-            domain.append(('import_type', '=', import_type))
+            domain.append(("import_type", "=", import_type))
         if date_from:
-            domain.append(('import_date', '>=', date_from))
+            domain.append(("import_date", ">=", date_from))
         if date_to:
-            domain.append(('import_date', '<=', date_to))
+            domain.append(("import_date", "<=", date_to))
 
         audits = self.search(domain)
 
         if not audits:
             return {
-                'total_imports': 0,
-                'successful_imports': 0,
-                'failed_imports': 0,
-                'total_records_created': 0,
-                'total_records_updated': 0,
-                'total_records_failed': 0,
-                'average_success_rate': 0.0,
+                "total_imports": 0,
+                "successful_imports": 0,
+                "failed_imports": 0,
+                "total_records_created": 0,
+                "total_records_updated": 0,
+                "total_records_failed": 0,
+                "average_success_rate": 0.0,
             }
 
         return {
-            'total_imports': len(audits),
-            'successful_imports': len(audits.filtered(lambda a: a.state == 'done')),
-            'failed_imports': len(audits.filtered(lambda a: a.state == 'failed')),
-            'total_records_created': sum(audits.mapped('records_created')),
-            'total_records_updated': sum(audits.mapped('records_updated')),
-            'total_records_failed': sum(audits.mapped('records_failed')),
-            'average_success_rate': sum(audits.mapped('success_rate')) / len(audits) if audits else 0.0,
+            "total_imports": len(audits),
+            "successful_imports": len(audits.filtered(lambda a: a.state == "done")),
+            "failed_imports": len(audits.filtered(lambda a: a.state == "failed")),
+            "total_records_created": sum(audits.mapped("records_created")),
+            "total_records_updated": sum(audits.mapped("records_updated")),
+            "total_records_failed": sum(audits.mapped("records_failed")),
+            "average_success_rate": (
+                sum(audits.mapped("success_rate")) / len(audits) if audits else 0.0
+            ),
         }
 
     @api.model
@@ -260,10 +268,12 @@ class FinancePPMTDIAudit(models.Model):
         """
         cutoff_date = fields.Datetime.subtract(fields.Datetime.now(), days=days)
 
-        old_audits = self.search([
-            ('import_date', '<', cutoff_date),
-            ('state', 'in', ['done', 'partial']),
-        ])
+        old_audits = self.search(
+            [
+                ("import_date", "<", cutoff_date),
+                ("state", "in", ["done", "partial"]),
+            ]
+        )
 
         count = len(old_audits)
         old_audits.unlink()

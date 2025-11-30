@@ -228,8 +228,8 @@ labels:
 ### Database Optimization
 ```sql
 -- Monitor Keycloak database performance
-SELECT schemaname, tablename, seq_scan, seq_tup_read 
-FROM pg_stat_user_tables 
+SELECT schemaname, tablename, seq_scan, seq_tup_read
+FROM pg_stat_user_tables
 WHERE schemaname = 'public' AND tablename LIKE 'keycloak%';
 ```
 
@@ -252,7 +252,7 @@ docker exec keycloak /opt/keycloak/bin/kc.sh export --realm insightpulse --file 
    ```bash
    # Check logs
    docker compose -f docker-compose.prod.yml logs keycloak
-   
+
    # Verify database connectivity
    docker exec odoo_prod_db_1 psql -U keycloak -d keycloak -c "\conninfo"
    ```
@@ -349,5 +349,5 @@ tail -f /var/log/odoo/odoo-server.log | grep oauth
 
 ---
 
-**Last Updated**: 2025-11-24  
+**Last Updated**: 2025-11-24
 **Deployment Status**: Ready for Production

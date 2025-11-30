@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
         <record id="schedule_1601C_Dec_2025" model="ipai.bir.form.schedule">
             <field name="form_code">1601C</field>
             <field name="period">Dec 2025</field>
@@ -776,5 +775,4 @@
                 </record>
             </field>
         </record>
-    </data>
 </odoo>

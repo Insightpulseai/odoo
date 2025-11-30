@@ -63,7 +63,7 @@ def subtract_business_days(date, days):
 
 def generate_schedule():
     schedule = []
-    
+
     # Generate for each month
     for month in range(1, 13):
         # Calculate target month/year for the deadline (usually the following month)
@@ -72,28 +72,28 @@ def generate_schedule():
         if deadline_month > 12:
             deadline_month = 1
             deadline_year = YEAR + 1
-            
+
         # Skip if deadline falls out of 2026 (for Dec 2026 tasks due in Jan 2027, we might want them, but let's stick to 2026 calendar year tasks or 2026 coverage)
         # Prompt says "2026 monthly closing workflow". Usually means tasks *happening* in 2026.
         # Jan 2026 tasks cover Dec 2025 period.
-        
+
         # Let's iterate periods: Dec 2025 to Nov 2026 (which have deadlines in 2026)
         # Actually prompt example: "January 2026 (Example form: 1601-C) Legal deadline: Jan 15, 2026"
         # So we look at deadlines occurring in 2026.
-        
+
         for form in FORMS:
             # Determine base deadline date
             if form.get("quarterly"):
                 # Only process if deadline_month is relevant (e.g. Apr, Jul, Oct, Jan)
                 # Quarters end Mar, Jun, Sep, Dec. Deadlines in Apr, Jul, Oct, Jan.
-                if month not in [3, 6, 9, 12]: 
+                if month not in [3, 6, 9, 12]:
                     continue
-            
+
             day = form["day_offset"]
             if month == 12 and form.get("jan_exception") and deadline_month == 1:
                  # Special case for Jan deadline (covering Dec)
                  day = form["jan_exception"]
-            
+
             # Construct naive deadline
             try:
                 base_deadline = datetime.date(deadline_year, deadline_month, day)
@@ -108,26 +108,26 @@ def generate_schedule():
                         next_y += 1
                     first_of_next = datetime.date(next_y, next_m, 1)
                     base_deadline = first_of_next - datetime.timedelta(days=1)
-            
+
             # 1. Adjust Deadline (D)
             final_deadline = get_next_business_day(base_deadline)
-            
+
             # 2. Calculate Milestones
             # Prep = D - 4 bus days
             # Review = D - 2 bus days
             # Approval = D - 1 bus day
-            
+
             date_prep = subtract_business_days(final_deadline, 4)
             date_review = subtract_business_days(final_deadline, 2)
             date_approval = subtract_business_days(final_deadline, 1)
-            
-            period_name = datetime.date(YEAR, month, 1).strftime("%b %Y") # e.g. Jan 2026 covering Dec? 
+
+            period_name = datetime.date(YEAR, month, 1).strftime("%b %Y") # e.g. Jan 2026 covering Dec?
             # Wait, if deadline is Jan 15 2026, it covers Dec 2025.
-            # Prompt says "January 2026 (Example form: 1601-C)". 
+            # Prompt says "January 2026 (Example form: 1601-C)".
             # Let's assume the "Period" label aligns with the deadline month for simplicity or the prompt's convention.
             # Actually prompt says "Period Covered (Dec 2025)" for Jan deadline.
             # Let's use Deadline Month as the grouper for the schedule.
-            
+
             schedule.append({
                 "Form": form["code"],
                 "Deadline": final_deadline,
@@ -190,7 +190,7 @@ def write_odoo_seed(schedule):
                 "approval_date": item['Approval'].isoformat(),
             }
         })
-    
+
     with open('odoo/ipai_finance_closing_seed.json', 'w') as f:
         json.dump(data, f, indent=4)
 

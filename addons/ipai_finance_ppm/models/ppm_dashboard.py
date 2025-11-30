@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+import logging
+
+import requests
 from odoo.exceptions import UserError
 
-import logging
-import requests
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -111,7 +112,10 @@ class FinancePpmDashboard(models.Model):
         }
         """
         url, api_key = self._get_status_endpoint()
-        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        }
 
         try:
             resp = requests.get(url, headers=headers, timeout=15)
@@ -124,7 +128,9 @@ class FinancePpmDashboard(models.Model):
         workflows = data.get("workflows", [])
         existing = {
             rec.workflow_code: rec
-            for rec in self.search([("workflow_code", "in", [w.get("workflow_code") for w in workflows])])
+            for rec in self.search(
+                [("workflow_code", "in", [w.get("workflow_code") for w in workflows])]
+            )
         }
 
         for w in workflows:

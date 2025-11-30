@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
         <!-- Philippine Holiday Calendar for 2025-2026 -->
         <!-- For business day calculations in BIR deadlines and month-end closing -->
         <!-- Includes regular holidays, special non-working days, and local holidays -->
@@ -320,6 +319,4 @@
             <field name="is_nationwide">True</field>
             <field name="description">Special non-working day - December 31, 2026</field>
         </record>
-
-    </data>
 </odoo>

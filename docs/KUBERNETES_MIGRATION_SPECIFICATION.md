@@ -22,7 +22,7 @@
 - **Service.yaml**: Internal service mapping port 8069
 - **HorizontalPodAutoscaler.yaml**: Auto-scaling based on Odoo worker usage
 
-### 2. Postgres Service  
+### 2. Postgres Service
 **File:** `kubernetes/postgres-statefulset.yaml`
 - **StatefulSet.yaml**: Database with persistent storage
 - **PersistentVolumeClaim.yaml**: Secure, persistent data storage
@@ -36,7 +36,7 @@
 ### 4. Ingress & Routing
 **File:** `kubernetes/ingress.yaml`
 - **Ingress.yaml**: Public routing replacing Traefik labels
-- **Domains**: 
+- **Domains**:
   - `erp.insightpulseai.net` → Odoo service
   - `auth.insightpulseai.net` → Keycloak service
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data>
 
     <!-- Standalone InsightPulse OCR Settings -->
 
@@ -58,6 +57,4 @@
               parent="hr_expense.menu_hr_expense_configuration"
               action="action_ipai_ocr_config"
               sequence="99"/>
-
-  </data>
 </odoo>

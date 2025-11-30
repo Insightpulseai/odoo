@@ -9,18 +9,16 @@
 repos:
   # OCA Official Hooks - Odoo-specific validation
   - repo: https://github.com/OCA/odoo-pre-commit-hooks
-    rev: v0.0.32
+    rev: v0.0.35
     hooks:
-      - id: oca-check-manifest
-        description: Check __manifest__.py for OCA compliance
-      - id: oca-check-csv
-        description: Validate CSV files (security, data)
-      - id: oca-xml-lint
-        description: Lint XML files for syntax errors
+      - id: oca-checks-odoo-module
+        description: Multiple OCA checks for Odoo modules (manifest, CSV, XML)
+      - id: oca-checks-po
+        description: Multiple checks for PO translation files
 
   # Python Code Formatting (Black)
   - repo: https://github.com/psf/black
-    rev: 24.4.2
+    rev: 25.11.0
     hooks:
       - id: black
         args: [--line-length=88]
@@ -28,23 +26,23 @@ repos:
 
   # Import Sorting (isort)
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 7.0.0
     hooks:
       - id: isort
         args: [--profile=black, --line-length=88]
         files: ^addons/
 
   # Flake8 Linting (PEP8)
+  # Configuration in .flake8 file - ignores F401/E741 for Odoo module patterns
   - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+    rev: 7.3.0
     hooks:
       - id: flake8
-        args: [--max-line-length=88, --extend-ignore=E501,W503]
         files: ^addons/
 
   # YAML Validation
   - repo: https://github.com/adrienverge/yamllint
-    rev: v1.35.1
+    rev: v1.37.1
     hooks:
       - id: yamllint
         args: [-d, relaxed]
@@ -52,7 +50,7 @@ repos:
 
   # Standard Pre-commit Hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
         exclude: \.po$|\.pot$

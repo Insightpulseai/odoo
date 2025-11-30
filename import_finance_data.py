@@ -9,13 +9,13 @@ sys.path.append('/usr/lib/python3/dist-packages')
 try:
     from odoo.modules.registry import Registry
     from odoo.api import Environment
-    
+
     # Initialize environment
     db_name = 'odoo'
     registry = Registry(db_name)
     with registry.cursor() as cr:
         env = Environment(cr, 1, {})  # SUPERUSER_ID is 1
-        
+
         # Import Directory data
         print('Importing Directory data...')
         with open('/tmp/finance_directory_template.csv', 'r') as f:
@@ -28,7 +28,7 @@ try:
                     'role': row['Role']
                 })
         print('Directory import completed successfully!')
-        
+
         # Import Monthly Tasks data
         print('Importing Monthly Tasks data...')
         with open('/tmp/finance_monthly_tasks_template.csv', 'r') as f:
@@ -46,9 +46,9 @@ try:
                         'approval_duration': float(row['approval_duration'])
                     })
         print('Monthly Tasks import completed successfully!')
-        
+
         print('All data imported successfully!')
-        
+
 except Exception as e:
     print(f"Error: {e}")
     import traceback

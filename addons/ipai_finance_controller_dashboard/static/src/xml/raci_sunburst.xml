@@ -41,7 +41,7 @@
 
                     chart.setOption({
                         title: {
-                            text: 'RACI Distribution by Cluster & Owner',
+                            text: 'RACI Distribution by Cluster &amp; Owner',
                             left: 'center',
                             textStyle: { fontSize: 16, fontWeight: 'bold' }
                         },

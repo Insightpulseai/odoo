@@ -35,17 +35,17 @@ SSL Mode: prefer
 **Purpose**: Executive view of project health across the portfolio
 
 ```sql
-SELECT 
+SELECT
     pp.name as project_name,
     pp.health_status,
     COUNT(DISTINCT pt.id) as total_tasks,
     COUNT(DISTINCT CASE WHEN pt.date_deadline < CURRENT_DATE THEN pt.id END) as overdue_tasks,
     ROUND(pp.total_planned_cost, 2) as planned_budget,
     ROUND(pp.total_actual_cost, 2) as actual_cost,
-    CASE 
-        WHEN pp.total_planned_cost > 0 
+    CASE
+        WHEN pp.total_planned_cost > 0
         THEN ROUND((pp.total_actual_cost / pp.total_planned_cost) * 100, 2)
-        ELSE 0 
+        ELSE 0
     END as budget_utilization_percent,
     pp.date_start,
     pp.date,
@@ -54,7 +54,7 @@ FROM project_project pp
 LEFT JOIN project_task pt ON pp.id = pt.project_id
 LEFT JOIN res_users u ON pp.user_id = u.id
 WHERE pp.active = true
-GROUP BY pp.id, pp.name, pp.health_status, pp.total_planned_cost, 
+GROUP BY pp.id, pp.name, pp.health_status, pp.total_planned_cost,
          pp.total_actual_cost, pp.date_start, pp.date, u.name
 ORDER BY pp.health_status, pp.name;
 ```
@@ -72,7 +72,7 @@ ORDER BY pp.health_status, pp.name;
 ```sql
 WITH RECURSIVE task_hierarchy AS (
     -- Base case: root tasks (no parent)
-    SELECT 
+    SELECT
         id,
         name,
         parent_id,
@@ -80,13 +80,13 @@ WITH RECURSIVE task_hierarchy AS (
         wbs_code,
         1 as depth,
         name as full_path
-    FROM project_task 
+    FROM project_task
     WHERE parent_id IS NULL
-    
+
     UNION ALL
-    
+
     -- Recursive case: child tasks
-    SELECT 
+    SELECT
         pt.id,
         pt.name,
         pt.parent_id,
@@ -97,7 +97,7 @@ WITH RECURSIVE task_hierarchy AS (
     FROM project_task pt
     INNER JOIN task_hierarchy th ON pt.parent_id = th.id
 )
-SELECT 
+SELECT
     pp.name as project_name,
     th.depth,
     COUNT(*) as task_count,
@@ -121,24 +121,24 @@ ORDER BY pp.name, th.depth;
 **Purpose**: Financial compliance and budget tracking
 
 ```sql
-SELECT 
+SELECT
     pp.name as project_name,
     pp.health_status,
     ROUND(pp.total_planned_cost, 2) as planned_budget,
     ROUND(pp.total_actual_cost, 2) as actual_cost,
     ROUND(pp.total_planned_cost - pp.total_actual_cost, 2) as budget_variance,
-    CASE 
-        WHEN pp.total_planned_cost > 0 
+    CASE
+        WHEN pp.total_planned_cost > 0
         THEN ROUND(((pp.total_planned_cost - pp.total_actual_cost) / pp.total_planned_cost) * 100, 2)
-        ELSE 0 
+        ELSE 0
     END as variance_percent,
-    CASE 
+    CASE
         WHEN (pp.total_planned_cost - pp.total_actual_cost) < 0 THEN 'Over Budget'
         WHEN (pp.total_planned_cost - pp.total_actual_cost) > (pp.total_planned_cost * 0.1) THEN 'Under Budget'
         ELSE 'On Budget'
     END as budget_status
 FROM project_project pp
-WHERE pp.active = true 
+WHERE pp.active = true
   AND pp.total_planned_cost > 0
 ORDER BY budget_variance DESC;
 ```
@@ -154,7 +154,7 @@ ORDER BY budget_variance DESC;
 **Purpose**: Track time investment vs. strategic goals
 
 ```sql
-SELECT 
+SELECT
     pp.name as project_name,
     u.name as employee_name,
     COUNT(DISTINCT aal.id) as timesheet_entries,
@@ -183,14 +183,14 @@ ORDER BY total_hours DESC;
 **Purpose**: Track November 2025 close progress across agencies
 
 ```sql
-SELECT 
+SELECT
     pt.name as task_name,
     pt.stage_id,
     ps.name as stage_name,
     u.name as assigned_to,
     pt.date_deadline,
     pt.date_start,
-    CASE 
+    CASE
         WHEN pt.date_deadline < CURRENT_DATE THEN 'Overdue'
         WHEN pt.date_deadline <= CURRENT_DATE + INTERVAL '2 days' THEN 'Due Soon'
         ELSE 'On Track'
@@ -322,6 +322,6 @@ ORDER BY pt.date_deadline, pt.wbs_code;
 
 ---
 
-**Last Updated**: November 24, 2025  
-**Odoo Version**: 18.0  
+**Last Updated**: November 24, 2025
+**Odoo Version**: 18.0
 **Superset Version**: 3.0+

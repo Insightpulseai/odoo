@@ -47,13 +47,9 @@ agents:
       according to the planner's module plan and feedback from quality tools.
     responsibilities:
       - Create/extend modules under the configured delta prefix (e.g. ipai_*).
-      - Use correct base classes (`models.Model`, `models.TransientModel`, `models.AbstractModel`).
-      - Follow naming conventions:
-        - Class names in PascalCase.
-        - `_name` in singular dot-notation.
-        - Recordset variables in PascalCase, others in snake_case.
-      - Keep manifests complete and correct:
-        - `depends`, `data`, `assets`, metadata, flags.
+      - Use correct base classes (models.Model, models.TransientModel, models.AbstractModel).
+      - Follow naming conventions - class names in PascalCase, _name in singular dot-notation, recordset variables in PascalCase, others in snake_case.
+      - Keep manifests complete and correct with depends, data, assets, metadata, flags.
       - Refactor code based on structured feedback from OCA tools and tests.
       - Avoid Enterprise contamination and version-blind patterns.
     tools:
@@ -70,12 +66,9 @@ agents:
       Enforce OCA quality standards locally using linting and pre-commit tools.
       Convert tool output into structured feedback for the Coding Agent and drive self-healing.
     responsibilities:
-      - Run `oca-odoo-pre-commit-hooks` and `pylint-odoo` against the changed modules.
-      - Parse errors/warnings into a structured JSON object:
-        - file, line, rule, severity, message, suggested fix (if known).
-      - Classify issues:
-        - blocking (must fix before CI)
-        - warnings (can postpone with justification)
+      - Run oca-odoo-pre-commit-hooks and pylint-odoo against the changed modules.
+      - Parse errors/warnings into a structured JSON object (file, line, rule, severity, message, suggested fix).
+      - Classify issues as blocking (must fix before CI) or warnings (can postpone with justification).
       - Re-run tools after fixes until all blocking issues are resolved.
       - Optionally trigger targeted unit tests when code changes affect core flows.
     tools:

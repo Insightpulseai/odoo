@@ -58,7 +58,7 @@ check_database_connection() {
 check_disk_space() {
     local threshold=90  # 90% usage threshold
     local usage=$(df / | awk 'NR==2 {print $5}' | sed 's/%//')
-    
+
     if [ "$usage" -lt "$threshold" ]; then
         log "INFO" "✓ Disk usage: ${usage}% (below ${threshold}% threshold)"
         return 0
@@ -72,7 +72,7 @@ check_disk_space() {
 check_memory_usage() {
     local threshold=90  # 90% usage threshold
     local usage=$(free | awk 'NR==2{printf "%.0f", $3*100/$2}')
-    
+
     if [ "$usage" -lt "$threshold" ]; then
         log "INFO" "✓ Memory usage: ${usage}% (below ${threshold}% threshold)"
         return 0
@@ -85,18 +85,18 @@ check_memory_usage() {
 # Check recent errors in logs
 check_recent_errors() {
     local error_count=0
-    
+
     # Check system logs
     if command -v journalctl >/dev/null 2>&1; then
         error_count=$(journalctl -u odoo --since "5 minutes ago" 2>/dev/null | grep -i "error\|failed" | wc -l)
     fi
-    
+
     # Check Odoo logs if available
     if [ -f "/var/log/odoo/odoo.log" ]; then
         local odoo_errors=$(tail -100 "/var/log/odoo/odoo.log" | grep -i "error\|failed" | wc -l)
         error_count=$((error_count + odoo_errors))
     fi
-    
+
     if [ "$error_count" -eq 0 ]; then
         log "INFO" "✓ No recent errors found in logs"
         return 0
@@ -110,7 +110,7 @@ check_recent_errors() {
 check_service_dependencies() {
     local services=("postgresql" "redis" "nginx")
     local all_healthy=true
-    
+
     for service in "${services[@]}"; do
         if systemctl is-active --quiet "$service" 2>/dev/null; then
             log "INFO" "✓ Service $service is running"
@@ -119,7 +119,7 @@ check_service_dependencies() {
             all_healthy=false
         fi
     done
-    
+
     if $all_healthy; then
         return 0
     else
@@ -131,7 +131,7 @@ check_service_dependencies() {
 check_network_connectivity() {
     local endpoints=("google.com" "github.com")
     local all_reachable=true
-    
+
     for endpoint in "${endpoints[@]}"; do
         if ping -c 1 -W 2 "$endpoint" >/dev/null 2>&1; then
             log "INFO" "✓ Network reachable: $endpoint"
@@ -140,7 +140,7 @@ check_network_connectivity() {
             all_reachable=false
         fi
     done
-    
+
     if $all_reachable; then
         return 0
     else
@@ -151,10 +151,10 @@ check_network_connectivity() {
 # Run comprehensive health check
 run_health_check() {
     log "INFO" "Starting comprehensive health check..."
-    
+
     local checks_failed=0
     local check_results=()
-    
+
     # Run all checks
     check_odoo_process || ((checks_failed++))
     check_database_connection || ((checks_failed++))
@@ -163,7 +163,7 @@ run_health_check() {
     check_recent_errors || ((checks_failed++))
     check_service_dependencies || ((checks_failed++))
     check_network_connectivity || ((checks_failed++))
-    
+
     # Summary
     if [ "$checks_failed" -eq 0 ]; then
         log "SUCCESS" "✓ All health checks passed"
@@ -177,14 +177,14 @@ run_health_check() {
 # Auto-healing procedure
 auto_heal() {
     local failure_count=$1
-    
+
     log "INFO" "Starting auto-healing procedure (failure count: $failure_count)"
-    
+
     # Run auto error handler
     if [ -f "$AUTO_HEAL_SCRIPT" ]; then
         log "INFO" "Running auto error handler..."
         "$AUTO_HEAL_SCRIPT" detect
-        
+
         # If we have multiple consecutive failures, run more aggressive fixes
         if [ "$failure_count" -ge "$ALERT_THRESHOLD" ]; then
             log "WARNING" "Multiple consecutive failures detected, running advanced healing..."
@@ -194,11 +194,11 @@ auto_heal() {
     else
         log "ERROR" "Auto error handler script not found: $AUTO_HEAL_SCRIPT"
     fi
-    
+
     # Attempt service restart if Odoo is not running
     if ! check_odoo_process; then
         log "INFO" "Attempting to restart Odoo service..."
-        
+
         if command -v docker-compose >/dev/null 2>&1; then
             cd deploy && docker-compose restart odoo && cd - || log "ERROR" "Failed to restart Odoo via Docker"
         elif command -v systemctl >/dev/null 2>&1; then
@@ -206,7 +206,7 @@ auto_heal() {
         else
             log "WARNING" "No supported service manager found for Odoo restart"
         fi
-        
+
         # Wait a bit and check again
         sleep 10
         if check_odoo_process; then
@@ -220,14 +220,14 @@ auto_heal() {
 # Continuous monitoring mode
 monitor_mode() {
     log "INFO" "Starting continuous health monitoring..."
-    
+
     local consecutive_failures=0
     local last_alert_time=0
     local alert_cooldown=300  # 5 minutes between alerts
-    
+
     while true; do
         local current_time=$(date +%s)
-        
+
         if run_health_check; then
             # Health check passed
             if [ "$consecutive_failures" -gt 0 ]; then
@@ -238,23 +238,23 @@ monitor_mode() {
             # Health check failed
             ((consecutive_failures++))
             log "WARNING" "Health check failed ($consecutive_failures consecutive failures)"
-            
+
             # Auto-heal on first failure
             if [ "$consecutive_failures" -eq 1 ]; then
                 auto_heal "$consecutive_failures"
             fi
-            
+
             # Alert on threshold breaches
             if [ "$consecutive_failures" -ge "$ALERT_THRESHOLD" ] && \
                [ $((current_time - last_alert_time)) -ge "$alert_cooldown" ]; then
                 log "ALERT" "CRITICAL: $consecutive_failures consecutive health check failures"
                 last_alert_time=$current_time
-                
+
                 # Run more aggressive healing
                 auto_heal "$consecutive_failures"
             fi
         fi
-        
+
         # Wait for next check
         sleep $HEALTH_CHECK_INTERVAL
     done
@@ -263,7 +263,7 @@ monitor_mode() {
 # Generate health report
 generate_report() {
     local report_file="/tmp/odoo_health_report_$(date +%Y%m%d_%H%M%S).txt"
-    
+
     {
         echo "Odoo Health Report - $(date)"
         echo "================================"
@@ -288,7 +288,7 @@ generate_report() {
         echo "------------------"
         pgrep -f "odoo" | xargs ps -o pid,user,cmd -p 2>/dev/null || echo "No Odoo processes found"
     } > "$report_file"
-    
+
     log "INFO" "Health report generated: $report_file"
     echo "$report_file"
 }
@@ -296,7 +296,7 @@ generate_report() {
 # Main function
 main() {
     local mode="${1:-check}"
-    
+
     case "$mode" in
         "check")
             run_health_check

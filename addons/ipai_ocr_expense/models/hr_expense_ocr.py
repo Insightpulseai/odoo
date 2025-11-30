@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import logging
-import requests
 import time
 
-from odoo import api, fields, models, _
+import requests
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -27,7 +28,9 @@ class HrExpense(models.Model):
     def action_ipai_ocr_scan(self):
         """Send the first attached receipt to InsightPulse OCR and fill fields."""
         params = self.env["ir.config_parameter"].sudo()
-        enabled = params.get_param("ipai_ocr_expense.ipai_ocr_enabled", "False") == "True"
+        enabled = (
+            params.get_param("ipai_ocr_expense.ipai_ocr_enabled", "False") == "True"
+        )
         api_url = params.get_param("ipai_ocr_expense.ipai_ocr_api_url")
         api_key = params.get_param("ipai_ocr_expense.ipai_ocr_api_key")
 
@@ -69,7 +72,11 @@ class HrExpense(models.Model):
             try:
                 file_content = attachments._file_read(attachments.store_fname)
                 files = {
-                    "file": (attachments.name or "receipt.jpg", file_content, attachments.mimetype),
+                    "file": (
+                        attachments.name or "receipt.jpg",
+                        file_content,
+                        attachments.mimetype,
+                    ),
                 }
                 headers = {}
                 if api_key:
@@ -86,7 +93,9 @@ class HrExpense(models.Model):
                 vals = {}
                 if data.get("total_amount"):
                     vals["total_amount"] = data["total_amount"]
-                    vals["unit_amount"] = data["total_amount"]  # simple case 1 line = total
+                    vals["unit_amount"] = data[
+                        "total_amount"
+                    ]  # simple case 1 line = total
 
                 if data.get("merchant_name"):
                     vals["name"] = data["merchant_name"]
@@ -98,23 +107,27 @@ class HrExpense(models.Model):
                 expense.write({"ocr_status": "done"})
 
                 # Determine status based on field extraction
-                has_all_fields = all([
-                    data.get("merchant_name"),
-                    data.get("invoice_date"),
-                    data.get("total_amount"),
-                ])
+                has_all_fields = all(
+                    [
+                        data.get("merchant_name"),
+                        data.get("invoice_date"),
+                        data.get("total_amount"),
+                    ]
+                )
                 status = "success" if has_all_fields else "partial"
 
                 # Update log with success data
-                log.write({
-                    "status": status,
-                    "duration_ms": duration_ms,
-                    "vendor_name_extracted": data.get("merchant_name"),
-                    "total_extracted": data.get("total_amount"),
-                    "currency_extracted": data.get("currency"),
-                    "date_extracted": data.get("invoice_date"),
-                    "confidence": data.get("confidence", 0.0),
-                })
+                log.write(
+                    {
+                        "status": status,
+                        "duration_ms": duration_ms,
+                        "vendor_name_extracted": data.get("merchant_name"),
+                        "total_extracted": data.get("total_amount"),
+                        "currency_extracted": data.get("currency"),
+                        "date_extracted": data.get("invoice_date"),
+                        "confidence": data.get("confidence", 0.0),
+                    }
+                )
 
                 _logger.info(
                     "OCR success for expense %s: %s (%.2f %s) in %dms",
@@ -130,11 +143,13 @@ class HrExpense(models.Model):
                 duration_ms = int((time.time() - start_time) * 1000)
 
                 # Update log with error
-                log.write({
-                    "status": "failed",
-                    "duration_ms": duration_ms,
-                    "error_message": str(e),
-                })
+                log.write(
+                    {
+                        "status": "failed",
+                        "duration_ms": duration_ms,
+                        "error_message": str(e),
+                    }
+                )
 
                 _logger.exception("Error calling InsightPulse OCR: %s", e)
                 expense.write({"ocr_status": "error"})

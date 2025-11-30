@@ -126,28 +126,28 @@ echo -e "${GREEN}✅ Image verification complete${NC}"
 # Push to registry (if GHCR_PAT is set)
 if [[ -n "${GHCR_PAT:-}" ]]; then
     echo -e "\n${YELLOW}4. Pushing to GitHub Container Registry...${NC}"
-    
+
     # Login to GHCR
     echo "${GHCR_PAT}" | docker login ghcr.io -u jgtolentino --password-stdin
-    
+
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}❌ Login failed! Check your GHCR_PAT.${NC}"
         exit 1
     fi
-    
+
     # Push versioned tag
     echo "   Pushing ${IMAGE_FULL}..."
     docker push "${IMAGE_FULL}"
-    
+
     if [[ $? -ne 0 ]]; then
         echo -e "${RED}❌ Push failed!${NC}"
         exit 1
     fi
-    
+
     # Push latest tag (optional, not recommended for production)
     echo "   Pushing ${IMAGE_NAME}:latest..."
     docker push "${IMAGE_NAME}:latest"
-    
+
     echo -e "${GREEN}✅ Push successful!${NC}"
     echo "   Registry: https://github.com/jgtolentino/odoo-ce/pkgs/container/odoo-ce"
 else

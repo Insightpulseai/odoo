@@ -15,25 +15,18 @@ class OcrExpenseLog(models.Model):
         "hr.expense",
         string="Expense",
         ondelete="set null",
-        help="Related expense record (if applicable)"
+        help="Related expense record (if applicable)",
     )
     user_id = fields.Many2one(
-        "res.users",
-        string="User",
-        default=lambda self: self.env.uid,
-        required=True
+        "res.users", string="User", default=lambda self: self.env.uid, required=True
     )
     employee_id = fields.Many2one(
-        "hr.employee",
-        string="Employee",
-        help="Employee who initiated OCR scan"
+        "hr.employee", string="Employee", help="Employee who initiated OCR scan"
     )
 
     # Request metadata
     created_at = fields.Datetime(
-        string="Timestamp",
-        default=fields.Datetime.now,
-        required=True
+        string="Timestamp", default=fields.Datetime.now, required=True
     )
     source = fields.Selection(
         [
@@ -43,11 +36,10 @@ class OcrExpenseLog(models.Model):
         ],
         string="Source",
         default="web",
-        required=True
+        required=True,
     )
     duration_ms = fields.Integer(
-        string="Duration (ms)",
-        help="Time taken for OCR processing"
+        string="Duration (ms)", help="Time taken for OCR processing"
     )
 
     # OCR results
@@ -59,50 +51,34 @@ class OcrExpenseLog(models.Model):
         ],
         string="Status",
         required=True,
-        default="success"
+        default="success",
     )
     vendor_name_extracted = fields.Char(
-        string="Vendor Name",
-        help="Extracted merchant/vendor name"
+        string="Vendor Name", help="Extracted merchant/vendor name"
     )
-    total_extracted = fields.Float(
-        string="Total Amount",
-        help="Extracted total amount"
-    )
-    currency_extracted = fields.Char(
-        string="Currency",
-        help="Extracted currency code"
-    )
-    date_extracted = fields.Date(
-        string="Date",
-        help="Extracted invoice/receipt date"
-    )
+    total_extracted = fields.Float(string="Total Amount", help="Extracted total amount")
+    currency_extracted = fields.Char(string="Currency", help="Extracted currency code")
+    date_extracted = fields.Date(string="Date", help="Extracted invoice/receipt date")
     confidence = fields.Float(
-        string="Confidence Score",
-        help="Overall confidence score (0.0-1.0)"
+        string="Confidence Score", help="Overall confidence score (0.0-1.0)"
     )
 
     # Error handling
     error_message = fields.Text(
-        string="Error Message",
-        help="Error details if OCR failed"
+        string="Error Message", help="Error details if OCR failed"
     )
 
     # Raw data (optional, for debugging)
     raw_payload_path = fields.Char(
-        string="Raw Payload Path",
-        help="Path to stored raw OCR response (S3/storage)"
+        string="Raw Payload Path", help="Path to stored raw OCR response (S3/storage)"
     )
     request_id = fields.Char(
-        string="Request ID",
-        help="Unique request identifier for tracing"
+        string="Request ID", help="Unique request identifier for tracing"
     )
 
     # Computed fields for analytics
     is_successful = fields.Boolean(
-        string="Successful",
-        compute="_compute_is_successful",
-        store=True
+        string="Successful", compute="_compute_is_successful", store=True
     )
 
     @api.depends("status")
