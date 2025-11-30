@@ -1,8 +1,37 @@
 # -*- coding: utf-8 -*-
+"""
+IPAI Expense & Travel Models (PH).
+
+This module extends Odoo's expense management with Philippines-specific
+workflows and validation rules:
+- Travel request approval workflow (Manager → Finance)
+- Project cost tracking for specific expense categories
+- PH expense category enforcement
+
+Models:
+    IpaiTravelRequest: Travel authorization with multi-level approval
+    HrExpense (inherited): Extended expense with travel and project linkage
+"""
 from odoo import api, fields, models
 
 
 class IpaiTravelRequest(models.Model):
+    """
+    Travel Request Model.
+
+    Handles pre-approval of business travel with budget estimation.
+    Implements dual-approval workflow: Manager → Finance.
+
+    Workflow:
+        draft → submitted → manager_approved → finance_approved
+                    ↓              ↓                ↓
+                rejected       rejected         rejected
+
+    Attributes:
+        _name: ipai.travel.request
+        _description: IPAI Travel Request
+    """
+
     _name = "ipai.travel.request"
     _description = "IPAI Travel Request"
     _order = "start_date desc, id desc"
@@ -44,23 +73,61 @@ class IpaiTravelRequest(models.Model):
     )
 
     def action_submit(self):
+        """
+        Submit travel request for approval.
+
+        Transitions state from 'draft' to 'submitted', triggering
+        the approval workflow starting with manager review.
+        """
         for rec in self:
             rec.state = "submitted"
 
     def action_manager_approve(self):
+        """
+        Manager approves the travel request.
+
+        First-level approval. Transitions to 'manager_approved',
+        allowing finance to perform final approval.
+        """
         for rec in self:
             rec.state = "manager_approved"
 
     def action_finance_approve(self):
+        """
+        Finance approves the travel request.
+
+        Final approval step. Transitions to 'finance_approved',
+        authorizing the employee to proceed with travel arrangements.
+        """
         for rec in self:
             rec.state = "finance_approved"
 
     def action_reject(self):
+        """
+        Reject the travel request.
+
+        Can be called at any approval stage. Transitions to 'rejected',
+        requiring the employee to submit a new request if needed.
+        """
         for rec in self:
             rec.state = "rejected"
 
 
 class HrExpense(models.Model):
+    """
+    Extended HR Expense Model.
+
+    Adds PH-specific fields and validation to standard Odoo expenses:
+    - Links expenses to travel requests for travel-related items
+    - Enforces project code requirement for specific categories
+    - Validates expense category consistency
+
+    Inherited Fields:
+        travel_request_id: Link to approved travel authorization
+        project_id: Project/job code for cost allocation
+        requires_project: Computed flag for validation
+    """
+
     _inherit = "hr.expense"
 
     travel_request_id = fields.Many2one(

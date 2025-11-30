@@ -1,8 +1,33 @@
 # -*- coding: utf-8 -*-
+"""
+IPAI Equipment Management Models.
+
+This module provides Cheqroom-style equipment tracking functionality including:
+- Equipment asset catalog with condition and status tracking
+- Booking management with conflict detection and overdue monitoring
+- Incident reporting and resolution tracking
+
+Models:
+    IpaiEquipmentAsset: Physical equipment items in the catalog
+    IpaiEquipmentBooking: Equipment reservations and checkouts
+    IpaiEquipmentIncident: Damage/issue reports for equipment
+"""
 from odoo import api, fields, models
 
 
 class IpaiEquipmentAsset(models.Model):
+    """
+    Equipment Asset Model.
+
+    Represents a physical piece of equipment that can be booked and tracked.
+    Supports condition monitoring (new/good/used/damaged) and availability
+    status (available/reserved/checked_out/maintenance).
+
+    Attributes:
+        _name: ipai.equipment.asset
+        _description: IPAI Equipment Asset
+    """
+
     _name = "ipai.equipment.asset"
     _description = "IPAI Equipment Asset"
     _order = "name"
@@ -89,6 +114,23 @@ class IpaiEquipmentAsset(models.Model):
 
 
 class IpaiEquipmentBooking(models.Model):
+    """
+    Equipment Booking Model.
+
+    Manages equipment reservations and checkouts with automatic conflict detection.
+    Tracks the full booking lifecycle: draft → reserved → checked_out → returned.
+
+    Workflow:
+        1. Create booking in draft state
+        2. Reserve equipment (validates no conflicts)
+        3. Check out to borrower
+        4. Return equipment (releases asset)
+
+    Attributes:
+        _name: ipai.equipment.booking
+        _description: IPAI Equipment Booking
+    """
+
     _name = "ipai.equipment.booking"
     _description = "IPAI Equipment Booking"
     _order = "start_datetime desc"
@@ -137,6 +179,13 @@ class IpaiEquipmentBooking(models.Model):
 
     @api.constrains("asset_id", "start_datetime", "end_datetime", "state")
     def _check_booking_conflict(self):
+        """
+        Validate no overlapping bookings exist for the same asset.
+
+        Raises:
+            ValueError: If the asset is already reserved or checked out
+                during the requested time period.
+        """
         for rec in self:
             if not rec.asset_id or not rec.start_datetime or not rec.end_datetime:
                 continue
@@ -153,21 +202,45 @@ class IpaiEquipmentBooking(models.Model):
                 )
 
     def action_reserve(self):
+        """
+        Confirm the booking and reserve the equipment.
+
+        Sets booking state to 'reserved' and updates the linked asset
+        status to 'reserved', preventing other bookings.
+        """
         for rec in self:
             rec.state = "reserved"
             rec.asset_id.status = "reserved"
 
     def action_check_out(self):
+        """
+        Check out equipment to the borrower.
+
+        Sets booking state to 'checked_out' and updates the linked asset
+        status. Equipment is now physically with the borrower.
+        """
         for rec in self:
             rec.state = "checked_out"
             rec.asset_id.status = "checked_out"
 
     def action_return(self):
+        """
+        Process equipment return from borrower.
+
+        Sets booking state to 'returned' and releases the asset back to
+        'available' status for future bookings.
+        """
         for rec in self:
             rec.state = "returned"
             rec.asset_id.status = "available"
 
     def action_cancel(self):
+        """
+        Cancel the booking and release the equipment.
+
+        Sets booking state to 'cancelled'. If the asset was reserved or
+        checked out for this booking, releases it back to 'available'.
+        """
         for rec in self:
             rec.state = "cancelled"
             if rec.asset_id.status in ("reserved", "checked_out"):
@@ -175,6 +248,19 @@ class IpaiEquipmentBooking(models.Model):
 
 
 class IpaiEquipmentIncident(models.Model):
+    """
+    Equipment Incident Model.
+
+    Tracks damage, loss, or issues reported for equipment assets.
+    Supports severity classification (low/medium/high) and resolution tracking.
+
+    Can be linked to a specific booking to identify when/how damage occurred.
+
+    Attributes:
+        _name: ipai.equipment.incident
+        _description: IPAI Equipment Incident
+    """
+
     _name = "ipai.equipment.incident"
     _description = "IPAI Equipment Incident"
     _order = "create_date desc"

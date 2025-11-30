@@ -1,8 +1,30 @@
 # -*- coding: utf-8 -*-
+"""
+IPAI OCR Configuration Settings.
+
+Extends Odoo's settings UI to configure InsightPulse OCR integration:
+- Enable/disable OCR functionality
+- Configure API endpoint URL
+- Set API authentication key
+
+Settings are stored in ir.config_parameter for persistence.
+"""
 from odoo import api, fields, models
 
 
 class ResConfigSettings(models.TransientModel):
+    """
+    OCR Configuration Settings.
+
+    Extends res.config.settings to provide UI for configuring
+    InsightPulse OCR service connection parameters.
+
+    Settings stored:
+        ipai_ocr_expense.ipai_ocr_enabled: Boolean
+        ipai_ocr_expense.ipai_ocr_api_url: String
+        ipai_ocr_expense.ipai_ocr_api_key: String (consider encryption)
+    """
+
     _inherit = "res.config.settings"
 
     ipai_ocr_enabled = fields.Boolean(string="Enable InsightPulse OCR")
@@ -16,6 +38,12 @@ class ResConfigSettings(models.TransientModel):
     )
 
     def set_values(self):
+        """
+        Persist OCR settings to ir.config_parameter.
+
+        Stores the OCR configuration values when user saves settings.
+        API key is stored as plaintext - consider encryption for production.
+        """
         super().set_values()
         params = self.env["ir.config_parameter"].sudo()
         params.set_param("ipai_ocr_expense.ipai_ocr_enabled", self.ipai_ocr_enabled)
@@ -29,6 +57,14 @@ class ResConfigSettings(models.TransientModel):
 
     @api.model
     def get_values(self):
+        """
+        Load OCR settings from ir.config_parameter.
+
+        Retrieves stored OCR configuration values when settings page loads.
+
+        Returns:
+            dict: Settings values including OCR enabled flag, API URL, and key
+        """
         res = super().get_values()
         params = self.env["ir.config_parameter"].sudo()
         res.update(

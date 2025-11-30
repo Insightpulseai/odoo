@@ -1,11 +1,36 @@
 # -*- coding: utf-8 -*-
 """
-OCR Expense Log - Track every OCR call for observability and quality measurement
+OCR Expense Log Model.
+
+Provides comprehensive logging for OCR scanning operations, enabling:
+- Quality measurement (success rates, confidence scores)
+- Performance monitoring (duration tracking)
+- Debugging (error messages, raw payload paths)
+- Analytics (is_successful computed field)
+
+Each OCR scan creates a log entry regardless of outcome.
 """
 from odoo import api, fields, models
 
 
 class OcrExpenseLog(models.Model):
+    """
+    OCR Expense Call Log Model.
+
+    Records every OCR scan attempt for observability and quality measurement.
+    Tracks extracted data, processing time, confidence scores, and errors.
+
+    Use Cases:
+        - Monitor OCR success rates over time
+        - Debug failed extractions
+        - Measure processing performance
+        - Audit OCR usage by employee/source
+
+    Attributes:
+        _name: ocr.expense.log
+        _description: OCR Expense Call Log
+    """
+
     _name = "ocr.expense.log"
     _description = "OCR Expense Call Log"
     _order = "created_at desc"
@@ -83,6 +108,12 @@ class OcrExpenseLog(models.Model):
 
     @api.depends("status")
     def _compute_is_successful(self):
+        """
+        Compute boolean success flag for analytics filtering.
+
+        Returns True only for 'success' status, not 'partial'.
+        Enables easy filtering and aggregation of successful scans.
+        """
         for record in self:
             record.is_successful = record.status == "success"
 

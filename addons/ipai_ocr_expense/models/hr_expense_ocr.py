@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+"""
+IPAI OCR Expense Integration.
+
+Extends hr.expense to add OCR receipt scanning capability using
+InsightPulse OCR service. Automatically extracts:
+- Merchant/vendor name
+- Total amount
+- Invoice/receipt date
+- Currency (if detected)
+
+Provides observability through ocr.expense.log for tracking scan
+success rates and debugging failed extractions.
+"""
 import logging
 import time
 
@@ -11,6 +24,19 @@ _logger = logging.getLogger(__name__)
 
 
 class HrExpense(models.Model):
+    """
+    Extended HR Expense with OCR Support.
+
+    Adds InsightPulse OCR integration for automatic expense data extraction
+    from receipt images. Includes status tracking and comprehensive logging.
+
+    Added Fields:
+        ocr_status: Tracks OCR processing state (none/pending/done/error)
+
+    Methods:
+        action_ipai_ocr_scan: Trigger OCR scan on attached receipt image
+    """
+
     _inherit = "hr.expense"
 
     ocr_status = fields.Selection(
