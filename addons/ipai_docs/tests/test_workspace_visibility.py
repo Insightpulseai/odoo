@@ -5,7 +5,7 @@ from odoo.tests.common import TransactionCase
 class TestWorkspaceVisibility(TransactionCase):
     def setUp(self):
         super().setUp()
-        self.Doc = self.env["ipai.docs.document"]
+        self.Doc = self.env["ipai.doc"]
         self.Project = self.env["project.project"]
         self.Task = self.env["project.task"]
         self.user = self.env.ref("base.user_admin")
@@ -16,7 +16,7 @@ class TestWorkspaceVisibility(TransactionCase):
         doc = self.Doc.create(
             {
                 "name": "Closing SOP",
-                "body": "<p>Test SOP content</p>",
+                "body_html": "<p>Test SOP content</p>",
             }
         )
 
