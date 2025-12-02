@@ -1,8 +1,8 @@
 OCA Addons Mirror (Meta Package)
-===============================
+================================
 
-This directory is a **container** for OCA-sourced addons included in this
-repository.
+This directory is a **container** for OCA-sourced addons included in
+this repository.
 
 It is not intended to be installed as an Odoo module. Instead, the
 actual addons live in subdirectories of this path.
