@@ -1,11 +1,13 @@
 # Feature Inventory
-Generated: 2025-12-02T12:24:32.477377+00:00Z
+Generated: 2025-12-02T21:27:31.465425+00:00Z
 
 | Module | Source | Version | State | Summary | Depends | Path |
 |---|---|---|---|---|---|---|
 | apps_admin_enhancements | Custom | 18.0.251026.1 | unknown | Enhanced Apps management with source tracking and accessibility | base | addons/custom/apps_admin_enhancements |
+| custom | Custom | 18.0.1.0.0 | unknown | Logical container for custom addons in this repository. |  | addons/custom |
 | finance_ssc_closing | Custom | 18.0.1.0.0 | unknown | Month-end closing checklist and BIR compliance tracking for Finance Shared Service Center | base,account,account_accountant,project,mail,hr,web | addons/custom/finance_ssc_closing |
 | github_integration | Custom | 1.0.0 | unknown | GitHub webhook and OAuth integration via pulser-hub app | base,project,web | addons/insightpulse/ops/github_integration |
+| insightpulse | Custom | 18.0.1.0.0 | unknown | Container for InsightPulse-specific addons in this repository. |  | addons/insightpulse |
 | insightpulse_app_sources | Custom | 18.0.1.0.0 | unknown | Display addon sources (OCA, Custom, Community) in Apps list | base | addons/insightpulse/insightpulse_app_sources |
 | ip_expense_mvp | Custom |  | unknown |  |  | addons/ip_expense_mvp |
 | ip_expense_mvp | Custom | 0.1.0 | unknown | Mobile receipt capture + OCR, cash advance/liquidation scaffolds, admin dashboard | base,web,hr,hr_expense | custom_addons/ip_expense_mvp |
@@ -43,6 +45,7 @@ Generated: 2025-12-02T12:24:32.477377+00:00Z
 | ipai_workflow_bot | Custom | 19.0.1.0.0 | unknown | Slash commands, interactive dialogs, workflow automation | ipai_chat_core,base_automation | odoo_addons/ipai_workflow_bot |
 | mcp_integration | Custom | 18.0.1.0.0 | unknown | Model Context Protocol integration for Odoo workflows | base,web | addons/mcp_integration |
 | microservices_connector | Custom | 18.0.251027.1 | unknown | Integration with OCR, LLM, and Agent microservices | base,web | addons/custom/microservices_connector |
+| oca | Custom | 18.0.1.0.0 | unknown | Container for OCA-sourced addons included in this repository. |  | addons/oca |
 | odoo_knowledge_agent | Custom | 18.0.1.0.0 | unknown | Forum scraper and error prevention for Odoo custom modules | base | addons/custom/odoo_knowledge_agent |
 | pulser_hub_sync | Custom | 18.0.1.0.0 | unknown | GitHub App integration for Pulser Hub webhook and OAuth | base,web,queue_job | addons/custom/pulser_hub_sync |
 | pulser_webhook | Custom | 19.0.1.0.2 | unknown | Triggers GitHub repository_dispatch (git-ops) from Odoo | base,project,sale_management,account,hr_expense,purchase | custom_addons/pulser_webhook |
