@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 46ef7a80aa00b333cc2849640c5359a9205d5213
+> Commit: 34b7de0aa8827cd7f778b2eee0a1d12bda97b550
 
 ```
 .
@@ -59,7 +59,8 @@
 │   ├── ipai_clarity_ppm_parity
 │   │   ├── data
 │   │   │   ├── bir_schedule_2025_2026.xml
-│   │   │   └── clarity_data.xml
+│   │   │   ├── clarity_data.xml
+│   │   │   └── demo_data.xml
 │   │   ├── models
 │   │   │   ├── __init__.py
 │   │   │   ├── project_checklist.py
@@ -70,7 +71,11 @@
 │   │   ├── security
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
-│   │   │   └── project_project_views.xml
+│   │   │   ├── project_menu.xml
+│   │   │   ├── project_milestone_views.xml
+│   │   │   ├── project_phase_views.xml
+│   │   │   ├── project_project_views.xml
+│   │   │   └── project_task_views.xml
 │   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── QUICK_START.md
 │   │   ├── README.rst
@@ -119,6 +124,7 @@
 │   │   ├── views
 │   │   │   ├── ipai_equipment_menus.xml
 │   │   │   └── ipai_equipment_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_expense
@@ -133,6 +139,7 @@
 │   │   ├── views
 │   │   │   ├── ipai_expense_menus.xml
 │   │   │   └── ipai_expense_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_ap_aging
@@ -285,6 +292,7 @@
 │   │   │   ├── ipai_ocr_expense_views.xml
 │   │   │   ├── ipai_ocr_settings_views.xml
 │   │   │   └── ocr_expense_log_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_portal_fix
@@ -377,7 +385,8 @@
 │   ├── PRIORITIZED_ROADMAP.md
 │   ├── README.md
 │   ├── odoo_oca_ci_fixer.yaml
-│   └── odoo_reverse_mapper.yaml
+│   ├── odoo_reverse_mapper.yaml
+│   └── smart_delta_oca.yaml
 ├── apps
 │   ├── do-advisor-agent
 │   │   ├── config
@@ -523,6 +532,7 @@
 │   ├── N8N_CREDENTIALS_BOOTSTRAP.md
 │   ├── OCA_MIGRATION.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
+│   ├── ODOO_18_CE_CHEATSHEET.md
 │   ├── ODOO_ARCHITECT_PERSONA.md
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
 │   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
@@ -765,6 +775,7 @@
 ├── .agentignore
 ├── .env.example
 ├── .env.production
+├── .flake8
 ├── .gitignore
 ├── .gitmodules
 ├── .pre-commit-config.yaml
@@ -859,7 +870,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-220 directories, 634 files
+220 directories, 645 files
 ```
 
 ## 📊 Stats
@@ -867,7 +878,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 236 |
-| Files | 683 |
+| Files | 694 |
 | Python files | 166 |
-| XML files | 88 |
-| Markdown files | 168 |
+| XML files | 93 |
+| Markdown files | 172 |

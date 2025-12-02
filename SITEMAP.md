@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 46ef7a80aa00b333cc2849640c5359a9205d5213
+> Commit: 34b7de0aa8827cd7f778b2eee0a1d12bda97b550
 
 ## 📚 Documentation
 
@@ -58,10 +58,13 @@
 | [Clarity PPM Parity - Quick Start Guide](addons/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Final Status](addons/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Test Report](addons/ipai_clarity_ppm_parity/TEST_REPORT.md) | addons/ipai_clarity_ppm_parity |
+| [IPAI Equipment Management](addons/ipai_equipment/README.md) | addons/ipai_equipment |
+| [IPAI Expense & Travel (PH)](addons/ipai_expense/README.md) | addons/ipai_expense |
 | [AP Aging Month-End Close Automation - Implementation Summary](addons/ipai_finance_ap_aging/IMPLEMENTATION_SUMMARY.md) | addons/ipai_finance_ap_aging |
 | [Finance Controller Dashboard - Implementation Summary](addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | addons/ipai_finance_controller_dashboard |
 | [IPAI Finance PPM](addons/ipai_finance_ppm/README.md) | addons/ipai_finance_ppm |
 | [Finance PPM Transaction Data Ingestion (TDI)](addons/ipai_finance_ppm_tdi/README.md) | addons/ipai_finance_ppm_tdi |
+| [IPAI Expense OCR (CE)](addons/ipai_ocr_expense/README.md) | addons/ipai_ocr_expense |
 | [IPAI Portal Fix - Deployment Verification Report](addons/ipai_portal_fix/DEPLOYMENT_VERIFICATION.md) | addons/ipai_portal_fix |
 | [IPAI Portal Fix - Website-Free Support](addons/ipai_portal_fix/README.md) | addons/ipai_portal_fix |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai_ppm_monthly_close |
@@ -116,6 +119,7 @@
 | [n8n Credentials Bootstrap – Finance Stack](docs/N8N_CREDENTIALS_BOOTSTRAP.md) | docs |
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
+| [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
 | [Odoo 18 CE & OCA Architect Persona](docs/ODOO_ARCHITECT_PERSONA.md) | docs |
 | [Odoo CE Comprehensive Deployment Summary](docs/ODOO_CE_DEPLOYMENT_SUMMARY.md) | docs |
 | [Odoo CE v0.9.0 Image Security & Compliance Audit Report](docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md) | docs |
@@ -180,22 +184,22 @@
 
 | Module | Status | Description |
 |--------|--------|-------------|
-| [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ | BIR 2307 Generator & Alphalist/RELIEF DAT File Engine |
+| [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai_ce_cleaner) | ✅ |  |
-| [ipai_clarity_ppm_parity](./addons/ipai_clarity_ppm_parity) | ✅ | Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy |
+| [ipai_clarity_ppm_parity](./addons/ipai_clarity_ppm_parity) | ✅ |  |
 | [ipai_docs](./addons/ipai_docs) | ✅ |  |
 | [ipai_docs_project](./addons/ipai_docs_project) | ✅ |  |
 | [ipai_equipment](./addons/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai_expense) | ✅ |  |
-| [ipai_finance_ap_aging](./addons/ipai_finance_ap_aging) | ✅ | AP Aging Heatmap Automation for Month-End Close |
-| [ipai_finance_controller_dashboard](./addons/ipai_finance_controller_dashboard) | ✅ | Finance Controller Dashboard with 6 ECharts Visualizations for Month-End Close KPI Monitoring |
+| [ipai_finance_ap_aging](./addons/ipai_finance_ap_aging) | ✅ |  |
+| [ipai_finance_controller_dashboard](./addons/ipai_finance_controller_dashboard) | ✅ |  |
 | [ipai_finance_monthly_closing](./addons/ipai_finance_monthly_closing) | ✅ |  |
 | [ipai_finance_ppm](./addons/ipai_finance_ppm) | ✅ |  |
 | [ipai_finance_ppm_dashboard](./addons/ipai_finance_ppm_dashboard) | ✅ |  |
-| [ipai_finance_ppm_tdi](./addons/ipai_finance_ppm_tdi) | ✅ | Import finance team, tasks, BIR calendar, and LogFrame data |
+| [ipai_finance_ppm_tdi](./addons/ipai_finance_ppm_tdi) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai_ocr_expense) | ✅ |  |
-| [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ | Fixes KeyError: website in portal.frontend_layout template |
-| [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ | Automated monthly financial close scheduling with PPM and Notion workspace parity |
+| [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ |  |
+| [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 
 ## 🔧 Configuration Files
