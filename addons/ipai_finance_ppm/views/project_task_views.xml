@@ -28,12 +28,12 @@
                     </group>
                 </page>
             </xpath>
-            
+
             <!-- Add finance code to main form -->
             <xpath expr="//field[@name='name']" position="after">
                 <field name="finance_code" class="oe_inline"/>
             </xpath>
-            
+
             <!-- Add Finance PPM fields to existing tabs -->
             <xpath expr="//group[@name='sale_order']" position="after">
                 <group string="Finance PPM" name="finance_ppm">

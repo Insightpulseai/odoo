@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
 
         <!-- ============================================= -->
         <!-- TBWA Finance Users (Placeholders) -->
         <!-- ============================================= -->
 
         <!-- Finance Head User -->
-        <record id="user_finance_head" model="res.users">
+        <record id="user_finance_head" model="res.users" context="{'no_reset_password': True}">
             <field name="name">Finance Head (TBWA)</field>
             <field name="login">finance.head@tbwa.com</field>
             <field name="email">finance.head@tbwa.com</field>
@@ -19,7 +18,7 @@
         </record>
 
         <!-- CFO User -->
-        <record id="user_cfo" model="res.users">
+        <record id="user_cfo" model="res.users" context="{'no_reset_password': True}">
             <field name="name">CFO (TBWA)</field>
             <field name="login">cfo@tbwa.com</field>
             <field name="email">cfo@tbwa.com</field>
@@ -31,7 +30,7 @@
         </record>
 
         <!-- Finance Manager User -->
-        <record id="user_finance_manager" model="res.users">
+        <record id="user_finance_manager" model="res.users" context="{'no_reset_password': True}">
             <field name="name">Finance Manager (TBWA)</field>
             <field name="login">finance.manager@tbwa.com</field>
             <field name="email">finance.manager@tbwa.com</field>
@@ -97,6 +96,4 @@
         - Enable MFA via Okta SSO (Phase 2)
         - Review user access rights quarterly
         -->
-
-    </data>
 </odoo>

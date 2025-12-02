@@ -8,12 +8,12 @@ def convert():
         data = json.load(f)
 
     xml_content = '<?xml version="1.0" encoding="utf-8"?>\n<odoo>\n    <data noupdate="1">\n'
-    
+
     for record in data:
         record_id = record['id']
         model = record['model']
         fields = record['fields']
-        
+
         xml_content += f'        <record id="{record_id}" model="{model}">\n'
         for fname, fval in fields.items():
             xml_content += f'            <field name="{fname}">{fval}</field>\n'

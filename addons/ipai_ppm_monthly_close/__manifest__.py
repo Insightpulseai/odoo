@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'PPM Monthly Close Scheduler',
-    'version': '18.0.1.0.0',
-    'category': 'Project Management',
-    'summary': 'Automated monthly financial close scheduling with PPM and Notion workspace parity',
-    'description': """
+    "name": "PPM Monthly Close Scheduler",
+    "version": "18.0.1.0.0",
+    "category": "Project Management",
+    "summary": "Automated monthly financial close scheduling with PPM and Notion workspace parity",
+    "description": """
 Monthly Financial Close Scheduler
 ==================================
 
@@ -32,26 +32,26 @@ Integration:
 * mail - Activity tracking and notifications
 * n8n - Automation workflows
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        'project',
-        'mail',
-        'resource',  # For business day calculations
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "base",
+        "project",
+        "mail",
+        "resource",  # For business day calculations
     ],
-    'data': [
-        'security/ir.model.access.csv',
-        'data/ppm_close_template_data_REAL.xml',
-        'data/ppm_close_cron.xml',
-        'views/ppm_monthly_close_views.xml',
-        'views/ppm_close_task_views.xml',
-        'views/ppm_close_template_views.xml',
-        'views/ppm_close_menu.xml',
+    "data": [
+        "security/ir.model.access.csv",
+        "data/ppm_close_template_data_REAL.xml",
+        "data/ppm_close_cron.xml",
+        "views/ppm_monthly_close_views.xml",
+        "views/ppm_close_task_views.xml",
+        "views/ppm_close_template_views.xml",
+        "views/ppm_close_menu.xml",
     ],
-    'demo': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
+    "demo": [],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
 }

@@ -76,7 +76,7 @@ Successfully implemented a complete Kapa.ai-style self-hosted RAG system for tec
 
 ### 1. Web Widget Integration
 ```html
-<script 
+<script
   src="/docs-assistant/web/docs-widget.js"
   data-api-url="https://docs-api.yourdomain.com"
   data-api-key="your-api-key"
@@ -157,21 +157,21 @@ INSERT INTO docs_sources (project_id, name, kind, config) VALUES
 ### Sample Queries
 ```sql
 -- Top questions by frequency
-SELECT query, COUNT(*) as frequency 
-FROM docs_questions 
+SELECT query, COUNT(*) as frequency
+FROM docs_questions
 WHERE project_id = 'your-project-id'
-GROUP BY query 
-ORDER BY frequency DESC 
+GROUP BY query
+ORDER BY frequency DESC
 LIMIT 10;
 
 -- Answer quality over time
-SELECT 
+SELECT
   DATE(created_at) as day,
   AVG(rating) as avg_rating,
   COUNT(*) as feedback_count
-FROM docs_feedback 
+FROM docs_feedback
 WHERE created_at >= NOW() - INTERVAL '30 days'
-GROUP BY day 
+GROUP BY day
 ORDER BY day;
 ```
 
@@ -194,11 +194,11 @@ ORDER BY day;
 ### Database Indexing
 ```sql
 -- Vector similarity search optimization
-CREATE INDEX idx_docs_chunk_embeddings_embedding 
+CREATE INDEX idx_docs_chunk_embeddings_embedding
 ON docs_chunk_embeddings USING ivfflat (embedding vector_cosine_ops);
 
 -- Query performance indexes
-CREATE INDEX idx_docs_questions_project_created 
+CREATE INDEX idx_docs_questions_project_created
 ON docs_questions(project_id, created_at);
 ```
 
@@ -294,6 +294,6 @@ location /docs-assistant/ {
 
 This implementation provides a complete, enterprise-ready alternative to Kapa.ai with full control over data, privacy, and integration. The system is designed for extensibility and can be customized to fit any technical documentation needs while maintaining the core benefits of Kapa.ai's approach to technical Q&A.
 
-**Implementation Status**: ✅ Complete  
-**System Version**: Docs Assistant v1.0  
+**Implementation Status**: ✅ Complete
+**System Version**: Docs Assistant v1.0
 **Last Updated**: $(date)

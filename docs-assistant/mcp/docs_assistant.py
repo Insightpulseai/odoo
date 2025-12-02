@@ -14,19 +14,19 @@ import asyncio
 
 class DocsAssistantMCP:
     """MCP tool for interacting with the Docs Assistant API"""
-    
+
     def __init__(self, api_base_url: str = None, api_key: str = None):
         self.api_base_url = api_base_url or os.getenv("DOCS_ASSISTANT_API_URL", "http://localhost:8000")
         self.api_key = api_key or os.getenv("DOCS_ASSISTANT_API_KEY")
         self.default_project = os.getenv("DOCS_ASSISTANT_PROJECT", "odoo-ce")
-        
+
         if not self.api_key:
             raise ValueError("DOCS_ASSISTANT_API_KEY environment variable is required")
-    
+
     async def ask_docs(self, question: str, project: Optional[str] = None) -> dict:
         """Ask a question to the documentation assistant"""
         project_slug = project or self.default_project
-        
+
         try:
             response = requests.post(
                 f"{self.api_base_url}/v1/chat",
@@ -41,7 +41,7 @@ class DocsAssistantMCP:
                 },
                 timeout=30
             )
-            
+
             if response.status_code == 200:
                 result = response.json()
                 return {
@@ -54,17 +54,17 @@ class DocsAssistantMCP:
                     "error": f"API error: {response.status_code} - {response.text}",
                     "answer": "I couldn't connect to the documentation assistant. Please try again later."
                 }
-                
+
         except requests.exceptions.RequestException as e:
             return {
                 "error": f"Connection error: {str(e)}",
                 "answer": "I couldn't connect to the documentation assistant. Please check if the service is running."
             }
-    
+
     async def search_docs(self, query: str, project: Optional[str] = None, limit: int = 10) -> dict:
         """Search documentation without generating an answer"""
         project_slug = project or self.default_project
-        
+
         try:
             response = requests.post(
                 f"{self.api_base_url}/v1/search",
@@ -79,7 +79,7 @@ class DocsAssistantMCP:
                 },
                 timeout=30
             )
-            
+
             if response.status_code == 200:
                 result = response.json()
                 return {
@@ -91,13 +91,13 @@ class DocsAssistantMCP:
                     "error": f"API error: {response.status_code} - {response.text}",
                     "results": []
                 }
-                
+
         except requests.exceptions.RequestException as e:
             return {
                 "error": f"Connection error: {str(e)}",
                 "results": []
             }
-    
+
     async def submit_feedback(self, answer_id: str, rating: int, comment: Optional[str] = None) -> dict:
         """Submit feedback for an answer"""
         try:
@@ -114,12 +114,12 @@ class DocsAssistantMCP:
                 },
                 timeout=10
             )
-            
+
             if response.status_code == 200:
                 return {"status": "success", "message": "Feedback submitted"}
             else:
                 return {"status": "error", "message": f"Failed to submit feedback: {response.text}"}
-                
+
         except requests.exceptions.RequestException as e:
             return {"status": "error", "message": f"Connection error: {str(e)}"}
 
@@ -130,13 +130,13 @@ async def main():
         command="python",
         args=["-m", "docs_assistant_mcp"]
     )
-    
+
     async with create_session(server_params) as session:
         client = Client(session)
-        
+
         # Register tools
         await client.initialize()
-        
+
         # Tool definitions
         tools = [
             {
@@ -207,41 +207,41 @@ async def main():
                 }
             }
         ]
-        
+
         await client.list_tools()
-        
+
         # Handle tool calls
         async for message in client:
             if message.type == "tools/call":
                 tool_call = message.content
                 assistant = DocsAssistantMCP()
-                
+
                 try:
                     if tool_call.name == "ask_docs":
                         result = await assistant.ask_docs(
                             question=tool_call.arguments["question"],
                             project=tool_call.arguments.get("project")
                         )
-                        
+
                     elif tool_call.name == "search_docs":
                         result = await assistant.search_docs(
                             query=tool_call.arguments["query"],
                             project=tool_call.arguments.get("project"),
                             limit=tool_call.arguments.get("limit", 10)
                         )
-                        
+
                     elif tool_call.name == "submit_feedback":
                         result = await assistant.submit_feedback(
                             answer_id=tool_call.arguments["answer_id"],
                             rating=tool_call.arguments["rating"],
                             comment=tool_call.arguments.get("comment")
                         )
-                    
+
                     else:
                         result = {"error": f"Unknown tool: {tool_call.name}"}
-                    
+
                     await client.send_tool_result(tool_call.callId, result)
-                    
+
                 except Exception as e:
                     error_result = {"error": f"Tool execution failed: {str(e)}"}
                     await client.send_tool_result(tool_call.callId, error_result)
@@ -253,16 +253,16 @@ if __name__ == "__main__":
 async def example_usage():
     """Example of how to use the Docs Assistant MCP tool"""
     assistant = DocsAssistantMCP()
-    
+
     # Ask a question about Odoo
     result = await assistant.ask_docs("How do I create a new Odoo module?")
     print("Answer:", result["answer"])
-    
+
     if result.get("citations"):
         print("Sources:")
         for citation in result["citations"]:
             print(f"- {citation['document_title']}: {citation['content_snippet']}")
-    
+
     # Search for specific information
     search_result = await assistant.search_docs("Odoo cron jobs configuration")
     print("Search results:", len(search_result["results"]))
@@ -271,14 +271,14 @@ async def example_usage():
 def test_connection():
     """Test connection to Docs Assistant API"""
     import requests
-    
+
     api_url = os.getenv("DOCS_ASSISTANT_API_URL", "http://localhost:8000")
     api_key = os.getenv("DOCS_ASSISTANT_API_KEY")
-    
+
     if not api_key:
         print("❌ DOCS_ASSISTANT_API_KEY not set")
         return False
-    
+
     try:
         response = requests.get(f"{api_url}/health", timeout=5)
         if response.status_code == 200:

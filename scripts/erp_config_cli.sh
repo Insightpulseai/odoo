@@ -96,26 +96,26 @@ update_system_param() {
         print_error "Usage: $0 update-param <key> <value>"
         exit 1
     fi
-    
+
     KEY="$1"
     VALUE="$2"
-    
+
     print_info "Updating system parameter: $KEY = $VALUE"
-    
+
     # Create Python script for parameter update
     cat > /tmp/update_param.py << EOF
 env['ir.config_parameter'].set_param('$KEY', '$VALUE')
 env.cr.commit()
 print("✅ System parameter updated: $KEY = $VALUE")
 EOF
-    
+
     # Execute the update
     if is_production; then
         docker compose -f docker-compose.prod.yml exec -T odoo odoo-bin shell -c /etc/odoo.conf -d odoo < /tmp/update_param.py
     else
         docker compose exec -T odoo odoo-bin shell -c /etc/odoo.conf -d odoo < /tmp/update_param.py
     fi
-    
+
     # Clean up
     rm -f /tmp/update_param.py
 }
@@ -126,11 +126,11 @@ reset_admin_password() {
         print_error "Usage: $0 reset-password <new_password>"
         exit 1
     fi
-    
+
     NEW_PASSWORD="$1"
-    
+
     print_info "Resetting admin password..."
-    
+
     # Create Python script for password reset
     cat > /tmp/reset_password.py << EOF
 admin = env['res.users'].search([('login', '=', 'admin')])
@@ -141,14 +141,14 @@ if admin:
 else:
     print("❌ Admin user not found")
 EOF
-    
+
     # Execute the reset
     if is_production; then
         docker compose -f docker-compose.prod.yml exec -T odoo odoo-bin shell -c /etc/odoo.conf -d odoo < /tmp/reset_password.py
     else
         docker compose exec -T odoo odoo-bin shell -c /etc/odoo.conf -d odoo < /tmp/reset_password.py
     fi
-    
+
     # Clean up
     rm -f /tmp/reset_password.py
 }
@@ -160,11 +160,11 @@ show_config() {
     echo "=== Database Configuration ==="
     test_db_connection
     echo ""
-    
+
     echo "=== Container Status ==="
     check_containers
     echo ""
-    
+
     echo "=== Common System Parameters ==="
     # Create Python script to show parameters
     cat > /tmp/show_params.py << EOF
@@ -182,13 +182,13 @@ for param in params:
     else:
         print(f"{param}: [Not Set]")
 EOF
-    
+
     if is_production; then
         docker compose -f docker-compose.prod.yml exec -T odoo odoo-bin shell -c /etc/odoo.conf -d odoo < /tmp/show_params.py
     else
         docker compose exec -T odoo odoo-bin shell -c /etc/odoo.conf -d odoo < /tmp/show_params.py
     fi
-    
+
     rm -f /tmp/show_params.py
 }
 

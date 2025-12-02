@@ -1,7 +1,42 @@
-from odoo import api, fields, models, _
+# -*- coding: utf-8 -*-
+"""
+IPAI Knowledge Document Model.
+
+This module provides Notion-style document management for Odoo CE:
+- Hierarchical document structure (parent/child pages)
+- Document lifecycle (draft → in_review → published → archived)
+- Block-based content storage (JSON) with HTML rendering
+- Template support for document cloning
+- Collaborative editing with owner and collaborator roles
+
+Models:
+    IpaiDoc: Main document model with versioning and collaboration features
+"""
+from odoo import _, api, fields, models
 
 
 class IpaiDoc(models.Model):
+    """
+    IPAI Knowledge Document Model.
+
+    Implements a Notion-style document system with hierarchical pages,
+    block-based content, and collaborative editing features.
+
+    Workflow:
+        draft → in_review → published → archived
+
+    Features:
+        - Nested page hierarchy (parent_id/child_ids)
+        - JSON block storage for rich content
+        - Template cloning support
+        - Owner and collaborator permissions
+
+    Attributes:
+        _name: ipai.doc
+        _description: IPAI Knowledge Document
+        _inherit: mail.thread, mail.activity.mixin
+    """
+
     _name = "ipai.doc"
     _description = "IPAI Knowledge Document"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -105,23 +140,62 @@ class IpaiDoc(models.Model):
 
     @api.depends("owner_id", "responsible_ids")
     def _compute_can_edit(self):
+        """
+        Determine if current user can edit this document.
+
+        Edit permission is granted to:
+        - Document owner
+        - Users listed as collaborators (responsible_ids)
+        """
         user = self.env.user
         for doc in self:
             doc.can_edit = user == doc.owner_id or user in doc.responsible_ids
 
     def action_set_in_review(self):
+        """
+        Submit document for review.
+
+        Transitions document from 'draft' to 'in_review' state,
+        signaling it's ready for editorial review before publishing.
+        """
         for doc in self:
             doc.state = "in_review"
 
     def action_publish(self):
+        """
+        Publish the document.
+
+        Transitions to 'published' state, making the document
+        visible to all users with read access.
+        """
         for doc in self:
             doc.state = "published"
 
     def action_archive(self):
+        """
+        Archive the document.
+
+        Transitions to 'archived' state, hiding the document from
+        normal views while preserving it for reference.
+        """
         for doc in self:
             doc.state = "archived"
 
     def copy(self, default=None):
+        """
+        Clone the document with appropriate defaults.
+
+        Creates a copy with:
+        - " (Copy)" suffix on name
+        - Reset to 'draft' state
+        - is_template set to False
+
+        Args:
+            default: Optional dict of field values to override
+
+        Returns:
+            New IpaiDoc record (copy of self)
+        """
         default = dict(default or {})
         default.setdefault("name", _("%s (Copy)") % (self.name,))
         default.setdefault("state", "draft")

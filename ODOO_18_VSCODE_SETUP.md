@@ -146,7 +146,7 @@
 # Type: oo-inherit
 class ProjectTask(models.Model):
     _inherit = 'project.task'
-    
+
     # Your custom fields here
 ```
 

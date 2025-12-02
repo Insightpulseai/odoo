@@ -1,2 +1,1 @@
-from . import ipai_doc
-from . import ipai_doc_tag
+from . import ipai_doc, ipai_doc_tag

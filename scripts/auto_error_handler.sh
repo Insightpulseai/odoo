@@ -86,19 +86,19 @@ init_error_patterns() {
 backup_config() {
     local backup_name="odoo_config_$(date +%Y%m%d_%H%M%S).tar.gz"
     local backup_path="$BACKUP_DIR/$backup_name"
-    
+
     mkdir -p "$BACKUP_DIR"
-    
+
     # Backup Odoo configuration files
     tar -czf "$backup_path" \
         addons/*/data/*.xml \
         deploy/odoo.conf \
         deploy/docker-compose.yml \
         2>/dev/null || true
-    
+
     # Clean up old backups
     ls -tp "$BACKUP_DIR"/*.tar.gz 2>/dev/null | tail -n +$((MAX_BACKUPS + 1)) | xargs -I {} rm -- {}
-    
+
     log "INFO" "Configuration backed up to $backup_path"
     echo "$backup_path"
 }
@@ -106,21 +106,21 @@ backup_config() {
 # Fix cron field issues
 fix_cron_fields() {
     log "INFO" "Attempting to fix cron field issues..."
-    
+
     # Find and fix all cron XML files
     local cron_files=$(find addons -name "*.xml" -type f | xargs grep -l "ir.cron" 2>/dev/null || true)
-    
+
     for file in $cron_files; do
         if [ -f "$file" ]; then
             log "INFO" "Processing cron file: $file"
-            
+
             # Remove deprecated fields
             sed -i.bak '/<field name="numbercall">/d' "$file"
             sed -i.bak '/<field name="max_calls">/d' "$file"
-            
+
             # Remove backup files
             rm -f "${file}.bak"
-            
+
             log "SUCCESS" "Fixed cron fields in $file"
         fi
     done
@@ -129,7 +129,7 @@ fix_cron_fields() {
 # Restart database service
 restart_database_service() {
     log "INFO" "Restarting database service..."
-    
+
     if command -v docker-compose >/dev/null 2>&1; then
         cd deploy && docker-compose restart db && cd - || return 1
     elif command -v systemctl >/dev/null 2>&1; then
@@ -138,7 +138,7 @@ restart_database_service() {
         log "WARNING" "No supported service manager found"
         return 1
     fi
-    
+
     log "SUCCESS" "Database service restarted"
     return 0
 }
@@ -146,21 +146,21 @@ restart_database_service() {
 # Fix file permissions
 fix_permissions() {
     log "INFO" "Fixing file permissions..."
-    
+
     # Set proper permissions for Odoo files
     find addons -type f -name "*.py" -exec chmod 644 {} \;
     find addons -type f -name "*.xml" -exec chmod 644 {} \;
     find scripts -type f -name "*.sh" -exec chmod +x {} \;
-    
+
     log "SUCCESS" "File permissions fixed"
 }
 
 # Health check function
 health_check() {
     log "INFO" "Running health check..."
-    
+
     local errors=0
-    
+
     # Check if Odoo is running
     if pgrep -f "odoo-bin" >/dev/null; then
         log "INFO" "✓ Odoo process is running"
@@ -168,7 +168,7 @@ health_check() {
         log "ERROR" "✗ Odoo process is not running"
         ((errors++))
     fi
-    
+
     # Check database connection
     if command -v psql >/dev/null 2>&1; then
         if psql -l >/dev/null 2>&1; then
@@ -178,25 +178,25 @@ health_check() {
             ((errors++))
         fi
     fi
-    
+
     # Check for common error patterns in logs
     local recent_errors=$(journalctl -u odoo --since "5 minutes ago" 2>/dev/null | grep -i "error\|failed" | wc -l)
     if [ "$recent_errors" -gt 0 ]; then
         log "WARNING" "Found $recent_errors errors in recent logs"
         ((errors++))
     fi
-    
+
     return $errors
 }
 
 # Automated error detection and fixing
 auto_detect_and_fix() {
     log "INFO" "Starting automated error detection..."
-    
+
     local log_source="$1"
     local errors_found=0
     local errors_fixed=0
-    
+
     # Get recent logs
     local recent_logs=""
     if [ "$log_source" = "journal" ]; then
@@ -207,10 +207,10 @@ auto_detect_and_fix() {
         log "ERROR" "Invalid log source: $log_source"
         return 1
     fi
-    
+
     # Load error patterns
     local patterns=$(cat "$ERROR_PATTERNS_FILE" 2>/dev/null || echo "$ERROR_PATTERNS")
-    
+
     # Check each pattern
     while IFS= read -r pattern; do
         local regex=$(echo "$pattern" | jq -r '.regex' 2>/dev/null)
@@ -219,11 +219,11 @@ auto_detect_and_fix() {
         local auto_fix=$(echo "$pattern" | jq -r '.auto_fix' 2>/dev/null)
         local fix_script=$(echo "$pattern" | jq -r '.fix_script' 2>/dev/null)
         local description=$(echo "$pattern" | jq -r '.description' 2>/dev/null)
-        
+
         if echo "$recent_logs" | grep -qE "$regex"; then
             log "ERROR" "Found error: $description (Type: $type, Severity: $severity)"
             ((errors_found++))
-            
+
             if [ "$auto_fix" = "true" ] && [ -n "$fix_script" ]; then
                 log "INFO" "Attempting auto-fix using: $fix_script"
                 if $fix_script; then
@@ -235,7 +235,7 @@ auto_detect_and_fix() {
             fi
         fi
     done < <(echo "$patterns" | jq -c '.patterns[]' 2>/dev/null)
-    
+
     log "INFO" "Error detection completed: $errors_found errors found, $errors_fixed auto-fixed"
     return $errors_found
 }
@@ -243,14 +243,14 @@ auto_detect_and_fix() {
 # Continuous monitoring mode
 monitor_mode() {
     log "INFO" "Starting continuous monitoring mode..."
-    
+
     while true; do
         # Run health check
         if ! health_check; then
             log "WARNING" "Health check failed, running auto-fix procedures"
             auto_detect_and_fix "journal"
         fi
-        
+
         # Wait for next check
         sleep $HEALTH_CHECK_INTERVAL
     done
@@ -260,10 +260,10 @@ monitor_mode() {
 main() {
     local mode="${1:-detect}"
     local log_source="${2:-journal}"
-    
+
     # Initialize
     init_error_patterns
-    
+
     case "$mode" in
         "detect")
             auto_detect_and_fix "$log_source"

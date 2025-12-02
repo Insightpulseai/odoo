@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
         <!-- System Parameter: n8n Webhook URL -->
         <record id="param_n8n_webhook_url" model="ir.config_parameter">
             <field name="key">ipai_finance_ap_aging.n8n_webhook_url</field>
@@ -63,5 +62,4 @@ action = {
 }
             </field>
         </record>
-    </data>
 </odoo>

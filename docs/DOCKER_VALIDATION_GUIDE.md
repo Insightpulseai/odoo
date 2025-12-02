@@ -115,7 +115,7 @@ image: ghcr.io/jgtolentino/odoo-ce:latest
 - [ ] Configuration file copied
 - [ ] Proper user permissions set
 
-### Runtime Validation  
+### Runtime Validation
 - [ ] Odoo starts successfully
 - [ ] Custom modules load without errors
 - [ ] Database connection works

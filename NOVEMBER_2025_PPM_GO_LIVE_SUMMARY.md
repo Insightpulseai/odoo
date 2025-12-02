@@ -1,6 +1,6 @@
 # November 2025 PPM Playbook - Go-Live Summary
 
-**Date**: 24 November 2025  
+**Date**: 24 November 2025
 **Status**: ✅ **Ready for Go-Live**
 
 ---
@@ -126,5 +126,5 @@ Documentation: [PPM Playbook Link]
 
 ---
 
-**Last Updated**: 24 November 2025  
+**Last Updated**: 24 November 2025
 **Next Review**: After module installation

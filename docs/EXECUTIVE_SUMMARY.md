@@ -1,7 +1,7 @@
 # Odoo CE v0.9.0 Audit - Executive Summary
 
-**Date:** 2025-11-25  
-**Auditor:** InsightPulse AI Security Team  
+**Date:** 2025-11-25
+**Auditor:** InsightPulse AI Security Team
 **Status:** ⚠️ CONDITIONAL APPROVAL - 3 Critical Fixes Required
 
 ---
@@ -17,7 +17,7 @@ The current v0.9.0 image has **3 critical specification violations** that will c
 ## Critical Findings
 
 ### ❌ Issue #1: Missing Python Requirements Installation
-**Impact:** Custom modules will crash at runtime if they have Python dependencies  
+**Impact:** Custom modules will crash at runtime if they have Python dependencies
 **Fix:** Add to Dockerfile (line 17):
 ```dockerfile
 RUN if [ -f /mnt/extra-addons/requirements.txt ]; then \
@@ -26,7 +26,7 @@ RUN if [ -f /mnt/extra-addons/requirements.txt ]; then \
 ```
 
 ### ❌ Issue #2: Missing Environment Variable Defaults
-**Impact:** Container behavior undefined when ENV vars not provided  
+**Impact:** Container behavior undefined when ENV vars not provided
 **Fix:** Add to Dockerfile (after line 22):
 ```dockerfile
 ENV HOST=db \
@@ -37,7 +37,7 @@ ENV HOST=db \
 ```
 
 ### ❌ Issue #3: Missing Health Check
-**Impact:** Docker/Kubernetes cannot detect service failures; no auto-restart  
+**Impact:** Docker/Kubernetes cannot detect service failures; no auto-restart
 **Fix:** Add to Dockerfile (after line 25):
 ```dockerfile
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
@@ -212,12 +212,12 @@ docker compose logs odoo --tail 50
 
 ## Contact
 
-**Owner:** Jake Tolentino  
-**Repo:** https://github.com/jgtolentino/odoo-ce  
+**Owner:** Jake Tolentino
+**Repo:** https://github.com/jgtolentino/odoo-ce
 **Critical Issues:** Open GitHub issue with `security` label
 
 ---
 
-**Status:** Ready for remediation → Deploy v0.9.1  
-**Approval:** Conditional (pending 3 critical fixes)  
+**Status:** Ready for remediation → Deploy v0.9.1
+**Approval:** Conditional (pending 3 critical fixes)
 **Next Step:** Apply Dockerfile fixes and rebuild

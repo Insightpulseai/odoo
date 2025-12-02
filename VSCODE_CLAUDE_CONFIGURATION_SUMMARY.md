@@ -34,7 +34,7 @@ The complete VS Code and Claude CLI configuration pack for Odoo 18 "Delta" devel
 
 ### Debugging (`.vscode/launch.json`)
 - **Debug Port**: 5678 for Docker attach
-- **Path Mappings**: 
+- **Path Mappings**:
   - Local `addons/` → Container `/mnt/extra-addons`
   - Local `odoo/` → Container `/usr/lib/python3/dist-packages/odoo`
 - **Just My Code**: Disabled for full Odoo debugging

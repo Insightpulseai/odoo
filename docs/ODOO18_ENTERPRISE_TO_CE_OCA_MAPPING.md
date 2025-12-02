@@ -1,14 +1,14 @@
 # Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)
 
-**System:** InsightPulse ERP (`erp.insightpulseai.net`)  
-**Target Stack:** Odoo 18 CE + OCA 18.0 + ipai_* delta modules  
+**System:** InsightPulse ERP (`erp.insightpulseai.net`)
+**Target Stack:** Odoo 18 CE + OCA 18.0 + ipai_* delta modules
 **Policy:** No Enterprise, no IAP. Always prefer **Config → OCA → Delta → New**.
 
 This document is the canonical map of:
 
-- What Odoo 18 offers in **Community Edition (CE)**  
-- Which **OCA 18.0** modules cover Enterprise features  
-- Where we accept **custom ipai_*** delta modules  
+- What Odoo 18 offers in **Community Edition (CE)**
+- Which **OCA 18.0** modules cover Enterprise features
+- Where we accept **custom ipai_*** delta modules
 - Which Enterprise features we **explicitly do not rebuild**
 
 ---

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
 
         <!-- Assets -->
         <record id="ipai_equipment_asset_tree" model="ir.ui.view">
@@ -353,6 +352,4 @@
                 </search>
             </field>
         </record>
-
-    </data>
 </odoo>

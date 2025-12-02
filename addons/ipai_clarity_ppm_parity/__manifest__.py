@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'InsightPulse Clarity PPM Parity',
-    'version': '18.0.1.0.0',
-    'category': 'Project Management',
-    'summary': 'Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy',
-    'description': """
+    "name": "InsightPulse Clarity PPM Parity",
+    "version": "18.0.1.0.0",
+    "category": "Project Management",
+    "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+    "description": """
 Clarity PPM Parity for Odoo
 ============================
 
@@ -43,35 +43,35 @@ Dependencies:
 Author: InsightPulse AI
 License: AGPL-3
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'project',
-        'project_key',
-        'project_category',
-        'project_wbs',
-        'project_parent_task_filter',
-        'project_milestone',
-        'project_task_milestone',
-        'project_task_dependency',
-        'project_task_checklist',
-        'project_timeline',
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "project",
+        "project_key",
+        "project_category",
+        "project_wbs",
+        "project_parent_task_filter",
+        "project_milestone",
+        "project_task_milestone",
+        "project_task_dependency",
+        "project_task_checklist",
+        "project_timeline",
     ],
-    'data': [
-        'security/ir.model.access.csv',
-        'data/clarity_data.xml',
-        'data/bir_schedule_2025_2026.xml',
-        'views/project_project_views.xml',
-        'views/project_phase_views.xml',
-        'views/project_milestone_views.xml',
-        'views/project_task_views.xml',
-        'views/project_menu.xml',
+    "data": [
+        "security/ir.model.access.csv",
+        "data/clarity_data.xml",
+        "data/bir_schedule_2025_2026.xml",
+        "views/project_project_views.xml",
+        "views/project_phase_views.xml",
+        "views/project_milestone_views.xml",
+        "views/project_task_views.xml",
+        "views/project_menu.xml",
     ],
-    'demo': [
-        'data/demo_data.xml',
+    "demo": [
+        "data/demo_data.xml",
     ],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
+    "installable": True,
+    "application": False,
+    "auto_install": False,
 }

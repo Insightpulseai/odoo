@@ -24,9 +24,9 @@ run_test() {
     local test_name="$1"
     local test_command="$2"
     local required="${3:-yes}"  # yes/no, default yes
-    
+
     echo -en "${test_name}... "
-    
+
     if eval "$test_command" > /dev/null 2>&1; then
         echo -e "${GREEN}✅ PASS${NC}"
         ((PASSED++))

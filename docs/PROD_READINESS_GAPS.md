@@ -49,14 +49,14 @@
    ```bash
    # Change from:
    docker compose exec db psql -U odoo -d odoo_ce_prod -f /docker-entrypoint-initdb.d/monitoring_schema.sql
-   
+
    # To:
    docker compose exec db psql -U odoo -d odoo -f /docker-entrypoint-initdb.d/monitoring_schema.sql
    ```
 
 3. **Branch Structure**:
    - ✅ v1.0: `chore/finalize-prod-readiness-v1`
-   - ✅ v1.1: `chore/hardening-v1.1` 
+   - ✅ v1.1: `chore/hardening-v1.1`
    - ✅ v1.2: `chore/monitoring-bi-v1.2` (new branch created)
 
 ### Production Verification Required

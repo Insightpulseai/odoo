@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data>
 
     <!-- Extend task form with Finance & BIR tabs -->
     <record id="view_task_form_finance_closing" model="ir.ui.view">
@@ -69,6 +68,4 @@
         </xpath>
       </field>
     </record>
-
-  </data>
 </odoo>

@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from . import project_project
-from . import project_phase
-from . import project_milestone
-from . import project_task
-from . import project_checklist
+from . import (
+    project_checklist,
+    project_milestone,
+    project_phase,
+    project_project,
+    project_task,
+)
