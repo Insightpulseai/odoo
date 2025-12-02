@@ -1,0 +1,198 @@
+version: 1
+name: smart_delta_oca_automation
+description: >
+  Smart Delta OCA-first autonomous customization system for Odoo 18 CE.
+  Uses Planning, Coding, Quality, and Orchestrator agents to generate, validate,
+  and ship OCA-compliant delta modules and immutable Odoo images.
+
+context:
+  target_odoo_version: "18.0"
+  base_image: "ghcr.io/jgtolentino/odoo-ce:18.0"
+  quality_standard: "OCA"
+  primary_repos:
+    - "github.com/jgtolentino/odoo-ce"
+    - "github.com/OCA/*"
+  delta_prefix: "ipai_"
+  examples:
+    - "ipai_ce_cleaner"
+    - "ipai_portal_fix"
+
+agents:
+  - id: planner
+    role: "Planning Agent"
+    description: >
+      Translate plain-language requirements into a technical plan for an Odoo 18 CE delta module.
+      Decide whether the change should be solved by configuration, OCA reuse, or a new custom module.
+    responsibilities:
+      - Intake feature requests and defects (e.g. KeyError, UX gaps).
+      - Query RAG context for Odoo 18 docs and OCA modules.
+      - Produce a structured module plan:
+        - models, fields, views, access rules
+        - module dependencies (`depends` list)
+        - which OCA modules to reuse
+        - required delta module name (e.g. ipai_finance_ppm)
+      - Minimize new custom Python where Odoo Studio / automation can solve the problem.
+    tools:
+      - id: rag_odoo18_docs
+        uses: "RAG over Odoo 18 documentation, changelog, and OCA repos"
+      - id: oca_catalog
+        uses: "Search OCA module registry for existing modules that solve or approximate the request"
+      - id: issue_tracker
+        uses: "Read/write tickets in Odoo or GitHub Issues (optional)"
+
+  - id: coder
+    role: "Coding Agent"
+    description: >
+      Generate and refactor Odoo 18 CE/OCA-compliant Python/ORM, XML views, and manifests
+      according to the planner's module plan and feedback from quality tools.
+    responsibilities:
+      - Create/extend modules under the configured delta prefix (e.g. ipai_*).
+      - Use correct base classes (models.Model, models.TransientModel, models.AbstractModel).
+      - Follow naming conventions - class names in PascalCase, _name in singular dot-notation, recordset variables in PascalCase, others in snake_case.
+      - Keep manifests complete and correct with depends, data, assets, metadata, flags.
+      - Refactor code based on structured feedback from OCA tools and tests.
+      - Avoid Enterprise contamination and version-blind patterns.
+    tools:
+      - id: git_fs
+        uses: "Read/write files in the Odoo addons repository"
+      - id: rag_odoo18_docs
+        uses: "RAG for correct API usage and patterns"
+      - id: unit_test_runner
+        uses: "Run targeted Odoo tests for a given module set"
+
+  - id: quality
+    role: "Quality Agent"
+    description: >
+      Enforce OCA quality standards locally using linting and pre-commit tools.
+      Convert tool output into structured feedback for the Coding Agent and drive self-healing.
+    responsibilities:
+      - Run oca-odoo-pre-commit-hooks and pylint-odoo against the changed modules.
+      - Parse errors/warnings into a structured JSON object (file, line, rule, severity, message, suggested fix).
+      - Classify issues as blocking (must fix before CI) or warnings (can postpone with justification).
+      - Re-run tools after fixes until all blocking issues are resolved.
+      - Optionally trigger targeted unit tests when code changes affect core flows.
+    tools:
+      - id: oca_pre_commit
+        uses: "Run OCA pre-commit hooks for the module set"
+      - id: pylint_odoo
+        uses: "Run Odoo-specific static analysis"
+      - id: unit_test_runner
+        uses: "Optional regression test execution for critical modules"
+
+  - id: orchestrator
+    role: "Orchestrator Agent"
+    description: >
+      Manage the Smart Delta lifecycle: from requirement to OCA-passed code to CI/CD and image promotion.
+      Acts as the high-level state machine that coordinates Planner, Coder, and Quality agents.
+    responsibilities:
+      - Maintain workflow state for each delta:
+        - NEW → PLANNED → IMPLEMENTED → OCA_PASSED → CI_PASSED → READY_FOR_DEPLOYMENT
+      - Call Planner to produce or update the module plan.
+      - Call Coder with plan + feedback to generate or adjust code.
+      - Call Quality to run OCA checks and collect structured feedback.
+      - Only trigger external CI/CD when local OCA checks are fully green.
+      - Handle CI results:
+        - On failure: convert logs to feedback for the Coder and loop.
+        - On success: tag images and update deployment records.
+    tools:
+      - id: ci_pipeline
+        uses: "Trigger CI (GitHub Actions, GitLab CI, etc.) for the repo"
+      - id: docker_build
+        uses: "Build immutable Odoo images with delta modules"
+      - id: odoo_migrate
+        uses: "Run odoo-bin -i/-u for modules on a test database"
+      - id: git_pr
+        uses: "Open/update PRs with delta changes and status checks"
+      - id: status_store
+        uses: "Persist workflow state (e.g. in Supabase/Odoo)"
+
+workflow:
+  states:
+    NEW:
+      description: "New requirement or defect identified."
+      on_enter:
+        - orchestrator: "log requirement and assign to planner"
+
+    PLANNED:
+      description: "Planner has produced a module-level plan."
+      transitions:
+        - to: IMPLEMENTED
+          via: "coder applies plan to repository"
+      actions:
+        - planner:
+            do: "Generate/refresh technical plan for module"
+            output: "plan.yaml"
+
+    IMPLEMENTED:
+      description: "Coder has written or updated module code according to the plan."
+      transitions:
+        - to: OCA_PASSED
+          via: "quality passes all OCA checks"
+        - to: IMPLEMENTED
+          via: "coder refactors based on feedback (self-healing loop)"
+      actions:
+        - coder:
+            do: "Generate or modify code for the module"
+            input: "plan.yaml + quality feedback"
+        - quality:
+            do: "Run oca-odoo-pre-commit-hooks and pylint-odoo"
+            output: "quality_report.json"
+
+    OCA_PASSED:
+      description: "All OCA checks are green (no blocking violations)."
+      transitions:
+        - to: CI_PASSED
+          via: "external CI build and tests succeed"
+      actions:
+        - orchestrator:
+            do: "Trigger CI pipeline with docker_build + tests"
+        - ci_pipeline:
+            do: "Run build, tests, and image validation"
+
+    CI_PASSED:
+      description: "Image builds and automated tests passed in CI."
+      transitions:
+        - to: READY_FOR_DEPLOYMENT
+          via: "manual or automated promotion decision"
+      actions:
+        - docker_build:
+            do: "Persist built image with versioned tag"
+        - orchestrator:
+            do: "Update status in Odoo/issue tracker"
+
+    READY_FOR_DEPLOYMENT:
+      description: "Delta image is approved and ready to be rolled out to production."
+      transitions: []
+      actions:
+        - orchestrator:
+            do: "Notify ops and/or trigger rollout via deployment pipeline"
+
+policies:
+  - id: oca_gate_before_ci
+    description: "External CI/CD must never run unless local OCA checks are clean (no blocking issues)."
+    enforced_by:
+      - orchestrator
+      - quality
+
+  - id: minimal_custom_code
+    description: "Prefer configuration, OCA modules, or automation rules before generating new custom Python."
+    enforced_by:
+      - planner
+
+  - id: no_enterprise_contamination
+    description: "Delta modules must not depend on or import Enterprise-only code. Any parity features must be implemented against CE and OCA modules only."
+    enforced_by:
+      - coder
+      - quality
+
+  - id: version_awareness
+    description: "All generated code must be validated against Odoo 18 docs and changelog via RAG to avoid version-blind patterns."
+    enforced_by:
+      - coder
+      - planner
+
+  - id: immutable_images
+    description: "Production uses immutable, versioned Docker images; manual installs on live instances are forbidden."
+    enforced_by:
+      - orchestrator
+      - ci_pipeline

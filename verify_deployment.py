@@ -13,14 +13,14 @@ registry = Registry.new('odoo')
 # Check module status
 with registry.cursor() as cr:
     env = odoo.api.Environment(cr, odoo.SUPERUSER_ID, {})
-    
+
     # Find the module
     module = env['ir.module.module'].search([('name', '=', 'ipai_finance_ppm')])
     if module:
         print(f'Module found: {module.name}')
         print(f'State: {module.state}')
         print(f'Latest version: {module.latest_version}')
-        
+
         # Check if project task fields exist
         fields = env['ir.model.fields'].search([('model', '=', 'project.task'), ('name', 'like', 'finance_%')])
         print(f'Finance PPM fields in project.task: {len(fields)}')

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
         <!-- Server Action for Daily Finance Task Generation -->
         <record id="ir_actions_server_generate_finance_tasks" model="ir.actions.server">
             <field name="name">Finance PPM: Generate Daily Tasks</field>
@@ -21,5 +20,4 @@
             <field name="numbercall">-1</field>
             <field name="priority">10</field>
         </record>
-    </data>
 </odoo>

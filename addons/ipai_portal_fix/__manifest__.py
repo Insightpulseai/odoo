@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'IPAI Portal Fix',
-    'version': '18.0.1.0.1',
-    'category': 'Technical',
-    'summary': 'Fixes KeyError: website in portal.frontend_layout template',
-    'description': """
+    "name": "IPAI Portal Fix",
+    "version": "18.0.1.0.1",
+    "category": "Technical",
+    "summary": "Fixes KeyError: website in portal.frontend_layout template",
+    "description": """
 IPAI Portal Fix
 ===============
 
@@ -27,16 +27,16 @@ safe default values for commonly used template variables:
 
 This ensures templates can safely check these variables without KeyError.
     """,
-    'author': 'InsightPulseAI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'portal',
+    "author": "InsightPulseAI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "portal",
     ],
-    'data': [
-        'views/portal_templates.xml',
+    "data": [
+        "views/portal_templates.xml",
     ],
-    'installable': True,
-    'application': False,
-    'auto_install': True,  # Auto-install when portal is installed
+    "installable": True,
+    "application": False,
+    "auto_install": True,  # Auto-install when portal is installed
 }

@@ -27,7 +27,7 @@ Since you're on **Odoo Community Edition (CE)** with OCA modules, here are the s
    user_id = fields.Many2one('res.users', string='Assigned User')
    stage_id = fields.Selection([
        ('todo', 'To Do'),
-       ('in_progress', 'In Progress'), 
+       ('in_progress', 'In Progress'),
        ('in_review', 'In Review'),
        ('done', 'Done')
    ], default='todo', string='Stage')
@@ -129,7 +129,7 @@ git clone https://github.com/Kaushalkhadaya/ks_dashboard_ninja.git
        <field name="name">finance.ppm.calendar</field>
        <field name="model">ipai_finance_task_template</field>
        <field name="arch" type="xml">
-           <calendar date_start="date_start" 
+           <calendar date_start="date_start"
                      date_stop="date_deadline"
                      color="user_id"
                      mode="month">
@@ -185,19 +185,19 @@ To make all views functional, add these fields to your model:
 ```python
 class IpaiFinanceTaskTemplate(models.Model):
     _name = 'ipai_finance_task_template'
-    
+
     # Existing fields
     name = fields.Char(string='Task Name')
     category = fields.Char(string='Category')
     employee_code_id = fields.Many2one('ipai_finance_person', string='Employee')
-    
+
     # New fields for views
     date_start = fields.Date(string='Start Date', default=fields.Date.today)
     date_deadline = fields.Date(string='Deadline')
     user_id = fields.Many2one('res.users', string='Assigned User')
     stage_id = fields.Selection([
         ('todo', 'To Do'),
-        ('in_progress', 'In Progress'), 
+        ('in_progress', 'In Progress'),
         ('in_review', 'In Review'),
         ('done', 'Done')
     ], default='todo', string='Stage')
@@ -216,7 +216,7 @@ Update your model with date_start, date_deadline, user_id, and stage_id fields.
 ### Step 3: Create Views
 Add the XML views for:
 - Timeline
-- Calendar  
+- Calendar
 - Kanban
 - Graph (Workload & Progress)
 

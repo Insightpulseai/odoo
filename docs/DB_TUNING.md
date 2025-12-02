@@ -1,6 +1,6 @@
 # Odoo CE 18 – Database & Worker Tuning
 
-Last updated: 2025-11-24  
+Last updated: 2025-11-24
 Scope: `erp.insightpulseai.net` – single-instance Odoo 18 CE + `ipai_*` modules
 
 ---

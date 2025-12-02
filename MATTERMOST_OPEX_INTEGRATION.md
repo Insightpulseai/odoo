@@ -17,7 +17,7 @@ Slash Commands    Bot Responses    Async Notifications
 - ✅ Team Edition (no license required)
 - ✅ Database connectivity established
 
-### n8n Setup  
+### n8n Setup
 - n8n instance accessible at `n8n.insightpulseai.net`
 - Existing Odoo/Supabase credentials configured
 - Webhook endpoints enabled
@@ -186,5 +186,5 @@ curl -X POST https://n8n.insightpulseai.net/webhook/opex-command \
 
 ---
 
-**Last Updated**: 2025-11-21  
+**Last Updated**: 2025-11-21
 **Status**: Infrastructure stabilized, ready for integration implementation

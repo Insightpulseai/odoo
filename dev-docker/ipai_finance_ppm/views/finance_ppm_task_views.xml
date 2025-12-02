@@ -25,7 +25,7 @@
         <field name="name">finance.ppm.task.tree</field>
         <field name="model">finance.ppm.task</field>
         <field name="arch" type="xml">
-            <tree string="Task List" decoration-danger="date_deadline and date_deadline &lt; current_date and state != 'done'" decoration-muted="state == 'done'">
+            <tree decoration-danger="date_deadline and date_deadline &lt; current_date and state != 'done'" decoration-muted="state == 'done'">
                 <field name="sequence" widget="handle"/>
                 <field name="complete_name" string="Task / Tax Form"/>
                 <field name="date_deadline" string="Deadline" optional="show"/>

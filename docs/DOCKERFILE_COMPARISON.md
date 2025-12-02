@@ -40,7 +40,7 @@ USER odoo
 3. ❌ No environment variable defaults
 4. ❌ No health check configuration
 
-**Specification Compliance:** 70% (7/10)  
+**Specification Compliance:** 70% (7/10)
 **Production Ready:** NO
 
 ---
@@ -107,7 +107,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 6. ✅ Added --no-install-recommends (image size optimization)
 7. ✅ Added version header documentation
 
-**Specification Compliance:** 100% (10/10)  
+**Specification Compliance:** 100% (10/10)
 **Production Ready:** YES
 
 ---
@@ -438,6 +438,6 @@ docker logs odoo-ce
 
 ---
 
-**Date:** 2025-11-25  
-**Version:** v0.9.1  
+**Date:** 2025-11-25
+**Version:** v0.9.1
 **Status:** ✅ Production Ready

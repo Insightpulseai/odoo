@@ -17,7 +17,7 @@ class DocsAssistantWidget {
         this.isOpen = false;
         this.sessionId = this.generateSessionId();
         this.conversationHistory = [];
-        
+
         this.init();
     }
 
@@ -57,8 +57,8 @@ class DocsAssistantWidget {
             <div class="docs-assistant-chat">
                 <div class="docs-assistant-messages"></div>
                 <div class="docs-assistant-input-container">
-                    <textarea 
-                        class="docs-assistant-input" 
+                    <textarea
+                        class="docs-assistant-input"
                         placeholder="Ask a question about the documentation..."
                         rows="1"
                     ></textarea>
@@ -89,7 +89,7 @@ class DocsAssistantWidget {
         this.fab.addEventListener('click', () => this.toggleModal());
         this.closeButton.addEventListener('click', () => this.closeModal());
         this.sendButton.addEventListener('click', () => this.sendMessage());
-        
+
         this.input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -155,7 +155,7 @@ class DocsAssistantWidget {
 
         try {
             const response = await this.askQuestion(message);
-            
+
             // Remove typing indicator
             if (typingMessage && typingMessage.parentNode) {
                 typingMessage.parentNode.remove();
@@ -163,7 +163,7 @@ class DocsAssistantWidget {
 
             // Add assistant response
             this.addMessage('assistant', response.answer, false, response.citations);
-            
+
             // Track successful answer
             this.trackEvent('answer_received', {
                 answer_id: response.metadata.answer_id,
@@ -180,7 +180,7 @@ class DocsAssistantWidget {
             // Show error message
             this.addMessage('assistant', 'Sorry, I encountered an error. Please try again.');
             console.error('Docs Assistant error:', error);
-            
+
             this.trackEvent('error_occurred', { error: error.message });
         } finally {
             this.input.disabled = false;
@@ -209,7 +209,7 @@ class DocsAssistantWidget {
         }
 
         const result = await response.json();
-        
+
         // Update conversation history
         this.conversationHistory.push(
             { role: 'user', content: question },
@@ -227,7 +227,7 @@ class DocsAssistantWidget {
     addMessage(role, content, isTyping = false, citations = []) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `docs-assistant-message docs-assistant-message--${role}`;
-        
+
         if (isTyping) {
             messageDiv.innerHTML = `
                 <div class="docs-assistant-message-content">
@@ -660,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
             theme: scriptElement.getAttribute('data-theme'),
             debug: scriptElement.hasAttribute('data-debug')
         };
-        
+
         if (config.apiKey) {
             window.docsAssistant = new DocsAssistantWidget(config);
         }

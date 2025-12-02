@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data>
 
     <record id="ipai_ocr_hr_expense_form_inherit" model="ir.ui.view">
       <field name="name">hr.expense.form.ipai.ocr</field>
@@ -18,6 +17,4 @@
         </xpath>
       </field>
     </record>
-
-  </data>
 </odoo>

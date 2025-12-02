@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
         <!-- BIR Filing Calendar Seed Data -->
         <!-- Philippine Bureau of Internal Revenue (BIR) tax forms for 2025-2026 -->
         <!-- Filing deadlines and responsible personnel for Finance SSC operations -->
@@ -453,6 +452,4 @@
             <field name="responsible_role">Finance Supervisor</field>
             <field name="description">Final withholding tax for Q4 2025 - Interest, dividends, royalties</field>
         </record>
-
-    </data>
 </odoo>

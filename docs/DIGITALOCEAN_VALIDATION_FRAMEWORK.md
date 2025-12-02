@@ -16,7 +16,7 @@ echo "✅ Registry access successful"
 # Expected: Exit code 0
 ```
 
-### 2. API Response Validation  
+### 2. API Response Validation
 **Standard**: JSON output contains expected fields with 2xx HTTP status
 
 **Validation Commands:**

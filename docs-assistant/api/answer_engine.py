@@ -97,10 +97,10 @@ async def authenticate_api_key(
 ) -> Dict[str, Any]:
     """Authenticate API key and return project info"""
     api_key = x_api_key or (authorization.replace("Bearer ", "") if authorization else None)
-    
+
     if not api_key:
         raise HTTPException(status_code=401, detail="API key required")
-    
+
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
@@ -112,18 +112,18 @@ async def authenticate_api_key(
                 WHERE ak.key_hash = %s AND ak.revoked_at IS NULL
             """, (api_key,))
             result = cur.fetchone()
-            
+
             if not result:
                 raise HTTPException(status_code=401, detail="Invalid API key")
-            
+
             # Update last used
             cur.execute("""
-                UPDATE docs_api_keys 
-                SET last_used_at = NOW() 
+                UPDATE docs_api_keys
+                SET last_used_at = NOW()
                 WHERE id = %s
             """, (result['id'],))
             conn.commit()
-            
+
             return dict(result)
     finally:
         conn.close()
@@ -149,7 +149,7 @@ def search_similar_chunks(
         with conn.cursor() as cur:
             # Convert embedding to PostgreSQL format
             embedding_array = "[" + ",".join(map(str, query_embedding)) + "]"
-            
+
             if source_group_ids:
                 cur.execute("""
                     SELECT * FROM docs_search_chunks(
@@ -162,7 +162,7 @@ def search_similar_chunks(
                         %s::vector, %s, %s::uuid, NULL
                     )
                 """, (embedding_array, limit, project_id))
-            
+
             return cur.fetchall()
     finally:
         conn.close()
@@ -173,22 +173,22 @@ def generate_answer_with_citations(
     history: Optional[List[Dict[str, str]]] = None
 ) -> Dict[str, Any]:
     """Generate answer using LLM with citations"""
-    
+
     # Build context from chunks
     context_parts = []
     for chunk in context_chunks:
         context_parts.append(f"Source: {chunk['document_title']} - {chunk['heading']}")
         context_parts.append(f"Content: {chunk['content']}")
         context_parts.append("---")
-    
+
     context = "\n".join(context_parts)
-    
+
     # Build conversation history
     messages = []
     if history:
         for msg in history[-6:]:  # Keep last 6 messages for context
             messages.append({"role": "user" if msg["role"] == "user" else "assistant", "content": msg["content"]})
-    
+
     # Add current question with context
     system_prompt = f"""You are a technical documentation assistant. Answer questions based ONLY on the provided context.
 
@@ -203,9 +203,9 @@ INSTRUCTIONS:
 5. Do not make up information or use external knowledge
 
 QUESTION: {question}"""
-    
+
     messages.append({"role": "user", "content": system_prompt})
-    
+
     try:
         # Use Claude for better reasoning (can switch to OpenAI if preferred)
         response = anthropic_client.messages.create(
@@ -214,9 +214,9 @@ QUESTION: {question}"""
             messages=messages,
             temperature=0.1
         )
-        
+
         answer = response.content[0].text
-        
+
         # Extract citations from answer
         citations = []
         for chunk in context_chunks:
@@ -228,7 +228,7 @@ QUESTION: {question}"""
                     "content_snippet": chunk['content'][:200] + "..." if len(chunk['content']) > 200 else chunk['content'],
                     "similarity_score": chunk['similarity_score']
                 })
-        
+
         return {
             "answer": answer,
             "citations": citations,
@@ -237,7 +237,7 @@ QUESTION: {question}"""
                 "output_tokens": response.usage.output_tokens
             }
         }
-    
+
     except Exception as e:
         logger.error(f"LLM generation error: {e}")
         return {
@@ -254,71 +254,71 @@ async def chat_endpoint(
 ):
     """Main chat endpoint for Q&A"""
     start_time = time.time()
-    
+
     # Check permissions
     if not auth_info['permissions'].get('chat', True):
         raise HTTPException(status_code=403, detail="Chat permission denied")
-    
+
     # Get project info
     project_id = auth_info['project_id']
-    
+
     # Generate query embedding
     try:
         query_embedding = get_embedding(request.question)
     except Exception as e:
         logger.error(f"Embedding generation error: {e}")
         raise HTTPException(status_code=500, detail="Failed to process question")
-    
+
     # Search for relevant chunks
     source_group_ids = None
     if request.source_groups:
         # Convert source group names to IDs (implementation needed)
         pass
-    
+
     chunks = search_similar_chunks(
         project_id=str(project_id),
         query_embedding=query_embedding,
         limit=10,
         source_group_ids=source_group_ids
     )
-    
+
     if not chunks:
         return ChatResponse(
             answer="I couldn't find relevant information in the documentation to answer your question.",
             citations=[],
             metadata={"grounded": False, "chunks_retrieved": 0}
         )
-    
+
     # Generate answer
     generation_result = generate_answer_with_citations(
         question=request.question,
         context_chunks=chunks,
         history=request.history
     )
-    
+
     latency_ms = int((time.time() - start_time) * 1000)
-    
+
     # Log question and answer
     conn = get_db_connection()
     try:
         with conn.cursor() as cur:
             # Log question
             cur.execute("""
-                INSERT INTO docs_questions 
+                INSERT INTO docs_questions
                 (project_id, api_key_id, query, channel, metadata)
                 VALUES (%s, %s, %s, %s, %s)
                 RETURNING id
             """, (project_id, auth_info['id'], request.question, 'api', json.dumps({"stream": request.stream})))
             question_id = cur.fetchone()['id']
-            
+
             # Log answer
             cur.execute("""
-                INSERT INTO docs_answers 
+                INSERT INTO docs_answers
                 (question_id, project_id, model, answer, latency_ms, token_in, token_out, grounded, confidence_score)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING id
             """, (
-                question_id, project_id, "claude-3-sonnet", 
+                question_id, project_id, "claude-3-sonnet",
                 generation_result["answer"], latency_ms,
                 generation_result["token_usage"]["input_tokens"],
                 generation_result["token_usage"]["output_tokens"],
@@ -326,17 +326,17 @@ async def chat_endpoint(
                 0.8  # Placeholder confidence score
             ))
             answer_id = cur.fetchone()['id']
-            
+
             # Log citations
             for citation in generation_result["citations"]:
                 cur.execute("""
-                    INSERT INTO docs_answer_citations 
+                    INSERT INTO docs_answer_citations
                     (answer_id, chunk_id, relevance_score, citation_text)
                     VALUES (%s, %s, %s, %s)
                 """, (answer_id, citation["chunk_id"], citation["similarity_score"], citation["content_snippet"]))
-            
+
             conn.commit()
-            
+
             # Return response with answer ID for feedback
             return ChatResponse(
                 answer=generation_result["answer"],
@@ -361,29 +361,29 @@ async def search_endpoint(
     # Check permissions
     if not auth_info['permissions'].get('search', True):
         raise HTTPException(status_code=403, detail="Search permission denied")
-    
+
     project_id = auth_info['project_id']
-    
+
     # Generate query embedding
     try:
         query_embedding = get_embedding(request.query)
     except Exception as e:
         logger.error(f"Embedding generation error: {e}")
         raise HTTPException(status_code=500, detail="Failed to process query")
-    
+
     # Search for relevant chunks
     source_group_ids = None
     if request.source_groups:
         # Convert source group names to IDs
         pass
-    
+
     chunks = search_similar_chunks(
         project_id=str(project_id),
         query_embedding=query_embedding,
         limit=request.limit,
         source_group_ids=source_group_ids
     )
-    
+
     return SearchResponse(
         results=chunks,
         metadata={
@@ -402,12 +402,12 @@ async def feedback_endpoint(
     try:
         with conn.cursor() as cur:
             cur.execute("""
-                INSERT INTO docs_feedback 
+                INSERT INTO docs_feedback
                 (answer_id, rating, comment, user_id)
                 VALUES (%s, %s, %s, %s)
             """, (request.answer_id, request.rating, request.comment, request.user_id))
             conn.commit()
-        
+
         return {"status": "success", "message": "Feedback submitted"}
     finally:
         conn.close()

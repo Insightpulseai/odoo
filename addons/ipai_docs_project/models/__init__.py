@@ -1,3 +1,1 @@
-from . import project
-from . import task
-from . import doc
+from . import doc, project, task

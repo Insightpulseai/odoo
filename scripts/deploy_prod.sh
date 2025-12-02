@@ -146,7 +146,7 @@ for i in {1..30}; do
     fi
     echo -n "."
     sleep 2
-    
+
     if [[ $i -eq 30 ]]; then
         echo -e "\n${RED}❌ Timeout waiting for Odoo to become healthy${NC}"
         echo "   Check logs: docker compose -f ${COMPOSE_FILE} logs odoo"

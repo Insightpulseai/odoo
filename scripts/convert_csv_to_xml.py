@@ -23,7 +23,7 @@ def convert():
                 'bir_deadline': t['legal_deadline'],
                 'steps': []
             }
-        
+
         # Map stage to specific date fields if they exist on the model
         if t['stage'] == 'Preparation':
             schedules[key]['prep_date'] = t['planned_date']
@@ -34,26 +34,26 @@ def convert():
         elif t['stage'] == 'Approval':
             schedules[key]['approval_date'] = t['planned_date']
             schedules[key]['responsible_approval_id'] = t['person_code']
-            
+
         schedules[key]['steps'].append(t)
 
     # Generate XML
     xml_content = '<?xml version="1.0" encoding="utf-8"?>\n<odoo>\n    <data noupdate="1">\n'
-    
+
     for (form, period), data in schedules.items():
         record_id = f"schedule_{form}_{period.replace(' ', '_')}"
         xml_content += f'        <record id="{record_id}" model="ipai.bir.form.schedule">\n'
         xml_content += f'            <field name="form_code">{data["form_code"]}</field>\n'
         xml_content += f'            <field name="period">{data["period"]}</field>\n'
         xml_content += f'            <field name="bir_deadline">{data["bir_deadline"]}</field>\n'
-        
+
         if 'prep_date' in data:
             xml_content += f'            <field name="prep_date">{data["prep_date"]}</field>\n'
         if 'review_date' in data:
             xml_content += f'            <field name="review_date">{data["review_date"]}</field>\n'
         if 'approval_date' in data:
             xml_content += f'            <field name="approval_date">{data["approval_date"]}</field>\n'
-            
+
         # Add steps
         xml_content += '            <field name="step_ids">\n'
         for i, step in enumerate(data['steps']):
@@ -62,10 +62,10 @@ def convert():
             xml_content += f'                    <field name="title">{step["stage"]}</field>\n'
             xml_content += f'                    <field name="role">{step["role"]}</field>\n'
             # Note: person_id is Many2one, skipping for now to avoid XML errors if record doesn't exist
-            # xml_content += f'                    <field name="person_id" ref="..."/>\n' 
+            # xml_content += f'                    <field name="person_id" ref="..."/>\n'
             xml_content += f'                </record>\n'
         xml_content += '            </field>\n'
-        
+
         xml_content += '        </record>\n'
 
     xml_content += '    </data>\n</odoo>'

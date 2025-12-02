@@ -4,9 +4,10 @@ Portal Controller Fix for Website-Free Instances
 Ensures 'website' context is always available to prevent KeyError.
 """
 
-from odoo import http
-from odoo.http import request
 from odoo.addons.portal.controllers.portal import CustomerPortal
+from odoo.http import request
+
+from odoo import http
 
 
 class CustomerPortalWebsiteSafe(CustomerPortal):
@@ -25,24 +26,27 @@ class CustomerPortalWebsiteSafe(CustomerPortal):
         values = super()._prepare_portal_layout_values()
 
         # Check if 'website' is missing and Website module is installed
-        if 'website' not in values:
+        if "website" not in values:
             # Try to get current website if Website module is installed
-            website_module = request.env['ir.module.module'].sudo().search([
-                ('name', '=', 'website'),
-                ('state', '=', 'installed')
-            ], limit=1)
+            website_module = (
+                request.env["ir.module.module"]
+                .sudo()
+                .search(
+                    [("name", "=", "website"), ("state", "=", "installed")], limit=1
+                )
+            )
 
             if website_module:
                 # Website module installed - get current website
                 try:
-                    current_website = request.env['website'].get_current_website()
-                    values['website'] = current_website
+                    current_website = request.env["website"].get_current_website()
+                    values["website"] = current_website
                 except Exception:
                     # Fallback: set to False to prevent KeyError
-                    values['website'] = False
+                    values["website"] = False
             else:
                 # Website module not installed - set to False
-                values['website'] = False
+                values["website"] = False
 
         return values
 
@@ -53,7 +57,7 @@ class CustomerPortalWebsiteSafe(CustomerPortal):
         values = super()._prepare_home_portal_values(counters)
 
         # Ensure 'website' is present
-        if 'website' not in values:
-            values['website'] = False
+        if "website" not in values:
+            values["website"] = False
 
         return values

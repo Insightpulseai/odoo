@@ -59,7 +59,7 @@ else:
     total = Model.search_count([])
     print(f"✅ PPM model: {Model._name}")
     print(f"   Total records: {total}")
-    
+
     count_2026 = 0
     if 'bir_deadline' in Model._fields:
         count_2026 = Model.search_count([('bir_deadline', '>=', '2026-01-01'), ('bir_deadline', '<=', '2026-12-31')])

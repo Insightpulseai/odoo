@@ -92,7 +92,7 @@
 **Action**: Mattermost notification with approver tagging
 **Result**: Faster approval cycles, reduced email dependency
 
-### 2. Expense Approvals  
+### 2. Expense Approvals
 **Trigger**: New expense submission
 **Action**: Mattermost notification to finance team
 **Result**: Real-time expense tracking
@@ -118,8 +118,8 @@ labels:
 ### Database Optimization
 ```sql
 -- Monitor Mattermost database performance
-SELECT schemaname, tablename, seq_scan, seq_tup_read 
-FROM pg_stat_user_tables 
+SELECT schemaname, tablename, seq_scan, seq_tup_read
+FROM pg_stat_user_tables
 WHERE schemaname = 'public';
 ```
 
@@ -139,7 +139,7 @@ docker exec odoo_prod_db_1 pg_dump -U odoo mattermost > mattermost_backup.sql
    ```bash
    # Check logs
    docker compose -f docker-compose.prod.yml logs mattermost
-   
+
    # Verify database connectivity
    docker exec odoo_prod_db_1 psql -U mmuser -d mattermost -c "\conninfo"
    ```
@@ -227,10 +227,10 @@ tail -f /var/log/odoo/odoo-server.log | grep mattermost
 
 ### Emergency Contacts
 - **Infrastructure**: Ops team
-- **Odoo Integration**: Development team  
+- **Odoo Integration**: Development team
 - **AI Agent**: AI/ML team
 
 ---
 
-**Last Updated**: 2025-11-24  
+**Last Updated**: 2025-11-24
 **Deployment Status**: Ready for Production

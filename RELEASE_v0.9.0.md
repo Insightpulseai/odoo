@@ -1,7 +1,7 @@
 # v0.9.0 - Infrastructure Unification Release
 
-**Release Date**: 2025-11-25  
-**Status**: Pre-production (Infrastructure Ready)  
+**Release Date**: 2025-11-25
+**Status**: Pre-production (Infrastructure Ready)
 **Previous Release**: None (First tagged release)
 
 ## 🎯 What's Included

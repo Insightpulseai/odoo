@@ -18,7 +18,7 @@ def generate_html():
         data = json.load(f)
 
     nodes = []
-    
+
     for i, record in enumerate(data):
         # New format is flat: { "date": ..., "label": ..., "role": ..., "person": ..., "status": ... }
         nodes.append({
@@ -130,7 +130,7 @@ def generate_html():
         }};
 
         option && myChart.setOption(option);
-        
+
         window.addEventListener('resize', function() {{
             myChart.resize();
         }});
