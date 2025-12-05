@@ -163,10 +163,17 @@ jobs:
             libwebp-dev \
             libharfbuzz-dev \
             libfribidi-dev \
-            libxcb1-dev
+            libxcb1-dev \
+            libev-dev
 
           # Clone Odoo 18.0 from official repository
           git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo.git /tmp/odoo
+
+          # Pin Cython < 3.0 for gevent compatibility (Cython 3.x has stricter cdef exception handling)
+          pip install "Cython<3.0"
+
+          # Install gevent with pre-built wheel to avoid Cython compilation issues
+          pip install --only-binary :all: gevent || pip install gevent
 
           # Install Odoo Python dependencies
           pip install -r /tmp/odoo/requirements.txt
@@ -319,10 +326,17 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           sudo apt-get update
-          sudo apt-get install -y libpq-dev
+          sudo apt-get install -y libpq-dev libev-dev
 
           # Clone Odoo
           git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo.git /tmp/odoo
+
+          # Pin Cython < 3.0 for gevent compatibility
+          pip install "Cython<3.0"
+
+          # Install gevent with pre-built wheel to avoid Cython compilation issues
+          pip install --only-binary :all: gevent || pip install gevent
+
           pip install -r /tmp/odoo/requirements.txt
 
           # Install performance testing tools
