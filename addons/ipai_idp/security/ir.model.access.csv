@@ -23,3 +23,8 @@ access_idp_review_admin,IDP Review Admin,model_idp_review,ipai_idp.group_idp_adm
 # IDP Validation Rule - admin only
 access_idp_validation_rule_user,IDP Validation Rule User,model_idp_validation_rule,ipai_idp.group_idp_user,1,0,0,0
 access_idp_validation_rule_admin,IDP Validation Rule Admin,model_idp_validation_rule,ipai_idp.group_idp_admin,1,1,1,1
+# IDP ADE Trace - audit trail for ADE executions
+access_idp_ade_trace_user,IDP ADE Trace User,model_idp_ade_trace,ipai_idp.group_idp_user,1,0,0,0
+access_idp_ade_trace_reviewer,IDP ADE Trace Reviewer,model_idp_ade_trace,ipai_idp.group_idp_reviewer,1,0,0,0
+access_idp_ade_trace_manager,IDP ADE Trace Manager,model_idp_ade_trace,ipai_idp.group_idp_manager,1,1,1,0
+access_idp_ade_trace_admin,IDP ADE Trace Admin,model_idp_ade_trace,ipai_idp.group_idp_admin,1,1,1,1
