@@ -322,3 +322,52 @@ class IdpServiceExtractor(models.AbstractModel):
                 "extracted_data": {},
                 "confidence": 0.0,
             }
+
+    @api.model
+    def call_llm_raw(
+        self,
+        prompt,
+        system_prompt="",
+        model="claude-3-sonnet",
+        temperature=0.0,
+        max_tokens=4096,
+    ):
+        """
+        Call LLM and return raw response text.
+
+        Used by ADE LLM gateway for flexible prompt execution.
+
+        Args:
+            prompt: User prompt text
+            system_prompt: Optional system prompt
+            model: LLM model identifier
+            temperature: Sampling temperature
+            max_tokens: Maximum response tokens
+
+        Returns:
+            str: Raw LLM response content
+
+        Raises:
+            UserError: If LLM API is not configured or call fails
+        """
+        params = self.env["ir.config_parameter"].sudo()
+        llm_api_url = params.get_param("ipai_idp.llm_api_url")
+        llm_api_key = params.get_param("ipai_idp.llm_api_key")
+
+        if not llm_api_url:
+            raise UserError("LLM API URL is not configured.")
+
+        try:
+            response = self._call_llm_api(
+                llm_api_url,
+                llm_api_key,
+                model,
+                system_prompt or "",
+                prompt,
+                temperature,
+                max_tokens,
+            )
+            return response.get("content", "")
+        except Exception as e:
+            _logger.exception("Raw LLM call failed")
+            raise UserError(f"LLM call failed: {str(e)}")

@@ -100,6 +100,35 @@ class IdpExtraction(models.Model):
         help="Total tokens used in the LLM call",
     )
 
+    # ADE (Agentic Document Extraction) fields
+    ade_pipeline_id = fields.Char(
+        string="ADE Pipeline ID",
+        help="Identifier of the ADE pipeline used (e.g., invoice_basic_v1)",
+        index=True,
+    )
+    ade_status = fields.Selection(
+        [
+            ("ok", "OK"),
+            ("needs_review", "Needs Review"),
+            ("failed", "Failed"),
+        ],
+        string="ADE Status",
+        default="ok",
+        help="Final status returned by the ADE orchestrator",
+    )
+    ade_trace = fields.Text(
+        string="ADE Trace (JSON)",
+        help="Full step-by-step trace from ADE orchestrator",
+    )
+    ade_action = fields.Char(
+        string="ADE Action",
+        help="Action taken by ADE (e.g., send_to_review)",
+    )
+    ade_reason = fields.Text(
+        string="ADE Reason",
+        help="Reason for ADE status if not OK",
+    )
+
     # Computed fields for easy access
     vendor_name = fields.Char(
         string="Vendor Name",
