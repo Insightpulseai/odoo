@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_idp_document_user,access_idp_document_user,model_idp_document,base.group_user,1,1,1,0
+access_idp_document_manager,access_idp_document_manager,model_idp_document,base.group_system,1,1,1,1
+access_idp_document_ocr_user,access_idp_document_ocr_user,model_idp_document_ocr,base.group_user,1,0,0,0
+access_idp_document_ocr_manager,access_idp_document_ocr_manager,model_idp_document_ocr,base.group_system,1,1,1,1
+access_idp_extraction_user,access_idp_extraction_user,model_idp_extraction,base.group_user,1,0,0,0
+access_idp_extraction_manager,access_idp_extraction_manager,model_idp_extraction,base.group_system,1,1,1,1
+access_idp_model_version_user,access_idp_model_version_user,model_idp_model_version,base.group_user,1,0,0,0
+access_idp_model_version_manager,access_idp_model_version_manager,model_idp_model_version,base.group_system,1,1,1,1
+access_idp_review_user,access_idp_review_user,model_idp_review,base.group_user,1,1,1,0
+access_idp_review_manager,access_idp_review_manager,model_idp_review,base.group_system,1,1,1,1
+access_idp_validation_rule_user,access_idp_validation_rule_user,model_idp_validation_rule,base.group_user,1,0,0,0
+access_idp_validation_rule_manager,access_idp_validation_rule_manager,model_idp_validation_rule,base.group_system,1,1,1,1
