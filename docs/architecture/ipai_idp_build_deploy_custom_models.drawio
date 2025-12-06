@@ -1,0 +1,246 @@
+<mxfile host="app.diagrams.net" modified="2024-12-06T00:00:00.000Z" agent="Claude" version="21.0.0">
+  <diagram name="IPAI IDP - Build &amp; Deploy Custom Models" id="ipai-build-deploy">
+    <mxGraphModel dx="1422" dy="850" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="IPAI IDP – Build &amp; Deploy Custom Document Models on Odoo CE" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#0078D4;" vertex="1" parent="1">
+          <mxGeometry x="350" y="20" width="700" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Data Sources Section (Left) -->
+        <mxCell id="sources-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E6F2FF;strokeColor=#0078D4;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="80" width="200" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="sources-title" value="Data Sources" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#0078D4;" vertex="1" parent="1">
+          <mxGeometry x="90" y="90" width="100" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-email" value="Email Invoices&#xa;(fetchmail)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="65" y="130" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-attach" value="Odoo Attachments&#xa;(ir.attachment)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="65" y="195" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-api" value="REST API Upload&#xa;(/ipai/idp/api/documents)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="65" y="260" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-storage" value="External Storage&#xa;(S3/GCS/Azure Blob)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="65" y="325" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="src-mobile" value="Mobile App&#xa;(Camera Capture)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="65" y="390" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Orchestration Section (Center-Left) -->
+        <mxCell id="orch-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="200" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="orch-title" value="Orchestration" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#388E3C;" vertex="1" parent="1">
+          <mxGeometry x="330" y="90" width="100" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="orch-doc" value="idp.document&#xa;(Document Registry)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="305" y="130" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="orch-queue" value="queue_job&#xa;(Async Processing)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="305" y="200" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="orch-cron" value="Odoo Cron&#xa;(Scheduled Processing)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="305" y="270" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="orch-version" value="idp.model.version&#xa;(Prompt Versioning)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="305" y="340" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="orch-rules" value="idp.validation.rule&#xa;(Business Rules)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="305" y="410" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- AI Services Section (Center) -->
+        <mxCell id="ai-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1976D2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="520" y="80" width="240" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="ai-title" value="AI Services" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#1976D2;" vertex="1" parent="1">
+          <mxGeometry x="590" y="90" width="100" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai-ocr" value="idp.service.ocr&#xa;&#xa;• InsightPulse OCR&#xa;• Google Vision&#xa;• Azure Form Recognizer&#xa;• Tesseract" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="545" y="125" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai-extractor" value="idp.service.extractor&#xa;&#xa;• Claude API&#xa;• OpenAI API&#xa;• Versioned Prompts&#xa;• JSON Schema Output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="545" y="230" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ai-validator" value="idp.service.validator&#xa;&#xa;• Required Fields&#xa;• Range/Format Checks&#xa;• Sum Validation&#xa;• Custom Expressions" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=10;align=left;spacingLeft=10;" vertex="1" parent="1">
+          <mxGeometry x="545" y="335" width="190" height="90" as="geometry" />
+        </mxCell>
+
+        <!-- Data Store Section (Center-Right) -->
+        <mxCell id="store-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#F57C00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="800" y="80" width="200" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="store-title" value="Data Store" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#F57C00;" vertex="1" parent="1">
+          <mxGeometry x="850" y="90" width="100" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="store-ocr" value="idp.document.ocr&#xa;(OCR Results)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFE0B2;strokeColor=#F57C00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="125" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="store-extraction" value="idp.extraction&#xa;(LLM Results)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFE0B2;strokeColor=#F57C00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="200" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="store-review" value="idp.review&#xa;(Human Corrections)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFE0B2;strokeColor=#F57C00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="275" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="store-modelver" value="idp.model.version&#xa;(Prompt Configs)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#FFE0B2;strokeColor=#F57C00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="840" y="350" width="120" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Output Section (Right) -->
+        <mxCell id="output-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="80" width="200" height="380" as="geometry" />
+        </mxCell>
+        <mxCell id="output-title" value="Output &amp; Analytics" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=14;fontStyle=1;fontColor=#7B1FA2;" vertex="1" parent="1">
+          <mxGeometry x="1070" y="90" width="140" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out-invoice" value="account.move&#xa;(Vendor Bills)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1065" y="130" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out-expense" value="hr.expense&#xa;(Expense Reports)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1065" y="195" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out-purchase" value="purchase.order&#xa;(PO Matching)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1065" y="260" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out-analytics" value="Analytics / BI&#xa;(Superset, Power BI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1065" y="325" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <mxCell id="out-audit" value="Audit Trail&#xa;(mail.message)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="1065" y="390" width="150" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Flow Arrows -->
+        <mxCell id="arrow-src-orch" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="240" y="270" as="sourcePoint" />
+            <mxPoint x="280" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-orch-ai" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="480" y="270" as="sourcePoint" />
+            <mxPoint x="520" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-ai-store" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="760" y="270" as="sourcePoint" />
+            <mxPoint x="800" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="arrow-store-out" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=2;strokeColor=#666666;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1000" y="270" as="sourcePoint" />
+            <mxPoint x="1040" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- External APIs Box (Bottom) -->
+        <mxCell id="external-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFEBEE;strokeColor=#C62828;strokeWidth=2;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="520" y="490" width="240" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="external-title" value="External APIs" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;fontColor=#C62828;" vertex="1" parent="1">
+          <mxGeometry x="590" y="495" width="100" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext-ocr-api" value="OCR Provider API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="535" y="520" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext-llm-api" value="LLM Provider API" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFCDD2;strokeColor=#C62828;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="645" y="520" width="100" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ext-label" value="(Claude / OpenAI / Azure)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="565" y="555" width="150" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Dashed arrow from AI to External -->
+        <mxCell id="arrow-ai-external" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeWidth=1;strokeColor=#C62828;dashed=1;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="640" y="460" as="sourcePoint" />
+            <mxPoint x="640" y="490" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Health Endpoints Box (Top Right) -->
+        <mxCell id="health-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#388E3C;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="490" width="160" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="health-title" value="Health Endpoints" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;fontColor=#388E3C;" vertex="1" parent="1">
+          <mxGeometry x="1130" y="495" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="health-livez" value="/ipai/idp/livez" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="520" width="100" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="health-readyz" value="/ipai/idp/readyz" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="540" width="100" height="15" as="geometry" />
+        </mxCell>
+        <mxCell id="health-healthz" value="/ipai/idp/healthz" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="560" width="100" height="15" as="geometry" />
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="legend-bg" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;strokeWidth=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="490" width="440" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-title" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="495" width="60" height="20" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-sources" value="Data Sources" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE6CC;strokeColor=#D79B00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="50" y="520" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-orch" value="Orchestration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#388E3C;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="140" y="520" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-ai" value="AI Services" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1976D2;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="230" y="520" width="80" height="25" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-store" value="Data Store" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=5;fillColor=#FFE0B2;strokeColor=#F57C00;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="320" y="515" width="70" height="35" as="geometry" />
+        </mxCell>
+        <mxCell id="leg-output" value="Output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=9;" vertex="1" parent="1">
+          <mxGeometry x="400" y="520" width="70" height="25" as="geometry" />
+        </mxCell>
+
+        <mxCell id="leg-note" value="Adapted from Azure 'Build and deploy custom document processing models' reference architecture" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=9;fontStyle=2;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="50" y="560" width="420" height="20" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
