@@ -18,7 +18,16 @@ validated, analytics-ready structured records using OCR + LLM extraction.
 Upload -> OCR -> Classify -> LLM Extract -> Validate -> Auto-approve/Review -> Export
 ```
 
-See the full architecture diagram: [docs/architecture/ipai_idp_architecture.drawio](../../docs/architecture/ipai_idp_architecture.drawio)
+### Architecture Diagrams
+
+Open these `.drawio` files in [diagrams.net](https://app.diagrams.net) to view/edit:
+
+| Diagram | Description |
+|---------|-------------|
+| [ipai_idp_architecture.drawio](../../docs/architecture/ipai_idp_architecture.drawio) | High-level system architecture |
+| [ipai_idp_build_deploy_custom_models.drawio](../../docs/architecture/ipai_idp_build_deploy_custom_models.drawio) | Build & deploy custom document models (Azure-style) |
+| [ipai_idp_pdf_processing.drawio](../../docs/architecture/ipai_idp_pdf_processing.drawio) | End-to-end PDF invoice/receipt processing flow |
+| [ipai_idp_multi_agent_workflow.drawio](../../docs/architecture/ipai_idp_multi_agent_workflow.drawio) | Multi-agent workflow with Anthropic skills pattern |
 
 ### Processing Pipeline
 
