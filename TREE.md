@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 34b7de0aa8827cd7f778b2eee0a1d12bda97b550
+> Commit: 5bae9d2e3fa2440765068418f26d6350f212ba34
 
 ```
 .
@@ -280,6 +280,58 @@
 │   │   ├── __init__.py
 │   │   ├── __manifest__.py
 │   │   └── hooks.py
+│   ├── ipai_idp
+│   │   ├── ade
+│   │   │   ├── core
+│   │   │   ├── pipelines
+│   │   │   └── __init__.py
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   ├── health_controller.py
+│   │   │   └── idp_api_controller.py
+│   │   ├── data
+│   │   │   └── idp_model_versions_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── idp_ade_trace.py
+│   │   │   ├── idp_document.py
+│   │   │   ├── idp_document_ocr.py
+│   │   │   ├── idp_extraction.py
+│   │   │   ├── idp_llm_gateway.py
+│   │   │   ├── idp_model_version.py
+│   │   │   ├── idp_review.py
+│   │   │   ├── idp_validation_rule.py
+│   │   │   └── res_config_settings.py
+│   │   ├── security
+│   │   │   ├── idp_groups.xml
+│   │   │   ├── idp_record_rules.xml
+│   │   │   └── ir.model.access.csv
+│   │   ├── services
+│   │   │   ├── __init__.py
+│   │   │   ├── idp_service_extractor.py
+│   │   │   ├── idp_service_health.py
+│   │   │   ├── idp_service_ocr.py
+│   │   │   ├── idp_service_parser.py
+│   │   │   └── idp_service_validator.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   ├── test_document_flow.py
+│   │   │   ├── test_extraction.py
+│   │   │   ├── test_health.py
+│   │   │   ├── test_http_endpoints.py
+│   │   │   ├── test_parsers.py
+│   │   │   ├── test_security.py
+│   │   │   └── test_validation.py
+│   │   ├── views
+│   │   │   ├── idp_document_views.xml
+│   │   │   ├── idp_extraction_views.xml
+│   │   │   ├── idp_menus.xml
+│   │   │   ├── idp_model_version_views.xml
+│   │   │   ├── idp_review_views.xml
+│   │   │   └── res_config_settings_views.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_ocr_expense
 │   │   ├── models
 │   │   │   ├── __init__.py
@@ -489,6 +541,11 @@
 │   ├── README.md
 │   └── docker-compose.yml
 ├── docs
+│   ├── architecture
+│   │   ├── ipai_idp_architecture.drawio
+│   │   ├── ipai_idp_build_deploy_custom_models.drawio
+│   │   ├── ipai_idp_multi_agent_workflow.drawio
+│   │   └── ipai_idp_pdf_processing.drawio
 │   ├── deployment
 │   │   ├── OCA_CI_GUARDIAN.md
 │   │   └── README.md
@@ -870,15 +927,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-220 directories, 645 files
+232 directories, 690 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 236 |
-| Files | 694 |
-| Python files | 166 |
-| XML files | 93 |
-| Markdown files | 172 |
+| Directories | 248 |
+| Files | 746 |
+| Python files | 200 |
+| XML files | 102 |
+| Markdown files | 173 |

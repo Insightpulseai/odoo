@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 34b7de0aa8827cd7f778b2eee0a1d12bda97b550
+> Commit: 5bae9d2e3fa2440765068418f26d6350f212ba34
 
 ## 📚 Documentation
 
@@ -64,6 +64,7 @@
 | [Finance Controller Dashboard - Implementation Summary](addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | addons/ipai_finance_controller_dashboard |
 | [IPAI Finance PPM](addons/ipai_finance_ppm/README.md) | addons/ipai_finance_ppm |
 | [Finance PPM Transaction Data Ingestion (TDI)](addons/ipai_finance_ppm_tdi/README.md) | addons/ipai_finance_ppm_tdi |
+| [IPAI Intelligent Document Processing (IDP)](addons/ipai_idp/README.md) | addons/ipai_idp |
 | [IPAI Expense OCR (CE)](addons/ipai_ocr_expense/README.md) | addons/ipai_ocr_expense |
 | [IPAI Portal Fix - Deployment Verification Report](addons/ipai_portal_fix/DEPLOYMENT_VERIFICATION.md) | addons/ipai_portal_fix |
 | [IPAI Portal Fix - Website-Free Support](addons/ipai_portal_fix/README.md) | addons/ipai_portal_fix |
@@ -197,6 +198,7 @@
 | [ipai_finance_ppm](./addons/ipai_finance_ppm) | ✅ |  |
 | [ipai_finance_ppm_dashboard](./addons/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_finance_ppm_tdi](./addons/ipai_finance_ppm_tdi) | ✅ |  |
+| [ipai_idp](./addons/ipai_idp) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ |  |
