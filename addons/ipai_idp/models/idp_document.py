@@ -35,6 +35,21 @@ class IdpDocument(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "create_date desc"
 
+    # Company and user fields for multi-tenant isolation
+    company_id = fields.Many2one(
+        "res.company",
+        string="Company",
+        required=True,
+        default=lambda self: self.env.company,
+        index=True,
+    )
+    user_id = fields.Many2one(
+        "res.users",
+        string="Created By",
+        default=lambda self: self.env.user,
+        index=True,
+    )
+
     # Core fields
     name = fields.Char(
         string="Document Name",
@@ -205,13 +220,62 @@ class IdpDocument(models.Model):
         Trigger document processing.
 
         Runs the full IDP pipeline: OCR -> Classify -> Extract -> Validate.
+        Uses async processing via queue_job if enabled.
         """
+        params = self.env["ir.config_parameter"].sudo()
+        async_enabled = params.get_param("ipai_idp.async_processing", "False") == "True"
+
         for record in self:
             if record.status not in ("queued", "error"):
                 raise UserError(
                     _("Document must be in 'Queued' or 'Error' status to process.")
                 )
-            record._run_idp_pipeline()
+
+            if async_enabled:
+                record.action_queue_processing()
+            else:
+                record._run_idp_pipeline()
+
+    def action_queue_processing(self):
+        """
+        Queue document for async processing via queue_job.
+
+        If queue_job is not installed, falls back to synchronous processing.
+        """
+        for record in self:
+            try:
+                # Try to use queue_job if available
+                record.with_delay(
+                    description=f"IDP: Process {record.name}",
+                    channel="root.idp",
+                )._job_process_document()
+                _logger.info("Document %s queued for async processing", record.id)
+            except AttributeError:
+                # queue_job not installed, fallback to sync
+                _logger.warning(
+                    "queue_job not available, processing document %s synchronously",
+                    record.id,
+                )
+                record._run_idp_pipeline()
+
+    def _job_process_document(self):
+        """
+        Job method for async document processing.
+
+        Called by queue_job worker. Handles full pipeline with proper
+        error handling and state management.
+        """
+        self.ensure_one()
+        _logger.info("Starting async processing for document %s", self.id)
+
+        try:
+            self._run_idp_pipeline()
+            _logger.info("Async processing completed for document %s", self.id)
+        except Exception as e:
+            _logger.exception("Async processing failed for document %s", self.id)
+            # Error state is set in _run_idp_pipeline
+            # Re-raise for queue_job retry logic
+            raise
 
     def action_reprocess(self):
         """Reset and reprocess the document."""
@@ -269,6 +333,15 @@ class IdpDocument(models.Model):
         self.ensure_one()
         self.write({"status": "processing"})
 
+        # Get configuration
+        params = self.env["ir.config_parameter"].sudo()
+        auto_approve_enabled = (
+            params.get_param("ipai_idp.auto_approve_enabled", "True") == "True"
+        )
+        auto_approve_threshold = float(
+            params.get_param("ipai_idp.auto_approve_confidence", "0.90")
+        )
+
         try:
             # Step 1: OCR
             ocr_service = self.env["idp.service.ocr"]
@@ -293,18 +366,38 @@ class IdpDocument(models.Model):
             if validation_result.get("status") == "pass":
                 self.write({"status": "validated"})
 
-                # Step 5: Auto-approve or review
-                if extraction.confidence >= 0.90:
+                # Step 5: Auto-approve or route to review
+                if (
+                    auto_approve_enabled
+                    and extraction.confidence >= auto_approve_threshold
+                ):
                     self.write(
                         {
                             "status": "approved",
                             "processed_at": fields.Datetime.now(),
                         }
                     )
+                    _logger.info(
+                        "Document %s auto-approved (confidence: %.2f >= %.2f)",
+                        self.id,
+                        extraction.confidence,
+                        auto_approve_threshold,
+                    )
                 else:
                     self.write({"status": "review_needed"})
+                    _logger.info(
+                        "Document %s needs review (confidence: %.2f < %.2f)",
+                        self.id,
+                        extraction.confidence,
+                        auto_approve_threshold,
+                    )
             else:
                 self.write({"status": "review_needed"})
+                _logger.info(
+                    "Document %s needs review (validation: %s)",
+                    self.id,
+                    validation_result.get("status"),
+                )
 
         except Exception as e:
             _logger.exception("IDP pipeline error for document %s", self.id)
