@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5bae9d2e3fa2440765068418f26d6350f212ba34
+> Commit: e294de47b9be6aa08babd277d72eaefa7aee0e7e
 
 ## 📚 Documentation
 
@@ -81,6 +81,9 @@
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
+| [Database Target Architecture](db/DB_TARGET_ARCHITECTURE.md) | db |
+| [RLS Roles and Permissions](db/rls/RLS_ROLES.md) | db/rls |
+| [Database Seeding Strategy](db/seeds/SEEDING_STRATEGY.md) | db/seeds |
 | [Deployment Guide](deploy/README.md) | deploy |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
 | [Odoo 18 CE Docker Development Environment](dev-docker/README.md) | dev-docker |
@@ -130,7 +133,7 @@
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
 | [Quick Reference: SSO & Permissions Setup](docs/QUICK_REFERENCE_SSO_SETUP.md) | docs |
-| [✅ Odoo CE v0.9.1 - Audit Complete & Fixes Applied](docs/README.md) | docs |
+| [InsightPulseAI Documentation](docs/README.md) | docs |
 | [MCP Stack – Odoo + n8n + Mattermost + Superset + DO Agents](docs/README_MCP_STACK.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
 | [Secrets Naming and Storage - Canonical Reference](docs/SECRETS_NAMING_AND_STORAGE.md) | docs |
@@ -139,6 +142,8 @@
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
+| [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
+| [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Odoo CE/OCA CI Guardian](docs/deployment/OCA_CI_GUARDIAN.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
@@ -158,6 +163,7 @@
 | [InsightPulse OCR Adapter - Production Deployment Guide](ocr-adapter/DEPLOYMENT.md) | ocr-adapter |
 | [InsightPulse OCR Adapter for Odoo](ocr-adapter/README.md) | ocr-adapter |
 | [Receipt OCR Test Harness](ocr-adapter/scripts/README.md) | ocr-adapter/scripts |
+| [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Scripts Directory](scripts/README.md) | scripts |

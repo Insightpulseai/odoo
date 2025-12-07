@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5bae9d2e3fa2440765068418f26d6350f212ba34
+> Commit: e294de47b9be6aa08babd277d72eaefa7aee0e7e
 
 ```
 .
@@ -484,6 +484,17 @@
 │   ├── notion_tasks_deduplicated.json
 │   ├── notion_tasks_parsed.json
 │   └── notion_tasks_with_logframe.json
+├── db
+│   ├── migrations
+│   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
+│   │   ├── 202512070002_REORG_COPY_DATA.sql
+│   │   └── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
+│   ├── rls
+│   │   ├── RLS_BASE_TEMPLATE.sql
+│   │   └── RLS_ROLES.md
+│   ├── seeds
+│   │   └── SEEDING_STRATEGY.md
+│   └── DB_TARGET_ARCHITECTURE.md
 ├── deploy
 │   ├── k8s
 │   │   ├── namespace.yaml
@@ -542,6 +553,8 @@
 │   └── docker-compose.yml
 ├── docs
 │   ├── architecture
+│   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
+│   │   ├── README.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
@@ -624,6 +637,15 @@
 │   ├── web
 │   │   └── docs-widget.js
 │   └── DEPLOYMENT_GUIDE.md
+├── engines
+│   ├── _template
+│   │   └── engine.yaml
+│   ├── doc-ocr
+│   │   └── engine.yaml
+│   ├── retail-intel
+│   │   └── engine.yaml
+│   └── te-cheq
+│       └── engine.yaml
 ├── external-src
 │   ├── account-closing
 │   ├── account-financial-reporting
@@ -726,6 +748,7 @@
 │   ├── requirements.txt
 │   └── test-ocr.sh
 ├── odoo
+│   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
 ├── scripts
 │   ├── ci
@@ -811,6 +834,12 @@
 │   └── regression
 │       ├── __init__.py
 │       └── test_finance_ppm_install.py
+├── tools
+│   ├── seed_all.ts
+│   ├── seed_doc_ocr.ts
+│   ├── seed_ppm.ts
+│   ├── seed_retail_intel.ts
+│   └── seed_te_cheq.ts
 ├── workflows
 │   ├── finance_ppm
 │   │   ├── DEPLOYMENT.md
@@ -927,15 +956,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-232 directories, 690 files
+242 directories, 709 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 248 |
-| Files | 746 |
+| Directories | 258 |
+| Files | 765 |
 | Python files | 200 |
 | XML files | 102 |
-| Markdown files | 173 |
+| Markdown files | 179 |
