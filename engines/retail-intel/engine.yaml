@@ -1,0 +1,216 @@
+engine:
+  slug: retail-intel
+  name: Retail Intelligence Engine (SariCoach/Scout)
+  version: 0.9.0
+  owner_team: retail-analytics
+  status: active
+  domain: retail
+  description: >
+    Powers sari-sari and small-format retail analytics, demand forecasts,
+    and coaching recommendations. Combines transactions, product catalog,
+    store metadata, and external indices like weather and payout days.
+
+  tags:
+    - sari-sari
+    - scout
+    - analytics
+    - coaching
+
+data:
+  primary_db: supabase
+  schemas:
+    - schema_name: analytics
+      role: fact
+    - schema_name: dim
+      role: dimension
+    - schema_name: intel
+      role: external_indices
+  tables:
+    - name: analytics.sales_daily
+      role: fact
+      description: One row per store/date/brand or store/date/sku (depending on grain).
+      primary_key: [id]
+      natural_keys: [tenant_id, store_id, date, brand_id]
+      partition_by: day
+      retention: null
+    - name: dim.stores
+      role: dimension
+      description: Store master (geo, tenancy, attributes).
+      primary_key: [id]
+      natural_keys: [tenant_id, external_store_code]
+      partition_by: null
+      retention: null
+    - name: dim.products
+      role: dimension
+      description: Product/SKU master linked to brands and categories.
+      primary_key: [id]
+      natural_keys: [tenant_id, sku_code]
+      partition_by: null
+      retention: null
+    - name: dim.brands
+      role: dimension
+      description: Brand master, including sponsoring brands for pilots.
+      primary_key: [id]
+      natural_keys: [tenant_id, brand_code]
+      partition_by: null
+      retention: null
+    - name: intel.external_indices_daily
+      role: fact
+      description: External signals (weather, holidays, payout days, footfall proxies) aggregated by region/day.
+      primary_key: [id]
+      natural_keys: [tenant_id, agg_level, agg_key, date, index_name]
+      partition_by: day
+      retention: 730d
+  indexes:
+    - table: analytics.sales_daily
+      type: btree
+      columns: [tenant_id, store_id, date]
+      where: null
+      usage: >
+        Primary query path for time-series charts and coaching context.
+    - table: analytics.sales_daily
+      type: btree
+      columns: [tenant_id, brand_id, date]
+      where: null
+      usage: >
+        Brand-centric analysis for sponsors.
+    - table: dim.stores
+      type: btree
+      columns: [tenant_id, region, city, barangay]
+      where: null
+      usage: >
+        Geo drill-downs and stratified sampling for RCTs.
+    - table: intel.external_indices_daily
+      type: btree
+      columns: [tenant_id, agg_level, agg_key, date, index_name]
+      where: null
+      usage: >
+        Efficient join with sales_daily for demand modeling.
+    - table: analytics.sales_daily
+      type: hash
+      columns: [store_id]
+      where: null
+      usage: >
+        Fast key-value style lookups when PlannerAgent needs per-store snapshots.
+
+interfaces:
+  api:
+    http:
+      - name: get-store-kpis
+        method: GET
+        path: /api/retail-intel/stores/{store_id}/kpis
+        supabase_function: retail_get_store_kpis
+        auth: bearer_jwt
+        rate_limit_rpm: 120
+      - name: get-store-feature-frame
+        method: GET
+        path: /api/retail-intel/stores/{store_id}/feature-frame
+        supabase_function: retail_get_feature_frame
+        auth: service_role
+        rate_limit_rpm: 300
+    events:
+      - name: retail_intel.store_session_started
+        direction: out
+        payload_contract: schemas/events/retail.store_session_started.json
+      - name: retail_intel.recommendation_accepted
+        direction: out
+        payload_contract: schemas/events/retail.recommendation_accepted.json
+  mcp_tools:
+    - name: retail_fetch_feature_frame
+      description: >
+        Planner/DataAnalyst agents call this to get a unified feature frame
+        per store including sales, stock, external indices, and campaign flags.
+      input_contract: schemas/tools/retail_fetch_feature_frame.input.json
+      output_contract: schemas/tools/retail_fetch_feature_frame.output.json
+    - name: retail_log_recommendation_outcome
+      description: >
+        CoachAgent records whether a recommendation was accepted and outcome metrics.
+      input_contract: schemas/tools/retail_log_recommendation_outcome.input.json
+      output_contract: schemas/tools/retail_log_recommendation_outcome.output.json
+
+agents:
+  primary_agent:
+    id: sari-coach
+    description: >
+      Micro-retail coach that turns store KPIs + external signals into
+      3–7 prioritized actions.
+    model: gemini-1.5-flash
+    tools:
+      - retail_fetch_feature_frame
+      - retail_log_recommendation_outcome
+  supporting_agents:
+    - id: retail-planner
+      role: turn_goal_into_data_tasks
+    - id: retail-data-analyst
+      role: build_feature_frames
+    - id: retail-experiment-analyst
+      role: analyze_rct_results
+
+memory:
+  short_term:
+    description: >
+      Current store session context: last 30 days KPIs, last 10 recommendations,
+      current question thread.
+    sources:
+      - feature_frame_snapshot
+      - recent_recommendations
+  long_term:
+    vector:
+      collections:
+        - retail_playbook
+        - brand_guidelines
+    sql:
+      tables:
+        - analytics.sales_daily
+        - intel.external_indices_daily
+        - dim.stores
+        - dim.products
+  stored:
+    logs_table: logs.retail_agent_actions
+    retention: 730d
+
+security:
+  tenants:
+    model: row_level_security
+    tenant_key: tenant_id
+  roles:
+    - name: sari_store_owner
+      permissions:
+        - read_own_tenant
+        - view_store_kpis
+    - name: brand_sponsor
+      permissions:
+        - read_sponsored_brand_aggregates
+    - name: retail_admin
+      permissions:
+        - read_all
+        - manage_stores
+  rls_policies_doc: docs/rls/retail-intel.md
+
+observability:
+  dashboards:
+    - name: Retail Engine Health
+      type: superset
+      path: dashboards/retail-intel-health.json
+  logs:
+    sink: supabase
+    table: logs.retail_engine_events
+  alerts:
+    - name: retail-feature-frame-latency
+      channel: mattermost
+      rule_ref: alerts/retail-feature-frame-latency.yml
+    - name: retail-missing-external-indices
+      channel: mattermost
+      rule_ref: alerts/retail-missing-indices.yml
+
+rollout:
+  environments:
+    - name: dev
+      supabase_project: dev-retail
+    - name: prod
+      supabase_project: spdtwktxdalcfigzeqrz
+  feature_flags:
+    - name: retail_enable_handwritten_receipt_ingest
+      service: supabase
+    - name: retail_enable_brand_sponsor_views
+      service: supabase

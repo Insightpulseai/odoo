@@ -1,0 +1,129 @@
+# path: engines/_template/engine.yaml
+engine:
+  slug: your-engine-slug
+  name: Human Friendly Engine Name
+  version: 0.1.0
+  owner_team: platform
+  status: draft # draft | active | deprecated
+  domain: ""    # finance | retail | infra | research | shared
+  description: >
+    One-paragraph description of what this engine does, who it serves,
+    and the main source-of-truth systems it touches.
+
+  tags:
+    - shared
+    - ai-agent
+    - supabase
+
+data:
+  primary_db: supabase
+  schemas:
+    - schema_name: ""
+      role: "" # e.g. fact, dimension, config, log
+  tables:
+    - name: schema.table_name
+      role: fact            # fact | dimension | config | log | junction
+      description: >
+        What rows in this table represent.
+      primary_key: [id]
+      natural_keys: []      # optional business keys
+      partition_by: null    # or: day, month, tenant_id
+      retention: null       # e.g. 365d for logs
+  indexes:
+    - table: schema.table_name
+      type: btree           # btree | hash | bitmap | gin | gist
+      columns: [col1, col2]
+      where: null           # optional partial index predicate
+      usage: >
+        Why this index exists (e.g. dashboard filter, agent query pattern).
+
+interfaces:
+  api:
+    http:
+      - name: list-things
+        method: GET
+        path: /api/engine-slug/things
+        supabase_function: null      # if fronted by function
+        auth: bearer_jwt             # or: anon, service_role, api_key
+        rate_limit_rpm: 60
+    events:
+      - name: engine_slug.event_name
+        direction: out               # in | out
+        payload_contract: json-schema-ref-or-doc-link
+  mcp_tools:
+    - name: engine_slug_tool_name
+      description: >
+        How agents should use this.
+      input_contract: json-schema-ref-or-doc-link
+      output_contract: json-schema-ref-or-doc-link
+
+agents:
+  primary_agent:
+    id: engine-slug-main
+    description: >
+      Main agent persona and responsibilities.
+    model: claude-3.5-sonnet
+    tools:
+      - engine_slug_tool_name
+      - supabase-sql
+      - file_search
+  supporting_agents:
+    - id: engine-slug-evaluator
+      role: evaluation
+    - id: engine-slug-migrator
+      role: data-migrations
+
+memory:
+  short_term:
+    description: >
+      What stays in the context window (per conversation / request).
+    sources:
+      - recent_events
+      - last_query_result
+  long_term:
+    vector:
+      collections: [] # e.g. [retail_prompts, engine_playbook]
+    sql:
+      tables:
+        - schema.table_name
+  stored:
+    logs_table: schema.engine_logs
+    retention: 365d
+
+security:
+  tenants:
+    model: row_level_security   # or: logical_db_per_tenant
+    tenant_key: tenant_id
+  roles:
+    - name: engine_admin
+      permissions:
+        - read_all
+        - write_all
+    - name: engine_user
+      permissions:
+        - read_own_tenant
+        - invoke_public_tools
+  rls_policies_doc: docs/rls/engine-slug.md
+
+observability:
+  dashboards:
+    - name: Engine Health
+      type: superset
+      path: dashboards/engine-slug-health.json
+  logs:
+    sink: supabase
+    table: logs.engine_slug_events
+  alerts:
+    - name: p95-latency-high
+      channel: mattermost
+      rule_ref: alerts/engine-slug-p95-latency.yml
+
+rollout:
+  environments:
+    - name: dev
+      supabase_project: dev-...
+    - name: prod
+      supabase_project: spdtwktxdalcfigzeqrz
+  feature_flags:
+    - name: engine_slug_enable_new_model
+      service: supabase
