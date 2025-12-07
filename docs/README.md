@@ -1,3 +1,25 @@
+# InsightPulseAI Documentation
+
+## Architecture & Platform
+
+| Document | Description |
+|----------|-------------|
+| **[Technical Architecture](architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md)** | Master platform architecture specification |
+| [DB Target Architecture](../db/DB_TARGET_ARCHITECTURE.md) | Database schema ownership and migration plan |
+| [RLS Roles & Permissions](../db/rls/RLS_ROLES.md) | Security role definitions |
+| [Odoo Integration Map](../odoo/ODOO_INTEGRATION_MAP.md) | Odoo 18 CE sync mappings |
+| [Engine Specs](../engines/) | YAML specifications for each engine |
+
+## Engine Registry
+
+| Engine | Domain | Status | Spec |
+|--------|--------|--------|------|
+| TE-Cheq | Travel & Expense | Active | [engine.yaml](../engines/te-cheq/engine.yaml) |
+| Retail-Intel | Retail Analytics | Active | [engine.yaml](../engines/retail-intel/engine.yaml) |
+| Doc-OCR | Document Processing | Active | [engine.yaml](../engines/doc-ocr/engine.yaml) |
+
+---
+
 # ✅ Odoo CE v0.9.1 - Audit Complete & Fixes Applied
 
 **Date:** 2025-11-25
