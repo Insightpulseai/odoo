@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 40732d7d2c41554ea1b31af01e787d57ad53b983
+> Commit: 39fb8f45dacdf8653bef49f25f03aa2ad0b6e8e9
 
 ## 📚 Documentation
 
@@ -155,6 +155,15 @@
 | [Odoo CE/OCA CI Guardian](docs/deployment/OCA_CI_GUARDIAN.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
+| [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md) | docs/odoo-18-handbook |
+| [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/README.md) | docs/odoo-18-handbook |
+| [Finance & Accounting Overview – InsightPulseAI Edition](docs/odoo-18-handbook/pages/01-finance-accounting.md) | docs/odoo-18-handbook/pages |
+| [Projects & Portfolio Management – InsightPulseAI Edition](docs/odoo-18-handbook/pages/02-projects-ppm.md) | docs/odoo-18-handbook/pages |
+| [Retail & Scout Integration – InsightPulseAI Edition](docs/odoo-18-handbook/pages/03-retail-scout-integration.md) | docs/odoo-18-handbook/pages |
+| [Constitution – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/constitution.md) | docs/odoo-18-handbook/spec |
+| [Plan – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/plan.md) | docs/odoo-18-handbook/spec |
+| [PRD – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/prd.md) | docs/odoo-18-handbook/spec |
+| [Tasks – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/tasks.md) | docs/odoo-18-handbook/spec |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |

@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 40732d7d2c41554ea1b31af01e787d57ad53b983
+> Commit: 39fb8f45dacdf8653bef49f25f03aa2ad0b6e8e9
 
 ```
 .
@@ -575,6 +575,18 @@
 │   │   └── architecture
 │   │       ├── README.md
 │   │       └── manifest.json
+│   ├── odoo-18-handbook
+│   │   ├── pages
+│   │   │   ├── 01-finance-accounting.md
+│   │   │   ├── 02-projects-ppm.md
+│   │   │   └── 03-retail-scout-integration.md
+│   │   ├── spec
+│   │   │   ├── constitution.md
+│   │   │   ├── plan.md
+│   │   │   ├── prd.md
+│   │   │   └── tasks.md
+│   │   ├── ODOO_18_CE_OCA_HANDBOOK.md
+│   │   └── README.md
 │   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
@@ -994,15 +1006,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-248 directories, 741 files
+251 directories, 750 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 264 |
-| Files | 797 |
+| Directories | 267 |
+| Files | 806 |
 | Python files | 200 |
 | XML files | 102 |
-| Markdown files | 187 |
+| Markdown files | 196 |
