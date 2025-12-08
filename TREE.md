@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e294de47b9be6aa08babd277d72eaefa7aee0e7e
+> Commit: 40732d7d2c41554ea1b31af01e787d57ad53b983
 
 ```
 .
@@ -559,6 +559,15 @@
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
 │   │   └── ipai_idp_pdf_processing.drawio
+│   ├── db
+│   │   ├── DB_CONVENTIONS_AND_NAMING.md
+│   │   ├── DB_CURRENT_INVENTORY.md
+│   │   ├── DB_DOMAIN_TABLE_SPECS.md
+│   │   ├── DB_ODOO_MAPPING.md
+│   │   ├── DB_REORG_MIGRATION_PLAN.md
+│   │   ├── DB_RLS_POLICY_TEMPLATES.md
+│   │   ├── DB_TABLE_CLASSIFICATION_DRAFT.md
+│   │   └── DB_TARGET_ARCHITECTURE.md
 │   ├── deployment
 │   │   ├── OCA_CI_GUARDIAN.md
 │   │   └── README.md
@@ -823,8 +832,37 @@
 ├── supabase
 │   ├── migrations
 │   │   ├── 20251123_saas_feature_matrix.sql
-│   │   └── 20251128_semantic_query_layer.sql
+│   │   ├── 20251128_semantic_query_layer.sql
+│   │   ├── 202512071100_1000_CORE_SCHEMAS_AND_TENANCY.sql
+│   │   ├── 202512071110_2000_ERP_FINANCE_EXPENSE_INVENTORY.sql
+│   │   ├── 202512071120_2001_ERP_PROJECTS_RATES_PPM.sql
+│   │   ├── 202512071130_3000_ENGINE_TE_CHEQ.sql
+│   │   ├── 202512071140_3001_ENGINE_RETAIL_INTEL_SCOUT.sql
+│   │   ├── 202512071150_3002_ENGINE_DOC_OCR.sql
+│   │   ├── 202512071160_3003_ENGINE_PPM_FIRM.sql
+│   │   ├── 202512071170_4000_AI_RAG_AND_AGENTS.sql
+│   │   ├── 202512071180_5000_ANALYTICS_GOLD_PLATINUM_VIEWS.sql
+│   │   ├── 202512071190_6000_SAAS_BILLING_SUBSCRIPTIONS.sql
+│   │   ├── 202512071200_7000_ODOO_CE_OCA_SYNC_META.sql
+│   │   ├── 202512071210_8000_RLS_POLICIES_AND_GRANTS.sql
+│   │   └── 202512071220_9000_SEEDS_REFERENCE_AND_DEMO_DATA.sql
 │   └── seed
+│       ├── 9000_core
+│       │   └── 9000_core_tenants_roles_users.sql
+│       ├── 9001_erp
+│       │   ├── 9001_erp_finance_bir_templates.sql
+│       │   └── 9001_erp_projects_rates_demo.sql
+│       ├── 9002_engines
+│       │   ├── 9002_engines_doc_ocr_sample_docs.sql
+│       │   ├── 9002_engines_ppm_demo.sql
+│       │   ├── 9002_engines_retail_intel_ph.sql
+│       │   └── 9002_engines_te_cheq_demo_flows.sql
+│       ├── 9003_ai_rag
+│       │   ├── 9003_ai_rag_agent_registry_seed.sql
+│       │   └── 9003_ai_rag_marketing_canvas_docs.sql
+│       ├── 9004_analytics
+│       │   ├── 9004_analytics_kpi_registry_seed.sql
+│       │   └── 9004_analytics_superset_dashboard_seed.sql
 │       └── 001_saas_feature_seed.sql
 ├── tests
 │   ├── load
@@ -956,15 +994,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-242 directories, 709 files
+248 directories, 741 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 258 |
-| Files | 765 |
+| Directories | 264 |
+| Files | 797 |
 | Python files | 200 |
 | XML files | 102 |
-| Markdown files | 179 |
+| Markdown files | 187 |

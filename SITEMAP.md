@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e294de47b9be6aa08babd277d72eaefa7aee0e7e
+> Commit: 40732d7d2c41554ea1b31af01e787d57ad53b983
 
 ## 📚 Documentation
 
@@ -144,6 +144,14 @@
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
+| [InsightPulse Supabase DB – Conventions & House Style](docs/db/DB_CONVENTIONS_AND_NAMING.md) | docs/db |
+| [DB Current Inventory (Summary)](docs/db/DB_CURRENT_INVENTORY.md) | docs/db |
+| [Domain Table Specs (Conceptual)](docs/db/DB_DOMAIN_TABLE_SPECS.md) | docs/db |
+| [Odoo → Supabase Schema Mapping](docs/db/DB_ODOO_MAPPING.md) | docs/db |
+| [DB Reorg Migration Plan](docs/db/DB_REORG_MIGRATION_PLAN.md) | docs/db |
+| [RLS Policy Templates](docs/db/DB_RLS_POLICY_TEMPLATES.md) | docs/db |
+| [DB Table Classification (Draft)](docs/db/DB_TABLE_CLASSIFICATION_DRAFT.md) | docs/db |
+| [DB Target Architecture — Odoo 18 EE/CE + OCA-equivalent on Supabase Postgres](docs/db/DB_TARGET_ARCHITECTURE.md) | docs/db |
 | [Odoo CE/OCA CI Guardian](docs/deployment/OCA_CI_GUARDIAN.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
