@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 39fb8f45dacdf8653bef49f25f03aa2ad0b6e8e9
+> Commit: c67a330ce7e31a732feeb492a011dbda785de52f
 
 ```
 .
@@ -642,6 +642,7 @@
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TESTING_ODOO_18.md
 │   ├── WBS_LOGFRAME_MAPPING.md
+│   ├── branch-cleanup-analysis.md
 │   └── v0.9.1_DEPLOYMENT_GUIDE.md
 ├── docs-assistant
 │   ├── api
@@ -786,6 +787,7 @@
 │   ├── build_v0.10.0.sh
 │   ├── build_v0.9.1.sh
 │   ├── check_project_tasks.py
+│   ├── cleanup-branches.sh
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
 │   ├── deploy-odoo-modules.sh
@@ -1006,7 +1008,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-251 directories, 750 files
+251 directories, 752 files
 ```
 
 ## 📊 Stats
@@ -1014,7 +1016,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 267 |
-| Files | 806 |
+| Files | 808 |
 | Python files | 200 |
 | XML files | 102 |
-| Markdown files | 196 |
+| Markdown files | 197 |

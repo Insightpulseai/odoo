@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 39fb8f45dacdf8653bef49f25f03aa2ad0b6e8e9
+> Commit: c67a330ce7e31a732feeb492a011dbda785de52f
 
 ## 📚 Documentation
 
@@ -144,6 +144,7 @@
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
+| [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
 | [InsightPulse Supabase DB – Conventions & House Style](docs/db/DB_CONVENTIONS_AND_NAMING.md) | docs/db |
 | [DB Current Inventory (Summary)](docs/db/DB_CURRENT_INVENTORY.md) | docs/db |
 | [Domain Table Specs (Conceptual)](docs/db/DB_DOMAIN_TABLE_SPECS.md) | docs/db |
