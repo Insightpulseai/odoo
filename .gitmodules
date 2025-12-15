@@ -54,3 +54,7 @@
 	path = external-src/server-tools
 	url = https://github.com/OCA/server-tools.git
 	branch = 18.0
+[submodule "oca-addons/mis-builder"]
+	path = oca-addons/mis-builder
+	url = https://github.com/OCA/mis-builder.git
+	branch = 18.0
