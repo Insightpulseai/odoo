@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 811a04efc3fed277f8667b3f5c5ad57d2f517759
+> Commit: d88beaacdc750aa57340945c31d1319002314bc1
 
 ```
 .
@@ -853,6 +853,11 @@
 ├── skills
 │   ├── architecture_diagrams.skill.json
 │   └── superset_mcp.skill.json
+├── spec
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
 ├── specs
 │   ├── 003-ai-enrichment
 │   │   ├── DEPLOYMENT.md
@@ -1030,15 +1035,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-257 directories, 768 files
+258 directories, 772 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 273 |
-| Files | 824 |
+| Directories | 274 |
+| Files | 828 |
 | Python files | 204 |
 | XML files | 102 |
-| Markdown files | 200 |
+| Markdown files | 204 |
