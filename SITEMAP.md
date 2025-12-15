@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 811a04efc3fed277f8667b3f5c5ad57d2f517759
+> Commit: d88beaacdc750aa57340945c31d1319002314bc1
 
 ## 📚 Documentation
 
@@ -189,6 +189,10 @@
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
+| [Odoo EE → CE/OCA SaaS Platform – Constitution](spec/constitution.md) | spec |
+| [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
+| [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
+| [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
 | [InsightPulse ERP – Expense & Equipment MVP (SAP Concur + Cheqroom Parity)](specs/002-odoo-expense-equipment-mvp.prd.md) | specs |
 | [Spec 003: AI Enrichment Agent - Deployment Guide](specs/003-ai-enrichment/DEPLOYMENT.md) | specs/003-ai-enrichment |
 | [Spec 003: AI Enrichment Agent](specs/003-ai-enrichment/spec.md) | specs/003-ai-enrichment |
