@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c67a330ce7e31a732feeb492a011dbda785de52f
+> Commit: 811a04efc3fed277f8667b3f5c5ad57d2f517759
 
 ```
 .
@@ -121,6 +121,9 @@
 │   │   │   └── equipment.py
 │   │   ├── security
 │   │   │   └── ir.model.access.csv
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_equipment_lifecycle.py
 │   │   ├── views
 │   │   │   ├── ipai_equipment_menus.xml
 │   │   │   └── ipai_equipment_views.xml
@@ -136,6 +139,9 @@
 │   │   ├── security
 │   │   │   ├── ipai_expense_security.xml
 │   │   │   └── ir.model.access.csv
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_expense_validation.py
 │   │   ├── views
 │   │   │   ├── ipai_expense_menus.xml
 │   │   │   └── ipai_expense_views.xml
@@ -551,6 +557,18 @@
 │   ├── Dockerfile
 │   ├── README.md
 │   └── docker-compose.yml
+├── docker
+│   ├── nginx
+│   │   ├── ssl
+│   │   │   ├── .gitkeep
+│   │   │   └── README.md
+│   │   └── nginx.conf
+│   ├── Dockerfile.enterprise-parity
+│   ├── Dockerfile.v1.1.0-enterprise-parity
+│   ├── build-enterprise-parity.sh
+│   ├── docker-compose.enterprise-parity.yml
+│   ├── odoo-v1.1.0.conf
+│   └── requirements-enterprise-parity.txt
 ├── docs
 │   ├── architecture
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
@@ -613,6 +631,7 @@
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── IMPLEMENTATION_SUMMARY.md
+│   ├── INDUSTRY_PARITY_ANALYSIS.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
 │   ├── MATTERMOST_ALERTING_SETUP.md
@@ -624,6 +643,7 @@
 │   ├── OCA_MIGRATION.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
+│   ├── ODOO_18_EE_TO_CE_OCA_PARITY.md
 │   ├── ODOO_ARCHITECT_PERSONA.md
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
 │   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
@@ -745,6 +765,8 @@
 │   ├── DEPLOYMENT_SUMMARY.md
 │   ├── N8N_CLI_README.md
 │   └── WORKFLOW_CONVENTIONS.md
+├── oca
+│   └── .gitkeep
 ├── oca-addons
 │   ├── mis-builder
 │   ├── project
@@ -1008,15 +1030,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-251 directories, 752 files
+257 directories, 768 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 267 |
-| Files | 808 |
-| Python files | 200 |
+| Directories | 273 |
+| Files | 824 |
+| Python files | 204 |
 | XML files | 102 |
-| Markdown files | 197 |
+| Markdown files | 200 |
