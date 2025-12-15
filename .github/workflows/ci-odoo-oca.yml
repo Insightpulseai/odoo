@@ -53,14 +53,33 @@ jobs:
           echo "Scanning for Odoo Enterprise/IAP dependencies..."
 
           # Check for Enterprise imports in Python files
-          enterprise_imports=$(grep -Rn "from odoo\.addons\..*_enterprise" addons oca 2>/dev/null || true)
-          enterprise_imports="$enterprise_imports$(grep -Rn "import odoo\.addons\..*_enterprise" addons oca 2>/dev/null || true)"
+          enterprise_imports=""
+          if [ -d addons ]; then
+            enterprise_imports=$(grep -Rn "from odoo\.addons\..*_enterprise" addons 2>/dev/null || true)
+            enterprise_imports="$enterprise_imports$(grep -Rn "import odoo\.addons\..*_enterprise" addons 2>/dev/null || true)"
+          fi
+          if [ -d oca ]; then
+            enterprise_imports="$enterprise_imports$(grep -Rn "from odoo\.addons\..*_enterprise" oca 2>/dev/null || true)"
+            enterprise_imports="$enterprise_imports$(grep -Rn "import odoo\.addons\..*_enterprise" oca 2>/dev/null || true)"
+          fi
 
           # Check for Enterprise modules in manifest dependencies
-          enterprise_depends=$(grep -A5 '"depends"' addons/*/__manifest__.py oca/*/__manifest__.py 2>/dev/null | grep -i "enterprise\|web_studio\|documents\|iap" || true)
+          enterprise_depends=""
+          if [ -d addons ]; then
+            enterprise_depends=$(grep -A5 '"depends"' addons/*/__manifest__.py 2>/dev/null | grep -i "enterprise\|web_studio\|documents\|iap" || true)
+          fi
+          if [ -d oca ]; then
+            enterprise_depends="$enterprise_depends$(grep -A5 '"depends"' oca/*/__manifest__.py 2>/dev/null | grep -i "enterprise\|web_studio\|documents\|iap" || true)"
+          fi
 
           # Check for common Enterprise keywords
-          enterprise_keywords=$(grep -Rn --include="*.py" "web_studio\|documents_\|iap_" addons oca 2>/dev/null || true)
+          enterprise_keywords=""
+          if [ -d addons ]; then
+            enterprise_keywords=$(grep -Rn --include="*.py" "web_studio\|documents_\|iap_" addons 2>/dev/null || true)
+          fi
+          if [ -d oca ]; then
+            enterprise_keywords="$enterprise_keywords$(grep -Rn --include="*.py" "web_studio\|documents_\|iap_" oca 2>/dev/null || true)"
+          fi
 
           if [ -n "$enterprise_imports" ] || [ -n "$enterprise_depends" ] || [ -n "$enterprise_keywords" ]; then
             echo "::error::Possible Odoo Enterprise/IAP dependency detected."
@@ -81,7 +100,12 @@ jobs:
           set -e
           echo "Scanning for odoo.com URLs in code..."
 
-          odoo_urls=$(grep -Rn --include="*.py" --include="*.xml" 'href=.*odoo\.com\|url.*=.*odoo\.com\|https\?://.*\.odoo\.com' addons oca 2>/dev/null || true)
+          odoo_urls=""
+          for dir in addons oca; do
+            if [ -d "$dir" ]; then
+              odoo_urls="$odoo_urls$(grep -Rn --include="*.py" --include="*.xml" 'href=.*odoo\.com\|url.*=.*odoo\.com\|https\?://.*\.odoo\.com' "$dir" 2>/dev/null || true)"
+            fi
+          done
 
           if [ -n "$odoo_urls" ]; then
             echo "::warning::Found odoo.com URLs in code – consider replacing with InsightPulse/OCA links."
@@ -93,7 +117,11 @@ jobs:
       - name: Python syntax check
         run: |
           echo "Checking Python syntax..."
-          python -m compileall addons oca 2>/dev/null || echo "Some modules failed syntax check"
+          for dir in addons oca; do
+            if [ -d "$dir" ]; then
+              python -m compileall "$dir" 2>/dev/null || echo "Some modules in $dir failed syntax check"
+            fi
+          done
 
   tests:
     name: ${{ matrix.test-suite.name }}
@@ -182,15 +210,26 @@ jobs:
       - name: List addons
         run: |
           echo "Custom addons:"
-          ls -1 addons || true
+          if [ -d addons ]; then
+            ls -1 addons || true
+          else
+            echo "addons directory not found"
+          fi
           echo ""
           echo "OCA addons:"
-          ls -1 oca || true
+          if [ -d oca ]; then
+            ls -1 oca || true
+          else
+            echo "oca directory not found (using OCA submodules in external-src instead)"
+          fi
 
       - name: Run Odoo tests for custom modules
         run: |
           # Get list of installable modules from addons/
-          MODULES=$(find addons -name "__manifest__.py" -exec dirname {} \; | xargs -I {} basename {} | tr '\n' ',' | sed 's/,$//')
+          MODULES=""
+          if [ -d addons ]; then
+            MODULES=$(find addons -name "__manifest__.py" -exec dirname {} \; | xargs -I {} basename {} | tr '\n' ',' | sed 's/,$//')
+          fi
 
           if [ -z "$MODULES" ]; then
             echo "No modules found to test"
@@ -203,8 +242,22 @@ jobs:
           echo "Testing modules: $MODULES"
           echo "========================================="
 
+          # Build addons path dynamically
+          ADDONS_PATH="/tmp/odoo/addons,addons"
+          if [ -d oca ]; then
+            ADDONS_PATH="$ADDONS_PATH,oca"
+          fi
+          if [ -d external-src ]; then
+            # Add OCA submodule paths
+            for subdir in external-src/*/; do
+              if [ -d "$subdir" ]; then
+                ADDONS_PATH="$ADDONS_PATH,$subdir"
+              fi
+            done
+          fi
+
           # Prepare test command
-          TEST_CMD="python /tmp/odoo/odoo-bin -d $DB_NAME -i $MODULES --stop-after-init --log-level=test --test-enable --addons-path=/tmp/odoo/addons,addons,oca"
+          TEST_CMD="python /tmp/odoo/odoo-bin -d $DB_NAME -i $MODULES --stop-after-init --log-level=test --test-enable --addons-path=$ADDONS_PATH"
 
           # Add test tags if specified
           if [ -n "${{ matrix.test-suite.tags }}" ]; then
@@ -220,7 +273,7 @@ jobs:
               --stop-after-init \
               --log-level=test \
               --test-enable \
-              --addons-path=/tmp/odoo/addons,addons,oca
+              --addons-path="$ADDONS_PATH"
 
             # Generate coverage report
             echo ""
@@ -334,11 +387,27 @@ jobs:
           echo "Performance Test: Module Installation"
           echo "========================================="
 
-          MODULES=$(find addons -name "__manifest__.py" -exec dirname {} \; | xargs -I {} basename {} | tr '\n' ',' | sed 's/,$//')
+          MODULES=""
+          if [ -d addons ]; then
+            MODULES=$(find addons -name "__manifest__.py" -exec dirname {} \; | xargs -I {} basename {} | tr '\n' ',' | sed 's/,$//')
+          fi
 
           if [ -z "$MODULES" ]; then
             echo "No modules found to test"
             exit 0
+          fi
+
+          # Build addons path dynamically
+          ADDONS_PATH="/tmp/odoo/addons,addons"
+          if [ -d oca ]; then
+            ADDONS_PATH="$ADDONS_PATH,oca"
+          fi
+          if [ -d external-src ]; then
+            for subdir in external-src/*/; do
+              if [ -d "$subdir" ]; then
+                ADDONS_PATH="$ADDONS_PATH,$subdir"
+              fi
+            done
           fi
 
           # Time the installation
@@ -349,7 +418,7 @@ jobs:
             -i "$MODULES" \
             --stop-after-init \
             --log-level=warn \
-            --addons-path=/tmp/odoo/addons,addons,oca
+            --addons-path="$ADDONS_PATH"
 
           END_TIME=$(date +%s)
           DURATION=$((END_TIME - START_TIME))
