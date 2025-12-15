@@ -1,0 +1,119 @@
+# =============================================================================
+# Odoo 18 CE + OCA Enterprise Parity - Python Requirements
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Core Odoo Dependencies (ensure latest compatible versions)
+# -----------------------------------------------------------------------------
+Babel>=2.9.1
+chardet>=4.0.0
+cryptography>=3.4.8
+decorator>=4.4.2
+docutils>=0.17
+ebaysdk>=2.1.5
+freezegun>=1.1.0
+gevent>=21.8.0
+greenlet>=1.1.2
+idna>=2.10
+Jinja2>=2.11.3
+libsass>=0.20.1
+lxml>=4.6.5
+MarkupSafe>=2.0.1
+num2words>=0.5.10
+ofxparse>=0.21
+passlib>=1.7.4
+Pillow>=9.0.0
+polib>=1.1.1
+psutil>=5.9.0
+psycopg2-binary>=2.9.3
+pydot>=1.4.2
+pyopenssl>=21.0.0
+PyPDF2>=1.26.0
+pyserial>=3.5
+python-dateutil>=2.8.1
+python-ldap>=3.4.0
+python-stdnum>=1.17
+pytz>=2021.3
+pyusb>=1.2.1
+qrcode>=7.3.1
+reportlab>=3.6.8
+requests>=2.25.1
+urllib3>=1.26.9
+vobject>=0.9.6.1
+Werkzeug>=2.0.2
+xlrd>=1.2.0
+XlsxWriter>=3.0.2
+xlwt>=1.3.0
+zeep>=4.1.0
+
+# -----------------------------------------------------------------------------
+# OCA Module Dependencies
+# -----------------------------------------------------------------------------
+# Reporting
+openpyxl>=3.0.9
+xlsxwriter>=3.0.2
+
+# Bank Statement Import
+ofxparse>=0.21
+mt940>=4.23.0
+
+# Financial Reporting
+openupgradelib>=3.3.0
+
+# MIS Builder
+pyparsing>=3.0.0
+
+# Document Management
+python-magic>=0.4.24
+
+# Commission Calculations
+numpy>=1.21.0
+
+# Helpdesk
+python-slugify>=5.0.2
+
+# Field Service
+geopy>=2.2.0
+
+# OCR / IDP (ipai_idp, ipai_ocr_expense)
+paddleocr>=2.6.0
+paddlepaddle>=2.4.0
+pdf2image>=1.16.0
+pytesseract>=0.3.10
+
+# API / Integration
+httpx>=0.23.0
+aiohttp>=3.8.0
+
+# Data Processing
+pandas>=1.4.0
+numpy>=1.21.0
+
+# QR Codes / Barcodes
+python-barcode>=0.14.0
+qrcode>=7.3.1
+
+# Charts (ipai_finance_controller_dashboard)
+echarts-python>=0.1.0
+
+# Scheduling (ipai_ppm_monthly_close)
+python-dateutil>=2.8.2
+workalendar>=16.0.0
+
+# Security
+PyJWT>=2.4.0
+cryptography>=38.0.0
+
+# Testing
+pytest>=7.0.0
+pytest-odoo>=0.7.0
+coverage>=6.0
+responses>=0.21.0
+requests-mock>=1.9.0
+
+# Development
+black>=22.0.0
+isort>=5.10.0
+flake8>=4.0.0
+pylint>=2.12.0
+pylint-odoo>=8.0.0
