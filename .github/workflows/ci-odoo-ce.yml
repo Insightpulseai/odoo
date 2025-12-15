@@ -19,9 +19,17 @@ jobs:
           echo "Scanning for Enterprise module dependencies in code..."
           # Look for actual Enterprise dependencies, not just the word "enterprise" in docs
           # Check for: import statements, module dependencies in __manifest__.py
-          matches=$(grep -Rn "from odoo\.addons\..*_enterprise" addons oca 2>/dev/null || true)
-          matches="$matches$(grep -Rn "import odoo\.addons\..*_enterprise" addons oca 2>/dev/null || true)"
-          matches="$matches$(grep -A5 '"depends"' addons/*/__manifest__.py oca/*/__manifest__.py 2>/dev/null | grep -i "enterprise" || true)"
+          matches=""
+          if [ -d addons ]; then
+            matches=$(grep -Rn "from odoo\.addons\..*_enterprise" addons 2>/dev/null || true)
+            matches="$matches$(grep -Rn "import odoo\.addons\..*_enterprise" addons 2>/dev/null || true)"
+            matches="$matches$(grep -A5 '"depends"' addons/*/__manifest__.py 2>/dev/null | grep -i "enterprise" || true)"
+          fi
+          if [ -d oca ]; then
+            matches="$matches$(grep -Rn "from odoo\.addons\..*_enterprise" oca 2>/dev/null || true)"
+            matches="$matches$(grep -Rn "import odoo\.addons\..*_enterprise" oca 2>/dev/null || true)"
+            matches="$matches$(grep -A5 '"depends"' oca/*/__manifest__.py 2>/dev/null | grep -i "enterprise" || true)"
+          fi
           if [ -n "$matches" ]; then
             echo "::error::Found Enterprise module dependencies in addons/ or oca/ – CE-only policy violated."
             echo "$matches"
@@ -35,10 +43,15 @@ jobs:
           echo "Scanning for odoo.com URLs in user-facing code..."
           # Look for actual URLs/links to odoo.com, not just mentions in documentation
           # Check for: href="", url=, window.open, etc.
-          matches=$(grep -Rn 'href=.*odoo\.com' addons oca deploy 2>/dev/null || true)
-          matches="$matches$(grep -Rn 'url.*=.*odoo\.com' addons oca deploy 2>/dev/null || true)"
-          matches="$matches$(grep -Rn 'window\.open.*odoo\.com' addons oca deploy 2>/dev/null || true)"
-          matches="$matches$(grep -Rn 'https\?://.*\.odoo\.com' addons oca deploy 2>/dev/null || true)"
+          matches=""
+          for dir in addons oca deploy; do
+            if [ -d "$dir" ]; then
+              matches="$matches$(grep -Rn 'href=.*odoo\.com' "$dir" 2>/dev/null || true)"
+              matches="$matches$(grep -Rn 'url.*=.*odoo\.com' "$dir" 2>/dev/null || true)"
+              matches="$matches$(grep -Rn 'window\.open.*odoo\.com' "$dir" 2>/dev/null || true)"
+              matches="$matches$(grep -Rn 'https\?://.*\.odoo\.com' "$dir" 2>/dev/null || true)"
+            fi
+          done
           if [ -n "$matches" ]; then
             echo "::error::Found odoo.com URLs in addons/ or oca/ – replace with InsightPulse/OCA links."
             echo "$matches"
