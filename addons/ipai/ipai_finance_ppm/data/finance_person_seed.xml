@@ -34,7 +34,7 @@
             <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_supervisor_bom"/>
         </record>
 
-        <!-- Financial Analyst (LAS) -->
+        <!-- Finance Staff (LAS) -->
         <record id="finance_person_las" model="ipai.finance.person">
             <field name="code">LAS</field>
             <field name="name">Amor Lasaga</field>
@@ -43,7 +43,7 @@
             <field name="user_id" ref="ipai_clarity_ppm_parity.user_financial_analyst_las"/>
         </record>
 
-        <!-- Finance Clerk (RMQB) -->
+        <!-- Finance Staff (RMQB) -->
         <record id="finance_person_rmqb" model="ipai.finance.person">
             <field name="code">RMQB</field>
             <field name="name">Sally Brillantes</field>
@@ -61,7 +61,7 @@
             <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_jm"/>
         </record>
 
-        <!-- GL Accountant (JAP) -->
+        <!-- Finance Staff (JAP) -->
         <record id="finance_person_jap" model="ipai.finance.person">
             <field name="code">JAP</field>
             <field name="name">Jinky Paladin</field>
@@ -70,7 +70,7 @@
             <field name="user_id" ref="ipai_clarity_ppm_parity.user_gl_accountant_jpal"/>
         </record>
 
-        <!-- AP/AR Specialist (JPAL) -->
+        <!-- Finance Staff (JPAL) -->
         <record id="finance_person_jpal" model="ipai.finance.person">
             <field name="code">JPAL</field>
             <field name="name">Jerald Loterte</field>
@@ -79,7 +79,7 @@
             <field name="user_id" ref="ipai_clarity_ppm_parity.user_apar_specialist_jpl"/>
         </record>
 
-        <!-- Tax Compliance Officer (JLI) -->
+        <!-- Finance Staff (JLI) -->
         <record id="finance_person_jli" model="ipai.finance.person">
             <field name="code">JLI</field>
             <field name="name">Jasmin Ignacio</field>
@@ -88,7 +88,7 @@
             <field name="user_id" ref="ipai_clarity_ppm_parity.user_tax_compliance_ji"/>
         </record>
 
-        <!-- Finance Assistant (JRMO) -->
+        <!-- Finance Staff (JRMO) -->
         <record id="finance_person_jrmo" model="ipai.finance.person">
             <field name="code">JRMO</field>
             <field name="name">Jhoee Oliva</field>
