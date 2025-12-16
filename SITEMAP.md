@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d88beaacdc750aa57340945c31d1319002314bc1
+> Commit: 07e3125909162d8d397607816c3ac81c3d8d959e
 
 ## 📚 Documentation
 
@@ -114,6 +114,7 @@
 | [Finance Stack Health Check System](docs/HEALTH_CHECK.md) | docs |
 | [Target Image Documentation](docs/IMAGE_GUIDE.md) | docs |
 | [Odoo CE v0.9.1 - Implementation Summary](docs/IMPLEMENTATION_SUMMARY.md) | docs |
+| [Odoo Industry Packs - OCA Dependencies Guide](docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md) | docs |
 | [Odoo CE/OCA 18 vs Enterprise Parity Analysis](docs/INDUSTRY_PARITY_ANALYSIS.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
@@ -216,6 +217,7 @@
 
 | Module | Status | Description |
 |--------|--------|-------------|
+| [ipai_accounting_firm_pack](./addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai_ce_cleaner) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai_clarity_ppm_parity) | ✅ |  |
@@ -230,7 +232,9 @@
 | [ipai_finance_ppm_dashboard](./addons/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_finance_ppm_tdi](./addons/ipai_finance_ppm_tdi) | ✅ |  |
 | [ipai_idp](./addons/ipai_idp) | ✅ |  |
+| [ipai_marketing_agency_pack](./addons/ipai_marketing_agency_pack) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai_ocr_expense) | ✅ |  |
+| [ipai_partner_pack](./addons/ipai_partner_pack) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
