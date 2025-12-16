@@ -312,7 +312,7 @@ class ProjectMilestone(models.Model):
             "type": "ir.actions.act_window",
             "name": f"Tasks for {self.name}",
             "res_model": "project.task",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("milestone_id", "=", self.id)],
             "context": {
                 "default_milestone_id": self.id,

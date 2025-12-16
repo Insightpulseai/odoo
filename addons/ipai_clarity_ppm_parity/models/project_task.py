@@ -216,7 +216,7 @@ class ProjectTask(models.Model):
             "type": "ir.actions.act_window",
             "name": "Task Dependencies",
             "res_model": "project.task.dependency",
-            "view_mode": "tree,form,graph",
+            "view_mode": "list,form,graph",
             "domain": ["|", ("task_id", "=", self.id), ("depend_on_id", "=", self.id)],
         }
 
