@@ -86,5 +86,31 @@
             <field name="groups_id" eval="[(6, 0, [ref('project.group_project_user'), ref('base.group_user')])]"/>
         </record>
 
+        <!-- Finance Staff (CSD) - Cliff Dejecacion -->
+        <record id="user_finance_staff_csd" model="res.users">
+            <field name="name">Cliff Dejecacion</field>
+            <field name="login">cliff.dejecacion@omc.com</field>
+            <field name="email">cliff.dejecacion@omc.com</field>
+            <field name="groups_id" eval="[(6, 0, [ref('project.group_project_user'), ref('base.group_user')])]"/>
+        </record>
+
+        <!-- ========================================== -->
+        <!-- OMC Code Mapping Reference -->
+        <!-- ========================================== -->
+        <!--
+        XML ID                           → OMC Code → Name
+        user_finance_director_ckvc       → CKVC     → Khalil Veracruz
+        user_senior_finance_manager_rim  → RIM      → Rey Meran
+        user_finance_supervisor_bom      → BOM      → Beng Manalo
+        user_financial_analyst_las       → LAS      → Amor Lasaga
+        user_finance_clerk_rmqb          → RMQB     → Sally Brillantes
+        user_finance_staff_jm            → JMSM     → Joana Maravillas
+        user_gl_accountant_jpal          → JAP      → Jinky Paladin
+        user_apar_specialist_jpl         → JPAL     → Jerald Loterte
+        user_tax_compliance_ji           → JLI      → Jasmin Ignacio
+        user_finance_assistant_jo        → JRMO     → Jhoee Oliva
+        user_finance_staff_csd           → CSD      → Cliff Dejecacion
+        -->
+
     </data>
 </odoo>

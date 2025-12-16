@@ -19,6 +19,7 @@
         "views/bir_schedule_views.xml",
         "views/ppm_dashboard_views.xml",
         "views/menus.xml",
+        "data/finance_person_seed.xml",
         "data/bir_schedule_seed.xml",
     ],
     "installable": True,
