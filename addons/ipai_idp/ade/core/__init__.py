@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 """ADE Core Components."""
-from .pipelines import PipelineRegistry
 from .orchestrator import ADEOrchestrator
+from .pipelines import PipelineRegistry
 from .tools import ADETools

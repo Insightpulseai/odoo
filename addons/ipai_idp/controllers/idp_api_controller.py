@@ -8,8 +8,9 @@ import base64
 import json
 import logging
 
-from odoo import http
 from odoo.http import request
+
+from odoo import http
 
 _logger = logging.getLogger(__name__)
 
@@ -149,9 +150,9 @@ class IdpApiController(http.Controller):
                         "status": doc.status,
                         "doc_type": doc.doc_type,
                         "source": doc.source,
-                        "create_date": doc.create_date.isoformat()
-                        if doc.create_date
-                        else None,
+                        "create_date": (
+                            doc.create_date.isoformat() if doc.create_date else None
+                        ),
                     }
                 )
 
@@ -186,12 +187,16 @@ class IdpApiController(http.Controller):
             file_content = base64.b64decode(file_base64)
 
             # Create attachment
-            attachment = request.env["ir.attachment"].sudo().create(
-                {
-                    "name": filename,
-                    "datas": file_base64,
-                    "type": "binary",
-                }
+            attachment = (
+                request.env["ir.attachment"]
+                .sudo()
+                .create(
+                    {
+                        "name": filename,
+                        "datas": file_base64,
+                        "type": "binary",
+                    }
+                )
             )
 
             # Compute hash
@@ -227,9 +232,7 @@ class IdpApiController(http.Controller):
             _logger.exception("Create document failed")
             return {"error": str(e)}
 
-    @http.route(
-        "/ipai/idp/api/documents/<int:document_id>", type="json", auth="user"
-    )
+    @http.route("/ipai/idp/api/documents/<int:document_id>", type="json", auth="user")
     def get_document(self, document_id):
         """
         Get document details and extraction results.
@@ -263,16 +266,16 @@ class IdpApiController(http.Controller):
                 "doc_type": document.doc_type,
                 "source": document.source,
                 "error_message": document.error_message,
-                "create_date": document.create_date.isoformat()
-                if document.create_date
-                else None,
-                "processed_at": document.processed_at.isoformat()
-                if document.processed_at
-                else None,
+                "create_date": (
+                    document.create_date.isoformat() if document.create_date else None
+                ),
+                "processed_at": (
+                    document.processed_at.isoformat() if document.processed_at else None
+                ),
                 "extraction": extraction_data,
-                "final_data": json.loads(document.final_data)
-                if document.final_data
-                else {},
+                "final_data": (
+                    json.loads(document.final_data) if document.final_data else {}
+                ),
             }
         except Exception as e:
             _logger.exception("Get document failed")

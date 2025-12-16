@@ -8,8 +8,9 @@ Tracks document lifecycle from upload through extraction to export.
 import hashlib
 import logging
 
-from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
