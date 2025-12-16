@@ -3,23 +3,23 @@
     'name': 'InsightPulse Default Home Page',
     'version': '18.0.1.0.0',
     'category': 'Extra Tools',
-    'summary': 'Set default landing page to Project view after login',
+    'summary': 'Set default landing page to Apps Dashboard after login',
     'description': """
 Default Home Page Configuration
 ================================
 
-Automatically redirects users to Project view (/odoo/project) after login.
+Automatically redirects users to Apps Dashboard (/odoo) after login - the icon grid view.
 
 Features:
 ---------
-* Configures default home action to Project application
+* Shows Apps Dashboard with icon grid (Discuss, Dashboards, Invoicing, Employees, Expenses, Apps, Settings)
+* Matches official Odoo behavior
 * Works for all users
-* Overrides Odoo's default home page behavior
 * No user action required
 
 Configuration:
 --------------
-After installation, all users will land on Project view after login.
+After installation, all users will see the Apps Dashboard after login.
 
 Author: InsightPulse AI
 License: AGPL-3

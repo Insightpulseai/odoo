@@ -23,13 +23,14 @@
         <!-- Configure system parameter for default home URL -->
         <record id="default_home_url_param" model="ir.config_parameter">
             <field name="key">web.base.url.redirect</field>
-            <field name="value">/odoo/project</field>
+            <field name="value">/odoo</field>
         </record>
 
-        <!-- Update all existing users to use Project as home action -->
+        <!-- Update all existing users to use Apps Dashboard as home action -->
+        <!-- This shows the icon grid view like official Odoo -->
         <function model="res.users" name="write">
             <value eval="[ref('base.user_root'), ref('base.user_admin')]"/>
-            <value eval="{'action_id': ref('project.open_view_project_all')}"/>
+            <value eval="{'action_id': False}"/>
         </function>
 
     </data>
