@@ -96,7 +96,7 @@ class IpaiEquipmentAsset(models.Model):
             "type": "ir.actions.act_window",
             "name": "Bookings",
             "res_model": "ipai.equipment.booking",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("asset_id", "=", self.id)],
             "context": {"default_asset_id": self.id},
         }
@@ -107,7 +107,7 @@ class IpaiEquipmentAsset(models.Model):
             "type": "ir.actions.act_window",
             "name": "Incidents",
             "res_model": "ipai.equipment.incident",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("asset_id", "=", self.id)],
             "context": {"default_asset_id": self.id},
         }

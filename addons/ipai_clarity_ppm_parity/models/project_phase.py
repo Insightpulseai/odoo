@@ -246,7 +246,7 @@ class ProjectPhase(models.Model):
             "type": "ir.actions.act_window",
             "name": f"Tasks in {self.name}",
             "res_model": "project.task",
-            "view_mode": "tree,form,gantt",
+            "view_mode": "list,form",
             "domain": [("parent_id", "=", self.id), ("is_phase", "=", False)],
             "context": {
                 "default_parent_id": self.id,

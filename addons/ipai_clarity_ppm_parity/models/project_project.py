@@ -191,7 +191,7 @@ class ProjectProject(models.Model):
             "type": "ir.actions.act_window",
             "name": "Phases",
             "res_model": "project.task",
-            "view_mode": "tree,form,gantt",
+            "view_mode": "list,form",
             "domain": [("project_id", "=", self.id), ("is_phase", "=", True)],
             "context": {"default_project_id": self.id, "default_is_phase": True},
         }
@@ -203,7 +203,7 @@ class ProjectProject(models.Model):
             "type": "ir.actions.act_window",
             "name": "Milestones",
             "res_model": "project.milestone",
-            "view_mode": "tree,form,gantt",
+            "view_mode": "list,form",
             "domain": [("project_id", "=", self.id)],
             "context": {"default_project_id": self.id},
         }
