@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 516d4c99bf308357c8d337efe46831499fb72b60
+> Commit: 59a00357585d9aa12a005d7f009bc115e1fb6f95
 
 ## 📚 Documentation
 
@@ -52,8 +52,6 @@
 | [TBWA / InsightPulseAI Custom Module Standard](TBWA_IPAI_MODULE_STANDARD.md) | . |
 | [📁 Repository Structure](TREE.md) | . |
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
-| [Flutter Receipt OCR Module - Deployment Guide](addons/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | addons/flutter_receipt_ocr |
-| [Receipt OCR Module for InsightPulse AI](addons/flutter_receipt_ocr/README.md) | addons/flutter_receipt_ocr |
 | [Clarity PPM Parity - Implementation Complete ✅](addons/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity - Quick Start Guide](addons/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Final Status](addons/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai_clarity_ppm_parity |
@@ -79,6 +77,8 @@
 | [DO Advisor - Unified Infrastructure Intelligence](apps/do-advisor-agent/prompts/unified_advisor.md) | apps/do-advisor-agent/prompts |
 | [DO Advisor UI](apps/do-advisor-ui/README.md) | apps/do-advisor-ui |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
+| [Flutter Receipt OCR Module - Deployment Guide](clients/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | clients/flutter_receipt_ocr |
+| [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
 | [Database Target Architecture](db/DB_TARGET_ARCHITECTURE.md) | db |

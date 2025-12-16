@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 516d4c99bf308357c8d337efe46831499fb72b60
+> Commit: 59a00357585d9aa12a005d7f009bc115e1fb6f95
 
 ```
 .
@@ -23,15 +23,6 @@
 │   │   └── health-check.yml
 │   └── copilot-instructions.md
 ├── addons
-│   ├── flutter_receipt_ocr
-│   │   ├── lib
-│   │   │   ├── receipt_ocr
-│   │   │   ├── main.dart
-│   │   │   └── receipt_ocr.dart
-│   │   ├── DEPLOYMENT_GUIDE.md
-│   │   ├── README.md
-│   │   ├── analysis_options.yaml
-│   │   └── pubspec.yaml
 │   ├── ipai_accounting_firm_pack
 │   │   ├── data
 │   │   │   └── engagement_data.xml
@@ -536,6 +527,16 @@
 ├── calendar
 │   ├── 2026_FinanceClosing_Master.csv
 │   └── FinanceClosing_RecurringTasks.ics
+├── clients
+│   └── flutter_receipt_ocr
+│       ├── lib
+│       │   ├── receipt_ocr
+│       │   ├── main.dart
+│       │   └── receipt_ocr.dart
+│       ├── DEPLOYMENT_GUIDE.md
+│       ├── README.md
+│       ├── analysis_options.yaml
+│       └── pubspec.yaml
 ├── data
 │   ├── bir_calendar_2026.json
 │   ├── employee_directory.json
@@ -863,6 +864,7 @@
 │   ├── build_v0.10.0.sh
 │   ├── build_v0.9.1.sh
 │   ├── check_project_tasks.py
+│   ├── ci_local.sh
 │   ├── cleanup-branches.sh
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
@@ -1089,15 +1091,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-273 directories, 811 files
+274 directories, 812 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 289 |
-| Files | 867 |
+| Directories | 290 |
+| Files | 868 |
 | Python files | 223 |
 | XML files | 118 |
 | Markdown files | 205 |
