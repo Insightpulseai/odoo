@@ -1,22 +1,23 @@
 # InsightPulse Default Home Page
 
-**Purpose**: Set default landing page after login to Project view (`/odoo/project`)
+**Purpose**: Set default landing page after login to Apps Dashboard (`/odoo`)
 
 ## Features
-- Redirects users to Project view immediately after login
-- Overrides Odoo's default home page behavior
-- Works for all users (can be customized per user group if needed)
+- Shows Apps Dashboard with icon grid (like official Odoo)
+- Displays: Discuss, Dashboards, Invoicing, Employees, Expenses, Apps, Settings
+- Works for all users
+- Matches official Odoo behavior
 
 ## Configuration
 The default home page is set via system parameter:
 - **Key**: `web.base.url.redirect`
-- **Value**: `/odoo/project`
+- **Value**: `/odoo`
 
 ## Installation
 1. Install this module via Odoo Apps menu
-2. Users will be redirected to Project view after login
+2. Users will see the Apps Dashboard icon grid after login
 
 ## Technical Details
-- Modifies `res.users` default home action
-- Sets menu action to Project application
+- Sets `res.users` default home action to `False` (shows Apps Dashboard)
+- Redirects to `/odoo` base URL
 - Compatible with Odoo 18 CE
