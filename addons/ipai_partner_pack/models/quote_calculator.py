@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
-from odoo import api, fields, models, _
+
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
 
 class QuoteCalculatorConfig(models.Model):
     """Quote calculator configuration for pricing rules."""
+
     _name = "ipai.quote.calculator.config"
     _description = "IPAI Quote Calculator Configuration"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -72,6 +75,7 @@ class QuoteCalculatorConfig(models.Model):
 
 class QuoteCalculatorRun(models.Model):
     """Quote calculator execution/run record."""
+
     _name = "ipai.quote.calculator.run"
     _description = "IPAI Quote Calculator Run"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -84,12 +88,17 @@ class QuoteCalculatorRun(models.Model):
         copy=False,
     )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("calculated", "Calculated"),
-        ("quoted", "Quote Created"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("calculated", "Calculated"),
+            ("quoted", "Quote Created"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     config_id = fields.Many2one(
         "ipai.quote.calculator.config",
@@ -127,12 +136,16 @@ class QuoteCalculatorRun(models.Model):
         help="Number of Odoo apps to implement",
     )
 
-    complexity = fields.Selection([
-        ("low", "Low"),
-        ("medium", "Medium"),
-        ("high", "High"),
-        ("very_high", "Very High"),
-    ], string="Complexity", default="medium")
+    complexity = fields.Selection(
+        [
+            ("low", "Low"),
+            ("medium", "Medium"),
+            ("high", "High"),
+            ("very_high", "Very High"),
+        ],
+        string="Complexity",
+        default="medium",
+    )
 
     # Output / results
     recommended_pack_id = fields.Many2one(
@@ -257,17 +270,23 @@ class QuoteCalculatorRun(models.Model):
             },
         ]
 
-        self.write({
-            "computed_lines": json.dumps(lines),
-            "state": "calculated",
-        })
+        self.write(
+            {
+                "computed_lines": json.dumps(lines),
+                "state": "calculated",
+            }
+        )
 
         # Find recommended pack
-        packs = self.env["ipai.service.pack"].search([
-            ("active", "=", True),
-            ("default_hours", ">=", total_hours * 0.8),
-            ("default_hours", "<=", total_hours * 1.2),
-        ], limit=1, order="default_hours asc")
+        packs = self.env["ipai.service.pack"].search(
+            [
+                ("active", "=", True),
+                ("default_hours", ">=", total_hours * 0.8),
+                ("default_hours", "<=", total_hours * 1.2),
+            ],
+            limit=1,
+            order="default_hours asc",
+        )
         if packs:
             self.recommended_pack_id = packs[0].id
 
@@ -294,28 +313,39 @@ class QuoteCalculatorRun(models.Model):
         }
 
         # Find or create implementation service product
-        product = self.env["product.product"].search([
-            ("default_code", "=", "IMPL-SERVICE"),
-        ], limit=1)
+        product = self.env["product.product"].search(
+            [
+                ("default_code", "=", "IMPL-SERVICE"),
+            ],
+            limit=1,
+        )
         if not product:
-            product = self.env["product.product"].create({
-                "name": "Implementation Services",
-                "default_code": "IMPL-SERVICE",
-                "type": "service",
-                "list_price": self.config_id.base_hourly_rate or 150.0,
-            })
+            product = self.env["product.product"].create(
+                {
+                    "name": "Implementation Services",
+                    "default_code": "IMPL-SERVICE",
+                    "type": "service",
+                    "list_price": self.config_id.base_hourly_rate or 150.0,
+                }
+            )
 
         # Create order lines from computed lines
         order_lines = []
         try:
             lines = json.loads(self.computed_lines or "[]")
             for line in lines:
-                order_lines.append((0, 0, {
-                    "product_id": product.id,
-                    "name": line.get("description", "Implementation Service"),
-                    "product_uom_qty": line.get("hours", 0),
-                    "price_unit": self.config_id.base_hourly_rate or 150.0,
-                }))
+                order_lines.append(
+                    (
+                        0,
+                        0,
+                        {
+                            "product_id": product.id,
+                            "name": line.get("description", "Implementation Service"),
+                            "product_uom_qty": line.get("hours", 0),
+                            "price_unit": self.config_id.base_hourly_rate or 150.0,
+                        },
+                    )
+                )
         except json.JSONDecodeError:
             pass
 
@@ -323,10 +353,12 @@ class QuoteCalculatorRun(models.Model):
             so_vals["order_line"] = order_lines
 
         sale_order = self.env["sale.order"].create(so_vals)
-        self.write({
-            "sale_order_id": sale_order.id,
-            "state": "quoted",
-        })
+        self.write(
+            {
+                "sale_order_id": sale_order.id,
+                "state": "quoted",
+            }
+        )
 
         return {
             "type": "ir.actions.act_window",
