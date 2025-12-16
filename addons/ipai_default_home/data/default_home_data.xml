@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- ========================================== -->
+        <!-- Default Home Page Configuration -->
+        <!-- ========================================== -->
+        <!-- Sets default landing page to Project view after login -->
+
+        <!-- Update base.action_open_base_user_action to redirect to Project -->
+        <record id="base.action_res_users" model="ir.actions.act_window">
+            <field name="name">Users</field>
+            <field name="res_model">res.users</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <!-- Set Project application as default home menu for all users -->
+        <record id="project.menu_main_pm" model="ir.ui.menu">
+            <field name="name">Project</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Configure system parameter for default home URL -->
+        <record id="default_home_url_param" model="ir.config_parameter">
+            <field name="key">web.base.url.redirect</field>
+            <field name="value">/odoo/project</field>
+        </record>
+
+        <!-- Update all existing users to use Project as home action -->
+        <function model="res.users" name="write">
+            <value eval="[ref('base.user_root'), ref('base.user_admin')]"/>
+            <value eval="{'action_id': ref('project.open_view_project_all')}"/>
+        </function>
+
+    </data>
+</odoo>

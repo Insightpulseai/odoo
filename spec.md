@@ -35,6 +35,7 @@ The system is designed to:
 |   |-- ipai_ce_branding
 |   |-- ipai_ce_cleaner
 |   |-- ipai_clarity_ppm_parity
+|   |-- ipai_default_home
 |   |-- ipai_dev_studio_base
 |   |-- ipai_docs
 |   |-- ipai_docs_project
@@ -130,6 +131,7 @@ The system is designed to:
 |   |-- backup_odoo.sh
 |   |-- baseline-validation.sh
 |   |-- check_project_tasks.py
+|   |-- cleanup_duplicate_users.sql
 |   |-- convert_csv_to_xml.py
 |   |-- convert_seed_to_xml.py
 |   |-- deploy-odoo-modules.sh
