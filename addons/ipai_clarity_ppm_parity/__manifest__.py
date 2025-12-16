@@ -61,6 +61,7 @@ License: AGPL-3
         'data/bir_schedule_2025_2026.xml',
         'data/month_end_closing_nov_dec_2025.xml',
         'data/month_end_closing_detailed_workflow.xml',
+        'data/month_end_closing_checklists.xml',
         'views/project_project_views.xml',
     ],
     'demo': [
