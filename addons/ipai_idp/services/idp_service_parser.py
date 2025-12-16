@@ -406,7 +406,9 @@ class IdpServiceParser(models.AbstractModel):
                 continue
 
             # Skip if it's a common header
-            if re.search(r"^(invoice|receipt|bill|order|tax|date)\b", line, re.IGNORECASE):
+            if re.search(
+                r"^(invoice|receipt|bill|order|tax|date)\b", line, re.IGNORECASE
+            ):
                 continue
 
             # Return this line as the vendor name

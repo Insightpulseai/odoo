@@ -13,12 +13,14 @@ Contains core models for document processing:
 - idp_ade_trace: ADE execution audit trail
 - res_config_settings: Configuration settings
 """
-from . import idp_document
-from . import idp_document_ocr
-from . import idp_extraction
-from . import idp_model_version
-from . import idp_review
-from . import idp_validation_rule
-from . import idp_llm_gateway
-from . import idp_ade_trace
-from . import res_config_settings
+from . import (
+    idp_ade_trace,
+    idp_document,
+    idp_document_ocr,
+    idp_extraction,
+    idp_llm_gateway,
+    idp_model_version,
+    idp_review,
+    idp_validation_rule,
+    res_config_settings,
+)

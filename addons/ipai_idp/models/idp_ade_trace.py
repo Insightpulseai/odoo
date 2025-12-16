@@ -197,15 +197,11 @@ class IdpADETrace(models.Model):
             result_data = step.get("result", {})
 
             if step_id == "validate_business_rules":
-                validation_passed_first = (
-                    result_data.get("validation_status") == "pass"
-                )
+                validation_passed_first = result_data.get("validation_status") == "pass"
             elif step_id == "correction_round" and not step.get("skipped"):
                 correction_applied = True
             elif step_id == "final_validation":
-                validation_passed_final = (
-                    result_data.get("final_status") == "pass"
-                )
+                validation_passed_final = result_data.get("final_status") == "pass"
 
         vals = {
             "document_id": document.id,

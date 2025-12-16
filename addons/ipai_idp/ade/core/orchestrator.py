@@ -81,12 +81,14 @@ class ADEOrchestrator:
                 condition = step["when"]
                 if not self._eval_condition(condition, state):
                     _logger.debug("Skipping step %s: condition not met", step_id)
-                    trace.append({
-                        "step": step_id,
-                        "type": step_type,
-                        "skipped": True,
-                        "reason": f"Condition not met: {condition}",
-                    })
+                    trace.append(
+                        {
+                            "step": step_id,
+                            "type": step_type,
+                            "skipped": True,
+                            "reason": f"Condition not met: {condition}",
+                        }
+                    )
                     continue
 
             # Execute step based on type
@@ -103,23 +105,27 @@ class ADEOrchestrator:
 
                 # Update state with results
                 state.update(result)
-                trace.append({
-                    "step": step_id,
-                    "type": step_type,
-                    "result": result,
-                    "skipped": False,
-                })
+                trace.append(
+                    {
+                        "step": step_id,
+                        "type": step_type,
+                        "result": result,
+                        "skipped": False,
+                    }
+                )
 
                 _logger.debug("Step %s completed: %s", step_id, list(result.keys()))
 
             except Exception as e:
                 _logger.exception("Step %s failed", step_id)
-                trace.append({
-                    "step": step_id,
-                    "type": step_type,
-                    "error": str(e),
-                    "skipped": False,
-                })
+                trace.append(
+                    {
+                        "step": step_id,
+                        "type": step_type,
+                        "error": str(e),
+                        "skipped": False,
+                    }
+                )
                 return {
                     "status": "failed",
                     "reason": f"Step {step_id} failed: {str(e)}",
@@ -265,7 +271,10 @@ class ADEOrchestrator:
         return result
 
     def _make_final_decision(
-        self, pipeline: Dict[str, Any], state: Dict[str, Any], trace: List[Dict[str, Any]]
+        self,
+        pipeline: Dict[str, Any],
+        state: Dict[str, Any],
+        trace: List[Dict[str, Any]],
     ) -> Dict[str, Any]:
         """
         Make final routing decision based on target criteria.
@@ -283,7 +292,9 @@ class ADEOrchestrator:
         require_status = target.get("require_final_status")
         on_fail = target.get("on_fail", "send_to_review")
 
-        final_status = state.get("final_status", state.get("validation_status", "unknown"))
+        final_status = state.get(
+            "final_status", state.get("validation_status", "unknown")
+        )
         confidence = state.get("overall_confidence", 0.0)
 
         # Check if we meet target criteria

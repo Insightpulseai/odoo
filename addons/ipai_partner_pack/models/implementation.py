@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class ImplementationTemplate(models.Model):
     """Implementation project templates for service delivery."""
+
     _name = "ipai.implementation.template"
     _description = "IPAI Implementation Template"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -50,7 +51,9 @@ class ImplementationTemplate(models.Model):
         for template in self:
             template.total_phases = len(template.phase_ids)
             template.total_deliverables = len(template.deliverable_ids)
-            template.estimated_duration = sum(template.phase_ids.mapped("duration_days"))
+            template.estimated_duration = sum(
+                template.phase_ids.mapped("duration_days")
+            )
 
     def action_create_project(self, partner_id=None, sale_order_id=None):
         """Create a project from this template."""
@@ -82,6 +85,7 @@ class ImplementationTemplate(models.Model):
 
 class ImplementationPhase(models.Model):
     """Implementation phases within a template."""
+
     _name = "ipai.implementation.phase"
     _description = "IPAI Implementation Phase"
     _order = "sequence, id"
@@ -99,16 +103,19 @@ class ImplementationPhase(models.Model):
 
     duration_days = fields.Float(string="Duration (Days)", default=5.0)
 
-    milestone_type = fields.Selection([
-        ("kickoff", "Kickoff"),
-        ("discovery", "Discovery Complete"),
-        ("config", "Configuration Complete"),
-        ("migration", "Data Migration Complete"),
-        ("uat", "UAT Signoff"),
-        ("golive", "Go-Live"),
-        ("hypercare", "Hypercare Complete"),
-        ("closure", "Project Closure"),
-    ], string="Milestone Type")
+    milestone_type = fields.Selection(
+        [
+            ("kickoff", "Kickoff"),
+            ("discovery", "Discovery Complete"),
+            ("config", "Configuration Complete"),
+            ("migration", "Data Migration Complete"),
+            ("uat", "UAT Signoff"),
+            ("golive", "Go-Live"),
+            ("hypercare", "Hypercare Complete"),
+            ("closure", "Project Closure"),
+        ],
+        string="Milestone Type",
+    )
 
     gate_criteria = fields.Text(
         string="Gate Criteria",
@@ -118,6 +125,7 @@ class ImplementationPhase(models.Model):
 
 class ImplementationDeliverable(models.Model):
     """Deliverables associated with implementation templates."""
+
     _name = "ipai.implementation.deliverable"
     _description = "IPAI Implementation Deliverable"
     _order = "sequence, id"
@@ -139,26 +147,36 @@ class ImplementationDeliverable(models.Model):
     sequence = fields.Integer(string="Sequence", default=10)
     description = fields.Text(string="Description")
 
-    deliverable_type = fields.Selection([
-        ("document", "Document"),
-        ("configuration", "Configuration"),
-        ("training", "Training Material"),
-        ("signoff", "Signoff/Approval"),
-        ("artifact", "Technical Artifact"),
-    ], string="Type", required=True, default="document")
+    deliverable_type = fields.Selection(
+        [
+            ("document", "Document"),
+            ("configuration", "Configuration"),
+            ("training", "Training Material"),
+            ("signoff", "Signoff/Approval"),
+            ("artifact", "Technical Artifact"),
+        ],
+        string="Type",
+        required=True,
+        default="document",
+    )
 
     is_mandatory = fields.Boolean(string="Mandatory", default=True)
 
-    owner_role = fields.Selection([
-        ("pm", "Project Manager"),
-        ("consultant", "Consultant"),
-        ("developer", "Developer"),
-        ("customer", "Customer"),
-    ], string="Owner Role", default="consultant")
+    owner_role = fields.Selection(
+        [
+            ("pm", "Project Manager"),
+            ("consultant", "Consultant"),
+            ("developer", "Developer"),
+            ("customer", "Customer"),
+        ],
+        string="Owner Role",
+        default="consultant",
+    )
 
 
 class RiskRegisterItem(models.Model):
     """Risk register for tracking implementation risks."""
+
     _name = "ipai.risk.register.item"
     _description = "IPAI Risk Register Item"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -179,32 +197,49 @@ class RiskRegisterItem(models.Model):
 
     description = fields.Text(string="Risk Description", tracking=True)
 
-    risk_category = fields.Selection([
-        ("scope", "Scope"),
-        ("schedule", "Schedule"),
-        ("resource", "Resource"),
-        ("technical", "Technical"),
-        ("budget", "Budget"),
-        ("change", "Change Management"),
-        ("integration", "Integration"),
-        ("data", "Data Quality"),
-    ], string="Category", required=True, tracking=True)
+    risk_category = fields.Selection(
+        [
+            ("scope", "Scope"),
+            ("schedule", "Schedule"),
+            ("resource", "Resource"),
+            ("technical", "Technical"),
+            ("budget", "Budget"),
+            ("change", "Change Management"),
+            ("integration", "Integration"),
+            ("data", "Data Quality"),
+        ],
+        string="Category",
+        required=True,
+        tracking=True,
+    )
 
-    probability = fields.Selection([
-        ("1", "Very Low (1)"),
-        ("2", "Low (2)"),
-        ("3", "Medium (3)"),
-        ("4", "High (4)"),
-        ("5", "Very High (5)"),
-    ], string="Probability", required=True, default="3", tracking=True)
+    probability = fields.Selection(
+        [
+            ("1", "Very Low (1)"),
+            ("2", "Low (2)"),
+            ("3", "Medium (3)"),
+            ("4", "High (4)"),
+            ("5", "Very High (5)"),
+        ],
+        string="Probability",
+        required=True,
+        default="3",
+        tracking=True,
+    )
 
-    impact = fields.Selection([
-        ("1", "Very Low (1)"),
-        ("2", "Low (2)"),
-        ("3", "Medium (3)"),
-        ("4", "High (4)"),
-        ("5", "Very High (5)"),
-    ], string="Impact", required=True, default="3", tracking=True)
+    impact = fields.Selection(
+        [
+            ("1", "Very Low (1)"),
+            ("2", "Low (2)"),
+            ("3", "Medium (3)"),
+            ("4", "High (4)"),
+            ("5", "Very High (5)"),
+        ],
+        string="Impact",
+        required=True,
+        default="3",
+        tracking=True,
+    )
 
     priority = fields.Integer(
         string="Risk Score",
@@ -212,13 +247,18 @@ class RiskRegisterItem(models.Model):
         store=True,
     )
 
-    state = fields.Selection([
-        ("identified", "Identified"),
-        ("analyzing", "Analyzing"),
-        ("mitigating", "Mitigating"),
-        ("monitoring", "Monitoring"),
-        ("closed", "Closed"),
-    ], string="Status", default="identified", tracking=True)
+    state = fields.Selection(
+        [
+            ("identified", "Identified"),
+            ("analyzing", "Analyzing"),
+            ("mitigating", "Mitigating"),
+            ("monitoring", "Monitoring"),
+            ("closed", "Closed"),
+        ],
+        string="Status",
+        default="identified",
+        tracking=True,
+    )
 
     mitigation_plan = fields.Text(string="Mitigation Plan")
     contingency_plan = fields.Text(string="Contingency Plan")

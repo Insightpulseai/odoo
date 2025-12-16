@@ -8,6 +8,7 @@ import logging
 import time
 
 import requests
+
 from odoo import api, models
 
 _logger = logging.getLogger(__name__)
@@ -252,9 +253,7 @@ class IdpServiceHealth(models.AbstractModel):
                 "review_needed",
                 "error",
             ]:
-                status_counts[status] = Document.search_count(
-                    [("status", "=", status)]
-                )
+                status_counts[status] = Document.search_count([("status", "=", status)])
 
             # Extraction metrics
             total_extractions = Extraction.search_count([])

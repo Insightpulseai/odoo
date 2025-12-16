@@ -11,10 +11,12 @@ Contains unit tests and integration tests for IDP module:
 - test_document_flow: State transition tests
 - test_http_endpoints: HTTP controller tests
 """
-from . import test_parsers
-from . import test_validation
-from . import test_extraction
-from . import test_health
-from . import test_security
-from . import test_document_flow
-from . import test_http_endpoints
+from . import (
+    test_document_flow,
+    test_extraction,
+    test_health,
+    test_http_endpoints,
+    test_parsers,
+    test_security,
+    test_validation,
+)
