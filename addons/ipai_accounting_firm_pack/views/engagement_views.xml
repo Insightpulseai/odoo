@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Engagement Tree View -->
+    <record id="view_engagement_tree" model="ir.ui.view">
+        <field name="name">ipai.engagement.tree</field>
+        <field name="model">ipai.engagement</field>
+        <field name="arch" type="xml">
+            <list string="Engagements" decoration-muted="state == 'cancelled'" decoration-success="state == 'completed'">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="engagement_type" widget="badge"/>
+                <field name="fiscal_year"/>
+                <field name="manager_id" widget="many2one_avatar_user"/>
+                <field name="billing_mode"/>
+                <field name="estimated_fee" widget="monetary"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state in ('planning', 'fieldwork')" decoration-primary="state in ('review', 'reporting')" decoration-success="state == 'completed'" decoration-danger="state == 'cancelled'"/>
+                <field name="currency_id" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Engagement Form View -->
+    <record id="view_engagement_form" model="ir.ui.view">
+        <field name="name">ipai.engagement.form</field>
+        <field name="model">ipai.engagement</field>
+        <field name="arch" type="xml">
+            <form string="Engagement">
+                <header>
+                    <button name="action_start_planning" string="Start Planning" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_start_fieldwork" string="Start Fieldwork" type="object" class="oe_highlight" invisible="state != 'planning'"/>
+                    <button name="action_start_review" string="Start Review" type="object" class="oe_highlight" invisible="state != 'fieldwork'"/>
+                    <button name="action_start_reporting" string="Start Reporting" type="object" class="oe_highlight" invisible="state != 'review'"/>
+                    <button name="action_complete" string="Complete" type="object" class="oe_highlight" invisible="state != 'reporting'"/>
+                    <button name="action_cancel" string="Cancel" type="object" invisible="state in ('completed', 'cancelled')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,planning,fieldwork,review,reporting,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="action_view_workpapers" icon="fa-file-text-o">
+                            <field name="workpaper_count" widget="statinfo" string="Workpapers"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_compliance" icon="fa-check-square-o">
+                            <field name="compliance_count" widget="statinfo" string="Tasks"/>
+                        </button>
+                        <button class="oe_stat_button" type="object" name="action_view_document_requests" icon="fa-folder-open-o">
+                            <field name="document_request_count" widget="statinfo" string="Doc Requests"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Client &amp; Engagement">
+                            <field name="partner_id"/>
+                            <field name="engagement_type"/>
+                            <field name="project_id"/>
+                        </group>
+                        <group string="Fiscal Year">
+                            <field name="fiscal_year"/>
+                            <field name="fiscal_year_start"/>
+                            <field name="fiscal_year_end"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Team">
+                            <field name="manager_id"/>
+                            <field name="partner_in_charge_id"/>
+                        </group>
+                        <group string="Billing">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="billing_mode"/>
+                            <field name="estimated_fee"/>
+                            <field name="actual_fee"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Periods" name="periods">
+                            <field name="period_ids">
+                                <list editable="bottom">
+                                    <field name="period_start"/>
+                                    <field name="period_end"/>
+                                    <field name="close_status" widget="badge"/>
+                                    <field name="reviewer_id"/>
+                                    <field name="review_date"/>
+                                    <field name="close_date"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Engagement Kanban View -->
+    <record id="view_engagement_kanban" model="ir.ui.view">
+        <field name="name">ipai.engagement.kanban</field>
+        <field name="model">ipai.engagement</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="engagement_type"/>
+                <field name="fiscal_year"/>
+                <field name="state"/>
+                <field name="manager_id"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_content">
+                            <strong><field name="name"/></strong>
+                            <div><field name="partner_id"/></div>
+                            <div class="mt-2">
+                                <span class="badge bg-secondary"><field name="engagement_type"/></span>
+                                <span class="badge bg-info"><field name="fiscal_year"/></span>
+                            </div>
+                            <div class="mt-2">
+                                <field name="manager_id" widget="many2one_avatar_user"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Engagement Search View -->
+    <record id="view_engagement_search" model="ir.ui.view">
+        <field name="name">ipai.engagement.search</field>
+        <field name="model">ipai.engagement</field>
+        <field name="arch" type="xml">
+            <search string="Search Engagements">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="fiscal_year"/>
+                <field name="manager_id"/>
+                <separator/>
+                <filter string="Active" name="filter_active" domain="[('state', 'not in', ('completed', 'cancelled'))]"/>
+                <filter string="Completed" name="filter_completed" domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <filter string="Tax" name="filter_tax" domain="[('engagement_type', 'in', ('tax_prep', 'tax_planning'))]"/>
+                <filter string="Audit" name="filter_audit" domain="[('engagement_type', '=', 'audit')]"/>
+                <filter string="Bookkeeping" name="filter_bookkeeping" domain="[('engagement_type', '=', 'bookkeeping')]"/>
+                <separator/>
+                <filter string="My Engagements" name="filter_mine" domain="[('manager_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Client" name="group_client" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'engagement_type'}"/>
+                    <filter string="Fiscal Year" name="group_year" context="{'group_by': 'fiscal_year'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Manager" name="group_manager" context="{'group_by': 'manager_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Engagement Action -->
+    <record id="action_engagement" model="ir.actions.act_window">
+        <field name="name">Engagements</field>
+        <field name="res_model">ipai.engagement</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first client engagement
+            </p>
+            <p>
+                Engagements track accounting services like tax preparation,
+                audits, and bookkeeping for clients.
+            </p>
+        </field>
+    </record>
+
+    <!-- Sequence for Engagement -->
+    <record id="sequence_engagement" model="ir.sequence">
+        <field name="name">Engagement</field>
+        <field name="code">ipai.engagement</field>
+        <field name="prefix">ENG-</field>
+        <field name="padding">5</field>
+    </record>
+</odoo>
