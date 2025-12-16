@@ -21,6 +21,7 @@
         "views/ppm_dashboard_views.xml",
         "views/project_task_views.xml",
         "views/menus.xml",
+        "data/finance_person_seed.xml",
         "data/bir_schedule_seed.xml",
         "data/finance_cron.xml",
     ],
