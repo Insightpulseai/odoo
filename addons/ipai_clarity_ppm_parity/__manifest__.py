@@ -55,7 +55,9 @@ License: AGPL-3
     'data': [
         'security/ir.model.access.csv',
         'data/ppm_seed_users.xml',
+        'data/finance_person_seed.xml',
         'data/clarity_data.xml',
+        'data/bir_schedule_seed.xml',
         'data/bir_schedule_2025_2026.xml',
         'data/month_end_closing_nov_dec_2025.xml',
         'data/month_end_closing_detailed_workflow.xml',
