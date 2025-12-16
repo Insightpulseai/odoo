@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d88beaacdc750aa57340945c31d1319002314bc1
+> Commit: 07e3125909162d8d397607816c3ac81c3d8d959e
 
 ```
 .
@@ -32,6 +32,23 @@
 │   │   ├── README.md
 │   │   ├── analysis_options.yaml
 │   │   └── pubspec.yaml
+│   ├── ipai_accounting_firm_pack
+│   │   ├── data
+│   │   │   └── engagement_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── compliance.py
+│   │   │   ├── engagement.py
+│   │   │   └── workpaper.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── compliance_views.xml
+│   │   │   ├── engagement_views.xml
+│   │   │   ├── menus.xml
+│   │   │   └── workpaper_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_bir_compliance
 │   │   ├── models
 │   │   │   ├── __init__.py
@@ -338,6 +355,25 @@
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_marketing_agency_pack
+│   │   ├── data
+│   │   │   └── campaign_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── campaign.py
+│   │   │   ├── client_brand.py
+│   │   │   ├── creative.py
+│   │   │   └── media.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── campaign_views.xml
+│   │   │   ├── client_brand_views.xml
+│   │   │   ├── creative_views.xml
+│   │   │   ├── media_views.xml
+│   │   │   └── menus.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_ocr_expense
 │   │   ├── models
 │   │   │   ├── __init__.py
@@ -351,6 +387,23 @@
 │   │   │   ├── ipai_ocr_settings_views.xml
 │   │   │   └── ocr_expense_log_views.xml
 │   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_partner_pack
+│   │   ├── data
+│   │   │   └── service_pack_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── implementation.py
+│   │   │   ├── quote_calculator.py
+│   │   │   └── service_pack.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── implementation_views.xml
+│   │   │   ├── menus.xml
+│   │   │   ├── quote_calculator_views.xml
+│   │   │   └── service_pack_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_portal_fix
@@ -631,6 +684,7 @@
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── IMPLEMENTATION_SUMMARY.md
+│   ├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
 │   ├── INDUSTRY_PARITY_ANALYSIS.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
@@ -1035,15 +1089,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-258 directories, 772 files
+273 directories, 811 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 274 |
-| Files | 828 |
-| Python files | 204 |
-| XML files | 102 |
-| Markdown files | 204 |
+| Directories | 289 |
+| Files | 867 |
+| Python files | 223 |
+| XML files | 118 |
+| Markdown files | 205 |
