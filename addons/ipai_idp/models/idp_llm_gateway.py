@@ -43,7 +43,6 @@ Return ONLY a JSON object with:
 
 OCR_TEXT:
 {{ ocr_text }}""",
-
     "prompt_extract": """You are an extraction engine for ACCOUNTS PAYABLE invoices.
 
 Extract key invoice fields and return clean, machine-readable JSON.
@@ -73,7 +72,6 @@ Guidelines:
 
 OCR_TEXT:
 {{ ocr_text }}""",
-
     "prompt_correction": """You are a correction engine for extracted invoice data.
 
 You are given:
@@ -96,7 +94,6 @@ CURRENT_FIELDS:
 
 VALIDATION_ERRORS:
 {{ validation_errors }}""",
-
     "prompt_extract_receipt": """You are an extraction engine for retail RECEIPTS.
 
 Extract key receipt fields and return clean, machine-readable JSON.
@@ -122,7 +119,6 @@ Return JSON with this structure:
 
 OCR_TEXT:
 {{ ocr_text }}""",
-
     "prompt_correction_receipt": """You are a correction engine for extracted receipt data.
 
 You are given:
@@ -140,7 +136,6 @@ CURRENT_FIELDS:
 
 VALIDATION_ERRORS:
 {{ validation_errors }}""",
-
     "prompt_extract_po": """You are an extraction engine for PURCHASE ORDERS.
 
 Extract key PO fields and return clean, machine-readable JSON.
@@ -166,7 +161,6 @@ Return JSON with this structure:
 
 OCR_TEXT:
 {{ ocr_text }}""",
-
     "prompt_correction_po": """You are a correction engine for extracted purchase order data.
 
 You are given:

@@ -7,5 +7,4 @@ HTTP controllers for IDP endpoints:
 - Extraction API
 - Document processing API
 """
-from . import health_controller
-from . import idp_api_controller
+from . import health_controller, idp_api_controller

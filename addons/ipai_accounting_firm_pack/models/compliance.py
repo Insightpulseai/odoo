@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class ComplianceTask(models.Model):
     """Compliance task for tracking deadlines and requirements."""
+
     _name = "ipai.compliance.task"
     _description = "IPAI Compliance Task"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -26,35 +27,50 @@ class ComplianceTask(models.Model):
         store=True,
     )
 
-    task_type = fields.Selection([
-        ("tax_filing", "Tax Filing"),
-        ("annual_report", "Annual Report"),
-        ("quarterly_report", "Quarterly Report"),
-        ("monthly_close", "Monthly Close"),
-        ("audit_procedure", "Audit Procedure"),
-        ("client_request", "Client Request"),
-        ("internal", "Internal Task"),
-        ("regulatory", "Regulatory Requirement"),
-        ("other", "Other"),
-    ], string="Task Type", required=True, tracking=True)
+    task_type = fields.Selection(
+        [
+            ("tax_filing", "Tax Filing"),
+            ("annual_report", "Annual Report"),
+            ("quarterly_report", "Quarterly Report"),
+            ("monthly_close", "Monthly Close"),
+            ("audit_procedure", "Audit Procedure"),
+            ("client_request", "Client Request"),
+            ("internal", "Internal Task"),
+            ("regulatory", "Regulatory Requirement"),
+            ("other", "Other"),
+        ],
+        string="Task Type",
+        required=True,
+        tracking=True,
+    )
 
     due_date = fields.Date(string="Due Date", required=True, tracking=True)
     completion_date = fields.Date(string="Completion Date")
 
-    priority = fields.Selection([
-        ("0", "Low"),
-        ("1", "Normal"),
-        ("2", "High"),
-        ("3", "Urgent"),
-    ], string="Priority", default="1", tracking=True)
+    priority = fields.Selection(
+        [
+            ("0", "Low"),
+            ("1", "Normal"),
+            ("2", "High"),
+            ("3", "Urgent"),
+        ],
+        string="Priority",
+        default="1",
+        tracking=True,
+    )
 
-    state = fields.Selection([
-        ("todo", "To Do"),
-        ("in_progress", "In Progress"),
-        ("blocked", "Blocked"),
-        ("done", "Done"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="todo", tracking=True)
+    state = fields.Selection(
+        [
+            ("todo", "To Do"),
+            ("in_progress", "In Progress"),
+            ("blocked", "Blocked"),
+            ("done", "Done"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="todo",
+        tracking=True,
+    )
 
     assigned_id = fields.Many2one(
         "res.users",
@@ -105,10 +121,12 @@ class ComplianceTask(models.Model):
         self.write({"state": "blocked"})
 
     def action_done(self):
-        self.write({
-            "state": "done",
-            "completion_date": fields.Date.today(),
-        })
+        self.write(
+            {
+                "state": "done",
+                "completion_date": fields.Date.today(),
+            }
+        )
 
     def action_cancel(self):
         self.write({"state": "cancelled"})
@@ -119,6 +137,7 @@ class ComplianceTask(models.Model):
 
 class DocumentRequest(models.Model):
     """Document request for client document collection."""
+
     _name = "ipai.document.request"
     _description = "IPAI Document Request"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -146,18 +165,23 @@ class DocumentRequest(models.Model):
         store=True,
     )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("sent", "Sent to Client"),
-        ("partial", "Partially Received"),
-        ("received", "Fully Received"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("sent", "Sent to Client"),
+            ("partial", "Partially Received"),
+            ("received", "Fully Received"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     request_list = fields.Text(
         string="Document Request List (JSON)",
         help="JSON array of requested documents with status",
-        default='[]',
+        default="[]",
     )
 
     request_description = fields.Html(
@@ -200,25 +224,31 @@ class DocumentRequest(models.Model):
     def _compute_attachment_count(self):
         Attachment = self.env["ir.attachment"]
         for request in self:
-            request.attachment_count = Attachment.search_count([
-                ("res_model", "=", self._name),
-                ("res_id", "=", request.id),
-            ])
+            request.attachment_count = Attachment.search_count(
+                [
+                    ("res_model", "=", self._name),
+                    ("res_id", "=", request.id),
+                ]
+            )
 
     def action_send(self):
-        self.write({
-            "state": "sent",
-            "sent_date": fields.Date.today(),
-        })
+        self.write(
+            {
+                "state": "sent",
+                "sent_date": fields.Date.today(),
+            }
+        )
 
     def action_mark_partial(self):
         self.write({"state": "partial"})
 
     def action_mark_received(self):
-        self.write({
-            "state": "received",
-            "received_date": fields.Date.today(),
-        })
+        self.write(
+            {
+                "state": "received",
+                "received_date": fields.Date.today(),
+            }
+        )
 
     def action_cancel(self):
         self.write({"state": "cancelled"})

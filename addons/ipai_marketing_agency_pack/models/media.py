@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-from odoo import api, fields, models, _
+
+from odoo import _, api, fields, models
 
 
 class ContentCalendarItem(models.Model):
     """Content calendar for campaign scheduling."""
+
     _name = "ipai.content.calendar.item"
     _description = "IPAI Content Calendar Item"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -31,35 +33,49 @@ class ContentCalendarItem(models.Model):
         string="Asset",
     )
 
-    channel = fields.Selection([
-        ("facebook", "Facebook"),
-        ("instagram", "Instagram"),
-        ("twitter", "Twitter/X"),
-        ("linkedin", "LinkedIn"),
-        ("tiktok", "TikTok"),
-        ("youtube", "YouTube"),
-        ("pinterest", "Pinterest"),
-        ("website", "Website/Blog"),
-        ("email", "Email"),
-        ("other", "Other"),
-    ], string="Channel", required=True, tracking=True)
+    channel = fields.Selection(
+        [
+            ("facebook", "Facebook"),
+            ("instagram", "Instagram"),
+            ("twitter", "Twitter/X"),
+            ("linkedin", "LinkedIn"),
+            ("tiktok", "TikTok"),
+            ("youtube", "YouTube"),
+            ("pinterest", "Pinterest"),
+            ("website", "Website/Blog"),
+            ("email", "Email"),
+            ("other", "Other"),
+        ],
+        string="Channel",
+        required=True,
+        tracking=True,
+    )
 
-    post_type = fields.Selection([
-        ("organic", "Organic"),
-        ("paid", "Paid/Sponsored"),
-        ("story", "Story"),
-        ("reel", "Reel/Short"),
-        ("live", "Live"),
-        ("carousel", "Carousel"),
-        ("article", "Article/Blog"),
-    ], string="Post Type", default="organic")
+    post_type = fields.Selection(
+        [
+            ("organic", "Organic"),
+            ("paid", "Paid/Sponsored"),
+            ("story", "Story"),
+            ("reel", "Reel/Short"),
+            ("live", "Live"),
+            ("carousel", "Carousel"),
+            ("article", "Article/Blog"),
+        ],
+        string="Post Type",
+        default="organic",
+    )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("scheduled", "Scheduled"),
-        ("published", "Published"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("scheduled", "Scheduled"),
+            ("published", "Published"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     scheduled_datetime = fields.Datetime(
         string="Scheduled Date/Time",
@@ -91,10 +107,12 @@ class ContentCalendarItem(models.Model):
         self.write({"state": "scheduled"})
 
     def action_publish(self):
-        self.write({
-            "state": "published",
-            "published_datetime": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "published",
+                "published_datetime": fields.Datetime.now(),
+            }
+        )
 
     def action_cancel(self):
         self.write({"state": "cancelled"})
@@ -105,6 +123,7 @@ class ContentCalendarItem(models.Model):
 
 class PerformanceSnapshot(models.Model):
     """Performance metrics snapshot for campaigns."""
+
     _name = "ipai.performance.snapshot"
     _description = "IPAI Campaign Performance Snapshot"
     _order = "date desc, campaign_id"
@@ -129,17 +148,21 @@ class PerformanceSnapshot(models.Model):
         default=fields.Date.today,
     )
 
-    channel = fields.Selection([
-        ("all", "All Channels"),
-        ("facebook", "Facebook"),
-        ("instagram", "Instagram"),
-        ("twitter", "Twitter/X"),
-        ("linkedin", "LinkedIn"),
-        ("tiktok", "TikTok"),
-        ("youtube", "YouTube"),
-        ("google", "Google Ads"),
-        ("other", "Other"),
-    ], string="Channel", default="all")
+    channel = fields.Selection(
+        [
+            ("all", "All Channels"),
+            ("facebook", "Facebook"),
+            ("instagram", "Instagram"),
+            ("twitter", "Twitter/X"),
+            ("linkedin", "LinkedIn"),
+            ("tiktok", "TikTok"),
+            ("youtube", "YouTube"),
+            ("google", "Google Ads"),
+            ("other", "Other"),
+        ],
+        string="Channel",
+        default="all",
+    )
 
     # Core metrics
     reach = fields.Integer(string="Reach")
@@ -212,26 +235,23 @@ class PerformanceSnapshot(models.Model):
         for snapshot in self:
             snapshot.ctr = (
                 (snapshot.clicks / snapshot.impressions * 100)
-                if snapshot.impressions else 0
+                if snapshot.impressions
+                else 0
             )
             snapshot.engagement_rate = (
-                (snapshot.engagement / snapshot.reach * 100)
-                if snapshot.reach else 0
+                (snapshot.engagement / snapshot.reach * 100) if snapshot.reach else 0
             )
 
     @api.depends("spend", "clicks", "impressions", "leads")
     def _compute_costs(self):
         for snapshot in self:
-            snapshot.cpc = (
-                snapshot.spend / snapshot.clicks if snapshot.clicks else 0
-            )
+            snapshot.cpc = snapshot.spend / snapshot.clicks if snapshot.clicks else 0
             snapshot.cpm = (
                 snapshot.spend / snapshot.impressions * 1000
-                if snapshot.impressions else 0
+                if snapshot.impressions
+                else 0
             )
-            snapshot.cpl = (
-                snapshot.spend / snapshot.leads if snapshot.leads else 0
-            )
+            snapshot.cpl = snapshot.spend / snapshot.leads if snapshot.leads else 0
 
     def get_metrics_dict(self):
         """Return extended metrics as Python dict."""
@@ -242,6 +262,9 @@ class PerformanceSnapshot(models.Model):
             return {}
 
     _sql_constraints = [
-        ("campaign_date_channel_uniq", "unique(campaign_id, date, channel)",
-         "Only one snapshot per campaign/date/channel combination!"),
+        (
+            "campaign_date_channel_uniq",
+            "unique(campaign_id, date, channel)",
+            "Only one snapshot per campaign/date/channel combination!",
+        ),
     ]

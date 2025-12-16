@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
-from odoo import api, fields, models, _
+
 from odoo.exceptions import ValidationError
+
+from odoo import _, api, fields, models
 
 
 class Campaign(models.Model):
     """Marketing campaign management."""
+
     _name = "ipai.campaign"
     _description = "IPAI Marketing Campaign"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -35,24 +38,34 @@ class Campaign(models.Model):
         tracking=True,
     )
 
-    objective = fields.Selection([
-        ("awareness", "Brand Awareness"),
-        ("consideration", "Consideration"),
-        ("conversion", "Conversion"),
-        ("retention", "Retention/Loyalty"),
-        ("engagement", "Engagement"),
-        ("launch", "Product Launch"),
-    ], string="Objective", required=True, tracking=True)
+    objective = fields.Selection(
+        [
+            ("awareness", "Brand Awareness"),
+            ("consideration", "Consideration"),
+            ("conversion", "Conversion"),
+            ("retention", "Retention/Loyalty"),
+            ("engagement", "Engagement"),
+            ("launch", "Product Launch"),
+        ],
+        string="Objective",
+        required=True,
+        tracking=True,
+    )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("planning", "Planning"),
-        ("briefing", "Briefing"),
-        ("production", "Production"),
-        ("live", "Live"),
-        ("completed", "Completed"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("planning", "Planning"),
+            ("briefing", "Briefing"),
+            ("production", "Production"),
+            ("live", "Live"),
+            ("completed", "Completed"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     start_date = fields.Date(string="Start Date", required=True, tracking=True)
     end_date = fields.Date(string="End Date", required=True, tracking=True)
@@ -180,7 +193,10 @@ class Campaign(models.Model):
             "res_model": "ipai.asset",
             "view_mode": "kanban,list,form",
             "domain": [("campaign_id", "=", self.id)],
-            "context": {"default_campaign_id": self.id, "default_brand_id": self.brand_id.id},
+            "context": {
+                "default_campaign_id": self.id,
+                "default_brand_id": self.brand_id.id,
+            },
         }
 
     def action_view_calendar(self):

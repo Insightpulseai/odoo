@@ -9,8 +9,9 @@ import logging
 import time
 
 import requests
-from odoo import api, models
 from odoo.exceptions import UserError
+
+from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 

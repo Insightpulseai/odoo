@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+
+from odoo import _, api, fields, models
 
 
 class ServicePack(models.Model):
     """Service packaging for Odoo Partner implementations."""
+
     _name = "ipai.service.pack"
     _description = "IPAI Service Pack"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -15,12 +17,18 @@ class ServicePack(models.Model):
     sequence = fields.Integer(string="Sequence", default=10)
     active = fields.Boolean(default=True)
 
-    tier = fields.Selection([
-        ("starter", "Starter"),
-        ("professional", "Professional"),
-        ("enterprise", "Enterprise"),
-        ("custom", "Custom"),
-    ], string="Tier", required=True, default="professional", tracking=True)
+    tier = fields.Selection(
+        [
+            ("starter", "Starter"),
+            ("professional", "Professional"),
+            ("enterprise", "Enterprise"),
+            ("custom", "Custom"),
+        ],
+        string="Tier",
+        required=True,
+        default="professional",
+        tracking=True,
+    )
 
     default_hours = fields.Float(
         string="Default Hours",
@@ -78,6 +86,7 @@ class ServicePack(models.Model):
 
 class ServicePackLine(models.Model):
     """Service pack line items."""
+
     _name = "ipai.service.pack.line"
     _description = "IPAI Service Pack Line"
     _order = "sequence, id"

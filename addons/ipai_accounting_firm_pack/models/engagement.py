@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+
+from odoo import _, api, fields, models
 
 
 class Engagement(models.Model):
     """Client engagement for accounting services."""
+
     _name = "ipai.engagement"
     _description = "IPAI Accounting Engagement"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -25,17 +27,22 @@ class Engagement(models.Model):
         domain="[('is_company', '=', True)]",
     )
 
-    engagement_type = fields.Selection([
-        ("bookkeeping", "Bookkeeping"),
-        ("tax_prep", "Tax Preparation"),
-        ("tax_planning", "Tax Planning"),
-        ("audit", "Audit"),
-        ("review", "Review"),
-        ("compilation", "Compilation"),
-        ("advisory", "Advisory/Consulting"),
-        ("payroll", "Payroll Services"),
-        ("forensic", "Forensic Accounting"),
-    ], string="Engagement Type", required=True, tracking=True)
+    engagement_type = fields.Selection(
+        [
+            ("bookkeeping", "Bookkeeping"),
+            ("tax_prep", "Tax Preparation"),
+            ("tax_planning", "Tax Planning"),
+            ("audit", "Audit"),
+            ("review", "Review"),
+            ("compilation", "Compilation"),
+            ("advisory", "Advisory/Consulting"),
+            ("payroll", "Payroll Services"),
+            ("forensic", "Forensic Accounting"),
+        ],
+        string="Engagement Type",
+        required=True,
+        tracking=True,
+    )
 
     fiscal_year = fields.Char(
         string="Fiscal Year",
@@ -47,22 +54,32 @@ class Engagement(models.Model):
     fiscal_year_start = fields.Date(string="Fiscal Year Start")
     fiscal_year_end = fields.Date(string="Fiscal Year End")
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("planning", "Planning"),
-        ("fieldwork", "Fieldwork"),
-        ("review", "Review"),
-        ("reporting", "Reporting"),
-        ("completed", "Completed"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("planning", "Planning"),
+            ("fieldwork", "Fieldwork"),
+            ("review", "Review"),
+            ("reporting", "Reporting"),
+            ("completed", "Completed"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
-    billing_mode = fields.Selection([
-        ("fixed", "Fixed Fee"),
-        ("hourly", "Hourly"),
-        ("retainer", "Retainer"),
-        ("value", "Value-Based"),
-    ], string="Billing Mode", default="hourly", tracking=True)
+    billing_mode = fields.Selection(
+        [
+            ("fixed", "Fixed Fee"),
+            ("hourly", "Hourly"),
+            ("retainer", "Retainer"),
+            ("value", "Value-Based"),
+        ],
+        string="Billing Mode",
+        default="hourly",
+        tracking=True,
+    )
 
     estimated_fee = fields.Monetary(
         string="Estimated Fee",
@@ -144,7 +161,9 @@ class Engagement(models.Model):
                 ) or _("New")
         return super().create(vals_list)
 
-    @api.depends("period_ids", "compliance_task_ids", "document_request_ids", "workpaper_ids")
+    @api.depends(
+        "period_ids", "compliance_task_ids", "document_request_ids", "workpaper_ids"
+    )
     def _compute_counts(self):
         for engagement in self:
             engagement.period_count = len(engagement.period_ids)
@@ -157,9 +176,9 @@ class Engagement(models.Model):
         for engagement in self:
             # This is a simplified calculation - can be extended
             # to pull from timesheets or invoices
-            engagement.actual_fee = sum(
-                engagement.workpaper_ids.mapped("billable_hours")
-            ) * 150  # Default rate
+            engagement.actual_fee = (
+                sum(engagement.workpaper_ids.mapped("billable_hours")) * 150
+            )  # Default rate
 
     @api.constrains("fiscal_year_start", "fiscal_year_end")
     def _check_fiscal_dates(self):
@@ -227,6 +246,7 @@ class Engagement(models.Model):
 
 class EngagementPeriod(models.Model):
     """Engagement periods for tracking work across time."""
+
     _name = "ipai.engagement.period"
     _description = "IPAI Engagement Period"
     _order = "period_start"
@@ -247,12 +267,16 @@ class EngagementPeriod(models.Model):
     period_start = fields.Date(string="Period Start", required=True)
     period_end = fields.Date(string="Period End", required=True)
 
-    close_status = fields.Selection([
-        ("open", "Open"),
-        ("in_progress", "In Progress"),
-        ("pending_review", "Pending Review"),
-        ("closed", "Closed"),
-    ], string="Close Status", default="open")
+    close_status = fields.Selection(
+        [
+            ("open", "Open"),
+            ("in_progress", "In Progress"),
+            ("pending_review", "Pending Review"),
+            ("closed", "Closed"),
+        ],
+        string="Close Status",
+        default="open",
+    )
 
     reviewer_id = fields.Many2one(
         "res.users",
@@ -285,7 +309,9 @@ class EngagementPeriod(models.Model):
         self.write({"close_status": "pending_review"})
 
     def action_close(self):
-        self.write({
-            "close_status": "closed",
-            "close_date": fields.Date.today(),
-        })
+        self.write(
+            {
+                "close_status": "closed",
+                "close_date": fields.Date.today(),
+            }
+        )

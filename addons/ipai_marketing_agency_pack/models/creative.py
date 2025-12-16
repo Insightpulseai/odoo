@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class CreativeBrief(models.Model):
     """Creative brief for campaign production."""
+
     _name = "ipai.creative.brief"
     _description = "IPAI Creative Brief"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -30,13 +31,18 @@ class CreativeBrief(models.Model):
         store=True,
     )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("review", "In Review"),
-        ("approved", "Approved"),
-        ("revision", "Needs Revision"),
-        ("rejected", "Rejected"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("review", "In Review"),
+            ("approved", "Approved"),
+            ("revision", "Needs Revision"),
+            ("rejected", "Rejected"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     # Brief content
     audience = fields.Text(
@@ -52,7 +58,7 @@ class CreativeBrief(models.Model):
     mandatories = fields.Text(
         string="Mandatories (JSON)",
         help="JSON list of mandatory elements to include",
-        default='[]',
+        default="[]",
     )
 
     channels = fields.Text(
@@ -109,6 +115,7 @@ class CreativeBrief(models.Model):
 
 class Asset(models.Model):
     """Creative asset for campaigns."""
+
     _name = "ipai.asset"
     _description = "IPAI Creative Asset"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -135,28 +142,39 @@ class Asset(models.Model):
         string="Creative Brief",
     )
 
-    asset_type = fields.Selection([
-        ("video", "Video"),
-        ("image", "Image/Static"),
-        ("copy", "Copy/Text"),
-        ("deck", "Presentation/Deck"),
-        ("audio", "Audio"),
-        ("animation", "Animation/GIF"),
-        ("document", "Document"),
-        ("other", "Other"),
-    ], string="Asset Type", required=True, default="image", tracking=True)
+    asset_type = fields.Selection(
+        [
+            ("video", "Video"),
+            ("image", "Image/Static"),
+            ("copy", "Copy/Text"),
+            ("deck", "Presentation/Deck"),
+            ("audio", "Audio"),
+            ("animation", "Animation/GIF"),
+            ("document", "Document"),
+            ("other", "Other"),
+        ],
+        string="Asset Type",
+        required=True,
+        default="image",
+        tracking=True,
+    )
 
     version = fields.Integer(string="Version", default=1, tracking=True)
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("internal_review", "Internal Review"),
-        ("client_review", "Client Review"),
-        ("approved", "Approved"),
-        ("revision", "Revision Needed"),
-        ("rejected", "Rejected"),
-        ("published", "Published"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("internal_review", "Internal Review"),
+            ("client_review", "Client Review"),
+            ("approved", "Approved"),
+            ("revision", "Revision Needed"),
+            ("rejected", "Rejected"),
+            ("published", "Published"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     # File storage
     file = fields.Binary(string="File", attachment=True)
@@ -205,6 +223,7 @@ class Asset(models.Model):
 
 class ApprovalCycle(models.Model):
     """Approval workflow for assets."""
+
     _name = "ipai.approval.cycle"
     _description = "IPAI Asset Approval Cycle"
     _order = "create_date desc"
@@ -216,12 +235,16 @@ class ApprovalCycle(models.Model):
         ondelete="cascade",
     )
 
-    stage = fields.Selection([
-        ("internal", "Internal Review"),
-        ("client", "Client Review"),
-        ("legal", "Legal Review"),
-        ("final", "Final Approval"),
-    ], string="Review Stage", required=True)
+    stage = fields.Selection(
+        [
+            ("internal", "Internal Review"),
+            ("client", "Client Review"),
+            ("legal", "Legal Review"),
+            ("final", "Final Approval"),
+        ],
+        string="Review Stage",
+        required=True,
+    )
 
     approver_id = fields.Many2one(
         "res.partner",
@@ -239,12 +262,17 @@ class ApprovalCycle(models.Model):
     due_date = fields.Date(string="Due Date")
     decision_date = fields.Datetime(string="Decision Date")
 
-    decision = fields.Selection([
-        ("pending", "Pending"),
-        ("approved", "Approved"),
-        ("revision", "Revision Needed"),
-        ("rejected", "Rejected"),
-    ], string="Decision", default="pending", required=True)
+    decision = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("approved", "Approved"),
+            ("revision", "Revision Needed"),
+            ("rejected", "Rejected"),
+        ],
+        string="Decision",
+        default="pending",
+        required=True,
+    )
 
     comments = fields.Text(string="Comments")
     revision_notes = fields.Text(string="Revision Notes")

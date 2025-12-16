@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class ClientBrand(models.Model):
     """Client brand for marketing agency operations."""
+
     _name = "ipai.client.brand"
     _description = "IPAI Client Brand"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -105,5 +106,9 @@ class ClientBrand(models.Model):
         }
 
     _sql_constraints = [
-        ("partner_code_uniq", "unique(partner_id, code)", "Brand code must be unique per client!"),
+        (
+            "partner_code_uniq",
+            "unique(partner_id, code)",
+            "Brand code must be unique per client!",
+        ),
     ]
