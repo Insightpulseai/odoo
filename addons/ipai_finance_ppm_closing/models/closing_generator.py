@@ -10,16 +10,27 @@ Key features:
 - SHA256 hashing for change detection
 - Audit trail via generation runs
 - Completeness status (PASS/WARN/FAIL)
+- Asia/Manila timezone for deadline calculations
+- Fallback assignee for unmapped employee codes
 """
 import hashlib
 import json
 import logging
 from datetime import date, datetime, timedelta
 
-from odoo import api, fields, models
+try:
+    import pytz
+    HAS_PYTZ = True
+except ImportError:
+    HAS_PYTZ = False
+
+from odoo import api, fields, models, SUPERUSER_ID
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
+
+# Default timezone for deadline calculations
+DEFAULT_TIMEZONE = "Asia/Manila"
 
 
 def _sha256(obj) -> str:
@@ -81,8 +92,9 @@ class ClosingTaskGenerator(models.AbstractModel):
             raise UserError(f"Cycle not found: {cycle_code}")
 
         # If no cycle_key specified, generate for current month
+        # Use timezone from seed for date calculations
         if not cycle_key:
-            today = fields.Date.context_today(self)
+            today = self._get_today_in_timezone(seed.get("timezone", DEFAULT_TIMEZONE))
             cycle_key = f"{cycle_code}|{today.strftime('%Y-%m')}"
 
         # Create audit run record
@@ -182,15 +194,24 @@ class ClosingTaskGenerator(models.AbstractModel):
                 )
                 expected_step_keys.add(step_key)
 
-                # Resolve assignee
-                user_id = self._resolve_user_id(step.get("default_assignee"))
-                if not user_id and step.get("default_assignee"):
+                # Resolve assignee with fallback support
+                user_id, used_fallback = self._resolve_user_id(
+                    step.get("default_assignee"),
+                    use_fallback=True,
+                )
+                if used_fallback or (not user_id and step.get("default_assignee")):
                     report["unresolved_assignees"].append(
                         {
                             "employee_code": step.get("default_assignee"),
                             "task_template_code": tpl["task_template_code"],
                             "step_code": step_code,
+                            "used_fallback": used_fallback,
                         }
+                    )
+                    report["warnings"].append(
+                        f"Unresolved assignee '{step.get('default_assignee')}' "
+                        f"for {tpl['task_template_code']}/{step_code}"
+                        + (" (using fallback)" if used_fallback else "")
                     )
 
                 # Create/update step task
@@ -233,7 +254,7 @@ class ClosingTaskGenerator(models.AbstractModel):
         status = "pass"
         if report["errors"]:
             status = "fail"
-        elif report["unresolved_assignees"] or report["missing_deadlines"]:
+        elif report["warnings"] or report["unresolved_assignees"]:
             status = "warn"
 
         # Update run record
@@ -432,6 +453,32 @@ class ClosingTaskGenerator(models.AbstractModel):
         return None
 
     @api.model
+    def _get_today_in_timezone(self, tz_name: str) -> date:
+        """
+        Get today's date in the specified timezone.
+
+        Args:
+            tz_name: Timezone name (e.g., 'Asia/Manila')
+
+        Returns:
+            date: Today's date in the specified timezone
+        """
+        if HAS_PYTZ:
+            try:
+                tz = pytz.timezone(tz_name)
+                return datetime.now(tz).date()
+            except pytz.UnknownTimeZoneError:
+                _logger.warning(
+                    "Unknown timezone '%s', falling back to UTC", tz_name
+                )
+                return datetime.utcnow().date()
+        else:
+            _logger.warning(
+                "pytz not installed, timezone '%s' ignored. Using UTC.", tz_name
+            )
+            return datetime.utcnow().date()
+
+    @api.model
     def _get_last_business_day(self, year: int, month: int) -> date:
         """Get last business day of a month."""
         # Get first day of next month
@@ -463,16 +510,44 @@ class ClosingTaskGenerator(models.AbstractModel):
         return current
 
     @api.model
-    def _resolve_user_id(self, employee_code: str | None) -> int | None:
-        """Resolve employee code to user ID."""
+    def _resolve_user_id(
+        self,
+        employee_code: str | None,
+        use_fallback: bool = True,
+    ) -> tuple[int | None, bool]:
+        """
+        Resolve employee code to user ID with optional fallback.
+
+        Args:
+            employee_code: The employee code to resolve (e.g., 'CKVC')
+            use_fallback: If True, return SUPERUSER_ID when code not found
+
+        Returns:
+            tuple: (user_id, used_fallback)
+                - user_id: The resolved user ID or None
+                - used_fallback: True if fallback was used
+        """
         if not employee_code:
-            return None
+            return (None, False)
+
         user = (
             self.env["res.users"]
             .sudo()
             .search([("x_employee_code", "=", employee_code)], limit=1)
         )
-        return user.id if user else None
+
+        if user:
+            return (user.id, False)
+
+        # Employee code not found
+        if use_fallback:
+            _logger.warning(
+                "Employee code '%s' not found, using fallback (SUPERUSER_ID)",
+                employee_code,
+            )
+            return (SUPERUSER_ID, True)
+
+        return (None, False)
 
     @api.model
     def _upsert_task(

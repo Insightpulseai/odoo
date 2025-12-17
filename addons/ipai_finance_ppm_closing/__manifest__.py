@@ -30,20 +30,21 @@ The generator creates:
 - Child tasks per step with computed deadlines
 - Audit records for traceability
     """,
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Accounting/Finance",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.net",
     "license": "AGPL-3",
     "depends": [
-        "base",
-        "mail",
         "project",
+        "ipai_finance_ppm",
+        "ipai_ppm_monthly_close",
     ],
     "data": [
         "security/ir.model.access.csv",
         "data/ir_cron.xml",
     ],
+    "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
     "auto_install": False,
