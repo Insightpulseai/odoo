@@ -7,5 +7,6 @@ from . import (
     finance_person,
     finance_task,
     ppm_dashboard,
+    project_task,
     res_users,
 )
