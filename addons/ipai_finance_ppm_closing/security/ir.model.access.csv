@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_close_generation_run_system,ipai.close.generation.run system,model_ipai_close_generation_run,base.group_system,1,1,1,1
+access_close_generation_run_user,ipai.close.generation.run user,model_ipai_close_generation_run,base.group_user,1,0,0,0
+access_close_generated_map_system,ipai.close.generated.map system,model_ipai_close_generated_map,base.group_system,1,1,1,1
+access_close_generated_map_user,ipai.close.generated.map user,model_ipai_close_generated_map,base.group_user,1,0,0,0
