@@ -5,3 +5,6 @@ access_ipai_bir_form_schedule,ipai.bir.form.schedule,model_ipai_bir_form_schedul
 access_ipai_bir_process_step,ipai.bir.process.step,model_ipai_bir_process_step,base.group_user,1,1,1,1
 access_finance_ppm_dashboard_user,access_finance_ppm_dashboard_user,model_finance_ppm_dashboard,account.group_account_user,1,0,0,0
 access_finance_bir_deadline,finance.bir.deadline,model_finance_bir_deadline,base.group_user,1,1,1,1
+access_ipai_close_task_template,ipai.close.task.template,model_ipai_close_task_template,base.group_user,1,1,1,1
+access_ipai_close_generation_run,ipai.close.generation.run,model_ipai_close_generation_run,base.group_user,1,1,1,1
+access_ipai_close_generated_map,ipai.close.generated.map,model_ipai_close_generated_map,base.group_user,1,1,1,1

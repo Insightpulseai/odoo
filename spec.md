@@ -141,6 +141,7 @@ The system is designed to:
 |   |-- deploy-odoo-modules.sh
 |   |-- deploy-to-server.sh
 |   |-- deployment-checklist.sh
+|   |-- export_project_30.py
 |   |-- fix_home_manual.sql
 |   |-- fix_home_page.sql
 |   |-- fix_home_to_dashboard.py
@@ -207,6 +208,7 @@ The system is designed to:
 |-- odoo_ce_expert_prompt.md
 |-- ph_holidays_2026.csv
 |-- plan.md
+|-- project_30_export.json
 |-- spec.md
 |-- task.md
 |-- tasks.md
