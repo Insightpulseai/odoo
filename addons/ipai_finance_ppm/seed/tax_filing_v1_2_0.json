@@ -1,0 +1,529 @@
+{
+  "version": "1.2.0",
+  "seed_id": "ipai_finance_ppm_tax_filing",
+  "description": "BIR Tax Filing Task Templates (Monthly, Quarterly, Annual)",
+  "defaults": {
+    "timezone": "Asia/Manila",
+    "uom_days": "business_days",
+    "assign_resolution": {
+      "strategy": "employee_code",
+      "field": "res.users.x_employee_code"
+    }
+  },
+  "cycles": [
+    {
+      "cycle_code": "TAX_FILING_MONTHLY",
+      "name": "Monthly Tax Filing",
+      "description": "Monthly BIR tax forms (1601-C, 0619-E)",
+      "recurrence": {
+        "freq": "MONTHLY"
+      },
+      "anchor": {
+        "type": "BIR_DEADLINE",
+        "day": 10,
+        "offset_months": 1
+      },
+      "phases": [
+        {
+          "phase_code": "MONTHLY_TAX",
+          "name": "Monthly Tax Filing",
+          "sequence": 10,
+          "phase_type": "tax_filing",
+          "description": "Withholding tax and documentary stamp tax",
+          "workstreams": [
+            {
+              "workstream_code": "WITHHOLDING_TAX",
+              "name": "Withholding Tax",
+              "sequence": 10,
+              "categories": [
+                {
+                  "category_code": "1601C",
+                  "name": "1601-C: Monthly Remittance Return of Income Taxes Withheld on Compensation",
+                  "sequence": 10,
+                  "bir_form_code": "1601-C",
+                  "task_templates": [
+                    {
+                      "template_code": "BIR_1601C",
+                      "task_name_template": "BIR 1601-C (Withholding Tax on Compensation) for {period}",
+                      "description": "Monthly remittance of income taxes withheld from employee compensation",
+                      "wbs_code_template": "BIR-1601C-{period}",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "name_template": "Prepare BIR 1601-C for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": -4,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REPORT_APPROVAL",
+                          "name_template": "Approve BIR 1601-C Report for {period}",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -2,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "PAYMENT_APPROVAL",
+                          "name_template": "Approve BIR 1601-C Payment for {period}",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -1,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        },
+                        {
+                          "step_code": "FILE_PAY",
+                          "name_template": "File and Pay BIR 1601-C for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": 0,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 40
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "0619E",
+                  "name": "0619-E: Monthly Remittance Return of Final Income Taxes Withheld",
+                  "sequence": 20,
+                  "bir_form_code": "0619-E",
+                  "task_templates": [
+                    {
+                      "template_code": "BIR_0619E",
+                      "task_name_template": "BIR 0619-E (Withholding Tax on Final Income) for {period}",
+                      "description": "Monthly remittance of final withholding tax on interest, royalties, prizes",
+                      "wbs_code_template": "BIR-0619E-{period}",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "name_template": "Prepare BIR 0619-E for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": -4,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REPORT_APPROVAL",
+                          "name_template": "Approve BIR 0619-E Report for {period}",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -2,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "PAYMENT_APPROVAL",
+                          "name_template": "Approve BIR 0619-E Payment for {period}",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -1,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        },
+                        {
+                          "step_code": "FILE_PAY",
+                          "name_template": "File and Pay BIR 0619-E for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": 0,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 40
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cycle_code": "TAX_FILING_QUARTERLY",
+      "name": "Quarterly Tax Filing",
+      "description": "Quarterly BIR tax forms (2550Q, 1601-EQ, 1601-FQ)",
+      "recurrence": {
+        "freq": "QUARTERLY"
+      },
+      "anchor": {
+        "type": "BIR_DEADLINE",
+        "offset_days": 60,
+        "quarter_end_relative": true
+      },
+      "phases": [
+        {
+          "phase_code": "QUARTERLY_TAX",
+          "name": "Quarterly Tax Filing",
+          "sequence": 10,
+          "phase_type": "tax_filing",
+          "description": "Income tax, expanded withholding tax",
+          "workstreams": [
+            {
+              "workstream_code": "INCOME_TAX",
+              "name": "Income Tax",
+              "sequence": 10,
+              "categories": [
+                {
+                  "category_code": "2550Q",
+                  "name": "2550Q: Quarterly Income Tax Return",
+                  "sequence": 10,
+                  "bir_form_code": "2550Q",
+                  "task_templates": [
+                    {
+                      "template_code": "BIR_2550Q",
+                      "task_name_template": "BIR 2550Q (Quarterly Income Tax Return) for {period}",
+                      "description": "Quarterly corporate income tax return",
+                      "wbs_code_template": "BIR-2550Q-{period}",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "name_template": "Prepare BIR 2550Q for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": -10,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 3,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REPORT_APPROVAL",
+                          "name_template": "Approve BIR 2550Q Report for {period}",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -5,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 2,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "PAYMENT_APPROVAL",
+                          "name_template": "Approve BIR 2550Q Payment for {period}",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -2,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 30
+                        },
+                        {
+                          "step_code": "FILE_PAY",
+                          "name_template": "File and Pay BIR 2550Q for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": 0,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 40
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "1601EQ",
+                  "name": "1601-EQ: Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)",
+                  "sequence": 20,
+                  "bir_form_code": "1601-EQ",
+                  "task_templates": [
+                    {
+                      "template_code": "BIR_1601EQ",
+                      "task_name_template": "BIR 1601-EQ (Expanded Withholding Tax) for {period}",
+                      "description": "Quarterly summary of expanded withholding tax",
+                      "wbs_code_template": "BIR-1601EQ-{period}",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "name_template": "Prepare BIR 1601-EQ for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": -8,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 2,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REPORT_APPROVAL",
+                          "name_template": "Approve BIR 1601-EQ Report for {period}",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -4,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "PAYMENT_APPROVAL",
+                          "name_template": "Approve BIR 1601-EQ Payment for {period}",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -2,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 30
+                        },
+                        {
+                          "step_code": "FILE_PAY",
+                          "name_template": "File and Pay BIR 1601-EQ for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": 0,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 40
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "1601FQ",
+                  "name": "1601-FQ: Quarterly Remittance Return of Final Income Taxes Withheld",
+                  "sequence": 30,
+                  "bir_form_code": "1601-FQ",
+                  "task_templates": [
+                    {
+                      "template_code": "BIR_1601FQ",
+                      "task_name_template": "BIR 1601-FQ (Final Withholding Tax) for {period}",
+                      "description": "Quarterly summary of final withholding tax",
+                      "wbs_code_template": "BIR-1601FQ-{period}",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "name_template": "Prepare BIR 1601-FQ for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": -8,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 2,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REPORT_APPROVAL",
+                          "name_template": "Approve BIR 1601-FQ Report for {period}",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -4,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "PAYMENT_APPROVAL",
+                          "name_template": "Approve BIR 1601-FQ Payment for {period}",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -2,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 30
+                        },
+                        {
+                          "step_code": "FILE_PAY",
+                          "name_template": "File and Pay BIR 1601-FQ for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": 0,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 40
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "cycle_code": "TAX_FILING_ANNUAL",
+      "name": "Annual Tax Filing",
+      "description": "Annual BIR tax forms (1702-RT)",
+      "recurrence": {
+        "freq": "YEARLY"
+      },
+      "anchor": {
+        "type": "BIR_DEADLINE",
+        "month": 4,
+        "day": 15,
+        "year_offset": 1
+      },
+      "phases": [
+        {
+          "phase_code": "ANNUAL_TAX",
+          "name": "Annual Tax Filing",
+          "sequence": 10,
+          "phase_type": "tax_filing",
+          "description": "Annual income tax return",
+          "workstreams": [
+            {
+              "workstream_code": "ANNUAL_ITR",
+              "name": "Annual Income Tax Return",
+              "sequence": 10,
+              "categories": [
+                {
+                  "category_code": "1702RT",
+                  "name": "1702-RT: Annual Income Tax Return for Corporations",
+                  "sequence": 10,
+                  "bir_form_code": "1702-RT",
+                  "task_templates": [
+                    {
+                      "template_code": "BIR_1702RT",
+                      "task_name_template": "BIR 1702-RT (Annual Income Tax Return) for {period}",
+                      "description": "Annual corporate income tax return with audited financial statements",
+                      "wbs_code_template": "BIR-1702RT-{period}",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "name_template": "Prepare BIR 1702-RT for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": -20,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 5,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REPORT_APPROVAL",
+                          "name_template": "Approve BIR 1702-RT Report for {period}",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -10,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 3,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "PAYMENT_APPROVAL",
+                          "name_template": "Approve BIR 1702-RT Payment for {period}",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -5,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 2,
+                          "sequence": 30
+                        },
+                        {
+                          "step_code": "FILE_PAY",
+                          "name_template": "File and Pay BIR 1702-RT for {period}",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": 0,
+                            "relative_to": "BIR_DEADLINE"
+                          },
+                          "duration_days": 1,
+                          "sequence": 40
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
