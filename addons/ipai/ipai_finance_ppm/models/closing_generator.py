@@ -252,60 +252,69 @@ class ClosingGenerator(models.Model):
 
             for phase in cycle.get('phases', []):
                 phase_code = phase.get('phase_code')
-                phase_name = phase.get('phase_name')
+                phase_name = phase.get('name', phase.get('phase_name'))
                 phase_seq = phase.get('sequence', 10)
 
                 for workstream in phase.get('workstreams', []):
                     workstream_code = workstream.get('workstream_code')
-                    workstream_name = workstream.get('workstream_name')
+                    workstream_name = workstream.get('name', workstream.get('workstream_name'))
                     workstream_seq = workstream.get('sequence', 10)
 
-                    for task_template in workstream.get('task_templates', []):
-                        template_code = task_template.get('template_code')
+                    # NEW: Iterate through categories (v1.2.0 hierarchy)
+                    for category in workstream.get('categories', []):
+                        category_code = category.get('category_code')
+                        category_name = category.get('name', category.get('category_name'))
+                        category_seq = category.get('sequence', 10)
 
-                        for step in task_template.get('steps', []):
-                            step_code = step.get('step_code')
-                            step_seq = step.get('sequence', 10)
+                        for task_template in category.get('task_templates', []):
+                            template_code = task_template.get('template_code')
 
-                            # Compute full template code: TEMPLATE_CODE|STEP_CODE
-                            full_template_code = f"{template_code}|{step_code}"
+                            for step in task_template.get('steps', []):
+                                step_code = step.get('step_code')
+                                step_seq = step.get('sequence', 10)
 
-                            # Check if template exists
-                            existing = template_model.search([
-                                ('template_code', '=', full_template_code),
-                                ('template_version', '=', seed_data.get('seed_version', '1.0.0'))
-                            ], limit=1)
+                                # Compute full template code: TEMPLATE_CODE|STEP_CODE
+                                full_template_code = f"{template_code}|{step_code}"
 
-                            template_vals = {
-                                'template_code': full_template_code,
-                                'template_version': seed_data.get('seed_version', '1.0.0'),
-                                'cycle_code': cycle_code,
-                                'phase_code': phase_code,
-                                'phase_name': phase_name,
-                                'phase_seq': phase_seq,
-                                'workstream_code': workstream_code,
-                                'workstream_name': workstream_name,
-                                'workstream_seq': workstream_seq,
-                                'template_seq': task_template.get('sequence', 10),
-                                'step_code': step_code,
-                                'step_seq': step_seq,
-                                'task_name_template': step.get('name_template', task_template.get('task_name_template')),
-                                'task_description': task_template.get('description'),
-                                'recurrence_rule': cycle.get('recurrence_rule'),
-                                'duration_days': step.get('duration_days', 1),
-                                'offset_from_period_end': step.get('offset_from_period_end', 0),
-                                'responsible_role': step.get('responsible_role'),
-                                'employee_code': step.get('employee_code'),
-                                'wbs_code_template': task_template.get('wbs_code_template'),
-                                'critical_path': task_template.get('critical_path', False),
-                                'phase_type': phase.get('phase_type'),
-                                'is_active': True
-                            }
+                                # Check if template exists
+                                existing = template_model.search([
+                                    ('template_code', '=', full_template_code),
+                                    ('template_version', '=', seed_data.get('version', '1.0.0'))
+                                ], limit=1)
 
-                            if existing:
-                                existing.write(template_vals)
-                            else:
-                                template_model.create(template_vals)
+                                template_vals = {
+                                    'template_code': full_template_code,
+                                    'template_version': seed_data.get('version', '1.0.0'),
+                                    'cycle_code': cycle_code,
+                                    'phase_code': phase_code,
+                                    'phase_name': phase_name,
+                                    'phase_seq': phase_seq,
+                                    'workstream_code': workstream_code,
+                                    'workstream_name': workstream_name,
+                                    'workstream_seq': workstream_seq,
+                                    'category_code': category_code,
+                                    'category_name': category_name,
+                                    'category_seq': category_seq,
+                                    'template_seq': task_template.get('sequence', 10),
+                                    'step_code': step_code,
+                                    'step_seq': step_seq,
+                                    'task_name_template': step.get('name_template', task_template.get('task_name_template')),
+                                    'task_description': task_template.get('description'),
+                                    'recurrence_rule': cycle.get('recurrence_rule'),
+                                    'duration_days': step.get('duration_days', 1),
+                                    'offset_from_period_end': step.get('due', {}).get('offset_business_days', 0),
+                                    'responsible_role': step.get('responsible_role'),
+                                    'employee_code': step.get('employee_code'),
+                                    'wbs_code_template': task_template.get('wbs_code_template'),
+                                    'critical_path': task_template.get('critical_path', False),
+                                    'phase_type': phase.get('phase_type'),
+                                    'is_active': True
+                                }
+
+                                if existing:
+                                    existing.write(template_vals)
+                                else:
+                                    template_model.create(template_vals)
 
         _logger.info(f"Templates upserted for generation run {generation_run.id}")
 
@@ -333,8 +342,12 @@ class ClosingGenerator(models.Model):
         ])
 
         for template in templates:
-            # Compute external key: CYCLE_KEY|TEMPLATE_CODE
-            external_key = f"{cycle_key}|{template.template_code}"
+            # Extract template code (remove step suffix)
+            # template.template_code format: "CT_PAYROLL_PROCESSING|PREP"
+            template_code_base = template.template_code.split('|')[0] if '|' in template.template_code else template.template_code
+
+            # Compute external key: CYCLE_KEY|PHASE_CODE|WORKSTREAM_CODE|CATEGORY_CODE|TEMPLATE_CODE|STEP_CODE
+            external_key = f"{cycle_key}|{template.phase_code}|{template.workstream_code}|{template.category_code}|{template_code_base}|{template.step_code}"
 
             # Check if task already exists
             existing_mapping = mapping_model.search([('external_key', '=', external_key)], limit=1)
