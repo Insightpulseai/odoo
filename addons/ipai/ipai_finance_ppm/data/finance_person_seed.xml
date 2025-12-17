@@ -13,7 +13,7 @@
             <field name="name">Khalil Veracruz</field>
             <field name="email">khalil.veracruz@omc.com</field>
             <field name="role">director</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_director_ckvc"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_director_ckvc"/> -->
         </record>
 
         <!-- Senior Finance Manager (RIM/SFM) -->
@@ -22,7 +22,7 @@
             <field name="name">Rey Meran</field>
             <field name="email">rey.meran@omc.com</field>
             <field name="role">manager</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_senior_finance_manager_rim"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_senior_finance_manager_rim"/> -->
         </record>
 
         <!-- Finance Supervisor (BOM) -->
@@ -31,7 +31,7 @@
             <field name="name">Beng Manalo</field>
             <field name="email">beng.manalo@omc.com</field>
             <field name="role">supervisor</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_supervisor_bom"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_supervisor_bom"/> -->
         </record>
 
         <!-- Finance Staff (LAS) -->
@@ -40,7 +40,7 @@
             <field name="name">Amor Lasaga</field>
             <field name="email">amor.lasaga@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_financial_analyst_las"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_financial_analyst_las"/> -->
         </record>
 
         <!-- Finance Staff (RMQB) -->
@@ -49,7 +49,7 @@
             <field name="name">Sally Brillantes</field>
             <field name="email">sally.brillantes@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_clerk_rmqb"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_clerk_rmqb"/> -->
         </record>
 
         <!-- Finance Staff (JMSM) -->
@@ -58,7 +58,7 @@
             <field name="name">Joana Maravillas</field>
             <field name="email">joana.maravillas@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_jm"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_jm"/> -->
         </record>
 
         <!-- Finance Staff (JAP) -->
@@ -67,7 +67,7 @@
             <field name="name">Jinky Paladin</field>
             <field name="email">jinky.paladin@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_gl_accountant_jpal"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_gl_accountant_jpal"/> -->
         </record>
 
         <!-- Finance Staff (JPAL) -->
@@ -76,7 +76,7 @@
             <field name="name">Jerald Loterte</field>
             <field name="email">jerald.loterte@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_apar_specialist_jpl"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_apar_specialist_jpl"/> -->
         </record>
 
         <!-- Finance Staff (JLI) -->
@@ -85,7 +85,7 @@
             <field name="name">Jasmin Ignacio</field>
             <field name="email">jasmin.ignacio@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_tax_compliance_ji"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_tax_compliance_ji"/> -->
         </record>
 
         <!-- Finance Staff (JRMO) -->
@@ -94,7 +94,7 @@
             <field name="name">Jhoee Oliva</field>
             <field name="email">jhoee.oliva@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_assistant_jo"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_assistant_jo"/> -->
         </record>
 
         <!-- Finance Staff (CSD) -->
@@ -103,7 +103,7 @@
             <field name="name">Cliff Dejecacion</field>
             <field name="email">cliff.dejecacion@omc.com</field>
             <field name="role">staff</field>
-            <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_csd"/>
+            <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_csd"/> -->
         </record>
 
     </data>
