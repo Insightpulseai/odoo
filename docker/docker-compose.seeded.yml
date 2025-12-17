@@ -1,0 +1,112 @@
+# =============================================================================
+# InsightPulse Odoo 18 CE - Seeded Image Docker Compose
+# =============================================================================
+# Usage:
+#   docker compose -f docker/docker-compose.seeded.yml up -d
+#
+# First boot (~2-5 min):
+#   - Installs KEEP modules
+#   - Runs seed reconciliation
+#   - Creates .db_seeded flag
+#
+# Subsequent boots:
+#   - Skips initialization
+#   - Normal Odoo startup
+# =============================================================================
+
+version: "3.9"
+
+services:
+  # ---------------------------------------------------------------------------
+  # PostgreSQL Database
+  # ---------------------------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: ipai-odoo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: odoo_core
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-odoo_secure_password}
+      POSTGRES_MAX_CONNECTIONS: 100
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - odoo-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo_core"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  # ---------------------------------------------------------------------------
+  # Odoo Application (Seeded Image)
+  # ---------------------------------------------------------------------------
+  odoo:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.seeded
+    image: ghcr.io/insightpulseai/odoo-ce:v18.0-core-seeded
+    container_name: ipai-odoo-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Database connection
+      HOST: db
+      PORT: 5432
+      USER: odoo
+      PASSWORD: ${DB_PASSWORD:-odoo_secure_password}
+      DB_NAME: odoo_core
+      # Odoo configuration
+      ODOO_RC: /etc/odoo/odoo.conf
+    volumes:
+      # Persistent filestore (uploads, attachments, session data)
+      - filestore:/var/lib/odoo
+      # Optional: Mount local addons for development
+      # - ../addons:/mnt/extra-addons:ro
+    ports:
+      # Expose on localhost only (use reverse proxy for production)
+      - "127.0.0.1:8069:8069"
+    networks:
+      - odoo-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 180s  # Allow time for first-boot seeding
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 1G
+
+# =============================================================================
+# Networks
+# =============================================================================
+networks:
+  odoo-network:
+    driver: bridge
+
+# =============================================================================
+# Volumes
+# =============================================================================
+volumes:
+  db-data:
+    driver: local
+  filestore:
+    driver: local
