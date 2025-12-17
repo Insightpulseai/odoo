@@ -82,6 +82,14 @@ class CloseTaskTemplate(models.Model):
     workstream_name = fields.Char(string='Workstream Name')
     workstream_seq = fields.Integer(string='Workstream Sequence', default=10)
 
+    category_code = fields.Char(
+        string='Category Code',
+        index=True,
+        help='Category identifier (e.g., PAYROLL_PERSONNEL, SSS_PHILHEALTH)'
+    )
+    category_name = fields.Char(string='Category Name')
+    category_seq = fields.Integer(string='Category Sequence', default=10)
+
     template_seq = fields.Integer(string='Template Sequence', default=10)
 
     step_code = fields.Selection([
@@ -151,7 +159,7 @@ class CloseTaskTemplate(models.Model):
          'Template code + version must be unique')
     ]
 
-    @api.depends('template_code', 'cycle_code', 'phase_code', 'workstream_code',
+    @api.depends('template_code', 'cycle_code', 'phase_code', 'workstream_code', 'category_code',
                  'task_name_template', 'step_code', 'duration_days', 'offset_from_period_end')
     def _compute_seed_hash(self):
         """Compute SHA256 hash of template payload for change detection"""
@@ -161,6 +169,7 @@ class CloseTaskTemplate(models.Model):
                 'cycle_code': record.cycle_code,
                 'phase_code': record.phase_code,
                 'workstream_code': record.workstream_code,
+                'category_code': record.category_code,
                 'task_name_template': record.task_name_template,
                 'step_code': record.step_code,
                 'duration_days': record.duration_days,
