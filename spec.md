@@ -35,6 +35,7 @@ The system is designed to:
 |   |-- ipai_ce_branding
 |   |-- ipai_ce_cleaner
 |   |-- ipai_clarity_ppm_parity
+|   |-- ipai_custom_routes
 |   |-- ipai_default_home
 |   |-- ipai_dev_studio_base
 |   |-- ipai_docs
