@@ -96,6 +96,7 @@ The system is designed to:
 |   |-- ODOO_PRODUCTION_RESEARCH.md
 |   |-- PRD_ipai_ppm_portfolio.md
 |   |-- SAAS_PARITY_READINESS.md
+|   |-- SITEMAP.md
 |   `-- TROUBLESHOOTING_500_ERROR.md
 |-- notion-n8n-monthly-close
 |   |-- scripts
@@ -132,17 +133,22 @@ The system is designed to:
 |   |-- baseline-validation.sh
 |   |-- check_project_tasks.py
 |   |-- cleanup_duplicate_users.sql
+|   |-- cleanup_users_xmlrpc.py
 |   |-- convert_csv_to_xml.py
 |   |-- convert_seed_to_xml.py
 |   |-- deploy-odoo-modules.sh
 |   |-- deploy-to-server.sh
 |   |-- deployment-checklist.sh
+|   |-- fix_home_manual.sql
+|   |-- fix_home_page.sql
+|   |-- fix_home_to_dashboard.py
 |   |-- gen_repo_tree.sh
 |   |-- generate_2026_finance_calendar.py
 |   |-- generate_2026_schedule.py
 |   |-- generate_finance_dashboard.py
 |   |-- import_month_end_tasks.py
 |   |-- install-git-hooks.sh
+|   |-- install_default_home.py
 |   |-- oca-sync.sh
 |   |-- report_ci_telemetry.sh
 |   |-- run_clarity_ppm_reverse.sh
