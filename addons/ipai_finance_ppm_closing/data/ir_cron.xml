@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Monthly cron to generate Month-End Close tasks -->
+    <record id="ir_cron_month_end_close_generate" model="ir.cron">
+        <field name="name">Generate Month-End Close Tasks</field>
+        <field name="model_id" ref="base.model_ir_actions_server"/>
+        <field name="state">code</field>
+        <field name="code">
+# Load seed from ir.config_parameter and run generator
+try:
+    env['ipai.close.generator'].run_from_config(
+        cycle_code='MONTH_END_CLOSE',
+        cycle_key=None,  # Auto-compute from current date
+        dry_run=False
+    )
+except Exception as e:
+    import logging
+    _logger = logging.getLogger(__name__)
+    _logger.error("Month-End Close generator failed: %s", e)
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="active">False</field>
+        <field name="priority">10</field>
+    </record>
+
+    <!-- Daily cron to check for BIR filing tasks that need generation -->
+    <record id="ir_cron_bir_filing_check" model="ir.cron">
+        <field name="name">Check BIR Filing Tasks</field>
+        <field name="model_id" ref="base.model_ir_actions_server"/>
+        <field name="state">code</field>
+        <field name="code">
+# Load seed and check for upcoming BIR filings
+try:
+    env['ipai.close.generator'].run_from_config(
+        cycle_code='BIR_TAX_FILING',
+        cycle_key=None,
+        dry_run=False
+    )
+except Exception as e:
+    import logging
+    _logger = logging.getLogger(__name__)
+    _logger.error("BIR Filing generator failed: %s", e)
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">False</field>
+        <field name="priority">20</field>
+    </record>
+</odoo>
