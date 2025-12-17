@@ -151,7 +151,7 @@ def fetch_db_templates(env):
                 print(f"   - {model_name}")
         return None, False
 
-    records = TemplateModel.search([('active', '=', True)])
+    records = TemplateModel.search([('is_active', '=', True)])
 
     # Detect legacy schema: check if any templates have step suffixes
     STEP_SUFFIXES = ['|PREP', '|REVIEW', '|APPROVAL']

@@ -5,5 +5,6 @@ from . import project_task
 from . import bir_schedule
 from . import ppm_dashboard
 from . import closing_models
+from . import closing_step
 from . import closing_generator
 from . import res_users
