@@ -3,6 +3,7 @@ from . import (
     bir_schedule,
     closing_generator,
     closing_models,
+    closing_step,
     finance_bir_deadline,
     finance_person,
     finance_task,

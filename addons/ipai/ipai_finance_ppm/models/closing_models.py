@@ -155,6 +155,19 @@ class CloseTaskTemplate(models.Model):
         ('closeout', 'Closeout')
     ], string='Phase Type')
 
+    # v1.2.0 Hierarchical Structure (Parent-Child Steps)
+    step_ids = fields.One2many(
+        'ipai.close.task.step',
+        'template_id',
+        string='Task Steps',
+        help='Workflow steps for this template (PREP, REVIEW, APPROVAL, FILE_PAY)'
+    )
+    x_legacy_migration = fields.Boolean(
+        string='Migrated from Legacy',
+        default=False,
+        help='True if this parent template was auto-created during v1.1.0 → v1.2.0 migration'
+    )
+
     # Metadata
     is_active = fields.Boolean(string='Active', default=True, index=True)
     seed_hash = fields.Char(
