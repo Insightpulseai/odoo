@@ -1,0 +1,198 @@
+# =============================================================================
+# GitHub Actions: Build & Publish InsightPulse Odoo 18 CE Seeded Image
+# =============================================================================
+# Triggers:
+#   - Push to main branch (production releases)
+#   - Manual workflow dispatch
+#   - Pull requests (build only, no push)
+#
+# Outputs:
+#   - ghcr.io/insightpulseai/odoo-ce:v18.0-core-seeded
+#   - ghcr.io/insightpulseai/odoo-ce:latest-seeded
+# =============================================================================
+
+name: Build Seeded Odoo Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'addons/ipai_**'
+      - 'docker/Dockerfile.seeded'
+      - 'docker/entrypoint.seeded.sh'
+      - 'docker/requirements.seeded.txt'
+      - '.github/workflows/build-seeded-image.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'addons/ipai_**'
+      - 'docker/**'
+  workflow_dispatch:
+    inputs:
+      push_image:
+        description: 'Push image to registry'
+        required: false
+        default: 'true'
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/odoo-ce
+
+jobs:
+  # ===========================================================================
+  # Build & Test Image
+  # ===========================================================================
+  build:
+    name: Build Seeded Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # -----------------------------------------------------------------------
+      # Checkout & Setup
+      # -----------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: false  # OCA submodules not needed for seeded image
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # -----------------------------------------------------------------------
+      # Registry Login (skip for PRs)
+      # -----------------------------------------------------------------------
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # -----------------------------------------------------------------------
+      # Extract Metadata for Tags
+      # -----------------------------------------------------------------------
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=v18.0-core-seeded
+            type=raw,value=latest-seeded
+            type=sha,prefix=seeded-
+
+      # -----------------------------------------------------------------------
+      # Build Image
+      # -----------------------------------------------------------------------
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.seeded
+          push: false
+          load: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-seeded
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # -----------------------------------------------------------------------
+      # Test Image (Basic Validation)
+      # -----------------------------------------------------------------------
+      - name: Test image startup
+        run: |
+          echo "Starting test containers..."
+
+          # Create test network
+          docker network create test-odoo-net || true
+
+          # Start PostgreSQL
+          docker run -d \
+            --name test-odoo-db \
+            --network test-odoo-net \
+            -e POSTGRES_DB=odoo_core \
+            -e POSTGRES_USER=odoo \
+            -e POSTGRES_PASSWORD=test_password \
+            postgres:16-alpine
+
+          # Wait for PostgreSQL
+          echo "Waiting for PostgreSQL..."
+          sleep 10
+
+          # Start Odoo (check if it boots without error)
+          docker run -d \
+            --name test-odoo-app \
+            --network test-odoo-net \
+            -e HOST=test-odoo-db \
+            -e USER=odoo \
+            -e PASSWORD=test_password \
+            -e DB_NAME=odoo_core \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-seeded
+
+          # Give it time to initialize
+          echo "Waiting for Odoo initialization (90s)..."
+          sleep 90
+
+          # Check container is running
+          if docker ps | grep -q test-odoo-app; then
+            echo "✅ Container is running"
+            docker logs test-odoo-app --tail 50
+          else
+            echo "❌ Container failed to start"
+            docker logs test-odoo-app
+            exit 1
+          fi
+
+      - name: Cleanup test containers
+        if: always()
+        run: |
+          docker rm -f test-odoo-app test-odoo-db || true
+          docker network rm test-odoo-net || true
+
+      # -----------------------------------------------------------------------
+      # Push Image (only on main branch push or manual trigger)
+      # -----------------------------------------------------------------------
+      - name: Push Docker image
+        if: |
+          github.event_name == 'push' && github.ref == 'refs/heads/main' ||
+          github.event_name == 'workflow_dispatch' && github.event.inputs.push_image == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.seeded
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # -----------------------------------------------------------------------
+      # Output Summary
+      # -----------------------------------------------------------------------
+      - name: Output image details
+        if: success()
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**KEEP Modules (8):**" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_finance_ppm (core Finance PPM)" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_ppm_monthly_close (monthly close scheduler)" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_finance_ppm_closing (idempotent generator)" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_finance_ppm_dashboard (dashboards)" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_bir_compliance (BIR tax filing)" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_expense (expense management)" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_ocr_expense (receipt OCR)" >> $GITHUB_STEP_SUMMARY
+          echo "- ipai_equipment (asset tracking)" >> $GITHUB_STEP_SUMMARY
