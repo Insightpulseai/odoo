@@ -95,7 +95,7 @@ def migrate_legacy_templates(env, dry_run=False):
             # Check if parent already exists
             existing_parent = TemplateModel.search([
                 ('template_code', '=', base_code),
-                ('active', '=', True)
+                ('is_active', '=', True)
             ], limit=1)
 
             if existing_parent and not any(suffix in existing_parent.template_code for suffix in STEP_SUFFIXES):
@@ -117,6 +117,11 @@ def migrate_legacy_templates(env, dry_run=False):
                     'duration_days': reference_tmpl.duration_days,
                     'x_legacy_migration': True,  # Mark as migrated
                 }
+
+                # Add required name fields with defaults from reference template or generated from codes
+                parent_vals['phase_name'] = getattr(reference_tmpl, 'phase_name', None) or reference_tmpl.phase_code or 'Unknown Phase'
+                parent_vals['workstream_name'] = getattr(reference_tmpl, 'workstream_name', None) or reference_tmpl.workstream_code or ''
+                parent_vals['category_name'] = getattr(reference_tmpl, 'category_name', None) or reference_tmpl.category_code or ''
 
                 # Add description_template if field exists
                 if hasattr(reference_tmpl, 'description_template'):
@@ -180,9 +185,9 @@ def migrate_legacy_templates(env, dry_run=False):
                 if not dry_run:
                     # Mark as obsolete if field exists, otherwise just deactivate
                     if hasattr(step_tmpl, 'x_obsolete'):
-                        step_tmpl.write({'active': False, 'x_obsolete': True})
+                        step_tmpl.write({'is_active': False, 'x_obsolete': True})
                     else:
-                        step_tmpl.write({'active': False})
+                        step_tmpl.write({'is_active': False})
                     stats['legacy_deactivated'] += 1
                 else:
                     print(f"   [DRY RUN] Would deactivate {step_tmpl.template_code}")
