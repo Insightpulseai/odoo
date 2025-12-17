@@ -1,0 +1,654 @@
+{
+  "version": "1.2.0",
+  "seed_id": "ipai_finance_ppm_closing",
+  "description": "Month-End Financial Closing Task Templates (Complete Hierarchy)",
+  "defaults": {
+    "timezone": "Asia/Manila",
+    "uom_days": "business_days",
+    "assign_resolution": {
+      "strategy": "employee_code",
+      "field": "res.users.x_employee_code"
+    }
+  },
+  "cycles": [
+    {
+      "cycle_code": "MONTH_END_CLOSE",
+      "name": "Month-End Closing",
+      "description": "Monthly financial close process",
+      "recurrence": {
+        "freq": "MONTHLY"
+      },
+      "anchor": {
+        "type": "MONTH_END"
+      },
+      "phases": [
+        {
+          "phase_code": "I_INITIAL_COMPLIANCE",
+          "name": "I - Initial & Compliance",
+          "sequence": 10,
+          "phase_type": "initial",
+          "description": "Payroll, statutory compliance, and initial reconciliations",
+          "workstreams": [
+            {
+              "workstream_code": "PAYROLL",
+              "name": "Payroll Processing & Tax Provision",
+              "sequence": 10,
+              "categories": [
+                {
+                  "category_code": "PAYROLL_PERSONNEL",
+                  "name": "Payroll & Personnel",
+                  "sequence": 10,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_PAYROLL_PROCESSING",
+                      "task_name_template": "Process and record Payroll, Final Pay, SL Conversions, early retirement accrual for {period}",
+                      "description": "Complete payroll processing with all statutory deductions and benefits",
+                      "wbs_code_template": "PP-{period}",
+                      "critical_path": false,
+                      "duration": {
+                        "prep_days": 1,
+                        "review_days": 0.5,
+                        "approval_days": 0.5
+                      },
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "name_template": "Prepare Payroll Processing for {period}",
+                          "role": "preparer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -6
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "name_template": "Review Payroll Processing for {period}",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "name_template": "Approve Payroll Processing for {period}",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "SSS_PHILHEALTH",
+                  "name": "SSS/PhilHealth/Pag-IBIG",
+                  "sequence": 20,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_SSS_PHILHEALTH",
+                      "task_name_template": "Process SSS, PhilHealth, HDMF contributions for {period}",
+                      "description": "Compute and record statutory contributions",
+                      "critical_path": false,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -6
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "workstream_code": "IT_FIXED_ASSETS",
+              "name": "IT / Fixed Asset Accounting",
+              "sequence": 20,
+              "categories": [
+                {
+                  "category_code": "AMORTIZATION",
+                  "name": "Amortization",
+                  "sequence": 10,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_IT_AMORTIZATION",
+                      "task_name_template": "Record IT Fixed Assets amortization for {period}",
+                      "description": "Calculate and record monthly amortization",
+                      "critical_path": false,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "JAP",
+                          "responsible_role": "GL Accountant",
+                          "due": {
+                            "offset_business_days": -5
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "BOM",
+                          "responsible_role": "Finance Supervisor",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -2
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "workstream_code": "RECONS",
+              "name": "Reconciliations",
+              "sequence": 30,
+              "categories": [
+                {
+                  "category_code": "BANK_RECON",
+                  "name": "Bank Reconciliation",
+                  "sequence": 10,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_BANK_RECON",
+                      "task_name_template": "Perform bank reconciliation for all accounts for {period}",
+                      "description": "Reconcile all bank accounts with general ledger",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "RMQB",
+                          "responsible_role": "Finance Clerk",
+                          "due": {
+                            "offset_business_days": -5
+                          },
+                          "duration_days": 2,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "BOM",
+                          "responsible_role": "Finance Supervisor",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 1,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -2
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "GL_RECON",
+                  "name": "GL Reconciliation",
+                  "sequence": 20,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_GL_RECON",
+                      "task_name_template": "Perform GL account reconciliation for {period}",
+                      "description": "Reconcile all balance sheet accounts",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "JAP",
+                          "responsible_role": "GL Accountant",
+                          "due": {
+                            "offset_business_days": -4
+                          },
+                          "duration_days": 2,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "BOM",
+                          "responsible_role": "Finance Supervisor",
+                          "due": {
+                            "offset_business_days": -2
+                          },
+                          "duration_days": 1,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -1
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "phase_code": "II_ACCRUALS",
+          "name": "II - Accruals & Provisions",
+          "sequence": 20,
+          "phase_type": "accruals",
+          "description": "Record accrued expenses and provisions",
+          "workstreams": [
+            {
+              "workstream_code": "ACCRUALS",
+              "name": "Accruals & Provisions",
+              "sequence": 10,
+              "categories": [
+                {
+                  "category_code": "EXPENSE_ACCRUALS",
+                  "name": "Expense Accruals",
+                  "sequence": 10,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_EXPENSE_ACCRUALS",
+                      "task_name_template": "Record expense accruals for {period}",
+                      "description": "Accrue unbilled expenses (utilities, rent, professional fees)",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "JPAL",
+                          "responsible_role": "AP/AR Specialist",
+                          "due": {
+                            "offset_business_days": -4
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "BOM",
+                          "responsible_role": "Finance Supervisor",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -2
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "TAX_PROVISIONS",
+                  "name": "Tax Provisions",
+                  "sequence": 20,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_TAX_PROVISIONS",
+                      "task_name_template": "Calculate and record tax provisions for {period}",
+                      "description": "Income tax, withholding tax, and other tax provisions",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "JLI",
+                          "responsible_role": "Tax Compliance Specialist",
+                          "due": {
+                            "offset_business_days": -3
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -2
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": -1
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "phase_code": "III_REVIEW",
+          "name": "III - Review & Adjustments",
+          "sequence": 30,
+          "phase_type": "review",
+          "description": "Financial statement review and adjusting entries",
+          "workstreams": [
+            {
+              "workstream_code": "REVIEW",
+              "name": "Financial Statement Review",
+              "sequence": 10,
+              "categories": [
+                {
+                  "category_code": "FS_REVIEW",
+                  "name": "Financial Statement Review",
+                  "sequence": 10,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_FS_REVIEW",
+                      "task_name_template": "Review financial statements for {period}",
+                      "description": "Review trial balance, P&L, balance sheet for accuracy and completeness",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "BOM",
+                          "responsible_role": "Finance Supervisor",
+                          "due": {
+                            "offset_business_days": -2
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": -1
+                          },
+                          "duration_days": 1,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": 0
+                          },
+                          "duration_days": 1,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "ADJUSTMENTS",
+                  "name": "Adjusting Entries",
+                  "sequence": 20,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_ADJUSTMENTS",
+                      "task_name_template": "Post adjusting journal entries for {period}",
+                      "description": "Record all adjusting entries identified during review",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "JAP",
+                          "responsible_role": "GL Accountant",
+                          "due": {
+                            "offset_business_days": -1
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "BOM",
+                          "responsible_role": "Finance Supervisor",
+                          "due": {
+                            "offset_business_days": -1
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": 0
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "phase_code": "IV_FINALIZATION",
+          "name": "IV - Finalization & Reporting",
+          "sequence": 40,
+          "phase_type": "finalization",
+          "description": "Close books and generate final reports",
+          "workstreams": [
+            {
+              "workstream_code": "CLOSING",
+              "name": "Period Close & Reporting",
+              "sequence": 10,
+              "categories": [
+                {
+                  "category_code": "CLOSE",
+                  "name": "Period Close",
+                  "sequence": 10,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_PERIOD_CLOSE",
+                      "task_name_template": "Close accounting period {period}",
+                      "description": "Lock period, archive records, generate closing reports",
+                      "critical_path": true,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "BOM",
+                          "responsible_role": "Finance Supervisor",
+                          "due": {
+                            "offset_business_days": 0
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": 0
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": 1
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "category_code": "REPORTING",
+                  "name": "Management Reporting",
+                  "sequence": 20,
+                  "task_templates": [
+                    {
+                      "template_code": "CT_MGMT_REPORTS",
+                      "task_name_template": "Generate management reports for {period}",
+                      "description": "Create dashboards, variance analysis, executive summary",
+                      "critical_path": false,
+                      "sequence": 10,
+                      "steps": [
+                        {
+                          "step_code": "PREP",
+                          "role": "preparer",
+                          "employee_code": "LAS",
+                          "responsible_role": "Financial Analyst",
+                          "due": {
+                            "offset_business_days": 1
+                          },
+                          "duration_days": 1,
+                          "sequence": 10
+                        },
+                        {
+                          "step_code": "REVIEW",
+                          "role": "reviewer",
+                          "employee_code": "RIM",
+                          "responsible_role": "Senior Finance Manager",
+                          "due": {
+                            "offset_business_days": 2
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 20
+                        },
+                        {
+                          "step_code": "APPROVAL",
+                          "role": "approver",
+                          "employee_code": "CKVC",
+                          "responsible_role": "Finance Director",
+                          "due": {
+                            "offset_business_days": 3
+                          },
+                          "duration_days": 0.5,
+                          "sequence": 30
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
