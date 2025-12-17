@@ -86,6 +86,7 @@ The system is designed to:
 |   |-- AGENT_FRAMEWORK_SESSION_REPORT.md
 |   |-- DEPLOYMENT.md
 |   |-- DEPLOYMENT_GUIDE.md
+|   |-- ECOSYSTEM_GUIDE.md
 |   |-- ENTERPRISE_FEATURE_GAP.yaml
 |   |-- FEATURE_CHEQROOM_PARITY.md
 |   |-- FEATURE_CONCUR_PARITY.md
