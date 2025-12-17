@@ -20,11 +20,12 @@ from datetime import date, datetime, timedelta
 
 try:
     import pytz
+
     HAS_PYTZ = True
 except ImportError:
     HAS_PYTZ = False
 
-from odoo import api, fields, models, SUPERUSER_ID
+from odoo import SUPERUSER_ID, api, fields, models
 from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
@@ -356,9 +357,7 @@ class ClosingTaskGenerator(models.AbstractModel):
     def _ensure_project(self, cycle: dict):
         """Get or create project for the cycle."""
         Project = self.env["project.project"].sudo()
-        proj = Project.search(
-            [("x_cycle_code", "=", cycle["cycle_code"])], limit=1
-        )
+        proj = Project.search([("x_cycle_code", "=", cycle["cycle_code"])], limit=1)
         if proj:
             return proj
         return Project.create(
@@ -468,9 +467,7 @@ class ClosingTaskGenerator(models.AbstractModel):
                 tz = pytz.timezone(tz_name)
                 return datetime.now(tz).date()
             except pytz.UnknownTimeZoneError:
-                _logger.warning(
-                    "Unknown timezone '%s', falling back to UTC", tz_name
-                )
+                _logger.warning("Unknown timezone '%s', falling back to UTC", tz_name)
                 return datetime.utcnow().date()
         else:
             _logger.warning(

@@ -22,9 +22,7 @@ class TestClosingGenerator(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         # Load seed JSON from file
-        seed_file = (
-            Path(__file__).parent.parent / "seed" / "closing_v1_2_0.json"
-        )
+        seed_file = Path(__file__).parent.parent / "seed" / "closing_v1_2_0.json"
         cls.seed = json.loads(seed_file.read_text())
 
     def test_seed_validation_passes(self):
@@ -140,18 +138,23 @@ class TestClosingGenerator(TransactionCase):
         # Create a modified seed with an unknown employee code
         modified_seed = json.loads(json.dumps(self.seed))
         cycle = next(
-            c for c in modified_seed["cycles"]
-            if c["cycle_code"] == "MONTH_END_CLOSE"
+            c for c in modified_seed["cycles"] if c["cycle_code"] == "MONTH_END_CLOSE"
         )
         # Add a template with unknown assignee
-        cycle["phases"][0]["workstreams"][0]["task_templates"].append({
-            "task_template_code": "T_TEST_UNKNOWN_ASSIGNEE",
-            "name": "Test Task with Unknown Assignee",
-            "steps": [
-                {"step_code": "PREP", "name": "Prep", "default_assignee": "UNKNOWN_CODE"}
-            ],
-            "dedupe_key": "MONTH_END_CLOSE|T_TEST_UNKNOWN_ASSIGNEE",
-        })
+        cycle["phases"][0]["workstreams"][0]["task_templates"].append(
+            {
+                "task_template_code": "T_TEST_UNKNOWN_ASSIGNEE",
+                "name": "Test Task with Unknown Assignee",
+                "steps": [
+                    {
+                        "step_code": "PREP",
+                        "name": "Prep",
+                        "default_assignee": "UNKNOWN_CODE",
+                    }
+                ],
+                "dedupe_key": "MONTH_END_CLOSE|T_TEST_UNKNOWN_ASSIGNEE",
+            }
+        )
 
         # Should complete with WARN status, not fail
         result = Generator.run(

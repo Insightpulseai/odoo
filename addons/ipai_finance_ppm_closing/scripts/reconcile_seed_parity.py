@@ -189,7 +189,10 @@ def main(env, dry_run: bool = False):
 
         # Re-run validation
         print("\nRe-running validation...")
-        from odoo.addons.ipai_finance_ppm_closing.scripts.validate_seed_parity import main as validate
+        from odoo.addons.ipai_finance_ppm_closing.scripts.validate_seed_parity import (
+            main as validate,
+        )
+
         return validate(env, report.get("cycle_key", "").split("|")[0])
     else:
         print("\n[DRY RUN] No changes were persisted.")
