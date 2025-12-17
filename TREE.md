@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 59a00357585d9aa12a005d7f009bc115e1fb6f95
+> Commit: 6eb2d0bbe2ccd2b8da13aab6c4267fbfa0b85b89
 
 ```
 .
@@ -18,6 +18,7 @@
 ├── .github
 │   ├── workflows
 │   │   ├── auto-sitemap-tree.yml
+│   │   ├── build-seeded-image.yml
 │   │   ├── ci-odoo-ce.yml
 │   │   ├── ci-odoo-oca.yml
 │   │   └── health-check.yml
@@ -253,6 +254,28 @@
 │   │   │   └── project_task_views.xml
 │   │   ├── README.md
 │   │   ├── README.rst
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_finance_ppm_closing
+│   │   ├── data
+│   │   │   └── ir_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── closing_generator.py
+│   │   │   ├── closing_models.py
+│   │   │   ├── project_ext.py
+│   │   │   └── res_users.py
+│   │   ├── scripts
+│   │   │   ├── __init__.py
+│   │   │   ├── reconcile_seed_parity.py
+│   │   │   └── validate_seed_parity.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── seed
+│   │   │   └── closing_v1_2_0.json
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_closing_generator.py
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_ppm_dashboard
@@ -618,11 +641,16 @@
 │   │   │   └── README.md
 │   │   └── nginx.conf
 │   ├── Dockerfile.enterprise-parity
+│   ├── Dockerfile.seeded
 │   ├── Dockerfile.v1.1.0-enterprise-parity
 │   ├── build-enterprise-parity.sh
 │   ├── docker-compose.enterprise-parity.yml
+│   ├── docker-compose.seeded.yml
+│   ├── entrypoint.seeded.sh
 │   ├── odoo-v1.1.0.conf
-│   └── requirements-enterprise-parity.txt
+│   ├── odoo.seeded.conf
+│   ├── requirements-enterprise-parity.txt
+│   └── requirements.seeded.txt
 ├── docs
 │   ├── architecture
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
@@ -1091,15 +1119,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-274 directories, 812 files
+281 directories, 833 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 290 |
-| Files | 868 |
-| Python files | 223 |
-| XML files | 118 |
+| Directories | 297 |
+| Files | 889 |
+| Python files | 235 |
+| XML files | 119 |
 | Markdown files | 205 |
