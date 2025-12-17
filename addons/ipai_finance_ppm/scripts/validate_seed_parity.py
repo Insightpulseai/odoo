@@ -107,15 +107,17 @@ class SeedParityValidator:
 
     def query_actual_tasks(self):
         """Query Odoo for all project 30 tasks with external keys"""
-        tasks = self.env['project.task'].search([
-            ('project_id', '=', self.PROJECT_ID),
-            ('x_external_key', '!=', False)
-        ])
+        # Use raw SQL to bypass ORM field registration requirement
+        query = """
+            SELECT id, x_external_key
+            FROM project_task
+            WHERE project_id = %s AND x_external_key IS NOT NULL AND x_external_key != ''
+        """
+        self.env.cr.execute(query, (self.PROJECT_ID,))
 
         actual = {}
-        for task in tasks:
-            if task.x_external_key:
-                actual[task.x_external_key] = task.id
+        for task_id, external_key in self.env.cr.fetchall():
+            actual[external_key] = task_id
 
         return actual
 
@@ -229,13 +231,19 @@ class SeedParityValidator:
         return duplicates
 
     def _check_malformed_keys(self):
-        """Check for malformed external keys (not 6 components)"""
+        """Check for malformed external keys (not 7 components)
+
+        Expected format: CYCLE_TYPE|PERIOD|PHASE|WORKSTREAM|CATEGORY|TEMPLATE|STEP
+        Example: MONTH_END_CLOSE|2025-10|I_INITIAL_COMPLIANCE|PAYROLL|PAYROLL_PERSONNEL|CT_PAYROLL_PROCESSING|PREP
+
+        Note: cycle_key is CYCLE_TYPE|PERIOD (2 segments), so total is 7 components when split by pipe.
+        """
         malformed = []
         for key in self.actual_keys.keys():
             components = key.split('|')
-            if len(components) != 6:
+            if len(components) != 7:
                 malformed.append(key)
-                self.warnings.append(f"Malformed key (expected 6 components, got {len(components)}): {key}")
+                self.warnings.append(f"Malformed key (expected 7 components, got {len(components)}): {key}")
 
         return malformed
 
@@ -299,28 +307,27 @@ def main():
 
     # Initialize Odoo environment
     odoo.tools.config.parse_config(['-d', args.database])
-    with odoo.api.Environment.manage():
-        registry = odoo.registry(args.database)
-        with registry.cursor() as cr:
-            env = api.Environment(cr, SUPERUSER_ID, {})
+    registry = odoo.registry(args.database)
+    with registry.cursor() as cr:
+        env = api.Environment(cr, SUPERUSER_ID, {})
 
-            # Run validation
-            validator = SeedParityValidator(env)
-            report = validator.validate_parity()
+        # Run validation
+        validator = SeedParityValidator(env)
+        report = validator.validate_parity()
 
-            # Write report to file if specified
-            if args.output:
-                output_path = Path(args.output)
-                output_path.write_text(json.dumps(report, indent=2))
-                print(f"\n📝 Report written to: {output_path}")
+        # Write report to file if specified
+        if args.output:
+            output_path = Path(args.output)
+            output_path.write_text(json.dumps(report, indent=2))
+            print(f"\n📝 Report written to: {output_path}")
 
-            # Exit with appropriate code
-            if report['status'] == 'PASS':
-                sys.exit(0)
-            elif report['status'] == 'WARN':
-                sys.exit(1)
-            else:
-                sys.exit(2)
+        # Exit with appropriate code
+        if report['status'] == 'PASS':
+            sys.exit(0)
+        elif report['status'] == 'WARN':
+            sys.exit(1)
+        else:
+            sys.exit(2)
 
 
 if __name__ == '__main__':

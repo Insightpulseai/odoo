@@ -62,7 +62,10 @@ class CloseTaskTemplate(models.Model):
         ('MONTH_END_CLOSE', 'Month-End Close'),
         ('QUARTER_END_CLOSE', 'Quarter-End Close'),
         ('YEAR_END_CLOSE', 'Year-End Close'),
-        ('BIR_TAX_FILING', 'BIR Tax Filing')
+        ('BIR_TAX_FILING', 'BIR Tax Filing'),
+        ('TAX_FILING_MONTHLY', 'Tax Filing - Monthly'),
+        ('TAX_FILING_QUARTERLY', 'Tax Filing - Quarterly'),
+        ('TAX_FILING_ANNUAL', 'Tax Filing - Annual')
     ], string='Cycle Type', required=True, index=True)
 
     phase_code = fields.Char(
@@ -96,6 +99,9 @@ class CloseTaskTemplate(models.Model):
         ('PREP', 'Preparation'),
         ('REVIEW', 'Review'),
         ('APPROVAL', 'Approval'),
+        ('REPORT_APPROVAL', 'Report Approval'),
+        ('PAYMENT_APPROVAL', 'Payment Approval'),
+        ('FILE_PAY', 'File & Pay'),
         ('EXEC', 'Execution'),
         ('VALIDATE', 'Validation')
     ], string='Step Type', index=True)
@@ -137,6 +143,11 @@ class CloseTaskTemplate(models.Model):
     )
     critical_path = fields.Boolean(string='On Critical Path', default=False)
     phase_type = fields.Selection([
+        ('initial', 'Initial'),
+        ('accruals', 'Accruals'),
+        ('review', 'Review'),
+        ('finalization', 'Finalization'),
+        ('tax_filing', 'Tax Filing'),
         ('initiation', 'Initiation'),
         ('planning', 'Planning'),
         ('execution', 'Execution'),
@@ -218,7 +229,9 @@ class CloseGenerationRun(models.Model):
         ('MONTH_END_CLOSE', 'Month-End Close'),
         ('QUARTER_END_CLOSE', 'Quarter-End Close'),
         ('YEAR_END_CLOSE', 'Year-End Close'),
-        ('BIR_TAX_FILING', 'BIR Tax Filing')
+        ('BIR_TAX_FILING', 'BIR Tax Filing'),
+        ('TAX_FILING_MONTHLY', 'Tax Filing - Monthly'),
+        ('TAX_FILING_QUARTERLY', 'Tax Filing - Quarterly')
     ], string='Cycle Type', compute='_compute_cycle_type', store=True)
 
     period_start = fields.Date(string='Period Start', required=True)

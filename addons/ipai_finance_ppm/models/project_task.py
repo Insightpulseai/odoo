@@ -64,4 +64,8 @@ class ProjectTask(models.Model):
 
     def _compute_is_finance_ppm(self):
         for task in self:
-            task.is_finance_ppm = bool(task.finance_logframe_id or task.bir_schedule_id)
+            task.is_finance_ppm = bool(
+                task.finance_logframe_id or
+                task.bir_schedule_id or
+                task.x_external_key  # Include generator-created tasks
+            )
