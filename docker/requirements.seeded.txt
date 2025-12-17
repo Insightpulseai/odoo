@@ -1,0 +1,31 @@
+# =============================================================================
+# InsightPulse Odoo 18 CE - Seeded Image Python Dependencies
+# =============================================================================
+# Minimal dependencies for KEEP modules only
+# =============================================================================
+
+# Data processing (Finance PPM dashboards)
+pandas>=2.2.0
+
+# Excel file handling (BIR compliance exports)
+openpyxl>=3.1.0
+xlrd>=2.0.0
+xlsxwriter>=3.1.0
+
+# OCR for expense receipts
+pytesseract>=0.3.10
+Pillow>=10.0.0
+
+# Date/time handling with timezone support
+python-dateutil>=2.8.2
+pytz>=2024.1
+
+# PDF processing
+PyPDF2>=3.0.0
+reportlab>=4.0.0
+
+# API utilities
+requests>=2.31.0
+
+# JSON schema validation (seed validation)
+jsonschema>=4.21.0
