@@ -114,6 +114,5 @@ class ProjectTask(models.Model):
             task.is_finance_ppm = bool(
                 task.finance_logframe_id
                 or task.bir_schedule_id
-                or task.finance_code
-                or task.finance_person_id
+                or task.x_external_key  # Include generator-created tasks
             )
