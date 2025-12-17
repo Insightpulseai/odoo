@@ -186,10 +186,14 @@ class ClosingGenerator(models.Model):
         errors = []
 
         # Required top-level keys
-        required_keys = ['seed_id', 'seed_version', 'cycles']
+        required_keys = ['seed_id', 'cycles']
         for key in required_keys:
             if key not in seed_data:
                 errors.append(f"Missing required key: {key}")
+
+        # Check for version (can be either 'version' or 'seed_version')
+        if 'version' not in seed_data and 'seed_version' not in seed_data:
+            errors.append("Missing required key: version or seed_version")
 
         # Validate cycles
         cycles = seed_data.get('cycles', [])

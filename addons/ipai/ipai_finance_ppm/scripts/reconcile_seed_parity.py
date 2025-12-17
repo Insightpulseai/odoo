@@ -296,32 +296,31 @@ def main():
 
     # Initialize Odoo environment
     odoo.tools.config.parse_config(['-d', args.database])
-    with odoo.api.Environment.manage():
-        registry = odoo.registry(args.database)
-        with registry.cursor() as cr:
-            env = api.Environment(cr, SUPERUSER_ID, {})
+    registry = odoo.registry(args.database)
+    with registry.cursor() as cr:
+        env = api.Environment(cr, SUPERUSER_ID, {})
 
-            # Run reconciliation
-            reconciler = SeedParityReconciler(
-                env,
-                dry_run=args.dry_run,
-                mark_obsolete=args.mark_obsolete,
-                force_delete=args.force_delete
-            )
+        # Run reconciliation
+        reconciler = SeedParityReconciler(
+            env,
+            dry_run=args.dry_run,
+            mark_obsolete=args.mark_obsolete,
+            force_delete=args.force_delete
+        )
 
-            # Step 1: Validate
-            validation_report = reconciler.run_validation_first()
+        # Step 1: Validate
+        validation_report = reconciler.run_validation_first()
 
-            # Step 2: Reconcile
-            reconciliation_report = reconciler.reconcile(validation_report)
+        # Step 2: Reconcile
+        reconciliation_report = reconciler.reconcile(validation_report)
 
-            # Exit with appropriate code
-            if reconciliation_report['status'] == 'SUCCESS':
-                sys.exit(0)
-            elif reconciliation_report['status'] == 'PARTIAL':
-                sys.exit(1)
-            else:
-                sys.exit(2)
+        # Exit with appropriate code
+        if reconciliation_report['status'] == 'SUCCESS':
+            sys.exit(0)
+        elif reconciliation_report['status'] == 'PARTIAL':
+            sys.exit(1)
+        else:
+            sys.exit(2)
 
 
 if __name__ == '__main__':

@@ -48,6 +48,7 @@ The system is designed to:
 |   |-- ipai_industry_marketing_agency
 |   |-- ipai_ocr_expense
 |   |-- ipai_ppm_monthly_close
+|   |-- ipai_tbwa_branding_min
 |   |-- ipai_workspace_core
 |   |-- omc_finance_ppm
 |   `-- tbwa_spectra_integration
