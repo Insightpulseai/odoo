@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 59a00357585d9aa12a005d7f009bc115e1fb6f95
+> Commit: 6eb2d0bbe2ccd2b8da13aab6c4267fbfa0b85b89
 
 ## 📚 Documentation
 
@@ -229,6 +229,7 @@
 | [ipai_finance_controller_dashboard](./addons/ipai_finance_controller_dashboard) | ✅ |  |
 | [ipai_finance_monthly_closing](./addons/ipai_finance_monthly_closing) | ✅ |  |
 | [ipai_finance_ppm](./addons/ipai_finance_ppm) | ✅ |  |
+| [ipai_finance_ppm_closing](./addons/ipai_finance_ppm_closing) | ✅ |  |
 | [ipai_finance_ppm_dashboard](./addons/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_finance_ppm_tdi](./addons/ipai_finance_ppm_tdi) | ✅ |  |
 | [ipai_idp](./addons/ipai_idp) | ✅ |  |
