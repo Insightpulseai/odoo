@@ -61,15 +61,17 @@ def extract_expected_tasks(seed: dict) -> list[dict]:
                         # Generate external key pattern (without date for comparison)
                         key_pattern = f"{cycle_code}|%|{tpl_code}|{step_code}"
 
-                        tasks.append({
-                            "cycle_code": cycle_code,
-                            "template_code": tpl_code,
-                            "template_name": template.get("name"),
-                            "step_code": step_code,
-                            "step_name": step.get("name"),
-                            "default_assignee": step.get("default_assignee"),
-                            "key_pattern": key_pattern,
-                        })
+                        tasks.append(
+                            {
+                                "cycle_code": cycle_code,
+                                "template_code": tpl_code,
+                                "template_name": template.get("name"),
+                                "step_code": step_code,
+                                "step_name": step.get("name"),
+                                "default_assignee": step.get("default_assignee"),
+                                "key_pattern": key_pattern,
+                            }
+                        )
 
     return tasks
 
@@ -136,31 +138,37 @@ def compare_tasks(
     for pattern in expected_patterns:
         if pattern not in existing_patterns:
             task = expected_map[pattern]
-            missing.append({
-                "template_code": task["template_code"],
-                "step_code": task["step_code"],
-                "template_name": task["template_name"],
-            })
+            missing.append(
+                {
+                    "template_code": task["template_code"],
+                    "step_code": task["step_code"],
+                    "template_name": task["template_name"],
+                }
+            )
 
     # Find extra (in existing but not expected)
     extra = []
     existing_pattern_set = set(existing_patterns.keys())
     for pattern in existing_pattern_set - expected_patterns:
         for key, data in existing_patterns[pattern]:
-            extra.append({
-                "external_key": key,
-                "task_name": data["name"],
-            })
+            extra.append(
+                {
+                    "external_key": key,
+                    "task_name": data["name"],
+                }
+            )
 
     # Find duplicates
     duplicates = []
     for pattern, items in existing_patterns.items():
         if len(items) > 1:
-            duplicates.append({
-                "pattern": pattern,
-                "count": len(items),
-                "keys": [k for k, _ in items],
-            })
+            duplicates.append(
+                {
+                    "pattern": pattern,
+                    "count": len(items),
+                    "keys": [k for k, _ in items],
+                }
+            )
 
     # Find drift (name mismatches) - simplified for now
     drift = []
@@ -236,6 +244,7 @@ def main(env, cycle_code: str = "MONTH_END_CLOSE", cycle_key: str = None):
     # Build default cycle_key if not provided
     if not cycle_key:
         from odoo import fields
+
         today = fields.Date.context_today(env.user)
         cycle_key = f"{cycle_code}|{today.strftime('%Y-%m')}"
 

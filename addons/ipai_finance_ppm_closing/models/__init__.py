@@ -1,5 +1,2 @@
 # -*- coding: utf-8 -*-
-from . import res_users
-from . import closing_models
-from . import project_ext
-from . import closing_generator
+from . import closing_generator, closing_models, project_ext, res_users
