@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_month_end_template_user,ipai.month.end.template user,model_ipai_month_end_template,base.group_user,1,1,1,0
+access_month_end_template_manager,ipai.month.end.template manager,model_ipai_month_end_template,project.group_project_manager,1,1,1,1
+access_month_end_template_step_user,ipai.month.end.template.step user,model_ipai_month_end_template_step,base.group_user,1,1,1,0
+access_month_end_template_step_manager,ipai.month.end.template.step manager,model_ipai_month_end_template_step,project.group_project_manager,1,1,1,1
+access_generate_month_end_wizard_user,ipai.generate.month.end.wizard user,model_ipai_generate_month_end_wizard,base.group_user,1,1,1,1

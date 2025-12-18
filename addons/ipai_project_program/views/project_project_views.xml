@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend project form view -->
+    <record id="view_project_form_inherit_ipai_program" model="ir.ui.view">
+        <field name="name">project.project.form.ipai.program</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <!-- Add stat buttons for program projects -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_child_projects"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-sitemap"
+                        invisible="not is_program">
+                    <field name="im_count" widget="statinfo" string="IM Projects"/>
+                </button>
+                <button name="action_view_child_tasks"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-tasks"
+                        invisible="not is_program">
+                    <field name="im_task_count" widget="statinfo" string="IM Tasks"/>
+                </button>
+            </xpath>
+
+            <!-- Add program fields after name -->
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <group>
+                    <group string="Program Information">
+                        <field name="is_program"/>
+                        <field name="program_code"/>
+                        <field name="program_type"/>
+                    </group>
+                    <group string="Implementation Module" invisible="is_program">
+                        <field name="parent_id" domain="[('is_program', '=', True)]"/>
+                        <field name="im_code"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend project tree view -->
+    <record id="view_project_tree_inherit_ipai_program" model="ir.ui.view">
+        <field name="name">project.project.tree.ipai.program</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="program_code" optional="show"/>
+                <field name="im_code" optional="show"/>
+                <field name="is_program" optional="hide"/>
+                <field name="parent_id" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Program Projects List Action -->
+    <record id="action_ipai_program_projects" model="ir.actions.act_window">
+        <field name="name">Programs</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('is_program', '=', True)]</field>
+        <field name="context">{'default_is_program': True}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Program
+            </p>
+            <p>
+                Programs are parent projects that contain Implementation Modules (IMs).
+            </p>
+        </field>
+    </record>
+
+    <!-- Implementation Modules List Action -->
+    <record id="action_ipai_im_projects" model="ir.actions.act_window">
+        <field name="name">Implementation Modules</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('is_program', '=', False), ('parent_id', '!=', False)]</field>
+        <field name="context">{'default_is_program': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Implementation Modules found
+            </p>
+            <p>
+                Implementation Modules are child projects under a Program.
+            </p>
+        </field>
+    </record>
+</odoo>
