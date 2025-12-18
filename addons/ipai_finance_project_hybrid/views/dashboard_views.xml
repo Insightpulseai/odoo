@@ -33,7 +33,7 @@
     <record id="action_ipai_finance_task_dashboard" model="ir.actions.act_window">
       <field name="name">Finance Task Analytics</field>
       <field name="res_model">project.task</field>
-      <field name="view_mode">pivot,graph,tree,form</field>
+      <field name="view_mode">pivot,graph,list,form</field>
       <field name="view_ids" eval="[
         (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_task_pivot_ipai_finance')}),
         (0, 0, {'view_mode': 'graph', 'view_id': ref('view_task_graph_ipai_finance')})

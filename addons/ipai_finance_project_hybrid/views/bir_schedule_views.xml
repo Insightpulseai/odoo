@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
   <data>
-    <record id="view_ipai_bir_schedule_tree" model="ir.ui.view">
-      <field name="name">ipai.bir.schedule.line.tree</field>
+    <record id="view_ipai_bir_schedule_list" model="ir.ui.view">
+      <field name="name">ipai.bir.schedule.line.list</field>
       <field name="model">ipai.bir.schedule.line</field>
       <field name="arch" type="xml">
-        <tree string="BIR Schedule">
+        <list string="BIR Schedule">
           <field name="bir_form"/>
           <field name="period_label"/>
           <field name="deadline_date"/>
@@ -16,7 +16,7 @@
           <field name="review_by_code"/>
           <field name="approve_by_code"/>
           <field name="notes"/>
-        </tree>
+        </list>
       </field>
     </record>
 
@@ -52,7 +52,7 @@
     <record id="action_ipai_bir_schedule" model="ir.actions.act_window">
       <field name="name">BIR Schedule</field>
       <field name="res_model">ipai.bir.schedule.line</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">list,form</field>
     </record>
   </data>
 </odoo>

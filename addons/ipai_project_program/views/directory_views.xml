@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Directory Person Tree View -->
-    <record id="view_ipai_directory_person_tree" model="ir.ui.view">
-        <field name="name">ipai.directory.person.tree</field>
+    <!-- Directory Person List View -->
+    <record id="view_ipai_directory_person_list" model="ir.ui.view">
+        <field name="name">ipai.directory.person.list</field>
         <field name="model">ipai.directory.person</field>
         <field name="arch" type="xml">
-            <tree>
+            <list string="Finance Directory">
                 <field name="code"/>
                 <field name="name"/>
                 <field name="email"/>
                 <field name="role"/>
                 <field name="user_id"/>
                 <field name="active" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -75,7 +75,7 @@
     <record id="action_ipai_directory_person" model="ir.actions.act_window">
         <field name="name">Finance Directory</field>
         <field name="res_model">ipai.directory.person</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Directory entry

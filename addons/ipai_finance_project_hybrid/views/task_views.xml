@@ -20,12 +20,12 @@
       </field>
     </record>
 
-    <record id="view_task_tree_ipai_finance" model="ir.ui.view">
-      <field name="name">project.task.tree.ipai.finance</field>
+    <record id="view_task_list_ipai_finance" model="ir.ui.view">
+      <field name="name">project.task.list.ipai.finance</field>
       <field name="model">project.task</field>
       <field name="inherit_id" ref="project.view_task_tree2"/>
       <field name="arch" type="xml">
-        <xpath expr="//tree" position="inside">
+        <xpath expr="//list" position="inside">
           <field name="ipai_task_category" optional="show"/>
           <field name="ipai_owner_role" optional="show"/>
           <field name="ipai_owner_code" optional="show"/>
