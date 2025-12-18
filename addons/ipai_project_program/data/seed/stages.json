@@ -1,0 +1,8 @@
+{
+  "task_stages": [
+    {"xml_id": "stage_prep", "name": "Preparation", "sequence": 10},
+    {"xml_id": "stage_review", "name": "Review", "sequence": 20},
+    {"xml_id": "stage_approve", "name": "Approval", "sequence": 30},
+    {"xml_id": "stage_filed", "name": "Filed", "sequence": 40}
+  ]
+}
