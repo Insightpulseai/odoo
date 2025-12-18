@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
   <data>
-    <record id="view_ipai_finance_task_template_tree" model="ir.ui.view">
-      <field name="name">ipai.finance.task.template.tree</field>
+    <record id="view_ipai_finance_task_template_list" model="ir.ui.view">
+      <field name="name">ipai.finance.task.template.list</field>
       <field name="model">ipai.finance.task.template</field>
       <field name="arch" type="xml">
-        <tree string="Task Templates">
+        <list string="Task Templates">
           <field name="sequence"/>
           <field name="name"/>
           <field name="category"/>
@@ -16,7 +16,7 @@
           <field name="review_by_code"/>
           <field name="approve_by_code"/>
           <field name="active"/>
-        </tree>
+        </list>
       </field>
     </record>
 
@@ -51,7 +51,7 @@
     <record id="action_ipai_finance_task_template" model="ir.actions.act_window">
       <field name="name">Task Templates</field>
       <field name="res_model">ipai.finance.task.template</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">list,form</field>
     </record>
   </data>
 </odoo>

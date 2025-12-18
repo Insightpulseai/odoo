@@ -41,9 +41,9 @@
         </field>
     </record>
 
-    <!-- Extend project tree view -->
-    <record id="view_project_tree_inherit_ipai_program" model="ir.ui.view">
-        <field name="name">project.project.tree.ipai.program</field>
+    <!-- Extend project list view -->
+    <record id="view_project_list_inherit_ipai_program" model="ir.ui.view">
+        <field name="name">project.project.list.ipai.program</field>
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.view_project"/>
         <field name="arch" type="xml">
@@ -60,7 +60,7 @@
     <record id="action_ipai_program_projects" model="ir.actions.act_window">
         <field name="name">Programs</field>
         <field name="res_model">project.project</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="domain">[('is_program', '=', True)]</field>
         <field name="context">{'default_is_program': True}</field>
         <field name="help" type="html">
@@ -77,7 +77,7 @@
     <record id="action_ipai_im_projects" model="ir.actions.act_window">
         <field name="name">Implementation Modules</field>
         <field name="res_model">project.project</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="domain">[('is_program', '=', False), ('parent_id', '!=', False)]</field>
         <field name="context">{'default_is_program': False}</field>
         <field name="help" type="html">

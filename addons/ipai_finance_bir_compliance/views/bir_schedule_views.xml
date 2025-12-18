@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- BIR Schedule Item Tree View -->
-    <record id="view_bir_schedule_item_tree" model="ir.ui.view">
-        <field name="name">ipai.bir.schedule.item.tree</field>
+    <!-- BIR Schedule Item List View -->
+    <record id="view_bir_schedule_item_list" model="ir.ui.view">
+        <field name="name">ipai.bir.schedule.item.list</field>
         <field name="model">ipai.bir.schedule.item</field>
         <field name="arch" type="xml">
-            <tree>
+            <list string="BIR Schedule">
                 <field name="deadline"/>
                 <field name="bir_form"/>
                 <field name="period_covered"/>
                 <field name="im_xml_id"/>
                 <field name="active" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -88,7 +88,7 @@
     <record id="action_bir_schedule" model="ir.actions.act_window">
         <field name="name">BIR Schedule</field>
         <field name="res_model">ipai.bir.schedule.item</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_upcoming': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Month-End Template Tree View -->
-    <record id="view_month_end_template_tree" model="ir.ui.view">
-        <field name="name">ipai.month.end.template.tree</field>
+    <!-- Month-End Template List View -->
+    <record id="view_month_end_template_list" model="ir.ui.view">
+        <field name="name">ipai.month.end.template.list</field>
         <field name="model">ipai.month.end.template</field>
         <field name="arch" type="xml">
-            <tree>
+            <list string="Month-End Templates">
                 <field name="category"/>
                 <field name="task_base_name"/>
                 <field name="default_im_xml_id"/>
                 <field name="active" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -82,7 +82,7 @@
     <record id="action_month_end_templates" model="ir.actions.act_window">
         <field name="name">Month-End Templates</field>
         <field name="res_model">ipai.month.end.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Month-End Template

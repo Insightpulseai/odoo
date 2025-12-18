@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
   <data>
-    <record id="view_ipai_finance_directory_tree" model="ir.ui.view">
-      <field name="name">ipai.finance.directory.tree</field>
+    <record id="view_ipai_finance_directory_list" model="ir.ui.view">
+      <field name="name">ipai.finance.directory.list</field>
       <field name="model">ipai.finance.directory</field>
       <field name="arch" type="xml">
-        <tree string="Finance Directory">
+        <list string="Finance Directory">
           <field name="code"/>
           <field name="name"/>
           <field name="email"/>
           <field name="user_id"/>
           <field name="active"/>
-        </tree>
+        </list>
       </field>
     </record>
 
@@ -36,7 +36,7 @@
     <record id="action_ipai_finance_directory" model="ir.actions.act_window">
       <field name="name">Finance Directory</field>
       <field name="res_model">ipai.finance.directory</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">list,form</field>
     </record>
   </data>
 </odoo>
