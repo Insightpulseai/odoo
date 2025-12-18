@@ -1,0 +1,100 @@
+{
+  "items": [
+    {
+      "bir_form": "1601-C / 0619-E",
+      "period_covered": "Dec 2025",
+      "deadline": "2026-01-15",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "BOM", "business_days_before": 4},
+        {"activity_type": "review", "role_code": "RIM", "business_days_before": 2},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "BOM", "on_or_before_deadline": true}
+      ]
+    },
+    {
+      "bir_form": "2550M",
+      "period_covered": "Dec 2025",
+      "deadline": "2026-01-20",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "JAP", "business_days_before": 4},
+        {"activity_type": "review", "role_code": "RIM", "business_days_before": 2},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "JAP", "on_or_before_deadline": true}
+      ]
+    },
+    {
+      "bir_form": "1601-C / 0619-E",
+      "period_covered": "Jan 2026",
+      "deadline": "2026-02-15",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "BOM", "business_days_before": 4},
+        {"activity_type": "review", "role_code": "RIM", "business_days_before": 2},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "BOM", "on_or_before_deadline": true}
+      ]
+    },
+    {
+      "bir_form": "2550M",
+      "period_covered": "Jan 2026",
+      "deadline": "2026-02-20",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "JAP", "business_days_before": 4},
+        {"activity_type": "review", "role_code": "RIM", "business_days_before": 2},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "JAP", "on_or_before_deadline": true}
+      ]
+    },
+    {
+      "bir_form": "1601-C / 0619-E",
+      "period_covered": "Feb 2026",
+      "deadline": "2026-03-15",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "BOM", "business_days_before": 4},
+        {"activity_type": "review", "role_code": "RIM", "business_days_before": 2},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "BOM", "on_or_before_deadline": true}
+      ]
+    },
+    {
+      "bir_form": "2550M",
+      "period_covered": "Feb 2026",
+      "deadline": "2026-03-20",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "JAP", "business_days_before": 4},
+        {"activity_type": "review", "role_code": "RIM", "business_days_before": 2},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "JAP", "on_or_before_deadline": true}
+      ]
+    },
+    {
+      "bir_form": "1702Q",
+      "period_covered": "Q4 2025",
+      "deadline": "2026-01-30",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "RIM", "business_days_before": 5},
+        {"activity_type": "review", "role_code": "CKVC", "business_days_before": 3},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "RIM", "on_or_before_deadline": true}
+      ]
+    },
+    {
+      "bir_form": "2550Q",
+      "period_covered": "Q4 2025",
+      "deadline": "2026-01-25",
+      "im_xml_id": "ipai_project_program.im2_tax_filing",
+      "steps": [
+        {"activity_type": "prep", "role_code": "JAP", "business_days_before": 5},
+        {"activity_type": "review", "role_code": "RIM", "business_days_before": 3},
+        {"activity_type": "approve", "role_code": "CKVC", "business_days_before": 1},
+        {"activity_type": "file", "role_code": "JAP", "on_or_before_deadline": true}
+      ]
+    }
+  ]
+}
