@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6eb2d0bbe2ccd2b8da13aab6c4267fbfa0b85b89
+> Commit: ac88bf1d2858a4e0c4cc3ad5478ef914a0c75182
 
 ## 📚 Documentation
 
@@ -62,6 +62,7 @@
 | [Finance Controller Dashboard - Implementation Summary](addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | addons/ipai_finance_controller_dashboard |
 | [IPAI Finance PPM](addons/ipai_finance_ppm/README.md) | addons/ipai_finance_ppm |
 | [Finance PPM Transaction Data Ingestion (TDI)](addons/ipai_finance_ppm_tdi/README.md) | addons/ipai_finance_ppm_tdi |
+| [ipai_finance_project_hybrid](addons/ipai_finance_project_hybrid/README.md) | addons/ipai_finance_project_hybrid |
 | [IPAI Intelligent Document Processing (IDP)](addons/ipai_idp/README.md) | addons/ipai_idp |
 | [IPAI Expense OCR (CE)](addons/ipai_ocr_expense/README.md) | addons/ipai_ocr_expense |
 | [IPAI Portal Fix - Deployment Verification Report](addons/ipai_portal_fix/DEPLOYMENT_VERIFICATION.md) | addons/ipai_portal_fix |
@@ -226,18 +227,22 @@
 | [ipai_equipment](./addons/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai_expense) | ✅ |  |
 | [ipai_finance_ap_aging](./addons/ipai_finance_ap_aging) | ✅ |  |
+| [ipai_finance_bir_compliance](./addons/ipai_finance_bir_compliance) | ✅ |  |
 | [ipai_finance_controller_dashboard](./addons/ipai_finance_controller_dashboard) | ✅ |  |
+| [ipai_finance_month_end](./addons/ipai_finance_month_end) | ✅ |  |
 | [ipai_finance_monthly_closing](./addons/ipai_finance_monthly_closing) | ✅ |  |
 | [ipai_finance_ppm](./addons/ipai_finance_ppm) | ✅ |  |
 | [ipai_finance_ppm_closing](./addons/ipai_finance_ppm_closing) | ✅ |  |
 | [ipai_finance_ppm_dashboard](./addons/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_finance_ppm_tdi](./addons/ipai_finance_ppm_tdi) | ✅ |  |
+| [ipai_finance_project_hybrid](./addons/ipai_finance_project_hybrid) | ✅ |  |
 | [ipai_idp](./addons/ipai_idp) | ✅ |  |
 | [ipai_marketing_agency_pack](./addons/ipai_marketing_agency_pack) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_partner_pack](./addons/ipai_partner_pack) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ |  |
+| [ipai_project_program](./addons/ipai_project_program) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 
 ## 🔧 Configuration Files
