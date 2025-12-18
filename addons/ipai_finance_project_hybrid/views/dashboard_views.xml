@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Dedicated analytics action: pivot + graph for finance tasks -->
+    <record id="view_task_pivot_ipai_finance" model="ir.ui.view">
+      <field name="name">project.task.pivot.ipai.finance</field>
+      <field name="model">project.task</field>
+      <field name="arch" type="xml">
+        <pivot string="Finance Task Analytics" disable_linking="1">
+          <field name="project_id" type="row"/>
+          <field name="ipai_task_category" type="row"/>
+          <field name="ipai_owner_role" type="col"/>
+          <field name="ipai_status_bucket" type="col"/>
+          <field name="stage_id" type="row"/>
+          <field name="create_date" interval="month" type="col"/>
+          <field name="id" type="measure" string="Tasks"/>
+        </pivot>
+      </field>
+    </record>
+
+    <record id="view_task_graph_ipai_finance" model="ir.ui.view">
+      <field name="name">project.task.graph.ipai.finance</field>
+      <field name="model">project.task</field>
+      <field name="arch" type="xml">
+        <graph string="Finance Task Analytics" type="bar" stacked="True">
+          <field name="project_id" type="row"/>
+          <field name="ipai_status_bucket" type="col"/>
+          <field name="id" type="measure" string="Tasks"/>
+        </graph>
+      </field>
+    </record>
+
+    <record id="action_ipai_finance_task_dashboard" model="ir.actions.act_window">
+      <field name="name">Finance Task Analytics</field>
+      <field name="res_model">project.task</field>
+      <field name="view_mode">pivot,graph,tree,form</field>
+      <field name="view_ids" eval="[
+        (0, 0, {'view_mode': 'pivot', 'view_id': ref('view_task_pivot_ipai_finance')}),
+        (0, 0, {'view_mode': 'graph', 'view_id': ref('view_task_graph_ipai_finance')})
+      ]"/>
+      <field name="domain">[('project_id.ipai_finance_enabled','=',True)]</field>
+      <field name="context">{'search_default_groupby_project_id': 1}</field>
+    </record>
+  </data>
+</odoo>
