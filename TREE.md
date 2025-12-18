@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6eb2d0bbe2ccd2b8da13aab6c4267fbfa0b85b89
+> Commit: ac88bf1d2858a4e0c4cc3ad5478ef914a0c75182
 
 ```
 .
@@ -180,6 +180,32 @@
 │   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_finance_bir_compliance
+│   │   ├── data
+│   │   │   └── seed
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── bir_generator.py
+│   │   │   └── bir_schedule_item.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── seed
+│   │   │   ├── __init__.py
+│   │   │   └── loader.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_bir_generation.py
+│   │   ├── views
+│   │   │   ├── bir_schedule_views.xml
+│   │   │   └── menus.xml
+│   │   ├── wizard
+│   │   │   ├── __init__.py
+│   │   │   ├── generate_bir_tasks_wizard.py
+│   │   │   └── generate_bir_tasks_wizard_views.xml
+│   │   ├── __init__.py
+│   │   ├── __manifest__.py
+│   │   └── hooks.py
 │   ├── ipai_finance_controller_dashboard
 │   │   ├── controllers
 │   │   │   ├── __init__.py
@@ -203,6 +229,32 @@
 │   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_finance_month_end
+│   │   ├── data
+│   │   │   └── seed
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── month_end_generator.py
+│   │   │   └── month_end_template.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── seed
+│   │   │   ├── __init__.py
+│   │   │   └── loader.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_month_end_generation.py
+│   │   ├── views
+│   │   │   ├── menus.xml
+│   │   │   └── month_end_template_views.xml
+│   │   ├── wizard
+│   │   │   ├── __init__.py
+│   │   │   ├── generate_month_end_wizard.py
+│   │   │   └── generate_month_end_wizard_views.xml
+│   │   ├── __init__.py
+│   │   ├── __manifest__.py
+│   │   └── hooks.py
 │   ├── ipai_finance_monthly_closing
 │   │   ├── data
 │   │   │   └── project_templates.xml
@@ -313,6 +365,42 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── finance_ppm_import_wizard.py
 │   │   │   └── finance_ppm_import_wizard_views.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── __manifest__.py
+│   │   └── hooks.py
+│   ├── ipai_finance_project_hybrid
+│   │   ├── data
+│   │   │   ├── seed
+│   │   │   └── ir_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── bir_schedule.py
+│   │   │   ├── finance_directory.py
+│   │   │   ├── finance_seed_service.py
+│   │   │   ├── project.py
+│   │   │   ├── res_config_settings.py
+│   │   │   ├── task.py
+│   │   │   └── task_template.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_seed_and_generation.py
+│   │   ├── views
+│   │   │   ├── bir_schedule_views.xml
+│   │   │   ├── dashboard_views.xml
+│   │   │   ├── finance_directory_views.xml
+│   │   │   ├── menu.xml
+│   │   │   ├── project_views.xml
+│   │   │   ├── seed_wizard_views.xml
+│   │   │   ├── task_template_views.xml
+│   │   │   └── task_views.xml
+│   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   ├── generate_im_projects_wizard.py
+│   │   │   └── seed_wizard.py
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   ├── __manifest__.py
@@ -461,6 +549,38 @@
 │   │   ├── README.rst
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_project_program
+│   │   ├── data
+│   │   │   └── seed
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── directory_person.py
+│   │   │   ├── project_project.py
+│   │   │   └── project_task.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── seed
+│   │   │   ├── __init__.py
+│   │   │   └── loader.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_seed_and_projects.py
+│   │   ├── utils
+│   │   │   ├── __init__.py
+│   │   │   ├── date_utils.py
+│   │   │   └── xmlid.py
+│   │   ├── views
+│   │   │   ├── directory_views.xml
+│   │   │   ├── menus.xml
+│   │   │   └── project_project_views.xml
+│   │   ├── wizard
+│   │   │   ├── __init__.py
+│   │   │   ├── convert_phases_wizard.py
+│   │   │   └── convert_phases_wizard_views.xml
+│   │   ├── __init__.py
+│   │   ├── __manifest__.py
+│   │   └── hooks.py
 │   └── tbwa_spectra_integration
 │       ├── data
 │       │   ├── approval_matrix_data.xml
@@ -1119,15 +1239,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-281 directories, 833 files
+317 directories, 917 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 297 |
-| Files | 889 |
-| Python files | 235 |
-| XML files | 119 |
-| Markdown files | 205 |
+| Directories | 333 |
+| Files | 980 |
+| Python files | 291 |
+| XML files | 142 |
+| Markdown files | 206 |
