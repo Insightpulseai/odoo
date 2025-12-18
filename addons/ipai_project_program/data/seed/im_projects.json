@@ -1,0 +1,16 @@
+{
+  "implementation_modules": [
+    {
+      "xml_id": "im1_month_end_closing",
+      "parent_xml_id": "ipai_project_program.prog_prj_2025_002",
+      "name": "IM1 - Month-End Closing Planning",
+      "im_code": "IM1"
+    },
+    {
+      "xml_id": "im2_tax_filing",
+      "parent_xml_id": "ipai_project_program.prog_prj_2025_002",
+      "name": "IM2 - Tax Filing & Compliance",
+      "im_code": "IM2"
+    }
+  ]
+}

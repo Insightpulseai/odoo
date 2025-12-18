@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Month-End Template List View -->
+    <record id="view_month_end_template_list" model="ir.ui.view">
+        <field name="name">ipai.month.end.template.list</field>
+        <field name="model">ipai.month.end.template</field>
+        <field name="arch" type="xml">
+            <list string="Month-End Templates">
+                <field name="category"/>
+                <field name="task_base_name"/>
+                <field name="default_im_xml_id"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Month-End Template Form View -->
+    <record id="view_month_end_template_form" model="ir.ui.view">
+        <field name="name">ipai.month.end.template.form</field>
+        <field name="model">ipai.month.end.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="task_base_name"/>
+                        <h1>
+                            <field name="task_base_name" placeholder="e.g., Payroll Processing"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                        </group>
+                        <group>
+                            <field name="default_im_xml_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Steps" name="steps">
+                            <field name="step_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="activity_type"/>
+                                    <field name="role_code"/>
+                                    <field name="offset_days"/>
+                                    <field name="business_days_before"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Month-End Template Search View -->
+    <record id="view_month_end_template_search" model="ir.ui.view">
+        <field name="name">ipai.month.end.template.search</field>
+        <field name="model">ipai.month.end.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="task_base_name"/>
+                <field name="category"/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category"
+                            context="{'group_by': 'category'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Month-End Template Action -->
+    <record id="action_month_end_templates" model="ir.actions.act_window">
+        <field name="name">Month-End Templates</field>
+        <field name="res_model">ipai.month.end.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Month-End Template
+            </p>
+            <p>
+                Templates define recurring tasks with Prep/Review/Approve steps.
+            </p>
+        </field>
+    </record>
+</odoo>

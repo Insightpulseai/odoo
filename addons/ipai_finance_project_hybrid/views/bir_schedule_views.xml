@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <record id="view_ipai_bir_schedule_list" model="ir.ui.view">
+      <field name="name">ipai.bir.schedule.line.list</field>
+      <field name="model">ipai.bir.schedule.line</field>
+      <field name="arch" type="xml">
+        <list string="BIR Schedule">
+          <field name="bir_form"/>
+          <field name="period_label"/>
+          <field name="deadline_date"/>
+          <field name="prep_due_date"/>
+          <field name="review_due_date"/>
+          <field name="approve_due_date"/>
+          <field name="prep_by_code"/>
+          <field name="review_by_code"/>
+          <field name="approve_by_code"/>
+          <field name="notes"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_ipai_bir_schedule_form" model="ir.ui.view">
+      <field name="name">ipai.bir.schedule.line.form</field>
+      <field name="model">ipai.bir.schedule.line</field>
+      <field name="arch" type="xml">
+        <form string="BIR Schedule Line">
+          <sheet>
+            <group>
+              <field name="bir_form"/>
+              <field name="period_label"/>
+              <field name="deadline_date"/>
+            </group>
+            <group string="Responsibility">
+              <field name="prep_by_code"/>
+              <field name="review_by_code"/>
+              <field name="approve_by_code"/>
+            </group>
+            <group string="Internal Dates">
+              <field name="prep_due_date"/>
+              <field name="review_due_date"/>
+              <field name="approve_due_date"/>
+            </group>
+            <group>
+              <field name="notes"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_ipai_bir_schedule" model="ir.actions.act_window">
+      <field name="name">BIR Schedule</field>
+      <field name="res_model">ipai.bir.schedule.line</field>
+      <field name="view_mode">list,form</field>
+    </record>
+  </data>
+</odoo>
