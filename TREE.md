@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 816aa8eb281a67a51997ce2ce69297ada419c644
+> Commit: 01d435f5bd69e888388c837e4ea9ad816712386f
 
 ```
 .
@@ -19,6 +19,7 @@
 │   ├── workflows
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
+│   │   ├── build-unified-image.yml
 │   │   ├── ci-odoo-ce.yml
 │   │   ├── ci-odoo-oca.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
@@ -985,6 +986,7 @@
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
+│   ├── TAGGING_STRATEGY.md
 │   ├── TESTING_ODOO_18.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── branch-cleanup-analysis.md
@@ -1156,6 +1158,7 @@
 │   ├── cleanup-branches.sh
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
+│   ├── create-release.sh
 │   ├── deploy-odoo-modules.sh
 │   ├── deploy-to-server.sh
 │   ├── deploy_custom_image.sh
@@ -1396,7 +1399,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-362 directories, 1029 files
+362 directories, 1032 files
 ```
 
 ## 📊 Stats
@@ -1404,7 +1407,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 380 |
-| Files | 1097 |
+| Files | 1100 |
 | Python files | 326 |
 | XML files | 174 |
-| Markdown files | 220 |
+| Markdown files | 221 |
