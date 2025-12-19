@@ -30,7 +30,7 @@ services:
           memory: 256M
 
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:v0.9.0
+    image: ipai-odoo:standard
     container_name: ipai-ce
     restart: unless-stopped
     depends_on:

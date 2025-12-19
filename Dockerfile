@@ -17,6 +17,9 @@
 #   - docs/adr/ADR-0002-UNIFIED-DOCKERFILE.md (unified build approach)
 # =============================================================================
 
+# Global build argument for profile selection (must be before first FROM)
+ARG PROFILE=standard
+
 # -----------------------------------------------------------------------------
 # Stage 0: Base - System dependencies and directory structure
 # -----------------------------------------------------------------------------
@@ -24,23 +27,13 @@ FROM odoo:18.0 AS base
 
 USER root
 
-# Install system dependencies for OCA modules
-# (reporting tools need xmlsec1, pandas, financial tools need various libs)
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpq-dev \
+# Install additional system dependencies for OCA modules
+# Base odoo:18.0 image already has most build tools and libraries
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
-    libssl-dev \
-    python3-pandas \
+    curl \
     python3-xlrd \
     python3-xlsxwriter \
-    python3-xmlsec \
-    gcc \
-    libxml2-dev \
-    libxslt1-dev \
-    libsasl2-dev \
-    libldap2-dev \
-    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Prepare directories for addons
@@ -94,24 +87,24 @@ COPY ./external-src/contract /mnt/oca-addons/contract
 COPY ./external-src/server-tools /mnt/oca-addons/server-tools
 
 # Additional parity repos (18 repos)
-COPY ./external-src/account-reconcile /mnt/oca-addons/account-reconcile 2>/dev/null || true
-COPY ./external-src/bank-payment /mnt/oca-addons/bank-payment 2>/dev/null || true
-COPY ./external-src/commission /mnt/oca-addons/commission 2>/dev/null || true
-COPY ./external-src/crm /mnt/oca-addons/crm 2>/dev/null || true
-COPY ./external-src/field-service /mnt/oca-addons/field-service 2>/dev/null || true
-COPY ./external-src/helpdesk /mnt/oca-addons/helpdesk 2>/dev/null || true
-COPY ./external-src/hr /mnt/oca-addons/hr 2>/dev/null || true
-COPY ./external-src/knowledge /mnt/oca-addons/knowledge 2>/dev/null || true
-COPY ./external-src/manufacture /mnt/oca-addons/manufacture 2>/dev/null || true
-COPY ./external-src/mis-builder /mnt/oca-addons/mis-builder 2>/dev/null || true
-COPY ./external-src/partner-contact /mnt/oca-addons/partner-contact 2>/dev/null || true
-COPY ./external-src/payroll /mnt/oca-addons/payroll 2>/dev/null || true
-COPY ./external-src/sale-workflow /mnt/oca-addons/sale-workflow 2>/dev/null || true
-COPY ./external-src/server-ux /mnt/oca-addons/server-ux 2>/dev/null || true
-COPY ./external-src/social /mnt/oca-addons/social 2>/dev/null || true
-COPY ./external-src/stock-logistics-warehouse /mnt/oca-addons/stock-logistics-warehouse 2>/dev/null || true
-COPY ./external-src/stock-logistics-workflow /mnt/oca-addons/stock-logistics-workflow 2>/dev/null || true
-COPY ./external-src/timesheet /mnt/oca-addons/timesheet 2>/dev/null || true
+COPY ./external-src/account-reconcile /mnt/oca-addons/account-reconcile
+COPY ./external-src/bank-payment /mnt/oca-addons/bank-payment
+COPY ./external-src/commission /mnt/oca-addons/commission
+COPY ./external-src/crm /mnt/oca-addons/crm
+COPY ./external-src/field-service /mnt/oca-addons/field-service
+COPY ./external-src/helpdesk /mnt/oca-addons/helpdesk
+COPY ./external-src/hr /mnt/oca-addons/hr
+COPY ./external-src/knowledge /mnt/oca-addons/knowledge
+COPY ./external-src/manufacture /mnt/oca-addons/manufacture
+COPY ./external-src/mis-builder /mnt/oca-addons/mis-builder
+COPY ./external-src/partner-contact /mnt/oca-addons/partner-contact
+COPY ./external-src/payroll /mnt/oca-addons/payroll
+COPY ./external-src/sale-workflow /mnt/oca-addons/sale-workflow
+COPY ./external-src/server-ux /mnt/oca-addons/server-ux
+COPY ./external-src/social /mnt/oca-addons/social
+COPY ./external-src/stock-logistics-warehouse /mnt/oca-addons/stock-logistics-warehouse
+COPY ./external-src/stock-logistics-workflow /mnt/oca-addons/stock-logistics-workflow
+COPY ./external-src/timesheet /mnt/oca-addons/timesheet
 
 # Build addons path for parity profile (all available OCA repos)
 ENV ODOO_ADDONS_PATH_OCA=/mnt/oca-addons/reporting-engine,/mnt/oca-addons/account-closing,/mnt/oca-addons/account-financial-reporting,/mnt/oca-addons/account-financial-tools,/mnt/oca-addons/account-invoicing,/mnt/oca-addons/account-reconcile,/mnt/oca-addons/bank-payment,/mnt/oca-addons/project,/mnt/oca-addons/timesheet,/mnt/oca-addons/contract,/mnt/oca-addons/field-service,/mnt/oca-addons/hr-expense,/mnt/oca-addons/hr,/mnt/oca-addons/payroll,/mnt/oca-addons/purchase-workflow,/mnt/oca-addons/sale-workflow,/mnt/oca-addons/crm,/mnt/oca-addons/commission,/mnt/oca-addons/stock-logistics-warehouse,/mnt/oca-addons/stock-logistics-workflow,/mnt/oca-addons/helpdesk,/mnt/oca-addons/manufacture,/mnt/oca-addons/maintenance,/mnt/oca-addons/reporting-engine,/mnt/oca-addons/mis-builder,/mnt/oca-addons/server-tools,/mnt/oca-addons/server-ux,/mnt/oca-addons/web,/mnt/oca-addons/dms,/mnt/oca-addons/knowledge,/mnt/oca-addons/partner-contact,/mnt/oca-addons/social,/mnt/oca-addons/calendar
@@ -119,27 +112,14 @@ ENV ODOO_ADDONS_PATH_OCA=/mnt/oca-addons/reporting-engine,/mnt/oca-addons/accoun
 # -----------------------------------------------------------------------------
 # Stage 3: Runtime - Final image with selected profile
 # -----------------------------------------------------------------------------
-ARG PROFILE=standard
 FROM oca-${PROFILE} AS runtime
 
 # Copy custom IPAI modules
-# For standard profile: 5-module architecture (ipai_workspace_core, ipai_ppm, ipai_advisor, ipai_workbooks, ipai_connectors)
-# For parity profile: All 27 existing ipai_* modules (backward compatibility)
-ARG PROFILE=standard
+# Currently using legacy 27-module architecture
+# Future: 5-module architecture (ipai_workspace_core, ipai_ppm, ipai_advisor, ipai_workbooks, ipai_connectors)
+ARG PROFILE
 
-# Always copy 5-module architecture (new standard)
-COPY ./addons/ipai_workspace_core /mnt/extra-addons/ipai_workspace_core 2>/dev/null || true
-COPY ./addons/ipai_ppm /mnt/extra-addons/ipai_ppm 2>/dev/null || true
-COPY ./addons/ipai_advisor /mnt/extra-addons/ipai_advisor 2>/dev/null || true
-COPY ./addons/ipai_workbooks /mnt/extra-addons/ipai_workbooks 2>/dev/null || true
-COPY ./addons/ipai_connectors /mnt/extra-addons/ipai_connectors 2>/dev/null || true
-
-# For parity profile: copy all 27 legacy modules for backward compatibility
-RUN if [ "$PROFILE" = "parity" ]; then \
-    echo "Parity profile: Copying all ipai_* modules for backward compatibility"; \
-fi
-
-# Copy all addons (handles both 5-module and 27-module scenarios)
+# Copy all existing IPAI modules (currently 27 modules, works for both profiles)
 COPY ./addons /mnt/extra-addons
 
 # Copy Odoo configuration
@@ -147,7 +127,7 @@ COPY ./deploy/odoo.conf /etc/odoo/odoo.conf
 
 # Install Python dependencies from OCA modules and custom addons
 # Note: --break-system-packages required for Python 3.12+ in containers (PEP 668)
-RUN find /mnt/oca-addons -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+RUN find /mnt/oca-addons -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \;
 RUN if [ -f /mnt/extra-addons/requirements.txt ]; then \
       pip install --no-cache-dir --break-system-packages -r /mnt/extra-addons/requirements.txt; \
     fi
