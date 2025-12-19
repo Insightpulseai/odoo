@@ -131,7 +131,6 @@ The system is designed to:
 |   |-- deployment
 |   |-- diagrams
 |   |-- odoo-18-handbook
-|   |-- stack
 |   |-- 003-odoo-ce-custom-image-spec.md
 |   |-- AGENTIC_CLOUD_PRD.md
 |   |-- AGENT_FRAMEWORK_SESSION_REPORT.md
@@ -248,7 +247,6 @@ The system is designed to:
 |   `-- WORKFLOW_CONVENTIONS.md
 |-- oca
 |   `-- .gitkeep
-|-- oca-addons
 |-- ocr-adapter
 |   |-- scripts
 |   |-- test_receipts
@@ -268,7 +266,6 @@ The system is designed to:
 |   `-- ipai_ce_cleaner_xmlid_fix.diff
 |-- scripts
 |   |-- ci
-|   |-- oca
 |   |-- README.md
 |   |-- apply-supabase-schema.sh
 |   |-- auto_error_handler.sh
