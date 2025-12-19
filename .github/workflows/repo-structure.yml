@@ -69,18 +69,18 @@ jobs:
             module_dir=$(dirname "$manifest")
             module_name=$(basename "$module_dir")
 
-            # Check for required keys
-            if ! grep -q '"name"' "$manifest"; then
+            # Check for required keys (handle both single and double quotes)
+            if ! grep -qE "['\"]name['\"]" "$manifest"; then
               echo "ERROR: $module_name missing 'name' in manifest"
               errors=$((errors + 1))
             fi
 
-            if ! grep -q '"version"' "$manifest"; then
+            if ! grep -qE "['\"]version['\"]" "$manifest"; then
               echo "ERROR: $module_name missing 'version' in manifest"
               errors=$((errors + 1))
             fi
 
-            if ! grep -q '"license"' "$manifest"; then
+            if ! grep -qE "['\"]license['\"]" "$manifest"; then
               echo "WARN: $module_name missing 'license' in manifest"
             fi
 
