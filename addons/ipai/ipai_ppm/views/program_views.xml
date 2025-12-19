@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Program List View -->
+    <record id="view_ppm_program_list" model="ir.ui.view">
+      <field name="name">ppm.program.list</field>
+      <field name="model">ppm.program</field>
+      <field name="arch" type="xml">
+        <list string="Programs" decoration-danger="health_status=='red'" decoration-warning="health_status=='yellow'">
+          <field name="sequence" widget="handle"/>
+          <field name="code"/>
+          <field name="name"/>
+          <field name="portfolio_id"/>
+          <field name="program_manager_id" widget="many2one_avatar_user"/>
+          <field name="project_count"/>
+          <field name="health_status" widget="badge" decoration-success="health_status=='green'" decoration-warning="health_status=='yellow'" decoration-danger="health_status=='red'"/>
+          <field name="health_score" widget="progressbar"/>
+          <field name="budget" sum="Total Budget"/>
+          <field name="risk_count"/>
+          <field name="open_high_risks" decoration-danger="open_high_risks > 0"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Program Form View -->
+    <record id="view_ppm_program_form" model="ir.ui.view">
+      <field name="name">ppm.program.form</field>
+      <field name="model">ppm.program</field>
+      <field name="arch" type="xml">
+        <form string="Program">
+          <header>
+            <field name="health_status" widget="statusbar" options="{'clickable': '1'}"/>
+          </header>
+          <sheet>
+            <div class="oe_button_box" name="button_box">
+              <button name="action_view_projects" type="object"
+                      class="oe_stat_button" icon="fa-tasks">
+                <field name="project_count" widget="statinfo" string="Projects"/>
+              </button>
+              <button name="action_view_risks" type="object"
+                      class="oe_stat_button" icon="fa-exclamation-triangle"
+                      invisible="risk_count == 0">
+                <field name="risk_count" widget="statinfo" string="Risks"/>
+              </button>
+            </div>
+            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+            <div class="oe_title">
+              <label for="name"/>
+              <h1><field name="name" placeholder="Program Name"/></h1>
+              <field name="code" placeholder="PG-CODE"/>
+            </div>
+            <group>
+              <group string="Hierarchy">
+                <field name="portfolio_id"/>
+              </group>
+              <group string="Ownership">
+                <field name="program_manager_id" widget="many2one_avatar_user"/>
+                <field name="sponsor_id" widget="many2one_avatar_user"/>
+              </group>
+            </group>
+            <group>
+              <group string="Timeline">
+                <field name="date_start"/>
+                <field name="date_end"/>
+              </group>
+              <group string="Budget">
+                <field name="budget"/>
+                <field name="actual_cost"/>
+                <field name="currency_id" invisible="1"/>
+              </group>
+            </group>
+            <group>
+              <group string="Health">
+                <field name="health_score" widget="progressbar"/>
+                <field name="health_notes"/>
+              </group>
+              <group string="Risk Summary">
+                <field name="risk_count" readonly="1"/>
+                <field name="open_high_risks" readonly="1"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Objectives" name="objectives">
+                <field name="objectives" placeholder="Program objectives..."/>
+              </page>
+              <page string="Description" name="description">
+                <field name="description"/>
+              </page>
+              <page string="Projects" name="projects">
+                <field name="project_ids" widget="many2many_tags"/>
+              </page>
+              <page string="Risks" name="risks">
+                <field name="risk_ids">
+                  <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="severity" widget="badge"/>
+                    <field name="risk_score"/>
+                    <field name="status"/>
+                    <field name="owner_id"/>
+                  </list>
+                </field>
+              </page>
+              <page string="Resource Allocations" name="allocations">
+                <field name="allocation_ids">
+                  <list>
+                    <field name="employee_id"/>
+                    <field name="role"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                    <field name="allocation_pct"/>
+                    <field name="is_overloaded" widget="boolean"/>
+                  </list>
+                </field>
+              </page>
+              <page string="KPIs" name="kpis">
+                <field name="kpi_snapshot_ids">
+                  <list>
+                    <field name="as_of"/>
+                    <field name="kpi_key"/>
+                    <field name="value"/>
+                    <field name="status" widget="badge"/>
+                  </list>
+                </field>
+              </page>
+            </notebook>
+            <field name="active" invisible="1"/>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Program Action -->
+    <record id="action_ppm_program" model="ir.actions.act_window">
+      <field name="name">Programs</field>
+      <field name="res_model">ppm.program</field>
+      <field name="view_mode">list,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create your first program
+        </p>
+        <p>
+          Programs group related projects under a common governance structure.
+        </p>
+      </field>
+    </record>
+  </data>
+</odoo>

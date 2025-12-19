@@ -1,0 +1,108 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# Odoo 18 CE + OCA - Docker Hardened Image (DHI) Baseline
+# =============================================================================
+# EXPERIMENTAL: Uses Docker Hardened Images for minimal/distroless baseline
+#
+# Benefits:
+#   - Minimal attack surface (distroless, ultra-minimal)
+#   - Signed SBOM/VEX/provenance
+#   - Free/open source (Docker Documentation)
+#
+# Trade-offs:
+#   - More build complexity (must package Odoo yourself)
+#   - Requires rebuilding Odoo on top of DHI
+#   - Keep main Dockerfile as compatibility fallback
+#
+# Build:
+#   docker build -f docker/hardened/Dockerfile.dhi -t erp-saas:2.0-dhi .
+#
+# References:
+#   https://docs.docker.com/dhi/about/what/
+# =============================================================================
+
+# TODO: Select appropriate DHI base (Python 3.12 minimal)
+# ARG DHI_BASE=docker/python:3.12-minimal
+# FROM ${DHI_BASE} AS dhi-base
+
+# NOTE: This is a skeleton for future DHI implementation
+# Current recommendation: Use main Dockerfile with digest pinning
+# Switch to DHI when security requirements justify the complexity
+
+FROM debian:bookworm-slim AS builder
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3.12 \
+    python3-pip \
+    python3-dev \
+    build-essential \
+    git \
+    curl \
+    wkhtmltopdf \
+    node-less \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone Odoo 18.0
+WORKDIR /opt
+RUN git clone --depth 1 --branch 18.0 https://github.com/odoo/odoo.git
+
+# Install Python dependencies
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
+# Copy OCA and IPAI modules
+COPY ./external-src /opt/external-src
+COPY ./addons/ipai /opt/addons/ipai
+
+# =============================================================================
+# Runtime Stage (Minimal/Distroless)
+# =============================================================================
+FROM debian:bookworm-slim AS runtime
+
+# Copy Python runtime + Odoo from builder
+COPY --from=builder /usr/bin/python3.12 /usr/bin/python3
+COPY --from=builder /opt/odoo /opt/odoo
+COPY --from=builder /opt/external-src /mnt/addons/oca
+COPY --from=builder /opt/addons/ipai /mnt/addons/ipai
+
+# Minimal runtime dependencies only
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create odoo user
+RUN useradd -m -u 101 odoo
+
+# Copy configuration
+COPY ./deploy/odoo.conf /etc/odoo/odoo.conf
+
+# Permissions
+RUN chown -R odoo:odoo /mnt/addons /etc/odoo /opt/odoo
+
+USER odoo
+
+# Environment
+ENV ODOO_RC=/etc/odoo/odoo.conf
+ENV ODOO_ADDONS_PATH=/opt/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+
+EXPOSE 8069
+
+ENTRYPOINT ["/opt/odoo/odoo-bin"]
+
+# OCI Labels (DHI-specific)
+LABEL org.opencontainers.image.title="ERP SaaS - DHI Hardened" \
+      org.opencontainers.image.description="Odoo 18 CE + OCA on Docker Hardened baseline" \
+      org.opencontainers.image.vendor="InsightPulse AI" \
+      org.opencontainers.image.version="2.0.0-dhi-alpha" \
+      com.insightpulseai.dhi.enabled="true" \
+      com.insightpulseai.security.baseline="minimal"
+
+# =============================================================================
+# NOTES:
+# - This is a skeleton implementation for future DHI adoption
+# - Requires significant testing before production use
+# - Keep main Dockerfile as primary deployment path
+# - Use this for high-security environments only
+# =============================================================================

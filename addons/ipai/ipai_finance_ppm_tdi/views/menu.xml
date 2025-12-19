@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root Menu: Finance PPM -->
+    <menuitem id="menu_finance_ppm_root" name="Finance PPM" sequence="30" web_icon="ipai_finance_ppm_tdi,static/description/icon.png"/>
+
+    <!-- Submenu: Data Ingestion -->
+    <menuitem id="menu_finance_ppm_data_ingestion" name="Data Ingestion"
+              parent="menu_finance_ppm_root" sequence="10"/>
+
+    <!-- Menu Item: Import Data -->
+    <menuitem id="menu_finance_ppm_import_data" name="Import Data"
+              parent="menu_finance_ppm_data_ingestion" sequence="10"
+              action="action_finance_ppm_import_wizard"
+              groups="group_finance_ppm_manager"/>
+
+    <!-- Menu Item: Import History -->
+    <menuitem id="menu_finance_ppm_import_history" name="Import History"
+              parent="menu_finance_ppm_data_ingestion" sequence="20"
+              action="action_finance_ppm_tdi_audit"
+              groups="group_finance_ppm_user"/>
+
+    <!-- Submenu: Configuration (for future use) -->
+    <menuitem id="menu_finance_ppm_configuration" name="Configuration"
+              parent="menu_finance_ppm_root" sequence="90"
+              groups="group_finance_ppm_admin"/>
+
+</odoo>

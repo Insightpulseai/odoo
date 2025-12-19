@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Reservation List View -->
+    <record id="view_reservation_list" model="ir.ui.view">
+      <field name="name">ipai.asset.reservation.list</field>
+      <field name="model">ipai.asset.reservation</field>
+      <field name="arch" type="xml">
+        <list string="Reservations" decoration-muted="state in ('cancelled', 'expired')">
+          <field name="start_date"/>
+          <field name="end_date"/>
+          <field name="asset_id"/>
+          <field name="employee_id"/>
+          <field name="state" widget="badge"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Reservation Form View -->
+    <record id="view_reservation_form" model="ir.ui.view">
+      <field name="name">ipai.asset.reservation.form</field>
+      <field name="model">ipai.asset.reservation</field>
+      <field name="arch" type="xml">
+        <form string="Asset Reservation">
+          <header>
+            <button name="action_confirm" type="object" string="Confirm" class="oe_highlight" invisible="state != 'draft'"/>
+            <button name="action_convert_to_checkout" type="object" string="Check Out Now" class="oe_highlight" invisible="state != 'confirmed'"/>
+            <button name="action_cancel" type="object" string="Cancel" invisible="state in ('cancelled', 'expired', 'checked_out')"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,checked_out"/>
+          </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="asset_id"/>
+                <field name="employee_id"/>
+              </group>
+              <group>
+                <field name="start_date"/>
+                <field name="end_date"/>
+              </group>
+            </group>
+            <field name="notes" placeholder="Reservation notes..."/>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Reservation Calendar View -->
+    <record id="view_reservation_calendar" model="ir.ui.view">
+      <field name="name">ipai.asset.reservation.calendar</field>
+      <field name="model">ipai.asset.reservation</field>
+      <field name="arch" type="xml">
+        <calendar string="Reservations" date_start="start_date" date_stop="end_date" color="asset_id" mode="month">
+          <field name="asset_id"/>
+          <field name="employee_id"/>
+        </calendar>
+      </field>
+    </record>
+
+    <!-- Reservation Action -->
+    <record id="action_reservation" model="ir.actions.act_window">
+      <field name="name">Reservations</field>
+      <field name="res_model">ipai.asset.reservation</field>
+      <field name="view_mode">calendar,list,form</field>
+    </record>
+  </data>
+</odoo>

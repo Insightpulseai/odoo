@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Portfolio List View -->
+    <record id="view_ppm_portfolio_list" model="ir.ui.view">
+      <field name="name">ppm.portfolio.list</field>
+      <field name="model">ppm.portfolio</field>
+      <field name="arch" type="xml">
+        <list string="Portfolios" decoration-danger="health_status=='red'" decoration-warning="health_status=='yellow'">
+          <field name="sequence" widget="handle"/>
+          <field name="code"/>
+          <field name="name"/>
+          <field name="owner_id" widget="many2one_avatar_user"/>
+          <field name="program_count"/>
+          <field name="health_status" widget="badge" decoration-success="health_status=='green'" decoration-warning="health_status=='yellow'" decoration-danger="health_status=='red'"/>
+          <field name="health_score" widget="progressbar"/>
+          <field name="total_budget" sum="Total Budget"/>
+          <field name="budget_variance_pct" widget="percentage"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Portfolio Form View -->
+    <record id="view_ppm_portfolio_form" model="ir.ui.view">
+      <field name="name">ppm.portfolio.form</field>
+      <field name="model">ppm.portfolio</field>
+      <field name="arch" type="xml">
+        <form string="Portfolio">
+          <header>
+            <field name="health_status" widget="statusbar" options="{'clickable': '0'}"/>
+          </header>
+          <sheet>
+            <div class="oe_button_box" name="button_box">
+              <button name="%(action_ppm_program)d" type="action"
+                      class="oe_stat_button" icon="fa-sitemap"
+                      context="{'search_default_portfolio_id': active_id}">
+                <field name="program_count" widget="statinfo" string="Programs"/>
+              </button>
+            </div>
+            <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+            <div class="oe_title">
+              <label for="name"/>
+              <h1><field name="name" placeholder="Portfolio Name"/></h1>
+              <field name="code" placeholder="PF-CODE"/>
+            </div>
+            <group>
+              <group string="Ownership">
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="sponsor_id" widget="many2one_avatar_user"/>
+              </group>
+              <group string="Timeline">
+                <field name="date_start"/>
+                <field name="date_end"/>
+              </group>
+            </group>
+            <group>
+              <group string="Health">
+                <field name="health_score" widget="progressbar"/>
+              </group>
+              <group string="Budget">
+                <field name="total_budget"/>
+                <field name="total_actual"/>
+                <field name="budget_variance_pct" widget="percentage"/>
+                <field name="currency_id" invisible="1"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Objective" name="objective">
+                <field name="objective" placeholder="Strategic objectives and success criteria..."/>
+              </page>
+              <page string="Description" name="description">
+                <field name="description"/>
+              </page>
+              <page string="Programs" name="programs">
+                <field name="program_ids">
+                  <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="program_manager_id" widget="many2one_avatar_user"/>
+                    <field name="health_status" widget="badge"/>
+                    <field name="project_count"/>
+                    <field name="budget"/>
+                  </list>
+                </field>
+              </page>
+              <page string="KPIs" name="kpis">
+                <field name="kpi_snapshot_ids">
+                  <list>
+                    <field name="as_of"/>
+                    <field name="kpi_key"/>
+                    <field name="value"/>
+                    <field name="unit"/>
+                    <field name="status" widget="badge"/>
+                    <field name="source"/>
+                  </list>
+                </field>
+              </page>
+            </notebook>
+            <field name="active" invisible="1"/>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Portfolio Kanban View -->
+    <record id="view_ppm_portfolio_kanban" model="ir.ui.view">
+      <field name="name">ppm.portfolio.kanban</field>
+      <field name="model">ppm.portfolio</field>
+      <field name="arch" type="xml">
+        <kanban class="o_kanban_mobile" sample="1">
+          <field name="name"/>
+          <field name="code"/>
+          <field name="owner_id"/>
+          <field name="health_status"/>
+          <field name="health_score"/>
+          <field name="program_count"/>
+          <templates>
+            <t t-name="card">
+              <div class="d-flex flex-column">
+                <div class="d-flex justify-content-between">
+                  <strong><field name="name"/></strong>
+                  <field name="health_status" widget="badge"/>
+                </div>
+                <div class="text-muted"><field name="code"/></div>
+                <div class="mt-2">
+                  <field name="owner_id" widget="many2one_avatar_user"/>
+                  <span class="float-end"><field name="program_count"/> programs</span>
+                </div>
+                <div class="mt-2">
+                  <field name="health_score" widget="progressbar"/>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Portfolio Action -->
+    <record id="action_ppm_portfolio" model="ir.actions.act_window">
+      <field name="name">Portfolios</field>
+      <field name="res_model">ppm.portfolio</field>
+      <field name="view_mode">kanban,list,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create your first portfolio
+        </p>
+        <p>
+          Portfolios group related programs for strategic oversight.
+        </p>
+      </field>
+    </record>
+  </data>
+</odoo>

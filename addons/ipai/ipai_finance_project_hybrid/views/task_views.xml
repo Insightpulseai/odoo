@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <record id="view_task_form_ipai_finance" model="ir.ui.view">
+      <field name="name">project.task.form.ipai.finance</field>
+      <field name="model">project.task</field>
+      <field name="inherit_id" ref="project.view_task_form2"/>
+      <field name="arch" type="xml">
+        <xpath expr="//sheet//group" position="after">
+          <group string="IPAI Finance" groups="ipai_finance_project_hybrid.group_ipai_finance_user">
+            <field name="ipai_task_category"/>
+            <field name="ipai_template_id"/>
+            <field name="ipai_owner_role"/>
+            <field name="ipai_owner_code"/>
+            <field name="ipai_compliance_step"/>
+            <field name="ipai_status_bucket" readonly="1"/>
+            <field name="ipai_days_to_deadline" readonly="1"/>
+          </group>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="view_task_list_ipai_finance" model="ir.ui.view">
+      <field name="name">project.task.list.ipai.finance</field>
+      <field name="model">project.task</field>
+      <field name="inherit_id" ref="project.view_task_tree2"/>
+      <field name="arch" type="xml">
+        <xpath expr="//list" position="inside">
+          <field name="ipai_task_category" optional="show"/>
+          <field name="ipai_owner_role" optional="show"/>
+          <field name="ipai_owner_code" optional="show"/>
+          <field name="ipai_compliance_step" optional="show"/>
+          <field name="ipai_status_bucket" optional="show"/>
+          <field name="ipai_days_to_deadline" optional="show"/>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
