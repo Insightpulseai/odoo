@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 356f0ec3db79adc8afcaa7579693f4eb0339d01e
+> Commit: de776ae65d777a5dd7b8416e79a2bda8364b6d8f
 
 ## 📚 Documentation
 
@@ -32,6 +32,7 @@
 | [Finance PPM Dashboard Implementation Guide](FINANCE_PPM_DASHBOARD_GUIDE.md) | . |
 | [Finance PPM Data Import Guide](FINANCE_PPM_IMPORT_GUIDE.md) | . |
 | [Identity & ChatOps Deployment Summary](IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md) | . |
+| [Infrastructure Improvement Plan](INFRASTRUCTURE_PLAN.md) | . |
 | [InsightPulse ERP Configuration Guide](INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md) | . |
 | [Kapa.ai-style Self-Hosted Documentation Assistant](KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md) | . |
 | [Mattermost ↔ n8n ↔ Odoo/Supabase Integration Guide](MATTERMOST_OPEX_INTEGRATION.md) | . |
@@ -68,6 +69,8 @@
 | [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
+| [InsightPulse Custom Routes](addons/ipai_custom_routes/README.md) | addons/ipai_custom_routes |
+| [InsightPulse Default Home Page](addons/ipai_default_home/README.md) | addons/ipai_default_home |
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
@@ -113,6 +116,7 @@
 | [Docker Image-Based CD Migration Guide](docs/DOCKER_CD_MIGRATION_GUIDE.md) | docs |
 | [Docker Validation Guide](docs/DOCKER_VALIDATION_GUIDE.md) | docs |
 | [DOKS Deployment Success Criteria – Infra + Custom Features](docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md) | docs |
+| [Odoo CE Ecosystem Guide for AI Agents](docs/ECOSYSTEM_GUIDE.md) | docs |
 | [Odoo CE v0.9.0 Audit - Executive Summary](docs/EXECUTIVE_SUMMARY.md) | docs |
 | [Cheqroom Parity Feature - Equipment Management on Odoo CE](docs/FEATURE_CHEQROOM_PARITY.md) | docs |
 | [SAP Concur Parity Feature - Expense Management on Odoo CE](docs/FEATURE_CONCUR_PARITY.md) | docs |
@@ -152,6 +156,7 @@
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
 | [Secrets Naming and Storage - Canonical Reference](docs/SECRETS_NAMING_AND_STORAGE.md) | docs |
 | [Semantic Versioning Strategy - InsightPulse Odoo CE](docs/SEMANTIC_VERSIONING_STRATEGY.md) | docs |
+| [Odoo CE 18.0 - InsightPulse AI Module Sitemap](docs/SITEMAP.md) | docs |
 | [SSO Configuration Validation Checklist](docs/SSO_VALIDATION_CHECKLIST.md) | docs |
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
@@ -221,6 +226,7 @@
 | [InsightPulse ERP – v1 Scope Tasks](specs/tasks.md) | specs |
 | [Task: n8n Automation Strategy for Odoo CE](task.md) | . |
 | [Tasks – InsightPulse Odoo CE](tasks.md) | . |
+| [Agent Services Hard Delete Checklist](tasks/infra/AGENT_SERVICES_HARD_DELETE_CHECKLIST.md) | tasks/infra |
 | [Database Instance Inventory Scanner](tools/db-inventory/README.md) | tools/db-inventory |
 | [Walkthrough - Notion Parity Modules](walkthrough.md) | . |
 | [Shadow Enterprise Webhook & AI Stack](workflows/SHADOW_ENTERPRISE_STACK.md) | workflows |
@@ -255,6 +261,12 @@
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
+| [ipai_custom_routes](./addons/ipai_custom_routes) | ✅ | Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.) |
+| [ipai_default_home](./addons/ipai_default_home) | ✅ | Set default landing page to Apps Dashboard after login |
+| [ipai_dev_studio_base](./addons/ipai_dev_studio_base) | ✅ |  |
+| [ipai_industry_accounting_firm](./addons/ipai_industry_accounting_firm) | ✅ |  |
+| [ipai_industry_marketing_agency](./addons/ipai_industry_marketing_agency) | ✅ |  |
+| [ipai_workspace_core](./addons/ipai_workspace_core) | ✅ |  |
 | [ipai_accounting_firm_pack](./archive/addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_docs](./archive/addons/ipai_docs) | ✅ |  |
 | [ipai_docs_project](./archive/addons/ipai_docs_project) | ✅ |  |
@@ -270,6 +282,7 @@
 
 | File | Purpose |
 |------|---------|
+| [docker-compose.yml](docker-compose.yml) | Docker orchestration |
 | [docker-compose.prod.yml](docker-compose.prod.yml) | Production Docker |
 | [Dockerfile](Dockerfile) | Container build |
 | [requirements.txt](requirements.txt) | Python dependencies |
