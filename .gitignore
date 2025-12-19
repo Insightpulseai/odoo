@@ -89,3 +89,6 @@ temp/
 # Exception: Claude external memory
 !.claude/project_memory.db
 .claude/settings.local.json
+
+# DB Inventory tool output
+tools/db-inventory/output/
