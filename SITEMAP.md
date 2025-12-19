@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5827c9b9d96ffd260dc11d7c73be512661395d84
+> Commit: 816aa8eb281a67a51997ce2ce69297ada419c644
 
 ## 📚 Documentation
 
@@ -155,6 +155,7 @@
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
+| [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
@@ -233,6 +234,7 @@
 |--------|--------|-------------|
 | [ipai_accounting_firm_pack](./addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_advisor](./addons/ipai_advisor) | ✅ |  |
+| [ipai_assets](./addons/ipai_assets) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ |  |
 | [ipai_ce_branding](./addons/ipai_ce_branding) | ✅ | Custom branding for Odoo CE login and backend |
 | [ipai_ce_cleaner](./addons/ipai_ce_cleaner) | ✅ |  |
@@ -259,6 +261,7 @@
 | [ipai_ppm](./addons/ipai_ppm) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai_project_program) | ✅ |  |
+| [ipai_srm](./addons/ipai_srm) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 
 ## 🔧 Configuration Files
