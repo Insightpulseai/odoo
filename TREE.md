@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 01d435f5bd69e888388c837e4ea9ad816712386f
+> Commit: 727ac9d6c4322f724a2d686d5d5daa0d9656bfdb
 
 ```
 .
@@ -27,693 +27,202 @@
 │   │   └── repo-structure.yml
 │   └── copilot-instructions.md
 ├── addons
+│   ├── ce
+│   │   └── .gitkeep
 │   ├── ipai
-│   │   └── .gitkeep
-│   ├── ipai_accounting_firm_pack
-│   │   ├── data
-│   │   │   └── engagement_data.xml
-│   │   ├── models
+│   │   ├── ipai_advisor
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
 │   │   │   ├── __init__.py
-│   │   │   ├── compliance.py
-│   │   │   ├── engagement.py
-│   │   │   └── workpaper.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── compliance_views.xml
-│   │   │   ├── engagement_views.xml
-│   │   │   ├── menus.xml
-│   │   │   └── workpaper_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_advisor
-│   │   ├── controllers
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_assets
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
 │   │   │   ├── __init__.py
-│   │   │   └── webhook.py
-│   │   ├── data
-│   │   │   └── advisor_categories.xml
-│   │   ├── models
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_bir_compliance
+│   │   │   ├── models
+│   │   │   ├── reports
+│   │   │   ├── security
+│   │   │   ├── wizards
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
-│   │   │   ├── category.py
-│   │   │   ├── playbook.py
-│   │   │   ├── recommendation.py
-│   │   │   └── score.py
-│   │   ├── security
-│   │   │   ├── advisor_security.xml
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── category_views.xml
-│   │   │   ├── dashboard_views.xml
-│   │   │   ├── menus.xml
-│   │   │   ├── playbook_views.xml
-│   │   │   ├── recommendation_views.xml
-│   │   │   └── score_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_assets
-│   │   ├── data
-│   │   │   ├── assets_categories.xml
-│   │   │   └── assets_sequence.xml
-│   │   ├── models
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ce_branding
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
-│   │   │   ├── asset.py
-│   │   │   ├── category.py
-│   │   │   ├── checkout.py
-│   │   │   └── reservation.py
-│   │   ├── security
-│   │   │   ├── assets_security.xml
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── asset_views.xml
-│   │   │   ├── checkout_views.xml
-│   │   │   ├── menus.xml
-│   │   │   └── reservation_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_bir_compliance
-│   │   ├── models
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ce_cleaner
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
-│   │   │   └── account_move.py
-│   │   ├── reports
-│   │   │   └── bir_2307_report.xml
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── wizards
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_clarity_ppm_parity
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   │   ├── QUICK_START.md
+│   │   │   ├── README.rst
+│   │   │   ├── STATUS.md
+│   │   │   ├── TEST_REPORT.md
 │   │   │   ├── __init__.py
-│   │   │   ├── bir_dat_file_wizard.py
-│   │   │   └── bir_dat_file_wizard_view.xml
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_ce_branding
-│   │   ├── static
-│   │   │   └── src
-│   │   ├── views
-│   │   │   ├── assets.xml
-│   │   │   └── ce_branding_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_ce_cleaner
-│   │   ├── static
-│   │   │   └── src
-│   │   ├── views
-│   │   │   ├── ipai_ce_cleaner_assets.xml
-│   │   │   └── ipai_ce_cleaner_views.xml
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_clarity_ppm_parity
-│   │   ├── data
-│   │   │   ├── bir_schedule_2025_2026.xml
-│   │   │   ├── clarity_data.xml
-│   │   │   └── demo_data.xml
-│   │   ├── models
+│   │   │   ├── __manifest__.py
+│   │   │   └── install.sh
+│   │   ├── ipai_equipment
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
-│   │   │   ├── project_checklist.py
-│   │   │   ├── project_milestone.py
-│   │   │   ├── project_phase.py
-│   │   │   ├── project_project.py
-│   │   │   └── project_task.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── project_menu.xml
-│   │   │   ├── project_milestone_views.xml
-│   │   │   ├── project_phase_views.xml
-│   │   │   ├── project_project_views.xml
-│   │   │   └── project_task_views.xml
-│   │   ├── IMPLEMENTATION_SUMMARY.md
-│   │   ├── QUICK_START.md
-│   │   ├── README.rst
-│   │   ├── STATUS.md
-│   │   ├── TEST_REPORT.md
-│   │   ├── __init__.py
-│   │   ├── __manifest__.py
-│   │   └── install.sh
-│   ├── ipai_docs
-│   │   ├── models
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_expense
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
-│   │   │   ├── ipai_doc.py
-│   │   │   └── ipai_doc_tag.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_workspace_visibility.py
-│   │   ├── views
-│   │   │   ├── ipai_doc_tag_views.xml
-│   │   │   ├── ipai_doc_views.xml
-│   │   │   └── menu.xml
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_docs_project
-│   │   ├── data
-│   │   │   └── workspace_seed.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── doc.py
-│   │   │   ├── project.py
-│   │   │   └── task.py
-│   │   ├── views
-│   │   │   ├── project_views.xml
-│   │   │   └── task_views.xml
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_equipment
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── equipment.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_equipment_lifecycle.py
-│   │   ├── views
-│   │   │   ├── ipai_equipment_menus.xml
-│   │   │   └── ipai_equipment_views.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_expense
-│   │   ├── data
-│   │   │   └── ipai_expense_categories.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── expense.py
-│   │   ├── security
-│   │   │   ├── ipai_expense_security.xml
-│   │   │   └── ir.model.access.csv
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_expense_validation.py
-│   │   ├── views
-│   │   │   ├── ipai_expense_menus.xml
-│   │   │   └── ipai_expense_views.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_finance_ap_aging
-│   │   ├── controllers
-│   │   │   ├── __init__.py
-│   │   │   └── main.py
-│   │   ├── data
-│   │   │   └── ap_aging_cron.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── account_move_line.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── static
-│   │   │   └── src
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_ap_aging.py
-│   │   ├── views
-│   │   │   ├── ap_aging_menu.xml
-│   │   │   └── ap_aging_views.xml
-│   │   ├── IMPLEMENTATION_SUMMARY.md
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_finance_bir_compliance
-│   │   ├── data
-│   │   │   └── seed
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── bir_generator.py
-│   │   │   └── bir_schedule_item.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── security.xml
-│   │   ├── seed
-│   │   │   ├── __init__.py
-│   │   │   └── loader.py
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_bir_generation.py
-│   │   ├── views
-│   │   │   ├── bir_schedule_views.xml
-│   │   │   └── menus.xml
-│   │   ├── wizard
-│   │   │   ├── __init__.py
-│   │   │   ├── generate_bir_tasks_wizard.py
-│   │   │   └── generate_bir_tasks_wizard_views.xml
-│   │   ├── __init__.py
-│   │   ├── __manifest__.py
-│   │   └── hooks.py
-│   ├── ipai_finance_controller_dashboard
-│   │   ├── controllers
-│   │   │   ├── __init__.py
-│   │   │   └── main.py
-│   │   ├── data
-│   │   │   └── controller_dashboard_cron.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── finance_controller_kpi.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── static
-│   │   │   └── src
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_controller_kpi.py
-│   │   ├── views
-│   │   │   ├── controller_dashboard_menu.xml
-│   │   │   └── controller_dashboard_views.xml
-│   │   ├── IMPLEMENTATION_SUMMARY.md
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_finance_month_end
-│   │   ├── data
-│   │   │   └── seed
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── month_end_generator.py
-│   │   │   └── month_end_template.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── security.xml
-│   │   ├── seed
-│   │   │   ├── __init__.py
-│   │   │   └── loader.py
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_month_end_generation.py
-│   │   ├── views
-│   │   │   ├── menus.xml
-│   │   │   └── month_end_template_views.xml
-│   │   ├── wizard
-│   │   │   ├── __init__.py
-│   │   │   ├── generate_month_end_wizard.py
-│   │   │   └── generate_month_end_wizard_views.xml
-│   │   ├── __init__.py
-│   │   ├── __manifest__.py
-│   │   └── hooks.py
-│   ├── ipai_finance_monthly_closing
-│   │   ├── data
-│   │   │   └── project_templates.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── project_task.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   └── project_task_views.xml
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_finance_ppm
-│   │   ├── controllers
-│   │   │   ├── __init__.py
-│   │   │   └── ppm_dashboard.py
-│   │   ├── data
-│   │   │   ├── bir_schedule_seed.xml
-│   │   │   ├── finance_bir_schedule_2026_full.xml
-│   │   │   ├── finance_bir_schedule_seed.xml
-│   │   │   ├── finance_cron.xml
-│   │   │   └── finance_logframe_seed.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── bir_schedule.py
-│   │   │   ├── finance_bir_deadline.py
-│   │   │   ├── finance_person.py
-│   │   │   ├── finance_ppm.py
-│   │   │   ├── finance_task.py
-│   │   │   ├── ppm_dashboard.py
-│   │   │   └── project_task.py
-│   │   ├── scripts
-│   │   │   └── generate_bir_seeds.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── static
-│   │   │   ├── lib
-│   │   │   └── src
-│   │   ├── views
-│   │   │   ├── bir_schedule_views.xml
-│   │   │   ├── finance_bir_deadline_views.xml
-│   │   │   ├── finance_person_views.xml
-│   │   │   ├── finance_ppm_views.xml
-│   │   │   ├── finance_task_views.xml
-│   │   │   ├── menus.xml
-│   │   │   ├── ppm_dashboard_template.xml
-│   │   │   ├── ppm_dashboard_views.xml
-│   │   │   └── project_task_views.xml
-│   │   ├── README.md
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_finance_ppm_closing
-│   │   ├── data
-│   │   │   └── ir_cron.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── closing_generator.py
-│   │   │   ├── closing_models.py
-│   │   │   ├── project_ext.py
-│   │   │   └── res_users.py
-│   │   ├── scripts
-│   │   │   ├── __init__.py
-│   │   │   ├── reconcile_seed_parity.py
-│   │   │   └── validate_seed_parity.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── seed
-│   │   │   └── closing_v1_2_0.json
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_closing_generator.py
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_finance_ppm_dashboard
-│   │   ├── static
-│   │   │   ├── lib
-│   │   │   └── src
-│   │   ├── views
-│   │   │   └── ipai_finance_ppm_dashboard_views.xml
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_finance_ppm_tdi
-│   │   ├── data
-│   │   │   ├── bir_calendar_seed.xml
-│   │   │   ├── finance_team_seed.xml
-│   │   │   ├── logframe_kpi_seed.xml
-│   │   │   ├── month_end_tasks_notion_import.xml
-│   │   │   ├── month_end_tasks_seed.xml
-│   │   │   └── ph_holiday_calendar_seed.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── finance_ppm_bir_calendar.py
-│   │   │   ├── finance_ppm_logframe.py
-│   │   │   ├── finance_ppm_ph_holiday.py
-│   │   │   └── finance_ppm_tdi_audit.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── security_groups.xml
-│   │   ├── static
-│   │   │   └── description
-│   │   ├── views
-│   │   │   ├── finance_ppm_tdi_audit_views.xml
-│   │   │   └── menu.xml
-│   │   ├── wizard
-│   │   │   ├── __init__.py
-│   │   │   ├── finance_ppm_import_wizard.py
-│   │   │   └── finance_ppm_import_wizard_views.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   ├── __manifest__.py
-│   │   └── hooks.py
-│   ├── ipai_finance_project_hybrid
-│   │   ├── data
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_finance_bir_compliance
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
 │   │   │   ├── seed
-│   │   │   └── ir_cron.xml
-│   │   ├── models
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── wizard
 │   │   │   ├── __init__.py
-│   │   │   ├── bir_schedule.py
-│   │   │   ├── finance_directory.py
-│   │   │   ├── finance_seed_service.py
-│   │   │   ├── project.py
-│   │   │   ├── res_config_settings.py
-│   │   │   ├── task.py
-│   │   │   └── task_template.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── security.xml
-│   │   ├── tests
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
+│   │   ├── ipai_finance_month_end
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── seed
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── wizard
 │   │   │   ├── __init__.py
-│   │   │   └── test_seed_and_generation.py
-│   │   ├── views
-│   │   │   ├── bir_schedule_views.xml
-│   │   │   ├── dashboard_views.xml
-│   │   │   ├── finance_directory_views.xml
-│   │   │   ├── menu.xml
-│   │   │   ├── project_views.xml
-│   │   │   ├── seed_wizard_views.xml
-│   │   │   ├── task_template_views.xml
-│   │   │   └── task_views.xml
-│   │   ├── wizards
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
+│   │   ├── ipai_finance_monthly_closing
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
-│   │   │   ├── generate_im_projects_wizard.py
-│   │   │   └── seed_wizard.py
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   ├── __manifest__.py
-│   │   └── hooks.py
-│   ├── ipai_idp
-│   │   ├── ade
-│   │   │   ├── core
-│   │   │   ├── pipelines
-│   │   │   └── __init__.py
-│   │   ├── controllers
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_finance_ppm
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── scripts
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
-│   │   │   ├── health_controller.py
-│   │   │   └── idp_api_controller.py
-│   │   ├── data
-│   │   │   └── idp_model_versions_data.xml
-│   │   ├── models
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_finance_ppm_closing
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── scripts
+│   │   │   ├── security
+│   │   │   ├── seed
+│   │   │   ├── tests
 │   │   │   ├── __init__.py
-│   │   │   ├── idp_ade_trace.py
-│   │   │   ├── idp_document.py
-│   │   │   ├── idp_document_ocr.py
-│   │   │   ├── idp_extraction.py
-│   │   │   ├── idp_llm_gateway.py
-│   │   │   ├── idp_model_version.py
-│   │   │   ├── idp_review.py
-│   │   │   ├── idp_validation_rule.py
-│   │   │   └── res_config_settings.py
-│   │   ├── security
-│   │   │   ├── idp_groups.xml
-│   │   │   ├── idp_record_rules.xml
-│   │   │   └── ir.model.access.csv
-│   │   ├── services
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_finance_ppm_dashboard
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
-│   │   │   ├── idp_service_extractor.py
-│   │   │   ├── idp_service_health.py
-│   │   │   ├── idp_service_ocr.py
-│   │   │   ├── idp_service_parser.py
-│   │   │   └── idp_service_validator.py
-│   │   ├── tests
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_finance_ppm_tdi
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── wizard
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
-│   │   │   ├── test_document_flow.py
-│   │   │   ├── test_extraction.py
-│   │   │   ├── test_health.py
-│   │   │   ├── test_http_endpoints.py
-│   │   │   ├── test_parsers.py
-│   │   │   ├── test_security.py
-│   │   │   └── test_validation.py
-│   │   ├── views
-│   │   │   ├── idp_document_views.xml
-│   │   │   ├── idp_extraction_views.xml
-│   │   │   ├── idp_menus.xml
-│   │   │   ├── idp_model_version_views.xml
-│   │   │   ├── idp_review_views.xml
-│   │   │   └── res_config_settings_views.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_marketing_agency_pack
-│   │   ├── data
-│   │   │   └── campaign_data.xml
-│   │   ├── models
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
+│   │   ├── ipai_finance_project_hybrid
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── wizards
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
-│   │   │   ├── campaign.py
-│   │   │   ├── client_brand.py
-│   │   │   ├── creative.py
-│   │   │   └── media.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── campaign_views.xml
-│   │   │   ├── client_brand_views.xml
-│   │   │   ├── creative_views.xml
-│   │   │   ├── media_views.xml
-│   │   │   └── menus.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_ocr_expense
-│   │   ├── models
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
+│   │   ├── ipai_portal_fix
+│   │   │   ├── controllers
+│   │   │   ├── models
+│   │   │   ├── views
+│   │   │   ├── DEPLOYMENT_VERIFICATION.md
+│   │   │   ├── README.md
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
-│   │   │   ├── hr_expense_ocr.py
-│   │   │   ├── ocr_expense_log.py
-│   │   │   └── res_config_settings.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── ipai_ocr_expense_views.xml
-│   │   │   ├── ipai_ocr_settings_views.xml
-│   │   │   └── ocr_expense_log_views.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_partner_pack
-│   │   ├── data
-│   │   │   └── service_pack_data.xml
-│   │   ├── models
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ppm
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
 │   │   │   ├── __init__.py
-│   │   │   ├── implementation.py
-│   │   │   ├── quote_calculator.py
-│   │   │   └── service_pack.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── implementation_views.xml
-│   │   │   ├── menus.xml
-│   │   │   ├── quote_calculator_views.xml
-│   │   │   └── service_pack_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_portal_fix
-│   │   ├── controllers
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ppm_monthly_close
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── wizards
+│   │   │   ├── INSTALL_NOVEMBER_2025.md
+│   │   │   ├── README.md
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
-│   │   │   └── portal.py
-│   │   ├── models
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_project_program
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── seed
+│   │   │   ├── tests
+│   │   │   ├── utils
+│   │   │   ├── views
+│   │   │   ├── wizard
 │   │   │   ├── __init__.py
-│   │   │   ├── ir_http.py
-│   │   │   └── ir_qweb.py
-│   │   ├── views
-│   │   │   └── portal_templates.xml
-│   │   ├── DEPLOYMENT_VERIFICATION.md
-│   │   ├── README.md
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_ppm
-│   │   ├── data
-│   │   │   └── kpi_definitions.xml
-│   │   ├── models
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
+│   │   ├── ipai_srm
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
 │   │   │   ├── __init__.py
-│   │   │   ├── kpi_snapshot.py
-│   │   │   ├── portfolio.py
-│   │   │   ├── program.py
-│   │   │   ├── resource_allocation.py
-│   │   │   └── risk.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── ppm_security.xml
-│   │   ├── views
-│   │   │   ├── kpi_snapshot_views.xml
-│   │   │   ├── menus.xml
-│   │   │   ├── portfolio_views.xml
-│   │   │   ├── program_views.xml
-│   │   │   ├── resource_allocation_views.xml
-│   │   │   └── risk_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_ppm_monthly_close
-│   │   ├── data
-│   │   │   ├── ppm_close_cron.xml
-│   │   │   └── ppm_close_template_data_REAL.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── ppm_close_task.py
-│   │   │   ├── ppm_close_template.py
-│   │   │   └── ppm_monthly_close.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_monthly_close.py
-│   │   ├── views
-│   │   │   ├── ppm_close_menu.xml
-│   │   │   ├── ppm_close_task_views.xml
-│   │   │   ├── ppm_close_template_views.xml
-│   │   │   └── ppm_monthly_close_views.xml
-│   │   ├── wizards
-│   │   │   └── __init__.py
-│   │   ├── INSTALL_NOVEMBER_2025.md
-│   │   ├── README.md
-│   │   ├── README.rst
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_project_program
-│   │   ├── data
-│   │   │   └── seed
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── directory_person.py
-│   │   │   ├── project_project.py
-│   │   │   └── project_task.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── security.xml
-│   │   ├── seed
-│   │   │   ├── __init__.py
-│   │   │   └── loader.py
-│   │   ├── tests
-│   │   │   ├── __init__.py
-│   │   │   └── test_seed_and_projects.py
-│   │   ├── utils
-│   │   │   ├── __init__.py
-│   │   │   ├── date_utils.py
-│   │   │   └── xmlid.py
-│   │   ├── views
-│   │   │   ├── directory_views.xml
-│   │   │   ├── menus.xml
-│   │   │   └── project_project_views.xml
-│   │   ├── wizard
-│   │   │   ├── __init__.py
-│   │   │   ├── convert_phases_wizard.py
-│   │   │   └── convert_phases_wizard_views.xml
-│   │   ├── __init__.py
-│   │   ├── __manifest__.py
-│   │   └── hooks.py
-│   ├── ipai_srm
-│   │   ├── data
-│   │   │   ├── srm_kpi_categories.xml
-│   │   │   └── srm_sequence.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── kpi_category.py
-│   │   │   ├── qualification.py
-│   │   │   ├── res_partner.py
-│   │   │   ├── scorecard.py
-│   │   │   └── supplier.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── srm_security.xml
-│   │   ├── views
-│   │   │   ├── menus.xml
-│   │   │   ├── qualification_views.xml
-│   │   │   ├── scorecard_views.xml
-│   │   │   └── supplier_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── oca
+│   │   │   └── __manifest__.py
 │   │   └── .gitkeep
-│   └── tbwa_spectra_integration
-│       ├── data
-│       │   ├── approval_matrix_data.xml
-│       │   ├── export_templates_data.xml
-│       │   ├── spectra_mapping_data.xml
-│       │   ├── tbwa_cron.xml
-│       │   └── users_data.xml
-│       ├── models
-│       │   ├── __init__.py
-│       │   ├── approval_matrix.py
-│       │   ├── hr_expense_advance.py
-│       │   ├── hr_expense_sheet.py
-│       │   ├── spectra_export.py
-│       │   └── spectra_mapping.py
-│       ├── security
-│       │   ├── ir.model.access.csv
-│       │   └── tbwa_security.xml
-│       ├── views
-│       │   ├── approval_matrix_views.xml
-│       │   ├── hr_expense_advance_views.xml
-│       │   ├── spectra_export_views.xml
-│       │   ├── spectra_mapping_views.xml
-│       │   └── tbwa_menu.xml
-│       ├── wizards
-│       │   ├── __init__.py
-│       │   ├── spectra_export_wizard.py
-│       │   └── spectra_export_wizard_views.xml
-│       ├── README.md
-│       ├── README.rst
-│       ├── __init__.py
-│       └── __manifest__.py
+│   └── oca
+│       └── .gitkeep
 ├── agents
 │   ├── capabilities
 │   │   └── CAPABILITY_MATRIX.yaml
@@ -772,6 +281,97 @@
 │       ├── next.config.mjs
 │       ├── package.json
 │       └── theme.config.jsx
+├── archive
+│   └── addons
+│       ├── ipai_accounting_firm_pack
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── views
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_docs
+│       │   ├── models
+│       │   ├── security
+│       │   ├── tests
+│       │   ├── views
+│       │   ├── README.rst
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_docs_project
+│       │   ├── data
+│       │   ├── models
+│       │   ├── views
+│       │   ├── README.rst
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_finance_ap_aging
+│       │   ├── controllers
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── static
+│       │   ├── tests
+│       │   ├── views
+│       │   ├── IMPLEMENTATION_SUMMARY.md
+│       │   ├── README.rst
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_finance_controller_dashboard
+│       │   ├── controllers
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── static
+│       │   ├── tests
+│       │   ├── views
+│       │   ├── IMPLEMENTATION_SUMMARY.md
+│       │   ├── README.rst
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_idp
+│       │   ├── ade
+│       │   ├── controllers
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── services
+│       │   ├── tests
+│       │   ├── views
+│       │   ├── README.md
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_marketing_agency_pack
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── views
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_ocr_expense
+│       │   ├── models
+│       │   ├── security
+│       │   ├── views
+│       │   ├── README.md
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── ipai_partner_pack
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── views
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       └── tbwa_spectra_integration
+│           ├── data
+│           ├── models
+│           ├── security
+│           ├── views
+│           ├── wizards
+│           ├── README.md
+│           ├── README.rst
+│           ├── __init__.py
+│           └── __manifest__.py
 ├── automations
 │   └── n8n
 │       └── workflows
@@ -873,6 +473,8 @@
 │   ├── README.md
 │   └── docker-compose.yml
 ├── docker
+│   ├── hardened
+│   │   └── Dockerfile.dhi
 │   ├── nginx
 │   │   ├── ssl
 │   │   │   ├── .gitkeep
@@ -1110,13 +712,6 @@
 │   └── WORKFLOW_CONVENTIONS.md
 ├── oca
 │   └── .gitkeep
-├── oca-addons
-│   ├── mis-builder
-│   ├── project
-│   ├── purchase-workflow
-│   ├── reporting-engine
-│   ├── server-ux
-│   └── oca-addons-extra.tar.gz
 ├── ocr-adapter
 │   ├── scripts
 │   │   ├── README.md
@@ -1175,11 +770,13 @@
 │   ├── generate_finance_dashboard.py
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
+│   ├── image-diff-report.sh
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── map_logframe.py
+│   ├── oca-update.sh
 │   ├── odoo_mattermost_integration.py
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
@@ -1399,15 +996,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-362 directories, 1032 files
+345 directories, 646 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 380 |
-| Files | 1100 |
+| Directories | 378 |
+| Files | 1103 |
 | Python files | 326 |
 | XML files | 174 |
 | Markdown files | 221 |

@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 01d435f5bd69e888388c837e4ea9ad816712386f
+> Commit: 727ac9d6c4322f724a2d686d5d5daa0d9656bfdb
 
 ## 📚 Documentation
 
@@ -55,24 +55,19 @@
 | [TBWA / InsightPulseAI Custom Module Standard](TBWA_IPAI_MODULE_STANDARD.md) | . |
 | [📁 Repository Structure](TREE.md) | . |
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
-| [Clarity PPM Parity - Implementation Complete ✅](addons/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai_clarity_ppm_parity |
-| [Clarity PPM Parity - Quick Start Guide](addons/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai_clarity_ppm_parity |
-| [Clarity PPM Parity Module - Final Status](addons/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai_clarity_ppm_parity |
-| [Clarity PPM Parity Module - Test Report](addons/ipai_clarity_ppm_parity/TEST_REPORT.md) | addons/ipai_clarity_ppm_parity |
-| [IPAI Equipment Management](addons/ipai_equipment/README.md) | addons/ipai_equipment |
-| [IPAI Expense & Travel (PH)](addons/ipai_expense/README.md) | addons/ipai_expense |
-| [AP Aging Month-End Close Automation - Implementation Summary](addons/ipai_finance_ap_aging/IMPLEMENTATION_SUMMARY.md) | addons/ipai_finance_ap_aging |
-| [Finance Controller Dashboard - Implementation Summary](addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | addons/ipai_finance_controller_dashboard |
-| [IPAI Finance PPM](addons/ipai_finance_ppm/README.md) | addons/ipai_finance_ppm |
-| [Finance PPM Transaction Data Ingestion (TDI)](addons/ipai_finance_ppm_tdi/README.md) | addons/ipai_finance_ppm_tdi |
-| [ipai_finance_project_hybrid](addons/ipai_finance_project_hybrid/README.md) | addons/ipai_finance_project_hybrid |
-| [IPAI Intelligent Document Processing (IDP)](addons/ipai_idp/README.md) | addons/ipai_idp |
-| [IPAI Expense OCR (CE)](addons/ipai_ocr_expense/README.md) | addons/ipai_ocr_expense |
-| [IPAI Portal Fix - Deployment Verification Report](addons/ipai_portal_fix/DEPLOYMENT_VERIFICATION.md) | addons/ipai_portal_fix |
-| [IPAI Portal Fix - Website-Free Support](addons/ipai_portal_fix/README.md) | addons/ipai_portal_fix |
-| [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai_ppm_monthly_close |
-| [PPM Monthly Close Scheduler](addons/ipai_ppm_monthly_close/README.md) | addons/ipai_ppm_monthly_close |
-| [TBWA Spectra Integration Module](addons/tbwa_spectra_integration/README.md) | addons/tbwa_spectra_integration |
+| [Clarity PPM Parity - Implementation Complete ✅](addons/ipai/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai/ipai_clarity_ppm_parity |
+| [Clarity PPM Parity - Quick Start Guide](addons/ipai/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai/ipai_clarity_ppm_parity |
+| [Clarity PPM Parity Module - Final Status](addons/ipai/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai/ipai_clarity_ppm_parity |
+| [Clarity PPM Parity Module - Test Report](addons/ipai/ipai_clarity_ppm_parity/TEST_REPORT.md) | addons/ipai/ipai_clarity_ppm_parity |
+| [IPAI Equipment Management](addons/ipai/ipai_equipment/README.md) | addons/ipai/ipai_equipment |
+| [IPAI Expense & Travel (PH)](addons/ipai/ipai_expense/README.md) | addons/ipai/ipai_expense |
+| [IPAI Finance PPM](addons/ipai/ipai_finance_ppm/README.md) | addons/ipai/ipai_finance_ppm |
+| [Finance PPM Transaction Data Ingestion (TDI)](addons/ipai/ipai_finance_ppm_tdi/README.md) | addons/ipai/ipai_finance_ppm_tdi |
+| [ipai_finance_project_hybrid](addons/ipai/ipai_finance_project_hybrid/README.md) | addons/ipai/ipai_finance_project_hybrid |
+| [IPAI Portal Fix - Deployment Verification Report](addons/ipai/ipai_portal_fix/DEPLOYMENT_VERIFICATION.md) | addons/ipai/ipai_portal_fix |
+| [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
+| [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
+| [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
@@ -85,6 +80,11 @@
 | [Delivery Plan — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/plan.md) | apps/ipai-control-center-docs/pages |
 | [Product Requirements Document — IPAI Control Center](apps/ipai-control-center-docs/pages/prd.md) | apps/ipai-control-center-docs/pages |
 | [Tasks — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/tasks.md) | apps/ipai-control-center-docs/pages |
+| [AP Aging Month-End Close Automation - Implementation Summary](archive/addons/ipai_finance_ap_aging/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_ap_aging |
+| [Finance Controller Dashboard - Implementation Summary](archive/addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_controller_dashboard |
+| [IPAI Intelligent Document Processing (IDP)](archive/addons/ipai_idp/README.md) | archive/addons/ipai_idp |
+| [IPAI Expense OCR (CE)](archive/addons/ipai_ocr_expense/README.md) | archive/addons/ipai_ocr_expense |
+| [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [Flutter Receipt OCR Module - Deployment Guide](clients/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | clients/flutter_receipt_ocr |
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
@@ -233,36 +233,36 @@
 
 | Module | Status | Description |
 |--------|--------|-------------|
-| [ipai_accounting_firm_pack](./addons/ipai_accounting_firm_pack) | ✅ |  |
-| [ipai_advisor](./addons/ipai_advisor) | ✅ |  |
-| [ipai_assets](./addons/ipai_assets) | ✅ |  |
-| [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ |  |
-| [ipai_ce_branding](./addons/ipai_ce_branding) | ✅ | Custom branding for Odoo CE login and backend |
-| [ipai_ce_cleaner](./addons/ipai_ce_cleaner) | ✅ |  |
-| [ipai_clarity_ppm_parity](./addons/ipai_clarity_ppm_parity) | ✅ |  |
-| [ipai_docs](./addons/ipai_docs) | ✅ |  |
-| [ipai_docs_project](./addons/ipai_docs_project) | ✅ |  |
-| [ipai_equipment](./addons/ipai_equipment) | ✅ |  |
-| [ipai_expense](./addons/ipai_expense) | ✅ |  |
-| [ipai_finance_ap_aging](./addons/ipai_finance_ap_aging) | ✅ |  |
-| [ipai_finance_bir_compliance](./addons/ipai_finance_bir_compliance) | ✅ |  |
-| [ipai_finance_controller_dashboard](./addons/ipai_finance_controller_dashboard) | ✅ |  |
-| [ipai_finance_month_end](./addons/ipai_finance_month_end) | ✅ |  |
-| [ipai_finance_monthly_closing](./addons/ipai_finance_monthly_closing) | ✅ |  |
-| [ipai_finance_ppm](./addons/ipai_finance_ppm) | ✅ |  |
-| [ipai_finance_ppm_closing](./addons/ipai_finance_ppm_closing) | ✅ |  |
-| [ipai_finance_ppm_dashboard](./addons/ipai_finance_ppm_dashboard) | ✅ |  |
-| [ipai_finance_ppm_tdi](./addons/ipai_finance_ppm_tdi) | ✅ |  |
-| [ipai_finance_project_hybrid](./addons/ipai_finance_project_hybrid) | ✅ |  |
-| [ipai_idp](./addons/ipai_idp) | ✅ |  |
-| [ipai_marketing_agency_pack](./addons/ipai_marketing_agency_pack) | ✅ |  |
-| [ipai_ocr_expense](./addons/ipai_ocr_expense) | ✅ |  |
-| [ipai_partner_pack](./addons/ipai_partner_pack) | ✅ |  |
-| [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ |  |
-| [ipai_ppm](./addons/ipai_ppm) | ✅ |  |
-| [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ |  |
-| [ipai_project_program](./addons/ipai_project_program) | ✅ |  |
-| [ipai_srm](./addons/ipai_srm) | ✅ |  |
+| [ipai_advisor](./addons/ipai/ipai_advisor) | ✅ |  |
+| [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
+| [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
+| [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ | Custom branding for Odoo CE login and backend |
+| [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
+| [ipai_clarity_ppm_parity](./addons/ipai/ipai_clarity_ppm_parity) | ✅ |  |
+| [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
+| [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
+| [ipai_finance_bir_compliance](./addons/ipai/ipai_finance_bir_compliance) | ✅ |  |
+| [ipai_finance_month_end](./addons/ipai/ipai_finance_month_end) | ✅ |  |
+| [ipai_finance_monthly_closing](./addons/ipai/ipai_finance_monthly_closing) | ✅ |  |
+| [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ✅ |  |
+| [ipai_finance_ppm_closing](./addons/ipai/ipai_finance_ppm_closing) | ✅ |  |
+| [ipai_finance_ppm_dashboard](./addons/ipai/ipai_finance_ppm_dashboard) | ✅ |  |
+| [ipai_finance_ppm_tdi](./addons/ipai/ipai_finance_ppm_tdi) | ✅ |  |
+| [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
+| [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
+| [ipai_ppm](./addons/ipai/ipai_ppm) | ✅ |  |
+| [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
+| [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
+| [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
+| [ipai_accounting_firm_pack](./archive/addons/ipai_accounting_firm_pack) | ✅ |  |
+| [ipai_docs](./archive/addons/ipai_docs) | ✅ |  |
+| [ipai_docs_project](./archive/addons/ipai_docs_project) | ✅ |  |
+| [ipai_finance_ap_aging](./archive/addons/ipai_finance_ap_aging) | ✅ |  |
+| [ipai_finance_controller_dashboard](./archive/addons/ipai_finance_controller_dashboard) | ✅ |  |
+| [ipai_idp](./archive/addons/ipai_idp) | ✅ |  |
+| [ipai_marketing_agency_pack](./archive/addons/ipai_marketing_agency_pack) | ✅ |  |
+| [ipai_ocr_expense](./archive/addons/ipai_ocr_expense) | ✅ |  |
+| [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 
 ## 🔧 Configuration Files
