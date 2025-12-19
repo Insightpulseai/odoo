@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2ddff5011d080e6e0ae41cc96fa96a2eedebc9c0
+> Commit: 130826936b4f4284f69d9638e6aa5df1fa5038a9
 
 ## 📚 Documentation
 
@@ -60,6 +60,8 @@
 | [Clarity PPM Parity - Quick Start Guide](addons/ipai/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Final Status](addons/ipai/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Test Report](addons/ipai/ipai_clarity_ppm_parity/TEST_REPORT.md) | addons/ipai/ipai_clarity_ppm_parity |
+| [InsightPulse Custom Routes](addons/ipai/ipai_custom_routes/README.md) | addons/ipai/ipai_custom_routes |
+| [InsightPulse Default Home Page](addons/ipai/ipai_default_home/README.md) | addons/ipai/ipai_default_home |
 | [IPAI Equipment Management](addons/ipai/ipai_equipment/README.md) | addons/ipai/ipai_equipment |
 | [IPAI Expense & Travel (PH)](addons/ipai/ipai_expense/README.md) | addons/ipai/ipai_expense |
 | [IPAI Finance PPM](addons/ipai/ipai_finance_ppm/README.md) | addons/ipai/ipai_finance_ppm |
@@ -69,8 +71,6 @@
 | [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
-| [InsightPulse Custom Routes](addons/ipai_custom_routes/README.md) | addons/ipai_custom_routes |
-| [InsightPulse Default Home Page](addons/ipai_default_home/README.md) | addons/ipai_default_home |
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
@@ -246,6 +246,9 @@
 | [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ | Custom branding for Odoo CE login and backend |
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai/ipai_clarity_ppm_parity) | ✅ |  |
+| [ipai_custom_routes](./addons/ipai/ipai_custom_routes) | ✅ | Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.) |
+| [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ | Set default landing page to Apps Dashboard after login |
+| [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
 | [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
 | [ipai_finance_bir_compliance](./addons/ipai/ipai_finance_bir_compliance) | ✅ |  |
@@ -256,17 +259,14 @@
 | [ipai_finance_ppm_dashboard](./addons/ipai/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_finance_ppm_tdi](./addons/ipai/ipai_finance_ppm_tdi) | ✅ |  |
 | [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
+| [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
+| [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm](./addons/ipai/ipai_ppm) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
-| [ipai_custom_routes](./addons/ipai_custom_routes) | ✅ | Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.) |
-| [ipai_default_home](./addons/ipai_default_home) | ✅ | Set default landing page to Apps Dashboard after login |
-| [ipai_dev_studio_base](./addons/ipai_dev_studio_base) | ✅ |  |
-| [ipai_industry_accounting_firm](./addons/ipai_industry_accounting_firm) | ✅ |  |
-| [ipai_industry_marketing_agency](./addons/ipai_industry_marketing_agency) | ✅ |  |
-| [ipai_workspace_core](./addons/ipai_workspace_core) | ✅ |  |
+| [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_accounting_firm_pack](./archive/addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_docs](./archive/addons/ipai_docs) | ✅ |  |
 | [ipai_docs_project](./archive/addons/ipai_docs_project) | ✅ |  |

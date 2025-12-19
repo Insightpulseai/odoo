@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2ddff5011d080e6e0ae41cc96fa96a2eedebc9c0
+> Commit: 130826936b4f4284f69d9638e6aa5df1fa5038a9
 
 ```
 .
@@ -27,8 +27,6 @@
 │   │   └── repo-structure.yml
 │   └── copilot-instructions.md
 ├── addons
-│   ├── ce
-│   │   └── .gitkeep
 │   ├── ipai
 │   │   ├── ipai_advisor
 │   │   │   ├── controllers
@@ -77,6 +75,21 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── install.sh
+│   │   ├── ipai_custom_routes
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_default_home
+│   │   │   ├── data
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_dev_studio_base
+│   │   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_equipment
 │   │   │   ├── models
 │   │   │   ├── security
@@ -173,6 +186,18 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_industry_accounting_firm
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_industry_marketing_agency
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_portal_fix
 │   │   │   ├── controllers
 │   │   │   ├── models
@@ -220,58 +245,13 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_workspace_core
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   └── .gitkeep
-│   ├── ipai_custom_routes
-│   │   ├── controllers
-│   │   │   ├── __init__.py
-│   │   │   └── main.py
-│   │   ├── data
-│   │   │   └── default_home_data.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_default_home
-│   │   ├── data
-│   │   │   └── default_home_data.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_dev_studio_base
-│   │   ├── models
-│   │   │   └── __init__.py
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_industry_accounting_firm
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── accounting_workspace_extension.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   └── accounting_workspace_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_industry_marketing_agency
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── marketing_workspace_extension.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   └── marketing_workspace_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_workspace_core
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   └── workspace.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── views
-│   │   │   ├── ipai_workspace_menu.xml
-│   │   │   └── ipai_workspace_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
 │   └── oca
 │       └── .gitkeep
 ├── agents
@@ -694,6 +674,8 @@
 │   ├── server-tools
 │   └── web
 ├── infra
+│   ├── ce
+│   │   └── .gitkeep
 │   ├── ci
 │   │   ├── install-test.sh
 │   │   └── structure-check.sh
@@ -1067,7 +1049,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-368 directories, 694 files
+368 directories, 676 files
 ```
 
 ## 📊 Stats
