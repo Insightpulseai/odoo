@@ -1,87 +1,112 @@
+# syntax=docker/dockerfile:1.7
 # =============================================================================
-# Odoo 18 CE + Parity Modules - Unified Dockerfile
+# IPAI Odoo 18 CE + OCA Custom Image
 # =============================================================================
-# Multi-profile build supporting different deployment configurations:
+# Multi-stage build supporting deterministic OCA vendoring via lockfile.
 #
+# Profiles:
 #   PROFILE=standard   - CE core + OCA essentials only
 #   PROFILE=parity     - CE + OCA + full enterprise parity modules
 #   PROFILE=dev        - parity + dev tools (debugpy, pytest)
 #
 # Build Examples:
-#   docker build --build-arg PROFILE=standard -t odoo-ce:standard .
-#   docker build --build-arg PROFILE=parity -t odoo-ce:parity .
-#   docker build --build-arg PROFILE=dev -t odoo-ce:dev .
+#   docker build --build-arg PROFILE=standard -t ipai-odoo:standard .
+#   docker build --build-arg PROFILE=parity -t ipai-odoo:parity .
+#   docker build -t ipai-odoo:18.0 .
 #
-# CI Matrix Build:
-#   for profile in standard parity dev; do
-#     docker build --build-arg PROFILE=$profile -t odoo-ce:$profile .
-#   done
+# Image Registry:
+#   ghcr.io/jgtolentino/odoo-ce:18.0-<sha>
+#   ghcr.io/jgtolentino/odoo-ce:18.0
 #
 # =============================================================================
 
+# Build arguments
 ARG PROFILE=parity
-ARG BASE_IMAGE=ghcr.io/jgtolentino/odoo-ce:v1.0.1-paddlepaddle-fix
+ARG BASE_REF=odoo:18.0
+ARG OCA_LOCK_PATH=vendor/oca.lock.json
 
 # =============================================================================
-# Stage 1: OCA Module Fetcher
+# Stage 1: OCA Module Builder (deterministic via lockfile)
 # =============================================================================
-FROM python:3.11-slim-bookworm AS oca-fetcher
+FROM debian:bookworm-slim AS oca-builder
 
+ARG OCA_LOCK_PATH
 ARG PROFILE
 
-RUN apt-get update && apt-get install -y --no-install-recommends git \
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    git \
+    jq \
+    rsync \
     && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /oca
+WORKDIR /src
 
-# Clone OCA repos based on profile
-# Standard: Minimal OCA for basic operations
-# Parity: Full OCA for enterprise feature parity
+# Copy lockfile
+COPY ${OCA_LOCK_PATH} /src/oca.lock.json
 
-# Core OCA (all profiles)
-RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/server-auth.git || true
-RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/server-tools.git || true
-RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/web.git || true
+# Clone OCA repos and extract only modules listed in lockfile
+# This ensures reproducible builds with no drift
+RUN mkdir -p /out/oca && \
+    jq -c '.repos[]' /src/oca.lock.json | while read -r repo; do \
+        url=$(echo "$repo" | jq -r '.url'); \
+        ref=$(echo "$repo" | jq -r '.ref'); \
+        commit=$(echo "$repo" | jq -r '.commit'); \
+        name=$(echo "$repo" | jq -r '.name' | tr '/' '_'); \
+        echo "Cloning $name ($ref)..."; \
+        \
+        # Clone with depth for efficiency, full clone if commit pinned
+        if [ "$commit" = "HEAD" ] || [ "$commit" = "null" ]; then \
+            git clone --depth 1 --branch "$ref" "$url" "/tmp/$name" 2>/dev/null || \
+            echo "Warning: Failed to clone $name"; \
+        else \
+            git clone --branch "$ref" "$url" "/tmp/$name" 2>/dev/null && \
+            cd "/tmp/$name" && \
+            git checkout "$commit" 2>/dev/null || \
+            echo "Warning: Failed to checkout $commit for $name"; \
+        fi; \
+        \
+        # Extract only specified modules
+        if [ -d "/tmp/$name" ]; then \
+            modules=$(echo "$repo" | jq -r '.modules[]' 2>/dev/null || echo ""); \
+            for m in $modules; do \
+                if [ -d "/tmp/$name/$m" ]; then \
+                    echo "  Extracting module: $m"; \
+                    rsync -a --delete "/tmp/$name/$m/" "/out/oca/$m/"; \
+                else \
+                    echo "  Warning: Module $m not found in $name"; \
+                fi; \
+            done; \
+        fi; \
+        rm -rf "/tmp/$name"; \
+    done && \
+    echo "OCA modules extracted: $(ls /out/oca | wc -l)"
 
-# Parity profile: Additional OCA modules
-RUN if [ "$PROFILE" = "parity" ] || [ "$PROFILE" = "dev" ]; then \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-financial-reporting.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-financial-tools.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-reconcile.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-closing.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-invoicing.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/bank-payment.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/project.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/timesheet.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/contract.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/hr.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/hr-expense.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/helpdesk.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/reporting-engine.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/mis-builder.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/dms.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/partner-contact.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/server-ux.git || true; \
-    git clone --depth 1 --branch 18.0 https://github.com/OCA/rest-framework.git || true; \
-    fi
-
-# Collect requirements from all cloned repos
-RUN find /oca -name "requirements.txt" -exec cat {} \; 2>/dev/null | sort -u > /oca/requirements.txt || true
+# Collect requirements from all OCA modules
+RUN find /out/oca -name "requirements.txt" -exec cat {} \; 2>/dev/null | \
+    sort -u > /out/oca-requirements.txt || true
 
 # =============================================================================
-# Stage 2: Production Image
+# Stage 2: Production Runtime Image
 # =============================================================================
-FROM ${BASE_IMAGE} AS production
+FROM ${BASE_REF} AS runtime
 
 ARG PROFILE
 ARG BUILD_DATE
 ARG VERSION=2.0.0
+ARG GIT_SHA
 
-LABEL maintainer="InsightPulseAI <dev@insightpulseai.net>"
-LABEL description="Odoo 18 CE + Parity Modules (${PROFILE} profile)"
-LABEL version="${VERSION}"
-LABEL profile="${PROFILE}"
-LABEL build-date="${BUILD_DATE}"
+# OCI Labels
+LABEL org.opencontainers.image.title="IPAI Odoo 18 CE"
+LABEL org.opencontainers.image.description="Odoo 18 CE + OCA + IPAI Modules (${PROFILE} profile)"
+LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
+LABEL org.opencontainers.image.revision="${GIT_SHA}"
+LABEL org.opencontainers.image.vendor="InsightPulse AI"
+LABEL org.opencontainers.image.source="https://github.com/jgtolentino/odoo-ce"
+LABEL com.insightpulseai.profile="${PROFILE}"
+LABEL com.insightpulseai.odoo.version="18.0"
 
 USER root
 
@@ -92,88 +117,77 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     python3-num2words \
     python3-phonenumbers \
+    python3-xmlsec \
     && rm -rf /var/lib/apt/lists/*
 
-# Create directories
-RUN mkdir -p /mnt/oca-modules /mnt/extra-addons /var/log/odoo \
-    && chown -R odoo:odoo /mnt/oca-modules /mnt/extra-addons /var/log/odoo
+# Create directories with proper ownership
+RUN mkdir -p \
+    /mnt/odoo/addons/ipai \
+    /mnt/odoo/addons/oca \
+    /var/log/odoo \
+    /entrypoint.d \
+    && chown -R odoo:odoo /mnt/odoo /var/log/odoo /entrypoint.d
 
 # -----------------------------------------------------------------------------
-# Copy OCA Modules (based on profile)
+# Copy OCA Modules from builder (no .git, only specified modules)
 # -----------------------------------------------------------------------------
-COPY --from=oca-fetcher /oca/server-auth /mnt/oca-modules/server-auth
-COPY --from=oca-fetcher /oca/server-tools /mnt/oca-modules/server-tools
-COPY --from=oca-fetcher /oca/web /mnt/oca-modules/web
+COPY --from=oca-builder --chown=odoo:odoo /out/oca /mnt/odoo/addons/oca
 
-# Parity profile modules
-COPY --from=oca-fetcher /oca/account-financial-reporting /mnt/oca-modules/account-financial-reporting
-COPY --from=oca-fetcher /oca/account-financial-tools /mnt/oca-modules/account-financial-tools
-COPY --from=oca-fetcher /oca/account-reconcile /mnt/oca-modules/account-reconcile
-COPY --from=oca-fetcher /oca/account-closing /mnt/oca-modules/account-closing
-COPY --from=oca-fetcher /oca/account-invoicing /mnt/oca-modules/account-invoicing
-COPY --from=oca-fetcher /oca/bank-payment /mnt/oca-modules/bank-payment
-COPY --from=oca-fetcher /oca/project /mnt/oca-modules/project
-COPY --from=oca-fetcher /oca/timesheet /mnt/oca-modules/timesheet
-COPY --from=oca-fetcher /oca/contract /mnt/oca-modules/contract
-COPY --from=oca-fetcher /oca/hr /mnt/oca-modules/hr
-COPY --from=oca-fetcher /oca/hr-expense /mnt/oca-modules/hr-expense
-COPY --from=oca-fetcher /oca/helpdesk /mnt/oca-modules/helpdesk
-COPY --from=oca-fetcher /oca/reporting-engine /mnt/oca-modules/reporting-engine
-COPY --from=oca-fetcher /oca/mis-builder /mnt/oca-modules/mis-builder
-COPY --from=oca-fetcher /oca/dms /mnt/oca-modules/dms
-COPY --from=oca-fetcher /oca/partner-contact /mnt/oca-modules/partner-contact
-COPY --from=oca-fetcher /oca/server-ux /mnt/oca-modules/server-ux
-COPY --from=oca-fetcher /oca/rest-framework /mnt/oca-modules/rest-framework
-
-# -----------------------------------------------------------------------------
-# Copy ipai_* Parity Modules
-# -----------------------------------------------------------------------------
-COPY ./addons/ipai_* /mnt/extra-addons/
-
-# -----------------------------------------------------------------------------
-# Install Python Requirements
-# -----------------------------------------------------------------------------
-COPY --from=oca-fetcher /oca/requirements.txt /tmp/oca-requirements.txt
-
+# Copy OCA requirements and install
+COPY --from=oca-builder /out/oca-requirements.txt /tmp/oca-requirements.txt
 RUN pip3 install --no-cache-dir --break-system-packages \
     num2words>=0.5.10 \
     phonenumbers>=8.12.0 \
     python-slugify>=5.0.2 \
-    2>/dev/null || true
-
-RUN pip3 install --no-cache-dir --break-system-packages \
-    -r /tmp/oca-requirements.txt 2>/dev/null || true \
-    && rm -f /tmp/oca-requirements.txt
+    2>/dev/null || true && \
+    pip3 install --no-cache-dir --break-system-packages \
+    -r /tmp/oca-requirements.txt 2>/dev/null || true && \
+    rm -f /tmp/oca-requirements.txt
 
 # -----------------------------------------------------------------------------
-# Configuration with envsubst Support
+# Copy IPAI Custom Modules
 # -----------------------------------------------------------------------------
-COPY ./docker/odoo.conf.template /etc/odoo/odoo.conf.template
-COPY ./docker/docker-entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY --chown=odoo:odoo ./addons/ipai_* /mnt/odoo/addons/ipai/
+
+# -----------------------------------------------------------------------------
+# Configuration and Entrypoint
+# -----------------------------------------------------------------------------
+COPY --chown=odoo:odoo ./config/odoo.conf.template /etc/odoo/odoo.conf.template
+COPY --chown=odoo:odoo ./config/entrypoint.d/ /entrypoint.d/
+COPY --chown=odoo:odoo ./docker/docker-entrypoint.sh /entrypoint.sh
+
+# Make entrypoint scripts executable
+RUN chmod +x /entrypoint.sh /entrypoint.d/*.sh 2>/dev/null || true
+
+# Default configuration (can be overridden)
+COPY --chown=odoo:odoo ./deploy/odoo.conf /etc/odoo/odoo.conf
 
 # Fix permissions
-RUN chown -R odoo:odoo /mnt/oca-modules /mnt/extra-addons /etc/odoo
+RUN chown -R odoo:odoo /etc/odoo /mnt/odoo
 
 # -----------------------------------------------------------------------------
 # Environment Configuration
 # -----------------------------------------------------------------------------
-ENV PROFILE=${PROFILE}
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/oca-modules/server-auth,/mnt/oca-modules/server-tools,/mnt/oca-modules/web,/mnt/oca-modules/account-financial-reporting,/mnt/oca-modules/account-financial-tools,/mnt/oca-modules/account-reconcile,/mnt/oca-modules/account-closing,/mnt/oca-modules/account-invoicing,/mnt/oca-modules/bank-payment,/mnt/oca-modules/project,/mnt/oca-modules/timesheet,/mnt/oca-modules/contract,/mnt/oca-modules/hr,/mnt/oca-modules/hr-expense,/mnt/oca-modules/helpdesk,/mnt/oca-modules/reporting-engine,/mnt/oca-modules/mis-builder,/mnt/oca-modules/dms,/mnt/oca-modules/partner-contact,/mnt/oca-modules/server-ux,/mnt/oca-modules/rest-framework
+ENV PROFILE=${PROFILE} \
+    ODOO_RC=/etc/odoo/odoo.conf \
+    ODOO_ADDONS_PATH=/mnt/odoo/addons/ipai,/mnt/odoo/addons/oca,/usr/lib/python3/dist-packages/odoo/addons
 
+# Switch to non-root user
 USER odoo
 
+# Entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
+# Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
-    CMD curl -f http://localhost:8069/web/health || exit 1
+    CMD curl -fsS http://127.0.0.1:8069/web/health || exit 1
 
 EXPOSE 8069 8072
 
 # =============================================================================
-# Stage 3: Development Image (extends production)
+# Stage 3: Development Image (extends runtime)
 # =============================================================================
-FROM production AS development
+FROM runtime AS development
 
 USER root
 

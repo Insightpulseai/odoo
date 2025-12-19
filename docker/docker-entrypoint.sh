@@ -1,63 +1,123 @@
 #!/bin/bash
 # =============================================================================
-# Odoo Docker Entrypoint with envsubst Configuration Templating
+# IPAI Odoo Docker Entrypoint
 # =============================================================================
 # This script:
-#   1. Expands environment variables in odoo.conf.template → odoo.conf
-#   2. Sets up proper permissions
-#   3. Launches Odoo with the provided arguments
+#   1. Runs startup hooks from /entrypoint.d/*.sh
+#   2. Expands environment variables in odoo.conf.template → odoo.conf
+#   3. Waits for database connectivity
+#   4. Launches Odoo with the provided arguments
+#
+# Hook ordering:
+#   10-log-env.sh      - Log environment information
+#   20-render-conf.sh  - Render configuration from template
+#   90-preflight.sh    - Pre-flight checks before starting Odoo
+#
 # =============================================================================
 
 set -e
 
 # -----------------------------------------------------------------------------
-# Configuration Templating
+# Run Entrypoint Hooks
 # -----------------------------------------------------------------------------
-# Odoo does NOT natively expand ${ENV_VAR} in config files
-# We use envsubst to expand variables at container startup
+# Execute all scripts in /entrypoint.d/ in sorted order
+# Each script should be idempotent and handle its own error conditions
 
-CONF_TEMPLATE="/etc/odoo/odoo.conf.template"
-CONF_OUTPUT="/etc/odoo/odoo.conf"
+HOOKS_DIR="/entrypoint.d"
 
-if [ -f "$CONF_TEMPLATE" ]; then
-    echo "[entrypoint] Expanding configuration template..."
+if [ -d "$HOOKS_DIR" ]; then
+    echo "[entrypoint] Running startup hooks from $HOOKS_DIR..."
 
-    # Export all environment variables for envsubst
-    # Filter to only include expected Odoo-related vars
-    envsubst '${DB_HOST} ${DB_PORT} ${DB_USER} ${DB_PASSWORD} ${DB_NAME} ${DB_SSLMODE} ${DB_MAXCONN}
-              ${DB_FILTER} ${LIST_DB}
-              ${ODOO_ADDONS_PATH}
-              ${HTTP_PORT} ${LONGPOLLING_PORT} ${HTTP_INTERFACE} ${PROXY_MODE}
-              ${WORKERS} ${MAX_CRON_THREADS}
-              ${LIMIT_TIME_CPU} ${LIMIT_TIME_REAL} ${LIMIT_TIME_REAL_CRON}
-              ${LIMIT_MEMORY_HARD} ${LIMIT_MEMORY_SOFT} ${LIMIT_REQUEST}
-              ${LOGFILE} ${LOG_LEVEL} ${LOG_HANDLER} ${LOG_DB}
-              ${ADMIN_PASSWORD} ${SERVER_WIDE_MODULES} ${DATA_DIR}
-              ${EMAIL_FROM} ${SMTP_SERVER} ${SMTP_PORT} ${SMTP_SSL} ${SMTP_USER} ${SMTP_PASSWORD}
-              ${TEST_ENABLE} ${WITHOUT_DEMO} ${UNACCENT}' \
-        < "$CONF_TEMPLATE" > "$CONF_OUTPUT"
+    for hook in $(ls -1 "$HOOKS_DIR"/*.sh 2>/dev/null | sort); do
+        if [ -x "$hook" ]; then
+            echo "[entrypoint] Executing: $(basename "$hook")"
+            . "$hook"
+            HOOK_EXIT=$?
+            if [ $HOOK_EXIT -ne 0 ]; then
+                echo "[entrypoint] ERROR: Hook $(basename "$hook") failed with exit code $HOOK_EXIT"
+                exit $HOOK_EXIT
+            fi
+        else
+            echo "[entrypoint] Skipping non-executable: $(basename "$hook")"
+        fi
+    done
 
-    echo "[entrypoint] Configuration written to $CONF_OUTPUT"
+    echo "[entrypoint] All hooks completed successfully"
 else
-    echo "[entrypoint] No template found at $CONF_TEMPLATE, using existing config"
+    echo "[entrypoint] No hooks directory found at $HOOKS_DIR"
 fi
 
 # -----------------------------------------------------------------------------
-# Database Initialization Check
+# Configuration Templating (fallback if not handled by hooks)
 # -----------------------------------------------------------------------------
-# Wait for database if DB_HOST is set
-if [ -n "$DB_HOST" ]; then
-    echo "[entrypoint] Waiting for database at $DB_HOST:${DB_PORT:-5432}..."
-    timeout=60
-    while ! pg_isready -h "$DB_HOST" -p "${DB_PORT:-5432}" -U "${DB_USER:-odoo}" -q; do
-        timeout=$((timeout - 1))
-        if [ $timeout -le 0 ]; then
-            echo "[entrypoint] ERROR: Database not ready after 60 seconds"
-            exit 1
+CONF_TEMPLATE="/etc/odoo/odoo.conf.template"
+CONF_OUTPUT="${ODOO_RC:-/etc/odoo/odoo.conf}"
+
+# Only render if template exists and hasn't been rendered by hooks
+if [ -f "$CONF_TEMPLATE" ] && [ ! -f "$CONF_OUTPUT" -o "$CONF_TEMPLATE" -nt "$CONF_OUTPUT" ]; then
+    echo "[entrypoint] Rendering configuration from template..."
+
+    # Set defaults for envsubst
+    export DB_HOST="${HOST:-db}"
+    export DB_PORT="${PORT:-5432}"
+    export DB_USER="${USER:-odoo}"
+    export DB_PASSWORD="${PASSWORD:-odoo}"
+    export DB_NAME="${DB_NAME:-False}"
+    export DB_SSLMODE="${DB_SSLMODE:-prefer}"
+    export DB_MAXCONN="${DB_MAXCONN:-64}"
+    export DB_FILTER="${DBFILTER:-.*}"
+    export LIST_DB="${LIST_DB:-False}"
+    export HTTP_PORT="${HTTP_PORT:-8069}"
+    export LONGPOLLING_PORT="${LONGPOLLING_PORT:-8072}"
+    export HTTP_INTERFACE="${HTTP_INTERFACE:-0.0.0.0}"
+    export PROXY_MODE="${PROXY_MODE:-True}"
+    export WORKERS="${ODOO_WORKERS:-4}"
+    export MAX_CRON_THREADS="${ODOO_MAX_CRON_THREADS:-2}"
+    export LIMIT_TIME_CPU="${ODOO_LIMIT_TIME_CPU:-600}"
+    export LIMIT_TIME_REAL="${ODOO_LIMIT_TIME_REAL:-1200}"
+    export LIMIT_TIME_REAL_CRON="${ODOO_LIMIT_TIME_REAL_CRON:-120}"
+    export LIMIT_MEMORY_HARD="${ODOO_LIMIT_MEMORY_HARD:-2684354560}"
+    export LIMIT_MEMORY_SOFT="${ODOO_LIMIT_MEMORY_SOFT:-2147483648}"
+    export LIMIT_REQUEST="${ODOO_LIMIT_REQUEST:-8192}"
+    export LOG_LEVEL="${LOG_LEVEL:-info}"
+    export LOG_HANDLER="${LOG_HANDLER:-:INFO}"
+    export ADMIN_PASSWORD="${ADMIN_PASSWD:-admin}"
+    export DATA_DIR="${ODOO_DATA_DIR:-/var/lib/odoo}"
+    export WITHOUT_DEMO="${WITHOUT_DEMO:-True}"
+
+    envsubst < "$CONF_TEMPLATE" > "$CONF_OUTPUT"
+    echo "[entrypoint] Configuration written to $CONF_OUTPUT"
+fi
+
+# -----------------------------------------------------------------------------
+# Database Connectivity Check
+# -----------------------------------------------------------------------------
+DB_HOST="${HOST:-db}"
+DB_PORT="${PORT:-5432}"
+DB_USER="${USER:-odoo}"
+
+if [ -n "$DB_HOST" ] && [ "$DB_HOST" != "False" ]; then
+    echo "[entrypoint] Waiting for database at $DB_HOST:$DB_PORT..."
+
+    # Use pg_isready if available
+    if command -v pg_isready &>/dev/null; then
+        timeout=60
+        while ! pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -q 2>/dev/null; do
+            timeout=$((timeout - 1))
+            if [ $timeout -le 0 ]; then
+                echo "[entrypoint] WARNING: Database not ready after 60 seconds"
+                echo "[entrypoint] Proceeding anyway - Odoo will retry connection"
+                break
+            fi
+            sleep 1
+        done
+
+        if [ $timeout -gt 0 ]; then
+            echo "[entrypoint] Database is ready!"
         fi
-        sleep 1
-    done
-    echo "[entrypoint] Database is ready!"
+    else
+        echo "[entrypoint] pg_isready not available, skipping database check"
+    fi
 fi
 
 # -----------------------------------------------------------------------------

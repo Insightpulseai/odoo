@@ -1,0 +1,60 @@
+[options]
+; =============================================================================
+; Odoo 18 CE + IPAI Configuration Template
+; =============================================================================
+; This template is rendered by 20-render-conf.sh using environment variables.
+; Variables are substituted using envsubst.
+;
+; Supported variables (with defaults):
+;   DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
+;   PROXY_MODE, LOG_LEVEL, LIST_DB
+;   WORKERS, MAX_CRON_THREADS
+;   LIMIT_MEMORY_SOFT, LIMIT_MEMORY_HARD, LIMIT_TIME_CPU, LIMIT_TIME_REAL
+;   ADMIN_PASSWORD
+;
+; =============================================================================
+
+; ----- Database -----
+db_host = ${DB_HOST}
+db_port = ${DB_PORT}
+db_user = ${DB_USER}
+db_password = ${DB_PASSWORD}
+db_name = ${DB_NAME}
+dbfilter = .*
+list_db = ${LIST_DB}
+db_sslmode = prefer
+
+; ----- Addons Path -----
+; Priority: IPAI > OCA > Core
+; This is typically set via ODOO_ADDONS_PATH environment variable
+; addons_path = /mnt/extra-addons,/mnt/oca-modules,/usr/lib/python3/dist-packages/odoo/addons
+
+; ----- HTTP -----
+http_port = 8069
+proxy_mode = ${PROXY_MODE}
+
+; ----- Logging -----
+logfile = False
+log_level = ${LOG_LEVEL}
+log_handler = :INFO
+
+; ----- Security -----
+admin_passwd = ${ADMIN_PASSWORD}
+
+; ----- Resource Limits -----
+limit_memory_hard = ${LIMIT_MEMORY_HARD}
+limit_memory_soft = ${LIMIT_MEMORY_SOFT}
+limit_time_cpu = ${LIMIT_TIME_CPU}
+limit_time_real = ${LIMIT_TIME_REAL}
+limit_request = 8192
+
+; ----- Worker Configuration -----
+workers = ${WORKERS}
+max_cron_threads = ${MAX_CRON_THREADS}
+db_maxconn = 64
+
+; ----- Data Directory -----
+data_dir = /var/lib/odoo
+
+; ----- Misc -----
+without_demo = True
