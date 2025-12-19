@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ac88bf1d2858a4e0c4cc3ad5478ef914a0c75182
+> Commit: d8b2425f3ae902bb7c33153e4e87fde4f429ff56
 
 ## 📚 Documentation
 
@@ -206,6 +206,7 @@
 | [InsightPulse ERP – v1 Scope Tasks](specs/tasks.md) | specs |
 | [Task: n8n Automation Strategy for Odoo CE](task.md) | . |
 | [Tasks – InsightPulse Odoo CE](tasks.md) | . |
+| [Database Instance Inventory Scanner](tools/db-inventory/README.md) | tools/db-inventory |
 | [Walkthrough - Notion Parity Modules](walkthrough.md) | . |
 | [Shadow Enterprise Webhook & AI Stack](workflows/SHADOW_ENTERPRISE_STACK.md) | workflows |
 | [n8n Webhook Deployment Guide - TBWA Finance SSC](workflows/WEBHOOK_DEPLOYMENT_GUIDE.md) | workflows |
@@ -219,6 +220,7 @@
 | Module | Status | Description |
 |--------|--------|-------------|
 | [ipai_accounting_firm_pack](./addons/ipai_accounting_firm_pack) | ✅ |  |
+| [ipai_advisor](./addons/ipai_advisor) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai_ce_cleaner) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai_clarity_ppm_parity) | ✅ |  |
@@ -241,6 +243,7 @@
 | [ipai_ocr_expense](./addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_partner_pack](./addons/ipai_partner_pack) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai_portal_fix) | ✅ |  |
+| [ipai_ppm](./addons/ipai_ppm) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai_project_program) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |

@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ac88bf1d2858a4e0c4cc3ad5478ef914a0c75182
+> Commit: d8b2425f3ae902bb7c33153e4e87fde4f429ff56
 
 ```
 .
@@ -39,6 +39,30 @@
 │   │   │   ├── engagement_views.xml
 │   │   │   ├── menus.xml
 │   │   │   └── workpaper_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_advisor
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── webhook.py
+│   │   ├── data
+│   │   │   └── advisor_categories.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── category.py
+│   │   │   ├── playbook.py
+│   │   │   ├── recommendation.py
+│   │   │   └── score.py
+│   │   ├── security
+│   │   │   ├── advisor_security.xml
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── category_views.xml
+│   │   │   ├── dashboard_views.xml
+│   │   │   ├── menus.xml
+│   │   │   ├── playbook_views.xml
+│   │   │   ├── recommendation_views.xml
+│   │   │   └── score_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_bir_compliance
@@ -521,6 +545,28 @@
 │   │   ├── DEPLOYMENT_VERIFICATION.md
 │   │   ├── README.md
 │   │   ├── README.rst
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ppm
+│   │   ├── data
+│   │   │   └── kpi_definitions.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── kpi_snapshot.py
+│   │   │   ├── portfolio.py
+│   │   │   ├── program.py
+│   │   │   ├── resource_allocation.py
+│   │   │   └── risk.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── ppm_security.xml
+│   │   ├── views
+│   │   │   ├── kpi_snapshot_views.xml
+│   │   │   ├── menus.xml
+│   │   │   ├── portfolio_views.xml
+│   │   │   ├── program_views.xml
+│   │   │   ├── resource_allocation_views.xml
+│   │   │   └── risk_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_ppm_monthly_close
@@ -1090,7 +1136,8 @@
 │   │   ├── 202512071190_6000_SAAS_BILLING_SUBSCRIPTIONS.sql
 │   │   ├── 202512071200_7000_ODOO_CE_OCA_SYNC_META.sql
 │   │   ├── 202512071210_8000_RLS_POLICIES_AND_GRANTS.sql
-│   │   └── 202512071220_9000_SEEDS_REFERENCE_AND_DEMO_DATA.sql
+│   │   ├── 202512071220_9000_SEEDS_REFERENCE_AND_DEMO_DATA.sql
+│   │   └── 20251219_ops_advisor_schema.sql
 │   └── seed
 │       ├── 9000_core
 │       │   └── 9000_core_tenants_roles_users.sql
@@ -1118,6 +1165,9 @@
 │       ├── __init__.py
 │       └── test_finance_ppm_install.py
 ├── tools
+│   ├── db-inventory
+│   │   ├── README.md
+│   │   └── inventory.py
 │   ├── seed_all.ts
 │   ├── seed_doc_ocr.ts
 │   ├── seed_ppm.ts
@@ -1239,15 +1289,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-317 directories, 917 files
+329 directories, 955 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 333 |
-| Files | 980 |
-| Python files | 291 |
-| XML files | 142 |
-| Markdown files | 206 |
+| Directories | 345 |
+| Files | 1018 |
+| Python files | 309 |
+| XML files | 158 |
+| Markdown files | 207 |
