@@ -370,7 +370,7 @@ jobs:
           echo "Testing modules: $MODULES"
           echo "========================================="
 
-          # Build addons path dynamically (OCA monorepo structure)
+          # Build addons path dynamically (OCA monorepo structure - flattened)
           ADDONS_PATH="/tmp/odoo/addons"
 
           # Add IPAI modules
@@ -383,8 +383,12 @@ jobs:
             ADDONS_PATH="$ADDONS_PATH,addons/ce"
           fi
 
-          # Add OCA modules from external-src (source of truth)
-          if [ -d external-src ]; then
+          # Add OCA modules (flattened structure preferred, fallback to external-src)
+          if [ -d addons/oca ] && [ "$(find addons/oca -maxdepth 1 -type d | wc -l)" -gt 1 ]; then
+            # Use flattened OCA modules if populated
+            ADDONS_PATH="$ADDONS_PATH,addons/oca"
+          elif [ -d external-src ]; then
+            # Fallback: enumerate external-src repos for source validation
             for subdir in external-src/*/; do
               if [ -d "$subdir" ]; then
                 ADDONS_PATH="$ADDONS_PATH,$subdir"

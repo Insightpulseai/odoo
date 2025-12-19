@@ -42,24 +42,46 @@ RUN mkdir -p /mnt/addons/ipai \
     && mkdir -p /mnt/addons/ce
 
 # =============================================================================
-# Copy OCA Modules (external-src → /mnt/addons/oca)
+# Copy OCA Modules (external-src → /mnt/addons/oca - FLATTENED)
 # =============================================================================
-# Source of truth: external-src/ (14 OCA git submodules)
-# Assumes: git submodule update --init --recursive run locally or in CI
-COPY ./external-src/reporting-engine /mnt/addons/oca/reporting-engine
-COPY ./external-src/account-closing /mnt/addons/oca/account-closing
-COPY ./external-src/account-financial-reporting /mnt/addons/oca/account-financial-reporting
-COPY ./external-src/account-financial-tools /mnt/addons/oca/account-financial-tools
-COPY ./external-src/account-invoicing /mnt/addons/oca/account-invoicing
-COPY ./external-src/project /mnt/addons/oca/project
-COPY ./external-src/hr-expense /mnt/addons/oca/hr-expense
-COPY ./external-src/purchase-workflow /mnt/addons/oca/purchase-workflow
-COPY ./external-src/maintenance /mnt/addons/oca/maintenance
-COPY ./external-src/dms /mnt/addons/oca/dms
-COPY ./external-src/calendar /mnt/addons/oca/calendar
-COPY ./external-src/web /mnt/addons/oca/web
-COPY ./external-src/contract /mnt/addons/oca/contract
-COPY ./external-src/server-tools /mnt/addons/oca/server-tools
+# Source of truth: external-src/ (OCA git submodules)
+# Strategy: Flatten all OCA modules into single /mnt/addons/oca root
+# Benefit: Single addon path instead of 14+ enumerated paths
+
+# Copy vendor source to temporary location
+COPY ./external-src /tmp/external-src
+
+# Flatten OCA modules with collision detection
+RUN set -eux; \
+  mkdir -p /mnt/addons/oca; \
+  echo "Flattening OCA modules from external-src..."; \
+  module_count=0; \
+  for repo in /tmp/external-src/*; do \
+    [ -d "$repo" ] || continue; \
+    repo_name=$(basename "$repo"); \
+    echo "Processing repo: $repo_name"; \
+    for mod in "$repo"/*; do \
+      [ -d "$mod" ] || continue; \
+      [ -f "$mod/__manifest__.py" ] || continue; \
+      mod_name=$(basename "$mod"); \
+      if [ -d "/mnt/addons/oca/$mod_name" ]; then \
+        echo "ERROR: OCA module name collision: $mod_name"; \
+        echo "  Already exists in: /mnt/addons/oca/$mod_name"; \
+        echo "  Trying to copy from: $mod"; \
+        exit 1; \
+      fi; \
+      cp -a "$mod" "/mnt/addons/oca/$mod_name"; \
+      module_count=$((module_count + 1)); \
+    done; \
+  done; \
+  echo ""; \
+  echo "========================================"; \
+  echo "OCA Module Flatten Summary"; \
+  echo "========================================"; \
+  echo "Total modules flattened: $module_count"; \
+  find /mnt/addons/oca -maxdepth 1 -type d -name "*" ! -name "oca" | sort; \
+  echo "========================================"; \
+  rm -rf /tmp/external-src
 
 # =============================================================================
 # Copy IPAI Production Modules (22 modules)
@@ -101,9 +123,10 @@ ENV HOST=db \
 
 ENV ODOO_RC=/etc/odoo/odoo.conf
 
-# OCA Monorepo Addon Path
-# Format: Odoo core → IPAI modules → OCA repos (each repo root contains modules)
-ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca/reporting-engine,/mnt/addons/oca/account-closing,/mnt/addons/oca/account-financial-reporting,/mnt/addons/oca/account-financial-tools,/mnt/addons/oca/account-invoicing,/mnt/addons/oca/project,/mnt/addons/oca/hr-expense,/mnt/addons/oca/purchase-workflow,/mnt/addons/oca/maintenance,/mnt/addons/oca/dms,/mnt/addons/oca/calendar,/mnt/addons/oca/web,/mnt/addons/oca/contract,/mnt/addons/oca/server-tools
+# OCA Monorepo Addon Path (Aggregated)
+# Format: Odoo core → IPAI modules → OCA modules (flattened)
+# All OCA modules flattened into /mnt/addons/oca during build
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
 
 # =============================================================================
 # Health Check
