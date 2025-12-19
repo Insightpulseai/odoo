@@ -18,7 +18,7 @@ on:
     branches:
       - main
     paths:
-      - 'addons/ipai_**'
+      - 'addons/ipai/**'
       - 'docker/Dockerfile.seeded'
       - 'docker/entrypoint.seeded.sh'
       - 'docker/requirements.seeded.txt'
@@ -27,7 +27,7 @@ on:
     branches:
       - main
     paths:
-      - 'addons/ipai_**'
+      - 'addons/ipai/**'
       - 'docker/**'
   workflow_dispatch:
     inputs:
