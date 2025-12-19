@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Client action -->
+    <record id="action_finance_ppm_dashboard" model="ir.actions.client">
+        <field name="name">Finance PPM Dashboard</field>
+        <field name="tag">ipai_finance_ppm_dashboard.action</field>
+    </record>
+
+    <!-- Top-level menu item -->
+    <menuitem id="menu_finance_ppm_dashboard_root"
+              name="Finance PPM Dashboard"
+              action="action_finance_ppm_dashboard"
+              sequence="90"/>
+</odoo>

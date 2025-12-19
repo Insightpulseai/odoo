@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Score List View -->
+    <record id="view_advisor_score_list" model="ir.ui.view">
+      <field name="name">advisor.score.list</field>
+      <field name="model">advisor.score</field>
+      <field name="arch" type="xml">
+        <list string="Score History" create="0">
+          <field name="as_of"/>
+          <field name="category_id"/>
+          <field name="score" widget="progressbar"/>
+          <field name="open_count"/>
+          <field name="high_count"/>
+          <field name="critical_count"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Score Graph View -->
+    <record id="view_advisor_score_graph" model="ir.ui.view">
+      <field name="name">advisor.score.graph</field>
+      <field name="model">advisor.score</field>
+      <field name="arch" type="xml">
+        <graph string="Score Trends" type="line">
+          <field name="as_of" interval="day" type="row"/>
+          <field name="score" type="measure"/>
+          <field name="category_id" type="col"/>
+        </graph>
+      </field>
+    </record>
+
+    <!-- Score Pivot View -->
+    <record id="view_advisor_score_pivot" model="ir.ui.view">
+      <field name="name">advisor.score.pivot</field>
+      <field name="model">advisor.score</field>
+      <field name="arch" type="xml">
+        <pivot string="Score Analysis">
+          <field name="category_id" type="row"/>
+          <field name="as_of" interval="week" type="col"/>
+          <field name="score" type="measure"/>
+        </pivot>
+      </field>
+    </record>
+
+    <!-- Score Action -->
+    <record id="action_advisor_score" model="ir.actions.act_window">
+      <field name="name">Score History</field>
+      <field name="res_model">advisor.score</field>
+      <field name="view_mode">graph,pivot,list</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          No score history yet
+        </p>
+        <p>
+          Scores are computed automatically based on open recommendations.
+        </p>
+      </field>
+    </record>
+  </data>
+</odoo>

@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_account_move_line_ap_aging_user,account.move.line.ap_aging.user,account.model_account_move_line,base.group_user,1,0,0,0
-access_account_move_line_ap_aging_accountant,account.move.line.ap_aging.accountant,account.model_account_move_line,account.group_account_invoice,1,1,1,0
-access_account_move_line_ap_aging_manager,account.move.line.ap_aging.manager,account.model_account_move_line,account.group_account_manager,1,1,1,1

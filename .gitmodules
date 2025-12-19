@@ -54,23 +54,3 @@
 	path = external-src/server-tools
 	url = https://github.com/OCA/server-tools.git
 	branch = 18.0
-[submodule "oca-addons/mis-builder"]
-	path = oca-addons/mis-builder
-	url = https://github.com/OCA/mis-builder.git
-	branch = 18.0
-[submodule "oca-addons/project"]
-	path = oca-addons/project
-	url = https://github.com/OCA/project.git
-	branch = 18.0
-[submodule "oca-addons/purchase-workflow"]
-	path = oca-addons/purchase-workflow
-	url = https://github.com/OCA/purchase-workflow.git
-	branch = 18.0
-[submodule "oca-addons/reporting-engine"]
-	path = oca-addons/reporting-engine
-	url = https://github.com/OCA/reporting-engine.git
-	branch = 18.0
-[submodule "oca-addons/server-ux"]
-	path = oca-addons/server-ux
-	url = https://github.com/OCA/server-ux.git
-	branch = 18.0

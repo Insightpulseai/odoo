@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Finance PPM Import Wizard Form View -->
+    <record id="view_finance_ppm_import_wizard_form" model="ir.ui.view">
+        <field name="name">finance.ppm.import.wizard.form</field>
+        <field name="model">finance.ppm.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Finance PPM Data Import">
+                <header>
+                    <button name="action_validate_import" string="Validate" type="object"
+                            class="btn-secondary" states="draft"
+                            confirm="Validate the import file before proceeding?"/>
+                    <button name="action_import" string="Import" type="object"
+                            class="btn-primary" states="draft"
+                            confirm="Start the import process? This will create/update records in the database."/>
+                    <button name="action_download_template" string="Download Template" type="object"
+                            class="btn-link" states="draft"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,validating,importing,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="import_type" placeholder="Select Import Type" required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="file_upload" string="File Upload">
+                            <field name="file_name" invisible="1"/>
+                            <field name="file_type" readonly="1"/>
+                            <field name="file_data" filename="file_name" required="1"/>
+                        </group>
+                        <group name="import_options" string="Import Options">
+                            <field name="skip_header"/>
+                            <field name="update_existing"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page name="summary" string="Import Summary" attrs="{'invisible': [('state', '=', 'draft')]}">
+                            <group>
+                                <group name="statistics" string="Statistics">
+                                    <field name="records_created" readonly="1"/>
+                                    <field name="records_updated" readonly="1"/>
+                                    <field name="records_skipped" readonly="1"/>
+                                    <field name="records_failed" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="import_summary" readonly="1" widget="text" colspan="2"/>
+                            </group>
+                        </page>
+
+                        <page name="errors" string="Error Log" attrs="{'invisible': [('error_log', '=', False)]}">
+                            <field name="error_log" readonly="1" widget="text" nolabel="1"/>
+                        </page>
+
+                        <page name="help" string="Help">
+                            <div class="alert alert-info" role="alert">
+                                <h4>Import Types:</h4>
+                                <ul>
+                                    <li><strong>Finance Team Members:</strong> Import finance team users with roles and permissions</li>
+                                    <li><strong>Month-End Closing Tasks:</strong> Import recurring tasks for month-end closing processes</li>
+                                    <li><strong>BIR Filing Calendar:</strong> Import BIR form filing schedule (1601-C, 2550Q, etc.)</li>
+                                    <li><strong>LogFrame KPI Definitions:</strong> Import Logical Framework objectives and indicators</li>
+                                </ul>
+
+                                <h4>File Format:</h4>
+                                <ul>
+                                    <li>Supported formats: CSV, Excel (XLSX)</li>
+                                    <li>First row should contain column headers (enable "Skip Header Row")</li>
+                                    <li>Click "Download Template" to get a sample file for each import type</li>
+                                </ul>
+
+                                <h4>Import Process:</h4>
+                                <ol>
+                                    <li>Select the import type</li>
+                                    <li>Upload your CSV or Excel file</li>
+                                    <li>Optionally click "Validate" to check for errors</li>
+                                    <li>Click "Import" to start the import process</li>
+                                    <li>Review the Import Summary for results</li>
+                                </ol>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action to open wizard -->
+    <record id="action_finance_ppm_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Finance PPM Data</field>
+        <field name="res_model">finance.ppm.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>
