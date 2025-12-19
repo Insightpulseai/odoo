@@ -16,13 +16,481 @@ The system is designed to:
 - Avoid all Odoo Enterprise codepaths, IAP services, and odoo.com upsell links.
 - Serve exclusively under InsightPulse domains (e.g. `erp.insightpulseai.net`).
 
-## 2. PRDs in This Repo
+## 2. Repository Structure
+
+<!-- REPO_TREE_START -->
+```text
+.
+|-- .agent
+|   |-- workflows
+|   `-- rules.md
+|-- .claude
+|   |-- project_memory.db
+|   |-- query_memory.py
+|   `-- settings.local.json
+|-- .github
+|   |-- workflows
+|   `-- copilot-instructions.md
+|-- addons
+|   |-- ipai
+|   `-- oca
+|-- agents
+|   |-- capabilities
+|   |-- knowledge
+|   |-- loops
+|   |-- personas
+|   |-- procedures
+|   |-- prompts
+|   |-- AGENT_SKILLS_REGISTRY.yaml
+|   |-- ORCHESTRATOR.md
+|   |-- PRIORITIZED_ROADMAP.md
+|   |-- README.md
+|   |-- odoo_oca_ci_fixer.yaml
+|   |-- odoo_reverse_mapper.yaml
+|   `-- smart_delta_oca.yaml
+|-- apps
+|   |-- do-advisor-agent
+|   |-- do-advisor-ui
+|   `-- ipai-control-center-docs
+|-- archive
+|   `-- addons
+|-- automations
+|   `-- n8n
+|-- baselines
+|   `-- v0.2.1-quality-baseline-20251121.txt
+|-- bin
+|   |-- README.md
+|   |-- finance-cli.sh
+|   |-- import_bir_schedules.py
+|   |-- odoo-tests.sh
+|   `-- postdeploy-finance.sh
+|-- calendar
+|   |-- 2026_FinanceClosing_Master.csv
+|   `-- FinanceClosing_RecurringTasks.ics
+|-- clients
+|   `-- flutter_receipt_ocr
+|-- config
+|   |-- entrypoint.d
+|   `-- odoo.conf.template
+|-- data
+|   |-- bir_calendar_2026.json
+|   |-- employee_directory.json
+|   |-- month_end_tasks.csv
+|   |-- notion_tasks_deduplicated.json
+|   |-- notion_tasks_parsed.json
+|   `-- notion_tasks_with_logframe.json
+|-- db
+|   |-- migrations
+|   |-- rls
+|   |-- seeds
+|   `-- DB_TARGET_ARCHITECTURE.md
+|-- deploy
+|   |-- k8s
+|   |-- nginx
+|   |-- .env.production.template
+|   |-- README.md
+|   |-- docker-compose.prod.v0.10.0.yml
+|   |-- docker-compose.prod.v0.9.1.yml
+|   |-- docker-compose.prod.yml
+|   |-- docker-compose.yml
+|   |-- keycloak-integration.yml
+|   |-- mattermost-integration.yml
+|   |-- monitoring_schema.sql
+|   |-- monitoring_views.sql
+|   |-- odoo-auto-heal.service
+|   `-- odoo.conf
+|-- dev-docker
+|   |-- config
+|   |-- ipai_finance_ppm
+|   |-- theme_tbwa_backend
+|   |-- .env.example
+|   |-- Dockerfile
+|   |-- README.md
+|   `-- docker-compose.yml
+|-- docker
+|   |-- hardened
+|   |-- nginx
+|   |-- Dockerfile.enterprise-parity
+|   |-- Dockerfile.seeded
+|   |-- Dockerfile.unified
+|   |-- Dockerfile.v1.1.0-enterprise-parity
+|   |-- build-enterprise-parity.sh
+|   |-- docker-compose.enterprise-parity.yml
+|   |-- docker-compose.seeded.yml
+|   |-- docker-entrypoint.sh
+|   |-- entrypoint.seeded.sh
+|   |-- odoo-v1.1.0.conf
+|   |-- odoo.conf.template
+|   |-- odoo.seeded.conf
+|   |-- requirements-enterprise-parity.txt
+|   `-- requirements.seeded.txt
+|-- docs
+|   |-- adr
+|   |-- architecture
+|   |-- db
+|   |-- deployment
+|   |-- diagrams
+|   |-- odoo-18-handbook
+|   |-- stack
+|   |-- 003-odoo-ce-custom-image-spec.md
+|   |-- AGENTIC_CLOUD_PRD.md
+|   |-- AGENT_FRAMEWORK_SESSION_REPORT.md
+|   |-- APP_ICONS_README.md
+|   |-- AUTOMATED_TROUBLESHOOTING_GUIDE.md
+|   |-- CUSTOM_IMAGE_SUCCESS_CRITERIA.md
+|   |-- DB_TUNING.md
+|   |-- DEPLOYMENT.md
+|   |-- DEPLOYMENT_GUIDE.md
+|   |-- DEPLOYMENT_NAMING_MATRIX.md
+|   |-- DIGITALOCEAN_VALIDATION_FRAMEWORK.md
+|   |-- DOCKERFILE_COMPARISON.md
+|   |-- DOCKER_CD_MIGRATION_GUIDE.md
+|   |-- DOCKER_VALIDATION_GUIDE.md
+|   |-- DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
+|   |-- ECOSYSTEM_GUIDE.md
+|   |-- ENTERPRISE_FEATURE_GAP.yaml
+|   |-- EXECUTIVE_SUMMARY.md
+|   |-- FEATURE_CHEQROOM_PARITY.md
+|   |-- FEATURE_CONCUR_PARITY.md
+|   |-- FEATURE_WORKSPACE_PARITY.md
+|   |-- FINAL_DEPLOYMENT_GUIDE.md
+|   |-- FINAL_OPERABILITY_CHECKLIST.md
+|   |-- FINANCE_PPM_IMPLEMENTATION.md
+|   |-- HEALTH_CHECK.md
+|   |-- IMAGE_GUIDE.md
+|   |-- IMPLEMENTATION_SUMMARY.md
+|   |-- INDUSTRY_PACKS_OCA_DEPENDENCIES.md
+|   |-- INDUSTRY_PARITY_ANALYSIS.md
+|   |-- KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
+|   |-- KUBERNETES_MIGRATION_SPECIFICATION.md
+|   |-- MATTERMOST_ALERTING_SETUP.md
+|   |-- MATTERMOST_CHATOPS_DEPLOYMENT.md
+|   |-- MCP_IMPLEMENTATION_STATUS.md
+|   |-- MIXED_CONTENT_FIX.md
+|   |-- MVP_GO_LIVE_CHECKLIST.md
+|   |-- N8N_CREDENTIALS_BOOTSTRAP.md
+|   |-- OCA_MIGRATION.md
+|   |-- ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
+|   |-- ODOO_18_CE_CHEATSHEET.md
+|   |-- ODOO_18_EE_TO_CE_OCA_PARITY.md
+|   |-- ODOO_ARCHITECT_PERSONA.md
+|   |-- ODOO_CE_DEPLOYMENT_SUMMARY.md
+|   |-- ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
+|   |-- ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
+|   |-- ODOO_IMAGE_SPEC.md
+|   |-- ODOO_MODULE_DEPLOYMENT.md
+|   |-- OFFLINE_TARBALL_DEPLOYMENT.md
+|   |-- PRD_ipai_ppm_portfolio.md
+|   |-- PROD_READINESS_GAPS.md
+|   |-- QUICK_REFERENCE_SSO_SETUP.md
+|   |-- README.md
+|   |-- README_MCP_STACK.md
+|   |-- SAAS_PARITY_READINESS.md
+|   |-- SECRETS_NAMING_AND_STORAGE.md
+|   |-- SEMANTIC_VERSIONING_STRATEGY.md
+|   |-- SITEMAP.md
+|   |-- SSO_VALIDATION_CHECKLIST.md
+|   |-- SUPERSET_PPM_ANALYTICS_GUIDE.md
+|   |-- TAGGING_STRATEGY.md
+|   |-- TESTING_ODOO_18.md
+|   |-- WBS_LOGFRAME_MAPPING.md
+|   |-- branch-cleanup-analysis.md
+|   `-- v0.9.1_DEPLOYMENT_GUIDE.md
+|-- docs-assistant
+|   |-- api
+|   |-- deploy
+|   |-- mcp
+|   |-- web
+|   `-- DEPLOYMENT_GUIDE.md
+|-- engines
+|   |-- _template
+|   |-- doc-ocr
+|   |-- retail-intel
+|   `-- te-cheq
+|-- external-src
+|   |-- account-closing
+|   |-- account-financial-reporting
+|   |-- account-financial-tools
+|   |-- account-invoicing
+|   |-- calendar
+|   |-- contract
+|   |-- dms
+|   |-- hr-expense
+|   |-- maintenance
+|   |-- project
+|   |-- purchase-workflow
+|   |-- reporting-engine
+|   |-- server-tools
+|   `-- web
+|-- infra
+|   |-- ce
+|   |-- ci
+|   |-- docker
+|   `-- entrypoint.d
+|-- mattermost
+|   |-- runbooks
+|   `-- webhook-templates
+|-- mcp
+|   |-- coordinator
+|   |-- local
+|   |-- servers
+|   `-- agentic-cloud.yaml
+|-- n8n
+|   `-- workflows
+|-- notion-n8n-monthly-close
+|   |-- scripts
+|   |-- src
+|   |-- supabase
+|   |-- workflows
+|   |-- DEPLOYMENT_STATUS.md
+|   |-- DEPLOYMENT_SUMMARY.md
+|   |-- N8N_CLI_README.md
+|   `-- WORKFLOW_CONVENTIONS.md
+|-- oca
+|   `-- .gitkeep
+|-- oca-addons
+|-- ocr-adapter
+|   |-- scripts
+|   |-- test_receipts
+|   |-- .gitignore
+|   |-- DEPLOYMENT.md
+|   |-- Dockerfile
+|   |-- README.md
+|   |-- docker-compose.yml
+|   |-- main.py
+|   |-- nginx-site.conf
+|   |-- requirements.txt
+|   `-- test-ocr.sh
+|-- odoo
+|   |-- ODOO_INTEGRATION_MAP.md
+|   `-- ipai_finance_closing_seed.json
+|-- patches
+|   `-- ipai_ce_cleaner_xmlid_fix.diff
+|-- scripts
+|   |-- ci
+|   |-- oca
+|   |-- README.md
+|   |-- apply-supabase-schema.sh
+|   |-- auto_error_handler.sh
+|   |-- backup_odoo.sh
+|   |-- baseline-validation.sh
+|   |-- build_and_push_version.sh
+|   |-- build_v0.10.0.sh
+|   |-- build_v0.9.1.sh
+|   |-- check_project_tasks.py
+|   |-- ci_local.sh
+|   |-- ci_smoke_test.sh
+|   |-- cleanup-branches.sh
+|   |-- convert_csv_to_xml.py
+|   |-- convert_seed_to_xml.py
+|   |-- create-release.sh
+|   |-- deploy-odoo-modules.sh
+|   |-- deploy-to-server.sh
+|   |-- deploy_custom_image.sh
+|   |-- deploy_notion_tasks.sh
+|   |-- deploy_prod.sh
+|   |-- deployment-checklist.sh
+|   |-- enhanced_health_check.sh
+|   |-- erp_config_cli.sh
+|   |-- full_deploy_sanity.sh
+|   |-- gen_repo_tree.sh
+|   |-- gen_repo_tree_fallback.sh
+|   |-- generate_2026_finance_calendar.py
+|   |-- generate_2026_schedule.py
+|   |-- generate_finance_dashboard.py
+|   |-- generate_seed_xml.py
+|   |-- healthcheck_odoo.sh
+|   |-- image-diff-report.sh
+|   |-- image_audit.sh
+|   |-- import_month_end_tasks.py
+|   |-- install-git-hooks.sh
+|   |-- install_ipai_finance_ppm.sh
+|   |-- install_module_xmlrpc.py
+|   |-- map_logframe.py
+|   |-- oca-sync.sh
+|   |-- oca-update.sh
+|   |-- odoo_mattermost_integration.py
+|   |-- package_image_tarball.sh
+|   |-- parse_notion_tasks.py
+|   |-- pre_install_snapshot.sh
+|   |-- report_ci_telemetry.sh
+|   |-- run_clarity_ppm_reverse.sh
+|   |-- run_odoo_migrations.sh
+|   |-- setup_keycloak_db.sh
+|   |-- setup_mattermost_db.sh
+|   |-- simple_deploy.sh
+|   |-- smoketest.sh
+|   |-- test_deploy_local.sh
+|   |-- update_diagram_manifest.py
+|   |-- validate_m1.sh
+|   |-- verify-https.sh
+|   |-- verify_backup.sh
+|   `-- verify_phase3.py
+|-- skills
+|   |-- architecture_diagrams.skill.json
+|   `-- superset_mcp.skill.json
+|-- spec
+|   |-- ipai-control-center
+|   |-- constitution.md
+|   |-- plan.md
+|   |-- prd.md
+|   `-- tasks.md
+|-- specs
+|   |-- 003-ai-enrichment
+|   |-- 002-odoo-expense-equipment-mvp.prd.md
+|   |-- 003-finance-ppm.prd.md
+|   |-- 003-odoo-custom-image.prd.md
+|   |-- INSTALL_SEQUENCE.md
+|   |-- MODULE_SERVICE_MATRIX.md
+|   |-- README.md
+|   `-- tasks.md
+|-- supabase
+|   |-- migrations
+|   `-- seed
+|-- tasks
+|   `-- infra
+|-- tests
+|   |-- load
+|   |-- playwright
+|   `-- regression
+|-- tools
+|   |-- db-inventory
+|   |-- seed_all.ts
+|   |-- seed_doc_ocr.ts
+|   |-- seed_ppm.ts
+|   |-- seed_retail_intel.ts
+|   `-- seed_te_cheq.ts
+|-- vendor
+|   |-- oca-sync.sh
+|   |-- oca.lock
+|   `-- oca.lock.json
+|-- workflows
+|   |-- finance_ppm
+|   |-- odoo
+|   |-- SHADOW_ENTERPRISE_STACK.md
+|   |-- WEBHOOK_DEPLOYMENT_GUIDE.md
+|   |-- n8n_bir_deadline_webhook.json
+|   |-- n8n_enrichment_agent.json
+|   |-- n8n_ocr_expense_webhook.json
+|   `-- n8n_scout_sync_webhook.json
+|-- .agentignore
+|-- .env.example
+|-- .env.production
+|-- .flake8
+|-- .gitignore
+|-- .gitmodules
+|-- .pre-commit-config.yaml
+|-- ANALYTICS_ACTIVATION_SEQUENCE.md
+|-- AUDIT_FIXES_APPLIED.md
+|-- AUTO_HEALING_SYSTEM_SUMMARY.md
+|-- CHANGELOG.md
+|-- CI_CD_AUTOMATION_SUMMARY.md
+|-- CI_CD_TROUBLESHOOTING_GUIDE.md
+|-- CLAUDE.md
+|-- CLAUDE_NEW.md
+|-- COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
+|-- DEPLOYMENT_MVP.md
+|-- DEPLOYMENT_STATUS.md
+|-- DEPLOYMENT_VALIDATION_REPORT.md
+|-- DEPLOYMENT_VERIFICATION.md
+|-- DEPLOYMENT_WORKFLOW.md
+|-- Dockerfile
+|-- Dockerfile.v0.10.0
+|-- ERP_CONFIGURATION_SUMMARY.md
+|-- EXECUTE_NOW.md
+|-- FINANCE_PPM_CE_DASHBOARD_GUIDE.md
+|-- FINANCE_PPM_DASHBOARD_GUIDE.md
+|-- FINANCE_PPM_IMPORT_GUIDE.md
+|-- IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
+|-- INFRASTRUCTURE_PLAN.md
+|-- INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
+|-- KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
+|-- MATTERMOST_OPEX_INTEGRATION.md
+|-- MCP_QUICK_START.md
+|-- NOVEMBER_2025_CLOSE_TIMELINE.md
+|-- NOVEMBER_2025_PPM_GO_LIVE_SUMMARY.md
+|-- OCR_PROJECT_COMPLETE.md
+|-- ODOO_18_VSCODE_SETUP.md
+|-- ODOO_OCR_SETUP.md
+|-- POSTGRES_PASSWORD_SOLUTION.md
+|-- PROJECT_WRAPPER_IMPLEMENTATION.md
+|-- PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md
+|-- README.md
+|-- README_BUILD.md
+|-- README_PATCH.md
+|-- RELEASE_v0.9.0.md
+|-- REPO_RESTRUCTURE_PLAN.md
+|-- SITEMAP.md
+|-- STRATEGIC_PPM_ANALYTICS_SUMMARY.md
+|-- TAG_LABEL_VOCABULARY.md
+|-- TBWA_IPAI_MODULE_STANDARD.md
+|-- TREE.md
+|-- VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md
+|-- bir_deadlines_2026.csv
+|-- constitution.md
+|-- custom_module_inventory.md
+|-- deploy_m1.sh.template
+|-- deploy_ppm_dashboard.sh
+|-- deploy_ppm_dashboard_direct.sh
+|-- deployment_readiness_assessment.md
+|-- docker-compose.mcp-local.yml
+|-- docker-compose.prod.yml
+|-- docker-compose.yml
+|-- final_verification.sh
+|-- finance_calendar_2026.csv
+|-- finance_calendar_2026.html
+|-- finance_compliance_calendar_template.csv
+|-- finance_directory.csv
+|-- finance_directory_template.csv
+|-- finance_events_2026.json
+|-- finance_monthly_tasks_template.csv
+|-- finance_wbs.csv
+|-- finance_wbs_deadlines.csv
+|-- implementation_plan.md
+|-- implementation_plan_agent.md
+|-- import_finance_data.py
+|-- import_finance_directory.py
+|-- import_november_wbs.py
+|-- install_module.py
+|-- install_ppm_module.py
+|-- install_ppm_monthly_close.sh
+|-- ipai_ce_branding_patch_v1.2.0.zip
+|-- ipai_finance_ppm_directory.csv
+|-- n8n_automation_strategy.md
+|-- n8n_opex_cli.sh
+|-- oca.lock.json
+|-- odoo-bin
+|-- odoo-ce-target.zip
+|-- odoo-v1.2.0-build.zip
+|-- odoo_ce_expert_prompt.md
+|-- ph_holidays_2026.csv
+|-- plan.md
+|-- ppm_dashboard_views.xml
+|-- query_memory.py
+|-- requirements.txt
+|-- spec.md
+|-- task.md
+|-- tasks.md
+|-- update_finance_ppm.py
+|-- update_module.py
+|-- vercel.json
+|-- verify_deployment.py
+|-- verify_finance_ppm.py
+|-- verify_ppm_installation.sh
+|-- walkthrough.md
+`-- workflow_template.csv
+```
+<!-- REPO_TREE_END -->
+
+**Note**: This tree is auto-generated by `scripts/gen_repo_tree.sh` and enforced in CI. Any manual edits will be overwritten.
+
+## 3. PRDs in This Repo
 
 - [002 – InsightPulse ERP Expense & Equipment MVP](specs/002-odoo-expense-equipment-mvp.prd.md)
 
 (Additional PRDs will be added under `specs/00x-*.prd.md` as the platform grows.)
 
-## 3. In-Scope (Current Wave)
+## 4. In-Scope (Current Wave)
 
 - Odoo CE 18 deployment (Docker/K8s friendly).
 - OCA module integration for accounting, expense, and stock/maintenance.
@@ -35,14 +503,14 @@ The system is designed to:
   - No Enterprise modules present/installed.
   - No `odoo.com` links or IAP references in templates/code.
 
-## 4. Explicitly Out of Scope (MVP)
+## 5. Explicitly Out of Scope (MVP)
 
 - Odoo Enterprise modules or licenses.
 - Any use of Odoo IAP (SMS, email, or credits) in production.
 - Full HR/payroll, manufacturing, or advanced warehouse flows.
 - Multi-company consolidations and group reporting.
 
-## 5. Success Criteria (MVP)
+## 6. Success Criteria (MVP)
 
 - Expense and travel workflows complete from creation → approval → posting, using CE/OCA only.
 - Equipment booking lifecycle (reserve → checkout → check-in → incident) works end-to-end.
@@ -51,13 +519,13 @@ The system is designed to:
 - `erp.insightpulseai.net` is the canonical entry point for all users.
 - CI/CD fails if Enterprise/IAP traces are introduced.
 
-## 6. Dependencies & Integrations
+## 7. Dependencies & Integrations
 
 - PostgreSQL (single instance for MVP).
 - Nginx (or equivalent) reverse proxy and SSL termination.
 - Optional: centralized logging/monitoring stack (to be defined in a later PRD).
 
-## 7. Roadmap Link
+## 8. Roadmap Link
 
 Implementation details and milestones are tracked in:
 

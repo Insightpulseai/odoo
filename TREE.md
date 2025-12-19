@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 356f0ec3db79adc8afcaa7579693f4eb0339d01e
+> Commit: 66809d9923665d61ccd38e50e51bcd61425fe4f5
 
 ```
 .
@@ -27,8 +27,6 @@
 │   │   └── repo-structure.yml
 │   └── copilot-instructions.md
 ├── addons
-│   ├── ce
-│   │   └── .gitkeep
 │   ├── ipai
 │   │   ├── ipai_advisor
 │   │   │   ├── controllers
@@ -77,6 +75,21 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── install.sh
+│   │   ├── ipai_custom_routes
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_default_home
+│   │   │   ├── data
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_dev_studio_base
+│   │   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_equipment
 │   │   │   ├── models
 │   │   │   ├── security
@@ -173,6 +186,18 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_industry_accounting_firm
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_industry_marketing_agency
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_portal_fix
 │   │   │   ├── controllers
 │   │   │   ├── models
@@ -215,6 +240,12 @@
 │   │   │   └── hooks.py
 │   │   ├── ipai_srm
 │   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_workspace_core
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
@@ -267,6 +298,7 @@
 │   │   └── nginx.conf
 │   └── ipai-control-center-docs
 │       ├── .vercel
+│       │   ├── README.txt
 │       │   └── project.json
 │       ├── pages
 │       │   ├── strategy
@@ -553,6 +585,7 @@
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
+│   ├── ECOSYSTEM_GUIDE.md
 │   ├── ENTERPRISE_FEATURE_GAP.yaml
 │   ├── EXECUTIVE_SUMMARY.md
 │   ├── FEATURE_CHEQROOM_PARITY.md
@@ -593,6 +626,7 @@
 │   ├── SAAS_PARITY_READINESS.md
 │   ├── SECRETS_NAMING_AND_STORAGE.md
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
+│   ├── SITEMAP.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
@@ -640,6 +674,8 @@
 │   ├── server-tools
 │   └── web
 ├── infra
+│   ├── ce
+│   │   └── .gitkeep
 │   ├── ci
 │   │   ├── install-test.sh
 │   │   └── structure-check.sh
@@ -785,6 +821,7 @@
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── map_logframe.py
+│   ├── oca-sync.sh
 │   ├── oca-update.sh
 │   ├── odoo_mattermost_integration.py
 │   ├── package_image_tarball.sh
@@ -864,6 +901,9 @@
 │       │   ├── 9004_analytics_kpi_registry_seed.sql
 │       │   └── 9004_analytics_superset_dashboard_seed.sql
 │       └── 001_saas_feature_seed.sql
+├── tasks
+│   └── infra
+│       └── AGENT_SERVICES_HARD_DELETE_CHECKLIST.md
 ├── tests
 │   ├── load
 │   │   └── odoo_login_and_nav.js
@@ -931,6 +971,7 @@
 ├── FINANCE_PPM_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_IMPORT_GUIDE.md
 ├── IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
+├── INFRASTRUCTURE_PLAN.md
 ├── INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 ├── KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
 ├── MATTERMOST_OPEX_INTEGRATION.md
@@ -963,6 +1004,7 @@
 ├── deployment_readiness_assessment.md
 ├── docker-compose.mcp-local.yml
 ├── docker-compose.prod.yml
+├── docker-compose.yml
 ├── final_verification.sh
 ├── finance_calendar_2026.csv
 ├── finance_calendar_2026.html
@@ -985,6 +1027,7 @@
 ├── ipai_finance_ppm_directory.csv
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
+├── oca.lock.json
 ├── odoo-bin
 ├── odoo-ce-target.zip
 ├── odoo-v1.2.0-build.zip
@@ -1006,15 +1049,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-347 directories, 654 files
+368 directories, 676 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 380 |
-| Files | 1111 |
-| Python files | 326 |
-| XML files | 174 |
-| Markdown files | 222 |
+| Directories | 401 |
+| Files | 1162 |
+| Python files | 357 |
+| XML files | 181 |
+| Markdown files | 228 |

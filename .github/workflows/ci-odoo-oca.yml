@@ -51,7 +51,7 @@ jobs:
       - name: Validate Addons Paths
         run: |
           echo "Validating OCA monorepo paths..."
-          for dir in addons/ipai addons/oca addons/ce external-src archive/addons; do
+          for dir in addons/ipai addons/oca external-src archive/addons; do
             if [ -d "$dir" ]; then
               COUNT=$(find "$dir" -name "__manifest__.py" 2>/dev/null | wc -l)
               echo "  $dir: $COUNT Odoo modules found"
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "Scanning for Enterprise-only view modes (gantt)..."
           GANTT_MATCHES=""
-          for dir in addons/ipai addons/oca addons/ce; do
+          for dir in addons/ipai addons/oca; do
             if [ -d "$dir" ]; then
               GANTT_MATCHES="$GANTT_MATCHES$(grep -Rn 'view_mode.*gantt\|view_type.*gantt' "$dir" --include="*.xml" --include="*.py" 2>/dev/null || true)"
             fi
@@ -80,7 +80,7 @@ jobs:
         run: |
           echo "Checking for missing web_icon references..."
           ISSUES=0
-          for addon_dir in addons/ipai addons/oca addons/ce; do
+          for addon_dir in addons/ipai addons/oca; do
             if [ -d "$addon_dir" ]; then
               for manifest in $addon_dir/*/__manifest__.py; do
                 if [ -f "$manifest" ]; then
@@ -110,7 +110,7 @@ jobs:
         run: |
           echo "Validating module manifests..."
           ISSUES=0
-          for addon_dir in addons/ipai addons/oca addons/ce; do
+          for addon_dir in addons/ipai addons/oca; do
             if [ -d "$addon_dir" ]; then
               for module_dir in $addon_dir/*/; do
                 if [ -d "$module_dir" ]; then
@@ -376,11 +376,6 @@ jobs:
           # Add IPAI modules
           if [ -d addons/ipai ]; then
             ADDONS_PATH="$ADDONS_PATH,addons/ipai"
-          fi
-
-          # Add CE modules (if any)
-          if [ -d addons/ce ]; then
-            ADDONS_PATH="$ADDONS_PATH,addons/ce"
           fi
 
           # Add OCA modules (flattened structure preferred, fallback to external-src)
