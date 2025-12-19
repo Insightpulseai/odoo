@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Resource Allocation List View -->
+    <record id="view_ppm_resource_allocation_list" model="ir.ui.view">
+      <field name="name">ppm.resource.allocation.list</field>
+      <field name="model">ppm.resource.allocation</field>
+      <field name="arch" type="xml">
+        <list string="Resource Allocations" decoration-danger="is_overloaded">
+          <field name="employee_id"/>
+          <field name="role"/>
+          <field name="program_id" optional="show"/>
+          <field name="project_id" optional="show"/>
+          <field name="task_id" optional="hide"/>
+          <field name="date_start"/>
+          <field name="date_end"/>
+          <field name="allocation_pct"/>
+          <field name="total_allocation"/>
+          <field name="is_overloaded" widget="boolean"/>
+          <field name="status" widget="badge"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Resource Allocation Form View -->
+    <record id="view_ppm_resource_allocation_form" model="ir.ui.view">
+      <field name="name">ppm.resource.allocation.form</field>
+      <field name="model">ppm.resource.allocation</field>
+      <field name="arch" type="xml">
+        <form string="Resource Allocation">
+          <sheet>
+            <widget name="web_ribbon" title="Overloaded" bg_color="text-bg-danger" invisible="not is_overloaded"/>
+            <group>
+              <group string="Resource">
+                <field name="employee_id"/>
+                <field name="role"/>
+              </group>
+              <group string="Assignment">
+                <field name="program_id"/>
+                <field name="project_id"/>
+                <field name="task_id" domain="[('project_id', '=', project_id)]"/>
+              </group>
+            </group>
+            <group>
+              <group string="Period">
+                <field name="date_start"/>
+                <field name="date_end"/>
+              </group>
+              <group string="Capacity">
+                <field name="allocation_pct"/>
+                <field name="planned_hours"/>
+                <field name="total_allocation" readonly="1"/>
+                <field name="is_overloaded" readonly="1"/>
+              </group>
+            </group>
+            <group>
+              <field name="status"/>
+              <field name="notes"/>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Resource Allocation Search -->
+    <record id="view_ppm_resource_allocation_search" model="ir.ui.view">
+      <field name="name">ppm.resource.allocation.search</field>
+      <field name="model">ppm.resource.allocation</field>
+      <field name="arch" type="xml">
+        <search string="Search Allocations">
+          <field name="employee_id"/>
+          <field name="program_id"/>
+          <field name="project_id"/>
+          <separator/>
+          <filter name="filter_overloaded" string="Overloaded" domain="[('is_overloaded', '=', True)]"/>
+          <filter name="filter_active" string="Active" domain="[('status', '=', 'active')]"/>
+          <separator/>
+          <group expand="0" string="Group By">
+            <filter name="groupby_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+            <filter name="groupby_program" string="Program" context="{'group_by': 'program_id'}"/>
+            <filter name="groupby_project" string="Project" context="{'group_by': 'project_id'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <!-- Resource Allocation Action -->
+    <record id="action_ppm_resource_allocation" model="ir.actions.act_window">
+      <field name="name">Resource Allocations</field>
+      <field name="res_model">ppm.resource.allocation</field>
+      <field name="view_mode">list,form</field>
+      <field name="search_view_id" ref="view_ppm_resource_allocation_search"/>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Allocate resources to programs and projects
+        </p>
+        <p>
+          Track capacity and detect overallocated resources.
+        </p>
+      </field>
+    </record>
+  </data>
+</odoo>
