@@ -2,21 +2,40 @@
 
 [![odoo-ce-ci](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml/badge.svg)](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml)
 
-**Self-hosted Odoo Community Edition + OCA stack for expense management and equipment booking.**
+**Self-hosted Odoo Community Edition 18.0 + OCA stack with SaaS parity modules and IPAI platform integration.**
 
 ## Overview
 
-This repository contains the **InsightPulse Odoo CE** implementation—a pure **Community Edition** deployment that replaces:
+This repository contains the **InsightPulse Odoo CE** implementation—a pure **Community Edition** deployment with **native parity modules** that clone enterprise SaaS capabilities:
 
-- **SAP Concur** for expense & travel management workflows (PH-focused)
-- **Cheqroom** for equipment catalog, bookings, and incident tracking
+- **Expense & Travel** (`ipai_expense`) – Concur parity for PH-focused workflows
+- **Equipment Management** (`ipai_equipment`) – Cheqroom parity for asset tracking and bookings
+- **Project Portfolio Management** (`ipai_ppm`) – Clarity PPM parity for project management
+- **Supplier Relationship Management** (`ipai_srm`) – SAP SRM parity for procurement
+- **Knowledge & Workspace** (`ipai_workspace_core`) – Notion parity for collaboration and documentation
 
-### Key Constraints
+### Key Principles
 
 ✅ **CE + OCA only** – No Odoo Enterprise modules or IAP dependencies
+✅ **No SaaS integrations** – Clone capabilities natively, don't integrate with external SaaS (see [ADR-0001](docs/adr/ADR-0001-NO-NOTION-INTEGRATION.md))
 ✅ **No odoo.com upsells** – All branding and links point to InsightPulse or OCA
-✅ **Self-hosted** – Full control via Docker/Kubernetes on DigitalOcean
+✅ **Self-hosted** – Full control via Docker on DigitalOcean Singapore
 ✅ **Production URL** – `https://erp.insightpulseai.net`
+
+### Tech Stack
+
+**Core Platform**:
+- **Odoo CE 18.0** – ERP foundation
+- **OCA Modules** – 14 standard repos (32 repos for enterprise parity profile)
+- **IPAI Modules** – 5-module architecture (27 modules for legacy parity profile)
+
+**IPAI Platform Services** (Infrastructure Integration):
+- **Supabase** – PostgreSQL analytics + RLS + Edge Functions
+- **n8n** – Workflow automation and orchestration
+- **Mattermost** – Notifications and ops communications
+- **Superset** – BI dashboards and analytics
+
+See [CLAUDE.md](CLAUDE.md) for complete stack architecture and deployment details.
 
 ## Repository Structure
 
@@ -39,6 +58,30 @@ odoo-ce/
 ├── plan.md                    # Implementation plan
 └── tasks.md                   # Task checklist
 ```
+
+## Docker Build Profiles
+
+This repository uses a **unified Dockerfile** with multi-stage builds for different deployment scenarios (see [ADR-0002](docs/adr/ADR-0002-UNIFIED-DOCKERFILE.md)):
+
+### Standard Profile (Minimal Production)
+**Use when**: New installations, minimal footprint, faster builds
+```bash
+docker build --build-arg PROFILE=standard -t odoo-ce:prod .
+```
+**Includes**:
+- 14 OCA repositories (accounting, project, HR, purchase, maintenance, DMS, web, server-tools)
+- 5 IPAI modules (workspace_core, ppm, advisor, workbooks, connectors)
+- ~1.8 GB image size
+
+### Parity Profile (Enterprise Features)
+**Use when**: Existing deployments with 27 modules, full feature set required
+```bash
+docker build --build-arg PROFILE=parity -t odoo-ce:enterprise-parity .
+```
+**Includes**:
+- 32 OCA repositories (adds helpdesk, CRM, manufacturing, payroll, etc.)
+- All 27 IPAI modules (backward compatibility)
+- ~2.4 GB image size
 
 ## Quick Start
 

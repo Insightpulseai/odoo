@@ -39,11 +39,22 @@ services:
     env_file:
       - .env.production
     environment:
-      # Odoo talks to Postgres using these
+      # Odoo database connection
       HOST: db
       USER: odoo
       PASSWORD: ${POSTGRES_PASSWORD}
       ODOO_RC: /etc/odoo/odoo.conf
+
+      # IPAI Stack Integration (Supabase, n8n, Mattermost, Superset)
+      # These are YOUR PLATFORM SERVICES, not external SaaS integrations
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      N8N_BASE_URL: ${N8N_BASE_URL}
+      N8N_WEBHOOK_SECRET: ${N8N_WEBHOOK_SECRET}
+      MATTERMOST_BASE_URL: ${MATTERMOST_BASE_URL}
+      MATTERMOST_BOT_TOKEN: ${MATTERMOST_BOT_TOKEN}
+      SUPERSET_BASE_URL: ${SUPERSET_BASE_URL}
+      SUPERSET_EMBED_SECRET: ${SUPERSET_EMBED_SECRET}
     volumes:
       # Main config
       - ./deploy/odoo.conf:/etc/odoo/odoo.conf:ro
