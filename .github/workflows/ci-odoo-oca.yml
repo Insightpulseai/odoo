@@ -50,8 +50,8 @@ jobs:
 
       - name: Validate Addons Paths
         run: |
-          echo "Validating addons paths..."
-          for dir in addons external-src oca-addons; do
+          echo "Validating OCA monorepo paths..."
+          for dir in addons/ipai addons/oca addons/ce external-src archive/addons; do
             if [ -d "$dir" ]; then
               COUNT=$(find "$dir" -name "__manifest__.py" 2>/dev/null | wc -l)
               echo "  $dir: $COUNT Odoo modules found"
@@ -64,7 +64,7 @@ jobs:
         run: |
           echo "Scanning for Enterprise-only view modes (gantt)..."
           GANTT_MATCHES=""
-          for dir in addons oca-addons; do
+          for dir in addons/ipai addons/oca addons/ce; do
             if [ -d "$dir" ]; then
               GANTT_MATCHES="$GANTT_MATCHES$(grep -Rn 'view_mode.*gantt\|view_type.*gantt' "$dir" --include="*.xml" --include="*.py" 2>/dev/null || true)"
             fi
@@ -80,25 +80,27 @@ jobs:
         run: |
           echo "Checking for missing web_icon references..."
           ISSUES=0
-          if [ -d "addons" ]; then
-            for manifest in addons/*/__manifest__.py; do
-              if [ -f "$manifest" ]; then
-                ICON_PATH=$(grep -o "'web_icon':\s*['\"][^'\"]*['\"]" "$manifest" 2>/dev/null | sed "s/'web_icon':\s*['\"]//;s/['\"]$//" || true)
-                if [ -n "$ICON_PATH" ]; then
-                  MODULE_DIR=$(dirname "$manifest")
-                  if [[ "$ICON_PATH" == *"/"* ]]; then
-                    FULL_PATH="addons/$ICON_PATH"
-                  else
-                    FULL_PATH="$MODULE_DIR/$ICON_PATH"
-                  fi
-                  if [ ! -f "$FULL_PATH" ]; then
-                    echo "::error::Missing icon: $FULL_PATH (referenced in $manifest)"
-                    ISSUES=$((ISSUES + 1))
+          for addon_dir in addons/ipai addons/oca addons/ce; do
+            if [ -d "$addon_dir" ]; then
+              for manifest in $addon_dir/*/__manifest__.py; do
+                if [ -f "$manifest" ]; then
+                  ICON_PATH=$(grep -o "'web_icon':\s*['\"][^'\"]*['\"]" "$manifest" 2>/dev/null | sed "s/'web_icon':\s*['\"]//;s/['\"]$//" || true)
+                  if [ -n "$ICON_PATH" ]; then
+                    MODULE_DIR=$(dirname "$manifest")
+                    if [[ "$ICON_PATH" == *"/"* ]]; then
+                      FULL_PATH="$addon_dir/$ICON_PATH"
+                    else
+                      FULL_PATH="$MODULE_DIR/$ICON_PATH"
+                    fi
+                    if [ ! -f "$FULL_PATH" ]; then
+                      echo "::error::Missing icon: $FULL_PATH (referenced in $manifest)"
+                      ISSUES=$((ISSUES + 1))
+                    fi
                   fi
                 fi
-              fi
-            done
-          fi
+              done
+            fi
+          done
           if [ $ISSUES -gt 0 ]; then
             exit 1
           fi
@@ -108,21 +110,23 @@ jobs:
         run: |
           echo "Validating module manifests..."
           ISSUES=0
-          if [ -d "addons" ]; then
-            for module_dir in addons/*/; do
-              if [ -d "$module_dir" ]; then
-                MODULE_NAME=$(basename "$module_dir")
-                if [ ! -f "$module_dir/__manifest__.py" ]; then
-                  echo "::error::Missing __manifest__.py in $MODULE_NAME"
-                  ISSUES=$((ISSUES + 1))
+          for addon_dir in addons/ipai addons/oca addons/ce; do
+            if [ -d "$addon_dir" ]; then
+              for module_dir in $addon_dir/*/; do
+                if [ -d "$module_dir" ]; then
+                  MODULE_NAME=$(basename "$module_dir")
+                  if [ ! -f "$module_dir/__manifest__.py" ]; then
+                    echo "::error::Missing __manifest__.py in $MODULE_NAME"
+                    ISSUES=$((ISSUES + 1))
+                  fi
+                  if [ ! -f "$module_dir/__init__.py" ]; then
+                    echo "::error::Missing __init__.py in $MODULE_NAME"
+                    ISSUES=$((ISSUES + 1))
+                  fi
                 fi
-                if [ ! -f "$module_dir/__init__.py" ]; then
-                  echo "::error::Missing __init__.py in $MODULE_NAME"
-                  ISSUES=$((ISSUES + 1))
-                fi
-              fi
-            done
-          fi
+              done
+            fi
+          done
           if [ $ISSUES -gt 0 ]; then
             exit 1
           fi
@@ -366,13 +370,21 @@ jobs:
           echo "Testing modules: $MODULES"
           echo "========================================="
 
-          # Build addons path dynamically
-          ADDONS_PATH="/tmp/odoo/addons,addons"
-          if [ -d oca ]; then
-            ADDONS_PATH="$ADDONS_PATH,oca"
+          # Build addons path dynamically (OCA monorepo structure)
+          ADDONS_PATH="/tmp/odoo/addons"
+
+          # Add IPAI modules
+          if [ -d addons/ipai ]; then
+            ADDONS_PATH="$ADDONS_PATH,addons/ipai"
           fi
+
+          # Add CE modules (if any)
+          if [ -d addons/ce ]; then
+            ADDONS_PATH="$ADDONS_PATH,addons/ce"
+          fi
+
+          # Add OCA modules from external-src (source of truth)
           if [ -d external-src ]; then
-            # Add OCA submodule paths
             for subdir in external-src/*/; do
               if [ -d "$subdir" ]; then
                 ADDONS_PATH="$ADDONS_PATH,$subdir"
@@ -391,7 +403,7 @@ jobs:
           # Run tests with coverage if this is the full test suite
           if [ "${{ matrix.test-suite.name }}" == "All Tests" ]; then
             echo "Running with coverage analysis..."
-            coverage run --source=addons --omit='*/tests/*' /tmp/odoo/odoo-bin \
+            coverage run --source=addons/ipai --omit='*/tests/*' /tmp/odoo/odoo-bin \
               -d "$DB_NAME" \
               -i "$MODULES" \
               --stop-after-init \
