@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <menuitem id="menu_ipai_finance_root"
+              name="Finance Ops"
+              parent="project.menu_main_pm"
+              sequence="45"
+              groups="ipai_finance_project_hybrid.group_ipai_finance_user"/>
+
+    <menuitem id="menu_ipai_finance_config"
+              name="Configuration"
+              parent="menu_ipai_finance_root"
+              sequence="90"
+              groups="ipai_finance_project_hybrid.group_ipai_finance_manager"/>
+
+    <menuitem id="menu_ipai_finance_seed"
+              name="Seed Finance Framework"
+              parent="menu_ipai_finance_config"
+              action="action_ipai_finance_seed_wizard"
+              sequence="1"
+              groups="ipai_finance_project_hybrid.group_ipai_finance_manager"/>
+
+    <menuitem id="menu_ipai_finance_directory"
+              name="Finance Directory"
+              parent="menu_ipai_finance_config"
+              action="action_ipai_finance_directory"
+              sequence="10"
+              groups="ipai_finance_project_hybrid.group_ipai_finance_manager"/>
+
+    <menuitem id="menu_ipai_finance_templates"
+              name="Task Templates"
+              parent="menu_ipai_finance_config"
+              action="action_ipai_finance_task_template"
+              sequence="20"
+              groups="ipai_finance_project_hybrid.group_ipai_finance_manager"/>
+
+    <menuitem id="menu_ipai_bir_schedule"
+              name="BIR Schedule"
+              parent="menu_ipai_finance_config"
+              action="action_ipai_bir_schedule"
+              sequence="30"
+              groups="ipai_finance_project_hybrid.group_ipai_finance_manager"/>
+
+    <menuitem id="menu_ipai_finance_dashboard"
+              name="Finance Task Analytics"
+              parent="menu_ipai_finance_root"
+              action="action_ipai_finance_task_dashboard"
+              sequence="5"
+              groups="ipai_finance_project_hybrid.group_ipai_finance_user"/>
+  </data>
+</odoo>

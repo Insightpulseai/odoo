@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- BIR Schedule Item List View -->
+    <record id="view_bir_schedule_item_list" model="ir.ui.view">
+        <field name="name">ipai.bir.schedule.item.list</field>
+        <field name="model">ipai.bir.schedule.item</field>
+        <field name="arch" type="xml">
+            <list string="BIR Schedule">
+                <field name="deadline"/>
+                <field name="bir_form"/>
+                <field name="period_covered"/>
+                <field name="im_xml_id"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- BIR Schedule Item Form View -->
+    <record id="view_bir_schedule_item_form" model="ir.ui.view">
+        <field name="name">ipai.bir.schedule.item.form</field>
+        <field name="model">ipai.bir.schedule.item</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="bir_form"/>
+                        <h1>
+                            <field name="bir_form" placeholder="e.g., 1601-C"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="period_covered"/>
+                            <field name="deadline"/>
+                        </group>
+                        <group>
+                            <field name="im_xml_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Steps" name="steps">
+                            <field name="step_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="activity_type"/>
+                                    <field name="role_code"/>
+                                    <field name="business_days_before"/>
+                                    <field name="on_or_before_deadline"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- BIR Schedule Item Search View -->
+    <record id="view_bir_schedule_item_search" model="ir.ui.view">
+        <field name="name">ipai.bir.schedule.item.search</field>
+        <field name="model">ipai.bir.schedule.item</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="bir_form"/>
+                <field name="period_covered"/>
+                <filter string="Upcoming" name="upcoming"
+                        domain="[('deadline', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Archived" name="inactive"
+                        domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="BIR Form" name="group_bir_form"
+                            context="{'group_by': 'bir_form'}"/>
+                    <filter string="Deadline Month" name="group_deadline"
+                            context="{'group_by': 'deadline:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- BIR Schedule Item Action -->
+    <record id="action_bir_schedule" model="ir.actions.act_window">
+        <field name="name">BIR Schedule</field>
+        <field name="res_model">ipai.bir.schedule.item</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_upcoming': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first BIR Schedule Item
+            </p>
+            <p>
+                Schedule items define filing deadlines and generate tasks automatically.
+            </p>
+        </field>
+    </record>
+</odoo>

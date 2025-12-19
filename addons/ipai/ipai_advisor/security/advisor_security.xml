@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+    <!-- Advisor Module Category -->
+    <record id="module_category_advisor" model="ir.module.category">
+      <field name="name">Ops Advisor</field>
+      <field name="sequence">55</field>
+    </record>
+
+    <!-- Groups -->
+    <record id="group_advisor_user" model="res.groups">
+      <field name="name">Advisor User</field>
+      <field name="category_id" ref="module_category_advisor"/>
+      <field name="comment">Can view recommendations and scores</field>
+    </record>
+
+    <record id="group_advisor_manager" model="res.groups">
+      <field name="name">Advisor Manager</field>
+      <field name="category_id" ref="module_category_advisor"/>
+      <field name="implied_ids" eval="[(4, ref('group_advisor_user'))]"/>
+      <field name="comment">Can manage recommendations, playbooks, and trigger recomputes</field>
+    </record>
+
+    <record id="group_advisor_admin" model="res.groups">
+      <field name="name">Advisor Administrator</field>
+      <field name="category_id" ref="module_category_advisor"/>
+      <field name="implied_ids" eval="[(4, ref('group_advisor_manager'))]"/>
+      <field name="comment">Full access to Advisor configuration</field>
+    </record>
+  </data>
+</odoo>

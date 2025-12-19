@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+        <!-- Month-End Closing Tasks Seed Data -->
+        <!-- 50+ tasks across 5 phases for TBWA Finance SSC -->
+
+        <!-- Project: Month-End Closing -->
+        <record id="project_month_end_closing" model="project.project">
+            <field name="name">Month-End Closing 2025</field>
+            <field name="active">True</field>
+            <field name="privacy_visibility">employees</field>
+        </record>
+
+        <!-- PHASE 1: Pre-Closing (Days 1-2) -->
+        <record id="task_phase1_bank_recon" model="project.task">
+            <field name="name">Bank Reconciliation - All Accounts</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_1'))]"/>
+            <field name="description">Reconcile all bank accounts with bank statements</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_ar_review" model="project.task">
+            <field name="name">Accounts Receivable Aging Review</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_2'))]"/>
+            <field name="description">Review AR aging report and identify overdue accounts</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_ap_review" model="project.task">
+            <field name="name">Accounts Payable Aging Review</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_3'))]"/>
+            <field name="description">Review AP aging report and schedule payments</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_cash_count" model="project.task">
+            <field name="name">Petty Cash Count and Reconciliation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_assistant_1'))]"/>
+            <field name="description">Physical count of petty cash and reconcile with records</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_revenue_cutoff" model="project.task">
+            <field name="name">Revenue Recognition Cutoff Review</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Ensure revenue is recognized in correct period</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_expense_cutoff" model="project.task">
+            <field name="name">Expense Accrual Cutoff Review</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Identify expenses to be accrued for current period</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_inventory_check" model="project.task">
+            <field name="name">Inventory Valuation Check</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_assistant_2'))]"/>
+            <field name="description">Verify inventory quantities and values</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_fx_revaluation" model="project.task">
+            <field name="name">Foreign Exchange Revaluation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_1'))]"/>
+            <field name="description">Revalue foreign currency balances at month-end rates</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_prepaid_review" model="project.task">
+            <field name="name">Prepaid Expenses and Deferred Revenue Review</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_accounting_staff_1'))]"/>
+            <field name="description">Review and adjust prepaid/deferred account balances</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase1_payroll_accrual" model="project.task">
+            <field name="name">Payroll Accrual Calculation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_assistant_3'))]"/>
+            <field name="description">Calculate and record payroll accruals for unpaid salaries</field>
+            <field name="priority">1</field>
+        </record>
+
+        <!-- PHASE 2: Journal Entries (Days 3-5) -->
+        <record id="task_phase2_depreciation" model="project.task">
+            <field name="name">Fixed Asset Depreciation Entry</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_accounting_staff_2'))]"/>
+            <field name="description">Calculate and post monthly depreciation</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_accruals" model="project.task">
+            <field name="name">Expense Accruals Journal Entry</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_2'))]"/>
+            <field name="description">Post accruals for utilities, rent, and other recurring expenses</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_provisions" model="project.task">
+            <field name="name">Bad Debt Provision Entry</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Calculate and post provision for doubtful accounts</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_intercompany" model="project.task">
+            <field name="name">Intercompany Transactions Reconciliation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_3'))]"/>
+            <field name="description">Reconcile and post intercompany transactions</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_reclassifications" model="project.task">
+            <field name="name">Account Reclassifications</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_accounting_staff_3'))]"/>
+            <field name="description">Reclassify misposted transactions to correct accounts</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_tax_computation" model="project.task">
+            <field name="name">Tax Computation and Provision</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Calculate tax liability and post provision entry</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_wht_computation" model="project.task">
+            <field name="name">Withholding Tax Computation (BIR 1601-C)</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_1'))]"/>
+            <field name="description">Compute withholding tax for BIR 1601-C filing</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_vat_computation" model="project.task">
+            <field name="name">VAT Computation and Adjustment</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_2'))]"/>
+            <field name="description">Compute VAT output/input and post adjustment entries</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_je_review_1" model="project.task">
+            <field name="name">Journal Entry Review - Batch 1</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Review and approve first batch of journal entries</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase2_je_review_2" model="project.task">
+            <field name="name">Journal Entry Review - Batch 2</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Review and approve second batch of journal entries</field>
+            <field name="priority">1</field>
+        </record>
+
+        <!-- PHASE 3: Reconciliation (Days 6-8) -->
+        <record id="task_phase3_gl_recon_assets" model="project.task">
+            <field name="name">GL Reconciliation - Assets</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_1'))]"/>
+            <field name="description">Reconcile all asset accounts with supporting schedules</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_gl_recon_liabilities" model="project.task">
+            <field name="name">GL Reconciliation - Liabilities</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_2'))]"/>
+            <field name="description">Reconcile all liability accounts with supporting schedules</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_gl_recon_equity" model="project.task">
+            <field name="name">GL Reconciliation - Equity</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_3'))]"/>
+            <field name="description">Reconcile equity accounts and retained earnings</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_gl_recon_revenue" model="project.task">
+            <field name="name">GL Reconciliation - Revenue</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Reconcile revenue accounts with sales records</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_gl_recon_expenses" model="project.task">
+            <field name="name">GL Reconciliation - Expenses</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Reconcile expense accounts with supporting documentation</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_suspense_clearing" model="project.task">
+            <field name="name">Suspense Account Clearing</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_accounting_staff_1'))]"/>
+            <field name="description">Clear all suspense accounts with proper reclassifications</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_tb_preparation" model="project.task">
+            <field name="name">Trial Balance Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_accounting_staff_2'))]"/>
+            <field name="description">Generate trial balance and verify debit/credit balance</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_variance_analysis" model="project.task">
+            <field name="name">Budget vs Actual Variance Analysis</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Analyze significant variances and prepare explanations</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_ratio_analysis" model="project.task">
+            <field name="name">Key Financial Ratios Calculation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Calculate key financial ratios and trend analysis</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase3_recon_review" model="project.task">
+            <field name="name">Reconciliation Review and Sign-Off</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_director'))]"/>
+            <field name="description">Review all reconciliations and provide sign-off</field>
+            <field name="priority">1</field>
+        </record>
+
+        <!-- PHASE 4: Financial Statements (Days 9-12) -->
+        <record id="task_phase4_bs_preparation" model="project.task">
+            <field name="name">Balance Sheet Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Prepare detailed balance sheet with comparatives</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_is_preparation" model="project.task">
+            <field name="name">Income Statement Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Prepare detailed income statement with comparatives</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_cf_preparation" model="project.task">
+            <field name="name">Cash Flow Statement Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Prepare cash flow statement using indirect method</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_notes_preparation" model="project.task">
+            <field name="name">Financial Statement Notes Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Prepare disclosure notes for financial statements</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_fs_review_1" model="project.task">
+            <field name="name">Financial Statements Review - Pass 1</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_director'))]"/>
+            <field name="description">Initial review of financial statements for accuracy</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_adjustments" model="project.task">
+            <field name="name">Post-Review Adjustments</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Post adjusting entries from review comments</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_fs_finalization" model="project.task">
+            <field name="name">Financial Statements Finalization</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Finalize financial statements with all adjustments</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_management_report" model="project.task">
+            <field name="name">Management Report Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Prepare management commentary and analysis report</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_dashboard_update" model="project.task">
+            <field name="name">Financial Dashboard Update</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_1'))]"/>
+            <field name="description">Update PowerBI/Tableau dashboards with month-end data</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase4_fs_approval" model="project.task">
+            <field name="name">Financial Statements Final Approval</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_director'))]"/>
+            <field name="description">Final approval and sign-off on financial statements</field>
+            <field name="priority">1</field>
+        </record>
+
+        <!-- PHASE 5: Reporting & Compliance (Days 13-15) -->
+        <record id="task_phase5_bir_1601c" model="project.task">
+            <field name="name">BIR 1601-C Monthly Withholding Tax Return</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_1'))]"/>
+            <field name="description">Prepare and file BIR 1601-C for withholding tax</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_bir_0619e" model="project.task">
+            <field name="name">BIR 0619-E Monthly VAT Declaration</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_2'))]"/>
+            <field name="description">Prepare and file BIR 0619-E for VAT declaration</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_regulatory_reports" model="project.task">
+            <field name="name">Regulatory Reports Submission</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Submit required reports to SEC, BSP, and other regulators</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_agency_reports" model="project.task">
+            <field name="name">Agency-Specific Financial Reports</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_2'))]"/>
+            <field name="description">Prepare and distribute reports to 8 agencies (RIM, CKVC, etc.)</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_consolidation" model="project.task">
+            <field name="name">Multi-Agency Consolidation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_director'))]"/>
+            <field name="description">Consolidate financials across all 8 agencies</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_audit_prep" model="project.task">
+            <field name="name">Audit Documentation Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_accounting_staff_3'))]"/>
+            <field name="description">Organize and file supporting documents for audit</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_archive" model="project.task">
+            <field name="name">Month-End Close Documentation Archive</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_accounting_staff_1'))]"/>
+            <field name="description">Archive all month-end close documentation</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_postmortem" model="project.task">
+            <field name="name">Closing Process Review and Lessons Learned</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_director'))]"/>
+            <field name="description">Team meeting to discuss process improvements</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_next_month_prep" model="project.task">
+            <field name="name">Next Month Planning and Preparation</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_senior_finance_manager_1'))]"/>
+            <field name="description">Plan and prepare for next month's closing cycle</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="task_phase5_kpi_update" model="project.task">
+            <field name="name">Finance KPI Dashboard Update</field>
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="user_ids" eval="[(4, ref('user_finance_supervisor_3'))]"/>
+            <field name="description">Update LogFrame KPIs with month-end actuals</field>
+            <field name="priority">1</field>
+        </record>
+</odoo>

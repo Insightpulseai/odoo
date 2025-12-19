@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Paper Format for BIR 2307 (Long Bond) -->
+    <record id="paperformat_bir_2307" model="report.paperformat">
+        <field name="name">BIR 2307 (Long)</field>
+        <field name="format">Legal</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">10</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+    </record>
+
+    <!-- Report Action -->
+    <record id="action_report_bir_2307" model="ir.actions.report">
+        <field name="name">BIR Form 2307</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ipai_bir_compliance.report_bir_2307</field>
+        <field name="report_file">ipai_bir_compliance.report_bir_2307</field>
+        <field name="paperformat_id" ref="paperformat_bir_2307"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- QWeb Report Template -->
+    <template id="report_bir_2307">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, sans-serif; font-size: 11px;">
+
+                        <!-- Header -->
+                        <div class="row text-center" style="border-bottom: 2px solid #000; padding-bottom: 10px;">
+                            <div class="col-12">
+                                <h4 style="margin-bottom: 5px;">Republic of the Philippines</h4>
+                                <h5 style="margin-bottom: 5px;">Department of Finance</h5>
+                                <h4 style="margin-bottom: 10px;"><strong>BUREAU OF INTERNAL REVENUE</strong></h4>
+                                <h3 style="margin-bottom: 5px;"><strong>Certificate of Creditable Tax Withheld at Source</strong></h3>
+                                <h5>(BIR Form No. 2307)</h5>
+                            </div>
+                        </div>
+
+                        <!-- Payor Section -->
+                        <div class="row mt-3" style="border: 1px solid #000; padding: 10px;">
+                            <div class="col-12">
+                                <h5><strong>Part I - Payor (Withholding Agent)</strong></h5>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>1. TIN:</strong> <span t-field="o.company_id.vat"/></p>
+                                <p><strong>2. Payor's Name:</strong> <span t-field="o.company_id.name"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>3. Registered Address:</strong></p>
+                                <span t-field="o.company_id.street"/>
+                                <t t-if="o.company_id.street2">, <span t-field="o.company_id.street2"/></t>
+                                <br/>
+                                <span t-field="o.company_id.city"/>, <span t-field="o.company_id.zip"/>
+                            </div>
+                        </div>
+
+                        <!-- Payee Section -->
+                        <div class="row mt-3" style="border: 1px solid #000; padding: 10px;">
+                            <div class="col-12">
+                                <h5><strong>Part II - Payee (Income Recipient)</strong></h5>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>4. TIN:</strong> <span t-field="o.partner_id.vat"/></p>
+                                <p><strong>5. Payee's Name:</strong> <span t-field="o.partner_id.name"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>6. Registered Address:</strong></p>
+                                <span t-field="o.partner_id.street"/>
+                                <t t-if="o.partner_id.street2">, <span t-field="o.partner_id.street2"/></t>
+                                <br/>
+                                <span t-field="o.partner_id.city"/>, <span t-field="o.partner_id.zip"/>
+                            </div>
+                        </div>
+
+                        <!-- Income Details Table -->
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <h5><strong>Part III - Details of Monthly Income Payments and Taxes Withheld</strong></h5>
+                                <table class="table table-bordered table-sm" style="font-size: 10px;">
+                                    <thead style="background-color: #f0f0f0;">
+                                        <tr>
+                                            <th style="width: 30%;">Nature of Income Payment</th>
+                                            <th style="width: 15%;">ATC Code</th>
+                                            <th style="width: 20%;">Amount of Income Payment</th>
+                                            <th style="width: 15%;">Tax Rate</th>
+                                            <th style="width: 20%;">Amount of Tax Withheld</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-set="total_income" t-value="0"/>
+                                        <t t-set="total_tax" t-value="0"/>
+                                        <t t-foreach="o.get_ewt_lines()" t-as="line">
+                                            <t t-set="ewt_rate" t-value="2"/>
+                                            <t t-set="ewt_amount" t-value="line.price_subtotal * ewt_rate / 100"/>
+                                            <t t-set="total_income" t-value="total_income + line.price_subtotal"/>
+                                            <t t-set="total_tax" t-value="total_tax + ewt_amount"/>
+                                            <tr>
+                                                <td><span t-field="line.name"/></td>
+                                                <td>WC160</td>
+                                                <td class="text-right">
+                                                    <span t-esc="'{:,.2f}'.format(line.price_subtotal)"/>
+                                                </td>
+                                                <td class="text-center"><t t-esc="ewt_rate"/>%</td>
+                                                <td class="text-right">
+                                                    <span t-esc="'{:,.2f}'.format(ewt_amount)"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <!-- Totals Row -->
+                                        <tr style="font-weight: bold; background-color: #f0f0f0;">
+                                            <td colspan="2" class="text-right">TOTAL</td>
+                                            <td class="text-right">
+                                                <span t-esc="'{:,.2f}'.format(total_income)"/>
+                                            </td>
+                                            <td></td>
+                                            <td class="text-right">
+                                                <span t-esc="'{:,.2f}'.format(total_tax)"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Reference Section -->
+                        <div class="row mt-3" style="border: 1px solid #000; padding: 10px;">
+                            <div class="col-6">
+                                <p><strong>Invoice Reference:</strong> <span t-field="o.name"/></p>
+                                <p><strong>Invoice Date:</strong> <span t-field="o.invoice_date"/></p>
+                            </div>
+                            <div class="col-6">
+                                <p><strong>Period Covered:</strong>
+                                    <span t-field="o.invoice_date" t-options='{"format": "MMMM yyyy"}'/>
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Signature Section -->
+                        <div class="row mt-4">
+                            <div class="col-6 text-center">
+                                <p style="border-top: 1px solid #000; margin-top: 50px; padding-top: 5px;">
+                                    Signature of Withholding Agent/Authorized Representative
+                                </p>
+                            </div>
+                            <div class="col-6 text-center">
+                                <p style="border-top: 1px solid #000; margin-top: 50px; padding-top: 5px;">
+                                    Date
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Footer Note -->
+                        <div class="row mt-3">
+                            <div class="col-12" style="font-size: 9px; font-style: italic;">
+                                <p>This certificate shall be attached to the quarterly/annual income tax return of the payee.</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Finance PPM Transaction Data Ingestion (TDI)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .feature-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+        .feature-card h3 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 3px;
+        }
+        .highlight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Finance PPM Transaction Data Ingestion (TDI)</h1>
+
+    <p><strong>Version:</strong> 1.0.0 | <strong>License:</strong> AGPL-3 | <strong>Author:</strong> InsightPulse AI - Jake Tolentino</p>
+
+    <div class="highlight">
+        <strong>Bulk import finance data with comprehensive validation, audit trails, and multi-format support.</strong>
+    </div>
+
+    <h2>Features</h2>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>👥 Team Import</h3>
+            <p>Import finance team members with roles and permissions</p>
+        </div>
+        <div class="feature-card">
+            <h3>📋 Tasks Import</h3>
+            <p>50+ month-end closing tasks across 5 phases</p>
+        </div>
+        <div class="feature-card">
+            <h3>📅 BIR Calendar</h3>
+            <p>Philippine tax filing schedule (1601-C, 2550Q, etc.)</p>
+        </div>
+        <div class="feature-card">
+            <h3>📊 LogFrame KPIs</h3>
+            <p>Logical Framework objectives and indicators</p>
+        </div>
+    </div>
+
+    <h2>Key Capabilities</h2>
+
+    <ul>
+        <li><strong>Multi-Format Support:</strong> Import from CSV or Excel (XLSX) files</li>
+        <li><strong>Data Validation:</strong> Pre-import validation with detailed error reporting</li>
+        <li><strong>Audit Trail:</strong> Complete history of all import operations with statistics</li>
+        <li><strong>Template Generation:</strong> Download CSV templates for each import type</li>
+        <li><strong>Update Mode:</strong> Create new records or update existing ones</li>
+        <li><strong>Error Recovery:</strong> Comprehensive error logging and retry capabilities</li>
+        <li><strong>Access Control:</strong> Three security levels (User, Manager, Administrator)</li>
+    </ul>
+
+    <h2>Dependencies</h2>
+
+    <p>This module requires the following OCA modules:</p>
+    <div>
+        <span class="badge">project_timeline</span>
+        <span class="badge">mis_builder</span>
+        <span class="badge">purchase_request</span>
+        <span class="badge">date_range</span>
+    </div>
+
+    <h2>Quick Start</h2>
+
+    <ol>
+        <li>Install the module from <strong>Apps</strong></li>
+        <li>Assign users to Finance PPM security groups</li>
+        <li>Navigate to <strong>Finance PPM → Data Ingestion → Import Data</strong></li>
+        <li>Select import type and download template</li>
+        <li>Prepare your data file (CSV or Excel)</li>
+        <li>Upload and import</li>
+        <li>Review results in <strong>Import History</strong></li>
+    </ol>
+
+    <h2>Import Types</h2>
+
+    <h3>Finance Team Members</h3>
+    <p>Import finance personnel with proper roles and permissions. Roles: Finance Supervisor, Senior Finance Manager, Finance Director, Finance Assistant, Accounting Staff.</p>
+
+    <h3>Month-End Closing Tasks</h3>
+    <p>Import recurring tasks for month-end processes organized into 5 phases. Each task includes deadlines, responsibilities, and project assignments.</p>
+
+    <h3>BIR Filing Calendar</h3>
+    <p>Import Philippine Bureau of Internal Revenue filing schedules. Covers all major forms: 1601-C (monthly withholding), 2550Q (quarterly income tax), 1702-RT (annual), etc.</p>
+
+    <h3>LogFrame KPI Definitions</h3>
+    <p>Import Logical Framework objectives structured hierarchically: Goal → Outcome → Immediate Objective → Output → Activity. Integrates with MIS Builder for KPI tracking.</p>
+
+    <h2>Screenshots</h2>
+
+    <p><em>Import Wizard:</em> User-friendly interface for uploading and configuring imports</p>
+    <p><em>Import History:</em> Complete audit trail with statistics and error logs</p>
+    <p><em>Validation:</em> Pre-import validation catches errors before database changes</p>
+
+    <h2>Support & Documentation</h2>
+
+    <p>For complete documentation, see the <code>README.md</code> file included with this module.</p>
+
+    <p><strong>Website:</strong> <a href="https://insightpulseai.net">https://insightpulseai.net</a></p>
+
+    <h2>License</h2>
+
+    <p>This module is licensed under AGPL-3. See <code>LICENSE</code> file for details.</p>
+
+</body>
+</html>

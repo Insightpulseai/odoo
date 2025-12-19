@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Milestone Form View Extension -->
+    <record id="view_milestone_form_clarity" model="ir.ui.view">
+        <field name="name">project.milestone.form.clarity</field>
+        <field name="model">project.milestone</field>
+        <field name="inherit_id" ref="project_milestone.project_milestone_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='deadline']" position="after">
+                <field name="baseline_deadline"/>
+                <field name="variance_days" readonly="1"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <group string="Milestone Classification">
+                    <field name="milestone_type"/>
+                    <field name="gate_status"/>
+                    <field name="risk_level"/>
+                </group>
+                <group string="Approval Workflow">
+                    <field name="approval_required"/>
+                    <field name="approver_id"/>
+                    <field name="approval_date" readonly="1"/>
+                </group>
+                <group string="Completion Criteria">
+                    <field name="completion_criteria"/>
+                    <field name="deliverables"/>
+                </group>
+                <group string="Alert Settings">
+                    <field name="alert_days_before"/>
+                    <field name="last_alert_sent" readonly="1"/>
+                </group>
+                <group string="Risk Assessment">
+                    <field name="risk_notes"/>
+                </group>
+            </xpath>
+            <xpath expr="//sheet" position="after">
+                <footer>
+                    <button name="action_approve_milestone" type="object"
+                            string="Approve Milestone" class="btn-primary"
+                            attrs="{'invisible': [('approval_required', '=', False)]}"/>
+                    <button name="action_send_alert" type="object"
+                            string="Send Alert" class="btn-secondary"/>
+                    <button name="action_view_tasks" type="object"
+                            string="View Tasks" class="btn-secondary"/>
+                </footer>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Milestone Tree View Extension -->
+    <record id="view_milestone_tree_clarity" model="ir.ui.view">
+        <field name="name">project.milestone.tree.clarity</field>
+        <field name="model">project.milestone</field>
+        <field name="inherit_id" ref="project_milestone.project_milestone_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='deadline']" position="after">
+                <field name="milestone_type"/>
+                <field name="gate_status"/>
+                <field name="task_count"/>
+                <field name="completed_task_count"/>
+                <field name="variance_days"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
