@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 727ac9d6c4322f724a2d686d5d5daa0d9656bfdb
+> Commit: 356f0ec3db79adc8afcaa7579693f4eb0339d01e
 
 ```
 .
@@ -398,6 +398,12 @@
 │       ├── README.md
 │       ├── analysis_options.yaml
 │       └── pubspec.yaml
+├── config
+│   ├── entrypoint.d
+│   │   ├── 10-log-env.sh
+│   │   ├── 20-render-conf.sh
+│   │   └── 90-preflight.sh
+│   └── odoo.conf.template
 ├── data
 │   ├── bir_calendar_2026.json
 │   ├── employee_directory.json
@@ -576,6 +582,7 @@
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
 │   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
 │   ├── ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
+│   ├── ODOO_IMAGE_SPEC.md
 │   ├── ODOO_MODULE_DEPLOYMENT.md
 │   ├── OFFLINE_TARBALL_DEPLOYMENT.md
 │   ├── PRD_ipai_ppm_portfolio.md
@@ -750,6 +757,7 @@
 │   ├── build_v0.9.1.sh
 │   ├── check_project_tasks.py
 │   ├── ci_local.sh
+│   ├── ci_smoke_test.sh
 │   ├── cleanup-branches.sh
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
@@ -771,6 +779,7 @@
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
 │   ├── image-diff-report.sh
+│   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
 │   ├── install_ipai_finance_ppm.sh
@@ -873,7 +882,8 @@
 │   ├── seed_retail_intel.ts
 │   └── seed_te_cheq.ts
 ├── vendor
-│   └── oca-sync.sh
+│   ├── oca-sync.sh
+│   └── oca.lock.json
 ├── workflows
 │   ├── finance_ppm
 │   │   ├── DEPLOYMENT.md
@@ -996,15 +1006,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-345 directories, 646 files
+347 directories, 654 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 378 |
-| Files | 1103 |
+| Directories | 380 |
+| Files | 1111 |
 | Python files | 326 |
 | XML files | 174 |
-| Markdown files | 221 |
+| Markdown files | 222 |

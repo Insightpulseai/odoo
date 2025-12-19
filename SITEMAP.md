@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 727ac9d6c4322f724a2d686d5d5daa0d9656bfdb
+> Commit: 356f0ec3db79adc8afcaa7579693f4eb0339d01e
 
 ## 📚 Documentation
 
@@ -141,6 +141,7 @@
 | [Odoo CE Comprehensive Deployment Summary](docs/ODOO_CE_DEPLOYMENT_SUMMARY.md) | docs |
 | [Odoo CE v0.9.0 Image Security & Compliance Audit Report](docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md) | docs |
 | [Odoo HTTPS OAuth Troubleshooting Guide](docs/ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md) | docs |
+| [IPAI Odoo 18 Custom Image Specification](docs/ODOO_IMAGE_SPEC.md) | docs |
 | [Odoo Module Deployment Guide](docs/ODOO_MODULE_DEPLOYMENT.md) | docs |
 | [Offline/Tarball Deployment Path](docs/OFFLINE_TARBALL_DEPLOYMENT.md) | docs |
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
