@@ -1,0 +1,234 @@
+# =============================================================================
+# GitHub Actions: Build & Publish Unified Odoo CE Images (Standard/Parity/Dev)
+# =============================================================================
+# Triggers:
+#   - Git tags: v*.*.* (production releases)
+#   - Push to main branch (edge builds)
+#   - Pull requests (build only, no push)
+#   - Manual workflow dispatch
+#
+# Image Matrix:
+#   - standard: CE + OCA essentials (production default)
+#   - parity: Full enterprise parity modules
+#   - dev: Parity + development tools
+#
+# Registry: ghcr.io/jgtolentino/odoo-ce
+# =============================================================================
+
+name: Build Unified Odoo Images
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*'
+    paths:
+      - 'addons/**'
+      - 'docker/Dockerfile.unified'
+      - 'docker/*.sh'
+      - '.github/workflows/build-unified-image.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'addons/**'
+      - 'docker/**'
+  workflow_dispatch:
+    inputs:
+      push_image:
+        description: 'Push images to registry'
+        required: false
+        default: 'true'
+        type: boolean
+      profiles:
+        description: 'Profiles to build (comma-separated: standard,parity,dev)'
+        required: false
+        default: 'standard,parity'
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: jgtolentino/odoo-ce
+
+jobs:
+  # ===========================================================================
+  # Build Matrix (Standard, Parity, Dev)
+  # ===========================================================================
+  build:
+    name: Build ${{ matrix.profile }} Profile
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        profile: [standard, parity]
+        # Add 'dev' profile for development builds if needed
+
+    steps:
+      # -----------------------------------------------------------------------
+      # Checkout & Setup
+      # -----------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive  # OCA submodules required
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # -----------------------------------------------------------------------
+      # Registry Login (skip for PRs)
+      # -----------------------------------------------------------------------
+      - name: Log in to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # -----------------------------------------------------------------------
+      # Extract Metadata for Tags
+      # -----------------------------------------------------------------------
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            suffix=-${{ matrix.profile }},onlatest=true
+          tags: |
+            # Git tag: v1.2.0 → 1.2.0-standard, 1.2-standard, 1-standard
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+
+            # Main branch → edge-standard (never "latest")
+            type=edge,branch=main,prefix=edge-
+
+            # SHA for traceability → sha-abc1234-standard
+            type=sha,prefix=sha-,format=short
+
+            # Latest pointer (standard is canonical production)
+            type=raw,value=latest,enable=${{ matrix.profile == 'standard' }}
+
+          labels: |
+            org.opencontainers.image.title=InsightPulse Odoo CE (${{ matrix.profile }})
+            org.opencontainers.image.description=Odoo 18 CE + OCA + IPAI Modules
+            org.opencontainers.image.vendor=InsightPulse AI
+            com.insightpulseai.profile=${{ matrix.profile }}
+            com.insightpulseai.odoo.version=18.0
+            com.insightpulseai.build.git-sha=${{ github.sha }}
+
+      # -----------------------------------------------------------------------
+      # Build Image
+      # -----------------------------------------------------------------------
+      - name: Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.unified
+          build-args: |
+            PROFILE=${{ matrix.profile }}
+          push: false
+          load: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.profile }}
+          cache-from: type=gha,scope=${{ matrix.profile }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.profile }}
+
+      # -----------------------------------------------------------------------
+      # Test Image (Basic Validation)
+      # -----------------------------------------------------------------------
+      - name: Test image startup
+        run: |
+          echo "Testing ${{ matrix.profile }} profile startup..."
+
+          # Create test network
+          docker network create test-odoo-net-${{ matrix.profile }} || true
+
+          # Start PostgreSQL
+          docker run -d \
+            --name test-db-${{ matrix.profile }} \
+            --network test-odoo-net-${{ matrix.profile }} \
+            -e POSTGRES_DB=odoo \
+            -e POSTGRES_USER=odoo \
+            -e POSTGRES_PASSWORD=test_password \
+            postgres:16-alpine
+
+          # Wait for PostgreSQL
+          echo "Waiting for PostgreSQL..."
+          sleep 10
+
+          # Start Odoo
+          docker run -d \
+            --name test-odoo-${{ matrix.profile }} \
+            --network test-odoo-net-${{ matrix.profile }} \
+            -e HOST=test-db-${{ matrix.profile }} \
+            -e USER=odoo \
+            -e PASSWORD=test_password \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:test-${{ matrix.profile }}
+
+          # Wait for initialization
+          echo "Waiting for Odoo initialization (90s)..."
+          sleep 90
+
+          # Verify container health
+          if docker ps | grep -q test-odoo-${{ matrix.profile }}; then
+            echo "✅ ${{ matrix.profile }} profile container is running"
+            docker logs test-odoo-${{ matrix.profile }} --tail 50
+          else
+            echo "❌ ${{ matrix.profile }} profile container failed"
+            docker logs test-odoo-${{ matrix.profile }}
+            exit 1
+          fi
+
+      - name: Cleanup test containers
+        if: always()
+        run: |
+          docker rm -f test-odoo-${{ matrix.profile }} test-db-${{ matrix.profile }} || true
+          docker network rm test-odoo-net-${{ matrix.profile }} || true
+
+      # -----------------------------------------------------------------------
+      # Push Image (only on main push, tag push, or manual trigger)
+      # -----------------------------------------------------------------------
+      - name: Push Docker image
+        if: |
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' && github.event.inputs.push_image == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.unified
+          build-args: |
+            PROFILE=${{ matrix.profile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.profile }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.profile }}
+
+      # -----------------------------------------------------------------------
+      # Output Summary
+      # -----------------------------------------------------------------------
+      - name: Output image details
+        if: success()
+        run: |
+          echo "## Build Summary (${{ matrix.profile }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Profile:** \`${{ matrix.profile }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tags:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**OCI Labels:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "${{ steps.meta.outputs.labels }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
