@@ -51,18 +51,18 @@ RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 # 4. Copy KEEP Modules Only (InsightPulse Core Stack)
 # =============================================================================
 # Finance PPM stack (core business logic)
-COPY addons/ipai_finance_ppm /mnt/extra-addons/ipai_finance_ppm
-COPY addons/ipai_ppm_monthly_close /mnt/extra-addons/ipai_ppm_monthly_close
-COPY addons/ipai_finance_ppm_closing /mnt/extra-addons/ipai_finance_ppm_closing
-COPY addons/ipai_finance_ppm_dashboard /mnt/extra-addons/ipai_finance_ppm_dashboard
+COPY addons/ipai/ipai_finance_ppm /mnt/extra-addons/ipai_finance_ppm
+COPY addons/ipai/ipai_ppm_monthly_close /mnt/extra-addons/ipai_ppm_monthly_close
+COPY addons/ipai/ipai_finance_ppm_closing /mnt/extra-addons/ipai_finance_ppm_closing
+COPY addons/ipai/ipai_finance_ppm_dashboard /mnt/extra-addons/ipai_finance_ppm_dashboard
 
 # BIR compliance & expense management
-COPY addons/ipai_bir_compliance /mnt/extra-addons/ipai_bir_compliance
-COPY addons/ipai_expense /mnt/extra-addons/ipai_expense
-COPY addons/ipai_ocr_expense /mnt/extra-addons/ipai_ocr_expense
+COPY addons/ipai/ipai_bir_compliance /mnt/extra-addons/ipai_bir_compliance
+COPY addons/ipai/ipai_expense /mnt/extra-addons/ipai_expense
+COPY addons/ipai/ipai_ocr_expense /mnt/extra-addons/ipai_ocr_expense
 
 # Equipment/asset tracking
-COPY addons/ipai_equipment /mnt/extra-addons/ipai_equipment
+COPY addons/ipai/ipai_equipment /mnt/extra-addons/ipai_equipment
 
 # Note: The following modules are planned but not yet created:
 # - ipai_dev_studio_base (core infrastructure)
