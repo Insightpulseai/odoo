@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_asset_category_user,ipai.asset.category.user,model_ipai_asset_category,group_assets_user,1,0,0,0
+access_asset_category_manager,ipai.asset.category.manager,model_ipai_asset_category,group_assets_manager,1,1,1,0
+access_asset_category_admin,ipai.asset.category.admin,model_ipai_asset_category,group_assets_admin,1,1,1,1
+access_asset_user,ipai.asset.user,model_ipai_asset,group_assets_user,1,0,0,0
+access_asset_manager,ipai.asset.manager,model_ipai_asset,group_assets_manager,1,1,1,0
+access_asset_admin,ipai.asset.admin,model_ipai_asset,group_assets_admin,1,1,1,1
+access_checkout_user,ipai.asset.checkout.user,model_ipai_asset_checkout,group_assets_user,1,1,1,0
+access_checkout_manager,ipai.asset.checkout.manager,model_ipai_asset_checkout,group_assets_manager,1,1,1,1
+access_reservation_user,ipai.asset.reservation.user,model_ipai_asset_reservation,group_assets_user,1,1,1,0
+access_reservation_manager,ipai.asset.reservation.manager,model_ipai_asset_reservation,group_assets_manager,1,1,1,1

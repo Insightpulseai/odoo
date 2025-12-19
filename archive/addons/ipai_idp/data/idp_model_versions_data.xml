@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Invoice Model Version -->
+        <record id="model_version_invoice_v1" model="idp.model.version">
+            <field name="name">Invoice Extractor v1</field>
+            <field name="description">Default invoice extraction configuration with comprehensive field support.</field>
+            <field name="doc_type">invoice</field>
+            <field name="llm_model">claude-3-sonnet</field>
+            <field name="temperature">0.0</field>
+            <field name="max_tokens">4096</field>
+            <field name="active">True</field>
+            <field name="is_default">True</field>
+            <field name="extraction_schema">{
+  "vendor_name": "string|null",
+  "vendor_address": "string|null",
+  "vendor_tin": "string|null",
+  "invoice_number": "string|null",
+  "invoice_date": "YYYY-MM-DD|null",
+  "due_date": "YYYY-MM-DD|null",
+  "currency": "ISO_4217|null",
+  "line_items": [
+    {
+      "description": "string|null",
+      "quantity": "number|null",
+      "unit_price": "number|null",
+      "amount": "number|null"
+    }
+  ],
+  "subtotal": "number|null",
+  "discount": "number|null",
+  "tax": "number|null",
+  "total": "number|null",
+  "payment_terms": "string|null"
+}</field>
+        </record>
+
+        <!-- Default Receipt Model Version -->
+        <record id="model_version_receipt_v1" model="idp.model.version">
+            <field name="name">Receipt Extractor v1</field>
+            <field name="description">Default receipt extraction for point-of-sale documents.</field>
+            <field name="doc_type">receipt</field>
+            <field name="llm_model">claude-3-sonnet</field>
+            <field name="temperature">0.0</field>
+            <field name="max_tokens">2048</field>
+            <field name="active">True</field>
+            <field name="is_default">True</field>
+            <field name="extraction_schema">{
+  "merchant_name": "string|null",
+  "merchant_address": "string|null",
+  "transaction_date": "YYYY-MM-DD|null",
+  "transaction_time": "HH:MM|null",
+  "receipt_number": "string|null",
+  "currency": "ISO_4217|null",
+  "items": [
+    {
+      "description": "string|null",
+      "quantity": "number|null",
+      "amount": "number|null"
+    }
+  ],
+  "subtotal": "number|null",
+  "tax": "number|null",
+  "total": "number|null",
+  "payment_method": "string|null",
+  "cashier": "string|null"
+}</field>
+        </record>
+
+        <!-- Default Purchase Order Model Version -->
+        <record id="model_version_po_v1" model="idp.model.version">
+            <field name="name">Purchase Order Extractor v1</field>
+            <field name="description">Default purchase order extraction configuration.</field>
+            <field name="doc_type">purchase_order</field>
+            <field name="llm_model">claude-3-sonnet</field>
+            <field name="temperature">0.0</field>
+            <field name="max_tokens">4096</field>
+            <field name="active">True</field>
+            <field name="is_default">True</field>
+            <field name="extraction_schema">{
+  "po_number": "string|null",
+  "order_date": "YYYY-MM-DD|null",
+  "delivery_date": "YYYY-MM-DD|null",
+  "vendor_name": "string|null",
+  "vendor_address": "string|null",
+  "ship_to_address": "string|null",
+  "currency": "ISO_4217|null",
+  "line_items": [
+    {
+      "item_code": "string|null",
+      "description": "string|null",
+      "quantity": "number|null",
+      "unit_price": "number|null",
+      "amount": "number|null"
+    }
+  ],
+  "subtotal": "number|null",
+  "tax": "number|null",
+  "shipping": "number|null",
+  "total": "number|null",
+  "terms_and_conditions": "string|null"
+}</field>
+        </record>
+
+        <!-- Common Validation Rules -->
+        <record id="validation_rule_vendor_required" model="idp.validation.rule">
+            <field name="name">Vendor Name Required</field>
+            <field name="description">Vendor/Merchant name must be present</field>
+            <field name="doc_type">all</field>
+            <field name="rule_type">required</field>
+            <field name="field_name">vendor_name</field>
+            <field name="severity">error</field>
+            <field name="error_message">Vendor name is required</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="validation_rule_total_required" model="idp.validation.rule">
+            <field name="name">Total Amount Required</field>
+            <field name="description">Total amount must be present</field>
+            <field name="doc_type">all</field>
+            <field name="rule_type">required</field>
+            <field name="field_name">total</field>
+            <field name="severity">error</field>
+            <field name="error_message">Total amount is required</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="validation_rule_date_format" model="idp.validation.rule">
+            <field name="name">Date Format Valid</field>
+            <field name="description">Invoice date must be in valid format</field>
+            <field name="doc_type">invoice</field>
+            <field name="rule_type">format</field>
+            <field name="field_name">invoice_date</field>
+            <field name="regex_pattern">^\d{4}-\d{2}-\d{2}$</field>
+            <field name="severity">warning</field>
+            <field name="error_message">Invoice date should be in YYYY-MM-DD format</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="validation_rule_date_order" model="idp.validation.rule">
+            <field name="name">Invoice Date Before Due Date</field>
+            <field name="description">Invoice date must be before or equal to due date</field>
+            <field name="doc_type">invoice</field>
+            <field name="rule_type">date_order</field>
+            <field name="date_field_1">invoice_date</field>
+            <field name="date_field_2">due_date</field>
+            <field name="date_comparison">before</field>
+            <field name="severity">warning</field>
+            <field name="error_message">Invoice date should be before due date</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="validation_rule_currency_valid" model="idp.validation.rule">
+            <field name="name">Currency Code Valid</field>
+            <field name="description">Currency must be a valid ISO 4217 code</field>
+            <field name="doc_type">all</field>
+            <field name="rule_type">format</field>
+            <field name="field_name">currency</field>
+            <field name="regex_pattern">^[A-Z]{3}$</field>
+            <field name="severity">warning</field>
+            <field name="error_message">Currency should be a 3-letter ISO code</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="validation_rule_positive_total" model="idp.validation.rule">
+            <field name="name">Positive Total Amount</field>
+            <field name="description">Total amount must be positive</field>
+            <field name="doc_type">all</field>
+            <field name="rule_type">range</field>
+            <field name="field_name">total</field>
+            <field name="min_value">0.01</field>
+            <field name="severity">error</field>
+            <field name="error_message">Total amount must be positive</field>
+            <field name="sequence">60</field>
+        </record>
+
+    </data>
+</odoo>

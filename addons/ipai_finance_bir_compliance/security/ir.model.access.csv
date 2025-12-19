@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_bir_schedule_item_user,ipai.bir.schedule.item user,model_ipai_bir_schedule_item,base.group_user,1,1,1,0
-access_bir_schedule_item_manager,ipai.bir.schedule.item manager,model_ipai_bir_schedule_item,project.group_project_manager,1,1,1,1
-access_bir_schedule_step_user,ipai.bir.schedule.step user,model_ipai_bir_schedule_step,base.group_user,1,1,1,0
-access_bir_schedule_step_manager,ipai.bir.schedule.step manager,model_ipai_bir_schedule_step,project.group_project_manager,1,1,1,1
-access_generate_bir_tasks_wizard_user,ipai.generate.bir.tasks.wizard user,model_ipai_generate_bir_tasks_wizard,base.group_user,1,1,1,1

@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ppm_portfolio_user,ppm.portfolio.user,model_ppm_portfolio,group_ppm_user,1,0,0,0
+access_ppm_portfolio_manager,ppm.portfolio.manager,model_ppm_portfolio,group_ppm_manager,1,1,1,0
+access_ppm_portfolio_admin,ppm.portfolio.admin,model_ppm_portfolio,group_ppm_admin,1,1,1,1
+access_ppm_program_user,ppm.program.user,model_ppm_program,group_ppm_user,1,0,0,0
+access_ppm_program_manager,ppm.program.manager,model_ppm_program,group_ppm_manager,1,1,1,0
+access_ppm_program_admin,ppm.program.admin,model_ppm_program,group_ppm_admin,1,1,1,1
+access_ppm_risk_user,ppm.risk.user,model_ppm_risk,group_ppm_user,1,0,0,0
+access_ppm_risk_manager,ppm.risk.manager,model_ppm_risk,group_ppm_manager,1,1,1,0
+access_ppm_risk_admin,ppm.risk.admin,model_ppm_risk,group_ppm_admin,1,1,1,1
+access_ppm_resource_allocation_user,ppm.resource.allocation.user,model_ppm_resource_allocation,group_ppm_user,1,0,0,0
+access_ppm_resource_allocation_manager,ppm.resource.allocation.manager,model_ppm_resource_allocation,group_ppm_manager,1,1,1,0
+access_ppm_resource_allocation_admin,ppm.resource.allocation.admin,model_ppm_resource_allocation,group_ppm_admin,1,1,1,1
+access_ppm_kpi_snapshot_user,ppm.kpi.snapshot.user,model_ppm_kpi_snapshot,group_ppm_user,1,0,0,0
+access_ppm_kpi_snapshot_manager,ppm.kpi.snapshot.manager,model_ppm_kpi_snapshot,group_ppm_manager,1,1,1,0
+access_ppm_kpi_snapshot_admin,ppm.kpi.snapshot.admin,model_ppm_kpi_snapshot,group_ppm_admin,1,1,1,1

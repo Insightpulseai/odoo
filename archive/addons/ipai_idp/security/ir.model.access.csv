@@ -1,0 +1,30 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+# IDP Document - layered access
+access_idp_document_user,IDP Document User,model_idp_document,ipai_idp.group_idp_user,1,0,0,0
+access_idp_document_reviewer,IDP Document Reviewer,model_idp_document,ipai_idp.group_idp_reviewer,1,1,0,0
+access_idp_document_manager,IDP Document Manager,model_idp_document,ipai_idp.group_idp_manager,1,1,1,0
+access_idp_document_admin,IDP Document Admin,model_idp_document,ipai_idp.group_idp_admin,1,1,1,1
+# IDP Document OCR - read-only for users, full for managers
+access_idp_document_ocr_user,IDP Document OCR User,model_idp_document_ocr,ipai_idp.group_idp_user,1,0,0,0
+access_idp_document_ocr_manager,IDP Document OCR Manager,model_idp_document_ocr,ipai_idp.group_idp_manager,1,1,1,0
+access_idp_document_ocr_admin,IDP Document OCR Admin,model_idp_document_ocr,ipai_idp.group_idp_admin,1,1,1,1
+# IDP Extraction - read for users, write for managers
+access_idp_extraction_user,IDP Extraction User,model_idp_extraction,ipai_idp.group_idp_user,1,0,0,0
+access_idp_extraction_reviewer,IDP Extraction Reviewer,model_idp_extraction,ipai_idp.group_idp_reviewer,1,1,0,0
+access_idp_extraction_manager,IDP Extraction Manager,model_idp_extraction,ipai_idp.group_idp_manager,1,1,1,0
+access_idp_extraction_admin,IDP Extraction Admin,model_idp_extraction,ipai_idp.group_idp_admin,1,1,1,1
+# IDP Model Version - admin only for config
+access_idp_model_version_user,IDP Model Version User,model_idp_model_version,ipai_idp.group_idp_user,1,0,0,0
+access_idp_model_version_admin,IDP Model Version Admin,model_idp_model_version,ipai_idp.group_idp_admin,1,1,1,1
+# IDP Review - reviewers can read/write, not delete
+access_idp_review_user,IDP Review User,model_idp_review,ipai_idp.group_idp_user,1,0,0,0
+access_idp_review_reviewer,IDP Review Reviewer,model_idp_review,ipai_idp.group_idp_reviewer,1,1,1,0
+access_idp_review_admin,IDP Review Admin,model_idp_review,ipai_idp.group_idp_admin,1,1,1,1
+# IDP Validation Rule - admin only
+access_idp_validation_rule_user,IDP Validation Rule User,model_idp_validation_rule,ipai_idp.group_idp_user,1,0,0,0
+access_idp_validation_rule_admin,IDP Validation Rule Admin,model_idp_validation_rule,ipai_idp.group_idp_admin,1,1,1,1
+# IDP ADE Trace - audit trail for ADE executions
+access_idp_ade_trace_user,IDP ADE Trace User,model_idp_ade_trace,ipai_idp.group_idp_user,1,0,0,0
+access_idp_ade_trace_reviewer,IDP ADE Trace Reviewer,model_idp_ade_trace,ipai_idp.group_idp_reviewer,1,0,0,0
+access_idp_ade_trace_manager,IDP ADE Trace Manager,model_idp_ade_trace,ipai_idp.group_idp_manager,1,1,1,0
+access_idp_ade_trace_admin,IDP ADE Trace Admin,model_idp_ade_trace,ipai_idp.group_idp_admin,1,1,1,1

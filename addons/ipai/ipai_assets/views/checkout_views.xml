@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Checkout List View -->
+    <record id="view_checkout_list" model="ir.ui.view">
+      <field name="name">ipai.asset.checkout.list</field>
+      <field name="model">ipai.asset.checkout</field>
+      <field name="arch" type="xml">
+        <list string="Checkouts" decoration-danger="state == 'overdue'" decoration-muted="state == 'returned'">
+          <field name="checkout_date"/>
+          <field name="asset_id"/>
+          <field name="employee_id"/>
+          <field name="expected_return_date"/>
+          <field name="actual_return_date"/>
+          <field name="state" widget="badge"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Checkout Form View -->
+    <record id="view_checkout_form" model="ir.ui.view">
+      <field name="name">ipai.asset.checkout.form</field>
+      <field name="model">ipai.asset.checkout</field>
+      <field name="arch" type="xml">
+        <form string="Asset Checkout">
+          <header>
+            <button name="action_request_approval" type="object" string="Request Approval" class="oe_highlight" invisible="state != 'draft'"/>
+            <button name="action_approve" type="object" string="Approve" class="oe_highlight" invisible="state != 'pending'" groups="ipai_assets.group_assets_manager"/>
+            <button name="action_check_in" type="object" string="Check In" class="oe_highlight" invisible="state != 'active'"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,active,returned"/>
+          </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="asset_id"/>
+                <field name="employee_id"/>
+              </group>
+              <group>
+                <field name="checkout_date"/>
+                <field name="expected_return_date"/>
+                <field name="actual_return_date" invisible="state != 'returned'"/>
+              </group>
+            </group>
+            <group invisible="state != 'returned'">
+              <group>
+                <field name="condition_on_return"/>
+              </group>
+              <group>
+                <field name="return_notes"/>
+              </group>
+            </group>
+            <field name="checkout_notes" placeholder="Checkout notes..."/>
+            <group invisible="state not in ('active', 'returned')">
+              <field name="approved_by"/>
+              <field name="approval_date"/>
+            </group>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Checkout Search View -->
+    <record id="view_checkout_search" model="ir.ui.view">
+      <field name="name">ipai.asset.checkout.search</field>
+      <field name="model">ipai.asset.checkout</field>
+      <field name="arch" type="xml">
+        <search string="Search Checkouts">
+          <field name="asset_id"/>
+          <field name="employee_id"/>
+          <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+          <filter name="pending" string="Pending Approval" domain="[('state', '=', 'pending')]"/>
+          <filter name="overdue" string="Overdue" domain="[('state', '=', 'overdue')]"/>
+          <separator/>
+          <filter name="my_checkouts" string="My Checkouts" domain="[('employee_id.user_id', '=', uid)]"/>
+          <group expand="0" string="Group By">
+            <filter name="group_asset" string="Asset" context="{'group_by': 'asset_id'}"/>
+            <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+            <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <!-- Checkout Action -->
+    <record id="action_checkout" model="ir.actions.act_window">
+      <field name="name">Checkouts</field>
+      <field name="res_model">ipai.asset.checkout</field>
+      <field name="view_mode">list,form</field>
+      <field name="search_view_id" ref="view_checkout_search"/>
+      <field name="context">{'search_default_active': 1}</field>
+    </record>
+  </data>
+</odoo>

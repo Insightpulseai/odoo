@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <record id="view_project_form_ipai_finance" model="ir.ui.view">
+      <field name="name">project.project.form.ipai.finance</field>
+      <field name="model">project.project</field>
+      <field name="inherit_id" ref="project.edit_project"/>
+      <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+          <button name="action_ipai_generate_im_projects"
+                  type="object"
+                  string="Generate IM Projects"
+                  class="btn-primary"
+                  groups="ipai_finance_project_hybrid.group_ipai_finance_manager"/>
+        </xpath>
+
+        <xpath expr="//sheet//group" position="after">
+          <group string="IPAI Finance" groups="ipai_finance_project_hybrid.group_ipai_finance_user">
+            <field name="ipai_finance_enabled"/>
+            <field name="ipai_is_im_project" readonly="1"/>
+            <field name="ipai_im_code" readonly="1" invisible="not ipai_is_im_project"/>
+            <field name="ipai_root_project_id" readonly="1" invisible="not ipai_is_im_project"/>
+          </group>
+        </xpath>
+      </field>
+    </record>
+  </data>
+</odoo>
