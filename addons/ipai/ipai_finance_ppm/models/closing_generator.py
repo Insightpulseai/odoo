@@ -22,7 +22,7 @@ Architecture:
 Example Usage:
     generator = env['ipai.close.generator']
     report = generator.generate_tasks_from_seed(
-        seed_json_path='addons/ipai_finance_ppm/data/seed_v1_2_aligned.json',
+        seed_json_path='addons/ipai/ipai_finance_ppm/data/seed_v1_2_aligned.json',
         cycle_key='MONTH_END_CLOSE|2025-12',
         period_start='2025-12-01',
         period_end='2025-12-31',

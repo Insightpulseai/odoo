@@ -167,20 +167,46 @@ echo ""
 # -----------------------------------------------------------------------------
 echo "Check 5: Docker compose restart loop check"
 
-compose_files=$(find "$REPO_ROOT" -name "docker-compose*.yml" -o -name "docker-compose*.yaml" 2>/dev/null || true)
-
-for compose_file in $compose_files; do
-    if grep -q "stop-after-init" "$compose_file" 2>/dev/null; then
-        if grep -q "restart:.*unless-stopped\|restart:.*always" "$compose_file" 2>/dev/null; then
-            # Check if same service has both
-            log_error "Potential restart loop in: $compose_file"
-            echo "       Service with --stop-after-init should have 'restart: no'"
-        fi
-    fi
-done
-
-if [[ $errors -eq 0 ]]; then
-    log_ok "No restart loops detected"
+if [ -f "$REPO_ROOT/docker-compose.yml" ]; then
+    awk '
+        function ltrim(s){ sub(/^[ \t]+/, "", s); return s }
+        /^[a-zA-Z0-9_-]+:$/ && in_services==1 {
+            # new top-level key inside services (service name)
+            svc = substr($0, 1, length($0)-1)
+            stop[svc]=0; restart[svc]=""
+        }
+        /^services:$/ { in_services=1; next }
+        in_services==1 {
+            line=$0
+            # Detect service headers (2-space indent: "  name:")
+            if (match(line, /^[ ]{2}[a-zA-Z0-9_-]+:$/)) {
+                svc=ltrim(line); svc=substr(svc, 1, length(svc)-1)
+                stop[svc]=0; restart[svc]=""
+                next
+            }
+            if (svc!="") {
+                if (index(line, "--stop-after-init")>0) stop[svc]=1
+                if (match(line, /^[ ]{4}restart:/)) {
+                    sub(/^[ ]{4}restart:[ ]*/, "", line)
+                    restart[svc]=line
+                }
+            }
+        }
+        END {
+            bad=0
+            for (s in stop) {
+                if (s ~ /-init$/) continue
+                if (stop[s]==1 && restart[s] ~ /unless-stopped/) {
+                    printf "'"${RED}"'[ERROR]'"${NC}"' %s has --stop-after-init with restart: %s\n", s, restart[s]
+                    bad=1
+                }
+            }
+            if (bad==0) print "'"${GREEN}"'[OK]'"${NC}"' No restart loop patterns detected"
+            exit bad
+        }
+    ' "$REPO_ROOT/docker-compose.yml" || errors=$((errors + 1))
+else
+    log_ok "docker-compose.yml not found (skipped)"
 fi
 
 echo ""
@@ -193,7 +219,7 @@ echo "Check 6: QWeb template ID check"
 # Find potential ID collisions in inherited templates
 if [[ -d "$ADDONS_DIR/ipai" ]]; then
     duplicates=$(grep -r 'inherit_id=.*template.*id=' "$ADDONS_DIR/ipai" 2>/dev/null | \
-                 grep -oP 'id="[^"]*"' | sort | uniq -d || true)
+                 grep -o 'id="[^"]*"' | sort | uniq -d || true)
     if [[ -n "$duplicates" ]]; then
         log_error "Potential QWeb ID collisions: $duplicates"
     else
