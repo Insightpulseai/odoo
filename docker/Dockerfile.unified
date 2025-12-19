@@ -1,0 +1,191 @@
+# =============================================================================
+# Odoo 18 CE + Parity Modules - Unified Dockerfile
+# =============================================================================
+# Multi-profile build supporting different deployment configurations:
+#
+#   PROFILE=standard   - CE core + OCA essentials only
+#   PROFILE=parity     - CE + OCA + full enterprise parity modules
+#   PROFILE=dev        - parity + dev tools (debugpy, pytest)
+#
+# Build Examples:
+#   docker build --build-arg PROFILE=standard -t odoo-ce:standard .
+#   docker build --build-arg PROFILE=parity -t odoo-ce:parity .
+#   docker build --build-arg PROFILE=dev -t odoo-ce:dev .
+#
+# CI Matrix Build:
+#   for profile in standard parity dev; do
+#     docker build --build-arg PROFILE=$profile -t odoo-ce:$profile .
+#   done
+#
+# =============================================================================
+
+ARG PROFILE=parity
+ARG BASE_IMAGE=ghcr.io/jgtolentino/odoo-ce:v1.0.1-paddlepaddle-fix
+
+# =============================================================================
+# Stage 1: OCA Module Fetcher
+# =============================================================================
+FROM python:3.11-slim-bookworm AS oca-fetcher
+
+ARG PROFILE
+
+RUN apt-get update && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /oca
+
+# Clone OCA repos based on profile
+# Standard: Minimal OCA for basic operations
+# Parity: Full OCA for enterprise feature parity
+
+# Core OCA (all profiles)
+RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/server-auth.git || true
+RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/server-tools.git || true
+RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/web.git || true
+
+# Parity profile: Additional OCA modules
+RUN if [ "$PROFILE" = "parity" ] || [ "$PROFILE" = "dev" ]; then \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-financial-reporting.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-financial-tools.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-reconcile.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-closing.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/account-invoicing.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/bank-payment.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/project.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/timesheet.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/contract.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/hr.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/hr-expense.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/helpdesk.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/reporting-engine.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/mis-builder.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/dms.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/partner-contact.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/server-ux.git || true; \
+    git clone --depth 1 --branch 18.0 https://github.com/OCA/rest-framework.git || true; \
+    fi
+
+# Collect requirements from all cloned repos
+RUN find /oca -name "requirements.txt" -exec cat {} \; 2>/dev/null | sort -u > /oca/requirements.txt || true
+
+# =============================================================================
+# Stage 2: Production Image
+# =============================================================================
+FROM ${BASE_IMAGE} AS production
+
+ARG PROFILE
+ARG BUILD_DATE
+ARG VERSION=2.0.0
+
+LABEL maintainer="InsightPulseAI <dev@insightpulseai.net>"
+LABEL description="Odoo 18 CE + Parity Modules (${PROFILE} profile)"
+LABEL version="${VERSION}"
+LABEL profile="${PROFILE}"
+LABEL build-date="${BUILD_DATE}"
+
+USER root
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client \
+    gettext-base \
+    curl \
+    python3-num2words \
+    python3-phonenumbers \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create directories
+RUN mkdir -p /mnt/oca-modules /mnt/extra-addons /var/log/odoo \
+    && chown -R odoo:odoo /mnt/oca-modules /mnt/extra-addons /var/log/odoo
+
+# -----------------------------------------------------------------------------
+# Copy OCA Modules (based on profile)
+# -----------------------------------------------------------------------------
+COPY --from=oca-fetcher /oca/server-auth /mnt/oca-modules/server-auth
+COPY --from=oca-fetcher /oca/server-tools /mnt/oca-modules/server-tools
+COPY --from=oca-fetcher /oca/web /mnt/oca-modules/web
+
+# Parity profile modules
+COPY --from=oca-fetcher /oca/account-financial-reporting /mnt/oca-modules/account-financial-reporting
+COPY --from=oca-fetcher /oca/account-financial-tools /mnt/oca-modules/account-financial-tools
+COPY --from=oca-fetcher /oca/account-reconcile /mnt/oca-modules/account-reconcile
+COPY --from=oca-fetcher /oca/account-closing /mnt/oca-modules/account-closing
+COPY --from=oca-fetcher /oca/account-invoicing /mnt/oca-modules/account-invoicing
+COPY --from=oca-fetcher /oca/bank-payment /mnt/oca-modules/bank-payment
+COPY --from=oca-fetcher /oca/project /mnt/oca-modules/project
+COPY --from=oca-fetcher /oca/timesheet /mnt/oca-modules/timesheet
+COPY --from=oca-fetcher /oca/contract /mnt/oca-modules/contract
+COPY --from=oca-fetcher /oca/hr /mnt/oca-modules/hr
+COPY --from=oca-fetcher /oca/hr-expense /mnt/oca-modules/hr-expense
+COPY --from=oca-fetcher /oca/helpdesk /mnt/oca-modules/helpdesk
+COPY --from=oca-fetcher /oca/reporting-engine /mnt/oca-modules/reporting-engine
+COPY --from=oca-fetcher /oca/mis-builder /mnt/oca-modules/mis-builder
+COPY --from=oca-fetcher /oca/dms /mnt/oca-modules/dms
+COPY --from=oca-fetcher /oca/partner-contact /mnt/oca-modules/partner-contact
+COPY --from=oca-fetcher /oca/server-ux /mnt/oca-modules/server-ux
+COPY --from=oca-fetcher /oca/rest-framework /mnt/oca-modules/rest-framework
+
+# -----------------------------------------------------------------------------
+# Copy ipai_* Parity Modules
+# -----------------------------------------------------------------------------
+COPY ./addons/ipai_* /mnt/extra-addons/
+
+# -----------------------------------------------------------------------------
+# Install Python Requirements
+# -----------------------------------------------------------------------------
+COPY --from=oca-fetcher /oca/requirements.txt /tmp/oca-requirements.txt
+
+RUN pip3 install --no-cache-dir --break-system-packages \
+    num2words>=0.5.10 \
+    phonenumbers>=8.12.0 \
+    python-slugify>=5.0.2 \
+    2>/dev/null || true
+
+RUN pip3 install --no-cache-dir --break-system-packages \
+    -r /tmp/oca-requirements.txt 2>/dev/null || true \
+    && rm -f /tmp/oca-requirements.txt
+
+# -----------------------------------------------------------------------------
+# Configuration with envsubst Support
+# -----------------------------------------------------------------------------
+COPY ./docker/odoo.conf.template /etc/odoo/odoo.conf.template
+COPY ./docker/docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Fix permissions
+RUN chown -R odoo:odoo /mnt/oca-modules /mnt/extra-addons /etc/odoo
+
+# -----------------------------------------------------------------------------
+# Environment Configuration
+# -----------------------------------------------------------------------------
+ENV PROFILE=${PROFILE}
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons,/mnt/oca-modules/server-auth,/mnt/oca-modules/server-tools,/mnt/oca-modules/web,/mnt/oca-modules/account-financial-reporting,/mnt/oca-modules/account-financial-tools,/mnt/oca-modules/account-reconcile,/mnt/oca-modules/account-closing,/mnt/oca-modules/account-invoicing,/mnt/oca-modules/bank-payment,/mnt/oca-modules/project,/mnt/oca-modules/timesheet,/mnt/oca-modules/contract,/mnt/oca-modules/hr,/mnt/oca-modules/hr-expense,/mnt/oca-modules/helpdesk,/mnt/oca-modules/reporting-engine,/mnt/oca-modules/mis-builder,/mnt/oca-modules/dms,/mnt/oca-modules/partner-contact,/mnt/oca-modules/server-ux,/mnt/oca-modules/rest-framework
+
+USER odoo
+
+ENTRYPOINT ["/entrypoint.sh"]
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+    CMD curl -f http://localhost:8069/web/health || exit 1
+
+EXPOSE 8069 8072
+
+# =============================================================================
+# Stage 3: Development Image (extends production)
+# =============================================================================
+FROM production AS development
+
+USER root
+
+RUN pip3 install --no-cache-dir --break-system-packages \
+    debugpy \
+    pytest \
+    pytest-odoo \
+    coverage \
+    black \
+    flake8 \
+    2>/dev/null || true
+
+USER odoo
+
+ENV PROFILE=dev
