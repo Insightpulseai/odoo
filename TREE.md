@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 356f0ec3db79adc8afcaa7579693f4eb0339d01e
+> Commit: de776ae65d777a5dd7b8416e79a2bda8364b6d8f
 
 ```
 .
@@ -221,6 +221,57 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   └── .gitkeep
+│   ├── ipai_custom_routes
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── main.py
+│   │   ├── data
+│   │   │   └── default_home_data.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_default_home
+│   │   ├── data
+│   │   │   └── default_home_data.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_dev_studio_base
+│   │   ├── models
+│   │   │   └── __init__.py
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_industry_accounting_firm
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── accounting_workspace_extension.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── accounting_workspace_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_industry_marketing_agency
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── marketing_workspace_extension.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── marketing_workspace_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workspace_core
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── workspace.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── ipai_workspace_menu.xml
+│   │   │   └── ipai_workspace_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   └── oca
 │       └── .gitkeep
 ├── agents
@@ -267,6 +318,7 @@
 │   │   └── nginx.conf
 │   └── ipai-control-center-docs
 │       ├── .vercel
+│       │   ├── README.txt
 │       │   └── project.json
 │       ├── pages
 │       │   ├── strategy
@@ -553,6 +605,7 @@
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
+│   ├── ECOSYSTEM_GUIDE.md
 │   ├── ENTERPRISE_FEATURE_GAP.yaml
 │   ├── EXECUTIVE_SUMMARY.md
 │   ├── FEATURE_CHEQROOM_PARITY.md
@@ -593,6 +646,7 @@
 │   ├── SAAS_PARITY_READINESS.md
 │   ├── SECRETS_NAMING_AND_STORAGE.md
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
+│   ├── SITEMAP.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
@@ -785,6 +839,7 @@
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── map_logframe.py
+│   ├── oca-sync.sh
 │   ├── oca-update.sh
 │   ├── odoo_mattermost_integration.py
 │   ├── package_image_tarball.sh
@@ -864,6 +919,9 @@
 │       │   ├── 9004_analytics_kpi_registry_seed.sql
 │       │   └── 9004_analytics_superset_dashboard_seed.sql
 │       └── 001_saas_feature_seed.sql
+├── tasks
+│   └── infra
+│       └── AGENT_SERVICES_HARD_DELETE_CHECKLIST.md
 ├── tests
 │   ├── load
 │   │   └── odoo_login_and_nav.js
@@ -931,6 +989,7 @@
 ├── FINANCE_PPM_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_IMPORT_GUIDE.md
 ├── IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
+├── INFRASTRUCTURE_PLAN.md
 ├── INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 ├── KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
 ├── MATTERMOST_OPEX_INTEGRATION.md
@@ -963,6 +1022,7 @@
 ├── deployment_readiness_assessment.md
 ├── docker-compose.mcp-local.yml
 ├── docker-compose.prod.yml
+├── docker-compose.yml
 ├── final_verification.sh
 ├── finance_calendar_2026.csv
 ├── finance_calendar_2026.html
@@ -985,6 +1045,7 @@
 ├── ipai_finance_ppm_directory.csv
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
+├── oca.lock.json
 ├── odoo-bin
 ├── odoo-ce-target.zip
 ├── odoo-v1.2.0-build.zip
@@ -1006,15 +1067,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-347 directories, 654 files
+368 directories, 694 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 380 |
-| Files | 1111 |
-| Python files | 326 |
-| XML files | 174 |
-| Markdown files | 222 |
+| Directories | 401 |
+| Files | 1162 |
+| Python files | 357 |
+| XML files | 181 |
+| Markdown files | 228 |
