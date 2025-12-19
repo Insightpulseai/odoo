@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d8b2425f3ae902bb7c33153e4e87fde4f429ff56
+> Commit: 88244b913e30975ed17cbb7adbcf295c3a82278c
 
 ```
 .
@@ -21,9 +21,12 @@
 │   │   ├── build-seeded-image.yml
 │   │   ├── ci-odoo-ce.yml
 │   │   ├── ci-odoo-oca.yml
-│   │   └── health-check.yml
+│   │   ├── health-check.yml
+│   │   └── repo-structure.yml
 │   └── copilot-instructions.md
 ├── addons
+│   ├── ipai
+│   │   └── .gitkeep
 │   ├── ipai_accounting_firm_pack
 │   │   ├── data
 │   │   │   └── engagement_data.xml
@@ -627,6 +630,8 @@
 │   │   ├── __init__.py
 │   │   ├── __manifest__.py
 │   │   └── hooks.py
+│   ├── oca
+│   │   └── .gitkeep
 │   └── tbwa_spectra_integration
 │       ├── data
 │       │   ├── approval_matrix_data.xml
@@ -952,6 +957,19 @@
 │   ├── reporting-engine
 │   ├── server-tools
 │   └── web
+├── infra
+│   ├── ci
+│   │   ├── install-test.sh
+│   │   └── structure-check.sh
+│   ├── docker
+│   │   └── odoo.conf
+│   └── entrypoint.d
+│       └── .gitkeep
+├── mattermost
+│   ├── runbooks
+│   │   └── .gitkeep
+│   └── webhook-templates
+│       └── .gitkeep
 ├── mcp
 │   ├── coordinator
 │   │   ├── app
@@ -978,6 +996,9 @@
 │   │   ├── odoo-erp.yaml
 │   │   └── odoo-lab.yaml
 │   └── agentic-cloud.yaml
+├── n8n
+│   └── workflows
+│       └── .gitkeep
 ├── notion-n8n-monthly-close
 │   ├── scripts
 │   │   ├── deduplicate_closing_tasks.py
@@ -1173,6 +1194,8 @@
 │   ├── seed_ppm.ts
 │   ├── seed_retail_intel.ts
 │   └── seed_te_cheq.ts
+├── vendor
+│   └── oca-sync.sh
 ├── workflows
 │   ├── finance_ppm
 │   │   ├── DEPLOYMENT.md
@@ -1234,6 +1257,7 @@
 ├── PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md
 ├── README.md
 ├── RELEASE_v0.9.0.md
+├── REPO_RESTRUCTURE_PLAN.md
 ├── SITEMAP.md
 ├── STRATEGIC_PPM_ANALYTICS_SUMMARY.md
 ├── TAG_LABEL_VOCABULARY.md
@@ -1289,15 +1313,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-329 directories, 955 files
+341 directories, 967 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 345 |
-| Files | 1018 |
+| Directories | 357 |
+| Files | 1031 |
 | Python files | 309 |
 | XML files | 158 |
-| Markdown files | 207 |
+| Markdown files | 208 |
