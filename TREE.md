@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5827c9b9d96ffd260dc11d7c73be512661395d84
+> Commit: 816aa8eb281a67a51997ce2ce69297ada419c644
 
 ```
 .
@@ -67,6 +67,26 @@
 │   │   │   ├── playbook_views.xml
 │   │   │   ├── recommendation_views.xml
 │   │   │   └── score_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_assets
+│   │   ├── data
+│   │   │   ├── assets_categories.xml
+│   │   │   └── assets_sequence.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── asset.py
+│   │   │   ├── category.py
+│   │   │   ├── checkout.py
+│   │   │   └── reservation.py
+│   │   ├── security
+│   │   │   ├── assets_security.xml
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── asset_views.xml
+│   │   │   ├── checkout_views.xml
+│   │   │   ├── menus.xml
+│   │   │   └── reservation_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_bir_compliance
@@ -639,6 +659,27 @@
 │   │   ├── __init__.py
 │   │   ├── __manifest__.py
 │   │   └── hooks.py
+│   ├── ipai_srm
+│   │   ├── data
+│   │   │   ├── srm_kpi_categories.xml
+│   │   │   └── srm_sequence.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── kpi_category.py
+│   │   │   ├── qualification.py
+│   │   │   ├── res_partner.py
+│   │   │   ├── scorecard.py
+│   │   │   └── supplier.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── srm_security.xml
+│   │   ├── views
+│   │   │   ├── menus.xml
+│   │   │   ├── qualification_views.xml
+│   │   │   ├── scorecard_views.xml
+│   │   │   └── supplier_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── oca
 │   │   └── .gitkeep
 │   └── tbwa_spectra_integration
@@ -838,16 +879,21 @@
 │   │   └── nginx.conf
 │   ├── Dockerfile.enterprise-parity
 │   ├── Dockerfile.seeded
+│   ├── Dockerfile.unified
 │   ├── Dockerfile.v1.1.0-enterprise-parity
 │   ├── build-enterprise-parity.sh
 │   ├── docker-compose.enterprise-parity.yml
 │   ├── docker-compose.seeded.yml
+│   ├── docker-entrypoint.sh
 │   ├── entrypoint.seeded.sh
 │   ├── odoo-v1.1.0.conf
+│   ├── odoo.conf.template
 │   ├── odoo.seeded.conf
 │   ├── requirements-enterprise-parity.txt
 │   └── requirements.seeded.txt
 ├── docs
+│   ├── adr
+│   │   └── ADR-0001-clone-not-integrate.md
 │   ├── architecture
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── README.md
@@ -1350,15 +1396,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-351 directories, 994 files
+362 directories, 1029 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 369 |
-| Files | 1062 |
-| Python files | 311 |
-| XML files | 160 |
-| Markdown files | 219 |
+| Directories | 380 |
+| Files | 1097 |
+| Python files | 326 |
+| XML files | 174 |
+| Markdown files | 220 |
