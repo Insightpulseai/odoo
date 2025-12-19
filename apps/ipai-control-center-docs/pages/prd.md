@@ -1,0 +1,1 @@
+../../../spec/ipai-control-center/prd.md
