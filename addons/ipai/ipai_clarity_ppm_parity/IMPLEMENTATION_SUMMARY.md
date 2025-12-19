@@ -395,7 +395,6 @@ class TestClarityPPM(TransactionCase):
 - [WBS Best Practices](https://techdocs.broadcom.com/wbs-best-practices)
 
 **Odoo Community**:
-- [Odoo Project Management](https://www.odoo.com/documentation/18.0/applications/services/project.html)
 - [OCA Guidelines](https://github.com/OCA/odoo-community.org/blob/master/website/Contribution/CONTRIBUTING.rst)
 
 ---
