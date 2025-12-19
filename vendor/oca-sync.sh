@@ -1,14 +1,19 @@
 #!/bin/bash
 # =============================================================================
-# OCA Vendor Sync Script
+# OCA Vendor Sync Script v2.0
 # =============================================================================
-# Syncs OCA repositories to addons/oca/ based on vendor/oca.lock
+# Syncs OCA repositories to addons/oca/ based on vendor/oca.lock.json
 #
 # Usage:
 #   ./vendor/oca-sync.sh sync     # Clone/update OCA repos to pinned versions
 #   ./vendor/oca-sync.sh verify   # Verify repos match lockfile
 #   ./vendor/oca-sync.sh update   # Update lockfile with current HEAD commits
 #   ./vendor/oca-sync.sh list     # List all OCA repos and their status
+#   ./vendor/oca-sync.sh export   # Export modules for Docker build (no .git)
+#
+# Requirements:
+#   - jq (for JSON parsing)
+#   - git
 #
 # =============================================================================
 
@@ -16,240 +21,341 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
-LOCKFILE="$SCRIPT_DIR/oca.lock"
+LOCKFILE="$SCRIPT_DIR/oca.lock.json"
 TARGET_DIR="$REPO_ROOT/addons/oca"
+EXPORT_DIR="$REPO_ROOT/.build/oca-modules"
 
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+log_debug() { [[ "${DEBUG:-}" == "1" ]] && echo -e "${CYAN}[DEBUG]${NC} $1" || true; }
 
-# Parse YAML lockfile (simplified - uses grep/awk)
-# For production, consider using yq or a proper YAML parser
-parse_repos() {
-    local in_repos=false
-    local current_repo=""
-    local current_url=""
-    local current_branch=""
-    local current_commit=""
-
-    while IFS= read -r line; do
-        # Skip comments and empty lines
-        [[ "$line" =~ ^[[:space:]]*# ]] && continue
-        [[ -z "${line// }" ]] && continue
-
-        # Check if we're in repos section
-        if [[ "$line" == "repos:" ]]; then
-            in_repos=true
-            continue
-        fi
-
-        if $in_repos; then
-            # New repo entry (no leading spaces, ends with :)
-            if [[ "$line" =~ ^[[:space:]]{2}([a-zA-Z0-9_-]+):$ ]]; then
-                # Output previous repo if exists
-                if [[ -n "$current_repo" ]]; then
-                    echo "$current_repo|$current_url|$current_branch|$current_commit"
-                fi
-                current_repo="${BASH_REMATCH[1]}"
-                current_url=""
-                current_branch=""
-                current_commit=""
-            elif [[ "$line" =~ ^[[:space:]]+url:[[:space:]]*(.*) ]]; then
-                current_url="${BASH_REMATCH[1]}"
-            elif [[ "$line" =~ ^[[:space:]]+branch:[[:space:]]*\"?([^\"]+)\"? ]]; then
-                current_branch="${BASH_REMATCH[1]}"
-            elif [[ "$line" =~ ^[[:space:]]+commit:[[:space:]]*(.*) ]]; then
-                current_commit="${BASH_REMATCH[1]}"
-                [[ "$current_commit" == "null" ]] && current_commit=""
-            fi
-        fi
-    done < "$LOCKFILE"
-
-    # Output last repo
-    if [[ -n "$current_repo" ]]; then
-        echo "$current_repo|$current_url|$current_branch|$current_commit"
+# Check dependencies
+check_deps() {
+    if ! command -v jq &> /dev/null; then
+        log_error "jq is required but not installed. Install with: apt install jq"
+        exit 1
+    fi
+    if ! command -v git &> /dev/null; then
+        log_error "git is required but not installed."
+        exit 1
     fi
 }
 
+# Get repository list from lockfile
+get_repos() {
+    jq -c '.repos[]' "$LOCKFILE"
+}
+
+# Sync a single repository
 sync_repo() {
-    local name="$1"
-    local url="$2"
-    local branch="$3"
-    local commit="$4"
-    local repo_dir="$TARGET_DIR/$name"
+    local name url ref commit repo_dir
+    name=$(echo "$1" | jq -r '.name')
+    url=$(echo "$1" | jq -r '.url')
+    ref=$(echo "$1" | jq -r '.ref')
+    commit=$(echo "$1" | jq -r '.commit')
+
+    local short_name
+    short_name=$(echo "$name" | cut -d'/' -f2)
+    repo_dir="$TARGET_DIR/$short_name"
 
     log_info "Syncing $name..."
 
-    if [[ -d "$repo_dir" ]]; then
+    if [[ -d "$repo_dir/.git" ]]; then
         # Update existing repo
         cd "$repo_dir"
-        git fetch origin
+        git fetch origin --quiet
 
-        if [[ -n "$commit" ]]; then
-            git checkout "$commit"
+        if [[ "$commit" != "HEAD" && "$commit" != "null" && -n "$commit" ]]; then
+            git checkout "$commit" --quiet 2>/dev/null || {
+                log_warn "$name: fetching full history for commit $commit"
+                git fetch --unshallow origin 2>/dev/null || true
+                git checkout "$commit" --quiet
+            }
+            log_success "$name synced to commit $commit"
         else
-            git checkout "origin/$branch"
+            git checkout "origin/$ref" --quiet
+            log_success "$name synced to $ref HEAD"
         fi
-
-        log_success "$name synced to ${commit:-$branch}"
     else
         # Clone new repo
-        git clone --depth 1 --branch "$branch" "$url" "$repo_dir"
+        mkdir -p "$TARGET_DIR"
 
-        if [[ -n "$commit" ]]; then
+        if [[ "$commit" != "HEAD" && "$commit" != "null" && -n "$commit" ]]; then
+            # Clone and checkout specific commit
+            git clone --branch "$ref" "$url" "$repo_dir" --quiet
             cd "$repo_dir"
-            git fetch --depth 1 origin "$commit"
-            git checkout "$commit"
+            git checkout "$commit" --quiet
+            log_success "$name cloned at commit $commit"
+        else
+            # Shallow clone at branch HEAD
+            git clone --depth 1 --branch "$ref" "$url" "$repo_dir" --quiet
+            log_success "$name cloned at $ref HEAD"
         fi
-
-        log_success "$name cloned"
     fi
 }
 
+# Verify a single repository
 verify_repo() {
-    local name="$1"
-    local url="$2"
-    local branch="$3"
-    local commit="$4"
-    local repo_dir="$TARGET_DIR/$name"
+    local name url ref commit repo_dir errors=0
+    name=$(echo "$1" | jq -r '.name')
+    url=$(echo "$1" | jq -r '.url')
+    ref=$(echo "$1" | jq -r '.ref')
+    commit=$(echo "$1" | jq -r '.commit')
 
-    if [[ ! -d "$repo_dir" ]]; then
-        log_error "$name: Not found"
+    local short_name
+    short_name=$(echo "$name" | cut -d'/' -f2)
+    repo_dir="$TARGET_DIR/$short_name"
+
+    if [[ ! -d "$repo_dir/.git" ]]; then
+        log_error "$name: Not found at $repo_dir"
         return 1
     fi
 
     cd "$repo_dir"
-    local current_commit=$(git rev-parse HEAD)
+    local current_commit
+    current_commit=$(git rev-parse HEAD)
 
-    if [[ -n "$commit" ]]; then
+    if [[ "$commit" != "HEAD" && "$commit" != "null" && -n "$commit" ]]; then
         if [[ "$current_commit" == "$commit"* ]]; then
-            log_success "$name: OK (pinned at $commit)"
+            log_success "$name: OK (pinned at ${commit:0:12})"
             return 0
         else
-            log_error "$name: Mismatch (expected $commit, got $current_commit)"
+            log_error "$name: Mismatch (expected ${commit:0:12}, got ${current_commit:0:12})"
             return 1
         fi
     else
-        log_warn "$name: Not pinned (currently at $current_commit)"
+        log_warn "$name: Not pinned (currently at ${current_commit:0:12})"
         return 0
     fi
 }
 
-update_lockfile() {
-    local temp_file=$(mktemp)
-    local in_repos=false
-    local current_repo=""
+# Verify all modules listed in lockfile exist in the cloned repos
+verify_modules() {
+    local errors=0
 
-    while IFS= read -r line; do
-        if [[ "$line" == "repos:" ]]; then
-            in_repos=true
-            echo "$line" >> "$temp_file"
-            continue
-        fi
+    log_info "Verifying module availability..."
 
-        if $in_repos; then
-            if [[ "$line" =~ ^[[:space:]]{2}([a-zA-Z0-9_-]+):$ ]]; then
-                current_repo="${BASH_REMATCH[1]}"
-                echo "$line" >> "$temp_file"
-            elif [[ "$line" =~ ^[[:space:]]+commit: ]]; then
-                local repo_dir="$TARGET_DIR/$current_repo"
-                if [[ -d "$repo_dir" ]]; then
-                    cd "$repo_dir"
-                    local current_commit=$(git rev-parse HEAD)
-                    echo "    commit: $current_commit" >> "$temp_file"
-                    log_info "Updated $current_repo commit to $current_commit"
-                else
-                    echo "$line" >> "$temp_file"
-                fi
+    while read -r repo; do
+        local short_name modules repo_dir
+        short_name=$(echo "$repo" | jq -r '.name' | cut -d'/' -f2)
+        modules=$(echo "$repo" | jq -r '.modules[]' 2>/dev/null || echo "")
+        repo_dir="$TARGET_DIR/$short_name"
+
+        for module in $modules; do
+            if [[ -d "$repo_dir/$module" ]]; then
+                log_debug "  $short_name/$module: found"
             else
-                echo "$line" >> "$temp_file"
+                log_error "  $short_name/$module: MISSING"
+                ((errors++))
             fi
-        else
-            echo "$line" >> "$temp_file"
-        fi
-    done < "$LOCKFILE"
+        done
+    done < <(get_repos)
 
-    mv "$temp_file" "$LOCKFILE"
-    log_success "Lockfile updated"
+    if [[ $errors -gt 0 ]]; then
+        log_error "$errors module(s) missing from lockfile definition"
+        return 1
+    else
+        log_success "All modules verified"
+        return 0
+    fi
 }
 
+# Update lockfile with current HEAD commits
+update_lockfile() {
+    local temp_file
+    temp_file=$(mktemp)
+
+    log_info "Updating lockfile with current commits..."
+
+    # Read the lockfile and update commits
+    jq --arg timestamp "$(date -u +%Y-%m-%dT%H:%M:%SZ)" '.generated_at = $timestamp' "$LOCKFILE" > "$temp_file"
+
+    while read -r repo; do
+        local name short_name repo_dir current_commit
+        name=$(echo "$repo" | jq -r '.name')
+        short_name=$(echo "$name" | cut -d'/' -f2)
+        repo_dir="$TARGET_DIR/$short_name"
+
+        if [[ -d "$repo_dir/.git" ]]; then
+            cd "$repo_dir"
+            current_commit=$(git rev-parse HEAD)
+
+            # Update the commit in temp file
+            jq --arg name "$name" --arg commit "$current_commit" \
+               '(.repos[] | select(.name == $name) | .commit) = $commit' \
+               "$temp_file" > "${temp_file}.new"
+            mv "${temp_file}.new" "$temp_file"
+
+            log_info "  $name: ${current_commit:0:12}"
+        else
+            log_warn "  $name: not cloned, skipping"
+        fi
+    done < <(get_repos)
+
+    mv "$temp_file" "$LOCKFILE"
+    log_success "Lockfile updated with pinned commits"
+}
+
+# List all repos and their status
 list_repos() {
     echo ""
     echo "OCA Repositories in lockfile:"
     echo "=============================="
+    printf "%-30s %-10s %-15s %s\n" "Repository" "Branch" "Status" "Commit"
+    printf "%-30s %-10s %-15s %s\n" "----------" "------" "------" "------"
 
-    parse_repos | while IFS='|' read -r name url branch commit; do
-        local repo_dir="$TARGET_DIR/$name"
-        local status="NOT CLONED"
+    while read -r repo; do
+        local name short_name ref commit repo_dir status current_commit
+        name=$(echo "$repo" | jq -r '.name')
+        short_name=$(echo "$name" | cut -d'/' -f2)
+        ref=$(echo "$repo" | jq -r '.ref')
+        commit=$(echo "$repo" | jq -r '.commit')
+        repo_dir="$TARGET_DIR/$short_name"
 
-        if [[ -d "$repo_dir" ]]; then
+        if [[ -d "$repo_dir/.git" ]]; then
             cd "$repo_dir"
-            local current_commit=$(git rev-parse --short HEAD)
-            status="CLONED ($current_commit)"
+            current_commit=$(git rev-parse --short HEAD)
+
+            if [[ "$commit" != "HEAD" && "$commit" != "null" && -n "$commit" ]]; then
+                if [[ "$(git rev-parse HEAD)" == "$commit"* ]]; then
+                    status="PINNED"
+                else
+                    status="DRIFT"
+                fi
+            else
+                status="UNPINNED"
+            fi
+        else
+            status="NOT CLONED"
+            current_commit="-"
         fi
 
-        printf "%-25s %-10s %s\n" "$name" "$branch" "$status"
-    done
+        printf "%-30s %-10s %-15s %s\n" "$short_name" "$ref" "$status" "$current_commit"
+    done < <(get_repos)
 
     echo ""
 }
 
+# Export modules for Docker build (without .git directories)
+export_modules() {
+    log_info "Exporting OCA modules for Docker build..."
+
+    rm -rf "$EXPORT_DIR"
+    mkdir -p "$EXPORT_DIR"
+
+    while read -r repo; do
+        local short_name modules repo_dir
+        short_name=$(echo "$repo" | jq -r '.name' | cut -d'/' -f2)
+        modules=$(echo "$repo" | jq -r '.modules[]' 2>/dev/null || echo "")
+        repo_dir="$TARGET_DIR/$short_name"
+
+        for module in $modules; do
+            if [[ -d "$repo_dir/$module" ]]; then
+                log_debug "  Exporting $short_name/$module"
+                rsync -a --delete "$repo_dir/$module/" "$EXPORT_DIR/$module/"
+            else
+                log_warn "  Skipping missing module: $short_name/$module"
+            fi
+        done
+    done < <(get_repos)
+
+    # Remove any .git directories
+    find "$EXPORT_DIR" -name ".git" -type d -exec rm -rf {} + 2>/dev/null || true
+
+    local module_count
+    module_count=$(find "$EXPORT_DIR" -maxdepth 1 -type d | wc -l)
+    ((module_count--)) # subtract 1 for the directory itself
+
+    log_success "Exported $module_count modules to $EXPORT_DIR"
+}
+
+# Show help
+show_help() {
+    echo "OCA Vendor Sync Script v2.0"
+    echo ""
+    echo "Usage: $0 <command>"
+    echo ""
+    echo "Commands:"
+    echo "  sync      Clone/update OCA repos to versions in oca.lock.json"
+    echo "  verify    Check if repos match lockfile (commits + modules)"
+    echo "  update    Update lockfile with current HEAD commits"
+    echo "  list      List all OCA repos and their status"
+    echo "  export    Export modules for Docker build (no .git)"
+    echo ""
+    echo "Lockfile: $LOCKFILE"
+    echo "Target:   $TARGET_DIR"
+    echo ""
+    echo "Environment:"
+    echo "  DEBUG=1   Enable debug output"
+    echo ""
+}
+
 # Main command dispatcher
-case "${1:-help}" in
-    sync)
-        log_info "Syncing OCA repositories to $TARGET_DIR"
-        mkdir -p "$TARGET_DIR"
+main() {
+    check_deps
 
-        parse_repos | while IFS='|' read -r name url branch commit; do
-            sync_repo "$name" "$url" "$branch" "$commit"
-        done
+    case "${1:-help}" in
+        sync)
+            log_info "Syncing OCA repositories to $TARGET_DIR"
+            mkdir -p "$TARGET_DIR"
 
-        log_success "All OCA repositories synced"
-        ;;
+            while read -r repo; do
+                sync_repo "$repo"
+            done < <(get_repos)
 
-    verify)
-        log_info "Verifying OCA repositories against lockfile"
+            log_success "All OCA repositories synced"
+            ;;
 
-        errors=0
-        parse_repos | while IFS='|' read -r name url branch commit; do
-            verify_repo "$name" "$url" "$branch" "$commit" || ((errors++))
-        done
+        verify)
+            log_info "Verifying OCA repositories against lockfile"
 
-        if [[ $errors -gt 0 ]]; then
-            log_error "$errors repositories failed verification"
+            local errors=0
+            while read -r repo; do
+                verify_repo "$repo" || ((errors++))
+            done < <(get_repos)
+
+            verify_modules || ((errors++))
+
+            if [[ $errors -gt 0 ]]; then
+                log_error "$errors verification issue(s) found"
+                exit 1
+            else
+                log_success "All OCA repositories verified"
+            fi
+            ;;
+
+        update)
+            update_lockfile
+            ;;
+
+        list)
+            list_repos
+            ;;
+
+        export)
+            export_modules
+            ;;
+
+        help|--help|-h)
+            show_help
+            ;;
+
+        *)
+            log_error "Unknown command: $1"
+            show_help
             exit 1
-        else
-            log_success "All OCA repositories verified"
-        fi
-        ;;
+            ;;
+    esac
+}
 
-    update)
-        log_info "Updating lockfile with current commits"
-        update_lockfile
-        ;;
-
-    list)
-        list_repos
-        ;;
-
-    *)
-        echo "OCA Vendor Sync Script"
-        echo ""
-        echo "Usage: $0 <command>"
-        echo ""
-        echo "Commands:"
-        echo "  sync    Clone/update OCA repos to versions in oca.lock"
-        echo "  verify  Check if repos match lockfile"
-        echo "  update  Update lockfile with current HEAD commits"
-        echo "  list    List all OCA repos and status"
-        echo ""
-        ;;
-esac
+main "$@"
