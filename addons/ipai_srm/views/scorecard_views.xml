@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Scorecard List View -->
+    <record id="view_scorecard_list" model="ir.ui.view">
+      <field name="name">srm.scorecard.list</field>
+      <field name="model">srm.scorecard</field>
+      <field name="arch" type="xml">
+        <list string="Scorecards">
+          <field name="as_of"/>
+          <field name="supplier_id"/>
+          <field name="period"/>
+          <field name="overall_score" widget="progressbar"/>
+          <field name="grade" widget="badge" decoration-success="grade == 'A'" decoration-info="grade == 'B'" decoration-warning="grade == 'C'" decoration-danger="grade in ('D', 'F')"/>
+          <field name="state"/>
+          <field name="evaluator_id"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Scorecard Form View -->
+    <record id="view_scorecard_form" model="ir.ui.view">
+      <field name="name">srm.scorecard.form</field>
+      <field name="model">srm.scorecard</field>
+      <field name="arch" type="xml">
+        <form string="Scorecard">
+          <header>
+            <button name="action_submit" type="object" string="Submit" class="oe_highlight" invisible="state != 'draft'"/>
+            <button name="action_approve" type="object" string="Approve" class="oe_highlight" invisible="state != 'submitted'" groups="ipai_srm.group_srm_manager"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
+          </header>
+          <sheet>
+            <div class="oe_title">
+              <label for="supplier_id"/>
+              <h1><field name="supplier_id"/></h1>
+            </div>
+            <group>
+              <group>
+                <field name="as_of"/>
+                <field name="period"/>
+                <field name="evaluator_id"/>
+              </group>
+              <group>
+                <field name="overall_score" widget="progressbar"/>
+                <field name="grade" widget="badge"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="KPI Scores">
+                <field name="line_ids">
+                  <list editable="bottom">
+                    <field name="kpi_category_id"/>
+                    <field name="weight"/>
+                    <field name="score"/>
+                    <field name="weighted_score"/>
+                    <field name="notes"/>
+                  </list>
+                </field>
+              </page>
+              <page string="Comments">
+                <field name="comments" placeholder="General comments on this evaluation..."/>
+                <field name="action_items" placeholder="Action items and follow-ups..."/>
+              </page>
+            </notebook>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Scorecard Action -->
+    <record id="action_scorecard" model="ir.actions.act_window">
+      <field name="name">Scorecards</field>
+      <field name="res_model">srm.scorecard</field>
+      <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- KPI Category Views -->
+    <record id="view_kpi_category_list" model="ir.ui.view">
+      <field name="name">srm.kpi.category.list</field>
+      <field name="model">srm.kpi.category</field>
+      <field name="arch" type="xml">
+        <list string="KPI Categories">
+          <field name="sequence" widget="handle"/>
+          <field name="code"/>
+          <field name="name"/>
+          <field name="weight"/>
+          <field name="eval_method"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_kpi_category_form" model="ir.ui.view">
+      <field name="name">srm.kpi.category.form</field>
+      <field name="model">srm.kpi.category</field>
+      <field name="arch" type="xml">
+        <form string="KPI Category">
+          <sheet>
+            <group>
+              <group>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="sequence"/>
+              </group>
+              <group>
+                <field name="weight"/>
+                <field name="eval_method"/>
+                <field name="compute_source" invisible="eval_method != 'computed'"/>
+              </group>
+            </group>
+            <field name="description" placeholder="KPI description..."/>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="action_kpi_category" model="ir.actions.act_window">
+      <field name="name">KPI Categories</field>
+      <field name="res_model">srm.kpi.category</field>
+      <field name="view_mode">list,form</field>
+    </record>
+  </data>
+</odoo>

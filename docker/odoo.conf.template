@@ -1,0 +1,87 @@
+[options]
+; =============================================================================
+; Odoo 18 CE + Parity Modules Configuration
+; =============================================================================
+; IMPORTANT: This is a TEMPLATE file. Do not edit odoo.conf directly.
+; Variables like ${VAR} are expanded by envsubst at container startup.
+; =============================================================================
+
+; -----------------------------------------------------------------------------
+; Database Configuration
+; -----------------------------------------------------------------------------
+db_host = ${DB_HOST:-db}
+db_port = ${DB_PORT:-5432}
+db_user = ${DB_USER:-odoo}
+db_password = ${DB_PASSWORD:-odoo}
+db_name = ${DB_NAME:-False}
+db_sslmode = ${DB_SSLMODE:-prefer}
+db_maxconn = ${DB_MAXCONN:-64}
+
+; Database filtering (production: restrict to single DB)
+dbfilter = ${DB_FILTER:-^%d$}
+list_db = ${LIST_DB:-False}
+
+; -----------------------------------------------------------------------------
+; Addons Path
+; -----------------------------------------------------------------------------
+; Loaded from ODOO_ADDONS_PATH environment variable at runtime
+; Default: CE core + OCA + ipai_* parity modules
+addons_path = ${ODOO_ADDONS_PATH}
+
+; -----------------------------------------------------------------------------
+; HTTP Settings
+; -----------------------------------------------------------------------------
+http_port = ${HTTP_PORT:-8069}
+longpolling_port = ${LONGPOLLING_PORT:-8072}
+http_interface = ${HTTP_INTERFACE:-0.0.0.0}
+proxy_mode = ${PROXY_MODE:-True}
+
+; -----------------------------------------------------------------------------
+; Performance Tuning
+; -----------------------------------------------------------------------------
+workers = ${WORKERS:-4}
+max_cron_threads = ${MAX_CRON_THREADS:-2}
+limit_time_cpu = ${LIMIT_TIME_CPU:-600}
+limit_time_real = ${LIMIT_TIME_REAL:-1200}
+limit_time_real_cron = ${LIMIT_TIME_REAL_CRON:-0}
+limit_memory_hard = ${LIMIT_MEMORY_HARD:-2684354560}
+limit_memory_soft = ${LIMIT_MEMORY_SOFT:-2147483648}
+limit_request = ${LIMIT_REQUEST:-8192}
+
+; -----------------------------------------------------------------------------
+; Logging
+; -----------------------------------------------------------------------------
+logfile = ${LOGFILE:-/var/log/odoo/odoo-server.log}
+log_level = ${LOG_LEVEL:-info}
+log_handler = ${LOG_HANDLER:-:INFO}
+log_db = ${LOG_DB:-False}
+
+; -----------------------------------------------------------------------------
+; Security
+; -----------------------------------------------------------------------------
+admin_passwd = ${ADMIN_PASSWORD:-admin}
+server_wide_modules = ${SERVER_WIDE_MODULES:-base,web}
+
+; Data storage
+data_dir = ${DATA_DIR:-/var/lib/odoo}
+
+; -----------------------------------------------------------------------------
+; Email (optional - configure via env vars)
+; -----------------------------------------------------------------------------
+email_from = ${EMAIL_FROM:-False}
+smtp_server = ${SMTP_SERVER:-localhost}
+smtp_port = ${SMTP_PORT:-25}
+smtp_ssl = ${SMTP_SSL:-False}
+smtp_user = ${SMTP_USER:-False}
+smtp_password = ${SMTP_PASSWORD:-False}
+
+; -----------------------------------------------------------------------------
+; Testing & Development
+; -----------------------------------------------------------------------------
+test_enable = ${TEST_ENABLE:-False}
+without_demo = ${WITHOUT_DEMO:-all}
+
+; -----------------------------------------------------------------------------
+; Misc
+; -----------------------------------------------------------------------------
+unaccent = ${UNACCENT:-False}
