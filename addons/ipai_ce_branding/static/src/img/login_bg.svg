@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a73e8;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#34a853;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1a73e8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg-gradient)"/>
+  <circle cx="960" cy="540" r="300" fill="rgba(255,255,255,0.1)"/>
+  <text x="960" y="560" font-family="Arial, sans-serif" font-size="72" fill="rgba(255,255,255,0.3)" text-anchor="middle">
+    InsightPulse AI
+  </text>
+</svg>
