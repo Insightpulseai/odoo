@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 88244b913e30975ed17cbb7adbcf295c3a82278c
+> Commit: 5827c9b9d96ffd260dc11d7c73be512661395d84
 
 ```
 .
@@ -21,6 +21,7 @@
 │   │   ├── build-seeded-image.yml
 │   │   ├── ci-odoo-ce.yml
 │   │   ├── ci-odoo-oca.yml
+│   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── health-check.yml
 │   │   └── repo-structure.yml
 │   └── copilot-instructions.md
@@ -81,6 +82,14 @@
 │   │   │   ├── bir_dat_file_wizard.py
 │   │   │   └── bir_dat_file_wizard_view.xml
 │   │   ├── README.rst
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ce_branding
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   ├── assets.xml
+│   │   │   └── ce_branding_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_ce_cleaner
@@ -692,19 +701,35 @@
 │   │   ├── tools
 │   │   │   └── odoo_finance_ppm.py
 │   │   └── README.md
-│   └── do-advisor-ui
-│       ├── public
-│       │   ├── config.js
-│       │   └── index.html
-│       ├── src
-│       │   ├── assets
-│       │   ├── components
-│       │   ├── views
-│       │   └── app.js
-│       ├── Dockerfile
-│       ├── README.md
-│       ├── app-spec.yaml
-│       └── nginx.conf
+│   ├── do-advisor-ui
+│   │   ├── public
+│   │   │   ├── config.js
+│   │   │   └── index.html
+│   │   ├── src
+│   │   │   ├── assets
+│   │   │   ├── components
+│   │   │   ├── views
+│   │   │   └── app.js
+│   │   ├── Dockerfile
+│   │   ├── README.md
+│   │   ├── app-spec.yaml
+│   │   └── nginx.conf
+│   └── ipai-control-center-docs
+│       ├── .vercel
+│       │   └── project.json
+│       ├── pages
+│       │   ├── strategy
+│       │   ├── _app.jsx
+│       │   ├── _meta.js
+│       │   ├── constitution.md
+│       │   ├── index.mdx
+│       │   ├── plan.md
+│       │   ├── prd.md
+│       │   └── tasks.md
+│       ├── DEPLOYMENT.md
+│       ├── next.config.mjs
+│       ├── package.json
+│       └── theme.config.jsx
 ├── automations
 │   └── n8n
 │       └── workflows
@@ -1064,6 +1089,8 @@
 ├── odoo
 │   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
+├── patches
+│   └── ipai_ce_cleaner_xmlid_fix.diff
 ├── scripts
 │   ├── ci
 │   │   ├── constraints-gevent.txt
@@ -1125,6 +1152,11 @@
 │   ├── architecture_diagrams.skill.json
 │   └── superset_mcp.skill.json
 ├── spec
+│   ├── ipai-control-center
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── constitution.md
 │   ├── plan.md
 │   ├── prd.md
@@ -1256,6 +1288,8 @@
 ├── PROJECT_WRAPPER_IMPLEMENTATION.md
 ├── PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md
 ├── README.md
+├── README_BUILD.md
+├── README_PATCH.md
 ├── RELEASE_v0.9.0.md
 ├── REPO_RESTRUCTURE_PLAN.md
 ├── SITEMAP.md
@@ -1291,11 +1325,13 @@
 ├── install_module.py
 ├── install_ppm_module.py
 ├── install_ppm_monthly_close.sh
+├── ipai_ce_branding_patch_v1.2.0.zip
 ├── ipai_finance_ppm_directory.csv
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
 ├── odoo-bin
 ├── odoo-ce-target.zip
+├── odoo-v1.2.0-build.zip
 ├── odoo_ce_expert_prompt.md
 ├── ph_holidays_2026.csv
 ├── plan.md
@@ -1307,21 +1343,22 @@
 ├── tasks.md
 ├── update_finance_ppm.py
 ├── update_module.py
+├── vercel.json
 ├── verify_deployment.py
 ├── verify_finance_ppm.py
 ├── verify_ppm_installation.sh
 ├── walkthrough.md
 └── workflow_template.csv
 
-341 directories, 967 files
+351 directories, 994 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 357 |
-| Files | 1031 |
-| Python files | 309 |
-| XML files | 158 |
-| Markdown files | 208 |
+| Directories | 369 |
+| Files | 1062 |
+| Python files | 311 |
+| XML files | 160 |
+| Markdown files | 219 |

@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 88244b913e30975ed17cbb7adbcf295c3a82278c
+> Commit: 5827c9b9d96ffd260dc11d7c73be512661395d84
 
 ## 📚 Documentation
 
@@ -45,6 +45,8 @@
 | [Finance PPM Project Wrapper Implementation](PROJECT_WRAPPER_IMPLEMENTATION.md) | . |
 | [Finance PPM Project Integration - Implementation Summary](PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md) | . |
 | [InsightPulse Odoo CE – ERP Platform](README.md) | . |
+| [Odoo CE v1.2.0 - Full Build Bundle](README_BUILD.md) | . |
+| [InsightPulse AI - CE Branding Patch v1.2.0](README_PATCH.md) | . |
 | [v0.9.0 - Infrastructure Unification Release](RELEASE_v0.9.0.md) | . |
 | [Odoo CE Repository Restructure Plan](REPO_RESTRUCTURE_PLAN.md) | . |
 | [🗺️ Sitemap - InsightPulse ERP](SITEMAP.md) | . |
@@ -78,6 +80,11 @@
 | [DO Advisor Agent](apps/do-advisor-agent/README.md) | apps/do-advisor-agent |
 | [DO Advisor - Unified Infrastructure Intelligence](apps/do-advisor-agent/prompts/unified_advisor.md) | apps/do-advisor-agent/prompts |
 | [DO Advisor UI](apps/do-advisor-ui/README.md) | apps/do-advisor-ui |
+| [IPAI Control Center Docs - Deployment Guide](apps/ipai-control-center-docs/DEPLOYMENT.md) | apps/ipai-control-center-docs |
+| [Constitution — IPAI Control Center (Spec Kit)](apps/ipai-control-center-docs/pages/constitution.md) | apps/ipai-control-center-docs/pages |
+| [Delivery Plan — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/plan.md) | apps/ipai-control-center-docs/pages |
+| [Product Requirements Document — IPAI Control Center](apps/ipai-control-center-docs/pages/prd.md) | apps/ipai-control-center-docs/pages |
+| [Tasks — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/tasks.md) | apps/ipai-control-center-docs/pages |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [Flutter Receipt OCR Module - Deployment Guide](clients/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | clients/flutter_receipt_ocr |
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
@@ -193,6 +200,10 @@
 | [Scripts Directory](scripts/README.md) | scripts |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
 | [Odoo EE → CE/OCA SaaS Platform – Constitution](spec/constitution.md) | spec |
+| [Constitution — IPAI Control Center (Spec Kit)](spec/ipai-control-center/constitution.md) | spec/ipai-control-center |
+| [Delivery Plan — IPAI Control Center (v1.0.0)](spec/ipai-control-center/plan.md) | spec/ipai-control-center |
+| [Product Requirements Document — IPAI Control Center](spec/ipai-control-center/prd.md) | spec/ipai-control-center |
+| [Tasks — IPAI Control Center (v1.0.0)](spec/ipai-control-center/tasks.md) | spec/ipai-control-center |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
@@ -223,6 +234,7 @@
 | [ipai_accounting_firm_pack](./addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_advisor](./addons/ipai_advisor) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai_bir_compliance) | ✅ |  |
+| [ipai_ce_branding](./addons/ipai_ce_branding) | ✅ | Custom branding for Odoo CE login and backend |
 | [ipai_ce_cleaner](./addons/ipai_ce_cleaner) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai_clarity_ppm_parity) | ✅ |  |
 | [ipai_docs](./addons/ipai_docs) | ✅ |  |
