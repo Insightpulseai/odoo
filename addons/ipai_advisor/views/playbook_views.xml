@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Playbook List View -->
+    <record id="view_advisor_playbook_list" model="ir.ui.view">
+      <field name="name">advisor.playbook.list</field>
+      <field name="model">advisor.playbook</field>
+      <field name="arch" type="xml">
+        <list string="Playbooks">
+          <field name="code"/>
+          <field name="name"/>
+          <field name="automation_kind"/>
+          <field name="recommendation_count"/>
+          <field name="category_ids" widget="many2many_tags"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Playbook Form View -->
+    <record id="view_advisor_playbook_form" model="ir.ui.view">
+      <field name="name">advisor.playbook.form</field>
+      <field name="model">advisor.playbook</field>
+      <field name="arch" type="xml">
+        <form string="Playbook">
+          <header>
+            <button name="action_execute" string="Execute" type="object" class="btn-primary" invisible="automation_kind == 'none'"/>
+          </header>
+          <sheet>
+            <div class="oe_button_box" name="button_box">
+              <button name="%(action_advisor_recommendation)d" type="action"
+                      class="oe_stat_button" icon="fa-list"
+                      context="{'search_default_playbook_id': active_id}">
+                <field name="recommendation_count" widget="statinfo" string="Recommendations"/>
+              </button>
+            </div>
+            <div class="oe_title">
+              <label for="name"/>
+              <h1><field name="name" placeholder="Playbook Name"/></h1>
+              <field name="code" placeholder="playbook-code"/>
+            </div>
+            <group>
+              <group string="Automation">
+                <field name="automation_kind"/>
+                <field name="automation_ref" invisible="automation_kind == 'none'"/>
+              </group>
+              <group string="Applicable To">
+                <field name="category_ids" widget="many2many_tags"/>
+              </group>
+            </group>
+            <group>
+              <field name="description" placeholder="Brief description..."/>
+            </group>
+            <notebook>
+              <page string="Steps" name="steps">
+                <field name="steps_md" widget="html" placeholder="Step-by-step remediation instructions in Markdown..."/>
+              </page>
+              <page string="Automation Parameters" name="params" invisible="automation_kind == 'none'">
+                <field name="automation_params" widget="ace" options="{'mode': 'json'}"/>
+              </page>
+            </notebook>
+            <field name="active" invisible="1"/>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- Playbook Action -->
+    <record id="action_advisor_playbook" model="ir.actions.act_window">
+      <field name="name">Playbooks</field>
+      <field name="res_model">advisor.playbook</field>
+      <field name="view_mode">list,form</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create your first playbook
+        </p>
+        <p>
+          Playbooks contain step-by-step remediation instructions
+          and can be linked to automation workflows.
+        </p>
+      </field>
+    </record>
+  </data>
+</odoo>
