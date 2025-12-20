@@ -11,6 +11,7 @@ jobs:
     outputs:
       run_odoo: ${{ steps.diff.outputs.run_odoo }}
       run_tests: ${{ steps.diff.outputs.run_tests }}
+      docs_only: ${{ steps.diff.outputs.docs_only }}
       change_type: ${{ steps.diff.outputs.change_type }}
       changed_files: ${{ steps.diff.outputs.changed_files }}
 
@@ -103,6 +104,14 @@ jobs:
             CHANGE_TYPE="other"
           fi
 
+          # Determine if this is a docs-only PR (no code, no tests)
+          # Includes: docs, spec, infra, agent_config - anything that doesn't need Odoo CI
+          if [ "$RUN_ODOO" = "false" ]; then
+            DOCS_ONLY=true
+          else
+            DOCS_ONLY=false
+          fi
+
           echo "Classification:"
           echo "  HAS_CODE=$HAS_CODE"
           echo "  HAS_TESTS=$HAS_TESTS"
@@ -112,10 +121,12 @@ jobs:
           echo "  HAS_AGENT_CONFIG=$HAS_AGENT_CONFIG"
           echo "  RUN_ODOO=$RUN_ODOO"
           echo "  RUN_TESTS=$RUN_TESTS"
+          echo "  DOCS_ONLY=$DOCS_ONLY"
           echo "  CHANGE_TYPE=$CHANGE_TYPE"
 
           echo "run_odoo=$RUN_ODOO" >> $GITHUB_OUTPUT
           echo "run_tests=$RUN_TESTS" >> $GITHUB_OUTPUT
+          echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
           echo "change_type=$CHANGE_TYPE" >> $GITHUB_OUTPUT
 
       - name: Summary
@@ -125,6 +136,7 @@ jobs:
           echo "| Flag | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Change Type | \`${{ steps.diff.outputs.change_type }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Docs Only | \`${{ steps.diff.outputs.docs_only }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Run Odoo CI | \`${{ steps.diff.outputs.run_odoo }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Run Tests | \`${{ steps.diff.outputs.run_tests }}\` |" >> $GITHUB_STEP_SUMMARY
 
@@ -140,27 +152,42 @@ jobs:
           echo "This PR contains code changes that require Odoo CI"
           echo "Change type: ${{ needs.classify.outputs.change_type }}"
 
-  # Skip message for docs-only PRs
+  # Success message for docs-only PRs (always passes when docs_only=true)
   docs-only:
     name: Docs-Only PR
     needs: classify
     runs-on: ubuntu-latest
-    if: needs.classify.outputs.run_odoo == 'false'
+    if: needs.classify.outputs.docs_only == 'true'
     steps:
-      - name: Skip heavy CI
+      - name: Docs-only confirmation
         run: |
-          echo "This PR contains only documentation/infrastructure changes"
+          echo "::notice::This PR contains only documentation/infrastructure changes"
           echo "Skipping Odoo CI matrix"
           echo "Change type: ${{ needs.classify.outputs.change_type }}"
+          echo ""
+          echo "Docs-only PRs skip:"
+          echo "  - Odoo module tests"
+          echo "  - OCA integration tests"
+          echo "  - Full Docker build matrix"
+          echo ""
+          echo "Docs-only PRs still run:"
+          echo "  - Spec-kit validation (if spec/ changed)"
+          echo "  - Workflow syntax checks"
+          echo "  - Lakehouse smoke tests (if infra/lakehouse changed)"
 
       - name: Add label
         uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
+        continue-on-error: true
         with:
           script: |
-            await github.rest.issues.addLabels({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              labels: ['docs-only', 'skip-ci']
-            });
+            try {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: ['docs-only', 'skip-ci']
+              });
+            } catch (e) {
+              console.log('Could not add label:', e.message);
+            }

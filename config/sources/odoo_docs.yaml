@@ -1,0 +1,239 @@
+# =============================================================================
+# Source Manifest: Odoo Documentation
+# =============================================================================
+# Official Odoo 18.0 documentation - User, Developer, and Contributing guides.
+# This manifest defines crawl rules for the lakehouse Bronze ingestion pipeline.
+# =============================================================================
+
+source: odoo_docs
+display_name: "Odoo 18 Documentation"
+version: "18.0"
+priority: 1  # Higher priority = process first
+
+# Domain allowlist
+domains:
+  - www.odoo.com
+
+# Crawl roots - each becomes a space in kb.spaces
+roots:
+  # User Documentation - Essentials
+  - space: user_docs/essentials
+    url: "https://www.odoo.com/documentation/18.0/"
+    depth: 3
+    description: "Getting started and essential concepts"
+
+  # User Documentation - Apps (Finance)
+  - space: user_docs/apps/accounting
+    url: "https://www.odoo.com/documentation/18.0/applications/finance/accounting.html"
+    depth: 5
+    description: "Accounting and Invoicing"
+
+  - space: user_docs/apps/expenses
+    url: "https://www.odoo.com/documentation/18.0/applications/finance/expenses.html"
+    depth: 4
+    description: "Expense Management"
+
+  # User Documentation - Apps (Sales)
+  - space: user_docs/apps/sales
+    url: "https://www.odoo.com/documentation/18.0/applications/sales/sales.html"
+    depth: 5
+    description: "Sales and CRM"
+
+  - space: user_docs/apps/crm
+    url: "https://www.odoo.com/documentation/18.0/applications/sales/crm.html"
+    depth: 5
+    description: "Customer Relationship Management"
+
+  - space: user_docs/apps/pos
+    url: "https://www.odoo.com/documentation/18.0/applications/sales/point_of_sale.html"
+    depth: 4
+    description: "Point of Sale"
+
+  # User Documentation - Apps (Supply Chain)
+  - space: user_docs/apps/inventory
+    url: "https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/inventory.html"
+    depth: 6
+    description: "Inventory and Warehousing"
+
+  - space: user_docs/apps/manufacturing
+    url: "https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/manufacturing.html"
+    depth: 5
+    description: "Manufacturing and MRP"
+
+  - space: user_docs/apps/purchase
+    url: "https://www.odoo.com/documentation/18.0/applications/inventory_and_mrp/purchase.html"
+    depth: 4
+    description: "Purchase Management"
+
+  # User Documentation - Apps (HR)
+  - space: user_docs/apps/employees
+    url: "https://www.odoo.com/documentation/18.0/applications/hr/employees.html"
+    depth: 4
+    description: "Employee Management"
+
+  - space: user_docs/apps/recruitment
+    url: "https://www.odoo.com/documentation/18.0/applications/hr/recruitment.html"
+    depth: 4
+    description: "Recruitment"
+
+  - space: user_docs/apps/time_off
+    url: "https://www.odoo.com/documentation/18.0/applications/hr/time_off.html"
+    depth: 4
+    description: "Time Off Management"
+
+  # User Documentation - Apps (Websites)
+  - space: user_docs/apps/website
+    url: "https://www.odoo.com/documentation/18.0/applications/websites/website.html"
+    depth: 5
+    description: "Website Builder"
+
+  - space: user_docs/apps/ecommerce
+    url: "https://www.odoo.com/documentation/18.0/applications/websites/ecommerce.html"
+    depth: 5
+    description: "eCommerce"
+
+  # User Documentation - Apps (Productivity)
+  - space: user_docs/apps/project
+    url: "https://www.odoo.com/documentation/18.0/applications/productivity/project.html"
+    depth: 4
+    description: "Project Management"
+
+  - space: user_docs/apps/knowledge
+    url: "https://www.odoo.com/documentation/18.0/applications/productivity/knowledge.html"
+    depth: 4
+    description: "Knowledge Base"
+
+  # User Documentation - Settings & Administration
+  - space: user_docs/settings
+    url: "https://www.odoo.com/documentation/18.0/applications/general.html"
+    depth: 4
+    description: "General Settings and Administration"
+
+  # User Documentation - Hosting
+  - space: user_docs/hosting/online
+    url: "https://www.odoo.com/documentation/18.0/administration/odoo_online.html"
+    depth: 3
+    description: "Odoo Online (SaaS)"
+
+  - space: user_docs/hosting/odoo_sh
+    url: "https://www.odoo.com/documentation/18.0/administration/odoo_sh.html"
+    depth: 4
+    description: "Odoo.sh Platform"
+
+  - space: user_docs/hosting/on_prem
+    url: "https://www.odoo.com/documentation/18.0/administration/on_premise.html"
+    depth: 4
+    description: "On-Premise Deployment"
+
+  # User Documentation - Upgrade & Maintain
+  - space: user_docs/maintain
+    url: "https://www.odoo.com/documentation/18.0/administration/maintain.html"
+    depth: 3
+    description: "Database Management and Maintenance"
+
+  - space: user_docs/upgrade
+    url: "https://www.odoo.com/documentation/18.0/administration/upgrade.html"
+    depth: 3
+    description: "Upgrade Process"
+
+  # Developer Documentation
+  - space: dev/tutorials
+    url: "https://www.odoo.com/documentation/18.0/developer/tutorials.html"
+    depth: 8
+    description: "Developer Tutorials"
+
+  - space: dev/howtos
+    url: "https://www.odoo.com/documentation/18.0/developer/howtos.html"
+    depth: 6
+    description: "Developer How-to Guides"
+
+  - space: dev/reference
+    url: "https://www.odoo.com/documentation/18.0/developer/reference.html"
+    depth: 8
+    description: "Developer Reference"
+
+  - space: dev/external_api
+    url: "https://www.odoo.com/documentation/18.0/developer/reference/external_api.html"
+    depth: 5
+    description: "External API Reference"
+
+  # Contributing Documentation
+  - space: contributing/coding
+    url: "https://www.odoo.com/documentation/18.0/contributing/development.html"
+    depth: 4
+    description: "Coding Guidelines"
+
+  - space: contributing/documentation
+    url: "https://www.odoo.com/documentation/18.0/contributing/documentation.html"
+    depth: 4
+    description: "Documentation Guidelines"
+
+# URL patterns to include (regex)
+include:
+  - "^https://www\\.odoo\\.com/documentation/18\\.0/.*"
+
+# URL patterns to exclude (regex)
+exclude:
+  # Old versions
+  - "/documentation/17\\."
+  - "/documentation/16\\."
+  - "/documentation/15\\."
+  - "/documentation/14\\."
+  - "/documentation/13\\."
+  # Non-content pages
+  - "\\?share="
+  - "\\?download="
+  - "#[a-z]"  # Fragment-only links
+  - "/page/"
+  - "/slides/"
+  - "/forum/"
+  - "/discuss/"
+  # Language variants (crawl English only, localize later)
+  - "/documentation/18\\.0/(de|fr|es|it|pt|nl|zh|ja|ko|ar|ru)/"
+
+# Language preference
+language:
+  preferred: "en"
+  fallback: null  # No fallback - skip if not English
+
+# Crawl behavior
+crawl:
+  rate_limit_ms: 500  # Delay between requests
+  timeout_s: 30
+  retries: 3
+  respect_robots_txt: true
+  user_agent: "KnowledgeHub/1.0 (Odoo Documentation Indexer)"
+
+# Content extraction
+extraction:
+  # CSS selectors for main content
+  content_selectors:
+    - "article.doc-body"
+    - "div.document"
+    - "main.content"
+  # Elements to remove before extraction
+  exclude_selectors:
+    - "nav"
+    - "aside"
+    - "footer"
+    - ".toc"
+    - ".breadcrumb"
+    - ".edit-on-github"
+  # Metadata extraction
+  metadata_selectors:
+    title: "h1"
+    version: "meta[name='version']"
+    last_updated: "meta[name='last-modified']"
+
+# Pipeline configuration
+pipeline:
+  chunk_strategy: "semantic"  # semantic | fixed | paragraph
+  chunk_size_tokens: 512
+  chunk_overlap_tokens: 64
+  embedding_model: "text-embedding-3-small"
+  embedding_dims: 1536
+
+# Refresh schedule
+schedule:
+  cron: "0 3 * * 0"  # Weekly on Sunday at 3 AM
+  full_recrawl_days: 30  # Full recrawl every 30 days

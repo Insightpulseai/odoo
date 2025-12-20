@@ -22,16 +22,18 @@ on:
     branches: [main]
     paths:
       - 'addons/**'
-      - 'infra/**'
       - 'vendor/**'
       - 'docker-compose*.yml'
       - '.github/workflows/repo-structure.yml'
+      # Only infra paths that affect Odoo structure
+      - 'infra/ci/structure-check.sh'
+      - 'infra/docker/**'
   push:
     branches: [main]
     paths:
       - 'addons/**'
-      - 'infra/**'
       - 'vendor/**'
+      - 'infra/ci/structure-check.sh'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
