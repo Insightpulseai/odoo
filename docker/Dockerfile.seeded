@@ -51,18 +51,18 @@ RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 # 4. Copy KEEP Modules Only (InsightPulse Core Stack)
 # =============================================================================
 # Finance PPM stack (core business logic)
-COPY addons/ipai_finance_ppm /mnt/extra-addons/ipai_finance_ppm
-COPY addons/ipai_ppm_monthly_close /mnt/extra-addons/ipai_ppm_monthly_close
-COPY addons/ipai_finance_ppm_closing /mnt/extra-addons/ipai_finance_ppm_closing
-COPY addons/ipai_finance_ppm_dashboard /mnt/extra-addons/ipai_finance_ppm_dashboard
+COPY addons/ipai/ipai_finance_ppm /mnt/extra-addons/ipai_finance_ppm
+COPY addons/ipai/ipai_ppm_monthly_close /mnt/extra-addons/ipai_ppm_monthly_close
+COPY addons/ipai/ipai_finance_ppm_closing /mnt/extra-addons/ipai_finance_ppm_closing
+COPY addons/ipai/ipai_finance_ppm_dashboard /mnt/extra-addons/ipai_finance_ppm_dashboard
 
 # BIR compliance & expense management
-COPY addons/ipai_bir_compliance /mnt/extra-addons/ipai_bir_compliance
-COPY addons/ipai_expense /mnt/extra-addons/ipai_expense
-COPY addons/ipai_ocr_expense /mnt/extra-addons/ipai_ocr_expense
+COPY addons/ipai/ipai_bir_compliance /mnt/extra-addons/ipai_bir_compliance
+COPY addons/ipai/ipai_expense /mnt/extra-addons/ipai_expense
+# Note: ipai_ocr_expense not yet migrated to this branch
 
 # Equipment/asset tracking
-COPY addons/ipai_equipment /mnt/extra-addons/ipai_equipment
+COPY addons/ipai/ipai_equipment /mnt/extra-addons/ipai_equipment
 
 # Note: The following modules are planned but not yet created:
 # - ipai_dev_studio_base (core infrastructure)
@@ -124,10 +124,10 @@ CMD ["odoo"]
 
 # =============================================================================
 # Image Notes:
-# - KEEP modules: 8 total (finance ppm stack, bir, expense, equipment)
+# - KEEP modules: 7 total (finance ppm stack, bir, expense, equipment)
 #   * ipai_finance_ppm, ipai_ppm_monthly_close, ipai_finance_ppm_closing
 #   * ipai_finance_ppm_dashboard, ipai_bir_compliance
-#   * ipai_expense, ipai_ocr_expense, ipai_equipment
+#   * ipai_expense, ipai_equipment
 # - DROP modules removed:
 #   * ipai_ce_cleaner, ipai_theme_cobalt, ipai_accounting_firm_pack
 #   * ipai_marketing_agency_pack, ipai_partner_pack, ipai_docs, ipai_docs_project

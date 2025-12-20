@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit web.login template to add custom branding class -->
+    <template id="ipai_ce_branding_web_login_inherit" inherit_id="web.login">
+        <xpath expr="//div[hasclass('oe_single_form_container')]" position="attributes">
+            <attribute name="class" add="ipai-login-bg" separator=" "/>
+        </xpath>
+    </template>
+</odoo>

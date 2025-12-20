@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_advisor_category_user,advisor.category.user,model_advisor_category,group_advisor_user,1,0,0,0
+access_advisor_category_admin,advisor.category.admin,model_advisor_category,group_advisor_admin,1,1,1,1
+access_advisor_recommendation_user,advisor.recommendation.user,model_advisor_recommendation,group_advisor_user,1,0,0,0
+access_advisor_recommendation_manager,advisor.recommendation.manager,model_advisor_recommendation,group_advisor_manager,1,1,1,0
+access_advisor_recommendation_admin,advisor.recommendation.admin,model_advisor_recommendation,group_advisor_admin,1,1,1,1
+access_advisor_playbook_user,advisor.playbook.user,model_advisor_playbook,group_advisor_user,1,0,0,0
+access_advisor_playbook_manager,advisor.playbook.manager,model_advisor_playbook,group_advisor_manager,1,1,1,0
+access_advisor_playbook_admin,advisor.playbook.admin,model_advisor_playbook,group_advisor_admin,1,1,1,1
+access_advisor_score_user,advisor.score.user,model_advisor_score,group_advisor_user,1,0,0,0
+access_advisor_score_manager,advisor.score.manager,model_advisor_score,group_advisor_manager,1,1,1,0
+access_advisor_score_admin,advisor.score.admin,model_advisor_score,group_advisor_admin,1,1,1,1
+access_advisor_tag_user,advisor.tag.user,model_advisor_tag,group_advisor_user,1,0,0,0
+access_advisor_tag_manager,advisor.tag.manager,model_advisor_tag,group_advisor_manager,1,1,1,1

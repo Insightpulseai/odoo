@@ -1,0 +1,205 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# IPAI Odoo 18 CE + OCA Custom Image
+# =============================================================================
+# Multi-stage build supporting deterministic OCA vendoring via lockfile.
+#
+# Profiles:
+#   PROFILE=standard   - CE core + OCA essentials only
+#   PROFILE=parity     - CE + OCA + full enterprise parity modules
+#   PROFILE=dev        - parity + dev tools (debugpy, pytest)
+#
+# Build Examples:
+#   docker build --build-arg PROFILE=standard -t ipai-odoo:standard .
+#   docker build --build-arg PROFILE=parity -t ipai-odoo:parity .
+#   docker build -t ipai-odoo:18.0 .
+#
+# Image Registry:
+#   ghcr.io/jgtolentino/odoo-ce:18.0-<sha>
+#   ghcr.io/jgtolentino/odoo-ce:18.0
+#
+# =============================================================================
+
+# Build arguments
+ARG PROFILE=parity
+ARG BASE_REF=odoo:18.0
+ARG OCA_LOCK_PATH=vendor/oca.lock.json
+
+# =============================================================================
+# Stage 1: OCA Module Builder (deterministic via lockfile)
+# =============================================================================
+FROM debian:bookworm-slim AS oca-builder
+
+ARG OCA_LOCK_PATH
+ARG PROFILE
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    git \
+    jq \
+    rsync \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+
+# Copy lockfile
+COPY ${OCA_LOCK_PATH} /src/oca.lock.json
+
+# Clone OCA repos and extract only modules listed in lockfile
+# This ensures reproducible builds with no drift
+RUN mkdir -p /out/oca && \
+    jq -c '.repos[]' /src/oca.lock.json | while read -r repo; do \
+        url=$(echo "$repo" | jq -r '.url'); \
+        ref=$(echo "$repo" | jq -r '.ref'); \
+        commit=$(echo "$repo" | jq -r '.commit'); \
+        name=$(echo "$repo" | jq -r '.name' | tr '/' '_'); \
+        echo "Cloning $name ($ref)..."; \
+        \
+        # Clone with depth for efficiency, full clone if commit pinned
+        if [ "$commit" = "HEAD" ] || [ "$commit" = "null" ]; then \
+            git clone --depth 1 --branch "$ref" "$url" "/tmp/$name" 2>/dev/null || \
+            echo "Warning: Failed to clone $name"; \
+        else \
+            git clone --branch "$ref" "$url" "/tmp/$name" 2>/dev/null && \
+            cd "/tmp/$name" && \
+            git checkout "$commit" 2>/dev/null || \
+            echo "Warning: Failed to checkout $commit for $name"; \
+        fi; \
+        \
+        # Extract only specified modules
+        if [ -d "/tmp/$name" ]; then \
+            modules=$(echo "$repo" | jq -r '.modules[]' 2>/dev/null || echo ""); \
+            for m in $modules; do \
+                if [ -d "/tmp/$name/$m" ]; then \
+                    echo "  Extracting module: $m"; \
+                    rsync -a --delete "/tmp/$name/$m/" "/out/oca/$m/"; \
+                else \
+                    echo "  Warning: Module $m not found in $name"; \
+                fi; \
+            done; \
+        fi; \
+        rm -rf "/tmp/$name"; \
+    done && \
+    echo "OCA modules extracted: $(ls /out/oca | wc -l)"
+
+# Collect requirements from all OCA modules
+RUN find /out/oca -name "requirements.txt" -exec cat {} \; 2>/dev/null | \
+    sort -u > /out/oca-requirements.txt || true
+
+# =============================================================================
+# Stage 2: Production Runtime Image
+# =============================================================================
+FROM ${BASE_REF} AS runtime
+
+ARG PROFILE
+ARG BUILD_DATE
+ARG VERSION=2.0.0
+ARG GIT_SHA
+
+# OCI Labels
+LABEL org.opencontainers.image.title="IPAI Odoo 18 CE"
+LABEL org.opencontainers.image.description="Odoo 18 CE + OCA + IPAI Modules (${PROFILE} profile)"
+LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.created="${BUILD_DATE}"
+LABEL org.opencontainers.image.revision="${GIT_SHA}"
+LABEL org.opencontainers.image.vendor="InsightPulse AI"
+LABEL org.opencontainers.image.source="https://github.com/jgtolentino/odoo-ce"
+LABEL com.insightpulseai.profile="${PROFILE}"
+LABEL com.insightpulseai.odoo.version="18.0"
+
+USER root
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client \
+    gettext-base \
+    curl \
+    python3-num2words \
+    python3-phonenumbers \
+    python3-xmlsec \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create directories with proper ownership
+RUN mkdir -p \
+    /mnt/odoo/addons/ipai \
+    /mnt/odoo/addons/oca \
+    /var/log/odoo \
+    /entrypoint.d \
+    && chown -R odoo:odoo /mnt/odoo /var/log/odoo /entrypoint.d
+
+# -----------------------------------------------------------------------------
+# Copy OCA Modules from builder (no .git, only specified modules)
+# -----------------------------------------------------------------------------
+COPY --from=oca-builder --chown=odoo:odoo /out/oca /mnt/odoo/addons/oca
+
+# Copy OCA requirements and install
+COPY --from=oca-builder /out/oca-requirements.txt /tmp/oca-requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages \
+    num2words>=0.5.10 \
+    phonenumbers>=8.12.0 \
+    python-slugify>=5.0.2 \
+    2>/dev/null || true && \
+    pip3 install --no-cache-dir --break-system-packages \
+    -r /tmp/oca-requirements.txt 2>/dev/null || true && \
+    rm -f /tmp/oca-requirements.txt
+
+# -----------------------------------------------------------------------------
+# Copy IPAI Custom Modules
+# -----------------------------------------------------------------------------
+COPY --chown=odoo:odoo ./addons/ipai_* /mnt/odoo/addons/ipai/
+
+# -----------------------------------------------------------------------------
+# Configuration and Entrypoint
+# -----------------------------------------------------------------------------
+COPY --chown=odoo:odoo ./config/odoo.conf.template /etc/odoo/odoo.conf.template
+COPY --chown=odoo:odoo ./config/entrypoint.d/ /entrypoint.d/
+COPY --chown=odoo:odoo ./docker/docker-entrypoint.sh /entrypoint.sh
+
+# Make entrypoint scripts executable
+RUN chmod +x /entrypoint.sh /entrypoint.d/*.sh 2>/dev/null || true
+
+# Default configuration (can be overridden)
+COPY --chown=odoo:odoo ./deploy/odoo.conf /etc/odoo/odoo.conf
+
+# Fix permissions
+RUN chown -R odoo:odoo /etc/odoo /mnt/odoo
+
+# -----------------------------------------------------------------------------
+# Environment Configuration
+# -----------------------------------------------------------------------------
+ENV PROFILE=${PROFILE} \
+    ODOO_RC=/etc/odoo/odoo.conf \
+    ODOO_ADDONS_PATH=/mnt/odoo/addons/ipai,/mnt/odoo/addons/oca,/usr/lib/python3/dist-packages/odoo/addons
+
+# Switch to non-root user
+USER odoo
+
+# Entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+    CMD curl -fsS http://127.0.0.1:8069/web/health || exit 1
+
+EXPOSE 8069 8072
+
+# =============================================================================
+# Stage 3: Development Image (extends runtime)
+# =============================================================================
+FROM runtime AS development
+
+USER root
+
+RUN pip3 install --no-cache-dir --break-system-packages \
+    debugpy \
+    pytest \
+    pytest-odoo \
+    coverage \
+    black \
+    flake8 \
+    2>/dev/null || true
+
+USER odoo
+
+ENV PROFILE=dev

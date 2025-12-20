@@ -1,0 +1,167 @@
+---
+# Odoo CE/OCA 18 Mapping Rules for SAP Concur Documentation
+# Keyword-based classification for mapping Concur features to Odoo modules/repos
+version: 1
+
+targets:
+  expense:
+    odoo_ce_modules:
+      - hr_expense
+      - hr
+      - account
+      - purchase
+    oca_repos:
+      - OCA/hr
+      - OCA/account-financial-tools
+      - OCA/account-invoicing
+      - OCA/purchase-workflow
+    keywords:
+      - expense
+      - receipt
+      - e-receipt
+      - reimbursement
+      - cash advance
+      - attendee
+      - expense report
+      - itemization
+      - expense type
+      - expense entry
+      - expense allocation
+      - mileage
+      - per diem
+
+  travel:
+    odoo_ce_modules:
+      - project
+      - hr
+      - fleet
+      - hr_expense
+    oca_repos:
+      - OCA/hr
+      - OCA/project
+      - OCA/fleet
+    keywords:
+      - travel
+      - trip
+      - booking
+      - itinerary
+      - flight
+      - hotel
+      - car rental
+      - travel request
+      - travel profile
+      - travel preference
+      - transportation
+      - lodging
+      - travel authorization
+
+  invoice:
+    odoo_ce_modules:
+      - account
+      - purchase
+      - account_payment
+    oca_repos:
+      - OCA/account-invoicing
+      - OCA/account-payment
+      - OCA/purchase-workflow
+    keywords:
+      - invoice
+      - vendor invoice
+      - supplier invoice
+      - invoice approval
+      - invoice payment
+      - payment request
+      - invoice processing
+      - invoice validation
+      - accounts payable
+      - ap
+      - invoice line
+      - tax code
+
+  audit_compliance:
+    odoo_ce_modules:
+      - base
+      - mail
+      - account
+      - hr
+    oca_repos:
+      - OCA/server-tools
+      - OCA/account-financial-reporting
+    keywords:
+      - audit
+      - compliance
+      - policy
+      - approval
+      - workflow
+      - delegation
+      - authorization
+      - review
+      - audit trail
+      - compliance report
+      - policy violation
+      - approval workflow
+      - approval chain
+      - expense policy
+
+  analytics:
+    odoo_ce_modules:
+      - account
+      - hr_expense
+    oca_repos:
+      - OCA/reporting-engine
+      - OCA/mis-builder
+      - OCA/account-financial-reporting
+    keywords:
+      - report
+      - analytics
+      - dashboard
+      - insight
+      - intelligence
+      - standard report
+      - custom report
+      - reporting
+      - data extract
+      - export
+      - business intelligence
+      - bi
+
+  integration:
+    odoo_ce_modules:
+      - base
+      - mail
+    oca_repos:
+      - OCA/server-tools
+      - OCA/connector
+      - OCA/queue
+    keywords:
+      - api
+      - integration
+      - connector
+      - web service
+      - webhook
+      - sso
+      - saml
+      - oauth
+      - authentication
+      - external system
+      - third party
+      - sync
+      - synchronization
+
+  mobile:
+    odoo_ce_modules:
+      - hr_expense
+      - hr
+    oca_repos:
+      - OCA/hr
+    keywords:
+      - mobile
+      - mobile app
+      - smartphone
+      - tablet
+      - ios
+      - android
+      - mobile device
+      - mobile capture
+      - mobile receipt
+      - offline

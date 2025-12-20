@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- BIR Compliance Submenu under Finance -->
+    <menuitem id="menu_ipai_bir_root"
+              name="BIR Compliance"
+              parent="ipai_finance_month_end.menu_ipai_finance_root"
+              sequence="20"/>
+
+    <menuitem id="menu_ipai_bir_schedule"
+              name="Schedule"
+              parent="menu_ipai_bir_root"
+              action="action_bir_schedule"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_bir_generate"
+              name="Generate Tasks"
+              parent="menu_ipai_bir_root"
+              action="action_ipai_generate_bir_tasks_wizard"
+              sequence="20"/>
+</odoo>

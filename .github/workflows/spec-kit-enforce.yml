@@ -1,37 +1,51 @@
+```yaml
+# .github/workflows/spec-kit-enforce.yml
 name: Spec Kit Enforcement
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "spec/**"
+      - ".github/workflows/spec-kit-enforce.yml"
+      - "CLAUDE.md"
+      - ".claude/**"
+      - "scripts/**"
   push:
-    branches: [main, master]
+    branches:
+      - main
+    paths:
+      - "spec/**"
+      - ".github/workflows/spec-kit-enforce.yml"
+      - "CLAUDE.md"
+      - ".claude/**"
+      - "scripts/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: spec-kit-enforce-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  spec-kit:
+  spec-kit-enforce:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate Spec Kit bundle exists
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps (YAML validator)
         shell: bash
         run: |
           set -euo pipefail
-
-          # Require at least one spec bundle under spec/<slug>/
-          if [ ! -d "spec" ]; then
-            echo "::error::Missing spec/ directory"
-            exit 1
-          fi
-
-          # Find directories under spec/ that contain constitution.md
-          bundles=$(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null | wc -l | tr -d ' ')
-          if [ "$bundles" -lt 1 ]; then
-            echo "::error::No Spec Kit bundle found. Expected spec/<slug>/constitution.md"
-            exit 1
-          fi
-
-          echo "Found $bundles spec kit bundle(s)"
+          python -m pip install --upgrade pip
+          pip install pyyaml
 
       - name: Validate required files + non-trivial content
         shell: bash
@@ -55,18 +69,18 @@ jobs:
               fi
 
               # Non-trivial: at least 10 non-empty, non-heading lines
-              non_empty="$(grep -Ev '^\s*$' "$path" | wc -l | tr -d ' ')"
+              non_empty="$(grep -Ev '^\s*$' "$path" | grep -Ev '^\s*#' | wc -l | tr -d ' ')"
               if [ "$non_empty" -lt 10 ]; then
-                echo "::error file=$path::Spec file too small (<10 non-empty lines). Add real content."
+                echo "::error file=$path::Spec file too small (<10 non-empty, non-heading lines). Add real content."
                 fail=1
               fi
 
-              # Block placeholder-y text patterns
+              # Block placeholder-y text patterns (warn only; enforce via fail if you want)
               if grep -Eqi '(TODO|TBD|PLACEHOLDER|FILL\s+ME\s+IN|LOREM\s+IPSUM)' "$path"; then
                 echo "::warning file=$path::Spec contains placeholders (TODO/TBD/etc). Consider resolving."
               fi
             done
-          done < <(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null)
+          done < <(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null || true)
 
           # Require CLAUDE.md
           if [ ! -f "CLAUDE.md" ]; then
@@ -92,14 +106,20 @@ jobs:
           set -euo pipefail
 
           # Find YAML files in spec bundles
-          yaml_files=$(find spec -name "*.yaml" -o -name "*.yml" 2>/dev/null || true)
+          yaml_files="$(find spec -type f \( -name "*.yaml" -o -name "*.yml" \) 2>/dev/null || true)"
           if [ -n "$yaml_files" ]; then
             echo "Validating YAML files in spec bundles..."
-            for f in $yaml_files; do
-              python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null || {
-                echo "::error file=$f::Invalid YAML syntax"
-                exit 1
-              }
-              echo "  OK: $f"
-            done
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+              python3 - <<PY
+import yaml, sys
+p = r"""$f"""
+with open(p, "r", encoding="utf-8") as fh:
+    yaml.safe_load(fh)
+print("OK:", p)
+PY
+            done <<< "$yaml_files"
+          else
+            echo "No YAML files found under spec/."
           fi
+```

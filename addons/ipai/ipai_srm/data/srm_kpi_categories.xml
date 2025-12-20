@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data noupdate="1">
+    <record id="kpi_quality" model="srm.kpi.category">
+      <field name="name">Quality</field>
+      <field name="code">QUAL</field>
+      <field name="sequence">10</field>
+      <field name="weight">25.0</field>
+      <field name="description">Product/service quality, defect rates, conformance to specs</field>
+    </record>
+
+    <record id="kpi_delivery" model="srm.kpi.category">
+      <field name="name">Delivery</field>
+      <field name="code">DEL</field>
+      <field name="sequence">20</field>
+      <field name="weight">25.0</field>
+      <field name="eval_method">computed</field>
+      <field name="compute_source">po_otd</field>
+      <field name="description">On-time delivery performance, lead time adherence</field>
+    </record>
+
+    <record id="kpi_cost" model="srm.kpi.category">
+      <field name="name">Cost</field>
+      <field name="code">COST</field>
+      <field name="sequence">30</field>
+      <field name="weight">20.0</field>
+      <field name="description">Price competitiveness, cost reduction initiatives, total cost of ownership</field>
+    </record>
+
+    <record id="kpi_responsiveness" model="srm.kpi.category">
+      <field name="name">Responsiveness</field>
+      <field name="code">RESP</field>
+      <field name="sequence">40</field>
+      <field name="weight">15.0</field>
+      <field name="description">Communication, issue resolution, flexibility</field>
+    </record>
+
+    <record id="kpi_compliance" model="srm.kpi.category">
+      <field name="name">Compliance</field>
+      <field name="code">COMP</field>
+      <field name="sequence">50</field>
+      <field name="weight">15.0</field>
+      <field name="description">Regulatory compliance, documentation, certifications</field>
+    </record>
+  </data>
+</odoo>

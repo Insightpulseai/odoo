@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Supplier List View -->
+    <record id="view_supplier_list" model="ir.ui.view">
+      <field name="name">srm.supplier.list</field>
+      <field name="model">srm.supplier</field>
+      <field name="arch" type="xml">
+        <list string="Suppliers" decoration-muted="state in ('blocked', 'archived')">
+          <field name="code"/>
+          <field name="name"/>
+          <field name="partner_id"/>
+          <field name="tier" widget="badge"/>
+          <field name="state" widget="badge" decoration-success="state == 'active'" decoration-warning="state in ('on_hold', 'qualification')" decoration-danger="state == 'blocked'"/>
+          <field name="overall_score" widget="progressbar"/>
+          <field name="risk_level"/>
+          <field name="is_qualified"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Supplier Form View -->
+    <record id="view_supplier_form" model="ir.ui.view">
+      <field name="name">srm.supplier.form</field>
+      <field name="model">srm.supplier</field>
+      <field name="arch" type="xml">
+        <form string="Supplier">
+          <header>
+            <button name="action_start_qualification" type="object" string="Start Qualification" invisible="state != 'prospect'"/>
+            <button name="action_activate" type="object" string="Activate" class="oe_highlight" invisible="state != 'qualification'" groups="ipai_srm.group_srm_manager"/>
+            <button name="action_block" type="object" string="Block" invisible="state not in ('active', 'on_hold')"/>
+            <button name="action_create_scorecard" type="object" string="New Scorecard" invisible="state != 'active'"/>
+            <field name="state" widget="statusbar" statusbar_visible="prospect,qualification,active"/>
+          </header>
+          <sheet>
+            <div class="oe_button_box" name="button_box">
+              <button type="object" name="action_view_scorecards" class="oe_stat_button" icon="fa-star">
+                <field name="scorecard_ids" widget="statinfo" string="Scorecards"/>
+              </button>
+              <button type="object" name="action_view_qualifications" class="oe_stat_button" icon="fa-check-circle">
+                <field name="qualification_ids" widget="statinfo" string="Qualifications"/>
+              </button>
+            </div>
+            <widget name="web_ribbon" title="Blocked" bg_color="bg-danger" invisible="state != 'blocked'"/>
+            <div class="oe_title">
+              <label for="name"/>
+              <h1><field name="name" placeholder="Supplier Name"/></h1>
+              <field name="code" readonly="1"/>
+            </div>
+            <group>
+              <group>
+                <field name="partner_id"/>
+                <field name="tier"/>
+                <field name="category_ids" widget="many2many_tags"/>
+              </group>
+              <group>
+                <field name="overall_score" widget="progressbar"/>
+                <field name="risk_level"/>
+                <field name="is_qualified"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Details">
+                <group>
+                  <group string="Contacts">
+                    <field name="primary_contact_id"/>
+                    <field name="sales_contact_id"/>
+                  </group>
+                  <group string="Qualification">
+                    <field name="qualification_expiry"/>
+                    <field name="compliance_docs_complete"/>
+                  </group>
+                </group>
+                <group>
+                  <group string="Audit">
+                    <field name="last_audit_date"/>
+                    <field name="next_audit_date"/>
+                  </group>
+                  <group string="Spending">
+                    <field name="ytd_spend"/>
+                    <field name="total_po_count"/>
+                    <field name="open_po_count"/>
+                    <field name="currency_id" invisible="1"/>
+                  </group>
+                </group>
+              </page>
+              <page string="Risk Assessment">
+                <field name="risk_notes" placeholder="Risk assessment notes..."/>
+              </page>
+              <page string="Scorecard History">
+                <field name="scorecard_ids">
+                  <list>
+                    <field name="as_of"/>
+                    <field name="period"/>
+                    <field name="overall_score" widget="progressbar"/>
+                    <field name="grade"/>
+                    <field name="state"/>
+                  </list>
+                </field>
+              </page>
+              <page string="Qualifications">
+                <field name="qualification_ids">
+                  <list>
+                    <field name="start_date"/>
+                    <field name="qualification_type"/>
+                    <field name="state"/>
+                    <field name="expiry_date"/>
+                  </list>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Supplier Kanban View -->
+    <record id="view_supplier_kanban" model="ir.ui.view">
+      <field name="name">srm.supplier.kanban</field>
+      <field name="model">srm.supplier</field>
+      <field name="arch" type="xml">
+        <kanban class="o_kanban_small_column" default_group_by="tier">
+          <field name="name"/>
+          <field name="code"/>
+          <field name="tier"/>
+          <field name="state"/>
+          <field name="overall_score"/>
+          <field name="risk_level"/>
+          <progressbar field="overall_score" colors='{"0": "danger", "60": "warning", "80": "success"}'/>
+          <templates>
+            <t t-name="card">
+              <div class="oe_kanban_global_click">
+                <div class="oe_kanban_details">
+                  <strong><field name="name"/></strong>
+                  <div class="text-muted"><field name="code"/></div>
+                  <div class="mt-2">
+                    <field name="state" widget="badge"/>
+                  </div>
+                  <div class="mt-2">
+                    <span>Score: </span>
+                    <field name="overall_score"/>%
+                  </div>
+                  <div t-if="record.risk_level.raw_value in ['high', 'critical']" class="text-danger">
+                    <i class="fa fa-warning"/> Risk: <field name="risk_level"/>
+                  </div>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+    <!-- Supplier Search View -->
+    <record id="view_supplier_search" model="ir.ui.view">
+      <field name="name">srm.supplier.search</field>
+      <field name="model">srm.supplier</field>
+      <field name="arch" type="xml">
+        <search string="Search Suppliers">
+          <field name="name"/>
+          <field name="code"/>
+          <field name="partner_id"/>
+          <filter name="active" string="Active" domain="[('state', '=', 'active')]"/>
+          <filter name="strategic" string="Strategic" domain="[('tier', '=', 'strategic')]"/>
+          <filter name="high_risk" string="High Risk" domain="[('risk_level', 'in', ('high', 'critical'))]"/>
+          <filter name="qualified" string="Qualified" domain="[('is_qualified', '=', True)]"/>
+          <separator/>
+          <group expand="0" string="Group By">
+            <filter name="group_tier" string="Tier" context="{'group_by': 'tier'}"/>
+            <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+            <filter name="group_risk" string="Risk Level" context="{'group_by': 'risk_level'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <!-- Supplier Action -->
+    <record id="action_supplier" model="ir.actions.act_window">
+      <field name="name">Suppliers</field>
+      <field name="res_model">srm.supplier</field>
+      <field name="view_mode">kanban,list,form</field>
+      <field name="search_view_id" ref="view_supplier_search"/>
+      <field name="context">{'search_default_active': 1}</field>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Create your first supplier profile
+        </p>
+        <p>
+          Manage supplier relationships with scorecards,
+          qualifications, and risk assessments.
+        </p>
+      </field>
+    </record>
+  </data>
+</odoo>
