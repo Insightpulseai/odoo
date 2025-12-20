@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ab54ad8e1d3c8601536e1d7c60fb35fc5474fc0a
+> Commit: 4169d93ad1fd345283d88f939e1c583dc87f9132
 
 ```
 .
@@ -37,7 +37,8 @@
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── repo-structure.yml
 │   │   ├── spec-kit-enforce.yml
-│   │   └── superset-bump.yml
+│   │   ├── superset-bump.yml
+│   │   └── verify-gates.yml
 │   └── copilot-instructions.md
 ├── addons
 │   ├── ipai
@@ -468,8 +469,19 @@
 │   │   ├── 10-log-env.sh
 │   │   ├── 20-render-conf.sh
 │   │   └── 90-preflight.sh
+│   ├── sources
+│   │   ├── oca_repos.yaml
+│   │   ├── odoo_docs.yaml
+│   │   └── sap_help.yaml
 │   ├── capability_map.yaml
-│   └── odoo.conf.template
+│   ├── odoo.conf.template
+│   └── pipeline.yaml
+├── contracts
+│   └── delta
+│       ├── bronze_raw_pages.yaml
+│       ├── gold_chunks.yaml
+│       ├── gold_embeddings.yaml
+│       └── silver_normalized_docs.yaml
 ├── data
 │   ├── bir_calendar_2026.json
 │   ├── employee_directory.json
@@ -854,6 +866,15 @@
 │   │   ├── install_odoo_18.sh
 │   │   ├── run_odoo_tests.sh
 │   │   └── wait_for_postgres.sh
+│   ├── kb
+│   │   ├── seed_oca_catalog.sql
+│   │   ├── seed_odoo_catalog.sql
+│   │   └── seed_sap_catalog.sql
+│   ├── lakehouse
+│   │   ├── coverage_audit.py
+│   │   ├── create_delta_tables_trino.sql
+│   │   ├── mirror_gold_to_supabase.py
+│   │   └── validate_contracts.py
 │   ├── README.md
 │   ├── apply-supabase-schema.sh
 │   ├── auto_error_handler.sh
@@ -921,7 +942,18 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── docs-platform-sapgrade
+│   │   ├── api-contract.yaml
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ipai-control-center
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── knowledge-hub
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -948,6 +980,11 @@
 │   ├── MODULE_SERVICE_MATRIX.md
 │   ├── README.md
 │   └── tasks.md
+├── src
+│   └── lakehouse
+│       ├── __init__.py
+│       ├── config.py
+│       └── contracts.py
 ├── supabase
 │   ├── functions
 │   │   ├── expense-policy-check
@@ -981,6 +1018,13 @@
 │   │   ├── 202512201002_AZURE_CONTROL_CENTER.sql
 │   │   ├── 202512201003_OCA_DOCS_BRAIN.sql
 │   │   ├── 202512201004_SHIP_READY_DELTA.sql
+│   │   ├── 20251220_001_docs_taxonomy.sql
+│   │   ├── 20251220_002_docs_versioning.sql
+│   │   ├── 20251220_003_docs_journeys.sql
+│   │   ├── 20251220_004_kb_core.sql
+│   │   ├── 20251220_005_kb_blocks.sql
+│   │   ├── 20251220_006_kb_discovery.sql
+│   │   ├── 20251220_007_kb_catalog.sql
 │   │   ├── 20251220_agentbrain_delta.sql
 │   │   ├── 20251220_capability_registry_full.sql
 │   │   ├── 20251220_process_runtime_ticketing.sql
@@ -1170,15 +1214,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-404 directories, 761 files
+413 directories, 796 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 437 |
-| Files | 1250 |
-| Python files | 372 |
+| Directories | 446 |
+| Files | 1285 |
+| Python files | 378 |
 | XML files | 182 |
-| Markdown files | 248 |
+| Markdown files | 256 |
