@@ -1,5 +1,5 @@
 # RAG Architecture Implementation Plan
-## Docs KB + Parity Mapper + Module Factory
+## Master Control: Docs KB + Parity Mapper + Module Factory
 
 **Status:** Draft
 **Created:** 2025-12-20
@@ -9,11 +9,60 @@
 
 ## Executive Summary
 
-This document provides a comprehensive implementation plan for building a production-grade RAG (Retrieval-Augmented Generation) system that achieves enterprise parity with SAP Concur while leveraging Odoo 18 CE/OCA. The system consists of three main components:
+This document provides a comprehensive implementation plan for building a **Master Control** platform—a single control plane that manages two factories:
 
-1. **Docs KB** - Versioned, searchable documentation with hybrid (vector + BM25) retrieval
-2. **Parity Mapper** - SAP → Odoo/OCA capability mapping with gap analysis
-3. **Module Factory** - Automated addon scaffolding from feature requests
+1. **Knowledge Factory** → Docs → RAG/KG → Context Packs → SOPs
+2. **Module Factory** → Feature → Spec → Scaffold → CI → PR → Deploy
+
+### Architecture Pattern: Databricks Lakeflow (Self-Hosted)
+
+We replicate the Databricks Pipeline Editor pattern using **Continue + Supabase + n8n**:
+
+| Databricks Component | Our Equivalent |
+|---------------------|----------------|
+| Asset Browser (left) | Sources, Pipelines, Context Packs, Capability Maps |
+| Multi-file Editor (center) | `pipeline.yaml`, `contracts/*.yaml`, `prompts/*.md` |
+| DAG Visualization | crawl → normalize → chunk → embed → KG → publish |
+| Data Preview (right) | Chunk preview, KG nodes, Module diff preview |
+| Issues Panel (bottom) | Parse failures, SLA breaches, CI failures → auto-create work_items |
+| Run Inspector | Pipeline runs, metrics, logs, "run this command" button |
+
+### No External Dependencies
+
+| Instead of... | We Use... |
+|--------------|-----------|
+| Jira/Atlassian | `runtime.work_items` in Supabase |
+| ServiceNow | `run.work_items` + `run.escalations` |
+| Databricks | Continue + Supabase + n8n |
+| SAP (live) | SAP docs as **reference only** → map to Odoo CE/OCA |
+
+### Stack Roles
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                      CONTINUE (IDE Layer)                       │
+│  Slash commands • Context providers • Workflow runners         │
+│  → User-facing surface, agent executor, review interface        │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                      N8N (Orchestration)                        │
+│  Scheduled crawls • Webhook triggers • Multi-step workflows    │
+│  → Glue between Continue, Supabase, Odoo, external APIs        │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                      SUPABASE (Backend)                         │
+│  Pipeline defs • Work items • Runs • Evidence • Audit trail    │
+│  → Single source of truth, multi-tenant, RLS-safe              │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                      ODOO 18 CE/OCA (ERP)                       │
+│  Transactions • Employees • Expenses • Projects • Inventory    │
+│  → System of record, no custom core modifications              │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
@@ -504,15 +553,140 @@ supabase/migrations/20251220_qms_lite_document_control.sql
 
 ---
 
-## 11. Architecture Summary
+## 11. N8N Role: End-to-End Workflow Orchestration
 
-### Three-Layer Stack
+### 11.1 What n8n Does (vs Continue vs Supabase)
+
+| Component | Role | Examples |
+|-----------|------|----------|
+| **n8n** | Workflow orchestration + triggers | Scheduled crawls, webhook handlers, multi-step automations |
+| **Continue** | IDE interface + agent executor | `/docs`, `/scaffold`, code review, chat |
+| **Supabase** | Data store + API + RLS | Work items, pipeline runs, evidence, audit trail |
+
+### 11.2 n8n Workflows for Master Control
+
+| Workflow | Trigger | Actions |
+|----------|---------|---------|
+| `docs_ingest_odoo18` | Cron (daily 2 AM) | Crawl → Normalize → Chunk → Embed → Publish |
+| `docs_ingest_sap_help` | Cron (weekly) | Crawl SAP Help → Map to Odoo/OCA capabilities |
+| `oca_repo_sync` | GitHub webhook | On push → re-index module docs |
+| `bpmn_to_sop` | Manual/API | Parse BPMN → Generate SOP draft → Submit for approval |
+| `module_factory` | Work item created | Spec → Scaffold → Lint → Test → PR |
+| `sla_monitor` | Cron (every 5 min) | Check timers → Create escalations → Notify |
+| `onboard_offboard` | Odoo webhook | Create run.instances → Generate work items |
+
+### 11.3 n8n ↔ Supabase ↔ Odoo Flow
+
+```
+[Trigger: GitHub push to OCA/hr-expense]
+         ↓
+    n8n Workflow
+         ↓
+┌────────────────────────────────────────────────┐
+│ Step 1: Fetch module manifest                  │
+│ Step 2: Extract README + doc/*                 │
+│ Step 3: POST /v1/ingest/normalize              │
+│ Step 4: POST /v1/ingest/chunk                  │
+│ Step 5: POST /v1/ingest/embed                  │
+│ Step 6: Upsert to Supabase rag.documents       │
+│ Step 7: If error → Create runtime.work_items   │
+│ Step 8: Notify Mattermost #docs-sync           │
+└────────────────────────────────────────────────┘
+```
+
+### 11.4 Why n8n (Not Just Continue)
+
+| Scenario | n8n | Continue |
+|----------|-----|----------|
+| Scheduled crawl at 2 AM | ✅ Cron trigger | ❌ Needs user in IDE |
+| Retry with backoff | ✅ Built-in | ❌ Manual |
+| Multi-system coordination | ✅ 400+ integrations | ⚠️ Limited |
+| Visual workflow editor | ✅ Drag-and-drop | ❌ Code only |
+| Agent execution | ⚠️ Via webhook | ✅ Native |
+| IDE integration | ❌ | ✅ Native |
+
+**Bottom line:** n8n handles **scheduled/triggered automation**, Continue handles **interactive/IDE work**.
+
+---
+
+## 12. Comprehensive Error Codes (Agent-Ready)
+
+### 12.1 Error Code Taxonomy
+
+Every error code includes:
+- **Root cause** (why it failed)
+- **Auto-fix command** (what to run)
+- **Rollback command** (how to undo)
+- **Verification command** (how to confirm)
+
+### 12.2 Ingest Errors (`INGEST_*`)
+
+| Code | Title | Auto-Fix |
+|------|-------|----------|
+| `INGEST_FETCH_BLOCKED` | Fetch blocked by robots.txt | `n8n execute --workflow=crawl --flag=ignore_robots --url={url}` |
+| `INGEST_AUTH_REQUIRED` | Source requires authentication | `vault read secret/crawlers/{source} && n8n execute --workflow=crawl --with-auth` |
+| `INGEST_RATE_LIMITED` | 429 Too Many Requests | `sleep 60 && n8n execute --workflow=crawl --rate-limit=0.5` |
+| `INGEST_TIMEOUT` | Connection timeout | `n8n execute --workflow=crawl --timeout=60s --url={url}` |
+
+### 12.3 Parse Errors (`PARSE_*`)
+
+| Code | Title | Auto-Fix |
+|------|-------|----------|
+| `PARSE_HTML_MALFORMED` | Invalid HTML structure | `curl {url} \| tidy -q -o /tmp/clean.html && n8n execute --input=/tmp/clean.html` |
+| `PARSE_ENCODING_ERROR` | Non-UTF8 encoding | `iconv -f ISO-8859-1 -t UTF-8 {file} -o {file}.utf8` |
+| `PARSE_BOILERPLATE_FAIL` | Boilerplate stripping failed | `n8n execute --workflow=normalize --strip-mode=lenient` |
+| `PARSE_HEADING_TREE_INVALID` | Heading hierarchy broken | `n8n execute --workflow=chunk --heading-aware=false` |
+
+### 12.4 Embed Errors (`EMBED_*`)
+
+| Code | Title | Auto-Fix |
+|------|-------|----------|
+| `EMBED_API_QUOTA` | OpenAI quota exceeded | `sleep 3600 && n8n execute --workflow=embed --batch-id={id}` |
+| `EMBED_MODEL_UNAVAILABLE` | Model not available | `n8n execute --workflow=embed --model=text-embedding-3-small` |
+| `EMBED_INPUT_TOO_LONG` | Token limit exceeded | `n8n execute --workflow=chunk --max-tokens=500 && n8n execute --workflow=embed` |
+
+### 12.5 Module Factory Errors (`MOD_*`)
+
+| Code | Title | Auto-Fix |
+|------|-------|----------|
+| `MOD_MANIFEST_MISSING` | `__manifest__.py` not found | `copier copy gh:OCA/oca-addons-repo-template {path}` |
+| `MOD_DEPENDENCY_MISSING` | Required module not installed | `pip install odoo-addon-{module} && odoo -u {module}` |
+| `MOD_LINT_FAIL` | pylint-odoo errors | `pre-commit run --all-files --hook-stage=commit` |
+| `MOD_TEST_FAIL` | Unit tests failed | `odoo --test-enable -u {module} --stop-after-init` |
+
+### 12.6 Odoo Errors (`ODOO_*`)
+
+| Code | Title | Auto-Fix |
+|------|-------|----------|
+| `ODOO_REGISTRY_INIT` | Registry initialization failed | `odoo --stop-after-init -d {db} && odoo -d {db}` |
+| `ODOO_MODULE_INSTALL` | Module installation error | `odoo -u {module} --stop-after-init 2>&1 \| tee /tmp/install.log` |
+| `ODOO_XMLRPC_AUTH` | Authentication failed | `curl -X POST -d '{"jsonrpc":"2.0","method":"authenticate"}' {url}` |
+
+### 12.7 Process Runtime Errors (`RUN_*`)
+
+| Code | Title | Auto-Fix |
+|------|-------|----------|
+| `RUN_SLA_BREACH` | SLA timer exceeded | `SELECT run.check_sla_timers(); -- Creates escalation` |
+| `RUN_WORK_ITEM_BLOCKED` | Work item dependencies unmet | `UPDATE run.work_items SET status='blocked' WHERE id={id}` |
+| `RUN_EVIDENCE_MISSING` | Required artifact not uploaded | `SELECT * FROM run.evidence WHERE instance_id={id}` |
+
+---
+
+## 13. Architecture Summary
+
+### Four-Layer Stack
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    LAYER 3: QMS-LITE                            │
+│                    LAYER 4: QMS-LITE                            │
 │  Controlled docs • Approvals • Audit trail • Evidence packs    │
 │  → Only effective versions feed into RAG                        │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                    LAYER 3: PROCESS RUNTIME                     │
+│  Hire-to-Retire • Work items • SLAs • Escalations • Ticketing  │
+│  → Master Control for onboarding/offboarding                    │
 └─────────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
@@ -528,9 +702,16 @@ supabase/migrations/20251220_qms_lite_document_control.sql
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### Migration Files (Apply in Order)
+
+1. `20251220085409_kapa_docs_copilot_hybrid_search.sql` - Base RAG
+2. `20251220_agentbrain_delta.sql` - Docs KB + Parity + Pipelines
+3. `20251220_qms_lite_document_control.sql` - QMS-Lite
+4. `20251220_process_runtime_ticketing.sql` - Process Runtime
+
 ---
 
-## 12. References
+## 14. References
 
 - [Odoo 18 Documentation](https://www.odoo.com/documentation/18.0/)
 - [SAP Help Portal](https://help.sap.com/docs/)
