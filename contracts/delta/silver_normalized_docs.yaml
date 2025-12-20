@@ -1,0 +1,93 @@
+# =============================================================================
+# Delta Table Contract: silver.normalized_docs
+# =============================================================================
+# Cleaned and normalized documents ready for chunking.
+# HTML converted to Markdown, metadata extracted.
+# =============================================================================
+
+table: silver.normalized_docs
+format: delta
+location: s3://lakehouse/silver/normalized_docs/
+
+partition_by:
+  - source
+  - normalized_date
+
+primary_key:
+  - tenant_id
+  - canonical_url
+  - content_hash
+
+columns:
+  tenant_id:
+    type: uuid
+    nullable: false
+    description: Tenant isolation key
+
+  source:
+    type: varchar
+    nullable: false
+    description: Source system
+
+  canonical_url:
+    type: varchar
+    nullable: false
+    description: Normalized URL
+
+  title:
+    type: varchar
+    nullable: true
+    description: Extracted document title
+
+  content_hash:
+    type: varchar
+    nullable: false
+    description: SHA-256 of normalized content
+
+  content_md:
+    type: varchar
+    nullable: false
+    description: Cleaned Markdown content
+
+  content_text:
+    type: varchar
+    nullable: true
+    description: Plain text version (for BM25 indexing)
+
+  language:
+    type: varchar
+    nullable: true
+    description: Detected language code (en, de, fr, etc.)
+
+  product:
+    type: varchar
+    nullable: true
+    description: Product context (odoo-ce, sap-concur, etc.)
+
+  version:
+    type: varchar
+    nullable: true
+    description: Extracted version number
+
+  version_at:
+    type: timestamp
+    nullable: true
+    description: Document version timestamp if available
+
+  metadata:
+    type: varchar
+    nullable: true
+    description: JSON-encoded extracted metadata
+
+  normalized_at:
+    type: timestamp
+    nullable: false
+    description: Normalization timestamp (UTC)
+
+  normalized_date:
+    type: date
+    nullable: false
+    description: Partition date
+
+merge_key: content_hash
+retention_days: 180
