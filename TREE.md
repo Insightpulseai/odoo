@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 133a2f1cf12cd084012c715ac69db073f1f32c55
+> Commit: c45c810f25582f62ede89f3209229ead9f1e0356
 
 ```
 .
@@ -23,6 +23,7 @@
 │   │   ├── ci-odoo-ce.yml
 │   │   ├── ci-odoo-oca.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
+│   │   ├── docs-crawler-cron.yml
 │   │   ├── health-check.yml
 │   │   └── repo-structure.yml
 │   └── copilot-instructions.md
@@ -888,7 +889,8 @@
 │   │   ├── 202512071200_7000_ODOO_CE_OCA_SYNC_META.sql
 │   │   ├── 202512071210_8000_RLS_POLICIES_AND_GRANTS.sql
 │   │   ├── 202512071220_9000_SEEDS_REFERENCE_AND_DEMO_DATA.sql
-│   │   └── 20251219_ops_advisor_schema.sql
+│   │   ├── 20251219_ops_advisor_schema.sql
+│   │   └── 20251220085409_kapa_docs_copilot_hybrid_search.sql
 │   └── seed
 │       ├── 9000_core
 │       │   └── 9000_core_tenants_roles_users.sql
@@ -923,10 +925,12 @@
 │   │   ├── README.md
 │   │   └── inventory.py
 │   ├── docs-crawler
+│   │   ├── .env.example
 │   │   ├── README.md
 │   │   ├── api_ask.py
 │   │   ├── config.yaml
-│   │   └── crawler.py
+│   │   ├── crawler.py
+│   │   └── requirements.txt
 │   ├── docs_catalog
 │   │   ├── README.md
 │   │   ├── crawl_docs.py
@@ -940,6 +944,9 @@
 ├── vendor
 │   ├── oca-sync.sh
 │   └── oca.lock.json
+├── vercel
+│   └── api
+│       └── ask.py
 ├── workflows
 │   ├── finance_ppm
 │   │   ├── DEPLOYMENT.md
@@ -1065,15 +1072,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-373 directories, 687 files
+375 directories, 692 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 406 |
-| Files | 1173 |
-| Python files | 361 |
+| Directories | 408 |
+| Files | 1178 |
+| Python files | 362 |
 | XML files | 181 |
 | Markdown files | 231 |
