@@ -1,0 +1,92 @@
+# =============================================================================
+# Delta Table Contract: gold.chunks
+# =============================================================================
+# Semantic chunks ready for embedding and retrieval.
+# Deterministic chunk IDs for stable references.
+# =============================================================================
+
+table: gold.chunks
+format: delta
+location: s3://lakehouse/gold/chunks/
+
+partition_by:
+  - source
+  - chunk_date
+
+primary_key:
+  - tenant_id
+  - chunk_id
+
+columns:
+  tenant_id:
+    type: uuid
+    nullable: false
+    description: Tenant isolation key
+
+  source:
+    type: varchar
+    nullable: false
+    description: Source system
+
+  document_id:
+    type: uuid
+    nullable: false
+    description: Stable document ID (derived from canonical_url)
+
+  document_version_id:
+    type: uuid
+    nullable: false
+    description: Version-specific ID (derived from content_hash)
+
+  chunk_id:
+    type: uuid
+    nullable: false
+    description: Deterministic chunk UUID (hash of doc_version + ord)
+
+  ord:
+    type: integer
+    nullable: false
+    description: Chunk order within document (0-indexed)
+
+  heading:
+    type: varchar
+    nullable: true
+    description: Nearest heading above this chunk
+
+  content:
+    type: varchar
+    nullable: false
+    description: Chunk text content
+
+  tokens:
+    type: integer
+    nullable: true
+    description: Token count (model-specific)
+
+  char_start:
+    type: integer
+    nullable: true
+    description: Character offset in source document
+
+  char_end:
+    type: integer
+    nullable: true
+    description: Character end offset
+
+  metadata:
+    type: varchar
+    nullable: true
+    description: JSON-encoded chunk metadata
+
+  created_at:
+    type: timestamp
+    nullable: false
+    description: Chunk creation timestamp (UTC)
+
+  chunk_date:
+    type: date
+    nullable: false
+    description: Partition date
+
+merge_key: chunk_id
+retention_days: 365
