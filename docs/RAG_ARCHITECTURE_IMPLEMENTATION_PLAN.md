@@ -708,10 +708,98 @@ Every error code includes:
 2. `20251220_agentbrain_delta.sql` - Docs KB + Parity + Pipelines
 3. `20251220_qms_lite_document_control.sql` - QMS-Lite
 4. `20251220_process_runtime_ticketing.sql` - Process Runtime
+5. `20251220_capability_registry_full.sql` - Full Capability Map + Gap Handlers
 
 ---
 
-## 14. References
+## 14. Capability Registry: SAP → Odoo CE/OCA + Supabase Gap Handlers
+
+### 14.1 Canonical Rule
+
+**SAP product ≠ 1:1 module.** Map SAP into a normalized **capability registry**, then bind each capability to:
+
+| Binding | Purpose |
+|---------|---------|
+| **Odoo CE core module(s)** | Must exist - base transaction layer |
+| **OCA addon(s)** | Preferred for workflow/approvals/extensions |
+| **Supabase gap handler** | Policy, scoring, OCR, audit, intelligence |
+
+This keeps **Odoo = Transaction UI + Posting Layer** and **Supabase = Governance + Automation + Intelligence Layer**.
+
+### 14.2 Capability Taxonomy
+
+| SAP Suite | Capability Area | Key Count |
+|-----------|-----------------|-----------|
+| SAP Concur | Expense, Invoice, Request | 8 |
+| SAP SRM/Ariba | Supplier, RFQ, PO, Receiving, Contracts | 6 |
+| SAP Integration | iFlows, BPMN, Adapters, Monitoring | 4 |
+| SAP SuccessFactors / Service Cloud | Onboarding, Offboarding, ITSM | 5 |
+| MasterControl (reference) | QMS Document Control, Training, Change | 3 |
+| **Total** | | **26 capabilities** |
+
+### 14.3 Gap Handler Categories
+
+| Category | Handler Count | Type |
+|----------|---------------|------|
+| OCR | 2 | Edge Function |
+| Policy/Rules | 5 | Edge Function |
+| Matching/Assertions | 2 | Edge Function |
+| Vendor Management | 3 | Edge Function |
+| Workflow | 5 | Hybrid (table + n8n) |
+| SLA/Escalation | 3 | Hybrid |
+| Audit | 4 | Table |
+| Alerts | 4 | Edge Function |
+| Exceptions | 2 | Mixed |
+| Integration | 4 | n8n Workflow |
+| **Total** | **34 handlers** | |
+
+### 14.4 Key Files
+
+| File | Purpose |
+|------|---------|
+| `config/capability_map.yaml` | Full YAML taxonomy (human-editable) |
+| `supabase/migrations/20251220_capability_registry_full.sql` | DB seed + gap_handlers table |
+| `supabase/functions/expense-policy-check/` | Policy rules Edge Function |
+| `supabase/functions/three-way-match/` | PO/GR/INV matching Edge Function |
+| `supabase/functions/vendor-score/` | Vendor risk scoring Edge Function |
+
+### 14.5 Example: SAP Concur Expense Capture Mapping
+
+```yaml
+- capability_key: travel.expense.capture
+  title: Expense Capture + Receipt Processing
+  odoo_ce:
+    - hr_expense
+    - documents
+  oca:
+    - repo: OCA/hr-expense
+      modules:
+        - hr_expense_sequence
+        - hr_expense_invoice
+  supabase_gap_handlers:
+    - ocr.receipt_extract      # PaddleOCR-VL + OpenAI
+    - policy.expense_rules     # Per diem, limits, requirements
+    - audit.provenance         # Immutable audit trail
+  gap_severity: critical
+  status: mapped
+```
+
+### 14.6 Gap Handler Lookup
+
+```sql
+-- Find all capabilities using a specific handler
+SELECT * FROM gold.capabilities_by_handler(
+    p_tenant_id := 'your-tenant-uuid',
+    p_handler_key := 'ocr.receipt_extract'
+);
+
+-- Check implementation status of all handlers
+SELECT * FROM gold.gap_handler_status();
+```
+
+---
+
+## 15. References
 
 - [Odoo 18 Documentation](https://www.odoo.com/documentation/18.0/)
 - [SAP Help Portal](https://help.sap.com/docs/)
