@@ -1,0 +1,162 @@
+[
+  {
+    "url": "https://help.sap.com/docs/CONCUR_EXPENSE/user-guide",
+    "title": "SAP Concur Expense User Guide",
+    "h1": "Expense Reports and Reimbursement",
+    "breadcrumbs": ["SAP Concur", "Expense", "User Guide"],
+    "section": "use",
+    "status": 200,
+    "word_count": 2543,
+    "discovered_from": null
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR_EXPENSE/receipts",
+    "title": "E-Receipts and Receipt Capture",
+    "h1": "Capturing Expense Receipts",
+    "breadcrumbs": ["SAP Concur", "Expense", "E-Receipts"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1823,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_EXPENSE/user-guide"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR_EXPENSE/itemization",
+    "title": "Expense Itemization",
+    "h1": "Itemizing Expense Entries",
+    "breadcrumbs": ["SAP Concur", "Expense", "Itemization"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1342,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_EXPENSE/user-guide"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR_EXPENSE/mileage",
+    "title": "Mileage Tracking",
+    "h1": "Mileage and Per Diem",
+    "breadcrumbs": ["SAP Concur", "Expense", "Mileage"],
+    "section": "use",
+    "status": 200,
+    "word_count": 987,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_EXPENSE/user-guide"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR_TRAVEL/booking",
+    "title": "Travel Booking and Itinerary",
+    "h1": "Booking Flights and Hotels",
+    "breadcrumbs": ["SAP Concur", "Travel", "Booking"],
+    "section": "use",
+    "status": 200,
+    "word_count": 2156,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_EXPENSE/user-guide"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR_TRAVEL/profile",
+    "title": "Travel Profile and Preferences",
+    "h1": "Managing Your Travel Profile",
+    "breadcrumbs": ["SAP Concur", "Travel", "Profile"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1456,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_TRAVEL/booking"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR_INVOICE/approval",
+    "title": "Invoice Approval Workflow",
+    "h1": "Approving Supplier Invoices",
+    "breadcrumbs": ["SAP Concur", "Invoice", "Approval"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1789,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_EXPENSE/user-guide"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR_INVOICE/payment",
+    "title": "Payment Requests",
+    "h1": "Creating Payment Requests",
+    "breadcrumbs": ["SAP Concur", "Invoice", "Payment"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1234,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_INVOICE/approval"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/audit-compliance",
+    "title": "Audit and Compliance Reporting",
+    "h1": "Compliance Reports and Audit Trails",
+    "breadcrumbs": ["SAP Concur", "Audit", "Compliance"],
+    "section": "reference",
+    "status": 200,
+    "word_count": 2345,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_EXPENSE/user-guide"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/policy-violation",
+    "title": "Policy Violations and Approval Overrides",
+    "h1": "Managing Policy Violations",
+    "breadcrumbs": ["SAP Concur", "Policy", "Violations"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1567,
+    "discovered_from": "https://help.sap.com/docs/CONCUR/audit-compliance"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/analytics-dashboard",
+    "title": "Analytics and Business Intelligence",
+    "h1": "Concur Analytics Dashboard",
+    "breadcrumbs": ["SAP Concur", "Analytics", "Dashboard"],
+    "section": "use",
+    "status": 200,
+    "word_count": 2876,
+    "discovered_from": "https://help.sap.com/docs/CONCUR/audit-compliance"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/standard-reports",
+    "title": "Standard Reports and Exports",
+    "h1": "Running Standard Reports",
+    "breadcrumbs": ["SAP Concur", "Reports", "Standard"],
+    "section": "reference",
+    "status": 200,
+    "word_count": 1923,
+    "discovered_from": "https://help.sap.com/docs/CONCUR/analytics-dashboard"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/api-integration",
+    "title": "API and Integration Guide",
+    "h1": "Concur API Integration",
+    "breadcrumbs": ["SAP Concur", "Integration", "API"],
+    "section": "integrate",
+    "status": 200,
+    "word_count": 3456,
+    "discovered_from": "https://help.sap.com/docs/CONCUR/analytics-dashboard"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/sso-saml",
+    "title": "Single Sign-On with SAML",
+    "h1": "Configuring SAML SSO",
+    "breadcrumbs": ["SAP Concur", "Security", "SSO"],
+    "section": "implement",
+    "status": 200,
+    "word_count": 2134,
+    "discovered_from": "https://help.sap.com/docs/CONCUR/api-integration"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/mobile-app",
+    "title": "Concur Mobile App Guide",
+    "h1": "Using the Mobile App",
+    "breadcrumbs": ["SAP Concur", "Mobile", "iOS/Android"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1678,
+    "discovered_from": "https://help.sap.com/docs/CONCUR_EXPENSE/receipts"
+  },
+  {
+    "url": "https://help.sap.com/docs/CONCUR/mobile-receipt-capture",
+    "title": "Mobile Receipt Capture",
+    "h1": "Capturing Receipts with Mobile Camera",
+    "breadcrumbs": ["SAP Concur", "Mobile", "Receipt Capture"],
+    "section": "use",
+    "status": 200,
+    "word_count": 1234,
+    "discovered_from": "https://help.sap.com/docs/CONCUR/mobile-app"
+  }
+]
