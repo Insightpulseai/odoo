@@ -1,0 +1,154 @@
+{
+  "$schema": "./oca.lock.schema.json",
+  "version": "2.0",
+  "odoo_version": "18.0",
+  "generated_at": "2025-12-19T00:00:00Z",
+  "target_dir": "addons/oca",
+  "repos": [
+    {
+      "name": "OCA/server-auth",
+      "url": "https://github.com/OCA/server-auth.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["auth_oidc", "auth_oauth", "auth_session_timeout"]
+    },
+    {
+      "name": "OCA/server-tools",
+      "url": "https://github.com/OCA/server-tools.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["base_technical_user", "module_auto_update", "base_cron_exclusion"]
+    },
+    {
+      "name": "OCA/server-ux",
+      "url": "https://github.com/OCA/server-ux.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["date_range", "sequence_reset_period"]
+    },
+    {
+      "name": "OCA/web",
+      "url": "https://github.com/OCA/web.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["web_responsive", "web_advanced_search"]
+    },
+    {
+      "name": "OCA/project",
+      "url": "https://github.com/OCA/project.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": [
+        "project_task_default_stage",
+        "project_template",
+        "project_status",
+        "project_timeline"
+      ]
+    },
+    {
+      "name": "OCA/mis-builder",
+      "url": "https://github.com/OCA/mis-builder.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["mis_builder", "mis_builder_budget"]
+    },
+    {
+      "name": "OCA/reporting-engine",
+      "url": "https://github.com/OCA/reporting-engine.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["report_xlsx", "report_xlsx_helper", "report_qweb_element_page_visibility"]
+    },
+    {
+      "name": "OCA/purchase-workflow",
+      "url": "https://github.com/OCA/purchase-workflow.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["purchase_request", "purchase_order_approved"]
+    },
+    {
+      "name": "OCA/hr-expense",
+      "url": "https://github.com/OCA/hr-expense.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["hr_expense_advance_clearing", "hr_expense_sequence"]
+    },
+    {
+      "name": "OCA/account-financial-tools",
+      "url": "https://github.com/OCA/account-financial-tools.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["account_lock_date_update", "account_fiscal_year"]
+    },
+    {
+      "name": "OCA/account-financial-reporting",
+      "url": "https://github.com/OCA/account-financial-reporting.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["account_financial_report"]
+    },
+    {
+      "name": "OCA/account-closing",
+      "url": "https://github.com/OCA/account-closing.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["account_cutoff_base"]
+    },
+    {
+      "name": "OCA/account-invoicing",
+      "url": "https://github.com/OCA/account-invoicing.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["account_invoice_merge"]
+    },
+    {
+      "name": "OCA/contract",
+      "url": "https://github.com/OCA/contract.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["contract"]
+    },
+    {
+      "name": "OCA/dms",
+      "url": "https://github.com/OCA/dms.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["dms", "dms_field"]
+    },
+    {
+      "name": "OCA/hr",
+      "url": "https://github.com/OCA/hr.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["hr_employee_calendar_planning"]
+    },
+    {
+      "name": "OCA/timesheet",
+      "url": "https://github.com/OCA/timesheet.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["hr_timesheet_sheet"]
+    },
+    {
+      "name": "OCA/partner-contact",
+      "url": "https://github.com/OCA/partner-contact.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["partner_firstname", "partner_company_group"]
+    },
+    {
+      "name": "OCA/helpdesk",
+      "url": "https://github.com/OCA/helpdesk.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["helpdesk_mgmt"]
+    },
+    {
+      "name": "OCA/rest-framework",
+      "url": "https://github.com/OCA/rest-framework.git",
+      "ref": "18.0",
+      "commit": "HEAD",
+      "modules": ["base_rest", "base_rest_datamodel"]
+    }
+  ]
+}

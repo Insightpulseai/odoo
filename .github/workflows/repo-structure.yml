@@ -1,0 +1,128 @@
+# =============================================================================
+# Repository Structure Guardrail
+# =============================================================================
+# Enforces the CE → OCA → IPAI layered architecture.
+#
+# Runs on:
+# - All PRs to main
+# - Direct pushes to main
+#
+# Checks:
+# - Addons must be in addons/ipai/ or addons/oca/
+# - IPAI modules follow naming convention
+# - No duplicate module names
+# - No restart loops in docker-compose
+# - No QWeb ID collisions
+# =============================================================================
+
+name: Repo Structure Check
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'addons/**'
+      - 'infra/**'
+      - 'vendor/**'
+      - 'docker-compose*.yml'
+      - '.github/workflows/repo-structure.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'addons/**'
+      - 'infra/**'
+      - 'vendor/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  structure-check:
+    name: Validate Repository Structure
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run structure check
+        run: |
+          chmod +x infra/ci/structure-check.sh
+          ./infra/ci/structure-check.sh
+
+      - name: Check IPAI module manifests
+        run: |
+          echo "Checking IPAI module manifests..."
+
+          # Find all __manifest__.py files in IPAI modules
+          manifests=$(find addons/ipai -name "__manifest__.py" 2>/dev/null || find addons -name "__manifest__.py" -path "*/ipai_*/*" 2>/dev/null || true)
+
+          if [[ -z "$manifests" ]]; then
+            echo "No IPAI modules found (structure may not be migrated yet)"
+            exit 0
+          fi
+
+          errors=0
+          for manifest in $manifests; do
+            module_dir=$(dirname "$manifest")
+            module_name=$(basename "$module_dir")
+
+            # Check for required keys (handle both single and double quotes)
+            if ! grep -qE "['\"]name['\"]" "$manifest"; then
+              echo "ERROR: $module_name missing 'name' in manifest"
+              errors=$((errors + 1))
+            fi
+
+            if ! grep -qE "['\"]version['\"]" "$manifest"; then
+              echo "ERROR: $module_name missing 'version' in manifest"
+              errors=$((errors + 1))
+            fi
+
+            if ! grep -qE "['\"]license['\"]" "$manifest"; then
+              echo "WARN: $module_name missing 'license' in manifest"
+            fi
+
+            echo "OK: $module_name manifest valid"
+          done
+
+          if [[ $errors -gt 0 ]]; then
+            echo "FAILED: $errors manifest error(s)"
+            exit 1
+          fi
+
+          echo "All IPAI manifests valid"
+
+      - name: Check OCA lockfile
+        run: |
+          echo "Checking OCA lockfile..."
+
+          if [[ -f vendor/oca.lock ]]; then
+            echo "OCA lockfile present"
+
+            # Basic YAML syntax check
+            if ! python3 -c "import yaml; yaml.safe_load(open('vendor/oca.lock'))" 2>/dev/null; then
+              echo "WARN: oca.lock is not valid YAML (may use custom format)"
+            fi
+          else
+            echo "WARN: vendor/oca.lock not found"
+            echo "Consider creating lockfile: ./vendor/oca-sync.sh update"
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          echo ""
+          echo "==================================="
+          echo "Repository Structure Check Complete"
+          echo "==================================="
+          echo ""
+          echo "Architecture: CE → OCA → IPAI"
+          echo ""
+          echo "Expected structure:"
+          echo "  addons/ipai/    - Custom IPAI modules"
+          echo "  addons/oca/     - Vendored OCA repos"
+          echo "  vendor/oca.lock - OCA pinning"
+          echo "  infra/          - Docker, CI, configs"
+          echo ""

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- KPI Snapshot List View -->
+    <record id="view_ppm_kpi_snapshot_list" model="ir.ui.view">
+      <field name="name">ppm.kpi.snapshot.list</field>
+      <field name="model">ppm.kpi.snapshot</field>
+      <field name="arch" type="xml">
+        <list string="KPI Snapshots">
+          <field name="as_of"/>
+          <field name="scope"/>
+          <field name="portfolio_id" optional="show"/>
+          <field name="program_id" optional="show"/>
+          <field name="project_id" optional="show"/>
+          <field name="kpi_key"/>
+          <field name="kpi_label" optional="show"/>
+          <field name="kpi_category"/>
+          <field name="value"/>
+          <field name="unit"/>
+          <field name="target_value" optional="show"/>
+          <field name="status" widget="badge" decoration-success="status=='green'" decoration-warning="status=='yellow'" decoration-danger="status=='red'"/>
+          <field name="source"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- KPI Snapshot Form View -->
+    <record id="view_ppm_kpi_snapshot_form" model="ir.ui.view">
+      <field name="name">ppm.kpi.snapshot.form</field>
+      <field name="model">ppm.kpi.snapshot</field>
+      <field name="arch" type="xml">
+        <form string="KPI Snapshot">
+          <sheet>
+            <group>
+              <group string="Scope">
+                <field name="scope"/>
+                <field name="portfolio_id" invisible="scope != 'portfolio'"/>
+                <field name="program_id" invisible="scope != 'program'"/>
+                <field name="project_id" invisible="scope != 'project'"/>
+              </group>
+              <group string="KPI Definition">
+                <field name="kpi_key"/>
+                <field name="kpi_label"/>
+                <field name="kpi_category"/>
+              </group>
+            </group>
+            <group>
+              <group string="Value">
+                <field name="value"/>
+                <field name="value_text"/>
+                <field name="unit"/>
+              </group>
+              <group string="Thresholds">
+                <field name="target_value"/>
+                <field name="threshold_green"/>
+                <field name="threshold_yellow"/>
+                <field name="status" widget="badge" readonly="1"/>
+              </group>
+            </group>
+            <group>
+              <group string="Source">
+                <field name="source"/>
+                <field name="source_ref"/>
+              </group>
+              <group string="Timestamp">
+                <field name="as_of"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <!-- KPI Snapshot Search -->
+    <record id="view_ppm_kpi_snapshot_search" model="ir.ui.view">
+      <field name="name">ppm.kpi.snapshot.search</field>
+      <field name="model">ppm.kpi.snapshot</field>
+      <field name="arch" type="xml">
+        <search string="Search KPIs">
+          <field name="kpi_key"/>
+          <field name="kpi_label"/>
+          <field name="program_id"/>
+          <field name="project_id"/>
+          <separator/>
+          <filter name="filter_red" string="Critical" domain="[('status', '=', 'red')]"/>
+          <filter name="filter_yellow" string="At Risk" domain="[('status', '=', 'yellow')]"/>
+          <separator/>
+          <group expand="0" string="Group By">
+            <filter name="groupby_kpi" string="KPI" context="{'group_by': 'kpi_key'}"/>
+            <filter name="groupby_category" string="Category" context="{'group_by': 'kpi_category'}"/>
+            <filter name="groupby_scope" string="Scope" context="{'group_by': 'scope'}"/>
+            <filter name="groupby_date" string="Date" context="{'group_by': 'as_of:day'}"/>
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <!-- KPI Pivot View -->
+    <record id="view_ppm_kpi_snapshot_pivot" model="ir.ui.view">
+      <field name="name">ppm.kpi.snapshot.pivot</field>
+      <field name="model">ppm.kpi.snapshot</field>
+      <field name="arch" type="xml">
+        <pivot string="KPI Analysis">
+          <field name="kpi_key" type="row"/>
+          <field name="as_of" interval="week" type="col"/>
+          <field name="value" type="measure"/>
+        </pivot>
+      </field>
+    </record>
+
+    <!-- KPI Graph View -->
+    <record id="view_ppm_kpi_snapshot_graph" model="ir.ui.view">
+      <field name="name">ppm.kpi.snapshot.graph</field>
+      <field name="model">ppm.kpi.snapshot</field>
+      <field name="arch" type="xml">
+        <graph string="KPI Trends" type="line">
+          <field name="as_of" interval="day" type="row"/>
+          <field name="value" type="measure"/>
+          <field name="kpi_key" type="col"/>
+        </graph>
+      </field>
+    </record>
+
+    <!-- KPI Snapshot Action -->
+    <record id="action_ppm_kpi_snapshot" model="ir.actions.act_window">
+      <field name="name">KPI Snapshots</field>
+      <field name="res_model">ppm.kpi.snapshot</field>
+      <field name="view_mode">list,pivot,graph,form</field>
+      <field name="search_view_id" ref="view_ppm_kpi_snapshot_search"/>
+      <field name="help" type="html">
+        <p class="o_view_nocontent_smiling_face">
+          Record a KPI measurement
+        </p>
+        <p>
+          Track KPIs over time for portfolios, programs, and projects.
+        </p>
+      </field>
+    </record>
+  </data>
+</odoo>

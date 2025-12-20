@@ -1,0 +1,20 @@
+{
+  "projects": [
+    {
+      "name": "ipai-control-center-docs",
+      "rootDirectory": "apps/ipai-control-center-docs",
+      "framework": "nextjs"
+    }
+  ],
+  "functions": {
+    "vercel/api/ask.py": {
+      "runtime": "python3.11"
+    }
+  },
+  "env": {
+    "SUPABASE_URL": "@supabase-url",
+    "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key",
+    "OPENAI_API_KEY": "@openai-api-key",
+    "TENANT_ID": "@tenant-id"
+  }
+}

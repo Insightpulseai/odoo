@@ -1,0 +1,31 @@
+# IPAI Control Center
+
+Azure Advisor-inspired unified operations platform for Odoo CE 18.0 + Supabase environments.
+
+## Documentation
+
+- [Constitution](/constitution) - Non-negotiables, success criteria, quality bar
+- [PRD](/prd) - Problem statement, goals, functional requirements
+- [Plan](/plan) - Architecture, milestones, technical decisions
+- [Tasks](/tasks) - Execution backlog with acceptance criteria
+
+## Quick Links
+
+- **GitHub**: [jgtolentino/odoo-ce](https://github.com/jgtolentino/odoo-ce)
+- **Spec Branch**: [feat/ipai-control-center-spec-kit](https://github.com/jgtolentino/odoo-ce/tree/feat/ipai-control-center-spec-kit)
+
+## Architecture Overview
+
+5-module architecture with clean separation of concerns:
+
+1. **ipai_workspace_core** - Shared foundation (base, mail)
+2. **ipai_ppm** - Portfolio/Program/Risk/Resource allocation (OCA integration)
+3. **ipai_advisor** - Recommendations + 5-category scoring
+4. **ipai_workbooks** - Superset analytics registry
+5. **ipai_connectors** - n8n/webhooks/Mattermost integration
+
+## Status
+
+**Phase**: Planning (Spec Kit Complete)
+**Version**: 1.0.0
+**Last Updated**: 2025-12-19

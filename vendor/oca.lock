@@ -1,0 +1,114 @@
+# OCA Module Pinning
+# ===================
+# This lockfile pins OCA repositories to specific commits for reproducible builds.
+# Generated: 2025-12-19
+# Odoo Version: 18.0
+#
+# Usage:
+#   ./vendor/oca-sync.sh sync    # Sync OCA repos to pinned versions
+#   ./vendor/oca-sync.sh verify  # Verify OCA repos match lockfile
+#   ./vendor/oca-sync.sh update  # Update lockfile with current commits
+
+version: 1
+odoo_version: "18.0"
+target_dir: "addons/oca"
+
+repos:
+  # Project Management
+  project:
+    url: https://github.com/OCA/project.git
+    branch: "18.0"
+    commit: null  # Pin after first sync
+    modules:
+      - project_task_default_stage
+      - project_template
+      - project_status
+
+  # MIS Builder (Management Information System)
+  mis-builder:
+    url: https://github.com/OCA/mis-builder.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - mis_builder
+      - mis_builder_budget
+
+  # Reporting Engine
+  reporting-engine:
+    url: https://github.com/OCA/reporting-engine.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - report_xlsx
+      - report_xlsx_helper
+      - report_qweb_element_page_visibility
+
+  # Server Tools
+  server-tools:
+    url: https://github.com/OCA/server-tools.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - base_technical_user
+      - module_auto_update
+
+  # Server UX
+  server-ux:
+    url: https://github.com/OCA/server-ux.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - date_range
+      - sequence_reset_period
+
+  # Purchase Workflow
+  purchase-workflow:
+    url: https://github.com/OCA/purchase-workflow.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - purchase_request
+      - purchase_order_approved
+
+  # HR Expense
+  hr-expense:
+    url: https://github.com/OCA/hr-expense.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - hr_expense_advance_clearing
+      - hr_expense_sequence
+
+  # Account Financial Tools
+  account-financial-tools:
+    url: https://github.com/OCA/account-financial-tools.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - account_lock_date_update
+      - account_fiscal_year
+
+  # Account Financial Reporting
+  account-financial-reporting:
+    url: https://github.com/OCA/account-financial-reporting.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - account_financial_report
+
+  # Contract
+  contract:
+    url: https://github.com/OCA/contract.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - contract
+
+  # DMS (Document Management System)
+  dms:
+    url: https://github.com/OCA/dms.git
+    branch: "18.0"
+    commit: null
+    modules:
+      - dms
+      - dms_field

@@ -1,0 +1,12 @@
+diff --git a/addons/ipai_ce_cleaner/views/ipai_ce_cleaner_assets.xml b/addons/ipai_ce_cleaner/views/ipai_ce_cleaner_assets.xml
+index fe9c4952..9d272a9c 100644
+--- a/addons/ipai_ce_cleaner/views/ipai_ce_cleaner_assets.xml
++++ b/addons/ipai_ce_cleaner/views/ipai_ce_cleaner_assets.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <odoo>
+-    <template id="assets_backend" inherit_id="web.assets_backend">
++    <template id="ipai_ce_cleaner_assets_backend" inherit_id="web.assets_backend">
+         <xpath expr="." position="inside">
+             <link rel="stylesheet" href="/ipai_ce_cleaner/static/src/css/ipai_ce_cleaner.css"/>
+         </xpath>

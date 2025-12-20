@@ -18,7 +18,7 @@ on:
     branches:
       - main
     paths:
-      - 'addons/ipai_**'
+      - 'addons/ipai/**'
       - 'docker/Dockerfile.seeded'
       - 'docker/entrypoint.seeded.sh'
       - 'docker/requirements.seeded.txt'
@@ -27,7 +27,7 @@ on:
     branches:
       - main
     paths:
-      - 'addons/ipai_**'
+      - 'addons/ipai/**'
       - 'docker/**'
   workflow_dispatch:
     inputs:
@@ -187,12 +187,11 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**KEEP Modules (8):**" >> $GITHUB_STEP_SUMMARY
+          echo "**KEEP Modules (7):**" >> $GITHUB_STEP_SUMMARY
           echo "- ipai_finance_ppm (core Finance PPM)" >> $GITHUB_STEP_SUMMARY
           echo "- ipai_ppm_monthly_close (monthly close scheduler)" >> $GITHUB_STEP_SUMMARY
           echo "- ipai_finance_ppm_closing (idempotent generator)" >> $GITHUB_STEP_SUMMARY
           echo "- ipai_finance_ppm_dashboard (dashboards)" >> $GITHUB_STEP_SUMMARY
           echo "- ipai_bir_compliance (BIR tax filing)" >> $GITHUB_STEP_SUMMARY
           echo "- ipai_expense (expense management)" >> $GITHUB_STEP_SUMMARY
-          echo "- ipai_ocr_expense (receipt OCR)" >> $GITHUB_STEP_SUMMARY
           echo "- ipai_equipment (asset tracking)" >> $GITHUB_STEP_SUMMARY

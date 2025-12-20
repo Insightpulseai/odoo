@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+    <!-- Qualification List View -->
+    <record id="view_qualification_list" model="ir.ui.view">
+      <field name="name">srm.qualification.list</field>
+      <field name="model">srm.qualification</field>
+      <field name="arch" type="xml">
+        <list string="Qualifications" decoration-success="state == 'approved'" decoration-danger="state == 'rejected'">
+          <field name="start_date"/>
+          <field name="supplier_id"/>
+          <field name="qualification_type"/>
+          <field name="state" widget="badge"/>
+          <field name="target_completion"/>
+          <field name="expiry_date"/>
+          <field name="checklist_complete"/>
+        </list>
+      </field>
+    </record>
+
+    <!-- Qualification Form View -->
+    <record id="view_qualification_form" model="ir.ui.view">
+      <field name="name">srm.qualification.form</field>
+      <field name="model">srm.qualification</field>
+      <field name="arch" type="xml">
+        <form string="Supplier Qualification">
+          <header>
+            <button name="action_start_documents" type="object" string="Start Document Collection" invisible="state != 'draft'"/>
+            <button name="action_submit_review" type="object" string="Submit for Review" invisible="state != 'documents'"/>
+            <button name="action_schedule_site_visit" type="object" string="Schedule Site Visit" invisible="state != 'review'" groups="ipai_srm.group_srm_manager"/>
+            <button name="action_approve" type="object" string="Approve" class="oe_highlight" invisible="state not in ('review', 'site_visit')" groups="ipai_srm.group_srm_manager"/>
+            <button name="action_reject" type="object" string="Reject" invisible="state in ('approved', 'rejected', 'draft')"/>
+            <field name="state" widget="statusbar" statusbar_visible="draft,documents,review,approved"/>
+          </header>
+          <sheet>
+            <widget name="web_ribbon" title="Approved" bg_color="bg-success" invisible="state != 'approved'"/>
+            <widget name="web_ribbon" title="Rejected" bg_color="bg-danger" invisible="state != 'rejected'"/>
+            <div class="oe_title">
+              <label for="supplier_id"/>
+              <h1><field name="supplier_id"/></h1>
+            </div>
+            <group>
+              <group>
+                <field name="qualification_type"/>
+                <field name="start_date"/>
+                <field name="target_completion"/>
+              </group>
+              <group>
+                <field name="reviewer_id"/>
+                <field name="approver_id" invisible="state != 'approved'"/>
+                <field name="expiry_date"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Checklist">
+                <field name="checklist_ids">
+                  <list editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="is_required"/>
+                    <field name="is_complete"/>
+                    <field name="completed_by"/>
+                    <field name="completed_date"/>
+                  </list>
+                </field>
+                <div class="mt-3">
+                  <field name="checklist_complete" widget="boolean" readonly="1"/>
+                  <span class="ms-2">Checklist Complete</span>
+                </div>
+              </page>
+              <page string="Documents">
+                <field name="document_ids" widget="many2many_binary"/>
+              </page>
+              <page string="Risk Assessment">
+                <group>
+                  <field name="risk_score"/>
+                </group>
+                <field name="risk_notes" placeholder="Risk assessment notes..."/>
+              </page>
+              <page string="Notes">
+                <field name="notes" placeholder="General notes..."/>
+                <field name="rejection_reason" placeholder="Rejection reason..." invisible="state != 'rejected'"/>
+              </page>
+            </notebook>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <!-- Qualification Action -->
+    <record id="action_qualification" model="ir.actions.act_window">
+      <field name="name">Qualifications</field>
+      <field name="res_model">srm.qualification</field>
+      <field name="view_mode">list,form</field>
+    </record>
+  </data>
+</odoo>
