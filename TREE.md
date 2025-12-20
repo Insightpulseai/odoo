@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7f935b00fc8e9e5041fe5e1307c10980bcbc7ae7
+> Commit: 9aab3f65df06d98c0c4adb4498e77d6cb0a78a1f
 
 ```
 .
@@ -275,6 +275,8 @@
 │   ├── odoo_oca_ci_fixer.yaml
 │   ├── odoo_reverse_mapper.yaml
 │   └── smart_delta_oca.yaml
+├── api
+│   └── oca-docs-brain-openapi.yaml
 ├── apps
 │   ├── do-advisor-agent
 │   │   ├── config
@@ -452,6 +454,8 @@
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
+│   ├── schema
+│   │   └── oca_docs_brain.dbml
 │   ├── seeds
 │   │   └── SEEDING_STRATEGY.md
 │   └── DB_TARGET_ARCHITECTURE.md
@@ -890,7 +894,12 @@
 │   │   ├── 202512071210_8000_RLS_POLICIES_AND_GRANTS.sql
 │   │   ├── 202512071220_9000_SEEDS_REFERENCE_AND_DEMO_DATA.sql
 │   │   ├── 20251219_ops_advisor_schema.sql
-│   │   └── 20251220085409_kapa_docs_copilot_hybrid_search.sql
+│   │   ├── 20251220085409_kapa_docs_copilot_hybrid_search.sql
+│   │   ├── 202512201000_MULTI_ENGINE_GOVERNANCE.sql
+│   │   ├── 202512201001_EXTERNAL_INTEGRATIONS.sql
+│   │   ├── 202512201002_AZURE_CONTROL_CENTER.sql
+│   │   ├── 202512201003_OCA_DOCS_BRAIN.sql
+│   │   └── 202512201004_SHIP_READY_DELTA.sql
 │   └── seed
 │       ├── 9000_core
 │       │   └── 9000_core_tenants_roles_users.sql
@@ -1072,15 +1081,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-375 directories, 692 files
+377 directories, 699 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 408 |
-| Files | 1178 |
+| Directories | 410 |
+| Files | 1185 |
 | Python files | 362 |
 | XML files | 181 |
 | Markdown files | 231 |
