@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 721ec42ce1f104f2ad968c5a92f6c2c25bdbbd09
+> Commit: 4a1fd20b91f484245603cd050e130e52b25cf903
 
 ## 📚 Documentation
 
@@ -151,6 +151,7 @@
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
 | [Quick Reference: SSO & Permissions Setup](docs/QUICK_REFERENCE_SSO_SETUP.md) | docs |
+| [RAG Architecture Implementation Plan](docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md) | docs |
 | [InsightPulseAI Documentation](docs/README.md) | docs |
 | [MCP Stack – Odoo + n8n + Mattermost + Superset + DO Agents](docs/README_MCP_STACK.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
