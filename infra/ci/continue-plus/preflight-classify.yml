@@ -1,0 +1,155 @@
+# =============================================================================
+# PREFLIGHT CLASSIFY - Reusable Workflow
+# =============================================================================
+# Classifies changed files and outputs gating flags for downstream jobs.
+#
+# Usage (in your workflow):
+#
+#   jobs:
+#     preflight:
+#       uses: ./.github/workflows/agent-preflight.yml
+#       # Or reference from another repo:
+#       # uses: your-org/ci-templates/.github/workflows/preflight-classify.yml@main
+#
+#     odoo-tests:
+#       needs: preflight
+#       if: needs.preflight.outputs.run_odoo == 'true'
+#       runs-on: ubuntu-latest
+#       steps:
+#         - run: echo "Running Odoo tests..."
+#
+# Outputs:
+#   run_odoo     - 'true' if addons/odoo/oca files changed
+#   run_tests    - 'true' if test files changed
+#   change_type  - Primary change category (code|tests|docs|spec|infra|agent_config)
+# =============================================================================
+
+name: Preflight Classify
+
+on:
+  workflow_call:
+    outputs:
+      run_odoo:
+        description: "Whether Odoo CI should run"
+        value: ${{ jobs.classify.outputs.run_odoo }}
+      run_tests:
+        description: "Whether test jobs should run"
+        value: ${{ jobs.classify.outputs.run_tests }}
+      change_type:
+        description: "Primary change category"
+        value: ${{ jobs.classify.outputs.change_type }}
+
+jobs:
+  classify:
+    name: Classify Changes
+    runs-on: ubuntu-latest
+    outputs:
+      run_odoo: ${{ steps.analyze.outputs.run_odoo }}
+      run_tests: ${{ steps.analyze.outputs.run_tests }}
+      change_type: ${{ steps.analyze.outputs.change_type }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Analyze changes
+        id: analyze
+        run: |
+          set -e
+
+          # Determine base ref
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="origin/${{ github.base_ref }}"
+          else
+            BASE_REF="HEAD~1"
+          fi
+
+          # Get changed files
+          CHANGED=$(git diff --name-only $BASE_REF...HEAD 2>/dev/null || git diff --name-only HEAD~1 2>/dev/null || echo "")
+
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          # Initialize flags
+          HAS_CODE=false
+          HAS_TESTS=false
+          HAS_DOCS=false
+          HAS_SPEC=false
+          HAS_INFRA=false
+          HAS_AGENT=false
+
+          # Classify each file
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+
+            case "$file" in
+              addons/*|odoo/*|oca/*)
+                HAS_CODE=true
+                ;;
+              tests/*|*_test.py|test_*.py)
+                HAS_TESTS=true
+                ;;
+              docs/*|*.md|*.rst)
+                HAS_DOCS=true
+                ;;
+              spec/*)
+                HAS_SPEC=true
+                ;;
+              .github/*|scripts/*|deploy/*|infra/*|docker*|Dockerfile*)
+                HAS_INFRA=true
+                ;;
+              .claude/*|.continue/*|CLAUDE.md)
+                HAS_AGENT=true
+                ;;
+            esac
+          done <<< "$CHANGED"
+
+          # Determine run flags
+          if [ "$HAS_CODE" = "true" ] || [ "$HAS_TESTS" = "true" ]; then
+            RUN_ODOO=true
+            RUN_TESTS=true
+          else
+            RUN_ODOO=false
+            RUN_TESTS=false
+          fi
+
+          # Determine primary change type (priority order)
+          if [ "$HAS_CODE" = "true" ]; then
+            CHANGE_TYPE="code"
+          elif [ "$HAS_TESTS" = "true" ]; then
+            CHANGE_TYPE="tests"
+          elif [ "$HAS_INFRA" = "true" ]; then
+            CHANGE_TYPE="infra"
+          elif [ "$HAS_SPEC" = "true" ]; then
+            CHANGE_TYPE="spec"
+          elif [ "$HAS_AGENT" = "true" ]; then
+            CHANGE_TYPE="agent_config"
+          elif [ "$HAS_DOCS" = "true" ]; then
+            CHANGE_TYPE="docs"
+          else
+            CHANGE_TYPE="other"
+          fi
+
+          # Output
+          echo "run_odoo=$RUN_ODOO" >> $GITHUB_OUTPUT
+          echo "run_tests=$RUN_TESTS" >> $GITHUB_OUTPUT
+          echo "change_type=$CHANGE_TYPE" >> $GITHUB_OUTPUT
+
+          # Summary
+          echo "## Preflight Classification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Flag | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Run Odoo CI | \`$RUN_ODOO\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run Tests | \`$RUN_TESTS\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Change Type | \`$CHANGE_TYPE\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Categories Detected" >> $GITHUB_STEP_SUMMARY
+          echo "- Code: \`$HAS_CODE\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests: \`$HAS_TESTS\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Docs: \`$HAS_DOCS\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Spec: \`$HAS_SPEC\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Infra: \`$HAS_INFRA\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Agent: \`$HAS_AGENT\`" >> $GITHUB_STEP_SUMMARY

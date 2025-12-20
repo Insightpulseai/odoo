@@ -1,0 +1,169 @@
+# =============================================================================
+# SPEC-KIT CHECK - Reusable Workflow
+# =============================================================================
+# Validates spec bundles meet Continue+ requirements.
+#
+# Usage (in your workflow):
+#
+#   jobs:
+#     spec-check:
+#       uses: ./.github/workflows/spec-kit-enforce.yml
+#       # Or reference from another repo:
+#       # uses: your-org/ci-templates/.github/workflows/spec-kit-check.yml@main
+#       with:
+#         spec-path: spec/
+#         strict-placeholders: false
+#         strict-content: false
+#
+# Inputs:
+#   spec-path          - Path to spec directory (default: spec/)
+#   strict-placeholders - Treat placeholders as errors (default: false)
+#   strict-content      - Treat low word count as errors (default: false)
+#
+# Outputs:
+#   passed  - Number of spec bundles that passed
+#   failed  - Number of spec bundles that failed
+#   valid   - 'true' if all passed, 'false' otherwise
+# =============================================================================
+
+name: Spec-Kit Check
+
+on:
+  workflow_call:
+    inputs:
+      spec-path:
+        description: "Path to spec directory"
+        required: false
+        default: "spec/"
+        type: string
+      strict-placeholders:
+        description: "Treat placeholders as errors"
+        required: false
+        default: false
+        type: boolean
+      strict-content:
+        description: "Treat low word count as errors"
+        required: false
+        default: false
+        type: boolean
+    outputs:
+      passed:
+        description: "Number of spec bundles that passed"
+        value: ${{ jobs.validate.outputs.passed }}
+      failed:
+        description: "Number of spec bundles that failed"
+        value: ${{ jobs.validate.outputs.failed }}
+      valid:
+        description: "Whether all spec bundles are valid"
+        value: ${{ jobs.validate.outputs.valid }}
+
+jobs:
+  validate:
+    name: Validate Spec Bundles
+    runs-on: ubuntu-latest
+    outputs:
+      passed: ${{ steps.check.outputs.passed }}
+      failed: ${{ steps.check.outputs.failed }}
+      valid: ${{ steps.check.outputs.valid }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check for spec-kit-enforce script
+        id: script
+        run: |
+          if [ -f "scripts/spec-kit-enforce.py" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create inline validator (if script missing)
+        if: steps.script.outputs.exists == 'false'
+        run: |
+          mkdir -p scripts
+          cat > scripts/spec-kit-enforce.py << 'PYTHON'
+          #!/usr/bin/env python3
+          import json
+          import os
+          import re
+          import sys
+          from pathlib import Path
+
+          REQUIRED = ["constitution.md", "prd.md", "plan.md", "tasks.md"]
+          PLACEHOLDERS = [r"\bTODO\b", r"\bTBD\b", r"\bLOREM\b", r"\bPLACEHOLDER\b"]
+
+          def check_bundle(path):
+              result = {"slug": path.name, "valid": True, "errors": [], "warnings": []}
+              for f in REQUIRED:
+                  fp = path / f
+                  if not fp.exists():
+                      result["errors"].append(f"Missing: {f}")
+                      result["valid"] = False
+                  else:
+                      content = fp.read_text()
+                      for p in PLACEHOLDERS:
+                          if re.search(p, content, re.I):
+                              result["warnings"].append(f"{f}: placeholder found")
+              return result
+
+          def main():
+              spec_dir = Path(sys.argv[1] if len(sys.argv) > 1 else "spec")
+              results = []
+              for d in sorted(spec_dir.iterdir()):
+                  if d.is_dir() and not d.name.startswith("."):
+                      results.append(check_bundle(d))
+              passed = sum(1 for r in results if r["valid"])
+              output = {"total": len(results), "passed": passed, "failed": len(results) - passed, "results": results}
+              print(json.dumps(output, indent=2))
+
+          if __name__ == "__main__":
+              main()
+          PYTHON
+          chmod +x scripts/spec-kit-enforce.py
+
+      - name: Validate spec bundles
+        id: check
+        run: |
+          ARGS="--check-all --json ${{ inputs.spec-path }}"
+          if [ "${{ inputs.strict-placeholders }}" = "true" ]; then
+            ARGS="$ARGS --strict-placeholders"
+          fi
+          if [ "${{ inputs.strict-content }}" = "true" ]; then
+            ARGS="$ARGS --strict-content"
+          fi
+
+          python scripts/spec-kit-enforce.py $ARGS > results.json || true
+          cat results.json
+
+          PASSED=$(jq -r '.passed // 0' results.json)
+          FAILED=$(jq -r '.failed // 0' results.json)
+          VALID=$( [ "$FAILED" -eq 0 ] && echo "true" || echo "false" )
+
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "valid=$VALID" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        run: |
+          echo "## Spec-Kit Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Passed | ${{ steps.check.outputs.passed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Failed | ${{ steps.check.outputs.failed }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Valid | ${{ steps.check.outputs.valid }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check result
+        if: steps.check.outputs.valid == 'false'
+        run: |
+          echo "::warning::Spec-kit validation has failures"
+          # Don't fail the job by default - just warn
+          # Uncomment to make this blocking:
+          # exit 1

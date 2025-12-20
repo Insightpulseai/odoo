@@ -1,0 +1,108 @@
+# =============================================================================
+# SUPERSET - DigitalOcean App Platform Spec
+# =============================================================================
+# Deployment spec for Apache Superset BI dashboard
+#
+# Usage:
+#   doctl apps create --spec infra/superset/do-app-spec.yaml
+#   doctl apps update <app-id> --spec infra/superset/do-app-spec.yaml
+#
+# Image source: ghcr.io/jgtolentino/ipai-superset:<tag>
+# Manifest: infra/superset/manifest.json
+# =============================================================================
+
+name: superset
+region: sgp1
+
+# =============================================================================
+# Services
+# =============================================================================
+services:
+  - name: superset
+    # Image from GHCR (updated via bump workflow)
+    image:
+      registry_type: GHCR
+      registry: jgtolentino
+      repository: ipai-superset
+      tag: latest  # Updated by superset-bump workflow
+
+    instance_size_slug: professional-xs
+    instance_count: 1
+
+    # Health check
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 30
+      period_seconds: 30
+      timeout_seconds: 10
+      success_threshold: 1
+      failure_threshold: 3
+
+    # HTTP settings
+    http_port: 8088
+
+    # Environment from secrets/config
+    envs:
+      - key: SUPERSET_SECRET_KEY
+        scope: RUN_TIME
+        type: SECRET
+
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        type: SECRET
+
+      - key: REDIS_URL
+        scope: RUN_TIME
+        type: SECRET
+
+      - key: SUPERSET_WEBSERVER_TIMEOUT
+        scope: RUN_TIME
+        value: "300"
+
+      - key: GUNICORN_WORKERS
+        scope: RUN_TIME
+        value: "2"
+
+      - key: GUNICORN_THREADS
+        scope: RUN_TIME
+        value: "4"
+
+    # Routes
+    routes:
+      - path: /
+
+# =============================================================================
+# Databases (Managed)
+# =============================================================================
+databases:
+  - name: superset-db
+    engine: PG
+    version: "15"
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
+
+  - name: superset-redis
+    engine: REDIS
+    version: "7"
+    size: db-s-1vcpu-1gb
+    num_nodes: 1
+
+# =============================================================================
+# Ingress (Domain)
+# =============================================================================
+ingress:
+  rules:
+    - component:
+        name: superset
+      match:
+        path:
+          prefix: /
+
+# =============================================================================
+# Alerts
+# =============================================================================
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DEPLOYMENT_LIVE
+  - rule: DOMAIN_FAILED
+  - rule: DOMAIN_LIVE
