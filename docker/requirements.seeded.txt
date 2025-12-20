@@ -29,3 +29,7 @@ requests>=2.31.0
 
 # JSON schema validation (seed validation)
 jsonschema>=4.21.0
+
+# Documentation catalogue tools (optional - for tools/docs_catalog/)
+beautifulsoup4>=4.12.0
+pyyaml>=6.0.1
