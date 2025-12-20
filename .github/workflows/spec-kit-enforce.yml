@@ -1,124 +1,125 @@
-name: Spec-Kit Enforcement
+```yaml
+# .github/workflows/spec-kit-enforce.yml
+name: Spec Kit Enforcement
 
 on:
   pull_request:
     paths:
-      - 'spec/**'
-      - 'scripts/spec-kit-enforce.py'
+      - "spec/**"
+      - ".github/workflows/spec-kit-enforce.yml"
+      - "CLAUDE.md"
+      - ".claude/**"
+      - "scripts/**"
   push:
-    branches: [main, master]
+    branches:
+      - main
     paths:
-      - 'spec/**'
+      - "spec/**"
+      - ".github/workflows/spec-kit-enforce.yml"
+      - "CLAUDE.md"
+      - ".claude/**"
+      - "scripts/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: spec-kit-enforce-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Validate Spec Bundles
+  spec-kit-enforce:
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install deps (YAML validator)
+        shell: bash
         run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
-          python -m pip install pyyaml
+          pip install pyyaml
 
-      - name: Validate all spec bundles
-        id: validate
+      - name: Validate required files + non-trivial content
+        shell: bash
         run: |
-          python scripts/spec-kit-enforce.py --check-all --json spec/ > spec-results.json || true
-          cat spec-results.json
+          set -euo pipefail
 
-          # Extract counts
-          PASSED=$(jq -r '.passed' spec-results.json)
-          FAILED=$(jq -r '.failed' spec-results.json)
-          WARNINGS=$(jq -r '.warnings' spec-results.json)
+          fail=0
 
-          echo "passed=$PASSED" >> $GITHUB_OUTPUT
-          echo "failed=$FAILED" >> $GITHUB_OUTPUT
-          echo "warnings=$WARNINGS" >> $GITHUB_OUTPUT
+          # For every spec/<slug>/constitution.md, enforce the full 4-file kit.
+          while IFS= read -r cfile; do
+            slug_dir="$(dirname "$cfile")"
+            slug_name="$(basename "$slug_dir")"
+            echo "Validating spec bundle: $slug_name"
 
-          # Set status
-          if [ "$FAILED" -gt 0 ]; then
-            echo "status=failure" >> $GITHUB_OUTPUT
-          elif [ "$WARNINGS" -gt 0 ]; then
-            echo "status=warning" >> $GITHUB_OUTPUT
+            for f in constitution.md prd.md plan.md tasks.md; do
+              path="$slug_dir/$f"
+              if [ ! -f "$path" ]; then
+                echo "::error file=$path::Missing required Spec Kit file: $path"
+                fail=1
+                continue
+              fi
+
+              # Non-trivial: at least 10 non-empty, non-heading lines
+              non_empty="$(grep -Ev '^\s*$' "$path" | grep -Ev '^\s*#' | wc -l | tr -d ' ')"
+              if [ "$non_empty" -lt 10 ]; then
+                echo "::error file=$path::Spec file too small (<10 non-empty, non-heading lines). Add real content."
+                fail=1
+              fi
+
+              # Block placeholder-y text patterns (warn only; enforce via fail if you want)
+              if grep -Eqi '(TODO|TBD|PLACEHOLDER|FILL\s+ME\s+IN|LOREM\s+IPSUM)' "$path"; then
+                echo "::warning file=$path::Spec contains placeholders (TODO/TBD/etc). Consider resolving."
+              fi
+            done
+          done < <(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null || true)
+
+          # Require CLAUDE.md
+          if [ ! -f "CLAUDE.md" ]; then
+            echo "::error::Missing CLAUDE.md at repo root"
+            fail=1
+          fi
+
+          # Check for .claude directory (optional warning)
+          if [ ! -d ".claude" ]; then
+            echo "::warning::Missing .claude/ directory"
+          fi
+
+          # Check for verification scripts
+          if [ ! -f "scripts/verify.sh" ] && [ ! -f "scripts/ci_local.sh" ]; then
+            echo "::warning::No verify script found (scripts/verify.sh or scripts/ci_local.sh)"
+          fi
+
+          exit "$fail"
+
+      - name: Validate YAML files (spec bundles)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Find YAML files in spec bundles
+          yaml_files="$(find spec -type f \( -name "*.yaml" -o -name "*.yml" \) 2>/dev/null || true)"
+          if [ -n "$yaml_files" ]; then
+            echo "Validating YAML files in spec bundles..."
+            while IFS= read -r f; do
+              [ -z "$f" ] && continue
+              python3 - <<PY
+import yaml, sys
+p = r"""$f"""
+with open(p, "r", encoding="utf-8") as fh:
+    yaml.safe_load(fh)
+print("OK:", p)
+PY
+            done <<< "$yaml_files"
           else
-            echo "status=success" >> $GITHUB_OUTPUT
+            echo "No YAML files found under spec/."
           fi
-
-      - name: Comment on PR
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const results = JSON.parse(fs.readFileSync('spec-results.json', 'utf8'));
-
-            let body = '## Spec-Kit Validation\n\n';
-            body += `| Metric | Count |\n|--------|-------|\n`;
-            body += `| Passed | ${results.passed} |\n`;
-            body += `| Failed | ${results.failed} |\n`;
-            body += `| Warnings | ${results.warnings} |\n\n`;
-
-            if (results.failed > 0) {
-              body += '### Errors\n\n';
-              for (const r of results.results.filter(r => !r.valid)) {
-                body += `**\`spec/${r.slug}/\`**\n`;
-                for (const err of r.errors) {
-                  body += `- ${err}\n`;
-                }
-                body += '\n';
-              }
-            }
-
-            if (results.warnings > 0) {
-              body += '### Warnings\n\n';
-              for (const r of results.results.filter(r => r.warnings.length > 0)) {
-                body += `**\`spec/${r.slug}/\`**\n`;
-                for (const warn of r.warnings) {
-                  body += `- ${warn}\n`;
-                }
-                body += '\n';
-              }
-            }
-
-            // Find existing comment
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-
-            const botComment = comments.find(c =>
-              c.user.type === 'Bot' && c.body.includes('## Spec-Kit Validation')
-            );
-
-            if (botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: body
-              });
-            }
-
-      - name: Check result
-        run: |
-          if [ "${{ steps.validate.outputs.status }}" = "failure" ]; then
-            echo "::error::Spec-kit validation failed"
-            exit 1
-          fi
+```

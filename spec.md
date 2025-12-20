@@ -25,15 +25,32 @@ The system is designed to:
 |   |-- workflows
 |   `-- rules.md
 |-- .claude
+|   |-- commands
 |   |-- project_memory.db
 |   |-- query_memory.py
+|   |-- settings.json
 |   `-- settings.local.json
+|-- .continue
+|   |-- prompts
+|   `-- rules
 |-- .github
 |   |-- workflows
 |   `-- copilot-instructions.md
 |-- addons
 |   |-- ipai
-|   `-- oca
+|   |-- ipai_cash_advance
+|   |-- ipai_ce_branding
+|   |-- ipai_clarity_ppm_parity
+|   |-- ipai_dev_studio_base
+|   |-- ipai_finance_ppm
+|   |-- ipai_industry_accounting_firm
+|   |-- ipai_industry_marketing_agency
+|   |-- ipai_master_control
+|   |-- ipai_ppm_monthly_close
+|   |-- ipai_tbwa_branding_min
+|   |-- ipai_workspace_core
+|   |-- oca
+|   `-- omc_finance_ppm
 |-- agents
 |   |-- capabilities
 |   |-- knowledge
@@ -48,10 +65,13 @@ The system is designed to:
 |   |-- odoo_oca_ci_fixer.yaml
 |   |-- odoo_reverse_mapper.yaml
 |   `-- smart_delta_oca.yaml
+|-- api
+|   `-- oca-docs-brain-openapi.yaml
 |-- apps
 |   |-- do-advisor-agent
 |   |-- do-advisor-ui
-|   `-- ipai-control-center-docs
+|   |-- ipai-control-center-docs
+|   `-- pulser-runner
 |-- archive
 |   `-- addons
 |-- automations
@@ -71,7 +91,12 @@ The system is designed to:
 |   `-- flutter_receipt_ocr
 |-- config
 |   |-- entrypoint.d
-|   `-- odoo.conf.template
+|   |-- sources
+|   |-- capability_map.yaml
+|   |-- odoo.conf.template
+|   `-- pipeline.yaml
+|-- contracts
+|   `-- delta
 |-- data
 |   |-- bir_calendar_2026.json
 |   |-- employee_directory.json
@@ -82,11 +107,13 @@ The system is designed to:
 |-- db
 |   |-- migrations
 |   |-- rls
+|   |-- schema
 |   |-- seeds
 |   `-- DB_TARGET_ARCHITECTURE.md
 |-- deploy
 |   |-- k8s
 |   |-- nginx
+|   |-- odoo-industry
 |   |-- .env.production.template
 |   |-- README.md
 |   |-- docker-compose.prod.v0.10.0.yml
@@ -130,6 +157,7 @@ The system is designed to:
 |   |-- db
 |   |-- deployment
 |   |-- diagrams
+|   |-- incidents
 |   |-- odoo-18-handbook
 |   |-- 003-odoo-ce-custom-image-spec.md
 |   |-- AGENTIC_CLOUD_PRD.md
@@ -166,6 +194,7 @@ The system is designed to:
 |   |-- MATTERMOST_CHATOPS_DEPLOYMENT.md
 |   |-- MCP_IMPLEMENTATION_STATUS.md
 |   |-- MIXED_CONTENT_FIX.md
+|   |-- MODULE_RISK_ASSESSMENT.md
 |   |-- MVP_GO_LIVE_CHECKLIST.md
 |   |-- N8N_CREDENTIALS_BOOTSTRAP.md
 |   |-- OCA_MIGRATION.md
@@ -178,10 +207,12 @@ The system is designed to:
 |   |-- ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
 |   |-- ODOO_IMAGE_SPEC.md
 |   |-- ODOO_MODULE_DEPLOYMENT.md
+|   |-- ODOO_PRODUCTION_RESEARCH.md
 |   |-- OFFLINE_TARBALL_DEPLOYMENT.md
 |   |-- PRD_ipai_ppm_portfolio.md
 |   |-- PROD_READINESS_GAPS.md
 |   |-- QUICK_REFERENCE_SSO_SETUP.md
+|   |-- RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
 |   |-- README.md
 |   |-- README_MCP_STACK.md
 |   |-- SAAS_PARITY_READINESS.md
@@ -192,6 +223,7 @@ The system is designed to:
 |   |-- SUPERSET_PPM_ANALYTICS_GUIDE.md
 |   |-- TAGGING_STRATEGY.md
 |   |-- TESTING_ODOO_18.md
+|   |-- TROUBLESHOOTING_500_ERROR.md
 |   |-- WBS_LOGFRAME_MAPPING.md
 |   |-- branch-cleanup-analysis.md
 |   `-- v0.9.1_DEPLOYMENT_GUIDE.md
@@ -225,7 +257,9 @@ The system is designed to:
 |   |-- ce
 |   |-- ci
 |   |-- docker
-|   `-- entrypoint.d
+|   |-- entrypoint.d
+|   |-- lakehouse
+|   `-- superset
 |-- mattermost
 |   |-- runbooks
 |   `-- webhook-templates
@@ -262,10 +296,21 @@ The system is designed to:
 |-- odoo
 |   |-- ODOO_INTEGRATION_MAP.md
 |   `-- ipai_finance_closing_seed.json
+|-- ops
+|   |-- BREAK_GLASS_RECOVERY.md
+|   |-- INCIDENT_RESPONSE_500_ERROR.md
+|   |-- POSTMORTEM_TEMPLATE.md
+|   |-- README.md
+|   `-- verify_prod.sh
+|-- out
+|   |-- concur_demo
+|   `-- concur_demo_odoo_map
 |-- patches
 |   `-- ipai_ce_cleaner_xmlid_fix.diff
 |-- scripts
 |   |-- ci
+|   |-- kb
+|   |-- lakehouse
 |   |-- README.md
 |   |-- apply-supabase-schema.sh
 |   |-- auto_error_handler.sh
@@ -278,6 +323,8 @@ The system is designed to:
 |   |-- ci_local.sh
 |   |-- ci_smoke_test.sh
 |   |-- cleanup-branches.sh
+|   |-- cleanup_duplicate_users.sql
+|   |-- cleanup_users_xmlrpc.py
 |   |-- convert_csv_to_xml.py
 |   |-- convert_seed_to_xml.py
 |   |-- create-release.sh
@@ -289,6 +336,10 @@ The system is designed to:
 |   |-- deployment-checklist.sh
 |   |-- enhanced_health_check.sh
 |   |-- erp_config_cli.sh
+|   |-- export_project_30.py
+|   |-- fix_home_manual.sql
+|   |-- fix_home_page.sql
+|   |-- fix_home_to_dashboard.py
 |   |-- full_deploy_sanity.sh
 |   |-- gen_repo_tree.sh
 |   |-- gen_repo_tree_fallback.sh
@@ -301,6 +352,7 @@ The system is designed to:
 |   |-- image_audit.sh
 |   |-- import_month_end_tasks.py
 |   |-- install-git-hooks.sh
+|   |-- install_default_home.py
 |   |-- install_ipai_finance_ppm.sh
 |   |-- install_module_xmlrpc.py
 |   |-- map_logframe.py
@@ -310,6 +362,7 @@ The system is designed to:
 |   |-- package_image_tarball.sh
 |   |-- parse_notion_tasks.py
 |   |-- pre_install_snapshot.sh
+|   |-- repo_health.sh
 |   |-- report_ci_telemetry.sh
 |   |-- run_clarity_ppm_reverse.sh
 |   |-- run_odoo_migrations.sh
@@ -317,17 +370,25 @@ The system is designed to:
 |   |-- setup_mattermost_db.sh
 |   |-- simple_deploy.sh
 |   |-- smoketest.sh
+|   |-- spec-kit-enforce.py
+|   |-- spec_validate.sh
 |   |-- test_deploy_local.sh
 |   |-- update_diagram_manifest.py
 |   |-- validate_m1.sh
+|   |-- validate_manifest_deps.py
 |   |-- verify-https.sh
+|   |-- verify.sh
 |   |-- verify_backup.sh
 |   `-- verify_phase3.py
 |-- skills
 |   |-- architecture_diagrams.skill.json
 |   `-- superset_mcp.skill.json
 |-- spec
+|   |-- continue-plus
+|   |-- docs-platform-sapgrade
 |   |-- ipai-control-center
+|   |-- knowledge-hub
+|   |-- pulser-master-control
 |   |-- constitution.md
 |   |-- plan.md
 |   |-- prd.md
@@ -341,7 +402,10 @@ The system is designed to:
 |   |-- MODULE_SERVICE_MATRIX.md
 |   |-- README.md
 |   `-- tasks.md
+|-- src
+|   `-- lakehouse
 |-- supabase
+|   |-- functions
 |   |-- migrations
 |   `-- seed
 |-- tasks
@@ -351,16 +415,22 @@ The system is designed to:
 |   |-- playwright
 |   `-- regression
 |-- tools
+|   |-- catalog
 |   |-- db-inventory
+|   |-- docs-crawler
+|   |-- docs_catalog
 |   |-- seed_all.ts
 |   |-- seed_doc_ocr.ts
 |   |-- seed_ppm.ts
 |   |-- seed_retail_intel.ts
 |   `-- seed_te_cheq.ts
 |-- vendor
+|   |-- oca
 |   |-- oca-sync.sh
 |   |-- oca.lock
 |   `-- oca.lock.json
+|-- vercel
+|   `-- api
 |-- workflows
 |   |-- finance_ppm
 |   |-- odoo
@@ -370,6 +440,7 @@ The system is designed to:
 |   |-- n8n_enrichment_agent.json
 |   |-- n8n_ocr_expense_webhook.json
 |   `-- n8n_scout_sync_webhook.json
+|-- .Rhistory
 |-- .agentignore
 |-- .env.example
 |-- .env.production
@@ -399,6 +470,7 @@ The system is designed to:
 |-- FINANCE_PPM_DASHBOARD_GUIDE.md
 |-- FINANCE_PPM_IMPORT_GUIDE.md
 |-- IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
+|-- INFRASTRUCTURE_AUDIT_REPORT.md
 |-- INFRASTRUCTURE_PLAN.md
 |-- INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 |-- KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
@@ -418,6 +490,7 @@ The system is designed to:
 |-- RELEASE_v0.9.0.md
 |-- REPO_RESTRUCTURE_PLAN.md
 |-- SITEMAP.md
+|-- SKILLS.md
 |-- STRATEGIC_PPM_ANALYTICS_SUMMARY.md
 |-- TAG_LABEL_VOCABULARY.md
 |-- TBWA_IPAI_MODULE_STANDARD.md
@@ -432,6 +505,7 @@ The system is designed to:
 |-- deployment_readiness_assessment.md
 |-- docker-compose.mcp-local.yml
 |-- docker-compose.prod.yml
+|-- docker-compose.test.yml
 |-- docker-compose.yml
 |-- final_verification.sh
 |-- finance_calendar_2026.csv
@@ -460,14 +534,18 @@ The system is designed to:
 |-- odoo-ce-target.zip
 |-- odoo-v1.2.0-build.zip
 |-- odoo_ce_expert_prompt.md
+|-- package.json
 |-- ph_holidays_2026.csv
 |-- plan.md
+|-- pnpm-workspace.yaml
 |-- ppm_dashboard_views.xml
+|-- project_30_export.json
 |-- query_memory.py
 |-- requirements.txt
 |-- spec.md
 |-- task.md
 |-- tasks.md
+|-- turbo.json
 |-- update_finance_ppm.py
 |-- update_module.py
 |-- vercel.json
