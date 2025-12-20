@@ -1,0 +1,176 @@
+---
+# Kapa-style Docs Crawler Configuration for Odoo CE + OCA 18.0
+# Upgrades: versioning, multi-source, structure-aware chunking, hybrid retrieval
+tenant_slug: tbwa
+target:
+  supabase_url_env: SUPABASE_URL
+  supabase_service_key_env: SUPABASE_SERVICE_ROLE_KEY
+
+sources:
+  # Odoo Official Documentation (18.0)
+  - type: sitemap
+    name: odoo_docs
+    canonical_url_prefix: "https://www.odoo.com/documentation/18.0/"
+    sitemap_urls:
+      - "https://www.odoo.com/sitemap.xml"
+    include_patterns:
+      - "https://www.odoo.com/documentation/18.0/**"
+    doc_version: "odoo-18.0"
+    visibility: public
+    update_frequency: daily
+
+  # OCA Account Financial Tools (18.0)
+  - type: github_repo
+    name: oca_account_financial_tools
+    repo: "OCA/account-financial-tools"
+    branch: "18.0"
+    include_globs:
+      - "**/README.rst"
+      - "**/__manifest__.py"
+      - "**/docs/**"
+      - "**/static/description/**"
+      - "**/models/**/*.py"
+      - "**/views/**/*.xml"
+      - "**/security/**"
+    doc_version: "oca-18.0"
+    visibility: public
+    update_frequency: daily
+
+  # OCA Account Invoicing (18.0)
+  - type: github_repo
+    name: oca_account_invoicing
+    repo: "OCA/account-invoicing"
+    branch: "18.0"
+    include_globs:
+      - "**/README.rst"
+      - "**/__manifest__.py"
+      - "**/docs/**"
+      - "**/static/description/**"
+      - "**/models/**/*.py"
+      - "**/views/**/*.xml"
+      - "**/security/**"
+    doc_version: "oca-18.0"
+    visibility: public
+    update_frequency: daily
+
+  # OCA Reporting Engine (18.0)
+  - type: github_repo
+    name: oca_reporting_engine
+    repo: "OCA/reporting-engine"
+    branch: "18.0"
+    include_globs:
+      - "**/README.rst"
+      - "**/__manifest__.py"
+      - "**/docs/**"
+      - "**/static/description/**"
+      - "**/models/**/*.py"
+      - "**/views/**/*.xml"
+      - "**/security/**"
+    doc_version: "oca-18.0"
+    visibility: public
+    update_frequency: daily
+
+  # OCA HR Expense (18.0)
+  - type: github_repo
+    name: oca_hr_expense
+    repo: "OCA/hr-expense"
+    branch: "18.0"
+    include_globs:
+      - "**/README.rst"
+      - "**/__manifest__.py"
+      - "**/docs/**"
+      - "**/static/description/**"
+      - "**/models/**/*.py"
+      - "**/views/**/*.xml"
+      - "**/security/**"
+    doc_version: "oca-18.0"
+    visibility: public
+    update_frequency: daily
+
+  # OCA Project (18.0)
+  - type: github_repo
+    name: oca_project
+    repo: "OCA/project"
+    branch: "18.0"
+    include_globs:
+      - "**/README.rst"
+      - "**/__manifest__.py"
+      - "**/docs/**"
+      - "**/static/description/**"
+      - "**/models/**/*.py"
+      - "**/views/**/*.xml"
+      - "**/security/**"
+    doc_version: "oca-18.0"
+    visibility: public
+    update_frequency: daily
+
+  # InsightPulse Odoo CE (Internal)
+  - type: github_repo
+    name: ipai_odoo_ce
+    repo: "jgtolentino/odoo-ce"
+    branch: "main"
+    include_globs:
+      - "addons/ipai/**"
+      - "patches/**"
+      - "docs/**"
+      - ".github/workflows/**"
+      - "CLAUDE.md"
+      - "spec.md"
+    doc_version: "ipai-main"
+    visibility: internal
+    update_frequency: on_push
+
+  # InsightPulse Finance PPM Module
+  - type: github_repo
+    name: ipai_finance_ppm
+    repo: "jgtolentino/odoo-ce"
+    branch: "main"
+    include_globs:
+      - "addons/ipai/ipai_finance_ppm/**"
+      - "addons/ipai/ipai_finance_ppm_closing/**"
+      - "addons/ipai/ipai_ppm_monthly_close/**"
+    doc_version: "ipai-finance-ppm-v1"
+    visibility: internal
+    update_frequency: on_push
+
+chunking:
+  max_tokens: 750
+  overlap_tokens: 120
+  split_by_headings: true
+  preserve_code_blocks: true
+  preserve_context_header: true  # module_name, repo, branch, commit_sha
+  section_delimiter: "###"
+
+embeddings:
+  provider: openai
+  model: "text-embedding-3-small"
+  dimensions: 1536
+  batch_size: 100
+
+serve:
+  citations_required: true
+  max_citations: 6
+  default_search_order:
+    - ipai_odoo_ce
+    - ipai_finance_ppm
+    - oca_account_financial_tools
+    - oca_reporting_engine
+    - oca_hr_expense
+    - oca_project
+    - odoo_docs
+  hybrid_weights:
+    vector: 0.65
+    lexical: 0.35
+
+ingestion:
+  dedupe_by_checksum: true
+  preserve_versions: true
+  max_concurrent_sources: 3
+  retry_attempts: 3
+  retry_delay_seconds: 5
+
+metadata:
+  extract_module_api: true  # model names, fields, constraints, security rules
+  extract_xml_ids: true     # view xmlids, action ids
+  extract_code_signatures: true  # function names, class names
+  language_detection: true
