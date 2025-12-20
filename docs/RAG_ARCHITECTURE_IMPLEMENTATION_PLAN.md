@@ -419,10 +419,122 @@ curl -X POST "https://erp.insightpulseai.net/api/v1/answer" \
 
 ---
 
-## 10. References
+## 10. QMS-Lite Layer (MasterControl-Style Document Control)
+
+### 10.1 Platform Positioning
+
+This platform is **"GitHub + Notion + Kapa + Runbooks + Auto-remediation"**, NOT a full regulated QMS like MasterControl. However, for SOPs and policies, we add a **QMS-lite layer** to provide:
+
+| Feature | MasterControl | Our Platform | Status |
+|---------|---------------|--------------|--------|
+| Controlled documents | ✅ Full | ✅ Implemented | `qms.controlled_docs` |
+| Immutable versions | ✅ Full | ✅ Implemented | `qms.doc_versions` |
+| Approval workflows | ✅ Multi-step | ✅ Multi-step | `qms.approval_routes` + `qms.approvals` |
+| Audit trail | ✅ Part 11 | ✅ Append-only | `qms.audit_events` |
+| Read/ack tracking | ✅ Training mgmt | ✅ Basic | `qms.read_receipts` |
+| Evidence packs | ✅ Validation | ✅ Basic | `qms.evidence_packs` |
+| Training & competency | ✅ Full | ❌ Not built | External/future |
+| CAPA / deviations | ✅ Full | ⚠️ Optional | `qms.change_controls` |
+| e-signatures (Part 11) | ✅ Validated | ⚠️ Placeholder | Signature hash only |
+
+### 10.2 QMS Schema (8 Tables)
+
+```sql
+-- Core document control
+qms.controlled_docs      -- SOP|POLICY|WI|FORM|SPEC|RECORD
+qms.doc_versions         -- Immutable snapshots with effective_at/superseded_at
+qms.approval_routes      -- Workflow templates (steps, roles, escalation)
+qms.approvals            -- Actual approval records with decisions
+qms.read_receipts        -- "I have read and understood" acknowledgments
+
+-- Audit & compliance
+qms.audit_events         -- Append-only audit log (no UPDATE/DELETE)
+qms.change_controls      -- Optional: change control records
+qms.evidence_packs       -- Snapshots + citations for audits
+```
+
+### 10.3 Key Integration Points
+
+**RAG Integration:**
+- View `qms.v_effective_docs_for_rag` feeds only **effective versions** to RAG indexers
+- Agents can draft SOPs but **cannot mark them effective** without approval workflow completion
+
+**Workflow:**
+```
+Agent drafts SOP → qms.doc_versions (status='draft')
+                 ↓
+Submit for approval → qms.approvals created (step 1, 2, ...)
+                 ↓
+All approvers complete → status='approved'
+                 ↓
+Admin marks effective → status='effective', effective_at set
+                 ↓
+RAG indexes effective version only
+```
+
+### 10.4 Sample Approval Route
+
+```json
+{
+  "name": "Standard SOP Approval",
+  "applies_to_types": ["SOP", "WI"],
+  "steps": [
+    {"step": 1, "role": "department_manager", "action": "review", "required": true},
+    {"step": 2, "role": "quality_assurance", "action": "approve", "required": true}
+  ],
+  "sequential": true,
+  "escalation_hours": 72
+}
+```
+
+### 10.5 What We Intentionally Don't Build
+
+| Feature | Reason |
+|---------|--------|
+| Training assignments & quizzes | Use external LMS (Notion, Moodle, etc.) |
+| Full CAPA workflow | Out of scope; use `qms.change_controls` for basics |
+| Part 11 validated e-signatures | Requires identity binding; placeholder only |
+| Validation package generation | Use `qms.evidence_packs` manually |
+
+### 10.6 Migration File
+
+```
+supabase/migrations/20251220_qms_lite_document_control.sql
+```
+
+---
+
+## 11. Architecture Summary
+
+### Three-Layer Stack
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    LAYER 3: QMS-LITE                            │
+│  Controlled docs • Approvals • Audit trail • Evidence packs    │
+│  → Only effective versions feed into RAG                        │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                    LAYER 2: DOCS KB + PARITY                    │
+│  RAG hybrid search • Capability maps • Pipelines • Error codes │
+│  → Agent Brain + Automation Control Plane                       │
+└─────────────────────────────────────────────────────────────────┘
+                              ↓
+┌─────────────────────────────────────────────────────────────────┐
+│                    LAYER 1: ODOO 18 CE/OCA                      │
+│  Core ERP • hr_expense • account • project • inventory         │
+│  → Transactional system of record                               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 12. References
 
 - [Odoo 18 Documentation](https://www.odoo.com/documentation/18.0/)
 - [SAP Help Portal](https://help.sap.com/docs/)
 - [OCA Repositories](https://github.com/OCA)
 - [Continue Dev](https://github.com/continuedev/continue)
 - [Kapa.ai Architecture](https://kapa.ai/docs)
+- [MasterControl QMS](https://www.mastercontrol.com/) (reference only)
