@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9aab3f65df06d98c0c4adb4498e77d6cb0a78a1f
+> Commit: 721ec42ce1f104f2ad968c5a92f6c2c25bdbbd09
 
 ## 📚 Documentation
 
@@ -215,6 +215,10 @@
 | [Tasks — IPAI Control Center (v1.0.0)](spec/ipai-control-center/tasks.md) | spec/ipai-control-center |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
+| [Pulser Master Control — Constitution](spec/pulser-master-control/constitution.md) | spec/pulser-master-control |
+| [Pulser Master Control — Implementation Plan](spec/pulser-master-control/plan.md) | spec/pulser-master-control |
+| [Pulser Master Control — Product Requirements Document](spec/pulser-master-control/prd.md) | spec/pulser-master-control |
+| [Pulser Master Control — Task Breakdown](spec/pulser-master-control/tasks.md) | spec/pulser-master-control |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
 | [InsightPulse ERP – Expense & Equipment MVP (SAP Concur + Cheqroom Parity)](specs/002-odoo-expense-equipment-mvp.prd.md) | specs |
 | [Spec 003: AI Enrichment Agent - Deployment Guide](specs/003-ai-enrichment/DEPLOYMENT.md) | specs/003-ai-enrichment |
@@ -270,6 +274,7 @@
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
+| [ipai_master_control](./addons/ipai_master_control) | ✅ |  |
 | [ipai_accounting_firm_pack](./archive/addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_docs](./archive/addons/ipai_docs) | ✅ |  |
 | [ipai_docs_project](./archive/addons/ipai_docs_project) | ✅ |  |

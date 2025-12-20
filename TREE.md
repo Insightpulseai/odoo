@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9aab3f65df06d98c0c4adb4498e77d6cb0a78a1f
+> Commit: 721ec42ce1f104f2ad968c5a92f6c2c25bdbbd09
 
 ```
 .
@@ -253,6 +253,19 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   └── .gitkeep
+│   ├── ipai_master_control
+│   │   ├── data
+│   │   │   └── ir_config_parameter.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── hr_employee.py
+│   │   │   ├── hr_expense.py
+│   │   │   ├── master_control_mixin.py
+│   │   │   └── purchase_order.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   └── oca
 │       └── .gitkeep
 ├── agents
@@ -299,23 +312,28 @@
 │   │   ├── README.md
 │   │   ├── app-spec.yaml
 │   │   └── nginx.conf
-│   └── ipai-control-center-docs
-│       ├── .vercel
-│       │   ├── README.txt
-│       │   └── project.json
-│       ├── pages
-│       │   ├── strategy
-│       │   ├── _app.jsx
-│       │   ├── _meta.js
-│       │   ├── constitution.md
-│       │   ├── index.mdx
-│       │   ├── plan.md
-│       │   ├── prd.md
-│       │   └── tasks.md
-│       ├── DEPLOYMENT.md
-│       ├── next.config.mjs
+│   ├── ipai-control-center-docs
+│   │   ├── .vercel
+│   │   │   ├── README.txt
+│   │   │   └── project.json
+│   │   ├── pages
+│   │   │   ├── strategy
+│   │   │   ├── _app.jsx
+│   │   │   ├── _meta.js
+│   │   │   ├── constitution.md
+│   │   │   ├── index.mdx
+│   │   │   ├── plan.md
+│   │   │   ├── prd.md
+│   │   │   └── tasks.md
+│   │   ├── DEPLOYMENT.md
+│   │   ├── next.config.mjs
+│   │   ├── package.json
+│   │   └── theme.config.jsx
+│   └── pulser-runner
+│       ├── .env.example
+│       ├── app.py
 │       ├── package.json
-│       └── theme.config.jsx
+│       └── requirements.txt
 ├── archive
 │   └── addons
 │       ├── ipai_accounting_firm_pack
@@ -786,6 +804,17 @@
 │   └── concur_demo_odoo_map
 │       ├── mapping.csv
 │       └── mapping.md
+├── packages
+│   ├── agent-core
+│   │   ├── src
+│   │   │   └── index.ts
+│   │   └── package.json
+│   └── github-app
+│       ├── src
+│       │   └── server.ts
+│       ├── .env.example
+│       ├── package.json
+│       └── tsconfig.json
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
 ├── scripts
@@ -860,6 +889,12 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── pulser-master-control
+│   │   ├── capability-registry.yaml
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── constitution.md
 │   ├── plan.md
 │   ├── prd.md
@@ -878,6 +913,8 @@
 │   └── tasks.md
 ├── supabase
 │   ├── migrations
+│   │   ├── 20241220000001_master_control.sql
+│   │   ├── 20241220000002_master_data.sql
 │   │   ├── 20251123_saas_feature_matrix.sql
 │   │   ├── 20251128_semantic_query_layer.sql
 │   │   ├── 202512071100_1000_CORE_SCHEMAS_AND_TENANCY.sql
@@ -1064,6 +1101,7 @@
 ├── odoo-ce-target.zip
 ├── odoo-v1.2.0-build.zip
 ├── odoo_ce_expert_prompt.md
+├── package.json
 ├── ph_holidays_2026.csv
 ├── plan.md
 ├── ppm_dashboard_views.xml
@@ -1081,15 +1119,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-377 directories, 699 files
+388 directories, 726 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 410 |
-| Files | 1185 |
-| Python files | 362 |
-| XML files | 181 |
-| Markdown files | 231 |
+| Directories | 421 |
+| Files | 1212 |
+| Python files | 370 |
+| XML files | 182 |
+| Markdown files | 235 |
