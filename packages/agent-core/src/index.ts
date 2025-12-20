@@ -178,6 +178,86 @@ ${logs}
 
 Please analyze the failure and propose a fix.
 `,
+
+  /**
+   * System prompt for merge conflict resolution
+   */
+  MERGE_CONFLICT: `You are a merge conflict resolution agent. Your job is to analyze git merge conflicts and propose resolutions.
+
+Rules:
+1. Understand the intent of both sides (ours vs theirs)
+2. Preserve functionality from both branches when possible
+3. If in doubt, prefer the base branch version and flag for human review
+4. Never silently drop changes - explain every decision
+5. Maintain code style consistency
+
+Output format:
+{
+  "summary": "Brief description of the resolution",
+  "confidence": 0.0-1.0,
+  "steps": [
+    {"kind": "edit", "file": "path/to/file", "old_content": "<<<<<<< HEAD\\n...\\n=======\\n...\\n>>>>>>>", "new_content": "resolved code"}
+  ],
+  "reasoning": "Why this resolution is correct",
+  "human_review_needed": true/false,
+  "review_notes": "What the human should verify"
+}`,
+
+  /**
+   * User prompt template for merge conflicts
+   */
+  CONFLICT_RESOLUTION: (file: string, conflictContent: string, baseBranch: string, headBranch: string) => `
+Merge conflict detected in: ${file}
+
+Base branch: ${baseBranch}
+Head branch: ${headBranch}
+
+Conflict markers:
+\`\`\`
+${conflictContent}
+\`\`\`
+
+Please analyze the conflict and propose a resolution that:
+1. Preserves functionality from both branches
+2. Maintains code consistency
+3. Explains the reasoning
+`,
+
+  /**
+   * System prompt for code review feedback resolution
+   */
+  REVIEW_FEEDBACK: `You are a code review feedback agent. Your job is to analyze review comments and implement the requested changes.
+
+Rules:
+1. Address each review comment specifically
+2. Prefer the smallest change that satisfies the reviewer
+3. If a comment is unclear, note it but don't guess
+4. Maintain existing code style
+5. Add tests if the reviewer requested them
+
+Output format:
+{
+  "summary": "Brief description of changes made",
+  "confidence": 0.0-1.0,
+  "steps": [
+    {"kind": "edit", "file": "path/to/file", "old_content": "...", "new_content": "..."}
+  ],
+  "reasoning": "How each comment was addressed",
+  "unresolved_comments": ["Comments that need clarification"]
+}`,
+
+  /**
+   * User prompt template for review comments
+   */
+  ADDRESS_REVIEW: (comments: Array<{ file: string; line: number; body: string }>) => `
+The following review comments need to be addressed:
+
+${comments.map((c, i) => `${i + 1}. ${c.file}:${c.line}
+   "${c.body}"
+`).join("\n")}
+
+Please analyze each comment and propose changes to address them.
+`,
 };
 
 // ============================================================================
@@ -234,4 +314,133 @@ export function extractFilePaths(content: string): string[] {
   }
 
   return [...new Set(paths)];
+}
+
+/**
+ * Parse git merge conflict markers from file content
+ */
+export interface ConflictBlock {
+  file: string;
+  startLine: number;
+  endLine: number;
+  ours: string;
+  theirs: string;
+  raw: string;
+}
+
+export function parseConflictMarkers(content: string, fileName: string = "unknown"): ConflictBlock[] {
+  const conflicts: ConflictBlock[] = [];
+  const lines = content.split("\n");
+
+  let inConflict = false;
+  let startLine = 0;
+  let oursLines: string[] = [];
+  let theirsLines: string[] = [];
+  let inTheirs = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+
+    if (line.startsWith("<<<<<<< ")) {
+      inConflict = true;
+      inTheirs = false;
+      startLine = i + 1;
+      oursLines = [];
+      theirsLines = [];
+    } else if (line.startsWith("=======") && inConflict) {
+      inTheirs = true;
+    } else if (line.startsWith(">>>>>>> ") && inConflict) {
+      conflicts.push({
+        file: fileName,
+        startLine,
+        endLine: i + 1,
+        ours: oursLines.join("\n"),
+        theirs: theirsLines.join("\n"),
+        raw: lines.slice(startLine - 1, i + 1).join("\n"),
+      });
+      inConflict = false;
+      inTheirs = false;
+    } else if (inConflict) {
+      if (inTheirs) {
+        theirsLines.push(line);
+      } else {
+        oursLines.push(line);
+      }
+    }
+  }
+
+  return conflicts;
+}
+
+/**
+ * Check if file has unresolved merge conflicts
+ */
+export function hasConflictMarkers(content: string): boolean {
+  return /^<<<<<<<\s/m.test(content) && /^>>>>>>>\s/m.test(content);
+}
+
+/**
+ * Parse review comments from GitHub API response
+ */
+export interface ReviewComment {
+  id: number;
+  file: string;
+  line: number;
+  body: string;
+  author: string;
+  createdAt: string;
+}
+
+export function parseReviewComments(
+  comments: Array<{
+    id: number;
+    path: string;
+    line?: number;
+    original_line?: number;
+    body: string;
+    user?: { login: string };
+    created_at: string;
+  }>
+): ReviewComment[] {
+  return comments.map((c) => ({
+    id: c.id,
+    file: c.path,
+    line: c.line || c.original_line || 0,
+    body: c.body,
+    author: c.user?.login || "unknown",
+    createdAt: c.created_at,
+  }));
+}
+
+/**
+ * Group review comments by file
+ */
+export function groupCommentsByFile(comments: ReviewComment[]): Map<string, ReviewComment[]> {
+  const grouped = new Map<string, ReviewComment[]>();
+
+  for (const comment of comments) {
+    const existing = grouped.get(comment.file) || [];
+    existing.push(comment);
+    grouped.set(comment.file, existing);
+  }
+
+  return grouped;
+}
+
+/**
+ * Determine remediation type from work item payload
+ */
+export type RemediationType = "ci_failure" | "merge_conflict" | "review_feedback" | "manual";
+
+export function detectRemediationType(payload: Record<string, unknown>): RemediationType {
+  if (payload.conflict_type === "merge_conflict") {
+    return "merge_conflict";
+  }
+  if (payload.feedback_type === "changes_requested") {
+    return "review_feedback";
+  }
+  if (payload.check_suite_id || payload.workflow_run_id || payload.failing_checks) {
+    return "ci_failure";
+  }
+  return "manual";
 }

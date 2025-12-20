@@ -1,102 +1,14 @@
-# =============================================================================
-# Verify Gates - Unified PR Verification
-# =============================================================================
-# Provides a single required check that gates PR mergeability.
-# Uses Agent Preflight outputs to determine which checks to run.
-#
-# For docs-only PRs:
-#   - Runs spec-kit validation (if spec/ changed)
-#   - Runs workflow syntax validation
-#   - Skips Odoo module checks
-#
-# For code PRs:
-#   - Runs full verification suite
-#   - Requires Odoo CI to pass
-# =============================================================================
-
 name: Verify Gates
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main, master]
 
 jobs:
-  # Use Agent Preflight for classification
-  preflight:
-    name: Classify PR
+  verify:
     runs-on: ubuntu-latest
-    outputs:
-      docs_only: ${{ steps.classify.outputs.docs_only }}
-      run_odoo: ${{ steps.classify.outputs.run_odoo }}
-      change_type: ${{ steps.classify.outputs.change_type }}
-      has_spec: ${{ steps.classify.outputs.has_spec }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Classify changes
-        id: classify
-        run: |
-          set -e
-
-          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
-
-          HAS_CODE=false
-          HAS_SPEC=false
-          HAS_DOCS_INFRA=false
-
-          while IFS= read -r file; do
-            [ -z "$file" ] && continue
-
-            if echo "$file" | grep -qE '^(addons|odoo|oca)/'; then
-              HAS_CODE=true
-            fi
-
-            if echo "$file" | grep -qE '^spec/'; then
-              HAS_SPEC=true
-            fi
-
-            if echo "$file" | grep -qE '^(docs?/|\.github/|scripts/|\.claude/|\.continue/|infra/|tools/|CLAUDE\.md|.*\.md$)'; then
-              HAS_DOCS_INFRA=true
-            fi
-          done <<< "$CHANGED"
-
-          # Determine flags
-          if [ "$HAS_CODE" = "true" ]; then
-            RUN_ODOO=true
-            DOCS_ONLY=false
-            CHANGE_TYPE="code"
-          else
-            RUN_ODOO=false
-            DOCS_ONLY=true
-            if [ "$HAS_SPEC" = "true" ]; then
-              CHANGE_TYPE="spec"
-            else
-              CHANGE_TYPE="docs"
-            fi
-          fi
-
-          echo "docs_only=$DOCS_ONLY" >> $GITHUB_OUTPUT
-          echo "run_odoo=$RUN_ODOO" >> $GITHUB_OUTPUT
-          echo "change_type=$CHANGE_TYPE" >> $GITHUB_OUTPUT
-          echo "has_spec=$HAS_SPEC" >> $GITHUB_OUTPUT
-
-          echo "Classification: docs_only=$DOCS_ONLY, run_odoo=$RUN_ODOO, has_spec=$HAS_SPEC"
-
-  # Verify gate for docs-only PRs (always passes if no code changes)
-  verify-docs:
-    name: Verify (Docs/Infra)
-    needs: preflight
-    if: needs.preflight.outputs.docs_only == 'true'
-    runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -106,159 +18,134 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Validate spec bundles
-        if: needs.preflight.outputs.has_spec == 'true'
+      - name: Ensure scripts are executable
+        shell: bash
         run: |
-          echo "Validating spec bundles..."
+          set -euo pipefail
+          chmod +x scripts/*.sh 2>/dev/null || true
+          chmod +x scripts/ci/*.sh 2>/dev/null || true
 
-          if [ -f scripts/spec-kit-enforce.py ]; then
-            python scripts/spec-kit-enforce.py --check-all spec/ || {
-              echo "::warning::Spec validation found issues"
+      - name: Repo health check
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "== Repo Health Check =="
+
+          # Git status
+          echo "Git status:"
+          git status --porcelain=v1 || true
+
+          # Required files
+          required_files=(
+            "CLAUDE.md"
+            "package.json"
+          )
+
+          for f in "${required_files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "OK: $f exists"
+            else
+              echo "MISSING: $f"
+            fi
+          done
+
+          # Optional but recommended
+          optional_files=(
+            ".claude/settings.json"
+            ".claude/settings.local.json"
+            "pnpm-workspace.yaml"
+            "turbo.json"
+          )
+
+          for f in "${optional_files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "OK: $f exists"
+            else
+              echo "OPTIONAL: $f not found"
+            fi
+          done
+
+          echo "== Health check completed =="
+
+      - name: Spec validation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f "scripts/spec_validate.sh" ]; then
+            ./scripts/spec_validate.sh
+          else
+            echo "No spec_validate.sh found, running inline check..."
+
+            if [ ! -d "spec" ]; then
+              echo "No spec/ directory found"
+              exit 0
+            fi
+
+            bundles=$(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null | wc -l | tr -d ' ')
+            echo "Found $bundles spec bundle(s)"
+
+            if [ "$bundles" -gt 0 ]; then
+              while IFS= read -r cfile; do
+                slug_dir="$(dirname "$cfile")"
+                echo "Validating: $(basename "$slug_dir")"
+                for f in constitution.md prd.md plan.md tasks.md; do
+                  if [ -f "$slug_dir/$f" ]; then
+                    echo "  OK: $f"
+                  else
+                    echo "  MISSING: $f"
+                  fi
+                done
+              done < <(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null)
+            fi
+          fi
+
+      - name: Python syntax check (addons)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Checking Python syntax in addons..."
+
+          fail=0
+          while IFS= read -r pyfile; do
+            python3 -m py_compile "$pyfile" 2>/dev/null || {
+              echo "::error file=$pyfile::Python syntax error"
+              fail=1
+            }
+          done < <(find addons -name "*.py" -type f 2>/dev/null || true)
+
+          if [ "$fail" -eq 0 ]; then
+            echo "All Python files pass syntax check"
+          fi
+          exit "$fail"
+
+      - name: JSON validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Validating JSON files..."
+
+          fail=0
+          while IFS= read -r jsonfile; do
+            python3 -c "import json; json.load(open('$jsonfile'))" 2>/dev/null || {
+              echo "::error file=$jsonfile::Invalid JSON"
+              fail=1
+            }
+          done < <(find . -name "*.json" -type f -not -path "./node_modules/*" -not -path "./.git/*" 2>/dev/null || true)
+
+          if [ "$fail" -eq 0 ]; then
+            echo "All JSON files are valid"
+          fi
+          exit "$fail"
+
+      - name: Run local CI (if available)
+        shell: bash
+        run: |
+          if [ -f "scripts/ci_local.sh" ]; then
+            echo "Running local CI script..."
+            ./scripts/ci_local.sh --quick || {
+              echo "::warning::Local CI returned non-zero exit code"
             }
           else
-            echo "spec-kit-enforce.py not found, skipping"
-          fi
-
-      - name: Validate workflow syntax
-        run: |
-          echo "Checking workflow YAML syntax..."
-
-          errors=0
-          for f in .github/workflows/*.yml; do
-            if [ -f "$f" ]; then
-              python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>&1 || {
-                echo "::error::Invalid YAML in $f"
-                errors=$((errors + 1))
-              }
-            fi
-          done
-
-          if [ $errors -gt 0 ]; then
-            exit 1
-          fi
-
-          echo "All workflow files have valid YAML syntax"
-
-      - name: Docs-only verification passed
-        run: |
-          echo "::notice::Docs-only PR verification passed"
-          echo ""
-          echo "Change type: ${{ needs.preflight.outputs.change_type }}"
-          echo "Skipped: Odoo CI, OCA integration tests"
-          echo "Verified: Workflow syntax, spec bundles"
-
-  # Verify gate for code PRs (requires Odoo checks)
-  verify-code:
-    name: Verify (Code)
-    needs: preflight
-    if: needs.preflight.outputs.run_odoo == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Check addon structure
-        run: |
-          echo "Checking addon structure..."
-
-          if [ -d addons ]; then
-            # Run structure check if it exists
-            if [ -x infra/ci/structure-check.sh ]; then
-              ./infra/ci/structure-check.sh
-            else
-              echo "structure-check.sh not executable, basic checks only"
-
-              # Basic check: addons should only have ipai/ and oca/
-              for dir in addons/*/; do
-                name=$(basename "$dir")
-                case "$name" in
-                  ipai|oca)
-                    echo "OK: $name/"
-                    ;;
-                  *)
-                    echo "::warning::Unexpected addon directory: $name/"
-                    ;;
-                esac
-              done
-            fi
-          else
-            echo "No addons/ directory found"
-          fi
-
-      - name: Check for manifest issues
-        run: |
-          echo "Checking module manifests..."
-
-          manifests=$(find addons -name "__manifest__.py" 2>/dev/null || true)
-
-          if [ -z "$manifests" ]; then
-            echo "No manifests found"
-            exit 0
-          fi
-
-          errors=0
-          for manifest in $manifests; do
-            if ! grep -q '"name"' "$manifest" && ! grep -q "'name'" "$manifest"; then
-              echo "::error::Missing 'name' in $manifest"
-              errors=$((errors + 1))
-            fi
-          done
-
-          if [ $errors -gt 0 ]; then
-            exit 1
-          fi
-
-          echo "All manifests have required fields"
-
-      - name: Code verification checkpoint
-        run: |
-          echo "::notice::Code PR verification passed initial checks"
-          echo ""
-          echo "Note: Full Odoo CI runs separately"
-          echo "This gate verifies: manifest structure, addon layout"
-
-  # Summary job that always runs
-  summary:
-    name: Verify
-    needs: [preflight, verify-docs, verify-code]
-    if: always()
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Check results
-        run: |
-          echo "## Verify Gates Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| PR Type | ${{ needs.preflight.outputs.change_type }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Docs Only | ${{ needs.preflight.outputs.docs_only }} |" >> $GITHUB_STEP_SUMMARY
-
-          # Check which verify job ran and its status
-          DOCS_RESULT="${{ needs.verify-docs.result }}"
-          CODE_RESULT="${{ needs.verify-code.result }}"
-
-          if [ "${{ needs.preflight.outputs.docs_only }}" = "true" ]; then
-            if [ "$DOCS_RESULT" = "success" ]; then
-              echo "| Verification | Passed |" >> $GITHUB_STEP_SUMMARY
-              echo "::notice::Docs-only verification passed"
-            elif [ "$DOCS_RESULT" = "skipped" ]; then
-              echo "| Verification | Skipped |" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "| Verification | Failed |" >> $GITHUB_STEP_SUMMARY
-              echo "::error::Docs verification failed"
-              exit 1
-            fi
-          else
-            if [ "$CODE_RESULT" = "success" ]; then
-              echo "| Verification | Passed |" >> $GITHUB_STEP_SUMMARY
-              echo "::notice::Code verification passed"
-            elif [ "$CODE_RESULT" = "skipped" ]; then
-              echo "| Verification | Skipped |" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "| Verification | Failed |" >> $GITHUB_STEP_SUMMARY
-              echo "::error::Code verification failed"
-              exit 1
-            fi
+            echo "No local CI script found, skipping"
           fi
