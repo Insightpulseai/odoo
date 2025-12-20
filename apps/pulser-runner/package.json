@@ -1,0 +1,10 @@
+{
+  "name": "@ipai/pulser-runner",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "python -m uvicorn app:app --host 0.0.0.0 --port 8788 --reload",
+    "start": "python -m uvicorn app:app --host 0.0.0.0 --port 8788",
+    "health": "curl -fsS http://localhost:8788/health"
+  }
+}
