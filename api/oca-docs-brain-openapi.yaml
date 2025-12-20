@@ -1,0 +1,1661 @@
+openapi: 3.1.0
+info:
+  title: OCA Docs Brain API
+  description: |
+    Kapa-like Knowledge Base API for Odoo CE + OCA 18.
+
+    ## Authentication
+    All endpoints require a Bearer token in the Authorization header.
+    Tokens include `tenant_id` and role claims for RLS enforcement.
+
+    ## Rate Limits
+    - Search: 100 req/min
+    - Chat: 30 req/min
+    - Admin: 60 req/min
+
+    ## Response Format
+    All responses follow the standard envelope:
+    ```json
+    {
+      "data": {...},
+      "meta": {"request_id": "...", "latency_ms": 123},
+      "errors": []
+    }
+    ```
+  version: 1.0.0
+  contact:
+    name: InsightPulseAI
+    url: https://insightpulseai.net
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.insightpulseai.net/v1
+    description: Production
+  - url: https://api-staging.insightpulseai.net/v1
+    description: Staging
+  - url: http://localhost:3000/v1
+    description: Local Development
+
+tags:
+  - name: Search
+    description: Hybrid search and retrieval
+  - name: Chat
+    description: Conversational Q&A with citations
+  - name: Documents
+    description: Document browsing and metadata
+  - name: Modules
+    description: OCA/Odoo module explorer
+  - name: Sources
+    description: Source management and crawling
+  - name: Policies
+    description: Routing policies and budgets
+  - name: Analytics
+    description: Query analytics and gaps
+  - name: Admin
+    description: Administrative operations
+
+security:
+  - BearerAuth: []
+
+paths:
+  # ===========================================================================
+  # SEARCH ENDPOINTS
+  # ===========================================================================
+  /search:
+    post:
+      operationId: search
+      summary: Hybrid search across documents
+      description: |
+        Performs hybrid vector + lexical search with filtering.
+        Results are ACL-filtered based on user permissions.
+      tags: [Search]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Search results with relevance scores
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /search/modules:
+    post:
+      operationId: searchModules
+      summary: Search OCA/Odoo modules
+      description: Search modules by name, feature, or Enterprise equivalent
+      tags: [Search, Modules]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query]
+              properties:
+                query:
+                  type: string
+                  example: "bank reconciliation"
+                filters:
+                  type: object
+                  properties:
+                    source_type:
+                      type: array
+                      items:
+                        type: string
+                        enum: [odoo_core, oca, custom]
+                    category:
+                      type: string
+                    odoo_version:
+                      type: string
+                      default: "18.0"
+                    has_enterprise_parity:
+                      type: boolean
+                top_k:
+                  type: integer
+                  default: 20
+      responses:
+        '200':
+          description: Module search results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleSearchResponse'
+
+  # ===========================================================================
+  # CHAT ENDPOINTS
+  # ===========================================================================
+  /chat:
+    post:
+      operationId: chat
+      summary: Conversational Q&A with citations
+      description: |
+        Ask a question and get an answer with citations.
+        Returns:
+        - Answer text
+        - Citations with chunk IDs and URLs
+        - Confidence score
+        - Source freshness indicators
+      tags: [Chat]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: Answer with citations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+
+  /chat/stream:
+    post:
+      operationId: chatStream
+      summary: Streaming chat with SSE
+      description: Same as /chat but streams response via Server-Sent Events
+      tags: [Chat]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatRequest'
+      responses:
+        '200':
+          description: SSE stream
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
+  /chat/openai-compatible:
+    post:
+      operationId: chatOpenAICompatible
+      summary: OpenAI-compatible chat endpoint
+      description: |
+        Drop-in replacement for OpenAI chat completions API.
+        Allows IDE tools (Continue, Cursor, etc.) to use Docs Brain.
+      tags: [Chat]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpenAIChatRequest'
+      responses:
+        '200':
+          description: OpenAI-compatible response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenAIChatResponse'
+
+  # ===========================================================================
+  # DOCUMENT ENDPOINTS
+  # ===========================================================================
+  /documents:
+    get:
+      operationId: listDocuments
+      summary: List documents with filtering
+      tags: [Documents]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: source_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: module_name
+          in: query
+          schema:
+            type: string
+        - name: doc_type
+          in: query
+          schema:
+            type: string
+        - name: version
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated document list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentListResponse'
+
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      summary: Get document by ID
+      tags: [Documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: include_chunks
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Document with metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /documents/{id}/chunks:
+    get:
+      operationId: getDocumentChunks
+      summary: Get chunks for a document
+      tags: [Documents]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: List of chunks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Chunk'
+
+  # ===========================================================================
+  # MODULE ENDPOINTS
+  # ===========================================================================
+  /modules:
+    get:
+      operationId: listModules
+      summary: List registered modules
+      tags: [Modules]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/LimitParam'
+        - name: source_type
+          in: query
+          schema:
+            type: string
+            enum: [odoo_core, oca, custom]
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: odoo_version
+          in: query
+          schema:
+            type: string
+            default: "18.0"
+      responses:
+        '200':
+          description: Module list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleListResponse'
+
+  /modules/{name}:
+    get:
+      operationId: getModule
+      summary: Get module details with dependencies
+      tags: [Modules]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "account_financial_report"
+        - name: version
+          in: query
+          schema:
+            type: string
+            default: "18.0"
+      responses:
+        '200':
+          description: Module with dependency graph
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModuleDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /modules/{name}/install-order:
+    get:
+      operationId: getModuleInstallOrder
+      summary: Get install order with all dependencies
+      description: Returns the full dependency tree in install order
+      tags: [Modules]
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: query
+          schema:
+            type: string
+            default: "18.0"
+      responses:
+        '200':
+          description: Install order
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        module_name:
+                          type: string
+                        install_order:
+                          type: integer
+                        is_requested:
+                          type: boolean
+
+  /modules/enterprise-parity:
+    get:
+      operationId: getEnterpriseParity
+      summary: Find OCA modules that replace Enterprise features
+      tags: [Modules]
+      parameters:
+        - name: enterprise_feature
+          in: query
+          required: true
+          schema:
+            type: string
+          example: "Bank Synchronization"
+      responses:
+        '200':
+          description: Parity mapping
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enterprise_feature:
+                    type: string
+                  oca_modules:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ModuleSummary'
+                  parity_level:
+                    type: string
+                    enum: [full, partial, alternative, none]
+
+  # ===========================================================================
+  # SOURCE ENDPOINTS (Admin)
+  # ===========================================================================
+  /sources:
+    get:
+      operationId: listSources
+      summary: List configured sources
+      tags: [Sources, Admin]
+      responses:
+        '200':
+          description: Source list with health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SourceListResponse'
+    post:
+      operationId: createSource
+      summary: Add a new source
+      tags: [Sources, Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceCreate'
+      responses:
+        '201':
+          description: Source created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+
+  /sources/{id}:
+    get:
+      operationId: getSource
+      summary: Get source details
+      tags: [Sources, Admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Source details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+    patch:
+      operationId: updateSource
+      summary: Update source configuration
+      tags: [Sources, Admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SourceUpdate'
+      responses:
+        '200':
+          description: Source updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Source'
+    delete:
+      operationId: deleteSource
+      summary: Delete a source
+      tags: [Sources, Admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Source deleted
+
+  /sources/{id}/crawl:
+    post:
+      operationId: triggerCrawl
+      summary: Trigger a crawl run
+      tags: [Sources, Admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                run_type:
+                  type: string
+                  enum: [full, incremental, reembed]
+                  default: incremental
+      responses:
+        '202':
+          description: Crawl started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CrawlRun'
+
+  /sources/{id}/runs:
+    get:
+      operationId: listCrawlRuns
+      summary: List crawl runs for a source
+      tags: [Sources, Admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/LimitParam'
+      responses:
+        '200':
+          description: Crawl run history
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CrawlRun'
+
+  # ===========================================================================
+  # POLICY ENDPOINTS (Admin)
+  # ===========================================================================
+  /policies/routing:
+    get:
+      operationId: listRoutingPolicies
+      summary: List routing policies
+      tags: [Policies, Admin]
+      responses:
+        '200':
+          description: Policy list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/RoutingPolicy'
+    post:
+      operationId: createRoutingPolicy
+      summary: Create routing policy
+      tags: [Policies, Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoutingPolicyCreate'
+      responses:
+        '201':
+          description: Policy created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutingPolicy'
+
+  /policies/acls:
+    post:
+      operationId: setDocumentAcl
+      summary: Set document ACL
+      tags: [Policies, Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentAclSet'
+      responses:
+        '200':
+          description: ACL updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  # ===========================================================================
+  # ANALYTICS ENDPOINTS
+  # ===========================================================================
+  /analytics/questions:
+    get:
+      operationId: getQuestionAnalytics
+      summary: Get question analytics
+      tags: [Analytics, Admin]
+      parameters:
+        - name: period
+          in: query
+          schema:
+            type: string
+            enum: [day, week, month]
+            default: week
+      responses:
+        '200':
+          description: Question analytics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  top_questions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        query:
+                          type: string
+                        count:
+                          type: integer
+                        avg_confidence:
+                          type: number
+                  zero_result_queries:
+                    type: array
+                    items:
+                      type: string
+                  feedback_summary:
+                    type: object
+                    properties:
+                      positive:
+                        type: integer
+                      negative:
+                        type: integer
+                      neutral:
+                        type: integer
+
+  /analytics/sources:
+    get:
+      operationId: getSourceAnalytics
+      summary: Get source health analytics
+      tags: [Analytics, Admin]
+      responses:
+        '200':
+          description: Source health
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          format: uuid
+                        name:
+                          type: string
+                        health_status:
+                          type: string
+                          enum: [healthy, warning, stale, critical]
+                        document_count:
+                          type: integer
+                        chunk_count:
+                          type: integer
+                        hours_since_crawl:
+                          type: number
+
+  # ===========================================================================
+  # SESSION & FEEDBACK ENDPOINTS
+  # ===========================================================================
+  /sessions:
+    post:
+      operationId: createSession
+      summary: Create a new session
+      tags: [Chat]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                channel:
+                  type: string
+                  enum: [docs_portal, ide, api, chat]
+                context:
+                  type: object
+      responses:
+        '201':
+          description: Session created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  session_id:
+                    type: string
+                    format: uuid
+
+  /feedback:
+    post:
+      operationId: submitFeedback
+      summary: Submit feedback on an answer
+      tags: [Chat]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeedbackCreate'
+      responses:
+        '201':
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  feedback_id:
+                    type: string
+                    format: uuid
+
+  # ===========================================================================
+  # AUDIT ENDPOINTS
+  # ===========================================================================
+  /audit/runs/{id}:
+    get:
+      operationId: getRunLineage
+      summary: Get full lineage for a query/run
+      tags: [Admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Full lineage trace
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidencePacket'
+
+  /audit/export:
+    post:
+      operationId: exportEvidence
+      summary: Export evidence packet
+      tags: [Admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [query_id]
+              properties:
+                query_id:
+                  type: string
+                  format: uuid
+                format:
+                  type: string
+                  enum: [json, pdf]
+                  default: json
+      responses:
+        '200':
+          description: Evidence packet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EvidencePacket'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 20
+        maximum: 100
+
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    RateLimited:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  schemas:
+    # =========================================================================
+    # REQUEST SCHEMAS
+    # =========================================================================
+    SearchRequest:
+      type: object
+      required: [query]
+      properties:
+        query:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          example: "How to configure bank reconciliation in OCA?"
+        filters:
+          type: object
+          properties:
+            source_ids:
+              type: array
+              items:
+                type: string
+                format: uuid
+            module_names:
+              type: array
+              items:
+                type: string
+            doc_types:
+              type: array
+              items:
+                type: string
+            version:
+              type: string
+            tags:
+              type: array
+              items:
+                type: string
+        top_k:
+          type: integer
+          default: 10
+          maximum: 50
+        vector_weight:
+          type: number
+          default: 0.7
+          minimum: 0
+          maximum: 1
+        include_metadata:
+          type: boolean
+          default: true
+
+    ChatRequest:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        session_id:
+          type: string
+          format: uuid
+        context:
+          type: object
+          properties:
+            module_focus:
+              type: string
+            version:
+              type: string
+            prior_messages:
+              type: array
+              items:
+                type: object
+                properties:
+                  role:
+                    type: string
+                    enum: [user, assistant]
+                  content:
+                    type: string
+        options:
+          type: object
+          properties:
+            max_citations:
+              type: integer
+              default: 5
+            include_code_examples:
+              type: boolean
+              default: true
+            include_freshness:
+              type: boolean
+              default: true
+
+    OpenAIChatRequest:
+      type: object
+      required: [model, messages]
+      properties:
+        model:
+          type: string
+          example: "oca-docs-brain"
+        messages:
+          type: array
+          items:
+            type: object
+            required: [role, content]
+            properties:
+              role:
+                type: string
+                enum: [system, user, assistant]
+              content:
+                type: string
+        temperature:
+          type: number
+          default: 0.7
+        max_tokens:
+          type: integer
+          default: 1000
+        stream:
+          type: boolean
+          default: false
+
+    SourceCreate:
+      type: object
+      required: [source_type, name]
+      properties:
+        source_type:
+          type: string
+          enum: [web, git, notion, confluence, pdf, odoo_docs, oca_repo]
+        name:
+          type: string
+        description:
+          type: string
+        base_url:
+          type: string
+          format: uri
+        repo_url:
+          type: string
+          format: uri
+        branch:
+          type: string
+          default: main
+        path_filter:
+          type: string
+        auth_type:
+          type: string
+          enum: [none, token, oauth, api_key]
+        auth_ref:
+          type: string
+        crawl_policy:
+          type: object
+        chunk_policy:
+          type: object
+        embedding_model_key:
+          type: string
+          default: text-embedding-3-small
+        tags:
+          type: array
+          items:
+            type: string
+
+    SourceUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [active, paused, disabled]
+        crawl_policy:
+          type: object
+        chunk_policy:
+          type: object
+        tags:
+          type: array
+          items:
+            type: string
+
+    RoutingPolicyCreate:
+      type: object
+      required: [policy_key, name, provider_chain]
+      properties:
+        policy_key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        provider_chain:
+          type: array
+          items:
+            type: object
+            properties:
+              provider:
+                type: string
+              model:
+                type: string
+              priority:
+                type: integer
+              fallback_only:
+                type: boolean
+        budgets:
+          type: object
+          properties:
+            max_tokens_per_day:
+              type: integer
+            max_tokens_per_request:
+              type: integer
+            max_tool_calls_per_run:
+              type: integer
+            cost_cap_usd_per_day:
+              type: number
+        provider_allowlist:
+          type: array
+          items:
+            type: string
+        tool_allowlist:
+          type: array
+          items:
+            type: string
+
+    DocumentAclSet:
+      type: object
+      required: [document_id, principal_type, principal_id]
+      properties:
+        document_id:
+          type: string
+          format: uuid
+        principal_type:
+          type: string
+          enum: [role, user, team]
+        principal_id:
+          type: string
+          format: uuid
+        permission:
+          type: string
+          enum: [read, write, admin]
+          default: read
+        allow:
+          type: boolean
+          default: true
+        expires_at:
+          type: string
+          format: date-time
+
+    FeedbackCreate:
+      type: object
+      required: [query_id, rating]
+      properties:
+        query_id:
+          type: string
+          format: uuid
+        session_id:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          enum: [-1, 0, 1]
+        feedback_type:
+          type: string
+          enum: [helpful, not_helpful, incorrect, missing_info, wrong_source, outdated]
+        notes:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+
+    # =========================================================================
+    # RESPONSE SCHEMAS
+    # =========================================================================
+    SearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchResult'
+        meta:
+          type: object
+          properties:
+            query:
+              type: string
+            total_results:
+              type: integer
+            latency_ms:
+              type: integer
+
+    SearchResult:
+      type: object
+      properties:
+        chunk_id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        content:
+          type: string
+        heading_path:
+          type: string
+        canonical_url:
+          type: string
+          format: uri
+        module_name:
+          type: string
+        score:
+          type: number
+        vector_score:
+          type: number
+        lexical_score:
+          type: number
+
+    ChatResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            answer:
+              type: string
+            answer_markdown:
+              type: string
+            citations:
+              type: array
+              items:
+                $ref: '#/components/schemas/Citation'
+            confidence_score:
+              type: number
+            model:
+              type: string
+            freshness:
+              type: object
+              properties:
+                oldest_source:
+                  type: string
+                  format: date-time
+                newest_source:
+                  type: string
+                  format: date-time
+                avg_freshness_score:
+                  type: number
+        meta:
+          type: object
+          properties:
+            query_id:
+              type: string
+              format: uuid
+            session_id:
+              type: string
+              format: uuid
+            latency_ms:
+              type: integer
+            tokens_used:
+              type: integer
+
+    OpenAIChatResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        object:
+          type: string
+          default: chat.completion
+        created:
+          type: integer
+        model:
+          type: string
+        choices:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+              message:
+                type: object
+                properties:
+                  role:
+                    type: string
+                  content:
+                    type: string
+              finish_reason:
+                type: string
+        usage:
+          type: object
+          properties:
+            prompt_tokens:
+              type: integer
+            completion_tokens:
+              type: integer
+            total_tokens:
+              type: integer
+
+    Citation:
+      type: object
+      properties:
+        chunk_id:
+          type: string
+          format: uuid
+        document_id:
+          type: string
+          format: uuid
+        url:
+          type: string
+          format: uri
+        title:
+          type: string
+        heading_path:
+          type: string
+        snippet:
+          type: string
+        relevance_score:
+          type: number
+        anchor:
+          type: string
+
+    DocumentListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentSummary'
+        meta:
+          type: object
+          properties:
+            total:
+              type: integer
+            page:
+              type: integer
+            limit:
+              type: integer
+
+    DocumentSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        canonical_url:
+          type: string
+          format: uri
+        module_name:
+          type: string
+        doc_type:
+          type: string
+        version:
+          type: string
+        chunk_count:
+          type: integer
+        freshness_score:
+          type: number
+        last_modified_at:
+          type: string
+          format: date-time
+
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        source_id:
+          type: string
+          format: uuid
+        canonical_url:
+          type: string
+          format: uri
+        title:
+          type: string
+        content_markdown:
+          type: string
+        language:
+          type: string
+        doc_type:
+          type: string
+        version:
+          type: string
+        module_name:
+          type: string
+        model_names:
+          type: array
+          items:
+            type: string
+        feature_tags:
+          type: array
+          items:
+            type: string
+        heading_tree:
+          type: object
+        toc:
+          type: array
+          items:
+            type: object
+        word_count:
+          type: integer
+        freshness_score:
+          type: number
+        published_at:
+          type: string
+          format: date-time
+        last_modified_at:
+          type: string
+          format: date-time
+        chunks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Chunk'
+
+    Chunk:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        chunk_index:
+          type: integer
+        content:
+          type: string
+        heading_path:
+          type: string
+        section_title:
+          type: string
+        token_count:
+          type: integer
+        chunk_type:
+          type: string
+        anchor_id:
+          type: string
+        line_start:
+          type: integer
+        line_end:
+          type: integer
+
+    ModuleSearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleSummary'
+        meta:
+          type: object
+          properties:
+            query:
+              type: string
+            total:
+              type: integer
+
+    ModuleListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ModuleSummary'
+        meta:
+          type: object
+          properties:
+            total:
+              type: integer
+            page:
+              type: integer
+
+    ModuleSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        technical_name:
+          type: string
+        display_name:
+          type: string
+        summary:
+          type: string
+        source_type:
+          type: string
+        category:
+          type: string
+        odoo_version:
+          type: string
+        dependency_count:
+          type: integer
+        enterprise_equivalent:
+          type: string
+        parity_level:
+          type: string
+
+    ModuleDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        technical_name:
+          type: string
+        display_name:
+          type: string
+        summary:
+          type: string
+        description:
+          type: string
+        source_type:
+          type: string
+        repo_url:
+          type: string
+          format: uri
+        odoo_version:
+          type: string
+        module_version:
+          type: string
+        manifest:
+          type: object
+        depends:
+          type: array
+          items:
+            type: string
+        external_dependencies:
+          type: object
+        category:
+          type: string
+        application:
+          type: boolean
+        installable:
+          type: boolean
+        enterprise_equivalent:
+          type: string
+        parity_level:
+          type: string
+        parity_notes:
+          type: string
+        install_order:
+          type: integer
+        dependent_count:
+          type: integer
+        documentation:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentSummary'
+
+    SourceListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Source'
+
+    Source:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        source_type:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        base_url:
+          type: string
+        repo_url:
+          type: string
+        status:
+          type: string
+        health_status:
+          type: string
+          enum: [healthy, warning, stale, critical]
+        document_count:
+          type: integer
+        chunk_count:
+          type: integer
+        last_crawl_at:
+          type: string
+          format: date-time
+        last_success_at:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            type: string
+
+    CrawlRun:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        source_id:
+          type: string
+          format: uuid
+        run_type:
+          type: string
+        status:
+          type: string
+        triggered_by:
+          type: string
+        started_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: string
+          format: date-time
+        progress_pct:
+          type: integer
+        items_fetched:
+          type: integer
+        items_created:
+          type: integer
+        items_updated:
+          type: integer
+        chunks_created:
+          type: integer
+        error_count:
+          type: integer
+        duration_seconds:
+          type: number
+
+    RoutingPolicy:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        policy_key:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        provider_chain:
+          type: array
+          items:
+            type: object
+        budgets:
+          type: object
+        is_active:
+          type: boolean
+        version:
+          type: integer
+
+    EvidencePacket:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        query_id:
+          type: string
+          format: uuid
+        packet_type:
+          type: string
+        evidence:
+          type: object
+          properties:
+            query:
+              type: object
+            session:
+              type: object
+            retrievals:
+              type: array
+              items:
+                type: object
+            tool_calls:
+              type: array
+              items:
+                type: object
+            feedback:
+              type: array
+              items:
+                type: object
+        content_hash:
+          type: string
+        exported_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: object
