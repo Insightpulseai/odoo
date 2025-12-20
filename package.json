@@ -1,0 +1,23 @@
+{
+  "name": "odoo-ce-ipai",
+  "version": "18.0.1.0.0",
+  "private": true,
+  "description": "Odoo CE 18 with InsightPulse AI extensions and Master Control",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:github-app": "npm --workspace packages/github-app run dev",
+    "dev:runner": "npm --workspace apps/pulser-runner run dev",
+    "build": "npm --workspace packages/github-app run build",
+    "lint": "npm --workspace packages/github-app run lint || true",
+    "typecheck": "npm --workspace packages/github-app run typecheck || true"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
