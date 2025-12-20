@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a1ea287b9cb891c8234065a5737862d561ec59cf
+> Commit: 133a2f1cf12cd084012c715ac69db073f1f32c55
 
 ## 📚 Documentation
 
@@ -204,6 +204,7 @@
 | [Receipt OCR Test Harness](ocr-adapter/scripts/README.md) | ocr-adapter/scripts |
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
+| [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
@@ -228,6 +229,8 @@
 | [Tasks – InsightPulse Odoo CE](tasks.md) | . |
 | [Agent Services Hard Delete Checklist](tasks/infra/AGENT_SERVICES_HARD_DELETE_CHECKLIST.md) | tasks/infra |
 | [Database Instance Inventory Scanner](tools/db-inventory/README.md) | tools/db-inventory |
+| [Kapa-style Docs Copilot for Odoo CE + OCA 18.0](tools/docs-crawler/README.md) | tools/docs-crawler |
+| [Documentation Catalogue → Odoo CE/OCA Mapper](tools/docs_catalog/README.md) | tools/docs_catalog |
 | [Walkthrough - Notion Parity Modules](walkthrough.md) | . |
 | [Shadow Enterprise Webhook & AI Stack](workflows/SHADOW_ENTERPRISE_STACK.md) | workflows |
 | [n8n Webhook Deployment Guide - TBWA Finance SSC](workflows/WEBHOOK_DEPLOYMENT_GUIDE.md) | workflows |
