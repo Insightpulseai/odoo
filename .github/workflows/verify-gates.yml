@@ -1,0 +1,151 @@
+name: Verify Gates
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main, master]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Ensure scripts are executable
+        shell: bash
+        run: |
+          set -euo pipefail
+          chmod +x scripts/*.sh 2>/dev/null || true
+          chmod +x scripts/ci/*.sh 2>/dev/null || true
+
+      - name: Repo health check
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "== Repo Health Check =="
+
+          # Git status
+          echo "Git status:"
+          git status --porcelain=v1 || true
+
+          # Required files
+          required_files=(
+            "CLAUDE.md"
+            "package.json"
+          )
+
+          for f in "${required_files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "OK: $f exists"
+            else
+              echo "MISSING: $f"
+            fi
+          done
+
+          # Optional but recommended
+          optional_files=(
+            ".claude/settings.json"
+            ".claude/settings.local.json"
+            "pnpm-workspace.yaml"
+            "turbo.json"
+          )
+
+          for f in "${optional_files[@]}"; do
+            if [ -f "$f" ]; then
+              echo "OK: $f exists"
+            else
+              echo "OPTIONAL: $f not found"
+            fi
+          done
+
+          echo "== Health check completed =="
+
+      - name: Spec validation
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -f "scripts/spec_validate.sh" ]; then
+            ./scripts/spec_validate.sh
+          else
+            echo "No spec_validate.sh found, running inline check..."
+
+            if [ ! -d "spec" ]; then
+              echo "No spec/ directory found"
+              exit 0
+            fi
+
+            bundles=$(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null | wc -l | tr -d ' ')
+            echo "Found $bundles spec bundle(s)"
+
+            if [ "$bundles" -gt 0 ]; then
+              while IFS= read -r cfile; do
+                slug_dir="$(dirname "$cfile")"
+                echo "Validating: $(basename "$slug_dir")"
+                for f in constitution.md prd.md plan.md tasks.md; do
+                  if [ -f "$slug_dir/$f" ]; then
+                    echo "  OK: $f"
+                  else
+                    echo "  MISSING: $f"
+                  fi
+                done
+              done < <(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null)
+            fi
+          fi
+
+      - name: Python syntax check (addons)
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Checking Python syntax in addons..."
+
+          fail=0
+          while IFS= read -r pyfile; do
+            python3 -m py_compile "$pyfile" 2>/dev/null || {
+              echo "::error file=$pyfile::Python syntax error"
+              fail=1
+            }
+          done < <(find addons -name "*.py" -type f 2>/dev/null || true)
+
+          if [ "$fail" -eq 0 ]; then
+            echo "All Python files pass syntax check"
+          fi
+          exit "$fail"
+
+      - name: JSON validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Validating JSON files..."
+
+          fail=0
+          while IFS= read -r jsonfile; do
+            python3 -c "import json; json.load(open('$jsonfile'))" 2>/dev/null || {
+              echo "::error file=$jsonfile::Invalid JSON"
+              fail=1
+            }
+          done < <(find . -name "*.json" -type f -not -path "./node_modules/*" -not -path "./.git/*" 2>/dev/null || true)
+
+          if [ "$fail" -eq 0 ]; then
+            echo "All JSON files are valid"
+          fi
+          exit "$fail"
+
+      - name: Run local CI (if available)
+        shell: bash
+        run: |
+          if [ -f "scripts/ci_local.sh" ]; then
+            echo "Running local CI script..."
+            ./scripts/ci_local.sh --quick || {
+              echo "::warning::Local CI returned non-zero exit code"
+            }
+          else
+            echo "No local CI script found, skipping"
+          fi

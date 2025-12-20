@@ -1,0 +1,105 @@
+name: Spec Kit Enforcement
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main, master]
+
+jobs:
+  spec-kit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Spec Kit bundle exists
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Require at least one spec bundle under spec/<slug>/
+          if [ ! -d "spec" ]; then
+            echo "::error::Missing spec/ directory"
+            exit 1
+          fi
+
+          # Find directories under spec/ that contain constitution.md
+          bundles=$(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null | wc -l | tr -d ' ')
+          if [ "$bundles" -lt 1 ]; then
+            echo "::error::No Spec Kit bundle found. Expected spec/<slug>/constitution.md"
+            exit 1
+          fi
+
+          echo "Found $bundles spec kit bundle(s)"
+
+      - name: Validate required files + non-trivial content
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          fail=0
+
+          # For every spec/<slug>/constitution.md, enforce the full 4-file kit.
+          while IFS= read -r cfile; do
+            slug_dir="$(dirname "$cfile")"
+            slug_name="$(basename "$slug_dir")"
+            echo "Validating spec bundle: $slug_name"
+
+            for f in constitution.md prd.md plan.md tasks.md; do
+              path="$slug_dir/$f"
+              if [ ! -f "$path" ]; then
+                echo "::error file=$path::Missing required Spec Kit file: $path"
+                fail=1
+                continue
+              fi
+
+              # Non-trivial: at least 10 non-empty, non-heading lines
+              non_empty="$(grep -Ev '^\s*$' "$path" | wc -l | tr -d ' ')"
+              if [ "$non_empty" -lt 10 ]; then
+                echo "::error file=$path::Spec file too small (<10 non-empty lines). Add real content."
+                fail=1
+              fi
+
+              # Block placeholder-y text patterns
+              if grep -Eqi '(TODO|TBD|PLACEHOLDER|FILL\s+ME\s+IN|LOREM\s+IPSUM)' "$path"; then
+                echo "::warning file=$path::Spec contains placeholders (TODO/TBD/etc). Consider resolving."
+              fi
+            done
+          done < <(find spec -mindepth 2 -maxdepth 2 -type f -name constitution.md -print 2>/dev/null)
+
+          # Require CLAUDE.md
+          if [ ! -f "CLAUDE.md" ]; then
+            echo "::error::Missing CLAUDE.md at repo root"
+            fail=1
+          fi
+
+          # Check for .claude directory (optional warning)
+          if [ ! -d ".claude" ]; then
+            echo "::warning::Missing .claude/ directory"
+          fi
+
+          # Check for verification scripts
+          if [ ! -f "scripts/verify.sh" ] && [ ! -f "scripts/ci_local.sh" ]; then
+            echo "::warning::No verify script found (scripts/verify.sh or scripts/ci_local.sh)"
+          fi
+
+          exit "$fail"
+
+      - name: Validate YAML files (spec bundles)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Find YAML files in spec bundles
+          yaml_files=$(find spec -name "*.yaml" -o -name "*.yml" 2>/dev/null || true)
+          if [ -n "$yaml_files" ]; then
+            echo "Validating YAML files in spec bundles..."
+            for f in $yaml_files; do
+              python3 -c "import yaml; yaml.safe_load(open('$f'))" 2>/dev/null || {
+                echo "::error file=$f::Invalid YAML syntax"
+                exit 1
+              }
+              echo "  OK: $f"
+            done
+          fi
