@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 721ec42ce1f104f2ad968c5a92f6c2c25bdbbd09
+> Commit: 4a1fd20b91f484245603cd050e130e52b25cf903
 
 ```
 .
@@ -456,6 +456,7 @@
 │   │   ├── 10-log-env.sh
 │   │   ├── 20-render-conf.sh
 │   │   └── 90-preflight.sh
+│   ├── capability_map.yaml
 │   └── odoo.conf.template
 ├── data
 │   ├── bir_calendar_2026.json
@@ -644,6 +645,7 @@
 │   ├── PRD_ipai_ppm_portfolio.md
 │   ├── PROD_READINESS_GAPS.md
 │   ├── QUICK_REFERENCE_SSO_SETUP.md
+│   ├── RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
 │   ├── README.md
 │   ├── README_MCP_STACK.md
 │   ├── SAAS_PARITY_READINESS.md
@@ -912,6 +914,13 @@
 │   ├── README.md
 │   └── tasks.md
 ├── supabase
+│   ├── functions
+│   │   ├── expense-policy-check
+│   │   │   └── index.ts
+│   │   ├── three-way-match
+│   │   │   └── index.ts
+│   │   └── vendor-score
+│   │       └── index.ts
 │   ├── migrations
 │   │   ├── 20241220000001_master_control.sql
 │   │   ├── 20241220000002_master_data.sql
@@ -936,7 +945,12 @@
 │   │   ├── 202512201001_EXTERNAL_INTEGRATIONS.sql
 │   │   ├── 202512201002_AZURE_CONTROL_CENTER.sql
 │   │   ├── 202512201003_OCA_DOCS_BRAIN.sql
-│   │   └── 202512201004_SHIP_READY_DELTA.sql
+│   │   ├── 202512201004_SHIP_READY_DELTA.sql
+│   │   ├── 20251220_agentbrain_delta.sql
+│   │   ├── 20251220_capability_registry_full.sql
+│   │   ├── 20251220_process_runtime_ticketing.sql
+│   │   ├── 20251220_qms_lite_document_control.sql
+│   │   └── 20251220_ticketing_pipelines_clean.sql
 │   └── seed
 │       ├── 9000_core
 │       │   └── 9000_core_tenants_roles_users.sql
@@ -1119,15 +1133,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-388 directories, 726 files
+392 directories, 736 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 421 |
-| Files | 1212 |
+| Directories | 425 |
+| Files | 1222 |
 | Python files | 370 |
 | XML files | 182 |
-| Markdown files | 235 |
+| Markdown files | 236 |
