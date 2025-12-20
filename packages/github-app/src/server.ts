@@ -4,9 +4,16 @@
  * Receives GitHub webhooks and creates work items in Master Control.
  * Implements "All Green" pattern: keep PRs mergeable via agent remediation.
  *
+ * Capabilities (like Continue's All Green):
+ * ✅ Addresses code review comments
+ * ✅ Fixes failing CI checks
+ * ✅ Resolves merge conflicts
+ *
  * Events handled:
- * - issue_comment.created / pull_request_review_comment.created
- * - check_suite.completed / workflow_run.completed
+ * - issue_comment.created / pull_request_review_comment.created (triggers)
+ * - pull_request_review.submitted (review feedback)
+ * - pull_request.synchronize / pull_request.opened (merge conflicts)
+ * - check_suite.completed / workflow_run.completed (CI failures)
  *
  * Usage:
  *   npm run dev
@@ -309,6 +316,166 @@ ${error instanceof Error ? error.message : String(error)}
         app.log.warn(`[pulser] Could not create work item: ${error}`);
       }
     }
+  });
+
+  // -------------------------------------------------------------------------
+  // Handle merge conflicts
+  // -------------------------------------------------------------------------
+  app.on(
+    ["pull_request.opened", "pull_request.synchronize", "pull_request.reopened"],
+    async (context) => {
+      const pr = context.payload.pull_request;
+      const repo = context.payload.repository;
+
+      // GitHub needs time to compute mergeable status
+      // On synchronize, mergeable might be null initially
+      if (pr.mergeable === null) {
+        app.log.debug(`[pulser] PR #${pr.number} mergeable status pending, will check on next event`);
+        return;
+      }
+
+      // Only act on merge conflicts
+      if (pr.mergeable !== false) {
+        return;
+      }
+
+      // Check if it's actually a conflict (not other merge issues)
+      if (pr.mergeable_state !== "dirty") {
+        app.log.debug(`[pulser] PR #${pr.number} not mergeable but state is ${pr.mergeable_state}, skipping`);
+        return;
+      }
+
+      app.log.info(`[pulser] Merge conflict detected for ${repo.full_name}#${pr.number}`);
+
+      try {
+        const sourceRef = `${pr.html_url}#merge_conflict_${pr.head.sha.substring(0, 7)}`;
+
+        const result = await createWorkItem({
+          tenant_id: Env.TENANT_ID,
+          source: "github_pr",
+          source_ref: sourceRef,
+          title: `Merge Conflict: ${repo.name}#${pr.number}`,
+          lane: "DEV",
+          priority: 2,
+          payload: {
+            owner: repo.owner.login,
+            repo: repo.name,
+            pr_number: pr.number,
+            pr_url: pr.html_url,
+            pr_title: pr.title,
+            base_branch: pr.base.ref,
+            head_branch: pr.head.ref,
+            head_sha: pr.head.sha,
+            mergeable_state: pr.mergeable_state,
+            conflict_type: "merge_conflict",
+            author: pr.user?.login,
+          },
+        });
+
+        // Comment on PR about conflict detection
+        await context.octokit.issues.createComment({
+          owner: repo.owner.login,
+          repo: repo.name,
+          issue_number: pr.number,
+          body: `🔀 **Pulser Bot** detected a merge conflict.
+
+| Field | Value |
+|-------|-------|
+| Work Item | \`${result.id}\` |
+| Base Branch | \`${pr.base.ref}\` |
+| Head Branch | \`${pr.head.ref}\` |
+| Status | Analyzing conflict... |
+
+I'll attempt to resolve the conflict automatically. If manual intervention is needed, I'll provide guidance.`,
+        });
+
+        app.log.info(`[pulser] Created work item ${result.id} for merge conflict`);
+      } catch (error) {
+        app.log.warn(`[pulser] Could not create merge conflict work item: ${error}`);
+      }
+    }
+  );
+
+  // -------------------------------------------------------------------------
+  // Handle code review comments (changes requested)
+  // -------------------------------------------------------------------------
+  app.on("pull_request_review.submitted", async (context) => {
+    const review = context.payload.review;
+    const pr = context.payload.pull_request;
+    const repo = context.payload.repository;
+
+    // Only act on reviews requesting changes
+    if (review.state !== "changes_requested") {
+      return;
+    }
+
+    // Skip if no review body (just approval/rejection without comments)
+    if (!review.body || review.body.trim().length === 0) {
+      app.log.debug(`[pulser] Review on PR #${pr.number} has no body, skipping`);
+      return;
+    }
+
+    app.log.info(`[pulser] Changes requested on ${repo.full_name}#${pr.number}`);
+
+    try {
+      const sourceRef = `${pr.html_url}#review_${review.id}`;
+
+      const result = await createWorkItem({
+        tenant_id: Env.TENANT_ID,
+        source: "github_pr",
+        source_ref: sourceRef,
+        title: `Review Feedback: ${repo.name}#${pr.number}`,
+        lane: "DEV",
+        priority: 2,
+        payload: {
+          owner: repo.owner.login,
+          repo: repo.name,
+          pr_number: pr.number,
+          pr_url: pr.html_url,
+          pr_title: pr.title,
+          review_id: review.id,
+          review_state: review.state,
+          review_body: review.body,
+          reviewer: review.user?.login,
+          head_sha: pr.head.sha,
+          feedback_type: "changes_requested",
+        },
+      });
+
+      // Reply to the review
+      await context.octokit.issues.createComment({
+        owner: repo.owner.login,
+        repo: repo.name,
+        issue_number: pr.number,
+        body: `🔍 **Pulser Bot** received review feedback from @${review.user?.login}.
+
+| Field | Value |
+|-------|-------|
+| Work Item | \`${result.id}\` |
+| Reviewer | @${review.user?.login} |
+| Status | Analyzing feedback... |
+
+I'll analyze the requested changes and propose fixes.`,
+      });
+
+      app.log.info(`[pulser] Created work item ${result.id} for review feedback`);
+    } catch (error) {
+      app.log.warn(`[pulser] Could not create review feedback work item: ${error}`);
+    }
+  });
+
+  // -------------------------------------------------------------------------
+  // Handle review thread comments (inline code review)
+  // -------------------------------------------------------------------------
+  app.on("pull_request_review_thread.resolved", async (context) => {
+    // Log when threads are resolved (for tracking)
+    const thread = context.payload.thread;
+    const pr = context.payload.pull_request;
+    const repo = context.payload.repository;
+
+    app.log.info(
+      `[pulser] Review thread resolved on ${repo.full_name}#${pr.number} by ${context.payload.sender?.login}`
+    );
   });
 });
 
