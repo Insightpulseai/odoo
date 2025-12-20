@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Superset Artifact Manifest",
+  "description": "Pinned container image reference for Apache Superset deployment",
+
+  "artifact": {
+    "name": "ipai-superset",
+    "source_repo": "https://github.com/jgtolentino/superset",
+    "image": "ghcr.io/jgtolentino/ipai-superset",
+    "tag": "latest",
+    "digest": null,
+    "updated_at": "2025-12-20T00:00:00Z",
+    "updated_by": "manual"
+  },
+
+  "deployment": {
+    "target": "digitalocean",
+    "app_name": "superset",
+    "region": "sgp1",
+    "instance_size": "professional-xs"
+  },
+
+  "healthcheck": {
+    "endpoint": "/health",
+    "interval_seconds": 30,
+    "timeout_seconds": 10
+  },
+
+  "dependencies": {
+    "postgres": {
+      "type": "managed",
+      "provider": "digitalocean",
+      "version": "15"
+    },
+    "redis": {
+      "type": "managed",
+      "provider": "digitalocean",
+      "version": "7"
+    }
+  },
+
+  "_notes": {
+    "usage": "This manifest is the artifact contract between odoo-ce and superset repos",
+    "update": "Run the superset-bump workflow or manually update tag/digest",
+    "no_submodule": "Superset is NOT a git submodule - it's a pinned container artifact"
+  }
+}
