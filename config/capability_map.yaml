@@ -1,0 +1,641 @@
+---
+# =============================================================================
+# CAPABILITY MAP: SAP → Odoo CE/OCA 18 + Supabase Gap Handlers
+# =============================================================================
+# Canonical rule: SAP product ≠ 1:1 module
+# Map into normalized capability registry, then bind to:
+#   1. Odoo CE core module(s) (must exist)
+#   2. OCA addon(s) (preferred for workflow/approvals/extensions)
+#   3. Supabase "gap handler" (policy, scoring, OCR, audit, credential vending)
+#
+# Odoo = Transaction UI + Posting Layer
+# Supabase = Governance + Automation + Intelligence Layer
+# =============================================================================
+
+version: 2
+updated_at: "2025-12-20"
+
+# -----------------------------------------------------------------------------
+# A) SAP CONCUR → Odoo CE/OCA 18
+# -----------------------------------------------------------------------------
+sap_concur:
+  # ---------------------------------------------------------------------------
+  # Expense Management
+  # ---------------------------------------------------------------------------
+  - capability_key: travel.expense.capture
+    title: Expense Capture + Receipt Processing
+    description: Employee photo capture of receipts, OCR extraction, line-item data validation
+    odoo_ce:
+      - hr_expense
+      - documents
+    oca:
+      - repo: OCA/hr-expense
+        modules:
+          - hr_expense_sequence
+          - hr_expense_invoice
+    supabase_gap_handlers:
+      - function: ocr.receipt_extract
+        description: PaddleOCR-VL + OpenAI for receipt line extraction
+        endpoint: /functions/v1/ocr-receipt
+      - function: policy.expense_rules
+        description: Per diem, category limits, receipt requirements engine
+        endpoint: /functions/v1/expense-policy-check
+      - function: audit.provenance
+        description: Immutable audit trail for expense lifecycle
+        table: runtime.audit_log
+    gap_severity: critical
+    status: mapped
+
+  - capability_key: travel.expense.approvals
+    title: Expense Approval Workflow
+    description: Multi-tier approval with configurable rules based on amount, category, policy
+    odoo_ce:
+      - hr_expense
+    oca:
+      - repo: OCA/hr-expense
+        modules:
+          - hr_expense_tier_validation
+      - repo: OCA/server-ux
+        modules:
+          - base_tier_validation
+    supabase_gap_handlers:
+      - function: rules.approval_routing
+        description: Dynamic approval chain based on amount thresholds
+        endpoint: /functions/v1/approval-route
+    gap_severity: minor
+    status: mapped
+
+  - capability_key: travel.expense.policy
+    title: Expense Policy Rule Engine
+    description: Define and enforce expense policies with complex conditions
+    odoo_ce:
+      - hr_expense
+    oca: []
+    supabase_gap_handlers:
+      - function: policy.expense_rules
+        description: Rules engine (limits, per diem, receipt requirements)
+        endpoint: /functions/v1/expense-policy-check
+      - function: alerts.policy_violation
+        description: Real-time violation notifications
+        endpoint: /functions/v1/policy-violation-alert
+    gap_severity: critical
+    status: draft
+    notes: Requires GAP_DELTA module ipai_expense_policy
+
+  - capability_key: travel.expense.reimburse
+    title: Expense Reimbursement
+    description: Process employee expense reimbursements via payroll or direct payment
+    odoo_ce:
+      - hr_expense
+      - account_payment
+    oca:
+      - repo: OCA/account-payment
+        modules:
+          - account_payment_order
+          - account_payment_partner
+    supabase_gap_handlers:
+      - function: calc.reimburse_amount
+        description: Net reimbursement calculation with deductions
+        endpoint: /functions/v1/reimburse-calc
+      - function: audit.payment_trail
+        description: Payment audit trail + exceptions
+        table: runtime.audit_log
+    gap_severity: minor
+    status: mapped
+
+  # ---------------------------------------------------------------------------
+  # Invoice Management
+  # ---------------------------------------------------------------------------
+  - capability_key: ap.invoice.capture
+    title: Invoice Capture + OCR
+    description: Vendor invoice scan/upload, OCR extraction, data validation
+    odoo_ce:
+      - account
+      - purchase
+    oca:
+      - repo: OCA/account-invoicing
+        modules:
+          - account_invoice_import
+    supabase_gap_handlers:
+      - function: ocr.invoice_extract
+        description: Invoice OCR with vendor matching
+        endpoint: /functions/v1/ocr-invoice
+      - function: matching.vendor_lookup
+        description: Fuzzy vendor name matching to res.partner
+        endpoint: /functions/v1/vendor-match
+    gap_severity: critical
+    status: draft
+
+  - capability_key: ap.invoice.routing
+    title: Invoice Approval Routing
+    description: Multi-step invoice approval based on amount, GL code, vendor
+    odoo_ce:
+      - account
+      - purchase
+    oca:
+      - repo: OCA/account-invoicing
+        modules:
+          - account_invoice_tier_validation
+      - repo: OCA/purchase-workflow
+        modules:
+          - purchase_tier_validation
+    supabase_gap_handlers:
+      - function: rules.invoice_routing
+        description: Dynamic routing based on invoice attributes
+        endpoint: /functions/v1/invoice-route
+    gap_severity: minor
+    status: mapped
+
+  - capability_key: ap.invoice.three_way_match
+    title: 3-Way Match (PO/GR/Invoice)
+    description: Automated matching of purchase order, goods receipt, and invoice
+    odoo_ce:
+      - purchase
+      - stock
+      - account
+    oca:
+      - repo: OCA/purchase-workflow
+        modules:
+          - purchase_order_line_invoice_status
+      - repo: OCA/account-invoicing
+        modules:
+          - account_invoice_check_total
+    supabase_gap_handlers:
+      - function: assertions.three_way_match
+        description: Assertion store (PO/GR/INV) + tolerance checks
+        endpoint: /functions/v1/three-way-match
+      - function: disputes.ticketing
+        description: Auto-create work items for mismatches
+        table: run.work_items
+      - function: alerts.mismatch
+        description: Real-time mismatch notifications
+        endpoint: /functions/v1/mismatch-alert
+    gap_severity: moderate
+    status: draft
+
+  # ---------------------------------------------------------------------------
+  # Request (Pre-Approval)
+  # ---------------------------------------------------------------------------
+  - capability_key: spend.request.preapproval
+    title: Spend Pre-Approval Request
+    description: Pre-trip approval with budget checks and threshold validation
+    odoo_ce:
+      - hr_expense
+    oca:
+      - repo: OCA/hr-expense
+        modules:
+          - hr_expense_advance_clearing
+    supabase_gap_handlers:
+      - function: budget.check
+        description: Budget availability check against GL
+        endpoint: /functions/v1/budget-check
+      - function: policy.threshold_validate
+        description: Amount threshold validation
+        endpoint: /functions/v1/threshold-check
+    gap_severity: moderate
+    status: draft
+
+# -----------------------------------------------------------------------------
+# B) SAP SRM / ARIBA → Odoo CE/OCA 18
+# -----------------------------------------------------------------------------
+sap_srm:
+  # ---------------------------------------------------------------------------
+  # Supplier Management
+  # ---------------------------------------------------------------------------
+  - capability_key: procurement.supplier.master
+    title: Supplier Master Data
+    description: Vendor onboarding, qualification, and profile management
+    odoo_ce:
+      - contacts
+      - purchase
+    oca:
+      - repo: OCA/partner-contact
+        modules:
+          - partner_contact_department
+          - partner_contact_birthdate
+          - partner_contact_gender
+      - repo: OCA/purchase-workflow
+        modules:
+          - purchase_commercial_partner
+    supabase_gap_handlers:
+      - function: vendor.scoring
+        description: Supplier risk scoring and performance tracking
+        endpoint: /functions/v1/vendor-score
+      - function: kyc.document_check
+        description: Document KYC validation
+        endpoint: /functions/v1/vendor-kyc
+      - function: alerts.risk_flags
+        description: Supplier risk flag notifications
+        endpoint: /functions/v1/vendor-risk-alert
+    gap_severity: moderate
+    status: draft
+
+  - capability_key: procurement.supplier.qualification
+    title: Supplier Qualification
+    description: Vendor qualification workflow with document requirements
+    odoo_ce:
+      - purchase
+      - documents
+    oca:
+      - repo: OCA/purchase-workflow
+        modules:
+          - purchase_request
+    supabase_gap_handlers:
+      - function: workflow.vendor_qualification
+        description: Multi-step qualification workflow
+        table: run.instances
+      - function: checklist.vendor_docs
+        description: Required document checklist
+        table: control.checklists
+    gap_severity: critical
+    status: draft
+    notes: Requires GAP_DELTA module ipai_vendor_qualification
+
+  # ---------------------------------------------------------------------------
+  # Requisition / RFQ / PO
+  # ---------------------------------------------------------------------------
+  - capability_key: procurement.rfq.po
+    title: RFQ to Purchase Order
+    description: Request for quotation workflow to PO creation
+    odoo_ce:
+      - purchase
+    oca:
+      - repo: OCA/purchase-workflow
+        modules:
+          - purchase_request
+          - purchase_request_tier_validation
+          - purchase_order_approval_block
+    supabase_gap_handlers:
+      - function: policy.po_gating
+        description: PO approval policy gating
+        endpoint: /functions/v1/po-policy-check
+      - function: audit.po_trail
+        description: PO lifecycle audit trail
+        table: runtime.audit_log
+    gap_severity: closed
+    status: implemented
+
+  - capability_key: procurement.requisition
+    title: Purchase Requisition
+    description: Employee-initiated purchase requests with approval workflow
+    odoo_ce:
+      - purchase
+    oca:
+      - repo: OCA/purchase-workflow
+        modules:
+          - purchase_request
+          - purchase_request_tier_validation
+    supabase_gap_handlers: []
+    gap_severity: closed
+    status: implemented
+
+  # ---------------------------------------------------------------------------
+  # Receiving / Goods Receipt
+  # ---------------------------------------------------------------------------
+  - capability_key: procurement.receiving
+    title: Goods Receipt
+    description: Receiving workflow with quantity validation and exception handling
+    odoo_ce:
+      - stock
+      - purchase
+    oca:
+      - repo: OCA/stock-logistics-workflow
+        modules:
+          - stock_picking_tier_validation
+    supabase_gap_handlers:
+      - function: exceptions.receiving
+        description: Exception detection + mismatch alerts
+        endpoint: /functions/v1/receiving-exceptions
+      - function: alerts.quantity_mismatch
+        description: Quantity mismatch notifications
+        endpoint: /functions/v1/quantity-alert
+    gap_severity: minor
+    status: mapped
+
+  # ---------------------------------------------------------------------------
+  # Contracts / Catalogs
+  # ---------------------------------------------------------------------------
+  - capability_key: procurement.contracts.catalog
+    title: Contracts and Catalogs
+    description: Vendor contracts with catalog item management
+    odoo_ce:
+      - purchase
+      - product
+    oca:
+      - repo: OCA/contract
+        modules:
+          - contract
+          - contract_sale_invoicing
+      - repo: OCA/purchase-workflow
+        modules:
+          - purchase_blanket_order
+    supabase_gap_handlers:
+      - function: catalog.normalize
+        description: Catalog normalization + price compliance
+        endpoint: /functions/v1/catalog-normalize
+      - function: price.compliance
+        description: Price compliance validation
+        endpoint: /functions/v1/price-compliance
+    gap_severity: moderate
+    status: draft
+
+# -----------------------------------------------------------------------------
+# C) SAP INTEGRATION / PROCESS ORCHESTRATION → n8n + Supabase
+# -----------------------------------------------------------------------------
+sap_integration:
+  - capability_key: integration.iflow.routing
+    title: Message Routing (iFlows)
+    description: Message-based integration routing between systems
+    odoo_ce: []
+    oca:
+      - repo: OCA/queue
+        modules:
+          - queue_job
+    supabase_gap_handlers:
+      - function: routing.message
+        description: n8n workflows + Edge Functions + retry/DLQ
+        n8n_workflow: message_router
+    gap_severity: n/a
+    status: mapped
+    notes: Handled entirely by n8n + Supabase, not Odoo
+
+  - capability_key: integration.bpmn.orchestrate
+    title: BPMN Orchestration
+    description: Business process orchestration with step tracking
+    odoo_ce: []
+    oca: []
+    supabase_gap_handlers:
+      - function: bpmn.engine
+        description: BPMN engine + run logs + step replay
+        tables:
+          - process.definitions
+          - process.nodes
+          - run.instances
+          - run.events
+    gap_severity: n/a
+    status: implemented
+    notes: Uses process runtime tables from 20251220_process_runtime_ticketing.sql
+
+  - capability_key: integration.adapters
+    title: Adapter Ecosystem
+    description: Connectors for external systems
+    odoo_ce: []
+    oca:
+      - repo: OCA/connector
+        modules:
+          - connector
+    supabase_gap_handlers:
+      - function: connectors.pack
+        description: HTTP/SFTP/IMAP/Drive/Notion/GitHub connector packs
+        n8n_workflow: connector_hub
+    gap_severity: n/a
+    status: mapped
+
+  - capability_key: integration.run.monitoring
+    title: Pipeline Run Monitoring
+    description: Execution monitoring with logs and alerts
+    odoo_ce: []
+    oca: []
+    supabase_gap_handlers:
+      - function: monitoring.runs
+        description: Run inspector UI + OpenLineage events
+        tables:
+          - runtime.pipeline_runs
+          - runtime.pipeline_run_steps
+    gap_severity: n/a
+    status: implemented
+
+# -----------------------------------------------------------------------------
+# D) ITSM / HR TICKETING → Odoo Project + Supabase Workflow
+# -----------------------------------------------------------------------------
+hr_itsm:
+  # ---------------------------------------------------------------------------
+  # HR Onboarding/Offboarding
+  # ---------------------------------------------------------------------------
+  - capability_key: hr.onboarding.case
+    title: Employee Onboarding Case
+    description: New hire onboarding workflow with task automation
+    odoo_ce:
+      - hr
+      - project
+    oca:
+      - repo: OCA/hr
+        modules:
+          - hr_contract_types
+      - repo: OCA/project
+        modules:
+          - project_task_default_stage
+    supabase_gap_handlers:
+      - function: workflow.onboarding
+        description: Cross-dept orchestration state machine
+        tables:
+          - process.definitions
+          - run.instances
+          - run.work_items
+      - function: sla.monitor
+        description: SLA timers with escalation
+        table: run.sla_timers
+      - function: audit.immutable
+        description: Immutable audit trail
+        table: runtime.audit_log
+    gap_severity: moderate
+    status: implemented
+    notes: Uses Hire-to-Retire process from 20251220_process_runtime_ticketing.sql
+
+  - capability_key: hr.offboarding.case
+    title: Employee Offboarding Case
+    description: Termination/resignation workflow with checklist
+    odoo_ce:
+      - hr
+      - project
+    oca:
+      - repo: OCA/hr
+        modules:
+          - hr_contract_types
+    supabase_gap_handlers:
+      - function: workflow.offboarding
+        description: Offboarding state machine with asset recovery
+        tables:
+          - process.definitions
+          - run.instances
+          - run.work_items
+      - function: checklist.offboarding
+        description: Offboarding checklist (equipment, access, final pay)
+        table: control.checklists
+    gap_severity: moderate
+    status: implemented
+
+  # ---------------------------------------------------------------------------
+  # IT Service Management
+  # ---------------------------------------------------------------------------
+  - capability_key: itsm.ticket.intake
+    title: IT Ticket Intake
+    description: IT service request submission and categorization
+    odoo_ce:
+      - helpdesk
+      - project
+    oca:
+      - repo: OCA/helpdesk
+        modules:
+          - helpdesk_mgmt
+    supabase_gap_handlers:
+      - function: classify.ticket
+        description: AI-powered ticket classification
+        endpoint: /functions/v1/ticket-classify
+      - function: route.ticket
+        description: Auto-routing to appropriate queue
+        endpoint: /functions/v1/ticket-route
+    gap_severity: minor
+    status: mapped
+
+  - capability_key: itsm.ticket.sla
+    title: IT Ticket SLA Management
+    description: SLA tracking with escalation rules
+    odoo_ce:
+      - helpdesk
+    oca:
+      - repo: OCA/helpdesk
+        modules:
+          - helpdesk_mgmt
+    supabase_gap_handlers:
+      - function: sla.ticket_timer
+        description: SLA timer with warning/breach thresholds
+        table: run.sla_timers
+      - function: escalation.auto
+        description: Auto-escalation on SLA breach
+        table: run.escalations
+    gap_severity: minor
+    status: mapped
+
+  - capability_key: itsm.ticket.knowledge_linked
+    title: Knowledge-Linked Tickets
+    description: Link tickets to knowledge base articles for resolution
+    odoo_ce:
+      - helpdesk
+      - knowledge
+    oca:
+      - repo: OCA/helpdesk
+        modules:
+          - helpdesk_mgmt
+    supabase_gap_handlers:
+      - function: rag.ticket_suggest
+        description: RAG-powered article suggestions
+        endpoint: /functions/v1/ticket-kb-suggest
+      - function: link.resolution
+        description: Link resolution to KB article
+        table: rag.documents
+    gap_severity: moderate
+    status: draft
+
+# -----------------------------------------------------------------------------
+# E) QMS-LITE (MasterControl-style Document Control)
+# -----------------------------------------------------------------------------
+qms_lite:
+  - capability_key: qms.document.control
+    title: Controlled Document Management
+    description: Document versioning with approval workflow
+    odoo_ce:
+      - documents
+    oca:
+      - repo: OCA/knowledge
+        modules:
+          - document_page
+          - document_page_approval
+    supabase_gap_handlers:
+      - function: doc.version_control
+        description: Immutable version snapshots
+        table: qms.doc_versions
+      - function: workflow.doc_approval
+        description: Multi-step approval workflow
+        table: qms.approval_routes
+    gap_severity: moderate
+    status: implemented
+    notes: Uses QMS-lite schema from 20251220_qms_lite_document_control.sql
+
+  - capability_key: qms.training.records
+    title: Training Records
+    description: Read receipts and training acknowledgments
+    odoo_ce:
+      - hr
+    oca: []
+    supabase_gap_handlers:
+      - function: training.read_receipt
+        description: "I have read and understood" acknowledgments
+        table: qms.read_receipts
+      - function: audit.training
+        description: Training completion audit trail
+        table: qms.audit_events
+    gap_severity: moderate
+    status: implemented
+
+  - capability_key: qms.change.control
+    title: Change Control Records
+    description: Change control workflow with impact assessment
+    odoo_ce: []
+    oca: []
+    supabase_gap_handlers:
+      - function: workflow.change_control
+        description: Change control workflow
+        table: qms.change_controls
+      - function: evidence.pack
+        description: Evidence pack for audits
+        table: qms.evidence_packs
+    gap_severity: critical
+    status: draft
+    notes: Minimal implementation; full CAPA requires GAP_DELTA
+
+# -----------------------------------------------------------------------------
+# METADATA
+# -----------------------------------------------------------------------------
+_meta:
+  total_capabilities: 30
+  by_status:
+    implemented: 8
+    mapped: 10
+    draft: 12
+  by_severity:
+    closed: 2
+    minor: 6
+    moderate: 10
+    critical: 7
+    n/a: 5
+  supabase_functions:
+    - ocr.receipt_extract
+    - ocr.invoice_extract
+    - policy.expense_rules
+    - policy.po_gating
+    - rules.approval_routing
+    - rules.invoice_routing
+    - budget.check
+    - matching.vendor_lookup
+    - assertions.three_way_match
+    - vendor.scoring
+    - kyc.document_check
+    - catalog.normalize
+    - price.compliance
+    - classify.ticket
+    - route.ticket
+    - rag.ticket_suggest
+    - workflow.onboarding
+    - workflow.offboarding
+    - workflow.change_control
+    - sla.monitor
+    - sla.ticket_timer
+    - escalation.auto
+    - audit.provenance
+    - audit.payment_trail
+    - audit.immutable
+    - alerts.policy_violation
+    - alerts.mismatch
+    - alerts.risk_flags
+    - alerts.quantity_mismatch
+  n8n_workflows:
+    - message_router
+    - connector_hub
+    - docs_ingest_odoo18
+    - docs_ingest_sap_help
+    - oca_repo_sync
+    - bpmn_to_sop
+    - module_factory
+    - sla_monitor
+    - onboard_offboard
