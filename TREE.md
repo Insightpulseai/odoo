@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4a1fd20b91f484245603cd050e130e52b25cf903
+> Commit: ab54ad8e1d3c8601536e1d7c60fb35fc5474fc0a
 
 ```
 .
@@ -15,8 +15,17 @@
 │   ├── project_memory.db
 │   ├── query_memory.py
 │   └── settings.local.json
+├── .continue
+│   ├── prompts
+│   │   ├── implement.md
+│   │   ├── plan.md
+│   │   ├── ship.md
+│   │   └── verify.md
+│   └── rules
+│       └── agentic.md
 ├── .github
 │   ├── workflows
+│   │   ├── agent-preflight.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
@@ -25,7 +34,10 @@
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── health-check.yml
-│   │   └── repo-structure.yml
+│   │   ├── lakehouse-smoke.yml
+│   │   ├── repo-structure.yml
+│   │   ├── spec-kit-enforce.yml
+│   │   └── superset-bump.yml
 │   └── copilot-instructions.md
 ├── addons
 │   ├── ipai
@@ -702,12 +714,29 @@
 │   ├── ce
 │   │   └── .gitkeep
 │   ├── ci
+│   │   ├── continue-plus
+│   │   │   ├── README.md
+│   │   │   ├── odoo-paths-ignore.yml
+│   │   │   ├── preflight-classify.yml
+│   │   │   └── spec-kit-check.yml
 │   │   ├── install-test.sh
 │   │   └── structure-check.sh
 │   ├── docker
 │   │   └── odoo.conf
-│   └── entrypoint.d
-│       └── .gitkeep
+│   ├── entrypoint.d
+│   │   └── .gitkeep
+│   ├── lakehouse
+│   │   ├── init
+│   │   │   └── postgres
+│   │   ├── trino
+│   │   │   └── catalog
+│   │   ├── .env.example
+│   │   ├── README.md
+│   │   └── docker-compose.yml
+│   └── superset
+│       ├── README.md
+│       ├── do-app-spec.yaml
+│       └── manifest.json
 ├── mattermost
 │   ├── runbooks
 │   │   └── .gitkeep
@@ -876,6 +905,7 @@
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
 │   ├── smoketest.sh
+│   ├── spec-kit-enforce.py
 │   ├── test_deploy_local.sh
 │   ├── update_diagram_manifest.py
 │   ├── validate_m1.sh
@@ -886,6 +916,11 @@
 │   ├── architecture_diagrams.skill.json
 │   └── superset_mcp.skill.json
 ├── spec
+│   ├── continue-plus
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ipai-control-center
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -981,6 +1016,8 @@
 │       ├── __init__.py
 │       └── test_finance_ppm_install.py
 ├── tools
+│   ├── catalog
+│   │   └── databricks_org_catalog.py
 │   ├── db-inventory
 │   │   ├── README.md
 │   │   └── inventory.py
@@ -1133,15 +1170,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-392 directories, 736 files
+404 directories, 761 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 425 |
-| Files | 1222 |
-| Python files | 370 |
+| Directories | 437 |
+| Files | 1250 |
+| Python files | 372 |
 | XML files | 182 |
-| Markdown files | 236 |
+| Markdown files | 248 |
