@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a1ea287b9cb891c8234065a5737862d561ec59cf
+> Commit: 133a2f1cf12cd084012c715ac69db073f1f32c55
 
 ```
 .
@@ -775,6 +775,12 @@
 ├── odoo
 │   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
+├── out
+│   ├── concur_demo
+│   │   └── catalog.json
+│   └── concur_demo_odoo_map
+│       ├── mapping.csv
+│       └── mapping.md
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
 ├── scripts
@@ -916,6 +922,16 @@
 │   ├── db-inventory
 │   │   ├── README.md
 │   │   └── inventory.py
+│   ├── docs-crawler
+│   │   ├── README.md
+│   │   ├── api_ask.py
+│   │   ├── config.yaml
+│   │   └── crawler.py
+│   ├── docs_catalog
+│   │   ├── README.md
+│   │   ├── crawl_docs.py
+│   │   ├── map_to_odoo.py
+│   │   └── odoo_map.yaml
 │   ├── seed_all.ts
 │   ├── seed_doc_ocr.ts
 │   ├── seed_ppm.ts
@@ -1049,15 +1065,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-368 directories, 676 files
+373 directories, 687 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 401 |
-| Files | 1162 |
-| Python files | 357 |
+| Directories | 406 |
+| Files | 1173 |
+| Python files | 361 |
 | XML files | 181 |
-| Markdown files | 228 |
+| Markdown files | 231 |
