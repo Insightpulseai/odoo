@@ -5,8 +5,42 @@
 -- Compatible with existing rag.documents and rag.chunks schema
 -- =============================================================================
 
+-- Create rag schema if it doesn't exist
+create schema if not exists rag;
+
 -- Enable extensions for hybrid search
 create extension if not exists pg_trgm;
+create extension if not exists vector;
+
+-- =============================================================================
+-- 0. Create base tables if they don't exist
+-- =============================================================================
+
+create table if not exists rag.documents (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null,
+  source_type text not null,
+  source_url text not null,
+  title text,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create table if not exists rag.chunks (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null,
+  document_id uuid references rag.documents(id) on delete cascade,
+  content text not null,
+  embedding vector(1536),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+-- Base indexes
+create index if not exists idx_documents_tenant on rag.documents(tenant_id);
+create index if not exists idx_documents_source on rag.documents(tenant_id, source_type);
+create index if not exists idx_chunks_tenant on rag.chunks(tenant_id);
+create index if not exists idx_chunks_document on rag.chunks(document_id);
 
 -- =============================================================================
 -- 1. Extend rag.documents with versioning and provenance
