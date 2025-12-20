@@ -1,0 +1,166 @@
+name: Agent Preflight
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  classify:
+    name: Classify Changes
+    runs-on: ubuntu-latest
+    outputs:
+      run_odoo: ${{ steps.diff.outputs.run_odoo }}
+      run_tests: ${{ steps.diff.outputs.run_tests }}
+      change_type: ${{ steps.diff.outputs.change_type }}
+      changed_files: ${{ steps.diff.outputs.changed_files }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Classify diff
+        id: diff
+        run: |
+          set -e
+
+          # Get changed files
+          CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD)
+          echo "Changed files:"
+          echo "$CHANGED"
+
+          # Save to output (escaped for JSON)
+          CHANGED_JSON=$(echo "$CHANGED" | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "changed_files=$CHANGED_JSON" >> $GITHUB_OUTPUT
+
+          # Classify by path patterns
+          HAS_CODE=false
+          HAS_TESTS=false
+          HAS_DOCS=false
+          HAS_SPEC=false
+          HAS_INFRA=false
+          HAS_AGENT_CONFIG=false
+
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+
+            # Code paths (triggers Odoo CI)
+            if echo "$file" | grep -qE '^(addons|odoo|oca)/'; then
+              HAS_CODE=true
+            fi
+
+            # Test paths
+            if echo "$file" | grep -qE '^tests?/|_test\.py$|test_.*\.py$'; then
+              HAS_TESTS=true
+            fi
+
+            # Documentation
+            if echo "$file" | grep -qE '^docs?/|\.md$|\.rst$'; then
+              HAS_DOCS=true
+            fi
+
+            # Spec bundles
+            if echo "$file" | grep -qE '^spec/'; then
+              HAS_SPEC=true
+            fi
+
+            # Infrastructure
+            if echo "$file" | grep -qE '^\.github/|^scripts/|^deploy/|^infra/|^docker'; then
+              HAS_INFRA=true
+            fi
+
+            # Agent configuration
+            if echo "$file" | grep -qE '^\.claude/|^\.continue/|^CLAUDE\.md$'; then
+              HAS_AGENT_CONFIG=true
+            fi
+
+          done <<< "$CHANGED"
+
+          # Determine run flags
+          if [ "$HAS_CODE" = "true" ] || [ "$HAS_TESTS" = "true" ]; then
+            RUN_ODOO=true
+            RUN_TESTS=true
+          else
+            RUN_ODOO=false
+            RUN_TESTS=false
+          fi
+
+          # Determine primary change type
+          if [ "$HAS_CODE" = "true" ]; then
+            CHANGE_TYPE="code"
+          elif [ "$HAS_TESTS" = "true" ]; then
+            CHANGE_TYPE="tests"
+          elif [ "$HAS_INFRA" = "true" ]; then
+            CHANGE_TYPE="infra"
+          elif [ "$HAS_SPEC" = "true" ]; then
+            CHANGE_TYPE="spec"
+          elif [ "$HAS_AGENT_CONFIG" = "true" ]; then
+            CHANGE_TYPE="agent_config"
+          elif [ "$HAS_DOCS" = "true" ]; then
+            CHANGE_TYPE="docs"
+          else
+            CHANGE_TYPE="other"
+          fi
+
+          echo "Classification:"
+          echo "  HAS_CODE=$HAS_CODE"
+          echo "  HAS_TESTS=$HAS_TESTS"
+          echo "  HAS_DOCS=$HAS_DOCS"
+          echo "  HAS_SPEC=$HAS_SPEC"
+          echo "  HAS_INFRA=$HAS_INFRA"
+          echo "  HAS_AGENT_CONFIG=$HAS_AGENT_CONFIG"
+          echo "  RUN_ODOO=$RUN_ODOO"
+          echo "  RUN_TESTS=$RUN_TESTS"
+          echo "  CHANGE_TYPE=$CHANGE_TYPE"
+
+          echo "run_odoo=$RUN_ODOO" >> $GITHUB_OUTPUT
+          echo "run_tests=$RUN_TESTS" >> $GITHUB_OUTPUT
+          echo "change_type=$CHANGE_TYPE" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        run: |
+          echo "## Agent Preflight Classification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Flag | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Change Type | \`${{ steps.diff.outputs.change_type }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run Odoo CI | \`${{ steps.diff.outputs.run_odoo }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Run Tests | \`${{ steps.diff.outputs.run_tests }}\` |" >> $GITHUB_STEP_SUMMARY
+
+  # Example gated job - other workflows can reference this
+  odoo-gate:
+    name: Odoo CI Gate
+    needs: classify
+    runs-on: ubuntu-latest
+    if: needs.classify.outputs.run_odoo == 'true'
+    steps:
+      - name: Odoo CI would run
+        run: |
+          echo "This PR contains code changes that require Odoo CI"
+          echo "Change type: ${{ needs.classify.outputs.change_type }}"
+
+  # Skip message for docs-only PRs
+  docs-only:
+    name: Docs-Only PR
+    needs: classify
+    runs-on: ubuntu-latest
+    if: needs.classify.outputs.run_odoo == 'false'
+    steps:
+      - name: Skip heavy CI
+        run: |
+          echo "This PR contains only documentation/infrastructure changes"
+          echo "Skipping Odoo CI matrix"
+          echo "Change type: ${{ needs.classify.outputs.change_type }}"
+
+      - name: Add label
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              labels: ['docs-only', 'skip-ci']
+            });
