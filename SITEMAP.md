@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ab54ad8e1d3c8601536e1d7c60fb35fc5474fc0a
+> Commit: 4169d93ad1fd345283d88f939e1c583dc87f9132
 
 ## 📚 Documentation
 
@@ -222,10 +222,18 @@
 | [Continue+ Implementation Plan](spec/continue-plus/plan.md) | spec/continue-plus |
 | [spec/continue-plus/prd.md](spec/continue-plus/prd.md) | spec/continue-plus |
 | [Continue+ Tasks](spec/continue-plus/tasks.md) | spec/continue-plus |
+| [Constitution: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/constitution.md) | spec/docs-platform-sapgrade |
+| [Implementation Plan: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/plan.md) | spec/docs-platform-sapgrade |
+| [PRD: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/prd.md) | spec/docs-platform-sapgrade |
+| [Tasks: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/tasks.md) | spec/docs-platform-sapgrade |
 | [Constitution — IPAI Control Center (Spec Kit)](spec/ipai-control-center/constitution.md) | spec/ipai-control-center |
 | [Delivery Plan — IPAI Control Center (v1.0.0)](spec/ipai-control-center/plan.md) | spec/ipai-control-center |
 | [Product Requirements Document — IPAI Control Center](spec/ipai-control-center/prd.md) | spec/ipai-control-center |
 | [Tasks — IPAI Control Center (v1.0.0)](spec/ipai-control-center/tasks.md) | spec/ipai-control-center |
+| [Constitution: Knowledge Hub](spec/knowledge-hub/constitution.md) | spec/knowledge-hub |
+| [Implementation Plan: Knowledge Hub](spec/knowledge-hub/plan.md) | spec/knowledge-hub |
+| [PRD: Knowledge Hub](spec/knowledge-hub/prd.md) | spec/knowledge-hub |
+| [Tasks: Knowledge Hub](spec/knowledge-hub/tasks.md) | spec/knowledge-hub |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
 | [Pulser Master Control — Constitution](spec/pulser-master-control/constitution.md) | spec/pulser-master-control |
