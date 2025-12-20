@@ -1,0 +1,43 @@
+{
+  "allowedTools": [
+    "Edit",
+    "Read",
+    "Write",
+    "Glob",
+    "Grep",
+    "Bash(git status)",
+    "Bash(git diff*)",
+    "Bash(git add*)",
+    "Bash(git commit*)",
+    "Bash(git push*)",
+    "Bash(git log*)",
+    "Bash(git branch*)",
+    "Bash(gh *)",
+    "Bash(npm run lint*)",
+    "Bash(npm run typecheck*)",
+    "Bash(npm run test*)",
+    "Bash(npm run build*)",
+    "Bash(pnpm -s lint*)",
+    "Bash(pnpm -s typecheck*)",
+    "Bash(pnpm -s test*)",
+    "Bash(pnpm -s build*)",
+    "Bash(python3 -m py_compile*)",
+    "Bash(black --check*)",
+    "Bash(black *)",
+    "Bash(isort --check*)",
+    "Bash(isort *)",
+    "Bash(flake8*)",
+    "Bash(./scripts/repo_health.sh)",
+    "Bash(./scripts/spec_validate.sh)",
+    "Bash(./scripts/verify.sh)",
+    "Bash(./scripts/ci_local.sh*)",
+    "Bash(./scripts/ci/*)"
+  ],
+  "agentCommands": {
+    "plan": ".claude/commands/plan.md",
+    "implement": ".claude/commands/implement.md",
+    "verify": ".claude/commands/verify.md",
+    "ship": ".claude/commands/ship.md",
+    "fix-github-issue": ".claude/commands/fix-github-issue.md"
+  }
+}
