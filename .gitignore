@@ -93,6 +93,8 @@ temp/
 # Database
 *.sql
 !supabase/migrations/*.sql
+!scripts/lakehouse/*.sql
+!infra/lakehouse/**/*.sql
 *.db
 *.sqlite
 # Exception: Claude external memory
