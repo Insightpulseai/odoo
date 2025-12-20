@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4a1fd20b91f484245603cd050e130e52b25cf903
+> Commit: ab54ad8e1d3c8601536e1d7c60fb35fc5474fc0a
 
 ## 📚 Documentation
 
@@ -11,6 +11,11 @@
 | [](.agent/workflows/deploy.md) | .agent/workflows |
 | [This step is manual or handled by the agent writing to the file](.agent/workflows/scaffold.md) | .agent/workflows |
 | [](.agent/workflows/test.md) | .agent/workflows |
+| [/implement Command](.continue/prompts/implement.md) | .continue/prompts |
+| [/plan Command](.continue/prompts/plan.md) | .continue/prompts |
+| [/ship Command](.continue/prompts/ship.md) | .continue/prompts |
+| [/verify Command](.continue/prompts/verify.md) | .continue/prompts |
+| [Agentic Rules (Continue)](.continue/rules/agentic.md) | .continue/rules |
 | [Copilot Instructions for InsightPulse Odoo CE](.github/copilot-instructions.md) | .github |
 | [Analytics Activation Sequence](ANALYTICS_ACTIVATION_SEQUENCE.md) | . |
 | [🎯 Odoo CE v0.9.1 - Security Audit Fixes Applied](AUDIT_FIXES_APPLIED.md) | . |
@@ -190,6 +195,9 @@
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
+| [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
+| [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
+| [Superset Integration](infra/superset/README.md) | infra/superset |
 | [MCP Coordinator Deployment Guide](mcp/coordinator/DEPLOYMENT.md) | mcp/coordinator |
 | [MCP Coordinator](mcp/coordinator/README.md) | mcp/coordinator |
 | [Local MCP Server](mcp/local/README.md) | mcp/local |
@@ -210,6 +218,10 @@
 | [Scripts Directory](scripts/README.md) | scripts |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
 | [Odoo EE → CE/OCA SaaS Platform – Constitution](spec/constitution.md) | spec |
+| [Continue+ Constitution](spec/continue-plus/constitution.md) | spec/continue-plus |
+| [Continue+ Implementation Plan](spec/continue-plus/plan.md) | spec/continue-plus |
+| [spec/continue-plus/prd.md](spec/continue-plus/prd.md) | spec/continue-plus |
+| [Continue+ Tasks](spec/continue-plus/tasks.md) | spec/continue-plus |
 | [Constitution — IPAI Control Center (Spec Kit)](spec/ipai-control-center/constitution.md) | spec/ipai-control-center |
 | [Delivery Plan — IPAI Control Center (v1.0.0)](spec/ipai-control-center/plan.md) | spec/ipai-control-center |
 | [Product Requirements Document — IPAI Control Center](spec/ipai-control-center/prd.md) | spec/ipai-control-center |
