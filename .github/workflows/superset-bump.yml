@@ -1,0 +1,148 @@
+name: Superset Bump
+
+# =============================================================================
+# Automatically update Superset image tag when new version is released
+#
+# Triggers:
+#   - Manual dispatch with tag input
+#   - Webhook from superset repo (repository_dispatch)
+#
+# Actions:
+#   1. Update manifest.json with new tag/digest
+#   2. Update do-app-spec.yaml with new tag
+#   3. Open PR for review
+# =============================================================================
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Superset image tag to bump to'
+        required: true
+        default: 'latest'
+      digest:
+        description: 'Image digest (optional, for pinning)'
+        required: false
+
+  repository_dispatch:
+    types: [superset-release]
+
+env:
+  SUPERSET_IMAGE: ghcr.io/jgtolentino/ipai-superset
+  MANIFEST_PATH: infra/superset/manifest.json
+  DO_SPEC_PATH: infra/superset/do-app-spec.yaml
+
+jobs:
+  bump:
+    name: Bump Superset Version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Determine tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            TAG="${{ github.event.client_payload.tag }}"
+            DIGEST="${{ github.event.client_payload.digest }}"
+          else
+            TAG="${{ inputs.tag }}"
+            DIGEST="${{ inputs.digest }}"
+          fi
+
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          echo "Bumping to tag: $TAG"
+
+      - name: Verify image exists
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          echo "Checking if image exists: $SUPERSET_IMAGE:$TAG"
+
+          # Try to get manifest (requires auth for private repos)
+          if docker manifest inspect "$SUPERSET_IMAGE:$TAG" > /dev/null 2>&1; then
+            echo "Image found!"
+          else
+            echo "::warning::Could not verify image (may be private or not exist)"
+          fi
+
+      - name: Get image digest
+        id: digest
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          INPUT_DIGEST="${{ steps.tag.outputs.digest }}"
+
+          if [ -n "$INPUT_DIGEST" ]; then
+            DIGEST="$INPUT_DIGEST"
+          else
+            # Try to get digest from registry
+            DIGEST=$(docker manifest inspect "$SUPERSET_IMAGE:$TAG" 2>/dev/null | jq -r '.config.digest // empty' || echo "")
+          fi
+
+          echo "digest=$DIGEST" >> $GITHUB_OUTPUT
+          echo "Digest: ${DIGEST:-none}"
+
+      - name: Update manifest.json
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+          DIGEST="${{ steps.digest.outputs.digest }}"
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          # Update manifest using jq
+          jq --arg tag "$TAG" \
+             --arg digest "$DIGEST" \
+             --arg now "$NOW" \
+             '.artifact.tag = $tag | .artifact.digest = (if $digest == "" then null else $digest end) | .artifact.updated_at = $now | .artifact.updated_by = "superset-bump"' \
+             "$MANIFEST_PATH" > manifest.tmp && mv manifest.tmp "$MANIFEST_PATH"
+
+          echo "Updated manifest.json:"
+          cat "$MANIFEST_PATH"
+
+      - name: Update do-app-spec.yaml
+        run: |
+          TAG="${{ steps.tag.outputs.tag }}"
+
+          # Update tag in YAML (sed-based, keeps formatting)
+          sed -i "s/tag: .*/tag: $TAG  # Updated by superset-bump workflow/" "$DO_SPEC_PATH"
+
+          echo "Updated do-app-spec.yaml:"
+          grep -A3 "repository: ipai-superset" "$DO_SPEC_PATH"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(superset): bump to ${{ steps.tag.outputs.tag }}"
+          title: "chore(superset): bump to ${{ steps.tag.outputs.tag }}"
+          body: |
+            ## Superset Image Bump
+
+            | Field | Value |
+            |-------|-------|
+            | Tag | `${{ steps.tag.outputs.tag }}` |
+            | Digest | `${{ steps.digest.outputs.digest || 'not pinned' }}` |
+            | Image | `${{ env.SUPERSET_IMAGE }}` |
+
+            ### Changes
+            - Updated `infra/superset/manifest.json`
+            - Updated `infra/superset/do-app-spec.yaml`
+
+            ### Triggered By
+            - Event: `${{ github.event_name }}`
+            - Actor: `${{ github.actor }}`
+
+            ### Verification
+            After merge, the DO App will auto-deploy with the new image.
+
+            ---
+            _Automated by superset-bump workflow_
+          branch: superset-bump/${{ steps.tag.outputs.tag }}
+          delete-branch: true
+          labels: |
+            dependencies
+            superset
+            automated
