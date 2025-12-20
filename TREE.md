@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4169d93ad1fd345283d88f939e1c583dc87f9132
+> Commit: 329ba189b7d5ac6df7c672c8a3420912bccfc34c
 
 ```
 .
@@ -12,8 +12,15 @@
 │   │   └── test.md
 │   └── rules.md
 ├── .claude
+│   ├── commands
+│   │   ├── fix-github-issue.md
+│   │   ├── implement.md
+│   │   ├── plan.md
+│   │   ├── ship.md
+│   │   └── verify.md
 │   ├── project_memory.db
 │   ├── query_memory.py
+│   ├── settings.json
 │   └── settings.local.json
 ├── .continue
 │   ├── prompts
@@ -919,6 +926,7 @@
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
 │   ├── pre_install_snapshot.sh
+│   ├── repo_health.sh
 │   ├── report_ci_telemetry.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
@@ -927,10 +935,12 @@
 │   ├── simple_deploy.sh
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
+│   ├── spec_validate.sh
 │   ├── test_deploy_local.sh
 │   ├── update_diagram_manifest.py
 │   ├── validate_m1.sh
 │   ├── verify-https.sh
+│   ├── verify.sh
 │   ├── verify_backup.sh
 │   └── verify_phase3.py
 ├── skills
@@ -1199,12 +1209,14 @@
 ├── package.json
 ├── ph_holidays_2026.csv
 ├── plan.md
+├── pnpm-workspace.yaml
 ├── ppm_dashboard_views.xml
 ├── query_memory.py
 ├── requirements.txt
 ├── spec.md
 ├── task.md
 ├── tasks.md
+├── turbo.json
 ├── update_finance_ppm.py
 ├── update_module.py
 ├── vercel.json
@@ -1214,15 +1226,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-413 directories, 796 files
+414 directories, 807 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 446 |
-| Files | 1285 |
+| Directories | 447 |
+| Files | 1296 |
 | Python files | 378 |
 | XML files | 182 |
-| Markdown files | 256 |
+| Markdown files | 261 |

@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4169d93ad1fd345283d88f939e1c583dc87f9132
+> Commit: 329ba189b7d5ac6df7c672c8a3420912bccfc34c
 
 ## 📚 Documentation
 
@@ -11,6 +11,11 @@
 | [](.agent/workflows/deploy.md) | .agent/workflows |
 | [This step is manual or handled by the agent writing to the file](.agent/workflows/scaffold.md) | .agent/workflows |
 | [](.agent/workflows/test.md) | .agent/workflows |
+| [Workflow](.claude/commands/fix-github-issue.md) | .claude/commands |
+| [Rules](.claude/commands/implement.md) | .claude/commands |
+| [Rules](.claude/commands/plan.md) | .claude/commands |
+| [Shipping Workflow](.claude/commands/ship.md) | .claude/commands |
+| [Primary Responsibility](.claude/commands/verify.md) | .claude/commands |
 | [/implement Command](.continue/prompts/implement.md) | .continue/prompts |
 | [/plan Command](.continue/prompts/plan.md) | .continue/prompts |
 | [/ship Command](.continue/prompts/ship.md) | .continue/prompts |
