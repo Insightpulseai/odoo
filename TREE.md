@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 329ba189b7d5ac6df7c672c8a3420912bccfc34c
+> Commit: 9b1d3131cce8103aab40cb5d24b34fcd43fb587c
 
 ```
 .
@@ -28,8 +28,11 @@
 │   │   ├── plan.md
 │   │   ├── ship.md
 │   │   └── verify.md
-│   └── rules
-│       └── agentic.md
+│   ├── rules
+│   │   ├── agentic.md
+│   │   ├── medallion-architecture.yaml
+│   │   └── notion-ppm.yaml
+│   └── config.json
 ├── .github
 │   ├── workflows
 │   │   ├── agent-preflight.yml
@@ -38,15 +41,24 @@
 │   │   ├── build-unified-image.yml
 │   │   ├── ci-odoo-ce.yml
 │   │   ├── ci-odoo-oca.yml
+│   │   ├── control-room-ci.yml
+│   │   ├── databricks-dab-ci.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── health-check.yml
+│   │   ├── infra-validate.yml
 │   │   ├── lakehouse-smoke.yml
+│   │   ├── notion-sync-ci.yml
 │   │   ├── repo-structure.yml
+│   │   ├── seeds-validate.yml
 │   │   ├── spec-kit-enforce.yml
+│   │   ├── spec-validate.yml
 │   │   ├── superset-bump.yml
+│   │   ├── sync-master.yml
 │   │   └── verify-gates.yml
 │   └── copilot-instructions.md
+├── .insightpulse
+│   └── sync-config.yaml
 ├── addons
 │   ├── ipai
 │   │   ├── ipai_advisor
@@ -273,6 +285,51 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   └── .gitkeep
+│   ├── ipai_bir_tax_compliance
+│   │   ├── data
+│   │   │   ├── bir_filing_deadlines.xml
+│   │   │   ├── bir_tax_rates.xml
+│   │   │   └── ir_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── bir_filing_deadline.py
+│   │   │   ├── bir_tax_return.py
+│   │   │   ├── bir_vat.py
+│   │   │   ├── bir_withholding.py
+│   │   │   └── res_partner.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── bir_dashboard_views.xml
+│   │   │   ├── bir_tax_return_views.xml
+│   │   │   ├── bir_vat_views.xml
+│   │   │   ├── bir_withholding_views.xml
+│   │   │   ├── menu.xml
+│   │   │   └── res_partner_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_close_orchestration
+│   │   ├── data
+│   │   │   ├── close_task_categories.xml
+│   │   │   ├── close_task_templates.xml
+│   │   │   └── ir_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── close_approval_gate.py
+│   │   │   ├── close_cycle.py
+│   │   │   ├── close_exception.py
+│   │   │   ├── close_task.py
+│   │   │   └── close_task_category.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── views
+│   │   │   ├── close_cycle_views.xml
+│   │   │   ├── close_exception_views.xml
+│   │   │   ├── close_task_views.xml
+│   │   │   └── menu.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_master_control
 │   │   ├── data
 │   │   │   └── ir_config_parameter.xml
@@ -286,8 +343,91 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_month_end
+│   │   ├── data
+│   │   │   ├── ir_cron.xml
+│   │   │   ├── ph_holidays.xml
+│   │   │   └── task_templates.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── closing.py
+│   │   │   ├── ph_holiday.py
+│   │   │   ├── task.py
+│   │   │   └── task_template.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── closing_views.xml
+│   │   │   ├── menu.xml
+│   │   │   ├── ph_holiday_views.xml
+│   │   │   ├── task_template_views.xml
+│   │   │   └── task_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ppm_a1
+│   │   ├── data
+│   │   │   ├── cron.xml
+│   │   │   └── sequences.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── compliance.py
+│   │   │   ├── export_run.py
+│   │   │   ├── overlay.py
+│   │   │   ├── task.py
+│   │   │   ├── tasklist.py
+│   │   │   ├── template.py
+│   │   │   └── workstream.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── views
+│   │   │   ├── compliance_views.xml
+│   │   │   ├── export_run_views.xml
+│   │   │   ├── menu.xml
+│   │   │   ├── overlay_views.xml
+│   │   │   ├── task_views.xml
+│   │   │   ├── tasklist_views.xml
+│   │   │   ├── template_views.xml
+│   │   │   ├── wizard_views.xml
+│   │   │   └── workstream_views.xml
+│   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   ├── export_seed_wizard.py
+│   │   │   └── import_seed_wizard.py
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_tbwa_finance
+│   │   ├── data
+│   │   │   ├── bir_form_types.xml
+│   │   │   ├── compliance_checks.xml
+│   │   │   ├── ir_cron.xml
+│   │   │   ├── month_end_templates.xml
+│   │   │   └── ph_holidays.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── bir_return.py
+│   │   │   ├── closing_period.py
+│   │   │   ├── compliance_check.py
+│   │   │   ├── finance_task.py
+│   │   │   ├── finance_task_template.py
+│   │   │   ├── ph_holiday.py
+│   │   │   └── res_partner.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── bir_return_views.xml
+│   │   │   ├── closing_period_views.xml
+│   │   │   ├── dashboard_views.xml
+│   │   │   ├── finance_task_views.xml
+│   │   │   ├── menu.xml
+│   │   │   ├── ph_holiday_views.xml
+│   │   │   └── res_partner_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   └── oca
-│       └── .gitkeep
+│       ├── .gitkeep
+│       ├── manifest.yaml
+│       └── requirements.txt
 ├── agents
 │   ├── capabilities
 │   │   └── CAPABILITY_MATRIX.yaml
@@ -311,6 +451,17 @@
 ├── api
 │   └── oca-docs-brain-openapi.yaml
 ├── apps
+│   ├── control-room
+│   │   ├── src
+│   │   │   ├── app
+│   │   │   ├── components
+│   │   │   └── types
+│   │   ├── .env.example
+│   │   ├── next.config.js
+│   │   ├── package.json
+│   │   ├── postcss.config.js
+│   │   ├── tailwind.config.js
+│   │   └── tsconfig.json
 │   ├── do-advisor-agent
 │   │   ├── config
 │   │   │   └── mcp-config.json
@@ -349,6 +500,19 @@
 │   │   ├── next.config.mjs
 │   │   ├── package.json
 │   │   └── theme.config.jsx
+│   ├── mobile
+│   │   ├── src
+│   │   │   ├── hooks
+│   │   │   ├── lib
+│   │   │   ├── screens
+│   │   │   ├── store
+│   │   │   └── types
+│   │   ├── App.tsx
+│   │   ├── README.md
+│   │   ├── app.json
+│   │   ├── eas.json
+│   │   ├── package.json
+│   │   └── tsconfig.json
 │   └── pulser-runner
 │       ├── .env.example
 │       ├── app.py
@@ -625,6 +789,12 @@
 │   │   │   └── tasks.md
 │   │   ├── ODOO_18_CE_OCA_HANDBOOK.md
 │   │   └── README.md
+│   ├── ppm
+│   │   ├── architecture.md
+│   │   ├── data-dictionary.md
+│   │   └── runbook.md
+│   ├── workflows
+│   │   └── hire-to-retire-bpmn.html
 │   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
@@ -689,6 +859,8 @@
 │   ├── TESTING_ODOO_18.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── branch-cleanup-analysis.md
+│   ├── odoo-apps-parity.md
+│   ├── supabase-integration.md
 │   └── v0.9.1_DEPLOYMENT_GUIDE.md
 ├── docs-assistant
 │   ├── api
@@ -730,6 +902,16 @@
 │   ├── server-tools
 │   └── web
 ├── infra
+│   ├── azure
+│   │   ├── modules
+│   │   │   ├── appservice.bicep
+│   │   │   ├── databricks.bicep
+│   │   │   ├── keyvault.bicep
+│   │   │   └── storage.bicep
+│   │   ├── parameters
+│   │   │   ├── dev.parameters.json
+│   │   │   └── prod.parameters.json
+│   │   └── main.bicep
 │   ├── ce
 │   │   └── .gitkeep
 │   ├── ci
@@ -740,6 +922,15 @@
 │   │   │   └── spec-kit-check.yml
 │   │   ├── install-test.sh
 │   │   └── structure-check.sh
+│   ├── databricks
+│   │   ├── notebooks
+│   │   │   ├── bronze
+│   │   │   ├── gold
+│   │   │   └── silver
+│   │   ├── resources
+│   │   │   ├── jobs.yml
+│   │   │   └── schemas.yml
+│   │   └── databricks.yml
 │   ├── docker
 │   │   └── odoo.conf
 │   ├── entrypoint.d
@@ -882,6 +1073,27 @@
 │   │   ├── create_delta_tables_trino.sql
 │   │   ├── mirror_gold_to_supabase.py
 │   │   └── validate_contracts.py
+│   ├── odoo
+│   │   ├── install-ce-apps.sh
+│   │   ├── install-oca-modules.sh
+│   │   ├── verify-ce-apps.sh
+│   │   ├── verify-full-parity.sh
+│   │   └── verify-oca-modules.sh
+│   ├── ppm
+│   │   ├── deploy-databricks.sh
+│   │   ├── run-dq-checks.sh
+│   │   ├── setup-control-room.sh
+│   │   ├── setup-notion-sync.sh
+│   │   └── verify-all.sh
+│   ├── sync
+│   │   ├── docs-to-kb.js
+│   │   ├── generate-sitemap.js
+│   │   ├── generate-tree.js
+│   │   ├── package.json
+│   │   ├── schema-to-docs.js
+│   │   ├── schema-to-openapi.js
+│   │   ├── spec-to-prisma.js
+│   │   └── sync-all.js
 │   ├── README.md
 │   ├── apply-supabase-schema.sh
 │   ├── auto_error_handler.sh
@@ -943,10 +1155,75 @@
 │   ├── verify.sh
 │   ├── verify_backup.sh
 │   └── verify_phase3.py
+├── seeds
+│   ├── schema
+│   │   ├── afc_tasks.schema.yaml
+│   │   ├── afc_templates.schema.yaml
+│   │   ├── afc_workstream.schema.yaml
+│   │   ├── shared_calendars.schema.yaml
+│   │   ├── stc_checks.schema.yaml
+│   │   ├── stc_scenarios.schema.yaml
+│   │   └── stc_workstream.schema.yaml
+│   ├── scripts
+│   │   ├── validate_seeds.sh
+│   │   └── yaml_to_payload.py
+│   ├── shared
+│   │   ├── approval_policies.yaml
+│   │   ├── calendars.yaml
+│   │   ├── notification_profiles.yaml
+│   │   ├── org_units.yaml
+│   │   └── roles.yaml
+│   ├── workstreams
+│   │   ├── afc_financial_close
+│   │   │   ├── 00_workstream.yaml
+│   │   │   ├── 10_templates.yaml
+│   │   │   ├── 20_tasks.yaml
+│   │   │   ├── 30_checklists.yaml
+│   │   │   ├── 40_kpis.yaml
+│   │   │   ├── 50_roles_raci.yaml
+│   │   │   └── 90_odoo_mapping.yaml
+│   │   └── stc_tax_compliance
+│   │       ├── 00_workstream.yaml
+│   │       ├── 10_worklist_types.yaml
+│   │       ├── 20_compliance_checks.yaml
+│   │       ├── 30_scenarios.yaml
+│   │       ├── 60_localization_ph.yaml
+│   │       └── 90_odoo_mapping.yaml
+│   └── README.md
+├── services
+│   └── notion-sync
+│       ├── config
+│       │   └── notion_mapping.yaml
+│       ├── notion_sync
+│       │   ├── __init__.py
+│       │   ├── client.py
+│       │   ├── config.py
+│       │   ├── databricks_writer.py
+│       │   ├── main.py
+│       │   ├── models.py
+│       │   ├── sync.py
+│       │   └── transform.py
+│       ├── tests
+│       │   ├── __init__.py
+│       │   ├── conftest.py
+│       │   └── test_transform.py
+│       ├── .env.example
+│       ├── README.md
+│       └── pyproject.toml
 ├── skills
 │   ├── architecture_diagrams.skill.json
 │   └── superset_mcp.skill.json
 ├── spec
+│   ├── bir-tax-compliance
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── close-orchestration
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── continue-plus
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -958,7 +1235,32 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── expense-automation
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── hire-to-retire
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── insightpulse-mobile
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ipai-control-center
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── ipai-month-end
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── ipai-tbwa-finance
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -968,8 +1270,23 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── notion-finance-ppm-control-room
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── odoo-apps-inventory
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── pulser-master-control
 │   │   ├── capability-registry.yaml
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── seed-bundle
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -999,11 +1316,27 @@
 │   ├── functions
 │   │   ├── expense-policy-check
 │   │   │   └── index.ts
+│   │   ├── realtime-sync
+│   │   │   └── index.ts
+│   │   ├── schema-changed
+│   │   │   └── index.ts
+│   │   ├── sync-kb-to-schema
+│   │   │   └── index.ts
 │   │   ├── three-way-match
 │   │   │   └── index.ts
 │   │   └── vendor-score
 │   │       └── index.ts
 │   ├── migrations
+│   │   ├── 20240101000001_kb_schema.sql
+│   │   ├── 20240101000002_studio_schema.sql
+│   │   ├── 20240101000003_sign_schema.sql
+│   │   ├── 20240101000004_booking_schema.sql
+│   │   ├── 20240101000005_fsm_schema.sql
+│   │   ├── 20240101000006_barcode_schema.sql
+│   │   ├── 20240101000007_mobile_schema.sql
+│   │   ├── 20240101000010_hr_schema.sql
+│   │   ├── 20240101000011_finance_tasks_schema.sql
+│   │   ├── 20240101000012_sync_events_schema.sql
 │   │   ├── 20241220000001_master_control.sql
 │   │   ├── 20241220000002_master_data.sql
 │   │   ├── 20251123_saas_feature_matrix.sql
@@ -1040,24 +1373,27 @@
 │   │   ├── 20251220_process_runtime_ticketing.sql
 │   │   ├── 20251220_qms_lite_document_control.sql
 │   │   └── 20251220_ticketing_pipelines_clean.sql
-│   └── seed
-│       ├── 9000_core
-│       │   └── 9000_core_tenants_roles_users.sql
-│       ├── 9001_erp
-│       │   ├── 9001_erp_finance_bir_templates.sql
-│       │   └── 9001_erp_projects_rates_demo.sql
-│       ├── 9002_engines
-│       │   ├── 9002_engines_doc_ocr_sample_docs.sql
-│       │   ├── 9002_engines_ppm_demo.sql
-│       │   ├── 9002_engines_retail_intel_ph.sql
-│       │   └── 9002_engines_te_cheq_demo_flows.sql
-│       ├── 9003_ai_rag
-│       │   ├── 9003_ai_rag_agent_registry_seed.sql
-│       │   └── 9003_ai_rag_marketing_canvas_docs.sql
-│       ├── 9004_analytics
-│       │   ├── 9004_analytics_kpi_registry_seed.sql
-│       │   └── 9004_analytics_superset_dashboard_seed.sql
-│       └── 001_saas_feature_seed.sql
+│   ├── seed
+│   │   ├── 9000_core
+│   │   │   └── 9000_core_tenants_roles_users.sql
+│   │   ├── 9001_erp
+│   │   │   ├── 9001_erp_finance_bir_templates.sql
+│   │   │   └── 9001_erp_projects_rates_demo.sql
+│   │   ├── 9002_engines
+│   │   │   ├── 9002_engines_doc_ocr_sample_docs.sql
+│   │   │   ├── 9002_engines_ppm_demo.sql
+│   │   │   ├── 9002_engines_retail_intel_ph.sql
+│   │   │   └── 9002_engines_te_cheq_demo_flows.sql
+│   │   ├── 9003_ai_rag
+│   │   │   ├── 9003_ai_rag_agent_registry_seed.sql
+│   │   │   └── 9003_ai_rag_marketing_canvas_docs.sql
+│   │   ├── 9004_analytics
+│   │   │   ├── 9004_analytics_kpi_registry_seed.sql
+│   │   │   └── 9004_analytics_superset_dashboard_seed.sql
+│   │   └── 001_saas_feature_seed.sql
+│   └── seeds
+│       ├── 001_hr_seed.sql
+│       └── 002_finance_seed.sql
 ├── tasks
 │   └── infra
 │       └── AGENT_SERVICES_HARD_DELETE_CHECKLIST.md
@@ -1108,6 +1444,13 @@
 │   │   ├── monthly_report.json
 │   │   ├── task_escalation.json
 │   │   └── verify_deployment.sh
+│   ├── n8n
+│   │   ├── expense-approval-workflow.json
+│   │   ├── expense-ocr-workflow.json
+│   │   ├── sync-complete.json
+│   │   ├── sync-docs-changed.json
+│   │   ├── sync-schema-changed.json
+│   │   └── sync-spec-changed.json
 │   ├── odoo
 │   │   └── W403_AP_AGING_HEATMAP.json
 │   ├── SHADOW_ENTERPRISE_STACK.md
@@ -1226,15 +1569,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-414 directories, 807 files
+494 directories, 1070 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 447 |
-| Files | 1296 |
-| Python files | 378 |
-| XML files | 182 |
-| Markdown files | 261 |
+| Directories | 558 |
+| Files | 1612 |
+| Python files | 445 |
+| XML files | 231 |
+| Markdown files | 309 |

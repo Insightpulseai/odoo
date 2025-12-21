@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 329ba189b7d5ac6df7c672c8a3420912bccfc34c
+> Commit: 9b1d3131cce8103aab40cb5d24b34fcd43fb587c
 
 ## 📚 Documentation
 
@@ -93,6 +93,7 @@
 | [Delivery Plan — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/plan.md) | apps/ipai-control-center-docs/pages |
 | [Product Requirements Document — IPAI Control Center](apps/ipai-control-center-docs/pages/prd.md) | apps/ipai-control-center-docs/pages |
 | [Tasks — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/tasks.md) | apps/ipai-control-center-docs/pages |
+| [InsightPulse Mobile](apps/mobile/README.md) | apps/mobile |
 | [AP Aging Month-End Close Automation - Implementation Summary](archive/addons/ipai_finance_ap_aging/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_ap_aging |
 | [Finance Controller Dashboard - Implementation Summary](archive/addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_controller_dashboard |
 | [IPAI Intelligent Document Processing (IDP)](archive/addons/ipai_idp/README.md) | archive/addons/ipai_idp |
@@ -197,6 +198,11 @@
 | [Plan – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/plan.md) | docs/odoo-18-handbook/spec |
 | [PRD – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/prd.md) | docs/odoo-18-handbook/spec |
 | [Tasks – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/tasks.md) | docs/odoo-18-handbook/spec |
+| [Odoo Apps Parity Matrix](docs/odoo-apps-parity.md) | docs |
+| [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
+| [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
+| [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
+| [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
@@ -221,7 +227,17 @@
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Scripts Directory](scripts/README.md) | scripts |
+| [PPM Seed Data Bundle](seeds/README.md) | seeds |
+| [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
+| [BIR Tax Compliance - Constitution](spec/bir-tax-compliance/constitution.md) | spec/bir-tax-compliance |
+| [BIR Tax Compliance - Implementation Plan](spec/bir-tax-compliance/plan.md) | spec/bir-tax-compliance |
+| [BIR Tax Compliance - Product Requirements](spec/bir-tax-compliance/prd.md) | spec/bir-tax-compliance |
+| [BIR Tax Compliance - Task Checklist](spec/bir-tax-compliance/tasks.md) | spec/bir-tax-compliance |
+| [Close Orchestration Module - Constitution](spec/close-orchestration/constitution.md) | spec/close-orchestration |
+| [Close Orchestration Module - Implementation Plan](spec/close-orchestration/plan.md) | spec/close-orchestration |
+| [Close Orchestration Module - Product Requirements Document](spec/close-orchestration/prd.md) | spec/close-orchestration |
+| [Close Orchestration Module - Task Checklist](spec/close-orchestration/tasks.md) | spec/close-orchestration |
 | [Odoo EE → CE/OCA SaaS Platform – Constitution](spec/constitution.md) | spec |
 | [Continue+ Constitution](spec/continue-plus/constitution.md) | spec/continue-plus |
 | [Continue+ Implementation Plan](spec/continue-plus/plan.md) | spec/continue-plus |
@@ -231,20 +247,52 @@
 | [Implementation Plan: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/plan.md) | spec/docs-platform-sapgrade |
 | [PRD: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/prd.md) | spec/docs-platform-sapgrade |
 | [Tasks: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/tasks.md) | spec/docs-platform-sapgrade |
+| [Expense Automation — Constitution](spec/expense-automation/constitution.md) | spec/expense-automation |
+| [Expense Automation Plan](spec/expense-automation/plan.md) | spec/expense-automation |
+| [Expense Automation PRD](spec/expense-automation/prd.md) | spec/expense-automation |
+| [Expense Automation — Task Checklist](spec/expense-automation/tasks.md) | spec/expense-automation |
+| [Hire-to-Retire Process Constitution](spec/hire-to-retire/constitution.md) | spec/hire-to-retire |
+| [Hire-to-Retire Implementation Plan](spec/hire-to-retire/plan.md) | spec/hire-to-retire |
+| [Hire-to-Retire Process - Product Requirements](spec/hire-to-retire/prd.md) | spec/hire-to-retire |
+| [Hire-to-Retire Tasks](spec/hire-to-retire/tasks.md) | spec/hire-to-retire |
+| [InsightPulse Mobile App Constitution](spec/insightpulse-mobile/constitution.md) | spec/insightpulse-mobile |
+| [InsightPulse Mobile Plan](spec/insightpulse-mobile/plan.md) | spec/insightpulse-mobile |
+| [InsightPulse Mobile App - Product Requirements](spec/insightpulse-mobile/prd.md) | spec/insightpulse-mobile |
+| [InsightPulse Mobile - Task Checklist](spec/insightpulse-mobile/tasks.md) | spec/insightpulse-mobile |
 | [Constitution — IPAI Control Center (Spec Kit)](spec/ipai-control-center/constitution.md) | spec/ipai-control-center |
 | [Delivery Plan — IPAI Control Center (v1.0.0)](spec/ipai-control-center/plan.md) | spec/ipai-control-center |
 | [Product Requirements Document — IPAI Control Center](spec/ipai-control-center/prd.md) | spec/ipai-control-center |
 | [Tasks — IPAI Control Center (v1.0.0)](spec/ipai-control-center/tasks.md) | spec/ipai-control-center |
+| [ipai_month_end Module Constitution](spec/ipai-month-end/constitution.md) | spec/ipai-month-end |
+| [ipai_month_end Implementation Plan](spec/ipai-month-end/plan.md) | spec/ipai-month-end |
+| [ipai_month_end - Product Requirements](spec/ipai-month-end/prd.md) | spec/ipai-month-end |
+| [ipai_month_end Implementation Tasks](spec/ipai-month-end/tasks.md) | spec/ipai-month-end |
+| [IPAI TBWA Finance - Constitution](spec/ipai-tbwa-finance/constitution.md) | spec/ipai-tbwa-finance |
+| [IPAI TBWA Finance - Implementation Plan](spec/ipai-tbwa-finance/plan.md) | spec/ipai-tbwa-finance |
+| [IPAI TBWA Finance - Product Requirements Document](spec/ipai-tbwa-finance/prd.md) | spec/ipai-tbwa-finance |
+| [IPAI TBWA Finance - Tasks](spec/ipai-tbwa-finance/tasks.md) | spec/ipai-tbwa-finance |
 | [Constitution: Knowledge Hub](spec/knowledge-hub/constitution.md) | spec/knowledge-hub |
 | [Implementation Plan: Knowledge Hub](spec/knowledge-hub/plan.md) | spec/knowledge-hub |
 | [PRD: Knowledge Hub](spec/knowledge-hub/prd.md) | spec/knowledge-hub |
 | [Tasks: Knowledge Hub](spec/knowledge-hub/tasks.md) | spec/knowledge-hub |
+| [Notion x Finance PPM Control Room — Constitution](spec/notion-finance-ppm-control-room/constitution.md) | spec/notion-finance-ppm-control-room |
+| [Notion x Finance PPM Control Room — Implementation Plan](spec/notion-finance-ppm-control-room/plan.md) | spec/notion-finance-ppm-control-room |
+| [Notion x Finance PPM Control Room — Product Requirements Document](spec/notion-finance-ppm-control-room/prd.md) | spec/notion-finance-ppm-control-room |
+| [Notion x Finance PPM Control Room — Task Checklist](spec/notion-finance-ppm-control-room/tasks.md) | spec/notion-finance-ppm-control-room |
+| [Odoo Apps Inventory — Constitution](spec/odoo-apps-inventory/constitution.md) | spec/odoo-apps-inventory |
+| [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
+| [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
+| [Odoo Apps Inventory — Task Checklist](spec/odoo-apps-inventory/tasks.md) | spec/odoo-apps-inventory |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
 | [Pulser Master Control — Constitution](spec/pulser-master-control/constitution.md) | spec/pulser-master-control |
 | [Pulser Master Control — Implementation Plan](spec/pulser-master-control/plan.md) | spec/pulser-master-control |
 | [Pulser Master Control — Product Requirements Document](spec/pulser-master-control/prd.md) | spec/pulser-master-control |
 | [Pulser Master Control — Task Breakdown](spec/pulser-master-control/tasks.md) | spec/pulser-master-control |
+| [Constitution — Seed Bundle](spec/seed-bundle/constitution.md) | spec/seed-bundle |
+| [Plan — Seed Bundle](spec/seed-bundle/plan.md) | spec/seed-bundle |
+| [PRD — Seed Bundle](spec/seed-bundle/prd.md) | spec/seed-bundle |
+| [Tasks — Seed Bundle](spec/seed-bundle/tasks.md) | spec/seed-bundle |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
 | [InsightPulse ERP – Expense & Equipment MVP (SAP Concur + Cheqroom Parity)](specs/002-odoo-expense-equipment-mvp.prd.md) | specs |
 | [Spec 003: AI Enrichment Agent - Deployment Guide](specs/003-ai-enrichment/DEPLOYMENT.md) | specs/003-ai-enrichment |
@@ -300,7 +348,12 @@
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
+| [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
+| [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
 | [ipai_master_control](./addons/ipai_master_control) | ✅ |  |
+| [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
+| [ipai_ppm_a1](./addons/ipai_ppm_a1) | ✅ |  |
+| [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
 | [ipai_accounting_firm_pack](./archive/addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_docs](./archive/addons/ipai_docs) | ✅ |  |
 | [ipai_docs_project](./archive/addons/ipai_docs_project) | ✅ |  |
