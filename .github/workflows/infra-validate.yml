@@ -1,0 +1,85 @@
+name: Infrastructure Validation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'infra/azure/**'
+      - '.github/workflows/infra-validate.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'infra/azure/**'
+
+jobs:
+  validate-bicep:
+    name: Validate Bicep Templates
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Azure CLI
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+        continue-on-error: true
+
+      - name: Install Bicep CLI
+        run: |
+          curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
+          chmod +x ./bicep
+          sudo mv ./bicep /usr/local/bin/bicep
+          bicep --version
+
+      - name: Lint Bicep files
+        run: |
+          cd infra/azure
+          for file in $(find . -name "*.bicep"); do
+            echo "Linting $file"
+            bicep lint "$file" || true
+          done
+
+      - name: Build Bicep templates
+        run: |
+          cd infra/azure
+          bicep build main.bicep --outfile main.json
+
+      - name: Validate ARM template (dev)
+        if: ${{ secrets.AZURE_CREDENTIALS != '' }}
+        run: |
+          az deployment group validate \
+            --resource-group rg-notion-ppm-dev \
+            --template-file infra/azure/main.json \
+            --parameters infra/azure/parameters/dev.parameters.json
+        continue-on-error: true
+
+      - name: Upload ARM template
+        uses: actions/upload-artifact@v4
+        with:
+          name: arm-template
+          path: infra/azure/main.json
+          retention-days: 7
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: infra/azure
+          framework: bicep
+          soft_fail: true
+          output_format: sarif
+          output_file_path: checkov-results.sarif
+
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: checkov-results.sarif
+        continue-on-error: true
