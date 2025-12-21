@@ -1,0 +1,39 @@
+compliance_checks: list(include('check'), required=True)
+categories: list(include('category'), required=False)
+severities: map(include('severity'), required=False)
+
+---
+check:
+  id: str(required=True)
+  worklist_type: str(required=True)
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+  category: str(required=False)
+  severity: str(required=False)
+  auto_run: bool(required=False)
+  sap_reference: str(required=False)
+  rule: include('rule', required=False)
+
+---
+rule:
+  type: str(required=True)
+  field: str(required=False)
+  model: str(required=False)
+  pattern: str(required=False)
+  message: str(required=False)
+  filter: str(required=False)
+  threshold: num(required=False)
+  operator: str(required=False)
+
+---
+category:
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+
+---
+severity:
+  color: str(required=False)
+  auto_block: bool(required=False)
+  sla_hours: int(required=False)
