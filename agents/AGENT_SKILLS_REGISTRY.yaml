@@ -20,6 +20,8 @@ domains:
   - deployment           # Infrastructure + deployment
   - finance_ops          # Finance operations + closing
   - mobile               # Mobile client development
+  - orchestration        # Control Room job orchestration + lineage
+  - diagrams             # Diagram export + visual regression
 
 # ============================================================================
 # SKILLS - Atomic capabilities the agent can execute
@@ -288,6 +290,87 @@ skills:
       - flutter_test
       - supabase_test_client
 
+  # --- Control Room Skills ---
+  - id: submit_control_room_job
+    name: "Submit Control Room Job"
+    domain: orchestration
+    description: "Submit a job to Control Room API for execution"
+    inputs:
+      - job_type
+      - spec
+      - code
+      - callbacks
+    outputs:
+      - job_id
+      - run_id
+      - status
+    tools:
+      - control_room_api
+      - httpx
+    knowledge_refs:
+      - control_room_api_docs
+
+  - id: query_lineage_graph
+    name: "Query Data Lineage Graph"
+    domain: orchestration
+    description: "Query upstream/downstream lineage for a data entity"
+    inputs:
+      - entity
+      - direction
+      - depth
+    outputs:
+      - lineage_graph
+    tools:
+      - control_room_api
+      - supabase
+
+  - id: export_diagram
+    name: "Export Diagram to PNG/SVG"
+    domain: diagrams
+    description: "Export Visio or DrawIO diagrams with validation and visual regression"
+    inputs:
+      - input_path
+      - formats
+      - validate
+      - baseline_path
+    outputs:
+      - exported_files
+      - validation_report
+      - diff_report
+    tools:
+      - visio_drawio_export
+      - docker
+    knowledge_refs:
+      - visio_drawio_export_docs
+
+  - id: validate_drawio_diagram
+    name: "Validate DrawIO Diagram"
+    domain: diagrams
+    description: "Validate DrawIO file structure, shapes, and connectors"
+    inputs:
+      - input_path
+      - strict
+      - min_shapes
+    outputs:
+      - validation_result
+    tools:
+      - visio_drawio_export
+
+  - id: visual_regression_diagrams
+    name: "Visual Regression for Diagrams"
+    domain: diagrams
+    description: "Compare diagram exports against baselines for visual regression"
+    inputs:
+      - baseline_dir
+      - current_dir
+      - diff_threshold
+    outputs:
+      - regression_report
+      - diff_images
+    tools:
+      - visio_drawio_export
+      - pixelmatch
+
 # ============================================================================
 # CAPABILITIES - Composite workflows combining multiple skills
 # ============================================================================
@@ -483,6 +566,56 @@ capabilities:
       - odoo_ce_18_docs
       - oca_maintainer_tools
       - oca_ci_guardian_docs
+
+  - id: control_room_orchestration
+    name: "Control Room Job Orchestration"
+    description: "Databricks-style job orchestration with lineage tracking. Submit jobs via Continue CLI, execute via K8s/DO, track lineage, manage artifacts."
+    skills:
+      - submit_control_room_job
+      - query_lineage_graph
+      - export_diagram
+    features:
+      - job_submission_and_validation
+      - run_status_tracking
+      - artifact_management
+      - lineage_graph_queries
+      - continue_cli_integration
+      - webhook_callbacks
+    preconditions:
+      - control_room_api_running
+      - supabase_configured
+    validation:
+      - jobs_complete_successfully
+      - lineage_edges_created
+      - artifacts_stored
+      - callbacks_delivered
+    knowledge_refs:
+      - control_room_api_docs
+      - continue_cli_docs
+
+  - id: diagram_qa_pipeline
+    name: "Diagram QA and Export Pipeline"
+    description: "Automated diagram export, validation, and visual regression testing for Visio and DrawIO files."
+    skills:
+      - export_diagram
+      - validate_drawio_diagram
+      - visual_regression_diagrams
+    features:
+      - visio_to_drawio_conversion
+      - png_svg_export
+      - structure_validation
+      - visual_regression_testing
+      - github_actions_integration
+    preconditions:
+      - diagram_files_exist
+      - docker_available
+    validation:
+      - exports_succeed
+      - validation_passes
+      - visual_regression_within_threshold
+    knowledge_refs:
+      - visio_drawio_export_docs
+      - drawio_documentation
 
 # ============================================================================
 # PROCEDURES - High-level orchestration macros
@@ -764,6 +897,26 @@ knowledge_sources:
     type: documentation
     location: "/home/user/odoo-ce/docs/deployment/OCA_CI_GUARDIAN.md"
     description: "OCA CI Guardian agent documentation with troubleshooting and examples"
+
+  - id: control_room_api_docs
+    type: documentation
+    location: "/home/user/odoo-ce/spec/control-room-api/"
+    description: "Control Room API specification, PRD, and implementation plan"
+
+  - id: continue_cli_docs
+    type: documentation
+    location: "https://docs.continue.dev/guides/cli"
+    description: "Continue CLI documentation for headless automation"
+
+  - id: visio_drawio_export_docs
+    type: documentation
+    location: "/home/user/odoo-ce/skills/visio-drawio-export/"
+    description: "Visio-DrawIO export skill documentation and usage"
+
+  - id: drawio_documentation
+    type: documentation
+    location: "https://www.drawio.com/doc/"
+    description: "Official draw.io documentation"
 
 # ============================================================================
 # EXECUTION RULES - Decision logic for autonomous operation
