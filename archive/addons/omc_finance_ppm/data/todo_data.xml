@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- To-Dos for Task: Process Payroll (Jan 2025) -->
+    <record id="todo_payroll_jan_prep" model="x_finance.todo">
+        <field name="x_name">Preparation: Gather payroll data</field>
+        <field name="x_task_id" ref="task_process_payroll_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_payroll_jan_review" model="x_finance.todo">
+        <field name="x_name">Review: Verify payroll calculations</field>
+        <field name="x_task_id" ref="task_process_payroll_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_payroll_jan_approval" model="x_finance.todo">
+        <field name="x_name">Approval: Finance Director sign-off</field>
+        <field name="x_task_id" ref="task_process_payroll_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <!-- To-Dos for Task: Compute WHT (Jan 2025) -->
+    <record id="todo_wht_jan_prep" model="x_finance.todo">
+        <field name="x_name">Preparation: Compile WHT transactions</field>
+        <field name="x_task_id" ref="task_compute_wht_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_wht_jan_review" model="x_finance.todo">
+        <field name="x_name">Review: Validate WHT rates and amounts</field>
+        <field name="x_task_id" ref="task_compute_wht_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_wht_jan_approval" model="x_finance.todo">
+        <field name="x_name">Approval: Senior Manager approval</field>
+        <field name="x_task_id" ref="task_compute_wht_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <!-- To-Dos for Task: VAT Computation (Jan 2025) -->
+    <record id="todo_vat_jan_prep" model="x_finance.todo">
+        <field name="x_name">Preparation: Extract VAT transactions</field>
+        <field name="x_task_id" ref="task_vat_computation_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_vat_jan_review" model="x_finance.todo">
+        <field name="x_name">Review: Reconcile VAT input/output</field>
+        <field name="x_task_id" ref="task_vat_computation_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_vat_jan_approval" model="x_finance.todo">
+        <field name="x_name">Approval: Tax Manager approval</field>
+        <field name="x_task_id" ref="task_vat_computation_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <!-- To-Dos for Task: Provision Review (Jan 2025) -->
+    <record id="todo_provision_jan_prep" model="x_finance.todo">
+        <field name="x_name">Preparation: Review provision balances</field>
+        <field name="x_task_id" ref="task_provision_review_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_provision_jan_review" model="x_finance.todo">
+        <field name="x_name">Review: Validate provision methodology</field>
+        <field name="x_task_id" ref="task_provision_review_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+
+    <record id="todo_provision_jan_approval" model="x_finance.todo">
+        <field name="x_name">Approval: Finance Director final approval</field>
+        <field name="x_task_id" ref="task_provision_review_jan"/>
+        <field name="x_is_done" eval="False"/>
+    </record>
+</odoo>

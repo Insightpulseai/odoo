@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Gate Template Views -->
+    <record id="close_gate_template_view_tree" model="ir.ui.view">
+        <field name="name">close.approval.gate.template.tree</field>
+        <field name="model">close.approval.gate.template</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="gate_type"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="close_gate_template_view_form" model="ir.ui.view">
+        <field name="name">close.approval.gate.template.form</field>
+        <field name="model">close.approval.gate.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="gate_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <group>
+                        <field name="pass_criteria"/>
+                    </group>
+                    <group string="A1 Bridge">
+                        <field name="a1_check_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="close_gate_template_action" model="ir.actions.act_window">
+        <field name="name">Gate Templates</field>
+        <field name="res_model">close.approval.gate.template</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Gate Instance Views -->
+    <record id="close_gate_view_tree" model="ir.ui.view">
+        <field name="name">close.approval.gate.tree</field>
+        <field name="model">close.approval.gate</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'passed'" decoration-danger="state in ('failed', 'blocked')" decoration-warning="state == 'ready'">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="cycle_id"/>
+                <field name="gate_type"/>
+                <field name="state" widget="badge"/>
+                <field name="approver_id"/>
+                <field name="approved_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="close_gate_view_form" model="ir.ui.view">
+        <field name="name">close.approval.gate.form</field>
+        <field name="model">close.approval.gate</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_mark_ready" string="Mark Ready" type="object" invisible="state != 'pending'"/>
+                    <button name="action_pass" string="Pass" type="object" class="btn-success" invisible="state not in ('ready', 'blocked')"/>
+                    <button name="action_fail" string="Fail" type="object" class="btn-danger" invisible="state not in ('ready', 'blocked')"/>
+                    <button name="action_unblock" string="Unblock" type="object" invisible="state != 'blocked'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,ready,passed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cycle_id"/>
+                            <field name="template_id"/>
+                            <field name="gate_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="approver_id"/>
+                            <field name="approved_date"/>
+                            <field name="approved_by"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Threshold (if applicable)" invisible="gate_type != 'threshold'">
+                        <group>
+                            <field name="threshold_value"/>
+                            <field name="actual_value"/>
+                        </group>
+                    </group>
+                    <group string="Block Reason" invisible="state != 'blocked'">
+                        <field name="block_reason" nolabel="1"/>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="close_gate_view_search" model="ir.ui.view">
+        <field name="name">close.approval.gate.search</field>
+        <field name="model">close.approval.gate</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="cycle_id"/>
+                <filter name="pending" string="Pending" domain="[('state', '=', 'pending')]"/>
+                <filter name="ready" string="Ready" domain="[('state', '=', 'ready')]"/>
+                <filter name="blocked" string="Blocked" domain="[('state', '=', 'blocked')]"/>
+                <filter name="passed" string="Passed" domain="[('state', '=', 'passed')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_cycle" string="Cycle" context="{'group_by': 'cycle_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="close_gate_action" model="ir.actions.act_window">
+        <field name="name">Approval Gates</field>
+        <field name="res_model">close.approval.gate</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="close_gate_view_search"/>
+    </record>
+
+</odoo>

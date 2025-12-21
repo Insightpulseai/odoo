@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Cycle Tree View -->
+    <record id="close_cycle_view_tree" model="ir.ui.view">
+        <field name="name">close.cycle.tree</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'closed'" decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="period_label"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-primary="state in ('open', 'in_progress')" decoration-warning="state == 'review'" decoration-success="state == 'closed'" decoration-danger="state == 'cancelled'"/>
+                <field name="task_count"/>
+                <field name="task_done_count"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="open_exception_count"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Cycle Form View -->
+    <record id="close_cycle_view_form" model="ir.ui.view">
+        <field name="name">close.cycle.form</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_generate_tasks" string="Generate Tasks" type="object" class="btn-primary" invisible="state not in ('draft', 'open')"/>
+                    <button name="action_open" string="Open" type="object" invisible="state != 'draft'"/>
+                    <button name="action_start" string="Start" type="object" invisible="state != 'open'"/>
+                    <button name="action_submit_for_review" string="Submit for Review" type="object" class="btn-primary" invisible="state != 'in_progress'"/>
+                    <button name="action_close" string="Close" type="object" class="btn-success" invisible="state != 'review'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,in_progress,review,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tasks" type="object" class="oe_stat_button" icon="fa-tasks">
+                            <div class="o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="task_done_count"/>/<field name="task_count"/>
+                                </span>
+                                <span class="o_stat_text">Tasks</span>
+                            </div>
+                        </button>
+                        <button name="action_view_exceptions" type="object" class="oe_stat_button" icon="fa-exclamation-triangle" invisible="exception_count == 0">
+                            <field name="open_exception_count" widget="statinfo" string="Exceptions"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="e.g., December 2025 Month-End Close"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="period_label"/>
+                        </group>
+                        <group>
+                            <field name="progress" widget="progressbar"/>
+                            <field name="gates_ready" widget="boolean"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Tasks" name="tasks">
+                            <field name="task_ids">
+                                <list decoration-success="state == 'done'" decoration-muted="state == 'cancelled'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                    <field name="preparer_id" widget="many2one_avatar_user"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="checklist_progress" widget="progressbar"/>
+                                    <field name="approval_deadline"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Exceptions" name="exceptions">
+                            <field name="exception_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="exception_type"/>
+                                    <field name="severity" widget="badge"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="assigned_to"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Approval Gates" name="gates">
+                            <field name="gate_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="gate_type"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="approver_id"/>
+                                    <field name="approved_date"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                        <page string="A1 Bridge" name="bridge">
+                            <group>
+                                <field name="a1_tasklist_id"/>
+                            </group>
+                        </page>
+                        <page string="Webhooks" name="webhooks">
+                            <group>
+                                <field name="webhook_url"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Cycle Search View -->
+    <record id="close_cycle_view_search" model="ir.ui.view">
+        <field name="name">close.cycle.search</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="period_label"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="open" string="Open" domain="[('state', '=', 'open')]"/>
+                <filter name="in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter name="has_exceptions" string="Has Exceptions" domain="[('open_exception_count', '>', 0)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_period" string="Period" context="{'group_by': 'period_end:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="close_cycle_action" model="ir.actions.act_window">
+        <field name="name">Close Cycles</field>
+        <field name="res_model">close.cycle</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="close_cycle_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first close cycle
+            </p>
+            <p>
+                Close cycles represent period-specific closing processes.
+            </p>
+        </field>
+    </record>
+
+</odoo>
