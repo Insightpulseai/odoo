@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Default Role Configurations -->
+
+    <record id="role_rim" model="a1.role">
+        <field name="code">RIM</field>
+        <field name="name">RIM - Rent &amp; Leases Manager</field>
+        <field name="sequence">10</field>
+        <field name="description">Responsible for rent and lease reconciliations, prepayments, and related reporting.</field>
+    </record>
+
+    <record id="role_jpal" model="a1.role">
+        <field name="code">JPAL</field>
+        <field name="name">JPAL - Journal &amp; Payables Lead</field>
+        <field name="sequence">20</field>
+        <field name="description">Manages journal entries, accounts payable, and vendor reconciliations.</field>
+    </record>
+
+    <record id="role_bom" model="a1.role">
+        <field name="code">BOM</field>
+        <field name="name">BOM - Billing Operations Manager</field>
+        <field name="sequence">30</field>
+        <field name="description">Oversees billing, revenue recognition, and customer invoicing.</field>
+    </record>
+
+    <record id="role_ckvc" model="a1.role">
+        <field name="code">CKVC</field>
+        <field name="name">CKVC - Cash &amp; Bank Controller</field>
+        <field name="sequence">40</field>
+        <field name="description">Manages bank reconciliations, cash flow, and treasury operations.</field>
+    </record>
+
+    <record id="role_fd" model="a1.role">
+        <field name="code">FD</field>
+        <field name="name">FD - Finance Director</field>
+        <field name="sequence">50</field>
+        <field name="description">Senior approval authority for financial close and reporting.</field>
+    </record>
+
+    <record id="role_jli" model="a1.role">
+        <field name="code">JLI</field>
+        <field name="name">JLI - Junior Accountant (Inventory)</field>
+        <field name="sequence">60</field>
+        <field name="description">Handles inventory accounting and stock reconciliations.</field>
+    </record>
+
+    <record id="role_jap" model="a1.role">
+        <field name="code">JAP</field>
+        <field name="name">JAP - Junior Accountant (Payroll)</field>
+        <field name="sequence">70</field>
+        <field name="description">Manages payroll processing and related journal entries.</field>
+    </record>
+
+    <record id="role_las" model="a1.role">
+        <field name="code">LAS</field>
+        <field name="name">LAS - Lead Accounting Specialist</field>
+        <field name="sequence">80</field>
+        <field name="description">Senior specialist for complex accounting entries and review.</field>
+    </record>
+
+    <record id="role_rmqb" model="a1.role">
+        <field name="code">RMQB</field>
+        <field name="name">RMQB - Reporting &amp; Analytics Lead</field>
+        <field name="sequence">90</field>
+        <field name="description">Responsible for management reporting and analytics.</field>
+    </record>
+
+</odoo>
