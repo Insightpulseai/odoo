@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Generate Filing Deadlines (Run monthly) -->
+    <record id="cron_generate_deadlines" model="ir.cron">
+        <field name="name">BIR: Generate Filing Deadlines</field>
+        <field name="model_id" ref="model_bir_filing_deadline"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_generate_deadlines()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">months</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+        <field name="nextcall" eval="(DateTime.now().replace(day=1) + timedelta(days=32)).replace(day=1, hour=1, minute=0, second=0)"/>
+    </record>
+
+    <!-- Send Deadline Alerts (Run daily at 8 AM) -->
+    <record id="cron_deadline_alerts" model="ir.cron">
+        <field name="name">BIR: Send Deadline Alerts</field>
+        <field name="model_id" ref="model_bir_filing_deadline"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_deadline_alerts()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=8, minute=0, second=0)"/>
+    </record>
+</odoo>

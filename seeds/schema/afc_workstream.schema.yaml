@@ -1,0 +1,38 @@
+workstream:
+  id: str(required=True)
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+  sap_anchor: str(required=False)
+  odoo_anchor: str(required=False)
+  version: str(required=True)
+  period_types: list(include('period_type'), required=False)
+  phases: list(include('phase'), required=False)
+  raci_roles: list(include('raci_role'), required=False)
+  default_assignments: include('default_assignments', required=False)
+
+---
+period_type:
+  code: str(required=True)
+  name: str(required=True)
+  frequency_days: int(required=False)
+  close_by_wd: int(required=False)
+
+---
+phase:
+  code: str(required=True)
+  name: str(required=True)
+  sequence: int(required=True)
+  description: str(required=False)
+
+---
+raci_role:
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+
+---
+default_assignments:
+  prep_role: str(required=False)
+  review_role: str(required=False)
+  approve_role: str(required=False)

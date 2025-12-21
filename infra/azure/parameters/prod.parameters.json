@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "environment": {
+      "value": "prod"
+    },
+    "baseName": {
+      "value": "notion-ppm"
+    },
+    "databricksTier": {
+      "value": "premium"
+    },
+    "appServiceSku": {
+      "value": "P1v2"
+    }
+  }
+}

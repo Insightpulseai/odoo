@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Closing Period Tree -->
+    <record id="view_closing_period_tree" model="ir.ui.view">
+        <field name="name">closing.period.tree</field>
+        <field name="model">closing.period</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'closed'" decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="period_date"/>
+                <field name="last_workday"/>
+                <field name="month_end_tasks"/>
+                <field name="bir_tasks"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="overdue_tasks" decoration-danger="overdue_tasks > 0"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state in ['open', 'in_progress']"
+                       decoration-primary="state == 'review'"
+                       decoration-success="state == 'closed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Closing Period Form -->
+    <record id="view_closing_period_form" model="ir.ui.view">
+        <field name="name">closing.period.form</field>
+        <field name="model">closing.period</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_generate_tasks" string="Generate Tasks" type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_release" string="Release" type="object" class="oe_highlight"
+                            invisible="state not in ['draft', 'open']"/>
+                    <button name="action_close" string="Close Period" type="object" class="oe_highlight"
+                            invisible="state not in ['in_progress', 'review']"
+                            confirm="Close this period? All tasks must be completed."/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ['closed', 'cancelled']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,open,in_progress,review,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_finance_task)d" type="action" class="oe_stat_button" icon="fa-tasks"
+                                context="{'search_default_closing_id': active_id}">
+                            <field name="total_tasks" widget="statinfo" string="Tasks"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="period_date"/>
+                            <field name="last_workday"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="month_end_tasks"/>
+                            <field name="bir_tasks"/>
+                            <field name="completed_tasks"/>
+                            <field name="overdue_tasks" decoration-danger="overdue_tasks > 0"/>
+                            <field name="progress" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Month-End Tasks" name="month_end">
+                            <field name="task_ids" domain="[('task_type', '=', 'month_end')]" mode="list">
+                                <list decoration-danger="is_overdue" decoration-success="state == 'done'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="phase"/>
+                                    <field name="name"/>
+                                    <field name="prep_user_id"/>
+                                    <field name="prep_due_date"/>
+                                    <field name="prep_done"/>
+                                    <field name="review_done"/>
+                                    <field name="approve_done"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="is_overdue" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="BIR Filing Tasks" name="bir">
+                            <field name="task_ids" domain="[('task_type', '=', 'bir_filing')]" mode="list">
+                                <list decoration-danger="is_overdue" decoration-success="state == 'done'">
+                                    <field name="bir_form_type"/>
+                                    <field name="name"/>
+                                    <field name="filing_due_date"/>
+                                    <field name="prep_done"/>
+                                    <field name="bir_reference"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="is_overdue" column_invisible="True"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Closing Period Kanban -->
+    <record id="view_closing_period_kanban" model="ir.ui.view">
+        <field name="name">closing.period.kanban</field>
+        <field name="model">closing.period</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="state"/>
+                <field name="progress"/>
+                <field name="overdue_tasks"/>
+                <templates>
+                    <t t-name="card">
+                        <field name="name" class="fw-bold fs-5"/>
+                        <field name="period_date"/>
+                        <div class="mt-2">
+                            <field name="progress" widget="progressbar"/>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <span class="badge text-bg-info"><field name="month_end_tasks"/> M/E</span>
+                            </div>
+                            <div class="col-6">
+                                <span class="badge text-bg-warning"><field name="bir_tasks"/> BIR</span>
+                            </div>
+                        </div>
+                        <div t-if="record.overdue_tasks.raw_value > 0" class="text-danger mt-1">
+                            <i class="fa fa-exclamation-triangle"/> <field name="overdue_tasks"/> overdue
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_closing_period" model="ir.actions.act_window">
+        <field name="name">Closing Periods</field>
+        <field name="res_model">closing.period</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_in_progress': 1}</field>
+    </record>
+</odoo>

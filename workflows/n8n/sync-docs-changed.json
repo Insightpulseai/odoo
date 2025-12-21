@@ -1,0 +1,191 @@
+{
+  "name": "Sync: Docs Changed Webhook",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "docs-changed",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook: Docs Changed",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "docs-changed-hook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const files = $input.first().json.files || [];\nconst docsFiles = files.filter(f => f.startsWith('docs/') && f.endsWith('.md'));\n\nreturn docsFiles.map(file => ({ json: { file } }));"
+      },
+      "id": "filter-docs",
+      "name": "Filter Docs Files",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /workspace/odoo-ce && node scripts/sync/docs-to-kb.js"
+      },
+      "id": "sync-to-kb",
+      "name": "Sync Docs to KB",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /workspace/odoo-ce && node scripts/sync/generate-sitemap.js"
+      },
+      "id": "update-sitemap",
+      "name": "Update Sitemap",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/sync_events",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "docs_sync"
+            },
+            {
+              "name": "files_synced",
+              "value": "={{ $json.count }}"
+            },
+            {
+              "name": "status",
+              "value": "completed"
+            },
+            {
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-sync-event",
+      "name": "Log Sync Event",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1120, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-auth",
+          "name": "Supabase Auth"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "#dev-notifications",
+        "text": ":book: Docs synced to Knowledge Base\n\nFiles: {{ $json.count }}\nSitemap updated",
+        "otherOptions": {}
+      },
+      "id": "notify-slack",
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [1340, 300],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "Slack Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, synced: 'docs-to-kb' }) }}"
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Webhook: Docs Changed": {
+      "main": [
+        [
+          {
+            "node": "Filter Docs Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Docs Files": {
+      "main": [
+        [
+          {
+            "node": "Sync Docs to KB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sync Docs to KB": {
+      "main": [
+        [
+          {
+            "node": "Update Sitemap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Sitemap": {
+      "main": [
+        [
+          {
+            "node": "Log Sync Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Sync Event": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Slack": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "executionOrder": "v1"
+  },
+  "tags": ["sync", "automation", "docs"]
+}

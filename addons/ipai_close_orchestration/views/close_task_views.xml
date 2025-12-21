@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Close Task Form View -->
+    <record id="view_close_task_form" model="ir.ui.view">
+        <field name="name">close.task.form</field>
+        <field name="model">close.task</field>
+        <field name="arch" type="xml">
+            <form string="Close Task">
+                <header>
+                    <!-- Preparation Phase -->
+                    <button name="action_start_prep" string="Start Preparation"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_submit_prep" string="Submit for Review"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'prep'"/>
+
+                    <!-- Review Phase -->
+                    <button name="action_start_review" string="Start Review"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'prep_done'"/>
+                    <button name="action_approve_review" string="Approve Review"
+                            type="object" class="btn-success"
+                            invisible="state != 'review'"/>
+                    <button name="action_reject_review" string="Reject (Rework)"
+                            type="object" class="btn-warning"
+                            invisible="state != 'review'"/>
+
+                    <!-- Approval Phase -->
+                    <button name="action_start_approval" string="Start Approval"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'review_done'"/>
+                    <button name="action_final_approve" string="Final Approve"
+                            type="object" class="btn-success"
+                            invisible="state != 'approval'"/>
+
+                    <!-- Cancel -->
+                    <button name="action_cancel" string="Cancel"
+                            type="object"
+                            invisible="state in ('done', 'cancelled')"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,prep,prep_done,review,review_done,approval,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_gl_entries" icon="fa-book"
+                                invisible="gl_entry_count == 0">
+                            <field name="gl_entry_count" widget="statinfo" string="GL Entries"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Overdue" bg_color="text-bg-danger"
+                            invisible="not is_overdue"/>
+                    <widget name="web_ribbon" title="Exceptions" bg_color="text-bg-warning"
+                            invisible="not has_exceptions"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Task Info">
+                            <field name="cycle_id"/>
+                            <field name="category_id"/>
+                            <field name="template_id" readonly="1"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Status">
+                            <field name="is_overdue" invisible="1"/>
+                            <field name="days_overdue" invisible="not is_overdue"/>
+                            <field name="has_exceptions" invisible="1"/>
+                            <field name="checklist_done_pct" widget="progressbar"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Workflow" name="workflow">
+                            <group>
+                                <group string="1. Preparation">
+                                    <field name="prep_user_id" widget="many2one_avatar_user"/>
+                                    <field name="prep_due_date"/>
+                                    <field name="prep_done_date"/>
+                                    <field name="prep_notes"/>
+                                </group>
+                                <group string="2. Review">
+                                    <field name="review_user_id" widget="many2one_avatar_user"/>
+                                    <field name="review_due_date"/>
+                                    <field name="review_done_date"/>
+                                    <field name="review_result" widget="badge"/>
+                                    <field name="review_notes"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="3. Approval">
+                                    <field name="approve_user_id" widget="many2one_avatar_user"/>
+                                    <field name="approve_due_date"/>
+                                    <field name="approve_done_date"/>
+                                    <field name="approve_notes"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page string="Checklist" name="checklist">
+                            <field name="checklist_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="required"/>
+                                    <field name="evidence_type"/>
+                                    <field name="is_done" widget="boolean_toggle"/>
+                                    <field name="done_by" widget="many2one_avatar_user"/>
+                                    <field name="done_at"/>
+                                    <field name="notes"/>
+                                    <button name="action_mark_done" type="object"
+                                            icon="fa-check" string="Done"
+                                            invisible="is_done"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="GL Entries" name="gl_entries"
+                              invisible="gl_entry_count == 0">
+                            <field name="gl_entry_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="ref"/>
+                                    <field name="state"/>
+                                    <field name="amount_total"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Exceptions" name="exceptions">
+                            <field name="exception_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="exception_type"/>
+                                    <field name="severity" widget="badge"
+                                           decoration-danger="severity == 'critical'"
+                                           decoration-warning="severity in ('high', 'warning')"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="assigned_to"/>
+                                </tree>
+                            </field>
+                        </page>
+
+                        <page string="Attachments" name="attachments">
+                            <field name="attachment_ids" widget="many2many_binary"/>
+                        </page>
+
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Task description and instructions..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Close Task Tree View -->
+    <record id="view_close_task_tree" model="ir.ui.view">
+        <field name="name">close.task.tree</field>
+        <field name="model">close.task</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="is_overdue"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="cycle_id"/>
+                <field name="category_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('draft', 'prep')"
+                       decoration-warning="state in ('prep_done', 'review', 'review_done', 'approval')"
+                       decoration-success="state == 'done'"/>
+                <field name="prep_user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="prep_due_date"/>
+                <field name="review_user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="approve_user_id" widget="many2one_avatar_user" optional="hide"/>
+                <field name="checklist_done_pct" widget="progressbar" optional="show"/>
+                <field name="is_overdue" column_invisible="True"/>
+                <field name="has_exceptions" optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Close Task Kanban View -->
+    <record id="view_close_task_kanban" model="ir.ui.view">
+        <field name="name">close.task.kanban</field>
+        <field name="model">close.task</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="state"/>
+                <field name="prep_user_id"/>
+                <field name="review_user_id"/>
+                <field name="approve_user_id"/>
+                <field name="prep_due_date"/>
+                <field name="is_overdue"/>
+                <field name="has_exceptions"/>
+                <field name="checklist_done_pct"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click #{record.is_overdue.raw_value ? 'border-danger' : ''}">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <field name="name"/>
+                                </div>
+                                <div class="o_kanban_record_subtitle">
+                                    <field name="category_id"/>
+                                </div>
+                                <div class="mt-2">
+                                    <field name="checklist_done_pct" widget="progressbar"/>
+                                </div>
+                                <div class="o_kanban_record_bottom mt-2">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span t-if="record.prep_due_date.raw_value"
+                                              t-attf-class="#{record.is_overdue.raw_value ? 'text-danger fw-bold' : ''}">
+                                            <i class="fa fa-clock-o"/> <field name="prep_due_date"/>
+                                        </span>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <field name="prep_user_id" widget="many2one_avatar_user"/>
+                                    </div>
+                                </div>
+                                <div t-if="record.has_exceptions.raw_value" class="mt-1">
+                                    <span class="badge text-bg-warning">Has Exceptions</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Close Task Search View -->
+    <record id="view_close_task_search" model="ir.ui.view">
+        <field name="name">close.task.search</field>
+        <field name="model">close.task</field>
+        <field name="arch" type="xml">
+            <search string="Close Tasks">
+                <field name="name"/>
+                <field name="cycle_id"/>
+                <field name="category_id"/>
+                <field name="prep_user_id"/>
+                <field name="review_user_id"/>
+                <field name="approve_user_id"/>
+                <filter name="filter_my_prep" string="My Preparation Tasks"
+                        domain="[('prep_user_id', '=', uid)]"/>
+                <filter name="filter_my_review" string="My Review Tasks"
+                        domain="[('review_user_id', '=', uid)]"/>
+                <filter name="filter_my_approval" string="My Approval Tasks"
+                        domain="[('approve_user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_prep" string="In Preparation"
+                        domain="[('state', '=', 'prep')]"/>
+                <filter name="filter_review" string="Under Review"
+                        domain="[('state', 'in', ('prep_done', 'review'))]"/>
+                <filter name="filter_approval" string="Pending Approval"
+                        domain="[('state', 'in', ('review_done', 'approval'))]"/>
+                <filter name="filter_done" string="Done" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="filter_overdue" string="Overdue"
+                        domain="[('is_overdue', '=', True)]"/>
+                <filter name="filter_has_exceptions" string="Has Exceptions"
+                        domain="[('has_exceptions', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_category" string="Category"
+                            context="{'group_by': 'category_id'}"/>
+                    <filter name="group_cycle" string="Cycle"
+                            context="{'group_by': 'cycle_id'}"/>
+                    <filter name="group_prep_user" string="Preparer"
+                            context="{'group_by': 'prep_user_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_close_task" model="ir.actions.act_window">
+        <field name="name">Close Tasks</field>
+        <field name="res_model">close.task</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="search_view_id" ref="view_close_task_search"/>
+        <field name="context">{
+            'search_default_filter_my_prep': 1,
+            'search_default_filter_my_review': 1,
+            'search_default_filter_my_approval': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No close tasks yet
+            </p>
+            <p>
+                Tasks are automatically generated when you open a close cycle.
+            </p>
+        </field>
+    </record>
+
+    <!-- Close Task Category Views -->
+    <record id="view_close_task_category_tree" model="ir.ui.view">
+        <field name="name">close.task.category.tree</field>
+        <field name="model">close.task.category</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="default_prep_role"/>
+                <field name="default_review_role"/>
+                <field name="default_approve_role"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_close_task_category_form" model="ir.ui.view">
+        <field name="name">close.task.category.form</field>
+        <field name="model">close.task.category</field>
+        <field name="arch" type="xml">
+            <form string="Task Category">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Default Assignments">
+                            <field name="default_prep_role"/>
+                            <field name="default_review_role"/>
+                            <field name="default_approve_role"/>
+                        </group>
+                    </group>
+                    <group string="Default Timing (Days)">
+                        <field name="default_prep_days"/>
+                        <field name="default_review_days"/>
+                        <field name="default_approve_days"/>
+                    </group>
+                    <group string="GL Integration">
+                        <field name="gl_account_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_close_task_category" model="ir.actions.act_window">
+        <field name="name">Task Categories</field>
+        <field name="res_model">close.task.category</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Close Task Template Views -->
+    <record id="view_close_task_template_tree" model="ir.ui.view">
+        <field name="name">close.task.template.tree</field>
+        <field name="model">close.task.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category_id"/>
+                <field name="period_type"/>
+                <field name="creates_gl_entry"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_close_task_template_form" model="ir.ui.view">
+        <field name="name">close.task.template.form</field>
+        <field name="model">close.task.template</field>
+        <field name="arch" type="xml">
+            <form string="Task Template">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="category_id"/>
+                            <field name="sequence"/>
+                            <field name="period_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Default Assignments">
+                            <field name="default_prep_user_id"/>
+                            <field name="default_review_user_id"/>
+                            <field name="default_approve_user_id"/>
+                        </group>
+                    </group>
+                    <group string="Timing (Days from Period End)">
+                        <field name="prep_day_offset"/>
+                        <field name="review_day_offset"/>
+                        <field name="approve_day_offset"/>
+                    </group>
+                    <group string="GL Integration">
+                        <field name="creates_gl_entry"/>
+                        <field name="gl_account_ids" widget="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Checklist Items">
+                            <field name="checklist_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="required"/>
+                                    <field name="evidence_type"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_close_task_template" model="ir.actions.act_window">
+        <field name="name">Task Templates</field>
+        <field name="res_model">close.task.template</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,68 @@
+# AFC - Advanced Financial Closing Workstream
+# SAP Canonical Taxonomy with Odoo CE18 Mapping
+
+workstream:
+  id: afc
+  code: AFC
+  name: Advanced Financial Closing
+  description: |
+    Month-end, quarter-end, and year-end closing activities.
+    Based on SAP AFC (Advanced Financial Closing) with TBWA Philippines adaptations.
+  sap_anchor: SAP_AFC_S4HANA
+  odoo_anchor: ipai_tbwa_finance
+  version: "1.0.0"
+
+  # Period types supported
+  period_types:
+    - code: MONTHLY
+      name: Monthly Close
+      frequency_days: 30
+      close_by_wd: 5  # 5th working day of next month
+    - code: QUARTERLY
+      name: Quarterly Close
+      frequency_days: 90
+      close_by_wd: 10
+    - code: ANNUAL
+      name: Annual Close
+      frequency_days: 365
+      close_by_wd: 20
+
+  # Phases (SAP AFC compatible)
+  phases:
+    - code: I
+      name: Initial & Compliance
+      sequence: 1
+      description: Payroll, tax provisions, VAT compilation
+    - code: II
+      name: Accruals & Amortization
+      sequence: 2
+      description: Revenue recognition, expense accruals, depreciation
+    - code: III
+      name: WIP & Reclassification
+      sequence: 3
+      description: Work-in-progress, intercompany, FX revaluation
+    - code: IV
+      name: Final Adjustments & Close
+      sequence: 4
+      description: Reversals, reporting, sign-off
+
+  # RACI roles
+  raci_roles:
+    - code: R
+      name: Responsible
+      description: Executes the task (typically RIM team)
+    - code: A
+      name: Accountable
+      description: Reviews and approves (typically BOM)
+    - code: C
+      name: Consulted
+      description: Provides input (typically CKVC)
+    - code: I
+      name: Informed
+      description: Receives notification (FD, stakeholders)
+
+  # Default team assignments
+  default_assignments:
+    prep_role: RIM
+    review_role: BOM
+    approve_role: FD
