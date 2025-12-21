@@ -1,0 +1,248 @@
+name: Diagrams QA & Export
+
+on:
+  pull_request:
+    paths:
+      - "**/*.vsdx"
+      - "**/*.drawio"
+      - "**/*.dio"
+      - "docs/diagrams/**"
+      - "skills/visio-drawio-export/**"
+
+  workflow_dispatch:
+    inputs:
+      visual_regression:
+        description: "Run visual regression tests"
+        required: false
+        default: "false"
+        type: boolean
+      diff_threshold:
+        description: "Visual diff threshold (0-1)"
+        required: false
+        default: "0.003"
+
+env:
+  DRAWIO_HEADLESS: "true"
+  DIFF_THRESHOLD: ${{ inputs.diff_threshold || '0.003' }}
+
+jobs:
+  export:
+    name: Export Diagrams
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "skills/visio-drawio-export/docker/package-lock.json"
+
+      - name: Install dependencies
+        working-directory: skills/visio-drawio-export/docker
+        run: npm ci
+
+      - name: Build export tool
+        working-directory: skills/visio-drawio-export/docker
+        run: |
+          docker build -t visio-drawio-export:ci .
+
+      - name: Find diagram files
+        id: find-diagrams
+        run: |
+          # Find Visio files
+          VSDX_FILES=$(find . -name "*.vsdx" -type f 2>/dev/null | tr '\n' ' ')
+          echo "vsdx_files=$VSDX_FILES" >> $GITHUB_OUTPUT
+
+          # Find DrawIO files
+          DRAWIO_FILES=$(find . -name "*.drawio" -o -name "*.dio" -type f 2>/dev/null | tr '\n' ' ')
+          echo "drawio_files=$DRAWIO_FILES" >> $GITHUB_OUTPUT
+
+          # Check if any files found
+          if [ -z "$VSDX_FILES" ] && [ -z "$DRAWIO_FILES" ]; then
+            echo "has_diagrams=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_diagrams=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Export Visio diagrams
+        if: steps.find-diagrams.outputs.has_diagrams == 'true' && steps.find-diagrams.outputs.vsdx_files != ''
+        run: |
+          mkdir -p artifacts/diagrams
+
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            visio-drawio-export:ci \
+            --input-glob "**/*.vsdx" \
+            --outdir "artifacts/diagrams" \
+            --formats "drawio,png,svg" \
+            --validate strict \
+            --json > artifacts/diagrams/export-report.json || true
+
+      - name: Export DrawIO diagrams
+        if: steps.find-diagrams.outputs.has_diagrams == 'true' && steps.find-diagrams.outputs.drawio_files != ''
+        run: |
+          mkdir -p artifacts/diagrams
+
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            visio-drawio-export:ci \
+            --input-glob "**/*.drawio" \
+            --outdir "artifacts/diagrams" \
+            --formats "png,svg" \
+            --validate basic \
+            --json >> artifacts/diagrams/export-report.json || true
+
+      - name: Validate export results
+        if: steps.find-diagrams.outputs.has_diagrams == 'true'
+        run: |
+          if [ -f artifacts/diagrams/export-report.json ]; then
+            echo "## Export Report" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat artifacts/diagrams/export-report.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload artifacts
+        if: steps.find-diagrams.outputs.has_diagrams == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagrams
+          path: artifacts/diagrams
+          retention-days: 7
+
+  visual-regression:
+    name: Visual Regression
+    runs-on: ubuntu-latest
+    needs: export
+    if: |
+      github.event.inputs.visual_regression == 'true' ||
+      contains(github.event.pull_request.labels.*.name, 'needs-visual-regression')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download current artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: diagrams
+          path: artifacts/current
+
+      - name: Download baseline artifacts
+        uses: dawidd6/action-download-artifact@v3
+        with:
+          workflow: diagrams-qa.yml
+          branch: main
+          name: diagrams
+          path: artifacts/baseline
+        continue-on-error: true
+
+      - name: Check baseline exists
+        id: check-baseline
+        run: |
+          if [ -d "artifacts/baseline" ] && [ "$(ls -A artifacts/baseline)" ]; then
+            echo "has_baseline=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_baseline=false" >> $GITHUB_OUTPUT
+            echo "::warning::No baseline artifacts found. Skipping visual regression."
+          fi
+
+      - name: Setup Node.js
+        if: steps.check-baseline.outputs.has_baseline == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install dependencies
+        if: steps.check-baseline.outputs.has_baseline == 'true'
+        working-directory: skills/visio-drawio-export/docker
+        run: npm ci
+
+      - name: Run visual regression
+        if: steps.check-baseline.outputs.has_baseline == 'true'
+        run: |
+          mkdir -p artifacts/diff
+
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            visio-drawio-export:ci \
+            --diff \
+            --baseline "artifacts/baseline" \
+            --current "artifacts/current" \
+            --diff-threshold "$DIFF_THRESHOLD" \
+            --json > artifacts/diff/regression-report.json
+
+      - name: Check regression results
+        if: steps.check-baseline.outputs.has_baseline == 'true'
+        run: |
+          if [ -f artifacts/diff/regression-report.json ]; then
+            PASSED=$(jq -r '.passed' artifacts/diff/regression-report.json)
+
+            echo "## Visual Regression Report" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat artifacts/diff/regression-report.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+
+            if [ "$PASSED" != "true" ]; then
+              echo "::error::Visual regression failed. Some diagrams have changed beyond the threshold."
+              exit 1
+            fi
+          fi
+
+      - name: Upload diff artifacts
+        if: steps.check-baseline.outputs.has_baseline == 'true' && failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff
+          path: artifacts/diff
+          retention-days: 7
+
+  notify-control-room:
+    name: Notify Control Room
+    runs-on: ubuntu-latest
+    needs: [export, visual-regression]
+    if: always() && github.event_name == 'pull_request'
+
+    steps:
+      - name: Prepare payload
+        id: payload
+        run: |
+          STATUS="completed"
+          if [ "${{ needs.export.result }}" == "failure" ] || [ "${{ needs.visual-regression.result }}" == "failure" ]; then
+            STATUS="failed"
+          fi
+
+          PAYLOAD=$(cat <<EOF
+          {
+            "job_type": "diagram_export",
+            "run_id": "${{ github.run_id }}",
+            "status": "$STATUS",
+            "pr_number": "${{ github.event.pull_request.number }}",
+            "repo": "${{ github.repository }}",
+            "ref": "${{ github.head_ref }}",
+            "artifacts_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
+          )
+
+          echo "payload<<EOF" >> $GITHUB_OUTPUT
+          echo "$PAYLOAD" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Send to Control Room
+        if: env.CONTROL_ROOM_URL != ''
+        env:
+          CONTROL_ROOM_URL: ${{ secrets.CONTROL_ROOM_URL }}
+          CONTROL_ROOM_TOKEN: ${{ secrets.CONTROL_ROOM_TOKEN }}
+        run: |
+          curl -X POST "$CONTROL_ROOM_URL/api/v1/webhooks/continue" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $CONTROL_ROOM_TOKEN" \
+            -d '${{ steps.payload.outputs.payload }}' || true
