@@ -1,0 +1,25 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_workstream_user,ipai.workstream user,model_ipai_workstream,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_workstream_admin,ipai.workstream admin,model_ipai_workstream,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_template_user,ipai.ppm.template user,model_ipai_ppm_template,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_template_admin,ipai.ppm.template admin,model_ipai_ppm_template,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_task_user,ipai.ppm.task user,model_ipai_ppm_task,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_task_admin,ipai.ppm.task admin,model_ipai_ppm_task,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_task_checklist_user,ipai.ppm.task.checklist user,model_ipai_ppm_task_checklist,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_task_checklist_admin,ipai.ppm.task.checklist admin,model_ipai_ppm_task_checklist,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_tasklist_user,ipai.ppm.tasklist user,model_ipai_ppm_tasklist,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_tasklist_admin,ipai.ppm.tasklist admin,model_ipai_ppm_tasklist,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_taskrun_user,ipai.ppm.taskrun user,model_ipai_ppm_taskrun,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_taskrun_admin,ipai.ppm.taskrun admin,model_ipai_ppm_taskrun,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_stc_worklist_user,ipai.stc.worklist_type user,model_ipai_stc_worklist_type,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_stc_worklist_admin,ipai.stc.worklist_type admin,model_ipai_stc_worklist_type,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_stc_check_user,ipai.stc.check user,model_ipai_stc_check,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_stc_check_admin,ipai.stc.check admin,model_ipai_stc_check,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_stc_scenario_user,ipai.stc.scenario user,model_ipai_stc_scenario,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_stc_scenario_admin,ipai.stc.scenario admin,model_ipai_stc_scenario,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_overlay_user,ipai.localization.overlay user,model_ipai_localization_overlay,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_overlay_admin,ipai.localization.overlay admin,model_ipai_localization_overlay,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_export_run_user,ipai.repo.export_run user,model_ipai_repo_export_run,ipai_ppm_a1.group_ipai_ppm_a1_user,1,0,0,0
+access_ipai_export_run_admin,ipai.repo.export_run admin,model_ipai_repo_export_run,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_import_wizard_admin,ipai.import.seed.wizard admin,model_ipai_import_seed_wizard,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1
+access_ipai_export_wizard_admin,ipai.export.seed.wizard admin,model_ipai_export_seed_wizard,ipai_ppm_a1.group_ipai_ppm_a1_admin,1,1,1,1

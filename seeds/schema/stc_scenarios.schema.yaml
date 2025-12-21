@@ -1,0 +1,27 @@
+scenarios: list(include('scenario'), required=True)
+statuses: list(include('status'), required=False)
+
+---
+scenario:
+  id: str(required=True)
+  workstream_id: str(required=True)
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)
+  frequency: str(required=True)
+  run_day_offset: int(required=False)
+  sap_reference: str(required=False)
+  checks: list(str(), required=False)
+  outputs: list(include('output'), required=False)
+  bir_forms: list(str(), required=False)
+
+---
+output:
+  name: str(required=True)
+  format: str(required=True)
+
+---
+status:
+  code: str(required=True)
+  name: str(required=True)
+  description: str(required=False)

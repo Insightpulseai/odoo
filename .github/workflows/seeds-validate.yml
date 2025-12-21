@@ -1,0 +1,43 @@
+name: Seeds / Validate
+
+on:
+  pull_request:
+    paths:
+      - 'seeds/**'
+      - '.github/workflows/seeds-validate.yml'
+  push:
+    branches: ["**"]
+    paths:
+      - 'seeds/**'
+      - '.github/workflows/seeds-validate.yml'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install yamale yamllint pyyaml
+
+      - name: Run yamllint
+        run: |
+          yamllint -d "{extends: default, rules: {line-length: {max: 200}, trailing-spaces: disable, document-start: disable, truthy: disable}}" seeds/ || true
+        continue-on-error: true
+
+      - name: Validate seed schemas
+        run: |
+          bash seeds/scripts/validate_seeds.sh
+
+      - name: Test YAML to payload conversion
+        run: |
+          python seeds/scripts/yaml_to_payload.py --output /tmp/test_payload.json
+          echo "Payload generated successfully"
+          python -c "import json; json.load(open('/tmp/test_payload.json'))"
+          echo "Payload is valid JSON"

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_ipai_task_tree" model="ir.ui.view">
+    <field name="name">ipai.ppm.task.tree</field>
+    <field name="model">ipai.ppm.task</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="template_id"/>
+        <field name="sequence"/>
+        <field name="code"/>
+        <field name="name"/>
+        <field name="category"/>
+        <field name="phase"/>
+        <field name="due_offset_days"/>
+        <field name="owner_role"/>
+        <field name="requires_approval"/>
+      </list>
+    </field>
+  </record>
+
+  <record id="view_ipai_task_form" model="ir.ui.view">
+    <field name="name">ipai.ppm.task.form</field>
+    <field name="model">ipai.ppm.task</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="name" placeholder="Task Name"/></h1>
+          </div>
+          <group>
+            <group>
+              <field name="template_id"/>
+              <field name="code"/>
+              <field name="category"/>
+              <field name="phase"/>
+              <field name="sequence"/>
+            </group>
+            <group>
+              <field name="due_offset_days"/>
+              <field name="prep_offset"/>
+              <field name="review_offset"/>
+              <field name="owner_role"/>
+            </group>
+          </group>
+          <group>
+            <group>
+              <field name="requires_approval"/>
+              <field name="evidence_required"/>
+            </group>
+            <group>
+              <field name="sap_reference"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Checklist" name="checklist">
+              <field name="checklist_line_ids">
+                <list editable="bottom">
+                  <field name="sequence" widget="handle"/>
+                  <field name="label"/>
+                  <field name="required"/>
+                  <field name="evidence_type"/>
+                  <field name="notes"/>
+                </list>
+              </field>
+            </page>
+          </notebook>
+        </sheet>
+        <chatter/>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_ipai_task" model="ir.actions.act_window">
+    <field name="name">Tasks</field>
+    <field name="res_model">ipai.ppm.task</field>
+    <field name="view_mode">list,form</field>
+  </record>
+
+  <menuitem id="ipai_ppm_a1_menu_tasks" name="Tasks"
+            parent="ipai_ppm_a1_menu_master"
+            action="action_ipai_task" sequence="30"/>
+</odoo>
