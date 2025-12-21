@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Module category -->
+        <record id="module_category_close_orchestration" model="ir.module.category">
+            <field name="name">Close Orchestration</field>
+            <field name="description">Month-End Close Process Management</field>
+            <field name="sequence">25</field>
+        </record>
+
+        <!-- User Groups -->
+        <record id="group_close_preparer" model="res.groups">
+            <field name="name">Close Preparer</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="comment">Can prepare close tasks and mark checklist items</field>
+        </record>
+
+        <record id="group_close_reviewer" model="res.groups">
+            <field name="name">Close Reviewer</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_preparer'))]"/>
+            <field name="comment">Can review and approve/reject prepared tasks</field>
+        </record>
+
+        <record id="group_close_approver" model="res.groups">
+            <field name="name">Close Approver</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_reviewer'))]"/>
+            <field name="comment">Can give final approval on close tasks</field>
+        </record>
+
+        <record id="group_close_controller" model="res.groups">
+            <field name="name">Close Controller (CKVC)</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_approver'))]"/>
+            <field name="comment">Controller - can manage cycles and lock periods</field>
+        </record>
+
+        <record id="group_close_manager" model="res.groups">
+            <field name="name">Close Manager (FD)</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_controller'))]"/>
+            <field name="comment">Finance Director - full access to close orchestration</field>
+        </record>
+
+        <!-- Department Role Groups -->
+        <record id="group_role_rim" model="res.groups">
+            <field name="name">RIM - Risk &amp; Investments Manager</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_reviewer'))]"/>
+        </record>
+
+        <record id="group_role_jpal" model="res.groups">
+            <field name="name">JPAL - GL Accountant</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_preparer'))]"/>
+        </record>
+
+        <record id="group_role_bom" model="res.groups">
+            <field name="name">BOM - Billing/Operations Manager</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_reviewer'))]"/>
+        </record>
+
+        <record id="group_role_sfm" model="res.groups">
+            <field name="name">SFM - Senior Finance Manager</field>
+            <field name="category_id" ref="module_category_close_orchestration"/>
+            <field name="implied_ids" eval="[(4, ref('group_close_reviewer'))]"/>
+        </record>
+
+        <!-- Record Rules -->
+        <record id="rule_close_cycle_company" model="ir.rule">
+            <field name="name">Close Cycle: Company Rule</field>
+            <field name="model_id" ref="model_close_cycle"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="rule_close_task_own" model="ir.rule">
+            <field name="name">Close Task: Preparer sees own tasks</field>
+            <field name="model_id" ref="model_close_task"/>
+            <field name="domain_force">['|', '|', ('prep_user_id', '=', user.id), ('review_user_id', '=', user.id), ('approve_user_id', '=', user.id)]</field>
+            <field name="groups" eval="[(4, ref('group_close_preparer'))]"/>
+        </record>
+
+        <record id="rule_close_task_reviewer" model="ir.rule">
+            <field name="name">Close Task: Reviewer sees all tasks</field>
+            <field name="model_id" ref="model_close_task"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_close_reviewer'))]"/>
+        </record>
+
+    </data>
+</odoo>

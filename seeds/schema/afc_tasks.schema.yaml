@@ -1,0 +1,25 @@
+tasks: list(include('task'), required=True)
+categories: list(include('category'), required=False)
+
+---
+task:
+  id: str(required=True)
+  template_id: str(required=True)
+  code: str(required=True)
+  name: str(required=True)
+  category: str(required=False)
+  phase: str(required=False)
+  sequence: int(required=True)
+  due_offset_days: int(required=False)
+  prep_offset: int(required=False)
+  review_offset: int(required=False)
+  owner_role: str(required=False)
+  requires_approval: bool(required=False)
+  evidence_required: bool(required=False)
+  sap_reference: str(required=False)
+
+---
+category:
+  code: str(required=True)
+  name: str(required=True)
+  color: str(required=False)

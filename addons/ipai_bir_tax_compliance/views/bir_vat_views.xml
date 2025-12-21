@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- VAT Return Tree View -->
+    <record id="view_bir_vat_return_tree" model="ir.ui.view">
+        <field name="name">bir.vat.return.tree</field>
+        <field name="model">bir.vat.return</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_overdue" decoration-success="state == 'confirmed'">
+                <field name="name"/>
+                <field name="form_type"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="total_sales" sum="Total Sales"/>
+                <field name="output_vat" sum="Output VAT"/>
+                <field name="total_input_vat" sum="Input VAT"/>
+                <field name="net_vat_payable" sum="Net Payable"/>
+                <field name="due_date"/>
+                <field name="state" widget="badge"/>
+                <field name="is_overdue" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- VAT Return Form View -->
+    <record id="view_bir_vat_return_form" model="ir.ui.view">
+        <field name="name">bir.vat.return.form</field>
+        <field name="model">bir.vat.return</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" string="Compute from Invoices"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_validate" string="Validate"
+                            type="object" class="oe_highlight"
+                            invisible="state not in ['draft', 'computed']"/>
+                    <button name="action_mark_filed" string="Mark as Filed"
+                            type="object" class="oe_highlight"
+                            invisible="state != 'validated'"/>
+                    <button name="action_confirm" string="Confirm"
+                            type="object"
+                            invisible="state != 'filed'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Overdue" bg_color="text-bg-danger" invisible="not is_overdue"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Form Details">
+                            <field name="form_type"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Period">
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="due_date"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Output VAT (Sales)" name="output">
+                            <group>
+                                <group>
+                                    <field name="vatable_sales"/>
+                                    <field name="zero_rated_sales"/>
+                                    <field name="exempt_sales"/>
+                                </group>
+                                <group>
+                                    <field name="total_sales"/>
+                                    <field name="output_vat" class="oe_highlight"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Input VAT (Purchases)" name="input">
+                            <group>
+                                <group>
+                                    <field name="vatable_purchases"/>
+                                    <field name="purchase_of_services"/>
+                                    <field name="importations"/>
+                                </group>
+                                <group>
+                                    <field name="total_input_vat"/>
+                                    <field name="excess_input_vat_previous"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Net VAT" name="net">
+                            <group>
+                                <group>
+                                    <field name="output_vat"/>
+                                    <field name="total_input_vat"/>
+                                    <field name="excess_input_vat_previous"/>
+                                </group>
+                                <group>
+                                    <field name="net_vat_payable" class="oe_highlight"/>
+                                    <field name="excess_input_vat"/>
+                                    <field name="penalty"/>
+                                    <field name="interest"/>
+                                    <field name="total_amount_due" class="oe_highlight"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Filing" name="filing" invisible="state not in ['filed', 'confirmed']">
+                            <group>
+                                <group>
+                                    <field name="filed_date"/>
+                                    <field name="filed_by"/>
+                                </group>
+                                <group>
+                                    <field name="bir_reference"/>
+                                    <field name="payment_date"/>
+                                    <field name="payment_reference"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bir_vat_return" model="ir.actions.act_window">
+        <field name="name">VAT Returns</field>
+        <field name="res_model">bir.vat.return</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'default_form_type': '2550M'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a VAT Return
+            </p>
+            <p>
+                Generate Forms 2550M (Monthly) or 2550Q (Quarterly) from your sales and purchase invoices.
+            </p>
+        </field>
+    </record>
+</odoo>

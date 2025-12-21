@@ -1,0 +1,47 @@
+calendars: list(include('calendar'), required=False)
+holidays: list(include('holiday'), required=True)
+holiday_types: map(include('holiday_type'), required=False)
+working_day_rules: list(include('working_day_rule'), required=False)
+deadline_rules: list(include('deadline_rule'), required=False)
+
+---
+calendar:
+  id: str(required=True)
+  code: str(required=True)
+  name: str(required=True)
+  country: str(required=True)
+  years: list(int(), required=False)
+  source: str(required=False)
+
+---
+holiday:
+  calendar_id: str(required=True)
+  date: str(required=True)
+  name: str(required=True)
+  type: str(required=True)
+  affects_deadlines: bool(required=False)
+
+---
+holiday_type:
+  name: str(required=True)
+  pay_multiplier: num(required=False)
+  is_workday: bool(required=False)
+  bir_deadline_extension: bool(required=False)
+
+---
+working_day_rule:
+  calendar_id: str(required=True)
+  workdays: list(int(), required=True)
+  work_hours: include('work_hours', required=False)
+  timezone: str(required=False)
+
+---
+work_hours:
+  start: str(required=True)
+  end: str(required=True)
+
+---
+deadline_rule:
+  rule: str(required=True)
+  description: str(required=False)
+  action: str(required=True)

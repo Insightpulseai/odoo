@@ -1,0 +1,81 @@
+# Databricks Asset Bundle Configuration
+# For Notion x Finance PPM Control Room
+
+bundle:
+  name: notion-finance-ppm
+
+variables:
+  catalog:
+    description: Unity Catalog name
+    default: ppm
+  schema_bronze:
+    description: Bronze schema name
+    default: bronze
+  schema_silver:
+    description: Silver schema name
+    default: silver
+  schema_gold:
+    description: Gold schema name
+    default: gold
+  warehouse_id:
+    description: SQL warehouse ID for queries
+  notion_token:
+    description: Notion integration token
+  databricks_token:
+    description: Databricks token for API calls
+
+workspace:
+  host: ${var.databricks_host}
+
+include:
+  - resources/*.yml
+
+artifacts:
+  notion_sync_wheel:
+    type: whl
+    path: ../../services/notion-sync
+    build: python setup.py bdist_wheel
+
+targets:
+  dev:
+    mode: development
+    default: true
+    variables:
+      catalog: dev_ppm
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/notion-finance-ppm-dev
+    resources:
+      jobs:
+        notion_sync_bronze:
+          name: "[DEV] Notion Sync Bronze"
+        notion_transform_silver:
+          name: "[DEV] Notion Transform Silver"
+        ppm_marts_gold:
+          name: "[DEV] PPM Marts Gold"
+        azure_rg_ingest:
+          name: "[DEV] Azure RG Ingest"
+        dq_checks:
+          name: "[DEV] DQ Checks"
+        control_room_refresh:
+          name: "[DEV] Control Room Refresh"
+
+  staging:
+    mode: development
+    variables:
+      catalog: staging_ppm
+    workspace:
+      root_path: /Workspace/Shared/notion-finance-ppm-staging
+
+  prod:
+    mode: production
+    variables:
+      catalog: ppm
+    workspace:
+      root_path: /Workspace/Shared/notion-finance-ppm
+    run_as:
+      service_principal_name: notion-ppm-service-principal
+    permissions:
+      - level: CAN_VIEW
+        group_name: data-engineers
+      - level: CAN_MANAGE
+        group_name: platform-admins

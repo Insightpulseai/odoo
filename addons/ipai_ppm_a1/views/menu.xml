@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="ipai_ppm_a1_root" name="A1 Control Center" sequence="10"
+            groups="ipai_ppm_a1.group_ipai_ppm_a1_user"
+            web_icon="ipai_ppm_a1,static/description/icon.png"/>
+
+  <menuitem id="ipai_ppm_a1_menu_master" name="Master Data"
+            parent="ipai_ppm_a1_root" sequence="10"/>
+
+  <menuitem id="ipai_ppm_a1_menu_ops" name="Operations"
+            parent="ipai_ppm_a1_root" sequence="20"/>
+
+  <menuitem id="ipai_ppm_a1_menu_admin" name="Admin"
+            parent="ipai_ppm_a1_root" sequence="30"
+            groups="ipai_ppm_a1.group_ipai_ppm_a1_admin"/>
+
+  <menuitem id="ipai_ppm_a1_menu_import" name="Import Seeds"
+            parent="ipai_ppm_a1_menu_admin"
+            action="action_ipai_import_seed_wizard" sequence="10"/>
+
+  <menuitem id="ipai_ppm_a1_menu_export" name="Export Seeds"
+            parent="ipai_ppm_a1_menu_admin"
+            action="action_ipai_export_seed_wizard" sequence="20"/>
+</odoo>

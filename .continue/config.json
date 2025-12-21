@@ -1,0 +1,76 @@
+{
+  "$schema": "https://continue.dev/schemas/config.json",
+  "rules": [
+    {
+      "path": ".continue/rules/notion-ppm.yaml",
+      "enabled": true
+    },
+    {
+      "path": ".continue/rules/medallion-architecture.yaml",
+      "enabled": true
+    }
+  ],
+  "contextProviders": [
+    {
+      "name": "codebase",
+      "params": {
+        "nRetrieve": 25,
+        "nFinal": 10
+      }
+    },
+    {
+      "name": "docs",
+      "params": {}
+    },
+    {
+      "name": "terminal",
+      "params": {}
+    }
+  ],
+  "slashCommands": [
+    {
+      "name": "ppm-sync",
+      "description": "Generate Notion sync code following PPM patterns"
+    },
+    {
+      "name": "ppm-transform",
+      "description": "Generate medallion layer transformation code"
+    },
+    {
+      "name": "ppm-api",
+      "description": "Generate Control Room API endpoint"
+    }
+  ],
+  "customCommands": [
+    {
+      "name": "ppm-sync",
+      "prompt": "Generate Python code for syncing data from Notion to Databricks bronze layer. Follow these patterns:\n1. Use Pydantic models for data validation\n2. Include retry logic with tenacity\n3. Use watermark-based incremental sync\n4. Add _extracted_at and _source metadata columns\n5. Use Delta MERGE for upserts\n\nContext: {{{ input }}}"
+    },
+    {
+      "name": "ppm-transform",
+      "prompt": "Generate PySpark transformation code for the medallion architecture. Follow these patterns:\n1. Bronze: Raw data with metadata columns only\n2. Silver: Cleaned, typed, deduplicated data\n3. Gold: Business aggregations and metrics\n4. Use explicit column selection (no SELECT *)\n5. Include data quality checks\n\nContext: {{{ input }}}"
+    },
+    {
+      "name": "ppm-api",
+      "prompt": "Generate a Next.js API route for the Control Room app. Follow these patterns:\n1. Use TypeScript with proper types\n2. Validate responses with Zod schemas\n3. Include try-catch error handling\n4. Use the Databricks SQL client from lib/databricks.ts\n5. Return proper HTTP status codes\n\nContext: {{{ input }}}"
+    }
+  ],
+  "docs": [
+    {
+      "name": "Notion API",
+      "startUrl": "https://developers.notion.com/reference"
+    },
+    {
+      "name": "Databricks SDK",
+      "startUrl": "https://docs.databricks.com/dev-tools/sdk-python.html"
+    },
+    {
+      "name": "Next.js",
+      "startUrl": "https://nextjs.org/docs"
+    },
+    {
+      "name": "Delta Lake",
+      "startUrl": "https://docs.delta.io/latest/index.html"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- BIR Return Tree -->
+    <record id="view_bir_return_tree" model="ir.ui.view">
+        <field name="name">bir.return.tree</field>
+        <field name="model">bir.return</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'confirmed'">
+                <field name="name"/>
+                <field name="form_type"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="tax_payable" sum="Total Payable"/>
+                <field name="bir_reference"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state in ['computed', 'validated']"
+                       decoration-success="state in ['filed', 'confirmed']"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- BIR Return Form -->
+    <record id="view_bir_return_form" model="ir.ui.view">
+        <field name="name">bir.return.form</field>
+        <field name="model">bir.return</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" string="Compute" type="object" class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_validate" string="Validate" type="object" class="oe_highlight"
+                            invisible="state not in ['draft', 'computed']"/>
+                    <button name="action_mark_filed" string="Mark Filed" type="object" class="oe_highlight"
+                            invisible="state != 'validated'"/>
+                    <button name="action_confirm" string="Confirm" type="object"
+                            invisible="state != 'filed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,computed,validated,filed,confirmed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Form Details">
+                            <field name="form_type"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="task_id"/>
+                        </group>
+                        <group string="Filing">
+                            <field name="bir_reference"/>
+                            <field name="filed_date"/>
+                            <field name="filed_by"/>
+                            <field name="payment_date"/>
+                            <field name="payment_reference"/>
+                        </group>
+                    </group>
+
+                    <!-- VAT Fields -->
+                    <group string="VAT Details" invisible="form_type not in ['2550M', '2550Q']">
+                        <group>
+                            <field name="vatable_sales"/>
+                            <field name="zero_rated_sales"/>
+                            <field name="exempt_sales"/>
+                        </group>
+                        <group>
+                            <field name="output_vat"/>
+                            <field name="input_vat"/>
+                        </group>
+                    </group>
+
+                    <!-- WHT Fields -->
+                    <group string="Withholding Details" invisible="form_type not in ['1601C', '1601E', '1601F']">
+                        <group>
+                            <field name="total_payments"/>
+                        </group>
+                        <group>
+                            <field name="total_wht"/>
+                        </group>
+                    </group>
+
+                    <!-- Tax Summary -->
+                    <group string="Tax Summary">
+                        <group>
+                            <field name="tax_base"/>
+                            <field name="tax_due"/>
+                            <field name="tax_credits"/>
+                        </group>
+                        <group>
+                            <field name="tax_payable"/>
+                            <field name="penalty"/>
+                            <field name="interest"/>
+                            <field name="total_due"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Details" name="lines">
+                            <field name="line_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="partner_id"/>
+                                    <field name="tin"/>
+                                    <field name="description"/>
+                                    <field name="amount"/>
+                                    <field name="tax_amount"/>
+                                    <field name="move_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_bir_return" model="ir.actions.act_window">
+        <field name="name">BIR Returns</field>
+        <field name="res_model">bir.return</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>
