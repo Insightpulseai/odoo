@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Close Cycle Form View -->
+    <record id="view_close_cycle_form" model="ir.ui.view">
+        <field name="name">close.cycle.form</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <form string="Close Cycle">
+                <header>
+                    <button name="action_open" string="Open Cycle" type="object"
+                            class="oe_highlight"
+                            invisible="state != 'draft'"/>
+                    <button name="action_start" string="Start Close" type="object"
+                            class="oe_highlight"
+                            invisible="state != 'open'"/>
+                    <button name="action_close" string="Complete Close" type="object"
+                            class="oe_highlight"
+                            invisible="state not in ('in_progress', 'review', 'approval')"/>
+                    <button name="action_lock" string="Lock Period" type="object"
+                            class="btn-danger"
+                            invisible="state != 'closed'"
+                            groups="ipai_close_orchestration.group_close_controller"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,open,in_progress,closed,locked"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_tasks" icon="fa-tasks">
+                            <div class="o_stat_info">
+                                <field name="task_done_count" class="o_stat_value"/>
+                                <span class="o_stat_text"> / </span>
+                                <field name="task_count" class="o_stat_value"/>
+                                <span class="o_stat_text">Tasks</span>
+                            </div>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_exceptions" icon="fa-exclamation-triangle"
+                                invisible="exception_count == 0">
+                            <field name="exception_count" widget="statinfo" string="Exceptions"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Locked" bg_color="text-bg-danger"
+                            invisible="state != 'locked'"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., October 2024 Close"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Period">
+                            <field name="period_type"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Close Timeline">
+                            <field name="close_start_date"/>
+                            <field name="close_target_date"/>
+                            <field name="close_actual_date"/>
+                            <field name="cycle_time_days"/>
+                        </group>
+                    </group>
+                    <group string="Progress">
+                        <field name="task_completion_pct" widget="progressbar"/>
+                    </group>
+                    <notebook>
+                        <page string="Tasks" name="tasks">
+                            <field name="task_ids">
+                                <tree editable="bottom" decoration-danger="is_overdue"
+                                      decoration-success="state == 'done'"
+                                      decoration-muted="state == 'cancelled'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                    <field name="state" widget="badge"
+                                           decoration-info="state in ('draft', 'prep')"
+                                           decoration-warning="state in ('prep_done', 'review')"
+                                           decoration-success="state == 'done'"/>
+                                    <field name="prep_user_id" widget="many2one_avatar_user"/>
+                                    <field name="prep_due_date"/>
+                                    <field name="review_user_id" widget="many2one_avatar_user"/>
+                                    <field name="approve_user_id" widget="many2one_avatar_user"/>
+                                    <field name="is_overdue" column_invisible="True"/>
+                                    <field name="has_exceptions" column_invisible="True"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Approval Gates" name="gates">
+                            <field name="gate_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="gate_level"/>
+                                    <field name="gate_type"/>
+                                    <field name="approver_role"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state == 'approved'"
+                                           decoration-danger="state == 'blocked'"
+                                           decoration-warning="state == 'pending'"/>
+                                    <field name="approved_by"/>
+                                    <field name="approved_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Exceptions" name="exceptions"
+                              invisible="exception_count == 0">
+                            <field name="exception_ids">
+                                <tree decoration-danger="severity == 'critical'"
+                                      decoration-warning="severity in ('high', 'warning')">
+                                    <field name="name"/>
+                                    <field name="exception_type"/>
+                                    <field name="severity" widget="badge"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="assigned_to" widget="many2one_avatar_user"/>
+                                    <field name="detected_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Close Cycle Tree View -->
+    <record id="view_close_cycle_tree" model="ir.ui.view">
+        <field name="name">close.cycle.tree</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state == 'locked'"
+                  decoration-info="state in ('open', 'in_progress')">
+                <field name="name"/>
+                <field name="period_type"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('draft', 'open')"
+                       decoration-warning="state in ('in_progress', 'review', 'approval')"
+                       decoration-success="state in ('closed', 'locked')"/>
+                <field name="task_completion_pct" widget="progressbar"/>
+                <field name="exception_count"/>
+                <field name="cycle_time_days"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Close Cycle Kanban View -->
+    <record id="view_close_cycle_kanban" model="ir.ui.view">
+        <field name="name">close.cycle.kanban</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" default_group_by="state">
+                <field name="name"/>
+                <field name="period_type"/>
+                <field name="period_end"/>
+                <field name="state"/>
+                <field name="task_completion_pct"/>
+                <field name="exception_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_title">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="o_kanban_record_subtitle">
+                                    <field name="period_type"/> - <field name="period_end"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="task_completion_pct" widget="progressbar"/>
+                                    </div>
+                                    <div class="oe_kanban_bottom_right">
+                                        <span t-if="record.exception_count.raw_value > 0"
+                                              class="badge text-bg-warning">
+                                            <field name="exception_count"/> exceptions
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Close Cycle Search View -->
+    <record id="view_close_cycle_search" model="ir.ui.view">
+        <field name="name">close.cycle.search</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <search string="Close Cycles">
+                <field name="name"/>
+                <field name="period_type"/>
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_open" string="Open" domain="[('state', '=', 'open')]"/>
+                <filter name="filter_in_progress" string="In Progress"
+                        domain="[('state', '=', 'in_progress')]"/>
+                <filter name="filter_closed" string="Closed"
+                        domain="[('state', 'in', ('closed', 'locked'))]"/>
+                <separator/>
+                <filter name="filter_monthly" string="Monthly"
+                        domain="[('period_type', '=', 'monthly')]"/>
+                <filter name="filter_quarterly" string="Quarterly"
+                        domain="[('period_type', '=', 'quarterly')]"/>
+                <filter name="filter_annual" string="Annual"
+                        domain="[('period_type', '=', 'annual')]"/>
+                <separator/>
+                <filter name="filter_has_exceptions" string="Has Exceptions"
+                        domain="[('exception_count', '>', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_period_type" string="Period Type"
+                            context="{'group_by': 'period_type'}"/>
+                    <filter name="group_company" string="Company"
+                            context="{'group_by': 'company_id'}"
+                            groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Close Cycle Calendar View -->
+    <record id="view_close_cycle_calendar" model="ir.ui.view">
+        <field name="name">close.cycle.calendar</field>
+        <field name="model">close.cycle</field>
+        <field name="arch" type="xml">
+            <calendar string="Close Cycles" date_start="close_start_date"
+                      date_stop="close_target_date" color="state" mode="month">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="task_completion_pct"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_close_cycle" model="ir.actions.act_window">
+        <field name="name">Close Cycles</field>
+        <field name="res_model">close.cycle</field>
+        <field name="view_mode">tree,kanban,form,calendar</field>
+        <field name="search_view_id" ref="view_close_cycle_search"/>
+        <field name="context">{'search_default_filter_in_progress': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first close cycle
+            </p>
+            <p>
+                Track month-end, quarter-end, and year-end close processes.
+            </p>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Scheduled action to check task due dates and send reminders -->
+        <record id="ir_cron_close_task_reminder" model="ir.cron">
+            <field name="name">Close Tasks: Due Date Reminders</field>
+            <field name="model_id" ref="model_close_task"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_send_due_reminders()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Scheduled action to auto-escalate overdue exceptions -->
+        <record id="ir_cron_exception_escalation" model="ir.cron">
+            <field name="name">Close Exceptions: Auto Escalation</field>
+            <field name="model_id" ref="model_close_exception"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_auto_escalate()</field>
+            <field name="interval_number">4</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Scheduled action to check approval gate readiness -->
+        <record id="ir_cron_gate_check" model="ir.cron">
+            <field name="name">Approval Gates: Readiness Check</field>
+            <field name="model_id" ref="model_close_approval_gate"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_check_gates()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">hours</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Daily cycle status update -->
+        <record id="ir_cron_cycle_status" model="ir.cron">
+            <field name="name">Close Cycles: Daily Status Update</field>
+            <field name="model_id" ref="model_close_cycle"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_daily_status()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>

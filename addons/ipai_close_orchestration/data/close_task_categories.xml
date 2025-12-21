@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--
+            21 Task Categories from TBWA Month-End Close Process
+            Based on actual spreadsheet analysis: Oct 24-29 close cycle
+        -->
+
+        <!-- Category 1: Accrual Management -->
+        <record id="category_accrual" model="close.task.category">
+            <field name="name">Accrual Management</field>
+            <field name="code">ACCRUAL</field>
+            <field name="sequence">10</field>
+            <field name="description">Expense accruals including utilities, rent, subscriptions, and other recurring costs</field>
+            <field name="color">1</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 2: Bank Reconciliation -->
+        <record id="category_bank_recon" model="close.task.category">
+            <field name="name">Bank Reconciliation</field>
+            <field name="code">BANK_RECON</field>
+            <field name="sequence">20</field>
+            <field name="description">Cash management, bank statement reconciliation, and outstanding check tracking</field>
+            <field name="color">2</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 3: Accounts Receivable -->
+        <record id="category_ar" model="close.task.category">
+            <field name="name">Accounts Receivable</field>
+            <field name="code">AR</field>
+            <field name="sequence">30</field>
+            <field name="description">Client receivables, aging analysis, allowance for doubtful accounts</field>
+            <field name="color">3</field>
+            <field name="default_prep_role">bom</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 4: Accounts Payable -->
+        <record id="category_ap" model="close.task.category">
+            <field name="name">Accounts Payable</field>
+            <field name="code">AP</field>
+            <field name="sequence">40</field>
+            <field name="description">Vendor payables, invoice processing, payment scheduling</field>
+            <field name="color">4</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 5: Payroll Processing -->
+        <record id="category_payroll" model="close.task.category">
+            <field name="name">Payroll Processing</field>
+            <field name="code">PAYROLL</field>
+            <field name="sequence">50</field>
+            <field name="description">Salary processing, benefits, statutory contributions, payroll taxes</field>
+            <field name="color">5</field>
+            <field name="default_prep_role">jap</field>
+            <field name="default_review_role">sfm</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">3</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 6: Fixed Assets -->
+        <record id="category_fixed_assets" model="close.task.category">
+            <field name="name">Fixed Assets</field>
+            <field name="code">FIXED_ASSETS</field>
+            <field name="sequence">60</field>
+            <field name="description">Asset additions, disposals, depreciation calculations</field>
+            <field name="color">6</field>
+            <field name="default_prep_role">jas</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 7: Prepaid Expenses -->
+        <record id="category_prepaid" model="close.task.category">
+            <field name="name">Prepaid Expenses</field>
+            <field name="code">PREPAID</field>
+            <field name="sequence">70</field>
+            <field name="description">Prepaid insurance, rent, subscriptions - amortization schedules</field>
+            <field name="color">7</field>
+            <field name="default_prep_role">jil</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 8: Intercompany -->
+        <record id="category_intercompany" model="close.task.category">
+            <field name="name">Intercompany Transactions</field>
+            <field name="code">INTERCO</field>
+            <field name="sequence">80</field>
+            <field name="description">Intercompany balances, eliminations, transfer pricing</field>
+            <field name="color">8</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 9: Revenue Recognition -->
+        <record id="category_revenue" model="close.task.category">
+            <field name="name">Revenue Recognition</field>
+            <field name="code">REVENUE</field>
+            <field name="sequence">90</field>
+            <field name="description">Project revenue, deferred income, milestone billing</field>
+            <field name="color">9</field>
+            <field name="default_prep_role">jrmo</field>
+            <field name="default_review_role">bom</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 10: Tax Compliance -->
+        <record id="category_tax" model="close.task.category">
+            <field name="name">Tax Compliance</field>
+            <field name="code">TAX</field>
+            <field name="sequence">100</field>
+            <field name="description">VAT/WHT filings, BIR form preparation, tax provision</field>
+            <field name="color">10</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 11: Employee Benefits -->
+        <record id="category_benefits" model="close.task.category">
+            <field name="name">Employee Benefits</field>
+            <field name="code">BENEFITS</field>
+            <field name="sequence">110</field>
+            <field name="description">SSS, PhilHealth, Pag-IBIG, leave accruals, 13th month</field>
+            <field name="color">11</field>
+            <field name="default_prep_role">rmqb</field>
+            <field name="default_review_role">sfm</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 12: Project Accounting -->
+        <record id="category_project" model="close.task.category">
+            <field name="name">Project Accounting</field>
+            <field name="code">PROJECT</field>
+            <field name="sequence">120</field>
+            <field name="description">WIP accounting, project cost allocation, job costing</field>
+            <field name="color">1</field>
+            <field name="default_prep_role">jap</field>
+            <field name="default_review_role">bom</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 13: Inventory/Supplies -->
+        <record id="category_inventory" model="close.task.category">
+            <field name="name">Inventory/Supplies</field>
+            <field name="code">INVENTORY</field>
+            <field name="sequence">130</field>
+            <field name="description">Office supplies, production materials, inventory count</field>
+            <field name="color">2</field>
+            <field name="default_prep_role">jas</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 14: Foreign Currency -->
+        <record id="category_forex" model="close.task.category">
+            <field name="name">Foreign Currency</field>
+            <field name="code">FOREX</field>
+            <field name="sequence">140</field>
+            <field name="description">FX revaluation, currency translation, hedging</field>
+            <field name="color">3</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 15: Journal Entries -->
+        <record id="category_journal" model="close.task.category">
+            <field name="name">Journal Entries</field>
+            <field name="code">JOURNAL</field>
+            <field name="sequence">150</field>
+            <field name="description">Manual journal entries, adjustments, reclassifications</field>
+            <field name="color">4</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 16: GL Reconciliation -->
+        <record id="category_gl_recon" model="close.task.category">
+            <field name="name">GL Reconciliation</field>
+            <field name="code">GL_RECON</field>
+            <field name="sequence">160</field>
+            <field name="description">Account reconciliations, subledger to GL matching</field>
+            <field name="color">5</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">2</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 17: Financial Reporting -->
+        <record id="category_reporting" model="close.task.category">
+            <field name="name">Financial Reporting</field>
+            <field name="code">REPORTING</field>
+            <field name="sequence">170</field>
+            <field name="description">Trial balance, financial statements, management reports</field>
+            <field name="color">6</field>
+            <field name="default_prep_role">rim</field>
+            <field name="default_review_role">sfm</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 18: Variance Analysis -->
+        <record id="category_variance" model="close.task.category">
+            <field name="name">Variance Analysis</field>
+            <field name="code">VARIANCE</field>
+            <field name="sequence">180</field>
+            <field name="description">Budget vs actual, month-over-month, YoY comparisons</field>
+            <field name="color">7</field>
+            <field name="default_prep_role">rim</field>
+            <field name="default_review_role">sfm</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 19: Audit Trail -->
+        <record id="category_audit" model="close.task.category">
+            <field name="name">Audit Trail</field>
+            <field name="code">AUDIT</field>
+            <field name="sequence">190</field>
+            <field name="description">Documentation, evidence collection, audit preparation</field>
+            <field name="color">8</field>
+            <field name="default_prep_role">jpal</field>
+            <field name="default_review_role">rim</field>
+            <field name="default_approve_role">ckvc</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 20: Period Lock -->
+        <record id="category_period_lock" model="close.task.category">
+            <field name="name">Period Lock</field>
+            <field name="code">PERIOD_LOCK</field>
+            <field name="sequence">200</field>
+            <field name="description">GL period closure, posting prevention, final sign-off</field>
+            <field name="color">9</field>
+            <field name="default_prep_role">rim</field>
+            <field name="default_review_role">ckvc</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+        <!-- Category 21: Management Review -->
+        <record id="category_mgmt_review" model="close.task.category">
+            <field name="name">Management Review</field>
+            <field name="code">MGMT_REVIEW</field>
+            <field name="sequence">210</field>
+            <field name="description">Executive presentation, board pack preparation, KPI review</field>
+            <field name="color">10</field>
+            <field name="default_prep_role">rim</field>
+            <field name="default_review_role">ckvc</field>
+            <field name="default_approve_role">fd</field>
+            <field name="default_prep_days">1</field>
+            <field name="default_review_days">1</field>
+            <field name="default_approve_days">1</field>
+        </record>
+
+    </data>
+</odoo>
