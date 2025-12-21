@@ -1,24 +1,11 @@
 # Master Sync Workflow
-# Automatically syncs between spec, schema, code, and docs
+# Manually triggered sync between spec, schema, code, and docs
+# NOTE: Does not run on push to avoid secret requirement failures
 
 name: Bidirectional Sync
 
 on:
-  push:
-    branches:
-      - main
-      - "claude/**"
-    paths:
-      - "spec/**/*.md"
-      - "supabase/migrations/*.sql"
-      - "apps/control-room/src/**/*.ts"
-      - "docs/**/*.md"
-      - "prisma/schema.prisma"
-
-  pull_request:
-    branches:
-      - main
-
+  # Manual trigger only - requires secrets to be configured
   workflow_dispatch:
     inputs:
       sync_type:
@@ -32,6 +19,10 @@ on:
           - schema-to-docs
           - docs-to-kb
           - tree-sitemap
+
+  # Optional: scheduled sync (uncomment when secrets are configured)
+  # schedule:
+  #   - cron: "0 */6 * * *"  # Every 6 hours
 
 jobs:
   # ==========================================================================
@@ -154,7 +145,7 @@ jobs:
   # ==========================================================================
   sync-tree-sitemap:
     needs: detect-changes
-    if: github.event.inputs.sync_type == 'tree-sitemap' || github.event.inputs.sync_type == 'all' || github.event_name == 'push'
+    if: github.event.inputs.sync_type == 'tree-sitemap' || github.event.inputs.sync_type == 'all'
     runs-on: ubuntu-latest
 
     steps:
@@ -173,67 +164,18 @@ jobs:
       - name: Generate SITEMAP.md
         run: node scripts/sync/generate-sitemap.js
 
-      - name: Check for changes
-        id: check
-        run: |
-          git diff --quiet TREE.md SITEMAP.md || echo "changed=true" >> $GITHUB_OUTPUT
-
-      - name: Commit changes
-        if: steps.check.outputs.changed == 'true' && github.event_name == 'push'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add TREE.md SITEMAP.md
-          git commit -m "docs: auto-update SITEMAP.md and TREE.md [skip ci]"
-          git push
-
-  # ==========================================================================
-  # COMMIT GENERATED FILES
-  # ==========================================================================
-  commit-generated:
-    needs:
-      - sync-spec-to-schema
-      - sync-schema-to-docs
-    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          fetch-depth: 0
-
-      - name: Download prisma artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: prisma-schema
-          path: prisma/
-        continue-on-error: true
-
-      - name: Download docs artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: generated-docs
-          path: docs/
-        continue-on-error: true
-
-      - name: Check for changes
-        id: check
-        run: |
-          git diff --quiet || echo "changed=true" >> $GITHUB_OUTPUT
-
-      - name: Commit generated files
-        if: steps.check.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "chore: sync generated files [skip ci]"
-          git push
+          name: tree-sitemap
+          path: |
+            TREE.md
+            SITEMAP.md
 
   # ==========================================================================
-  # NOTIFY ON SYNC
+  # SUMMARY
   # ==========================================================================
-  notify:
+  summary:
     needs:
       - sync-spec-to-schema
       - sync-schema-to-docs
@@ -243,15 +185,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Notify n8n webhook
-        if: github.event_name == 'push'
+      - name: Sync Summary
         run: |
-          curl -X POST "${{ secrets.N8N_WEBHOOK_URL }}/sync-complete" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "event": "sync_complete",
-              "ref": "${{ github.ref }}",
-              "sha": "${{ github.sha }}",
-              "actor": "${{ github.actor }}",
-              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
-            }' || true
+          echo "## Bidirectional Sync Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| spec-to-schema | ${{ needs.sync-spec-to-schema.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| schema-to-docs | ${{ needs.sync-schema-to-docs.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| docs-to-kb | ${{ needs.sync-docs-to-kb.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| tree-sitemap | ${{ needs.sync-tree-sitemap.result }} |" >> $GITHUB_STEP_SUMMARY
