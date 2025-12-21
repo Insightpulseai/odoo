@@ -1,0 +1,272 @@
+# Continue Rules for Notion x Finance PPM System
+# These rules enforce coding standards and architectural patterns
+
+name: notion-ppm-guardrails
+description: Guardrails for Notion Finance PPM Control Room and sync services
+version: 1.0.0
+
+rules:
+  # ============================================================================
+  # GENERAL RULES
+  # ============================================================================
+
+  - id: no-hardcoded-secrets
+    description: Never hardcode secrets, API keys, or credentials
+    severity: error
+    patterns:
+      - "NOTION_TOKEN\\s*=\\s*[\"'][^$]"
+      - "DATABRICKS_TOKEN\\s*=\\s*[\"'][^$]"
+      - "secret[\"']?\\s*[:=]\\s*[\"'][a-zA-Z0-9]"
+    message: |
+      Secrets must come from environment variables or secret managers.
+      Use process.env.VAR_NAME or config objects loaded from .env files.
+
+  - id: no-any-types
+    description: Avoid using 'any' type in TypeScript
+    severity: warning
+    patterns:
+      - ":\\s*any\\b"
+      - "as\\s+any\\b"
+    excludePaths:
+      - "**/*.test.ts"
+      - "**/*.spec.ts"
+    message: |
+      Use explicit types instead of 'any'. Define interfaces or use
+      'unknown' with type guards for dynamic data.
+
+  # ============================================================================
+  # CONTROL ROOM (NEXT.JS) RULES
+  # ============================================================================
+
+  - id: use-server-components
+    description: Prefer React Server Components for data fetching
+    paths:
+      - "apps/control-room/src/app/**/*.tsx"
+    severity: info
+    patterns:
+      - "useEffect.*fetch"
+      - "useState.*setData"
+    message: |
+      Consider using React Server Components for data fetching instead of
+      client-side useEffect. Move data fetching to the page component or
+      use server actions.
+
+  - id: validate-api-responses
+    description: Always validate external API responses with Zod
+    paths:
+      - "apps/control-room/src/app/api/**/*.ts"
+    severity: warning
+    patterns:
+      - "await\\s+fetch\\("
+    requirePatterns:
+      - "\\.parse\\("
+      - "\\.safeParse\\("
+    message: |
+      External API responses should be validated with Zod schemas.
+      Use schema.parse(data) or schema.safeParse(data) for runtime validation.
+
+  - id: handle-api-errors
+    description: API routes must have proper error handling
+    paths:
+      - "apps/control-room/src/app/api/**/*.ts"
+    severity: error
+    patterns:
+      - "export\\s+(async\\s+)?function\\s+(GET|POST|PUT|DELETE)"
+    requirePatterns:
+      - "try\\s*{"
+      - "catch"
+    message: |
+      API routes must wrap logic in try-catch blocks and return appropriate
+      error responses with status codes.
+
+  - id: use-config-constants
+    description: Use centralized config for table names and endpoints
+    paths:
+      - "apps/control-room/**/*.ts"
+    severity: warning
+    patterns:
+      - "[\"']ppm_gold\\."
+      - "[\"']ppm_silver\\."
+      - "[\"']ppm_bronze\\."
+    message: |
+      Use constants from lib/config.ts for table names.
+      Import { TABLES } from '@/lib/config' and use TABLES.GOLD.* instead.
+
+  # ============================================================================
+  # NOTION SYNC SERVICE (PYTHON) RULES
+  # ============================================================================
+
+  - id: use-pydantic-models
+    description: Use Pydantic models for data validation
+    paths:
+      - "services/notion-sync/**/*.py"
+    severity: warning
+    patterns:
+      - "Dict\\[str,\\s*Any\\]"
+      - "dict\\[str,\\s*Any\\]"
+    excludePaths:
+      - "**/test_*.py"
+    message: |
+      Use Pydantic models instead of Dict[str, Any] for structured data.
+      Define models in models.py and use them for type safety.
+
+  - id: use-retry-decorators
+    description: API calls should use retry decorators
+    paths:
+      - "services/notion-sync/**/*.py"
+    severity: warning
+    patterns:
+      - "requests\\.get\\("
+      - "requests\\.post\\("
+      - "self\\.client\\."
+    requirePatterns:
+      - "@retry"
+      - "tenacity"
+    message: |
+      API calls should use tenacity retry decorators to handle transient failures.
+      Use @retry(stop=stop_after_attempt(3), wait=wait_exponential()).
+
+  - id: log-with-structlog
+    description: Use structured logging
+    paths:
+      - "services/notion-sync/**/*.py"
+    severity: info
+    patterns:
+      - "print\\("
+      - "logging\\.info\\("
+    message: |
+      Use structlog for structured logging instead of print() or logging.
+      Import structlog and use logger = structlog.get_logger().
+
+  - id: incremental-sync-watermark
+    description: Sync operations should use watermark-based incremental sync
+    paths:
+      - "services/notion-sync/**/*.py"
+    severity: error
+    patterns:
+      - "query_database\\("
+    requirePatterns:
+      - "last_edited_time"
+      - "watermark"
+    message: |
+      Use watermark-based incremental sync to avoid full table scans.
+      Filter by last_edited_time >= watermark in Notion queries.
+
+  # ============================================================================
+  # DATABRICKS NOTEBOOKS RULES
+  # ============================================================================
+
+  - id: use-delta-merge
+    description: Use MERGE for upserts instead of overwrite
+    paths:
+      - "infra/databricks/notebooks/**/*.py"
+    severity: warning
+    patterns:
+      - "\\.write\\.mode\\([\"']overwrite[\"']\\)"
+    message: |
+      Use Delta MERGE operations for upserts to preserve history and enable
+      incremental processing. Avoid overwrite mode for dimension tables.
+
+  - id: partition-by-date
+    description: Large tables should be partitioned by date
+    paths:
+      - "infra/databricks/notebooks/**/*.py"
+    severity: info
+    patterns:
+      - "\\.write"
+      - "DeltaTable"
+    requirePatterns:
+      - "partitionBy"
+      - "PARTITIONED BY"
+    message: |
+      Consider partitioning large tables by date columns (_extracted_at,
+      created_date) for better query performance.
+
+  - id: use-schema-evolution
+    description: Enable schema evolution for bronze tables
+    paths:
+      - "infra/databricks/notebooks/bronze/**/*.py"
+    severity: warning
+    patterns:
+      - "\\.write"
+    requirePatterns:
+      - "mergeSchema"
+      - "overwriteSchema"
+    message: |
+      Enable schema evolution (mergeSchema=True) for bronze tables to
+      handle Notion schema changes gracefully.
+
+  # ============================================================================
+  # INFRASTRUCTURE RULES
+  # ============================================================================
+
+  - id: bicep-resource-tags
+    description: All Azure resources must have tags
+    paths:
+      - "infra/azure/**/*.bicep"
+    severity: error
+    patterns:
+      - "resource\\s+\\w+\\s+[\"']Microsoft\\."
+    requirePatterns:
+      - "tags:"
+      - "tags ="
+    message: |
+      All Azure resources must include tags for cost allocation and
+      governance. Include environment, project, and owner tags.
+
+  - id: dab-job-notifications
+    description: DAB jobs should have failure notifications
+    paths:
+      - "infra/databricks/resources/*.yml"
+    severity: warning
+    patterns:
+      - "name:.*_job"
+      - "tasks:"
+    requirePatterns:
+      - "email_notifications"
+      - "webhook_notifications"
+    message: |
+      Configure email or webhook notifications for job failures to
+      ensure operational visibility.
+
+  # ============================================================================
+  # TESTING RULES
+  # ============================================================================
+
+  - id: test-coverage-required
+    description: New features should have corresponding tests
+    severity: info
+    patterns:
+      - "export\\s+(async\\s+)?function"
+      - "def\\s+\\w+\\("
+    message: |
+      Ensure new functions have corresponding unit tests.
+      Place tests in __tests__/ (TS) or tests/ (Python) directories.
+
+  - id: mock-external-services
+    description: Tests should mock external services
+    paths:
+      - "**/*.test.ts"
+      - "**/test_*.py"
+    severity: warning
+    patterns:
+      - "fetch\\("
+      - "requests\\."
+      - "notion\\.databases"
+    requirePatterns:
+      - "mock"
+      - "Mock"
+      - "jest\\.fn"
+      - "patch"
+    message: |
+      External service calls should be mocked in tests.
+      Use jest.mock() for TS or unittest.mock.patch for Python.
+
+# Excluded paths that don't need these rules
+excludePaths:
+  - "**/node_modules/**"
+  - "**/.next/**"
+  - "**/dist/**"
+  - "**/__pycache__/**"
+  - "**/venv/**"
+  - "**/.venv/**"
