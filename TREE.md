@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd32aa1a05901efd4d572fa2fd45197836aad7fd
+> Commit: 12d23b251dc9749f58d11c098b5a2a7897ff0b07
 
 ```
 .
@@ -109,6 +109,14 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── install.sh
+│   │   ├── ipai_close_orchestration
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_custom_routes
 │   │   │   ├── controllers
 │   │   │   ├── data
@@ -232,6 +240,12 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_master_control
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_portal_fix
 │   │   │   ├── controllers
 │   │   │   ├── models
@@ -246,6 +260,14 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ppm_a1
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── wizards
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ppm_monthly_close
@@ -329,19 +351,6 @@
 │   │   │   ├── close_exception_views.xml
 │   │   │   ├── close_task_views.xml
 │   │   │   └── menu.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_master_control
-│   │   ├── data
-│   │   │   └── ir_config_parameter.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── hr_employee.py
-│   │   │   ├── hr_expense.py
-│   │   │   ├── master_control_mixin.py
-│   │   │   └── purchase_order.py
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_month_end
@@ -605,6 +614,16 @@
 │       │   ├── views
 │       │   ├── __init__.py
 │       │   └── __manifest__.py
+│       ├── omc_finance_ppm
+│       │   ├── actions
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── static
+│       │   ├── views
+│       │   ├── DEPLOYMENT_STRATEGY.md
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
 │       └── tbwa_spectra_integration
 │           ├── data
 │           ├── models
@@ -783,6 +802,8 @@
 │   │   └── architecture
 │   │       ├── README.md
 │   │       └── manifest.json
+│   ├── finance-ppm
+│   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── odoo-18-handbook
 │   │   ├── pages
 │   │   │   ├── 01-finance-accounting.md
@@ -1141,6 +1162,7 @@
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
 │   ├── odoo_mattermost_integration.py
+│   ├── odoo_smoke_close.sh
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
 │   ├── pre_install_snapshot.sh
@@ -1306,6 +1328,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── parallel-control-planes
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── pulser-master-control
 │   │   ├── capability-registry.yaml
 │   │   ├── constitution.md
@@ -1456,6 +1483,12 @@
 │   ├── seed_retail_intel.ts
 │   └── seed_te_cheq.ts
 ├── vendor
+│   ├── oca
+│   │   ├── account-financial-reporting
+│   │   ├── account-reconcile
+│   │   ├── project
+│   │   ├── server-tools
+│   │   └── web
 │   ├── oca-sync.sh
 │   └── oca.lock.json
 ├── vercel
@@ -1596,15 +1629,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-499 directories, 1092 files
+526 directories, 1098 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 563 |
-| Files | 1634 |
-| Python files | 446 |
-| XML files | 231 |
-| Markdown files | 314 |
+| Directories | 593 |
+| Files | 1709 |
+| Python files | 473 |
+| XML files | 265 |
+| Markdown files | 321 |
