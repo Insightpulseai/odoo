@@ -1,0 +1,228 @@
+# STC Compliance Scenarios
+# Groupings of checks into executable runs
+
+scenarios:
+  # ============================================================
+  # Monthly Scenarios
+  # ============================================================
+
+  - id: scn_monthly_vat
+    workstream_id: stc
+    code: STC_SCN_MONTHLY_VAT
+    name: Monthly VAT Compliance Run
+    description: All VAT-related checks for monthly filing preparation
+    frequency: MONTHLY
+    run_day_offset: 15  # Run on 15th of following month
+    sap_reference: SAP_STC_SCENARIO_VAT_MONTHLY
+    checks:
+      - chk_vat_id_validation
+      - chk_postings_without_tax
+      - chk_high_vat_sales
+      - chk_high_vat_purchase
+      - chk_vat_mismatch
+    outputs:
+      - name: VAT Exception Report
+        format: xlsx
+      - name: Input VAT Schedule
+        format: xlsx
+      - name: Output VAT Schedule
+        format: xlsx
+    bir_forms:
+      - "2550M"  # Monthly VAT Declaration
+
+  - id: scn_monthly_wht
+    workstream_id: stc
+    code: STC_SCN_MONTHLY_WHT
+    name: Monthly Withholding Tax Run
+    description: WHT checks for 1601-C and 1601-E preparation
+    frequency: MONTHLY
+    run_day_offset: 5  # Run on 5th of following month
+    sap_reference: SAP_STC_SCENARIO_WHT_MONTHLY
+    checks:
+      - chk_wht_rate_mismatch
+      - chk_wht_missing_atc
+      - chk_wht_threshold_exceeded
+      - chk_wht_cert_not_issued
+    outputs:
+      - name: WHT Exception Report
+        format: xlsx
+      - name: Compensation WHT Summary
+        format: xlsx
+      - name: Expanded WHT Summary
+        format: xlsx
+    bir_forms:
+      - "1601C"  # Monthly Compensation WHT
+      - "1601E"  # Monthly Expanded WHT
+
+  - id: scn_monthly_vendor
+    workstream_id: stc
+    code: STC_SCN_MONTHLY_VENDOR
+    name: Monthly Vendor Master Compliance
+    description: Vendor master data quality checks
+    frequency: MONTHLY
+    run_day_offset: 1  # Run on 1st of each month
+    sap_reference: SAP_STC_SCENARIO_VND_MONTHLY
+    checks:
+      - chk_vendor_without_tin
+      - chk_vendor_tin_format
+      - chk_vendor_address_incomplete
+    outputs:
+      - name: Vendor Data Quality Report
+        format: xlsx
+
+  # ============================================================
+  # Quarterly Scenarios
+  # ============================================================
+
+  - id: scn_quarterly_vat
+    workstream_id: stc
+    code: STC_SCN_QUARTERLY_VAT
+    name: Quarterly VAT Compliance Run
+    description: Comprehensive VAT checks for quarterly return
+    frequency: QUARTERLY
+    run_day_offset: 18  # Run on 18th after quarter end
+    sap_reference: SAP_STC_SCENARIO_VAT_QUARTERLY
+    checks:
+      - chk_vat_id_validation
+      - chk_postings_without_tax
+      - chk_high_vat_sales
+      - chk_high_vat_purchase
+      - chk_vat_mismatch
+      - chk_zero_rated_without_docs
+      - chk_invoice_without_tin
+      - chk_invoice_amount_threshold
+    outputs:
+      - name: Quarterly VAT Summary
+        format: xlsx
+      - name: Zero-Rated Export Schedule
+        format: xlsx
+      - name: VAT Relief Schedule
+        format: xlsx
+    bir_forms:
+      - "2550Q"  # Quarterly VAT Return
+
+  # ============================================================
+  # Annual Scenarios
+  # ============================================================
+
+  - id: scn_annual_alphalist_comp
+    workstream_id: stc
+    code: STC_SCN_ANNUAL_ALPHA_COMP
+    name: Annual Alphalist (Compensation) Run
+    description: Year-end alphalist for compensation payments
+    frequency: ANNUAL
+    run_day_offset: 20  # Run on Jan 20
+    sap_reference: SAP_STC_SCENARIO_ALPHA_COMP
+    checks:
+      - chk_wht_rate_mismatch
+      - chk_wht_missing_atc
+      - chk_wht_cert_not_issued
+    outputs:
+      - name: Alphalist (Compensation)
+        format: dat
+      - name: Compensation Summary Report
+        format: xlsx
+    bir_forms:
+      - "1604CF"  # Annual Alphalist - Compensation
+
+  - id: scn_annual_alphalist_exp
+    workstream_id: stc
+    code: STC_SCN_ANNUAL_ALPHA_EXP
+    name: Annual Alphalist (Expanded) Run
+    description: Year-end alphalist for expanded withholding
+    frequency: ANNUAL
+    run_day_offset: 45  # Run on Feb 14
+    sap_reference: SAP_STC_SCENARIO_ALPHA_EXP
+    checks:
+      - chk_vendor_without_tin
+      - chk_vendor_tin_format
+      - chk_wht_rate_mismatch
+      - chk_wht_missing_atc
+    outputs:
+      - name: Alphalist (Expanded)
+        format: dat
+      - name: Expanded WHT Summary Report
+        format: xlsx
+    bir_forms:
+      - "1604E"  # Annual Alphalist - Expanded
+
+  - id: scn_annual_income_tax
+    workstream_id: stc
+    code: STC_SCN_ANNUAL_ITR
+    name: Annual Income Tax Return Run
+    description: Corporate income tax return preparation
+    frequency: ANNUAL
+    run_day_offset: 90  # Run on Apr 1
+    sap_reference: SAP_STC_SCENARIO_ITR
+    checks:
+      - chk_postings_without_tax
+      - chk_vat_mismatch
+      - chk_invoice_amount_threshold
+      - chk_duplicate_invoice
+    outputs:
+      - name: Income Tax Computation
+        format: xlsx
+      - name: Tax Reconciliation
+        format: xlsx
+    bir_forms:
+      - "1702"  # Annual Corporate Income Tax
+
+  # ============================================================
+  # Ad-hoc Scenarios
+  # ============================================================
+
+  - id: scn_new_vendor_onboard
+    workstream_id: stc
+    code: STC_SCN_VENDOR_ONBOARD
+    name: New Vendor Onboarding Check
+    description: Pre-payment compliance for new vendors
+    frequency: ON_DEMAND
+    sap_reference: SAP_STC_SCENARIO_VND_ONBOARD
+    checks:
+      - chk_vendor_without_tin
+      - chk_vendor_tin_format
+      - chk_vendor_address_incomplete
+      - chk_vendor_bank_missing
+    outputs:
+      - name: Vendor Compliance Checklist
+        format: pdf
+
+  - id: scn_audit_prep
+    workstream_id: stc
+    code: STC_SCN_AUDIT_PREP
+    name: Audit Preparation Run
+    description: Comprehensive checks before external audit
+    frequency: ON_DEMAND
+    sap_reference: SAP_STC_SCENARIO_AUDIT
+    checks:
+      - chk_vat_id_validation
+      - chk_postings_without_tax
+      - chk_vat_mismatch
+      - chk_vendor_without_tin
+      - chk_invoice_without_tin
+      - chk_duplicate_invoice
+      - chk_wht_rate_mismatch
+      - chk_wht_missing_atc
+    outputs:
+      - name: Audit Readiness Report
+        format: xlsx
+      - name: Exception Summary
+        format: xlsx
+
+# Scenario execution statuses
+statuses:
+  - code: DRAFT
+    name: Draft
+    description: Scenario created but not run
+  - code: RUNNING
+    name: Running
+    description: Scenario currently executing
+  - code: COMPLETED
+    name: Completed
+    description: All checks passed
+  - code: EXCEPTIONS
+    name: Has Exceptions
+    description: Some checks have findings
+  - code: FAILED
+    name: Failed
+    description: Scenario execution failed

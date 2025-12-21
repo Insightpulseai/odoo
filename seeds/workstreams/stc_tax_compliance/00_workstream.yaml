@@ -1,0 +1,70 @@
+# STC - SAP Tax Compliance Workstream
+# SAP Canonical Taxonomy with PH Localization
+
+workstream:
+  id: stc
+  code: STC
+  name: SAP Tax Compliance
+  description: |
+    Tax compliance monitoring and filing workflow.
+    Based on SAP Tax Compliance for S/4HANA with Philippine BIR localization.
+  sap_anchor: SAP_STC_S4HANA
+  odoo_anchor: ipai_tbwa_finance
+  version: "1.0.0"
+
+  # Compliance domains
+  domains:
+    - code: VAT
+      name: Value Added Tax
+      description: VAT input/output compliance
+    - code: WHT
+      name: Withholding Tax
+      description: Compensation and expanded withholding
+    - code: INC
+      name: Income Tax
+      description: Corporate income tax compliance
+    - code: ALP
+      name: Alphalist
+      description: Annual information returns
+
+  # Worklist types (SAP STC compatible)
+  worklist_types:
+    - code: S4_VAT
+      name: VAT Compliance Worklist
+      description: VAT-related compliance checks
+    - code: S4_VND
+      name: Vendor Compliance Worklist
+      description: Vendor master data checks
+    - code: S4_INV
+      name: Invoice Compliance Worklist
+      description: Invoice data quality checks
+    - code: S4_WHT
+      name: Withholding Tax Worklist
+      description: WHT compliance checks
+
+  # Filing frequencies
+  frequencies:
+    - code: MONTHLY
+      name: Monthly Filing
+      deadline_rule: day_of_next_month
+    - code: QUARTERLY
+      name: Quarterly Filing
+      deadline_rule: day_after_quarter_end
+    - code: ANNUAL
+      name: Annual Filing
+      deadline_rule: day_after_year_end
+
+  # RACI roles (same as AFC)
+  raci_roles:
+    - code: R
+      name: Responsible
+      description: Prepares the return
+    - code: A
+      name: Accountable
+      description: Reviews and approves
+    - code: C
+      name: Consulted
+      description: Provides technical guidance
+    - code: I
+      name: Informed
+      description: Notified of filing status
