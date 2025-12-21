@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Exception Tree View -->
+    <record id="close_exception_view_tree" model="ir.ui.view">
+        <field name="name">close.exception.tree</field>
+        <field name="model">close.exception</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'escalated'" decoration-success="state in ('resolved', 'closed')">
+                <field name="name"/>
+                <field name="cycle_id"/>
+                <field name="task_id"/>
+                <field name="exception_type"/>
+                <field name="severity" widget="badge" decoration-info="severity == 'low'" decoration-warning="severity == 'medium'" decoration-danger="severity in ('high', 'critical')"/>
+                <field name="state" widget="badge"/>
+                <field name="assigned_to"/>
+                <field name="escalation_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Exception Form View -->
+    <record id="close_exception_view_form" model="ir.ui.view">
+        <field name="name">close.exception.form</field>
+        <field name="model">close.exception</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start_investigation" string="Investigate" type="object" invisible="state != 'open'"/>
+                    <button name="action_escalate" string="Escalate" type="object" class="btn-warning" invisible="state in ('escalated', 'resolved', 'closed')"/>
+                    <button name="action_resolve" string="Resolve" type="object" class="btn-success" invisible="state in ('resolved', 'closed')"/>
+                    <button name="action_close" string="Close" type="object" invisible="state != 'resolved'"/>
+                    <button name="action_reopen" string="Reopen" type="object" invisible="state not in ('resolved', 'closed')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,investigating,resolved,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" placeholder="Exception Title"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="cycle_id"/>
+                            <field name="task_id"/>
+                            <field name="exception_type"/>
+                            <field name="severity"/>
+                        </group>
+                        <group>
+                            <field name="reported_by"/>
+                            <field name="assigned_to"/>
+                            <field name="escalated_to"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Escalation">
+                        <group>
+                            <field name="escalation_count"/>
+                            <field name="last_escalated"/>
+                        </group>
+                        <group>
+                            <field name="escalation_deadline"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Resolution" name="resolution">
+                            <group>
+                                <field name="resolution"/>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="resolved_date"/>
+                                    <field name="resolved_by"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Exception Search View -->
+    <record id="close_exception_view_search" model="ir.ui.view">
+        <field name="name">close.exception.search</field>
+        <field name="model">close.exception</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="cycle_id"/>
+                <field name="task_id"/>
+                <filter name="open" string="Open" domain="[('state', 'in', ('open', 'investigating'))]"/>
+                <filter name="escalated" string="Escalated" domain="[('state', '=', 'escalated')]"/>
+                <filter name="resolved" string="Resolved" domain="[('state', 'in', ('resolved', 'closed'))]"/>
+                <separator/>
+                <filter name="critical" string="Critical" domain="[('severity', '=', 'critical')]"/>
+                <filter name="my_assigned" string="Assigned to Me" domain="[('assigned_to', '=', uid)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_severity" string="Severity" context="{'group_by': 'severity'}"/>
+                    <filter name="group_cycle" string="Cycle" context="{'group_by': 'cycle_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="close_exception_action" model="ir.actions.act_window">
+        <field name="name">Exceptions</field>
+        <field name="res_model">close.exception</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="close_exception_view_search"/>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+</odoo>

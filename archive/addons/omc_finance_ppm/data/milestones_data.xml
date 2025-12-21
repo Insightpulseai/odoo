@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- BIR Tax Filing Milestones -->
+
+    <!-- Milestone: BIR 1601-C (Jan 2025) -->
+    <record id="milestone_bir_1601c_jan_2025" model="project.milestone">
+        <field name="name">BIR 1601-C Filing (Jan 2025)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="deadline" eval="(DateTime.now() + timedelta(days=15)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- Milestone: BIR 0619-E (Jan 2025) -->
+    <record id="milestone_bir_0619e_jan_2025" model="project.milestone">
+        <field name="name">BIR 0619-E Filing (Jan 2025)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="deadline" eval="(DateTime.now() + timedelta(days=20)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- Milestone: BIR 2550Q (Q4 2024) -->
+    <record id="milestone_bir_2550q_q4_2024" model="project.milestone">
+        <field name="name">BIR 2550Q Filing (Q4 2024)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="deadline" eval="(DateTime.now() + timedelta(days=60)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- Milestone: BIR 1702-RT (Annual 2024) -->
+    <record id="milestone_bir_1702rt_2024" model="project.milestone">
+        <field name="name">BIR 1702-RT Filing (Annual 2024)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="deadline" eval="(DateTime.now() + timedelta(days=90)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- Milestone: BIR 1601-EQ (Q4 2024) -->
+    <record id="milestone_bir_1601eq_q4_2024" model="project.milestone">
+        <field name="name">BIR 1601-EQ Filing (Q4 2024)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="deadline" eval="(DateTime.now() + timedelta(days=30)).strftime('%Y-%m-%d')"/>
+    </record>
+
+    <!-- Milestone: BIR 1601-FQ (Q4 2024) -->
+    <record id="milestone_bir_1601fq_q4_2024" model="project.milestone">
+        <field name="name">BIR 1601-FQ Filing (Q4 2024)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="deadline" eval="(DateTime.now() + timedelta(days=35)).strftime('%Y-%m-%d')"/>
+    </record>
+</odoo>

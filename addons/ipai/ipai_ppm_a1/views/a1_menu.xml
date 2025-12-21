@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Main Menu -->
+    <menuitem id="a1_menu_root"
+        name="A1 Control Center"
+        sequence="40"
+        web_icon="ipai_ppm_a1,static/description/icon.png"
+        groups="group_a1_user"/>
+
+    <!-- Operations -->
+    <menuitem id="a1_menu_operations"
+        name="Operations"
+        parent="a1_menu_root"
+        sequence="10"/>
+
+    <menuitem id="a1_menu_tasklists"
+        name="Tasklists"
+        parent="a1_menu_operations"
+        action="a1_tasklist_action"
+        sequence="10"/>
+
+    <menuitem id="a1_menu_tasks"
+        name="Tasks"
+        parent="a1_menu_operations"
+        action="a1_task_action"
+        sequence="20"/>
+
+    <!-- Configuration -->
+    <menuitem id="a1_menu_config"
+        name="Configuration"
+        parent="a1_menu_root"
+        sequence="20"
+        groups="group_a1_manager"/>
+
+    <menuitem id="a1_menu_workstreams"
+        name="Workstreams"
+        parent="a1_menu_config"
+        action="a1_workstream_action"
+        sequence="10"/>
+
+    <menuitem id="a1_menu_templates"
+        name="Task Templates"
+        parent="a1_menu_config"
+        action="a1_template_action"
+        sequence="20"/>
+
+    <menuitem id="a1_menu_checks"
+        name="Checks / STCs"
+        parent="a1_menu_config"
+        action="a1_check_action"
+        sequence="30"/>
+
+    <menuitem id="a1_menu_roles"
+        name="Roles"
+        parent="a1_menu_config"
+        action="a1_role_action"
+        sequence="40"/>
+
+</odoo>

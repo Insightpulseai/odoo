@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data noupdate="1">
+
+    <!-- =========================================================
+         FINANCE PPM – MASTER PROJECT
+         ========================================================= -->
+    <record id="project_finance_ppm_2025_2026" model="project.project">
+      <field name="name">TBWA SMP – Month-End Closing &amp; Tax Filing 2025–2026</field>
+      <field name="privacy_visibility">followers</field>
+    </record>
+
+    <!-- =========================================================
+         PHASE: NOVEMBER 2025 CLOSING
+         ========================================================= -->
+    <record id="task_phase_nov_2025_closing" model="project.task">
+      <field name="name">Phase: November 2025 Closing</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="date_deadline">2025-12-05</field>
+      <field name="sequence">10</field>
+      <field name="is_phase" eval="True"/>
+    </record>
+
+    <record id="task_nov25_gl_recon" model="project.task">
+      <field name="name">Nov 2025 – GL &amp; Sub-ledger Reconciliation</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_nov_2025_closing"/>
+      <field name="date_deadline">2025-11-30</field>
+      <field name="sequence">11</field>
+    </record>
+
+    <record id="task_nov25_accruals" model="project.task">
+      <field name="name">Nov 2025 – Accruals &amp; Provisions Posting</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_nov_2025_closing"/>
+      <field name="date_deadline">2025-12-02</field>
+      <field name="sequence">12</field>
+    </record>
+
+    <record id="task_nov25_wip_revrec" model="project.task">
+      <field name="name">Nov 2025 – WIP &amp; Revenue Recognition</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_nov_2025_closing"/>
+      <field name="date_deadline">2025-12-03</field>
+      <field name="sequence">13</field>
+    </record>
+
+    <record id="task_nov25_tb_signoff" model="project.task">
+      <field name="name">Nov 2025 – Trial Balance Review &amp; Sign-off</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_nov_2025_closing"/>
+      <field name="date_deadline">2025-12-04</field>
+      <field name="sequence">14</field>
+    </record>
+
+    <record id="task_nov25_mis_reporting" model="project.task">
+      <field name="name">Nov 2025 – Management Reporting Pack</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_nov_2025_closing"/>
+      <field name="date_deadline">2025-12-05</field>
+      <field name="sequence">15</field>
+    </record>
+
+    <!-- =========================================================
+         PHASE: DECEMBER 2025 & YEAR-END CLOSING
+         ========================================================= -->
+    <record id="task_phase_dec_2025_year_end" model="project.task">
+      <field name="name">Phase: December 2025 &amp; Year-End Closing</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="date_deadline">2026-01-15</field>
+      <field name="sequence">20</field>
+      <field name="is_phase" eval="True"/>
+    </record>
+
+    <record id="task_dec25_preclose_recon" model="project.task">
+      <field name="name">Dec 2025 – Pre-close Reconciliations</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_dec_2025_year_end"/>
+      <field name="date_deadline">2025-12-29</field>
+      <field name="sequence">21</field>
+    </record>
+
+    <record id="task_dec25_accruals_cutoff" model="project.task">
+      <field name="name">Dec 2025 – Final Accruals &amp; Cut-offs</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_dec_2025_year_end"/>
+      <field name="date_deadline">2026-01-05</field>
+      <field name="sequence">22</field>
+    </record>
+
+    <record id="task_dec25_year_end_adj" model="project.task">
+      <field name="name">Dec 2025 – Year-End Adjustments &amp; Provisions</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_dec_2025_year_end"/>
+      <field name="date_deadline">2026-01-08</field>
+      <field name="sequence">23</field>
+    </record>
+
+    <record id="task_dec25_audit_pack" model="project.task">
+      <field name="name">Dec 2025 – Audit Pack &amp; Schedules</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_dec_2025_year_end"/>
+      <field name="date_deadline">2026-01-12</field>
+      <field name="sequence">24</field>
+    </record>
+
+    <!-- =========================================================
+         PHASE: TAX COMPLIANCE – NOV & DEC 2025
+         ========================================================= -->
+    <record id="task_phase_tax_nov_dec_2025" model="project.task">
+      <field name="name">Phase: Tax Compliance – Nov &amp; Dec 2025</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="date_deadline">2026-01-20</field>
+      <field name="sequence">30</field>
+      <field name="is_phase" eval="True"/>
+    </record>
+
+    <record id="task_tax_nov25_payroll_withholding" model="project.task">
+      <field name="name">Tax – Nov 2025 1601-C &amp; 0619-E Filing</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_tax_nov_dec_2025"/>
+      <field name="date_deadline">2025-12-10</field>
+      <field name="sequence">31</field>
+    </record>
+
+    <record id="task_tax_nov25_vat_2550m" model="project.task">
+      <field name="name">Tax – Nov 2025 VAT 2550M Filing</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_tax_nov_dec_2025"/>
+      <field name="date_deadline">2025-12-20</field>
+      <field name="sequence">32</field>
+    </record>
+
+    <record id="task_tax_dec25_payroll_withholding" model="project.task">
+      <field name="name">Tax – Dec 2025 1601-C &amp; 0619-E Filing</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_tax_nov_dec_2025"/>
+      <field name="date_deadline">2026-01-10</field>
+      <field name="sequence">33</field>
+    </record>
+
+    <record id="task_tax_dec25_vat_2550m" model="project.task">
+      <field name="name">Tax – Dec 2025 VAT 2550M &amp; Annual Reconciliations</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_tax_nov_dec_2025"/>
+      <field name="date_deadline">2026-01-20</field>
+      <field name="sequence">34</field>
+    </record>
+
+    <!-- =========================================================
+         PHASE: 2026 MONTHLY CLOSING CYCLE
+         ========================================================= -->
+    <record id="task_phase_2026_cycle" model="project.task">
+      <field name="name">Phase: 2026 Monthly Closing &amp; Tax Cycle</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="date_deadline">2026-12-31</field>
+      <field name="sequence">40</field>
+      <field name="is_phase" eval="True"/>
+    </record>
+
+    <!-- 2026 Monthly Milestones -->
+    <record id="task_milestone_jan_2026_closed" model="project.task">
+      <field name="name">January 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-02-05</field>
+      <field name="sequence">41</field>
+    </record>
+
+    <record id="task_milestone_feb_2026_closed" model="project.task">
+      <field name="name">February 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-03-05</field>
+      <field name="sequence">42</field>
+    </record>
+
+    <record id="task_milestone_mar_2026_closed" model="project.task">
+      <field name="name">March 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-04-05</field>
+      <field name="sequence">43</field>
+    </record>
+
+    <record id="task_milestone_apr_2026_closed" model="project.task">
+      <field name="name">April 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-05-05</field>
+      <field name="sequence">44</field>
+    </record>
+
+    <record id="task_milestone_may_2026_closed" model="project.task">
+      <field name="name">May 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-06-05</field>
+      <field name="sequence">45</field>
+    </record>
+
+    <record id="task_milestone_jun_2026_closed" model="project.task">
+      <field name="name">June 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-07-05</field>
+      <field name="sequence">46</field>
+    </record>
+
+    <record id="task_milestone_jul_2026_closed" model="project.task">
+      <field name="name">July 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-08-05</field>
+      <field name="sequence">47</field>
+    </record>
+
+    <record id="task_milestone_aug_2026_closed" model="project.task">
+      <field name="name">August 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-09-05</field>
+      <field name="sequence">48</field>
+    </record>
+
+    <record id="task_milestone_sep_2026_closed" model="project.task">
+      <field name="name">September 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-10-05</field>
+      <field name="sequence">49</field>
+    </record>
+
+    <record id="task_milestone_oct_2026_closed" model="project.task">
+      <field name="name">October 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-11-05</field>
+      <field name="sequence">50</field>
+    </record>
+
+    <record id="task_milestone_nov_2026_closed" model="project.task">
+      <field name="name">November 2026 Books Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2026-12-05</field>
+      <field name="sequence">51</field>
+    </record>
+
+    <record id="task_milestone_dec_2026_closed" model="project.task">
+      <field name="name">December 2026 Books &amp; FY 2026 Closed</field>
+      <field name="project_id" ref="project_finance_ppm_2025_2026"/>
+      <field name="parent_id" ref="task_phase_2026_cycle"/>
+      <field name="date_deadline">2027-01-15</field>
+      <field name="sequence">52</field>
+    </record>
+
+  </data>
+</odoo>
