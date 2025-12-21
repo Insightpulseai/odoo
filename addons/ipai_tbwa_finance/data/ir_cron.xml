@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Daily overdue notification -->
+    <record id="cron_overdue_notifications" model="ir.cron">
+        <field name="name">TBWA Finance: Send Overdue Notifications</field>
+        <field name="model_id" ref="model_finance_task"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_send_overdue_notifications()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+        <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=8, minute=0, second=0)"/>
+    </record>
+</odoo>

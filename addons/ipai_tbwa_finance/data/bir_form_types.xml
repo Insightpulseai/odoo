@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Monthly BIR Forms -->
+    <record id="tmpl_bir_2550m" model="finance.task.template">
+        <field name="name">BIR 2550M - Monthly VAT Declaration</field>
+        <field name="sequence">100</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">2550M</field><field name="frequency">monthly</field>
+        <field name="filing_day_offset">20</field>
+        <field name="prep_day_offset">15</field><field name="review_day_offset">17</field><field name="approve_day_offset">19</field>
+    </record>
+    <record id="tmpl_bir_1601c" model="finance.task.template">
+        <field name="name">BIR 1601-C - Monthly Compensation WHT</field>
+        <field name="sequence">101</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">1601C</field><field name="frequency">monthly</field>
+        <field name="filing_day_offset">10</field>
+        <field name="prep_day_offset">5</field><field name="review_day_offset">7</field><field name="approve_day_offset">9</field>
+    </record>
+    <record id="tmpl_bir_1601e" model="finance.task.template">
+        <field name="name">BIR 1601-E - Monthly Expanded WHT</field>
+        <field name="sequence">102</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">1601E</field><field name="frequency">monthly</field>
+        <field name="filing_day_offset">10</field>
+        <field name="prep_day_offset">5</field><field name="review_day_offset">7</field><field name="approve_day_offset">9</field>
+    </record>
+    <record id="tmpl_bir_2551m" model="finance.task.template">
+        <field name="name">BIR 2551M - Monthly Percentage Tax</field>
+        <field name="sequence">103</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">2551M</field><field name="frequency">monthly</field>
+        <field name="filing_day_offset">20</field>
+        <field name="prep_day_offset">15</field><field name="review_day_offset">17</field><field name="approve_day_offset">19</field>
+    </record>
+
+    <!-- Quarterly BIR Forms -->
+    <record id="tmpl_bir_2550q" model="finance.task.template">
+        <field name="name">BIR 2550Q - Quarterly VAT Return</field>
+        <field name="sequence">110</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">2550Q</field><field name="frequency">quarterly</field>
+        <field name="filing_day_offset">25</field>
+        <field name="prep_day_offset">18</field><field name="review_day_offset">22</field><field name="approve_day_offset">24</field>
+    </record>
+
+    <!-- Annual BIR Forms -->
+    <record id="tmpl_bir_1604cf" model="finance.task.template">
+        <field name="name">BIR 1604-CF - Annual Alphalist (Compensation)</field>
+        <field name="sequence">120</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">1604CF</field><field name="frequency">annual</field>
+        <field name="filing_day_offset">31</field>
+        <field name="prep_day_offset">20</field><field name="review_day_offset">25</field><field name="approve_day_offset">30</field>
+    </record>
+    <record id="tmpl_bir_1604e" model="finance.task.template">
+        <field name="name">BIR 1604-E - Annual Alphalist (Expanded)</field>
+        <field name="sequence">121</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">1604E</field><field name="frequency">annual</field>
+        <field name="filing_day_offset">60</field>
+        <field name="prep_day_offset">45</field><field name="review_day_offset">55</field><field name="approve_day_offset">58</field>
+    </record>
+    <record id="tmpl_bir_1702" model="finance.task.template">
+        <field name="name">BIR 1702 - Annual Corporate Income Tax</field>
+        <field name="sequence">122</field><field name="task_type">bir_filing</field>
+        <field name="bir_form_type">1702</field><field name="frequency">annual</field>
+        <field name="filing_day_offset">105</field>
+        <field name="prep_day_offset">90</field><field name="review_day_offset">100</field><field name="approve_day_offset">103</field>
+    </record>
+</odoo>
