@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Automation Rule: Email Reminder 2 Days Before Deadline -->
+    <record id="automation_deadline_reminder" model="base.automation">
+        <field name="name">Deadline Reminder (2 Days Before)</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="state">code</field>
+        <field name="trigger">on_time</field>
+        <field name="trg_date_id" ref="project.field_project_task__date_deadline"/>
+        <field name="trg_date_range">-2</field>
+        <field name="trg_date_range_type">day</field>
+        <field name="filter_domain">[('x_is_phase', '=', False), ('date_deadline', '!=', False)]</field>
+        <field name="code">
+# Send email reminder using mail template
+template = env.ref('project.mail_template_task_rating')
+for record in records:
+    if record.user_ids:
+        record.message_post_with_template(
+            template.id,
+            composition_mode='comment',
+            email_layout_xmlid='mail.mail_notification_light',
+            subject=f'Reminder: {record.name} due in 2 days',
+        )
+        </field>
+    </record>
+</odoo>

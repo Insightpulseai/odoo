@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Project: Month-End Closing & Tax Filing 2025 -->
+    <record id="project_month_end_closing_2025" model="project.project">
+        <field name="name">Month-End Closing &amp; Tax Filing 2025</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Phase 1: Payroll & Personnel -->
+    <record id="phase_payroll_personnel" model="project.task">
+        <field name="name">Payroll &amp; Personnel</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="x_is_phase" eval="True"/>
+        <field name="sequence">10</field>
+    </record>
+
+    <!-- Phase 2: Tax & Provisions -->
+    <record id="phase_tax_provisions" model="project.task">
+        <field name="name">Tax &amp; Provisions</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="x_is_phase" eval="True"/>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Task 1: Process Payroll (Jan 2025) -->
+    <record id="task_process_payroll_jan" model="project.task">
+        <field name="name">Process Payroll (Jan 2025)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="parent_id" ref="phase_payroll_personnel"/>
+        <field name="date_deadline" eval="(DateTime.now() + timedelta(days=5)).strftime('%Y-%m-%d')"/>
+        <field name="x_is_phase" eval="False"/>
+    </record>
+
+    <!-- Task 2: Compute WHT (Jan 2025) -->
+    <record id="task_compute_wht_jan" model="project.task">
+        <field name="name">Compute WHT (Jan 2025)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="parent_id" ref="phase_tax_provisions"/>
+        <field name="date_deadline" eval="(DateTime.now() + timedelta(days=8)).strftime('%Y-%m-%d')"/>
+        <field name="depend_on_ids" eval="[(4, ref('task_process_payroll_jan'))]"/>
+        <field name="x_is_phase" eval="False"/>
+    </record>
+
+    <!-- Task 3: VAT Computation (Jan 2025) -->
+    <record id="task_vat_computation_jan" model="project.task">
+        <field name="name">VAT Computation (Jan 2025)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="parent_id" ref="phase_tax_provisions"/>
+        <field name="date_deadline" eval="(DateTime.now() + timedelta(days=10)).strftime('%Y-%m-%d')"/>
+        <field name="depend_on_ids" eval="[(4, ref('task_compute_wht_jan'))]"/>
+        <field name="x_is_phase" eval="False"/>
+    </record>
+
+    <!-- Task 4: Provision Review (Jan 2025) -->
+    <record id="task_provision_review_jan" model="project.task">
+        <field name="name">Provision Review (Jan 2025)</field>
+        <field name="project_id" ref="project_month_end_closing_2025"/>
+        <field name="parent_id" ref="phase_tax_provisions"/>
+        <field name="date_deadline" eval="(DateTime.now() + timedelta(days=12)).strftime('%Y-%m-%d')"/>
+        <field name="depend_on_ids" eval="[(4, ref('task_vat_computation_jan'))]"/>
+        <field name="x_is_phase" eval="False"/>
+    </record>
+</odoo>

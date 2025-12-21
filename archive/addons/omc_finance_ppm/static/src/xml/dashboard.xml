@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="omc_finance_ppm.Dashboard">
+        <div class="o_action_manager">
+            <div class="container-fluid py-3">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-primary">Month-End Closing Dashboard (Clarity PPM)</h2>
+                    <button class="btn btn-primary" t-on-click="loadData">
+                        <i class="fa fa-refresh"/> Refresh Data
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-primary text-white">
+                                <b>Logical Framework Compliance (Goal → IM1 / IM2)</b>
+                            </div>
+                            <div class="card-body">
+                                <div id="echarts_logframe" style="width: 100%; height: 450px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card shadow-sm">
+                            <div class="card-header">
+                                <b>Phase Progress &amp; To-Do Completion</b>
+                            </div>
+                            <div class="card-body">
+                                <div id="echarts_main" style="width: 100%; height: 400px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
