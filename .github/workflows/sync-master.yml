@@ -1,0 +1,257 @@
+# Master Sync Workflow
+# Automatically syncs between spec, schema, code, and docs
+
+name: Bidirectional Sync
+
+on:
+  push:
+    branches:
+      - main
+      - "claude/**"
+    paths:
+      - "spec/**/*.md"
+      - "supabase/migrations/*.sql"
+      - "apps/control-room/src/**/*.ts"
+      - "docs/**/*.md"
+      - "prisma/schema.prisma"
+
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      sync_type:
+        description: "Type of sync to run"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - spec-to-schema
+          - schema-to-docs
+          - docs-to-kb
+          - tree-sitemap
+
+jobs:
+  # ==========================================================================
+  # DETECT CHANGES
+  # ==========================================================================
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      spec_changed: ${{ steps.changes.outputs.spec }}
+      schema_changed: ${{ steps.changes.outputs.schema }}
+      code_changed: ${{ steps.changes.outputs.code }}
+      docs_changed: ${{ steps.changes.outputs.docs }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            spec:
+              - 'spec/**/*.md'
+            schema:
+              - 'supabase/migrations/*.sql'
+              - 'prisma/schema.prisma'
+            code:
+              - 'apps/control-room/src/**/*.ts'
+            docs:
+              - 'docs/**/*.md'
+
+  # ==========================================================================
+  # SPEC → SCHEMA SYNC
+  # ==========================================================================
+  sync-spec-to-schema:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.spec_changed == 'true' || github.event.inputs.sync_type == 'spec-to-schema' || github.event.inputs.sync_type == 'all'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run spec-to-prisma sync
+        run: node scripts/sync/spec-to-prisma.js
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
+        continue-on-error: true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: prisma-schema
+          path: prisma/schema.prisma
+
+  # ==========================================================================
+  # SCHEMA → DOCS SYNC
+  # ==========================================================================
+  sync-schema-to-docs:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.schema_changed == 'true' || github.event.inputs.sync_type == 'schema-to-docs' || github.event.inputs.sync_type == 'all'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run schema-to-openapi sync
+        run: node scripts/sync/schema-to-openapi.js
+
+      - name: Run schema-to-docs sync
+        run: node scripts/sync/schema-to-docs.js
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-docs
+          path: |
+            docs/api/openapi.yaml
+            docs/data-dictionary.md
+
+  # ==========================================================================
+  # DOCS → KB SYNC
+  # ==========================================================================
+  sync-docs-to-kb:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.docs_changed == 'true' || github.event.inputs.sync_type == 'docs-to-kb' || github.event.inputs.sync_type == 'all'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Sync docs to Supabase KB
+        run: node scripts/sync/docs-to-kb.js
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+
+  # ==========================================================================
+  # TREE & SITEMAP GENERATION
+  # ==========================================================================
+  sync-tree-sitemap:
+    needs: detect-changes
+    if: github.event.inputs.sync_type == 'tree-sitemap' || github.event.inputs.sync_type == 'all' || github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate TREE.md
+        run: node scripts/sync/generate-tree.js
+
+      - name: Generate SITEMAP.md
+        run: node scripts/sync/generate-sitemap.js
+
+      - name: Check for changes
+        id: check
+        run: |
+          git diff --quiet TREE.md SITEMAP.md || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit changes
+        if: steps.check.outputs.changed == 'true' && github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add TREE.md SITEMAP.md
+          git commit -m "docs: auto-update SITEMAP.md and TREE.md [skip ci]"
+          git push
+
+  # ==========================================================================
+  # COMMIT GENERATED FILES
+  # ==========================================================================
+  commit-generated:
+    needs:
+      - sync-spec-to-schema
+      - sync-schema-to-docs
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download prisma artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: prisma-schema
+          path: prisma/
+        continue-on-error: true
+
+      - name: Download docs artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-docs
+          path: docs/
+        continue-on-error: true
+
+      - name: Check for changes
+        id: check
+        run: |
+          git diff --quiet || echo "changed=true" >> $GITHUB_OUTPUT
+
+      - name: Commit generated files
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: sync generated files [skip ci]"
+          git push
+
+  # ==========================================================================
+  # NOTIFY ON SYNC
+  # ==========================================================================
+  notify:
+    needs:
+      - sync-spec-to-schema
+      - sync-schema-to-docs
+      - sync-docs-to-kb
+      - sync-tree-sitemap
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify n8n webhook
+        if: github.event_name == 'push'
+        run: |
+          curl -X POST "${{ secrets.N8N_WEBHOOK_URL }}/sync-complete" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event": "sync_complete",
+              "ref": "${{ github.ref }}",
+              "sha": "${{ github.sha }}",
+              "actor": "${{ github.actor }}",
+              "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+            }' || true
