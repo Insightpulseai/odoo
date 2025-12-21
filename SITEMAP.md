@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd32aa1a05901efd4d572fa2fd45197836aad7fd
+> Commit: 12d23b251dc9749f58d11c098b5a2a7897ff0b07
 
 ## 📚 Documentation
 
@@ -98,6 +98,8 @@
 | [Finance Controller Dashboard - Implementation Summary](archive/addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_controller_dashboard |
 | [IPAI Intelligent Document Processing (IDP)](archive/addons/ipai_idp/README.md) | archive/addons/ipai_idp |
 | [IPAI Expense OCR (CE)](archive/addons/ipai_ocr_expense/README.md) | archive/addons/ipai_ocr_expense |
+| [omc_finance_ppm Deployment Strategy](archive/addons/omc_finance_ppm/DEPLOYMENT_STRATEGY.md) | archive/addons/omc_finance_ppm |
+| [Finance PPM Seed Data Documentation](archive/addons/omc_finance_ppm/data/README.md) | archive/addons/omc_finance_ppm/data |
 | [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [Flutter Receipt OCR Module - Deployment Guide](clients/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | clients/flutter_receipt_ocr |
@@ -189,6 +191,7 @@
 | [Odoo CE/OCA CI Guardian](docs/deployment/OCA_CI_GUARDIAN.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
+| [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md) | docs/odoo-18-handbook |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/README.md) | docs/odoo-18-handbook |
 | [Finance & Accounting Overview – InsightPulseAI Edition](docs/odoo-18-handbook/pages/01-finance-accounting.md) | docs/odoo-18-handbook/pages |
@@ -288,6 +291,10 @@
 | [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Task Checklist](spec/odoo-apps-inventory/tasks.md) | spec/odoo-apps-inventory |
+| [Constitution — Parallel Control Planes](spec/parallel-control-planes/constitution.md) | spec/parallel-control-planes |
+| [Implementation Plan — Parallel Control Planes](spec/parallel-control-planes/plan.md) | spec/parallel-control-planes |
+| [Product Requirements — Parallel Control Planes](spec/parallel-control-planes/prd.md) | spec/parallel-control-planes |
+| [Tasks — Parallel Control Planes](spec/parallel-control-planes/tasks.md) | spec/parallel-control-planes |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
 | [Pulser Master Control — Constitution](spec/pulser-master-control/constitution.md) | spec/pulser-master-control |
@@ -332,6 +339,7 @@
 | [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ | Custom branding for Odoo CE login and backend |
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai/ipai_clarity_ppm_parity) | ✅ |  |
+| [ipai_close_orchestration](./addons/ipai/ipai_close_orchestration) | ✅ |  |
 | [ipai_custom_routes](./addons/ipai/ipai_custom_routes) | ✅ | Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.) |
 | [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ | Set default landing page to Apps Dashboard after login |
 | [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
@@ -347,15 +355,16 @@
 | [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
+| [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm](./addons/ipai/ipai_ppm) | ✅ |  |
+| [ipai_ppm_a1](./addons/ipai/ipai_ppm_a1) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
-| [ipai_master_control](./addons/ipai_master_control) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_ppm_a1](./addons/ipai_ppm_a1) | ✅ |  |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
