@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9b1d3131cce8103aab40cb5d24b34fcd43fb587c
+> Commit: dd32aa1a05901efd4d572fa2fd45197836aad7fd
 
 ```
 .
@@ -44,6 +44,7 @@
 │   │   ├── control-room-ci.yml
 │   │   ├── databricks-dab-ci.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
+│   │   ├── diagrams-qa.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── health-check.yml
 │   │   ├── infra-validate.yml
@@ -462,6 +463,11 @@
 │   │   ├── postcss.config.js
 │   │   ├── tailwind.config.js
 │   │   └── tsconfig.json
+│   ├── control-room-api
+│   │   ├── .env.example
+│   │   ├── Dockerfile
+│   │   ├── app.py
+│   │   └── requirements.txt
 │   ├── do-advisor-agent
 │   │   ├── config
 │   │   │   └── mcp-config.json
@@ -1211,8 +1217,23 @@
 │       ├── README.md
 │       └── pyproject.toml
 ├── skills
+│   ├── visio-drawio-export
+│   │   ├── docker
+│   │   │   ├── Dockerfile
+│   │   │   ├── entrypoint.sh
+│   │   │   └── package.json
+│   │   ├── src
+│   │   │   ├── convert.js
+│   │   │   ├── diff.js
+│   │   │   ├── export.js
+│   │   │   ├── index.js
+│   │   │   ├── parse.js
+│   │   │   └── validate.js
+│   │   ├── README.md
+│   │   └── skill.yaml
 │   ├── architecture_diagrams.skill.json
-│   └── superset_mcp.skill.json
+│   ├── superset_mcp.skill.json
+│   └── visio_drawio_export.skill.json
 ├── spec
 │   ├── bir-tax-compliance
 │   │   ├── constitution.md
@@ -1225,6 +1246,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── continue-plus
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── control-room-api
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -1339,6 +1365,7 @@
 │   │   ├── 20240101000012_sync_events_schema.sql
 │   │   ├── 20241220000001_master_control.sql
 │   │   ├── 20241220000002_master_data.sql
+│   │   ├── 20241221000001_control_room_api.sql
 │   │   ├── 20251123_saas_feature_matrix.sql
 │   │   ├── 20251128_semantic_query_layer.sql
 │   │   ├── 202512071100_1000_CORE_SCHEMAS_AND_TENANCY.sql
@@ -1569,15 +1596,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-494 directories, 1070 files
+499 directories, 1092 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 558 |
-| Files | 1612 |
-| Python files | 445 |
+| Directories | 563 |
+| Files | 1634 |
+| Python files | 446 |
 | XML files | 231 |
-| Markdown files | 309 |
+| Markdown files | 314 |

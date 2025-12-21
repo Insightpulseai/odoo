@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9b1d3131cce8103aab40cb5d24b34fcd43fb587c
+> Commit: dd32aa1a05901efd4d572fa2fd45197836aad7fd
 
 ## 📚 Documentation
 
@@ -229,6 +229,7 @@
 | [Scripts Directory](scripts/README.md) | scripts |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
+| [Visio-DrawIO Export Skill](skills/visio-drawio-export/README.md) | skills/visio-drawio-export |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
 | [BIR Tax Compliance - Constitution](spec/bir-tax-compliance/constitution.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Implementation Plan](spec/bir-tax-compliance/plan.md) | spec/bir-tax-compliance |
@@ -243,6 +244,10 @@
 | [Continue+ Implementation Plan](spec/continue-plus/plan.md) | spec/continue-plus |
 | [spec/continue-plus/prd.md](spec/continue-plus/prd.md) | spec/continue-plus |
 | [Continue+ Tasks](spec/continue-plus/tasks.md) | spec/continue-plus |
+| [Control Room API — Constitution](spec/control-room-api/constitution.md) | spec/control-room-api |
+| [Control Room API — Implementation Plan](spec/control-room-api/plan.md) | spec/control-room-api |
+| [Control Room API — Product Requirements Document](spec/control-room-api/prd.md) | spec/control-room-api |
+| [Control Room API — Task Checklist](spec/control-room-api/tasks.md) | spec/control-room-api |
 | [Constitution: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/constitution.md) | spec/docs-platform-sapgrade |
 | [Implementation Plan: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/plan.md) | spec/docs-platform-sapgrade |
 | [PRD: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/prd.md) | spec/docs-platform-sapgrade |
