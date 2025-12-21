@@ -1,0 +1,213 @@
+# InsightPulse Bidirectional Sync Configuration
+# Source-of-truth hierarchy and sync automation rules
+
+version: "1.0"
+project: "odoo-ce"
+
+# =============================================================================
+# SOURCE OF TRUTH HIERARCHY
+# =============================================================================
+# Each domain has a designated source; changes flow FROM source TO targets
+hierarchy:
+  spec:
+    source: "spec/**/*.md"
+    targets:
+      - prisma_schema
+      - supabase_migrations
+      - typescript_types
+    description: "Spec bundles are authoritative for feature definitions"
+
+  schema:
+    source: "supabase/migrations/*.sql"
+    targets:
+      - openapi_spec
+      - typescript_types
+      - docs/data-dictionary.md
+    description: "SQL migrations are authoritative for database structure"
+
+  code:
+    source: "apps/control-room/src/**/*.ts"
+    targets:
+      - docs/api-reference.md
+    description: "TypeScript code is authoritative for API behavior"
+
+  docs:
+    source: "docs/**/*.md"
+    targets:
+      - kb_artifacts
+    description: "Markdown docs sync to Supabase KB"
+
+# =============================================================================
+# SYNC RULES
+# =============================================================================
+sync_rules:
+  # Spec → Prisma Schema
+  spec_to_prisma:
+    trigger: "spec/**/prd.md"
+    action: "scripts/sync/spec-to-prisma.js"
+    output: "prisma/schema.prisma"
+    validation: "npx prisma validate"
+
+  # SQL Migrations → OpenAPI
+  schema_to_openapi:
+    trigger: "supabase/migrations/*.sql"
+    action: "scripts/sync/schema-to-openapi.js"
+    output: "docs/api/openapi.yaml"
+    validation: "npx @redocly/cli lint docs/api/openapi.yaml"
+
+  # Schema → Data Dictionary
+  schema_to_docs:
+    trigger: "supabase/migrations/*.sql"
+    action: "scripts/sync/schema-to-docs.js"
+    output: "docs/data-dictionary.md"
+
+  # TypeScript → API Docs
+  code_to_api_docs:
+    trigger: "apps/control-room/src/app/api/**/*.ts"
+    action: "scripts/sync/code-to-api-docs.js"
+    output: "docs/api-reference.md"
+
+  # Docs → KB Artifacts
+  docs_to_kb:
+    trigger: "docs/**/*.md"
+    action: "supabase/functions/sync-kb-to-schema"
+    target: "supabase.kb_artifacts"
+
+  # Tree Structure → TREE.md
+  tree_sync:
+    trigger: "**/*"
+    exclude:
+      - "node_modules/**"
+      - ".git/**"
+      - "*.log"
+      - ".next/**"
+    action: "scripts/sync/generate-tree.js"
+    output: "TREE.md"
+
+  # Sitemap Generation
+  sitemap_sync:
+    trigger: "docs/**/*.md"
+    action: "scripts/sync/generate-sitemap.js"
+    output: "SITEMAP.md"
+
+# =============================================================================
+# CONFLICT RESOLUTION
+# =============================================================================
+conflict_resolution:
+  strategy: "source-wins"
+
+  rules:
+    - pattern: "*.sql"
+      resolution: "manual-review"
+      notify: ["@data-team"]
+
+    - pattern: "spec/**/*.md"
+      resolution: "spec-wins"
+
+    - pattern: "*.generated.*"
+      resolution: "regenerate"
+
+# =============================================================================
+# VALIDATION GATES
+# =============================================================================
+validation:
+  pre_sync:
+    - name: "Schema Validation"
+      command: "npx prisma validate"
+      required: true
+
+    - name: "TypeScript Check"
+      command: "npx tsc --noEmit"
+      required: true
+
+    - name: "Lint Check"
+      command: "npm run lint"
+      required: false
+
+  post_sync:
+    - name: "OpenAPI Validation"
+      command: "npx @redocly/cli lint docs/api/openapi.yaml"
+      required: true
+
+    - name: "Markdown Links"
+      command: "npx markdown-link-check docs/**/*.md"
+      required: false
+
+# =============================================================================
+# NOTIFICATIONS
+# =============================================================================
+notifications:
+  slack:
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channels:
+      sync_success: "#dev-notifications"
+      sync_failure: "#dev-alerts"
+      conflict: "#dev-review"
+
+  github:
+    create_issues: true
+    labels:
+      - "sync"
+      - "automated"
+
+# =============================================================================
+# SUPABASE INTEGRATION
+# =============================================================================
+supabase:
+  project_id: "spdtwktxdalcfigzeqrz"
+
+  tables:
+    kb_artifacts:
+      sync_field: "content"
+      metadata_fields:
+        - "title"
+        - "kind"
+        - "tags"
+        - "personas"
+      updated_at: "updated_at"
+
+    data_assets:
+      sync_from: "supabase/migrations/*.sql"
+
+  realtime:
+    enabled: true
+    channels:
+      - "sync-events"
+      - "schema-changes"
+
+# =============================================================================
+# N8N WEBHOOKS
+# =============================================================================
+n8n:
+  base_url: "${N8N_BASE_URL}"
+
+  webhooks:
+    on_spec_change:
+      path: "/webhook/spec-changed"
+      method: "POST"
+
+    on_schema_change:
+      path: "/webhook/schema-changed"
+      method: "POST"
+
+    on_docs_change:
+      path: "/webhook/docs-changed"
+      method: "POST"
+
+# =============================================================================
+# LOCAL DEV WORKFLOW
+# =============================================================================
+local:
+  watch:
+    enabled: true
+    debounce_ms: 500
+
+  commands:
+    sync_all: "npm run sync:all"
+    sync_schema: "npm run sync:schema"
+    sync_docs: "npm run sync:docs"
+
+  hooks:
+    pre_commit:
+      - "npm run sync:tree"
+      - "npm run sync:sitemap"
