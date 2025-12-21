@@ -38,19 +38,7 @@ The system is designed to:
 |   `-- copilot-instructions.md
 |-- addons
 |   |-- ipai
-|   |-- ipai_cash_advance
-|   |-- ipai_ce_branding
-|   |-- ipai_clarity_ppm_parity
-|   |-- ipai_dev_studio_base
-|   |-- ipai_finance_ppm
-|   |-- ipai_industry_accounting_firm
-|   |-- ipai_industry_marketing_agency
-|   |-- ipai_master_control
-|   |-- ipai_ppm_monthly_close
-|   |-- ipai_tbwa_branding_min
-|   |-- ipai_workspace_core
-|   |-- oca
-|   `-- omc_finance_ppm
+|   `-- oca
 |-- agents
 |   |-- capabilities
 |   |-- knowledge
@@ -113,7 +101,6 @@ The system is designed to:
 |-- deploy
 |   |-- k8s
 |   |-- nginx
-|   |-- odoo-industry
 |   |-- .env.production.template
 |   |-- README.md
 |   |-- docker-compose.prod.v0.10.0.yml
@@ -157,7 +144,7 @@ The system is designed to:
 |   |-- db
 |   |-- deployment
 |   |-- diagrams
-|   |-- incidents
+|   |-- finance-ppm
 |   |-- odoo-18-handbook
 |   |-- 003-odoo-ce-custom-image-spec.md
 |   |-- AGENTIC_CLOUD_PRD.md
@@ -194,7 +181,6 @@ The system is designed to:
 |   |-- MATTERMOST_CHATOPS_DEPLOYMENT.md
 |   |-- MCP_IMPLEMENTATION_STATUS.md
 |   |-- MIXED_CONTENT_FIX.md
-|   |-- MODULE_RISK_ASSESSMENT.md
 |   |-- MVP_GO_LIVE_CHECKLIST.md
 |   |-- N8N_CREDENTIALS_BOOTSTRAP.md
 |   |-- OCA_MIGRATION.md
@@ -207,7 +193,6 @@ The system is designed to:
 |   |-- ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
 |   |-- ODOO_IMAGE_SPEC.md
 |   |-- ODOO_MODULE_DEPLOYMENT.md
-|   |-- ODOO_PRODUCTION_RESEARCH.md
 |   |-- OFFLINE_TARBALL_DEPLOYMENT.md
 |   |-- PRD_ipai_ppm_portfolio.md
 |   |-- PROD_READINESS_GAPS.md
@@ -223,7 +208,6 @@ The system is designed to:
 |   |-- SUPERSET_PPM_ANALYTICS_GUIDE.md
 |   |-- TAGGING_STRATEGY.md
 |   |-- TESTING_ODOO_18.md
-|   |-- TROUBLESHOOTING_500_ERROR.md
 |   |-- WBS_LOGFRAME_MAPPING.md
 |   |-- branch-cleanup-analysis.md
 |   `-- v0.9.1_DEPLOYMENT_GUIDE.md
@@ -296,12 +280,6 @@ The system is designed to:
 |-- odoo
 |   |-- ODOO_INTEGRATION_MAP.md
 |   `-- ipai_finance_closing_seed.json
-|-- ops
-|   |-- BREAK_GLASS_RECOVERY.md
-|   |-- INCIDENT_RESPONSE_500_ERROR.md
-|   |-- POSTMORTEM_TEMPLATE.md
-|   |-- README.md
-|   `-- verify_prod.sh
 |-- out
 |   |-- concur_demo
 |   `-- concur_demo_odoo_map
@@ -324,7 +302,6 @@ The system is designed to:
 |   |-- ci_smoke_test.sh
 |   |-- cleanup-branches.sh
 |   |-- cleanup_duplicate_users.sql
-|   |-- cleanup_users_xmlrpc.py
 |   |-- convert_csv_to_xml.py
 |   |-- convert_seed_to_xml.py
 |   |-- create-release.sh
@@ -336,10 +313,8 @@ The system is designed to:
 |   |-- deployment-checklist.sh
 |   |-- enhanced_health_check.sh
 |   |-- erp_config_cli.sh
-|   |-- export_project_30.py
 |   |-- fix_home_manual.sql
 |   |-- fix_home_page.sql
-|   |-- fix_home_to_dashboard.py
 |   |-- full_deploy_sanity.sh
 |   |-- gen_repo_tree.sh
 |   |-- gen_repo_tree_fallback.sh
@@ -352,13 +327,13 @@ The system is designed to:
 |   |-- image_audit.sh
 |   |-- import_month_end_tasks.py
 |   |-- install-git-hooks.sh
-|   |-- install_default_home.py
 |   |-- install_ipai_finance_ppm.sh
 |   |-- install_module_xmlrpc.py
 |   |-- map_logframe.py
 |   |-- oca-sync.sh
 |   |-- oca-update.sh
 |   |-- odoo_mattermost_integration.py
+|   |-- odoo_smoke_close.sh
 |   |-- package_image_tarball.sh
 |   |-- parse_notion_tasks.py
 |   |-- pre_install_snapshot.sh
@@ -375,7 +350,6 @@ The system is designed to:
 |   |-- test_deploy_local.sh
 |   |-- update_diagram_manifest.py
 |   |-- validate_m1.sh
-|   |-- validate_manifest_deps.py
 |   |-- verify-https.sh
 |   |-- verify.sh
 |   |-- verify_backup.sh
@@ -388,6 +362,7 @@ The system is designed to:
 |   |-- docs-platform-sapgrade
 |   |-- ipai-control-center
 |   |-- knowledge-hub
+|   |-- parallel-control-planes
 |   |-- pulser-master-control
 |   |-- constitution.md
 |   |-- plan.md
@@ -440,7 +415,6 @@ The system is designed to:
 |   |-- n8n_enrichment_agent.json
 |   |-- n8n_ocr_expense_webhook.json
 |   `-- n8n_scout_sync_webhook.json
-|-- .Rhistory
 |-- .agentignore
 |-- .env.example
 |-- .env.production
@@ -470,7 +444,6 @@ The system is designed to:
 |-- FINANCE_PPM_DASHBOARD_GUIDE.md
 |-- FINANCE_PPM_IMPORT_GUIDE.md
 |-- IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
-|-- INFRASTRUCTURE_AUDIT_REPORT.md
 |-- INFRASTRUCTURE_PLAN.md
 |-- INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 |-- KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
@@ -490,7 +463,6 @@ The system is designed to:
 |-- RELEASE_v0.9.0.md
 |-- REPO_RESTRUCTURE_PLAN.md
 |-- SITEMAP.md
-|-- SKILLS.md
 |-- STRATEGIC_PPM_ANALYTICS_SUMMARY.md
 |-- TAG_LABEL_VOCABULARY.md
 |-- TBWA_IPAI_MODULE_STANDARD.md
@@ -505,7 +477,6 @@ The system is designed to:
 |-- deployment_readiness_assessment.md
 |-- docker-compose.mcp-local.yml
 |-- docker-compose.prod.yml
-|-- docker-compose.test.yml
 |-- docker-compose.yml
 |-- final_verification.sh
 |-- finance_calendar_2026.csv
@@ -539,7 +510,6 @@ The system is designed to:
 |-- plan.md
 |-- pnpm-workspace.yaml
 |-- ppm_dashboard_views.xml
-|-- project_30_export.json
 |-- query_memory.py
 |-- requirements.txt
 |-- spec.md
