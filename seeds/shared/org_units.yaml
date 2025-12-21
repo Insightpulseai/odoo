@@ -1,0 +1,122 @@
+# Shared Organization Units
+# Company and department structure
+
+organization:
+  - id: org_tbwa_ph
+    code: TBWA_PH
+    name: TBWA Philippines
+    legal_name: TBWA\Santiago Mangada Puno, Inc.
+    country: PH
+    currency: PHP
+    tin: null  # Populated in production
+    rdo_code: null  # Revenue District Office
+    address:
+      street: null
+      city: Makati
+      state: Metro Manila
+      zip: null
+      country: Philippines
+
+departments:
+  - id: dept_finance
+    org_id: org_tbwa_ph
+    code: FIN
+    name: Finance
+    manager_role: FD
+    teams:
+      - id: team_rim
+        code: RIM
+        name: Revenue & Inventory Management
+        lead_role: BOM
+
+      - id: team_compliance
+        code: COMPL
+        name: Tax Compliance
+        lead_role: BOM
+
+  - id: dept_hr
+    org_id: org_tbwa_ph
+    code: HR
+    name: Human Resources
+    manager_role: HR_DIR
+
+  - id: dept_it
+    org_id: org_tbwa_ph
+    code: IT
+    name: Information Technology
+    manager_role: IT_MGR
+
+  - id: dept_ops
+    org_id: org_tbwa_ph
+    code: OPS
+    name: Operations
+    manager_role: OPS_DIR
+
+# Cost centers (for task allocation)
+cost_centers:
+  - id: cc_finance_admin
+    code: "1000"
+    name: Finance Administration
+    department_id: dept_finance
+
+  - id: cc_tax_compliance
+    code: "1010"
+    name: Tax Compliance
+    department_id: dept_finance
+
+  - id: cc_treasury
+    code: "1020"
+    name: Treasury
+    department_id: dept_finance
+
+# Reporting hierarchy
+reporting_lines:
+  - subordinate: RIM
+    supervisor: BOM
+    backup: CKVC
+
+  - subordinate: BOM
+    supervisor: CKVC
+    backup: FD
+
+  - subordinate: CKVC
+    supervisor: FD
+    backup: null
+
+# Team assignments for workstreams
+workstream_assignments:
+  afc:
+    primary_team: team_rim
+    oversight: [BOM, CKVC]
+    approver: FD
+
+  stc:
+    primary_team: team_compliance
+    oversight: [BOM, CKVC]
+    approver: FD
+
+# Capacity planning (hours per period)
+capacity:
+  - role: RIM
+    hours_per_month: 160
+    afc_allocation: 0.6
+    stc_allocation: 0.3
+    other: 0.1
+
+  - role: BOM
+    hours_per_month: 160
+    afc_allocation: 0.4
+    stc_allocation: 0.3
+    other: 0.3
+
+  - role: CKVC
+    hours_per_month: 160
+    afc_allocation: 0.2
+    stc_allocation: 0.1
+    other: 0.7
+
+  - role: FD
+    hours_per_month: 160
+    afc_allocation: 0.1
+    stc_allocation: 0.1
+    other: 0.8
