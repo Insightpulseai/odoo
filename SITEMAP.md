@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 12d23b251dc9749f58d11c098b5a2a7897ff0b07
+> Commit: f225e54dadd1f574f9cadf55dc7227ac7c5a9a32
 
 ## 📚 Documentation
 
@@ -243,6 +243,9 @@
 | [Close Orchestration Module - Product Requirements Document](spec/close-orchestration/prd.md) | spec/close-orchestration |
 | [Close Orchestration Module - Task Checklist](spec/close-orchestration/tasks.md) | spec/close-orchestration |
 | [Odoo EE → CE/OCA SaaS Platform – Constitution](spec/constitution.md) | spec |
+| [Continue+ "All Green" Acceptance Criteria](spec/continue-plus/ALL_GREEN_CRITERIA.md) | spec/continue-plus |
+| [Continue.dev Implementation Evaluation Report](spec/continue-plus/EVALUATION_REPORT.md) | spec/continue-plus |
+| [Continue+ Runbook](spec/continue-plus/RUNBOOK.md) | spec/continue-plus |
 | [Continue+ Constitution](spec/continue-plus/constitution.md) | spec/continue-plus |
 | [Continue+ Implementation Plan](spec/continue-plus/plan.md) | spec/continue-plus |
 | [spec/continue-plus/prd.md](spec/continue-plus/prd.md) | spec/continue-plus |
