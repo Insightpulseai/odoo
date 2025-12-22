@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Search History Tree View -->
+    <record id="search_history_tree_view" model="ir.ui.view">
+        <field name="name">ipai.workos.search.history.tree</field>
+        <field name="model">ipai.workos.search.history</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="query"/>
+                <field name="result_count"/>
+                <field name="user_id"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Search History Action -->
+    <record id="action_workos_search_history" model="ir.actions.act_window">
+        <field name="name">Search History</field>
+        <field name="res_model">ipai.workos.search.history</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <!-- Add to menu -->
+    <menuitem id="menu_workos_search_history"
+              name="Search History"
+              parent="ipai_workos_core.menu_workos_config"
+              action="action_workos_search_history"
+              sequence="50"/>
+</odoo>

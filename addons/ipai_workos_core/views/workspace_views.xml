@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Workspace Tree View -->
+    <record id="workspace_tree_view" model="ir.ui.view">
+        <field name="name">ipai.workos.workspace.tree</field>
+        <field name="model">ipai.workos.workspace</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="owner_id"/>
+                <field name="space_count"/>
+                <field name="active" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Workspace Kanban View -->
+    <record id="workspace_kanban_view" model="ir.ui.view">
+        <field name="name">ipai.workos.workspace.kanban</field>
+        <field name="model">ipai.workos.workspace</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="color"/>
+                <field name="space_count"/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div class="d-flex flex-column p-2">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="me-2" t-esc="record.icon.value"/>
+                                <strong t-esc="record.name.value"/>
+                            </div>
+                            <div class="text-muted small">
+                                <span t-esc="record.space_count.value"/> spaces
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Workspace Form View -->
+    <record id="workspace_form_view" model="ir.ui.view">
+        <field name="name">ipai.workos.workspace.form</field>
+        <field name="model">ipai.workos.workspace</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_spaces" type="object"
+                                class="oe_stat_button" icon="fa-folder-open">
+                            <field name="space_count" widget="statinfo" string="Spaces"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Workspace Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="icon"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="owner_id"/>
+                        </group>
+                        <group>
+                            <field name="member_ids" widget="many2many_tags"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Workspace description..."/>
+                        </page>
+                        <page string="Spaces">
+                            <field name="space_ids" mode="kanban">
+                                <kanban>
+                                    <field name="name"/>
+                                    <field name="icon"/>
+                                    <field name="visibility"/>
+                                    <field name="page_count"/>
+                                    <templates>
+                                        <t t-name="kanban-card">
+                                            <div class="p-2">
+                                                <strong t-esc="record.name.value"/>
+                                                <div class="text-muted small">
+                                                    <span t-esc="record.page_count.value"/> pages
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workspace Action -->
+    <record id="action_workos_workspace" model="ir.actions.act_window">
+        <field name="name">Workspaces</field>
+        <field name="res_model">ipai.workos.workspace</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first workspace
+            </p>
+            <p>
+                Workspaces are top-level containers for organizing your content.
+                Create spaces within workspaces to further organize your pages.
+            </p>
+        </field>
+    </record>
+</odoo>

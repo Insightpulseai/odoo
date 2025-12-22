@@ -43,18 +43,106 @@ targets:
   - id: workos_notion
     name: Notion
     domains: [workos]
+    url: https://notion.so
     hero_flows:
-      - id: workos.pages.db
-        title: "Pages + database views + templates"
+      - id: workos.workspace.space.tree
+        title: "Workspace → space → page tree navigation"
+        priority: p0
+        description: |
+          Nested workspace hierarchy with expandable tree sidebar,
+          drag-drop page reordering, favorites, recent pages.
+      - id: workos.page.create.nest
+        title: "Create nested page"
+        priority: p0
+        description: |
+          Create a new page nested under an existing page.
+          Navigate to parent, click + or type /page, enter title.
+      - id: workos.page.move.archive
+        title: "Move and archive pages"
+        priority: p0
+        description: |
+          Move pages between spaces/parents, archive with restore.
+      - id: workos.blocks.editor.core
+        title: "Block editor with slash commands"
+        priority: p0
+        description: |
+          Add content blocks using / commands, drag to reorder,
+          inline editing, keyboard navigation.
+      - id: workos.blocks.types.basic
+        title: "Basic block types"
+        priority: p0
+        description: |
+          Paragraph, headings, lists, todo, toggle, divider, quote, callout.
+      - id: workos.db.create.properties
+        title: "Database with typed properties"
+        priority: p0
+        description: |
+          Create database table with typed columns (text, number, select, etc).
+      - id: workos.db.rows.inline_edit
+        title: "Database row inline editing"
+        priority: p0
+        description: |
+          Add and edit rows inline in table view.
+      - id: workos.db.property.types
+        title: "Property types"
+        priority: p0
+        description: |
+          Text, number, select, multi_select, date, checkbox, person, relation.
+      - id: workos.views.table
+        title: "Table view"
+        priority: p0
+        description: |
+          Spreadsheet-style table view with sorting and filtering.
+      - id: workos.views.kanban
+        title: "Kanban view"
+        priority: p0
+        description: |
+          Board view with drag-drop between columns.
+      - id: workos.views.calendar
+        title: "Calendar view"
+        priority: p0
+        description: |
+          Calendar view for date-based records.
+      - id: workos.collab.comments.page
+        title: "Page comments"
+        priority: p0
+        description: |
+          Comment threads on pages and blocks.
+      - id: workos.collab.mentions.notify
+        title: "Mentions and notifications"
+        priority: p0
+        description: |
+          @mention users with notifications via mail.
+      - id: workos.permissions.workspace_roles
+        title: "Workspace roles"
+        priority: p0
+        description: |
+          Admin, member, guest roles with permissions.
+      - id: workos.permissions.page_scopes
+        title: "Page-level permissions"
+        priority: p0
+        description: |
+          Per-page read/write/admin scopes.
+      - id: workos.search.global
+        title: "Global search"
+        priority: p0
+        description: |
+          Search across all pages, databases, and content.
+      - id: workos.templates.page_db
+        title: "Page and database templates"
         priority: p1
         description: |
-          Wiki-style pages with rich editing, database views
-          (table, board, gallery), templates and cloning.
-      - id: workos.team.spaces
-        title: "Team workspaces with permissions"
+          Create from templates, save page as template.
+      - id: workos.share.links
+        title: "Share links"
+        priority: p1
+        description: |
+          Generate shareable links with permissions.
+      - id: workos.export.markdown
+        title: "Export to Markdown"
         priority: p2
         description: |
-          Nested workspace hierarchy with granular permissions.
+          Export pages and databases to Markdown format.
 
   - id: assets_cheqroom
     name: Cheqroom
@@ -118,6 +206,18 @@ domains:
     name: Work Operating System
     odoo_core: [knowledge]
     oca_repos: [knowledge]
+    ipai_modules:
+      - ipai_workos_core
+      - ipai_workos_blocks
+      - ipai_workos_db
+      - ipai_workos_views
+      - ipai_workos_templates
+      - ipai_workos_collab
+      - ipai_workos_search
+      - ipai_workos_canvas
+      - ipai_workos_affine
+      - ipai_platform_permissions
+      - ipai_platform_audit
   assets:
     name: Asset Management
     odoo_core: [maintenance, stock]

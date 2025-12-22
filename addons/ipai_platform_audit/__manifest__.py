@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 {
     "name": "IPAI Platform - Audit Trail",
     "version": "18.0.1.0.0",
@@ -19,7 +20,7 @@ Features:
 This module enables compliance-grade audit logging for
 sensitive data and operations across all IPAI modules.
     """,
-    "author": "IPAI",
+    "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
     "depends": ["base", "mail"],

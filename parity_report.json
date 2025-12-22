@@ -1,0 +1,563 @@
+{
+  "rubric": {
+    "version": "1.0.0",
+    "description": "Parity scoring rubric for Work OS Notion Clone",
+    "weights": {
+      "workflow_fidelity": 20,
+      "ux_fidelity": 30,
+      "data_fidelity": 15,
+      "permission_fidelity": 20,
+      "reporting_search": 10,
+      "performance": 5
+    },
+    "capability_checks": {
+      "workos.workspace.space.tree": {
+        "module_exists": "ipai_workos_core",
+        "models": [
+          "ipai.workos.workspace",
+          "ipai.workos.space"
+        ],
+        "views": [
+          "workspace_tree_view",
+          "space_tree_view"
+        ],
+        "tests": [
+          "test_workspace_create",
+          "test_space_navigation"
+        ]
+      },
+      "workos.page.create.nest": {
+        "module_exists": "ipai_workos_core",
+        "models": [
+          "ipai.workos.page"
+        ],
+        "views": [
+          "page_form_view",
+          "page_tree_view"
+        ],
+        "tests": [
+          "test_page_create",
+          "test_page_nesting"
+        ]
+      },
+      "workos.page.move.archive": {
+        "module_exists": "ipai_workos_core",
+        "models": [
+          "ipai.workos.page"
+        ],
+        "fields": [
+          "active",
+          "parent_id"
+        ],
+        "tests": [
+          "test_page_move",
+          "test_page_archive"
+        ]
+      },
+      "workos.blocks.editor.core": {
+        "module_exists": "ipai_workos_blocks",
+        "models": [
+          "ipai.workos.block"
+        ],
+        "assets": [
+          "block_editor.js",
+          "block_editor.scss"
+        ],
+        "tests": [
+          "test_block_create",
+          "test_block_move",
+          "test_block_delete"
+        ]
+      },
+      "workos.blocks.types.basic": {
+        "module_exists": "ipai_workos_blocks",
+        "models": [
+          "ipai.workos.block"
+        ],
+        "selection_values": [
+          "paragraph",
+          "heading",
+          "bulleted_list",
+          "numbered_list",
+          "todo",
+          "toggle",
+          "divider",
+          "quote",
+          "callout"
+        ],
+        "tests": [
+          "test_block_types"
+        ]
+      },
+      "workos.db.create.properties": {
+        "module_exists": "ipai_workos_db",
+        "models": [
+          "ipai.workos.database",
+          "ipai.workos.property"
+        ],
+        "views": [
+          "database_form_view"
+        ],
+        "tests": [
+          "test_database_create",
+          "test_property_add"
+        ]
+      },
+      "workos.db.rows.inline_edit": {
+        "module_exists": "ipai_workos_db",
+        "models": [
+          "ipai.workos.row"
+        ],
+        "assets": [
+          "row_editor.js"
+        ],
+        "tests": [
+          "test_row_create",
+          "test_row_inline_edit"
+        ]
+      },
+      "workos.db.property.types": {
+        "module_exists": "ipai_workos_db",
+        "models": [
+          "ipai.workos.property"
+        ],
+        "selection_values": [
+          "text",
+          "number",
+          "select",
+          "multi_select",
+          "date",
+          "checkbox",
+          "person"
+        ],
+        "tests": [
+          "test_property_types"
+        ]
+      },
+      "workos.views.table": {
+        "module_exists": "ipai_workos_views",
+        "models": [
+          "ipai.workos.view"
+        ],
+        "views": [
+          "database_table_view"
+        ],
+        "tests": [
+          "test_table_view"
+        ]
+      },
+      "workos.views.kanban": {
+        "module_exists": "ipai_workos_views",
+        "models": [
+          "ipai.workos.view"
+        ],
+        "views": [
+          "database_kanban_view"
+        ],
+        "tests": [
+          "test_kanban_view"
+        ]
+      },
+      "workos.views.calendar": {
+        "module_exists": "ipai_workos_views",
+        "models": [
+          "ipai.workos.view"
+        ],
+        "views": [
+          "database_calendar_view"
+        ],
+        "tests": [
+          "test_calendar_view"
+        ]
+      },
+      "workos.collab.comments.page": {
+        "module_exists": "ipai_workos_collab",
+        "models": [
+          "ipai.workos.comment"
+        ],
+        "tests": [
+          "test_comment_create",
+          "test_comment_thread"
+        ]
+      },
+      "workos.collab.mentions.notify": {
+        "module_exists": "ipai_workos_collab",
+        "depends": [
+          "mail"
+        ],
+        "tests": [
+          "test_mention_notification"
+        ]
+      },
+      "workos.permissions.workspace_roles": {
+        "module_exists": "ipai_platform_permissions",
+        "models": [
+          "ipai.workos.permission"
+        ],
+        "tests": [
+          "test_workspace_roles"
+        ]
+      },
+      "workos.permissions.page_scopes": {
+        "module_exists": "ipai_platform_permissions",
+        "tests": [
+          "test_page_permissions"
+        ]
+      },
+      "workos.search.global": {
+        "module_exists": "ipai_workos_search",
+        "tests": [
+          "test_global_search"
+        ]
+      }
+    },
+    "tier_thresholds": {
+      "p0": {
+        "minimum_score": 70,
+        "block_merge_on_regression": true
+      },
+      "p1": {
+        "minimum_score": 50,
+        "block_merge_on_regression": false
+      },
+      "p2": {
+        "minimum_score": 0,
+        "block_merge_on_regression": false
+      }
+    }
+  },
+  "scores": {
+    "p0": {
+      "workos.workspace.space.tree": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_core",
+            "passed": true
+          },
+          "model:ipai.workos.workspace": {
+            "passed": true
+          },
+          "model:ipai.workos.space": {
+            "passed": true
+          },
+          "view:workspace_tree_view": {
+            "passed": true
+          },
+          "view:space_tree_view": {
+            "passed": true
+          }
+        },
+        "passed": 5,
+        "total": 5
+      },
+      "workos.page.create.nest": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_core",
+            "passed": true
+          },
+          "model:ipai.workos.page": {
+            "passed": true
+          },
+          "view:page_form_view": {
+            "passed": true
+          },
+          "view:page_tree_view": {
+            "passed": true
+          }
+        },
+        "passed": 4,
+        "total": 4
+      },
+      "workos.page.move.archive": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_core",
+            "passed": true
+          },
+          "model:ipai.workos.page": {
+            "passed": true
+          }
+        },
+        "passed": 2,
+        "total": 2
+      },
+      "workos.blocks.editor.core": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_blocks",
+            "passed": true
+          },
+          "model:ipai.workos.block": {
+            "passed": true
+          }
+        },
+        "passed": 2,
+        "total": 2
+      },
+      "workos.blocks.types.basic": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_blocks",
+            "passed": true
+          },
+          "model:ipai.workos.block": {
+            "passed": true
+          }
+        },
+        "passed": 2,
+        "total": 2
+      },
+      "workos.db.create.properties": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_db",
+            "passed": true
+          },
+          "model:ipai.workos.database": {
+            "passed": true
+          },
+          "model:ipai.workos.property": {
+            "passed": true
+          },
+          "view:database_form_view": {
+            "passed": true
+          }
+        },
+        "passed": 4,
+        "total": 4
+      },
+      "workos.db.rows.inline_edit": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_db",
+            "passed": true
+          },
+          "model:ipai.workos.row": {
+            "passed": true
+          }
+        },
+        "passed": 2,
+        "total": 2
+      },
+      "workos.db.property.types": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_db",
+            "passed": true
+          },
+          "model:ipai.workos.property": {
+            "passed": true
+          }
+        },
+        "passed": 2,
+        "total": 2
+      },
+      "workos.views.switcher.saved": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.views.table": {
+        "score": 66,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_views",
+            "passed": true
+          },
+          "model:ipai.workos.view": {
+            "passed": true
+          },
+          "view:database_table_view": {
+            "passed": false
+          }
+        },
+        "passed": 2,
+        "total": 3
+      },
+      "workos.views.kanban": {
+        "score": 66,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_views",
+            "passed": true
+          },
+          "model:ipai.workos.view": {
+            "passed": true
+          },
+          "view:database_kanban_view": {
+            "passed": false
+          }
+        },
+        "passed": 2,
+        "total": 3
+      },
+      "workos.views.calendar": {
+        "score": 66,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_views",
+            "passed": true
+          },
+          "model:ipai.workos.view": {
+            "passed": true
+          },
+          "view:database_calendar_view": {
+            "passed": false
+          }
+        },
+        "passed": 2,
+        "total": 3
+      },
+      "workos.collab.comments.page": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_collab",
+            "passed": true
+          },
+          "model:ipai.workos.comment": {
+            "passed": true
+          }
+        },
+        "passed": 2,
+        "total": 2
+      },
+      "workos.collab.mentions.notify": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_collab",
+            "passed": true
+          }
+        },
+        "passed": 1,
+        "total": 1
+      },
+      "workos.activity.log": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.permissions.workspace_roles": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_platform_permissions",
+            "passed": true
+          },
+          "model:ipai.workos.permission": {
+            "passed": true
+          }
+        },
+        "passed": 2,
+        "total": 2
+      },
+      "workos.permissions.page_scopes": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_platform_permissions",
+            "passed": true
+          }
+        },
+        "passed": 1,
+        "total": 1
+      },
+      "workos.search.global": {
+        "score": 100,
+        "automated": true,
+        "checks": {
+          "module_exists": {
+            "module": "ipai_workos_search",
+            "passed": true
+          }
+        },
+        "passed": 1,
+        "total": 1
+      }
+    },
+    "p1": {
+      "workos.blocks.attachments": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.db.relations.basic": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.filters.sorts.lite": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.templates.page_db": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.share.links": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.search.scoped": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      }
+    },
+    "p2": {
+      "workos.db.rollups.lite": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.export.markdown": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "workos.import.markdown": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      }
+    }
+  },
+  "regressions": [],
+  "summary": {
+    "p0_count": 18,
+    "p0_average": 83.22222222222223,
+    "p0_min": 0,
+    "p1_count": 6,
+    "p1_average": 0.0,
+    "regression_count": 0,
+    "p0_regressions": 0
+  }
+}
