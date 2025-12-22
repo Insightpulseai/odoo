@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template Tree View -->
+    <record id="template_tree_view" model="ir.ui.view">
+        <field name="name">ipai.workos.template.tree</field>
+        <field name="model">ipai.workos.template</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="is_published"/>
+                <field name="is_system"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Template Form View -->
+    <record id="template_form_view" model="ir.ui.view">
+        <field name="name">ipai.workos.template.form</field>
+        <field name="model">ipai.workos.template</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="icon" class="me-2"/>
+                            <field name="name" placeholder="Template Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                            <field name="sequence"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="is_published"/>
+                            <field name="is_system" readonly="1"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Template description..."/>
+                    <notebook>
+                        <page string="Blocks" invisible="category != 'page'">
+                            <field name="blocks_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Properties" invisible="category != 'database'">
+                            <field name="properties_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Views" invisible="category != 'database'">
+                            <field name="views_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Template Kanban View -->
+    <record id="template_kanban_view" model="ir.ui.view">
+        <field name="name">ipai.workos.template.kanban</field>
+        <field name="model">ipai.workos.template</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="icon"/>
+                <field name="category"/>
+                <field name="description"/>
+                <templates>
+                    <t t-name="kanban-card">
+                        <div class="p-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="me-2" t-esc="record.icon.value"/>
+                                <strong t-esc="record.name.value"/>
+                            </div>
+                            <div class="text-muted small" t-esc="record.description.value"/>
+                            <div class="mt-2">
+                                <span class="badge bg-secondary" t-esc="record.category.value"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Template Action -->
+    <record id="action_workos_template" model="ir.actions.act_window">
+        <field name="name">Templates</field>
+        <field name="res_model">ipai.workos.template</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_published': 1}</field>
+    </record>
+
+    <!-- Add to menu -->
+    <menuitem id="menu_workos_templates"
+              name="Templates"
+              parent="ipai_workos_core.menu_workos_config"
+              action="action_workos_template"
+              sequence="30"/>
+</odoo>

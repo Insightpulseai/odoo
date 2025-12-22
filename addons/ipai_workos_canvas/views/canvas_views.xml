@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Canvas List View -->
+    <record id="view_ipai_workos_canvas_list" model="ir.ui.view">
+        <field name="name">ipai.workos.canvas.list</field>
+        <field name="model">ipai.workos.canvas</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="page_id"/>
+                <field name="write_date"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Canvas Form View -->
+    <record id="view_ipai_workos_canvas_form" model="ir.ui.view">
+        <field name="name">ipai.workos.canvas.form</field>
+        <field name="model">ipai.workos.canvas</field>
+        <field name="arch" type="xml">
+            <form string="Canvas">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Untitled canvas"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="page_id"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Edgeless Canvas">
+                            <div class="ipai-workos-canvas-root"
+                                 style="min-height: 520px; border: 1px solid #ddd; border-radius: 8px; background: #fafafa;">
+                                <div style="padding: 40px; text-align: center; color: #888;">
+                                    <i class="fa fa-object-group fa-3x mb-3"></i>
+                                    <p>Canvas runtime placeholder</p>
+                                    <p class="small">OWL component mounts here. v1 stores viewport/nodes JSON.</p>
+                                </div>
+                            </div>
+                        </page>
+                        <page string="Data">
+                            <group>
+                                <field name="viewport_json" widget="ace" options="{'mode': 'json'}"/>
+                                <field name="nodes_json" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Canvas Action -->
+    <record id="action_ipai_workos_canvas" model="ir.actions.act_window">
+        <field name="name">Canvas</field>
+        <field name="res_model">ipai.workos.canvas</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first canvas
+            </p>
+            <p>
+                Canvas provides an infinite edgeless surface for visual content arrangement.
+            </p>
+        </field>
+    </record>
+
+    <!-- Add to Work OS menu -->
+    <menuitem id="menu_ipai_workos_canvas"
+              name="Canvas"
+              parent="ipai_workos_core.menu_workos_root"
+              action="action_ipai_workos_canvas"
+              sequence="50"/>
+</odoo>
