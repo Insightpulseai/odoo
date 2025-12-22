@@ -14,56 +14,56 @@ class CloseCycle(models.Model):
 
     name = fields.Char(required=True, tracking=True)
     company_id = fields.Many2one(
-        "res.company",
-        default=lambda self: self.env.company,
-        required=True
+        "res.company", default=lambda self: self.env.company, required=True
     )
 
     # Period
-    period_type = fields.Selection([
-        ("monthly", "Monthly"),
-        ("quarterly", "Quarterly"),
-        ("annual", "Annual"),
-    ], default="monthly", required=True, tracking=True)
+    period_type = fields.Selection(
+        [
+            ("monthly", "Monthly"),
+            ("quarterly", "Quarterly"),
+            ("annual", "Annual"),
+        ],
+        default="monthly",
+        required=True,
+        tracking=True,
+    )
 
     period_start = fields.Date(required=True, tracking=True)
     period_end = fields.Date(required=True, tracking=True)
 
     # Close timeline (Oct 24-29 pattern)
     close_start_date = fields.Date(
-        string="Close Start",
-        tracking=True,
-        help="Day 1 of close cycle (e.g., Oct 24)"
+        string="Close Start", tracking=True, help="Day 1 of close cycle (e.g., Oct 24)"
     )
     close_target_date = fields.Date(
         string="Target Close",
         tracking=True,
-        help="Target completion date (e.g., Oct 29)"
+        help="Target completion date (e.g., Oct 29)",
     )
-    close_actual_date = fields.Date(
-        string="Actual Close",
-        tracking=True
-    )
+    close_actual_date = fields.Date(string="Actual Close", tracking=True)
 
     # Status
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("open", "Open"),
-        ("in_progress", "In Progress"),
-        ("review", "Under Review"),
-        ("approval", "Pending Approval"),
-        ("closed", "Closed"),
-        ("locked", "Locked"),
-    ], default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("open", "Open"),
+            ("in_progress", "In Progress"),
+            ("review", "Under Review"),
+            ("approval", "Pending Approval"),
+            ("closed", "Closed"),
+            ("locked", "Locked"),
+        ],
+        default="draft",
+        tracking=True,
+    )
 
     # Tasks
     task_ids = fields.One2many("close.task", "cycle_id", string="Close Tasks")
     task_count = fields.Integer(compute="_compute_task_stats", store=True)
     task_done_count = fields.Integer(compute="_compute_task_stats", store=True)
     task_completion_pct = fields.Float(
-        compute="_compute_task_stats",
-        store=True,
-        string="Completion %"
+        compute="_compute_task_stats", store=True, string="Completion %"
     )
 
     # Exceptions
@@ -77,13 +77,12 @@ class CloseCycle(models.Model):
     closing_period_id = fields.Many2one(
         "closing.period",
         string="Closing Period",
-        help="Link to ipai_tbwa_finance closing period"
+        help="Link to ipai_tbwa_finance closing period",
     )
 
     # KPIs
     cycle_time_days = fields.Integer(
-        compute="_compute_cycle_time",
-        string="Cycle Time (Days)"
+        compute="_compute_cycle_time", string="Cycle Time (Days)"
     )
 
     @api.depends("task_ids", "task_ids.state")
@@ -94,15 +93,18 @@ class CloseCycle(models.Model):
             cycle.task_done_count = len(tasks.filtered(lambda t: t.state == "done"))
             cycle.task_completion_pct = (
                 (cycle.task_done_count / cycle.task_count * 100)
-                if cycle.task_count else 0.0
+                if cycle.task_count
+                else 0.0
             )
 
     @api.depends("exception_ids")
     def _compute_exception_count(self):
         for cycle in self:
-            cycle.exception_count = len(cycle.exception_ids.filtered(
-                lambda e: e.state not in ("resolved", "cancelled")
-            ))
+            cycle.exception_count = len(
+                cycle.exception_ids.filtered(
+                    lambda e: e.state not in ("resolved", "cancelled")
+                )
+            )
 
     @api.depends("close_start_date", "close_actual_date")
     def _compute_cycle_time(self):
@@ -135,9 +137,7 @@ class CloseCycle(models.Model):
         self.ensure_one()
         pending_tasks = self.task_ids.filtered(lambda t: t.state != "done")
         if pending_tasks:
-            raise UserError(
-                f"Cannot close: {len(pending_tasks)} tasks still pending"
-            )
+            raise UserError(f"Cannot close: {len(pending_tasks)} tasks still pending")
 
         open_exceptions = self.exception_ids.filtered(
             lambda e: e.state not in ("resolved", "cancelled")
@@ -162,27 +162,33 @@ class CloseCycle(models.Model):
     def _generate_tasks_from_templates(self):
         """Generate close tasks from active templates."""
         TaskTemplate = self.env["close.task.template"]
-        templates = TaskTemplate.search([
-            ("active", "=", True),
-            "|",
-            ("period_type", "=", self.period_type),
-            ("period_type", "=", False),
-        ])
+        templates = TaskTemplate.search(
+            [
+                ("active", "=", True),
+                "|",
+                ("period_type", "=", self.period_type),
+                ("period_type", "=", False),
+            ]
+        )
 
         for tmpl in templates:
-            self.env["close.task"].create({
-                "cycle_id": self.id,
-                "template_id": tmpl.id,
-                "name": tmpl.name,
-                "category_id": tmpl.category_id.id,
-                "state": "draft",
-                "prep_user_id": tmpl.default_prep_user_id.id or False,
-                "review_user_id": tmpl.default_review_user_id.id or False,
-                "approve_user_id": tmpl.default_approve_user_id.id or False,
-                "prep_due_date": self._calculate_due_date(tmpl.prep_day_offset),
-                "review_due_date": self._calculate_due_date(tmpl.review_day_offset),
-                "approve_due_date": self._calculate_due_date(tmpl.approve_day_offset),
-            })
+            self.env["close.task"].create(
+                {
+                    "cycle_id": self.id,
+                    "template_id": tmpl.id,
+                    "name": tmpl.name,
+                    "category_id": tmpl.category_id.id,
+                    "state": "draft",
+                    "prep_user_id": tmpl.default_prep_user_id.id or False,
+                    "review_user_id": tmpl.default_review_user_id.id or False,
+                    "approve_user_id": tmpl.default_approve_user_id.id or False,
+                    "prep_due_date": self._calculate_due_date(tmpl.prep_day_offset),
+                    "review_due_date": self._calculate_due_date(tmpl.review_day_offset),
+                    "approve_due_date": self._calculate_due_date(
+                        tmpl.approve_day_offset
+                    ),
+                }
+            )
 
     def _calculate_due_date(self, offset_days):
         """Calculate due date from period end with offset."""
@@ -218,9 +224,9 @@ class CloseCycle(models.Model):
     @api.model
     def _cron_daily_status(self):
         """Daily status check for active cycles."""
-        active_cycles = self.search([
-            ("state", "in", ("open", "in_progress", "review", "approval"))
-        ])
+        active_cycles = self.search(
+            [("state", "in", ("open", "in_progress", "review", "approval"))]
+        )
         for cycle in active_cycles:
             # Calculate stats
             overdue_tasks = cycle.task_ids.filtered(lambda t: t.is_overdue)
@@ -231,5 +237,5 @@ class CloseCycle(models.Model):
             if overdue_tasks or open_exceptions:
                 cycle.message_post(
                     body=f"Daily Status: {len(overdue_tasks)} overdue tasks, "
-                         f"{len(open_exceptions)} open exceptions"
+                    f"{len(open_exceptions)} open exceptions"
                 )

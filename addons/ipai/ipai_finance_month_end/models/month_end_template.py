@@ -35,8 +35,11 @@ class IPAIMonthEndTemplate(models.Model):
     )
 
     _sql_constraints = [
-        ("task_base_name_unique", "unique(task_base_name)",
-         "Task base name must be unique!"),
+        (
+            "task_base_name_unique",
+            "unique(task_base_name)",
+            "Task base name must be unique!",
+        ),
     ]
 
 

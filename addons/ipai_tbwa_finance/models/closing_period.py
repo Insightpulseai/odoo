@@ -9,6 +9,7 @@ class ClosingPeriod(models.Model):
     Represents a month-end closing period.
     Contains both internal closing tasks and BIR filing deadlines.
     """
+
     _name = "closing.period"
     _description = "Closing Period"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -47,14 +48,19 @@ class ClosingPeriod(models.Model):
         help="Last working day of the period (excluding weekends/holidays)",
     )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("open", "Open"),
-        ("in_progress", "In Progress"),
-        ("review", "Under Review"),
-        ("closed", "Closed"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("open", "Open"),
+            ("in_progress", "In Progress"),
+            ("review", "Under Review"),
+            ("closed", "Closed"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     # Task management
     task_ids = fields.One2many(
@@ -128,15 +134,21 @@ class ClosingPeriod(models.Model):
             else:
                 rec.last_workday = False
 
-    @api.depends("task_ids", "task_ids.state", "task_ids.is_overdue", "task_ids.task_type")
+    @api.depends(
+        "task_ids", "task_ids.state", "task_ids.is_overdue", "task_ids.task_type"
+    )
     def _compute_task_stats(self):
         for rec in self:
             tasks = rec.task_ids
             rec.total_tasks = len(tasks)
             rec.completed_tasks = len(tasks.filtered(lambda t: t.state == "done"))
-            rec.progress = (rec.completed_tasks / rec.total_tasks * 100) if rec.total_tasks else 0
+            rec.progress = (
+                (rec.completed_tasks / rec.total_tasks * 100) if rec.total_tasks else 0
+            )
             rec.overdue_tasks = len(tasks.filtered(lambda t: t.is_overdue))
-            rec.month_end_tasks = len(tasks.filtered(lambda t: t.task_type == "month_end"))
+            rec.month_end_tasks = len(
+                tasks.filtered(lambda t: t.task_type == "month_end")
+            )
             rec.bir_tasks = len(tasks.filtered(lambda t: t.task_type == "bir_filing"))
 
     def action_generate_tasks(self):
@@ -170,27 +182,37 @@ class ClosingPeriod(models.Model):
                 filing_due = False
             else:
                 # BIR filing - days after period end
-                prep_due = self.period_date + relativedelta(days=tmpl.filing_day_offset - 5)
-                review_due = self.period_date + relativedelta(days=tmpl.filing_day_offset - 2)
-                approve_due = self.period_date + relativedelta(days=tmpl.filing_day_offset - 1)
-                filing_due = self.period_date + relativedelta(days=tmpl.filing_day_offset)
+                prep_due = self.period_date + relativedelta(
+                    days=tmpl.filing_day_offset - 5
+                )
+                review_due = self.period_date + relativedelta(
+                    days=tmpl.filing_day_offset - 2
+                )
+                approve_due = self.period_date + relativedelta(
+                    days=tmpl.filing_day_offset - 1
+                )
+                filing_due = self.period_date + relativedelta(
+                    days=tmpl.filing_day_offset
+                )
 
-            self.env["finance.task"].create({
-                "closing_id": self.id,
-                "template_id": tmpl.id,
-                "name": tmpl.name,
-                "task_type": tmpl.task_type,
-                "phase": tmpl.phase,
-                "bir_form_type": tmpl.bir_form_type,
-                "sequence": tmpl.sequence,
-                "prep_user_id": tmpl.prep_user_id.id,
-                "review_user_id": tmpl.review_user_id.id,
-                "approve_user_id": tmpl.approve_user_id.id,
-                "prep_due_date": prep_due,
-                "review_due_date": review_due,
-                "approve_due_date": approve_due,
-                "filing_due_date": filing_due,
-            })
+            self.env["finance.task"].create(
+                {
+                    "closing_id": self.id,
+                    "template_id": tmpl.id,
+                    "name": tmpl.name,
+                    "task_type": tmpl.task_type,
+                    "phase": tmpl.phase,
+                    "bir_form_type": tmpl.bir_form_type,
+                    "sequence": tmpl.sequence,
+                    "prep_user_id": tmpl.prep_user_id.id,
+                    "review_user_id": tmpl.review_user_id.id,
+                    "approve_user_id": tmpl.approve_user_id.id,
+                    "prep_due_date": prep_due,
+                    "review_due_date": review_due,
+                    "approve_due_date": approve_due,
+                    "filing_due_date": filing_due,
+                }
+            )
 
         self.state = "open"
         return True

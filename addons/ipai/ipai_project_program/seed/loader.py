@@ -59,7 +59,9 @@ def load_seed_bundle(env, module_name: str):
         if rec:
             rec.write({"sequence": seq})
         else:
-            rec = env["project.task.type"].sudo().create({"name": name, "sequence": seq})
+            rec = (
+                env["project.task.type"].sudo().create({"name": name, "sequence": seq})
+            )
         # Store xmlid if provided
         xml_id = s.get("xml_id")
         if xml_id:
@@ -85,8 +87,13 @@ def load_seed_bundle(env, module_name: str):
     programs = _read_json(module_name, "data/seed/programs.json").get("programs", [])
     for p in programs:
         program_code = p["program_code"]
-        rec = env["project.project"].sudo().search(
-            [("program_code", "=", program_code), ("parent_id", "=", False)], limit=1
+        rec = (
+            env["project.project"]
+            .sudo()
+            .search(
+                [("program_code", "=", program_code), ("parent_id", "=", False)],
+                limit=1,
+            )
         )
         vals = {
             "name": p["name"],
@@ -115,8 +122,10 @@ def load_seed_bundle(env, module_name: str):
             _logger.warning("Parent not found for IM: %s", im.get("xml_id"))
             continue
         im_code = im["im_code"]
-        child = env["project.project"].sudo().search(
-            [("parent_id", "=", parent.id), ("im_code", "=", im_code)], limit=1
+        child = (
+            env["project.project"]
+            .sudo()
+            .search([("parent_id", "=", parent.id), ("im_code", "=", im_code)], limit=1)
         )
         vals = {
             "name": im["name"],

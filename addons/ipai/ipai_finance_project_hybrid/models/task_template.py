@@ -2,6 +2,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
+
 class FinanceTaskTemplate(models.Model):
     _name = "ipai.finance.task.template"
     _description = "Finance Task Template (Month-End / Compliance)"
@@ -9,11 +10,16 @@ class FinanceTaskTemplate(models.Model):
 
     sequence = fields.Integer(default=10)
     name = fields.Char(required=True)
-    category = fields.Selection([
-        ("month_end", "Month-End Close"),
-        ("bir", "BIR / Tax Compliance"),
-        ("other", "Other"),
-    ], required=True, default="month_end", index=True)
+    category = fields.Selection(
+        [
+            ("month_end", "Month-End Close"),
+            ("bir", "BIR / Tax Compliance"),
+            ("other", "Other"),
+        ],
+        required=True,
+        default="month_end",
+        index=True,
+    )
 
     # Optional: role routing by codes (directory)
     prep_by_code = fields.Char()
@@ -21,34 +27,46 @@ class FinanceTaskTemplate(models.Model):
     approve_by_code = fields.Char()
 
     # Scheduling rules
-    anchor = fields.Selection([
-        ("month_end", "Month End (last day)"),
-        ("deadline", "Filing Deadline"),
-        ("manual", "Manual"),
-    ], default="month_end", required=True)
+    anchor = fields.Selection(
+        [
+            ("month_end", "Month End (last day)"),
+            ("deadline", "Filing Deadline"),
+            ("manual", "Manual"),
+        ],
+        default="month_end",
+        required=True,
+    )
 
     offset_days = fields.Integer(default=0, help="Days from anchor. Negative = before.")
     default_duration_days = fields.Integer(default=1)
 
     # Task meta
-    task_category = fields.Selection([
-        ("payroll", "Payroll & Personnel"),
-        ("tax", "Tax & Provisions"),
-        ("rent", "Rent & Leases"),
-        ("accruals", "Accruals & Expenses"),
-        ("billing", "Client Billings / WIP / OOP"),
-        ("treasury", "Treasury"),
-        ("vat", "VAT / Indirect Tax"),
-        ("interco", "Intercompany"),
-        ("review", "Prior Period Review"),
-        ("reporting", "Regional Reporting"),
-        ("other", "Other"),
-    ], default="other", index=True)
+    task_category = fields.Selection(
+        [
+            ("payroll", "Payroll & Personnel"),
+            ("tax", "Tax & Provisions"),
+            ("rent", "Rent & Leases"),
+            ("accruals", "Accruals & Expenses"),
+            ("billing", "Client Billings / WIP / OOP"),
+            ("treasury", "Treasury"),
+            ("vat", "VAT / Indirect Tax"),
+            ("interco", "Intercompany"),
+            ("review", "Prior Period Review"),
+            ("reporting", "Regional Reporting"),
+            ("other", "Other"),
+        ],
+        default="other",
+        index=True,
+    )
 
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
-        ("tmpl_name_unique", "unique(name, category)", "Template name must be unique per category."),
+        (
+            "tmpl_name_unique",
+            "unique(name, category)",
+            "Template name must be unique per category.",
+        ),
     ]
 
     @api.model

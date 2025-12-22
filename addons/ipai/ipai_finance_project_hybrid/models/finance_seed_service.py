@@ -4,6 +4,7 @@ import pkgutil
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+
 class FinanceSeedService(models.Model):
     _name = "ipai.finance.seed.service"
     _description = "Finance Seed Loader (Directory + BIR + Templates)"
@@ -11,7 +12,9 @@ class FinanceSeedService(models.Model):
 
     @api.model
     def _load_bundle_json(self):
-        data = pkgutil.get_data(__name__.split('.')[0], "data/seed/finance_framework.seed.json")
+        data = pkgutil.get_data(
+            __name__.split(".")[0], "data/seed/finance_framework.seed.json"
+        )
         if not data:
             raise UserError(_("Seed bundle not found inside module."))
         try:
@@ -26,7 +29,11 @@ class FinanceSeedService(models.Model):
         Schedule = self.env["ipai.bir.schedule.line"]
         Template = self.env["ipai.finance.task.template"]
 
-        if Directory.search_count([]) or Schedule.search_count([]) or Template.search_count([]):
+        if (
+            Directory.search_count([])
+            or Schedule.search_count([])
+            or Template.search_count([])
+        ):
             return False
 
         bundle = self._load_bundle_json()

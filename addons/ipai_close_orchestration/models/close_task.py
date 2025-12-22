@@ -16,11 +16,14 @@ class CloseTaskTemplate(models.Model):
     description = fields.Text()
 
     # Period applicability
-    period_type = fields.Selection([
-        ("monthly", "Monthly"),
-        ("quarterly", "Quarterly"),
-        ("annual", "Annual"),
-    ], help="Leave empty for all period types")
+    period_type = fields.Selection(
+        [
+            ("monthly", "Monthly"),
+            ("quarterly", "Quarterly"),
+            ("annual", "Annual"),
+        ],
+        help="Leave empty for all period types",
+    )
 
     # Default assignments
     default_prep_user_id = fields.Many2one("res.users")
@@ -29,26 +32,19 @@ class CloseTaskTemplate(models.Model):
 
     # Timing (days offset from period end)
     prep_day_offset = fields.Integer(
-        default=-4,
-        help="Days from period end for prep due date (negative = before)"
+        default=-4, help="Days from period end for prep due date (negative = before)"
     )
     review_day_offset = fields.Integer(
-        default=-2,
-        help="Days from period end for review due date"
+        default=-2, help="Days from period end for review due date"
     )
     approve_day_offset = fields.Integer(
-        default=0,
-        help="Days from period end for approval due date"
+        default=0, help="Days from period end for approval due date"
     )
 
     # GL integration
-    gl_account_ids = fields.Many2many(
-        "account.account",
-        string="Affected GL Accounts"
-    )
+    gl_account_ids = fields.Many2many("account.account", string="Affected GL Accounts")
     creates_gl_entry = fields.Boolean(
-        default=False,
-        help="Does this task create GL entries?"
+        default=False, help="Does this task create GL entries?"
     )
 
     # Checklist
@@ -69,19 +65,20 @@ class CloseTaskTemplateChecklist(models.Model):
     _order = "sequence, id"
 
     template_id = fields.Many2one(
-        "close.task.template",
-        required=True,
-        ondelete="cascade"
+        "close.task.template", required=True, ondelete="cascade"
     )
     sequence = fields.Integer(default=10)
     name = fields.Char(required=True)
     required = fields.Boolean(default=True)
-    evidence_type = fields.Selection([
-        ("document", "Document Upload"),
-        ("screenshot", "Screenshot"),
-        ("gl_entry", "GL Entry Reference"),
-        ("sign_off", "Sign-off Confirmation"),
-    ], default="document")
+    evidence_type = fields.Selection(
+        [
+            ("document", "Document Upload"),
+            ("screenshot", "Screenshot"),
+            ("gl_entry", "GL Entry Reference"),
+            ("sign_off", "Sign-off Confirmation"),
+        ],
+        default="document",
+    )
 
 
 class CloseTask(models.Model):
@@ -94,10 +91,7 @@ class CloseTask(models.Model):
 
     name = fields.Char(required=True, tracking=True)
     cycle_id = fields.Many2one(
-        "close.cycle",
-        required=True,
-        ondelete="cascade",
-        index=True
+        "close.cycle", required=True, ondelete="cascade", index=True
     )
     template_id = fields.Many2one("close.task.template")
     category_id = fields.Many2one("close.task.category", tracking=True)
@@ -105,57 +99,48 @@ class CloseTask(models.Model):
     description = fields.Text()
 
     # 3-Stage Workflow State
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("prep", "In Preparation"),
-        ("prep_done", "Prep Complete"),
-        ("review", "Under Review"),
-        ("review_done", "Review Complete"),
-        ("approval", "Pending Approval"),
-        ("done", "Done"),
-        ("cancelled", "Cancelled"),
-    ], default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("prep", "In Preparation"),
+            ("prep_done", "Prep Complete"),
+            ("review", "Under Review"),
+            ("review_done", "Review Complete"),
+            ("approval", "Pending Approval"),
+            ("done", "Done"),
+            ("cancelled", "Cancelled"),
+        ],
+        default="draft",
+        tracking=True,
+    )
 
     # RACI Assignments
     # Preparation
-    prep_user_id = fields.Many2one(
-        "res.users",
-        string="Preparer",
-        tracking=True
-    )
+    prep_user_id = fields.Many2one("res.users", string="Preparer", tracking=True)
     prep_due_date = fields.Date(string="Prep Due", tracking=True)
     prep_done_date = fields.Datetime(string="Prep Completed")
     prep_notes = fields.Text()
 
     # Review
-    review_user_id = fields.Many2one(
-        "res.users",
-        string="Reviewer",
-        tracking=True
-    )
+    review_user_id = fields.Many2one("res.users", string="Reviewer", tracking=True)
     review_due_date = fields.Date(string="Review Due", tracking=True)
     review_done_date = fields.Datetime(string="Review Completed")
     review_notes = fields.Text()
-    review_result = fields.Selection([
-        ("approved", "Approved"),
-        ("rejected", "Rejected - Needs Rework"),
-    ])
+    review_result = fields.Selection(
+        [
+            ("approved", "Approved"),
+            ("rejected", "Rejected - Needs Rework"),
+        ]
+    )
 
     # Approval
-    approve_user_id = fields.Many2one(
-        "res.users",
-        string="Approver",
-        tracking=True
-    )
+    approve_user_id = fields.Many2one("res.users", string="Approver", tracking=True)
     approve_due_date = fields.Date(string="Approval Due", tracking=True)
     approve_done_date = fields.Datetime(string="Approved")
     approve_notes = fields.Text()
 
     # GL Integration
-    gl_entry_ids = fields.Many2many(
-        "account.move",
-        string="GL Entries Created"
-    )
+    gl_entry_ids = fields.Many2many("account.move", string="GL Entries Created")
     gl_entry_count = fields.Integer(compute="_compute_gl_entry_count")
 
     # Checklist
@@ -163,10 +148,7 @@ class CloseTask(models.Model):
     checklist_done_pct = fields.Float(compute="_compute_checklist_pct")
 
     # Attachments
-    attachment_ids = fields.Many2many(
-        "ir.attachment",
-        string="Supporting Documents"
-    )
+    attachment_ids = fields.Many2many("ir.attachment", string="Supporting Documents")
 
     # Exceptions
     exception_ids = fields.One2many("close.exception", "task_id")
@@ -194,9 +176,11 @@ class CloseTask(models.Model):
     @api.depends("exception_ids", "exception_ids.state")
     def _compute_has_exceptions(self):
         for task in self:
-            task.has_exceptions = bool(task.exception_ids.filtered(
-                lambda e: e.state not in ("resolved", "cancelled")
-            ))
+            task.has_exceptions = bool(
+                task.exception_ids.filtered(
+                    lambda e: e.state not in ("resolved", "cancelled")
+                )
+            )
 
     @api.depends("state", "prep_due_date", "review_due_date", "approve_due_date")
     def _compute_is_overdue(self):
@@ -252,7 +236,7 @@ class CloseTask(models.Model):
                 "mail.mail_activity_data_todo",
                 user_id=self.review_user_id.id,
                 summary=f"Review: {self.name}",
-                note="Task ready for your review"
+                note="Task ready for your review",
             )
 
     def action_start_review(self):
@@ -280,7 +264,7 @@ class CloseTask(models.Model):
                 "mail.mail_activity_data_todo",
                 user_id=self.approve_user_id.id,
                 summary=f"Approve: {self.name}",
-                note="Task ready for final approval"
+                note="Task ready for final approval",
             )
 
     def action_reject_review(self):
@@ -299,7 +283,7 @@ class CloseTask(models.Model):
                 "mail.mail_activity_data_todo",
                 user_id=self.prep_user_id.id,
                 summary=f"Rework: {self.name}",
-                note=f"Review rejected: {self.review_notes}"
+                note=f"Review rejected: {self.review_notes}",
             )
 
     def action_start_approval(self):
@@ -336,20 +320,19 @@ class CloseTaskChecklist(models.Model):
     _description = "Close Task Checklist Item"
     _order = "sequence, id"
 
-    task_id = fields.Many2one(
-        "close.task",
-        required=True,
-        ondelete="cascade"
-    )
+    task_id = fields.Many2one("close.task", required=True, ondelete="cascade")
     sequence = fields.Integer(default=10)
     name = fields.Char(required=True)
     required = fields.Boolean(default=True)
-    evidence_type = fields.Selection([
-        ("document", "Document Upload"),
-        ("screenshot", "Screenshot"),
-        ("gl_entry", "GL Entry Reference"),
-        ("sign_off", "Sign-off Confirmation"),
-    ], default="document")
+    evidence_type = fields.Selection(
+        [
+            ("document", "Document Upload"),
+            ("screenshot", "Screenshot"),
+            ("gl_entry", "GL Entry Reference"),
+            ("sign_off", "Sign-off Confirmation"),
+        ],
+        default="document",
+    )
 
     is_done = fields.Boolean(default=False)
     done_by = fields.Many2one("res.users")
@@ -385,17 +368,21 @@ class CloseTaskCron(models.Model):
     def _cron_send_due_reminders(self):
         """Send reminders for tasks due soon or overdue."""
         from datetime import timedelta
+
         today = fields.Date.today()
         tomorrow = today + timedelta(days=1)
 
         # Find tasks due tomorrow
-        tasks_due_tomorrow = self.search([
-            ("state", "not in", ("done", "cancelled")),
-            "|", "|",
-            ("prep_due_date", "=", tomorrow),
-            ("review_due_date", "=", tomorrow),
-            ("approve_due_date", "=", tomorrow),
-        ])
+        tasks_due_tomorrow = self.search(
+            [
+                ("state", "not in", ("done", "cancelled")),
+                "|",
+                "|",
+                ("prep_due_date", "=", tomorrow),
+                ("review_due_date", "=", tomorrow),
+                ("approve_due_date", "=", tomorrow),
+            ]
+        )
 
         for task in tasks_due_tomorrow:
             user_to_notify = False
@@ -411,17 +398,19 @@ class CloseTaskCron(models.Model):
                     "mail.mail_activity_data_todo",
                     user_id=user_to_notify.id,
                     summary=f"Due Tomorrow: {task.name}",
-                    note="This task is due tomorrow. Please complete it promptly."
+                    note="This task is due tomorrow. Please complete it promptly.",
                 )
 
         # Find overdue tasks
-        overdue_tasks = self.search([
-            ("state", "not in", ("done", "cancelled")),
-            ("is_overdue", "=", True),
-        ])
+        overdue_tasks = self.search(
+            [
+                ("state", "not in", ("done", "cancelled")),
+                ("is_overdue", "=", True),
+            ]
+        )
 
         for task in overdue_tasks:
             task.message_post(
                 body=f"OVERDUE: Task is {task.days_overdue} days overdue",
-                message_type="notification"
+                message_type="notification",
             )

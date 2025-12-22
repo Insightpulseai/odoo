@@ -8,6 +8,7 @@ class FinanceTask(models.Model):
     - Month-end closing tasks (internal)
     - BIR filing tasks (statutory)
     """
+
     _name = "finance.task"
     _description = "Finance Task"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -32,41 +33,59 @@ class FinanceTask(models.Model):
     )
 
     # Classification
-    task_type = fields.Selection([
-        ("month_end", "Month-End Closing"),
-        ("bir_filing", "BIR Filing"),
-        ("compliance", "Compliance Check"),
-    ], string="Task Type", required=True, default="month_end")
+    task_type = fields.Selection(
+        [
+            ("month_end", "Month-End Closing"),
+            ("bir_filing", "BIR Filing"),
+            ("compliance", "Compliance Check"),
+        ],
+        string="Task Type",
+        required=True,
+        default="month_end",
+    )
 
-    phase = fields.Selection([
-        ("I", "Phase I - Initial"),
-        ("II", "Phase II - Accruals"),
-        ("III", "Phase III - WIP"),
-        ("IV", "Phase IV - Close"),
-    ], string="Phase")
+    phase = fields.Selection(
+        [
+            ("I", "Phase I - Initial"),
+            ("II", "Phase II - Accruals"),
+            ("III", "Phase III - WIP"),
+            ("IV", "Phase IV - Close"),
+        ],
+        string="Phase",
+    )
 
-    bir_form_type = fields.Selection([
-        ("2550M", "2550M - Monthly VAT"),
-        ("2550Q", "2550Q - Quarterly VAT"),
-        ("1601C", "1601-C - Compensation WHT"),
-        ("1601E", "1601-E - Expanded WHT"),
-        ("1601F", "1601-F - Final WHT"),
-        ("1604CF", "1604-CF - Alphalist (Comp)"),
-        ("1604E", "1604-E - Alphalist (Exp)"),
-        ("1700", "1700 - Annual ITR"),
-        ("1702", "1702 - Corporate ITR"),
-        ("2551M", "2551M - Percentage Tax"),
-    ], string="BIR Form")
+    bir_form_type = fields.Selection(
+        [
+            ("2550M", "2550M - Monthly VAT"),
+            ("2550Q", "2550Q - Quarterly VAT"),
+            ("1601C", "1601-C - Compensation WHT"),
+            ("1601E", "1601-E - Expanded WHT"),
+            ("1601F", "1601-F - Final WHT"),
+            ("1604CF", "1604-CF - Alphalist (Comp)"),
+            ("1604E", "1604-E - Alphalist (Exp)"),
+            ("1700", "1700 - Annual ITR"),
+            ("1702", "1702 - Corporate ITR"),
+            ("2551M", "2551M - Percentage Tax"),
+        ],
+        string="BIR Form",
+    )
 
     # State machine (RACI workflow)
-    state = fields.Selection([
-        ("pending", "Pending"),
-        ("in_progress", "In Progress"),
-        ("review", "Under Review"),
-        ("done", "Done"),
-        ("cancelled", "Cancelled"),
-    ], string="Status", default="pending", tracking=True,
-       compute="_compute_state", store=True, readonly=False)
+    state = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("in_progress", "In Progress"),
+            ("review", "Under Review"),
+            ("done", "Done"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="Status",
+        default="pending",
+        tracking=True,
+        compute="_compute_state",
+        store=True,
+        readonly=False,
+    )
 
     # RACI: Preparer
     prep_user_id = fields.Many2one("res.users", string="Preparer")
@@ -141,33 +160,39 @@ class FinanceTask(models.Model):
     def action_mark_prep_done(self):
         """Mark preparation as done"""
         self.ensure_one()
-        self.write({
-            "prep_done": True,
-            "prep_done_date": fields.Datetime.now(),
-            "prep_done_by": self.env.uid,
-        })
+        self.write(
+            {
+                "prep_done": True,
+                "prep_done_date": fields.Datetime.now(),
+                "prep_done_by": self.env.uid,
+            }
+        )
 
     def action_mark_review_done(self):
         """Mark review as done"""
         self.ensure_one()
         if not self.prep_done:
             raise UserError("Preparation must be completed first")
-        self.write({
-            "review_done": True,
-            "review_done_date": fields.Datetime.now(),
-            "review_done_by": self.env.uid,
-        })
+        self.write(
+            {
+                "review_done": True,
+                "review_done_date": fields.Datetime.now(),
+                "review_done_by": self.env.uid,
+            }
+        )
 
     def action_mark_approve_done(self):
         """Mark as approved"""
         self.ensure_one()
         if not self.review_done:
             raise UserError("Review must be completed first")
-        self.write({
-            "approve_done": True,
-            "approve_done_date": fields.Datetime.now(),
-            "approve_done_by": self.env.uid,
-        })
+        self.write(
+            {
+                "approve_done": True,
+                "approve_done_date": fields.Datetime.now(),
+                "approve_done_by": self.env.uid,
+            }
+        )
 
     def action_cancel(self):
         """Cancel task"""
@@ -188,13 +213,15 @@ class FinanceTask(models.Model):
             }
 
         # Create new BIR return
-        bir_return = self.env["bir.return"].create({
-            "form_type": self.bir_form_type,
-            "period_start": self.closing_id.period_date.replace(day=1),
-            "period_end": self.closing_id.period_date,
-            "company_id": self.company_id.id,
-            "task_id": self.id,
-        })
+        bir_return = self.env["bir.return"].create(
+            {
+                "form_type": self.bir_form_type,
+                "period_start": self.closing_id.period_date.replace(day=1),
+                "period_end": self.closing_id.period_date,
+                "company_id": self.company_id.id,
+                "task_id": self.id,
+            }
+        )
         self.bir_return_id = bir_return.id
 
         return {
@@ -207,10 +234,12 @@ class FinanceTask(models.Model):
     @api.model
     def _cron_send_overdue_notifications(self):
         """Send notifications for overdue tasks"""
-        overdue = self.search([
-            ("is_overdue", "=", True),
-            ("state", "not in", ("done", "cancelled")),
-        ])
+        overdue = self.search(
+            [
+                ("is_overdue", "=", True),
+                ("state", "not in", ("done", "cancelled")),
+            ]
+        )
         for task in overdue:
             users = [task.prep_user_id, task.review_user_id, task.approve_user_id]
             for user in filter(None, users):

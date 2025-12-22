@@ -117,11 +117,13 @@ class SrmScorecard(models.Model):
         if not record.line_ids:
             categories = self.env["srm.kpi.category"].search([])
             for cat in categories:
-                self.env["srm.scorecard.line"].create({
-                    "scorecard_id": record.id,
-                    "kpi_category_id": cat.id,
-                    "weight": cat.weight,
-                })
+                self.env["srm.scorecard.line"].create(
+                    {
+                        "scorecard_id": record.id,
+                        "kpi_category_id": cat.id,
+                        "weight": cat.weight,
+                    }
+                )
         return record
 
 

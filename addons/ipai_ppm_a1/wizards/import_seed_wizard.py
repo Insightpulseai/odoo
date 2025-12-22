@@ -64,7 +64,10 @@ class IpaiImportSeedWizard(models.TransientModel):
             if not code:
                 continue
             wl = wl_by_code.get(code)
-            vals = {"name": row.get("name") or code, "description": row.get("description")}
+            vals = {
+                "name": row.get("name") or code,
+                "description": row.get("description"),
+            }
             if wl:
                 wl.write(vals)
             else:

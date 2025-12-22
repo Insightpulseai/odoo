@@ -2,11 +2,14 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+
 class FinanceSeedWizard(models.TransientModel):
     _name = "ipai.finance.seed.wizard"
     _description = "Seed Finance Framework (Directory + BIR + Templates)"
 
-    strict = fields.Boolean(default=False, help="If enabled, invalid rows raise errors.")
+    strict = fields.Boolean(
+        default=False, help="If enabled, invalid rows raise errors."
+    )
 
     def action_seed(self):
         self.ensure_one()

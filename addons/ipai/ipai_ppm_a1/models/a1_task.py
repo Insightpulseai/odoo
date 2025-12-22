@@ -81,14 +81,20 @@ class A1Task(models.Model):
     approval_deadline = fields.Date(string="Approval Deadline")
 
     # Status
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("prep", "In Preparation"),
-        ("review", "In Review"),
-        ("approval", "Pending Approval"),
-        ("done", "Completed"),
-        ("cancelled", "Cancelled"),
-    ], string="State", default="draft", tracking=True, required=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("prep", "In Preparation"),
+            ("review", "In Review"),
+            ("approval", "Pending Approval"),
+            ("done", "Completed"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="State",
+        default="draft",
+        tracking=True,
+        required=True,
+    )
 
     # Completion tracking
     prep_done_date = fields.Datetime(string="Prep Done At")
@@ -155,11 +161,13 @@ class A1Task(models.Model):
         if required_incomplete:
             raise UserError("Complete all required checklist items before submitting.")
 
-        self.write({
-            "state": "review",
-            "prep_done_date": fields.Datetime.now(),
-            "prep_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "review",
+                "prep_done_date": fields.Datetime.now(),
+                "prep_done_by": self.env.user.id,
+            }
+        )
         self.message_post(body=f"Submitted for review by {self.env.user.name}")
 
     def action_submit_review(self):
@@ -168,11 +176,13 @@ class A1Task(models.Model):
         if self.state != "review":
             raise UserError("Task must be in Review state to submit for approval.")
 
-        self.write({
-            "state": "approval",
-            "review_done_date": fields.Datetime.now(),
-            "review_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "approval",
+                "review_done_date": fields.Datetime.now(),
+                "review_done_by": self.env.user.id,
+            }
+        )
         self.message_post(body=f"Submitted for approval by {self.env.user.name}")
 
     def action_approve(self):
@@ -181,11 +191,13 @@ class A1Task(models.Model):
         if self.state != "approval":
             raise UserError("Task must be in Pending Approval state to approve.")
 
-        self.write({
-            "state": "done",
-            "approval_done_date": fields.Datetime.now(),
-            "approval_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "done",
+                "approval_done_date": fields.Datetime.now(),
+                "approval_done_by": self.env.user.id,
+            }
+        )
         self.message_post(body=f"Approved by {self.env.user.name}")
 
     def action_reject(self):
@@ -195,7 +207,9 @@ class A1Task(models.Model):
             raise UserError("Task must be in Review or Approval state to reject.")
 
         self.state = "prep"
-        self.message_post(body=f"Rejected by {self.env.user.name} - returned to preparation")
+        self.message_post(
+            body=f"Rejected by {self.env.user.name} - returned to preparation"
+        )
 
     def action_cancel(self):
         """Cancel task."""
@@ -229,12 +243,17 @@ class A1TaskChecklist(models.Model):
     name = fields.Char(string="Name", required=True)
     sequence = fields.Integer(string="Sequence", default=10)
 
-    item_type = fields.Selection([
-        ("check", "Checkbox"),
-        ("input", "Input Value"),
-        ("upload", "File Upload"),
-        ("approve", "Approval Sign-off"),
-    ], string="Type", default="check", required=True)
+    item_type = fields.Selection(
+        [
+            ("check", "Checkbox"),
+            ("input", "Input Value"),
+            ("upload", "File Upload"),
+            ("approve", "Approval Sign-off"),
+        ],
+        string="Type",
+        default="check",
+        required=True,
+    )
 
     is_required = fields.Boolean(string="Required", default=True)
     is_done = fields.Boolean(string="Done", default=False)
@@ -249,8 +268,10 @@ class A1TaskChecklist(models.Model):
 
     def action_mark_done(self):
         """Mark item as done."""
-        self.write({
-            "is_done": True,
-            "done_date": fields.Datetime.now(),
-            "done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "is_done": True,
+                "done_date": fields.Datetime.now(),
+                "done_by": self.env.user.id,
+            }
+        )

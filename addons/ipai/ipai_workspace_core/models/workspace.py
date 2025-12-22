@@ -167,7 +167,7 @@ class Workspace(models.Model):
                 if l.res_model
                 in (
                     "ipai.af.engagement",  # accounting firm vertical
-                    "ipai.ma.campaign",   # marketing agency vertical
+                    "ipai.ma.campaign",  # marketing agency vertical
                 )
             ]
             invoices = [l for l in ws.link_ids if l.res_model == "account.move"]
@@ -261,11 +261,7 @@ class WorkspaceLink(models.Model):
             name = f"{link.res_model},{link.res_id}"
             if link.res_model and link.res_id:
                 try:
-                    record = (
-                        self.env[link.res_model]
-                        .sudo()
-                        .browse(link.res_id)
-                    )
+                    record = self.env[link.res_model].sudo().browse(link.res_id)
                     if record.exists():
                         name = record.display_name
                 except Exception:

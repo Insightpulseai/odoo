@@ -52,13 +52,15 @@ def load_seed_bundle(env, module_name: str):
         # Replace steps (simple deterministic idempotency)
         Step.search([("template_id", "=", rec.id)]).unlink()
         for idx, s in enumerate(t.get("steps", []), start=1):
-            Step.create({
-                "template_id": rec.id,
-                "sequence": idx * 10,
-                "activity_type": s["activity_type"],
-                "role_code": s.get("role_code"),
-                "offset_days": s.get("offset_days", 0),
-                "business_days_before": s.get("business_days_before", 0),
-            })
+            Step.create(
+                {
+                    "template_id": rec.id,
+                    "sequence": idx * 10,
+                    "activity_type": s["activity_type"],
+                    "role_code": s.get("role_code"),
+                    "offset_days": s.get("offset_days", 0),
+                    "business_days_before": s.get("business_days_before", 0),
+                }
+            )
 
     _logger.info("Loaded %d month-end templates", len(templates))

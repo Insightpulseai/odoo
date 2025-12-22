@@ -140,8 +140,7 @@ class PpmProgram(models.Model):
             program.risk_count = len(risks)
             program.open_high_risks = len(
                 risks.filtered(
-                    lambda r: r.status == "open"
-                    and r.severity in ("high", "critical")
+                    lambda r: r.status == "open" and r.severity in ("high", "critical")
                 )
             )
 
@@ -153,10 +152,12 @@ class PpmProgram(models.Model):
             total = 0.0
             for project in program.project_ids:
                 if project.analytic_account_id:
-                    lines = self.env["account.analytic.line"].search([
-                        ("account_id", "=", project.analytic_account_id.id),
-                        ("amount", "<", 0),  # Costs are negative
-                    ])
+                    lines = self.env["account.analytic.line"].search(
+                        [
+                            ("account_id", "=", project.analytic_account_id.id),
+                            ("amount", "<", 0),  # Costs are negative
+                        ]
+                    )
                     total += abs(sum(lines.mapped("amount")))
             program.actual_cost = total
 

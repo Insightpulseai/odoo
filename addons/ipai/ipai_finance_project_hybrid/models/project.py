@@ -3,17 +3,26 @@ from datetime import date, timedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+
 class Project(models.Model):
     _inherit = "project.project"
 
-    ipai_is_im_project = fields.Boolean(string="Is IM Project", default=False, index=True)
+    ipai_is_im_project = fields.Boolean(
+        string="Is IM Project", default=False, index=True
+    )
     ipai_im_code = fields.Selection([("IM1", "IM1"), ("IM2", "IM2")], index=True)
-    ipai_root_project_id = fields.Many2one("project.project", string="Root Project", index=True, ondelete="set null")
-    ipai_finance_enabled = fields.Boolean(string="Finance Analytics Enabled", default=False)
+    ipai_root_project_id = fields.Many2one(
+        "project.project", string="Root Project", index=True, ondelete="set null"
+    )
+    ipai_finance_enabled = fields.Boolean(
+        string="Finance Analytics Enabled", default=False
+    )
 
     def action_ipai_generate_im_projects(self):
         self.ensure_one()
-        wiz = self.env["ipai.generate.im.projects.wizard"].create({"project_id": self.id})
+        wiz = self.env["ipai.generate.im.projects.wizard"].create(
+            {"project_id": self.id}
+        )
         return {
             "type": "ir.actions.act_window",
             "name": _("Generate IM Projects"),
@@ -25,11 +34,14 @@ class Project(models.Model):
 
     def _ipai_find_or_create_child(self, im_code: str, name_suffix: str):
         self.ensure_one()
-        child = self.search([
-            ("ipai_is_im_project", "=", True),
-            ("ipai_root_project_id", "=", self.id),
-            ("ipai_im_code", "=", im_code),
-        ], limit=1)
+        child = self.search(
+            [
+                ("ipai_is_im_project", "=", True),
+                ("ipai_root_project_id", "=", self.id),
+                ("ipai_im_code", "=", im_code),
+            ],
+            limit=1,
+        )
         if child:
             return child
         vals = {
@@ -51,11 +63,17 @@ class Project(models.Model):
         if not month_end:
             # default: end of current month
             today = fields.Date.today()
-            month_end = (today.replace(day=28) + timedelta(days=4)).replace(day=1) - timedelta(days=1)
+            month_end = (today.replace(day=28) + timedelta(days=4)).replace(
+                day=1
+            ) - timedelta(days=1)
 
-        Template = self.env["ipai.finance.task.template"].search([("active", "=", True)])
+        Template = self.env["ipai.finance.task.template"].search(
+            [("active", "=", True)]
+        )
         if not Template:
-            raise UserError(_("No finance task templates found. Run Finance Seed first."))
+            raise UserError(
+                _("No finance task templates found. Run Finance Seed first.")
+            )
 
         Task = self.env["project.task"]
         created = self.env["project.task"]
@@ -81,7 +99,14 @@ class Project(models.Model):
                     vals["user_ids"] = [(6, 0, [user.id])]
                     vals["ipai_owner_code"] = t.prep_by_code
                     vals["ipai_owner_role"] = "prep"
-            existing = Task.search([("project_id", "=", self.id), ("ipai_template_id", "=", t.id), ("date_deadline", "=", due)], limit=1)
+            existing = Task.search(
+                [
+                    ("project_id", "=", self.id),
+                    ("ipai_template_id", "=", t.id),
+                    ("date_deadline", "=", due),
+                ],
+                limit=1,
+            )
             if existing:
                 continue
             created |= Task.create(vals)
@@ -107,7 +132,9 @@ class Project(models.Model):
                 "ipai_owner_role": role,
                 "ipai_compliance_step": step,
             }
-            user = self.env["ipai.finance.directory"].resolve_user(code) if code else False
+            user = (
+                self.env["ipai.finance.directory"].resolve_user(code) if code else False
+            )
             if user:
                 vals["user_ids"] = [(6, 0, [user.id])]
             return vals
@@ -117,17 +144,58 @@ class Project(models.Model):
             base = f"{line.bir_form} - {line.period_label}"
             steps = []
             if line.prep_due_date:
-                steps.append(("Prepare", line.prep_by_code, "prep", line.prep_due_date, "prepare"))
+                steps.append(
+                    (
+                        "Prepare",
+                        line.prep_by_code,
+                        "prep",
+                        line.prep_due_date,
+                        "prepare",
+                    )
+                )
             if line.review_due_date:
-                steps.append(("Review", line.review_by_code, "review", line.review_due_date, "review"))
+                steps.append(
+                    (
+                        "Review",
+                        line.review_by_code,
+                        "review",
+                        line.review_due_date,
+                        "review",
+                    )
+                )
             if line.approve_due_date:
-                steps.append(("Approve/Pay", line.approve_by_code, "approve", line.approve_due_date, "approve"))
+                steps.append(
+                    (
+                        "Approve/Pay",
+                        line.approve_by_code,
+                        "approve",
+                        line.approve_due_date,
+                        "approve",
+                    )
+                )
             if not steps:
-                steps = [("File/Pay", line.approve_by_code or line.review_by_code or line.prep_by_code, "approve", line.deadline_date, "file")]
+                steps = [
+                    (
+                        "File/Pay",
+                        line.approve_by_code
+                        or line.review_by_code
+                        or line.prep_by_code,
+                        "approve",
+                        line.deadline_date,
+                        "file",
+                    )
+                ]
 
             for label, code, role, due, step in steps:
                 name = f"{base} — {label}"
-                exists = Task.search([("project_id", "=", self.id), ("name", "=", name), ("date_deadline", "=", due)], limit=1)
+                exists = Task.search(
+                    [
+                        ("project_id", "=", self.id),
+                        ("name", "=", name),
+                        ("date_deadline", "=", due),
+                    ],
+                    limit=1,
+                )
                 if exists:
                     continue
                 created |= Task.create(_mk(name, code, role, due, step))

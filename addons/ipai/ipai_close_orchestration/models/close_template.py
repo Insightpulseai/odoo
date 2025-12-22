@@ -19,7 +19,11 @@ class CloseTaskTemplate(models.Model):
     _order = "sequence, code"
 
     _sql_constraints = [
-        ("code_uniq", "unique(code, company_id)", "Template code must be unique per company."),
+        (
+            "code_uniq",
+            "unique(code, company_id)",
+            "Template code must be unique per company.",
+        ),
     ]
 
     # Core fields
@@ -44,41 +48,50 @@ class CloseTaskTemplate(models.Model):
     )
 
     # Roles (using selection for common roles)
-    preparer_role = fields.Selection([
-        ("rim", "RIM"),
-        ("jpal", "JPAL"),
-        ("bom", "BOM"),
-        ("ckvc", "CKVC"),
-        ("jli", "JLI"),
-        ("jap", "JAP"),
-        ("las", "LAS"),
-        ("rmqb", "RMQB"),
-        ("fd", "FD"),
-    ], string="Preparer Role")
+    preparer_role = fields.Selection(
+        [
+            ("rim", "RIM"),
+            ("jpal", "JPAL"),
+            ("bom", "BOM"),
+            ("ckvc", "CKVC"),
+            ("jli", "JLI"),
+            ("jap", "JAP"),
+            ("las", "LAS"),
+            ("rmqb", "RMQB"),
+            ("fd", "FD"),
+        ],
+        string="Preparer Role",
+    )
 
-    reviewer_role = fields.Selection([
-        ("rim", "RIM"),
-        ("jpal", "JPAL"),
-        ("bom", "BOM"),
-        ("ckvc", "CKVC"),
-        ("jli", "JLI"),
-        ("jap", "JAP"),
-        ("las", "LAS"),
-        ("rmqb", "RMQB"),
-        ("fd", "FD"),
-    ], string="Reviewer Role")
+    reviewer_role = fields.Selection(
+        [
+            ("rim", "RIM"),
+            ("jpal", "JPAL"),
+            ("bom", "BOM"),
+            ("ckvc", "CKVC"),
+            ("jli", "JLI"),
+            ("jap", "JAP"),
+            ("las", "LAS"),
+            ("rmqb", "RMQB"),
+            ("fd", "FD"),
+        ],
+        string="Reviewer Role",
+    )
 
-    approver_role = fields.Selection([
-        ("rim", "RIM"),
-        ("jpal", "JPAL"),
-        ("bom", "BOM"),
-        ("ckvc", "CKVC"),
-        ("jli", "JLI"),
-        ("jap", "JAP"),
-        ("las", "LAS"),
-        ("rmqb", "RMQB"),
-        ("fd", "FD"),
-    ], string="Approver Role")
+    approver_role = fields.Selection(
+        [
+            ("rim", "RIM"),
+            ("jpal", "JPAL"),
+            ("bom", "BOM"),
+            ("ckvc", "CKVC"),
+            ("jli", "JLI"),
+            ("jap", "JAP"),
+            ("las", "LAS"),
+            ("rmqb", "RMQB"),
+            ("fd", "FD"),
+        ],
+        string="Approver Role",
+    )
 
     # Default assignees
     preparer_id = fields.Many2one("res.users", string="Default Preparer")

@@ -26,8 +26,11 @@ class A1Tasklist(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     _sql_constraints = [
-        ("period_uniq", "unique(period_start, period_end, company_id)",
-         "A tasklist for this period already exists."),
+        (
+            "period_uniq",
+            "unique(period_start, period_end, company_id)",
+            "A tasklist for this period already exists.",
+        ),
     ]
 
     # Core fields
@@ -55,13 +58,19 @@ class A1Tasklist(models.Model):
     )
 
     # Status
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("open", "Open"),
-        ("in_progress", "In Progress"),
-        ("done", "Completed"),
-        ("cancelled", "Cancelled"),
-    ], string="State", default="draft", tracking=True, required=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("open", "Open"),
+            ("in_progress", "In Progress"),
+            ("done", "Completed"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="State",
+        default="draft",
+        tracking=True,
+        required=True,
+    )
 
     # Tasks
     task_ids = fields.One2many(
@@ -123,7 +132,9 @@ class A1Tasklist(models.Model):
             tasks = tl.task_ids
             tl.task_count = len(tasks)
             tl.task_done_count = len(tasks.filtered(lambda t: t.state == "done"))
-            tl.progress = (tl.task_done_count / tl.task_count * 100) if tl.task_count else 0
+            tl.progress = (
+                (tl.task_done_count / tl.task_count * 100) if tl.task_count else 0
+            )
 
     def action_generate_tasks(self):
         """Generate tasks from all active templates."""
@@ -131,10 +142,12 @@ class A1Tasklist(models.Model):
         if self.state not in ("draft", "open"):
             raise UserError("Can only generate tasks for Draft or Open tasklists.")
 
-        templates = self.env["a1.template"].search([
-            ("active", "=", True),
-            ("company_id", "=", self.company_id.id),
-        ])
+        templates = self.env["a1.template"].search(
+            [
+                ("active", "=", True),
+                ("company_id", "=", self.company_id.id),
+            ]
+        )
 
         Role = self.env["a1.role"]
         created_count = 0
@@ -142,10 +155,13 @@ class A1Tasklist(models.Model):
         for tpl in templates:
             # Check if task already exists (idempotency)
             external_key = f"{self.period_label}|{tpl.code}"
-            existing = self.env["a1.task"].search([
-                ("tasklist_id", "=", self.id),
-                ("external_key", "=", external_key),
-            ], limit=1)
+            existing = self.env["a1.task"].search(
+                [
+                    ("tasklist_id", "=", self.id),
+                    ("external_key", "=", external_key),
+                ],
+                limit=1,
+            )
 
             if existing:
                 continue
@@ -156,34 +172,38 @@ class A1Tasklist(models.Model):
             approver = Role.resolve_user(tpl.approver_role, self.company_id.id)
 
             # Create task
-            task = self.env["a1.task"].create({
-                "tasklist_id": self.id,
-                "template_id": tpl.id,
-                "name": tpl.name,
-                "sequence": tpl.sequence,
-                "external_key": external_key,
-                "owner_role": tpl.owner_role,
-                "owner_id": owner.id if owner else False,
-                "reviewer_role": tpl.reviewer_role,
-                "reviewer_id": reviewer.id if reviewer else False,
-                "approver_role": tpl.approver_role,
-                "approver_id": approver.id if approver else False,
-                "prep_deadline": self.period_end,
-                "review_deadline": self.period_end,
-                "approval_deadline": self.period_end,
-            })
+            task = self.env["a1.task"].create(
+                {
+                    "tasklist_id": self.id,
+                    "template_id": tpl.id,
+                    "name": tpl.name,
+                    "sequence": tpl.sequence,
+                    "external_key": external_key,
+                    "owner_role": tpl.owner_role,
+                    "owner_id": owner.id if owner else False,
+                    "reviewer_role": tpl.reviewer_role,
+                    "reviewer_id": reviewer.id if reviewer else False,
+                    "approver_role": tpl.approver_role,
+                    "approver_id": approver.id if approver else False,
+                    "prep_deadline": self.period_end,
+                    "review_deadline": self.period_end,
+                    "approval_deadline": self.period_end,
+                }
+            )
 
             # Create checklist items from template
             for item in tpl.checklist_ids:
-                self.env["a1.task.checklist"].create({
-                    "task_id": task.id,
-                    "template_item_id": item.id,
-                    "code": item.code,
-                    "name": item.name,
-                    "sequence": item.sequence,
-                    "item_type": item.item_type,
-                    "is_required": item.is_required,
-                })
+                self.env["a1.task.checklist"].create(
+                    {
+                        "task_id": task.id,
+                        "template_item_id": item.id,
+                        "code": item.code,
+                        "name": item.name,
+                        "sequence": item.sequence,
+                        "item_type": item.item_type,
+                        "is_required": item.is_required,
+                    }
+                )
 
             created_count += 1
 
@@ -211,13 +231,15 @@ class A1Tasklist(models.Model):
             raise UserError("Close cycle already exists for this tasklist.")
 
         # Create close cycle
-        cycle = self.env["close.cycle"].create({
-            "name": self.name,
-            "company_id": self.company_id.id,
-            "period_start": self.period_start,
-            "period_end": self.period_end,
-            "a1_tasklist_id": self.id,
-        })
+        cycle = self.env["close.cycle"].create(
+            {
+                "name": self.name,
+                "company_id": self.company_id.id,
+                "period_start": self.period_start,
+                "period_end": self.period_end,
+                "a1_tasklist_id": self.id,
+            }
+        )
 
         self.close_cycle_id = cycle.id
 
@@ -252,7 +274,9 @@ class A1Tasklist(models.Model):
         if self.state != "in_progress":
             raise UserError("Can only complete In Progress tasklists.")
 
-        incomplete = self.task_ids.filtered(lambda t: t.state not in ("done", "cancelled"))
+        incomplete = self.task_ids.filtered(
+            lambda t: t.state not in ("done", "cancelled")
+        )
         if incomplete:
             raise UserError(f"Cannot complete: {len(incomplete)} tasks not done.")
 
