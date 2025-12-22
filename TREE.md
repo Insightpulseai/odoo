@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4c5b6fb75915e7ddd34ff086b52b62edb4ff2524
+> Commit: 6003f06c5860e93ff764c9d63d9765358fcd40e9
 
 ```
 .
@@ -56,6 +56,7 @@
 │   │   ├── production-ready.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
+│   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── spec-validate.yml
 │   │   ├── superset-bump.yml
@@ -359,6 +360,22 @@
 │   │   │   └── menu.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_crm_pipeline
+│   │   ├── data
+│   │   │   └── crm_stage_rules.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── crm_lead.py
+│   │   │   └── crm_stage.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   ├── crm_lead_views.xml
+│   │   │   └── crm_stage_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_month_end
 │   │   ├── data
 │   │   │   ├── ir_cron.xml
@@ -378,6 +395,43 @@
 │   │   │   ├── ph_holiday_views.xml
 │   │   │   ├── task_template_views.xml
 │   │   │   └── task_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_platform_approvals
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── approval_mixin.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── approval_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_platform_audit
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── audit_mixin.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── audit_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_platform_theme
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── assets.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_platform_workflow
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── workflow_mixin.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── workflow_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_ppm_a1
@@ -658,6 +712,9 @@
 ├── calendar
 │   ├── 2026_FinanceClosing_Master.csv
 │   └── FinanceClosing_RecurringTasks.ics
+├── catalog
+│   ├── best_of_breed.yaml
+│   └── equivalence_matrix.csv
 ├── clients
 │   └── flutter_receipt_ocr
 │       ├── lib
@@ -986,6 +1043,12 @@
 │       ├── README.md
 │       ├── do-app-spec.yaml
 │       └── manifest.json
+├── kb
+│   ├── design_system
+│   │   └── tokens.yaml
+│   └── parity
+│       ├── baseline.json
+│       └── rubric.json
 ├── mattermost
 │   ├── runbooks
 │   │   └── .gitkeep
@@ -1307,6 +1370,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── erp-saas-clone-suite
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── expense-automation
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -1491,6 +1559,10 @@
 │       ├── __init__.py
 │       └── test_finance_ppm_install.py
 ├── tools
+│   ├── audit
+│   │   ├── db_truth.sql
+│   │   ├── snapshot.sh
+│   │   └── verify_alignment.py
 │   ├── catalog
 │   │   └── databricks_org_catalog.py
 │   ├── db-inventory
@@ -1508,6 +1580,9 @@
 │   │   ├── crawl_docs.py
 │   │   ├── map_to_odoo.py
 │   │   └── odoo_map.yaml
+│   ├── parity
+│   │   ├── parity_audit.py
+│   │   └── validate_spec_kit.py
 │   ├── seed_all.ts
 │   ├── seed_doc_ocr.ts
 │   ├── seed_ppm.ts
@@ -1662,15 +1737,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-529 directories, 1128 files
+559 directories, 1173 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 596 |
-| Files | 1739 |
-| Python files | 478 |
-| XML files | 265 |
-| Markdown files | 331 |
+| Directories | 628 |
+| Files | 1787 |
+| Python files | 500 |
+| XML files | 272 |
+| Markdown files | 335 |
