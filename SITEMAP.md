@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4c5b6fb75915e7ddd34ff086b52b62edb4ff2524
+> Commit: 6003f06c5860e93ff764c9d63d9765358fcd40e9
 
 ## 📚 Documentation
 
@@ -265,6 +265,10 @@
 | [Implementation Plan: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/plan.md) | spec/docs-platform-sapgrade |
 | [PRD: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/prd.md) | spec/docs-platform-sapgrade |
 | [Tasks: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/tasks.md) | spec/docs-platform-sapgrade |
+| [ERP SaaS Clone Suite — Constitution](spec/erp-saas-clone-suite/constitution.md) | spec/erp-saas-clone-suite |
+| [ERP SaaS Clone Suite — Implementation Plan](spec/erp-saas-clone-suite/plan.md) | spec/erp-saas-clone-suite |
+| [ERP SaaS Clone Suite — Product Requirements Document](spec/erp-saas-clone-suite/prd.md) | spec/erp-saas-clone-suite |
+| [ERP SaaS Clone Suite — Task Checklist](spec/erp-saas-clone-suite/tasks.md) | spec/erp-saas-clone-suite |
 | [Expense Automation — Constitution](spec/expense-automation/constitution.md) | spec/expense-automation |
 | [Expense Automation Plan](spec/expense-automation/plan.md) | spec/expense-automation |
 | [Expense Automation PRD](spec/expense-automation/prd.md) | spec/expense-automation |
@@ -375,7 +379,12 @@
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
+| [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
+| [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
+| [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
+| [ipai_platform_theme](./addons/ipai_platform_theme) | ✅ |  |
+| [ipai_platform_workflow](./addons/ipai_platform_workflow) | ✅ |  |
 | [ipai_ppm_a1](./addons/ipai_ppm_a1) | ✅ |  |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
 | [ipai_accounting_firm_pack](./archive/addons/ipai_accounting_firm_pack) | ✅ |  |
