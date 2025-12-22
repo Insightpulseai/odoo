@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Theme assets registration (fallback for older Odoo versions) -->
+    <template id="ipai_platform_theme_assets_backend" inherit_id="web.assets_backend" name="IPAI Theme Tokens">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/scss" href="/ipai_platform_theme/static/src/scss/tokens.scss"/>
+            <link rel="stylesheet" type="text/scss" href="/ipai_platform_theme/static/src/scss/components.scss"/>
+        </xpath>
+    </template>
+</odoo>

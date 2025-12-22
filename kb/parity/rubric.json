@@ -1,0 +1,94 @@
+{
+  "version": "1.0.0",
+  "description": "Parity scoring rubric for capability assessment",
+  "weights": {
+    "workflow": 30,
+    "ux": 25,
+    "data": 15,
+    "perm": 15,
+    "report": 10,
+    "perf": 5
+  },
+  "dimensions": {
+    "workflow": {
+      "weight": 30,
+      "description": "Business process coverage and automation",
+      "criteria": [
+        "Core workflow states implemented",
+        "Transition rules enforced",
+        "Notifications on state changes",
+        "Approval chains where required",
+        "Exception handling paths"
+      ]
+    },
+    "ux": {
+      "weight": 25,
+      "description": "User experience and interface quality",
+      "criteria": [
+        "View matches target product feel",
+        "Quick actions available",
+        "Responsive and accessible",
+        "Intuitive navigation",
+        "Consistent design tokens"
+      ]
+    },
+    "data": {
+      "weight": 15,
+      "description": "Data model completeness and integrity",
+      "criteria": [
+        "Required fields captured",
+        "Relationships modeled correctly",
+        "Data validation rules",
+        "History/audit trail",
+        "Import/export capability"
+      ]
+    },
+    "perm": {
+      "weight": 15,
+      "description": "Permission and access control",
+      "criteria": [
+        "Role-based access defined",
+        "Field-level security where needed",
+        "Record-level rules",
+        "Action permissions",
+        "Delegation support"
+      ]
+    },
+    "report": {
+      "weight": 10,
+      "description": "Reporting and analytics",
+      "criteria": [
+        "Key metrics dashboards",
+        "Standard reports available",
+        "Export formats",
+        "Scheduled reports",
+        "Drill-down capability"
+      ]
+    },
+    "perf": {
+      "weight": 5,
+      "description": "Performance and scalability",
+      "criteria": [
+        "Page load < 2s",
+        "List views handle 10k+ records",
+        "Search response < 1s",
+        "No N+1 queries",
+        "Caching where appropriate"
+      ]
+    }
+  },
+  "scoring_guide": {
+    "0": "Not implemented",
+    "20": "Basic skeleton only",
+    "40": "Partial implementation, major gaps",
+    "60": "Functional but missing polish",
+    "80": "Production ready, minor gaps",
+    "100": "Full parity with target"
+  },
+  "thresholds": {
+    "p0_minimum": 70,
+    "p1_minimum": 50,
+    "p2_minimum": 0,
+    "launch_ready": 70
+  }
+}

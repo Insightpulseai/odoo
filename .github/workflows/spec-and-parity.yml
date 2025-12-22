@@ -1,0 +1,170 @@
+name: Spec + Parity Gates
+
+on:
+  pull_request:
+    paths:
+      - "spec/**"
+      - "catalog/**"
+      - "kb/**"
+      - "tools/parity/**"
+      - "tools/audit/**"
+      - "addons/ipai_*/**"
+      - ".github/workflows/spec-and-parity.yml"
+  push:
+    branches: [main, master]
+    paths:
+      - "spec/**"
+      - "catalog/**"
+      - "kb/**"
+      - "tools/parity/**"
+      - "tools/audit/**"
+      - "addons/ipai_*/**"
+      - ".github/workflows/spec-and-parity.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: spec-parity-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  spec_kit:
+    name: Spec Kit Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate Spec Kit structure
+        run: python3 tools/parity/validate_spec_kit.py
+
+  parity:
+    name: Parity Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run parity audit (no P0 regressions)
+        run: python3 tools/parity/parity_audit.py
+
+      - name: Upload parity report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: parity_report
+          path: parity_report.json
+          retention-days: 30
+
+  catalog_validation:
+    name: Catalog Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Validate YAML files
+        run: |
+          set -euo pipefail
+          echo "Validating catalog YAML files..."
+
+          # Validate best_of_breed.yaml
+          if [[ -f "catalog/best_of_breed.yaml" ]]; then
+            python3 -c "import yaml; yaml.safe_load(open('catalog/best_of_breed.yaml'))"
+            echo "[OK] catalog/best_of_breed.yaml"
+          fi
+
+          # Validate design system tokens
+          if [[ -f "kb/design_system/tokens.yaml" ]]; then
+            python3 -c "import yaml; yaml.safe_load(open('kb/design_system/tokens.yaml'))"
+            echo "[OK] kb/design_system/tokens.yaml"
+          fi
+
+          echo "All YAML files valid"
+
+      - name: Validate JSON files
+        run: |
+          set -euo pipefail
+          echo "Validating JSON files..."
+
+          # Validate parity rubric
+          if [[ -f "kb/parity/rubric.json" ]]; then
+            python3 -c "import json; json.load(open('kb/parity/rubric.json'))"
+            echo "[OK] kb/parity/rubric.json"
+          fi
+
+          # Validate baseline
+          if [[ -f "kb/parity/baseline.json" ]]; then
+            python3 -c "import json; json.load(open('kb/parity/baseline.json'))"
+            echo "[OK] kb/parity/baseline.json"
+          fi
+
+          echo "All JSON files valid"
+
+      - name: Validate CSV structure
+        run: |
+          set -euo pipefail
+          echo "Validating CSV files..."
+
+          if [[ -f "catalog/equivalence_matrix.csv" ]]; then
+            python3 << 'PY'
+          import csv
+          required_headers = ['capability_id', 'tier', 'target_product', 'manual_score']
+          with open('catalog/equivalence_matrix.csv', newline='') as f:
+              reader = csv.DictReader(f)
+              headers = reader.fieldnames or []
+              missing = [h for h in required_headers if h not in headers]
+              if missing:
+                  print(f"[FAIL] Missing headers: {missing}")
+                  exit(1)
+              rows = list(reader)
+              print(f"[OK] equivalence_matrix.csv: {len(rows)} capabilities")
+          PY
+          fi
+
+  audit_preflight:
+    name: Audit Preflight
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Generate snapshot
+        run: |
+          chmod +x tools/audit/snapshot.sh
+          ./tools/audit/snapshot.sh > snapshot.txt
+
+      - name: Verify alignment
+        run: python3 tools/audit/verify_alignment.py --snapshot snapshot.txt || true
+
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit_snapshot
+          path: snapshot.txt
+          retention-days: 30
