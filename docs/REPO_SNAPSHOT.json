@@ -1,0 +1,38 @@
+{
+  "generated_at": "2025-12-22T19:10:21.399938Z",
+  "git": {
+    "sha": "2dac7661279f7152a21f4e4b911dcecd60829724",
+    "branch": "claude/notion-clone-odoo-module-LSFan",
+    "dirty": true,
+    "remotes": [
+      "origin\thttp://local_proxy@127.0.0.1:21740/git/jgtolentino/odoo-ce (fetch)",
+      "origin\thttp://local_proxy@127.0.0.1:21740/git/jgtolentino/odoo-ce (push)"
+    ]
+  },
+  "submodules": "-e2de4d8a8ff0fe368f3222ff798ea56a2157d28d external-src/account-closing\n-7102d7287ab0c7027f2378aca6dd67f3f92c5bda external-src/account-financial-reporting\n-2b8097e59a0fca9396305faebd66f04359ee9cb9 external-src/account-financial-tools\n-2f4bb29d30fd2ec978f9b004e05925b978771e1d external-src/account-invoicing\n-d531dcb8bbc18dd95ca9783ea9db9da70b25e3d2 external-src/calendar\n-11209a1a49d2da4ddeece2ca99636058faf94382 external-src/contract\n-fe4a576abf2b33462003b6e994aedb3d56c25ed1 external-src/dms\n-bf9d3783e39d9c1ce2d5e84d4f0a14273d97749f external-src/hr-expense\n-f90c836119e234e5e3fbf544af5472939c1c72ac external-src/maintenance\n-c4f080333f87d2bc3e3509cab61952262f0ef27b external-src/project\n-ff541f09a216f40c9e1e8cdae935103089401ae9 external-src/purchase-workflow\n-a602ffda7c9a9c5fc67dd14d4d96188c77d67b6f external-src/reporting-engine\n-42d80c8696fb03acbf83355d62ae0a5cf3adde08 external-src/server-tools\n-c729a3b694bfdaf9eb6f08fad1853438e49c2455 external-src/web\n-bdae054eeff60e4a6d19952f4f3d488484582f5e vendor/oca/account-financial-reporting\n-40de3ff4fa81453d07122296012e6998c533e8a8 vendor/oca/account-reconcile\n-5bbd81fed7a9b68e365e7781750a67b72eb2691a vendor/oca/project\n-adec64e27900e7527262ef02071b74d2e1d47c8f vendor/oca/server-tools\n-dbff15b4a07ad5b22dc61de095e2b1bea1b4ad1d vendor/oca/web",
+  "env": {
+    "ODOO_RC": "",
+    "ODOO_ADDONS_PATH": ""
+  },
+  "python_version": "Python 3.11.14",
+  "addons": [
+    "ipai",
+    "ipai_bir_tax_compliance",
+    "ipai_close_orchestration",
+    "ipai_month_end",
+    "ipai_platform_audit",
+    "ipai_platform_permissions",
+    "ipai_ppm_a1",
+    "ipai_tbwa_finance",
+    "ipai_workos_affine",
+    "ipai_workos_blocks",
+    "ipai_workos_canvas",
+    "ipai_workos_collab",
+    "ipai_workos_core",
+    "ipai_workos_db",
+    "ipai_workos_search",
+    "ipai_workos_templates",
+    "ipai_workos_views",
+    "oca"
+  ]
+}
