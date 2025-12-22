@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f4b8906a76de25e8c7d5f78977f3e89929d818fe
+> Commit: 4c5b6fb75915e7ddd34ff086b52b62edb4ff2524
 
 ```
 .
@@ -53,6 +53,7 @@
 │   │   ├── infra-validate.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── notion-sync-ci.yml
+│   │   ├── production-ready.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-kit-enforce.yml
@@ -1077,6 +1078,9 @@
 ├── odoo
 │   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
+├── ops
+│   ├── DISASTER_RECOVERY.md
+│   └── backup-production.sh
 ├── out
 │   ├── concur_demo
 │   │   └── catalog.json
@@ -1140,6 +1144,7 @@
 │   ├── build_and_push_version.sh
 │   ├── build_v0.10.0.sh
 │   ├── build_v0.9.1.sh
+│   ├── check-enterprise-modules.sh
 │   ├── check_project_tasks.py
 │   ├── ci_local.sh
 │   ├── ci_smoke_test.sh
@@ -1194,6 +1199,7 @@
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
 │   ├── validate_m1.sh
+│   ├── validate_manifests.py
 │   ├── verify-https.sh
 │   ├── verify.sh
 │   ├── verify_backup.sh
@@ -1656,15 +1662,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-528 directories, 1123 files
+529 directories, 1128 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 595 |
-| Files | 1734 |
-| Python files | 477 |
+| Directories | 596 |
+| Files | 1739 |
+| Python files | 478 |
 | XML files | 265 |
-| Markdown files | 330 |
+| Markdown files | 331 |
