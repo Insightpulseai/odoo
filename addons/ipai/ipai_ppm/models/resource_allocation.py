@@ -130,13 +130,15 @@ class PpmResourceAllocation(models.Model):
                 continue
 
             # Find overlapping allocations for this employee
-            overlapping = self.search([
-                ("employee_id", "=", alloc.employee_id.id),
-                ("id", "!=", alloc.id if alloc.id else 0),
-                ("status", "not in", ["cancelled", "completed"]),
-                ("date_start", "<=", alloc.date_end),
-                ("date_end", ">=", alloc.date_start),
-            ])
+            overlapping = self.search(
+                [
+                    ("employee_id", "=", alloc.employee_id.id),
+                    ("id", "!=", alloc.id if alloc.id else 0),
+                    ("status", "not in", ["cancelled", "completed"]),
+                    ("date_start", "<=", alloc.date_end),
+                    ("date_end", ">=", alloc.date_start),
+                ]
+            )
 
             total = alloc.allocation_pct + sum(overlapping.mapped("allocation_pct"))
             alloc.total_allocation = total

@@ -20,7 +20,11 @@ class A1Check(models.Model):
     _order = "sequence, code"
 
     _sql_constraints = [
-        ("code_uniq", "unique(code, company_id)", "Check code must be unique per company."),
+        (
+            "code_uniq",
+            "unique(code, company_id)",
+            "Check code must be unique per company.",
+        ),
     ]
 
     # Core fields
@@ -38,18 +42,28 @@ class A1Check(models.Model):
     active = fields.Boolean(string="Active", default=True)
 
     # Classification
-    check_type = fields.Selection([
-        ("manual", "Manual Verification"),
-        ("automated", "Automated Check"),
-        ("approval", "Approval Gate"),
-        ("reconciliation", "Reconciliation"),
-    ], string="Type", default="manual", required=True)
+    check_type = fields.Selection(
+        [
+            ("manual", "Manual Verification"),
+            ("automated", "Automated Check"),
+            ("approval", "Approval Gate"),
+            ("reconciliation", "Reconciliation"),
+        ],
+        string="Type",
+        default="manual",
+        required=True,
+    )
 
-    severity = fields.Selection([
-        ("info", "Informational"),
-        ("warning", "Warning"),
-        ("blocker", "Blocker"),
-    ], string="Severity", default="warning", required=True)
+    severity = fields.Selection(
+        [
+            ("info", "Informational"),
+            ("warning", "Warning"),
+            ("blocker", "Blocker"),
+        ],
+        string="Severity",
+        default="warning",
+        required=True,
+    )
 
     # Linked templates (many2many - a check can apply to multiple templates)
     template_ids = fields.Many2many(
@@ -114,12 +128,17 @@ class A1CheckResult(models.Model):
     )
 
     # Result
-    result = fields.Selection([
-        ("pending", "Pending"),
-        ("pass", "Pass"),
-        ("fail", "Fail"),
-        ("skip", "Skipped"),
-    ], string="Result", default="pending", required=True)
+    result = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("pass", "Pass"),
+            ("fail", "Fail"),
+            ("skip", "Skipped"),
+        ],
+        string="Result",
+        default="pending",
+        required=True,
+    )
 
     result_notes = fields.Text(string="Result Notes")
 

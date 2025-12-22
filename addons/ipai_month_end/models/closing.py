@@ -125,7 +125,9 @@ class MonthEndClosing(models.Model):
     def action_generate_tasks(self):
         """Generate tasks from templates for this closing period."""
         self.ensure_one()
-        templates = self.env["ipai.month.end.task.template"].search([("active", "=", True)])
+        templates = self.env["ipai.month.end.task.template"].search(
+            [("active", "=", True)]
+        )
 
         for template in templates:
             # Calculate due dates
@@ -139,19 +141,21 @@ class MonthEndClosing(models.Model):
                 self.last_workday, template.approve_day_offset
             )
 
-            self.env["ipai.month.end.task"].create({
-                "closing_id": self.id,
-                "template_id": template.id,
-                "name": template.name,
-                "phase": template.phase,
-                "sequence": template.sequence,
-                "prep_user_id": template.prep_user_id.id,
-                "review_user_id": template.review_user_id.id,
-                "approve_user_id": template.approve_user_id.id,
-                "prep_due_date": prep_date,
-                "review_due_date": review_date,
-                "approve_due_date": approve_date,
-            })
+            self.env["ipai.month.end.task"].create(
+                {
+                    "closing_id": self.id,
+                    "template_id": template.id,
+                    "name": template.name,
+                    "phase": template.phase,
+                    "sequence": template.sequence,
+                    "prep_user_id": template.prep_user_id.id,
+                    "review_user_id": template.review_user_id.id,
+                    "approve_user_id": template.approve_user_id.id,
+                    "prep_due_date": prep_date,
+                    "review_due_date": review_date,
+                    "approve_due_date": approve_date,
+                }
+            )
 
         self.state = "in_progress"
         return True

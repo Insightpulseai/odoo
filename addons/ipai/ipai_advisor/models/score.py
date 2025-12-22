@@ -63,10 +63,12 @@ class AdvisorScore(models.Model):
         Recommendation = self.env["advisor.recommendation"]
 
         for category in categories:
-            recs = Recommendation.search([
-                ("category_id", "=", category.id),
-                ("status", "=", "open"),
-            ])
+            recs = Recommendation.search(
+                [
+                    ("category_id", "=", category.id),
+                    ("status", "=", "open"),
+                ]
+            )
 
             open_count = len(recs)
             high_count = len(recs.filtered(lambda r: r.severity == "high"))
@@ -76,23 +78,27 @@ class AdvisorScore(models.Model):
             penalty = (critical_count * 25) + (high_count * 10) + (open_count * 2)
             score = max(0, min(100, 100 - penalty))
 
-            self.create({
-                "category_id": category.id,
-                "score": score,
-                "open_count": open_count,
-                "high_count": high_count,
-                "critical_count": critical_count,
-            })
+            self.create(
+                {
+                    "category_id": category.id,
+                    "score": score,
+                    "open_count": open_count,
+                    "high_count": high_count,
+                    "critical_count": critical_count,
+                }
+            )
 
         return True
 
     @api.model
     def get_latest_scores(self):
         """Get the latest score for each category."""
-        self.env.cr.execute("""
+        self.env.cr.execute(
+            """
             SELECT DISTINCT ON (category_id)
                 category_id, score, open_count, high_count, critical_count, as_of
             FROM advisor_score
             ORDER BY category_id, as_of DESC
-        """)
+        """
+        )
         return self.env.cr.dictfetchall()

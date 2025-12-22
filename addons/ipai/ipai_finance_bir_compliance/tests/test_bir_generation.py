@@ -10,11 +10,17 @@ class TestBIRGeneration(TransactionCase):
     def setUp(self):
         super().setUp()
         # Load program seed first
-        from odoo.addons.ipai_project_program.seed.loader import load_seed_bundle as load_program_seed
+        from odoo.addons.ipai_project_program.seed.loader import (
+            load_seed_bundle as load_program_seed,
+        )
+
         load_program_seed(self.env, "ipai_project_program")
 
         # Load BIR schedule
-        from odoo.addons.ipai_finance_bir_compliance.seed.loader import load_seed_bundle as load_bir_seed
+        from odoo.addons.ipai_finance_bir_compliance.seed.loader import (
+            load_seed_bundle as load_bir_seed,
+        )
+
         load_bir_seed(self.env, "ipai_finance_bir_compliance")
 
     def test_schedule_loaded(self):
@@ -24,10 +30,13 @@ class TestBIRGeneration(TransactionCase):
         self.assertTrue(len(items) > 0)
 
         # Check specific item
-        item = Item.search([
-            ("bir_form", "=", "1601-C / 0619-E"),
-            ("period_covered", "=", "Dec 2025"),
-        ], limit=1)
+        item = Item.search(
+            [
+                ("bir_form", "=", "1601-C / 0619-E"),
+                ("period_covered", "=", "Dec 2025"),
+            ],
+            limit=1,
+        )
         self.assertTrue(item)
         self.assertEqual(len(item.step_ids), 4)
 
@@ -60,10 +69,13 @@ class TestBIRGeneration(TransactionCase):
     def test_step_date_calculation(self):
         """Test step target date calculation."""
         Item = self.env["ipai.bir.schedule.item"]
-        item = Item.search([
-            ("bir_form", "=", "1601-C / 0619-E"),
-            ("period_covered", "=", "Dec 2025"),
-        ], limit=1)
+        item = Item.search(
+            [
+                ("bir_form", "=", "1601-C / 0619-E"),
+                ("period_covered", "=", "Dec 2025"),
+            ],
+            limit=1,
+        )
 
         deadline = item.deadline  # 2026-01-15
         for step in item.step_ids:
@@ -85,8 +97,10 @@ class TestBIRGeneration(TransactionCase):
 
         # Verify no tasks created
         im2 = self.env.ref("ipai_project_program.im2_tax_filing")
-        tasks = self.env["project.task"].search([
-            ("project_id", "=", im2.id),
-            ("bir_form", "!=", False),
-        ])
+        tasks = self.env["project.task"].search(
+            [
+                ("project_id", "=", im2.id),
+                ("bir_form", "!=", False),
+            ]
+        )
         self.assertEqual(len(tasks), 0)

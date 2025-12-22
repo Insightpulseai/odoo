@@ -40,7 +40,9 @@ class AssetReservation(models.Model):
     def _compute_name(self):
         for rec in self:
             if rec.asset_id and rec.employee_id:
-                rec.name = f"{rec.asset_id.name} - {rec.employee_id.name} ({rec.start_date})"
+                rec.name = (
+                    f"{rec.asset_id.name} - {rec.employee_id.name} ({rec.start_date})"
+                )
             else:
                 rec.name = "New Reservation"
 
@@ -54,13 +56,15 @@ class AssetReservation(models.Model):
     def _check_overlap(self):
         for rec in self:
             if rec.state not in ("draft", "cancelled", "expired"):
-                overlapping = self.search([
-                    ("asset_id", "=", rec.asset_id.id),
-                    ("id", "!=", rec.id),
-                    ("state", "not in", ("cancelled", "expired")),
-                    ("start_date", "<=", rec.end_date),
-                    ("end_date", ">=", rec.start_date),
-                ])
+                overlapping = self.search(
+                    [
+                        ("asset_id", "=", rec.asset_id.id),
+                        ("id", "!=", rec.id),
+                        ("state", "not in", ("cancelled", "expired")),
+                        ("start_date", "<=", rec.end_date),
+                        ("end_date", ">=", rec.start_date),
+                    ]
+                )
                 if overlapping:
                     raise ValidationError(
                         f"Reservation overlaps with existing reservation: {overlapping[0].name}"
@@ -82,12 +86,14 @@ class AssetReservation(models.Model):
     def action_convert_to_checkout(self):
         """Convert reservation to active checkout."""
         for rec in self:
-            checkout = self.env["ipai.asset.checkout"].create({
-                "asset_id": rec.asset_id.id,
-                "employee_id": rec.employee_id.id,
-                "expected_return_date": rec.end_date,
-                "checkout_notes": f"From reservation: {rec.name}",
-            })
+            checkout = self.env["ipai.asset.checkout"].create(
+                {
+                    "asset_id": rec.asset_id.id,
+                    "employee_id": rec.employee_id.id,
+                    "expected_return_date": rec.end_date,
+                    "checkout_notes": f"From reservation: {rec.name}",
+                }
+            )
             checkout.action_approve()
             rec.state = "checked_out"
         return checkout

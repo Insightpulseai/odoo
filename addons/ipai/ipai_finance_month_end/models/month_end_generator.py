@@ -15,8 +15,8 @@ class MonthEndGenerator(models.AbstractModel):
     @api.model
     def _find_stage(self, label: str):
         """Find task stage by name."""
-        return self.env["project.task.type"].sudo().search(
-            [("name", "=", label)], limit=1
+        return (
+            self.env["project.task.type"].sudo().search([("name", "=", label)], limit=1)
         )
 
     @api.model
@@ -27,22 +27,28 @@ class MonthEndGenerator(models.AbstractModel):
         """
         if not role_code:
             return self.env["res.users"]
-        person = self.env["ipai.directory.person"].sudo().search(
-            [("code", "=", role_code)], limit=1
+        person = (
+            self.env["ipai.directory.person"]
+            .sudo()
+            .search([("code", "=", role_code)], limit=1)
         )
         if not person or not person.email:
             return self.env["res.users"]
-        user = self.env["res.users"].sudo().search(
-            [("login", "=", person.email)], limit=1
+        user = (
+            self.env["res.users"].sudo().search([("login", "=", person.email)], limit=1)
         )
         if not user:
-            user = self.env["res.users"].sudo().search(
-                [("email", "=", person.email)], limit=1
+            user = (
+                self.env["res.users"]
+                .sudo()
+                .search([("email", "=", person.email)], limit=1)
             )
         return user
 
     @api.model
-    def generate(self, program_project, anchor_date: date, templates=None, dry_run=False):
+    def generate(
+        self, program_project, anchor_date: date, templates=None, dry_run=False
+    ):
         """
         Generate tasks into IM projects based on templates.
 
@@ -73,9 +79,16 @@ class MonthEndGenerator(models.AbstractModel):
                 im = self.env.ref(tmpl.default_im_xml_id, raise_if_not_found=False)
             if not im:
                 # Fallback: use program's IM1
-                im = self.env["project.project"].sudo().search(
-                    [("parent_id", "=", program_project.id), ("im_code", "=", "IM1")],
-                    limit=1,
+                im = (
+                    self.env["project.project"]
+                    .sudo()
+                    .search(
+                        [
+                            ("parent_id", "=", program_project.id),
+                            ("im_code", "=", "IM1"),
+                        ],
+                        limit=1,
+                    )
                 )
             if not im:
                 _logger.warning(
@@ -85,18 +98,21 @@ class MonthEndGenerator(models.AbstractModel):
 
             for step in tmpl.step_ids:
                 target = step.compute_target_date(anchor_date)
-                activity_label = dict(
-                    step._fields["activity_type"].selection
-                ).get(step.activity_type)
+                activity_label = dict(step._fields["activity_type"].selection).get(
+                    step.activity_type
+                )
                 task_name = f"{tmpl.task_base_name} - {activity_label}"
                 stage = self._find_stage(activity_label) or False
 
                 # Idempotency key: (project_id, name, date_deadline)
-                existing = Task.search([
-                    ("project_id", "=", im.id),
-                    ("name", "=", task_name),
-                    ("date_deadline", "=", target),
-                ], limit=1)
+                existing = Task.search(
+                    [
+                        ("project_id", "=", im.id),
+                        ("name", "=", task_name),
+                        ("date_deadline", "=", target),
+                    ],
+                    limit=1,
+                )
                 if existing:
                     continue
 

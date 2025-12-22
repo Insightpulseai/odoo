@@ -2,6 +2,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+
 class GenerateIMProjectsWizard(models.TransientModel):
     _name = "ipai.generate.im.projects.wizard"
     _description = "Generate IM1/IM2 Projects and Tasks"

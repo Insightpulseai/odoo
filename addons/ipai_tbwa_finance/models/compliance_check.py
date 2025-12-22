@@ -6,6 +6,7 @@ class ComplianceCheck(models.Model):
     Compliance check results for each closing period.
     Pre-close validations before month can be closed.
     """
+
     _name = "compliance.check"
     _description = "Compliance Check"
     _order = "closing_id, sequence"
@@ -19,22 +20,30 @@ class ComplianceCheck(models.Model):
         required=True,
         ondelete="cascade",
     )
-    check_type = fields.Selection([
-        ("gl", "General Ledger"),
-        ("ar", "Accounts Receivable"),
-        ("ap", "Accounts Payable"),
-        ("bank", "Bank Reconciliation"),
-        ("tax", "Tax Compliance"),
-        ("payroll", "Payroll"),
-        ("inventory", "Inventory"),
-    ], string="Check Type", required=True)
+    check_type = fields.Selection(
+        [
+            ("gl", "General Ledger"),
+            ("ar", "Accounts Receivable"),
+            ("ap", "Accounts Payable"),
+            ("bank", "Bank Reconciliation"),
+            ("tax", "Tax Compliance"),
+            ("payroll", "Payroll"),
+            ("inventory", "Inventory"),
+        ],
+        string="Check Type",
+        required=True,
+    )
 
-    status = fields.Selection([
-        ("pending", "Pending"),
-        ("passed", "Passed"),
-        ("warning", "Warning"),
-        ("failed", "Failed"),
-    ], string="Status", default="pending")
+    status = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("passed", "Passed"),
+            ("warning", "Warning"),
+            ("failed", "Failed"),
+        ],
+        string="Status",
+        default="pending",
+    )
 
     result_text = fields.Text(string="Result Details")
     checked_date = fields.Datetime(string="Last Checked")
@@ -54,7 +63,9 @@ class ComplianceCheck(models.Model):
     def _compute_variance(self):
         for rec in self:
             if rec.expected_value:
-                rec.variance = abs(rec.actual_value - rec.expected_value) / abs(rec.expected_value)
+                rec.variance = abs(rec.actual_value - rec.expected_value) / abs(
+                    rec.expected_value
+                )
             else:
                 rec.variance = 0.0
 
@@ -79,12 +90,14 @@ class ComplianceCheck(models.Model):
     def _check_gl(self):
         """Check GL is balanced"""
         # Sum of debits = sum of credits
-        moves = self.env["account.move"].search([
-            ("company_id", "=", self.closing_id.company_id.id),
-            ("date", ">=", self.closing_id.period_date.replace(day=1)),
-            ("date", "<=", self.closing_id.period_date),
-            ("state", "=", "posted"),
-        ])
+        moves = self.env["account.move"].search(
+            [
+                ("company_id", "=", self.closing_id.company_id.id),
+                ("date", ">=", self.closing_id.period_date.replace(day=1)),
+                ("date", "<=", self.closing_id.period_date),
+                ("state", "=", "posted"),
+            ]
+        )
         total_debit = sum(moves.mapped("line_ids.debit"))
         total_credit = sum(moves.mapped("line_ids.credit"))
 
@@ -92,19 +105,25 @@ class ComplianceCheck(models.Model):
         self.actual_value = total_credit
         if abs(total_debit - total_credit) < 0.01:
             self.status = "passed"
-            self.result_text = f"GL balanced: Debit={total_debit:,.2f}, Credit={total_credit:,.2f}"
+            self.result_text = (
+                f"GL balanced: Debit={total_debit:,.2f}, Credit={total_credit:,.2f}"
+            )
         else:
             self.status = "failed"
-            self.result_text = f"GL imbalance: Debit={total_debit:,.2f} ≠ Credit={total_credit:,.2f}"
+            self.result_text = (
+                f"GL imbalance: Debit={total_debit:,.2f} ≠ Credit={total_credit:,.2f}"
+            )
 
     def _check_bank(self):
         """Check bank reconciliation status"""
         # Find unreconciled bank statement lines
-        unreconciled = self.env["account.bank.statement.line"].search_count([
-            ("company_id", "=", self.closing_id.company_id.id),
-            ("date", "<=", self.closing_id.period_date),
-            ("is_reconciled", "=", False),
-        ])
+        unreconciled = self.env["account.bank.statement.line"].search_count(
+            [
+                ("company_id", "=", self.closing_id.company_id.id),
+                ("date", "<=", self.closing_id.period_date),
+                ("is_reconciled", "=", False),
+            ]
+        )
 
         self.actual_value = unreconciled
         self.expected_value = 0
@@ -120,11 +139,13 @@ class ComplianceCheck(models.Model):
 
     def _check_tax(self):
         """Check tax returns filed"""
-        unfiled = self.env["finance.task"].search_count([
-            ("closing_id", "=", self.closing_id.id),
-            ("task_type", "=", "bir_filing"),
-            ("state", "!=", "done"),
-        ])
+        unfiled = self.env["finance.task"].search_count(
+            [
+                ("closing_id", "=", self.closing_id.id),
+                ("task_type", "=", "bir_filing"),
+                ("state", "!=", "done"),
+            ]
+        )
 
         self.actual_value = unfiled
         self.expected_value = 0

@@ -11,44 +11,50 @@ class CloseException(models.Model):
 
     name = fields.Char(required=True, tracking=True)
     cycle_id = fields.Many2one(
-        "close.cycle",
-        required=True,
-        ondelete="cascade",
-        index=True
+        "close.cycle", required=True, ondelete="cascade", index=True
     )
-    task_id = fields.Many2one(
-        "close.task",
-        ondelete="set null",
-        index=True
-    )
+    task_id = fields.Many2one("close.task", ondelete="set null", index=True)
 
     # Classification
-    exception_type = fields.Selection([
-        ("missing_invoice", "Missing Invoice"),
-        ("variance", "Unusual Variance"),
-        ("unmatched", "Unmatched Transaction"),
-        ("approval_delay", "Approval Delay"),
-        ("doc_missing", "Missing Documentation"),
-        ("posting_error", "Posting Error"),
-        ("policy_violation", "Policy Violation"),
-        ("system_error", "System Error"),
-        ("other", "Other"),
-    ], required=True, tracking=True)
+    exception_type = fields.Selection(
+        [
+            ("missing_invoice", "Missing Invoice"),
+            ("variance", "Unusual Variance"),
+            ("unmatched", "Unmatched Transaction"),
+            ("approval_delay", "Approval Delay"),
+            ("doc_missing", "Missing Documentation"),
+            ("posting_error", "Posting Error"),
+            ("policy_violation", "Policy Violation"),
+            ("system_error", "System Error"),
+            ("other", "Other"),
+        ],
+        required=True,
+        tracking=True,
+    )
 
-    severity = fields.Selection([
-        ("info", "Info"),
-        ("warning", "Warning"),
-        ("high", "High"),
-        ("critical", "Critical"),
-    ], default="warning", required=True, tracking=True)
+    severity = fields.Selection(
+        [
+            ("info", "Info"),
+            ("warning", "Warning"),
+            ("high", "High"),
+            ("critical", "Critical"),
+        ],
+        default="warning",
+        required=True,
+        tracking=True,
+    )
 
     # Status
-    state = fields.Selection([
-        ("open", "Open"),
-        ("investigating", "Investigating"),
-        ("resolved", "Resolved"),
-        ("cancelled", "Cancelled"),
-    ], default="open", tracking=True)
+    state = fields.Selection(
+        [
+            ("open", "Open"),
+            ("investigating", "Investigating"),
+            ("resolved", "Resolved"),
+            ("cancelled", "Cancelled"),
+        ],
+        default="open",
+        tracking=True,
+    )
 
     # Details
     description = fields.Text()
@@ -59,19 +65,13 @@ class CloseException(models.Model):
     # Financial impact
     amount = fields.Monetary(currency_field="currency_id")
     currency_id = fields.Many2one(
-        "res.currency",
-        default=lambda self: self.env.company.currency_id
+        "res.currency", default=lambda self: self.env.company.currency_id
     )
     variance_pct = fields.Float(string="Variance %")
 
     # Assignment
-    detected_by = fields.Many2one(
-        "res.users",
-        default=lambda self: self.env.user
-    )
-    detected_date = fields.Datetime(
-        default=fields.Datetime.now
-    )
+    detected_by = fields.Many2one("res.users", default=lambda self: self.env.user)
+    detected_date = fields.Datetime(default=fields.Datetime.now)
     assigned_to = fields.Many2one("res.users", tracking=True)
 
     # Resolution
@@ -97,7 +97,9 @@ class CloseException(models.Model):
         self.state = "resolved"
         self.resolved_by = self.env.user
         self.resolved_date = fields.Datetime.now()
-        self.message_post(body=f"Exception resolved: {self.resolution_action or 'See notes'}")
+        self.message_post(
+            body=f"Exception resolved: {self.resolution_action or 'See notes'}"
+        )
 
     def action_escalate(self):
         """Escalate to next level."""
@@ -116,9 +118,7 @@ class CloseException(models.Model):
             # Escalate to FD
             role = "fd"
 
-        self.message_post(
-            body=f"Exception escalated to level {self.escalation_level}"
-        )
+        self.message_post(body=f"Exception escalated to level {self.escalation_level}")
 
     def action_cancel(self):
         """Cancel exception (false positive)."""
@@ -133,21 +133,23 @@ class CloseException(models.Model):
 
         # Escalation thresholds (hours)
         ESCALATION_HOURS = {
-            "critical": 4,   # Escalate critical after 4 hours
-            "high": 24,      # Escalate high after 24 hours
-            "warning": 48,   # Escalate warning after 48 hours
+            "critical": 4,  # Escalate critical after 4 hours
+            "high": 24,  # Escalate high after 24 hours
+            "warning": 48,  # Escalate warning after 48 hours
         }
 
         now = fields.Datetime.now()
 
         for severity, hours in ESCALATION_HOURS.items():
             threshold = now - td(hours=hours)
-            exceptions_to_escalate = self.search([
-                ("state", "in", ("open", "investigating")),
-                ("severity", "=", severity),
-                ("detected_date", "<", threshold),
-                ("escalation_level", "<", 3),  # Max 3 escalation levels
-            ])
+            exceptions_to_escalate = self.search(
+                [
+                    ("state", "in", ("open", "investigating")),
+                    ("severity", "=", severity),
+                    ("detected_date", "<", threshold),
+                    ("escalation_level", "<", 3),  # Max 3 escalation levels
+                ]
+            )
 
             for exc in exceptions_to_escalate:
                 exc.action_escalate()

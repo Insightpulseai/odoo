@@ -30,29 +30,47 @@ class CloseException(models.Model):
     description = fields.Html(string="Description")
 
     # Classification
-    exception_type = fields.Selection([
-        ("data", "Data Issue"),
-        ("timing", "Timing Issue"),
-        ("process", "Process Deviation"),
-        ("system", "System Error"),
-        ("other", "Other"),
-    ], string="Type", default="other", required=True, tracking=True)
+    exception_type = fields.Selection(
+        [
+            ("data", "Data Issue"),
+            ("timing", "Timing Issue"),
+            ("process", "Process Deviation"),
+            ("system", "System Error"),
+            ("other", "Other"),
+        ],
+        string="Type",
+        default="other",
+        required=True,
+        tracking=True,
+    )
 
-    severity = fields.Selection([
-        ("low", "Low"),
-        ("medium", "Medium"),
-        ("high", "High"),
-        ("critical", "Critical"),
-    ], string="Severity", default="medium", required=True, tracking=True)
+    severity = fields.Selection(
+        [
+            ("low", "Low"),
+            ("medium", "Medium"),
+            ("high", "High"),
+            ("critical", "Critical"),
+        ],
+        string="Severity",
+        default="medium",
+        required=True,
+        tracking=True,
+    )
 
     # Status
-    state = fields.Selection([
-        ("open", "Open"),
-        ("investigating", "Investigating"),
-        ("escalated", "Escalated"),
-        ("resolved", "Resolved"),
-        ("closed", "Closed"),
-    ], string="State", default="open", tracking=True, required=True)
+    state = fields.Selection(
+        [
+            ("open", "Open"),
+            ("investigating", "Investigating"),
+            ("escalated", "Escalated"),
+            ("resolved", "Resolved"),
+            ("closed", "Closed"),
+        ],
+        string="State",
+        default="open",
+        tracking=True,
+        required=True,
+    )
 
     # Relationships
     cycle_id = fields.Many2one(
@@ -119,11 +137,13 @@ class CloseException(models.Model):
     def action_escalate(self):
         """Escalate the exception."""
         self.ensure_one()
-        self.write({
-            "state": "escalated",
-            "escalation_count": self.escalation_count + 1,
-            "last_escalated": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "escalated",
+                "escalation_count": self.escalation_count + 1,
+                "last_escalated": fields.Datetime.now(),
+            }
+        )
         self.message_post(body=f"Escalated by {self.env.user.name}")
 
         # Notify escalated_to user
@@ -137,11 +157,13 @@ class CloseException(models.Model):
     def action_resolve(self):
         """Mark exception as resolved."""
         self.ensure_one()
-        self.write({
-            "state": "resolved",
-            "resolved_date": fields.Datetime.now(),
-            "resolved_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "resolved",
+                "resolved_date": fields.Datetime.now(),
+                "resolved_by": self.env.user.id,
+            }
+        )
         self.message_post(body=f"Resolved by {self.env.user.name}")
 
     def action_close(self):
@@ -165,17 +187,21 @@ class CloseException(models.Model):
         """Auto-escalate exceptions past their deadline."""
         now = fields.Datetime.now()
 
-        exceptions = self.search([
-            ("state", "in", ("open", "investigating")),
-            ("escalation_deadline", "<=", now),
-        ])
+        exceptions = self.search(
+            [
+                ("state", "in", ("open", "investigating")),
+                ("escalation_deadline", "<=", now),
+            ]
+        )
 
         for exc in exceptions:
-            exc.write({
-                "state": "escalated",
-                "escalation_count": exc.escalation_count + 1,
-                "last_escalated": now,
-            })
+            exc.write(
+                {
+                    "state": "escalated",
+                    "escalation_count": exc.escalation_count + 1,
+                    "last_escalated": now,
+                }
+            )
             exc.message_post(body="Auto-escalated due to deadline")
 
             # Notify cycle owner

@@ -9,7 +9,10 @@ class IpaiWorkstream(models.Model):
 
     name = fields.Char(required=True, tracking=True)
     code = fields.Selection(
-        [("AFC", "AFC - Advanced Financial Closing"), ("STC", "STC - SAP Tax Compliance")],
+        [
+            ("AFC", "AFC - Advanced Financial Closing"),
+            ("STC", "STC - SAP Tax Compliance"),
+        ],
         required=True,
         default="AFC",
         tracking=True,

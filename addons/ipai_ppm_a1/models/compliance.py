@@ -11,7 +11,11 @@ class IpaiStcWorklistType(models.Model):
     description = fields.Text()
 
     _sql_constraints = [
-        ("stc_worklist_code_unique", "unique(code)", "Worklist type code must be unique."),
+        (
+            "stc_worklist_code_unique",
+            "unique(code)",
+            "Worklist type code must be unique.",
+        ),
     ]
 
 

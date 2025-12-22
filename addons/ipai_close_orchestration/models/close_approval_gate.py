@@ -12,54 +12,57 @@ class CloseApprovalGate(models.Model):
 
     name = fields.Char(required=True)
     cycle_id = fields.Many2one(
-        "close.cycle",
-        required=True,
-        ondelete="cascade",
-        index=True
+        "close.cycle", required=True, ondelete="cascade", index=True
     )
 
     # Gate configuration
     gate_level = fields.Integer(
-        required=True,
-        help="1=Review Gate, 2=Approval Gate, 3=Lock Gate"
+        required=True, help="1=Review Gate, 2=Approval Gate, 3=Lock Gate"
     )
-    gate_type = fields.Selection([
-        ("review", "Review Gate"),
-        ("approval", "Approval Gate"),
-        ("lock", "GL Lock Gate"),
-    ], required=True)
+    gate_type = fields.Selection(
+        [
+            ("review", "Review Gate"),
+            ("approval", "Approval Gate"),
+            ("lock", "GL Lock Gate"),
+        ],
+        required=True,
+    )
 
     # Approval requirements
-    approver_role = fields.Selection([
-        ("rim", "RIM"),
-        ("sfm", "SFM"),
-        ("ckvc", "CKVC - Controller"),
-        ("fd", "FD - Finance Director"),
-    ], required=True)
+    approver_role = fields.Selection(
+        [
+            ("rim", "RIM"),
+            ("sfm", "SFM"),
+            ("ckvc", "CKVC - Controller"),
+            ("fd", "FD - Finance Director"),
+        ],
+        required=True,
+    )
     approver_user_id = fields.Many2one("res.users")
     required_approvals = fields.Integer(default=1)
 
     # Prerequisites
     required_task_states = fields.Char(
-        default="done",
-        help="Comma-separated task states required before gate can pass"
+        default="done", help="Comma-separated task states required before gate can pass"
     )
     min_completion_pct = fields.Float(
-        default=100.0,
-        help="Minimum task completion % before gate can pass"
+        default=100.0, help="Minimum task completion % before gate can pass"
     )
     block_on_exceptions = fields.Boolean(
-        default=True,
-        help="Block gate if open exceptions exist"
+        default=True, help="Block gate if open exceptions exist"
     )
 
     # Status
-    state = fields.Selection([
-        ("pending", "Pending"),
-        ("ready", "Ready for Approval"),
-        ("approved", "Approved"),
-        ("blocked", "Blocked"),
-    ], default="pending", tracking=True)
+    state = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("ready", "Ready for Approval"),
+            ("approved", "Approved"),
+            ("blocked", "Blocked"),
+        ],
+        default="pending",
+        tracking=True,
+    )
 
     # Approval tracking
     approved_by = fields.Many2one("res.users")
@@ -68,13 +71,9 @@ class CloseApprovalGate(models.Model):
 
     # Blocking info
     blocking_reason = fields.Text()
-    blocking_tasks = fields.Many2many(
-        "close.task",
-        string="Blocking Tasks"
-    )
+    blocking_tasks = fields.Many2many("close.task", string="Blocking Tasks")
     blocking_exceptions = fields.Many2many(
-        "close.exception",
-        string="Blocking Exceptions"
+        "close.exception", string="Blocking Exceptions"
     )
 
     @api.depends("cycle_id.task_ids", "cycle_id.exception_ids")
@@ -128,10 +127,12 @@ class CloseApprovalGate(models.Model):
     @api.model
     def _cron_check_gates(self):
         """Periodically check gate readiness for active cycles."""
-        active_gates = self.search([
-            ("cycle_id.state", "in", ("open", "in_progress", "review", "approval")),
-            ("state", "in", ("pending", "blocked")),
-        ])
+        active_gates = self.search(
+            [
+                ("cycle_id.state", "in", ("open", "in_progress", "review", "approval")),
+                ("state", "in", ("pending", "blocked")),
+            ]
+        )
         for gate in active_gates:
             gate._compute_readiness()
 
@@ -141,5 +142,5 @@ class CloseApprovalGate(models.Model):
                     "mail.mail_activity_data_todo",
                     user_id=gate.approver_user_id.id,
                     summary=f"Gate Ready: {gate.name}",
-                    note="This approval gate is now ready for your approval."
+                    note="This approval gate is now ready for your approval.",
                 )

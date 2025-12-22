@@ -10,6 +10,7 @@ class TestSeedAndProjects(TransactionCase):
         super().setUp()
         # Import and run seed loader
         from odoo.addons.ipai_project_program.seed.loader import load_seed_bundle
+
         load_seed_bundle(self.env, module_name="ipai_project_program")
 
     def test_seed_idempotent(self):
@@ -64,32 +65,42 @@ class TestSeedAndProjects(TransactionCase):
     def test_convert_phases_wizard(self):
         """Test the convert phases wizard."""
         # Create a fresh program
-        prog = self.env["project.project"].create({
-            "name": "Test Program",
-            "is_program": True,
-            "program_code": "TEST-001",
-        })
+        prog = self.env["project.project"].create(
+            {
+                "name": "Test Program",
+                "is_program": True,
+                "program_code": "TEST-001",
+            }
+        )
 
         # Create wizard
-        wizard = self.env["ipai.convert.phases.wizard"].create({
-            "parent_project_id": prog.id,
-            "im1_name": "Test IM1",
-            "im2_name": "Test IM2",
-            "move_tasks_by_keyword": False,
-        })
+        wizard = self.env["ipai.convert.phases.wizard"].create(
+            {
+                "parent_project_id": prog.id,
+                "im1_name": "Test IM1",
+                "im2_name": "Test IM2",
+                "move_tasks_by_keyword": False,
+            }
+        )
 
         # Run conversion
         wizard.action_convert()
 
         # Verify IMs created
-        im1 = self.env["project.project"].search([
-            ("parent_id", "=", prog.id),
-            ("im_code", "=", "IM1"),
-        ], limit=1)
-        im2 = self.env["project.project"].search([
-            ("parent_id", "=", prog.id),
-            ("im_code", "=", "IM2"),
-        ], limit=1)
+        im1 = self.env["project.project"].search(
+            [
+                ("parent_id", "=", prog.id),
+                ("im_code", "=", "IM1"),
+            ],
+            limit=1,
+        )
+        im2 = self.env["project.project"].search(
+            [
+                ("parent_id", "=", prog.id),
+                ("im_code", "=", "IM2"),
+            ],
+            limit=1,
+        )
 
         self.assertTrue(im1)
         self.assertTrue(im2)

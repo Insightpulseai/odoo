@@ -67,7 +67,9 @@ class AssetCheckout(models.Model):
     def _compute_name(self):
         for rec in self:
             if rec.asset_id and rec.employee_id:
-                date_str = rec.checkout_date.strftime("%Y-%m-%d") if rec.checkout_date else ""
+                date_str = (
+                    rec.checkout_date.strftime("%Y-%m-%d") if rec.checkout_date else ""
+                )
                 rec.name = f"{rec.asset_id.name} - {rec.employee_id.name} ({date_str})"
             else:
                 rec.name = "New Checkout"
@@ -76,11 +78,13 @@ class AssetCheckout(models.Model):
     def _check_asset_available(self):
         for rec in self:
             if rec.state in ("pending", "active"):
-                other_active = self.search([
-                    ("asset_id", "=", rec.asset_id.id),
-                    ("state", "in", ("pending", "active")),
-                    ("id", "!=", rec.id),
-                ])
+                other_active = self.search(
+                    [
+                        ("asset_id", "=", rec.asset_id.id),
+                        ("state", "in", ("pending", "active")),
+                        ("id", "!=", rec.id),
+                    ]
+                )
                 if other_active:
                     raise ValidationError(
                         f"Asset {rec.asset_id.name} is already checked out or pending."
@@ -97,24 +101,32 @@ class AssetCheckout(models.Model):
     def action_approve(self):
         """Approve and activate checkout."""
         for rec in self:
-            rec.write({
-                "state": "active",
-                "approved_by": self.env.user.id,
-                "approval_date": fields.Datetime.now(),
-            })
-            rec.asset_id.write({
-                "state": "checked_out",
-                "custodian_id": rec.employee_id.id,
-            })
+            rec.write(
+                {
+                    "state": "active",
+                    "approved_by": self.env.user.id,
+                    "approval_date": fields.Datetime.now(),
+                }
+            )
+            rec.asset_id.write(
+                {
+                    "state": "checked_out",
+                    "custodian_id": rec.employee_id.id,
+                }
+            )
 
     def action_check_in(self):
         """Return the asset."""
         for rec in self:
-            rec.write({
-                "state": "returned",
-                "actual_return_date": fields.Datetime.now(),
-            })
-            rec.asset_id.write({
-                "state": "available",
-                "custodian_id": False,
-            })
+            rec.write(
+                {
+                    "state": "returned",
+                    "actual_return_date": fields.Datetime.now(),
+                }
+            )
+            rec.asset_id.write(
+                {
+                    "state": "available",
+                    "custodian_id": False,
+                }
+            )

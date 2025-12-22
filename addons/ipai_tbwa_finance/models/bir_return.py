@@ -7,6 +7,7 @@ class BirReturn(models.Model):
     BIR Tax Return - actual filing document.
     Linked to finance.task for workflow tracking.
     """
+
     _name = "bir.return"
     _description = "BIR Tax Return"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -28,29 +29,39 @@ class BirReturn(models.Model):
         string="Linked Task",
     )
 
-    form_type = fields.Selection([
-        ("2550M", "2550M - Monthly VAT"),
-        ("2550Q", "2550Q - Quarterly VAT"),
-        ("1601C", "1601-C - Compensation WHT"),
-        ("1601E", "1601-E - Expanded WHT"),
-        ("1601F", "1601-F - Final WHT"),
-        ("1604CF", "1604-CF - Alphalist"),
-        ("1604E", "1604-E - Alphalist (Exp)"),
-        ("1700", "1700 - Annual ITR"),
-        ("1702", "1702 - Corporate ITR"),
-        ("2551M", "2551M - Percentage Tax"),
-    ], string="Form Type", required=True, tracking=True)
+    form_type = fields.Selection(
+        [
+            ("2550M", "2550M - Monthly VAT"),
+            ("2550Q", "2550Q - Quarterly VAT"),
+            ("1601C", "1601-C - Compensation WHT"),
+            ("1601E", "1601-E - Expanded WHT"),
+            ("1601F", "1601-F - Final WHT"),
+            ("1604CF", "1604-CF - Alphalist"),
+            ("1604E", "1604-E - Alphalist (Exp)"),
+            ("1700", "1700 - Annual ITR"),
+            ("1702", "1702 - Corporate ITR"),
+            ("2551M", "2551M - Percentage Tax"),
+        ],
+        string="Form Type",
+        required=True,
+        tracking=True,
+    )
 
     period_start = fields.Date(string="Period Start", required=True)
     period_end = fields.Date(string="Period End", required=True)
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("computed", "Computed"),
-        ("validated", "Validated"),
-        ("filed", "Filed"),
-        ("confirmed", "Confirmed"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("computed", "Computed"),
+            ("validated", "Validated"),
+            ("filed", "Filed"),
+            ("confirmed", "Confirmed"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     # Tax amounts
     currency_id = fields.Many2one(
@@ -76,14 +87,20 @@ class BirReturn(models.Model):
     )
 
     # VAT specific
-    vatable_sales = fields.Monetary(string="Vatable Sales", currency_field="currency_id")
-    zero_rated_sales = fields.Monetary(string="Zero-Rated Sales", currency_field="currency_id")
+    vatable_sales = fields.Monetary(
+        string="Vatable Sales", currency_field="currency_id"
+    )
+    zero_rated_sales = fields.Monetary(
+        string="Zero-Rated Sales", currency_field="currency_id"
+    )
     exempt_sales = fields.Monetary(string="Exempt Sales", currency_field="currency_id")
     output_vat = fields.Monetary(string="Output VAT", currency_field="currency_id")
     input_vat = fields.Monetary(string="Input VAT", currency_field="currency_id")
 
     # WHT specific
-    total_payments = fields.Monetary(string="Total Payments", currency_field="currency_id")
+    total_payments = fields.Monetary(
+        string="Total Payments", currency_field="currency_id"
+    )
     total_wht = fields.Monetary(string="Total WHT", currency_field="currency_id")
 
     # Filing
@@ -168,24 +185,28 @@ class BirReturn(models.Model):
             if any(t.amount == 12 for t in line.tax_ids)
         )
 
-        self.write({
-            "vatable_sales": vatable,
-            "zero_rated_sales": zero,
-            "exempt_sales": exempt,
-            "output_vat": vatable * 0.12,
-            "input_vat": input_base * 0.12,
-            "tax_base": vatable + zero + exempt,
-            "tax_due": vatable * 0.12,
-            "tax_credits": input_base * 0.12,
-        })
+        self.write(
+            {
+                "vatable_sales": vatable,
+                "zero_rated_sales": zero,
+                "exempt_sales": exempt,
+                "output_vat": vatable * 0.12,
+                "input_vat": input_base * 0.12,
+                "tax_base": vatable + zero + exempt,
+                "tax_due": vatable * 0.12,
+                "tax_credits": input_base * 0.12,
+            }
+        )
 
     def _compute_wht(self):
         """Compute withholding tax"""
         # Placeholder - integrate with payroll
-        self.write({
-            "tax_base": 0,
-            "tax_due": 0,
-        })
+        self.write(
+            {
+                "tax_base": 0,
+                "tax_due": 0,
+            }
+        )
 
     def action_validate(self):
         self.ensure_one()
@@ -197,11 +218,13 @@ class BirReturn(models.Model):
         self.ensure_one()
         if self.state != "validated":
             raise UserError("Validate first")
-        self.write({
-            "state": "filed",
-            "filed_date": fields.Datetime.now(),
-            "filed_by": self.env.uid,
-        })
+        self.write(
+            {
+                "state": "filed",
+                "filed_date": fields.Datetime.now(),
+                "filed_by": self.env.uid,
+            }
+        )
         # Update linked task
         if self.task_id:
             self.task_id.action_mark_prep_done()
@@ -220,6 +243,7 @@ class BirReturn(models.Model):
 
 class BirReturnLine(models.Model):
     """BIR Return Line Item"""
+
     _name = "bir.return.line"
     _description = "BIR Return Line"
 
