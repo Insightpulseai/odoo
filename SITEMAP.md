@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f225e54dadd1f574f9cadf55dc7227ac7c5a9a32
+> Commit: 4c0a39e1d67df713950b7ed8c0284c66b02813fe
 
 ## 📚 Documentation
 
@@ -121,6 +121,7 @@
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
 | [Custom Odoo Image Success Criteria Validation](docs/CUSTOM_IMAGE_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE 18 – Database & Worker Tuning](docs/DB_TUNING.md) | docs |
+| [Odoo CE Production Deliverables Manifest](docs/DELIVERABLES_MANIFEST.md) | docs |
 | [Odoo CE 18 M1 Deployment Guide](docs/DEPLOYMENT.md) | docs |
 | [Deployment Guide: Finance Stack Health Monitoring & Automation](docs/DEPLOYMENT_GUIDE.md) | docs |
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
@@ -137,6 +138,7 @@
 | [Final Deployment Guide](docs/FINAL_DEPLOYMENT_GUIDE.md) | docs |
 | [Final Operability Checklist](docs/FINAL_OPERABILITY_CHECKLIST.md) | docs |
 | [Finance PPM Implementation - Clarity/Notion-Style in Odoo CE](docs/FINANCE_PPM_IMPLEMENTATION.md) | docs |
+| [Odoo CE Production Go-Live Checklist](docs/GO_LIVE_CHECKLIST.md) | docs |
 | [Finance Stack Health Check System](docs/HEALTH_CHECK.md) | docs |
 | [Target Image Documentation](docs/IMAGE_GUIDE.md) | docs |
 | [Odoo CE v0.9.1 - Implementation Summary](docs/IMPLEMENTATION_SUMMARY.md) | docs |
@@ -154,6 +156,7 @@
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
 | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
 | [Odoo 18 Enterprise → CE/OCA Complete Parity Guide](docs/ODOO_18_EE_TO_CE_OCA_PARITY.md) | docs |
+| [Odoo CE Apps Catalog](docs/ODOO_APPS_CATALOG.md) | docs |
 | [Odoo 18 CE & OCA Architect Persona](docs/ODOO_ARCHITECT_PERSONA.md) | docs |
 | [Odoo CE Comprehensive Deployment Summary](docs/ODOO_CE_DEPLOYMENT_SUMMARY.md) | docs |
 | [Odoo CE v0.9.0 Image Security & Compliance Audit Report](docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md) | docs |
