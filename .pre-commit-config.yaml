@@ -1,13 +1,36 @@
-# OCA Pre-commit Configuration for Odoo 18
-# Ensures code quality before commit
+# OCA Pre-commit Configuration for Odoo 18 CE
+# Ensures code quality and OCA compliance before commit
 #
 # Usage:
 #   pip install pre-commit
 #   pre-commit install
+#   pre-commit install --hook-type commit-msg
 #   pre-commit run --all-files
 #
+# OCA Alignment: https://github.com/OCA/maintainer-tools
+#
 repos:
+  # =============================================================================
+  # OCA Maintainer Tools - README/Icon Generation
+  # =============================================================================
+  - repo: https://github.com/OCA/maintainer-tools
+    rev: master
+    hooks:
+      # Generate README.rst from readme/ folder fragments
+      - id: oca-gen-addon-readme
+        args:
+          - --addons-dir=addons
+          - --org-name=InsightPulseAI
+          - --repo-name=odoo-ce
+
+      # Generate module icons from template
+      - id: oca-gen-addon-icon
+        args:
+          - --addons-dir=addons
+
+  # =============================================================================
   # OCA Official Hooks - Odoo-specific validation
+  # =============================================================================
   - repo: https://github.com/OCA/odoo-pre-commit-hooks
     rev: v0.0.35
     hooks:
@@ -75,12 +98,58 @@ repos:
   #       args: [--rcfile=.pylintrc]
   #       files: ^addons/
 
+  # =============================================================================
+  # Conventional Commits (commit message validation)
+  # =============================================================================
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.1.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args:
+          - feat
+          - fix
+          - docs
+          - style
+          - refactor
+          - perf
+          - test
+          - build
+          - ci
+          - chore
+          - revert
+
+  # =============================================================================
+  # Local Hooks (Custom Policy Enforcement)
+  # =============================================================================
+  - repo: local
+    hooks:
+      # Check for Enterprise/IAP dependencies
+      - id: no-enterprise-deps
+        name: No Enterprise Dependencies
+        entry: bash -c 'scripts/policy-check.sh --diff || true'
+        language: system
+        pass_filenames: false
+        types: [python]
+
+      # Validate spec bundles on spec changes
+      - id: validate-spec-kit
+        name: Validate Spec Kit
+        entry: bash -c 'scripts/validate-spec-kit.sh || true'
+        language: system
+        pass_filenames: false
+        files: ^spec/
+
+# =============================================================================
 # CI Configuration
+# =============================================================================
 ci:
   autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit hooks
+    style: auto fixes from pre-commit hooks [skip ci]
   autofix_prs: true
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
-  autoupdate_schedule: weekly
-  skip: []
+  autoupdate_commit_msg: 'ci: pre-commit autoupdate'
+  autoupdate_schedule: monthly
+  skip:
+    - no-enterprise-deps  # Run in CI workflow instead
+    - validate-spec-kit   # Run in CI workflow instead
   submodules: false
