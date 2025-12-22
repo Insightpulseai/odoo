@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Enhanced Stage Form View -->
+    <record id="ipai_crm_stage_form_inherit" model="ir.ui.view">
+        <field name="name">crm.stage.form.ipai.rules</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_form"/>
+        <field name="arch" type="xml">
+            <!-- Add IPAI stage rule configuration -->
+            <xpath expr="//sheet/group" position="after">
+                <group string="IPAI Stage Rules">
+                    <group>
+                        <field name="ipai_enforce_rules"/>
+                        <field name="ipai_sla_days"/>
+                    </group>
+                    <group>
+                        <field name="ipai_stage_color" widget="color"/>
+                        <field name="ipai_stage_icon"/>
+                    </group>
+                </group>
+                <group string="Required Fields" invisible="not ipai_enforce_rules">
+                    <field name="ipai_required_field_ids" widget="many2many_tags" nolabel="1"/>
+                </group>
+                <group string="Automation Notes">
+                    <field name="ipai_automation_notes" nolabel="1" placeholder="Document any automated actions triggered by this stage..."/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Stage Configuration Action -->
+    <record id="ipai_crm_stage_action" model="ir.actions.act_window">
+        <field name="name">Stage Configuration</field>
+        <field name="res_model">crm.stage</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your pipeline stages
+            </p>
+            <p>
+                Define required fields, SLA targets, and automation rules
+                for each stage in your sales pipeline.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Entry for Stage Configuration -->
+    <menuitem id="ipai_crm_stage_config_menu"
+              name="Stage Rules"
+              parent="crm.crm_menu_config"
+              action="ipai_crm_stage_action"
+              sequence="10"/>
+</odoo>

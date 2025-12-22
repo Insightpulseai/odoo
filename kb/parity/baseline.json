@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "description": "Baseline parity scores for P0 capabilities. CI fails if any score regresses below these values.",
+  "updated_at": "2024-01-01T00:00:00Z",
+  "p0": {
+    "crm.pipeline.board": 0,
+    "itsm.incident.queue": 0
+  },
+  "notes": {
+    "crm.pipeline.board": "Initial scaffold only, score will increase as features are implemented",
+    "itsm.incident.queue": "Not yet started"
+  }
+}
