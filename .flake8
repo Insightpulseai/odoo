@@ -1,18 +1,57 @@
+# Flake8 Configuration for Odoo 18 CE/OCA
+# See: https://flake8.pycqa.org/en/latest/user/configuration.html
+#
+# OCA-aligned settings based on:
+# https://github.com/OCA/maintainer-tools/blob/master/template/module/.flake8
+
 [flake8]
+# Line length: Black-compatible
 max-line-length = 88
+
+# Ignore rules that conflict with Black or are too strict for Odoo
 extend-ignore =
+    # E501: Line too long (handled by max-line-length)
     E501,
+    # W503: Line break before binary operator (Black style)
     W503,
+    # F401: Module imported but unused (common in __init__.py)
     F401,
+    # E741: Ambiguous variable name (Odoo uses 'l' for lines)
     E741,
-    F841
+    # F841: Local variable assigned but never used (Odoo patterns)
+    F841,
+    # W504: Line break after binary operator (conflicts with W503)
+    W504
+
+# Directories to exclude from linting
 exclude =
     .git,
     __pycache__,
     build,
     dist,
     external-src,
-    oca-addons
+    oca-addons,
+    oca/,
+    migrations/,
+    .venv,
+    venv,
+    node_modules,
+    .eggs,
+    *.egg-info
+
+# Per-file ignores for Odoo patterns
 per-file-ignores =
+    # __init__.py files commonly import for re-export
     */__init__.py:F401
     */tests/__init__.py:F401
+    # Migration files may have unused imports
+    */migrations/*.py:F401,E501
+    # Demo data may have long lines
+    */demo/*.py:E501
+
+# McCabe complexity threshold
+max-complexity = 15
+
+# Statistics
+statistics = True
+count = True
