@@ -44,8 +44,11 @@ class IPAIBIRScheduleItem(models.Model):
     )
 
     _sql_constraints = [
-        ("bir_schedule_unique", "unique(bir_form, period_covered, deadline)",
-         "BIR schedule item must be unique per form/period/deadline!"),
+        (
+            "bir_schedule_unique",
+            "unique(bir_form, period_covered, deadline)",
+            "BIR schedule item must be unique per form/period/deadline!",
+        ),
     ]
 
 

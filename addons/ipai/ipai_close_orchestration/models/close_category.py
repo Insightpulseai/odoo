@@ -19,7 +19,11 @@ class CloseTaskCategory(models.Model):
     _order = "sequence, code"
 
     _sql_constraints = [
-        ("code_uniq", "unique(code, company_id)", "Category code must be unique per company."),
+        (
+            "code_uniq",
+            "unique(code, company_id)",
+            "Category code must be unique per company.",
+        ),
     ]
 
     # Core fields

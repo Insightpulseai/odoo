@@ -49,21 +49,29 @@ class IPAIConvertPhasesWizard(models.TransientModel):
             raise UserError(_("Parent program not found."))
 
         def _get_or_create_child(im_code, name):
-            child = self.env["project.project"].sudo().search(
-                [("parent_id", "=", parent.id), ("im_code", "=", im_code)], limit=1
+            child = (
+                self.env["project.project"]
+                .sudo()
+                .search(
+                    [("parent_id", "=", parent.id), ("im_code", "=", im_code)], limit=1
+                )
             )
             if child:
                 child.write({"name": name})
                 return child
-            return self.env["project.project"].sudo().create(
-                {
-                    "name": name,
-                    "parent_id": parent.id,
-                    "im_code": im_code,
-                    "program_code": parent.program_code,
-                    "program_type": parent.program_type,
-                    "is_program": False,
-                }
+            return (
+                self.env["project.project"]
+                .sudo()
+                .create(
+                    {
+                        "name": name,
+                        "parent_id": parent.id,
+                        "im_code": im_code,
+                        "program_code": parent.program_code,
+                        "program_type": parent.program_type,
+                        "is_program": False,
+                    }
+                )
             )
 
         im1 = _get_or_create_child("IM1", self.im1_name)
@@ -99,9 +107,7 @@ class IPAIConvertPhasesWizard(models.TransientModel):
             "tag": "display_notification",
             "params": {
                 "title": _("Conversion Complete"),
-                "message": _(
-                    "Created/Updated IM1 and IM2 projects. Moved %s tasks."
-                )
+                "message": _("Created/Updated IM1 and IM2 projects. Moved %s tasks.")
                 % moved_count,
                 "sticky": False,
                 "type": "success",

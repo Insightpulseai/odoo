@@ -73,7 +73,7 @@ def load_seed_json():
         return None
 
     try:
-        with open(seed_path, 'r', encoding='utf-8') as f:
+        with open(seed_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         print(f"✅ Loaded seed JSON from: {seed_path}")
         return data
@@ -93,40 +93,42 @@ def flatten_seed_templates(json_data):
     """
     templates = {}
 
-    version = json_data.get('version') or json_data.get('seed_version')
+    version = json_data.get("version") or json_data.get("seed_version")
     print(f"ℹ️  Seed Version: {version}")
 
-    for cycle in json_data.get('cycles', []):
-        cycle_code = cycle.get('cycle_code')
+    for cycle in json_data.get("cycles", []):
+        cycle_code = cycle.get("cycle_code")
 
-        for phase in cycle.get('phases', []):
-            phase_code = phase.get('phase_code')
-            phase_type = phase.get('phase_type')
+        for phase in cycle.get("phases", []):
+            phase_code = phase.get("phase_code")
+            phase_type = phase.get("phase_type")
 
-            for workstream in phase.get('workstreams', []):
-                ws_code = workstream.get('workstream_code')
+            for workstream in phase.get("workstreams", []):
+                ws_code = workstream.get("workstream_code")
 
-                for category in workstream.get('categories', []):
-                    cat_code = category.get('category_code')
+                for category in workstream.get("categories", []):
+                    cat_code = category.get("category_code")
 
-                    for tmpl in category.get('task_templates', []):
-                        template_code = tmpl.get('template_code')
+                    for tmpl in category.get("task_templates", []):
+                        template_code = tmpl.get("template_code")
 
                         if not template_code:
                             print(f"⚠️  Skipping template without code in {cat_code}")
                             continue
 
                         templates[template_code] = {
-                            'cycle_code': cycle_code,
-                            'phase_code': phase_code,
-                            'phase_type': phase_type,
-                            'workstream_code': ws_code,
-                            'category_code': cat_code,
-                            'task_name_template': tmpl.get('task_name_template'),
-                            'description_template': tmpl.get('description_template'),
-                            'duration_days': tmpl.get('duration_days'),
-                            'steps': [s.get('step_code') for s in tmpl.get('steps', [])],
-                            'step_count': len(tmpl.get('steps', []))
+                            "cycle_code": cycle_code,
+                            "phase_code": phase_code,
+                            "phase_type": phase_type,
+                            "workstream_code": ws_code,
+                            "category_code": cat_code,
+                            "task_name_template": tmpl.get("task_name_template"),
+                            "description_template": tmpl.get("description_template"),
+                            "duration_days": tmpl.get("duration_days"),
+                            "steps": [
+                                s.get("step_code") for s in tmpl.get("steps", [])
+                            ],
+                            "step_count": len(tmpl.get("steps", [])),
                         }
 
     return templates
@@ -142,19 +144,19 @@ def fetch_db_templates(env):
         - is_legacy_schema: True if database uses old step-baked structure
     """
     try:
-        TemplateModel = env['ipai.close.task.template']
+        TemplateModel = env["ipai.close.task.template"]
     except KeyError:
         print("❌ Model 'ipai.close.task.template' not found in database.")
         print("   Available models with 'close' in name:")
         for model_name in sorted(env.registry.models.keys()):
-            if 'close' in model_name:
+            if "close" in model_name:
                 print(f"   - {model_name}")
         return None, False
 
-    records = TemplateModel.search([('is_active', '=', True)])
+    records = TemplateModel.search([("is_active", "=", True)])
 
     # Detect legacy schema: check if any templates have step suffixes
-    STEP_SUFFIXES = ['|PREP', '|REVIEW', '|APPROVAL']
+    STEP_SUFFIXES = ["|PREP", "|REVIEW", "|APPROVAL"]
     legacy_count = 0
     hierarchical_count = 0
 
@@ -169,17 +171,17 @@ def fetch_db_templates(env):
             hierarchical_count += 1
 
         templates[rec.template_code] = {
-            'id': rec.id,
-            'cycle_code': rec.cycle_code,
-            'phase_code': rec.phase_code,
-            'phase_type': rec.phase_type,
-            'workstream_code': rec.workstream_code,
-            'category_code': rec.category_code,
-            'task_name_template': rec.task_name_template,
-            'description_template': getattr(rec, 'description_template', '') or '',
-            'duration_days': rec.duration_days,
-            'step_count': len(rec.step_ids) if hasattr(rec, 'step_ids') else 0,
-            'is_legacy': is_legacy,
+            "id": rec.id,
+            "cycle_code": rec.cycle_code,
+            "phase_code": rec.phase_code,
+            "phase_type": rec.phase_type,
+            "workstream_code": rec.workstream_code,
+            "category_code": rec.category_code,
+            "task_name_template": rec.task_name_template,
+            "description_template": getattr(rec, "description_template", "") or "",
+            "duration_days": rec.duration_days,
+            "step_count": len(rec.step_ids) if hasattr(rec, "step_ids") else 0,
+            "is_legacy": is_legacy,
         }
 
     # Database is legacy if it has more legacy templates than hierarchical
@@ -199,32 +201,32 @@ def compare_template(template_code, seed_data, db_data):
 
     # Check each field
     fields_to_check = [
-        'cycle_code',
-        'phase_code',
-        'phase_type',
-        'workstream_code',
-        'category_code',
-        'task_name_template',
-        'description_template',
-        'duration_days',
+        "cycle_code",
+        "phase_code",
+        "phase_type",
+        "workstream_code",
+        "category_code",
+        "task_name_template",
+        "description_template",
+        "duration_days",
     ]
 
     for field in fields_to_check:
-        seed_val = seed_data.get(field, '')
-        db_val = db_data.get(field, '')
+        seed_val = seed_data.get(field, "")
+        db_val = db_data.get(field, "")
 
         # Normalize empty values
         if seed_val is None:
-            seed_val = ''
+            seed_val = ""
         if db_val is None:
-            db_val = ''
+            db_val = ""
 
         if str(seed_val) != str(db_val):
             issues.append(f"{field}: '{seed_val}' ≠ '{db_val}'")
 
     # Check step count
-    seed_steps = seed_data.get('step_count', 0)
-    db_steps = db_data.get('step_count', 0)
+    seed_steps = seed_data.get("step_count", 0)
+    db_steps = db_data.get("step_count", 0)
     if seed_steps != db_steps:
         issues.append(f"step_count: {seed_steps} ≠ {db_steps}")
 
@@ -347,8 +349,12 @@ def check_parity(db_names=None):
             legacy_dbs[db_name] = is_legacy
 
             if is_legacy:
-                print(f"   ⚠️  Loaded {len(templates)} templates from {db_name} (LEGACY SCHEMA DETECTED)")
-                print(f"   ℹ️  Run migrate_templates_v1_2_0.py to upgrade to hierarchical structure")
+                print(
+                    f"   ⚠️  Loaded {len(templates)} templates from {db_name} (LEGACY SCHEMA DETECTED)"
+                )
+                print(
+                    f"   ℹ️  Run migrate_templates_v1_2_0.py to upgrade to hierarchical structure"
+                )
             else:
                 print(f"   ✅ Loaded {len(templates)} templates from {db_name}")
 
@@ -373,7 +379,9 @@ def check_parity(db_names=None):
 
             # Report missing templates
             if missing_in_db:
-                print(f"\n❌ MISSING IN {db_name.upper()} ({len(missing_in_db)} templates):")
+                print(
+                    f"\n❌ MISSING IN {db_name.upper()} ({len(missing_in_db)} templates):"
+                )
                 for code in sorted(missing_in_db):
                     tmpl = seed_templates[code]
                     print(f"   - {code}: {tmpl['task_name_template']}")
@@ -383,7 +391,9 @@ def check_parity(db_names=None):
 
             # Report extra templates
             if extra_in_db:
-                print(f"\n⚠️  EXTRA IN {db_name.upper()} ({len(extra_in_db)} templates):")
+                print(
+                    f"\n⚠️  EXTRA IN {db_name.upper()} ({len(extra_in_db)} templates):"
+                )
                 for code in sorted(extra_in_db):
                     tmpl = db_templates[code]
                     print(f"   - {code}: {tmpl['task_name_template']}")
@@ -397,12 +407,16 @@ def check_parity(db_names=None):
 
             mismatches = []
             for code in sorted(common):
-                issues = compare_template(code, seed_templates[code], db_templates[code])
+                issues = compare_template(
+                    code, seed_templates[code], db_templates[code]
+                )
                 if issues:
                     mismatches.append((code, issues))
 
             if mismatches:
-                print(f"⚠️  Found {len(mismatches)} template(s) with content mismatches:")
+                print(
+                    f"⚠️  Found {len(mismatches)} template(s) with content mismatches:"
+                )
                 for code, issues in mismatches[:5]:  # Show first 5
                     print(f"   ⚠️  {code}:")
                     for issue in issues:
@@ -417,8 +431,10 @@ def check_parity(db_names=None):
         if len(db_data) == 2:
             db_names_list = list(db_data.keys())
             has_db_diff = compare_databases(
-                db_names_list[0], db_data[db_names_list[0]],
-                db_names_list[1], db_data[db_names_list[1]]
+                db_names_list[0],
+                db_data[db_names_list[0]],
+                db_names_list[1],
+                db_data[db_names_list[1]],
             )
             if has_db_diff:
                 all_issues.append("Databases not in sync")
@@ -449,6 +465,7 @@ def check_parity(db_names=None):
     except Exception as e:
         print(f"\n❌ FATAL ERROR: {str(e)}")
         import traceback
+
         traceback.print_exc()
         return 2
 
@@ -456,7 +473,7 @@ def check_parity(db_names=None):
 def main():
     """Parse arguments and run parity check."""
     parser = argparse.ArgumentParser(
-        description='Multi-Database Seed Parity Checker',
+        description="Multi-Database Seed Parity Checker",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -468,14 +485,14 @@ Examples:
 
   # Check two specific databases
   python3 check_seed_parity.py --db staging production
-        """
+        """,
     )
 
     parser.add_argument(
-        '--db',
-        nargs='+',
+        "--db",
+        nargs="+",
         default=DEFAULT_DBS,
-        help=f'Database name(s) to check (default: {" ".join(DEFAULT_DBS)})'
+        help=f'Database name(s) to check (default: {" ".join(DEFAULT_DBS)})',
     )
 
     args = parser.parse_args()

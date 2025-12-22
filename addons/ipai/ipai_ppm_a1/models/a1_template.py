@@ -21,7 +21,11 @@ class A1Template(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     _sql_constraints = [
-        ("code_uniq", "unique(code, company_id)", "Template code must be unique per company."),
+        (
+            "code_uniq",
+            "unique(code, company_id)",
+            "Template code must be unique per company.",
+        ),
     ]
 
     # Core fields
@@ -130,9 +134,7 @@ class A1Template(models.Model):
     def _compute_total_days(self):
         for tpl in self:
             tpl.total_days = (
-                (tpl.prep_days or 0) +
-                (tpl.review_days or 0) +
-                (tpl.approval_days or 0)
+                (tpl.prep_days or 0) + (tpl.review_days or 0) + (tpl.approval_days or 0)
             )
 
     @api.model_create_multi
@@ -147,32 +149,36 @@ class A1Template(models.Model):
     def _create_default_steps(self):
         """Create default PREP/REVIEW/APPROVAL steps."""
         Step = self.env["a1.template.step"]
-        Step.create([
-            {
-                "template_id": self.id,
-                "code": "PREP",
-                "name": "Preparation",
-                "sequence": 10,
-                "assignee_role": self.owner_role,
-                "effort_days": self.prep_days,
-            },
-            {
-                "template_id": self.id,
-                "code": "REVIEW",
-                "name": "Review",
-                "sequence": 20,
-                "assignee_role": self.reviewer_role or self.owner_role,
-                "effort_days": self.review_days,
-            },
-            {
-                "template_id": self.id,
-                "code": "APPROVAL",
-                "name": "Approval",
-                "sequence": 30,
-                "assignee_role": self.approver_role or self.reviewer_role or self.owner_role,
-                "effort_days": self.approval_days,
-            },
-        ])
+        Step.create(
+            [
+                {
+                    "template_id": self.id,
+                    "code": "PREP",
+                    "name": "Preparation",
+                    "sequence": 10,
+                    "assignee_role": self.owner_role,
+                    "effort_days": self.prep_days,
+                },
+                {
+                    "template_id": self.id,
+                    "code": "REVIEW",
+                    "name": "Review",
+                    "sequence": 20,
+                    "assignee_role": self.reviewer_role or self.owner_role,
+                    "effort_days": self.review_days,
+                },
+                {
+                    "template_id": self.id,
+                    "code": "APPROVAL",
+                    "name": "Approval",
+                    "sequence": 30,
+                    "assignee_role": self.approver_role
+                    or self.reviewer_role
+                    or self.owner_role,
+                    "effort_days": self.approval_days,
+                },
+            ]
+        )
 
 
 class A1TemplateStep(models.Model):
@@ -254,12 +260,17 @@ class A1TemplateChecklist(models.Model):
     sequence = fields.Integer(string="Sequence", default=10)
 
     # Item type
-    item_type = fields.Selection([
-        ("check", "Checkbox"),
-        ("input", "Input Value"),
-        ("upload", "File Upload"),
-        ("approve", "Approval Sign-off"),
-    ], string="Type", default="check", required=True)
+    item_type = fields.Selection(
+        [
+            ("check", "Checkbox"),
+            ("input", "Input Value"),
+            ("upload", "File Upload"),
+            ("approve", "Approval Sign-off"),
+        ],
+        string="Type",
+        default="check",
+        required=True,
+    )
 
     # Required
     is_required = fields.Boolean(

@@ -12,9 +12,16 @@ class IpaiPpmTask(models.Model):
     template_id = fields.Many2one(
         "ipai.ppm.template", required=True, ondelete="cascade", index=True
     )
-    category = fields.Char(help="SAP-style category e.g. Accruals, VAT, AR/AP, WIP, etc.")
+    category = fields.Char(
+        help="SAP-style category e.g. Accruals, VAT, AR/AP, WIP, etc."
+    )
     phase = fields.Selection(
-        [("I", "Phase I"), ("II", "Phase II"), ("III", "Phase III"), ("IV", "Phase IV")],
+        [
+            ("I", "Phase I"),
+            ("II", "Phase II"),
+            ("III", "Phase III"),
+            ("IV", "Phase IV"),
+        ],
         help="AFC closing phase",
     )
     sequence = fields.Integer(default=10)

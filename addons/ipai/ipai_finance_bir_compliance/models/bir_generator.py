@@ -15,8 +15,8 @@ class BIRGenerator(models.AbstractModel):
     @api.model
     def _find_stage(self, label: str):
         """Find task stage by name."""
-        return self.env["project.task.type"].sudo().search(
-            [("name", "=", label)], limit=1
+        return (
+            self.env["project.task.type"].sudo().search([("name", "=", label)], limit=1)
         )
 
     @api.model
@@ -27,17 +27,21 @@ class BIRGenerator(models.AbstractModel):
         """
         if not role_code:
             return self.env["res.users"]
-        person = self.env["ipai.directory.person"].sudo().search(
-            [("code", "=", role_code)], limit=1
+        person = (
+            self.env["ipai.directory.person"]
+            .sudo()
+            .search([("code", "=", role_code)], limit=1)
         )
         if not person or not person.email:
             return self.env["res.users"]
-        user = self.env["res.users"].sudo().search(
-            [("login", "=", person.email)], limit=1
+        user = (
+            self.env["res.users"].sudo().search([("login", "=", person.email)], limit=1)
         )
         if not user:
-            user = self.env["res.users"].sudo().search(
-                [("email", "=", person.email)], limit=1
+            user = (
+                self.env["res.users"]
+                .sudo()
+                .search([("email", "=", person.email)], limit=1)
             )
         return user
 
@@ -76,9 +80,16 @@ class BIRGenerator(models.AbstractModel):
             im = self.env.ref(item.im_xml_id, raise_if_not_found=False)
             if not im:
                 # Fallback: use program's IM2
-                im = self.env["project.project"].sudo().search(
-                    [("parent_id", "=", program_project.id), ("im_code", "=", "IM2")],
-                    limit=1,
+                im = (
+                    self.env["project.project"]
+                    .sudo()
+                    .search(
+                        [
+                            ("parent_id", "=", program_project.id),
+                            ("im_code", "=", "IM2"),
+                        ],
+                        limit=1,
+                    )
                 )
             if not im:
                 _logger.warning(
@@ -89,19 +100,22 @@ class BIRGenerator(models.AbstractModel):
                 continue
 
             for step in item.step_ids:
-                label = dict(
-                    step._fields["activity_type"].selection
-                ).get(step.activity_type)
+                label = dict(step._fields["activity_type"].selection).get(
+                    step.activity_type
+                )
                 target = step.compute_target_date(item.deadline)
                 task_name = f"{item.bir_form} ({item.period_covered}) - {label}"
                 stage = self._find_stage(label) or False
 
                 # Idempotency key: (project_id, name, date_deadline)
-                existing = Task.search([
-                    ("project_id", "=", im.id),
-                    ("name", "=", task_name),
-                    ("date_deadline", "=", target),
-                ], limit=1)
+                existing = Task.search(
+                    [
+                        ("project_id", "=", im.id),
+                        ("name", "=", task_name),
+                        ("date_deadline", "=", target),
+                    ],
+                    limit=1,
+                )
                 if existing:
                     continue
 

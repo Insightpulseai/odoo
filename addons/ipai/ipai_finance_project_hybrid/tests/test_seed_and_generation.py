@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo.tests.common import TransactionCase
 
+
 class TestFinanceProjectHybrid(TransactionCase):
 
     def setUp(self):
@@ -28,11 +29,15 @@ class TestFinanceProjectHybrid(TransactionCase):
         self.Seed.seed_bundle(self.Seed._load_bundle_json(), strict=False)
 
         root = self.Project.create({"name": "Finance Framework Root"})
-        wiz = self.env["ipai.generate.im.projects.wizard"].create({"project_id": root.id})
+        wiz = self.env["ipai.generate.im.projects.wizard"].create(
+            {"project_id": root.id}
+        )
         action = wiz.action_generate()
         self.assertEqual(action["res_model"], "project.project")
 
-        im_children = self.Project.search([("ipai_root_project_id", "=", root.id), ("ipai_is_im_project", "=", True)])
+        im_children = self.Project.search(
+            [("ipai_root_project_id", "=", root.id), ("ipai_is_im_project", "=", True)]
+        )
         self.assertEqual(len(im_children), 2)
 
         im1 = im_children.filtered(lambda p: p.ipai_im_code == "IM1")

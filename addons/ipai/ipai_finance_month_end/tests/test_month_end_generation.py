@@ -10,11 +10,17 @@ class TestMonthEndGeneration(TransactionCase):
     def setUp(self):
         super().setUp()
         # Load program seed first
-        from odoo.addons.ipai_project_program.seed.loader import load_seed_bundle as load_program_seed
+        from odoo.addons.ipai_project_program.seed.loader import (
+            load_seed_bundle as load_program_seed,
+        )
+
         load_program_seed(self.env, "ipai_project_program")
 
         # Load month-end templates
-        from odoo.addons.ipai_finance_month_end.seed.loader import load_seed_bundle as load_month_end_seed
+        from odoo.addons.ipai_finance_month_end.seed.loader import (
+            load_seed_bundle as load_month_end_seed,
+        )
+
         load_month_end_seed(self.env, "ipai_finance_month_end")
 
     def test_templates_loaded(self):
@@ -24,7 +30,9 @@ class TestMonthEndGeneration(TransactionCase):
         self.assertTrue(len(templates) > 0)
 
         # Check specific template
-        payroll = Template.search([("task_base_name", "=", "Payroll Processing")], limit=1)
+        payroll = Template.search(
+            [("task_base_name", "=", "Payroll Processing")], limit=1
+        )
         self.assertTrue(payroll)
         self.assertEqual(payroll.category, "Payroll & Personnel")
         self.assertEqual(len(payroll.step_ids), 3)
@@ -57,16 +65,20 @@ class TestMonthEndGeneration(TransactionCase):
 
         # Verify no tasks created
         im1 = self.env.ref("ipai_project_program.im1_month_end_closing")
-        tasks = self.env["project.task"].search([
-            ("project_id", "=", im1.id),
-            ("date_deadline", "<=", anchor),
-        ])
+        tasks = self.env["project.task"].search(
+            [
+                ("project_id", "=", im1.id),
+                ("date_deadline", "<=", anchor),
+            ]
+        )
         self.assertEqual(len(tasks), 0)
 
     def test_step_date_calculation(self):
         """Test step target date calculation."""
         Template = self.env["ipai.month.end.template"]
-        payroll = Template.search([("task_base_name", "=", "Payroll Processing")], limit=1)
+        payroll = Template.search(
+            [("task_base_name", "=", "Payroll Processing")], limit=1
+        )
 
         anchor = date(2025, 12, 31)  # Wednesday
         for step in payroll.step_ids:

@@ -170,36 +170,45 @@ class AdvisorRecommendation(models.Model):
         self.write({"status": "in_progress"})
 
     def action_resolve(self):
-        self.write({
-            "status": "resolved",
-            "date_resolved": fields.Date.context_today(self),
-        })
+        self.write(
+            {
+                "status": "resolved",
+                "date_resolved": fields.Date.context_today(self),
+            }
+        )
 
     def action_snooze(self):
         """Snooze for 7 days by default."""
-        self.write({
-            "status": "snoozed",
-            "snooze_until": fields.Date.add(
-                fields.Date.context_today(self), days=7
-            ),
-        })
+        self.write(
+            {
+                "status": "snoozed",
+                "snooze_until": fields.Date.add(
+                    fields.Date.context_today(self), days=7
+                ),
+            }
+        )
 
     def action_dismiss(self):
         self.write({"status": "dismissed"})
 
     def action_reopen(self):
-        self.write({
-            "status": "open",
-            "date_resolved": False,
-            "snooze_until": False,
-        })
+        self.write(
+            {
+                "status": "open",
+                "date_resolved": False,
+                "snooze_until": False,
+            }
+        )
 
     @api.model
     def create_from_signal(self, signal_data):
         """Create recommendation from external signal (n8n webhook)."""
-        category = self.env["advisor.category"].search([
-            ("code", "=", signal_data.get("category", "ops")),
-        ], limit=1)
+        category = self.env["advisor.category"].search(
+            [
+                ("code", "=", signal_data.get("category", "ops")),
+            ],
+            limit=1,
+        )
 
         if not category:
             category = self.env["advisor.category"].search([], limit=1)

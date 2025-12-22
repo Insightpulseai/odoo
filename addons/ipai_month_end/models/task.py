@@ -118,11 +118,13 @@ class MonthEndTask(models.Model):
     def action_mark_prep_done(self):
         """Mark preparation as complete."""
         self.ensure_one()
-        self.write({
-            "prep_done": True,
-            "prep_done_date": fields.Datetime.now(),
-            "prep_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "prep_done": True,
+                "prep_done_date": fields.Datetime.now(),
+                "prep_done_by": self.env.user.id,
+            }
+        )
         # Schedule activity for reviewer
         if self.review_user_id:
             self.activity_schedule(
@@ -135,11 +137,13 @@ class MonthEndTask(models.Model):
     def action_mark_review_done(self):
         """Mark review as complete."""
         self.ensure_one()
-        self.write({
-            "review_done": True,
-            "review_done_date": fields.Datetime.now(),
-            "review_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "review_done": True,
+                "review_done_date": fields.Datetime.now(),
+                "review_done_by": self.env.user.id,
+            }
+        )
         # Schedule activity for approver
         if self.approve_user_id:
             self.activity_schedule(
@@ -152,11 +156,13 @@ class MonthEndTask(models.Model):
     def action_mark_approve_done(self):
         """Mark approval as complete."""
         self.ensure_one()
-        self.write({
-            "approve_done": True,
-            "approve_done_date": fields.Datetime.now(),
-            "approve_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "approve_done": True,
+                "approve_done_date": fields.Datetime.now(),
+                "approve_done_by": self.env.user.id,
+            }
+        )
         # Mark all activities done
         self.activity_ids.action_feedback(feedback="Task approved and complete.")
 
@@ -168,10 +174,12 @@ class MonthEndTask(models.Model):
     @api.model
     def _cron_send_overdue_notifications(self):
         """Daily cron to notify about overdue tasks."""
-        overdue = self.search([
-            ("state", "not in", ["done", "cancelled"]),
-            ("prep_due_date", "<", fields.Date.today()),
-        ])
+        overdue = self.search(
+            [
+                ("state", "not in", ["done", "cancelled"]),
+                ("prep_due_date", "<", fields.Date.today()),
+            ]
+        )
         for task in overdue:
             if task.prep_user_id:
                 task.activity_schedule(
