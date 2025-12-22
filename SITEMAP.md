@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c1f286f225ef8974dbc273c2c2c20c08125bbda0
+> Commit: d901d2a7d099c5a8d6e46ae4872b6580621d9431
 
 ## 📚 Documentation
 
@@ -345,12 +345,12 @@
 | [ipai_advisor](./addons/ipai/ipai_advisor) | ✅ |  |
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
-| [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ | Custom branding for Odoo CE login and backend |
+| [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai/ipai_clarity_ppm_parity) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai/ipai_close_orchestration) | ✅ |  |
-| [ipai_custom_routes](./addons/ipai/ipai_custom_routes) | ✅ | Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.) |
-| [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ | Set default landing page to Apps Dashboard after login |
+| [ipai_custom_routes](./addons/ipai/ipai_custom_routes) | ✅ |  |
+| [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ |  |
 | [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
 | [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
