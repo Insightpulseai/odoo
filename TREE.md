@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d901d2a7d099c5a8d6e46ae4872b6580621d9431
+> Commit: f4b8906a76de25e8c7d5f78977f3e89929d818fe
 
 ```
 .
@@ -46,6 +46,7 @@
 │   │   ├── control-room-ci.yml
 │   │   ├── databricks-dab-ci.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
+│   │   ├── deploy-production.yml
 │   │   ├── diagrams-qa.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── health-check.yml
@@ -1655,7 +1656,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-528 directories, 1122 files
+528 directories, 1123 files
 ```
 
 ## 📊 Stats
@@ -1663,7 +1664,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 595 |
-| Files | 1733 |
+| Files | 1734 |
 | Python files | 477 |
 | XML files | 265 |
 | Markdown files | 330 |
