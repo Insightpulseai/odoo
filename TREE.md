@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f225e54dadd1f574f9cadf55dc7227ac7c5a9a32
+> Commit: 4c0a39e1d67df713950b7ed8c0284c66b02813fe
 
 ```
 .
@@ -309,7 +309,9 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
-│   │   └── .gitkeep
+│   │   ├── .gitkeep
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_bir_tax_compliance
 │   │   ├── data
 │   │   │   ├── bir_filing_deadlines.xml
@@ -438,6 +440,8 @@
 │   │   └── __manifest__.py
 │   └── oca
 │       ├── .gitkeep
+│       ├── __init__.py
+│       ├── __manifest__.py
 │       ├── manifest.yaml
 │       └── requirements.txt
 ├── agents
@@ -831,6 +835,7 @@
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
+│   ├── DELIVERABLES_MANIFEST.md
 │   ├── DEPLOYMENT.md
 │   ├── DEPLOYMENT_GUIDE.md
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
@@ -848,6 +853,7 @@
 │   ├── FINAL_DEPLOYMENT_GUIDE.md
 │   ├── FINAL_OPERABILITY_CHECKLIST.md
 │   ├── FINANCE_PPM_IMPLEMENTATION.md
+│   ├── GO_LIVE_CHECKLIST.md
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── IMPLEMENTATION_SUMMARY.md
@@ -865,6 +871,7 @@
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
 │   ├── ODOO_18_EE_TO_CE_OCA_PARITY.md
+│   ├── ODOO_APPS_CATALOG.md
 │   ├── ODOO_ARCHITECT_PERSONA.md
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
 │   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
@@ -1638,7 +1645,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-526 directories, 1107 files
+526 directories, 1114 files
 ```
 
 ## 📊 Stats
@@ -1646,7 +1653,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 593 |
-| Files | 1718 |
-| Python files | 473 |
+| Files | 1725 |
+| Python files | 477 |
 | XML files | 265 |
-| Markdown files | 324 |
+| Markdown files | 327 |
