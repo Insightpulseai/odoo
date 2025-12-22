@@ -95,6 +95,10 @@ temp/
 !supabase/migrations/*.sql
 !scripts/lakehouse/*.sql
 !infra/lakehouse/**/*.sql
+!tools/audit/*.sql
+
+# Parity audit generated files
+parity_report.json
 *.db
 *.sqlite
 # Exception: Claude external memory
