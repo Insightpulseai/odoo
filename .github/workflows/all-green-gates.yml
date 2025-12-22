@@ -1,0 +1,217 @@
+name: All-Green Gates
+
+# This workflow enforces the "all green" gates for Continue+ workflow
+# It runs spec-kit validation, policy checks, and Continue config validation
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+    paths:
+      - 'spec/**'
+      - '.continue/**'
+      - 'scripts/validate-*.sh'
+      - 'scripts/policy-check.sh'
+
+concurrency:
+  group: all-green-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ==========================================================================
+  # Gate 1: Spec Kit Validation
+  # ==========================================================================
+  validate-spec:
+    name: Validate Spec Kit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Run spec kit validation
+        run: ./scripts/validate-spec-kit.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Spec Kit Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ All spec bundles are valid" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Spec validation failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==========================================================================
+  # Gate 2: Policy Check
+  # ==========================================================================
+  policy-check:
+    name: Policy Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Needed for --diff mode
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Run policy check
+        run: ./scripts/policy-check.sh --diff
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Policy Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ All policies pass" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Policy violations found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==========================================================================
+  # Gate 3: Continue Configuration
+  # ==========================================================================
+  validate-continue:
+    name: Validate Continue Config
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Make scripts executable
+        run: chmod +x scripts/*.sh
+
+      - name: Run Continue config validation
+        run: ./scripts/validate-continue-config.sh
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Continue Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Continue configuration is valid" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Continue configuration errors" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==========================================================================
+  # Gate 4: JSON/YAML Syntax
+  # ==========================================================================
+  syntax-check:
+    name: Syntax Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install pyyaml
+
+      - name: Validate JSON files
+        run: |
+          fail=0
+          while IFS= read -r jsonfile; do
+            python3 -c "import json; json.load(open('$jsonfile'))" 2>/dev/null || {
+              echo "::error file=$jsonfile::Invalid JSON"
+              fail=1
+            }
+          done < <(find . -name "*.json" -type f -not -path "./node_modules/*" -not -path "./.git/*" 2>/dev/null || true)
+          exit $fail
+
+      - name: Validate YAML files
+        run: |
+          fail=0
+          while IFS= read -r yamlfile; do
+            python3 -c "import yaml; yaml.safe_load(open('$yamlfile'))" 2>/dev/null || {
+              echo "::error file=$yamlfile::Invalid YAML"
+              fail=1
+            }
+          done < <(find . -name "*.yaml" -o -name "*.yml" -type f -not -path "./node_modules/*" -not -path "./.git/*" 2>/dev/null || true)
+          exit $fail
+
+  # ==========================================================================
+  # Final Gate: All Green
+  # ==========================================================================
+  all-green:
+    name: All Green
+    runs-on: ubuntu-latest
+    needs: [validate-spec, policy-check, validate-continue, syntax-check]
+    if: always()
+
+    steps:
+      - name: Check all gates
+        run: |
+          if [ "${{ needs.validate-spec.result }}" != "success" ]; then
+            echo "❌ Spec validation failed"
+            exit 1
+          fi
+          if [ "${{ needs.policy-check.result }}" != "success" ]; then
+            echo "❌ Policy check failed"
+            exit 1
+          fi
+          if [ "${{ needs.validate-continue.result }}" != "success" ]; then
+            echo "❌ Continue config validation failed"
+            exit 1
+          fi
+          if [ "${{ needs.syntax-check.result }}" != "success" ]; then
+            echo "❌ Syntax check failed"
+            exit 1
+          fi
+          echo "✅ All gates passed!"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## All-Green Gate Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Gate | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Spec Kit | ${{ needs.validate-spec.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Policy | ${{ needs.policy-check.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Continue | ${{ needs.validate-continue.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Syntax | ${{ needs.syntax-check.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY

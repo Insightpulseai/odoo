@@ -2,14 +2,29 @@
   "$schema": "https://continue.dev/schemas/config.json",
   "rules": [
     {
+      "path": ".continue/rules/agentic.md",
+      "enabled": true
+    },
+    {
       "path": ".continue/rules/notion-ppm.yaml",
       "enabled": true
     },
     {
       "path": ".continue/rules/medallion-architecture.yaml",
       "enabled": true
+    },
+    {
+      "path": ".continue/rules/spec-kit.yaml",
+      "enabled": true
     }
   ],
+  "experimental": {
+    "modelRoles": {
+      "planner": "claude-3-5-sonnet-20241022",
+      "implementer": "claude-3-5-sonnet-20241022",
+      "verifier": "claude-3-5-sonnet-20241022"
+    }
+  },
   "contextProviders": [
     {
       "name": "codebase",
@@ -28,6 +43,22 @@
     }
   ],
   "slashCommands": [
+    {
+      "name": "plan",
+      "description": "Create implementation plan without making edits"
+    },
+    {
+      "name": "implement",
+      "description": "Execute plan with minimal diffs"
+    },
+    {
+      "name": "verify",
+      "description": "Run checks and fix failures until green"
+    },
+    {
+      "name": "ship",
+      "description": "Generate PR-ready package with evidence"
+    },
     {
       "name": "ppm-sync",
       "description": "Generate Notion sync code following PPM patterns"
