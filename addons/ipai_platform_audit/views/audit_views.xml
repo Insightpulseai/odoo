@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Audit Log Tree View -->
+    <record id="ipai_audit_log_tree" model="ir.ui.view">
+        <field name="name">ipai.audit.log.tree</field>
+        <field name="model">ipai.audit.log</field>
+        <field name="arch" type="xml">
+            <tree string="Audit Log" create="false" edit="false" delete="false">
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="res_model"/>
+                <field name="res_name"/>
+                <field name="action"/>
+                <field name="field_name"/>
+                <field name="old_value"/>
+                <field name="new_value"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Audit Log Form View -->
+    <record id="ipai_audit_log_form" model="ir.ui.view">
+        <field name="name">ipai.audit.log.form</field>
+        <field name="model">ipai.audit.log</field>
+        <field name="arch" type="xml">
+            <form string="Audit Log Entry" create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="create_date"/>
+                            <field name="user_id"/>
+                            <field name="action"/>
+                        </group>
+                        <group>
+                            <field name="res_model"/>
+                            <field name="res_id"/>
+                            <field name="res_name"/>
+                        </group>
+                    </group>
+                    <group string="Change Details" invisible="not field_name">
+                        <field name="field_name"/>
+                        <field name="old_value"/>
+                        <field name="new_value"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Audit Log Search View -->
+    <record id="ipai_audit_log_search" model="ir.ui.view">
+        <field name="name">ipai.audit.log.search</field>
+        <field name="model">ipai.audit.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Audit Log">
+                <field name="res_model"/>
+                <field name="res_name"/>
+                <field name="user_id"/>
+                <field name="field_name"/>
+                <filter string="Today" name="today" domain="[('create_date', '&gt;=', datetime.datetime.now().replace(hour=0, minute=0, second=0))]"/>
+                <filter string="This Week" name="week" domain="[('create_date', '&gt;=', (datetime.datetime.now() - datetime.timedelta(days=7)))]"/>
+                <separator/>
+                <filter string="Created" name="created" domain="[('action', '=', 'create')]"/>
+                <filter string="Updated" name="updated" domain="[('action', '=', 'write')]"/>
+                <filter string="Deleted" name="deleted" domain="[('action', '=', 'unlink')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Model" name="group_model" context="{'group_by': 'res_model'}"/>
+                    <filter string="Action" name="group_action" context="{'group_by': 'action'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Audit Log Menu Action -->
+    <record id="ipai_audit_log_action" model="ir.actions.act_window">
+        <field name="name">Audit Log</field>
+        <field name="res_model">ipai.audit.log</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="ipai_audit_log_search"/>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+</odoo>

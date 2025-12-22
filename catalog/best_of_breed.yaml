@@ -1,0 +1,132 @@
+version: 1
+description: |
+  Clone targets for the ERP SaaS Clone Suite.
+  Each target represents a best-of-breed SaaS product whose hero flows
+  we aim to replicate using Odoo CE/OCA + ipai_* delta modules.
+
+targets:
+  - id: crm_salesforce
+    name: Salesforce Sales Cloud
+    domains: [crm]
+    hero_flows:
+      - id: crm.pipeline.board
+        title: "Pipeline board + stage rules + quick actions"
+        priority: p0
+        description: |
+          Kanban-style pipeline view with drag-drop stage transitions,
+          stage validation rules, quick action buttons (log call, schedule,
+          send email), and activity timeline.
+      - id: crm.forecasting
+        title: "Revenue forecasting with weighted pipeline"
+        priority: p2
+        description: |
+          Probability-weighted pipeline forecast by period,
+          commit vs best-case views.
+
+  - id: itsm_servicenow
+    name: ServiceNow ITSM
+    domains: [itsm]
+    hero_flows:
+      - id: itsm.incident.queue
+        title: "Incident intake → assignment → SLA → escalation"
+        priority: p0
+        description: |
+          Incident queue with auto-categorization, assignment rules,
+          SLA tracking, and escalation workflows.
+      - id: itsm.change.management
+        title: "Change request approval workflow"
+        priority: p2
+        description: |
+          Change advisory board workflow, risk assessment,
+          approval chains, implementation tracking.
+
+  - id: workos_notion
+    name: Notion
+    domains: [workos]
+    hero_flows:
+      - id: workos.pages.db
+        title: "Pages + database views + templates"
+        priority: p1
+        description: |
+          Wiki-style pages with rich editing, database views
+          (table, board, gallery), templates and cloning.
+      - id: workos.team.spaces
+        title: "Team workspaces with permissions"
+        priority: p2
+        description: |
+          Nested workspace hierarchy with granular permissions.
+
+  - id: assets_cheqroom
+    name: Cheqroom
+    domains: [assets]
+    hero_flows:
+      - id: assets.checkout.reserve
+        title: "Reserve → checkout → custody → return"
+        priority: p1
+        description: |
+          Equipment reservation workflow with calendar view,
+          checkout/return processing, custody tracking,
+          maintenance scheduling integration.
+      - id: assets.inventory.scan
+        title: "Barcode/QR inventory management"
+        priority: p2
+        description: |
+          Mobile-friendly barcode scanning for asset tracking.
+
+  - id: ppm_clarity
+    name: Clarity PPM
+    domains: [ppm]
+    hero_flows:
+      - id: ppm.portfolio.lite
+        title: "Portfolio → capacity-lite → budget control-lite"
+        priority: p1
+        description: |
+          Portfolio-level project grouping, simplified resource
+          capacity view, budget summary and controls.
+      - id: ppm.roadmap.timeline
+        title: "Roadmap timeline with dependencies"
+        priority: p2
+        description: |
+          Gantt-style roadmap with cross-project dependencies.
+
+  - id: expense_concur
+    name: SAP Concur
+    domains: [expense]
+    hero_flows:
+      - id: expense.submit.approve
+        title: "Expense submission → approval → reimbursement"
+        priority: p1
+        description: |
+          Mobile expense capture, receipt OCR, approval routing,
+          reimbursement tracking.
+      - id: expense.policy.enforce
+        title: "Policy violation detection and enforcement"
+        priority: p2
+        description: |
+          Automated policy checking, violation flagging, pre-approval requirements.
+
+domains:
+  crm:
+    name: Customer Relationship Management
+    odoo_core: [crm, sale]
+    oca_repos: [crm, sale-workflow]
+  itsm:
+    name: IT Service Management
+    odoo_core: [helpdesk, maintenance]
+    oca_repos: [helpdesk]
+  workos:
+    name: Work Operating System
+    odoo_core: [knowledge]
+    oca_repos: [knowledge]
+  assets:
+    name: Asset Management
+    odoo_core: [maintenance, stock]
+    oca_repos: [maintenance, stock-logistics-warehouse]
+  ppm:
+    name: Project Portfolio Management
+    odoo_core: [project, hr_timesheet]
+    oca_repos: [project]
+  expense:
+    name: Travel & Expense
+    odoo_core: [hr_expense]
+    oca_repos: [hr-expense]
