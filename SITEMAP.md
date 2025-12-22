@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f4b8906a76de25e8c7d5f78977f3e89929d818fe
+> Commit: 4c5b6fb75915e7ddd34ff086b52b62edb4ff2524
 
 ## 📚 Documentation
 
@@ -233,6 +233,7 @@
 | [Receipt OCR Test Harness](ocr-adapter/scripts/README.md) | ocr-adapter/scripts |
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
+| [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Scripts Directory](scripts/README.md) | scripts |
