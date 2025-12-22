@@ -54,3 +54,28 @@
 	path = external-src/server-tools
 	url = https://github.com/OCA/server-tools.git
 	branch = 18.0
+[submodule "vendor/oca/account-financial-reporting"]
+	path = vendor/oca/account-financial-reporting
+	url = https://github.com/OCA/account-financial-reporting.git
+	branch = 18.0
+	shallow = true
+[submodule "vendor/oca/account-reconcile"]
+	path = vendor/oca/account-reconcile
+	url = https://github.com/OCA/account-reconcile.git
+	branch = 18.0
+	shallow = true
+[submodule "vendor/oca/project"]
+	path = vendor/oca/project
+	url = https://github.com/OCA/project.git
+	branch = 18.0
+	shallow = true
+[submodule "vendor/oca/server-tools"]
+	path = vendor/oca/server-tools
+	url = https://github.com/OCA/server-tools.git
+	branch = 18.0
+	shallow = true
+[submodule "vendor/oca/web"]
+	path = vendor/oca/web
+	url = https://github.com/OCA/web.git
+	branch = 18.0
+	shallow = true
