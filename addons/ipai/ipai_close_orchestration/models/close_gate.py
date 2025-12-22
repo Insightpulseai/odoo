@@ -25,11 +25,16 @@ class CloseApprovalGateTemplate(models.Model):
     sequence = fields.Integer(string="Sequence", default=10)
     active = fields.Boolean(string="Active", default=True)
 
-    gate_type = fields.Selection([
-        ("manual", "Manual Approval"),
-        ("automated", "Automated Check"),
-        ("threshold", "Threshold Check"),
-    ], string="Type", default="manual", required=True)
+    gate_type = fields.Selection(
+        [
+            ("manual", "Manual Approval"),
+            ("automated", "Automated Check"),
+            ("threshold", "Threshold Check"),
+        ],
+        string="Type",
+        default="manual",
+        required=True,
+    )
 
     description = fields.Html(string="Description")
     pass_criteria = fields.Text(string="Pass Criteria")
@@ -82,20 +87,31 @@ class CloseApprovalGate(models.Model):
     )
 
     # Gate configuration
-    gate_type = fields.Selection([
-        ("manual", "Manual Approval"),
-        ("automated", "Automated Check"),
-        ("threshold", "Threshold Check"),
-    ], string="Type", default="manual", required=True)
+    gate_type = fields.Selection(
+        [
+            ("manual", "Manual Approval"),
+            ("automated", "Automated Check"),
+            ("threshold", "Threshold Check"),
+        ],
+        string="Type",
+        default="manual",
+        required=True,
+    )
 
     # Status
-    state = fields.Selection([
-        ("pending", "Pending"),
-        ("ready", "Ready for Check"),
-        ("blocked", "Blocked"),
-        ("passed", "Passed"),
-        ("failed", "Failed"),
-    ], string="State", default="pending", tracking=True, required=True)
+    state = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("ready", "Ready for Check"),
+            ("blocked", "Blocked"),
+            ("passed", "Passed"),
+            ("failed", "Failed"),
+        ],
+        string="State",
+        default="pending",
+        tracking=True,
+        required=True,
+    )
 
     # Approval
     approver_id = fields.Many2one(
@@ -144,12 +160,14 @@ class CloseApprovalGate(models.Model):
         self.ensure_one()
         if self.state not in ("ready", "blocked"):
             return
-        self.write({
-            "state": "passed",
-            "approved_date": fields.Datetime.now(),
-            "approved_by": self.env.user.id,
-            "block_reason": False,
-        })
+        self.write(
+            {
+                "state": "passed",
+                "approved_date": fields.Datetime.now(),
+                "approved_by": self.env.user.id,
+                "block_reason": False,
+            }
+        )
         self.message_post(body=f"Gate passed by {self.env.user.name}")
         self._trigger_webhook("close.gate.passed")
 
@@ -165,10 +183,12 @@ class CloseApprovalGate(models.Model):
     def action_block(self, reason=None):
         """Block the gate with a reason."""
         self.ensure_one()
-        self.write({
-            "state": "blocked",
-            "block_reason": reason or "Blocked pending resolution",
-        })
+        self.write(
+            {
+                "state": "blocked",
+                "block_reason": reason or "Blocked pending resolution",
+            }
+        )
         self.message_post(body=f"Gate blocked: {self.block_reason}")
         self._trigger_webhook("close.gate.blocked")
 
@@ -177,10 +197,12 @@ class CloseApprovalGate(models.Model):
         self.ensure_one()
         if self.state != "blocked":
             return
-        self.write({
-            "state": "ready",
-            "block_reason": False,
-        })
+        self.write(
+            {
+                "state": "ready",
+                "block_reason": False,
+            }
+        )
         self.message_post(body=f"Gate unblocked by {self.env.user.name}")
 
     def _trigger_webhook(self, event_type):
@@ -219,26 +241,27 @@ class CloseApprovalGate(models.Model):
     @api.model
     def _cron_check_gates(self):
         """Check automated gates and update status."""
-        gates = self.search([
-            ("state", "=", "pending"),
-            ("gate_type", "=", "automated"),
-        ])
+        gates = self.search(
+            [
+                ("state", "=", "pending"),
+                ("gate_type", "=", "automated"),
+            ]
+        )
 
         for gate in gates:
             # Check if all tasks in cycle are done
             cycle = gate.cycle_id
-            all_done = all(
-                t.state in ("done", "cancelled")
-                for t in cycle.task_ids
-            )
+            all_done = all(t.state in ("done", "cancelled") for t in cycle.task_ids)
             if all_done:
                 gate.action_mark_ready()
 
         # Check threshold gates
-        threshold_gates = self.search([
-            ("state", "=", "ready"),
-            ("gate_type", "=", "threshold"),
-        ])
+        threshold_gates = self.search(
+            [
+                ("state", "=", "ready"),
+                ("gate_type", "=", "threshold"),
+            ]
+        )
 
         for gate in threshold_gates:
             if gate.actual_value is not None and gate.threshold_value is not None:
@@ -247,4 +270,8 @@ class CloseApprovalGate(models.Model):
                 else:
                     gate.action_fail()
 
-        _logger.info("Gate check completed: %d automated, %d threshold", len(gates), len(threshold_gates))
+        _logger.info(
+            "Gate check completed: %d automated, %d threshold",
+            len(gates),
+            len(threshold_gates),
+        )

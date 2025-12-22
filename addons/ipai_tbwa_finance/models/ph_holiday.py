@@ -4,17 +4,23 @@ from datetime import date, timedelta
 
 class PhHoliday(models.Model):
     """Philippine Holiday Calendar - Shared across all finance tasks"""
+
     _name = "ph.holiday"
     _description = "Philippine Holiday"
     _order = "date"
 
     name = fields.Char(string="Holiday Name", required=True)
     date = fields.Date(string="Date", required=True, index=True)
-    holiday_type = fields.Selection([
-        ("regular", "Regular Holiday"),
-        ("special", "Special Non-Working Day"),
-        ("special_working", "Special Working Day"),
-    ], string="Type", required=True, default="regular")
+    holiday_type = fields.Selection(
+        [
+            ("regular", "Regular Holiday"),
+            ("special", "Special Non-Working Day"),
+            ("special_working", "Special Working Day"),
+        ],
+        string="Type",
+        required=True,
+        default="regular",
+    )
     year = fields.Integer(
         string="Year",
         compute="_compute_year",
@@ -28,7 +34,11 @@ class PhHoliday(models.Model):
     )
 
     _sql_constraints = [
-        ("date_unique", "unique(date, company_id)", "Holiday date must be unique per company"),
+        (
+            "date_unique",
+            "unique(date, company_id)",
+            "Holiday date must be unique per company",
+        ),
     ]
 
     @api.depends("date")

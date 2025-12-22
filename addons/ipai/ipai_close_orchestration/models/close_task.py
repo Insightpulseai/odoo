@@ -76,14 +76,20 @@ class CloseTask(models.Model):
     approval_deadline = fields.Date(string="Approval Deadline")
 
     # Status
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("prep", "Preparation"),
-        ("review", "Review"),
-        ("approval", "Approval"),
-        ("done", "Completed"),
-        ("cancelled", "Cancelled"),
-    ], string="State", default="draft", tracking=True, required=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("prep", "Preparation"),
+            ("review", "Review"),
+            ("approval", "Approval"),
+            ("done", "Completed"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="State",
+        default="draft",
+        tracking=True,
+        required=True,
+    )
 
     # Completion tracking
     prep_done_date = fields.Datetime(string="Prep Done At")
@@ -144,7 +150,9 @@ class CloseTask(models.Model):
     def _compute_has_open_exceptions(self):
         for task in self:
             task.has_open_exceptions = bool(
-                task.exception_ids.filtered(lambda e: e.state not in ("resolved", "closed"))
+                task.exception_ids.filtered(
+                    lambda e: e.state not in ("resolved", "closed")
+                )
             )
 
     def action_start_prep(self):
@@ -172,11 +180,13 @@ class CloseTask(models.Model):
         if self.has_open_exceptions:
             raise UserError("Resolve all exceptions before submitting.")
 
-        self.write({
-            "state": "review",
-            "prep_done_date": fields.Datetime.now(),
-            "prep_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "review",
+                "prep_done_date": fields.Datetime.now(),
+                "prep_done_by": self.env.user.id,
+            }
+        )
         self.message_post(body=f"Submitted for review by {self.env.user.name}")
         self._trigger_webhook("close.task.state_changed", {"new_state": "review"})
 
@@ -191,11 +201,13 @@ class CloseTask(models.Model):
         if self.state != "review":
             raise UserError("Task must be in Review state.")
 
-        self.write({
-            "state": "approval",
-            "review_done_date": fields.Datetime.now(),
-            "review_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "approval",
+                "review_done_date": fields.Datetime.now(),
+                "review_done_by": self.env.user.id,
+            }
+        )
         self.message_post(body=f"Submitted for approval by {self.env.user.name}")
         self._trigger_webhook("close.task.state_changed", {"new_state": "approval"})
 
@@ -205,11 +217,13 @@ class CloseTask(models.Model):
         if self.state != "approval":
             raise UserError("Task must be in Approval state.")
 
-        self.write({
-            "state": "done",
-            "approval_done_date": fields.Datetime.now(),
-            "approval_done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "done",
+                "approval_done_date": fields.Datetime.now(),
+                "approval_done_by": self.env.user.id,
+            }
+        )
         self.message_post(body=f"Approved by {self.env.user.name}")
         self._trigger_webhook("close.task.state_changed", {"new_state": "done"})
 
@@ -221,7 +235,9 @@ class CloseTask(models.Model):
 
         self.state = "prep"
         self.message_post(body=f"Rejected by {self.env.user.name}")
-        self._trigger_webhook("close.task.state_changed", {"new_state": "prep", "rejected": True})
+        self._trigger_webhook(
+            "close.task.state_changed", {"new_state": "prep", "rejected": True}
+        )
 
     def action_cancel(self):
         """Cancel task."""
@@ -287,10 +303,12 @@ class CloseTask(models.Model):
         today = fields.Date.today()
 
         # Tasks that should start prep today
-        prep_due = self.search([
-            ("state", "=", "draft"),
-            ("prep_deadline", "=", today),
-        ])
+        prep_due = self.search(
+            [
+                ("state", "=", "draft"),
+                ("prep_deadline", "=", today),
+            ]
+        )
         for task in prep_due:
             task.message_post(
                 body="Reminder: Preparation deadline is today!",
@@ -304,10 +322,12 @@ class CloseTask(models.Model):
                 )
 
         # Tasks in review with review deadline today
-        review_due = self.search([
-            ("state", "=", "review"),
-            ("review_deadline", "=", today),
-        ])
+        review_due = self.search(
+            [
+                ("state", "=", "review"),
+                ("review_deadline", "=", today),
+            ]
+        )
         for task in review_due:
             task.message_post(
                 body="Reminder: Review deadline is today!",
@@ -321,10 +341,12 @@ class CloseTask(models.Model):
                 )
 
         # Tasks in approval with approval deadline today
-        approval_due = self.search([
-            ("state", "=", "approval"),
-            ("approval_deadline", "=", today),
-        ])
+        approval_due = self.search(
+            [
+                ("state", "=", "approval"),
+                ("approval_deadline", "=", today),
+            ]
+        )
         for task in approval_due:
             task.message_post(
                 body="Reminder: Approval deadline is today!",
@@ -339,7 +361,9 @@ class CloseTask(models.Model):
 
         _logger.info(
             "Due reminders sent: %d prep, %d review, %d approval",
-            len(prep_due), len(review_due), len(approval_due)
+            len(prep_due),
+            len(review_due),
+            len(approval_due),
         )
 
 
@@ -372,8 +396,10 @@ class CloseTaskChecklist(models.Model):
 
     def action_mark_done(self):
         """Mark item as done."""
-        self.write({
-            "is_done": True,
-            "done_date": fields.Datetime.now(),
-            "done_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "is_done": True,
+                "done_date": fields.Datetime.now(),
+                "done_by": self.env.user.id,
+            }
+        )

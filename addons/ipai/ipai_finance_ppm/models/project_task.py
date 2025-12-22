@@ -68,40 +68,40 @@ class ProjectTask(models.Model):
 
     # Generator tracking fields (for seed-based task generation)
     x_cycle_key = fields.Char(
-        string='Cycle Instance Key',
+        string="Cycle Instance Key",
         index=True,
-        help='Instance key: MONTH_END_CLOSE|2025-11 (for generator idempotency)'
+        help="Instance key: MONTH_END_CLOSE|2025-11 (for generator idempotency)",
     )
 
     x_task_template_code = fields.Char(
-        string='Task Template Code',
+        string="Task Template Code",
         index=True,
-        help='Template code: CT_PAYROLL_PERSONNEL (from seed JSON)'
+        help="Template code: CT_PAYROLL_PERSONNEL (from seed JSON)",
     )
 
     x_step_code = fields.Char(
-        string='Step Code',
+        string="Step Code",
         index=True,
-        help='Step code: PREP|REVIEW|APPROVAL (from seed JSON)'
+        help="Step code: PREP|REVIEW|APPROVAL (from seed JSON)",
     )
 
     x_external_key = fields.Char(
-        string='External Deduplication Key',
+        string="External Deduplication Key",
         index=True,
-        help='Full external key: CYCLE_KEY|TEMPLATE_CODE|STEP_CODE (prevents duplicates)'
+        help="Full external key: CYCLE_KEY|TEMPLATE_CODE|STEP_CODE (prevents duplicates)",
     )
 
     x_seed_hash = fields.Char(
-        string='Template Seed Hash',
+        string="Template Seed Hash",
         index=True,
-        help='SHA256 hash of template for change detection'
+        help="SHA256 hash of template for change detection",
     )
 
     x_obsolete = fields.Boolean(
-        string='Obsolete',
+        string="Obsolete",
         default=False,
         index=True,
-        help='Marked obsolete by generator (template removed from seed)'
+        help="Marked obsolete by generator (template removed from seed)",
     )
 
     # Computed fields for dashboard visibility

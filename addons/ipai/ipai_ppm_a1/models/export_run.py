@@ -25,19 +25,28 @@ class A1ExportRun(models.Model):
     _order = "create_date desc"
 
     # Run identification
-    run_type = fields.Selection([
-        ("export", "Export"),
-        ("import", "Import"),
-    ], string="Type", required=True)
+    run_type = fields.Selection(
+        [
+            ("export", "Export"),
+            ("import", "Import"),
+        ],
+        string="Type",
+        required=True,
+    )
 
     # Status
-    status = fields.Selection([
-        ("pending", "Pending"),
-        ("running", "Running"),
-        ("success", "Success"),
-        ("warning", "Warning"),
-        ("error", "Error"),
-    ], string="Status", default="pending", required=True)
+    status = fields.Selection(
+        [
+            ("pending", "Pending"),
+            ("running", "Running"),
+            ("success", "Success"),
+            ("warning", "Warning"),
+            ("error", "Error"),
+        ],
+        string="Status",
+        default="pending",
+        required=True,
+    )
 
     # Payload
     seed_json = fields.Text(string="Seed JSON")
@@ -74,30 +83,36 @@ class A1ExportRun(models.Model):
         company_id = company_id or self.env.company.id
 
         # Create run record
-        run = self.create({
-            "run_type": "export",
-            "status": "running",
-            "company_id": company_id,
-        })
+        run = self.create(
+            {
+                "run_type": "export",
+                "status": "running",
+                "company_id": company_id,
+            }
+        )
 
         try:
             seed = self._build_seed_payload(company_id)
             seed_json = json.dumps(seed, indent=2, ensure_ascii=False, default=str)
             seed_hash = hashlib.sha256(seed_json.encode()).hexdigest()[:16]
 
-            run.write({
-                "status": "success",
-                "seed_json": seed_json,
-                "seed_hash": seed_hash,
-            })
+            run.write(
+                {
+                    "status": "success",
+                    "seed_json": seed_json,
+                    "seed_hash": seed_hash,
+                }
+            )
 
             return seed
 
         except Exception as e:
-            run.write({
-                "status": "error",
-                "log": str(e),
-            })
+            run.write(
+                {
+                    "status": "error",
+                    "log": str(e),
+                }
+            )
             raise
 
     def _build_seed_payload(self, company_id):
@@ -105,10 +120,12 @@ class A1ExportRun(models.Model):
         company = self.env["res.company"].browse(company_id)
 
         # Get workstreams grouped by phase
-        workstreams = self.env["a1.workstream"].search([
-            ("company_id", "=", company_id),
-            ("active", "=", True),
-        ])
+        workstreams = self.env["a1.workstream"].search(
+            [
+                ("company_id", "=", company_id),
+                ("active", "=", True),
+            ]
+        )
 
         # Group by phase
         phases = {}
@@ -127,49 +144,63 @@ class A1ExportRun(models.Model):
                 for tpl in ws.template_ids:
                     steps = []
                     for step in tpl.step_ids:
-                        steps.append({
-                            "step_code": step.code,
-                            "name": step.name,
-                            "default_assignee": step.assignee_role,
-                            "effort_days": step.effort_days,
-                            "deadline_offset_days": step.deadline_offset_days,
-                        })
+                        steps.append(
+                            {
+                                "step_code": step.code,
+                                "name": step.name,
+                                "default_assignee": step.assignee_role,
+                                "effort_days": step.effort_days,
+                                "deadline_offset_days": step.deadline_offset_days,
+                            }
+                        )
 
                     checklist = []
                     for item in tpl.checklist_ids:
-                        checklist.append({
-                            "code": item.code,
-                            "name": item.name,
-                            "type": item.item_type,
-                            "required": item.is_required,
-                        })
+                        checklist.append(
+                            {
+                                "code": item.code,
+                                "name": item.name,
+                                "type": item.item_type,
+                                "required": item.is_required,
+                            }
+                        )
 
-                    templates.append({
-                        "task_template_code": tpl.code,
-                        "name": tpl.name,
-                        "owner_role": tpl.owner_role,
-                        "reviewer_role": tpl.reviewer_role,
-                        "approver_role": tpl.approver_role,
-                        "steps": steps,
-                        "checklist": checklist,
-                    })
+                    templates.append(
+                        {
+                            "task_template_code": tpl.code,
+                            "name": tpl.name,
+                            "owner_role": tpl.owner_role,
+                            "reviewer_role": tpl.reviewer_role,
+                            "approver_role": tpl.approver_role,
+                            "steps": steps,
+                            "checklist": checklist,
+                        }
+                    )
 
-                ws_list.append({
-                    "workstream_code": ws.code,
-                    "name": ws.name,
-                    "owner_role": ws.owner_role_id.code if ws.owner_role_id else None,
-                    "task_templates": templates,
-                })
+                ws_list.append(
+                    {
+                        "workstream_code": ws.code,
+                        "name": ws.name,
+                        "owner_role": (
+                            ws.owner_role_id.code if ws.owner_role_id else None
+                        ),
+                        "task_templates": templates,
+                    }
+                )
 
-            cycles.append({
-                "cycle_code": "MONTH_END_CLOSE",
-                "name": "Month-End Close",
-                "phases": [{
-                    "phase_code": phase_code,
-                    "name": phase_code,
-                    "workstreams": ws_list,
-                }],
-            })
+            cycles.append(
+                {
+                    "cycle_code": "MONTH_END_CLOSE",
+                    "name": "Month-End Close",
+                    "phases": [
+                        {
+                            "phase_code": phase_code,
+                            "name": phase_code,
+                            "workstreams": ws_list,
+                        }
+                    ],
+                }
+            )
 
         # Get roles
         roles = self.env["a1.role"].search([("company_id", "=", company_id)])
@@ -179,7 +210,9 @@ class A1ExportRun(models.Model):
                 {
                     "role_code": r.code,
                     "name": r.name,
-                    "default_user": r.default_user_id.login if r.default_user_id else None,
+                    "default_user": (
+                        r.default_user_id.login if r.default_user_id else None
+                    ),
                 }
                 for r in roles
             ],
@@ -216,12 +249,14 @@ class A1ExportRun(models.Model):
         company_id = company_id or self.env.company.id
 
         # Create run record
-        run = self.create({
-            "run_type": "import",
-            "status": "running",
-            "company_id": company_id,
-            "seed_json": json.dumps(seed, indent=2),
-        })
+        run = self.create(
+            {
+                "run_type": "import",
+                "status": "running",
+                "company_id": company_id,
+                "seed_json": json.dumps(seed, indent=2),
+            }
+        )
 
         report = {
             "created": 0,
@@ -239,25 +274,31 @@ class A1ExportRun(models.Model):
             for cycle in seed.get("cycles", []):
                 for phase in cycle.get("phases", []):
                     for ws_data in phase.get("workstreams", []):
-                        self._import_workstream(ws_data, phase, company_id, report, dry_run)
+                        self._import_workstream(
+                            ws_data, phase, company_id, report, dry_run
+                        )
 
             status = "success" if not report["errors"] else "warning"
-            run.write({
-                "status": status,
-                "created_count": report["created"],
-                "updated_count": report["updated"],
-                "unchanged_count": report["unchanged"],
-                "error_count": len(report["errors"]),
-                "log": json.dumps(report, indent=2),
-            })
+            run.write(
+                {
+                    "status": status,
+                    "created_count": report["created"],
+                    "updated_count": report["updated"],
+                    "unchanged_count": report["unchanged"],
+                    "error_count": len(report["errors"]),
+                    "log": json.dumps(report, indent=2),
+                }
+            )
 
             return report
 
         except Exception as e:
-            run.write({
-                "status": "error",
-                "log": str(e),
-            })
+            run.write(
+                {
+                    "status": "error",
+                    "log": str(e),
+                }
+            )
             raise
 
     def _import_roles(self, seed, company_id, report, dry_run):
@@ -270,10 +311,13 @@ class A1ExportRun(models.Model):
             if not role_code:
                 continue
 
-            existing = Role.search([
-                ("code", "=", role_code),
-                ("company_id", "=", company_id),
-            ], limit=1)
+            existing = Role.search(
+                [
+                    ("code", "=", role_code),
+                    ("company_id", "=", company_id),
+                ],
+                limit=1,
+            )
 
             vals = {
                 "code": role_code,
@@ -300,10 +344,13 @@ class A1ExportRun(models.Model):
             return
 
         # Find or create workstream
-        existing_ws = Workstream.search([
-            ("code", "=", ws_code),
-            ("company_id", "=", company_id),
-        ], limit=1)
+        existing_ws = Workstream.search(
+            [
+                ("code", "=", ws_code),
+                ("company_id", "=", company_id),
+            ],
+            limit=1,
+        )
 
         ws_vals = {
             "code": ws_code,
@@ -330,10 +377,13 @@ class A1ExportRun(models.Model):
             if not tpl_code:
                 continue
 
-            existing_tpl = Template.search([
-                ("code", "=", tpl_code),
-                ("company_id", "=", company_id),
-            ], limit=1)
+            existing_tpl = Template.search(
+                [
+                    ("code", "=", tpl_code),
+                    ("company_id", "=", company_id),
+                ],
+                limit=1,
+            )
 
             tpl_vals = {
                 "code": tpl_code,

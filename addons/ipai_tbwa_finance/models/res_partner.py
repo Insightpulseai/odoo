@@ -5,6 +5,7 @@ from odoo.exceptions import ValidationError
 
 class ResPartner(models.Model):
     """Extend res.partner with Philippine TIN"""
+
     _inherit = "res.partner"
 
     tin = fields.Char(
@@ -24,15 +25,19 @@ class ResPartner(models.Model):
     bir_registration_date = fields.Date(
         string="BIR Registration Date",
     )
-    tax_type = fields.Selection([
-        ("individual", "Individual"),
-        ("sole_proprietor", "Sole Proprietor"),
-        ("corporation", "Corporation"),
-        ("partnership", "Partnership"),
-        ("cooperative", "Cooperative"),
-        ("government", "Government"),
-        ("non_profit", "Non-Profit"),
-    ], string="Tax Type", default="individual")
+    tax_type = fields.Selection(
+        [
+            ("individual", "Individual"),
+            ("sole_proprietor", "Sole Proprietor"),
+            ("corporation", "Corporation"),
+            ("partnership", "Partnership"),
+            ("cooperative", "Cooperative"),
+            ("government", "Government"),
+            ("non_profit", "Non-Profit"),
+        ],
+        string="Tax Type",
+        default="individual",
+    )
 
     @api.constrains("tin")
     def _check_tin_format(self):

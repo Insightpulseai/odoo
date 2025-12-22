@@ -21,17 +21,21 @@ class ResUsers(models.Model):
     """
     Extension of res.users for generator integration
     """
-    _inherit = 'res.users'
+
+    _inherit = "res.users"
 
     x_employee_code = fields.Char(
-        string='Employee Code',
+        string="Employee Code",
         index=True,
-        help='Unique employee identifier for generator assignment (e.g., RIM, CKVC, BOM, JPAL)'
+        help="Unique employee identifier for generator assignment (e.g., RIM, CKVC, BOM, JPAL)",
     )
 
     _sql_constraints = [
-        ('x_employee_code_uniq', 'UNIQUE(x_employee_code)',
-         'Employee code must be unique')
+        (
+            "x_employee_code_uniq",
+            "UNIQUE(x_employee_code)",
+            "Employee code must be unique",
+        )
     ]
 
     @api.model
@@ -48,5 +52,5 @@ class ResUsers(models.Model):
         if not employee_code:
             return False
 
-        user = self.search([('x_employee_code', '=', employee_code)], limit=1)
+        user = self.search([("x_employee_code", "=", employee_code)], limit=1)
         return user.id if user else False

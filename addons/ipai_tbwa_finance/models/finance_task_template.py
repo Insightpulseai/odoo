@@ -7,6 +7,7 @@ class FinanceTaskTemplate(models.Model):
     - Month-end closing tasks (36 internal tasks)
     - BIR compliance tasks (filing deadlines)
     """
+
     _name = "finance.task.template"
     _description = "Finance Task Template"
     _order = "task_type, phase, sequence"
@@ -16,41 +17,57 @@ class FinanceTaskTemplate(models.Model):
     active = fields.Boolean(default=True)
 
     # Task classification
-    task_type = fields.Selection([
-        ("month_end", "Month-End Closing"),
-        ("bir_filing", "BIR Filing"),
-        ("compliance", "Compliance Check"),
-    ], string="Task Type", required=True, default="month_end")
+    task_type = fields.Selection(
+        [
+            ("month_end", "Month-End Closing"),
+            ("bir_filing", "BIR Filing"),
+            ("compliance", "Compliance Check"),
+        ],
+        string="Task Type",
+        required=True,
+        default="month_end",
+    )
 
     # Month-end specific
-    phase = fields.Selection([
-        ("I", "Phase I - Initial & Compliance"),
-        ("II", "Phase II - Accruals & Amortization"),
-        ("III", "Phase III - WIP & Inventory"),
-        ("IV", "Phase IV - Final Adjustments & Close"),
-    ], string="Phase", help="Month-end closing phase")
+    phase = fields.Selection(
+        [
+            ("I", "Phase I - Initial & Compliance"),
+            ("II", "Phase II - Accruals & Amortization"),
+            ("III", "Phase III - WIP & Inventory"),
+            ("IV", "Phase IV - Final Adjustments & Close"),
+        ],
+        string="Phase",
+        help="Month-end closing phase",
+    )
 
     # BIR specific
-    bir_form_type = fields.Selection([
-        ("2550M", "2550M - Monthly VAT"),
-        ("2550Q", "2550Q - Quarterly VAT"),
-        ("1601C", "1601-C - Compensation WHT"),
-        ("1601E", "1601-E - Expanded WHT"),
-        ("1601F", "1601-F - Final WHT"),
-        ("1604CF", "1604-CF - Annual Alphalist (Comp)"),
-        ("1604E", "1604-E - Annual Alphalist (Exp)"),
-        ("1700", "1700 - Annual ITR (Comp Only)"),
-        ("1701", "1701 - Annual ITR (Self-Employed)"),
-        ("1702", "1702 - Annual Corporate ITR"),
-        ("2551M", "2551M - Monthly Percentage Tax"),
-    ], string="BIR Form")
+    bir_form_type = fields.Selection(
+        [
+            ("2550M", "2550M - Monthly VAT"),
+            ("2550Q", "2550Q - Quarterly VAT"),
+            ("1601C", "1601-C - Compensation WHT"),
+            ("1601E", "1601-E - Expanded WHT"),
+            ("1601F", "1601-F - Final WHT"),
+            ("1604CF", "1604-CF - Annual Alphalist (Comp)"),
+            ("1604E", "1604-E - Annual Alphalist (Exp)"),
+            ("1700", "1700 - Annual ITR (Comp Only)"),
+            ("1701", "1701 - Annual ITR (Self-Employed)"),
+            ("1702", "1702 - Annual Corporate ITR"),
+            ("2551M", "2551M - Monthly Percentage Tax"),
+        ],
+        string="BIR Form",
+    )
 
-    frequency = fields.Selection([
-        ("monthly", "Monthly"),
-        ("quarterly", "Quarterly"),
-        ("annual", "Annual"),
-        ("per_transaction", "Per Transaction"),
-    ], string="Frequency", default="monthly")
+    frequency = fields.Selection(
+        [
+            ("monthly", "Monthly"),
+            ("quarterly", "Quarterly"),
+            ("annual", "Annual"),
+            ("per_transaction", "Per Transaction"),
+        ],
+        string="Frequency",
+        default="monthly",
+    )
 
     # RACI assignments (defaults)
     prep_user_id = fields.Many2one("res.users", string="Default Preparer")
@@ -108,6 +125,6 @@ class FinanceTaskTemplate(models.Model):
 
     def _compute_task_count(self):
         for rec in self:
-            rec.task_count = self.env["finance.task"].search_count([
-                ("template_id", "=", rec.id)
-            ])
+            rec.task_count = self.env["finance.task"].search_count(
+                [("template_id", "=", rec.id)]
+            )

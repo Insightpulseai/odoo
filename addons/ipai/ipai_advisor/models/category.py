@@ -57,7 +57,9 @@ class AdvisorCategory(models.Model):
         string="Score",
     )
 
-    @api.depends("recommendation_ids", "recommendation_ids.status", "recommendation_ids.severity")
+    @api.depends(
+        "recommendation_ids", "recommendation_ids.status", "recommendation_ids.severity"
+    )
     def _compute_recommendation_count(self):
         for cat in self:
             recs = cat.recommendation_ids
@@ -65,17 +67,20 @@ class AdvisorCategory(models.Model):
             cat.open_count = len(recs.filtered(lambda r: r.status == "open"))
             cat.high_count = len(
                 recs.filtered(
-                    lambda r: r.status == "open"
-                    and r.severity in ("high", "critical")
+                    lambda r: r.status == "open" and r.severity in ("high", "critical")
                 )
             )
 
     def _compute_latest_score(self):
         Score = self.env["advisor.score"]
         for cat in self:
-            latest = Score.search([
-                ("category_id", "=", cat.id),
-            ], order="as_of desc", limit=1)
+            latest = Score.search(
+                [
+                    ("category_id", "=", cat.id),
+                ],
+                order="as_of desc",
+                limit=1,
+            )
             cat.latest_score = latest.score if latest else 0
 
     def action_view_recommendations(self):

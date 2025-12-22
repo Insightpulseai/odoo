@@ -4,6 +4,7 @@ from odoo.exceptions import UserError
 
 class BirVatReturn(models.Model):
     """VAT Return (Forms 2550M, 2550Q)"""
+
     _name = "bir.vat.return"
     _description = "BIR VAT Return"
     _inherit = ["bir.tax.return"]
@@ -79,7 +80,9 @@ class BirVatReturn(models.Model):
     @api.depends("vatable_sales", "zero_rated_sales", "exempt_sales")
     def _compute_total_sales(self):
         for rec in self:
-            rec.total_sales = rec.vatable_sales + rec.zero_rated_sales + rec.exempt_sales
+            rec.total_sales = (
+                rec.vatable_sales + rec.zero_rated_sales + rec.exempt_sales
+            )
 
     @api.depends("vatable_sales")
     def _compute_output_vat(self):
@@ -133,7 +136,9 @@ class BirVatReturn(models.Model):
             for line in inv.invoice_line_ids:
                 # Check tax types on line
                 tax_tags = line.tax_ids.mapped("tax_group_id.name")
-                if "VAT 12%" in str(tax_tags) or any(t.amount == 12 for t in line.tax_ids):
+                if "VAT 12%" in str(tax_tags) or any(
+                    t.amount == 12 for t in line.tax_ids
+                ):
                     vatable += line.price_subtotal
                 elif any(t.amount == 0 for t in line.tax_ids):
                     zero_rated += line.price_subtotal
@@ -150,17 +155,20 @@ class BirVatReturn(models.Model):
                 if any(t.amount == 12 for t in line.tax_ids):
                     vatable_purchases += line.price_subtotal
 
-        self.write({
-            "vatable_sales": vatable,
-            "zero_rated_sales": zero_rated,
-            "exempt_sales": exempt,
-            "vatable_purchases": vatable_purchases,
-            "state": "computed",
-        })
+        self.write(
+            {
+                "vatable_sales": vatable,
+                "zero_rated_sales": zero_rated,
+                "exempt_sales": exempt,
+                "vatable_purchases": vatable_purchases,
+                "state": "computed",
+            }
+        )
 
 
 class BirVatLine(models.Model):
     """VAT Return Line Items (Sales/Purchases list)"""
+
     _name = "bir.vat.line"
     _description = "BIR VAT Line"
 
@@ -170,21 +178,30 @@ class BirVatLine(models.Model):
         required=True,
         ondelete="cascade",
     )
-    line_type = fields.Selection([
-        ("sales", "Sales"),
-        ("purchases", "Purchases"),
-    ], string="Type", required=True)
+    line_type = fields.Selection(
+        [
+            ("sales", "Sales"),
+            ("purchases", "Purchases"),
+        ],
+        string="Type",
+        required=True,
+    )
     partner_id = fields.Many2one("res.partner", string="Customer/Supplier")
     tin = fields.Char(related="partner_id.tin", string="TIN")
     invoice_id = fields.Many2one("account.move", string="Invoice/Bill")
     invoice_date = fields.Date(related="invoice_id.invoice_date", string="Date")
-    amount_untaxed = fields.Monetary(string="Amount (Net)", currency_field="currency_id")
+    amount_untaxed = fields.Monetary(
+        string="Amount (Net)", currency_field="currency_id"
+    )
     vat_amount = fields.Monetary(string="VAT Amount", currency_field="currency_id")
-    vat_category = fields.Selection([
-        ("vatable", "Vatable (12%)"),
-        ("zero_rated", "Zero-Rated (0%)"),
-        ("exempt", "Exempt"),
-    ], string="VAT Category")
+    vat_category = fields.Selection(
+        [
+            ("vatable", "Vatable (12%)"),
+            ("zero_rated", "Zero-Rated (0%)"),
+            ("exempt", "Exempt"),
+        ],
+        string="VAT Category",
+    )
     currency_id = fields.Many2one(
         "res.currency",
         related="return_id.currency_id",

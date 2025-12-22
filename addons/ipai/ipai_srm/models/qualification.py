@@ -100,16 +100,20 @@ class SrmQualification(models.Model):
 
     def action_approve(self):
         for rec in self:
-            rec.write({
-                "state": "approved",
-                "approver_id": self.env.user.id,
-                "approval_date": fields.Datetime.now(),
-                "completion_date": fields.Date.today(),
-            })
-            rec.supplier_id.write({
-                "state": "active",
-                "is_qualified": True,
-            })
+            rec.write(
+                {
+                    "state": "approved",
+                    "approver_id": self.env.user.id,
+                    "approval_date": fields.Datetime.now(),
+                    "completion_date": fields.Date.today(),
+                }
+            )
+            rec.supplier_id.write(
+                {
+                    "state": "active",
+                    "is_qualified": True,
+                }
+            )
 
     def action_reject(self):
         for rec in self:
@@ -139,8 +143,10 @@ class SrmQualificationChecklist(models.Model):
 
     def action_mark_complete(self):
         for rec in self:
-            rec.write({
-                "is_complete": True,
-                "completed_by": self.env.user.id,
-                "completed_date": fields.Date.today(),
-            })
+            rec.write(
+                {
+                    "is_complete": True,
+                    "completed_by": self.env.user.id,
+                    "completed_date": fields.Date.today(),
+                }
+            )

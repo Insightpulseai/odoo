@@ -39,11 +39,14 @@ def load_seed_bundle(env, module_name: str):
     for it in items:
         # Idempotency key: (bir_form, period_covered, deadline)
         key = (it.get("bir_form"), it.get("period_covered"), it.get("deadline"))
-        rec = Item.search([
-            ("bir_form", "=", key[0]),
-            ("period_covered", "=", key[1]),
-            ("deadline", "=", key[2]),
-        ], limit=1)
+        rec = Item.search(
+            [
+                ("bir_form", "=", key[0]),
+                ("period_covered", "=", key[1]),
+                ("deadline", "=", key[2]),
+            ],
+            limit=1,
+        )
 
         vals = {
             "bir_form": it.get("bir_form"),
@@ -60,13 +63,17 @@ def load_seed_bundle(env, module_name: str):
         # Replace steps (simple deterministic idempotency)
         Step.search([("item_id", "=", rec.id)]).unlink()
         for idx, s in enumerate(it.get("steps", []), start=1):
-            Step.create({
-                "item_id": rec.id,
-                "sequence": idx * 10,
-                "activity_type": s.get("activity_type"),
-                "role_code": s.get("role_code"),
-                "business_days_before": s.get("business_days_before", 0),
-                "on_or_before_deadline": bool(s.get("on_or_before_deadline", False)),
-            })
+            Step.create(
+                {
+                    "item_id": rec.id,
+                    "sequence": idx * 10,
+                    "activity_type": s.get("activity_type"),
+                    "role_code": s.get("role_code"),
+                    "business_days_before": s.get("business_days_before", 0),
+                    "on_or_before_deadline": bool(
+                        s.get("on_or_before_deadline", False)
+                    ),
+                }
+            )
 
     _logger.info("Loaded %d BIR schedule items", len(items))

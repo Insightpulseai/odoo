@@ -2,6 +2,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 
+
 class FinanceDirectory(models.Model):
     _name = "ipai.finance.directory"
     _description = "Finance Directory (code → person)"
@@ -10,7 +11,9 @@ class FinanceDirectory(models.Model):
     code = fields.Char(required=True, index=True)
     name = fields.Char(required=True)
     email = fields.Char(index=True)
-    user_id = fields.Many2one("res.users", string="User", help="Optional link to an Odoo user.")
+    user_id = fields.Many2one(
+        "res.users", string="User", help="Optional link to an Odoo user."
+    )
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
@@ -49,7 +52,11 @@ class FinanceDirectory(models.Model):
             return rec.user_id
         # Soft match: map by email → user if exists
         if rec and rec.email:
-            user = self.env["res.users"].sudo().search([("login", "=", rec.email)], limit=1)
+            user = (
+                self.env["res.users"]
+                .sudo()
+                .search([("login", "=", rec.email)], limit=1)
+            )
             if user:
                 rec.user_id = user.id
                 return user

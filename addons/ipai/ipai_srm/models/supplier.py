@@ -119,7 +119,9 @@ class SrmSupplier(models.Model):
     @api.depends("scorecard_ids")
     def _compute_latest_scorecard(self):
         for rec in self:
-            rec.latest_scorecard_id = rec.scorecard_ids.sorted("as_of", reverse=True)[:1]
+            rec.latest_scorecard_id = rec.scorecard_ids.sorted("as_of", reverse=True)[
+                :1
+            ]
 
     @api.depends("qualification_ids", "qualification_ids.state")
     def _compute_is_qualified(self):

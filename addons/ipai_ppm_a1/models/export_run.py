@@ -54,7 +54,15 @@ class IpaiRepoExportRun(models.Model):
         payload = {
             "workstreams": recs(
                 Workstream,
-                ["id", "code", "name", "description", "sap_anchor", "odoo_anchor", "active"],
+                [
+                    "id",
+                    "code",
+                    "name",
+                    "description",
+                    "sap_anchor",
+                    "odoo_anchor",
+                    "active",
+                ],
             ),
             "templates": recs(
                 Template,
@@ -88,7 +96,15 @@ class IpaiRepoExportRun(models.Model):
             ),
             "checklists": recs(
                 Checklist,
-                ["id", "task_id", "sequence", "label", "required", "evidence_type", "notes"],
+                [
+                    "id",
+                    "task_id",
+                    "sequence",
+                    "label",
+                    "required",
+                    "evidence_type",
+                    "notes",
+                ],
             ),
             "stc_worklist_types": recs(Worklist, ["id", "code", "name", "description"]),
             "stc_checks": recs(

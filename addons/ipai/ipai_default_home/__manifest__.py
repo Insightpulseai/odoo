@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'InsightPulse Default Home Page',
-    'version': '18.0.1.0.0',
-    'category': 'Extra Tools',
-    'summary': 'Set default landing page to Apps Dashboard after login',
-    'description': """
+    "name": "InsightPulse Default Home Page",
+    "version": "18.0.1.0.0",
+    "category": "Extra Tools",
+    "summary": "Set default landing page to Apps Dashboard after login",
+    "description": """
 Default Home Page Configuration
 ================================
 
@@ -24,17 +24,17 @@ After installation, all users will see the Apps Dashboard after login.
 Author: InsightPulse AI
 License: AGPL-3
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        'project',
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "base",
+        "project",
     ],
-    'data': [
-        'data/default_home_data.xml',
+    "data": [
+        "data/default_home_data.xml",
     ],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
+    "installable": True,
+    "application": False,
+    "auto_install": False,
 }

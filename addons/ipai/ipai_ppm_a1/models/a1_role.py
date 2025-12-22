@@ -20,7 +20,11 @@ class A1Role(models.Model):
     _order = "sequence, code"
 
     _sql_constraints = [
-        ("code_uniq", "unique(code, company_id)", "Role code must be unique per company."),
+        (
+            "code_uniq",
+            "unique(code, company_id)",
+            "Role code must be unique per company.",
+        ),
     ]
 
     # Core fields
@@ -86,10 +90,13 @@ class A1Role(models.Model):
 
         company_id = company_id or self.env.company.id
 
-        role = self.search([
-            ("code", "=", role_code),
-            ("company_id", "=", company_id),
-        ], limit=1)
+        role = self.search(
+            [
+                ("code", "=", role_code),
+                ("company_id", "=", company_id),
+            ],
+            limit=1,
+        )
 
         if not role:
             return False
@@ -100,10 +107,13 @@ class A1Role(models.Model):
         if role.fallback_user_id:
             return role.fallback_user_id
         if role.group_ids:
-            user = self.env["res.users"].search([
-                ("groups_id", "in", role.group_ids.ids),
-                ("company_id", "=", company_id),
-            ], limit=1)
+            user = self.env["res.users"].search(
+                [
+                    ("groups_id", "in", role.group_ids.ids),
+                    ("company_id", "=", company_id),
+                ],
+                limit=1,
+            )
             if user:
                 return user
         return False
@@ -125,10 +135,13 @@ class A1Role(models.Model):
 
         company_id = company_id or self.env.company.id
 
-        role = self.search([
-            ("code", "=", role_code),
-            ("company_id", "=", company_id),
-        ], limit=1)
+        role = self.search(
+            [
+                ("code", "=", role_code),
+                ("company_id", "=", company_id),
+            ],
+            limit=1,
+        )
 
         if not role:
             return self.env["res.users"]
@@ -137,8 +150,10 @@ class A1Role(models.Model):
         if role.default_user_id:
             users |= role.default_user_id
         if role.group_ids:
-            users |= self.env["res.users"].search([
-                ("groups_id", "in", role.group_ids.ids),
-                ("company_id", "=", company_id),
-            ])
+            users |= self.env["res.users"].search(
+                [
+                    ("groups_id", "in", role.group_ids.ids),
+                    ("company_id", "=", company_id),
+                ]
+            )
         return users

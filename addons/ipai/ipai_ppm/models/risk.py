@@ -213,7 +213,9 @@ class PpmRisk(models.Model):
         self.write({"status": "open"})
 
     def action_close(self):
-        self.write({
-            "status": "closed",
-            "date_closed": fields.Date.context_today(self),
-        })
+        self.write(
+            {
+                "status": "closed",
+                "date_closed": fields.Date.context_today(self),
+            }
+        )

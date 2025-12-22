@@ -21,7 +21,11 @@ class A1Workstream(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     _sql_constraints = [
-        ("code_uniq", "unique(code, company_id)", "Workstream code must be unique per company."),
+        (
+            "code_uniq",
+            "unique(code, company_id)",
+            "Workstream code must be unique per company.",
+        ),
     ]
 
     # Core fields

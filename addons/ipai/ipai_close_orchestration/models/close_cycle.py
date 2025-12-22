@@ -26,8 +26,11 @@ class CloseCycle(models.Model):
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
     _sql_constraints = [
-        ("period_uniq", "unique(period_start, period_end, company_id)",
-         "A cycle for this period already exists."),
+        (
+            "period_uniq",
+            "unique(period_start, period_end, company_id)",
+            "A cycle for this period already exists.",
+        ),
     ]
 
     # Core fields
@@ -55,14 +58,20 @@ class CloseCycle(models.Model):
     )
 
     # Status
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("open", "Open"),
-        ("in_progress", "In Progress"),
-        ("review", "Under Review"),
-        ("closed", "Closed"),
-        ("cancelled", "Cancelled"),
-    ], string="State", default="draft", tracking=True, required=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("open", "Open"),
+            ("in_progress", "In Progress"),
+            ("review", "Under Review"),
+            ("closed", "Closed"),
+            ("cancelled", "Cancelled"),
+        ],
+        string="State",
+        default="draft",
+        tracking=True,
+        required=True,
+    )
 
     # Tasks
     task_ids = fields.One2many(
@@ -146,14 +155,20 @@ class CloseCycle(models.Model):
             tasks = cycle.task_ids
             cycle.task_count = len(tasks)
             cycle.task_done_count = len(tasks.filtered(lambda t: t.state == "done"))
-            cycle.progress = (cycle.task_done_count / cycle.task_count * 100) if cycle.task_count else 0
+            cycle.progress = (
+                (cycle.task_done_count / cycle.task_count * 100)
+                if cycle.task_count
+                else 0
+            )
 
     @api.depends("exception_ids", "exception_ids.state")
     def _compute_exception_count(self):
         for cycle in self:
             cycle.exception_count = len(cycle.exception_ids)
             cycle.open_exception_count = len(
-                cycle.exception_ids.filtered(lambda e: e.state not in ("resolved", "closed"))
+                cycle.exception_ids.filtered(
+                    lambda e: e.state not in ("resolved", "closed")
+                )
             )
 
     @api.depends("gate_ids", "gate_ids.state")
@@ -170,19 +185,24 @@ class CloseCycle(models.Model):
         if self.state not in ("draft", "open"):
             raise UserError("Can only generate tasks for Draft or Open cycles.")
 
-        templates = self.env["close.task.template"].search([
-            ("active", "=", True),
-            ("company_id", "=", self.company_id.id),
-        ])
+        templates = self.env["close.task.template"].search(
+            [
+                ("active", "=", True),
+                ("company_id", "=", self.company_id.id),
+            ]
+        )
 
         created_count = 0
         for tpl in templates:
             # Check idempotency
             external_key = f"{self.period_label}|{tpl.code}"
-            existing = self.env["close.task"].search([
-                ("cycle_id", "=", self.id),
-                ("external_key", "=", external_key),
-            ], limit=1)
+            existing = self.env["close.task"].search(
+                [
+                    ("cycle_id", "=", self.id),
+                    ("external_key", "=", external_key),
+                ],
+                limit=1,
+            )
 
             if existing:
                 continue
@@ -193,38 +213,44 @@ class CloseCycle(models.Model):
             approval_deadline = self.period_end + timedelta(days=tpl.approval_offset)
 
             # Create task
-            task = self.env["close.task"].create({
-                "cycle_id": self.id,
-                "template_id": tpl.id,
-                "category_id": tpl.category_id.id if tpl.category_id else False,
-                "name": tpl.name,
-                "sequence": tpl.sequence,
-                "external_key": external_key,
-                "preparer_id": tpl.preparer_id.id if tpl.preparer_id else False,
-                "reviewer_id": tpl.reviewer_id.id if tpl.reviewer_id else False,
-                "approver_id": tpl.approver_id.id if tpl.approver_id else False,
-                "prep_deadline": prep_deadline,
-                "review_deadline": review_deadline,
-                "approval_deadline": approval_deadline,
-            })
+            task = self.env["close.task"].create(
+                {
+                    "cycle_id": self.id,
+                    "template_id": tpl.id,
+                    "category_id": tpl.category_id.id if tpl.category_id else False,
+                    "name": tpl.name,
+                    "sequence": tpl.sequence,
+                    "external_key": external_key,
+                    "preparer_id": tpl.preparer_id.id if tpl.preparer_id else False,
+                    "reviewer_id": tpl.reviewer_id.id if tpl.reviewer_id else False,
+                    "approver_id": tpl.approver_id.id if tpl.approver_id else False,
+                    "prep_deadline": prep_deadline,
+                    "review_deadline": review_deadline,
+                    "approval_deadline": approval_deadline,
+                }
+            )
 
             # Create checklist items
             for item in tpl.checklist_ids:
-                self.env["close.task.checklist"].create({
-                    "task_id": task.id,
-                    "code": item.code,
-                    "name": item.name,
-                    "sequence": item.sequence,
-                    "is_required": item.is_required,
-                    "instructions": item.instructions,
-                })
+                self.env["close.task.checklist"].create(
+                    {
+                        "task_id": task.id,
+                        "code": item.code,
+                        "name": item.name,
+                        "sequence": item.sequence,
+                        "is_required": item.is_required,
+                        "instructions": item.instructions,
+                    }
+                )
 
             created_count += 1
 
         self.state = "open"
         _logger.info("Generated %d tasks for close cycle %s", created_count, self.name)
 
-        self._trigger_webhook("close.cycle.tasks_generated", {"task_count": created_count})
+        self._trigger_webhook(
+            "close.cycle.tasks_generated", {"task_count": created_count}
+        )
 
         return {
             "type": "ir.actions.client",
@@ -258,15 +284,21 @@ class CloseCycle(models.Model):
         if self.state != "in_progress":
             raise UserError("Can only submit In Progress cycles for review.")
 
-        incomplete = self.task_ids.filtered(lambda t: t.state not in ("done", "cancelled"))
+        incomplete = self.task_ids.filtered(
+            lambda t: t.state not in ("done", "cancelled")
+        )
         if incomplete:
             raise UserError(f"Cannot submit: {len(incomplete)} tasks not completed.")
 
         if not self.gates_ready:
-            raise UserError("All approval gates must pass before submitting for review.")
+            raise UserError(
+                "All approval gates must pass before submitting for review."
+            )
 
         if self.open_exception_count > 0:
-            raise UserError(f"Cannot submit: {self.open_exception_count} open exceptions.")
+            raise UserError(
+                f"Cannot submit: {self.open_exception_count} open exceptions."
+            )
 
         self.state = "review"
         self._trigger_webhook("close.cycle.state_changed", {"new_state": "review"})

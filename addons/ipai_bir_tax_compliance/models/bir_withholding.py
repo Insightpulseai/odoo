@@ -4,16 +4,21 @@ from odoo.exceptions import UserError
 
 class BirWithholdingReturn(models.Model):
     """Withholding Tax Return (Forms 1600, 1601-C, 1601-E, 1601-F, 1604-CF)"""
+
     _name = "bir.withholding.return"
     _description = "BIR Withholding Tax Return"
     _inherit = ["bir.tax.return"]
 
-    withholding_type = fields.Selection([
-        ("compensation", "Compensation (1601-C)"),
-        ("expanded", "Expanded (1601-E)"),
-        ("final", "Final (1601-F)"),
-        ("vat", "VAT/Percentage Withheld (1600)"),
-    ], string="Withholding Type", required=True)
+    withholding_type = fields.Selection(
+        [
+            ("compensation", "Compensation (1601-C)"),
+            ("expanded", "Expanded (1601-E)"),
+            ("final", "Final (1601-F)"),
+            ("vat", "VAT/Percentage Withheld (1600)"),
+        ],
+        string="Withholding Type",
+        required=True,
+    )
 
     # Compensation WHT (1601-C)
     total_compensation = fields.Monetary(
@@ -98,32 +103,52 @@ class BirWithholdingReturn(models.Model):
         lines = []
 
         for slip in payslips:
-            gross = sum(slip.line_ids.filtered(lambda l: l.category_id.code == "GROSS").mapped("total"))
-            net = sum(slip.line_ids.filtered(lambda l: l.category_id.code == "NET").mapped("total"))
+            gross = sum(
+                slip.line_ids.filtered(lambda l: l.category_id.code == "GROSS").mapped(
+                    "total"
+                )
+            )
+            net = sum(
+                slip.line_ids.filtered(lambda l: l.category_id.code == "NET").mapped(
+                    "total"
+                )
+            )
             # Tax withheld = Gross - Net - Deductions (simplified)
             wht = gross - net
             if wht > 0:
                 total_comp += gross
                 taxable_comp += gross  # Simplified
                 tax_withheld += wht
-                lines.append((0, 0, {
-                    "partner_id": slip.employee_id.address_home_id.id if slip.employee_id.address_home_id else False,
-                    "income_type": "compensation",
-                    "gross_income": gross,
-                    "wht_rate": 0,  # Progressive rate
-                    "wht_amount": wht,
-                    "payslip_id": slip.id,
-                }))
+                lines.append(
+                    (
+                        0,
+                        0,
+                        {
+                            "partner_id": (
+                                slip.employee_id.address_home_id.id
+                                if slip.employee_id.address_home_id
+                                else False
+                            ),
+                            "income_type": "compensation",
+                            "gross_income": gross,
+                            "wht_rate": 0,  # Progressive rate
+                            "wht_amount": wht,
+                            "payslip_id": slip.id,
+                        },
+                    )
+                )
 
-        self.write({
-            "total_compensation": total_comp,
-            "taxable_compensation": taxable_comp,
-            "compensation_tax_withheld": tax_withheld,
-            "employee_count": len(payslips.mapped("employee_id")),
-            "tax_base": taxable_comp,
-            "tax_due": tax_withheld,
-            "line_ids": [(5, 0, 0)] + lines,
-        })
+        self.write(
+            {
+                "total_compensation": total_comp,
+                "taxable_compensation": taxable_comp,
+                "compensation_tax_withheld": tax_withheld,
+                "employee_count": len(payslips.mapped("employee_id")),
+                "tax_base": taxable_comp,
+                "tax_due": tax_withheld,
+                "line_ids": [(5, 0, 0)] + lines,
+            }
+        )
 
     def _compute_expanded_wht(self):
         """Compute expanded withholding from vendor bills"""
@@ -143,39 +168,58 @@ class BirWithholdingReturn(models.Model):
         for bill in bills:
             for line in bill.invoice_line_ids:
                 # Check for EWT taxes (expanded withholding)
-                ewt_taxes = line.tax_ids.filtered(lambda t: "EWT" in (t.name or "").upper() or t.amount < 0)
+                ewt_taxes = line.tax_ids.filtered(
+                    lambda t: "EWT" in (t.name or "").upper() or t.amount < 0
+                )
                 if ewt_taxes:
-                    wht = abs(sum(ewt_taxes.mapped("amount")) / 100 * line.price_subtotal)
+                    wht = abs(
+                        sum(ewt_taxes.mapped("amount")) / 100 * line.price_subtotal
+                    )
                     total += line.price_subtotal
                     wht_total += wht
-                    lines.append((0, 0, {
-                        "partner_id": bill.partner_id.id,
-                        "income_type": "professional_fees" if "professional" in line.name.lower() else "other",
-                        "gross_income": line.price_subtotal,
-                        "wht_rate": abs(sum(ewt_taxes.mapped("amount"))),
-                        "wht_amount": wht,
-                        "move_id": bill.id,
-                    }))
+                    lines.append(
+                        (
+                            0,
+                            0,
+                            {
+                                "partner_id": bill.partner_id.id,
+                                "income_type": (
+                                    "professional_fees"
+                                    if "professional" in line.name.lower()
+                                    else "other"
+                                ),
+                                "gross_income": line.price_subtotal,
+                                "wht_rate": abs(sum(ewt_taxes.mapped("amount"))),
+                                "wht_amount": wht,
+                                "move_id": bill.id,
+                            },
+                        )
+                    )
 
-        self.write({
-            "total_payments": total,
-            "expanded_wht_amount": wht_total,
-            "tax_base": total,
-            "tax_due": wht_total,
-            "line_ids": [(5, 0, 0)] + lines,
-        })
+        self.write(
+            {
+                "total_payments": total,
+                "expanded_wht_amount": wht_total,
+                "tax_base": total,
+                "tax_due": wht_total,
+                "line_ids": [(5, 0, 0)] + lines,
+            }
+        )
 
     def _compute_final_wht(self):
         """Compute final withholding (interest, dividends, etc.)"""
         # Similar logic for final withholding
-        self.write({
-            "tax_base": 0,
-            "tax_due": 0,
-        })
+        self.write(
+            {
+                "tax_base": 0,
+                "tax_due": 0,
+            }
+        )
 
 
 class BirWithholdingLine(models.Model):
     """Withholding Tax Line (Payee Details)"""
+
     _name = "bir.withholding.line"
     _description = "BIR Withholding Tax Line"
 
@@ -187,16 +231,19 @@ class BirWithholdingLine(models.Model):
     )
     partner_id = fields.Many2one("res.partner", string="Payee")
     tin = fields.Char(related="partner_id.tin", string="TIN")
-    income_type = fields.Selection([
-        ("compensation", "Compensation"),
-        ("professional_fees", "Professional Fees"),
-        ("rental", "Rental"),
-        ("interest", "Interest"),
-        ("dividends", "Dividends"),
-        ("royalties", "Royalties"),
-        ("contractor", "Contractor Services"),
-        ("other", "Other"),
-    ], string="Income Type")
+    income_type = fields.Selection(
+        [
+            ("compensation", "Compensation"),
+            ("professional_fees", "Professional Fees"),
+            ("rental", "Rental"),
+            ("interest", "Interest"),
+            ("dividends", "Dividends"),
+            ("royalties", "Royalties"),
+            ("contractor", "Contractor Services"),
+            ("other", "Other"),
+        ],
+        string="Income Type",
+    )
     gross_income = fields.Monetary(string="Gross Income", currency_field="currency_id")
     wht_rate = fields.Float(string="WHT Rate (%)")
     wht_amount = fields.Monetary(string="WHT Amount", currency_field="currency_id")
@@ -210,6 +257,7 @@ class BirWithholdingLine(models.Model):
 
 class BirAlphalist(models.Model):
     """Annual Alphalist (Forms 1604-CF, 1604-E)"""
+
     _name = "bir.alphalist"
     _description = "BIR Annual Alphalist"
     _inherit = ["mail.thread"]
@@ -221,16 +269,24 @@ class BirAlphalist(models.Model):
         required=True,
         default=lambda self: self.env.company,
     )
-    form_type = fields.Selection([
-        ("1604CF", "1604-CF - Compensation"),
-        ("1604E", "1604-E - Creditable/Expanded"),
-    ], string="Form Type", required=True)
+    form_type = fields.Selection(
+        [
+            ("1604CF", "1604-CF - Compensation"),
+            ("1604E", "1604-E - Creditable/Expanded"),
+        ],
+        string="Form Type",
+        required=True,
+    )
     fiscal_year = fields.Integer(string="Fiscal Year", required=True)
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("generated", "Generated"),
-        ("filed", "Filed"),
-    ], string="Status", default="draft")
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("generated", "Generated"),
+            ("filed", "Filed"),
+        ],
+        string="Status",
+        default="draft",
+    )
     line_ids = fields.One2many(
         "bir.alphalist.line",
         "alphalist_id",
@@ -335,6 +391,7 @@ class BirAlphalist(models.Model):
 
 class BirAlphalistLine(models.Model):
     """Alphalist Line (Employee/Supplier Record)"""
+
     _name = "bir.alphalist.line"
     _description = "BIR Alphalist Line"
 
@@ -346,15 +403,20 @@ class BirAlphalistLine(models.Model):
     )
     partner_id = fields.Many2one("res.partner", string="Payee", required=True)
     tin = fields.Char(related="partner_id.tin", string="TIN")
-    income_type = fields.Selection([
-        ("compensation", "Compensation"),
-        ("professional_fees", "Professional Fees"),
-        ("rental", "Rental"),
-        ("interest", "Interest"),
-        ("dividends", "Dividends"),
-        ("other", "Other"),
-    ], string="Income Type")
-    gross_income = fields.Monetary(string="Total Gross Income", currency_field="currency_id")
+    income_type = fields.Selection(
+        [
+            ("compensation", "Compensation"),
+            ("professional_fees", "Professional Fees"),
+            ("rental", "Rental"),
+            ("interest", "Interest"),
+            ("dividends", "Dividends"),
+            ("other", "Other"),
+        ],
+        string="Income Type",
+    )
+    gross_income = fields.Monetary(
+        string="Total Gross Income", currency_field="currency_id"
+    )
     wht_amount = fields.Monetary(string="Total WHT", currency_field="currency_id")
     currency_id = fields.Many2one(
         "res.currency",

@@ -11,7 +11,6 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-
         "views/menu.xml",
         "views/finance_directory_views.xml",
         "views/bir_schedule_views.xml",
@@ -20,7 +19,6 @@
         "views/task_views.xml",
         "views/dashboard_views.xml",
         "views/seed_wizard_views.xml",
-
         "data/ir_cron.xml",
     ],
     "post_init_hook": "post_init_hook",
