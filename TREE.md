@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 12d23b251dc9749f58d11c098b5a2a7897ff0b07
+> Commit: f225e54dadd1f574f9cadf55dc7227ac7c5a9a32
 
 ```
 .
@@ -31,11 +31,13 @@
 │   ├── rules
 │   │   ├── agentic.md
 │   │   ├── medallion-architecture.yaml
-│   │   └── notion-ppm.yaml
+│   │   ├── notion-ppm.yaml
+│   │   └── spec-kit.yaml
 │   └── config.json
 ├── .github
 │   ├── workflows
 │   │   ├── agent-preflight.yml
+│   │   ├── all-green-gates.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
@@ -1165,6 +1167,7 @@
 │   ├── odoo_smoke_close.sh
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
+│   ├── policy-check.sh
 │   ├── pre_install_snapshot.sh
 │   ├── repo_health.sh
 │   ├── report_ci_telemetry.sh
@@ -1178,6 +1181,8 @@
 │   ├── spec_validate.sh
 │   ├── test_deploy_local.sh
 │   ├── update_diagram_manifest.py
+│   ├── validate-continue-config.sh
+│   ├── validate-spec-kit.sh
 │   ├── validate_m1.sh
 │   ├── verify-https.sh
 │   ├── verify.sh
@@ -1268,6 +1273,9 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── continue-plus
+│   │   ├── ALL_GREEN_CRITERIA.md
+│   │   ├── EVALUATION_REPORT.md
+│   │   ├── RUNBOOK.md
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -1426,7 +1434,8 @@
 │   │   ├── 20251220_capability_registry_full.sql
 │   │   ├── 20251220_process_runtime_ticketing.sql
 │   │   ├── 20251220_qms_lite_document_control.sql
-│   │   └── 20251220_ticketing_pipelines_clean.sql
+│   │   ├── 20251220_ticketing_pipelines_clean.sql
+│   │   └── 20251222_control_room_workbench.sql
 │   ├── seed
 │   │   ├── 9000_core
 │   │   │   └── 9000_core_tenants_roles_users.sql
@@ -1629,7 +1638,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-526 directories, 1098 files
+526 directories, 1107 files
 ```
 
 ## 📊 Stats
@@ -1637,7 +1646,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 593 |
-| Files | 1709 |
+| Files | 1718 |
 | Python files | 473 |
 | XML files | 265 |
-| Markdown files | 321 |
+| Markdown files | 324 |
