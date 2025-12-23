@@ -1,14 +1,83 @@
 {
+  "generated_at": "2025-12-23T03:08:05.335031Z",
   "rubric": {
     "version": "1.0.0",
-    "description": "Parity scoring rubric for Work OS Notion Clone",
+    "description": "Parity scoring rubric for capability assessment",
     "weights": {
-      "workflow_fidelity": 20,
-      "ux_fidelity": 30,
-      "data_fidelity": 15,
-      "permission_fidelity": 20,
-      "reporting_search": 10,
-      "performance": 5
+      "workflow": 30,
+      "ux": 25,
+      "data": 15,
+      "perm": 15,
+      "report": 10,
+      "perf": 5
+    },
+    "dimensions": {
+      "workflow": {
+        "weight": 30,
+        "description": "Business process coverage and automation",
+        "criteria": [
+          "Core workflow states implemented",
+          "Transition rules enforced",
+          "Notifications on state changes",
+          "Approval chains where required",
+          "Exception handling paths"
+        ]
+      },
+      "ux": {
+        "weight": 25,
+        "description": "User experience and interface quality",
+        "criteria": [
+          "View matches target product feel",
+          "Quick actions available",
+          "Responsive and accessible",
+          "Intuitive navigation",
+          "Consistent design tokens"
+        ]
+      },
+      "data": {
+        "weight": 15,
+        "description": "Data model completeness and integrity",
+        "criteria": [
+          "Required fields captured",
+          "Relationships modeled correctly",
+          "Data validation rules",
+          "History/audit trail",
+          "Import/export capability"
+        ]
+      },
+      "perm": {
+        "weight": 15,
+        "description": "Permission and access control",
+        "criteria": [
+          "Role-based access defined",
+          "Field-level security where needed",
+          "Record-level rules",
+          "Action permissions",
+          "Delegation support"
+        ]
+      },
+      "report": {
+        "weight": 10,
+        "description": "Reporting and analytics",
+        "criteria": [
+          "Key metrics dashboards",
+          "Standard reports available",
+          "Export formats",
+          "Scheduled reports",
+          "Drill-down capability"
+        ]
+      },
+      "perf": {
+        "weight": 5,
+        "description": "Performance and scalability",
+        "criteria": [
+          "Page load < 2s",
+          "List views handle 10k+ records",
+          "Search response < 1s",
+          "No N+1 queries",
+          "Caching where appropriate"
+        ]
+      }
     },
     "capability_checks": {
       "workos.workspace.space.tree": {
@@ -211,6 +280,20 @@
         ]
       }
     },
+    "scoring_guide": {
+      "0": "Not implemented",
+      "20": "Basic skeleton only",
+      "40": "Partial implementation, major gaps",
+      "60": "Functional but missing polish",
+      "80": "Production ready, minor gaps",
+      "100": "Full parity with target"
+    },
+    "thresholds": {
+      "p0_minimum": 70,
+      "p1_minimum": 50,
+      "p2_minimum": 0,
+      "launch_ready": 70
+    },
     "tier_thresholds": {
       "p0": {
         "minimum_score": 70,
@@ -228,6 +311,16 @@
   },
   "scores": {
     "p0": {
+      "crm.pipeline.board": {
+        "score": 10,
+        "automated": false,
+        "checks": {}
+      },
+      "itsm.incident.queue": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
       "workos.workspace.space.tree": {
         "score": 100,
         "automated": true,
@@ -501,6 +594,26 @@
       }
     },
     "p1": {
+      "workos.pages.db": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "assets.checkout.reserve": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "ppm.portfolio.lite": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "expense.submit.approve": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
       "workos.blocks.attachments": {
         "score": 0,
         "automated": false,
@@ -533,6 +646,21 @@
       }
     },
     "p2": {
+      "crm.forecasting": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "itsm.change.management": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
+      "expense.policy.enforce": {
+        "score": 0,
+        "automated": false,
+        "checks": {}
+      },
       "workos.db.rollups.lite": {
         "score": 0,
         "automated": false,
@@ -551,12 +679,69 @@
     }
   },
   "regressions": [],
+  "below_threshold": [
+    {
+      "capability_id": "crm.pipeline.board",
+      "score": 10,
+      "threshold": 70,
+      "tier": "p0"
+    },
+    {
+      "capability_id": "itsm.incident.queue",
+      "score": 0,
+      "threshold": 70,
+      "tier": "p0"
+    },
+    {
+      "capability_id": "workos.views.switcher.saved",
+      "score": 0,
+      "threshold": 70,
+      "tier": "p0"
+    },
+    {
+      "capability_id": "workos.views.table",
+      "score": 66,
+      "threshold": 70,
+      "tier": "p0"
+    },
+    {
+      "capability_id": "workos.views.kanban",
+      "score": 66,
+      "threshold": 70,
+      "tier": "p0"
+    },
+    {
+      "capability_id": "workos.views.calendar",
+      "score": 66,
+      "threshold": 70,
+      "tier": "p0"
+    },
+    {
+      "capability_id": "workos.activity.log",
+      "score": 0,
+      "threshold": 70,
+      "tier": "p0"
+    }
+  ],
   "summary": {
-    "p0_count": 18,
-    "p0_average": 83.22222222222223,
-    "p0_min": 0,
-    "p1_count": 6,
-    "p1_average": 0.0,
+    "p0": {
+      "count": 20,
+      "average": 75.4,
+      "min": 0,
+      "max": 100
+    },
+    "p1": {
+      "count": 10,
+      "average": 0.0,
+      "min": 0,
+      "max": 0
+    },
+    "p2": {
+      "count": 6,
+      "average": 0.0,
+      "min": 0,
+      "max": 0
+    },
     "regression_count": 0,
     "p0_regressions": 0
   }
