@@ -101,7 +101,7 @@
     <record id="action_workos_space" model="ir.actions.act_window">
         <field name="name">Spaces</field>
         <field name="res_model">ipai.workos.space</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create a space to organize your pages
