@@ -4,8 +4,9 @@
 # This override mounts the addons directory for quick WorkOS module deployment
 # without requiring an image rebuild.
 #
-# Usage:
-#   docker compose -f docker-compose.prod.yml -f docker-compose.workos-deploy.yml up -d
+# CRITICAL: Run from repo root, NOT from deploy/ directory:
+#   cd /opt/odoo-ce
+#   docker compose -f deploy/docker-compose.prod.yml -f deploy/docker-compose.workos-deploy.yml up -d
 #
 # After deployment is verified, build a new immutable image for production.
 # ===========================================
@@ -14,19 +15,20 @@ services:
   odoo:
     volumes:
       # Mount addons for WorkOS deployment (temporary until image rebuild)
-      - ../addons:/mnt/addons/ipai:ro
+      # Path is relative to repo root (where docker compose is invoked from)
+      - ./addons:/mnt/addons/ipai:ro
 
       # Keep existing volumes
       - odoo-filestore:/var/lib/odoo
       - odoo-logs:/var/log/odoo
 
-    # Override command to include addons path
-    command: >
-      odoo
-      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
-      --db_host=${DB_HOST:-db}
-      --db_user=${DB_USER:-odoo}
-      --db_password=${DB_PASSWORD:?DB_PASSWORD required}
+    # Remove healthcheck that uses /web/health (may not exist)
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8069/web/login || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
 
   # One-shot init service for module installation
   odoo-workos-init:
@@ -42,7 +44,7 @@ services:
       PASSWORD: ${DB_PASSWORD:?DB_PASSWORD required}
 
     volumes:
-      - ../addons:/mnt/addons/ipai:ro
+      - ./addons:/mnt/addons/ipai:ro
       - odoo-filestore:/var/lib/odoo
 
     command: >
