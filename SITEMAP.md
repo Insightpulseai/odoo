@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 013d3c1c14f7c48e8b6b6f294675419c15da5ddb
+> Commit: 31fab1228e190bb14af7baef4dad783073ae49aa
 
 ## 📚 Documentation
 
@@ -213,6 +213,34 @@
 | [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
+| [IPAI Module Suite - System Architecture](docs/ipai/ARCHITECTURE.md) | docs/ipai |
+| [IPAI Module Suite - Changelog](docs/ipai/CHANGELOG.md) | docs/ipai |
+| [IPAI Module Suite - Installation Guide](docs/ipai/INSTALLATION.md) | docs/ipai |
+| [IPAI Module Suite - Operations Runbook](docs/ipai/OPERATIONS_RUNBOOK.md) | docs/ipai |
+| [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
+| [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
+| [IPAI Module Suite - Technical Documentation Index](docs/modules/INDEX.md) | docs/modules |
+| [ipai_bir_tax_compliance](docs/modules/ipai_bir_tax_compliance.md) | docs/modules |
+| [ipai_close_orchestration](docs/modules/ipai_close_orchestration.md) | docs/modules |
+| [ipai_crm_pipeline](docs/modules/ipai_crm_pipeline.md) | docs/modules |
+| [ipai_finance_ppm_golive](docs/modules/ipai_finance_ppm_golive.md) | docs/modules |
+| [ipai_month_end](docs/modules/ipai_month_end.md) | docs/modules |
+| [ipai_platform_approvals](docs/modules/ipai_platform_approvals.md) | docs/modules |
+| [ipai_platform_audit](docs/modules/ipai_platform_audit.md) | docs/modules |
+| [ipai_platform_permissions](docs/modules/ipai_platform_permissions.md) | docs/modules |
+| [ipai_platform_theme](docs/modules/ipai_platform_theme.md) | docs/modules |
+| [ipai_platform_workflow](docs/modules/ipai_platform_workflow.md) | docs/modules |
+| [ipai_ppm_a1](docs/modules/ipai_ppm_a1.md) | docs/modules |
+| [ipai_tbwa_finance](docs/modules/ipai_tbwa_finance.md) | docs/modules |
+| [ipai_workos_affine](docs/modules/ipai_workos_affine.md) | docs/modules |
+| [ipai_workos_blocks](docs/modules/ipai_workos_blocks.md) | docs/modules |
+| [ipai_workos_canvas](docs/modules/ipai_workos_canvas.md) | docs/modules |
+| [ipai_workos_collab](docs/modules/ipai_workos_collab.md) | docs/modules |
+| [ipai_workos_core](docs/modules/ipai_workos_core.md) | docs/modules |
+| [ipai_workos_db](docs/modules/ipai_workos_db.md) | docs/modules |
+| [ipai_workos_search](docs/modules/ipai_workos_search.md) | docs/modules |
+| [ipai_workos_templates](docs/modules/ipai_workos_templates.md) | docs/modules |
+| [ipai_workos_views](docs/modules/ipai_workos_views.md) | docs/modules |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md) | docs/odoo-18-handbook |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/README.md) | docs/odoo-18-handbook |
 | [Finance & Accounting Overview – InsightPulseAI Edition](docs/odoo-18-handbook/pages/01-finance-accounting.md) | docs/odoo-18-handbook/pages |
