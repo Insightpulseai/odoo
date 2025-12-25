@@ -259,6 +259,7 @@ The system is designed to:
 |   |-- TAGGING_STRATEGY.md
 |   |-- TESTING_ODOO_18.md
 |   |-- WBS_LOGFRAME_MAPPING.md
+|   |-- WORKOS_DEPLOYMENT_MANIFEST.md
 |   |-- branch-cleanup-analysis.md
 |   |-- odoo-apps-parity.md
 |   |-- supabase-integration.md
