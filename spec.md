@@ -180,6 +180,8 @@ The system is designed to:
 |   |-- deployment
 |   |-- diagrams
 |   |-- finance-ppm
+|   |-- ipai
+|   |-- modules
 |   |-- odoo-18-handbook
 |   |-- ppm
 |   |-- repo
@@ -390,6 +392,7 @@ The system is designed to:
 |   |-- generate_2026_finance_calendar.py
 |   |-- generate_2026_schedule.py
 |   |-- generate_finance_dashboard.py
+|   |-- generate_module_docs.py
 |   |-- generate_seed_xml.py
 |   |-- healthcheck_odoo.sh
 |   |-- image-diff-report.sh
@@ -411,6 +414,7 @@ The system is designed to:
 |   |-- report_ci_telemetry.sh
 |   |-- run_clarity_ppm_reverse.sh
 |   |-- run_odoo_migrations.sh
+|   |-- scan_ipai_modules.py
 |   |-- setup_keycloak_db.sh
 |   |-- setup_mattermost_db.sh
 |   |-- simple_deploy.sh
