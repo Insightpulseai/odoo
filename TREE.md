@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd3fc65223457bc6a1c587d0bbc162e4c8dddfda
+> Commit: a4af31aa2641ceaa4b88b871f4d9aa92f4d89c65
 
 ```
 .
@@ -1033,14 +1033,17 @@
 │   ├── repo
 │   │   ├── GIT_STATE.prod.txt
 │   │   ├── REPO_SNAPSHOT.prod.json
-│   │   └── REPO_TREE.prod.md
+│   │   ├── REPO_TREE.prod.md
+│   │   └── WORKOS_REPO_TREE.prod.md
 │   ├── runtime
 │   │   ├── ADDONS_PATH.prod.txt
 │   │   ├── CONTAINER_PATH_CHECK.prod.txt
 │   │   ├── HTTP_SITEMAP.prod.json
 │   │   ├── MODULE_STATES.prod.csv
 │   │   ├── ODOO_MENU_SITEMAP.prod.json
-│   │   └── ODOO_MODEL_SNAPSHOT.prod.json
+│   │   ├── ODOO_MODEL_SNAPSHOT.prod.json
+│   │   ├── WORKOS_MODELS.prod.json
+│   │   └── WORKOS_MODULES.prod.csv
 │   ├── workflows
 │   │   └── hire-to-retire-bpmn.html
 │   ├── 003-odoo-ce-custom-image-spec.md
@@ -1117,6 +1120,7 @@
 │   ├── TAGGING_STRATEGY.md
 │   ├── TESTING_ODOO_18.md
 │   ├── WBS_LOGFRAME_MAPPING.md
+│   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── branch-cleanup-analysis.md
 │   ├── odoo-apps-parity.md
 │   ├── supabase-integration.md
@@ -1838,6 +1842,7 @@
 ├── CONTRIBUTING.md
 ├── DEPLOYMENT_MVP.md
 ├── DEPLOYMENT_REPORT.md
+├── DEPLOYMENT_REPORT_FINAL.md
 ├── DEPLOYMENT_RUNBOOK.md
 ├── DEPLOYMENT_STATUS.md
 ├── DEPLOYMENT_VALIDATION_REPORT.md
@@ -1935,7 +1940,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-620 directories, 1310 files
+620 directories, 1315 files
 ```
 
 ## 📊 Stats
@@ -1943,7 +1948,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 698 |
-| Files | 1933 |
+| Files | 1938 |
 | Python files | 549 |
 | XML files | 293 |
-| Markdown files | 358 |
+| Markdown files | 361 |

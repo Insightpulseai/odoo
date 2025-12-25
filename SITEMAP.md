@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd3fc65223457bc6a1c587d0bbc162e4c8dddfda
+> Commit: a4af31aa2641ceaa4b88b871f4d9aa92f4d89c65
 
 ## 📚 Documentation
 
@@ -34,6 +34,7 @@
 | [Contributing to Odoo CE](CONTRIBUTING.md) | . |
 | [Odoo CE Equipment MVP Deployment Guide](DEPLOYMENT_MVP.md) | . |
 | [WorkOS Production Deployment Report](DEPLOYMENT_REPORT.md) | . |
+| [WorkOS Production Deployment Report](DEPLOYMENT_REPORT_FINAL.md) | . |
 | [WorkOS Production Deployment Runbook](DEPLOYMENT_RUNBOOK.md) | . |
 | [Odoo CE Deployment Status - Live Instance](DEPLOYMENT_STATUS.md) | . |
 | [Deployment Validation Report](DEPLOYMENT_VALIDATION_REPORT.md) | . |
@@ -190,6 +191,7 @@
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
+| [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
@@ -225,6 +227,7 @@
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
+| [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
