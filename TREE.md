@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 849eb93c52236836f07571f372e6311df32a4ffd
+> Commit: a1461b0921ce5e1c524fb26330a272492c26cecb
 
 ```
 .
@@ -1039,7 +1039,9 @@
 │   │   ├── ADDONS_PATH.prod.txt
 │   │   ├── CONTAINER_PATH_CHECK.prod.txt
 │   │   ├── HTTP_SITEMAP.prod.json
+│   │   ├── IPAI_MODULE_STATUS.prod.txt
 │   │   ├── MODULE_STATES.prod.csv
+│   │   ├── ODOO_ACTIONS.prod.json
 │   │   ├── ODOO_MENU_SITEMAP.prod.json
 │   │   ├── ODOO_MODEL_SNAPSHOT.prod.json
 │   │   ├── WORKOS_MODELS.prod.json
@@ -1940,7 +1942,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-620 directories, 1315 files
+620 directories, 1317 files
 ```
 
 ## 📊 Stats
@@ -1948,7 +1950,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 698 |
-| Files | 1938 |
+| Files | 1940 |
 | Python files | 549 |
 | XML files | 293 |
 | Markdown files | 361 |
