@@ -1,0 +1,18 @@
+{
+  "generated_at": "2025-12-25T17:06:22Z",
+  "window_actions": [
+{"id" : 200, "name" : {"en_US": "Audit Log"}, "res_model" : "ipai.audit.log", "view_mode" : "list,form"},
+{"id" : 201, "name" : {"en_US": "Permissions"}, "res_model" : "ipai.permission", "view_mode" : "list,form"},
+{"id" : 202, "name" : {"en_US": "Share Tokens"}, "res_model" : "ipai.share.token", "view_mode" : "list,form"},
+{"id" : 204, "name" : {"en_US": "Workspaces"}, "res_model" : "ipai.workos.workspace", "view_mode" : "kanban,tree,form"},
+{"id" : 205, "name" : {"en_US": "Spaces"}, "res_model" : "ipai.workos.space", "view_mode" : "kanban,tree,form"},
+{"id" : 206, "name" : {"en_US": "Pages"}, "res_model" : "ipai.workos.page", "view_mode" : "kanban,tree,form"},
+{"id" : 207, "name" : {"en_US": "Blocks"}, "res_model" : "ipai.workos.block", "view_mode" : "list,form"},
+{"id" : 208, "name" : {"en_US": "Databases"}, "res_model" : "ipai.workos.database", "view_mode" : "list,form"},
+{"id" : 209, "name" : {"en_US": "Canvas"}, "res_model" : "ipai.workos.canvas", "view_mode" : "list,form"},
+{"id" : 210, "name" : {"en_US": "Comments"}, "res_model" : "ipai.workos.comment", "view_mode" : "list,form"},
+{"id" : 211, "name" : {"en_US": "Search History"}, "res_model" : "ipai.workos.search.history", "view_mode" : "list"},
+{"id" : 212, "name" : {"en_US": "Templates"}, "res_model" : "ipai.workos.template", "view_mode" : "kanban,tree,form"},
+{"id" : 213, "name" : {"en_US": "Saved Views"}, "res_model" : "ipai.workos.view", "view_mode" : "list,form"}
+  ]
+}
