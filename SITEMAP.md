@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2dd9bc6c6583a2ca9762612707edb0086dbab1d2
+> Commit: 196d95aaaa71fcaa6071ca3bb23fff68c7f5968b
 
 ## 📚 Documentation
 
@@ -33,6 +33,7 @@
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
 | [Contributing to Odoo CE](CONTRIBUTING.md) | . |
 | [Odoo CE Equipment MVP Deployment Guide](DEPLOYMENT_MVP.md) | . |
+| [WorkOS Production Deployment Runbook](DEPLOYMENT_RUNBOOK.md) | . |
 | [Odoo CE Deployment Status - Live Instance](DEPLOYMENT_STATUS.md) | . |
 | [Deployment Validation Report](DEPLOYMENT_VALIDATION_REPORT.md) | . |
 | [Deployment Verification - Strategic Portfolio Command Center](DEPLOYMENT_VERIFICATION.md) | . |
