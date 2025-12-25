@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 52d0df6147b5811dce4ffcaab22b86bf23e73807
+> Commit: dd3fc65223457bc6a1c587d0bbc162e4c8dddfda
 
 ## 📚 Documentation
 
@@ -144,6 +144,8 @@
 | [Final Operability Checklist](docs/FINAL_OPERABILITY_CHECKLIST.md) | docs |
 | [FINAL READINESS CHECK & GIT COMMIT VERIFICATION](docs/FINAL_READINESS_CHECK.md) | docs |
 | [Finance PPM Implementation - Clarity/Notion-Style in Odoo CE](docs/FINANCE_PPM_IMPLEMENTATION.md) | docs |
+| [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
+| [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
 | [ODOO-CE GO-LIVE CHECKLIST](docs/GO_LIVE_CHECKLIST.md) | docs |
 | [Finance Stack Health Check System](docs/HEALTH_CHECK.md) | docs |
 | [Target Image Documentation](docs/IMAGE_GUIDE.md) | docs |
@@ -200,8 +202,13 @@
 | [RLS Policy Templates](docs/db/DB_RLS_POLICY_TEMPLATES.md) | docs/db |
 | [DB Table Classification (Draft)](docs/db/DB_TABLE_CLASSIFICATION_DRAFT.md) | docs/db |
 | [DB Target Architecture — Odoo 18 EE/CE + OCA-equivalent on Supabase Postgres](docs/db/DB_TARGET_ARCHITECTURE.md) | docs/db |
+| [Claude Code CLI Deployment Prompt](docs/deployment/CLAUDE_CODE_CLI_PROMPT.md) | docs/deployment |
+| [WorkOS Production Deployment - Execution Guide](docs/deployment/DEPLOYMENT_EXECUTION_GUIDE.md) | docs/deployment |
+| [WorkOS Deployment Verification Matrix](docs/deployment/DEPLOYMENT_VERIFICATION_MATRIX.md) | docs/deployment |
 | [Odoo CE/OCA CI Guardian](docs/deployment/OCA_CI_GUARDIAN.md) | docs/deployment |
+| [WorkOS Production Deployment - Pre-Flight Checklist](docs/deployment/PRE_FLIGHT_CHECKLIST.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
+| [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md) | docs/odoo-18-handbook |
@@ -249,6 +256,10 @@
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
 | [Visio-DrawIO Export Skill](skills/visio-drawio-export/README.md) | skills/visio-drawio-export |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
+| [ADK Control Room — Constitution](spec/adk-control-room/constitution.md) | spec/adk-control-room |
+| [ADK Control Room — Implementation Plan](spec/adk-control-room/plan.md) | spec/adk-control-room |
+| [ADK Control Room — Product Requirements Document](spec/adk-control-room/prd.md) | spec/adk-control-room |
+| [ADK Control Room — Task Checklist](spec/adk-control-room/tasks.md) | spec/adk-control-room |
 | [BIR Tax Compliance - Constitution](spec/bir-tax-compliance/constitution.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Implementation Plan](spec/bir-tax-compliance/plan.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Product Requirements](spec/bir-tax-compliance/prd.md) | spec/bir-tax-compliance |
@@ -392,6 +403,7 @@
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
+| [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ | Production go-live checklist for Finance PPM modules |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |

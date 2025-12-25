@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 52d0df6147b5811dce4ffcaab22b86bf23e73807
+> Commit: dd3fc65223457bc6a1c587d0bbc162e4c8dddfda
 
 ```
 .
@@ -46,6 +46,7 @@
 │   │   ├── ci-odoo-oca.yml
 │   │   ├── control-room-ci.yml
 │   │   ├── databricks-dab-ci.yml
+│   │   ├── deploy-finance-ppm.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-production.yml
 │   │   ├── diagrams-qa.yml
@@ -375,6 +376,27 @@
 │   │   ├── views
 │   │   │   ├── crm_lead_views.xml
 │   │   │   └── crm_stage_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_finance_ppm_golive
+│   │   ├── data
+│   │   │   ├── checklist_items.xml
+│   │   │   └── checklist_sections.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── golive_checklist.py
+│   │   │   ├── golive_item.py
+│   │   │   └── golive_section.py
+│   │   ├── reports
+│   │   │   └── golive_cfo_signoff.xml
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   ├── golive_checklist_views.xml
+│   │   │   ├── golive_dashboard_views.xml
+│   │   │   ├── golive_item_views.xml
+│   │   │   ├── golive_section_views.xml
+│   │   │   └── menus.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_month_end
@@ -979,8 +1001,13 @@
 │   │   ├── DB_TABLE_CLASSIFICATION_DRAFT.md
 │   │   └── DB_TARGET_ARCHITECTURE.md
 │   ├── deployment
+│   │   ├── CLAUDE_CODE_CLI_PROMPT.md
+│   │   ├── DEPLOYMENT_EXECUTION_GUIDE.md
+│   │   ├── DEPLOYMENT_VERIFICATION_MATRIX.md
 │   │   ├── OCA_CI_GUARDIAN.md
-│   │   └── README.md
+│   │   ├── PRE_FLIGHT_CHECKLIST.md
+│   │   ├── README.md
+│   │   └── WORKOS_DEPLOYMENT_PACKAGE.md
 │   ├── diagrams
 │   │   └── architecture
 │   │       ├── README.md
@@ -1043,6 +1070,8 @@
 │   ├── FINAL_OPERABILITY_CHECKLIST.md
 │   ├── FINAL_READINESS_CHECK.md
 │   ├── FINANCE_PPM_IMPLEMENTATION.md
+│   ├── GITHUB_SECRETS_SETUP.md
+│   ├── GIT_WORKTREE_STRATEGY.md
 │   ├── GO_LIVE_CHECKLIST.md
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
@@ -1302,8 +1331,12 @@
 ├── scripts
 │   ├── ci
 │   │   ├── constraints-gevent.txt
+│   │   ├── deploy-ipai-modules.sh
+│   │   ├── import-n8n-workflows.sh
+│   │   ├── install-oca-modules.sh
 │   │   ├── install_odoo_18.sh
 │   │   ├── run_odoo_tests.sh
+│   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
 │   ├── kb
 │   │   ├── seed_oca_catalog.sql
@@ -1406,7 +1439,8 @@
 │   ├── verify-https.sh
 │   ├── verify.sh
 │   ├── verify_backup.sh
-│   └── verify_phase3.py
+│   ├── verify_phase3.py
+│   └── worktree-setup.sh
 ├── seeds
 │   ├── schema
 │   │   ├── afc_tasks.schema.yaml
@@ -1481,6 +1515,11 @@
 │   ├── superset_mcp.skill.json
 │   └── visio_drawio_export.skill.json
 ├── spec
+│   ├── adk-control-room
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── bir-tax-compliance
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -1823,6 +1862,7 @@
 ├── ODOO_18_VSCODE_SETUP.md
 ├── ODOO_OCR_SETUP.md
 ├── POSTGRES_PASSWORD_SOLUTION.md
+├── PRODUCTION_DEPLOY_WORKOS.sh
 ├── PROJECT_WRAPPER_IMPLEMENTATION.md
 ├── PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md
 ├── README.md
@@ -1895,15 +1935,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-613 directories, 1277 files
+620 directories, 1310 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 691 |
-| Files | 1900 |
-| Python files | 543 |
-| XML files | 285 |
-| Markdown files | 347 |
+| Directories | 698 |
+| Files | 1933 |
+| Python files | 549 |
+| XML files | 293 |
+| Markdown files | 358 |
