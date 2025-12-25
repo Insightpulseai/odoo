@@ -1,0 +1,17 @@
+# Container Path Verification
+# PLACEHOLDER - This file must be regenerated on the production server
+# Run: ./tools/audit/gen_runtime_sitemap.sh
+
+## Expected output:
+
+## Odoo installation path:
+# /usr/lib/python3/dist-packages/odoo/__init__.py
+
+## /mnt/addons/ipai contents:
+# Should list ipai_workos_*, ipai_platform_* directories
+
+## IPAI WorkOS modules visible:
+# /mnt/addons/ipai/ipai_workos_affine
+# /mnt/addons/ipai/ipai_workos_core
+# /mnt/addons/ipai/ipai_workos_blocks
+# ... etc
