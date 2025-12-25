@@ -1,0 +1,3096 @@
+{
+  "total_modules": 30,
+  "by_layer": {
+    "Other": 11,
+    "Finance": 14,
+    "Platform/Utilities": 2,
+    "Industry": 2,
+    "WorkOS": 1
+  },
+  "layers": {
+    "Other": [
+      {
+        "name": "ipai_advisor",
+        "display_name": "IPAI Ops Advisor",
+        "version": "18.0.1.0.0",
+        "summary": "Azure Advisor-style recommendations engine for operational governance",
+        "category": "Operations",
+        "layer": "Other",
+        "author": "InsightPulse AI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "base",
+          "mail"
+        ],
+        "data": [
+          "security/advisor_security.xml",
+          "security/ir.model.access.csv",
+          "data/advisor_categories.xml",
+          "views/category_views.xml",
+          "views/recommendation_views.xml",
+          "views/playbook_views.xml",
+          "views/score_views.xml",
+          "views/dashboard_views.xml",
+          "views/menus.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/playbook.py",
+            "models/recommendation.py",
+            "models/score.py",
+            "models/category.py"
+          ],
+          "views": [
+            "views/playbook_views.xml",
+            "views/score_views.xml",
+            "views/recommendation_views.xml",
+            "views/menus.xml",
+            "views/category_views.xml",
+            "views/dashboard_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/advisor_categories.xml"
+          ],
+          "controllers": [
+            "controllers/webhook.py"
+          ],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_advisor"
+      },
+      {
+        "name": "ipai_assets",
+        "display_name": "IPAI Asset Checkout",
+        "version": "18.0.1.0.0",
+        "summary": "Equipment and asset checkout tracking (Cheqroom-style parity)",
+        "category": "Operations/Equipment",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "mail",
+          "hr",
+          "stock",
+          "barcodes"
+        ],
+        "data": [
+          "security/assets_security.xml",
+          "security/ir.model.access.csv",
+          "data/assets_sequence.xml",
+          "data/assets_categories.xml",
+          "views/asset_views.xml",
+          "views/checkout_views.xml",
+          "views/reservation_views.xml",
+          "views/menus.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/reservation.py",
+            "models/asset.py",
+            "models/checkout.py",
+            "models/category.py"
+          ],
+          "views": [
+            "views/reservation_views.xml",
+            "views/menus.xml",
+            "views/asset_views.xml",
+            "views/checkout_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/assets_sequence.xml",
+            "data/assets_categories.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_assets"
+      },
+      {
+        "name": "ipai_custom_routes",
+        "display_name": "InsightPulse Custom Routes",
+        "version": "18.0.1.0.0",
+        "summary": "Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.)",
+        "category": "Extra Tools",
+        "layer": "Other",
+        "author": "InsightPulse AI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "calendar",
+          "project",
+          "hr_expense"
+        ],
+        "data": [
+          "data/default_home_data.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [],
+          "views": [],
+          "security": [],
+          "data": [
+            "data/default_home_data.xml"
+          ],
+          "controllers": [
+            "controllers/main.py"
+          ],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_custom_routes"
+      },
+      {
+        "name": "ipai_default_home",
+        "display_name": "InsightPulse Default Home Page",
+        "version": "18.0.1.0.0",
+        "summary": "Set default landing page to Apps Dashboard after login",
+        "category": "Extra Tools",
+        "layer": "Other",
+        "author": "InsightPulse AI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "project"
+        ],
+        "data": [
+          "data/default_home_data.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [],
+          "views": [],
+          "security": [],
+          "data": [
+            "data/default_home_data.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_default_home"
+      },
+      {
+        "name": "ipai_dev_studio_base",
+        "display_name": "InsightPulse Dev Studio Base",
+        "version": "18.0.1.0.0",
+        "summary": "Base OCA/CE module bundle and dev tools for InsightPulse",
+        "category": "Tools",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.com",
+        "license": "LGPL-3",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "contacts",
+          "board",
+          "base_automation",
+          "project",
+          "documents"
+        ],
+        "data": [],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [],
+          "views": [],
+          "security": [],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_dev_studio_base"
+      },
+      {
+        "name": "ipai_equipment",
+        "display_name": "IPAI Equipment Management",
+        "version": "18.0.1.0.0",
+        "summary": "Cheqroom-style equipment catalog, bookings, and incidents on Odoo CE + OCA.",
+        "category": "Inventory",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "stock",
+          "maintenance",
+          "project"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "views/ipai_equipment_menus.xml",
+          "views/ipai_equipment_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/equipment.py"
+          ],
+          "views": [
+            "views/ipai_equipment_menus.xml",
+            "views/ipai_equipment_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": [
+            "tests/test_equipment_lifecycle.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_equipment"
+      },
+      {
+        "name": "ipai_expense",
+        "display_name": "IPAI Expense & Travel (PH)",
+        "version": "18.0.1.0.0",
+        "summary": "PH-focused expense & travel workflows (SAP Concur-style) on Odoo CE + OCA.",
+        "category": "Human Resources/Expenses",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "hr",
+          "hr_expense",
+          "account",
+          "project"
+        ],
+        "data": [
+          "security/ipai_expense_security.xml",
+          "security/ir.model.access.csv",
+          "data/ipai_expense_categories.xml",
+          "views/ipai_expense_menus.xml",
+          "views/ipai_expense_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/expense.py"
+          ],
+          "views": [
+            "views/ipai_expense_views.xml",
+            "views/ipai_expense_menus.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/ipai_expense_categories.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": [
+            "tests/test_expense_validation.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_expense"
+      },
+      {
+        "name": "ipai_master_control",
+        "display_name": "Master Control - Work Intake",
+        "version": "18.0.1.0.0",
+        "summary": "Bridge Odoo events to Master Control work items",
+        "category": "Productivity",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "base",
+          "hr",
+          "hr_expense",
+          "purchase"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "data/ir_config_parameter.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/master_control_mixin.py",
+            "models/hr_expense.py",
+            "models/purchase_order.py",
+            "models/hr_employee.py"
+          ],
+          "views": [],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/ir_config_parameter.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_master_control"
+      },
+      {
+        "name": "ipai_portal_fix",
+        "display_name": "IPAI Portal Fix",
+        "version": "18.0.1.0.1",
+        "summary": "Fixes KeyError: website in portal.frontend_layout template",
+        "category": "Technical",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "portal"
+        ],
+        "data": [
+          "views/portal_templates.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": true,
+        "structure": {
+          "models": [
+            "models/ir_http.py",
+            "models/ir_qweb.py"
+          ],
+          "views": [
+            "views/portal_templates.xml"
+          ],
+          "security": [],
+          "data": [],
+          "controllers": [
+            "controllers/portal.py"
+          ],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_portal_fix"
+      },
+      {
+        "name": "ipai_project_program",
+        "display_name": "IPAI Project Program (Program + IM Projects)",
+        "version": "18.0.1.0.0",
+        "summary": "Program (parent project) + Implementation Modules (IM1/IM2) as child projects + Directory + seed loader",
+        "category": "Project",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "project",
+          "mail"
+        ],
+        "data": [
+          "security/security.xml",
+          "security/ir.model.access.csv",
+          "views/project_project_views.xml",
+          "views/directory_views.xml",
+          "views/menus.xml",
+          "wizard/convert_phases_wizard_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/directory_person.py",
+            "models/project_task.py",
+            "models/project_project.py"
+          ],
+          "views": [
+            "views/directory_views.xml",
+            "views/menus.xml",
+            "views/project_project_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [
+            "wizard/convert_phases_wizard.py"
+          ],
+          "reports": [],
+          "tests": [
+            "tests/test_seed_and_projects.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_project_program"
+      },
+      {
+        "name": "ipai_srm",
+        "display_name": "IPAI Supplier Relationship Management",
+        "version": "18.0.1.0.0",
+        "summary": "Supplier lifecycle and performance management (SAP SRM/Ariba-style parity)",
+        "category": "Inventory/Purchase",
+        "layer": "Other",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "mail",
+          "purchase",
+          "contacts"
+        ],
+        "data": [
+          "security/srm_security.xml",
+          "security/ir.model.access.csv",
+          "data/srm_sequence.xml",
+          "data/srm_kpi_categories.xml",
+          "views/supplier_views.xml",
+          "views/scorecard_views.xml",
+          "views/qualification_views.xml",
+          "views/menus.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/kpi_category.py",
+            "models/scorecard.py",
+            "models/qualification.py",
+            "models/supplier.py",
+            "models/res_partner.py"
+          ],
+          "views": [
+            "views/supplier_views.xml",
+            "views/scorecard_views.xml",
+            "views/menus.xml",
+            "views/qualification_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/srm_kpi_categories.xml",
+            "data/srm_sequence.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_srm"
+      }
+    ],
+    "Finance": [
+      {
+        "name": "ipai_bir_compliance",
+        "display_name": "IPAI Tax Shield (Philippines)",
+        "version": "18.0.1.0.0",
+        "summary": "BIR 2307 Generator & Alphalist/RELIEF DAT File Engine",
+        "category": "Accounting/Localizations",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "account"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "reports/bir_2307_report.xml",
+          "wizards/bir_dat_file_wizard_view.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/account_move.py"
+          ],
+          "views": [],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [
+            "wizards/bir_dat_file_wizard.py"
+          ],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_bir_compliance"
+      },
+      {
+        "name": "ipai_clarity_ppm_parity",
+        "display_name": "InsightPulse Clarity PPM Parity",
+        "version": "18.0.1.0.0",
+        "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+        "category": "Project Management",
+        "layer": "Finance",
+        "author": "InsightPulse AI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "project",
+          "project_key",
+          "project_category",
+          "project_wbs",
+          "project_parent_task_filter",
+          "project_milestone",
+          "project_task_milestone",
+          "project_task_dependency",
+          "project_task_checklist",
+          "project_timeline"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "data/clarity_data.xml",
+          "data/bir_schedule_2025_2026.xml",
+          "views/project_project_views.xml",
+          "views/project_phase_views.xml",
+          "views/project_milestone_views.xml",
+          "views/project_task_views.xml",
+          "views/project_menu.xml"
+        ],
+        "demo": [
+          "data/demo_data.xml"
+        ],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/project_checklist.py",
+            "models/project_task.py",
+            "models/project_phase.py",
+            "models/project_project.py",
+            "models/project_milestone.py"
+          ],
+          "views": [
+            "views/project_task_views.xml",
+            "views/project_menu.xml",
+            "views/project_milestone_views.xml",
+            "views/project_project_views.xml",
+            "views/project_phase_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/clarity_data.xml",
+            "data/bir_schedule_2025_2026.xml",
+            "data/demo_data.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_clarity_ppm_parity"
+      },
+      {
+        "name": "ipai_close_orchestration",
+        "display_name": "IPAI Close Cycle Orchestration",
+        "version": "18.0.1.0.0",
+        "summary": "Close Cycle Orchestration - Cycles, Tasks, Templates, Checklists, Exceptions, Gates",
+        "category": "Accounting/Close",
+        "layer": "Finance",
+        "author": "IPAI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "base",
+          "mail"
+        ],
+        "data": [
+          "security/close_security.xml",
+          "security/ir.model.access.csv",
+          "data/close_cron.xml",
+          "views/close_cycle_views.xml",
+          "views/close_task_views.xml",
+          "views/close_template_views.xml",
+          "views/close_exception_views.xml",
+          "views/close_gate_views.xml",
+          "views/close_menu.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/close_template.py",
+            "models/close_category.py",
+            "models/close_gate.py",
+            "models/close_exception.py",
+            "models/close_task.py",
+            "models/close_cycle.py"
+          ],
+          "views": [
+            "views/close_template_views.xml",
+            "views/close_menu.xml",
+            "views/close_task_views.xml",
+            "views/close_gate_views.xml",
+            "views/close_cycle_views.xml",
+            "views/close_exception_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/close_cron.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_close_orchestration"
+      },
+      {
+        "name": "ipai_finance_bir_compliance",
+        "display_name": "IPAI Finance BIR Compliance (Schedule + Generator)",
+        "version": "18.0.1.0.0",
+        "summary": "JSON-seeded BIR schedule that generates Prep/Review/Approval/Filing tasks into IM2",
+        "category": "Accounting/Project",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ],
+        "data": [
+          "security/security.xml",
+          "security/ir.model.access.csv",
+          "views/bir_schedule_views.xml",
+          "views/menus.xml",
+          "wizard/generate_bir_tasks_wizard_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/bir_schedule_item.py",
+            "models/bir_generator.py"
+          ],
+          "views": [
+            "views/bir_schedule_views.xml",
+            "views/menus.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [
+            "wizard/generate_bir_tasks_wizard.py"
+          ],
+          "reports": [],
+          "tests": [
+            "tests/test_bir_generation.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_finance_bir_compliance"
+      },
+      {
+        "name": "ipai_finance_month_end",
+        "display_name": "IPAI Finance Month-End (Templates + Generator)",
+        "version": "18.0.1.0.0",
+        "summary": "JSON-seeded month-end templates that generate Preparation/Review/Approval tasks into IM1",
+        "category": "Accounting/Project",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ],
+        "data": [
+          "security/security.xml",
+          "security/ir.model.access.csv",
+          "views/month_end_template_views.xml",
+          "views/menus.xml",
+          "wizard/generate_month_end_wizard_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/month_end_template.py",
+            "models/month_end_generator.py"
+          ],
+          "views": [
+            "views/menus.xml",
+            "views/month_end_template_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [
+            "wizard/generate_month_end_wizard.py"
+          ],
+          "reports": [],
+          "tests": [
+            "tests/test_month_end_generation.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_finance_month_end"
+      },
+      {
+        "name": "ipai_finance_monthly_closing",
+        "display_name": "IPAI Finance Monthly Closing",
+        "version": "18.0.1.0.0",
+        "summary": "Structured month-end closing and BIR filing on top of Projects (CE/OCA-only).",
+        "category": "Accounting/Finance",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "project"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "views/project_task_views.xml",
+          "data/project_templates.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/project_task.py"
+          ],
+          "views": [
+            "views/project_task_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/project_templates.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_finance_monthly_closing"
+      },
+      {
+        "name": "ipai_finance_ppm",
+        "display_name": "IPAI Finance PPM",
+        "version": "18.0.1.0.0",
+        "summary": "Finance Project Portfolio Management (Notion Parity).",
+        "category": "Accounting/Finance",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "views/finance_person_views.xml",
+          "views/finance_bir_deadline_views.xml",
+          "views/finance_task_views.xml",
+          "views/bir_schedule_views.xml",
+          "views/ppm_dashboard_views.xml",
+          "views/project_task_views.xml",
+          "views/menus.xml",
+          "data/finance_person_seed.xml",
+          "data/bir_schedule_seed.xml",
+          "data/finance_cron.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/closing_step.py",
+            "models/finance_ppm.py",
+            "models/finance_bir_deadline.py",
+            "models/closing_models.py",
+            "models/bir_schedule.py",
+            "models/res_users.py",
+            "models/project_task.py",
+            "models/finance_task.py",
+            "models/closing_generator.py",
+            "models/finance_person.py",
+            "models/ppm_dashboard.py"
+          ],
+          "views": [
+            "views/finance_person_views.xml",
+            "views/project_task_views.xml",
+            "views/finance_bir_deadline_views.xml",
+            "views/finance_task_views.xml",
+            "views/bir_schedule_views.xml",
+            "views/ppm_dashboard_template.xml",
+            "views/menus.xml",
+            "views/ppm_dashboard_views.xml",
+            "views/finance_ppm_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/finance_person_seed.xml",
+            "data/finance_bir_schedule_2026_full.xml",
+            "data/finance_cron.xml",
+            "data/finance_logframe_seed.xml",
+            "data/finance_bir_schedule_seed.xml",
+            "data/bir_schedule_seed.xml"
+          ],
+          "controllers": [
+            "controllers/ppm_dashboard.py"
+          ],
+          "static": [
+            "static/lib/README.txt",
+            "static/lib/echarts.min.js",
+            "static/src/js/ppm_dashboard.js",
+            "static/src/js/semantic-search/MonthlyRevenueSearch.js",
+            "static/src/js/semantic-search/api.js",
+            "static/src/xml/monthly_revenue_search.xml"
+          ],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_finance_ppm"
+      },
+      {
+        "name": "ipai_finance_ppm_closing",
+        "display_name": "IPAI Finance PPM Closing Generator",
+        "version": "18.0.1.1.0",
+        "summary": "Idempotent Month-End Close & BIR Task Generator with audit trail.",
+        "category": "Accounting/Finance",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "project",
+          "ipai_finance_ppm",
+          "ipai_ppm_monthly_close"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "data/ir_cron.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/closing_models.py",
+            "models/res_users.py",
+            "models/project_ext.py",
+            "models/closing_generator.py"
+          ],
+          "views": [],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/ir_cron.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": [
+            "tests/test_closing_generator.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_finance_ppm_closing"
+      },
+      {
+        "name": "ipai_finance_ppm_dashboard",
+        "display_name": "IPAI Finance PPM Dashboard",
+        "version": "18.0.1.0.0",
+        "summary": "Month-end & BIR calendar dashboard (Gantt + calendar graph)",
+        "category": "Accounting/Reporting",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "web"
+        ],
+        "data": [
+          "views/ipai_finance_ppm_dashboard_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [],
+          "views": [
+            "views/ipai_finance_ppm_dashboard_views.xml"
+          ],
+          "security": [],
+          "data": [],
+          "controllers": [],
+          "static": [
+            "static/lib/echarts.min.js",
+            "static/src/js/ppm_dashboard.js",
+            "static/src/xml/ppm_dashboard_templates.xml"
+          ],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_finance_ppm_dashboard"
+      },
+      {
+        "name": "ipai_finance_ppm_tdi",
+        "display_name": "Finance PPM Transaction Data Ingestion (TDI)",
+        "version": "1.0.0",
+        "summary": "Import finance team, tasks, BIR calendar, and LogFrame data",
+        "category": "Finance",
+        "layer": "Finance",
+        "author": "InsightPulse AI - Jake Tolentino",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "project",
+          "hr",
+          "account"
+        ],
+        "data": [
+          "security/security_groups.xml",
+          "security/ir.model.access.csv",
+          "data/finance_team_seed.xml",
+          "data/month_end_tasks_seed.xml",
+          "data/bir_calendar_seed.xml",
+          "data/logframe_kpi_seed.xml",
+          "data/ph_holiday_calendar_seed.xml",
+          "wizard/finance_ppm_import_wizard_views.xml",
+          "views/finance_ppm_tdi_audit_views.xml",
+          "views/menu.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/finance_ppm_logframe.py",
+            "models/finance_ppm_tdi_audit.py",
+            "models/finance_ppm_ph_holiday.py",
+            "models/finance_ppm_bir_calendar.py"
+          ],
+          "views": [
+            "views/menu.xml",
+            "views/finance_ppm_tdi_audit_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/finance_team_seed.xml",
+            "data/logframe_kpi_seed.xml",
+            "data/month_end_tasks_seed.xml",
+            "data/ph_holiday_calendar_seed.xml",
+            "data/month_end_tasks_notion_import.xml",
+            "data/bir_calendar_seed.xml"
+          ],
+          "controllers": [],
+          "static": [
+            "static/description/index.html"
+          ],
+          "wizards": [
+            "wizard/finance_ppm_import_wizard.py"
+          ],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_finance_ppm_tdi"
+      },
+      {
+        "name": "ipai_finance_project_hybrid",
+        "display_name": "IPAI Finance Project Hybrid (IM1/IM2 + BIR + Month-End Generators)",
+        "version": "18.0.1.0.0",
+        "summary": "Turns finance phases into IM projects, seeds finance directory/BIR schedule, generates month-end + compliance tasks, and adds analytics dashboards.",
+        "category": "Project",
+        "layer": "Finance",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.com",
+        "license": "LGPL-3",
+        "depends": [
+          "project",
+          "mail"
+        ],
+        "data": [
+          "security/security.xml",
+          "security/ir.model.access.csv",
+          "views/menu.xml",
+          "views/finance_directory_views.xml",
+          "views/bir_schedule_views.xml",
+          "views/task_template_views.xml",
+          "views/project_views.xml",
+          "views/task_views.xml",
+          "views/dashboard_views.xml",
+          "views/seed_wizard_views.xml",
+          "data/ir_cron.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/task.py",
+            "models/finance_directory.py",
+            "models/bir_schedule.py",
+            "models/res_config_settings.py",
+            "models/finance_seed_service.py",
+            "models/project.py",
+            "models/task_template.py"
+          ],
+          "views": [
+            "views/project_views.xml",
+            "views/task_template_views.xml",
+            "views/task_views.xml",
+            "views/bir_schedule_views.xml",
+            "views/finance_directory_views.xml",
+            "views/seed_wizard_views.xml",
+            "views/menu.xml",
+            "views/dashboard_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/ir_cron.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [
+            "wizards/generate_im_projects_wizard.py",
+            "wizards/seed_wizard.py"
+          ],
+          "reports": [],
+          "tests": [
+            "tests/test_seed_and_generation.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_finance_project_hybrid"
+      },
+      {
+        "name": "ipai_ppm",
+        "display_name": "IPAI Portfolio & Program Management",
+        "version": "18.0.1.0.0",
+        "summary": "Portfolio/Program governance layer with risk register, KPI snapshots, and resource allocation",
+        "category": "Project Management",
+        "layer": "Finance",
+        "author": "InsightPulse AI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "project",
+          "hr",
+          "mail"
+        ],
+        "data": [
+          "security/ppm_security.xml",
+          "security/ir.model.access.csv",
+          "views/portfolio_views.xml",
+          "views/program_views.xml",
+          "views/risk_views.xml",
+          "views/resource_allocation_views.xml",
+          "views/kpi_snapshot_views.xml",
+          "views/menus.xml",
+          "data/kpi_definitions.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/resource_allocation.py",
+            "models/kpi_snapshot.py",
+            "models/program.py",
+            "models/risk.py",
+            "models/portfolio.py"
+          ],
+          "views": [
+            "views/portfolio_views.xml",
+            "views/resource_allocation_views.xml",
+            "views/menus.xml",
+            "views/risk_views.xml",
+            "views/program_views.xml",
+            "views/kpi_snapshot_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/kpi_definitions.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_ppm"
+      },
+      {
+        "name": "ipai_ppm_a1",
+        "display_name": "IPAI PPM A1 Control Center",
+        "version": "18.0.1.0.0",
+        "summary": "A1 Control Center - Workstreams, Templates, Tasks, Checks + Seed Import/Export",
+        "category": "Project/Portfolio",
+        "layer": "Finance",
+        "author": "IPAI",
+        "website": "https://insightpulseai.net",
+        "license": "LGPL-3",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ],
+        "data": [
+          "security/a1_security.xml",
+          "security/ir.model.access.csv",
+          "data/a1_role_data.xml",
+          "views/a1_workstream_views.xml",
+          "views/a1_template_views.xml",
+          "views/a1_task_views.xml",
+          "views/a1_tasklist_views.xml",
+          "views/a1_check_views.xml",
+          "views/a1_menu.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": true,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/export_run.py",
+            "models/a1_workstream.py",
+            "models/a1_task.py",
+            "models/a1_template.py",
+            "models/a1_tasklist.py",
+            "models/a1_check.py",
+            "models/a1_role.py"
+          ],
+          "views": [
+            "views/a1_menu.xml",
+            "views/a1_workstream_views.xml",
+            "views/a1_tasklist_views.xml",
+            "views/a1_template_views.xml",
+            "views/a1_task_views.xml",
+            "views/a1_check_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/a1_role_data.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_ppm_a1"
+      },
+      {
+        "name": "ipai_ppm_monthly_close",
+        "display_name": "PPM Monthly Close Scheduler",
+        "version": "18.0.1.0.0",
+        "summary": "Automated monthly financial close scheduling with PPM and Notion workspace parity",
+        "category": "Project Management",
+        "layer": "Finance",
+        "author": "InsightPulse AI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "project",
+          "mail",
+          "resource"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "data/ppm_close_template_data_REAL.xml",
+          "data/ppm_close_cron.xml",
+          "views/ppm_monthly_close_views.xml",
+          "views/ppm_close_task_views.xml",
+          "views/ppm_close_template_views.xml",
+          "views/ppm_close_menu.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/ppm_close_task.py",
+            "models/ppm_monthly_close.py",
+            "models/ppm_close_template.py"
+          ],
+          "views": [
+            "views/ppm_close_menu.xml",
+            "views/ppm_close_task_views.xml",
+            "views/ppm_monthly_close_views.xml",
+            "views/ppm_close_template_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [
+            "data/ppm_close_cron.xml",
+            "data/ppm_close_template_data_REAL.xml"
+          ],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": [
+            "tests/test_monthly_close.py"
+          ]
+        },
+        "path": "addons/ipai/ipai_ppm_monthly_close"
+      }
+    ],
+    "Platform/Utilities": [
+      {
+        "name": "ipai_ce_branding",
+        "display_name": "InsightPulse AI - CE Branding",
+        "version": "1.2.0",
+        "summary": "Custom branding for Odoo CE login and backend",
+        "category": "Customization",
+        "layer": "Platform/Utilities",
+        "author": "InsightPulse AI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "web",
+          "base"
+        ],
+        "data": [
+          "views/ce_branding_views.xml",
+          "views/assets.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [],
+          "views": [
+            "views/ce_branding_views.xml",
+            "views/assets.xml"
+          ],
+          "security": [],
+          "data": [],
+          "controllers": [],
+          "static": [
+            "static/src/scss/login.scss",
+            "static/src/scss/branding.scss",
+            "static/src/img/login_bg.svg"
+          ],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_ce_branding"
+      },
+      {
+        "name": "ipai_ce_cleaner",
+        "display_name": "IPAI CE Cleaner (No Enterprise/IAP)",
+        "version": "18.0.1.0.0",
+        "summary": "Hides Enterprise/IAP upsells and rewires links away from odoo.com.",
+        "category": "Tools",
+        "layer": "Platform/Utilities",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.net",
+        "license": "AGPL-3",
+        "depends": [
+          "base",
+          "web"
+        ],
+        "data": [
+          "views/ipai_ce_cleaner_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [],
+          "views": [
+            "views/ipai_ce_cleaner_assets.xml",
+            "views/ipai_ce_cleaner_views.xml"
+          ],
+          "security": [],
+          "data": [],
+          "controllers": [],
+          "static": [
+            "static/src/css/ipai_ce_cleaner.css"
+          ],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_ce_cleaner"
+      }
+    ],
+    "Industry": [
+      {
+        "name": "ipai_industry_accounting_firm",
+        "display_name": "InsightPulse Industry - Accounting Firm",
+        "version": "18.0.1.0.0",
+        "summary": "Accounting firm vertical with month-end closing and compliance workflows",
+        "category": "InsightPulse/Vertical",
+        "layer": "Industry",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.com",
+        "license": "LGPL-3",
+        "depends": [
+          "ipai_workspace_core"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "views/accounting_workspace_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/accounting_workspace_extension.py"
+          ],
+          "views": [
+            "views/accounting_workspace_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_industry_accounting_firm"
+      },
+      {
+        "name": "ipai_industry_marketing_agency",
+        "display_name": "InsightPulse Industry - Marketing Agency",
+        "version": "18.0.1.0.0",
+        "summary": "Marketing agency vertical with campaign-specific fields and workflows",
+        "category": "InsightPulse/Vertical",
+        "layer": "Industry",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.com",
+        "license": "LGPL-3",
+        "depends": [
+          "ipai_workspace_core"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "views/marketing_workspace_views.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/marketing_workspace_extension.py"
+          ],
+          "views": [
+            "views/marketing_workspace_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_industry_marketing_agency"
+      }
+    ],
+    "WorkOS": [
+      {
+        "name": "ipai_workspace_core",
+        "display_name": "InsightPulse Workspace Core",
+        "version": "18.0.1.0.0",
+        "summary": "Unified workspace model for marketing agencies and accounting firms.",
+        "category": "InsightPulse/Core",
+        "layer": "WorkOS",
+        "author": "InsightPulseAI",
+        "website": "https://insightpulseai.com",
+        "license": "AGPL-3",
+        "depends": [
+          "ipai_dev_studio_base"
+        ],
+        "data": [
+          "security/ir.model.access.csv",
+          "views/ipai_workspace_views.xml",
+          "views/ipai_workspace_menu.xml"
+        ],
+        "demo": [],
+        "installable": true,
+        "application": false,
+        "auto_install": false,
+        "structure": {
+          "models": [
+            "models/workspace.py"
+          ],
+          "views": [
+            "views/ipai_workspace_menu.xml",
+            "views/ipai_workspace_views.xml"
+          ],
+          "security": [
+            "security/ir.model.access.csv"
+          ],
+          "data": [],
+          "controllers": [],
+          "static": [],
+          "wizards": [],
+          "reports": [],
+          "tests": []
+        },
+        "path": "addons/ipai/ipai_workspace_core"
+      }
+    ]
+  },
+  "all_modules": [
+    {
+      "name": "ipai_advisor",
+      "display_name": "IPAI Ops Advisor",
+      "version": "18.0.1.0.0",
+      "summary": "Azure Advisor-style recommendations engine for operational governance",
+      "category": "Operations",
+      "layer": "Other",
+      "author": "InsightPulse AI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "data": [
+        "security/advisor_security.xml",
+        "security/ir.model.access.csv",
+        "data/advisor_categories.xml",
+        "views/category_views.xml",
+        "views/recommendation_views.xml",
+        "views/playbook_views.xml",
+        "views/score_views.xml",
+        "views/dashboard_views.xml",
+        "views/menus.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/playbook.py",
+          "models/recommendation.py",
+          "models/score.py",
+          "models/category.py"
+        ],
+        "views": [
+          "views/playbook_views.xml",
+          "views/score_views.xml",
+          "views/recommendation_views.xml",
+          "views/menus.xml",
+          "views/category_views.xml",
+          "views/dashboard_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/advisor_categories.xml"
+        ],
+        "controllers": [
+          "controllers/webhook.py"
+        ],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_advisor"
+    },
+    {
+      "name": "ipai_assets",
+      "display_name": "IPAI Asset Checkout",
+      "version": "18.0.1.0.0",
+      "summary": "Equipment and asset checkout tracking (Cheqroom-style parity)",
+      "category": "Operations/Equipment",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "mail",
+        "hr",
+        "stock",
+        "barcodes"
+      ],
+      "data": [
+        "security/assets_security.xml",
+        "security/ir.model.access.csv",
+        "data/assets_sequence.xml",
+        "data/assets_categories.xml",
+        "views/asset_views.xml",
+        "views/checkout_views.xml",
+        "views/reservation_views.xml",
+        "views/menus.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/reservation.py",
+          "models/asset.py",
+          "models/checkout.py",
+          "models/category.py"
+        ],
+        "views": [
+          "views/reservation_views.xml",
+          "views/menus.xml",
+          "views/asset_views.xml",
+          "views/checkout_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/assets_sequence.xml",
+          "data/assets_categories.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_assets"
+    },
+    {
+      "name": "ipai_bir_compliance",
+      "display_name": "IPAI Tax Shield (Philippines)",
+      "version": "18.0.1.0.0",
+      "summary": "BIR 2307 Generator & Alphalist/RELIEF DAT File Engine",
+      "category": "Accounting/Localizations",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "account"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "reports/bir_2307_report.xml",
+        "wizards/bir_dat_file_wizard_view.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/account_move.py"
+        ],
+        "views": [],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [
+          "wizards/bir_dat_file_wizard.py"
+        ],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_bir_compliance"
+    },
+    {
+      "name": "ipai_ce_branding",
+      "display_name": "InsightPulse AI - CE Branding",
+      "version": "1.2.0",
+      "summary": "Custom branding for Odoo CE login and backend",
+      "category": "Customization",
+      "layer": "Platform/Utilities",
+      "author": "InsightPulse AI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "web",
+        "base"
+      ],
+      "data": [
+        "views/ce_branding_views.xml",
+        "views/assets.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [],
+        "views": [
+          "views/ce_branding_views.xml",
+          "views/assets.xml"
+        ],
+        "security": [],
+        "data": [],
+        "controllers": [],
+        "static": [
+          "static/src/scss/login.scss",
+          "static/src/scss/branding.scss",
+          "static/src/img/login_bg.svg"
+        ],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_ce_branding"
+    },
+    {
+      "name": "ipai_ce_cleaner",
+      "display_name": "IPAI CE Cleaner (No Enterprise/IAP)",
+      "version": "18.0.1.0.0",
+      "summary": "Hides Enterprise/IAP upsells and rewires links away from odoo.com.",
+      "category": "Tools",
+      "layer": "Platform/Utilities",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "data": [
+        "views/ipai_ce_cleaner_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [],
+        "views": [
+          "views/ipai_ce_cleaner_assets.xml",
+          "views/ipai_ce_cleaner_views.xml"
+        ],
+        "security": [],
+        "data": [],
+        "controllers": [],
+        "static": [
+          "static/src/css/ipai_ce_cleaner.css"
+        ],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_ce_cleaner"
+    },
+    {
+      "name": "ipai_clarity_ppm_parity",
+      "display_name": "InsightPulse Clarity PPM Parity",
+      "version": "18.0.1.0.0",
+      "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+      "category": "Project Management",
+      "layer": "Finance",
+      "author": "InsightPulse AI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "project",
+        "project_key",
+        "project_category",
+        "project_wbs",
+        "project_parent_task_filter",
+        "project_milestone",
+        "project_task_milestone",
+        "project_task_dependency",
+        "project_task_checklist",
+        "project_timeline"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "data/clarity_data.xml",
+        "data/bir_schedule_2025_2026.xml",
+        "views/project_project_views.xml",
+        "views/project_phase_views.xml",
+        "views/project_milestone_views.xml",
+        "views/project_task_views.xml",
+        "views/project_menu.xml"
+      ],
+      "demo": [
+        "data/demo_data.xml"
+      ],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/project_checklist.py",
+          "models/project_task.py",
+          "models/project_phase.py",
+          "models/project_project.py",
+          "models/project_milestone.py"
+        ],
+        "views": [
+          "views/project_task_views.xml",
+          "views/project_menu.xml",
+          "views/project_milestone_views.xml",
+          "views/project_project_views.xml",
+          "views/project_phase_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/clarity_data.xml",
+          "data/bir_schedule_2025_2026.xml",
+          "data/demo_data.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_clarity_ppm_parity"
+    },
+    {
+      "name": "ipai_close_orchestration",
+      "display_name": "IPAI Close Cycle Orchestration",
+      "version": "18.0.1.0.0",
+      "summary": "Close Cycle Orchestration - Cycles, Tasks, Templates, Checklists, Exceptions, Gates",
+      "category": "Accounting/Close",
+      "layer": "Finance",
+      "author": "IPAI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "data": [
+        "security/close_security.xml",
+        "security/ir.model.access.csv",
+        "data/close_cron.xml",
+        "views/close_cycle_views.xml",
+        "views/close_task_views.xml",
+        "views/close_template_views.xml",
+        "views/close_exception_views.xml",
+        "views/close_gate_views.xml",
+        "views/close_menu.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/close_template.py",
+          "models/close_category.py",
+          "models/close_gate.py",
+          "models/close_exception.py",
+          "models/close_task.py",
+          "models/close_cycle.py"
+        ],
+        "views": [
+          "views/close_template_views.xml",
+          "views/close_menu.xml",
+          "views/close_task_views.xml",
+          "views/close_gate_views.xml",
+          "views/close_cycle_views.xml",
+          "views/close_exception_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/close_cron.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_close_orchestration"
+    },
+    {
+      "name": "ipai_custom_routes",
+      "display_name": "InsightPulse Custom Routes",
+      "version": "18.0.1.0.0",
+      "summary": "Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.)",
+      "category": "Extra Tools",
+      "layer": "Other",
+      "author": "InsightPulse AI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "calendar",
+        "project",
+        "hr_expense"
+      ],
+      "data": [
+        "data/default_home_data.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [],
+        "views": [],
+        "security": [],
+        "data": [
+          "data/default_home_data.xml"
+        ],
+        "controllers": [
+          "controllers/main.py"
+        ],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_custom_routes"
+    },
+    {
+      "name": "ipai_default_home",
+      "display_name": "InsightPulse Default Home Page",
+      "version": "18.0.1.0.0",
+      "summary": "Set default landing page to Apps Dashboard after login",
+      "category": "Extra Tools",
+      "layer": "Other",
+      "author": "InsightPulse AI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "project"
+      ],
+      "data": [
+        "data/default_home_data.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [],
+        "views": [],
+        "security": [],
+        "data": [
+          "data/default_home_data.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_default_home"
+    },
+    {
+      "name": "ipai_dev_studio_base",
+      "display_name": "InsightPulse Dev Studio Base",
+      "version": "18.0.1.0.0",
+      "summary": "Base OCA/CE module bundle and dev tools for InsightPulse",
+      "category": "Tools",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.com",
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "contacts",
+        "board",
+        "base_automation",
+        "project",
+        "documents"
+      ],
+      "data": [],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [],
+        "views": [],
+        "security": [],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_dev_studio_base"
+    },
+    {
+      "name": "ipai_equipment",
+      "display_name": "IPAI Equipment Management",
+      "version": "18.0.1.0.0",
+      "summary": "Cheqroom-style equipment catalog, bookings, and incidents on Odoo CE + OCA.",
+      "category": "Inventory",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "stock",
+        "maintenance",
+        "project"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "views/ipai_equipment_menus.xml",
+        "views/ipai_equipment_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/equipment.py"
+        ],
+        "views": [
+          "views/ipai_equipment_menus.xml",
+          "views/ipai_equipment_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": [
+          "tests/test_equipment_lifecycle.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_equipment"
+    },
+    {
+      "name": "ipai_expense",
+      "display_name": "IPAI Expense & Travel (PH)",
+      "version": "18.0.1.0.0",
+      "summary": "PH-focused expense & travel workflows (SAP Concur-style) on Odoo CE + OCA.",
+      "category": "Human Resources/Expenses",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "hr",
+        "hr_expense",
+        "account",
+        "project"
+      ],
+      "data": [
+        "security/ipai_expense_security.xml",
+        "security/ir.model.access.csv",
+        "data/ipai_expense_categories.xml",
+        "views/ipai_expense_menus.xml",
+        "views/ipai_expense_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/expense.py"
+        ],
+        "views": [
+          "views/ipai_expense_views.xml",
+          "views/ipai_expense_menus.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/ipai_expense_categories.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": [
+          "tests/test_expense_validation.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_expense"
+    },
+    {
+      "name": "ipai_finance_bir_compliance",
+      "display_name": "IPAI Finance BIR Compliance (Schedule + Generator)",
+      "version": "18.0.1.0.0",
+      "summary": "JSON-seeded BIR schedule that generates Prep/Review/Approval/Filing tasks into IM2",
+      "category": "Accounting/Project",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "project",
+        "mail",
+        "ipai_project_program"
+      ],
+      "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "views/bir_schedule_views.xml",
+        "views/menus.xml",
+        "wizard/generate_bir_tasks_wizard_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/bir_schedule_item.py",
+          "models/bir_generator.py"
+        ],
+        "views": [
+          "views/bir_schedule_views.xml",
+          "views/menus.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [
+          "wizard/generate_bir_tasks_wizard.py"
+        ],
+        "reports": [],
+        "tests": [
+          "tests/test_bir_generation.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_finance_bir_compliance"
+    },
+    {
+      "name": "ipai_finance_month_end",
+      "display_name": "IPAI Finance Month-End (Templates + Generator)",
+      "version": "18.0.1.0.0",
+      "summary": "JSON-seeded month-end templates that generate Preparation/Review/Approval tasks into IM1",
+      "category": "Accounting/Project",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "project",
+        "mail",
+        "ipai_project_program"
+      ],
+      "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "views/month_end_template_views.xml",
+        "views/menus.xml",
+        "wizard/generate_month_end_wizard_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/month_end_template.py",
+          "models/month_end_generator.py"
+        ],
+        "views": [
+          "views/menus.xml",
+          "views/month_end_template_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [
+          "wizard/generate_month_end_wizard.py"
+        ],
+        "reports": [],
+        "tests": [
+          "tests/test_month_end_generation.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_finance_month_end"
+    },
+    {
+      "name": "ipai_finance_monthly_closing",
+      "display_name": "IPAI Finance Monthly Closing",
+      "version": "18.0.1.0.0",
+      "summary": "Structured month-end closing and BIR filing on top of Projects (CE/OCA-only).",
+      "category": "Accounting/Finance",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "project"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "views/project_task_views.xml",
+        "data/project_templates.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/project_task.py"
+        ],
+        "views": [
+          "views/project_task_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/project_templates.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_finance_monthly_closing"
+    },
+    {
+      "name": "ipai_finance_ppm",
+      "display_name": "IPAI Finance PPM",
+      "version": "18.0.1.0.0",
+      "summary": "Finance Project Portfolio Management (Notion Parity).",
+      "category": "Accounting/Finance",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "views/finance_person_views.xml",
+        "views/finance_bir_deadline_views.xml",
+        "views/finance_task_views.xml",
+        "views/bir_schedule_views.xml",
+        "views/ppm_dashboard_views.xml",
+        "views/project_task_views.xml",
+        "views/menus.xml",
+        "data/finance_person_seed.xml",
+        "data/bir_schedule_seed.xml",
+        "data/finance_cron.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/closing_step.py",
+          "models/finance_ppm.py",
+          "models/finance_bir_deadline.py",
+          "models/closing_models.py",
+          "models/bir_schedule.py",
+          "models/res_users.py",
+          "models/project_task.py",
+          "models/finance_task.py",
+          "models/closing_generator.py",
+          "models/finance_person.py",
+          "models/ppm_dashboard.py"
+        ],
+        "views": [
+          "views/finance_person_views.xml",
+          "views/project_task_views.xml",
+          "views/finance_bir_deadline_views.xml",
+          "views/finance_task_views.xml",
+          "views/bir_schedule_views.xml",
+          "views/ppm_dashboard_template.xml",
+          "views/menus.xml",
+          "views/ppm_dashboard_views.xml",
+          "views/finance_ppm_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/finance_person_seed.xml",
+          "data/finance_bir_schedule_2026_full.xml",
+          "data/finance_cron.xml",
+          "data/finance_logframe_seed.xml",
+          "data/finance_bir_schedule_seed.xml",
+          "data/bir_schedule_seed.xml"
+        ],
+        "controllers": [
+          "controllers/ppm_dashboard.py"
+        ],
+        "static": [
+          "static/lib/README.txt",
+          "static/lib/echarts.min.js",
+          "static/src/js/ppm_dashboard.js",
+          "static/src/js/semantic-search/MonthlyRevenueSearch.js",
+          "static/src/js/semantic-search/api.js",
+          "static/src/xml/monthly_revenue_search.xml"
+        ],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_finance_ppm"
+    },
+    {
+      "name": "ipai_finance_ppm_closing",
+      "display_name": "IPAI Finance PPM Closing Generator",
+      "version": "18.0.1.1.0",
+      "summary": "Idempotent Month-End Close & BIR Task Generator with audit trail.",
+      "category": "Accounting/Finance",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "project",
+        "ipai_finance_ppm",
+        "ipai_ppm_monthly_close"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "data/ir_cron.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/closing_models.py",
+          "models/res_users.py",
+          "models/project_ext.py",
+          "models/closing_generator.py"
+        ],
+        "views": [],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/ir_cron.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": [
+          "tests/test_closing_generator.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_finance_ppm_closing"
+    },
+    {
+      "name": "ipai_finance_ppm_dashboard",
+      "display_name": "IPAI Finance PPM Dashboard",
+      "version": "18.0.1.0.0",
+      "summary": "Month-end & BIR calendar dashboard (Gantt + calendar graph)",
+      "category": "Accounting/Reporting",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "data": [
+        "views/ipai_finance_ppm_dashboard_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [],
+        "views": [
+          "views/ipai_finance_ppm_dashboard_views.xml"
+        ],
+        "security": [],
+        "data": [],
+        "controllers": [],
+        "static": [
+          "static/lib/echarts.min.js",
+          "static/src/js/ppm_dashboard.js",
+          "static/src/xml/ppm_dashboard_templates.xml"
+        ],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_finance_ppm_dashboard"
+    },
+    {
+      "name": "ipai_finance_ppm_tdi",
+      "display_name": "Finance PPM Transaction Data Ingestion (TDI)",
+      "version": "1.0.0",
+      "summary": "Import finance team, tasks, BIR calendar, and LogFrame data",
+      "category": "Finance",
+      "layer": "Finance",
+      "author": "InsightPulse AI - Jake Tolentino",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "project",
+        "hr",
+        "account"
+      ],
+      "data": [
+        "security/security_groups.xml",
+        "security/ir.model.access.csv",
+        "data/finance_team_seed.xml",
+        "data/month_end_tasks_seed.xml",
+        "data/bir_calendar_seed.xml",
+        "data/logframe_kpi_seed.xml",
+        "data/ph_holiday_calendar_seed.xml",
+        "wizard/finance_ppm_import_wizard_views.xml",
+        "views/finance_ppm_tdi_audit_views.xml",
+        "views/menu.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/finance_ppm_logframe.py",
+          "models/finance_ppm_tdi_audit.py",
+          "models/finance_ppm_ph_holiday.py",
+          "models/finance_ppm_bir_calendar.py"
+        ],
+        "views": [
+          "views/menu.xml",
+          "views/finance_ppm_tdi_audit_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/finance_team_seed.xml",
+          "data/logframe_kpi_seed.xml",
+          "data/month_end_tasks_seed.xml",
+          "data/ph_holiday_calendar_seed.xml",
+          "data/month_end_tasks_notion_import.xml",
+          "data/bir_calendar_seed.xml"
+        ],
+        "controllers": [],
+        "static": [
+          "static/description/index.html"
+        ],
+        "wizards": [
+          "wizard/finance_ppm_import_wizard.py"
+        ],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_finance_ppm_tdi"
+    },
+    {
+      "name": "ipai_finance_project_hybrid",
+      "display_name": "IPAI Finance Project Hybrid (IM1/IM2 + BIR + Month-End Generators)",
+      "version": "18.0.1.0.0",
+      "summary": "Turns finance phases into IM projects, seeds finance directory/BIR schedule, generates month-end + compliance tasks, and adds analytics dashboards.",
+      "category": "Project",
+      "layer": "Finance",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.com",
+      "license": "LGPL-3",
+      "depends": [
+        "project",
+        "mail"
+      ],
+      "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "views/menu.xml",
+        "views/finance_directory_views.xml",
+        "views/bir_schedule_views.xml",
+        "views/task_template_views.xml",
+        "views/project_views.xml",
+        "views/task_views.xml",
+        "views/dashboard_views.xml",
+        "views/seed_wizard_views.xml",
+        "data/ir_cron.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/task.py",
+          "models/finance_directory.py",
+          "models/bir_schedule.py",
+          "models/res_config_settings.py",
+          "models/finance_seed_service.py",
+          "models/project.py",
+          "models/task_template.py"
+        ],
+        "views": [
+          "views/project_views.xml",
+          "views/task_template_views.xml",
+          "views/task_views.xml",
+          "views/bir_schedule_views.xml",
+          "views/finance_directory_views.xml",
+          "views/seed_wizard_views.xml",
+          "views/menu.xml",
+          "views/dashboard_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/ir_cron.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [
+          "wizards/generate_im_projects_wizard.py",
+          "wizards/seed_wizard.py"
+        ],
+        "reports": [],
+        "tests": [
+          "tests/test_seed_and_generation.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_finance_project_hybrid"
+    },
+    {
+      "name": "ipai_industry_accounting_firm",
+      "display_name": "InsightPulse Industry - Accounting Firm",
+      "version": "18.0.1.0.0",
+      "summary": "Accounting firm vertical with month-end closing and compliance workflows",
+      "category": "InsightPulse/Vertical",
+      "layer": "Industry",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.com",
+      "license": "LGPL-3",
+      "depends": [
+        "ipai_workspace_core"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "views/accounting_workspace_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/accounting_workspace_extension.py"
+        ],
+        "views": [
+          "views/accounting_workspace_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_industry_accounting_firm"
+    },
+    {
+      "name": "ipai_industry_marketing_agency",
+      "display_name": "InsightPulse Industry - Marketing Agency",
+      "version": "18.0.1.0.0",
+      "summary": "Marketing agency vertical with campaign-specific fields and workflows",
+      "category": "InsightPulse/Vertical",
+      "layer": "Industry",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.com",
+      "license": "LGPL-3",
+      "depends": [
+        "ipai_workspace_core"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "views/marketing_workspace_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/marketing_workspace_extension.py"
+        ],
+        "views": [
+          "views/marketing_workspace_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_industry_marketing_agency"
+    },
+    {
+      "name": "ipai_master_control",
+      "display_name": "Master Control - Work Intake",
+      "version": "18.0.1.0.0",
+      "summary": "Bridge Odoo events to Master Control work items",
+      "category": "Productivity",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "hr",
+        "hr_expense",
+        "purchase"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "data/ir_config_parameter.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/master_control_mixin.py",
+          "models/hr_expense.py",
+          "models/purchase_order.py",
+          "models/hr_employee.py"
+        ],
+        "views": [],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/ir_config_parameter.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_master_control"
+    },
+    {
+      "name": "ipai_portal_fix",
+      "display_name": "IPAI Portal Fix",
+      "version": "18.0.1.0.1",
+      "summary": "Fixes KeyError: website in portal.frontend_layout template",
+      "category": "Technical",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "portal"
+      ],
+      "data": [
+        "views/portal_templates.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": true,
+      "structure": {
+        "models": [
+          "models/ir_http.py",
+          "models/ir_qweb.py"
+        ],
+        "views": [
+          "views/portal_templates.xml"
+        ],
+        "security": [],
+        "data": [],
+        "controllers": [
+          "controllers/portal.py"
+        ],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_portal_fix"
+    },
+    {
+      "name": "ipai_ppm",
+      "display_name": "IPAI Portfolio & Program Management",
+      "version": "18.0.1.0.0",
+      "summary": "Portfolio/Program governance layer with risk register, KPI snapshots, and resource allocation",
+      "category": "Project Management",
+      "layer": "Finance",
+      "author": "InsightPulse AI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "project",
+        "hr",
+        "mail"
+      ],
+      "data": [
+        "security/ppm_security.xml",
+        "security/ir.model.access.csv",
+        "views/portfolio_views.xml",
+        "views/program_views.xml",
+        "views/risk_views.xml",
+        "views/resource_allocation_views.xml",
+        "views/kpi_snapshot_views.xml",
+        "views/menus.xml",
+        "data/kpi_definitions.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/resource_allocation.py",
+          "models/kpi_snapshot.py",
+          "models/program.py",
+          "models/risk.py",
+          "models/portfolio.py"
+        ],
+        "views": [
+          "views/portfolio_views.xml",
+          "views/resource_allocation_views.xml",
+          "views/menus.xml",
+          "views/risk_views.xml",
+          "views/program_views.xml",
+          "views/kpi_snapshot_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/kpi_definitions.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_ppm"
+    },
+    {
+      "name": "ipai_ppm_a1",
+      "display_name": "IPAI PPM A1 Control Center",
+      "version": "18.0.1.0.0",
+      "summary": "A1 Control Center - Workstreams, Templates, Tasks, Checks + Seed Import/Export",
+      "category": "Project/Portfolio",
+      "layer": "Finance",
+      "author": "IPAI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ],
+      "data": [
+        "security/a1_security.xml",
+        "security/ir.model.access.csv",
+        "data/a1_role_data.xml",
+        "views/a1_workstream_views.xml",
+        "views/a1_template_views.xml",
+        "views/a1_task_views.xml",
+        "views/a1_tasklist_views.xml",
+        "views/a1_check_views.xml",
+        "views/a1_menu.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/export_run.py",
+          "models/a1_workstream.py",
+          "models/a1_task.py",
+          "models/a1_template.py",
+          "models/a1_tasklist.py",
+          "models/a1_check.py",
+          "models/a1_role.py"
+        ],
+        "views": [
+          "views/a1_menu.xml",
+          "views/a1_workstream_views.xml",
+          "views/a1_tasklist_views.xml",
+          "views/a1_template_views.xml",
+          "views/a1_task_views.xml",
+          "views/a1_check_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/a1_role_data.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_ppm_a1"
+    },
+    {
+      "name": "ipai_ppm_monthly_close",
+      "display_name": "PPM Monthly Close Scheduler",
+      "version": "18.0.1.0.0",
+      "summary": "Automated monthly financial close scheduling with PPM and Notion workspace parity",
+      "category": "Project Management",
+      "layer": "Finance",
+      "author": "InsightPulse AI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "project",
+        "mail",
+        "resource"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "data/ppm_close_template_data_REAL.xml",
+        "data/ppm_close_cron.xml",
+        "views/ppm_monthly_close_views.xml",
+        "views/ppm_close_task_views.xml",
+        "views/ppm_close_template_views.xml",
+        "views/ppm_close_menu.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/ppm_close_task.py",
+          "models/ppm_monthly_close.py",
+          "models/ppm_close_template.py"
+        ],
+        "views": [
+          "views/ppm_close_menu.xml",
+          "views/ppm_close_task_views.xml",
+          "views/ppm_monthly_close_views.xml",
+          "views/ppm_close_template_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/ppm_close_cron.xml",
+          "data/ppm_close_template_data_REAL.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": [
+          "tests/test_monthly_close.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_ppm_monthly_close"
+    },
+    {
+      "name": "ipai_project_program",
+      "display_name": "IPAI Project Program (Program + IM Projects)",
+      "version": "18.0.1.0.0",
+      "summary": "Program (parent project) + Implementation Modules (IM1/IM2) as child projects + Directory + seed loader",
+      "category": "Project",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "LGPL-3",
+      "depends": [
+        "project",
+        "mail"
+      ],
+      "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "views/project_project_views.xml",
+        "views/directory_views.xml",
+        "views/menus.xml",
+        "wizard/convert_phases_wizard_views.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/directory_person.py",
+          "models/project_task.py",
+          "models/project_project.py"
+        ],
+        "views": [
+          "views/directory_views.xml",
+          "views/menus.xml",
+          "views/project_project_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [
+          "wizard/convert_phases_wizard.py"
+        ],
+        "reports": [],
+        "tests": [
+          "tests/test_seed_and_projects.py"
+        ]
+      },
+      "path": "addons/ipai/ipai_project_program"
+    },
+    {
+      "name": "ipai_srm",
+      "display_name": "IPAI Supplier Relationship Management",
+      "version": "18.0.1.0.0",
+      "summary": "Supplier lifecycle and performance management (SAP SRM/Ariba-style parity)",
+      "category": "Inventory/Purchase",
+      "layer": "Other",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.net",
+      "license": "AGPL-3",
+      "depends": [
+        "base",
+        "mail",
+        "purchase",
+        "contacts"
+      ],
+      "data": [
+        "security/srm_security.xml",
+        "security/ir.model.access.csv",
+        "data/srm_sequence.xml",
+        "data/srm_kpi_categories.xml",
+        "views/supplier_views.xml",
+        "views/scorecard_views.xml",
+        "views/qualification_views.xml",
+        "views/menus.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/kpi_category.py",
+          "models/scorecard.py",
+          "models/qualification.py",
+          "models/supplier.py",
+          "models/res_partner.py"
+        ],
+        "views": [
+          "views/supplier_views.xml",
+          "views/scorecard_views.xml",
+          "views/menus.xml",
+          "views/qualification_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [
+          "data/srm_kpi_categories.xml",
+          "data/srm_sequence.xml"
+        ],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_srm"
+    },
+    {
+      "name": "ipai_workspace_core",
+      "display_name": "InsightPulse Workspace Core",
+      "version": "18.0.1.0.0",
+      "summary": "Unified workspace model for marketing agencies and accounting firms.",
+      "category": "InsightPulse/Core",
+      "layer": "WorkOS",
+      "author": "InsightPulseAI",
+      "website": "https://insightpulseai.com",
+      "license": "AGPL-3",
+      "depends": [
+        "ipai_dev_studio_base"
+      ],
+      "data": [
+        "security/ir.model.access.csv",
+        "views/ipai_workspace_views.xml",
+        "views/ipai_workspace_menu.xml"
+      ],
+      "demo": [],
+      "installable": true,
+      "application": false,
+      "auto_install": false,
+      "structure": {
+        "models": [
+          "models/workspace.py"
+        ],
+        "views": [
+          "views/ipai_workspace_menu.xml",
+          "views/ipai_workspace_views.xml"
+        ],
+        "security": [
+          "security/ir.model.access.csv"
+        ],
+        "data": [],
+        "controllers": [],
+        "static": [],
+        "wizards": [],
+        "reports": [],
+        "tests": []
+      },
+      "path": "addons/ipai/ipai_workspace_core"
+    }
+  ]
+}
