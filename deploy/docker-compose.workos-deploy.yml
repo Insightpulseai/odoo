@@ -1,0 +1,63 @@
+# ===========================================
+# WORKOS DEPLOYMENT OVERRIDE
+# ===========================================
+# This override mounts the addons directory for quick WorkOS module deployment
+# without requiring an image rebuild.
+#
+# Usage:
+#   docker compose -f docker-compose.prod.yml -f docker-compose.workos-deploy.yml up -d
+#
+# After deployment is verified, build a new immutable image for production.
+# ===========================================
+
+services:
+  odoo:
+    volumes:
+      # Mount addons for WorkOS deployment (temporary until image rebuild)
+      - ../addons:/mnt/addons/ipai:ro
+
+      # Keep existing volumes
+      - odoo-filestore:/var/lib/odoo
+      - odoo-logs:/var/log/odoo
+
+    # Override command to include addons path
+    command: >
+      odoo
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+      --db_host=${DB_HOST:-db}
+      --db_user=${DB_USER:-odoo}
+      --db_password=${DB_PASSWORD:?DB_PASSWORD required}
+
+  # One-shot init service for module installation
+  odoo-workos-init:
+    image: ${APP_IMAGE:-ghcr.io/jgtolentino/odoo-ce}:${APP_IMAGE_VERSION:-latest}
+    container_name: odoo-workos-init
+    depends_on:
+      db:
+        condition: service_healthy
+
+    environment:
+      HOST: ${DB_HOST:-db}
+      USER: ${DB_USER:-odoo}
+      PASSWORD: ${DB_PASSWORD:?DB_PASSWORD required}
+
+    volumes:
+      - ../addons:/mnt/addons/ipai:ro
+      - odoo-filestore:/var/lib/odoo
+
+    command: >
+      odoo
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+      --db_host=${DB_HOST:-db}
+      --db_user=${DB_USER:-odoo}
+      --db_password=${DB_PASSWORD}
+      -d ${DB_NAME:-odoo}
+      -i ipai_workos_affine
+      --stop-after-init
+      --log-level=info
+
+    networks:
+      - odoo_backend
+
+    profiles:
+      - init
