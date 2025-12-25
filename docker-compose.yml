@@ -19,7 +19,43 @@ services:
     restart: unless-stopped
 
   # ===== CORE EDITION (Port 8069) =====
-  # Init service (one-time module installation)
+  # Init service - CE Core Modules (one-time installation of all CE modules)
+  odoo-core-ce-init:
+    image: odoo:18.0
+    container_name: odoo-core-ce-init
+    depends_on:
+      - postgres
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo
+      - DB_NAME=odoo_core
+    volumes:
+      - ./addons:/mnt/extra-addons
+      - odoo-core-web-data:/var/lib/odoo
+    # Install all CE core modules in dependency order
+    command: >
+      odoo -d odoo_core -i
+      base,web,base_setup,base_import,bus,mail,digest,iap,web_tour,web_editor,portal,resource,calendar,
+      contacts,sales_team,crm,sale,sale_management,sale_crm,
+      analytic,account,account_payment,
+      purchase,purchase_requisition,
+      stock,stock_account,stock_landed_costs,stock_picking_batch,
+      sale_stock,sale_purchase,purchase_stock,
+      mrp,maintenance,
+      project,project_todo,hr_timesheet,sale_timesheet,
+      hr,hr_contract,hr_holidays,hr_attendance,hr_expense,hr_recruitment,hr_skills,
+      website,website_sale,website_crm,website_blog,website_forum,website_slides,website_event,
+      mass_mailing,im_livechat,
+      point_of_sale,
+      survey,lunch,fleet,repair
+      --stop-after-init
+    networks:
+      - odoo-network
+    restart: "no"
+    profiles: ["ce-init"]
+
+  # Init service - IPAI custom modules (after CE modules are installed)
   odoo-core-init:
     image: odoo:18.0
     container_name: odoo-core-init
