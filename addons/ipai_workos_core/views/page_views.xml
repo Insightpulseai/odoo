@@ -143,7 +143,7 @@
     <record id="action_workos_page" model="ir.actions.act_window">
         <field name="name">Pages</field>
         <field name="res_model">ipai.workos.page</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="search_view_id" ref="page_search_view"/>
         <field name="context">{'search_default_group_by_space': 1}</field>
         <field name="help" type="html">
