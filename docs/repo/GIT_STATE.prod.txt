@@ -1,0 +1,29 @@
+# Git State Snapshot
+# Generated: 2025-12-25T14:56:10Z
+# Host: runsc
+# Repo: /home/user/odoo-ce
+
+SHA: 1c04f0036014db2f0f52159a9664e14deefb81ad
+Branch: claude/notion-clone-odoo-module-LSFan
+Short SHA: 1c04f00
+
+# Remote
+origin	http://local_proxy@127.0.0.1:43434/git/jgtolentino/odoo-ce (fetch)
+origin	http://local_proxy@127.0.0.1:43434/git/jgtolentino/odoo-ce (push)
+
+# Status (dirty check)
+?? docs/repo/
+?? tools/audit/gen_prod_snapshot.sh
+?? tools/audit/gen_repo_tree_prod.sh
+?? tools/audit/gen_runtime_sitemap.sh
+?? tools/audit/http_crawler.py
+
+# Last 5 commits
+1c04f00 fix(deploy): correct volume paths and add robust deployment script
+4cdff4d feat(deploy): add WorkOS production deployment scripts
+cd85b06 fix(ci): repair repo-structure check and add deployment docs
+4c0d691 docs(audit): canonicalize repo structure + add CI contract guardrails
+6a2c403 feat(workos): scaffold Notion clone module suite with parity tracking
+
+# Tags
+
