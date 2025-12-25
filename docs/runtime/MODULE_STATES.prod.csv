@@ -1,0 +1,4 @@
+name,state,latest_version,shortdesc
+# PLACEHOLDER - This file must be regenerated on the production server
+# Run: ./tools/audit/gen_runtime_sitemap.sh
+# Expected: ipai_workos_* and ipai_platform_* modules with state=installed

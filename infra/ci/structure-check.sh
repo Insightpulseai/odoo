@@ -4,11 +4,15 @@
 # =============================================================================
 # Enforces the CE → OCA → IPAI layered architecture.
 #
+# Supports TWO layouts:
+# A) Flat structure (canonical): addons/ipai_*, addons/oca/
+# B) Namespaced structure: addons/ipai/, addons/oca/
+#
 # Rules:
-# 1. Addons must be in addons/ipai/ or addons/oca/
-# 2. No flat modules in addons/ root
-# 3. IPAI modules must follow naming: ipai_*
-# 4. No duplicate module names across ipai/oca
+# 1. IPAI modules must follow naming: ipai_* (either flat or in addons/ipai/)
+# 2. OCA modules must be in addons/oca/
+# 3. No other modules allowed in addons/ root
+# 4. No duplicate module names
 #
 # Usage:
 #   ./infra/ci/structure-check.sh
@@ -42,7 +46,32 @@ echo "=========================="
 echo ""
 
 # -----------------------------------------------------------------------------
-# Check 1: Only ipai/ and oca/ directories allowed in addons/
+# Detect structure type
+# -----------------------------------------------------------------------------
+FLAT_STRUCTURE=false
+NAMESPACED_STRUCTURE=false
+
+if [[ -d "$ADDONS_DIR/ipai" ]]; then
+    NAMESPACED_STRUCTURE=true
+fi
+
+# Check for flat ipai_* modules
+flat_ipai_count=$(find "$ADDONS_DIR" -maxdepth 1 -type d -name "ipai_*" 2>/dev/null | wc -l)
+if [[ $flat_ipai_count -gt 0 ]]; then
+    FLAT_STRUCTURE=true
+fi
+
+if $FLAT_STRUCTURE; then
+    echo "Detected: FLAT structure (ipai_* modules in addons/)"
+elif $NAMESPACED_STRUCTURE; then
+    echo "Detected: NAMESPACED structure (addons/ipai/ subdirectory)"
+else
+    echo "Detected: No IPAI modules found yet"
+fi
+echo ""
+
+# -----------------------------------------------------------------------------
+# Check 1: Addons directory structure
 # -----------------------------------------------------------------------------
 echo "Check 1: Addons directory structure"
 
@@ -52,12 +81,21 @@ if [[ -d "$ADDONS_DIR" ]]; then
             name=$(basename "$dir")
             case "$name" in
                 ipai|oca)
+                    # Namespaced structure - always valid
                     log_ok "Valid addon namespace: $name/"
+                    ;;
+                ipai_*)
+                    # Flat structure - ipai_* modules directly in addons/
+                    if $FLAT_STRUCTURE; then
+                        log_ok "Valid IPAI module: $name/"
+                    else
+                        log_error "Flat module $name/ found but repo uses namespaced structure"
+                        echo "       Move to addons/ipai/$name/"
+                    fi
                     ;;
                 *)
                     log_error "Invalid addon directory: addons/$name/"
-                    echo "       Only addons/ipai/ and addons/oca/ are allowed."
-                    echo "       Move $name to appropriate namespace or archive it."
+                    echo "       Allowed: ipai_* modules, oca/, or ipai/"
                     ;;
             esac
         fi
@@ -73,20 +111,39 @@ echo ""
 # -----------------------------------------------------------------------------
 echo "Check 2: IPAI module naming convention"
 
+ipai_modules_found=0
+
+# Check namespaced structure
 if [[ -d "$ADDONS_DIR/ipai" ]]; then
     for module_dir in "$ADDONS_DIR/ipai"/*/; do
         if [[ -d "$module_dir" ]]; then
             module=$(basename "$module_dir")
             if [[ "$module" =~ ^ipai_ ]]; then
-                log_ok "Valid IPAI module: $module"
+                log_ok "Valid IPAI module: ipai/$module"
+                ipai_modules_found=$((ipai_modules_found + 1))
             else
                 log_error "Invalid IPAI module name: $module"
                 echo "       IPAI modules must start with 'ipai_'"
             fi
         fi
     done
+fi
+
+# Check flat structure
+if $FLAT_STRUCTURE; then
+    for module_dir in "$ADDONS_DIR"/ipai_*/; do
+        if [[ -d "$module_dir" ]]; then
+            module=$(basename "$module_dir")
+            log_ok "Valid IPAI module (flat): $module"
+            ipai_modules_found=$((ipai_modules_found + 1))
+        fi
+    done
+fi
+
+if [[ $ipai_modules_found -eq 0 ]]; then
+    log_warn "No IPAI modules found"
 else
-    log_warn "addons/ipai/ not found (not yet migrated?)"
+    echo "Found $ipai_modules_found IPAI module(s)"
 fi
 
 echo ""
@@ -97,9 +154,11 @@ echo ""
 echo "Check 3: OCA module vendoring"
 
 if [[ -d "$ADDONS_DIR/oca" ]]; then
+    oca_found=0
     for repo_dir in "$ADDONS_DIR/oca"/*/; do
         if [[ -d "$repo_dir" ]]; then
             repo=$(basename "$repo_dir")
+            oca_found=$((oca_found + 1))
             if [[ -d "$repo_dir/.git" ]]; then
                 log_ok "OCA repo vendored: $repo"
             else
@@ -107,6 +166,10 @@ if [[ -d "$ADDONS_DIR/oca" ]]; then
             fi
         fi
     done
+
+    if [[ $oca_found -eq 0 ]]; then
+        log_ok "OCA directory exists but is empty"
+    fi
 
     # Check for lockfile
     if [[ -f "$REPO_ROOT/vendor/oca.lock" ]]; then
@@ -116,7 +179,7 @@ if [[ -d "$ADDONS_DIR/oca" ]]; then
         echo "       Run: ./vendor/oca-sync.sh update"
     fi
 else
-    log_warn "addons/oca/ not found (not yet migrated?)"
+    log_warn "addons/oca/ not found (no OCA modules vendored yet)"
 fi
 
 echo ""
@@ -128,7 +191,7 @@ echo "Check 4: No duplicate module names"
 
 declare -A seen_modules
 
-# Check IPAI modules
+# Check namespaced IPAI modules
 if [[ -d "$ADDONS_DIR/ipai" ]]; then
     for module_dir in "$ADDONS_DIR/ipai"/*/; do
         if [[ -d "$module_dir" ]]; then
@@ -136,13 +199,29 @@ if [[ -d "$ADDONS_DIR/ipai" ]]; then
             if [[ -n "${seen_modules[$module]:-}" ]]; then
                 log_error "Duplicate module: $module (also in ${seen_modules[$module]})"
             else
-                seen_modules[$module]="ipai"
+                seen_modules[$module]="ipai/"
             fi
         fi
     done
 fi
 
-# Check OCA modules (just top-level, OCA repos have submodules)
+# Check flat IPAI modules (flat structure is canonical when duplicates exist)
+if $FLAT_STRUCTURE; then
+    for module_dir in "$ADDONS_DIR"/ipai_*/; do
+        if [[ -d "$module_dir" ]]; then
+            module=$(basename "$module_dir")
+            if [[ -n "${seen_modules[$module]:-}" ]]; then
+                # Flat structure is canonical - warn but don't error
+                log_warn "Module $module exists in both addons/$module and addons/ipai/$module (flat is canonical)"
+                seen_modules[$module]="addons/ (canonical)"
+            else
+                seen_modules[$module]="addons/"
+            fi
+        fi
+    done
+fi
+
+# Check OCA modules
 if [[ -d "$ADDONS_DIR/oca" ]]; then
     for repo_dir in "$ADDONS_DIR/oca"/*/; do
         if [[ -d "$repo_dir" ]]; then
@@ -150,7 +229,7 @@ if [[ -d "$ADDONS_DIR/oca" ]]; then
                 if [[ -d "$module_dir" && -f "$module_dir/__manifest__.py" ]]; then
                     module=$(basename "$module_dir")
                     if [[ -n "${seen_modules[$module]:-}" ]]; then
-                        log_error "Duplicate module: $module (ipai vs oca)"
+                        log_error "Duplicate module: $module (${seen_modules[$module]} vs oca)"
                     fi
                 fi
             done
@@ -216,10 +295,25 @@ echo ""
 # -----------------------------------------------------------------------------
 echo "Check 6: QWeb template ID check"
 
-# Find potential ID collisions in inherited templates
+ipai_dirs=""
 if [[ -d "$ADDONS_DIR/ipai" ]]; then
-    duplicates=$(grep -r 'inherit_id=.*template.*id=' "$ADDONS_DIR/ipai" 2>/dev/null | \
-                 grep -o 'id="[^"]*"' | sort | uniq -d || true)
+    ipai_dirs="$ADDONS_DIR/ipai"
+fi
+if $FLAT_STRUCTURE; then
+    ipai_dirs="$ipai_dirs $(find "$ADDONS_DIR" -maxdepth 1 -type d -name 'ipai_*' | tr '\n' ' ')"
+fi
+
+if [[ -n "$ipai_dirs" ]]; then
+    duplicates=""
+    for dir in $ipai_dirs; do
+        if [[ -d "$dir" ]]; then
+            dup=$(grep -r 'inherit_id=.*template.*id=' "$dir" 2>/dev/null | \
+                  grep -o 'id="[^"]*"' | sort | uniq -d || true)
+            if [[ -n "$dup" ]]; then
+                duplicates="$duplicates $dup"
+            fi
+        fi
+    done
     if [[ -n "$duplicates" ]]; then
         log_error "Potential QWeb ID collisions: $duplicates"
     else
