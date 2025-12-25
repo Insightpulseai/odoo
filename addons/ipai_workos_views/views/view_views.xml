@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View Tree -->
+    <record id="database_view_tree" model="ir.ui.view">
+        <field name="name">ipai.workos.view.tree</field>
+        <field name="model">ipai.workos.view</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="database_id"/>
+                <field name="view_type"/>
+                <field name="is_default"/>
+                <field name="is_shared"/>
+                <field name="user_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="database_view_form" model="ir.ui.view">
+        <field name="name">ipai.workos.view.form</field>
+        <field name="model">ipai.workos.view</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="database_id"/>
+                            <field name="view_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="is_default"/>
+                            <field name="is_shared"/>
+                            <field name="user_id"/>
+                        </group>
+                    </group>
+                    <group string="View Configuration">
+                        <field name="group_by_property_id" invisible="view_type != 'kanban'"/>
+                        <field name="date_property_id" invisible="view_type != 'calendar'"/>
+                        <field name="visible_property_ids" widget="many2many_tags"/>
+                    </group>
+                    <notebook>
+                        <page string="Filters">
+                            <field name="filter_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Sorts">
+                            <field name="sort_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Configuration">
+                            <field name="config_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- View Action -->
+    <record id="action_workos_view" model="ir.actions.act_window">
+        <field name="name">Saved Views</field>
+        <field name="res_model">ipai.workos.view</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Add to menu -->
+    <menuitem id="menu_workos_views"
+              name="Saved Views"
+              parent="ipai_workos_core.menu_workos_config"
+              action="action_workos_view"
+              sequence="20"/>
+</odoo>

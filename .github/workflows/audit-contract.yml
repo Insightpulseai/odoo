@@ -1,0 +1,97 @@
+name: audit-contract
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  repo-contract:
+    name: Verify Repo Contract
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install tree command
+        run: sudo apt-get update && sudo apt-get install -y tree
+
+      - name: Verify expected paths exist
+        run: |
+          echo "=== Verifying repo contract paths ==="
+          bash tools/audit/verify_expected_paths.sh
+
+      - name: Generate audit artifacts
+        run: |
+          echo "=== Generating audit bundle ==="
+          bash tools/audit/run_audit_bundle.sh
+
+      - name: Validate Python syntax in modules
+        run: |
+          echo "=== Validating Python syntax ==="
+          python3 -c "
+          import ast
+          import pathlib
+          errors = []
+          for p in pathlib.Path('addons').rglob('*.py'):
+              if 'ipai_' in str(p):
+                  try:
+                      ast.parse(p.read_text())
+                  except SyntaxError as e:
+                      errors.append(f'{p}: {e}')
+          if errors:
+              print('Python syntax errors found:')
+              for e in errors:
+                  print(f'  - {e}')
+              exit(1)
+          print('All Python files parsed OK')
+          "
+
+      - name: Run parity audit
+        run: |
+          echo "=== Running parity audit ==="
+          python3 tools/parity/parity_audit.py
+
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: audit-bundle
+          path: |
+            audit/
+            docs/REPO_TREE.generated.md
+            docs/REPO_SNAPSHOT.json
+            parity_report.json
+          retention-days: 30
+
+      - name: Check for path hallucinations
+        run: |
+          echo "=== Checking for invalid path references ==="
+          # Fail if any code references non-existent src/apps/odoo or src/addons
+          if grep -r "src/apps/odoo" addons/ docs/ spec/ 2>/dev/null; then
+            echo "::error::Found references to non-existent 'src/apps/odoo' path"
+            exit 1
+          fi
+          if grep -r "src/addons/" addons/ docs/ spec/ 2>/dev/null | grep -v "Optional Future Refactor"; then
+            echo "::error::Found references to non-existent 'src/addons/' path (outside future refactor docs)"
+            exit 1
+          fi
+          echo "No path hallucinations detected"
+
+      - name: Report CI telemetry
+        if: always()
+        env:
+          N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
+        run: |
+          if [ -f scripts/report_ci_telemetry.sh ]; then
+            chmod +x scripts/report_ci_telemetry.sh
+            scripts/report_ci_telemetry.sh "${{ job.status }}"
+          fi

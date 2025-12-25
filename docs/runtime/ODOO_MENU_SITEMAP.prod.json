@@ -1,0 +1,9 @@
+{
+  "generated_at": "PLACEHOLDER - run on production",
+  "note": "This file must be regenerated on the production server",
+  "regenerate_command": "./tools/audit/gen_runtime_sitemap.sh",
+  "expected_content": {
+    "menus": "Array of ir_ui_menu records",
+    "workos_menus": "WorkOS-specific menu entries"
+  }
+}

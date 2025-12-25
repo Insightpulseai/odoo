@@ -1,10 +1,40 @@
 {
   "version": "1.0.0",
   "description": "Baseline parity scores for P0 capabilities. CI fails if any score regresses below these values.",
-  "updated_at": "2024-01-01T00:00:00Z",
+  "updated_at": "2025-12-23T00:00:00Z",
   "p0": {
     "crm.pipeline.board": 0,
-    "itsm.incident.queue": 0
+    "itsm.incident.queue": 0,
+    "workos.workspace.space.tree": 0,
+    "workos.page.create.nest": 0,
+    "workos.page.move.archive": 0,
+    "workos.blocks.editor.core": 0,
+    "workos.blocks.types.basic": 0,
+    "workos.db.create.properties": 0,
+    "workos.db.rows.inline_edit": 0,
+    "workos.db.property.types": 0,
+    "workos.views.table": 0,
+    "workos.views.kanban": 0,
+    "workos.views.calendar": 0,
+    "workos.collab.comments.page": 0,
+    "workos.collab.mentions.notify": 0,
+    "workos.activity.log": 0,
+    "workos.permissions.workspace_roles": 0,
+    "workos.permissions.page_scopes": 0,
+    "workos.search.global": 0
+  },
+  "p1": {
+    "workos.blocks.attachments": 0,
+    "workos.db.relations.basic": 0,
+    "workos.filters.sorts.lite": 0,
+    "workos.templates.page_db": 0,
+    "workos.share.links": 0,
+    "workos.search.scoped": 0
+  },
+  "p2": {
+    "workos.db.rollups.lite": 0,
+    "workos.export.markdown": 0,
+    "workos.import.markdown": 0
   },
   "notes": {
     "crm.pipeline.board": "Initial scaffold only, score will increase as features are implemented",

@@ -1,0 +1,10 @@
+{
+  "generated_at": "PLACEHOLDER - run on production",
+  "note": "This file must be regenerated on the production server",
+  "regenerate_command": "./tools/audit/gen_runtime_sitemap.sh",
+  "expected_content": {
+    "ipai_models": "Array of ipai.* models",
+    "workos_models": "Array of ipai.workos.* models",
+    "model_counts": "Summary counts"
+  }
+}
