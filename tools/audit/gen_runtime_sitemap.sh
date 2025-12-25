@@ -27,45 +27,65 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 OUTPUT_DIR="$REPO_ROOT/docs/runtime"
 
-# Configuration
-COMPOSE_FILE="${1:-deploy/docker-compose.prod.yml}"
-COMPOSE_OVERRIDE="${COMPOSE_OVERRIDE:-deploy/docker-compose.workos-deploy.yml}"
-DB_SERVICE="${2:-db}"
-DB_NAME="${3:-odoo}"
-DB_USER="${4:-odoo}"
-ODOO_SERVICE="${ODOO_SERVICE:-odoo}"
+# Configuration with environment variable support
+DEFAULT_COMPOSE="${COMPOSE_FILE:-deploy/docker-compose.prod.yml}"
+DEFAULT_COMPOSE_OVERRIDE="${COMPOSE_OVERRIDE:-deploy/docker-compose.workos-deploy.yml}"
+DEFAULT_DB_SERVICE="${DB_SERVICE:-db}"
+DEFAULT_DB_NAME="${DB_NAME:-odoo}"
+DEFAULT_DB_USER="${DB_USER:-odoo}"
+DEFAULT_ODOO_SERVICE="${ODOO_SERVICE:-odoo}"
+
+COMPOSE_FILE="${1:-$DEFAULT_COMPOSE}"
+COMPOSE_OVERRIDE="${2:-$DEFAULT_COMPOSE_OVERRIDE}"
+DB_SERVICE="${3:-$DEFAULT_DB_SERVICE}"
+DB_NAME="${4:-$DEFAULT_DB_NAME}"
+DB_USER="${5:-$DEFAULT_DB_USER}"
+ODOO_SERVICE="${ODOO_SERVICE:-$DEFAULT_ODOO_SERVICE}"
 
 mkdir -p "$OUTPUT_DIR"
 
 cd "$REPO_ROOT"
+
+# Detect if docker compose service is available, fallback to docker exec
+DC=""
+if [[ -f "$COMPOSE_FILE" ]]; then
+    if [[ -f "$COMPOSE_OVERRIDE" ]]; then
+        DC="docker compose -f $COMPOSE_FILE -f $COMPOSE_OVERRIDE"
+    else
+        DC="docker compose -f $COMPOSE_FILE"
+    fi
+
+    # Verify service exists
+    if ! $DC ps --services 2>/dev/null | grep -qx "$DB_SERVICE"; then
+        echo "⚠️  Service '$DB_SERVICE' not found in compose, falling back to docker exec"
+        DC=""
+    fi
+fi
 
 echo "=== Generating Odoo Runtime Sitemap ==="
 echo "Compose: $COMPOSE_FILE"
 echo "DB Service: $DB_SERVICE"
 echo "Database: $DB_NAME"
 echo "Output: $OUTPUT_DIR"
+echo "Mode: $([ -n "$DC" ] && echo "docker compose" || echo "docker exec (fallback)")"
 echo ""
 
-# Helper function for psql
+# Helper function for psql with docker exec fallback
 run_psql() {
     local query="$1"
-    if [[ -f "$COMPOSE_OVERRIDE" ]]; then
-        docker compose -f "$COMPOSE_FILE" -f "$COMPOSE_OVERRIDE" exec -T "$DB_SERVICE" \
-            psql -U "$DB_USER" -d "$DB_NAME" -tAc "$query" 2>/dev/null
+    if [[ -n "$DC" ]]; then
+        $DC exec -T "$DB_SERVICE" psql -U "$DB_USER" -d "$DB_NAME" -tAc "$query" 2>/dev/null
     else
-        docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
-            psql -U "$DB_USER" -d "$DB_NAME" -tAc "$query" 2>/dev/null
+        docker exec -i "$DB_SERVICE" psql -U "$DB_USER" -d "$DB_NAME" -tAc "$query" 2>/dev/null
     fi
 }
 
 run_psql_formatted() {
     local query="$1"
-    if [[ -f "$COMPOSE_OVERRIDE" ]]; then
-        docker compose -f "$COMPOSE_FILE" -f "$COMPOSE_OVERRIDE" exec -T "$DB_SERVICE" \
-            psql -U "$DB_USER" -d "$DB_NAME" -c "$query" 2>/dev/null
+    if [[ -n "$DC" ]]; then
+        $DC exec -T "$DB_SERVICE" psql -U "$DB_USER" -d "$DB_NAME" -c "$query" 2>/dev/null
     else
-        docker compose -f "$COMPOSE_FILE" exec -T "$DB_SERVICE" \
-            psql -U "$DB_USER" -d "$DB_NAME" -c "$query" 2>/dev/null
+        docker exec -i "$DB_SERVICE" psql -U "$DB_USER" -d "$DB_NAME" -c "$query" 2>/dev/null
     fi
 }
 
@@ -76,7 +96,7 @@ echo "Extracting MODULE_STATES.prod.csv..."
 
 {
     echo "name,state,latest_version,shortdesc"
-    run_psql "SELECT name || ',' || state || ',' || COALESCE(latest_version, 'null') || ',' || COALESCE(REPLACE(shortdesc, ',', ';'), '') FROM ir_module_module WHERE state IN ('installed', 'to install', 'to upgrade') ORDER BY name;"
+    run_psql "SELECT name || ',' || state || ',' || COALESCE(latest_version, 'null') || ',' || COALESCE(REPLACE(shortdesc::text, ',', ';'), '') FROM ir_module_module WHERE state IN ('installed', 'to install', 'to upgrade') ORDER BY name;"
 } > "$OUTPUT_DIR/MODULE_STATES.prod.csv"
 
 # Count
@@ -88,31 +108,33 @@ echo "  ✓ MODULE_STATES.prod.csv ($installed_count installed modules)"
 # =============================================================================
 echo "Extracting ODOO_MENU_SITEMAP.prod.json..."
 
-# Get menus as JSON
-cat > "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json" << EOF
-{
-  "generated_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-  "database": "$DB_NAME",
-  "menus": [
-EOF
-
-# Extract menus
-run_psql "SELECT json_build_object('id', id, 'name', name, 'parent_id', parent_id, 'sequence', sequence, 'action', action) FROM ir_ui_menu ORDER BY parent_id NULLS FIRST, sequence;" | \
-    sed 's/$/,/' | sed '$ s/,$//' >> "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json" 2>/dev/null || echo "    {\"error\": \"could not extract menus\"}" >> "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json"
-
-cat >> "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json" << EOF
-  ],
-  "workos_menus": [
-EOF
-
-# Extract WorkOS-specific menus
-run_psql "SELECT json_build_object('id', id, 'name', name, 'parent_id', parent_id, 'action', action) FROM ir_ui_menu WHERE name ILIKE '%workos%' OR name ILIKE '%workspace%' OR name ILIKE '%affine%' ORDER BY id;" | \
-    sed 's/$/,/' | sed '$ s/,$//' >> "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json" 2>/dev/null || echo "    {\"note\": \"no workos menus found\"}" >> "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json"
-
-cat >> "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json" << EOF
-  ]
-}
-EOF
+# Extract menu sitemap using proper JSONB handling
+run_psql "
+SELECT json_build_object(
+  'generated_at', to_char(now() at time zone 'UTC','YYYY-MM-DD\"T\"HH24:MI:SS\"Z\"'),
+  'database', '$DB_NAME',
+  'menus', COALESCE(json_agg(json_build_object(
+    'id', id,
+    'name', COALESCE(name->>'en_US', (SELECT value FROM jsonb_each_text(name) LIMIT 1)),
+    'parent_id', parent_id,
+    'sequence', sequence,
+    'action', action
+  ) ORDER BY COALESCE(parent_id,0), sequence, id), '[]'::json),
+  'workos_menus', (
+    SELECT COALESCE(json_agg(json_build_object(
+      'id', m.id,
+      'name', COALESCE(m.name->>'en_US', (SELECT value FROM jsonb_each_text(m.name) LIMIT 1)),
+      'parent_id', m.parent_id,
+      'action', m.action
+    ) ORDER BY m.id), '[]'::json)
+    FROM ir_ui_menu m
+    WHERE COALESCE(m.name->>'en_US', m.name::text) ILIKE '%workos%'
+       OR COALESCE(m.name->>'en_US', m.name::text) ILIKE '%workspace%'
+       OR COALESCE(m.name->>'en_US', m.name::text) ILIKE '%affine%'
+  )
+)
+FROM ir_ui_menu;
+" > "$OUTPUT_DIR/ODOO_MENU_SITEMAP.prod.json"
 
 menu_count=$(run_psql "SELECT COUNT(*) FROM ir_ui_menu;" || echo "0")
 echo "  ✓ ODOO_MENU_SITEMAP.prod.json ($menu_count menus)"
