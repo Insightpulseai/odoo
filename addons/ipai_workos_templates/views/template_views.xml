@@ -5,13 +5,13 @@
         <field name="name">ipai.workos.template.tree</field>
         <field name="model">ipai.workos.template</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="category"/>
                 <field name="is_published"/>
                 <field name="is_system"/>
-            </tree>
+            </list>
         </field>
     </record>
 

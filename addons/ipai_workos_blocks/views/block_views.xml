@@ -5,13 +5,13 @@
         <field name="name">ipai.workos.block.tree</field>
         <field name="model">ipai.workos.block</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="block_type"/>
                 <field name="name"/>
                 <field name="page_id"/>
                 <field name="parent_block_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -46,11 +46,11 @@
                         </page>
                         <page string="Child Blocks" invisible="block_type != 'toggle'">
                             <field name="child_block_ids">
-                                <tree>
+                                <list>
                                     <field name="sequence" widget="handle"/>
                                     <field name="block_type"/>
                                     <field name="name"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -63,7 +63,7 @@
     <record id="action_workos_block" model="ir.actions.act_window">
         <field name="name">Blocks</field>
         <field name="res_model">ipai.workos.block</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_group_by_page': 1}</field>
     </record>
 

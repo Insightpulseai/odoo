@@ -5,7 +5,7 @@
         <field name="name">ipai.workos.page.tree</field>
         <field name="model">ipai.workos.page</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="is_archived">
+            <list decoration-muted="is_archived">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="space_id"/>
@@ -14,7 +14,7 @@
                 <field name="last_edited_by"/>
                 <field name="write_date"/>
                 <field name="is_archived" column_invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -69,13 +69,13 @@
                         </page>
                         <page string="Sub-pages" invisible="child_count == 0">
                             <field name="child_ids">
-                                <tree>
+                                <list>
                                     <field name="sequence" widget="handle"/>
                                     <field name="icon"/>
                                     <field name="name"/>
                                     <field name="child_count"/>
                                     <field name="write_date"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

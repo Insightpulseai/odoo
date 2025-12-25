@@ -5,7 +5,7 @@
         <field name="name">ipai.permission.tree</field>
         <field name="model">ipai.permission</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="scope_type"/>
                 <field name="role"/>
@@ -13,7 +13,7 @@
                 <field name="user_id"/>
                 <field name="group_id"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -48,14 +48,14 @@
         <field name="name">ipai.share.token.tree</field>
         <field name="model">ipai.share.token</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="scope_type"/>
                 <field name="permission_level"/>
                 <field name="is_public"/>
                 <field name="expires_at"/>
                 <field name="created_by"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -63,13 +63,13 @@
     <record id="action_ipai_permission" model="ir.actions.act_window">
         <field name="name">Permissions</field>
         <field name="res_model">ipai.permission</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Share Token Action -->
     <record id="action_ipai_share_token" model="ir.actions.act_window">
         <field name="name">Share Tokens</field>
         <field name="res_model">ipai.share.token</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>
