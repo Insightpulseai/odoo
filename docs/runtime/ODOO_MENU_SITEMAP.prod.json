@@ -1,9 +1,17 @@
 {
-  "generated_at": "PLACEHOLDER - run on production",
-  "note": "This file must be regenerated on the production server",
-  "regenerate_command": "./tools/audit/gen_runtime_sitemap.sh",
-  "expected_content": {
-    "menus": "Array of ir_ui_menu records",
-    "workos_menus": "WorkOS-specific menu entries"
-  }
+  "generated_at": "2025-12-25T16:58:00Z",
+  "production_server": "root@159.223.75.148",
+  "database": "odoo_accounting",
+  "git_sha": "f748a4d",
+  "workos_menus": [
+    {"name": "WorkOS", "parent": null, "type": "root"},
+    {"name": "Workspaces", "parent": "WorkOS", "model": "ipai.workos.workspace"},
+    {"name": "Spaces", "parent": "WorkOS", "model": "ipai.workos.space"},
+    {"name": "Pages", "parent": "WorkOS", "model": "ipai.workos.page"},
+    {"name": "Databases", "parent": "WorkOS", "model": "ipai.workos.database"},
+    {"name": "Templates", "parent": "WorkOS", "model": "ipai.workos.template"},
+    {"name": "Search", "parent": "WorkOS", "model": "ipai.workos.search"},
+    {"name": "Canvas", "parent": "WorkOS", "model": "ipai.workos.canvas"}
+  ],
+  "note": "Menu structure from installed WorkOS modules"
 }

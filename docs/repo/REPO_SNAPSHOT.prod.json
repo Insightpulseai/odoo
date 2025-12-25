@@ -1,17 +1,17 @@
 {
-  "generated_at": "2025-12-25T14:56:12Z",
-  "hostname": "runsc",
-  "repo_path": "/home/user/odoo-ce",
+  "generated_at": "2025-12-25T16:56:39Z",
+  "hostname": "odoo-erp-prod",
+  "repo_path": "/opt/odoo-ce",
   "git": {
-    "sha": "1c04f0036014db2f0f52159a9664e14deefb81ad",
-    "short_sha": "1c04f00",
-    "branch": "claude/notion-clone-odoo-module-LSFan",
-    "dirty_files": 5
+    "sha": "f748a4d7305f8269a8092f49c204978413501a25",
+    "short_sha": "f748a4d",
+    "branch": "main",
+    "dirty_files": 4
   },
   "file_counts": {
-    "python": 345,
-    "xml": 203,
+    "python": 351,
+    "xml": 211,
     "javascript": 11
   },
-  "ipai_modules": [{"name":"ipai_bir_tax_compliance","version":"unknown"},{"name":"ipai_close_orchestration","version":"unknown"},{"name":"ipai_crm_pipeline","version":"unknown"},{"name":"ipai_month_end","version":"unknown"},{"name":"ipai_platform_approvals","version":"unknown"},{"name":"ipai_platform_audit","version":"unknown"},{"name":"ipai_platform_permissions","version":"unknown"},{"name":"ipai_platform_theme","version":"unknown"},{"name":"ipai_platform_workflow","version":"unknown"},{"name":"ipai_ppm_a1","version":"unknown"},{"name":"ipai_tbwa_finance","version":"unknown"},{"name":"ipai_workos_affine","version":"unknown"},{"name":"ipai_workos_blocks","version":"unknown"},{"name":"ipai_workos_canvas","version":"unknown"},{"name":"ipai_workos_collab","version":"unknown"},{"name":"ipai_workos_core","version":"unknown"},{"name":"ipai_workos_db","version":"unknown"},{"name":"ipai_workos_search","version":"unknown"},{"name":"ipai_workos_templates","version":"unknown"},{"name":"ipai_workos_views","version":"unknown"}]
+  "ipai_modules": [{"name":"ipai_bir_tax_compliance","version":"unknown"},{"name":"ipai_close_orchestration","version":"unknown"},{"name":"ipai_crm_pipeline","version":"unknown"},{"name":"ipai_finance_ppm_golive","version":"unknown"},{"name":"ipai_month_end","version":"unknown"},{"name":"ipai_platform_approvals","version":"unknown"},{"name":"ipai_platform_audit","version":"unknown"},{"name":"ipai_platform_permissions","version":"unknown"},{"name":"ipai_platform_theme","version":"unknown"},{"name":"ipai_platform_workflow","version":"unknown"},{"name":"ipai_ppm_a1","version":"unknown"},{"name":"ipai_tbwa_finance","version":"unknown"},{"name":"ipai_workos_affine","version":"unknown"},{"name":"ipai_workos_blocks","version":"unknown"},{"name":"ipai_workos_canvas","version":"unknown"},{"name":"ipai_workos_collab","version":"unknown"},{"name":"ipai_workos_core","version":"unknown"},{"name":"ipai_workos_db","version":"unknown"},{"name":"ipai_workos_search","version":"unknown"},{"name":"ipai_workos_templates","version":"unknown"},{"name":"ipai_workos_views","version":"unknown"}]
 }

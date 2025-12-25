@@ -1,10 +1,31 @@
 {
-  "generated_at": "PLACEHOLDER - run on production",
-  "note": "This file must be regenerated on the production server",
-  "regenerate_command": "./tools/audit/gen_runtime_sitemap.sh",
-  "expected_content": {
-    "ipai_models": "Array of ipai.* models",
-    "workos_models": "Array of ipai.workos.* models",
-    "model_counts": "Summary counts"
+  "generated_at": "2025-12-25T16:58:00Z",
+  "production_server": "root@159.223.75.148",
+  "database": "odoo_accounting",
+  "git_sha": "f748a4d",
+  "ipai_models": [
+    {"model": "ipai.audit.log", "name": "IPAI Audit Log", "module": "ipai_platform_audit"},
+    {"model": "ipai.audit.mixin", "name": "IPAI Audit Mixin", "module": "ipai_platform_audit"},
+    {"model": "ipai.permission", "name": "IPAI Permission Scope", "module": "ipai_platform_permissions"},
+    {"model": "ipai.share.token", "name": "IPAI Share Token", "module": "ipai_platform_permissions"},
+    {"model": "ipai.workos.block", "name": "Work OS Block", "module": "ipai_workos_blocks"},
+    {"model": "ipai.workos.canvas", "name": "WorkOS Canvas", "module": "ipai_workos_canvas"},
+    {"model": "ipai.workos.comment", "name": "Work OS Comment", "module": "ipai_workos_collab"},
+    {"model": "ipai.workos.database", "name": "Work OS Database", "module": "ipai_workos_db"},
+    {"model": "ipai.workos.page", "name": "Work OS Page", "module": "ipai_workos_core"},
+    {"model": "ipai.workos.property", "name": "Work OS Database Property", "module": "ipai_workos_db"},
+    {"model": "ipai.workos.row", "name": "Work OS Database Row", "module": "ipai_workos_db"},
+    {"model": "ipai.workos.search", "name": "Work OS Search", "module": "ipai_workos_search"},
+    {"model": "ipai.workos.search.history", "name": "Work OS Search History", "module": "ipai_workos_search"},
+    {"model": "ipai.workos.space", "name": "Work OS Space", "module": "ipai_workos_core"},
+    {"model": "ipai.workos.template", "name": "Work OS Template", "module": "ipai_workos_templates"},
+    {"model": "ipai.workos.template.tag", "name": "Work OS Template Tag", "module": "ipai_workos_templates"},
+    {"model": "ipai.workos.view", "name": "Work OS Database View", "module": "ipai_workos_views"},
+    {"model": "ipai.workos.workspace", "name": "Work OS Workspace", "module": "ipai_workos_core"}
+  ],
+  "statistics": {
+    "total_ipai_models": 18,
+    "platform_models": 4,
+    "workos_models": 14
   }
 }

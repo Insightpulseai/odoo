@@ -1,445 +1,566 @@
 # Production Repo Tree
 
-Generated: 2025-12-25T14:56:11Z
-SHA: 1c04f00
+Generated: 2025-12-25T16:56:39Z
+SHA: f748a4d
 
 ## addons/
 ```
-/home/user/odoo-ce/addons
-/home/user/odoo-ce/addons/ipai
-/home/user/odoo-ce/addons/ipai/.gitkeep
-/home/user/odoo-ce/addons/ipai/__init__.py
-/home/user/odoo-ce/addons/ipai/__manifest__.py
-/home/user/odoo-ce/addons/ipai/ipai_advisor
-/home/user/odoo-ce/addons/ipai/ipai_assets
-/home/user/odoo-ce/addons/ipai/ipai_bir_compliance
-/home/user/odoo-ce/addons/ipai/ipai_ce_branding
-/home/user/odoo-ce/addons/ipai/ipai_ce_cleaner
-/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity
-/home/user/odoo-ce/addons/ipai/ipai_close_orchestration
-/home/user/odoo-ce/addons/ipai/ipai_custom_routes
-/home/user/odoo-ce/addons/ipai/ipai_default_home
-/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base
-/home/user/odoo-ce/addons/ipai/ipai_equipment
-/home/user/odoo-ce/addons/ipai/ipai_expense
-/home/user/odoo-ce/addons/ipai/ipai_finance_bir_compliance
-/home/user/odoo-ce/addons/ipai/ipai_finance_month_end
-/home/user/odoo-ce/addons/ipai/ipai_finance_monthly_closing
-/home/user/odoo-ce/addons/ipai/ipai_finance_ppm
-/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_closing
-/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_dashboard
-/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_tdi
-/home/user/odoo-ce/addons/ipai/ipai_finance_project_hybrid
-/home/user/odoo-ce/addons/ipai/ipai_industry_accounting_firm
-/home/user/odoo-ce/addons/ipai/ipai_industry_marketing_agency
-/home/user/odoo-ce/addons/ipai/ipai_master_control
-/home/user/odoo-ce/addons/ipai/ipai_portal_fix
-/home/user/odoo-ce/addons/ipai/ipai_ppm
-/home/user/odoo-ce/addons/ipai/ipai_ppm_a1
-/home/user/odoo-ce/addons/ipai/ipai_ppm_monthly_close
-/home/user/odoo-ce/addons/ipai/ipai_project_program
-/home/user/odoo-ce/addons/ipai/ipai_srm
-/home/user/odoo-ce/addons/ipai/ipai_workspace_core
-/home/user/odoo-ce/addons/ipai_bir_tax_compliance
-/home/user/odoo-ce/addons/ipai_bir_tax_compliance/__init__.py
-/home/user/odoo-ce/addons/ipai_bir_tax_compliance/__manifest__.py
-/home/user/odoo-ce/addons/ipai_bir_tax_compliance/data
-/home/user/odoo-ce/addons/ipai_bir_tax_compliance/models
-/home/user/odoo-ce/addons/ipai_bir_tax_compliance/security
-/home/user/odoo-ce/addons/ipai_bir_tax_compliance/views
-/home/user/odoo-ce/addons/ipai_close_orchestration
-/home/user/odoo-ce/addons/ipai_close_orchestration/__init__.py
-/home/user/odoo-ce/addons/ipai_close_orchestration/__manifest__.py
-/home/user/odoo-ce/addons/ipai_close_orchestration/data
-/home/user/odoo-ce/addons/ipai_close_orchestration/models
-/home/user/odoo-ce/addons/ipai_close_orchestration/security
-/home/user/odoo-ce/addons/ipai_close_orchestration/views
-/home/user/odoo-ce/addons/ipai_crm_pipeline
-/home/user/odoo-ce/addons/ipai_crm_pipeline/__init__.py
-/home/user/odoo-ce/addons/ipai_crm_pipeline/__manifest__.py
-/home/user/odoo-ce/addons/ipai_crm_pipeline/data
-/home/user/odoo-ce/addons/ipai_crm_pipeline/models
-/home/user/odoo-ce/addons/ipai_crm_pipeline/security
-/home/user/odoo-ce/addons/ipai_crm_pipeline/static
-/home/user/odoo-ce/addons/ipai_crm_pipeline/views
-/home/user/odoo-ce/addons/ipai_month_end
-/home/user/odoo-ce/addons/ipai_month_end/__init__.py
-/home/user/odoo-ce/addons/ipai_month_end/__manifest__.py
-/home/user/odoo-ce/addons/ipai_month_end/data
-/home/user/odoo-ce/addons/ipai_month_end/models
-/home/user/odoo-ce/addons/ipai_month_end/security
-/home/user/odoo-ce/addons/ipai_month_end/views
-/home/user/odoo-ce/addons/ipai_platform_approvals
-/home/user/odoo-ce/addons/ipai_platform_approvals/__init__.py
-/home/user/odoo-ce/addons/ipai_platform_approvals/__manifest__.py
-/home/user/odoo-ce/addons/ipai_platform_approvals/models
-/home/user/odoo-ce/addons/ipai_platform_approvals/security
-/home/user/odoo-ce/addons/ipai_platform_approvals/views
-/home/user/odoo-ce/addons/ipai_platform_audit
-/home/user/odoo-ce/addons/ipai_platform_audit/__init__.py
-/home/user/odoo-ce/addons/ipai_platform_audit/__manifest__.py
-/home/user/odoo-ce/addons/ipai_platform_audit/__pycache__
-/home/user/odoo-ce/addons/ipai_platform_audit/models
-/home/user/odoo-ce/addons/ipai_platform_audit/security
-/home/user/odoo-ce/addons/ipai_platform_audit/views
-/home/user/odoo-ce/addons/ipai_platform_permissions
-/home/user/odoo-ce/addons/ipai_platform_permissions/__init__.py
-/home/user/odoo-ce/addons/ipai_platform_permissions/__manifest__.py
-/home/user/odoo-ce/addons/ipai_platform_permissions/__pycache__
-/home/user/odoo-ce/addons/ipai_platform_permissions/models
-/home/user/odoo-ce/addons/ipai_platform_permissions/security
-/home/user/odoo-ce/addons/ipai_platform_permissions/views
-/home/user/odoo-ce/addons/ipai_platform_theme
-/home/user/odoo-ce/addons/ipai_platform_theme/__init__.py
-/home/user/odoo-ce/addons/ipai_platform_theme/__manifest__.py
-/home/user/odoo-ce/addons/ipai_platform_theme/static
-/home/user/odoo-ce/addons/ipai_platform_theme/views
-/home/user/odoo-ce/addons/ipai_platform_workflow
-/home/user/odoo-ce/addons/ipai_platform_workflow/__init__.py
-/home/user/odoo-ce/addons/ipai_platform_workflow/__manifest__.py
-/home/user/odoo-ce/addons/ipai_platform_workflow/models
-/home/user/odoo-ce/addons/ipai_platform_workflow/security
-/home/user/odoo-ce/addons/ipai_platform_workflow/views
-/home/user/odoo-ce/addons/ipai_ppm_a1
-/home/user/odoo-ce/addons/ipai_ppm_a1/__init__.py
-/home/user/odoo-ce/addons/ipai_ppm_a1/__manifest__.py
-/home/user/odoo-ce/addons/ipai_ppm_a1/data
-/home/user/odoo-ce/addons/ipai_ppm_a1/models
+/opt/odoo-ce/addons
+├── ipai
+│   ├── ipai_advisor
+│   ├── ipai_assets
+│   ├── ipai_bir_compliance
+│   ├── ipai_ce_branding
+│   ├── ipai_ce_cleaner
+│   ├── ipai_clarity_ppm_parity
+│   ├── ipai_close_orchestration
+│   ├── ipai_custom_routes
+│   ├── ipai_default_home
+│   ├── ipai_dev_studio_base
+│   ├── ipai_equipment
+│   ├── ipai_expense
+│   ├── ipai_finance_bir_compliance
+│   ├── ipai_finance_month_end
+│   ├── ipai_finance_monthly_closing
+│   ├── ipai_finance_ppm
+│   ├── ipai_finance_ppm_closing
+│   ├── ipai_finance_ppm_dashboard
+│   ├── ipai_finance_ppm_tdi
+│   ├── ipai_finance_project_hybrid
+│   ├── ipai_industry_accounting_firm
+│   ├── ipai_industry_marketing_agency
+│   ├── ipai_master_control
+│   ├── ipai_portal_fix
+│   ├── ipai_ppm
+│   ├── ipai_ppm_a1
+│   ├── ipai_ppm_monthly_close
+│   ├── ipai_project_program
+│   ├── ipai_srm
+│   ├── ipai_workspace_core
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_bir_tax_compliance
+│   ├── data
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_close_orchestration
+│   ├── data
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_crm_pipeline
+│   ├── data
+│   ├── models
+│   ├── security
+│   ├── static
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_finance_ppm_golive
+│   ├── data
+│   ├── models
+│   ├── reports
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_month_end
+│   ├── data
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_platform_approvals
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_platform_audit
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_platform_permissions
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_platform_theme
+│   ├── static
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_platform_workflow
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_ppm_a1
+│   ├── data
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── wizards
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_tbwa_finance
+│   ├── data
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_affine
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_blocks
+│   ├── models
+│   ├── security
+│   ├── static
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_canvas
+│   ├── models
+│   ├── security
+│   ├── static
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_collab
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_core
+│   ├── models
+│   ├── security
+│   ├── static
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_db
+│   ├── models
+│   ├── security
+│   ├── static
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_search
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_templates
+│   ├── data
+│   ├── models
+│   ├── security
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+├── ipai_workos_views
+│   ├── models
+│   ├── security
+│   ├── static
+│   ├── views
+│   ├── __init__.py
+│   └── __manifest__.py
+└── oca
+    ├── __init__.py
+    ├── __manifest__.py
+    ├── manifest.yaml
+    └── requirements.txt
 ```
 
 ## deploy/
 ```
-/home/user/odoo-ce/deploy
-/home/user/odoo-ce/deploy/.env.production.template
-/home/user/odoo-ce/deploy/README.md
-/home/user/odoo-ce/deploy/docker-compose.prod.v0.10.0.yml
-/home/user/odoo-ce/deploy/docker-compose.prod.v0.9.1.yml
-/home/user/odoo-ce/deploy/docker-compose.prod.yml
-/home/user/odoo-ce/deploy/docker-compose.workos-deploy.yml
-/home/user/odoo-ce/deploy/docker-compose.yml
-/home/user/odoo-ce/deploy/k8s
-/home/user/odoo-ce/deploy/k8s/namespace.yaml
-/home/user/odoo-ce/deploy/k8s/odoo-configmap.yaml
-/home/user/odoo-ce/deploy/k8s/odoo-deployment.yaml
-/home/user/odoo-ce/deploy/k8s/odoo-ingress.yaml
-/home/user/odoo-ce/deploy/k8s/odoo-secrets.yaml
-/home/user/odoo-ce/deploy/k8s/odoo-service.yaml
-/home/user/odoo-ce/deploy/k8s/postgres-service.yaml
-/home/user/odoo-ce/deploy/k8s/postgres-statefulset.yaml
-/home/user/odoo-ce/deploy/keycloak-integration.yml
-/home/user/odoo-ce/deploy/mattermost-integration.yml
-/home/user/odoo-ce/deploy/monitoring_schema.sql
-/home/user/odoo-ce/deploy/monitoring_views.sql
-/home/user/odoo-ce/deploy/nginx
-/home/user/odoo-ce/deploy/nginx/erp.insightpulseai.net.conf
-/home/user/odoo-ce/deploy/odoo-auto-heal.service
-/home/user/odoo-ce/deploy/odoo.conf
+/opt/odoo-ce/deploy
+├── k8s
+│   ├── namespace.yaml
+│   ├── odoo-configmap.yaml
+│   ├── odoo-deployment.yaml
+│   ├── odoo-ingress.yaml
+│   ├── odoo-secrets.yaml
+│   ├── odoo-service.yaml
+│   ├── postgres-service.yaml
+│   └── postgres-statefulset.yaml
+├── nginx
+│   └── erp.insightpulseai.net.conf
+├── README.md
+├── docker-compose.prod.v0.10.0.yml
+├── docker-compose.prod.v0.9.1.yml
+├── docker-compose.prod.yml
+├── docker-compose.workos-deploy.yml
+├── docker-compose.yml
+├── keycloak-integration.yml
+├── mattermost-integration.yml
+├── monitoring_schema.sql
+├── monitoring_views.sql
+├── odoo-auto-heal.service
+└── odoo.conf
 ```
 
 ## tools/
 ```
-/home/user/odoo-ce/tools
-/home/user/odoo-ce/tools/audit
-/home/user/odoo-ce/tools/audit/db_truth.sql
-/home/user/odoo-ce/tools/audit/gen_prod_snapshot.sh
-/home/user/odoo-ce/tools/audit/gen_repo_tree.sh
-/home/user/odoo-ce/tools/audit/gen_repo_tree_prod.sh
-/home/user/odoo-ce/tools/audit/gen_runtime_sitemap.sh
-/home/user/odoo-ce/tools/audit/gen_snapshot_json.sh
-/home/user/odoo-ce/tools/audit/http_crawler.py
-/home/user/odoo-ce/tools/audit/require_audit_artifacts.sh
-/home/user/odoo-ce/tools/audit/run_audit_bundle.sh
-/home/user/odoo-ce/tools/audit/snapshot.sh
-/home/user/odoo-ce/tools/audit/verify_alignment.py
-/home/user/odoo-ce/tools/audit/verify_expected_paths.sh
-/home/user/odoo-ce/tools/audit/verify_workos_install.sql
-/home/user/odoo-ce/tools/catalog
-/home/user/odoo-ce/tools/catalog/databricks_org_catalog.py
-/home/user/odoo-ce/tools/db-inventory
-/home/user/odoo-ce/tools/db-inventory/README.md
-/home/user/odoo-ce/tools/db-inventory/inventory.py
-/home/user/odoo-ce/tools/docs-crawler
-/home/user/odoo-ce/tools/docs-crawler/.env.example
-/home/user/odoo-ce/tools/docs-crawler/README.md
-/home/user/odoo-ce/tools/docs-crawler/api_ask.py
-/home/user/odoo-ce/tools/docs-crawler/config.yaml
-/home/user/odoo-ce/tools/docs-crawler/crawler.py
-/home/user/odoo-ce/tools/docs-crawler/requirements.txt
-/home/user/odoo-ce/tools/docs_catalog
-/home/user/odoo-ce/tools/docs_catalog/README.md
-/home/user/odoo-ce/tools/docs_catalog/crawl_docs.py
-/home/user/odoo-ce/tools/docs_catalog/map_to_odoo.py
-/home/user/odoo-ce/tools/docs_catalog/odoo_map.yaml
-/home/user/odoo-ce/tools/parity
-/home/user/odoo-ce/tools/parity/parity_audit.py
-/home/user/odoo-ce/tools/parity/validate_spec_kit.py
-/home/user/odoo-ce/tools/seed_all.ts
-/home/user/odoo-ce/tools/seed_doc_ocr.ts
-/home/user/odoo-ce/tools/seed_ppm.ts
-/home/user/odoo-ce/tools/seed_retail_intel.ts
-/home/user/odoo-ce/tools/seed_te_cheq.ts
+/opt/odoo-ce/tools
+├── audit
+│   ├── db_truth.sql
+│   ├── gen_prod_snapshot.sh
+│   ├── gen_repo_tree.sh
+│   ├── gen_repo_tree_prod.sh
+│   ├── gen_runtime_sitemap.sh
+│   ├── gen_snapshot_json.sh
+│   ├── http_crawler.py
+│   ├── require_audit_artifacts.sh
+│   ├── run_audit_bundle.sh
+│   ├── snapshot.sh
+│   ├── verify_alignment.py
+│   ├── verify_expected_paths.sh
+│   └── verify_workos_install.sql
+├── catalog
+│   └── databricks_org_catalog.py
+├── db-inventory
+│   ├── README.md
+│   └── inventory.py
+├── docs-crawler
+│   ├── README.md
+│   ├── api_ask.py
+│   ├── config.yaml
+│   ├── crawler.py
+│   └── requirements.txt
+├── docs_catalog
+│   ├── README.md
+│   ├── crawl_docs.py
+│   ├── map_to_odoo.py
+│   └── odoo_map.yaml
+├── parity
+│   ├── parity_audit.py
+│   └── validate_spec_kit.py
+├── seed_all.ts
+├── seed_doc_ocr.ts
+├── seed_ppm.ts
+├── seed_retail_intel.ts
+└── seed_te_cheq.ts
 ```
 
 ## catalog/
 ```
-/home/user/odoo-ce/catalog
-/home/user/odoo-ce/catalog/best_of_breed.yaml
-/home/user/odoo-ce/catalog/equivalence_matrix.csv
-/home/user/odoo-ce/catalog/equivalence_matrix_workos_notion.csv
+/opt/odoo-ce/catalog
+├── best_of_breed.yaml
+├── equivalence_matrix.csv
+└── equivalence_matrix_workos_notion.csv
 ```
 
 ## spec/
 ```
-/home/user/odoo-ce/spec
-/home/user/odoo-ce/spec/bir-tax-compliance
-/home/user/odoo-ce/spec/bir-tax-compliance/constitution.md
-/home/user/odoo-ce/spec/bir-tax-compliance/plan.md
-/home/user/odoo-ce/spec/bir-tax-compliance/prd.md
-/home/user/odoo-ce/spec/bir-tax-compliance/tasks.md
-/home/user/odoo-ce/spec/close-orchestration
-/home/user/odoo-ce/spec/close-orchestration/constitution.md
-/home/user/odoo-ce/spec/close-orchestration/plan.md
-/home/user/odoo-ce/spec/close-orchestration/prd.md
-/home/user/odoo-ce/spec/close-orchestration/tasks.md
-/home/user/odoo-ce/spec/constitution.md
-/home/user/odoo-ce/spec/continue-plus
-/home/user/odoo-ce/spec/continue-plus/ALL_GREEN_CRITERIA.md
-/home/user/odoo-ce/spec/continue-plus/EVALUATION_REPORT.md
-/home/user/odoo-ce/spec/continue-plus/RUNBOOK.md
-/home/user/odoo-ce/spec/continue-plus/constitution.md
-/home/user/odoo-ce/spec/continue-plus/plan.md
-/home/user/odoo-ce/spec/continue-plus/prd.md
-/home/user/odoo-ce/spec/continue-plus/tasks.md
-/home/user/odoo-ce/spec/control-room-api
-/home/user/odoo-ce/spec/control-room-api/constitution.md
-/home/user/odoo-ce/spec/control-room-api/plan.md
-/home/user/odoo-ce/spec/control-room-api/prd.md
-/home/user/odoo-ce/spec/control-room-api/tasks.md
-/home/user/odoo-ce/spec/docs-platform-sapgrade
-/home/user/odoo-ce/spec/docs-platform-sapgrade/api-contract.yaml
-/home/user/odoo-ce/spec/docs-platform-sapgrade/constitution.md
-/home/user/odoo-ce/spec/docs-platform-sapgrade/plan.md
-/home/user/odoo-ce/spec/docs-platform-sapgrade/prd.md
-/home/user/odoo-ce/spec/docs-platform-sapgrade/tasks.md
-/home/user/odoo-ce/spec/erp-saas-clone-suite
-/home/user/odoo-ce/spec/erp-saas-clone-suite/constitution.md
-/home/user/odoo-ce/spec/erp-saas-clone-suite/plan.md
-/home/user/odoo-ce/spec/erp-saas-clone-suite/prd.md
-/home/user/odoo-ce/spec/erp-saas-clone-suite/tasks.md
-/home/user/odoo-ce/spec/expense-automation
-/home/user/odoo-ce/spec/expense-automation/constitution.md
-/home/user/odoo-ce/spec/expense-automation/plan.md
-/home/user/odoo-ce/spec/expense-automation/prd.md
-/home/user/odoo-ce/spec/expense-automation/tasks.md
-/home/user/odoo-ce/spec/hire-to-retire
-/home/user/odoo-ce/spec/hire-to-retire/constitution.md
-/home/user/odoo-ce/spec/hire-to-retire/plan.md
-/home/user/odoo-ce/spec/hire-to-retire/prd.md
-/home/user/odoo-ce/spec/hire-to-retire/tasks.md
-/home/user/odoo-ce/spec/insightpulse-mobile
-/home/user/odoo-ce/spec/insightpulse-mobile/constitution.md
-/home/user/odoo-ce/spec/insightpulse-mobile/plan.md
-/home/user/odoo-ce/spec/insightpulse-mobile/prd.md
-/home/user/odoo-ce/spec/insightpulse-mobile/tasks.md
-/home/user/odoo-ce/spec/ipai-control-center
-/home/user/odoo-ce/spec/ipai-control-center/constitution.md
-/home/user/odoo-ce/spec/ipai-control-center/plan.md
-/home/user/odoo-ce/spec/ipai-control-center/prd.md
-/home/user/odoo-ce/spec/ipai-control-center/tasks.md
-/home/user/odoo-ce/spec/ipai-month-end
-/home/user/odoo-ce/spec/ipai-month-end/constitution.md
-/home/user/odoo-ce/spec/ipai-month-end/plan.md
-/home/user/odoo-ce/spec/ipai-month-end/prd.md
-/home/user/odoo-ce/spec/ipai-month-end/tasks.md
-/home/user/odoo-ce/spec/ipai-tbwa-finance
-/home/user/odoo-ce/spec/ipai-tbwa-finance/constitution.md
-/home/user/odoo-ce/spec/ipai-tbwa-finance/plan.md
-/home/user/odoo-ce/spec/ipai-tbwa-finance/prd.md
-/home/user/odoo-ce/spec/ipai-tbwa-finance/tasks.md
-/home/user/odoo-ce/spec/knowledge-hub
-/home/user/odoo-ce/spec/knowledge-hub/constitution.md
-/home/user/odoo-ce/spec/knowledge-hub/plan.md
-/home/user/odoo-ce/spec/knowledge-hub/prd.md
-/home/user/odoo-ce/spec/knowledge-hub/tasks.md
-/home/user/odoo-ce/spec/notion-finance-ppm-control-room
-/home/user/odoo-ce/spec/notion-finance-ppm-control-room/constitution.md
-/home/user/odoo-ce/spec/notion-finance-ppm-control-room/plan.md
-/home/user/odoo-ce/spec/notion-finance-ppm-control-room/prd.md
-/home/user/odoo-ce/spec/notion-finance-ppm-control-room/tasks.md
-/home/user/odoo-ce/spec/odoo-apps-inventory
-/home/user/odoo-ce/spec/odoo-apps-inventory/constitution.md
-/home/user/odoo-ce/spec/odoo-apps-inventory/plan.md
-/home/user/odoo-ce/spec/odoo-apps-inventory/prd.md
-/home/user/odoo-ce/spec/odoo-apps-inventory/tasks.md
-/home/user/odoo-ce/spec/parallel-control-planes
-/home/user/odoo-ce/spec/parallel-control-planes/constitution.md
-/home/user/odoo-ce/spec/parallel-control-planes/plan.md
-/home/user/odoo-ce/spec/parallel-control-planes/prd.md
-/home/user/odoo-ce/spec/parallel-control-planes/tasks.md
-/home/user/odoo-ce/spec/plan.md
-/home/user/odoo-ce/spec/prd.md
-/home/user/odoo-ce/spec/pulser-master-control
-/home/user/odoo-ce/spec/pulser-master-control/capability-registry.yaml
-/home/user/odoo-ce/spec/pulser-master-control/constitution.md
-/home/user/odoo-ce/spec/pulser-master-control/plan.md
-/home/user/odoo-ce/spec/pulser-master-control/prd.md
-/home/user/odoo-ce/spec/pulser-master-control/tasks.md
-/home/user/odoo-ce/spec/seed-bundle
-/home/user/odoo-ce/spec/seed-bundle/constitution.md
-/home/user/odoo-ce/spec/seed-bundle/plan.md
-/home/user/odoo-ce/spec/seed-bundle/prd.md
-/home/user/odoo-ce/spec/seed-bundle/tasks.md
-/home/user/odoo-ce/spec/tasks.md
+/opt/odoo-ce/spec
+├── adk-control-room
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── bir-tax-compliance
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── close-orchestration
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── continue-plus
+│   ├── ALL_GREEN_CRITERIA.md
+│   ├── EVALUATION_REPORT.md
+│   ├── RUNBOOK.md
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── control-room-api
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── docs-platform-sapgrade
+│   ├── api-contract.yaml
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── erp-saas-clone-suite
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── expense-automation
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── hire-to-retire
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── insightpulse-mobile
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── ipai-control-center
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── ipai-month-end
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── ipai-tbwa-finance
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── knowledge-hub
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── notion-finance-ppm-control-room
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── odoo-apps-inventory
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── parallel-control-planes
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── pulser-master-control
+│   ├── capability-registry.yaml
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── seed-bundle
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── workos-notion-clone
+│   ├── constitution.md
+│   ├── plan.md
+│   ├── prd.md
+│   └── tasks.md
+├── constitution.md
+├── plan.md
+├── prd.md
+└── tasks.md
 ```
 
 ## kb/
 ```
-/home/user/odoo-ce/kb
-/home/user/odoo-ce/kb/audit
-/home/user/odoo-ce/kb/audit/AGENT_AUDIT_RULES.md
-/home/user/odoo-ce/kb/design_system
-/home/user/odoo-ce/kb/design_system/tokens.yaml
-/home/user/odoo-ce/kb/parity
-/home/user/odoo-ce/kb/parity/baseline.json
-/home/user/odoo-ce/kb/parity/rubric.json
+/opt/odoo-ce/kb
+├── audit
+│   └── AGENT_AUDIT_RULES.md
+├── design_system
+│   └── tokens.yaml
+└── parity
+    ├── baseline.json
+    └── rubric.json
 ```
 
 ## docs/
 ```
-/home/user/odoo-ce/docs
-/home/user/odoo-ce/docs/003-odoo-ce-custom-image-spec.md
-/home/user/odoo-ce/docs/AGENTIC_CLOUD_PRD.md
-/home/user/odoo-ce/docs/AGENT_FRAMEWORK_SESSION_REPORT.md
-/home/user/odoo-ce/docs/APP_ICONS_README.md
-/home/user/odoo-ce/docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md
-/home/user/odoo-ce/docs/CUSTOM_IMAGE_SUCCESS_CRITERIA.md
-/home/user/odoo-ce/docs/DB_TUNING.md
-/home/user/odoo-ce/docs/DELIVERABLES_MANIFEST.md
-/home/user/odoo-ce/docs/DEPLOYMENT.md
-/home/user/odoo-ce/docs/DEPLOYMENT_GUIDE.md
-/home/user/odoo-ce/docs/DEPLOYMENT_NAMING_MATRIX.md
-/home/user/odoo-ce/docs/DEPLOY_NOTION_WORKOS.md
-/home/user/odoo-ce/docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md
-/home/user/odoo-ce/docs/DOCKERFILE_COMPARISON.md
-/home/user/odoo-ce/docs/DOCKER_CD_MIGRATION_GUIDE.md
-/home/user/odoo-ce/docs/DOCKER_VALIDATION_GUIDE.md
-/home/user/odoo-ce/docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
-/home/user/odoo-ce/docs/ECOSYSTEM_GUIDE.md
-/home/user/odoo-ce/docs/ENTERPRISE_FEATURE_GAP.yaml
-/home/user/odoo-ce/docs/EXECUTIVE_SUMMARY.md
-/home/user/odoo-ce/docs/FEATURE_CHEQROOM_PARITY.md
-/home/user/odoo-ce/docs/FEATURE_CONCUR_PARITY.md
-/home/user/odoo-ce/docs/FEATURE_WORKSPACE_PARITY.md
-/home/user/odoo-ce/docs/FINAL_DEPLOYMENT_GUIDE.md
-/home/user/odoo-ce/docs/FINAL_OPERABILITY_CHECKLIST.md
-/home/user/odoo-ce/docs/FINAL_READINESS_CHECK.md
-/home/user/odoo-ce/docs/FINANCE_PPM_IMPLEMENTATION.md
-/home/user/odoo-ce/docs/GO_LIVE_CHECKLIST.md
-/home/user/odoo-ce/docs/HEALTH_CHECK.md
-/home/user/odoo-ce/docs/IMAGE_GUIDE.md
-/home/user/odoo-ce/docs/IMPLEMENTATION_SUMMARY.md
-/home/user/odoo-ce/docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md
-/home/user/odoo-ce/docs/INDUSTRY_PARITY_ANALYSIS.md
-/home/user/odoo-ce/docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
-/home/user/odoo-ce/docs/KUBERNETES_MIGRATION_SPECIFICATION.md
-/home/user/odoo-ce/docs/MATTERMOST_ALERTING_SETUP.md
-/home/user/odoo-ce/docs/MATTERMOST_CHATOPS_DEPLOYMENT.md
-/home/user/odoo-ce/docs/MCP_IMPLEMENTATION_STATUS.md
-/home/user/odoo-ce/docs/MIXED_CONTENT_FIX.md
-/home/user/odoo-ce/docs/MVP_GO_LIVE_CHECKLIST.md
-/home/user/odoo-ce/docs/N8N_CREDENTIALS_BOOTSTRAP.md
-/home/user/odoo-ce/docs/OCA_MIGRATION.md
-/home/user/odoo-ce/docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
-/home/user/odoo-ce/docs/ODOO_18_CE_CHEATSHEET.md
-/home/user/odoo-ce/docs/ODOO_18_EE_TO_CE_OCA_PARITY.md
-/home/user/odoo-ce/docs/ODOO_APPS_CATALOG.md
-/home/user/odoo-ce/docs/ODOO_ARCHITECT_PERSONA.md
-/home/user/odoo-ce/docs/ODOO_CE_DEPLOYMENT_SUMMARY.md
-/home/user/odoo-ce/docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
-/home/user/odoo-ce/docs/ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
-/home/user/odoo-ce/docs/ODOO_IMAGE_SPEC.md
-/home/user/odoo-ce/docs/ODOO_MODULE_DEPLOYMENT.md
-/home/user/odoo-ce/docs/OFFLINE_TARBALL_DEPLOYMENT.md
-/home/user/odoo-ce/docs/PRD_ipai_ppm_portfolio.md
-/home/user/odoo-ce/docs/PROD_READINESS_GAPS.md
-/home/user/odoo-ce/docs/QUICK_REFERENCE_SSO_SETUP.md
-/home/user/odoo-ce/docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
-/home/user/odoo-ce/docs/README.md
-/home/user/odoo-ce/docs/README_MCP_STACK.md
-/home/user/odoo-ce/docs/REPO_SNAPSHOT.json
-/home/user/odoo-ce/docs/REPO_TREE.contract.md
-/home/user/odoo-ce/docs/REPO_TREE.generated.md
-/home/user/odoo-ce/docs/SAAS_PARITY_READINESS.md
-/home/user/odoo-ce/docs/SECRETS_NAMING_AND_STORAGE.md
-/home/user/odoo-ce/docs/SEMANTIC_VERSIONING_STRATEGY.md
-/home/user/odoo-ce/docs/SITEMAP.md
-/home/user/odoo-ce/docs/SSO_VALIDATION_CHECKLIST.md
-/home/user/odoo-ce/docs/SUPERSET_PPM_ANALYTICS_GUIDE.md
-/home/user/odoo-ce/docs/TAGGING_STRATEGY.md
-/home/user/odoo-ce/docs/TESTING_ODOO_18.md
-/home/user/odoo-ce/docs/WBS_LOGFRAME_MAPPING.md
-/home/user/odoo-ce/docs/adr
-/home/user/odoo-ce/docs/adr/ADR-0001-clone-not-integrate.md
-/home/user/odoo-ce/docs/architecture
-/home/user/odoo-ce/docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
-/home/user/odoo-ce/docs/architecture/README.md
-/home/user/odoo-ce/docs/architecture/ipai_idp_architecture.drawio
-/home/user/odoo-ce/docs/architecture/ipai_idp_build_deploy_custom_models.drawio
-/home/user/odoo-ce/docs/architecture/ipai_idp_multi_agent_workflow.drawio
-/home/user/odoo-ce/docs/architecture/ipai_idp_pdf_processing.drawio
-/home/user/odoo-ce/docs/branch-cleanup-analysis.md
-/home/user/odoo-ce/docs/db
-/home/user/odoo-ce/docs/db/DB_CONVENTIONS_AND_NAMING.md
-/home/user/odoo-ce/docs/db/DB_CURRENT_INVENTORY.md
-/home/user/odoo-ce/docs/db/DB_DOMAIN_TABLE_SPECS.md
-/home/user/odoo-ce/docs/db/DB_ODOO_MAPPING.md
-/home/user/odoo-ce/docs/db/DB_REORG_MIGRATION_PLAN.md
-/home/user/odoo-ce/docs/db/DB_RLS_POLICY_TEMPLATES.md
-/home/user/odoo-ce/docs/db/DB_TABLE_CLASSIFICATION_DRAFT.md
-/home/user/odoo-ce/docs/db/DB_TARGET_ARCHITECTURE.md
-/home/user/odoo-ce/docs/deployment
-/home/user/odoo-ce/docs/deployment/OCA_CI_GUARDIAN.md
-/home/user/odoo-ce/docs/deployment/README.md
-/home/user/odoo-ce/docs/diagrams
-/home/user/odoo-ce/docs/diagrams/architecture
-/home/user/odoo-ce/docs/finance-ppm
-/home/user/odoo-ce/docs/finance-ppm/OCA_INSTALLATION_GUIDE.md
-/home/user/odoo-ce/docs/odoo-18-handbook
-/home/user/odoo-ce/docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md
+/opt/odoo-ce/docs
+├── adr
+│   └── ADR-0001-clone-not-integrate.md
+├── architecture
+│   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
+│   ├── README.md
+│   ├── ipai_idp_architecture.drawio
+│   ├── ipai_idp_build_deploy_custom_models.drawio
+│   ├── ipai_idp_multi_agent_workflow.drawio
+│   └── ipai_idp_pdf_processing.drawio
+├── db
+│   ├── DB_CONVENTIONS_AND_NAMING.md
+│   ├── DB_CURRENT_INVENTORY.md
+│   ├── DB_DOMAIN_TABLE_SPECS.md
+│   ├── DB_ODOO_MAPPING.md
+│   ├── DB_REORG_MIGRATION_PLAN.md
+│   ├── DB_RLS_POLICY_TEMPLATES.md
+│   ├── DB_TABLE_CLASSIFICATION_DRAFT.md
+│   └── DB_TARGET_ARCHITECTURE.md
+├── deployment
+│   ├── CLAUDE_CODE_CLI_PROMPT.md
+│   ├── DEPLOYMENT_EXECUTION_GUIDE.md
+│   ├── DEPLOYMENT_VERIFICATION_MATRIX.md
+│   ├── OCA_CI_GUARDIAN.md
+│   ├── PRE_FLIGHT_CHECKLIST.md
+│   ├── README.md
+│   └── WORKOS_DEPLOYMENT_PACKAGE.md
+├── diagrams
+│   └── architecture
+├── finance-ppm
+│   └── OCA_INSTALLATION_GUIDE.md
+├── odoo-18-handbook
+│   ├── pages
+│   ├── spec
+│   ├── ODOO_18_CE_OCA_HANDBOOK.md
+│   └── README.md
+├── ppm
+│   ├── architecture.md
+│   ├── data-dictionary.md
+│   └── runbook.md
+├── repo
+│   ├── GIT_STATE.prod.txt
+│   ├── REPO_SNAPSHOT.prod.json
+│   ├── REPO_TREE.prod.md
+│   └── WORKOS_REPO_TREE.prod.md
+├── runtime
+│   ├── ADDONS_PATH.prod.txt
+│   ├── CONTAINER_PATH_CHECK.prod.txt
+│   ├── HTTP_SITEMAP.prod.json
+│   ├── MODULE_STATES.prod.csv
+│   ├── ODOO_MENU_SITEMAP.prod.json
+│   ├── ODOO_MODEL_SNAPSHOT.prod.json
+│   ├── WORKOS_MODELS.prod.json
+│   └── WORKOS_MODULES.prod.csv
+├── workflows
+│   └── hire-to-retire-bpmn.html
+├── 003-odoo-ce-custom-image-spec.md
+├── AGENTIC_CLOUD_PRD.md
+├── AGENT_FRAMEWORK_SESSION_REPORT.md
+├── APP_ICONS_README.md
+├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
+├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
+├── DB_TUNING.md
+├── DELIVERABLES_MANIFEST.md
+├── DEPLOYMENT.md
+├── DEPLOYMENT_GUIDE.md
+├── DEPLOYMENT_NAMING_MATRIX.md
+├── DEPLOY_NOTION_WORKOS.md
+├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
+├── DOCKERFILE_COMPARISON.md
+├── DOCKER_CD_MIGRATION_GUIDE.md
+├── DOCKER_VALIDATION_GUIDE.md
+├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
+├── ECOSYSTEM_GUIDE.md
+├── ENTERPRISE_FEATURE_GAP.yaml
+├── EXECUTIVE_SUMMARY.md
+├── FEATURE_CHEQROOM_PARITY.md
+├── FEATURE_CONCUR_PARITY.md
+├── FEATURE_WORKSPACE_PARITY.md
+├── FINAL_DEPLOYMENT_GUIDE.md
+├── FINAL_OPERABILITY_CHECKLIST.md
+├── FINAL_READINESS_CHECK.md
+├── FINANCE_PPM_IMPLEMENTATION.md
+├── GITHUB_SECRETS_SETUP.md
+├── GIT_WORKTREE_STRATEGY.md
+├── GO_LIVE_CHECKLIST.md
+├── HEALTH_CHECK.md
+├── IMAGE_GUIDE.md
+├── IMPLEMENTATION_SUMMARY.md
+├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
+├── INDUSTRY_PARITY_ANALYSIS.md
+├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
+├── KUBERNETES_MIGRATION_SPECIFICATION.md
+├── MATTERMOST_ALERTING_SETUP.md
+├── MATTERMOST_CHATOPS_DEPLOYMENT.md
+├── MCP_IMPLEMENTATION_STATUS.md
+├── MIXED_CONTENT_FIX.md
+├── MVP_GO_LIVE_CHECKLIST.md
+├── N8N_CREDENTIALS_BOOTSTRAP.md
+├── OCA_MIGRATION.md
+├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
+├── ODOO_18_CE_CHEATSHEET.md
+├── ODOO_18_EE_TO_CE_OCA_PARITY.md
+├── ODOO_APPS_CATALOG.md
+├── ODOO_ARCHITECT_PERSONA.md
+├── ODOO_CE_DEPLOYMENT_SUMMARY.md
+├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
+├── ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
+├── ODOO_IMAGE_SPEC.md
+├── ODOO_MODULE_DEPLOYMENT.md
+├── OFFLINE_TARBALL_DEPLOYMENT.md
+├── PRD_ipai_ppm_portfolio.md
+├── PROD_READINESS_GAPS.md
+├── PROD_SNAPSHOT_MANIFEST.md
+├── QUICK_REFERENCE_SSO_SETUP.md
+├── RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
+├── README.md
+├── README_MCP_STACK.md
+├── REPO_SNAPSHOT.json
+├── REPO_TREE.contract.md
+├── REPO_TREE.generated.md
+├── SAAS_PARITY_READINESS.md
+├── SECRETS_NAMING_AND_STORAGE.md
+├── SEMANTIC_VERSIONING_STRATEGY.md
+├── SITEMAP.md
+├── SSO_VALIDATION_CHECKLIST.md
+├── SUPERSET_PPM_ANALYTICS_GUIDE.md
+├── TAGGING_STRATEGY.md
+├── TESTING_ODOO_18.md
+├── WBS_LOGFRAME_MAPPING.md
+├── WORKOS_DEPLOYMENT_MANIFEST.md
+├── branch-cleanup-analysis.md
+├── odoo-apps-parity.md
+├── supabase-integration.md
+└── v0.9.1_DEPLOYMENT_GUIDE.md
 ```
 
 ## .github/
 ```
-/home/user/odoo-ce/.github
-/home/user/odoo-ce/.github/copilot-instructions.md
-/home/user/odoo-ce/.github/workflows
-/home/user/odoo-ce/.github/workflows/agent-preflight.yml
-/home/user/odoo-ce/.github/workflows/all-green-gates.yml
-/home/user/odoo-ce/.github/workflows/audit-contract.yml
-/home/user/odoo-ce/.github/workflows/auto-sitemap-tree.yml
-/home/user/odoo-ce/.github/workflows/build-seeded-image.yml
-/home/user/odoo-ce/.github/workflows/build-unified-image.yml
-/home/user/odoo-ce/.github/workflows/ci-odoo-ce.yml
-/home/user/odoo-ce/.github/workflows/ci-odoo-oca.yml
-/home/user/odoo-ce/.github/workflows/control-room-ci.yml
-/home/user/odoo-ce/.github/workflows/databricks-dab-ci.yml
-/home/user/odoo-ce/.github/workflows/deploy-ipai-control-center-docs.yml
-/home/user/odoo-ce/.github/workflows/deploy-production.yml
-/home/user/odoo-ce/.github/workflows/diagrams-qa.yml
-/home/user/odoo-ce/.github/workflows/docs-crawler-cron.yml
-/home/user/odoo-ce/.github/workflows/health-check.yml
-/home/user/odoo-ce/.github/workflows/infra-validate.yml
-/home/user/odoo-ce/.github/workflows/lakehouse-smoke.yml
-/home/user/odoo-ce/.github/workflows/notion-sync-ci.yml
-/home/user/odoo-ce/.github/workflows/production-ready.yml
-/home/user/odoo-ce/.github/workflows/repo-structure.yml
-/home/user/odoo-ce/.github/workflows/seeds-validate.yml
-/home/user/odoo-ce/.github/workflows/spec-and-parity.yml
-/home/user/odoo-ce/.github/workflows/spec-kit-enforce.yml
-/home/user/odoo-ce/.github/workflows/spec-validate.yml
-/home/user/odoo-ce/.github/workflows/superset-bump.yml
-/home/user/odoo-ce/.github/workflows/sync-master.yml
-/home/user/odoo-ce/.github/workflows/verify-gates.yml
+/opt/odoo-ce/.github
+├── workflows
+│   ├── agent-preflight.yml
+│   ├── all-green-gates.yml
+│   ├── audit-contract.yml
+│   ├── auto-sitemap-tree.yml
+│   ├── build-seeded-image.yml
+│   ├── build-unified-image.yml
+│   ├── ci-odoo-ce.yml
+│   ├── ci-odoo-oca.yml
+│   ├── control-room-ci.yml
+│   ├── databricks-dab-ci.yml
+│   ├── deploy-finance-ppm.yml
+│   ├── deploy-ipai-control-center-docs.yml
+│   ├── deploy-production.yml
+│   ├── diagrams-qa.yml
+│   ├── docs-crawler-cron.yml
+│   ├── health-check.yml
+│   ├── infra-validate.yml
+│   ├── lakehouse-smoke.yml
+│   ├── notion-sync-ci.yml
+│   ├── production-ready.yml
+│   ├── repo-structure.yml
+│   ├── seeds-validate.yml
+│   ├── spec-and-parity.yml
+│   ├── spec-kit-enforce.yml
+│   ├── spec-validate.yml
+│   ├── superset-bump.yml
+│   ├── sync-master.yml
+│   └── verify-gates.yml
+└── copilot-instructions.md
 ```
 
 ## IPAI Modules
@@ -447,6 +568,7 @@ SHA: 1c04f00
 ipai_bir_tax_compliance
 ipai_close_orchestration
 ipai_crm_pipeline
+ipai_finance_ppm_golive
 ipai_month_end
 ipai_platform_approvals
 ipai_platform_audit
