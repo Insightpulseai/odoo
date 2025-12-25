@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 013d3c1c14f7c48e8b6b6f294675419c15da5ddb
+> Commit: 31fab1228e190bb14af7baef4dad783073ae49aa
 
 ```
 .
@@ -1014,6 +1014,38 @@
 │   │       └── manifest.json
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
+│   ├── ipai
+│   │   ├── ARCHITECTURE.md
+│   │   ├── CHANGELOG.md
+│   │   ├── INSTALLATION.md
+│   │   ├── OPERATIONS_RUNBOOK.md
+│   │   ├── README.md
+│   │   ├── SECURITY_MODEL.md
+│   │   └── module_scan.json
+│   ├── modules
+│   │   ├── INDEX.md
+│   │   ├── generation_summary.json
+│   │   ├── ipai_bir_tax_compliance.md
+│   │   ├── ipai_close_orchestration.md
+│   │   ├── ipai_crm_pipeline.md
+│   │   ├── ipai_finance_ppm_golive.md
+│   │   ├── ipai_month_end.md
+│   │   ├── ipai_platform_approvals.md
+│   │   ├── ipai_platform_audit.md
+│   │   ├── ipai_platform_permissions.md
+│   │   ├── ipai_platform_theme.md
+│   │   ├── ipai_platform_workflow.md
+│   │   ├── ipai_ppm_a1.md
+│   │   ├── ipai_tbwa_finance.md
+│   │   ├── ipai_workos_affine.md
+│   │   ├── ipai_workos_blocks.md
+│   │   ├── ipai_workos_canvas.md
+│   │   ├── ipai_workos_collab.md
+│   │   ├── ipai_workos_core.md
+│   │   ├── ipai_workos_db.md
+│   │   ├── ipai_workos_search.md
+│   │   ├── ipai_workos_templates.md
+│   │   └── ipai_workos_views.md
 │   ├── odoo-18-handbook
 │   │   ├── pages
 │   │   │   ├── 01-finance-accounting.md
@@ -1409,6 +1441,7 @@
 │   ├── generate_2026_finance_calendar.py
 │   ├── generate_2026_schedule.py
 │   ├── generate_finance_dashboard.py
+│   ├── generate_module_docs.py
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
 │   ├── image-diff-report.sh
@@ -1430,6 +1463,7 @@
 │   ├── report_ci_telemetry.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
+│   ├── scan_ipai_modules.py
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
@@ -1942,15 +1976,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-620 directories, 1317 files
+622 directories, 1349 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 698 |
-| Files | 1940 |
-| Python files | 549 |
+| Directories | 700 |
+| Files | 1972 |
+| Python files | 551 |
 | XML files | 293 |
-| Markdown files | 361 |
+| Markdown files | 389 |
