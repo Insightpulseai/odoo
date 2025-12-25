@@ -1,15 +1,9 @@
 name: Infrastructure Validation
 
+# DISABLED: Project uses DigitalOcean, not Azure (per CLAUDE.md)
+# Azure services are prohibited for this project
 on:
-  push:
-    branches: [main, develop]
-    paths:
-      - 'infra/azure/**'
-      - '.github/workflows/infra-validate.yml'
-  pull_request:
-    branches: [main]
-    paths:
-      - 'infra/azure/**'
+  workflow_dispatch: # Manual trigger only
 
 jobs:
   validate-bicep:
