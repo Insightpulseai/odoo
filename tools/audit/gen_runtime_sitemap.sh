@@ -128,9 +128,9 @@ SELECT json_build_object(
       'action', m.action
     ) ORDER BY m.id), '[]'::json)
     FROM ir_ui_menu m
-    WHERE COALESCE(m.name->>'en_US', m.name::text) ILIKE '%workos%'
-       OR COALESCE(m.name->>'en_US', m.name::text) ILIKE '%workspace%'
-       OR COALESCE(m.name->>'en_US', m.name::text) ILIKE '%affine%'
+    WHERE COALESCE(m.name->>'en_US', (SELECT value FROM jsonb_each_text(m.name) LIMIT 1), m.name::text) ILIKE '%workos%'
+       OR COALESCE(m.name->>'en_US', (SELECT value FROM jsonb_each_text(m.name) LIMIT 1), m.name::text) ILIKE '%workspace%'
+       OR COALESCE(m.name->>'en_US', (SELECT value FROM jsonb_each_text(m.name) LIMIT 1), m.name::text) ILIKE '%affine%'
   )
 )
 FROM ir_ui_menu;
