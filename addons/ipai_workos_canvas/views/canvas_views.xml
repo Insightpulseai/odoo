@@ -5,12 +5,12 @@
         <field name="name">ipai.workos.canvas.list</field>
         <field name="model">ipai.workos.canvas</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="page_id"/>
                 <field name="write_date"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -62,7 +62,7 @@
     <record id="action_ipai_workos_canvas" model="ir.actions.act_window">
         <field name="name">Canvas</field>
         <field name="res_model">ipai.workos.canvas</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first canvas

@@ -5,11 +5,11 @@
         <field name="name">ipai.workos.database.tree</field>
         <field name="model">ipai.workos.database</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="space_id"/>
                 <field name="row_count"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -44,14 +44,14 @@
                     <notebook>
                         <page string="Properties (Schema)">
                             <field name="property_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="property_type"/>
                                     <field name="is_title"/>
                                     <field name="is_visible"/>
                                     <field name="width"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Description">
@@ -69,12 +69,12 @@
         <field name="name">ipai.workos.row.tree</field>
         <field name="model">ipai.workos.row</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="database_id"/>
                 <field name="write_date"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -104,7 +104,7 @@
     <record id="action_workos_database" model="ir.actions.act_window">
         <field name="name">Databases</field>
         <field name="res_model">ipai.workos.database</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Add to Work OS menu -->

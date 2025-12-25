@@ -5,12 +5,12 @@
         <field name="name">ipai.workos.workspace.tree</field>
         <field name="model">ipai.workos.workspace</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="owner_id"/>
                 <field name="space_count"/>
                 <field name="active" column_invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 

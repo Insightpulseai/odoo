@@ -1,0 +1,100 @@
+name: Deploy Finance PPM to Production
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/**'
+      - 'workflows/finance_ppm/**'
+      - 'scripts/ci/**'
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: 'Force rebuild all components'
+        required: false
+        default: 'false'
+
+env:
+  DROPLET_IP: 159.223.75.148
+  ODOO_DB: odoo_accounting
+  ODOO_PORT: 8071
+  N8N_BASE_URL: https://ipa.insightpulseai.net
+
+jobs:
+  deploy-oca:
+    name: Install OCA Modules
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
+
+      - name: Install OCA modules
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} \
+            'bash -s' < scripts/ci/install-oca-modules.sh
+
+  deploy-ipai:
+    name: Deploy IPAI Finance PPM Modules
+    runs-on: ubuntu-latest
+    needs: deploy-oca
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
+
+      - name: Deploy IPAI modules
+        env:
+          ODOO_ADMIN_PASSWORD: ${{ secrets.ODOO_ADMIN_PASSWORD }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} \
+            "ODOO_ADMIN_PASSWORD=$ODOO_ADMIN_PASSWORD bash -s" < scripts/ci/deploy-ipai-modules.sh
+
+  deploy-n8n:
+    name: Import n8n Workflows
+    runs-on: ubuntu-latest
+    needs: deploy-ipai
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
+
+      - name: Import n8n workflows
+        env:
+          N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} \
+            "N8N_API_KEY=$N8N_API_KEY bash -s" < scripts/ci/import-n8n-workflows.sh
+
+  verify-deployment:
+    name: Verify Deployment
+    runs-on: ubuntu-latest
+    needs: deploy-n8n
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DROPLET_SSH_KEY }}
+
+      - name: Run deployment verification
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.MATTERMOST_WEBHOOK_URL }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} \
+            "SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY MATTERMOST_WEBHOOK_URL=$MATTERMOST_WEBHOOK_URL bash -s" < scripts/ci/verify-deployment.sh

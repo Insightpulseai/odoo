@@ -5,14 +5,14 @@
         <field name="name">ipai.workos.comment.tree</field>
         <field name="model">ipai.workos.comment</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="target_name"/>
                 <field name="content_text"/>
                 <field name="author_id"/>
                 <field name="reply_count"/>
                 <field name="is_resolved"/>
                 <field name="create_date"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -52,11 +52,11 @@
                     </group>
                     <group string="Replies" invisible="reply_count == 0">
                         <field name="child_ids" nolabel="1">
-                            <tree>
+                            <list>
                                 <field name="author_id"/>
                                 <field name="content_text"/>
                                 <field name="create_date"/>
-                            </tree>
+                            </list>
                         </field>
                     </group>
                 </sheet>
@@ -69,7 +69,7 @@
     <record id="action_workos_comment" model="ir.actions.act_window">
         <field name="name">Comments</field>
         <field name="res_model">ipai.workos.comment</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Add to menu -->

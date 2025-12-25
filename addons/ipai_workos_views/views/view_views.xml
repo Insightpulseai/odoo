@@ -5,7 +5,7 @@
         <field name="name">ipai.workos.view.tree</field>
         <field name="model">ipai.workos.view</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="database_id"/>
@@ -13,7 +13,7 @@
                 <field name="is_default"/>
                 <field name="is_shared"/>
                 <field name="user_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -62,7 +62,7 @@
     <record id="action_workos_view" model="ir.actions.act_window">
         <field name="name">Saved Views</field>
         <field name="res_model">ipai.workos.view</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Add to menu -->
