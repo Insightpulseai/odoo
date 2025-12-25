@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6003f06c5860e93ff764c9d63d9765358fcd40e9
+> Commit: 2dd9bc6c6583a2ca9762612707edb0086dbab1d2
 
 ```
 .
@@ -38,6 +38,7 @@
 │   ├── workflows
 │   │   ├── agent-preflight.yml
 │   │   ├── all-green-gates.yml
+│   │   ├── audit-contract.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
@@ -417,6 +418,16 @@
 │   │   │   └── audit_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_platform_permissions
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── permission.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── permission_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_platform_theme
 │   │   ├── static
 │   │   │   └── src
@@ -492,6 +503,108 @@
 │   │   │   ├── menu.xml
 │   │   │   ├── ph_holiday_views.xml
 │   │   │   └── res_partner_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_affine
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_blocks
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── block.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── block_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_canvas
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── canvas.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── canvas_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_collab
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── comment.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── comment_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_core
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── page.py
+│   │   │   ├── space.py
+│   │   │   └── workspace.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   ├── menu_views.xml
+│   │   │   ├── page_views.xml
+│   │   │   ├── space_views.xml
+│   │   │   └── workspace_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_db
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── database.py
+│   │   │   ├── property.py
+│   │   │   └── row.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── database_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_search
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── search.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── search_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_templates
+│   │   ├── data
+│   │   │   └── default_templates.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── template.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── template_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_workos_views
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── view.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── view_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   └── oca
@@ -696,6 +809,9 @@
 │           ├── README.rst
 │           ├── __init__.py
 │           └── __manifest__.py
+├── audit
+│   ├── snapshot.json
+│   └── snapshot.txt
 ├── automations
 │   └── n8n
 │       └── workflows
@@ -714,7 +830,8 @@
 │   └── FinanceClosing_RecurringTasks.ics
 ├── catalog
 │   ├── best_of_breed.yaml
-│   └── equivalence_matrix.csv
+│   ├── equivalence_matrix.csv
+│   └── equivalence_matrix_workos_notion.csv
 ├── clients
 │   └── flutter_receipt_ocr
 │       ├── lib
@@ -780,6 +897,7 @@
 │   ├── docker-compose.prod.v0.10.0.yml
 │   ├── docker-compose.prod.v0.9.1.yml
 │   ├── docker-compose.prod.yml
+│   ├── docker-compose.workos-deploy.yml
 │   ├── docker-compose.yml
 │   ├── keycloak-integration.yml
 │   ├── mattermost-integration.yml
@@ -885,6 +1003,17 @@
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
 │   │   └── runbook.md
+│   ├── repo
+│   │   ├── GIT_STATE.prod.txt
+│   │   ├── REPO_SNAPSHOT.prod.json
+│   │   └── REPO_TREE.prod.md
+│   ├── runtime
+│   │   ├── ADDONS_PATH.prod.txt
+│   │   ├── CONTAINER_PATH_CHECK.prod.txt
+│   │   ├── HTTP_SITEMAP.prod.json
+│   │   ├── MODULE_STATES.prod.csv
+│   │   ├── ODOO_MENU_SITEMAP.prod.json
+│   │   └── ODOO_MODEL_SNAPSHOT.prod.json
 │   ├── workflows
 │   │   └── hire-to-retire-bpmn.html
 │   ├── 003-odoo-ce-custom-image-spec.md
@@ -898,6 +1027,7 @@
 │   ├── DEPLOYMENT.md
 │   ├── DEPLOYMENT_GUIDE.md
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
+│   ├── DEPLOY_NOTION_WORKOS.md
 │   ├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
 │   ├── DOCKERFILE_COMPARISON.md
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
@@ -941,10 +1071,14 @@
 │   ├── OFFLINE_TARBALL_DEPLOYMENT.md
 │   ├── PRD_ipai_ppm_portfolio.md
 │   ├── PROD_READINESS_GAPS.md
+│   ├── PROD_SNAPSHOT_MANIFEST.md
 │   ├── QUICK_REFERENCE_SSO_SETUP.md
 │   ├── RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
 │   ├── README.md
 │   ├── README_MCP_STACK.md
+│   ├── REPO_SNAPSHOT.json
+│   ├── REPO_TREE.contract.md
+│   ├── REPO_TREE.generated.md
 │   ├── SAAS_PARITY_READINESS.md
 │   ├── SECRETS_NAMING_AND_STORAGE.md
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
@@ -1044,6 +1178,8 @@
 │       ├── do-app-spec.yaml
 │       └── manifest.json
 ├── kb
+│   ├── audit
+│   │   └── AGENT_AUDIT_RULES.md
 │   ├── design_system
 │   │   └── tokens.yaml
 │   └── parity
@@ -1190,6 +1326,9 @@
 │   │   ├── setup-control-room.sh
 │   │   ├── setup-notion-sync.sh
 │   │   └── verify-all.sh
+│   ├── prod
+│   │   ├── deploy_workos.sh
+│   │   └── verify_workos.sh
 │   ├── sync
 │   │   ├── docs-to-kb.js
 │   │   ├── generate-sitemap.js
@@ -1221,6 +1360,7 @@
 │   ├── deploy_custom_image.sh
 │   ├── deploy_notion_tasks.sh
 │   ├── deploy_prod.sh
+│   ├── deploy_workos_prod.sh
 │   ├── deployment-checklist.sh
 │   ├── enhanced_health_check.sh
 │   ├── erp_config_cli.sh
@@ -1436,6 +1576,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── workos-notion-clone
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── constitution.md
 │   ├── plan.md
 │   ├── prd.md
@@ -1561,8 +1706,18 @@
 ├── tools
 │   ├── audit
 │   │   ├── db_truth.sql
+│   │   ├── gen_prod_snapshot.sh
+│   │   ├── gen_repo_tree.sh
+│   │   ├── gen_repo_tree_prod.sh
+│   │   ├── gen_runtime_sitemap.sh
+│   │   ├── gen_snapshot_json.sh
+│   │   ├── http_crawler.py
+│   │   ├── require_audit_artifacts.sh
+│   │   ├── run_audit_bundle.sh
 │   │   ├── snapshot.sh
-│   │   └── verify_alignment.py
+│   │   ├── verify_alignment.py
+│   │   ├── verify_expected_paths.sh
+│   │   └── verify_workos_install.sql
 │   ├── catalog
 │   │   └── databricks_org_catalog.py
 │   ├── db-inventory
@@ -1718,6 +1873,7 @@
 ├── odoo-v1.2.0-build.zip
 ├── odoo_ce_expert_prompt.md
 ├── package.json
+├── parity_report.json
 ├── ph_holidays_2026.csv
 ├── plan.md
 ├── pnpm-workspace.yaml
@@ -1737,15 +1893,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-559 directories, 1173 files
+613 directories, 1275 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 628 |
-| Files | 1787 |
-| Python files | 500 |
-| XML files | 272 |
-| Markdown files | 335 |
+| Directories | 691 |
+| Files | 1898 |
+| Python files | 543 |
+| XML files | 285 |
+| Markdown files | 345 |

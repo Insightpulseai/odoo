@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6003f06c5860e93ff764c9d63d9765358fcd40e9
+> Commit: 2dd9bc6c6583a2ca9762612707edb0086dbab1d2
 
 ## 📚 Documentation
 
@@ -127,6 +127,7 @@
 | [Odoo CE 18 M1 Deployment Guide](docs/DEPLOYMENT.md) | docs |
 | [Deployment Guide: Finance Stack Health Monitoring & Automation](docs/DEPLOYMENT_GUIDE.md) | docs |
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
+| [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
 | [DigitalOcean Validation Framework](docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md) | docs |
 | [Dockerfile Changes: v0.9.0 → v0.9.1](docs/DOCKERFILE_COMPARISON.md) | docs |
 | [Docker Image-Based CD Migration Guide](docs/DOCKER_CD_MIGRATION_GUIDE.md) | docs |
@@ -169,10 +170,13 @@
 | [Offline/Tarball Deployment Path](docs/OFFLINE_TARBALL_DEPLOYMENT.md) | docs |
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
+| [Production Snapshot Manifest](docs/PROD_SNAPSHOT_MANIFEST.md) | docs |
 | [Quick Reference: SSO & Permissions Setup](docs/QUICK_REFERENCE_SSO_SETUP.md) | docs |
 | [RAG Architecture Implementation Plan](docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md) | docs |
 | [InsightPulseAI Documentation](docs/README.md) | docs |
 | [MCP Stack – Odoo + n8n + Mattermost + Superset + DO Agents](docs/README_MCP_STACK.md) | docs |
+| [Repo Tree Contract (Authoritative)](docs/REPO_TREE.contract.md) | docs |
+| [Repo Tree (generated)](docs/REPO_TREE.generated.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
 | [Secrets Naming and Storage - Canonical Reference](docs/SECRETS_NAMING_AND_STORAGE.md) | docs |
 | [Semantic Versioning Strategy - InsightPulse Odoo CE](docs/SEMANTIC_VERSIONING_STRATEGY.md) | docs |
@@ -211,6 +215,7 @@
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
+| [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
@@ -218,6 +223,7 @@
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
+| [Agent Audit Rules](kb/audit/AGENT_AUDIT_RULES.md) | kb/audit |
 | [MCP Coordinator Deployment Guide](mcp/coordinator/DEPLOYMENT.md) | mcp/coordinator |
 | [MCP Coordinator](mcp/coordinator/README.md) | mcp/coordinator |
 | [Local MCP Server](mcp/local/README.md) | mcp/local |
@@ -320,6 +326,10 @@
 | [PRD — Seed Bundle](spec/seed-bundle/prd.md) | spec/seed-bundle |
 | [Tasks — Seed Bundle](spec/seed-bundle/tasks.md) | spec/seed-bundle |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
+| [Notion Clone Module Constitution (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/constitution.md) | spec/workos-notion-clone |
+| [Plan — Notion Clone Module (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/plan.md) | spec/workos-notion-clone |
+| [PRD — Work OS Notion Clone (Odoo CE 18 + OCA 18) — Bootstrapped in `jgtolentino/odoo-ce`](spec/workos-notion-clone/prd.md) | spec/workos-notion-clone |
+| [Tasks — Notion Clone Module (Executable Graph)](spec/workos-notion-clone/tasks.md) | spec/workos-notion-clone |
 | [InsightPulse ERP – Expense & Equipment MVP (SAP Concur + Cheqroom Parity)](specs/002-odoo-expense-equipment-mvp.prd.md) | specs |
 | [Spec 003: AI Enrichment Agent - Deployment Guide](specs/003-ai-enrichment/DEPLOYMENT.md) | specs/003-ai-enrichment |
 | [Spec 003: AI Enrichment Agent](specs/003-ai-enrichment/spec.md) | specs/003-ai-enrichment |
@@ -383,10 +393,20 @@
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
+| [ipai_platform_permissions](./addons/ipai_platform_permissions) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai_platform_theme) | ✅ |  |
 | [ipai_platform_workflow](./addons/ipai_platform_workflow) | ✅ |  |
 | [ipai_ppm_a1](./addons/ipai_ppm_a1) | ✅ |  |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
+| [ipai_workos_affine](./addons/ipai_workos_affine) | ✅ |  |
+| [ipai_workos_blocks](./addons/ipai_workos_blocks) | ✅ |  |
+| [ipai_workos_canvas](./addons/ipai_workos_canvas) | ✅ |  |
+| [ipai_workos_collab](./addons/ipai_workos_collab) | ✅ |  |
+| [ipai_workos_core](./addons/ipai_workos_core) | ✅ |  |
+| [ipai_workos_db](./addons/ipai_workos_db) | ✅ |  |
+| [ipai_workos_search](./addons/ipai_workos_search) | ✅ |  |
+| [ipai_workos_templates](./addons/ipai_workos_templates) | ✅ |  |
+| [ipai_workos_views](./addons/ipai_workos_views) | ✅ |  |
 | [ipai_accounting_firm_pack](./archive/addons/ipai_accounting_firm_pack) | ✅ |  |
 | [ipai_docs](./archive/addons/ipai_docs) | ✅ |  |
 | [ipai_docs_project](./archive/addons/ipai_docs_project) | ✅ |  |
