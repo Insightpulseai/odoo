@@ -1,0 +1,28 @@
+# IPAI Module Status
+# Generated: 2025-12-25T17:06:23Z
+
+           name            |    state    | latest_version 
+---------------------------+-------------+----------------
+ ipai_bir_tax_compliance   | uninstalled | 
+ ipai_close_orchestration  | uninstalled | 
+ ipai_crm_pipeline         | uninstalled | 
+ ipai_finance_ppm_golive   | uninstalled | 18.0.1.0.0
+ ipai_month_end            | uninstalled | 
+ ipai_platform_approvals   | uninstalled | 
+ ipai_platform_audit       | installed   | 18.0.1.0.0
+ ipai_platform_permissions | installed   | 18.0.1.0.0
+ ipai_platform_theme       | uninstalled | 
+ ipai_platform_workflow    | uninstalled | 
+ ipai_ppm_a1               | uninstalled | 
+ ipai_tbwa_finance         | uninstalled | 
+ ipai_workos_affine        | installed   | 18.0.1.0.0
+ ipai_workos_blocks        | installed   | 18.0.1.0.0
+ ipai_workos_canvas        | installed   | 18.0.1.0.0
+ ipai_workos_collab        | installed   | 18.0.1.0.0
+ ipai_workos_core          | installed   | 18.0.1.0.0
+ ipai_workos_db            | installed   | 18.0.1.0.0
+ ipai_workos_search        | installed   | 18.0.1.0.0
+ ipai_workos_templates     | installed   | 18.0.1.0.0
+ ipai_workos_views         | installed   | 18.0.1.0.0
+(21 rows)
+
