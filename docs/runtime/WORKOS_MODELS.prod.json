@@ -1,0 +1,89 @@
+{
+  "generated_at": "2025-12-25T16:52:00Z",
+  "production_server": "root@159.223.75.148",
+  "database": "odoo_accounting",
+  "git_sha": "74219604437336cd68131d79c232eb1578b5a7d1",
+  "models": [
+    {
+      "model": "ipai.workos.block",
+      "name": "Work OS Block",
+      "module": "ipai_workos_blocks"
+    },
+    {
+      "model": "ipai.workos.canvas",
+      "name": "WorkOS Canvas",
+      "module": "ipai_workos_canvas"
+    },
+    {
+      "model": "ipai.workos.comment",
+      "name": "Work OS Comment",
+      "module": "ipai_workos_collab"
+    },
+    {
+      "model": "ipai.workos.database",
+      "name": "Work OS Database",
+      "module": "ipai_workos_db"
+    },
+    {
+      "model": "ipai.workos.page",
+      "name": "Work OS Page",
+      "module": "ipai_workos_core"
+    },
+    {
+      "model": "ipai.workos.property",
+      "name": "Work OS Database Property",
+      "module": "ipai_workos_db"
+    },
+    {
+      "model": "ipai.workos.row",
+      "name": "Work OS Database Row",
+      "module": "ipai_workos_db"
+    },
+    {
+      "model": "ipai.workos.search",
+      "name": "Work OS Search",
+      "module": "ipai_workos_search"
+    },
+    {
+      "model": "ipai.workos.search.history",
+      "name": "Work OS Search History",
+      "module": "ipai_workos_search"
+    },
+    {
+      "model": "ipai.workos.space",
+      "name": "Work OS Space",
+      "module": "ipai_workos_core"
+    },
+    {
+      "model": "ipai.workos.template",
+      "name": "Work OS Template",
+      "module": "ipai_workos_templates"
+    },
+    {
+      "model": "ipai.workos.template.tag",
+      "name": "Work OS Template Tag",
+      "module": "ipai_workos_templates"
+    },
+    {
+      "model": "ipai.workos.view",
+      "name": "Work OS Database View",
+      "module": "ipai_workos_views"
+    },
+    {
+      "model": "ipai.workos.workspace",
+      "name": "Work OS Workspace",
+      "module": "ipai_workos_core"
+    }
+  ],
+  "statistics": {
+    "total_models": 14,
+    "core_models": 3,
+    "blocks_models": 1,
+    "canvas_models": 1,
+    "collab_models": 1,
+    "database_models": 3,
+    "search_models": 2,
+    "templates_models": 2,
+    "views_models": 1
+  }
+}
