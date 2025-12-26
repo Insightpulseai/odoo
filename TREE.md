@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 521c63c038b22908ca5d9ecd854a00dc44a77cb5
+> Commit: 24aa319102359a6a8454b984992d6efb2fdefaa1
 
 ```
 .
@@ -1449,6 +1449,8 @@
 │   ├── deployment-checklist.sh
 │   ├── enhanced_health_check.sh
 │   ├── erp_config_cli.sh
+│   ├── finance_ppm_health_check.sh
+│   ├── finance_ppm_health_check.sql
 │   ├── full_deploy_sanity.sh
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
@@ -1990,7 +1992,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-628 directories, 1357 files
+628 directories, 1359 files
 ```
 
 ## 📊 Stats
@@ -1998,7 +2000,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 707 |
-| Files | 1982 |
+| Files | 1984 |
 | Python files | 554 |
 | XML files | 297 |
 | Markdown files | 390 |
