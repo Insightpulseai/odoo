@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 24aa319102359a6a8454b984992d6efb2fdefaa1
+> Commit: f68ef50fb188a7f6f8b665cf9f2ba6a8635e3150
 
 ## 📚 Documentation
 
@@ -42,6 +42,7 @@
 | [Odoo CE v0.9.1 - Production Deployment Workflow](DEPLOYMENT_WORKFLOW.md) | . |
 | [InsightPulse ERP Configuration - Complete Summary](ERP_CONFIGURATION_SUMMARY.md) | . |
 | [EXECUTE NOW - DEPLOY v0.9.0 TO FIX 502 ERROR](EXECUTE_NOW.md) | . |
+| [Finance PPM Canonical State](FINANCE_PPM_CANONICAL.md) | . |
 | [Finance PPM Dashboard Implementation Guide for Odoo CE + OCA](FINANCE_PPM_CE_DASHBOARD_GUIDE.md) | . |
 | [Finance PPM Dashboard Implementation Guide](FINANCE_PPM_DASHBOARD_GUIDE.md) | . |
 | [Finance PPM Data Import Guide](FINANCE_PPM_IMPORT_GUIDE.md) | . |

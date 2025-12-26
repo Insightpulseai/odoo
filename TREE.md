@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 24aa319102359a6a8454b984992d6efb2fdefaa1
+> Commit: f68ef50fb188a7f6f8b665cf9f2ba6a8635e3150
 
 ```
 .
@@ -1904,6 +1904,7 @@
 ├── Dockerfile.v0.10.0
 ├── ERP_CONFIGURATION_SUMMARY.md
 ├── EXECUTE_NOW.md
+├── FINANCE_PPM_CANONICAL.md
 ├── FINANCE_PPM_CE_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_IMPORT_GUIDE.md
@@ -1992,7 +1993,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-628 directories, 1359 files
+628 directories, 1360 files
 ```
 
 ## 📊 Stats
@@ -2000,7 +2001,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 707 |
-| Files | 1984 |
+| Files | 1985 |
 | Python files | 554 |
 | XML files | 297 |
-| Markdown files | 390 |
+| Markdown files | 391 |
