@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8859e37f17bb2ebec04c59b53a51511372eae996
+> Commit: 521c63c038b22908ca5d9ecd854a00dc44a77cb5
 
 ```
 .
@@ -398,6 +398,18 @@
 │   │   │   ├── golive_section_views.xml
 │   │   │   └── menus.xml
 │   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_finance_ppm_umbrella
+│   │   ├── addons
+│   │   │   └── ipai_finance_ppm_umbrella
+│   │   ├── data
+│   │   │   ├── 01_employees.xml
+│   │   │   ├── 02_logframe_complete.xml
+│   │   │   ├── 03_bir_schedule.xml
+│   │   │   └── 04_closing_tasks.xml
+│   │   ├── scripts
+│   │   │   └── generate_seed_from_excel.py
+│   │   ├── README.md
 │   │   └── __manifest__.py
 │   ├── ipai_month_end
 │   │   ├── data
@@ -869,6 +881,8 @@
 │   │   ├── 10-log-env.sh
 │   │   ├── 20-render-conf.sh
 │   │   └── 90-preflight.sh
+│   ├── finance
+│   │   └── Month-end Closing Task and Tax Filing (7).xlsx
 │   ├── sources
 │   │   ├── oca_repos.yaml
 │   │   ├── odoo_docs.yaml
@@ -1976,15 +1990,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-622 directories, 1349 files
+628 directories, 1357 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 700 |
-| Files | 1972 |
-| Python files | 551 |
-| XML files | 293 |
-| Markdown files | 389 |
+| Directories | 707 |
+| Files | 1982 |
+| Python files | 554 |
+| XML files | 297 |
+| Markdown files | 390 |
