@@ -10,36 +10,36 @@
         <xpath expr="//sheet/notebook" position="inside">
           <page string="Finance Closing">
             <group>
-              <field name="cluster"/>
-              <field name="relative_due"/>
-              <field name="closing_due_date"/>
+              <field name="cluster" optional="show"/>
+              <field name="relative_due" optional="show"/>
+              <field name="closing_due_date" optional="show"/>
             </group>
             <group>
-              <field name="owner_code"/>
-              <field name="reviewer_id"/>
-              <field name="approver_id"/>
+              <field name="owner_code" optional="show"/>
+              <field name="reviewer_id" optional="show"/>
+              <field name="approver_id" optional="show"/>
             </group>
             <group>
-              <field name="auto_sync"/>
-              <field name="erp_ref"/>
+              <field name="auto_sync" optional="show"/>
+              <field name="erp_ref" optional="show"/>
             </group>
           </page>
           <page string="BIR Filing">
             <group>
-              <field name="bir_related"/>
-              <field name="bir_form"/>
-              <field name="bir_period_label"/>
+              <field name="bir_related" optional="show"/>
+              <field name="bir_form" optional="show"/>
+              <field name="bir_period_label" optional="show"/>
             </group>
             <group>
-              <field name="bir_deadline"/>
-              <field name="bir_prep_due_date"/>
-              <field name="bir_approval_due_date"/>
-              <field name="bir_payment_due_date"/>
+              <field name="bir_deadline" optional="show"/>
+              <field name="bir_prep_due_date" optional="show"/>
+              <field name="bir_approval_due_date" optional="show"/>
+              <field name="bir_payment_due_date" optional="show"/>
             </group>
             <group>
-              <field name="finance_supervisor_id"/>
-              <field name="sfm_id"/>
-              <field name="fd_id"/>
+              <field name="finance_supervisor_id" optional="show"/>
+              <field name="sfm_id" optional="show"/>
+              <field name="fd_id" optional="show"/>
             </group>
           </page>
         </xpath>
@@ -56,15 +56,15 @@
           <attribute name="create">true</attribute>
         </xpath>
         <xpath expr="//field[@name='name']" position="after">
-          <field name="cluster"/>
-          <field name="relative_due"/>
-          <field name="closing_due_date"/>
-          <field name="owner_code"/>
-          <field name="reviewer_id"/>
-          <field name="approver_id"/>
-          <field name="bir_form"/>
-          <field name="bir_period_label"/>
-          <field name="bir_deadline"/>
+          <field name="cluster" optional="show"/>
+          <field name="relative_due" optional="show"/>
+          <field name="closing_due_date" optional="show"/>
+          <field name="owner_code" optional="show"/>
+          <field name="reviewer_id" optional="show"/>
+          <field name="approver_id" optional="show"/>
+          <field name="bir_form" optional="show"/>
+          <field name="bir_period_label" optional="show"/>
+          <field name="bir_deadline" optional="show"/>
         </xpath>
       </field>
     </record>
