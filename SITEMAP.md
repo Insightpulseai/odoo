@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8859e37f17bb2ebec04c59b53a51511372eae996
+> Commit: 521c63c038b22908ca5d9ecd854a00dc44a77cb5
 
 ## 📚 Documentation
 
@@ -86,6 +86,7 @@
 | [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
+| [IPAI Finance PPM – TBWA Canonical Umbrella Module](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
@@ -435,6 +436,8 @@
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
 | [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ | Production go-live checklist for Finance PPM modules |
+| [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella) | ✅ |  |
+| [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella/addons/ipai_finance_ppm_umbrella) | ⚠️ | Missing manifest |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
