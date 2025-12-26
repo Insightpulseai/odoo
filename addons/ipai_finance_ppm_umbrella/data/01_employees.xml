@@ -1,0 +1,38 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<odoo>
+  <data noupdate="1">
+    <!-- 8 Employees for TBWA Finance SSC -->
+    <record id="user_bom" model="res.users">
+      <field name="name">BOM</field>
+      <field name="login">bom</field>
+    </record>
+    <record id="user_jap" model="res.users">
+      <field name="name">JAP</field>
+      <field name="login">jap</field>
+    </record>
+    <record id="user_jli" model="res.users">
+      <field name="name">JLI</field>
+      <field name="login">jli</field>
+    </record>
+    <record id="user_jpal" model="res.users">
+      <field name="name">JPAL</field>
+      <field name="login">jpal</field>
+    </record>
+    <record id="user_jrmo" model="res.users">
+      <field name="name">JRMO</field>
+      <field name="login">jrmo</field>
+    </record>
+    <record id="user_las" model="res.users">
+      <field name="name">LAS</field>
+      <field name="login">las</field>
+    </record>
+    <record id="user_rim" model="res.users">
+      <field name="name">RIM</field>
+      <field name="login">rim</field>
+    </record>
+    <record id="user_rmqb" model="res.users">
+      <field name="name">RMQB</field>
+      <field name="login">rmqb</field>
+    </record>
+  </data>
+</odoo>
