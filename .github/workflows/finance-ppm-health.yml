@@ -1,0 +1,40 @@
+name: Finance PPM Health Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - "addons/ipai_finance_ppm/**"
+      - "addons/ipai_finance_ppm_umbrella/**"
+      - "scripts/finance_ppm_health_check.*"
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: SSH into production server and run health check
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ODOO_HOST }}
+          username: ${{ secrets.ODOO_USER }}
+          key: ${{ secrets.ODOO_SSH_KEY }}
+          script: |
+            cd /root/odoo-prod
+            ./scripts/finance_ppm_health_check.sh odoo
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Finance PPM health check failed! Expected: 8/12/144/36/36"
+          echo "::error::Check production database integrity and rollback if needed"
+          exit 1
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ Finance PPM health check passed: 8/12/144/36/36"
