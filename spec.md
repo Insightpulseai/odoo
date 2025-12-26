@@ -45,6 +45,7 @@ The system is designed to:
 |   |-- ipai_close_orchestration
 |   |-- ipai_crm_pipeline
 |   |-- ipai_finance_ppm_golive
+|   |-- ipai_finance_ppm_umbrella
 |   |-- ipai_month_end
 |   |-- ipai_platform_approvals
 |   |-- ipai_platform_audit
@@ -113,6 +114,7 @@ The system is designed to:
 |   `-- flutter_receipt_ocr
 |-- config
 |   |-- entrypoint.d
+|   |-- finance
 |   |-- sources
 |   |-- capability_map.yaml
 |   |-- odoo.conf.template
