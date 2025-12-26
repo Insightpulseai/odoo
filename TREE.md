@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f68ef50fb188a7f6f8b665cf9f2ba6a8635e3150
+> Commit: f812c476c5968520a891d91d82717923d4254a9a
 
 ```
 .
@@ -34,6 +34,8 @@
 │   │   ├── notion-ppm.yaml
 │   │   └── spec-kit.yaml
 │   └── config.json
+├── .githooks
+│   └── pre-commit
 ├── .github
 │   ├── workflows
 │   │   ├── agent-preflight.yml
@@ -51,6 +53,7 @@
 │   │   ├── deploy-production.yml
 │   │   ├── diagrams-qa.yml
 │   │   ├── docs-crawler-cron.yml
+│   │   ├── finance-ppm-health.yml
 │   │   ├── health-check.yml
 │   │   ├── infra-validate.yml
 │   │   ├── lakehouse-smoke.yml
@@ -1451,6 +1454,7 @@
 │   ├── erp_config_cli.sh
 │   ├── finance_ppm_health_check.sh
 │   ├── finance_ppm_health_check.sql
+│   ├── finance_ppm_restore_golden.sh
 │   ├── full_deploy_sanity.sh
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
@@ -1928,6 +1932,7 @@
 ├── README_PATCH.md
 ├── RELEASE_v0.9.0.md
 ├── REPO_RESTRUCTURE_PLAN.md
+├── SAFETY_MECHANISMS.md
 ├── SECURITY.md
 ├── SITEMAP.md
 ├── STRATEGIC_PPM_ANALYTICS_SUMMARY.md
@@ -1993,15 +1998,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-628 directories, 1360 files
+629 directories, 1364 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 707 |
-| Files | 1985 |
+| Directories | 708 |
+| Files | 1989 |
 | Python files | 554 |
 | XML files | 297 |
-| Markdown files | 391 |
+| Markdown files | 392 |
