@@ -386,6 +386,8 @@ The system is designed to:
 |   |-- deployment-checklist.sh
 |   |-- enhanced_health_check.sh
 |   |-- erp_config_cli.sh
+|   |-- finance_ppm_health_check.sh
+|   |-- finance_ppm_health_check.sql
 |   |-- fix_home_manual.sql
 |   |-- fix_home_page.sql
 |   |-- full_deploy_sanity.sh
