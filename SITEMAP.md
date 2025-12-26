@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f68ef50fb188a7f6f8b665cf9f2ba6a8635e3150
+> Commit: f812c476c5968520a891d91d82717923d4254a9a
 
 ## 📚 Documentation
 
@@ -65,6 +65,7 @@
 | [InsightPulse AI - CE Branding Patch v1.2.0](README_PATCH.md) | . |
 | [v0.9.0 - Infrastructure Unification Release](RELEASE_v0.9.0.md) | . |
 | [Odoo CE Repository Restructure Plan](REPO_RESTRUCTURE_PLAN.md) | . |
+| [Finance PPM Safety Mechanisms](SAFETY_MECHANISMS.md) | . |
 | [Security Policy](SECURITY.md) | . |
 | [🗺️ Sitemap - InsightPulse ERP](SITEMAP.md) | . |
 | [Strategic PPM & Analytics Stack - Activation Summary](STRATEGIC_PPM_ANALYTICS_SUMMARY.md) | . |
