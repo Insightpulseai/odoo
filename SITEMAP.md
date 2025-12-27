@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1a9bc57ea4d1129c37c6863d76bad7d747182e89
+> Commit: e83674669b09c6fea44c5a8df47858e4e30fc8ff
 
 ## 📚 Documentation
 
@@ -161,6 +161,7 @@
 | [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
 | [Mattermost ChatOps Deployment Guide](docs/MATTERMOST_CHATOPS_DEPLOYMENT.md) | docs |
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |
+| [MCP + Supabase Integration Architecture](docs/MCP_SUPABASE_INTEGRATION.md) | docs |
 | [Mixed Content Fix - HTTPS Asset Loading](docs/MIXED_CONTENT_FIX.md) | docs |
 | [Odoo CE MVP Go-Live Checklist](docs/MVP_GO_LIVE_CHECKLIST.md) | docs |
 | [n8n Credentials Bootstrap – Finance Stack](docs/N8N_CREDENTIALS_BOOTSTRAP.md) | docs |
