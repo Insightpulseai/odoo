@@ -88,16 +88,20 @@ export class IpaiHomePage extends Component {
                 return;
             }
 
-            this.state.apps = menus.map((menu, index) => ({
-                id: menu.xmlid || String(menu.id),
-                name: menu.name,
-                actionId: menu.actionID,
-                menuId: menu.id,
-                icon: menu.webIconData || menu.webIcon || '/base/static/description/icon.png',
-                color: this.getAppColor(menu.xmlid || String(menu.id)),
-                unread: 0,
-                sequence: index,
-            }));
+            this.state.apps = menus.map((menu, index) => {
+                const appId = menu.xmlid || String(menu.id);
+                return {
+                    id: appId,
+                    name: menu.name,
+                    actionId: menu.actionID,
+                    menuId: menu.id,
+                    // Priority: webIconData (base64) > webIcon > module icon.svg > fallback
+                    icon: menu.webIconData || menu.webIcon || this.getFallbackIcon(appId),
+                    color: this.getAppColor(appId),
+                    unread: 0,
+                    sequence: index,
+                };
+            });
 
             this.state.filteredApps = [...this.state.apps];
             this.state.isLoading = false;
@@ -109,20 +113,69 @@ export class IpaiHomePage extends Component {
         }
     }
 
+    /**
+     * Get app color based on xmlid - using official Odoo brand colors
+     * Reference: https://github.com/odoo/odoo/tree/18.0/addons/*/static/description/icon.svg
+     */
     getAppColor(appId) {
         const colorMap = {
-            'mail.menu_root_discuss': '#FF6B35',
-            'project.menu_main_pm': '#9B59B6',
-            'account.menu_finance': '#00BCD4',
-            'hr.menu_hr_root': '#FF9800',
-            'hr_expense.menu_hr_expense_root': '#2196F3',
-            'sale.sale_menu_root': '#27AE60',
-            'purchase.menu_purchase_root': '#E74C3C',
-            'stock.menu_stock_root': '#3498DB',
-            'crm.crm_menu_root': '#1ABC9C',
-            'website.menu_website_configuration': '#E91E63',
+            // Official Odoo App Colors (from SVG analysis)
+            'mail.menu_root_discuss': '#F86126',      // Orange (Discuss)
+            'project.menu_main_pm': '#9B59B6',        // Purple (Project)
+            'account.menu_finance': '#2EBCFA',        // Cyan (Invoicing)
+            'hr.menu_hr_root': '#985184',             // Purple (Employees)
+            'hr_expense.menu_hr_expense_root': '#2EBCFA', // Cyan (Expenses)
+            'sale.sale_menu_root': '#985184',         // Purple (Sales)
+            'purchase.menu_purchase_root': '#714B67', // Odoo Purple (Purchase)
+            'stock.menu_stock_root': '#3498DB',       // Blue (Inventory)
+            'crm.crm_menu_root': '#985184',           // Purple (CRM)
+            'website.menu_website_configuration': '#E91E63', // Pink (Website)
+            'spreadsheet_dashboard.menu_dashboard': '#985184', // Purple (Dashboards)
+            'base_setup.menu_configuration': '#FBB945', // Yellow (Settings)
+            'base.menu_management': '#1AD3BB',        // Teal (Apps)
+            'contacts.menu_contacts': '#1AD3BB',      // Teal (Contacts)
+            'calendar.mail_menu_calendar': '#F86126', // Orange (Calendar)
+            'mrp.menu_mrp_root': '#088BF5',           // Blue (Manufacturing)
+            'point_of_sale.menu_point_root': '#03AF89', // Green (POS)
+            'fleet.menu_fleet_root': '#FBB945',       // Yellow (Fleet)
+            'lunch.menu_lunch': '#FC868B',            // Pink (Lunch)
+            'survey.menu_surveys': '#144496',         // Navy (Survey)
+            'event.menu_event': '#F9464C',            // Red (Events)
+            'helpdesk.menu_helpdesk_root': '#1AD3BB', // Teal (Helpdesk)
+            'maintenance.menu_m_main': '#FBB945',     // Yellow (Maintenance)
+            'hr_recruitment.menu_hr_recruitment_root': '#985184', // Purple (Recruitment)
         };
         return colorMap[appId] || '#714B67';
+    }
+
+    /**
+     * Get fallback icon path based on app xmlid
+     */
+    getFallbackIcon(appId) {
+        // Extract module name from xmlid (e.g., 'mail.menu_root_discuss' -> 'mail')
+        const moduleName = appId ? appId.split('.')[0] : null;
+
+        // Map common modules to their icon paths
+        const iconPaths = {
+            'mail': '/mail/static/description/icon.svg',
+            'account': '/account/static/description/icon.svg',
+            'hr': '/hr/static/description/icon.svg',
+            'hr_expense': '/hr_expense/static/description/icon.svg',
+            'sale': '/sale/static/description/icon.svg',
+            'purchase': '/purchase/static/description/icon.svg',
+            'stock': '/stock/static/description/icon.svg',
+            'crm': '/crm/static/description/icon.svg',
+            'project': '/project/static/description/icon.svg',
+            'website': '/website/static/description/icon.svg',
+            'spreadsheet_dashboard': '/spreadsheet_dashboard/static/description/icon.svg',
+            'base_setup': '/base_setup/static/description/icon.svg',
+            'calendar': '/calendar/static/description/icon.svg',
+            'contacts': '/contacts/static/description/icon.svg',
+            'mrp': '/mrp/static/description/icon.svg',
+            'point_of_sale': '/point_of_sale/static/description/icon.svg',
+        };
+
+        return iconPaths[moduleName] || '/base/static/description/icon.svg';
     }
 
     onAppClick(app) {

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- ==========================================
+         ASK AI SECURITY
+         ========================================== -->
+
+    <!-- Category -->
+    <record id="module_category_ask_ai" model="ir.module.category">
+        <field name="name">Ask AI</field>
+        <field name="description">Access rights for Ask AI assistant</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <!-- User group: Can use Ask AI -->
+    <record id="group_ask_ai_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_ask_ai"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Can use the Ask AI assistant for business queries</field>
+    </record>
+
+</odoo>
