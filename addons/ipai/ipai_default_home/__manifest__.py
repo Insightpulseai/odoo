@@ -1,25 +1,31 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "InsightPulse Default Home Page",
-    "version": "18.0.1.0.0",
+    "name": "InsightPulse Custom Home Page",
+    "version": "18.0.2.0.0",
     "category": "Extra Tools",
-    "summary": "Set default landing page to Apps Dashboard after login",
+    "summary": "Custom app grid home page with modern styling",
     "description": """
-Default Home Page Configuration
-================================
+Custom Home Page for InsightPulse
+=================================
 
-Automatically redirects users to Apps Dashboard (/odoo) after login - the icon grid view.
+A beautiful, modern app grid home page inspired by Odoo's default design
+but with enhanced styling and features.
 
 Features:
 ---------
-* Shows Apps Dashboard with icon grid (Discuss, Dashboards, Invoicing, Employees, Expenses, Apps, Settings)
-* Matches official Odoo behavior
-* Works for all users
-* No user action required
+* Modern app grid layout with smooth animations
+* Hover effects and visual feedback
+* Right-click context menu for quick actions
+* Keyboard shortcut (Ctrl+K) for app search
+* Favorites support
+* Responsive design for all screen sizes
+* Badge notifications for unread items
 
-Configuration:
---------------
-After installation, all users will see the Apps Dashboard after login.
+Technical Details:
+------------------
+* Built with OWL (Odoo Web Library)
+* CSS Grid for responsive layout
+* Client-side caching for performance
 
 Author: InsightPulse AI
 License: AGPL-3
@@ -29,11 +35,20 @@ License: AGPL-3
     "license": "AGPL-3",
     "depends": [
         "base",
-        "project",
+        "web",
+        "mail",
     ],
     "data": [
         "data/default_home_data.xml",
+        "views/home_action.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ipai_default_home/static/src/css/home_page.css",
+            "ipai_default_home/static/src/js/home_page.js",
+            "ipai_default_home/static/src/xml/home_page.xml",
+        ],
+    },
     "installable": True,
     "application": False,
     "auto_install": False,
