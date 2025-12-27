@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ==========================================
+         SYSTRAY BUTTON TEMPLATE
+         ========================================== -->
+    <t t-name="ipai_ask_ai.Systray">
+        <div class="o_ask_ai_systray">
+            <!-- Systray Button -->
+            <button class="o_ask_ai_systray_btn" t-on-click="togglePanel" title="Ask AI (Ctrl+Shift+A)">
+                <span class="o_ask_ai_icon">
+                    <i class="fa fa-robot" t-if="!state.hasNotification"/>
+                    <i class="fa fa-robot o_ask_ai_has_notification" t-else=""/>
+                </span>
+                <span class="o_ask_ai_label d-none d-md-inline">Ask AI</span>
+                <span class="o_ask_ai_badge" t-if="state.hasNotification">1</span>
+            </button>
+
+            <!-- Chat Panel -->
+            <AskAIChat
+                t-if="state.showPanel"
+                onClose.bind="closePanel"
+                onMinimize.bind="onMinimize"
+            />
+        </div>
+    </t>
+
+    <!-- ==========================================
+         CHAT PANEL TEMPLATE
+         ========================================== -->
+    <t t-name="ipai_ask_ai.ChatPanel">
+        <div t-attf-class="o_ask_ai_panel #{state.isMinimized ? 'o_minimized' : ''}" t-if="state.isOpen">
+            <!-- Header -->
+            <div class="o_ask_ai_header">
+                <div class="o_ask_ai_header_left">
+                    <span class="o_ask_ai_icon">
+                        <i class="fa fa-robot"/>
+                    </span>
+                    <span class="o_ask_ai_title">Ask AI</span>
+                </div>
+                <div class="o_ask_ai_header_actions">
+                    <button class="o_ask_ai_action_btn" t-on-click="clearHistory" title="Clear chat">
+                        <i class="fa fa-trash-o"/>
+                    </button>
+                    <button class="o_ask_ai_action_btn" t-on-click="minimize" title="Minimize">
+                        <i t-attf-class="fa #{state.isMinimized ? 'fa-expand' : 'fa-minus'}"/>
+                    </button>
+                    <button class="o_ask_ai_action_btn o_close" t-on-click="close" title="Close (ESC)">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Notification Bar -->
+            <div class="o_ask_ai_notification" t-if="state.hasUnread and !state.isMinimized">
+                <span class="o_ask_ai_notification_badge">New messages</span>
+                <button class="o_ask_ai_mark_read" t-on-click="markAsRead">Mark as Read</button>
+            </div>
+
+            <!-- Messages Container -->
+            <div class="o_ask_ai_messages" t-ref="messagesContainer" t-if="!state.isMinimized">
+                <!-- Error State -->
+                <div class="o_ask_ai_error" t-if="state.error">
+                    <i class="fa fa-exclamation-triangle"/>
+                    <span t-esc="state.error"/>
+                </div>
+
+                <!-- Messages -->
+                <t t-foreach="state.messages" t-as="message" t-key="message.id">
+                    <div t-att-class="getMessageClass(message)">
+                        <!-- AI Message -->
+                        <t t-if="message.type === 'ai'">
+                            <div class="o_ask_ai_message_header">
+                                <span class="o_ask_ai_avatar o_ai_avatar">
+                                    <i class="fa fa-robot"/>
+                                </span>
+                                <span class="o_ask_ai_author">Ask AI</span>
+                                <span class="o_ask_ai_time" t-esc="formatTime(message.timestamp)"/>
+                            </div>
+                            <div class="o_ask_ai_message_body">
+                                <t t-out="message.content"/>
+                            </div>
+                            <!-- Action button if available -->
+                            <div class="o_ask_ai_message_actions" t-if="message.action">
+                                <button class="o_ask_ai_view_results" t-on-click="() => this.executeAction(message.action)">
+                                    <i class="fa fa-external-link"/> View Results
+                                </button>
+                            </div>
+                        </t>
+
+                        <!-- User Message -->
+                        <t t-elif="message.type === 'user'">
+                            <div class="o_ask_ai_message_body">
+                                <t t-esc="message.content"/>
+                            </div>
+                            <div class="o_ask_ai_message_meta">
+                                <span class="o_ask_ai_time" t-esc="formatTime(message.timestamp)"/>
+                                <span class="o_ask_ai_avatar o_user_avatar">
+                                    <i class="fa fa-user"/>
+                                </span>
+                            </div>
+                        </t>
+
+                        <!-- Error Message -->
+                        <t t-elif="message.type === 'error'">
+                            <div class="o_ask_ai_message_body o_error">
+                                <i class="fa fa-exclamation-circle"/>
+                                <t t-esc="message.content"/>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Typing Indicator -->
+                <div class="o_ask_ai_typing" t-if="state.isTyping">
+                    <span class="o_ask_ai_avatar o_ai_avatar">
+                        <i class="fa fa-robot"/>
+                    </span>
+                    <div class="o_ask_ai_typing_dots">
+                        <span class="dot"/>
+                        <span class="dot"/>
+                        <span class="dot"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestions -->
+            <div class="o_ask_ai_suggestions" t-if="state.showSuggestions and state.suggestions.length > 0 and !state.isMinimized">
+                <t t-foreach="state.suggestions" t-as="suggestion" t-key="suggestion.text">
+                    <button class="o_ask_ai_suggestion" t-on-click="() => this.selectSuggestion(suggestion)">
+                        <i t-attf-class="fa #{suggestion.icon}"/>
+                        <span t-esc="suggestion.text"/>
+                    </button>
+                </t>
+            </div>
+
+            <!-- Input Area -->
+            <div class="o_ask_ai_input_area" t-if="!state.isMinimized">
+                <input
+                    type="text"
+                    class="o_ask_ai_input"
+                    t-ref="messageInput"
+                    t-att-value="state.inputValue"
+                    t-on-input="onInput"
+                    t-on-keydown="onKeydown"
+                    placeholder="Message Ask AI..."
+                    t-att-disabled="state.isTyping"
+                />
+                <button
+                    class="o_ask_ai_send_btn"
+                    t-on-click="sendMessage"
+                    t-att-disabled="!state.inputValue.trim() || state.isTyping"
+                >
+                    <i class="fa fa-paper-plane"/>
+                </button>
+            </div>
+
+            <!-- Minimized State -->
+            <div class="o_ask_ai_minimized_content" t-if="state.isMinimized">
+                <span>Ask AI - Chat minimized</span>
+            </div>
+        </div>
+    </t>
+
+</templates>
