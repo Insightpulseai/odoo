@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bbc1cf1f9f313c2ee453c084f1d59c11243e7377
+> Commit: 456f1e6b1f160eaa4ac3bfc60eaacb88dcf0243e
 
 ```
 .
@@ -330,6 +330,25 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── .gitkeep
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ask_ai
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── main.py
+│   │   ├── data
+│   │   │   └── ai_channel_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── ask_ai_channel.py
+│   │   │   └── ask_ai_service.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── ask_ai_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_bir_tax_compliance
@@ -2056,15 +2075,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-655 directories, 1396 files
+663 directories, 1407 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 746 |
-| Files | 2050 |
-| Python files | 569 |
-| XML files | 311 |
+| Directories | 758 |
+| Files | 2079 |
+| Python files | 576 |
+| XML files | 315 |
 | Markdown files | 397 |
