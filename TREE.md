@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0159a79090ad0c153ba8e2ee33a69de6f460cdf7
+> Commit: bbc1cf1f9f313c2ee453c084f1d59c11243e7377
 
 ```
 .
@@ -425,6 +425,25 @@
 │   │   ├── scripts
 │   │   │   └── generate_seed_from_excel.py
 │   │   ├── README.md
+│   │   └── __manifest__.py
+│   ├── ipai_grid_view
+│   │   ├── data
+│   │   │   └── demo_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── grid_column.py
+│   │   │   ├── grid_filter.py
+│   │   │   └── grid_view.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── views
+│   │   │   ├── grid_column_views.xml
+│   │   │   ├── grid_filter_views.xml
+│   │   │   └── grid_view_views.xml
+│   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_month_end
 │   │   ├── data
@@ -2037,15 +2056,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-648 directories, 1384 files
+655 directories, 1396 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 736 |
-| Files | 2031 |
-| Python files | 563 |
-| XML files | 305 |
+| Directories | 746 |
+| Files | 2050 |
+| Python files | 569 |
+| XML files | 311 |
 | Markdown files | 397 |

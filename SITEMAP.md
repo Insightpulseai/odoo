@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0159a79090ad0c153ba8e2ee33a69de6f460cdf7
+> Commit: bbc1cf1f9f313c2ee453c084f1d59c11243e7377
 
 ## 📚 Documentation
 
@@ -446,6 +446,7 @@
 | [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ | Production go-live checklist for Finance PPM modules |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella) | ✅ |  |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella/addons/ipai_finance_ppm_umbrella) | ⚠️ | Missing manifest |
+| [ipai_grid_view](./addons/ipai_grid_view) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
