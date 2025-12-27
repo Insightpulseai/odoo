@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_studio_ai_history_user,ipai.studio.ai.history user,model_ipai_studio_ai_history,base.group_user,1,1,1,0
+access_studio_ai_history_admin,ipai.studio.ai.history admin,model_ipai_studio_ai_history,base.group_system,1,1,1,1
+access_studio_ai_stats_user,ipai.studio.ai.stats user,model_ipai_studio_ai_stats,base.group_user,1,0,0,0
+access_studio_ai_wizard_user,ipai.studio.ai.wizard user,model_ipai_studio_ai_wizard,base.group_user,1,1,1,1
