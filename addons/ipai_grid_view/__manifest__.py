@@ -42,6 +42,7 @@ Technical Stack:
     ],
     "assets": {
         "web.assets_backend": [
+            "ipai_grid_view/static/src/js/ask_ai_patch.js",
             "ipai_grid_view/static/src/scss/grid_view.scss",
             "ipai_grid_view/static/src/js/grid_view.js",
             "ipai_grid_view/static/src/js/grid_controller.js",
