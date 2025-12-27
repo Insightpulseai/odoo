@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- History Tree View -->
+    <record id="view_studio_ai_history_tree" model="ir.ui.view">
+        <field name="name">ipai.studio.ai.history.tree</field>
+        <field name="model">ipai.studio.ai.history</field>
+        <field name="arch" type="xml">
+            <tree string="Studio AI History" decoration-success="result == 'executed'" decoration-danger="result == 'failed'" decoration-muted="result == 'cancelled'">
+                <field name="create_date" string="Date"/>
+                <field name="command" string="Command"/>
+                <field name="command_type" string="Type"/>
+                <field name="model_name" string="Model"/>
+                <field name="confidence" widget="progressbar"/>
+                <field name="result" string="Status"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- History Form View -->
+    <record id="view_studio_ai_history_form" model="ir.ui.view">
+        <field name="name">ipai.studio.ai.history.form</field>
+        <field name="model">ipai.studio.ai.history</field>
+        <field name="arch" type="xml">
+            <form string="Studio AI Command">
+                <header>
+                    <field name="result" widget="statusbar" statusbar_visible="pending,executed,failed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="command" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Command Details">
+                            <field name="command_type"/>
+                            <field name="model_id"/>
+                            <field name="confidence" widget="progressbar"/>
+                            <field name="user_id"/>
+                            <field name="create_date"/>
+                        </group>
+                        <group string="Result">
+                            <field name="result_message"/>
+                            <field name="field_id" invisible="not field_id"/>
+                            <field name="automation_id" invisible="not automation_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Analysis" name="analysis">
+                            <field name="analysis" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Feedback" name="feedback">
+                            <group>
+                                <field name="feedback_score" widget="radio"/>
+                                <field name="feedback_comment"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- History Search View -->
+    <record id="view_studio_ai_history_search" model="ir.ui.view">
+        <field name="name">ipai.studio.ai.history.search</field>
+        <field name="model">ipai.studio.ai.history</field>
+        <field name="arch" type="xml">
+            <search string="Search History">
+                <field name="command"/>
+                <field name="model_id"/>
+                <field name="user_id"/>
+                <filter name="executed" string="Executed" domain="[('result', '=', 'executed')]"/>
+                <filter name="failed" string="Failed" domain="[('result', '=', 'failed')]"/>
+                <filter name="pending" string="Pending" domain="[('result', '=', 'pending')]"/>
+                <separator/>
+                <filter name="field" string="Field Creation" domain="[('command_type', '=', 'field')]"/>
+                <filter name="automation" string="Automation" domain="[('command_type', '=', 'automation')]"/>
+                <separator/>
+                <filter name="my_commands" string="My Commands" domain="[('user_id', '=', uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_type" string="Type" context="{'group_by': 'command_type'}"/>
+                    <filter name="group_model" string="Model" context="{'group_by': 'model_id'}"/>
+                    <filter name="group_result" string="Result" context="{'group_by': 'result'}"/>
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- History Action -->
+    <record id="action_studio_ai_history" model="ir.actions.act_window">
+        <field name="name">Command History</field>
+        <field name="res_model">ipai.studio.ai.history</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_my_commands': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No commands yet
+            </p>
+            <p>
+                Use the Studio AI wizard to create your first customization!
+            </p>
+        </field>
+    </record>
+
+    <!-- Stats Pivot View -->
+    <record id="view_studio_ai_stats_pivot" model="ir.ui.view">
+        <field name="name">ipai.studio.ai.stats.pivot</field>
+        <field name="model">ipai.studio.ai.stats</field>
+        <field name="arch" type="xml">
+            <pivot string="Studio AI Analytics">
+                <field name="date" type="row"/>
+                <field name="command_type" type="col"/>
+                <field name="total_commands" type="measure"/>
+                <field name="executed_commands" type="measure"/>
+                <field name="avg_confidence" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Stats Graph View -->
+    <record id="view_studio_ai_stats_graph" model="ir.ui.view">
+        <field name="name">ipai.studio.ai.stats.graph</field>
+        <field name="model">ipai.studio.ai.stats</field>
+        <field name="arch" type="xml">
+            <graph string="Studio AI Analytics" type="bar">
+                <field name="date"/>
+                <field name="total_commands" type="measure"/>
+                <field name="executed_commands" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Stats Action -->
+    <record id="action_studio_ai_stats" model="ir.actions.act_window">
+        <field name="name">Analytics</field>
+        <field name="res_model">ipai.studio.ai.stats</field>
+        <field name="view_mode">pivot,graph</field>
+    </record>
+
+</odoo>
