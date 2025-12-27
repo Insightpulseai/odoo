@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bbc1cf1f9f313c2ee453c084f1d59c11243e7377
+> Commit: 456f1e6b1f160eaa4ac3bfc60eaacb88dcf0243e
 
 ## 📚 Documentation
 
@@ -440,6 +440,7 @@
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ | Natural Language Customization Engine for Odoo |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
+| [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
