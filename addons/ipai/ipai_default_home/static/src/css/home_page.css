@@ -1,0 +1,379 @@
+/* IPAI Custom Home Page Styles */
+
+/* Home Page Container */
+.ipai-home-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: calc(100vh - 46px);
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #F3E7FF 0%, #E8D5FF 100%);
+}
+
+.ipai-home-container {
+    width: 100%;
+    max-width: 1400px;
+}
+
+/* App Grid Section */
+.ipai-app-grid-section {
+    width: 100%;
+}
+
+.ipai-app-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 32px;
+    padding: 20px;
+}
+
+/* App Card */
+.ipai-app-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    padding: 16px;
+    border-radius: 12px;
+    position: relative;
+    user-select: none;
+    text-decoration: none;
+}
+
+.ipai-app-card:hover {
+    transform: translateY(-12px);
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.ipai-app-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(108, 99, 255, 0.05);
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.ipai-app-card:hover::before {
+    opacity: 1;
+}
+
+/* App Icon Container */
+.ipai-app-icon-wrapper {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ipai-app-icon-bg {
+    position: absolute;
+    inset: 0;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    z-index: 0;
+}
+
+.ipai-app-card:hover .ipai-app-icon-bg {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+}
+
+.ipai-app-icon {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    z-index: 1;
+    object-fit: contain;
+}
+
+/* App Badge (notification count) */
+.ipai-app-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #FF4757;
+    color: white;
+    border-radius: 50%;
+    min-width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    border: 3px solid white;
+    z-index: 2;
+    padding: 0 4px;
+}
+
+/* App Name */
+.ipai-app-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.ipai-app-card:hover .ipai-app-name {
+    color: #714B67;
+    font-weight: 600;
+}
+
+/* Favorites Section */
+.ipai-favorites-section {
+    margin-bottom: 40px;
+}
+
+.ipai-section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+
+/* Search Overlay */
+.ipai-search-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 100px;
+    z-index: 2000;
+}
+
+.ipai-search-overlay.active {
+    display: flex;
+}
+
+.ipai-search-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+}
+
+.ipai-search-input {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    outline: none;
+}
+
+.ipai-search-results {
+    background: white;
+    margin-top: 8px;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.ipai-search-result-item {
+    padding: 16px 24px;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ipai-search-result-item:last-child {
+    border-bottom: none;
+}
+
+.ipai-search-result-item:hover {
+    background: #f5f5f5;
+}
+
+.ipai-search-result-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.ipai-search-result-icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.ipai-search-result-content {
+    flex: 1;
+}
+
+.ipai-search-result-title {
+    font-weight: 600;
+    color: #333;
+}
+
+.ipai-search-result-desc {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Context Menu */
+.ipai-context-menu {
+    position: fixed;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    z-index: 3000;
+    min-width: 180px;
+    padding: 8px 0;
+}
+
+.ipai-context-menu-item {
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+    transition: background 0.2s ease;
+}
+
+.ipai-context-menu-item:hover {
+    background: #f5f5f5;
+}
+
+.ipai-context-menu-divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 8px 0;
+}
+
+/* Animation */
+@keyframes ipai-fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ipai-app-card {
+    animation: ipai-fadeInUp 0.5s ease backwards;
+}
+
+.ipai-app-card:nth-child(1) { animation-delay: 0.05s; }
+.ipai-app-card:nth-child(2) { animation-delay: 0.1s; }
+.ipai-app-card:nth-child(3) { animation-delay: 0.15s; }
+.ipai-app-card:nth-child(4) { animation-delay: 0.2s; }
+.ipai-app-card:nth-child(5) { animation-delay: 0.25s; }
+.ipai-app-card:nth-child(6) { animation-delay: 0.3s; }
+.ipai-app-card:nth-child(7) { animation-delay: 0.35s; }
+.ipai-app-card:nth-child(8) { animation-delay: 0.4s; }
+.ipai-app-card:nth-child(9) { animation-delay: 0.45s; }
+.ipai-app-card:nth-child(10) { animation-delay: 0.5s; }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .ipai-app-grid {
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 24px;
+    }
+
+    .ipai-app-icon-wrapper {
+        width: 80px;
+        height: 80px;
+    }
+
+    .ipai-app-icon {
+        width: 48px;
+        height: 48px;
+    }
+
+    .ipai-app-name {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ipai-home-page {
+        padding: 24px 16px;
+    }
+
+    .ipai-app-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 16px;
+        padding: 12px;
+    }
+
+    .ipai-app-icon-wrapper {
+        width: 70px;
+        height: 70px;
+    }
+
+    .ipai-app-icon {
+        width: 42px;
+        height: 42px;
+    }
+}
+
+@media (max-width: 480px) {
+    .ipai-app-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        padding: 8px;
+    }
+
+    .ipai-app-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+
+    .ipai-app-icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .ipai-app-name {
+        font-size: 11px;
+    }
+}
+
+/* Loading State */
+.ipai-app-grid-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+}
+
+.ipai-loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #e0e0e0;
+    border-top-color: #714B67;
+    border-radius: 50%;
+    animation: ipai-spin 1s linear infinite;
+}
+
+@keyframes ipai-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
