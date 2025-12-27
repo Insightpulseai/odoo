@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e83674669b09c6fea44c5a8df47858e4e30fc8ff
+> Commit: 0159a79090ad0c153ba8e2ee33a69de6f460cdf7
 
 ```
 .
@@ -312,6 +312,15 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_studio_ai
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── wizards
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_workspace_core
@@ -713,6 +722,12 @@
 │   │   ├── README.md
 │   │   ├── app-spec.yaml
 │   │   └── nginx.conf
+│   ├── docs-ai-widget
+│   │   ├── src
+│   │   │   ├── components
+│   │   │   ├── embed.ts
+│   │   │   └── index.ts
+│   │   └── package.json
 │   ├── ipai-control-center-docs
 │   │   ├── .vercel
 │   │   │   ├── README.txt
@@ -1628,6 +1643,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── insightpulse-docs-ai
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── insightpulse-mobile
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -1709,6 +1729,8 @@
 │   ├── functions
 │   │   ├── cron-processor
 │   │   │   └── index.ts
+│   │   ├── docs-ai-ask
+│   │   │   └── index.ts
 │   │   ├── expense-policy-check
 │   │   │   └── index.ts
 │   │   ├── github-app-auth
@@ -1777,6 +1799,7 @@
 │   │   ├── 20251220_ticketing_pipelines_clean.sql
 │   │   ├── 20251222_control_room_workbench.sql
 │   │   ├── 20251227_database_webhooks.sql
+│   │   ├── 20251227_docs_ai_schema.sql
 │   │   ├── 20251227_mcp_job_queue_cron.sql
 │   │   └── 20251227_supabase_queues_setup.sql
 │   ├── seed
@@ -2014,15 +2037,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-636 directories, 1373 files
+648 directories, 1384 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 719 |
-| Files | 2004 |
-| Python files | 556 |
-| XML files | 299 |
-| Markdown files | 393 |
+| Directories | 736 |
+| Files | 2031 |
+| Python files | 563 |
+| XML files | 305 |
+| Markdown files | 397 |
