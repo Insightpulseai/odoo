@@ -62,6 +62,7 @@ Author: InsightPulse AI
         'web.assets_backend': [
             'ipai_studio_ai/static/src/js/studio_ai_widget.js',
             'ipai_studio_ai/static/src/css/studio_ai.css',
+            'ipai_studio_ai/static/src/xml/studio_ai_templates.xml',
         ],
     },
     'installable': True,

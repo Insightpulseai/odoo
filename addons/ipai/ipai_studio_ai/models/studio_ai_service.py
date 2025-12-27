@@ -149,6 +149,22 @@ TRIGGER_PATTERNS = {
     ],
 }
 
+# Query patterns for data retrieval commands
+QUERY_PATTERNS = {
+    'list': [
+        r'\b(show|list|find|get|display|search)\b',
+        r'\b(what|which|where)\b.*\b(are|is)\b',
+    ],
+    'count': [
+        r'\b(how\s+many|count|total|number\s+of)\b',
+    ],
+    'filter': [
+        r'\b(overdue|pending|open|closed|done|completed|late|urgent)\b',
+        r'\b(my|mine|assigned\s+to\s+me)\b',
+        r'\b(today|yesterday|this\s+week|this\s+month|last\s+week)\b',
+    ],
+}
+
 
 class StudioAIService(models.AbstractModel):
     """Service model for processing natural language Studio commands."""
@@ -191,16 +207,32 @@ class StudioAIService(models.AbstractModel):
             result.update(self._analyze_automation_command(command_lower, context))
         elif command_type == 'report':
             result.update(self._analyze_report_command(command_lower, context))
+        elif command_type == 'query':
+            result.update(self._analyze_query_command(command_lower, context))
         else:
             result['message'] = _("I couldn't understand that command. Try:\n"
                                  "- 'Add a [field type] field called [name] to [model]'\n"
                                  "- 'When [event], do [action]'\n"
+                                 "- 'Show my overdue tasks'\n"
                                  "- 'Show [field] in the [model] list view'")
 
         return result
 
     def _detect_command_type(self, command: str) -> str:
         """Detect the type of command."""
+        # Query patterns - check first as they're most common
+        query_patterns = [
+            r'\b(show|list|find|get|display|search)\b.*\b(my|mine|all|overdue|pending|open)\b',
+            r'\b(show|list|find|get|display)\b.*\b(task|invoice|order|contact|customer)\b',
+            r'\b(what|which|where)\b.*\b(are|is)\b.*\b(my|the)\b',
+            r'\b(how\s+many|count|total)\b',
+            r'\bdo\s+i\s+have\b',
+        ]
+
+        for pattern in query_patterns:
+            if re.search(pattern, command):
+                return 'query'
+
         # Field creation patterns
         field_patterns = [
             r'\b(add|create|new|insert)\b.*\b(field|column)\b',
@@ -490,6 +522,173 @@ class StudioAIService(models.AbstractModel):
                         "2. Export data to Excel using the action menu\n"
                         "3. Create a custom report module"),
         }
+
+    def _analyze_query_command(self, command: str, context: dict) -> dict:
+        """Analyze a data query command like 'Show my overdue tasks'."""
+        from datetime import date, datetime, timedelta
+
+        result = {
+            'analysis': {
+                'query_type': 'list',
+                'model': '',
+                'model_id': False,
+                'domain': [],
+                'limit': 10,
+            },
+            'confidence': 0.6,
+            'ready': True,
+            'records': [],
+            'action': None,
+        }
+
+        analysis = result['analysis']
+
+        # Detect model
+        for model, patterns in MODEL_PATTERNS.items():
+            for pattern in patterns:
+                if re.search(pattern, command):
+                    analysis['model'] = model
+                    model_rec = self.env['ir.model'].search([('model', '=', model)], limit=1)
+                    if model_rec:
+                        analysis['model_id'] = model_rec.id
+                        result['confidence'] += 0.1
+                    break
+            if analysis['model']:
+                break
+
+        # Build domain based on filters
+        domain = []
+
+        # Check for "my" / user filter
+        if re.search(r'\b(my|mine)\b', command):
+            user_id = self.env.user.id
+            # Try common user fields
+            if analysis['model'] == 'project.task':
+                domain.append(('user_ids', 'in', [user_id]))
+            elif analysis['model'] in ('sale.order', 'purchase.order', 'crm.lead'):
+                domain.append(('user_id', '=', user_id))
+            elif analysis['model'] == 'hr.expense':
+                domain.append(('employee_id.user_id', '=', user_id))
+            elif analysis['model'] == 'account.move':
+                # Invoices created by user or assigned to user's partner
+                pass  # No specific user field
+            else:
+                # Try generic fields
+                domain.append('|')
+                domain.append(('user_id', '=', user_id))
+                domain.append(('create_uid', '=', user_id))
+
+        # Check for overdue filter
+        if re.search(r'\b(overdue|late|past\s*due)\b', command):
+            today = date.today()
+            if analysis['model'] == 'project.task':
+                domain.append(('date_deadline', '<', today.isoformat()))
+                domain.append(('state', 'not in', ['1_done', '1_canceled']))
+            elif analysis['model'] == 'account.move':
+                domain.append(('invoice_date_due', '<', today.isoformat()))
+                domain.append(('payment_state', '!=', 'paid'))
+            elif analysis['model'] == 'sale.order':
+                domain.append(('commitment_date', '<', datetime.now().isoformat()))
+                domain.append(('state', 'in', ['sale', 'done']))
+            else:
+                # Generic deadline check
+                domain.append(('date_deadline', '<', today.isoformat()))
+
+        # Check for pending/open filter
+        if re.search(r'\b(pending|open|in\s*progress|active)\b', command):
+            if analysis['model'] == 'project.task':
+                domain.append(('state', 'not in', ['1_done', '1_canceled']))
+            elif analysis['model'] in ('sale.order', 'purchase.order'):
+                domain.append(('state', 'in', ['draft', 'sent']))
+            elif analysis['model'] == 'account.move':
+                domain.append(('state', '=', 'draft'))
+            elif analysis['model'] == 'crm.lead':
+                domain.append(('active', '=', True))
+
+        # Check for completed/done filter
+        if re.search(r'\b(completed|done|closed|finished)\b', command):
+            if analysis['model'] == 'project.task':
+                domain.append(('state', '=', '1_done'))
+            elif analysis['model'] in ('sale.order', 'purchase.order'):
+                domain.append(('state', '=', 'done'))
+            elif analysis['model'] == 'account.move':
+                domain.append(('state', '=', 'posted'))
+
+        # Check for time-based filters
+        today = date.today()
+        if re.search(r'\btoday\b', command):
+            domain.append(('create_date', '>=', today.isoformat()))
+        elif re.search(r'\byesterday\b', command):
+            yesterday = today - timedelta(days=1)
+            domain.append(('create_date', '>=', yesterday.isoformat()))
+            domain.append(('create_date', '<', today.isoformat()))
+        elif re.search(r'\bthis\s*week\b', command):
+            start_of_week = today - timedelta(days=today.weekday())
+            domain.append(('create_date', '>=', start_of_week.isoformat()))
+        elif re.search(r'\bthis\s*month\b', command):
+            start_of_month = today.replace(day=1)
+            domain.append(('create_date', '>=', start_of_month.isoformat()))
+
+        analysis['domain'] = domain
+
+        # Try to execute the query if we have a model
+        records = []
+        action = None
+
+        if analysis['model']:
+            try:
+                Model = self.env[analysis['model']]
+                records_data = Model.search_read(
+                    domain,
+                    ['id', 'display_name'],
+                    limit=analysis['limit'],
+                    order='create_date desc'
+                )
+                records = records_data
+
+                # Build action to open the records
+                action = {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Query Results'),
+                    'res_model': analysis['model'],
+                    'view_mode': 'tree,form',
+                    'domain': domain,
+                    'target': 'current',
+                }
+
+                result['records'] = records
+                result['action'] = action
+
+            except Exception as e:
+                _logger.warning("Query execution error: %s", e)
+                result['confidence'] = 0.3
+
+        # Build message
+        if records:
+            model_name = self.env['ir.model']._get(analysis['model']).name if analysis['model'] else 'records'
+            result['message'] = _(
+                "Found **%d %s**:\n\n%s\n\n"
+                "_Click to open the full list._"
+            ) % (
+                len(records),
+                model_name,
+                '\n'.join(['• ' + r['display_name'] for r in records[:5]]) +
+                ('\n• _...and %d more_' % (len(records) - 5) if len(records) > 5 else '')
+            )
+        elif analysis['model']:
+            model_name = self.env['ir.model']._get(analysis['model']).name if analysis['model'] else 'records'
+            result['message'] = _("No %s found matching your criteria.") % model_name
+        else:
+            result['message'] = _(
+                "I couldn't determine which records you want to see.\n\n"
+                "Try being more specific:\n"
+                "• 'Show my overdue tasks'\n"
+                "• 'List pending invoices'\n"
+                "• 'Find customers in Japan'"
+            )
+            result['ready'] = False
+
+        return result
 
     @api.model
     def execute_field_creation(self, analysis: dict) -> Dict[str, Any]:
