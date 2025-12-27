@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1a9bc57ea4d1129c37c6863d76bad7d747182e89
+> Commit: e83674669b09c6fea44c5a8df47858e4e30fc8ff
 
 ```
 .
@@ -1140,6 +1140,7 @@
 │   ├── MATTERMOST_ALERTING_SETUP.md
 │   ├── MATTERMOST_CHATOPS_DEPLOYMENT.md
 │   ├── MCP_IMPLEMENTATION_STATUS.md
+│   ├── MCP_SUPABASE_INTEGRATION.md
 │   ├── MIXED_CONTENT_FIX.md
 │   ├── MVP_GO_LIVE_CHECKLIST.md
 │   ├── N8N_CREDENTIALS_BOOTSTRAP.md
@@ -1706,7 +1707,15 @@
 │       └── contracts.py
 ├── supabase
 │   ├── functions
+│   │   ├── cron-processor
+│   │   │   └── index.ts
 │   │   ├── expense-policy-check
+│   │   │   └── index.ts
+│   │   ├── github-app-auth
+│   │   │   └── index.ts
+│   │   ├── github-mattermost-bridge
+│   │   │   └── index.ts
+│   │   ├── mcp-gateway
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
@@ -1766,7 +1775,10 @@
 │   │   ├── 20251220_process_runtime_ticketing.sql
 │   │   ├── 20251220_qms_lite_document_control.sql
 │   │   ├── 20251220_ticketing_pipelines_clean.sql
-│   │   └── 20251222_control_room_workbench.sql
+│   │   ├── 20251222_control_room_workbench.sql
+│   │   ├── 20251227_database_webhooks.sql
+│   │   ├── 20251227_mcp_job_queue_cron.sql
+│   │   └── 20251227_supabase_queues_setup.sql
 │   ├── seed
 │   │   ├── 9000_core
 │   │   │   └── 9000_core_tenants_roles_users.sql
@@ -1870,6 +1882,7 @@
 │   ├── n8n
 │   │   ├── expense-approval-workflow.json
 │   │   ├── expense-ocr-workflow.json
+│   │   ├── git-operations-workflow.json
 │   │   ├── sync-complete.json
 │   │   ├── sync-docs-changed.json
 │   │   ├── sync-schema-changed.json
@@ -2001,15 +2014,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-632 directories, 1364 files
+636 directories, 1373 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 715 |
-| Files | 1995 |
+| Directories | 719 |
+| Files | 2004 |
 | Python files | 556 |
 | XML files | 299 |
-| Markdown files | 392 |
+| Markdown files | 393 |
