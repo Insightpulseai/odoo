@@ -1,0 +1,208 @@
+{
+  "name": "Git Operations via MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "git-operations",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Git Operations Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "git-operations"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "outputKey": "clone",
+              "conditions": {
+                "options": { "leftValue": "", "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  { "leftValue": "={{ $json.operation }}", "rightValue": "clone", "operator": { "type": "string", "operation": "equals" } }
+                ]
+              }
+            },
+            {
+              "outputKey": "status",
+              "conditions": {
+                "options": { "leftValue": "", "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  { "leftValue": "={{ $json.operation }}", "rightValue": "status", "operator": { "type": "string", "operation": "equals" } }
+                ]
+              }
+            },
+            {
+              "outputKey": "pull",
+              "conditions": {
+                "options": { "leftValue": "", "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  { "leftValue": "={{ $json.operation }}", "rightValue": "pull", "operator": { "type": "string", "operation": "equals" } }
+                ]
+              }
+            },
+            {
+              "outputKey": "push",
+              "conditions": {
+                "options": { "leftValue": "", "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  { "leftValue": "={{ $json.operation }}", "rightValue": "push", "operator": { "type": "string", "operation": "equals" } }
+                ]
+              }
+            },
+            {
+              "outputKey": "commit",
+              "conditions": {
+                "options": { "leftValue": "", "caseSensitive": true, "typeValidation": "strict" },
+                "combinator": "and",
+                "conditions": [
+                  { "leftValue": "={{ $json.operation }}", "rightValue": "commit", "operator": { "type": "string", "operation": "equals" } }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "id": "switch-1",
+      "name": "Route by Operation",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "command": "=cd /workspace && git clone {{ $json.repo_url }} {{ $json.target_dir || 'repo' }} 2>&1"
+      },
+      "id": "exec-clone",
+      "name": "Git Clone",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [700, 100]
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $json.repo_path || '/workspace/repo' }} && git status --porcelain 2>&1"
+      },
+      "id": "exec-status",
+      "name": "Git Status",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [700, 200]
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $json.repo_path || '/workspace/repo' }} && git pull origin {{ $json.branch || 'main' }} 2>&1"
+      },
+      "id": "exec-pull",
+      "name": "Git Pull",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $json.repo_path || '/workspace/repo' }} && git push origin {{ $json.branch || 'main' }} 2>&1"
+      },
+      "id": "exec-push",
+      "name": "Git Push",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [700, 400]
+    },
+    {
+      "parameters": {
+        "command": "=cd {{ $json.repo_path || '/workspace/repo' }} && git add {{ $json.files || '.' }} && git commit -m \"{{ $json.message || 'Update' }}\" 2>&1"
+      },
+      "id": "exec-commit",
+      "name": "Git Commit",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [700, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "const stdout = $input.item.json.stdout || '';\nconst stderr = $input.item.json.stderr || '';\nconst exitCode = $input.item.json.exitCode || 0;\n\nreturn {\n  json: {\n    success: exitCode === 0,\n    operation: $('Route by Operation').item.json.operation,\n    request_id: $('Git Operations Webhook').item.json.request_id,\n    output: stdout || stderr,\n    exit_code: exitCode,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [950, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "respond-1",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1150, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/mcp_request_log",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{ $env.SUPABASE_ANON_KEY }}" },
+            { "name": "Authorization", "value": "=Bearer {{ $env.SUPABASE_SERVICE_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "request_id", "value": "={{ $json.request_id }}" },
+            { "name": "action", "value": "git_operation" },
+            { "name": "client_id", "value": "=n8n-git-worker" },
+            { "name": "status", "value": "={{ $json.success ? 'success' : 'error' }}" },
+            { "name": "metadata", "value": "={{ JSON.stringify({ operation: $json.operation, exit_code: $json.exit_code }) }}" }
+          ]
+        }
+      },
+      "id": "log-to-supabase",
+      "name": "Log to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1150, 450]
+    }
+  ],
+  "connections": {
+    "Git Operations Webhook": {
+      "main": [[{ "node": "Route by Operation", "type": "main", "index": 0 }]]
+    },
+    "Route by Operation": {
+      "clone": [[{ "node": "Git Clone", "type": "main", "index": 0 }]],
+      "status": [[{ "node": "Git Status", "type": "main", "index": 0 }]],
+      "pull": [[{ "node": "Git Pull", "type": "main", "index": 0 }]],
+      "push": [[{ "node": "Git Push", "type": "main", "index": 0 }]],
+      "commit": [[{ "node": "Git Commit", "type": "main", "index": 0 }]]
+    },
+    "Git Clone": { "main": [[{ "node": "Format Response", "type": "main", "index": 0 }]] },
+    "Git Status": { "main": [[{ "node": "Format Response", "type": "main", "index": 0 }]] },
+    "Git Pull": { "main": [[{ "node": "Format Response", "type": "main", "index": 0 }]] },
+    "Git Push": { "main": [[{ "node": "Format Response", "type": "main", "index": 0 }]] },
+    "Git Commit": { "main": [[{ "node": "Format Response", "type": "main", "index": 0 }]] },
+    "Format Response": {
+      "main": [
+        [{ "node": "Respond to Webhook", "type": "main", "index": 0 }],
+        [{ "node": "Log to Supabase", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "active": true,
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "MCP" }, { "name": "Git" }]
+}
