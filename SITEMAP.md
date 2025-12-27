@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e83674669b09c6fea44c5a8df47858e4e30fc8ff
+> Commit: 0159a79090ad0c153ba8e2ee33a69de6f460cdf7
 
 ## 📚 Documentation
 
@@ -331,6 +331,10 @@
 | [Hire-to-Retire Implementation Plan](spec/hire-to-retire/plan.md) | spec/hire-to-retire |
 | [Hire-to-Retire Process - Product Requirements](spec/hire-to-retire/prd.md) | spec/hire-to-retire |
 | [Hire-to-Retire Tasks](spec/hire-to-retire/tasks.md) | spec/hire-to-retire |
+| [InsightPulse Docs AI – Constitution](spec/insightpulse-docs-ai/constitution.md) | spec/insightpulse-docs-ai |
+| [Delivery Plan – InsightPulse Docs AI](spec/insightpulse-docs-ai/plan.md) | spec/insightpulse-docs-ai |
+| [PRD – InsightPulse Docs AI – Technical Knowledge Assistant](spec/insightpulse-docs-ai/prd.md) | spec/insightpulse-docs-ai |
+| [Tasks – InsightPulse Docs AI](spec/insightpulse-docs-ai/tasks.md) | spec/insightpulse-docs-ai |
 | [InsightPulse Mobile App Constitution](spec/insightpulse-mobile/constitution.md) | spec/insightpulse-mobile |
 | [InsightPulse Mobile Plan](spec/insightpulse-mobile/plan.md) | spec/insightpulse-mobile |
 | [InsightPulse Mobile App - Product Requirements](spec/insightpulse-mobile/prd.md) | spec/insightpulse-mobile |
@@ -434,6 +438,7 @@
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
+| [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ | Natural Language Customization Engine for Odoo |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
