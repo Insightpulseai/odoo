@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Welcome message -->
+        <record id="studio_ai_welcome_activity" model="mail.activity.type">
+            <field name="name">Studio AI Tutorial</field>
+            <field name="summary">Learn how to use Studio AI</field>
+            <field name="icon">fa-magic</field>
+            <field name="res_model">res.users</field>
+            <field name="category">default</field>
+            <field name="delay_count">0</field>
+            <field name="delay_unit">days</field>
+        </record>
+
+    </data>
+</odoo>
