@@ -7,14 +7,29 @@ import { useService } from "@web/core/utils/hooks";
 /**
  * IPAI Custom Home Page Component
  * Renders an app grid similar to Odoo's default home page but with custom styling
+ *
+ * Includes defensive checks for service availability to prevent
+ * "Cannot read properties of undefined" errors.
  */
 export class IpaiHomePage extends Component {
     static template = "ipai_default_home.HomePage";
     static props = {};
 
     setup() {
-        this.action = useService("action");
-        this.menuService = useService("menu");
+        // Safely inject services with fallback checks
+        try {
+            this.action = useService("action");
+        } catch (e) {
+            console.warn("[IpaiHomePage] Action service not available:", e);
+            this.action = null;
+        }
+
+        try {
+            this.menuService = useService("menu");
+        } catch (e) {
+            console.warn("[IpaiHomePage] Menu service not available:", e);
+            this.menuService = null;
+        }
 
         this.state = useState({
             apps: [],
@@ -24,6 +39,7 @@ export class IpaiHomePage extends Component {
             isLoading: true,
             showSearch: false,
             contextMenu: null,
+            error: null,
         });
 
         onWillStart(async () => {
@@ -35,10 +51,42 @@ export class IpaiHomePage extends Component {
         });
     }
 
+    /**
+     * Wait for menu service to be ready
+     */
+    async waitForMenuService(maxRetries = 5, delay = 500) {
+        for (let i = 0; i < maxRetries; i++) {
+            if (this.menuService && typeof this.menuService.getApps === "function") {
+                return true;
+            }
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+        return false;
+    }
+
     async loadApps() {
         try {
+            // Wait for menu service if not immediately available
+            if (!this.menuService) {
+                const ready = await this.waitForMenuService();
+                if (!ready) {
+                    console.error("[IpaiHomePage] Menu service not available after retries");
+                    this.state.error = "Unable to load app menu. Please refresh the page.";
+                    this.state.isLoading = false;
+                    return;
+                }
+            }
+
             // Get menus from menu service (official Odoo way)
             const menus = this.menuService.getApps();
+
+            if (!menus || !Array.isArray(menus)) {
+                console.warn("[IpaiHomePage] No menus returned from menu service");
+                this.state.apps = [];
+                this.state.filteredApps = [];
+                this.state.isLoading = false;
+                return;
+            }
 
             this.state.apps = menus.map((menu, index) => ({
                 id: menu.xmlid || String(menu.id),
@@ -53,8 +101,10 @@ export class IpaiHomePage extends Component {
 
             this.state.filteredApps = [...this.state.apps];
             this.state.isLoading = false;
+            this.state.error = null;
         } catch (error) {
-            console.error("Failed to load apps:", error);
+            console.error("[IpaiHomePage] Failed to load apps:", error);
+            this.state.error = `Error loading apps: ${error.message}`;
             this.state.isLoading = false;
         }
     }
