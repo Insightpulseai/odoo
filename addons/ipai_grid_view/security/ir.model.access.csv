@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_grid_view_user,ipai.grid.view.user,model_ipai_grid_view,group_grid_view_user,1,0,0,0
+access_ipai_grid_view_manager,ipai.grid.view.manager,model_ipai_grid_view,group_grid_view_manager,1,1,1,1
+access_ipai_grid_column_user,ipai.grid.column.user,model_ipai_grid_column,group_grid_view_user,1,0,0,0
+access_ipai_grid_column_manager,ipai.grid.column.manager,model_ipai_grid_column,group_grid_view_manager,1,1,1,1
+access_ipai_grid_filter_user,ipai.grid.filter.user,model_ipai_grid_filter,group_grid_view_user,1,1,1,1
+access_ipai_grid_filter_manager,ipai.grid.filter.manager,model_ipai_grid_filter,group_grid_view_manager,1,1,1,1
+access_ipai_grid_filter_condition,ipai.grid.filter.condition,model_ipai_grid_filter_condition,group_grid_view_user,1,1,1,1
