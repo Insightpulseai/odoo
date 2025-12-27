@@ -10,6 +10,11 @@
                     <div class="ipai-loading-spinner"></div>
                 </div>
 
+                <!-- Error State -->
+                <div t-elif="state.error" class="ipai-error-message">
+                    <p t-esc="state.error"/>
+                </div>
+
                 <!-- App Grid -->
                 <section t-else="" class="ipai-app-grid-section">
                     <div class="ipai-app-grid">

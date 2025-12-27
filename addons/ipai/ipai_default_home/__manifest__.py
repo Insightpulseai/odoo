@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "InsightPulse Custom Home Page",
-    "version": "18.0.2.0.0",
+    "version": "18.0.3.0.0",
     "category": "Extra Tools",
     "summary": "Custom app grid home page with modern styling",
     "description": """
