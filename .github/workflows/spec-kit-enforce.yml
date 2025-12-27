@@ -1,4 +1,3 @@
-```yaml
 # .github/workflows/spec-kit-enforce.yml
 name: Spec Kit Enforcement
 
@@ -122,4 +121,3 @@ PY
           else
             echo "No YAML files found under spec/."
           fi
-```
