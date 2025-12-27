@@ -13,7 +13,6 @@ export class IpaiHomePage extends Component {
     static props = {};
 
     setup() {
-        this.rpc = useService("rpc");
         this.action = useService("action");
         this.menuService = useService("menu");
 
@@ -42,12 +41,12 @@ export class IpaiHomePage extends Component {
             const menus = this.menuService.getApps();
 
             this.state.apps = menus.map((menu, index) => ({
-                id: menu.xmlid || menu.id,
+                id: menu.xmlid || String(menu.id),
                 name: menu.name,
                 actionId: menu.actionID,
                 menuId: menu.id,
                 icon: menu.webIconData || menu.webIcon || '/base/static/description/icon.png',
-                color: this.getAppColor(menu.xmlid || menu.id),
+                color: this.getAppColor(menu.xmlid || String(menu.id)),
                 unread: 0,
                 sequence: index,
             }));
@@ -114,16 +113,12 @@ export class IpaiHomePage extends Component {
         this.state.contextMenu = null;
     }
 
-    async onContextMenuFavorite(app) {
-        try {
-            const result = await this.rpc("/api/v1/apps/favorite", {
-                app_id: app.id,
-            });
-            if (result.success) {
-                this.state.favorites = result.favorites;
-            }
-        } catch (error) {
-            console.error("Failed to toggle favorite:", error);
+    onContextMenuFavorite(app) {
+        // Toggle favorite in local state (simplified - no backend call)
+        if (this.state.favorites.includes(app.id)) {
+            this.state.favorites = this.state.favorites.filter(id => id !== app.id);
+        } else {
+            this.state.favorites = [...this.state.favorites, app.id];
         }
         this.state.contextMenu = null;
     }
