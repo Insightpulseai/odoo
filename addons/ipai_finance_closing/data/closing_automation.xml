@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+    Automated Actions for Month-End Closing
+    These replace manual triggers with scheduled automation
+    -->
+
+    <!-- ============================================ -->
+    <!-- SCHEDULED ACTIONS (CRON JOBS) -->
+    <!-- ============================================ -->
+    
+    <!-- 
+    Depreciation Run - Last day of month at 11 PM
+    SAP Equivalent: AFAB scheduled job
+    -->
+    <record id="ir_cron_depreciation_run" model="ir.cron">
+        <field name="name">Monthly Depreciation Posting</field>
+        <field name="model_id" ref="account.model_account_asset"/>
+        <field name="state">code</field>
+        <field name="code">
+# Compute and post depreciation for all open assets
+# Runs on last day of month
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
+today = date.today()
+last_day = today + relativedelta(day=31)
+
+if today == last_day:
+    assets = env['account.asset'].search([
+        ('state', '=', 'open'),
+    ])
+    for asset in assets:
+        asset.compute_depreciation_board()
+    
+    # Log completion
+    env['ir.logging'].create({
+        'name': 'Depreciation Run',
+        'type': 'server',
+        'level': 'info',
+        'message': f'Depreciation computed for {len(assets)} assets',
+        'func': 'ir_cron_depreciation_run',
+    })
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- 
+    Currency Rate Update - Daily at 6 AM
+    Fetches BSP exchange rates
+    Requires: OCA currency_rate_update module
+    -->
+    <record id="ir_cron_currency_update" model="ir.cron">
+        <field name="name">Update Currency Rates (BSP)</field>
+        <field name="model_id" ref="base.model_res_currency"/>
+        <field name="state">code</field>
+        <field name="code">
+# Update exchange rates from configured providers
+# Requires currency_rate_update OCA module
+providers = env['res.currency.rate.provider'].search([('active', '=', True)])
+for provider in providers:
+    try:
+        provider._update(date_from=False, date_to=False)
+    except Exception as e:
+        env['ir.logging'].create({
+            'name': 'Currency Update',
+            'type': 'server', 
+            'level': 'error',
+            'message': str(e),
+            'func': 'ir_cron_currency_update',
+        })
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">False</field>
+        <field name="active">False</field> <!-- Enable when OCA module installed -->
+    </record>
+
+    <!-- 
+    Auto-Reverse Accruals - Day 1 of month at 12:01 AM
+    Reverses entries marked for auto-reversal
+    -->
+    <record id="ir_cron_reverse_accruals" model="ir.cron">
+        <field name="name">Auto-Reverse Prior Month Accruals</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">
+# Find and reverse accrual entries marked for auto-reversal
+from datetime import date
+
+today = date.today()
+if today.day == 1:
+    # Find entries to reverse
+    entries = env['account.move'].search([
+        ('state', '=', 'posted'),
+        ('auto_reverse', '=', True),
+        ('reversed_entry_id', '=', False),
+        ('date', '&lt;', today),
+    ])
+    
+    for entry in entries:
+        try:
+            entry._reverse_moves([{'date': today}], cancel=False)
+        except Exception as e:
+            env['ir.logging'].create({
+                'name': 'Auto-Reverse',
+                'type': 'server',
+                'level': 'error', 
+                'message': f'Failed to reverse {entry.name}: {str(e)}',
+                'func': 'ir_cron_reverse_accruals',
+            })
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- 
+    Dunning/Follow-up Run - Weekly on Monday at 9 AM
+    Sends payment reminders
+    -->
+    <record id="ir_cron_dunning_run" model="ir.cron">
+        <field name="name">Weekly Customer Follow-up</field>
+        <field name="model_id" ref="account.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">
+# Run follow-up actions for overdue invoices
+from datetime import date
+
+partners = env['res.partner'].search([
+    ('payment_next_action_date', '&lt;=', date.today()),
+])
+
+for partner in partners:
+    try:
+        partner._compute_followup_status()
+    except Exception as e:
+        pass  # Continue with next partner
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">weeks</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- AUTOMATED ACTIONS (TRIGGERS) -->
+    <!-- ============================================ -->
+    
+    <!--
+    Task Completion Notification
+    When closing task is completed, notify next assigned user
+    -->
+    <record id="base_automation_task_complete" model="base.automation">
+        <field name="name">Notify Next Task Owner on Completion</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="trigger">on_stage_set</field>
+        <field name="trigger_field_ids" eval="[(6, 0, [])]"/>
+        <field name="state">code</field>
+        <field name="code">
+# When task moves to Completed stage, notify dependent task owners
+for task in records:
+    if task.stage_id.name == 'Completed':
+        # Find tasks that depend on this one
+        dependent_tasks = env['project.task'].search([
+            ('depend_on_ids', 'in', task.id),
+            ('stage_id.name', '=', 'Backlog'),
+        ])
+        
+        for dep_task in dependent_tasks:
+            # Move to In Progress
+            in_progress = env['project.task.type'].search([
+                ('name', '=', 'In Progress')
+            ], limit=1)
+            if in_progress:
+                dep_task.stage_id = in_progress
+            
+            # Notify assignee
+            if dep_task.user_ids:
+                dep_task.message_post(
+                    body=f"Predecessor task '{task.name}' completed. This task is now ready to start.",
+                    partner_ids=dep_task.user_ids.mapped('partner_id').ids,
+                    message_type='notification',
+                )
+        </field>
+        <field name="active">True</field>
+    </record>
+
+    <!--
+    Large Invoice Alert
+    When vendor bill > 100,000 is created, notify Finance Manager
+    -->
+    <record id="base_automation_large_invoice" model="base.automation">
+        <field name="name">Alert: Large Vendor Invoice</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="trigger">on_create_or_write</field>
+        <field name="filter_domain">[('move_type', '=', 'in_invoice'), ('amount_total', '>=', 100000)]</field>
+        <field name="state">code</field>
+        <field name="code">
+for move in records:
+    if move.amount_total >= 100000 and move.state == 'draft':
+        move.message_post(
+            body=f"⚠️ Large invoice alert: {move.partner_id.name} - ₱{move.amount_total:,.2f}",
+            subject="Large Invoice Requires Review",
+            message_type='notification',
+        )
+        </field>
+        <field name="active">True</field>
+    </record>
+
+    <!--
+    Period Lock Reminder
+    Day 5 of each month - remind to close prior period
+    -->
+    <record id="ir_cron_period_lock_reminder" model="ir.cron">
+        <field name="name">Period Lock Reminder</field>
+        <field name="model_id" ref="base.model_res_users"/>
+        <field name="state">code</field>
+        <field name="code">
+from datetime import date
+
+today = date.today()
+if today.day == 5:
+    # Find finance managers (users with specific group)
+    finance_group = env.ref('account.group_account_manager', raise_if_not_found=False)
+    if finance_group:
+        for user in finance_group.users:
+            # Create activity reminder
+            env['mail.activity'].create({
+                'res_model_id': env['ir.model']._get('res.company').id,
+                'res_id': env.company.id,
+                'activity_type_id': env.ref('mail.mail_activity_data_todo').id,
+                'summary': 'Close Prior Accounting Period',
+                'note': 'Month-end closing should be complete. Please verify and lock the prior period.',
+                'user_id': user.id,
+                'date_deadline': today,
+            })
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="doall">False</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- ============================================ -->
+    <!-- SERVER ACTIONS (Manual Triggers) -->
+    <!-- ============================================ -->
+    
+    <!--
+    Generate Month-End Close Task List
+    Creates new project from template for specific month
+    -->
+    <record id="action_generate_closing_tasklist" model="ir.actions.server">
+        <field name="name">Generate Month-End Closing Task List</field>
+        <field name="model_id" ref="project.model_project_project"/>
+        <field name="binding_model_id" ref="project.model_project_project"/>
+        <field name="binding_view_types">form</field>
+        <field name="state">code</field>
+        <field name="code">
+from datetime import date
+from dateutil.relativedelta import relativedelta
+
+# Get template project
+template = env.ref('closing_template.project_month_end_template', raise_if_not_found=False)
+if template:
+    # Calculate period
+    today = date.today()
+    period_end = today + relativedelta(day=1) - relativedelta(days=1)
+    period_name = period_end.strftime('%B %Y')
+    
+    # Copy template
+    new_project = template.copy({
+        'name': f'Month-End Close - {period_name}',
+        'date_start': today,
+    })
+    
+    # Return action to open new project
+    action = env['ir.actions.act_window']._for_xml_id('project.open_view_project_all')
+    action['res_id'] = new_project.id
+    action['views'] = [(False, 'form')]
+else:
+    raise UserError("Closing template not found. Please install closing_template module.")
+        </field>
+    </record>
+
+    <!--
+    Run FX Revaluation
+    Manual trigger for foreign currency revaluation
+    -->
+    <record id="action_fx_revaluation" model="ir.actions.server">
+        <field name="name">Run FX Revaluation</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="state">code</field>
+        <field name="code">
+# Placeholder - actual implementation depends on Odoo version
+# and whether OCA account_multicurrency_revaluation is installed
+raise UserError("""
+FX Revaluation Instructions:
+
+1. Update exchange rates first:
+   Accounting → Configuration → Currencies
+
+2. For Odoo 18+:
+   Use built-in Unrealized Currency Gains/Losses report
+   
+3. For OCA enhanced revaluation:
+   Install: account_multicurrency_revaluation
+   Then: Accounting → Periodic Processing → FX Revaluation
+""")
+        </field>
+    </record>
+
+    <!--
+    Generate BIR 2307 Certificates
+    Placeholder for BIR withholding tax certificates
+    -->
+    <record id="action_generate_bir2307" model="ir.actions.server">
+        <field name="name">Generate BIR 2307 Certificates</field>
+        <field name="model_id" ref="account.model_account_payment"/>
+        <field name="binding_model_id" ref="account.model_account_payment"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+# Placeholder - requires ipai_bir_withholding module
+raise UserError("""
+BIR 2307 Generation requires ipai_bir_withholding module.
+
+To implement:
+1. Create ipai_bir_withholding module
+2. Add wizard to select payments with EWT
+3. Generate PDF certificates per BIR format
+4. Batch generate for period
+
+For now, use manual BIR 2307 forms.
+""")
+        </field>
+    </record>
+
+</odoo>
