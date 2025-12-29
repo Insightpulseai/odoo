@@ -10,11 +10,11 @@ Comprehensive month-end financial closing task template based on **SAP Advanced 
 
 **Key Benefits:**
 - ✅ **7 days → 4 days**: Reduce closing cycle from 7 to 4 business days
-- ✅ **50+ pre-configured tasks**: Complete SAP AFC-inspired checklist
-- ✅ **Task dependencies**: Automatic workflow sequencing
-- ✅ **BIR compliance**: 1601-C, 2550Q, 1702-RT, 0619-E reminders
-- ✅ **Automated actions**: Accrual reversals, FX rates, period locks
+- ✅ **26 pre-configured tasks**: Complete SAP AFC-inspired checklist
+- ✅ **Task assignments**: Automatic role-based assignment (Finance Director, AP/AR/GL/Tax specialists)
+- ✅ **Tax preparation**: BIR 1601-C, 1601-EQ, 2550M/Q report generation
 - ✅ **n8n integration**: Webhook-triggered closing orchestration
+- ✅ **Separation of concerns**: Month-end close ≠ Tax filing (handled by n8n workflows)
 
 ---
 
@@ -24,41 +24,54 @@ Comprehensive month-end financial closing task template based on **SAP Advanced 
 
 | Phase | Days | Task Count | Key Activities |
 |-------|------|------------|----------------|
-| **Pre-Closing** | -5 to -1 | 9 tasks | Period management, master data review |
-| **Subledgers** | 1-3 | 15 tasks | AP/AR/Asset processing |
-| **General Ledger** | 3-5 | 21 tasks | Accruals, reconciliations, FX |
-| **Tax/Compliance** | 3-7 | 6 tasks | BIR forms (1601-C, 2550Q, etc.) |
+| **Pre-Closing** | -5 to -1 | 2 tasks | Period management, master data review |
+| **Subledgers** | 1-3 | 10 tasks | AP/AR/Asset processing |
+| **General Ledger** | 3-5 | 5 tasks | Accruals, reconciliations, FX |
+| **Tax Preparation** | 3-7 | 3 tasks | BIR forms PREPARATION (1601-C, 1601-EQ, 2550M/Q) |
 | **Reporting** | 5-7 | 6 tasks | Trial balance, financials, management reports |
 
-**Total**: 57 tasks
+**Total**: 26 tasks
 
-### 2. Automated Actions (Scheduled)
+**Scope**: Month-end close + tax **preparation** (Days 1-7). BIR tax **filing** (Days 10-25) is handled separately via n8n workflows.
 
-| Action | Schedule | Description |
-|--------|----------|-------------|
+### 2. Task Assignments (Role-Based)
+
+| Role | User | Task Count | Functional Areas |
+|------|------|------------|------------------|
+| **Finance Director** | Rey Meran | 4 | Period open/close, master data, sign-off |
+| **AP Specialist** | Jasmin Ignacio | 3 | Vendor bills, GR/IR, payments |
+| **AR Specialist** | Jinky Paladin | 4 | Customer invoices, collections, bad debt |
+| **GL Specialist** | Jerald Loterte | 7 | Assets, accruals, FX, journal entries |
+| **Tax Specialist** | Jhoee Oliva | 3 | BIR 1601-C, 1601-EQ, 2550M/Q preparation |
+| **Reconciliation** | Joana Maravillas | 2 | Bank, subledger reconciliations |
+| **Finance Manager** | Khalil Veracruz | 3 | Trial balance, financials, coordination |
+
+### 3. Automated Actions (n8n Workflows)
+
+**Note**: Automation via scheduled actions disabled in initial release due to Odoo 18 restrictions. Use n8n workflows instead:
+
+| Workflow | Schedule | Description |
+|----------|----------|-------------|
 | **Reverse Accruals** | Day 1, 00:01 AM | Auto-reverse prior month accrual entries |
 | **Update FX Rates** | Day 1, 06:00 AM | Fetch BSP (Bangko Sentral) exchange rates |
-| **Run Depreciation** | Last Day -1, 11:00 PM | Calculate and post asset depreciation |
-| **Period Lock Reminder** | Day 5, 09:00 AM | Email Finance Manager |
-| **BIR 1601-C Reminder** | Day 10, 08:00 AM | Mattermost notification |
+| **Period Lock Reminder** | Day 5, 09:00 AM | Mattermost notification |
+| **BIR Filing Alerts** | Day 10, 08:00 AM | 1601-C, 1601-EQ, 2550M/Q deadline reminders |
 
-### 3. Task Tags (Functional Areas)
+### 4. BIR (Philippine Tax) Preparation vs. Filing
 
-- **[GL]** - General Ledger
-- **[AP]** - Accounts Payable
-- **[AR]** - Accounts Receivable
-- **[AA]** - Asset Accounting
-- **[Tax]** - Tax & Compliance
-- **[Reporting]** - Financial Reporting
+**✅ Included in Template (Tax Preparation):**
+- **4.1**: Prepare BIR 1601-C (Withholding Tax - Compensation)
+- **4.2**: Prepare BIR 1601-EQ (Expanded Withholding Tax)
+- **4.3**: Prepare BIR 2550M/Q (Monthly/Quarterly VAT Return)
 
-### 4. BIR (Philippine Tax) Compliance
+**❌ NOT Included (Tax Filing - Separate n8n Workflow):**
+- BIR data validation (cross-check with GL)
+- DAT file generation for eBIRForms
+- Submission to BIR eFPS/eBIRForms
+- Payment processing via bank/eFPS
+- Filing confirmation archival
 
-Pre-configured tasks for:
-- **1601-C**: Monthly withholding tax (due: 10th)
-- **1601-EQ**: Quarterly withholding tax (due: 15th after quarter)
-- **2550M/Q**: Monthly/quarterly income tax (due: 20th/25th)
-- **1702-RT**: Annual income tax (due: April 15)
-- **0619-E**: Monthly expanded withholding tax (due: 10th)
+**Rationale**: Month-end close (Days 1-7) ≠ Tax filing (Days 10-25). Different timelines and processes require separation.
 
 ---
 
@@ -146,10 +159,9 @@ Pre-configured tasks for:
 
 2. **n8n workflow actions**
    - Creates project: "Month-End Close - Dec 2025"
-   - Creates all 57 tasks
-   - Sets dependencies
-   - Assigns to users
-   - Schedules automated actions
+   - Creates all 26 tasks with role-based assignments
+   - Sets task dependencies
+   - Schedules automated reminders
    - Notifies Mattermost: "Month-end closing started"
 
 3. **Daily progress monitoring**
@@ -304,19 +316,20 @@ odoo -d production -c /etc/odoo/odoo.conf --list
 
 # Check XML data loaded
 psql -U odoo production -c "SELECT COUNT(*) FROM project_task WHERE project_id IN (SELECT id FROM project_project WHERE name LIKE '%Month-End Close Template%');"
-# Should return: 57
+# Should return: 26
 ```
 
 ### Problem: Automated actions not running
 
-**Solution**:
-```bash
-# Check cron status
-psql -U odoo production -c "SELECT name, nextcall, active FROM ir_cron WHERE model='account.move';"
+**Note**: Scheduled actions (cron jobs) are **disabled** in initial release due to Odoo 18 restrictions on Python imports in scheduled action code.
 
-# Force run cron job
-odoo -d production --cron --stop-after-init
-```
+**Solution**: Use n8n workflows for automation:
+- Accrual reversals
+- FX rate updates
+- Period lock reminders
+- BIR filing deadline alerts
+
+See Phase 3 of implementation plan for n8n workflow setup.
 
 ### Problem: Task dependencies not enforced
 
@@ -340,8 +353,8 @@ addons/ipai_finance_closing/
 ├── __init__.py                    # Empty (no Python code)
 ├── __manifest__.py                # Module metadata
 ├── data/
-│   ├── closing_tasks.xml          # 57 task definitions
-│   └── closing_automation.xml     # 5 scheduled actions
+│   ├── closing_tasks.xml          # 26 task definitions (5 phases)
+│   └── closing_automation.xml.disabled  # Disabled (Odoo 18 restrictions)
 ├── security/
 │   └── ir.model.access.csv        # Access rights
 └── README.md                      # This file
