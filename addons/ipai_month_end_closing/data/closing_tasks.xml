@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 
+        Month-End Closing Tasks - TBWA Finance
+        Source: Month-end Closing Task and Tax Filing.xlsx
+        36 tasks organized by functional area and employee assignment
+        -->
+
+        <!-- ============================================ -->
+        <!-- SECTION 1: RIM - PAYROLL & PERSONNEL -->
+        <!-- ============================================ -->
+
+        <record id="task_rim_001_payroll" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RIM-001: Process Payroll, Final Pay, SL Conversions</field>
+            <field name="description">Process and record Payroll, Final Pay, SL Conversions, and early retirement accrual.
+
+Preparer: RIM
+Reviewer: CKVC
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="task_rim_002_tax_provision" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RIM-002: Calculate Tax Provision &amp; PPB Provision</field>
+            <field name="description">Calculate and record the monthly Tax Provision and PPB Provision (performance bonuses).
+
+Preparer: RIM
+Reviewer: CKVC
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_tax'), ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="task_rim_003_rent_leases" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RIM-003: Record Rental Income/Expense &amp; Health Plan Amortization</field>
+            <field name="description">Record recurring monthly Rental Income/Expense and monthly amortization expense for employee hospitalization plans.
+
+Preparer: RIM
+Reviewer: CKVC
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals'), ref('tag_amortization')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="task_rim_004_consultancy_accruals" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RIM-004: Record Consultancy Fees &amp; General Expense Accruals</field>
+            <field name="description">Record accruals for Consultancy Fees and various routine General Expense Accruals. Estimated expense for which a vendor invoice has not yet been received.
+
+Preparer: RIM
+Reviewer: CKVC
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals'), ref('tag_ap')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="task_rim_005_cash_advances" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RIM-005: Process Cash Advance Payments</field>
+            <field name="description">Process and record Payments for various Cash Advances. Recording the funding/issuance of cash to employees for expected business expenditures.
+
+Preparer: RIM
+Reviewer: CKVC
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals'), ref('tag_ap')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="task_rim_006_prior_period_reversal" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RIM-006: Process Prior Period Reversals</field>
+            <field name="description">The necessary reversal or adjustment of temporary journal entries created in a previous month. Process reversal entries for the prior month's accruals and reclassifications.
+
+Preparer: RIM
+Reviewer: CKVC
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_gl'), ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- SECTION 2: BOM - AMORTIZATION & CORPORATE -->
+        <!-- ============================================ -->
+
+        <record id="task_bom_001_depreciation" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">BOM-001: Record Depreciation &amp; Technology Amortization</field>
+            <field name="description">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Depreciation, Amortization for vehicles/purchases/LOA, and Amortization for all technology licenses and shared service costs.
+
+Preparer: BOM
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization'), ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="task_bom_002_mgmt_royalty" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">BOM-002: Accrue Management &amp; Royalty Fees</field>
+            <field name="description">Accrue monthly expenses for Management and Royalty fees, consulting fees, and funds for Innovations/Initiatives. Recognizing an expense for internal projects or strategic corporate investments not yet formally invoiced.
+
+Preparer: BOM
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals'), ref('tag_intercompany')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="task_bom_003_insurance" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">BOM-003: Record Corporate Insurance &amp; Health Insurance Amortization</field>
+            <field name="description">Monthly tracking and recording of premiums for various corporate insurance policies. Record monthly accrual for various Corporate Insurance types and amortize prepaid Health Insurance.
+
+Preparer: BOM
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_insurance'), ref('tag_amortization')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <record id="task_bom_004_treasury" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">BOM-004: Treasury - Bank Charges, FX Reval, Stock Options</field>
+            <field name="description">Non-operating financial activities including capital structure and compliance. Record monthly bank charges, perform revaluation of foreign currency bank accounts, and record the monthly expense portion of the Omnicom stock option grant.
+
+Preparer: BOM
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_treasury'), ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <record id="task_bom_005_prior_period" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">BOM-005: Process Prior Month Accrual Reversals</field>
+            <field name="description">Process reversal entries for all prior month Accruals (e.g., trainings, production/retainers).
+
+Preparer: BOM
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_gl'), ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">110</field>
+        </record>
+
+        <record id="task_bom_006_regional_reporting" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">BOM-006: Prepare Regional Reports (Flash, Wins/Losses, Revenue)</field>
+            <field name="description">Prepare reports for Flash, Wins &amp; Losses and Revenue.
+
+Preparer: BOM
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_reporting')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">120</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- SECTION 3: JPAL - CLIENT BILLINGS & WIP -->
+        <!-- ============================================ -->
+
+        <record id="task_jpal_001_revenue_accruals" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JPAL-001: Accrue Production, Retainer, Media, Creative Fees &amp; OOPC</field>
+            <field name="description">Recognizing revenue and billable costs based on client contracts and project status. Accrue estimated Production, Retainer Fees, Media Commission, Creative Fees, and OOPC. Recording estimated Out-of-Pocket Costs that will eventually be billed to a client.
+
+Preparer: JPAL
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ar'), ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">130</field>
+        </record>
+
+        <record id="task_jpal_002_wip_oop_reclass" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JPAL-002: WIP/OOP Reclassifications</field>
+            <field name="description">Reconciling and reclassifying costs to ensure they are correctly categorized as billable (WIP) or internal (OOP). Perform month-end Reclassifications of OOP to WIP (moves client-related expenses to an active project account) and necessary Reclass WIP to OOP (moves costs back if non-billable).
+
+Preparer: JPAL
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_wip'), ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">140</field>
+        </record>
+
+        <record id="task_jpal_003_business_permit" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JPAL-003: Amortize Business Permit &amp; LOA</field>
+            <field name="description">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Amortization of the Business Permit and Amortization of LOA.
+
+Preparer: JPAL
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">150</field>
+        </record>
+
+        <record id="task_jpal_004_audit_fees" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JPAL-004: Accrue Monthly Audit Fees</field>
+            <field name="description">Accrue estimated monthly Audit Fees.
+
+Preparer: JPAL
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">160</field>
+        </record>
+
+        <record id="task_jpal_005_interco_rental" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JPAL-005: Record Intercompany Rental Expense/Income</field>
+            <field name="description">Record monthly Rental Expense/Income related to intercompany transactions.
+
+Preparer: JPAL
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_intercompany'), ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">170</field>
+        </record>
+
+        <record id="task_jpal_006_interco_fx_reval" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JPAL-006: Revalue Intercompany Balances (FX)</field>
+            <field name="description">Perform month-end Revaluation of Intercompany Balances. Adjusting intercompany balances to reflect the correct value at the month-end exchange rate.
+
+Preparer: JPAL
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_intercompany'), ref('tag_treasury')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">180</field>
+        </record>
+
+        <record id="task_jpal_007_ar_aging_wc" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JPAL-007: Prepare AR Aging Report (Working Capital)</field>
+            <field name="description">Prepare reports for Working Capital related to AR.
+
+Preparer: JPAL
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ar'), ref('tag_reporting')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">190</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- SECTION 4: LAS - CA LIQUIDATIONS & AP -->
+        <!-- ============================================ -->
+
+        <record id="task_las_001_ca_liquidations" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">LAS-001: Process CA Liquidations (Project-Related)</field>
+            <field name="description">Process and record Cash Advance (CA) Liquidations for specific project-related expenses.
+
+Preparer: LAS
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ap'), ref('tag_wip')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">200</field>
+        </record>
+
+        <record id="task_las_002_ap_aging_wc" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">LAS-002: Prepare AP Aging Report (Working Capital)</field>
+            <field name="description">Prepare AP Aging report for working capital submission.
+
+Preparer: LAS
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ap'), ref('tag_reporting')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">210</field>
+        </record>
+
+        <record id="task_las_003_oop_summary" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">LAS-003: Prepare HOWs Summary Report (OOP)</field>
+            <field name="description">Prepare HOW's summary report.
+
+Preparer: LAS
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_wip'), ref('tag_reporting')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">220</field>
+        </record>
+
+        <record id="task_las_004_lease_interest" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">LAS-004: Record Lease Interest &amp; Corporate Fee Amortization</field>
+            <field name="description">Recording transactions for financed assets and long-term commitments. Record monthly interest expense on leased assets and process amortization reclassifications for prepaid corporate fees.
+
+Preparer: LAS
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization'), ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">230</field>
+        </record>
+
+        <record id="task_las_005_gl_reclass" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">LAS-005: Process GL &amp; Marketing Expense Reclassifications</field>
+            <field name="description">Correcting entries across the general ledger (GL). Process required reclassifications between specific GL accounts and between Marketing Expense categories.
+
+Preparer: LAS
+Reviewer: BOM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">240</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- SECTION 5: JLI - VAT & ASSETS -->
+        <!-- ============================================ -->
+
+        <record id="task_jli_001_input_vat" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JLI-001: Compile Input VAT &amp; Monthly VAT Report</field>
+            <field name="description">Compile and record monthly Input VAT entries (VAT paid on purchases) and the monthly VAT Report (cumulative summary of VAT activity).
+
+Preparer: JLI
+Reviewer: JPAL
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_vat'), ref('tag_tax')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">250</field>
+        </record>
+
+        <record id="task_jli_002_recurring_accruals" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JLI-002: Accrue Recurring Expenses</field>
+            <field name="description">Recording estimated expenses for recurring monthly costs and recognizing non-fixed asset costs. Accrue recurring Expenses (estimated expense for regularly occurring services).
+
+Preparer: JLI
+Reviewer: LAS
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">260</field>
+        </record>
+
+        <record id="task_jli_003_computer_costs" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JLI-003: Capitalize Other Computer Related Costs</field>
+            <field name="description">Record the monthly recognition/capitalization of Other Computer Related Costs.
+
+Preparer: JLI
+Reviewer: LAS
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization'), ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">270</field>
+        </record>
+
+        <record id="task_jli_004_ap_aging" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JLI-004: Prepare Detailed AP Aging Report</field>
+            <field name="description">Prepare AP Aging report with detailed status per invoice.
+
+Preparer: JLI
+Reviewer: LAS
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ap'), ref('tag_reporting')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">280</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- SECTION 6: RMQB - CA & ACCRUALS -->
+        <!-- ============================================ -->
+
+        <record id="task_rmqb_001_ca_liquidations" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RMQB-001: Process CA Liquidations (Employee Submitted)</field>
+            <field name="description">Process and record Cash Advance (CA) Liquidations submitted by employees.
+
+Preparer: RMQB
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ap')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">290</field>
+        </record>
+
+        <record id="task_rmqb_002_cellphone_allowance" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RMQB-002: Accrue Employee Cellphone Allowance</field>
+            <field name="description">Accrue monthly expense for Employee Cellphone Allowance.
+
+Preparer: RMQB
+Reviewer: LAS
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">300</field>
+        </record>
+
+        <record id="task_rmqb_003_expense_reclass" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">RMQB-003: Expense Reclassifications</field>
+            <field name="description">Adjusting a recorded expense from one GL account to another to ensure correct reporting classification.
+
+Preparer: RMQB
+Reviewer: RIM
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">310</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- SECTION 7: JAP - VAT & JOB TRANSFERS -->
+        <!-- ============================================ -->
+
+        <record id="task_jap_001_vat_report" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JAP-001: Compile &amp; Record Monthly VAT Report</field>
+            <field name="description">Compile, review, and record the monthly VAT Report (Initial and additional entries).
+
+Preparer: JAP
+Reviewer: JPAL
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_vat'), ref('tag_tax')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">320</field>
+        </record>
+
+        <record id="task_jap_002_job_transfers" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JAP-002: Process Job Transfers (Project Code Adjustments)</field>
+            <field name="description">Adjusting costs or revenues between different internal project codes or job numbers to ensure accurate project profitability tracking.
+
+Preparer: JAP
+Reviewer: JPAL
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_wip'), ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">330</field>
+        </record>
+
+        <record id="task_jap_003_gl_reclass" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JAP-003: Record Month-End GL Reclassifications</field>
+            <field name="description">Record specific GL reclassifications needed for month-end adjustments.
+
+Preparer: JAP
+Reviewer: JPAL
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_gl')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">340</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- SECTION 8: JRMO - ACCRUALS & WIP -->
+        <!-- ============================================ -->
+
+        <record id="task_jrmo_001_revenue_docs" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JRMO-001: Compile Revenue Accrual Documentation</field>
+            <field name="description">Compile documents for the attachment of the revenue accruals.
+
+Preparer: JRMO
+Reviewer: JPAL
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ar'), ref('tag_accruals')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">350</field>
+        </record>
+
+        <record id="task_jrmo_002_wip_schedule" model="project.task">
+            <field name="project_id" ref="project_month_end_closing"/>
+            <field name="name">JRMO-002: Prepare WIP Schedule Summary per Job#</field>
+            <field name="description">Prepare WIP schedule summary per Job#.
+
+Preparer: JRMO
+Reviewer: JPAL
+Approver: CKVC
+
+Timeline:
+- Preparation: 1 Day
+- Review: 0.5 Day
+- Approval: 0.5 Day</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_wip'), ref('tag_reporting')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">360</field>
+        </record>
+
+    </data>
+</odoo>
