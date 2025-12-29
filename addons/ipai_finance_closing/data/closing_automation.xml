@@ -45,7 +45,6 @@ if today == last_day:
         </field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
-        <field name="doall">False</field>
         <field name="active">True</field>
     </record> -->
 
@@ -76,7 +75,6 @@ for provider in providers:
         </field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
-        <field name="doall">False</field>
         <field name="active">False</field> <!-- Enable when OCA module installed -->
     </record>
 
@@ -116,7 +114,6 @@ if today.day == 1:
         </field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
-        <field name="doall">False</field>
         <field name="active">True</field>
     </record>
 
@@ -144,7 +141,6 @@ for partner in partners:
         </field>
         <field name="interval_number">1</field>
         <field name="interval_type">weeks</field>
-        <field name="doall">False</field>
         <field name="active">True</field>
     </record>
 
@@ -243,7 +239,6 @@ if today.day == 5:
         </field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
-        <field name="doall">False</field>
         <field name="active">True</field>
     </record>
 
