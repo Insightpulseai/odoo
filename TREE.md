@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f91420426124cff35f298630dee5f16424b9fa82
+> Commit: e8d19140eca01a10689d4a0711c08c863b93de03
 
 ```
 .
@@ -916,9 +916,11 @@
 │   └── snapshot.txt
 ├── automations
 │   └── n8n
-│       └── workflows
-│           ├── odoo_reverse_mapper.json
-│           └── ppm_monthly_close_automation.json
+│       ├── workflows
+│       │   ├── finance_closing_automation.json
+│       │   ├── odoo_reverse_mapper.json
+│       │   └── ppm_monthly_close_automation.json
+│       └── README_FINANCE_CLOSING.md
 ├── baselines
 │   └── v0.2.1-quality-baseline-20251121.txt
 ├── bin
@@ -2084,7 +2086,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-666 directories, 1413 files
+666 directories, 1415 files
 ```
 
 ## 📊 Stats
@@ -2092,7 +2094,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 761 |
-| Files | 2085 |
+| Files | 2087 |
 | Python files | 578 |
 | XML files | 317 |
-| Markdown files | 398 |
+| Markdown files | 399 |
