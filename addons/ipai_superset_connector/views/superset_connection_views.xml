@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Superset Connection Views -->
+    
+    <record id="superset_connection_view_form" model="ir.ui.view">
+        <field name="name">superset.connection.form</field>
+        <field name="model">superset.connection</field>
+        <field name="arch" type="xml">
+            <form string="Superset Connection">
+                <header>
+                    <button name="action_test_connection" type="object" 
+                            string="Test Connection" class="btn-secondary"/>
+                    <button name="action_create_database_connection" type="object" 
+                            string="Create Database in Superset" class="btn-primary"
+                            invisible="not db_connection_id == 0"/>
+                    <button name="action_sync_all_datasets" type="object" 
+                            string="Sync All Datasets" class="btn-secondary"
+                            invisible="state != 'connected'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,connected"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_superset_dataset_list)d" type="action"
+                                class="oe_stat_button" icon="fa-database">
+                            <field name="dataset_count" widget="statinfo" string="Datasets"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Connection Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Superset Server">
+                            <field name="base_url" placeholder="https://superset.company.com"/>
+                            <field name="auth_method"/>
+                            <field name="username" invisible="auth_method == 'api_key'"/>
+                            <field name="password" password="True" invisible="auth_method == 'api_key'"/>
+                            <field name="api_key" password="True" invisible="auth_method != 'api_key'"/>
+                        </group>
+                        <group string="Odoo Database (for Superset)">
+                            <field name="db_connection_name"/>
+                            <field name="db_connection_id" readonly="1"/>
+                            <field name="pg_host"/>
+                            <field name="pg_port"/>
+                            <field name="pg_database"/>
+                            <field name="pg_username"/>
+                            <field name="pg_password" password="True"/>
+                            <field name="pg_schema"/>
+                            <field name="use_ssl"/>
+                        </group>
+                    </group>
+                    <group string="Status" invisible="state == 'draft'">
+                        <field name="last_sync"/>
+                        <field name="last_error" invisible="not last_error"/>
+                    </group>
+                    <notebook>
+                        <page string="Datasets" name="datasets">
+                            <field name="dataset_ids" mode="tree">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="technical_name"/>
+                                    <field name="category"/>
+                                    <field name="sync_status"/>
+                                    <field name="last_sync"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Tokens" name="tokens" groups="base.group_system">
+                            <group>
+                                <field name="access_token" readonly="1"/>
+                                <field name="refresh_token" readonly="1"/>
+                                <field name="csrf_token" readonly="1"/>
+                                <field name="token_expiry" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="superset_connection_view_tree" model="ir.ui.view">
+        <field name="name">superset.connection.tree</field>
+        <field name="model">superset.connection</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="base_url"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'connected'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="dataset_count"/>
+                <field name="last_sync"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_superset_connection" model="ir.actions.act_window">
+        <field name="name">Superset Connections</field>
+        <field name="res_model">superset.connection</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Superset connection
+            </p>
+            <p>
+                Connect Odoo to Apache Superset for business intelligence dashboards.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_superset_root"
+              name="Superset"
+              web_icon="ipai_superset_connector,static/description/icon.png"
+              sequence="90"/>
+    
+    <menuitem id="menu_superset_connections"
+              name="Connections"
+              parent="menu_superset_root"
+              action="action_superset_connection"
+              sequence="10"/>
+
+</odoo>
