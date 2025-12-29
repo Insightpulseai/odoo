@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- 
+        BIR Tax Filing Tasks - TBWA Finance
+        Source: Month-end Closing Task and Tax Filing.xlsx - Tax Filing sheet
+        
+        Workflow per filing:
+        1. Preparation (BOM): BIR Deadline - 4 Business Days
+        2. Report Approval (RIM/SFM): BIR Deadline - 2 Business Days
+        3. Payment Approval (CKVC/FD): BIR Deadline - 1 Business Day
+        4. Filing & Payment: On or before BIR Deadline
+        -->
+
+        <!-- ============================================ -->
+        <!-- MONTHLY: 1601-C WITHHOLDING TAX ON COMPENSATION -->
+        <!-- ============================================ -->
+
+        <record id="task_bir_1601c_dec2025" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C: December 2025 Compensation</field>
+            <field name="description">BIR Form 1601-C - Monthly Remittance Return of Income Taxes Withheld on Compensation
+
+Period Covered: December 2025
+BIR Deadline: January 15, 2026
+
+Workflow:
+- Preparation (BOM): January 9, 2026
+- Report Approval (RIM): January 12, 2026
+- Payment Approval (CKVC): January 13, 2026
+- Filing &amp; Payment: January 15, 2026</field>
+            <field name="date_deadline">2026-01-15</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1000</field>
+        </record>
+
+        <record id="task_bir_1601c_jan2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: January 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: January 2026
+BIR Deadline: February 10, 2026
+
+Workflow:
+- Preparation (BOM): February 4, 2026
+- Report Approval (RIM): February 6, 2026
+- Payment Approval (CKVC): February 9, 2026</field>
+            <field name="date_deadline">2026-02-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1010</field>
+        </record>
+
+        <record id="task_bir_1601c_feb2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: February 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: February 2026
+BIR Deadline: March 10, 2026
+
+Workflow:
+- Preparation (BOM): March 4, 2026
+- Report Approval (RIM): March 6, 2026
+- Payment Approval (CKVC): March 9, 2026</field>
+            <field name="date_deadline">2026-03-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1020</field>
+        </record>
+
+        <record id="task_bir_1601c_mar2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: March 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: March 2026
+BIR Deadline: April 10, 2026
+
+Workflow:
+- Preparation (BOM): April 6, 2026
+- Report Approval (RIM): April 8, 2026
+- Payment Approval (CKVC): April 9, 2026</field>
+            <field name="date_deadline">2026-04-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1030</field>
+        </record>
+
+        <record id="task_bir_1601c_apr2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: April 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: April 2026
+BIR Deadline: May 10, 2026
+
+Workflow:
+- Preparation (BOM): May 6, 2026
+- Report Approval (RIM): May 7, 2026
+- Payment Approval (CKVC): May 8, 2026</field>
+            <field name="date_deadline">2026-05-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1040</field>
+        </record>
+
+        <record id="task_bir_1601c_may2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: May 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: May 2026
+BIR Deadline: June 10, 2026
+
+Workflow:
+- Preparation (BOM): June 4, 2026
+- Report Approval (RIM): June 8, 2026
+- Payment Approval (CKVC): June 9, 2026</field>
+            <field name="date_deadline">2026-06-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1050</field>
+        </record>
+
+        <record id="task_bir_1601c_jun2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: June 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: June 2026
+BIR Deadline: July 10, 2026
+
+Workflow:
+- Preparation (BOM): July 6, 2026
+- Report Approval (RIM): July 8, 2026
+- Payment Approval (CKVC): July 9, 2026</field>
+            <field name="date_deadline">2026-07-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1060</field>
+        </record>
+
+        <record id="task_bir_1601c_jul2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: July 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: July 2026
+BIR Deadline: August 10, 2026
+
+Workflow:
+- Preparation (BOM): August 4, 2026
+- Report Approval (RIM): August 6, 2026
+- Payment Approval (CKVC): August 7, 2026</field>
+            <field name="date_deadline">2026-08-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1070</field>
+        </record>
+
+        <record id="task_bir_1601c_aug2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: August 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: August 2026
+BIR Deadline: September 10, 2026
+
+Workflow:
+- Preparation (BOM): September 4, 2026
+- Report Approval (RIM): September 8, 2026
+- Payment Approval (CKVC): September 9, 2026</field>
+            <field name="date_deadline">2026-09-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1080</field>
+        </record>
+
+        <record id="task_bir_1601c_sep2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: September 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: September 2026
+BIR Deadline: October 12, 2026 (Oct 10 is Saturday)
+
+Workflow:
+- Preparation (BOM): October 6, 2026
+- Report Approval (RIM): October 8, 2026
+- Payment Approval (CKVC): October 9, 2026</field>
+            <field name="date_deadline">2026-10-12</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1090</field>
+        </record>
+
+        <record id="task_bir_1601c_oct2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: October 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: October 2026
+BIR Deadline: November 10, 2026
+
+Workflow:
+- Preparation (BOM): November 4, 2026
+- Report Approval (RIM): November 6, 2026
+- Payment Approval (CKVC): November 9, 2026</field>
+            <field name="date_deadline">2026-11-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1100</field>
+        </record>
+
+        <record id="task_bir_1601c_nov2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-C / 0619-E: November 2026</field>
+            <field name="description">BIR Form 1601-C &amp; 0619-E - Monthly Withholding Tax Returns
+
+Period Covered: November 2026
+BIR Deadline: December 10, 2026
+
+Workflow:
+- Preparation (BOM): December 4, 2026
+- Report Approval (RIM): December 8, 2026
+- Payment Approval (CKVC): December 9, 2026</field>
+            <field name="date_deadline">2026-12-10</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601c'), ref('tag_payroll')])]"/>
+            <field name="planned_hours">16</field>
+            <field name="sequence">1110</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- QUARTERLY: 1601-EQ EXPANDED WITHHOLDING TAX -->
+        <!-- ============================================ -->
+
+        <record id="task_bir_1601eq_q4_2025" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-EQ: Q4 2025 Quarterly EWT</field>
+            <field name="description">BIR Form 1601-EQ - Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)
+
+Period Covered: Q4 2025 (October - December)
+BIR Deadline: January 30, 2026
+
+Workflow:
+- Preparation (BOM): January 26, 2026
+- Report Approval (RIM): January 27, 2026
+- Payment Approval (CKVC): January 28, 2026</field>
+            <field name="date_deadline">2026-01-30</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601eq'), ref('tag_tax'), ref('tag_critical')])]"/>
+            <field name="planned_hours">24</field>
+            <field name="sequence">2000</field>
+        </record>
+
+        <record id="task_bir_1601eq_q1_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-EQ: Q1 2026 Quarterly EWT</field>
+            <field name="description">BIR Form 1601-EQ - Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)
+
+Period Covered: Q1 2026 (January - March)
+BIR Deadline: April 30, 2026
+
+Workflow:
+- Preparation (BOM): April 24, 2026
+- Report Approval (RIM): April 28, 2026
+- Payment Approval (CKVC): April 29, 2026</field>
+            <field name="date_deadline">2026-04-30</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601eq'), ref('tag_tax'), ref('tag_critical')])]"/>
+            <field name="planned_hours">24</field>
+            <field name="sequence">2010</field>
+        </record>
+
+        <record id="task_bir_1601eq_q2_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-EQ: Q2 2026 Quarterly EWT</field>
+            <field name="description">BIR Form 1601-EQ - Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)
+
+Period Covered: Q2 2026 (April - June)
+BIR Deadline: July 31, 2026
+
+Workflow:
+- Preparation (BOM): July 27, 2026
+- Report Approval (RIM): July 29, 2026
+- Payment Approval (CKVC): July 30, 2026</field>
+            <field name="date_deadline">2026-07-31</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601eq'), ref('tag_tax'), ref('tag_critical')])]"/>
+            <field name="planned_hours">24</field>
+            <field name="sequence">2020</field>
+        </record>
+
+        <record id="task_bir_1601eq_q3_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1601-EQ: Q3 2026 Quarterly EWT</field>
+            <field name="description">BIR Form 1601-EQ - Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)
+
+Period Covered: Q3 2026 (July - September)
+BIR Deadline: October 30, 2026
+
+Workflow:
+- Preparation (BOM): October 26, 2026
+- Report Approval (RIM): October 28, 2026
+- Payment Approval (CKVC): October 29, 2026</field>
+            <field name="date_deadline">2026-10-30</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1601eq'), ref('tag_tax'), ref('tag_critical')])]"/>
+            <field name="planned_hours">24</field>
+            <field name="sequence">2030</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- QUARTERLY: 2550Q VAT RETURN -->
+        <!-- ============================================ -->
+
+        <record id="task_bir_2550q_q1_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">2550Q: Q1 2026 Quarterly VAT</field>
+            <field name="description">BIR Form 2550Q - Quarterly Value-Added Tax Return
+
+Period Covered: Q1 2026 (January - March)
+BIR Deadline: April 27, 2026 (April 25 is Saturday)
+
+Workflow:
+- Preparation (BOM): April 21, 2026
+- Report Approval (RIM): April 23, 2026
+- Payment Approval (CKVC): April 24, 2026</field>
+            <field name="date_deadline">2026-04-27</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_2550q'), ref('tag_vat'), ref('tag_critical')])]"/>
+            <field name="planned_hours">24</field>
+            <field name="sequence">3000</field>
+        </record>
+
+        <record id="task_bir_2550q_q2_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">2550Q: Q2 2026 Quarterly VAT</field>
+            <field name="description">BIR Form 2550Q - Quarterly Value-Added Tax Return
+
+Period Covered: Q2 2026 (April - June)
+BIR Deadline: July 27, 2026 (July 25 is Saturday)
+
+Workflow:
+- Preparation (BOM): July 21, 2026
+- Report Approval (RIM): July 23, 2026
+- Payment Approval (CKVC): July 24, 2026</field>
+            <field name="date_deadline">2026-07-27</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_2550q'), ref('tag_vat'), ref('tag_critical')])]"/>
+            <field name="planned_hours">24</field>
+            <field name="sequence">3010</field>
+        </record>
+
+        <record id="task_bir_2550q_q3_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">2550Q: Q3 2026 Quarterly VAT</field>
+            <field name="description">BIR Form 2550Q - Quarterly Value-Added Tax Return
+
+Period Covered: Q3 2026 (July - September)
+BIR Deadline: October 26, 2026 (October 25 is Sunday)
+
+Workflow:
+- Preparation (BOM): October 20, 2026
+- Report Approval (RIM): October 22, 2026
+- Payment Approval (CKVC): October 23, 2026</field>
+            <field name="date_deadline">2026-10-26</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_2550q'), ref('tag_vat'), ref('tag_critical')])]"/>
+            <field name="planned_hours">24</field>
+            <field name="sequence">3020</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- QUARTERLY: 1702Q INCOME TAX -->
+        <!-- ============================================ -->
+
+        <record id="task_bir_1702q_q2_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1702Q: Q2 2026 Quarterly Income Tax</field>
+            <field name="description">BIR Form 1702Q - Quarterly Income Tax Return for Corporations
+
+Period Covered: Q2 2026
+BIR Deadline: May 30, 2026
+
+Workflow:
+- Preparation (BOM): May 26, 2026
+- Report Approval (RIM): May 27, 2026
+- Payment Approval (CKVC): May 28, 2026</field>
+            <field name="date_deadline">2026-05-30</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1702'), ref('tag_tax'), ref('tag_critical')])]"/>
+            <field name="planned_hours">32</field>
+            <field name="sequence">4000</field>
+        </record>
+
+        <record id="task_bir_1702q_q3_2026" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1702Q: Q3 2026 Quarterly Income Tax</field>
+            <field name="description">BIR Form 1702Q - Quarterly Income Tax Return for Corporations
+
+Period Covered: Q3 2026
+BIR Deadline: August 29, 2026
+
+Workflow:
+- Preparation (BOM): August 25, 2026
+- Report Approval (RIM): August 26, 2026
+- Payment Approval (CKVC): August 27, 2026</field>
+            <field name="date_deadline">2026-08-29</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1702'), ref('tag_tax'), ref('tag_critical')])]"/>
+            <field name="planned_hours">32</field>
+            <field name="sequence">4010</field>
+        </record>
+
+        <!-- ============================================ -->
+        <!-- ANNUAL: 1702-RT/EX INCOME TAX RETURN -->
+        <!-- ============================================ -->
+
+        <record id="task_bir_1702rtex_2025" model="project.task">
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="name">1702-RT/EX: Annual 2025 Income Tax Return</field>
+            <field name="description">BIR Form 1702-RT/EX - Annual Income Tax Return for Corporations
+
+Period Covered: Fiscal Year 2025
+BIR Deadline: April 15, 2026
+
+This is a CRITICAL PATH item requiring:
+- Complete trial balance and financial statements
+- Reconciliation of all tax-related accounts
+- Supporting schedules for all deductions
+
+Workflow:
+- Preparation (BOM): April 9, 2026
+- Report Approval (RIM): April 13, 2026
+- Payment Approval (CKVC): April 14, 2026</field>
+            <field name="date_deadline">2026-04-15</field>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_bir'), ref('tag_bir_1702'), ref('tag_tax'), ref('tag_critical')])]"/>
+            <field name="planned_hours">80</field>
+            <field name="sequence">5000</field>
+        </record>
+
+    </data>
+</odoo>

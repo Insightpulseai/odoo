@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_superset_connection_user,superset.connection.user,model_superset_connection,group_superset_user,1,0,0,0
+access_superset_connection_manager,superset.connection.manager,model_superset_connection,group_superset_manager,1,1,1,0
+access_superset_connection_admin,superset.connection.admin,model_superset_connection,group_superset_admin,1,1,1,1
+access_superset_dataset_user,superset.dataset.user,model_superset_dataset,group_superset_user,1,0,0,0
+access_superset_dataset_manager,superset.dataset.manager,model_superset_dataset,group_superset_manager,1,1,1,0
+access_superset_dataset_admin,superset.dataset.admin,model_superset_dataset,group_superset_admin,1,1,1,1
+access_superset_dataset_column_user,superset.dataset.column.user,model_superset_dataset_column,group_superset_user,1,0,0,0
+access_superset_dataset_column_manager,superset.dataset.column.manager,model_superset_dataset_column,group_superset_manager,1,1,1,1
+access_superset_analytics_view_user,superset.analytics.view.user,model_superset_analytics_view,group_superset_user,1,0,0,0
+access_superset_analytics_view_manager,superset.analytics.view.manager,model_superset_analytics_view,group_superset_manager,1,1,1,0
+access_superset_analytics_view_admin,superset.analytics.view.admin,model_superset_analytics_view,group_superset_admin,1,1,1,1
+access_superset_dataset_wizard,superset.dataset.wizard,model_superset_dataset_wizard,group_superset_manager,1,1,1,1
+access_superset_bulk_dataset_wizard,superset.bulk.dataset.wizard,model_superset_bulk_dataset_wizard,group_superset_manager,1,1,1,1
