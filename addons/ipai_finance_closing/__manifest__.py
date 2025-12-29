@@ -48,7 +48,7 @@ without any custom Python development.
     ],
     'data': [
         'data/closing_tasks.xml',
-        'data/closing_automation.xml',
+        # 'data/closing_automation.xml',  # Disabled: Automation requires additional configuration
     ],
     'demo': [],
     'installable': True,
