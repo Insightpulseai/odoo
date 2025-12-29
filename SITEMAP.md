@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f91420426124cff35f298630dee5f16424b9fa82
+> Commit: e8d19140eca01a10689d4a0711c08c863b93de03
 
 ## 📚 Documentation
 
@@ -110,6 +110,7 @@
 | [omc_finance_ppm Deployment Strategy](archive/addons/omc_finance_ppm/DEPLOYMENT_STRATEGY.md) | archive/addons/omc_finance_ppm |
 | [Finance PPM Seed Data Documentation](archive/addons/omc_finance_ppm/data/README.md) | archive/addons/omc_finance_ppm/data |
 | [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
+| [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [Flutter Receipt OCR Module - Deployment Guide](clients/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | clients/flutter_receipt_ocr |
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
