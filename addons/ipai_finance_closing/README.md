@@ -3,6 +3,7 @@
 **Version**: 18.0.1.0.0
 **Category**: Finance/Automation
 **License**: AGPL-3
+**Deployment Status**: ✅ **[See DEPLOYMENT_COMPLETE.md](DEPLOYMENT_COMPLETE.md)**
 
 ## Overview
 
