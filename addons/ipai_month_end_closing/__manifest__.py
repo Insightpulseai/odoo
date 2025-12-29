@@ -57,10 +57,10 @@ This module follows the ipai_* Smart Delta pattern:
     ],
     'data': [
         'security/ir.model.access.csv',
-        'data/hr_employees.xml',
+        'data/ipai_users.xml',
         'data/project_config.xml',
-        'data/closing_tasks.xml',
-        'data/tax_filing_tasks.xml',
+        'data/ipai_closing_tasks.xml',
+        'data/ipai_bir_tasks.xml',
     ],
     'demo': [],
     'installable': True,
