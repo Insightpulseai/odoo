@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 31e54c9ff0d85aaeff4c4bbbcd43f264f1469fd5
+> Commit: 9b105d0fb287d70ca95bf413dc28a6d0fa3a5922
 
 ```
 .
@@ -639,6 +639,13 @@
 │   │   │   └── res_partner_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_theme_tbwa_backend
+│   │   ├── static
+│   │   │   └── src
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   ├── __manifest__.py
+│   │   └── install.sh
 │   ├── ipai_workos_affine
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
@@ -2124,15 +2131,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-675 directories, 1444 files
+678 directories, 1448 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 770 |
-| Files | 2118 |
-| Python files | 589 |
+| Directories | 775 |
+| Files | 2130 |
+| Python files | 591 |
 | XML files | 331 |
-| Markdown files | 401 |
+| Markdown files | 402 |
