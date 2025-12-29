@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 456f1e6b1f160eaa4ac3bfc60eaacb88dcf0243e
+> Commit: 988a1eb5c0a37259b4cf70b9d624309c86533ff5
 
 ```
 .
@@ -410,6 +410,15 @@
 │   │   ├── views
 │   │   │   ├── crm_lead_views.xml
 │   │   │   └── crm_stage_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_finance_closing
+│   │   ├── data
+│   │   │   ├── closing_automation.xml
+│   │   │   └── closing_tasks.xml
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_ppm_golive
@@ -2075,15 +2084,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-663 directories, 1407 files
+666 directories, 1413 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 758 |
-| Files | 2079 |
-| Python files | 576 |
-| XML files | 315 |
-| Markdown files | 397 |
+| Directories | 761 |
+| Files | 2085 |
+| Python files | 578 |
+| XML files | 317 |
+| Markdown files | 398 |
