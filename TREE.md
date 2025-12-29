@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e32cf5008cfb111c9cd555e883c83c84cba4190d
+> Commit: f191e67cc5fda709307327c5de13410a8e8bad6f
 
 ```
 .
@@ -1287,6 +1287,7 @@
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── branch-cleanup-analysis.md
 │   ├── odoo-apps-parity.md
+│   ├── odoo_core_schema.sql
 │   ├── supabase-integration.md
 │   └── v0.9.1_DEPLOYMENT_GUIDE.md
 ├── docs-assistant
@@ -2131,7 +2132,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-678 directories, 1448 files
+678 directories, 1449 files
 ```
 
 ## 📊 Stats
@@ -2139,7 +2140,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 775 |
-| Files | 2130 |
+| Files | 2131 |
 | Python files | 591 |
 | XML files | 331 |
 | Markdown files | 402 |
