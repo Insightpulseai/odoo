@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 456f1e6b1f160eaa4ac3bfc60eaacb88dcf0243e
+> Commit: 988a1eb5c0a37259b4cf70b9d624309c86533ff5
 
 ## 📚 Documentation
 
@@ -88,6 +88,7 @@
 | [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
+| [InsightPulse Finance Month-End Closing](addons/ipai_finance_closing/README.md) | addons/ipai_finance_closing |
 | [Finance PPM Umbrella Module](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
@@ -444,6 +445,7 @@
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
+| [ipai_finance_closing](./addons/ipai_finance_closing) | ✅ | Month-end financial closing task template based on SAP Advanced Financial Closing |
 | [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ | Production go-live checklist for Finance PPM modules |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella) | ✅ |  |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella/addons/ipai_finance_ppm_umbrella) | ⚠️ | Missing manifest |
