@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 31e54c9ff0d85aaeff4c4bbbcd43f264f1469fd5
+> Commit: 9b105d0fb287d70ca95bf413dc28a6d0fa3a5922
 
 ## 📚 Documentation
 
@@ -92,6 +92,7 @@
 | [Finance PPM Umbrella Module](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing/README.md) | addons/ipai_month_end_closing |
 | [IPAI Superset Connector](addons/ipai_superset_connector/README.md) | addons/ipai_superset_connector |
+| [TBWA Backend Theme - Installation Guide](addons/ipai_theme_tbwa_backend/README.md) | addons/ipai_theme_tbwa_backend |
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
@@ -463,6 +464,7 @@
 | [ipai_ppm_a1](./addons/ipai_ppm_a1) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai_superset_connector) | ✅ | Apache Superset integration with managed dataset sync |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
+| [ipai_theme_tbwa_backend](./addons/ipai_theme_tbwa_backend) | ✅ | TBWA branding for Odoo backend - Black + Yellow + IBM Plex |
 | [ipai_workos_affine](./addons/ipai_workos_affine) | ✅ |  |
 | [ipai_workos_blocks](./addons/ipai_workos_blocks) | ✅ |  |
 | [ipai_workos_canvas](./addons/ipai_workos_canvas) | ✅ |  |
