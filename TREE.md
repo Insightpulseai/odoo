@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 550e52ab7de827e807f441fe83e1571b4b942397
+> Commit: aae222905cbe7412ef511f0fe547615870b3be23
 
 ```
 .
@@ -494,6 +494,17 @@
 │   │   │   └── task_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_month_end_closing
+│   │   ├── data
+│   │   │   ├── closing_tasks.xml
+│   │   │   ├── hr_employees.xml
+│   │   │   ├── project_config.xml
+│   │   │   └── tax_filing_tasks.xml
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_platform_approvals
 │   │   ├── models
 │   │   │   ├── __init__.py
@@ -571,6 +582,30 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── export_seed_wizard.py
 │   │   │   └── import_seed_wizard.py
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_superset_connector
+│   │   ├── data
+│   │   │   ├── analytics_views.xml
+│   │   │   └── superset_config.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── res_config_settings.py
+│   │   │   ├── superset_analytics_view.py
+│   │   │   ├── superset_connection.py
+│   │   │   └── superset_dataset.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── superset_security.xml
+│   │   ├── views
+│   │   │   ├── res_config_settings_views.xml
+│   │   │   ├── superset_connection_views.xml
+│   │   │   └── superset_dataset_views.xml
+│   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   ├── dataset_wizard.py
+│   │   │   └── dataset_wizard_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_tbwa_finance
@@ -2086,15 +2121,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-666 directories, 1415 files
+675 directories, 1441 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 761 |
-| Files | 2089 |
-| Python files | 578 |
-| XML files | 317 |
-| Markdown files | 399 |
+| Directories | 770 |
+| Files | 2115 |
+| Python files | 589 |
+| XML files | 328 |
+| Markdown files | 401 |
