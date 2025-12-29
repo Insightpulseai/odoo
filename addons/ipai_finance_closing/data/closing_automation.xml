@@ -9,11 +9,12 @@
     <!-- SCHEDULED ACTIONS (CRON JOBS) -->
     <!-- ============================================ -->
     
-    <!-- 
+    <!--
     Depreciation Run - Last day of month at 11 PM
     SAP Equivalent: AFAB scheduled job
+    DISABLED: Requires account_asset module to be installed
     -->
-    <record id="ir_cron_depreciation_run" model="ir.cron">
+    <!-- <record id="ir_cron_depreciation_run" model="ir.cron">
         <field name="name">Monthly Depreciation Posting</field>
         <field name="model_id" ref="account.model_account_asset"/>
         <field name="state">code</field>
@@ -32,7 +33,7 @@ if today == last_day:
     ])
     for asset in assets:
         asset.compute_depreciation_board()
-    
+
     # Log completion
     env['ir.logging'].create({
         'name': 'Depreciation Run',
@@ -47,7 +48,7 @@ if today == last_day:
         <field name="numbercall">-1</field>
         <field name="doall">False</field>
         <field name="active">True</field>
-    </record>
+    </record> -->
 
     <!-- 
     Currency Rate Update - Daily at 6 AM
