@@ -25,12 +25,6 @@ a modern SaaS look while maintaining Odoo backend compatibility.
     "data": [
         "views/assets.xml",
     ],
-    "assets": {
-        "web.assets_backend": [
-            "ipai_platform_theme/static/src/scss/tbwa-tokens.scss",
-            "ipai_platform_theme/static/src/scss/tbwa-components.scss",
-        ],
-    },
     "demo": [],
     "installable": True,
     "application": False,
