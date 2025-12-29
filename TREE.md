@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1740494e949d59e0cac8e2ab523f2c548b9e2ac0
+> Commit: 31e54c9ff0d85aaeff4c4bbbcd43f264f1469fd5
 
 ```
 .
@@ -498,6 +498,9 @@
 │   │   ├── data
 │   │   │   ├── closing_tasks.xml
 │   │   │   ├── hr_employees.xml
+│   │   │   ├── ipai_bir_tasks.xml
+│   │   │   ├── ipai_closing_tasks.xml
+│   │   │   ├── ipai_users.xml
 │   │   │   ├── project_config.xml
 │   │   │   └── tax_filing_tasks.xml
 │   │   ├── security
@@ -2121,7 +2124,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-675 directories, 1441 files
+675 directories, 1444 files
 ```
 
 ## 📊 Stats
@@ -2129,7 +2132,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 770 |
-| Files | 2115 |
+| Files | 2118 |
 | Python files | 589 |
-| XML files | 328 |
+| XML files | 331 |
 | Markdown files | 401 |
