@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 251d03b7fc5063cb1fcca860ebc05c5c251cf748
+> Commit: 92aebdcd699c1e22f9f6b88793a5a9a7f4b14d83
 
 ## 📚 Documentation
 
@@ -203,6 +203,7 @@
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
+| [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
