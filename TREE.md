@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 92aebdcd699c1e22f9f6b88793a5a9a7f4b14d83
+> Commit: a8e1e2967dde245723b69d8b5a93571ede262fc7
 
 ```
 .
@@ -1281,6 +1281,7 @@
 │   ├── SECRETS_NAMING_AND_STORAGE.md
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
 │   ├── SITEMAP.md
+│   ├── SMTP_SETUP_SUMMARY.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
@@ -2137,7 +2138,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-678 directories, 1454 files
+678 directories, 1455 files
 ```
 
 ## 📊 Stats
@@ -2145,7 +2146,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 775 |
-| Files | 2136 |
+| Files | 2137 |
 | Python files | 593 |
 | XML files | 331 |
-| Markdown files | 405 |
+| Markdown files | 406 |
