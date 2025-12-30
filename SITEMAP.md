@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f191e67cc5fda709307327c5de13410a8e8bad6f
+> Commit: 99a7d9e13cbcf819a9df54dfd77e3c0febaa0603
 
 ## 📚 Documentation
 
@@ -181,6 +181,7 @@
 | [Odoo HTTPS OAuth Troubleshooting Guide](docs/ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md) | docs |
 | [IPAI Odoo 18 Custom Image Specification](docs/ODOO_IMAGE_SPEC.md) | docs |
 | [Odoo Module Deployment Guide](docs/ODOO_MODULE_DEPLOYMENT.md) | docs |
+| [Odoo 18 Programmatic Settings Configuration Guide](docs/ODOO_PROGRAMMATIC_CONFIG.md) | docs |
 | [Offline/Tarball Deployment Path](docs/OFFLINE_TARBALL_DEPLOYMENT.md) | docs |
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
