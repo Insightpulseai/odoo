@@ -15,9 +15,9 @@ SMTP_CONFIG = {
     'smtp_host': 'smtp.gmail.com',
     'smtp_port': 587,
     'smtp_encryption': 'starttls',  # TLS (STARTTLS)
-    'smtp_user': 'jgtolentino88@gmail.com',  # UPDATE: Your Gmail address
+    'smtp_user': 'jgtolentino.rn@gmail.com',  # UPDATE: Your Gmail address
     'smtp_pass': 'vzabhqzhwvhmzsgz',  # App password (no spaces)
-    'from_filter': 'jgtolentino88@gmail.com',  # FROM Filtering - same as smtp_user
+    'from_filter': 'jgtolentino.rn@gmail.com',  # FROM Filtering - same as smtp_user
     'sequence': 10,  # Priority (lower = higher priority)
     'smtp_authentication': 'login',  # Username/Password auth
     'smtp_debug': False,  # Debugging off in production
