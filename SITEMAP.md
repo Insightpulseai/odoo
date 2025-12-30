@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e96cb049c315e481a0dd973802efed2141ee773a
+> Commit: 251d03b7fc5063cb1fcca860ebc05c5c251cf748
 
 ## 📚 Documentation
 
@@ -139,6 +139,7 @@
 | [Deployment Guide: Finance Stack Health Monitoring & Automation](docs/DEPLOYMENT_GUIDE.md) | docs |
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
+| [DigitalOcean SMTP Unblock Request](docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md) | docs |
 | [DigitalOcean Validation Framework](docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md) | docs |
 | [Dockerfile Changes: v0.9.0 → v0.9.1](docs/DOCKERFILE_COMPARISON.md) | docs |
 | [Docker Image-Based CD Migration Guide](docs/DOCKER_CD_MIGRATION_GUIDE.md) | docs |
