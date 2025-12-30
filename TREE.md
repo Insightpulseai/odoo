@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 251d03b7fc5063cb1fcca860ebc05c5c251cf748
+> Commit: 92aebdcd699c1e22f9f6b88793a5a9a7f4b14d83
 
 ```
 .
@@ -1287,6 +1287,7 @@
 │   ├── TESTING_ODOO_18.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
+│   ├── ZOHO_DNS_SETUP.md
 │   ├── branch-cleanup-analysis.md
 │   ├── odoo-apps-parity.md
 │   ├── odoo_core_schema.sql
@@ -1556,6 +1557,7 @@
 │   ├── ci_smoke_test.sh
 │   ├── cleanup-branches.sh
 │   ├── configure_gmail_smtp.py
+│   ├── configure_zoho_smtp.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
 │   ├── create-module-readme.sh
@@ -2135,7 +2137,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-678 directories, 1452 files
+678 directories, 1454 files
 ```
 
 ## 📊 Stats
@@ -2143,7 +2145,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 775 |
-| Files | 2134 |
-| Python files | 592 |
+| Files | 2136 |
+| Python files | 593 |
 | XML files | 331 |
-| Markdown files | 404 |
+| Markdown files | 405 |
