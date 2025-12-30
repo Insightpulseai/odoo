@@ -38,9 +38,10 @@ We run a multi-company Finance Shared Services Center using Odoo CE 18. Email no
 **Expected Volume**: <50 emails/day (internal team notifications only)
 
 **SMTP Configuration**:
-- Provider: Gmail (smtp.gmail.com)
-- Port: 587 (STARTTLS)
-- Authentication: Gmail App Password (OAuth)
+- Primary Provider: Zoho Workplace (smtppro.zoho.com) - Business email
+- Backup Provider: Gmail (smtp.gmail.com) - Personal fallback
+- Ports Required: 465 (SSL/TLS) and 587 (STARTTLS)
+- Authentication: Password-based (no open relay)
 - Purpose: Internal notifications only
 
 **Security Measures**:
@@ -85,16 +86,21 @@ Test SMTP connectivity:
 # SSH into droplet
 ssh root@159.223.75.148
 
-# Test port 587
-timeout 5 bash -c '</dev/tcp/smtp.gmail.com/587' && echo '✅ Port 587 OPEN' || echo '❌ Port 587 BLOCKED'
+# Test Zoho SMTP (port 465)
+timeout 5 bash -c '</dev/tcp/smtppro.zoho.com/465' && echo '✅ Zoho port 465 OPEN' || echo '❌ BLOCKED'
+
+# Test Gmail SMTP (port 587)
+timeout 5 bash -c '</dev/tcp/smtp.gmail.com/587' && echo '✅ Gmail port 587 OPEN' || echo '❌ BLOCKED'
 
 # Test from Odoo container
-docker exec odoo-core python3 -c 'import socket; socket.create_connection(("smtp.gmail.com", 587), timeout=5); print("✅ SMTP reachable")'
+docker exec odoo-core python3 -c 'import socket; socket.create_connection(("smtppro.zoho.com", 465), timeout=5); print("✅ Zoho SMTP reachable")'
 ```
 
 If both tests show ✅, then go to Odoo UI:
 - Settings → Technical → Outgoing Mail Servers
-- Click "Gmail SMTP - InsightPulse"
+- Click "Zoho SMTP - InsightPulse"
+- Enter your Zoho password in the Password field
+- Save
 - Click **Test Connection**
 - Should show: "Connection Test Succeeded! Everything seems properly set up!"
 
@@ -120,14 +126,16 @@ SendGrid is NOT blocked by DigitalOcean and will work immediately.
 ## Current Configuration Status
 
 ✅ **Odoo SMTP Configured**:
-- Email: jgtolentino.rn@gmail.com
-- Server: smtp.gmail.com:587
-- App Password: vzabhqzhwvhmzsgz
-- Configuration ID: 2 (on odoo-core container)
+- **Primary**: Zoho Workplace (business@insightpulseai.com)
+  - Server: smtppro.zoho.com:465 (SSL/TLS)
+  - Configuration ID: 3 (on odoo-core container)
+  - Password: ⚠️ **Must be set in Odoo UI**
 
-❌ **Network Status**: DigitalOcean blocks outbound SMTP ports (verified)
+- **Backup**: Gmail (jgtolentino.rn@gmail.com) - Removed, replaced with Zoho
 
-⏳ **Waiting For**: DigitalOcean support to unblock port 587
+❌ **Network Status**: DigitalOcean blocks outbound SMTP ports 465, 587, 2525 (verified)
+
+⏳ **Waiting For**: DigitalOcean support to unblock ports 465 and 587
 
 ---
 
