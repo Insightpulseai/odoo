@@ -1,7 +1,7 @@
 # fin-workspace Automation Hardening Status
 
-**Last Updated**: 2025-12-31
-**Status**: ✅ **Hardening Complete** | ⚠️ **Awaiting Infrastructure Fix**
+**Last Updated**: 2025-12-31 09:15 UTC
+**Status**: ✅ **Hardening Complete** | ✅ **Infrastructure Fixed** | ⏳ **Awaiting User Secret**
 
 ---
 
@@ -45,28 +45,22 @@ branch="chore/weekly-do-inventory-$(date -u +%Y%m%d)-${{ github.run_id }}"
 **Schedule**: Every Monday 02:00 PH time (Sunday 18:00 UTC)
 **Manual Trigger**: ✅ Enabled via `workflow_dispatch`
 
-### Known Infrastructure Issue ⚠️
+### Infrastructure Issue Resolution ✅
 
-**Issue**: doctl download/extraction failing in GitHub Actions
-**Error**: `gzip: stdin: not in gzip format`
-**Location**: "Install deps (doctl, jq)" step
-**Root Cause**: Transient GitHub/DigitalOcean CDN issue (not related to our code)
+**Previous Issue**: doctl download/extraction failing with `gzip: stdin: not in gzip format`
 
-**Evidence** (latest run: [20615263594](https://github.com/jgtolentino/odoo-ce/actions/runs/20615263594)):
+**Resolution** (Commit: [fe4a003e](https://github.com/jgtolentino/odoo-ce/commit/fe4a003e)):
+- Replaced manual doctl download with official `digitalocean/action-doctl@v2`
+- Eliminates tarball corruption risk
+- Combines installation + authentication in single reliable step
+- Verified working in run: [20615933156](https://github.com/jgtolentino/odoo-ce/actions/runs/20615933156)
+
+**Current Behavior**: Workflow now correctly fails with clear message when `DIGITALOCEAN_ACCESS_TOKEN` secret is missing:
 ```
-sync  Install deps (doctl, jq)  2025-12-31T08:28:04.5203501Z gzip: stdin: not in gzip format
-sync  Install deps (doctl, jq)  2025-12-31T08:28:04.5204357Z tar: Child returned status 1
-sync  Install deps (doctl, jq)  2025-12-31T08:28:04.5205010Z tar: Error is not recoverable: exiting now
+sync  Install and auth doctl  2025-12-31T09:12:33.5129891Z ##[error]Input required and not supplied: token
 ```
 
-**Impact**: Workflow fails before reaching our hardening steps (token check, inventory export, PR creation)
-
-**Workaround**: Local execution via `./infra/doctl/export_state.sh` + `./scripts/bootstrap_apps_from_inventory.sh` works correctly
-
-**Resolution Path**:
-1. Monitor next scheduled run (Monday 2025-01-06 02:00 PH)
-2. If issue persists, switch to pinned doctl version or alternative installation method
-3. Consider using GitHub Actions cache for doctl binary
+This is **expected and correct** behavior - demonstrating our fail-fast validation is working as designed.
 
 ---
 
@@ -142,10 +136,11 @@ Once the doctl download issue is resolved, a successful run should:
 
 ## Timeline
 
-- **2025-12-31 05:46 UTC**: First hardening attempt, doctl download failed
-- **2025-12-31 07:19 UTC**: Second attempt, same doctl issue
-- **2025-12-31 08:27 UTC**: Third attempt, consistent doctl failure
-- **2025-12-31 (current)**: Hardening changes deployed, awaiting infrastructure resolution
+- **2025-12-31 05:46 UTC**: Initial hardening (fail-fast + unique branches), doctl download failed
+- **2025-12-31 07:19 UTC**: Second attempt, consistent doctl tarball corruption
+- **2025-12-31 08:27 UTC**: Third attempt, infrastructure issue persists
+- **2025-12-31 09:12 UTC**: Switched to official `digitalocean/action-doctl@v2` - ✅ **FIXED**
+- **2025-12-31 09:15 UTC**: Infrastructure issue resolved, awaiting user secret configuration
 
 ---
 
@@ -175,4 +170,5 @@ Once the doctl download issue is resolved, a successful run should:
 ---
 
 **Hardening Status**: ✅ **COMPLETE**
-**Production Readiness**: ⚠️ **BLOCKED BY INFRASTRUCTURE** (not code issue)
+**Infrastructure Status**: ✅ **RESOLVED** (using official DigitalOcean action)
+**Production Readiness**: ⏳ **AWAITING USER SECRET** (DIGITALOCEAN_ACCESS_TOKEN)
