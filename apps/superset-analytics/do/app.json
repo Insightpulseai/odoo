@@ -1,0 +1,418 @@
+[
+  {
+    "id": "73af11cb-dab2-4cb1-9770-291c536531e6",
+    "owner_uuid": "ee77a9b3-6275-410f-91cf-cf875d537748",
+    "spec": {
+      "name": "superset-analytics",
+      "services": [
+        {
+          "name": "superset",
+          "image": {
+            "registry_type": "DOCR",
+            "registry": "fin-workspace",
+            "repository": "ipai-superset",
+            "tag": "latest"
+          },
+          "run_command": "gunicorn --bind 0.0.0.0:8088 --workers 4 --timeout 120 \"superset.app:create_app()\"",
+          "envs": [
+            {
+              "key": "SUPERSET__SQLALCHEMY_DATABASE_URI",
+              "value": "EV[1:oZAIFyDIoKPpW4M7tbhgrO3QO7ujUIDj:iz6h04e1IGRugBEDWduV2g==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPERSET__SECRET_KEY",
+              "value": "EV[1:f+Kl53RQalPV1/g918Ok4TFoT8YUx9lt:EWJVc37W3WLqchSjmACSYA==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPERSET_ADMIN_USER",
+              "value": "EV[1:1rv9wjMNvwLnysrciWobL2VJGL1TAcE3:C7wy5qrlMlcID5m6TndYbw==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPERSET_ADMIN_PASS",
+              "value": "EV[1:Ix2LgukplMC/T1mr4B4eM0VY8t3OLf70:rR9EYiuAVRJVLO72vWDcgw==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "EXAMPLES_DB_URI",
+              "value": "EV[1:qPsBGr8l0v2mdCiS8P+uJ/HlxFcvVVCn:2uOh72annNtTfKFeea43Dg==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPERSET_WEBSERVER_TIMEOUT",
+              "value": "300",
+              "scope": "RUN_TIME"
+            },
+            {
+              "key": "LOG_LEVEL",
+              "value": "INFO",
+              "scope": "RUN_TIME"
+            }
+          ],
+          "instance_size_slug": "professional-xs",
+          "instance_count": 1,
+          "http_port": 8088,
+          "health_check": {
+            "initial_delay_seconds": 60,
+            "period_seconds": 30,
+            "timeout_seconds": 10,
+            "success_threshold": 1,
+            "failure_threshold": 3,
+            "http_path": "/health"
+          }
+        }
+      ],
+      "domains": [
+        {
+          "domain": "superset.insightpulseai.net",
+          "type": "PRIMARY"
+        }
+      ],
+      "region": "nyc",
+      "ingress": {
+        "rules": [
+          {
+            "match": {
+              "path": {
+                "prefix": "/"
+              }
+            },
+            "component": {
+              "name": "superset"
+            }
+          }
+        ]
+      }
+    },
+    "last_deployment_active_at": "2025-12-18T21:54:35Z",
+    "default_ingress": "https://superset-nlavf.ondigitalocean.app",
+    "created_at": "2025-11-03T15:17:51Z",
+    "updated_at": "2025-12-30T14:50:04Z",
+    "active_deployment": {
+      "id": "473424c9-6926-4f95-b3cf-188cb0e4dbda",
+      "spec": {
+        "name": "superset",
+        "services": [
+          {
+            "name": "superset",
+            "image": {
+              "registry_type": "DOCKER_HUB",
+              "registry": "apache",
+              "repository": "superset",
+              "tag": "3.1.0"
+            },
+            "envs": [
+              {
+                "key": "SUPERSET_SECRET_KEY",
+                "value": "1eRsQ4+93UP6OIP2xPLoOKfFCs89kLJMcJ/2cWyMSeJ0gqqRr87Q1jeA",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "SQLALCHEMY_DATABASE_URI",
+                "value": "postgresql+psycopg2://postgres.spdtwktxdalcfigzeqrz:SHWYXDMFAwXI1drT@aws-1-us-east-1.pooler.supabase.com:6543/postgres",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "REDIS_HOST",
+                "value": "EV[1:aNA4dZhfytKnSv+i1zng1sJN/i2SJcOg:Vpt72xG9Bh/ulZ4sy0sjgg==]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "SUPERSET_ENV",
+                "value": "production",
+                "scope": "RUN_TIME"
+              },
+              {
+                "key": "ENABLE_PROXY_FIX",
+                "value": "True",
+                "scope": "RUN_TIME"
+              },
+              {
+                "key": "SUPERSET_LOAD_EXAMPLES",
+                "value": "no",
+                "scope": "RUN_TIME"
+              }
+            ],
+            "instance_size_slug": "basic-xs",
+            "instance_count": 1,
+            "http_port": 8088,
+            "health_check": {
+              "initial_delay_seconds": 60,
+              "period_seconds": 10,
+              "timeout_seconds": 5,
+              "failure_threshold": 3,
+              "http_path": "/health"
+            }
+          }
+        ],
+        "domains": [
+          {
+            "domain": "superset.insightpulseai.net",
+            "type": "PRIMARY"
+          }
+        ],
+        "region": "sgp",
+        "ingress": {
+          "rules": [
+            {
+              "match": {
+                "path": {
+                  "prefix": "/"
+                }
+              },
+              "component": {
+                "name": "superset"
+              }
+            }
+          ]
+        }
+      },
+      "services": [
+        {
+          "name": "superset"
+        }
+      ],
+      "phase_last_updated_at": "2025-12-18T21:54:35Z",
+      "created_at": "2025-12-18T21:54:12Z",
+      "updated_at": "2025-12-25T21:54:37Z",
+      "cause": "automated rollback after failed deployment of \"298ce4a6-7aa2-498a-a21e-6ddec6aad3a5\"",
+      "cloned_from": "d4234ea8-6f91-46fc-af3f-4bc3ef2ce32c",
+      "progress": {
+        "success_steps": 6,
+        "total_steps": 6,
+        "steps": [
+          {
+            "name": "build",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-18T21:54:17.567634811Z",
+                "ended_at": "2025-12-18T21:54:20.004978616Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "superset",
+                    "status": "SUCCESS",
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "reason": {
+                      "code": "PreviousBuildReused",
+                      "message": "Your previous build was reused."
+                    },
+                    "component_name": "superset",
+                    "message_base": "Building service"
+                  }
+                ],
+                "started_at": "2025-12-18T21:54:20.005011508Z",
+                "ended_at": "2025-12-18T21:54:20.005567824Z"
+              }
+            ],
+            "started_at": "2025-12-18T21:54:17.567522943Z",
+            "ended_at": "2025-12-18T21:54:20.005783185Z"
+          },
+          {
+            "name": "deploy",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-18T21:54:24.495732726Z",
+                "ended_at": "2025-12-18T21:54:27.022858545Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "superset",
+                    "status": "SUCCESS",
+                    "steps": [
+                      {
+                        "name": "deploy",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "superset",
+                        "message_base": "Deploying service"
+                      },
+                      {
+                        "name": "wait",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "superset",
+                        "message_base": "Waiting for service"
+                      }
+                    ],
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "superset"
+                  }
+                ],
+                "started_at": "2025-12-18T21:54:27.022943103Z",
+                "ended_at": "2025-12-18T21:54:30.03512494Z"
+              },
+              {
+                "name": "finalize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-18T21:54:32.606947018Z",
+                "ended_at": "2025-12-18T21:54:34.17878855Z"
+              }
+            ],
+            "started_at": "2025-12-18T21:54:24.495711597Z",
+            "ended_at": "2025-12-18T21:54:34.1788635Z"
+          }
+        ]
+      },
+      "phase": "ACTIVE",
+      "tier_slug": "basic",
+      "previous_deployment_id": "298ce4a6-7aa2-498a-a21e-6ddec6aad3a5",
+      "cause_details": {
+        "internal": true,
+        "type": "AUTO_ROLLBACK"
+      },
+      "timing": {
+        "pending": "5.567634811s",
+        "build_total": "2.438148374s",
+        "build_billable": "0s"
+      }
+    },
+    "last_deployment_created_at": "2025-12-18T21:54:12Z",
+    "live_url": "https://superset.insightpulseai.net",
+    "region": {
+      "slug": "nyc",
+      "label": "New York",
+      "flag": "usa",
+      "continent": "North America",
+      "data_centers": [
+        "nyc1",
+        "nyc3"
+      ]
+    },
+    "tier_slug": "professional",
+    "live_url_base": "https://superset.insightpulseai.net",
+    "live_domain": "superset.insightpulseai.net",
+    "domains": [
+      {
+        "id": "a7d180e8-849a-40e2-8448-3063315ff4f7",
+        "spec": {
+          "domain": "superset.insightpulseai.net",
+          "type": "PRIMARY"
+        },
+        "phase": "ACTIVE",
+        "progress": {
+          "steps": [
+            {
+              "name": "default-ingress-ready",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.503248556Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "ensure-zone",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.503369592Z",
+              "ended_at": "2025-12-18T21:49:48.924364595Z"
+            },
+            {
+              "name": "ensure-ns-records",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.503444451Z",
+              "ended_at": "2025-12-18T21:49:48.924428825Z"
+            },
+            {
+              "name": "verify-nameservers",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.503588349Z",
+              "ended_at": "2025-12-18T21:49:48.92449581Z"
+            },
+            {
+              "name": "ensure-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.503644113Z",
+              "ended_at": "2025-12-18T21:49:48.924547075Z"
+            },
+            {
+              "name": "ensure-alias-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.503728511Z",
+              "ended_at": "2025-12-18T21:49:48.924608069Z"
+            },
+            {
+              "name": "ensure-wildcard-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.503789464Z",
+              "ended_at": "2025-12-18T21:49:48.924680964Z"
+            },
+            {
+              "name": "verify-cname",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.591714702Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "ensure-ssl-txt-record-saved",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.721081142Z",
+              "ended_at": "2025-12-18T21:49:49.445695344Z"
+            },
+            {
+              "name": "ensure-ssl-txt-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.721216945Z",
+              "ended_at": "2025-12-18T21:49:49.445786744Z"
+            },
+            {
+              "name": "ensure-renewal-email",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.721307394Z",
+              "ended_at": "2025-12-18T21:49:49.445841276Z"
+            },
+            {
+              "name": "ensure-CA-authorization",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:56.721403473Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "ensure-certificate",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:57.504909026Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "create-deployment",
+              "status": "SUCCESS",
+              "started_at": "0001-01-01T00:00:00Z",
+              "ended_at": "2025-12-18T21:51:29.051320026Z"
+            },
+            {
+              "name": "configuration-alert",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T14:49:58.224711419Z",
+              "ended_at": "2025-12-18T21:49:52.339480034Z"
+            }
+          ]
+        },
+        "validation": {},
+        "certificate_expires_at": "2026-03-18T20:52:46Z"
+      }
+    ],
+    "build_config": {},
+    "project_id": "29cde7a1-8280-46ad-9fdf-dea7b21a7825"
+  }
+]

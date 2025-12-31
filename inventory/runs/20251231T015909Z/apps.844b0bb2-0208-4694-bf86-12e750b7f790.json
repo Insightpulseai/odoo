@@ -1,0 +1,482 @@
+[
+  {
+    "id": "844b0bb2-0208-4694-bf86-12e750b7f790",
+    "owner_uuid": "ee77a9b3-6275-410f-91cf-cf875d537748",
+    "spec": {
+      "name": "mcp-coordinator",
+      "services": [
+        {
+          "name": "mcp-hub",
+          "github": {
+            "repo": "jgtolentino/insightpulse-odoo",
+            "branch": "main",
+            "deploy_on_push": true
+          },
+          "dockerfile_path": "/services/mcp-hub/Dockerfile",
+          "source_dir": "/services/mcp-hub",
+          "envs": [
+            {
+              "key": "SUPABASE_URL",
+              "value": "https://spdtwktxdalcfigzeqrz.supabase.co",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "SUPABASE_KEY",
+              "value": "EV[1:GH1PbFKTrPI+IGlwTBL5uowHmr8+GYK2:qcC+MtQWllnngySslyQyZyTypu/JoEggaIXNrMjFEDg955YfuNkLpeh3Z3nvAyKKfMUGQgb8J7xn9zqx5h3QMuE7lUE4E3p71TjH9VixjSDlWiwVTxnHFIKxh/j+bpGBAzsrvK5XTV/rLzzBZDoaibDTiOJFsfqDaEDggk80fmRRf+i/9cVlBVX9bCb1Q8XxO7J31KiaEWkJEic6k1XvlUvKt4kN0pRPtBiWKonVpSNJ1jRypSUENz14J0bogO1A7I889zcz/4XnJPBZ0mmg1JGaFw8jCXF7GM+IYocDQrk=]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "ODOO_URL",
+              "value": "https://erp.insightpulseai.net",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "ODOO_DB",
+              "value": "odoo",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "ODOO_USERNAME",
+              "value": "EV[1:Cd7+k8hj+2x5RBqRsRtRc2DnN/7s8wvD:uCtI/WDO9mAfpqebI1/fTFg66iB0]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "ODOO_PASSWORD",
+              "value": "EV[1:+1R4pQV3ngNsnstKmTPDPNeAp9EIw5vv:mc6xbxct+Ymx3A/NOWldNdB7Bqtq2YyEhDQ=]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPERSET_URL",
+              "value": "https://superset.insightpulseai.net",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "NOTION_TOKEN",
+              "value": "EV[1:DaYYMmaU5ojuL9sre5Q+lbHHVWkbUnur:DXzXZ2wuWP2/GhX/i2Q3PMT/1A9URwB2vhOwu4q1yZ1G4pJnCAsdo/VDKjgRldo/1CYsojigAHsc64tl6/q1eqVS]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "ENVIRONMENT",
+              "value": "production",
+              "scope": "RUN_AND_BUILD_TIME"
+            }
+          ],
+          "instance_size_slug": "professional-xs",
+          "instance_count": 1,
+          "http_port": 8001,
+          "health_check": {
+            "initial_delay_seconds": 30,
+            "period_seconds": 10,
+            "http_path": "/health"
+          }
+        }
+      ],
+      "domains": [
+        {
+          "domain": "mcp.insightpulseai.net",
+          "type": "PRIMARY"
+        }
+      ],
+      "region": "sgp",
+      "ingress": {
+        "rules": [
+          {
+            "match": {
+              "path": {
+                "prefix": "/"
+              }
+            },
+            "component": {
+              "name": "mcp-hub"
+            }
+          }
+        ]
+      }
+    },
+    "last_deployment_active_at": "2025-12-30T03:38:11Z",
+    "default_ingress": "https://pulse-hub-web-an645.ondigitalocean.app",
+    "created_at": "2025-11-01T03:21:16Z",
+    "updated_at": "2025-12-30T21:54:17Z",
+    "active_deployment": {
+      "id": "d17583c2-68c2-44ab-8282-eaaf1fc226ab",
+      "spec": {
+        "name": "mcp-coordinator",
+        "services": [
+          {
+            "name": "mcp-hub",
+            "github": {
+              "repo": "jgtolentino/insightpulse-odoo",
+              "branch": "main",
+              "deploy_on_push": true
+            },
+            "dockerfile_path": "/services/mcp-hub/Dockerfile",
+            "source_dir": "/services/mcp-hub",
+            "envs": [
+              {
+                "key": "SUPABASE_URL",
+                "value": "https://spdtwktxdalcfigzeqrz.supabase.co",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "SUPABASE_KEY",
+                "value": "EV[1:GH1PbFKTrPI+IGlwTBL5uowHmr8+GYK2:qcC+MtQWllnngySslyQyZyTypu/JoEggaIXNrMjFEDg955YfuNkLpeh3Z3nvAyKKfMUGQgb8J7xn9zqx5h3QMuE7lUE4E3p71TjH9VixjSDlWiwVTxnHFIKxh/j+bpGBAzsrvK5XTV/rLzzBZDoaibDTiOJFsfqDaEDggk80fmRRf+i/9cVlBVX9bCb1Q8XxO7J31KiaEWkJEic6k1XvlUvKt4kN0pRPtBiWKonVpSNJ1jRypSUENz14J0bogO1A7I889zcz/4XnJPBZ0mmg1JGaFw8jCXF7GM+IYocDQrk=]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "ODOO_URL",
+                "value": "https://erp.insightpulseai.net",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "ODOO_DB",
+                "value": "odoo",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "ODOO_USERNAME",
+                "value": "EV[1:Cd7+k8hj+2x5RBqRsRtRc2DnN/7s8wvD:uCtI/WDO9mAfpqebI1/fTFg66iB0]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "ODOO_PASSWORD",
+                "value": "EV[1:+1R4pQV3ngNsnstKmTPDPNeAp9EIw5vv:mc6xbxct+Ymx3A/NOWldNdB7Bqtq2YyEhDQ=]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "SUPERSET_URL",
+                "value": "https://superset.insightpulseai.net",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "NOTION_TOKEN",
+                "value": "EV[1:DaYYMmaU5ojuL9sre5Q+lbHHVWkbUnur:DXzXZ2wuWP2/GhX/i2Q3PMT/1A9URwB2vhOwu4q1yZ1G4pJnCAsdo/VDKjgRldo/1CYsojigAHsc64tl6/q1eqVS]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "ENVIRONMENT",
+                "value": "production",
+                "scope": "RUN_AND_BUILD_TIME"
+              }
+            ],
+            "instance_size_slug": "professional-xs",
+            "instance_count": 1,
+            "http_port": 8001,
+            "health_check": {
+              "initial_delay_seconds": 30,
+              "period_seconds": 10,
+              "http_path": "/health"
+            }
+          }
+        ],
+        "domains": [
+          {
+            "domain": "mcp.insightpulseai.net",
+            "type": "PRIMARY"
+          }
+        ],
+        "region": "sgp",
+        "ingress": {
+          "rules": [
+            {
+              "match": {
+                "path": {
+                  "prefix": "/"
+                }
+              },
+              "component": {
+                "name": "mcp-hub"
+              }
+            }
+          ]
+        }
+      },
+      "services": [
+        {
+          "name": "mcp-hub",
+          "source_commit_hash": "835052bb84657d29bc6b8aba0c0b914768c415e5"
+        }
+      ],
+      "phase_last_updated_at": "2025-12-30T03:38:11Z",
+      "created_at": "2025-12-30T03:35:13Z",
+      "updated_at": "2025-12-30T03:38:11Z",
+      "cause": "commit 835052b pushed to github.com/jgtolentino/insightpulse-odoo/tree/main",
+      "progress": {
+        "success_steps": 6,
+        "total_steps": 6,
+        "steps": [
+          {
+            "name": "build",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:35:18.253441642Z",
+                "ended_at": "2025-12-30T03:35:20.930669111Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "mcp-hub",
+                    "status": "SUCCESS",
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "mcp-hub",
+                    "message_base": "Building service"
+                  }
+                ],
+                "started_at": "2025-12-30T03:36:13.64669424Z",
+                "ended_at": "2025-12-30T03:36:59.475379355Z"
+              }
+            ],
+            "started_at": "2025-12-30T03:36:13.646610374Z",
+            "ended_at": "2025-12-30T03:37:01.226940483Z"
+          },
+          {
+            "name": "deploy",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:37:04.07477909Z",
+                "ended_at": "2025-12-30T03:37:07.727485774Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "mcp-hub",
+                    "status": "SUCCESS",
+                    "steps": [
+                      {
+                        "name": "deploy",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "mcp-hub",
+                        "message_base": "Deploying service"
+                      },
+                      {
+                        "name": "wait",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "mcp-hub",
+                        "message_base": "Waiting for service"
+                      }
+                    ],
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "mcp-hub"
+                  }
+                ],
+                "started_at": "2025-12-30T03:37:07.727545736Z",
+                "ended_at": "2025-12-30T03:38:06.871088072Z"
+              },
+              {
+                "name": "finalize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:38:08.305121316Z",
+                "ended_at": "2025-12-30T03:38:10.050574351Z"
+              }
+            ],
+            "started_at": "2025-12-30T03:37:04.074762279Z",
+            "ended_at": "2025-12-30T03:38:10.050700757Z"
+          }
+        ]
+      },
+      "phase": "ACTIVE",
+      "tier_slug": "professional",
+      "previous_deployment_id": "05796758-36b1-4def-a8a8-d17b554ebb00",
+      "cause_details": {
+        "git_push": {
+          "github": {
+            "repo": "jgtolentino/insightpulse-odoo",
+            "branch": "main"
+          },
+          "username": "github-actions[bot]",
+          "commit_sha": "835052bb84657d29bc6b8aba0c0b914768c415e5",
+          "commit_message": "docs: auto-update generated documentation [skip ci]"
+        },
+        "type": "DEPLOY_ON_PUSH"
+      },
+      "timing": {
+        "pending": "5.253441642s",
+        "build_total": "102.973498841s",
+        "build_billable": "25.643114786s",
+        "components": [
+          {
+            "name": "mcp-hub",
+            "build_billable": "25.643114786s"
+          }
+        ]
+      }
+    },
+    "last_deployment_created_at": "2025-12-30T03:35:13Z",
+    "live_url": "https://mcp.insightpulseai.net",
+    "region": {
+      "slug": "sgp",
+      "label": "Singapore",
+      "flag": "singapore",
+      "continent": "Asia",
+      "data_centers": [
+        "sgp1"
+      ]
+    },
+    "tier_slug": "professional",
+    "live_url_base": "https://mcp.insightpulseai.net",
+    "live_domain": "mcp.insightpulseai.net",
+    "domains": [
+      {
+        "id": "c81f06cf-eca4-4c95-a55b-356f20c142e9",
+        "spec": {
+          "domain": "mcp.insightpulseai.net",
+          "type": "PRIMARY"
+        },
+        "phase": "ACTIVE",
+        "progress": {
+          "steps": [
+            {
+              "name": "default-ingress-ready",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.030739157Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "ensure-zone",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.030806913Z",
+              "ended_at": "2025-11-04T00:49:46.546993403Z"
+            },
+            {
+              "name": "ensure-ns-records",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.030860002Z",
+              "ended_at": "2025-11-04T00:49:46.547049782Z"
+            },
+            {
+              "name": "verify-nameservers",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.030913381Z",
+              "ended_at": "2025-11-04T00:49:46.54713941Z"
+            },
+            {
+              "name": "ensure-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.030985696Z",
+              "ended_at": "2025-11-04T00:49:46.547196736Z"
+            },
+            {
+              "name": "ensure-alias-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.031042361Z",
+              "ended_at": "2025-11-04T00:49:46.547250444Z"
+            },
+            {
+              "name": "ensure-wildcard-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.031094468Z",
+              "ended_at": "2025-11-04T00:49:46.547314338Z"
+            },
+            {
+              "name": "verify-cname",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.116080596Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "ensure-ssl-txt-record-saved",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.408664822Z",
+              "ended_at": "2025-11-04T00:49:46.6138196Z"
+            },
+            {
+              "name": "ensure-ssl-txt-record",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.408729643Z",
+              "ended_at": "2025-11-04T00:49:46.613910236Z"
+            },
+            {
+              "name": "ensure-renewal-email",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.408782381Z",
+              "ended_at": "2025-11-04T00:49:46.614102244Z"
+            },
+            {
+              "name": "ensure-CA-authorization",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:08.408833025Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "ensure-certificate",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:09.181177276Z",
+              "ended_at": "0001-01-01T00:00:00Z"
+            },
+            {
+              "name": "create-deployment",
+              "status": "SUCCESS",
+              "started_at": "0001-01-01T00:00:00Z",
+              "ended_at": "2025-11-04T00:50:16.218102319Z"
+            },
+            {
+              "name": "configuration-alert",
+              "status": "SUCCESS",
+              "started_at": "2025-12-30T21:54:09.84783938Z",
+              "ended_at": "2025-11-04T00:49:47.575490008Z"
+            }
+          ]
+        },
+        "validation": {},
+        "certificate_expires_at": "2026-02-01T23:51:22Z"
+      }
+    ],
+    "build_config": {
+      "cnb_versioning": {
+        "buildpacks": [
+          {
+            "id": "digitalocean/custom",
+            "latest": true,
+            "name": "Custom Build Command",
+            "description": [
+              "Run the provided custom build command"
+            ],
+            "docs_link": "https://docs.digitalocean.com/products/app-platform/how-to/build-run-commands/"
+          },
+          {
+            "id": "digitalocean/procfile",
+            "latest": true,
+            "name": "Procfile",
+            "description": [
+              "Configure default run commands from the Procfile if one exists"
+            ]
+          },
+          {
+            "id": "heroku/nodejs",
+            "latest": true,
+            "name": "Node.js",
+            "description": [
+              "Install dependencies using NPM, PNPM or Yarn"
+            ],
+            "docs_link": "https://docs.digitalocean.com/products/app-platform/languages-frameworks/nodejs/"
+          }
+        ],
+        "stack_id": "heroku-22"
+      }
+    },
+    "project_id": "29cde7a1-8280-46ad-9fdf-dea7b21a7825"
+  }
+]

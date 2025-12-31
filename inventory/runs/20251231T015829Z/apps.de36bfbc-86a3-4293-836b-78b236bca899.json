@@ -1,0 +1,379 @@
+[
+  {
+    "id": "de36bfbc-86a3-4293-836b-78b236bca899",
+    "owner_uuid": "ee77a9b3-6275-410f-91cf-cf875d537748",
+    "spec": {
+      "name": "odoo-developer-agent",
+      "services": [
+        {
+          "name": "odoo-developer-api",
+          "github": {
+            "repo": "jgtolentino/insightpulse-odoo",
+            "branch": "main",
+            "deploy_on_push": true
+          },
+          "build_command": "pip install --upgrade pip \u0026\u0026 pip install -r requirements.txt",
+          "run_command": "uvicorn main:app --host 0.0.0.0 --port 8080",
+          "source_dir": "services/odoo-developer-agent",
+          "envs": [
+            {
+              "key": "ANTHROPIC_API_KEY",
+              "value": "EV[1:pI30gGje4upeK8x2Ywt8TzAoQ6Zktn3r:cLn1oWnEOoKZ64Ui9+ogPkYDFV2uawNub/D/TRnXp+xra4ds]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "ODOO_BASE_URL",
+              "value": "https://erp.insightpulseai.net",
+              "scope": "RUN_TIME"
+            },
+            {
+              "key": "GITHUB_TOKEN",
+              "value": "EV[1:ADYHWvwk/MoOfHtK7OK3RvH7J6ned0Kz:2b7viWJE+pe9HVYCxHFM+9hHYJGQjGXBiecgLtlk9w==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPABASE_URL",
+              "value": "https://spdtwktxdalcfigzeqrz.supabase.co",
+              "scope": "RUN_TIME"
+            },
+            {
+              "key": "SUPABASE_ANON_KEY",
+              "value": "EV[1:ypq2JGLv/xCgraI7CYS337WZyPlqCvZ/:Z9XI/9CFDmyADAzdhbKRIuIfkMOAQo6A3ef5l6sWLcjTWPqI]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            }
+          ],
+          "instance_size_slug": "basic-xxs",
+          "instance_count": 1,
+          "http_port": 8080,
+          "health_check": {
+            "initial_delay_seconds": 10,
+            "period_seconds": 30,
+            "timeout_seconds": 5,
+            "success_threshold": 1,
+            "failure_threshold": 3,
+            "http_path": "/health"
+          }
+        }
+      ],
+      "region": "sfo",
+      "alerts": [
+        {
+          "rule": "DEPLOYMENT_FAILED"
+        },
+        {
+          "rule": "DOMAIN_FAILED"
+        }
+      ],
+      "ingress": {
+        "rules": [
+          {
+            "match": {
+              "path": {
+                "prefix": "/"
+              }
+            },
+            "component": {
+              "name": "odoo-developer-api"
+            }
+          }
+        ]
+      },
+      "features": [
+        "buildpack-stack=ubuntu-22"
+      ]
+    },
+    "last_deployment_active_at": "2025-12-30T03:37:13Z",
+    "default_ingress": "https://odoo-developer-agent-295j9.ondigitalocean.app",
+    "created_at": "2025-11-14T18:07:08Z",
+    "updated_at": "2025-12-30T03:37:46Z",
+    "active_deployment": {
+      "id": "e2fd0149-6234-4b4a-8c2d-1105163ae34c",
+      "spec": {
+        "name": "odoo-developer-agent",
+        "services": [
+          {
+            "name": "odoo-developer-api",
+            "github": {
+              "repo": "jgtolentino/insightpulse-odoo",
+              "branch": "main",
+              "deploy_on_push": true
+            },
+            "build_command": "pip install --upgrade pip \u0026\u0026 pip install -r requirements.txt",
+            "run_command": "uvicorn main:app --host 0.0.0.0 --port 8080",
+            "source_dir": "services/odoo-developer-agent",
+            "envs": [
+              {
+                "key": "ANTHROPIC_API_KEY",
+                "value": "EV[1:pI30gGje4upeK8x2Ywt8TzAoQ6Zktn3r:cLn1oWnEOoKZ64Ui9+ogPkYDFV2uawNub/D/TRnXp+xra4ds]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "ODOO_BASE_URL",
+                "value": "https://erp.insightpulseai.net",
+                "scope": "RUN_TIME"
+              },
+              {
+                "key": "GITHUB_TOKEN",
+                "value": "EV[1:ADYHWvwk/MoOfHtK7OK3RvH7J6ned0Kz:2b7viWJE+pe9HVYCxHFM+9hHYJGQjGXBiecgLtlk9w==]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "SUPABASE_URL",
+                "value": "https://spdtwktxdalcfigzeqrz.supabase.co",
+                "scope": "RUN_TIME"
+              },
+              {
+                "key": "SUPABASE_ANON_KEY",
+                "value": "EV[1:ypq2JGLv/xCgraI7CYS337WZyPlqCvZ/:Z9XI/9CFDmyADAzdhbKRIuIfkMOAQo6A3ef5l6sWLcjTWPqI]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              }
+            ],
+            "instance_size_slug": "basic-xxs",
+            "instance_count": 1,
+            "http_port": 8080,
+            "health_check": {
+              "initial_delay_seconds": 10,
+              "period_seconds": 30,
+              "timeout_seconds": 5,
+              "success_threshold": 1,
+              "failure_threshold": 3,
+              "http_path": "/health"
+            }
+          }
+        ],
+        "region": "sfo",
+        "alerts": [
+          {
+            "rule": "DEPLOYMENT_FAILED"
+          },
+          {
+            "rule": "DOMAIN_FAILED"
+          }
+        ],
+        "ingress": {
+          "rules": [
+            {
+              "match": {
+                "path": {
+                  "prefix": "/"
+                }
+              },
+              "component": {
+                "name": "odoo-developer-api"
+              }
+            }
+          ]
+        },
+        "features": [
+          "buildpack-stack=ubuntu-22"
+        ]
+      },
+      "services": [
+        {
+          "name": "odoo-developer-api",
+          "source_commit_hash": "835052bb84657d29bc6b8aba0c0b914768c415e5",
+          "buildpacks": [
+            {
+              "id": "heroku/python",
+              "version": "4.289.5",
+              "major_version": 4,
+              "latest": true,
+              "name": "Python",
+              "docs_link": "https://docs.digitalocean.com/products/app-platform/languages-frameworks/python/"
+            },
+            {
+              "id": "digitalocean/procfile",
+              "version": "0.1.0",
+              "latest": true,
+              "name": "Procfile",
+              "description": [
+                "Configure default run commands from the Procfile if one exists"
+              ]
+            },
+            {
+              "id": "digitalocean/custom",
+              "version": "0.2.0",
+              "latest": true,
+              "name": "Custom Build Command",
+              "description": [
+                "Run the provided custom build command"
+              ],
+              "docs_link": "https://docs.digitalocean.com/products/app-platform/how-to/build-run-commands/"
+            }
+          ]
+        }
+      ],
+      "phase_last_updated_at": "2025-12-30T03:37:13Z",
+      "created_at": "2025-12-30T03:35:13Z",
+      "updated_at": "2025-12-30T03:37:13Z",
+      "cause": "commit 835052b pushed to github.com/jgtolentino/insightpulse-odoo/tree/main",
+      "progress": {
+        "success_steps": 6,
+        "total_steps": 6,
+        "steps": [
+          {
+            "name": "build",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:35:18.321833745Z",
+                "ended_at": "2025-12-30T03:35:18.965666656Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "odoo-developer-api",
+                    "status": "SUCCESS",
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "odoo-developer-api",
+                    "message_base": "Building service"
+                  }
+                ],
+                "started_at": "2025-12-30T03:35:18.965702062Z",
+                "ended_at": "2025-12-30T03:36:09.410785487Z"
+              }
+            ],
+            "started_at": "2025-12-30T03:35:18.321765759Z",
+            "ended_at": "2025-12-30T03:36:10.213938559Z"
+          },
+          {
+            "name": "deploy",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:36:14.242297342Z",
+                "ended_at": "2025-12-30T03:36:15.647958156Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "odoo-developer-api",
+                    "status": "SUCCESS",
+                    "steps": [
+                      {
+                        "name": "deploy",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "odoo-developer-api",
+                        "message_base": "Deploying service"
+                      },
+                      {
+                        "name": "wait",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "odoo-developer-api",
+                        "message_base": "Waiting for service"
+                      }
+                    ],
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "odoo-developer-api"
+                  }
+                ],
+                "started_at": "2025-12-30T03:36:15.647985978Z",
+                "ended_at": "2025-12-30T03:37:10.806321432Z"
+              },
+              {
+                "name": "finalize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:37:11.273651933Z",
+                "ended_at": "2025-12-30T03:37:12.193310883Z"
+              }
+            ],
+            "started_at": "2025-12-30T03:36:14.242261796Z",
+            "ended_at": "2025-12-30T03:37:12.193478855Z"
+          }
+        ]
+      },
+      "phase": "ACTIVE",
+      "tier_slug": "basic",
+      "previous_deployment_id": "7e1f3d52-4138-40d2-939d-2a150458b0d1",
+      "cause_details": {
+        "git_push": {
+          "github": {
+            "repo": "jgtolentino/insightpulse-odoo",
+            "branch": "main"
+          },
+          "username": "github-actions[bot]",
+          "commit_sha": "835052bb84657d29bc6b8aba0c0b914768c415e5",
+          "commit_message": "docs: auto-update generated documentation [skip ci]"
+        },
+        "type": "DEPLOY_ON_PUSH"
+      },
+      "timing": {
+        "pending": "5.321833745s",
+        "build_total": "51.892104814s",
+        "build_billable": "17.036058946s",
+        "components": [
+          {
+            "name": "odoo-developer-api",
+            "build_billable": "17.036058946s"
+          }
+        ]
+      }
+    },
+    "last_deployment_created_at": "2025-12-30T03:35:13Z",
+    "live_url": "https://odoo-developer-agent-295j9.ondigitalocean.app",
+    "region": {
+      "slug": "sfo",
+      "label": "San Francisco",
+      "flag": "usa",
+      "continent": "North America",
+      "data_centers": [
+        "sfo3"
+      ]
+    },
+    "tier_slug": "basic",
+    "live_url_base": "https://odoo-developer-agent-295j9.ondigitalocean.app",
+    "live_domain": "odoo-developer-agent-295j9.ondigitalocean.app",
+    "build_config": {
+      "cnb_versioning": {
+        "buildpacks": [
+          {
+            "id": "digitalocean/custom",
+            "latest": true,
+            "name": "Custom Build Command",
+            "description": [
+              "Run the provided custom build command"
+            ],
+            "docs_link": "https://docs.digitalocean.com/products/app-platform/how-to/build-run-commands/"
+          },
+          {
+            "id": "digitalocean/procfile",
+            "latest": true,
+            "name": "Procfile",
+            "description": [
+              "Configure default run commands from the Procfile if one exists"
+            ]
+          },
+          {
+            "id": "heroku/python",
+            "major_version": 4,
+            "latest": true,
+            "name": "Python",
+            "docs_link": "https://docs.digitalocean.com/products/app-platform/languages-frameworks/python/"
+          }
+        ],
+        "stack_id": "heroku-22"
+      }
+    },
+    "project_id": "29cde7a1-8280-46ad-9fdf-dea7b21a7825"
+  }
+]
