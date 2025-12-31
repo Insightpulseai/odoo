@@ -24,6 +24,10 @@ jobs:
           sudo mv doctl /usr/local/bin/doctl
           doctl version
 
+      - name: Ensure DO token exists
+        run: |
+          test -n "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" || (echo "Missing DIGITALOCEAN_ACCESS_TOKEN secret" && exit 1)
+
       - name: Auth doctl
         env:
           DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
@@ -51,7 +55,7 @@ jobs:
             exit 0
           fi
 
-          branch="chore/weekly-do-inventory-$(date -u +%Y%m%d)"
+          branch="chore/weekly-do-inventory-$(date -u +%Y%m%d)-${{ github.run_id }}"
           git checkout -b "$branch"
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
