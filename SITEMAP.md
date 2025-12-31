@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 323c345af2b6642e5afe812198d4aac9f0c608c9
+> Commit: fe4a003e79c16202caf167a9e4be22d7017d05ff
 
 ## 📚 Documentation
 
@@ -163,6 +163,7 @@
 | [Final Operability Checklist](docs/FINAL_OPERABILITY_CHECKLIST.md) | docs |
 | [FINAL READINESS CHECK & GIT COMMIT VERIFICATION](docs/FINAL_READINESS_CHECK.md) | docs |
 | [Finance PPM Implementation - Clarity/Notion-Style in Odoo CE](docs/FINANCE_PPM_IMPLEMENTATION.md) | docs |
+| [fin-workspace Automation Hardening Status](docs/FIN_WORKSPACE_HARDENING_STATUS.md) | docs |
 | [fin-workspace Setup Guide](docs/FIN_WORKSPACE_SETUP.md) | docs |
 | [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
 | [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
