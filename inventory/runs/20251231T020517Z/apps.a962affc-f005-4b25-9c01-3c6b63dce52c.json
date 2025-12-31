@@ -1,0 +1,278 @@
+[
+  {
+    "id": "a962affc-f005-4b25-9c01-3c6b63dce52c",
+    "owner_uuid": "ee77a9b3-6275-410f-91cf-cf875d537748",
+    "spec": {
+      "name": "odoo-saas-platform",
+      "services": [
+        {
+          "name": "odoo-web",
+          "github": {
+            "repo": "jgtolentino/odoo-ce",
+            "branch": "main",
+            "deploy_on_push": true
+          },
+          "dockerfile_path": "Dockerfile",
+          "envs": [
+            {
+              "key": "ODOO_ADDONS_PATH",
+              "value": "/usr/lib/python3/dist-packages/odoo/addons",
+              "scope": "RUN_TIME"
+            }
+          ],
+          "instance_size_slug": "basic-xxs",
+          "instance_count": 1,
+          "http_port": 8069,
+          "health_check": {
+            "initial_delay_seconds": 60,
+            "period_seconds": 30,
+            "timeout_seconds": 10,
+            "success_threshold": 1,
+            "failure_threshold": 3,
+            "http_path": "/web/health"
+          }
+        }
+      ],
+      "region": "sgp",
+      "ingress": {
+        "rules": [
+          {
+            "match": {
+              "path": {
+                "prefix": "/"
+              }
+            },
+            "component": {
+              "name": "odoo-web",
+              "preserve_path_prefix": true
+            }
+          }
+        ]
+      }
+    },
+    "last_deployment_active_at": "2025-12-30T01:02:03Z",
+    "created_at": "2025-11-30T03:48:46Z",
+    "updated_at": "2025-12-30T01:10:16Z",
+    "active_deployment": {
+      "id": "b406c07d-58fa-481a-a99b-874b49e76bbf",
+      "spec": {
+        "name": "odoo-saas-platform",
+        "services": [
+          {
+            "name": "odoo-web",
+            "github": {
+              "repo": "jgtolentino/odoo-ce",
+              "branch": "main",
+              "deploy_on_push": true
+            },
+            "dockerfile_path": "Dockerfile",
+            "envs": [
+              {
+                "key": "ODOO_ADDONS_PATH",
+                "value": "/usr/lib/python3/dist-packages/odoo/addons",
+                "scope": "RUN_TIME"
+              }
+            ],
+            "instance_size_slug": "basic-xxs",
+            "instance_count": 1,
+            "http_port": 8069,
+            "health_check": {
+              "initial_delay_seconds": 60,
+              "period_seconds": 30,
+              "timeout_seconds": 10,
+              "success_threshold": 1,
+              "failure_threshold": 3,
+              "http_path": "/web/health"
+            }
+          }
+        ],
+        "region": "sgp",
+        "ingress": {
+          "rules": [
+            {
+              "match": {
+                "path": {
+                  "prefix": "/"
+                }
+              },
+              "component": {
+                "name": "odoo-web",
+                "preserve_path_prefix": true
+              }
+            }
+          ]
+        }
+      },
+      "services": [
+        {
+          "name": "odoo-web",
+          "source_commit_hash": "1b4b3184f08f6e3e19442dd6bae756e91aaae030"
+        }
+      ],
+      "phase_last_updated_at": "2025-12-30T01:03:26Z",
+      "created_at": "2025-12-30T00:55:43Z",
+      "updated_at": "2025-12-30T01:03:26Z",
+      "cause": "commit 1b4b318 pushed to github.com/jgtolentino/odoo-ce/tree/main",
+      "progress": {
+        "pending_steps": 1,
+        "success_steps": 4,
+        "error_steps": 1,
+        "total_steps": 6,
+        "steps": [
+          {
+            "name": "build",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T00:55:50.272754106Z",
+                "ended_at": "2025-12-30T00:55:51.667508703Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "odoo-web",
+                    "status": "SUCCESS",
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "odoo-web",
+                    "message_base": "Building service"
+                  }
+                ],
+                "started_at": "2025-12-30T00:55:51.667550742Z",
+                "ended_at": "2025-12-30T01:00:00.791295145Z"
+              }
+            ],
+            "started_at": "2025-12-30T00:55:50.272616169Z",
+            "ended_at": "2025-12-30T01:00:02.352153266Z"
+          },
+          {
+            "name": "deploy",
+            "status": "ERROR",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T01:00:06.304057855Z",
+                "ended_at": "2025-12-30T01:00:09.846088936Z"
+              },
+              {
+                "name": "components",
+                "status": "ERROR",
+                "steps": [
+                  {
+                    "name": "odoo-web",
+                    "status": "ERROR",
+                    "steps": [
+                      {
+                        "name": "deploy",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "odoo-web",
+                        "message_base": "Deploying service"
+                      },
+                      {
+                        "name": "wait",
+                        "status": "ERROR",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "reason": {
+                          "code": "DeployContainerExitNonZero",
+                          "message": "Your deploy failed because your container exited with a non-zero exit code."
+                        },
+                        "component_name": "odoo-web",
+                        "message_base": "Waiting for service"
+                      }
+                    ],
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "reason": {
+                      "code": "DeployContainerExitNonZero",
+                      "message": "Your deploy failed because your container exited with a non-zero exit code."
+                    },
+                    "component_name": "odoo-web"
+                  }
+                ],
+                "started_at": "2025-12-30T01:00:09.846119232Z",
+                "ended_at": "2025-12-30T01:03:23.88456206Z",
+                "reason": {
+                  "code": "DeployContainerExitNonZero",
+                  "message": "Your deploy failed because your container exited with a non-zero exit code."
+                }
+              },
+              {
+                "name": "finalize",
+                "status": "PENDING",
+                "started_at": "0001-01-01T00:00:00Z",
+                "ended_at": "0001-01-01T00:00:00Z"
+              }
+            ],
+            "started_at": "2025-12-30T01:00:06.304022449Z",
+            "ended_at": "2025-12-30T01:03:25.923115113Z",
+            "reason": {
+              "code": "DeployContainerExitNonZero",
+              "message": "Your deploy failed because your container exited with a non-zero exit code."
+            }
+          }
+        ],
+        "summary_steps": [
+          {
+            "name": "deploy.components.odoo-web.wait",
+            "status": "ERROR",
+            "started_at": "0001-01-01T00:00:00Z",
+            "ended_at": "0001-01-01T00:00:00Z",
+            "reason": {
+              "code": "DeployContainerExitNonZero",
+              "message": "Your deploy failed because your container exited with a non-zero exit code."
+            },
+            "component_name": "odoo-web",
+            "message_base": "Waiting for service"
+          }
+        ]
+      },
+      "phase": "ERROR",
+      "tier_slug": "basic",
+      "previous_deployment_id": "4fdfcbe7-496f-49c9-8163-1541c0e71057",
+      "cause_details": {
+        "git_push": {
+          "github": {
+            "repo": "jgtolentino/odoo-ce",
+            "branch": "main"
+          },
+          "username": "github-actions[bot]",
+          "commit_sha": "1b4b3184f08f6e3e19442dd6bae756e91aaae030",
+          "commit_message": "docs: auto-update SITEMAP.md and TREE.md [skip ci]"
+        },
+        "type": "DEPLOY_ON_PUSH"
+      },
+      "timing": {
+        "pending": "7.272754106s",
+        "build_total": "252.079399160s",
+        "build_billable": "221.709037023s",
+        "components": [
+          {
+            "name": "odoo-web",
+            "build_billable": "221.709037023s"
+          }
+        ]
+      }
+    },
+    "last_deployment_created_at": "2025-12-30T01:02:03Z",
+    "region": {
+      "slug": "sgp",
+      "label": "Singapore",
+      "flag": "singapore",
+      "continent": "Asia",
+      "data_centers": [
+        "sgp1"
+      ]
+    },
+    "tier_slug": "basic",
+    "build_config": {},
+    "project_id": "29cde7a1-8280-46ad-9fdf-dea7b21a7825"
+  }
+]

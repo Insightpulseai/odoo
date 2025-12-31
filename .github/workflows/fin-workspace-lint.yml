@@ -1,0 +1,37 @@
+name: fin-workspace lint
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install linters
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck jq
+          python -m pip install --upgrade pip
+          pip install yamllint
+
+          # shfmt
+          curl -sSLo /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.8.0_linux_amd64
+          chmod +x /usr/local/bin/shfmt
+
+      - name: Shellcheck scripts
+        run: |
+          shellcheck infra/doctl/export_state.sh
+          shellcheck scripts/bootstrap_apps_from_inventory.sh
+          shellcheck scripts/new_conversation_entry.sh
+
+      - name: shfmt check
+        run: |
+          shfmt -d -i 2 -ci infra/doctl/export_state.sh scripts/*.sh
+
+      - name: yamllint (apps specs)
+        run: |
+          yamllint -d "{extends: default, rules: {line-length: {max: 140}}}" apps/**/spec.yaml
