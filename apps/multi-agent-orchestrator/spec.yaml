@@ -1,0 +1,10 @@
+# fin-workspace app spec (normalized)
+name: multi-agent-orchestrator
+slug: multi-agent-orchestrator
+do:
+  app_id: 6e33fbd8-d31d-4bf0-900e-e54642d48e3c
+  region: 
+  ingress: 
+owners:
+  - platform: fin-workspace
+env: prod

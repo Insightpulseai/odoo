@@ -1,0 +1,369 @@
+[
+  {
+    "id": "115a9584-75a3-4974-bb73-8f34b5cec6c9",
+    "owner_uuid": "ee77a9b3-6275-410f-91cf-cf875d537748",
+    "spec": {
+      "name": "finance-ssc-expert",
+      "services": [
+        {
+          "name": "finance-ssc-api",
+          "github": {
+            "repo": "jgtolentino/insightpulse-odoo",
+            "branch": "main",
+            "deploy_on_push": true
+          },
+          "build_command": "pip install --upgrade pip \u0026\u0026 pip install -r requirements.txt",
+          "run_command": "uvicorn main:app --host 0.0.0.0 --port 8080",
+          "source_dir": "services/finance-ssc-expert",
+          "envs": [
+            {
+              "key": "ANTHROPIC_API_KEY",
+              "value": "EV[1:wO62QVBXUTo1yESf+kKRWeD7TPKNYADo:o2SGGzLACuEDDibN3j4HMIy4wmYQUnnbsRnGlI8FUk4TuTwj]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPABASE_URL",
+              "value": "https://spdtwktxdalcfigzeqrz.supabase.co",
+              "scope": "RUN_TIME"
+            },
+            {
+              "key": "SUPABASE_SERVICE_ROLE_KEY",
+              "value": "EV[1:VaMREaEXBGMExlsQcIy+sF8LYnkKYhRG:p9CH/S8gdRilGr6Lmt3gmFrWXVaPdF70cLJaXe690ypqGZL1+XrK9ll4JUU=]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "POSTGRES_URL",
+              "value": "EV[1:lbPsgPdpRs3CsUAjZKBL36YgmP7vl6Hu:HgOVbFYruh7aoA04pF6zeAC6IZhK/cYY2bdHxtUFCQ==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            }
+          ],
+          "instance_size_slug": "basic-xxs",
+          "instance_count": 1,
+          "http_port": 8080,
+          "health_check": {
+            "initial_delay_seconds": 10,
+            "period_seconds": 30,
+            "timeout_seconds": 5,
+            "success_threshold": 1,
+            "failure_threshold": 3,
+            "http_path": "/health"
+          }
+        }
+      ],
+      "region": "sfo",
+      "alerts": [
+        {
+          "rule": "DEPLOYMENT_FAILED"
+        },
+        {
+          "rule": "DOMAIN_FAILED"
+        }
+      ],
+      "ingress": {
+        "rules": [
+          {
+            "match": {
+              "path": {
+                "prefix": "/"
+              }
+            },
+            "component": {
+              "name": "finance-ssc-api"
+            }
+          }
+        ]
+      },
+      "features": [
+        "buildpack-stack=ubuntu-22"
+      ]
+    },
+    "last_deployment_active_at": "2025-12-30T03:37:21Z",
+    "default_ingress": "https://finance-ssc-expert-3722k.ondigitalocean.app",
+    "created_at": "2025-11-14T18:16:41Z",
+    "updated_at": "2025-12-30T03:38:35Z",
+    "active_deployment": {
+      "id": "c67df97a-71d5-4dcf-8d99-660f9c78ed85",
+      "spec": {
+        "name": "finance-ssc-expert",
+        "services": [
+          {
+            "name": "finance-ssc-api",
+            "github": {
+              "repo": "jgtolentino/insightpulse-odoo",
+              "branch": "main",
+              "deploy_on_push": true
+            },
+            "build_command": "pip install --upgrade pip \u0026\u0026 pip install -r requirements.txt",
+            "run_command": "uvicorn main:app --host 0.0.0.0 --port 8080",
+            "source_dir": "services/finance-ssc-expert",
+            "envs": [
+              {
+                "key": "ANTHROPIC_API_KEY",
+                "value": "EV[1:wO62QVBXUTo1yESf+kKRWeD7TPKNYADo:o2SGGzLACuEDDibN3j4HMIy4wmYQUnnbsRnGlI8FUk4TuTwj]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "SUPABASE_URL",
+                "value": "https://spdtwktxdalcfigzeqrz.supabase.co",
+                "scope": "RUN_TIME"
+              },
+              {
+                "key": "SUPABASE_SERVICE_ROLE_KEY",
+                "value": "EV[1:VaMREaEXBGMExlsQcIy+sF8LYnkKYhRG:p9CH/S8gdRilGr6Lmt3gmFrWXVaPdF70cLJaXe690ypqGZL1+XrK9ll4JUU=]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "POSTGRES_URL",
+                "value": "EV[1:lbPsgPdpRs3CsUAjZKBL36YgmP7vl6Hu:HgOVbFYruh7aoA04pF6zeAC6IZhK/cYY2bdHxtUFCQ==]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              }
+            ],
+            "instance_size_slug": "basic-xxs",
+            "instance_count": 1,
+            "http_port": 8080,
+            "health_check": {
+              "initial_delay_seconds": 10,
+              "period_seconds": 30,
+              "timeout_seconds": 5,
+              "success_threshold": 1,
+              "failure_threshold": 3,
+              "http_path": "/health"
+            }
+          }
+        ],
+        "region": "sfo",
+        "alerts": [
+          {
+            "rule": "DEPLOYMENT_FAILED"
+          },
+          {
+            "rule": "DOMAIN_FAILED"
+          }
+        ],
+        "ingress": {
+          "rules": [
+            {
+              "match": {
+                "path": {
+                  "prefix": "/"
+                }
+              },
+              "component": {
+                "name": "finance-ssc-api"
+              }
+            }
+          ]
+        },
+        "features": [
+          "buildpack-stack=ubuntu-22"
+        ]
+      },
+      "services": [
+        {
+          "name": "finance-ssc-api",
+          "source_commit_hash": "835052bb84657d29bc6b8aba0c0b914768c415e5",
+          "buildpacks": [
+            {
+              "id": "heroku/python",
+              "version": "4.289.5",
+              "major_version": 4,
+              "latest": true,
+              "name": "Python",
+              "docs_link": "https://docs.digitalocean.com/products/app-platform/languages-frameworks/python/"
+            },
+            {
+              "id": "digitalocean/procfile",
+              "version": "0.1.0",
+              "latest": true,
+              "name": "Procfile",
+              "description": [
+                "Configure default run commands from the Procfile if one exists"
+              ]
+            },
+            {
+              "id": "digitalocean/custom",
+              "version": "0.2.0",
+              "latest": true,
+              "name": "Custom Build Command",
+              "description": [
+                "Run the provided custom build command"
+              ],
+              "docs_link": "https://docs.digitalocean.com/products/app-platform/how-to/build-run-commands/"
+            }
+          ]
+        }
+      ],
+      "phase_last_updated_at": "2025-12-30T03:37:21Z",
+      "created_at": "2025-12-30T03:35:13Z",
+      "updated_at": "2025-12-30T03:37:21Z",
+      "cause": "commit 835052b pushed to github.com/jgtolentino/insightpulse-odoo/tree/main",
+      "progress": {
+        "success_steps": 6,
+        "total_steps": 6,
+        "steps": [
+          {
+            "name": "build",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:35:17.763702306Z",
+                "ended_at": "2025-12-30T03:35:18.610976854Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "finance-ssc-api",
+                    "status": "SUCCESS",
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "finance-ssc-api",
+                    "message_base": "Building service"
+                  }
+                ],
+                "started_at": "2025-12-30T03:35:18.61100678Z",
+                "ended_at": "2025-12-30T03:36:19.636567736Z"
+              }
+            ],
+            "started_at": "2025-12-30T03:35:17.763581101Z",
+            "ended_at": "2025-12-30T03:36:20.345412415Z"
+          },
+          {
+            "name": "deploy",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:36:24.585608806Z",
+                "ended_at": "2025-12-30T03:36:25.857522661Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "finance-ssc-api",
+                    "status": "SUCCESS",
+                    "steps": [
+                      {
+                        "name": "deploy",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "finance-ssc-api",
+                        "message_base": "Deploying service"
+                      },
+                      {
+                        "name": "wait",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "finance-ssc-api",
+                        "message_base": "Waiting for service"
+                      }
+                    ],
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "finance-ssc-api"
+                  }
+                ],
+                "started_at": "2025-12-30T03:36:25.857554611Z",
+                "ended_at": "2025-12-30T03:37:19.355596412Z"
+              },
+              {
+                "name": "finalize",
+                "status": "SUCCESS",
+                "started_at": "2025-12-30T03:37:20.036924361Z",
+                "ended_at": "2025-12-30T03:37:20.706363457Z"
+              }
+            ],
+            "started_at": "2025-12-30T03:36:24.585570134Z",
+            "ended_at": "2025-12-30T03:37:20.706430292Z"
+          }
+        ]
+      },
+      "phase": "ACTIVE",
+      "tier_slug": "basic",
+      "previous_deployment_id": "e30a328e-2006-4923-94db-572d00d566e1",
+      "cause_details": {
+        "git_push": {
+          "github": {
+            "repo": "jgtolentino/insightpulse-odoo",
+            "branch": "main"
+          },
+          "username": "github-actions[bot]",
+          "commit_sha": "835052bb84657d29bc6b8aba0c0b914768c415e5",
+          "commit_message": "docs: auto-update generated documentation [skip ci]"
+        },
+        "type": "DEPLOY_ON_PUSH"
+      },
+      "timing": {
+        "pending": "4.763702306s",
+        "build_total": "62.581710109s",
+        "build_billable": "26.808407664s",
+        "components": [
+          {
+            "name": "finance-ssc-api",
+            "build_billable": "26.808407664s"
+          }
+        ]
+      }
+    },
+    "last_deployment_created_at": "2025-12-30T03:35:13Z",
+    "live_url": "https://finance-ssc-expert-3722k.ondigitalocean.app",
+    "region": {
+      "slug": "sfo",
+      "label": "San Francisco",
+      "flag": "usa",
+      "continent": "North America",
+      "data_centers": [
+        "sfo3"
+      ]
+    },
+    "tier_slug": "basic",
+    "live_url_base": "https://finance-ssc-expert-3722k.ondigitalocean.app",
+    "live_domain": "finance-ssc-expert-3722k.ondigitalocean.app",
+    "build_config": {
+      "cnb_versioning": {
+        "buildpacks": [
+          {
+            "id": "digitalocean/custom",
+            "latest": true,
+            "name": "Custom Build Command",
+            "description": [
+              "Run the provided custom build command"
+            ],
+            "docs_link": "https://docs.digitalocean.com/products/app-platform/how-to/build-run-commands/"
+          },
+          {
+            "id": "digitalocean/procfile",
+            "latest": true,
+            "name": "Procfile",
+            "description": [
+              "Configure default run commands from the Procfile if one exists"
+            ]
+          },
+          {
+            "id": "heroku/python",
+            "major_version": 4,
+            "latest": true,
+            "name": "Python",
+            "docs_link": "https://docs.digitalocean.com/products/app-platform/languages-frameworks/python/"
+          }
+        ],
+        "stack_id": "heroku-22"
+      }
+    },
+    "project_id": "29cde7a1-8280-46ad-9fdf-dea7b21a7825"
+  }
+]
