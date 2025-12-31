@@ -15,25 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install deps (doctl, jq)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq
-          curl -sSLo doctl.tar.gz https://github.com/digitalocean/doctl/releases/latest/download/doctl-$(uname -s | tr '[:upper:]' '[:lower:]')-amd64.tar.gz
-          tar -xzf doctl.tar.gz
-          sudo mv doctl /usr/local/bin/doctl
-          doctl version
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-      - name: Ensure DO token exists
-        run: |
-          test -n "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" || (echo "Missing DIGITALOCEAN_ACCESS_TOKEN secret" && exit 1)
+      - name: Install and auth doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Auth doctl
-        env:
-          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-        run: |
-          doctl auth init -t "$DIGITALOCEAN_ACCESS_TOKEN"
-          doctl account get
+      - name: Verify doctl auth
+        run: doctl account get
 
       - name: Run export + bootstrap
         run: |
