@@ -1,0 +1,10 @@
+# fin-workspace app spec (normalized)
+name: odoo-saas-platform
+slug: odoo-saas-platform
+do:
+  app_id: a962affc-f005-4b25-9c01-3c6b63dce52c
+  region: 
+  ingress: 
+owners:
+  - platform: fin-workspace
+env: prod

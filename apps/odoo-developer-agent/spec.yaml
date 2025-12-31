@@ -1,0 +1,10 @@
+# fin-workspace app spec (normalized)
+name: odoo-developer-agent
+slug: odoo-developer-agent
+do:
+  app_id: de36bfbc-86a3-4293-836b-78b236bca899
+  region: 
+  ingress: 
+owners:
+  - platform: fin-workspace
+env: prod

@@ -1,0 +1,10 @@
+# fin-workspace app spec (normalized)
+name: superset-analytics
+slug: superset-analytics
+do:
+  app_id: 73af11cb-dab2-4cb1-9770-291c536531e6
+  region: 
+  ingress: 
+owners:
+  - platform: fin-workspace
+env: prod

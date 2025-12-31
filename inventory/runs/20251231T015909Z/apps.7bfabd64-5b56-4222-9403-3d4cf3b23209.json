@@ -1,0 +1,338 @@
+[
+  {
+    "id": "7bfabd64-5b56-4222-9403-3d4cf3b23209",
+    "owner_uuid": "ee77a9b3-6275-410f-91cf-cf875d537748",
+    "spec": {
+      "name": "mattermost-rag",
+      "services": [
+        {
+          "name": "rag-service",
+          "github": {
+            "repo": "jgtolentino/opex",
+            "branch": "main",
+            "deploy_on_push": true
+          },
+          "dockerfile_path": "/packages/mattermost-rag/rag-service/Dockerfile",
+          "source_dir": "/packages/mattermost-rag/rag-service",
+          "envs": [
+            {
+              "key": "MM_SITE_URL",
+              "value": "https://chat.insightpulseai.net",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "MM_BOT_TOKEN",
+              "value": "EV[1:WcWFk4lGLW0j4KIdpxSprDqEN8DbJEyD:5TEZu5hPf4ncCdgJqgEXVsDm5Mb0sqECPZOg1ZVcMxhFTXrf0a5MKFxW]",
+              "scope": "RUN_AND_BUILD_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "MM_SLASH_TOKEN",
+              "value": "EV[1:q0RfA7sYNl6HYbnVVAxoRcFXhY0z68yU:ayfoFM3rKhEjh9SvO+KB3oD345cMlsbElRN6DO5TC8S7MOUysPRfAXEO]",
+              "scope": "RUN_AND_BUILD_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "OPENAI_API_KEY",
+              "value": "EV[1:JVsLazIXXbuMiK4/W5l0l9L0WVr1NeIe:/xeB+PNKWOEDCo8bcuKXTQ==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "SUPABASE_URL",
+              "value": "https://ublqmilcjtpnflofprkr.supabase.co",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "SUPABASE_SERVICE_ROLE_KEY",
+              "value": "EV[1:nGtwo+78ClFEF3ZY4IJ1CJTVqCN+1liy:K+8zH8wniHM/mPJHmJp6ow==]",
+              "scope": "RUN_TIME",
+              "type": "SECRET"
+            },
+            {
+              "key": "MAX_CONCURRENT_REQUESTS",
+              "value": "10",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "REQUEST_TIMEOUT",
+              "value": "30",
+              "scope": "RUN_AND_BUILD_TIME"
+            },
+            {
+              "key": "LOG_LEVEL",
+              "value": "INFO",
+              "scope": "RUN_AND_BUILD_TIME"
+            }
+          ],
+          "instance_size_slug": "basic-xxs",
+          "instance_count": 1,
+          "http_port": 8000,
+          "health_check": {
+            "initial_delay_seconds": 10,
+            "period_seconds": 10,
+            "timeout_seconds": 3,
+            "success_threshold": 1,
+            "failure_threshold": 3,
+            "http_path": "/health"
+          }
+        }
+      ],
+      "region": "sgp",
+      "ingress": {
+        "rules": [
+          {
+            "match": {
+              "path": {
+                "prefix": "/"
+              }
+            },
+            "component": {
+              "name": "rag-service"
+            }
+          }
+        ]
+      }
+    },
+    "last_deployment_active_at": "2025-11-19T12:28:55Z",
+    "default_ingress": "https://mattermost-rag-egb6n.ondigitalocean.app",
+    "created_at": "2025-11-15T15:24:33Z",
+    "updated_at": "2025-12-24T12:29:26Z",
+    "active_deployment": {
+      "id": "eea97477-8df5-4fae-920e-244243ee4961",
+      "spec": {
+        "name": "mattermost-rag",
+        "services": [
+          {
+            "name": "rag-service",
+            "github": {
+              "repo": "jgtolentino/opex",
+              "branch": "main",
+              "deploy_on_push": true
+            },
+            "dockerfile_path": "/packages/mattermost-rag/rag-service/Dockerfile",
+            "source_dir": "/packages/mattermost-rag/rag-service",
+            "envs": [
+              {
+                "key": "MM_SITE_URL",
+                "value": "https://chat.insightpulseai.net",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "MM_BOT_TOKEN",
+                "value": "EV[1:WcWFk4lGLW0j4KIdpxSprDqEN8DbJEyD:5TEZu5hPf4ncCdgJqgEXVsDm5Mb0sqECPZOg1ZVcMxhFTXrf0a5MKFxW]",
+                "scope": "RUN_AND_BUILD_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "MM_SLASH_TOKEN",
+                "value": "EV[1:q0RfA7sYNl6HYbnVVAxoRcFXhY0z68yU:ayfoFM3rKhEjh9SvO+KB3oD345cMlsbElRN6DO5TC8S7MOUysPRfAXEO]",
+                "scope": "RUN_AND_BUILD_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "OPENAI_API_KEY",
+                "value": "EV[1:JVsLazIXXbuMiK4/W5l0l9L0WVr1NeIe:/xeB+PNKWOEDCo8bcuKXTQ==]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "SUPABASE_URL",
+                "value": "https://ublqmilcjtpnflofprkr.supabase.co",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "SUPABASE_SERVICE_ROLE_KEY",
+                "value": "EV[1:nGtwo+78ClFEF3ZY4IJ1CJTVqCN+1liy:K+8zH8wniHM/mPJHmJp6ow==]",
+                "scope": "RUN_TIME",
+                "type": "SECRET"
+              },
+              {
+                "key": "MAX_CONCURRENT_REQUESTS",
+                "value": "10",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "REQUEST_TIMEOUT",
+                "value": "30",
+                "scope": "RUN_AND_BUILD_TIME"
+              },
+              {
+                "key": "LOG_LEVEL",
+                "value": "INFO",
+                "scope": "RUN_AND_BUILD_TIME"
+              }
+            ],
+            "instance_size_slug": "basic-xxs",
+            "instance_count": 1,
+            "http_port": 8000,
+            "health_check": {
+              "initial_delay_seconds": 10,
+              "period_seconds": 10,
+              "timeout_seconds": 3,
+              "success_threshold": 1,
+              "failure_threshold": 3,
+              "http_path": "/health"
+            }
+          }
+        ],
+        "region": "sgp",
+        "ingress": {
+          "rules": [
+            {
+              "match": {
+                "path": {
+                  "prefix": "/"
+                }
+              },
+              "component": {
+                "name": "rag-service"
+              }
+            }
+          ]
+        }
+      },
+      "services": [
+        {
+          "name": "rag-service",
+          "source_commit_hash": "a1a59cf9da480ccabac15c9cc13a55d004ffbe5d"
+        }
+      ],
+      "phase_last_updated_at": "2025-11-19T12:28:55Z",
+      "created_at": "2025-11-19T12:27:15Z",
+      "updated_at": "2025-12-24T12:29:20Z",
+      "cause": "commit a1a59cf pushed to github.com/jgtolentino/opex/tree/main",
+      "progress": {
+        "success_steps": 6,
+        "total_steps": 6,
+        "steps": [
+          {
+            "name": "build",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-11-19T12:27:19.48812047Z",
+                "ended_at": "2025-11-19T12:27:21.586583994Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "rag-service",
+                    "status": "SUCCESS",
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "rag-service",
+                    "message_base": "Building service"
+                  }
+                ],
+                "started_at": "2025-11-19T12:27:21.5866404Z",
+                "ended_at": "2025-11-19T12:27:51.181797806Z"
+              }
+            ],
+            "started_at": "2025-11-19T12:27:19.488026615Z",
+            "ended_at": "2025-11-19T12:27:53.000915571Z"
+          },
+          {
+            "name": "deploy",
+            "status": "SUCCESS",
+            "steps": [
+              {
+                "name": "initialize",
+                "status": "SUCCESS",
+                "started_at": "2025-11-19T12:27:54.280873593Z",
+                "ended_at": "2025-11-19T12:27:57.81168748Z"
+              },
+              {
+                "name": "components",
+                "status": "SUCCESS",
+                "steps": [
+                  {
+                    "name": "rag-service",
+                    "status": "SUCCESS",
+                    "steps": [
+                      {
+                        "name": "deploy",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "rag-service",
+                        "message_base": "Deploying service"
+                      },
+                      {
+                        "name": "wait",
+                        "status": "SUCCESS",
+                        "started_at": "0001-01-01T00:00:00Z",
+                        "ended_at": "0001-01-01T00:00:00Z",
+                        "component_name": "rag-service",
+                        "message_base": "Waiting for service"
+                      }
+                    ],
+                    "started_at": "0001-01-01T00:00:00Z",
+                    "ended_at": "0001-01-01T00:00:00Z",
+                    "component_name": "rag-service"
+                  }
+                ],
+                "started_at": "2025-11-19T12:27:57.811747985Z",
+                "ended_at": "2025-11-19T12:28:51.590165906Z"
+              },
+              {
+                "name": "finalize",
+                "status": "SUCCESS",
+                "started_at": "2025-11-19T12:28:52.922549788Z",
+                "ended_at": "2025-11-19T12:28:54.447321455Z"
+              }
+            ],
+            "started_at": "2025-11-19T12:27:54.280830564Z",
+            "ended_at": "2025-11-19T12:28:54.447404744Z"
+          }
+        ]
+      },
+      "phase": "ACTIVE",
+      "tier_slug": "basic",
+      "previous_deployment_id": "1fb41347-703c-4cc2-908e-0a5165c9c73f",
+      "cause_details": {
+        "git_push": {
+          "github": {
+            "repo": "jgtolentino/opex",
+            "branch": "main"
+          },
+          "username": "web-flow",
+          "commit_sha": "a1a59cf9da480ccabac15c9cc13a55d004ffbe5d",
+          "commit_message": "Merge pull request #25 from jgtolentino/claude/review-opex-platform-01JFiC2XgV3MwWAG179u38ru\n\nReview OpEx Platform codebase comprehensively"
+        },
+        "type": "DEPLOY_ON_PUSH"
+      },
+      "timing": {
+        "pending": "4.488120470s",
+        "build_total": "33.512795101s",
+        "build_billable": "11.100313690s",
+        "components": [
+          {
+            "name": "rag-service",
+            "build_billable": "11.100313690s"
+          }
+        ]
+      }
+    },
+    "last_deployment_created_at": "2025-11-19T12:27:15Z",
+    "live_url": "https://mattermost-rag-egb6n.ondigitalocean.app",
+    "region": {
+      "slug": "sgp",
+      "label": "Singapore",
+      "flag": "singapore",
+      "continent": "Asia",
+      "data_centers": [
+        "sgp1"
+      ]
+    },
+    "tier_slug": "basic",
+    "live_url_base": "https://mattermost-rag-egb6n.ondigitalocean.app",
+    "live_domain": "mattermost-rag-egb6n.ondigitalocean.app",
+    "build_config": {},
+    "project_id": "29cde7a1-8280-46ad-9fdf-dea7b21a7825"
+  }
+]
