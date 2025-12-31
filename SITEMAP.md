@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a8e1e2967dde245723b69d8b5a93571ede262fc7
+> Commit: 02a6cf8990178e9af8f59f5caf85b70ff6322c4a
 
 ## 📚 Documentation
 
@@ -97,15 +97,24 @@
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
+| [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
+| [devops-engineer](apps/devops-engineer/APP.md) | apps/devops-engineer |
 | [DO Advisor Agent](apps/do-advisor-agent/README.md) | apps/do-advisor-agent |
 | [DO Advisor - Unified Infrastructure Intelligence](apps/do-advisor-agent/prompts/unified_advisor.md) | apps/do-advisor-agent/prompts |
 | [DO Advisor UI](apps/do-advisor-ui/README.md) | apps/do-advisor-ui |
+| [finance-ssc-expert](apps/finance-ssc-expert/APP.md) | apps/finance-ssc-expert |
 | [IPAI Control Center Docs - Deployment Guide](apps/ipai-control-center-docs/DEPLOYMENT.md) | apps/ipai-control-center-docs |
 | [Constitution — IPAI Control Center (Spec Kit)](apps/ipai-control-center-docs/pages/constitution.md) | apps/ipai-control-center-docs/pages |
 | [Delivery Plan — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/plan.md) | apps/ipai-control-center-docs/pages |
 | [Product Requirements Document — IPAI Control Center](apps/ipai-control-center-docs/pages/prd.md) | apps/ipai-control-center-docs/pages |
 | [Tasks — IPAI Control Center (v1.0.0)](apps/ipai-control-center-docs/pages/tasks.md) | apps/ipai-control-center-docs/pages |
+| [mattermost-rag](apps/mattermost-rag/APP.md) | apps/mattermost-rag |
+| [mcp-coordinator](apps/mcp-coordinator/APP.md) | apps/mcp-coordinator |
 | [InsightPulse Mobile](apps/mobile/README.md) | apps/mobile |
+| [multi-agent-orchestrator](apps/multi-agent-orchestrator/APP.md) | apps/multi-agent-orchestrator |
+| [odoo-developer-agent](apps/odoo-developer-agent/APP.md) | apps/odoo-developer-agent |
+| [odoo-saas-platform](apps/odoo-saas-platform/APP.md) | apps/odoo-saas-platform |
+| [superset-analytics](apps/superset-analytics/APP.md) | apps/superset-analytics |
 | [AP Aging Month-End Close Automation - Implementation Summary](archive/addons/ipai_finance_ap_aging/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_ap_aging |
 | [Finance Controller Dashboard - Implementation Summary](archive/addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_controller_dashboard |
 | [IPAI Intelligent Document Processing (IDP)](archive/addons/ipai_idp/README.md) | archive/addons/ipai_idp |
@@ -154,6 +163,7 @@
 | [Final Operability Checklist](docs/FINAL_OPERABILITY_CHECKLIST.md) | docs |
 | [FINAL READINESS CHECK & GIT COMMIT VERIFICATION](docs/FINAL_READINESS_CHECK.md) | docs |
 | [Finance PPM Implementation - Clarity/Notion-Style in Odoo CE](docs/FINANCE_PPM_IMPLEMENTATION.md) | docs |
+| [fin-workspace Setup Guide](docs/FIN_WORKSPACE_SETUP.md) | docs |
 | [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
 | [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
 | [ODOO-CE GO-LIVE CHECKLIST](docs/GO_LIVE_CHECKLIST.md) | docs |
@@ -169,8 +179,10 @@
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |
 | [MCP + Supabase Integration Architecture](docs/MCP_SUPABASE_INTEGRATION.md) | docs |
 | [Mixed Content Fix - HTTPS Asset Loading](docs/MIXED_CONTENT_FIX.md) | docs |
+| [fin-workspace Monorepo Structure](docs/MONOREPO_STRUCTURE.md) | docs |
 | [Odoo CE MVP Go-Live Checklist](docs/MVP_GO_LIVE_CHECKLIST.md) | docs |
 | [n8n Credentials Bootstrap – Finance Stack](docs/N8N_CREDENTIALS_BOOTSTRAP.md) | docs |
+| [Naming Convention - Equivalent APP TOOLS](docs/NAMING_CONVENTION_EQ_APP_TOOLS.md) | docs |
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
 | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
@@ -264,6 +276,20 @@
 | [PRD – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/prd.md) | docs/odoo-18-handbook/spec |
 | [Tasks – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/tasks.md) | docs/odoo-18-handbook/spec |
 | [Odoo Apps Parity Matrix](docs/odoo-apps-parity.md) | docs |
+| [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
+| [001 — 2025-12-31 — Initial setup](docs/ops/conversations/001 — 2025-12-31 — Initial setup.md) | docs/ops/conversations
+.
+.
+.
+.
+. |
+| [002 — 2025-12-31 — Post-commit smoke](docs/ops/conversations/002 — 2025-12-31 — Post-commit smoke.md) | docs/ops/conversations
+.
+.
+.
+.
+. |
+| [Conversations Index](docs/ops/conversations/INDEX.md) | docs/ops/conversations |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
@@ -295,6 +321,7 @@
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
+| [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |

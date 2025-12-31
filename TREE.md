@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a8e1e2967dde245723b69d8b5a93571ede262fc7
+> Commit: 02a6cf8990178e9af8f59f5caf85b70ff6322c4a
 
 ```
 .
@@ -53,6 +53,8 @@
 │   │   ├── deploy-production.yml
 │   │   ├── diagrams-qa.yml
 │   │   ├── docs-crawler-cron.yml
+│   │   ├── fin-workspace-lint.yml
+│   │   ├── fin-workspace-weekly-sync.yml
 │   │   ├── finance-ppm-health.yml
 │   │   ├── health-check.yml
 │   │   ├── infra-validate.yml
@@ -777,6 +779,11 @@
 ├── api
 │   └── oca-docs-brain-openapi.yaml
 ├── apps
+│   ├── bi-architect
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
 │   ├── control-room
 │   │   ├── src
 │   │   │   ├── app
@@ -793,6 +800,11 @@
 │   │   ├── Dockerfile
 │   │   ├── app.py
 │   │   └── requirements.txt
+│   ├── devops-engineer
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
 │   ├── do-advisor-agent
 │   │   ├── config
 │   │   │   └── mcp-config.json
@@ -820,6 +832,11 @@
 │   │   │   ├── embed.ts
 │   │   │   └── index.ts
 │   │   └── package.json
+│   ├── finance-ssc-expert
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
 │   ├── ipai-control-center-docs
 │   │   ├── .vercel
 │   │   │   ├── README.txt
@@ -837,6 +854,16 @@
 │   │   ├── next.config.mjs
 │   │   ├── package.json
 │   │   └── theme.config.jsx
+│   ├── mattermost-rag
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
+│   ├── mcp-coordinator
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
 │   ├── mobile
 │   │   ├── src
 │   │   │   ├── hooks
@@ -850,11 +877,31 @@
 │   │   ├── eas.json
 │   │   ├── package.json
 │   │   └── tsconfig.json
-│   └── pulser-runner
-│       ├── .env.example
-│       ├── app.py
-│       ├── package.json
-│       └── requirements.txt
+│   ├── multi-agent-orchestrator
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
+│   ├── odoo-developer-agent
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
+│   ├── odoo-saas-platform
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
+│   ├── pulser-runner
+│   │   ├── .env.example
+│   │   ├── app.py
+│   │   ├── package.json
+│   │   └── requirements.txt
+│   └── superset-analytics
+│       ├── do
+│       │   └── app.json
+│       ├── APP.md
+│       └── spec.yaml
 ├── archive
 │   └── addons
 │       ├── ipai_accounting_firm_pack
@@ -1187,6 +1234,13 @@
 │   │   │   └── tasks.md
 │   │   ├── ODOO_18_CE_OCA_HANDBOOK.md
 │   │   └── README.md
+│   ├── ops
+│   │   ├── conversations
+│   │   │   ├── 001 — 2025-12-31 — Initial setup.md
+│   │   │   ├── 002 — 2025-12-31 — Post-commit smoke.md
+│   │   │   ├── INDEX.md
+│   │   │   └── index.json
+│   │   └── CONVERSATIONS_README.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
@@ -1237,6 +1291,7 @@
 │   ├── FINAL_OPERABILITY_CHECKLIST.md
 │   ├── FINAL_READINESS_CHECK.md
 │   ├── FINANCE_PPM_IMPLEMENTATION.md
+│   ├── FIN_WORKSPACE_SETUP.md
 │   ├── GITHUB_SECRETS_SETUP.md
 │   ├── GIT_WORKTREE_STRATEGY.md
 │   ├── GO_LIVE_CHECKLIST.md
@@ -1252,8 +1307,10 @@
 │   ├── MCP_IMPLEMENTATION_STATUS.md
 │   ├── MCP_SUPABASE_INTEGRATION.md
 │   ├── MIXED_CONTENT_FIX.md
+│   ├── MONOREPO_STRUCTURE.md
 │   ├── MVP_GO_LIVE_CHECKLIST.md
 │   ├── N8N_CREDENTIALS_BOOTSTRAP.md
+│   ├── NAMING_CONVENTION_EQ_APP_TOOLS.md
 │   ├── OCA_MIGRATION.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
@@ -1365,6 +1422,8 @@
 │   │   └── databricks.yml
 │   ├── docker
 │   │   └── odoo.conf
+│   ├── doctl
+│   │   └── export_state.sh
 │   ├── entrypoint.d
 │   │   └── .gitkeep
 │   ├── lakehouse
@@ -1379,6 +1438,74 @@
 │       ├── README.md
 │       ├── do-app-spec.yaml
 │       └── manifest.json
+├── inventory
+│   ├── latest -> runs/20251231T020517Z
+│   └── runs
+│       ├── 20251231T015431Z
+│       │   ├── apps."a962affc-f005-4b25-9c01-3c6b63dce52c".json
+│       │   └── apps.list.json
+│       ├── 20251231T015708Z
+│       │   ├── apps."a962affc-f005-4b25-9c01-3c6b63dce52c".json
+│       │   └── apps.list.json
+│       ├── 20251231T015728Z
+│       │   ├── agents.list.json
+│       │   ├── apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json
+│       │   ├── apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json
+│       │   ├── apps.73af11cb-dab2-4cb1-9770-291c536531e6.json
+│       │   ├── apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+│       │   ├── apps.844b0bb2-0208-4694-bf86-12e750b7f790.json
+│       │   ├── apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json
+│       │   ├── apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+│       │   ├── apps.d77ba558-e72f-494e-a439-b27a563aeb42.json
+│       │   ├── apps.de36bfbc-86a3-4293-836b-78b236bca899.json
+│       │   ├── apps.list.json
+│       │   ├── domains.list.json
+│       │   └── droplets.list.json
+│       ├── 20251231T015829Z
+│       │   ├── agents.list.json
+│       │   ├── apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json
+│       │   ├── apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json
+│       │   ├── apps.73af11cb-dab2-4cb1-9770-291c536531e6.json
+│       │   ├── apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+│       │   ├── apps.844b0bb2-0208-4694-bf86-12e750b7f790.json
+│       │   ├── apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json
+│       │   ├── apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+│       │   ├── apps.d77ba558-e72f-494e-a439-b27a563aeb42.json
+│       │   ├── apps.de36bfbc-86a3-4293-836b-78b236bca899.json
+│       │   ├── apps.list.json
+│       │   ├── databases.list.json
+│       │   ├── droplets.list.json
+│       │   └── projects.list.json
+│       ├── 20251231T015909Z
+│       │   ├── agents.list.json
+│       │   ├── apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json
+│       │   ├── apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json
+│       │   ├── apps.73af11cb-dab2-4cb1-9770-291c536531e6.json
+│       │   ├── apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+│       │   ├── apps.844b0bb2-0208-4694-bf86-12e750b7f790.json
+│       │   ├── apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json
+│       │   ├── apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+│       │   ├── apps.d77ba558-e72f-494e-a439-b27a563aeb42.json
+│       │   ├── apps.de36bfbc-86a3-4293-836b-78b236bca899.json
+│       │   ├── apps.list.json
+│       │   ├── databases.list.json
+│       │   ├── droplets.list.json
+│       │   └── projects.list.json
+│       └── 20251231T020517Z
+│           ├── agents.list.json
+│           ├── apps.115a9584-75a3-4974-bb73-8f34b5cec6c9.json
+│           ├── apps.6e33fbd8-d31d-4bf0-900e-e54642d48e3c.json
+│           ├── apps.73af11cb-dab2-4cb1-9770-291c536531e6.json
+│           ├── apps.7bfabd64-5b56-4222-9403-3d4cf3b23209.json
+│           ├── apps.844b0bb2-0208-4694-bf86-12e750b7f790.json
+│           ├── apps.9e89ce8b-e6f8-4403-af8c-8f1ca593639d.json
+│           ├── apps.a962affc-f005-4b25-9c01-3c6b63dce52c.json
+│           ├── apps.d77ba558-e72f-494e-a439-b27a563aeb42.json
+│           ├── apps.de36bfbc-86a3-4293-836b-78b236bca899.json
+│           ├── apps.list.json
+│           ├── databases.list.json
+│           ├── droplets.list.json
+│           └── projects.list.json
 ├── kb
 │   ├── audit
 │   │   └── AGENT_AUDIT_RULES.md
@@ -1544,11 +1671,14 @@
 │   │   ├── schema-to-openapi.js
 │   │   ├── spec-to-prisma.js
 │   │   └── sync-all.js
+│   ├── FIX_OWLERROR_GUIDE.md
 │   ├── README.md
+│   ├── activate-n8n-workflows.sh
 │   ├── apply-supabase-schema.sh
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
+│   ├── bootstrap_apps_from_inventory.sh
 │   ├── build_and_push_version.sh
 │   ├── build_v0.10.0.sh
 │   ├── build_v0.9.1.sh
@@ -1563,6 +1693,9 @@
 │   ├── convert_seed_to_xml.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
+│   ├── deploy-bir-compliance.sh
+│   ├── deploy-december-2025-bir-tasks.sh
+│   ├── deploy-n8n-workflows.sh
 │   ├── deploy-odoo-modules.sh
 │   ├── deploy-to-server.sh
 │   ├── deploy_custom_image.sh
@@ -1575,6 +1708,8 @@
 │   ├── finance_ppm_health_check.sh
 │   ├── finance_ppm_health_check.sql
 │   ├── finance_ppm_restore_golden.sh
+│   ├── fix-finance-ppm-schema.sh
+│   ├── fix-pay-invoices-online-error.py
 │   ├── full_deploy_sanity.sh
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
@@ -1591,6 +1726,7 @@
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── map_logframe.py
+│   ├── new_conversation_entry.sh
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
 │   ├── odoo_mattermost_integration.py
@@ -2138,15 +2274,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-678 directories, 1455 files
+708 directories, 1561 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 775 |
-| Files | 2137 |
-| Python files | 593 |
+| Directories | 804 |
+| Files | 2243 |
+| Python files | 594 |
 | XML files | 331 |
-| Markdown files | 406 |
+| Markdown files | 423 |
