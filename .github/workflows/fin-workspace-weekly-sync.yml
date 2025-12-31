@@ -1,0 +1,71 @@
+name: fin-workspace weekly DO inventory sync
+
+on:
+  schedule:
+    - cron: "0 18 * * 1"  # Mondays 02:00 PH time (UTC+8) => Sunday 18:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps (doctl, jq)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          curl -sSLo doctl.tar.gz https://github.com/digitalocean/doctl/releases/latest/download/doctl-$(uname -s | tr '[:upper:]' '[:lower:]')-amd64.tar.gz
+          tar -xzf doctl.tar.gz
+          sudo mv doctl /usr/local/bin/doctl
+          doctl version
+
+      - name: Auth doctl
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: |
+          doctl auth init -t "$DIGITALOCEAN_ACCESS_TOKEN"
+          doctl account get
+
+      - name: Run export + bootstrap
+        run: |
+          chmod +x infra/doctl/export_state.sh scripts/bootstrap_apps_from_inventory.sh
+          ./infra/doctl/export_state.sh
+          ./scripts/bootstrap_apps_from_inventory.sh
+
+      - name: Create conversation entry
+        run: |
+          chmod +x scripts/new_conversation_entry.sh
+          ./scripts/new_conversation_entry.sh "Weekly DO inventory sync" "$(date -u +%Y-%m-%d)"
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --quiet; then
+            echo "No changes detected."
+            exit 0
+          fi
+
+          branch="chore/weekly-do-inventory-$(date -u +%Y%m%d)"
+          git checkout -b "$branch"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "chore(fin-workspace): weekly DO inventory sync"
+          git push -u origin "$branch"
+
+          # create PR via gh api (no gh cli dependency)
+          pr_title="chore(fin-workspace): weekly DO inventory sync"
+          pr_body="Automated inventory export + spec regen + conversation entry."
+          repo="${{ github.repository }}"
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/repos/$repo/pulls \
+            -d "$(jq -nc --arg t "$pr_title" --arg h "$branch" --arg b "main" --arg body "$pr_body" \
+              '{title:$t, head:$h, base:$b, body:$body}')"
