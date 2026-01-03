@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a97765c86532538f62aa01ed4748f19487380c6f
+> Commit: 4c4da6f8b7239d2e162a7d7b569593391e425076
 
 ```
 .
@@ -129,13 +129,6 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── wizards
-│   │   │   ├── __init__.py
-│   │   │   └── __manifest__.py
-│   │   ├── ipai_copilot
-│   │   │   ├── controllers
-│   │   │   ├── models
-│   │   │   ├── static
-│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_custom_routes
@@ -352,14 +345,16 @@
 │   │   ├── models
 │   │   │   ├── __init__.py
 │   │   │   ├── ask_ai_channel.py
-│   │   │   └── ask_ai_service.py
+│   │   │   ├── ask_ai_service.py
+│   │   │   └── res_config_settings.py
 │   │   ├── security
 │   │   │   ├── ir.model.access.csv
 │   │   │   └── security.xml
 │   │   ├── static
 │   │   │   └── src
 │   │   ├── views
-│   │   │   └── ask_ai_views.xml
+│   │   │   ├── ask_ai_views.xml
+│   │   │   └── res_config_settings_view.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_bir_tax_compliance
@@ -2107,9 +2102,10 @@
 │   │   │   ├── 9004_analytics_kpi_registry_seed.sql
 │   │   │   └── 9004_analytics_superset_dashboard_seed.sql
 │   │   └── 001_saas_feature_seed.sql
-│   └── seeds
-│       ├── 001_hr_seed.sql
-│       └── 002_finance_seed.sql
+│   ├── seeds
+│   │   ├── 001_hr_seed.sql
+│   │   └── 002_finance_seed.sql
+│   └── config.toml
 ├── tasks
 │   └── infra
 │       └── AGENT_SERVICES_HARD_DELETE_CHECKLIST.md
@@ -2324,15 +2320,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-723 directories, 1596 files
+718 directories, 1597 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 824 |
-| Files | 2290 |
-| Python files | 607 |
-| XML files | 337 |
+| Directories | 815 |
+| Files | 2281 |
+| Python files | 602 |
+| XML files | 335 |
 | Markdown files | 433 |
