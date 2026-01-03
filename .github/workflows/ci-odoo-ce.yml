@@ -77,6 +77,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Generate canonical data model artifacts
         run: python scripts/generate_odoo_dbml.py
 
