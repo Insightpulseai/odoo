@@ -1,0 +1,145 @@
+id,name,project_id:id,tag_ids/id,planned_hours,description
+ipai_close_1,"Process and record Payroll, Final Pay, SL Conversions, and early retirement accrual.",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_payroll_personnel,16.0,"Category: Payroll & Personnel
+Reviewed by: CKVC
+Approved by: CKVC
+Employee code: RIM"
+ipai_close_2,Calculate and record the monthly Tax Provision and PPB Provision (performance bonuses).,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_tax_provisions,16.0,"Category: Tax & Provisions
+Reviewed by: CKVC
+Approved by: CKVC
+Employee code: RIM"
+ipai_close_3,Record recurring monthly Rental Income/Expense and monthly amortization expense for employee hospitalization plans.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_rent_leases,16.0,"Category: Rent & Leases
+Reviewed by: CKVC
+Approved by: CKVC
+Employee code: RIM"
+ipai_close_4,Record accruals for Consultancy Fees and various routine General Expense Accruals.Estimated expense for which a vendor invoice has not yet been received.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_accruals_expenses,16.0,"Category: Accruals & Expenses
+Reviewed by: CKVC
+Approved by: CKVC
+Employee code: RIM"
+ipai_close_5,Process and record Payments for various Cash Advances. Recording the funding/issuance of cash to employees for expected business expenditures.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_accruals_expenses,16.0,"Category: Accruals & Expenses
+Reviewed by: CKVC
+Approved by: CKVC
+Employee code: RIM"
+ipai_close_6,The necessary reversal or adjustment of temporary journal entries created in a previous month. Process reversal entries for the prior month's accruals and reclassifications.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_prior_period_review,16.0,"Category: Prior Period Review
+Reviewed by: CKVC
+Approved by: CKVC
+Employee code: RIM"
+ipai_close_7,"Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Depreciation, Amortization for vehicles/purchases/LOA, and Amortization for all technology licenses and shared service costs.",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_amortization_corporate,16.0,"Category: Amortization & Corporate
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: BOM"
+ipai_close_8,"Accrue monthly expenses for Management and Royalty fees, consulting fees, and funds for Innovations/Initiatives. Brief Detail: Recognizing an expense for internal projects or strategic corporate investments not yet formally invoiced.",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_corporate_accruals,16.0,"Category: Corporate Accruals
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: BOM"
+ipai_close_9,Monthly tracking and recording of premiums for various corporate insurance policies. Record monthly accrual for various Corporate Insurance types and amortize prepaid Health Insurance.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_insurance,16.0,"Category: Insurance
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: BOM"
+ipai_close_10,"Non-operating financial activities including capital structure and compliance. Record monthly bank charges, perform revaluation of foreign currency bank accounts, and record the monthly expense portion of the Omnicom stock option grant.",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_treasury_other,16.0,"Category: Treasury & Other
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: BOM"
+ipai_close_11,"Process reversal entries for all prior month Accruals (e.g., trainings, production/retainers).",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_prior_period_review,16.0,"Category: Prior Period Review
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: BOM"
+ipai_close_12,"Prepare reports for Flash, Wins & Losses and Revenue.",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_regional_reporting,16.0,"Category: Regional Reporting
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: BOM"
+ipai_close_13,"Recognizing revenue and billable costs based on client contracts and project status. Accrue estimated Production, Retainer Fees, Media Commission, Creative Fees, and OOPC. Recording estimated Out-of-Pocket Costs that will eventually be billed to a client.",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_client_billings,16.0,"Category: Client Billings
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: JPAL"
+ipai_close_14,Reconciling and reclassifying costs to ensure they are correctly categorized as billable (WIP) or internal (OOP). Perform month-end Reclassifications of OOP to WIP (moves client-related expenses to an active project account) and necessary Reclass WIP to OOP (moves costs back if non-billable).,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_wip_oop_management,16.0,"Category: WIP/OOP Management
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: JPAL"
+ipai_close_15,Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Amortization of the Business Permit and Amortization of LOA.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_amortization_corporate,16.0,"Category: Amortization & Corporate
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: JPAL"
+ipai_close_16,Accrue estimated monthly Audit Fees.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_amortization_corporate,16.0,"Category: Amortization & Corporate
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: JPAL"
+ipai_close_17,Record monthly Rental Expense/Income related to intercompany transactions.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_amortization_corporate,16.0,"Category: Amortization & Corporate
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: JPAL"
+ipai_close_18,Perform month-end Revaluation of Intercompany Balances. Adjusting intercompany balances to reflect the correct value at the month-end exchange rate.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_amortization_corporate,16.0,"Category: Amortization & Corporate
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: JPAL"
+ipai_close_19,Prepare reports for Working Captital related to AR,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_ar_aging_wc,16.0,"Category: AR Aging - WC
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: JPAL"
+ipai_close_20,Process and record Cash Advance (CA) Liquidations for specific project-related expenses.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_ca_liquidations,16.0,"Category: CA Liquidations
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: LAS"
+ipai_close_21,Prepare AP Aging report for working captital submission,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_ap_aging_wc,16.0,"Category: AP Aging - WC
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: LAS"
+ipai_close_22,Prepare HOW's summary report,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_oop,16.0,"Category: OOP
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: LAS"
+ipai_close_23,Recording transactions for financed assets and long-term commitments. Record monthly interest expense on leased assets and process amortization reclassifications for prepaid corporate fees.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_asset_lease_entries,16.0,"Category: Asset & Lease Entries
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: LAS"
+ipai_close_24,Correcting entries across the general ledger (GL). Process required reclassifications between specific GL accounts and between Marketing Expense categories.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_reclassifications,16.0,"Category: Reclassifications
+Reviewed by: BOM
+Approved by: CKVC
+Employee code: LAS"
+ipai_close_25,Compile and record monthly Input VAT entries (VAT paid on purchases) and the monthly VAT Report (cumulative summary of VAT activity).,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_vat_taxes,16.0,"Category: VAT & Taxes
+Reviewed by: JPAL
+Approved by: CKVC
+Employee code: JLI"
+ipai_close_26,Recording estimated expenses for recurring monthly costs and recognizing non-fixed asset costs. Accrue recurring Expenses (estimated expense for regularly occurring services).,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_accruals_assets,16.0,"Category: Accruals & Assets
+Reviewed by: LAS
+Approved by: CKVC
+Employee code: JLI"
+ipai_close_27,Record the monthly recognition/capitalization of Other Computer Related Costs.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_accruals_assets,16.0,"Category: Accruals & Assets
+Reviewed by: LAS
+Approved by: CKVC
+Employee code: JLI"
+ipai_close_28,Prepare AP Aging report with detailed status per invoice.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_ap_aging,16.0,"Category: AP Aging
+Reviewed by: LAS
+Approved by: CKVC
+Employee code: JLI"
+ipai_close_29,Process and record Cash Advance (CA) Liquidations submitted by employees.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_ca_liquidations,16.0,"Category: CA Liquidations
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: RMQB"
+ipai_close_30,Accrue monthly expense for Employee Cellphone Allowance,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_accruals_assets,16.0,"Category: Accruals & Assets
+Reviewed by: LAS
+Approved by: CKVC
+Employee code: RMQB"
+ipai_close_31,"Adjusting a recorded expense from one GL account to another to ensure correct reporting. Process reclassifications to correct expense categories (e.g., General Expense to Wireless and Meals).",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_expense_reclassification,16.0,"Category: Expense Reclassification
+Reviewed by: RIM
+Approved by: CKVC
+Employee code: RMQB"
+ipai_close_32,"Compile, review, and record the monthly VAT Report (Initial and additional entries).",ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_vat_reporting,16.0,"Category: VAT Reporting
+Reviewed by: JPAL
+Approved by: CKVC
+Employee code: JAP"
+ipai_close_33,Adjusting costs or revenues between different internal project codes or job numbers. Process and record Transfers of Job Codes for consultancy fees and corporate projects.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_job_transfers,16.0,"Category: Job Transfers
+Reviewed by: JPAL
+Approved by: CKVC
+Employee code: JAP"
+ipai_close_34,Record specific GL reclassifications needed for month-end adjustments,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_job_transfers,16.0,"Category: Job Transfers
+Reviewed by: JPAL
+Approved by: CKVC
+Employee code: JAP"
+ipai_close_35,Compile documents for the attachment of the revenue accruals.,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_accruals,16.0,"Category: Accruals
+Reviewed by: JPAL
+Approved by: CKVC
+Employee code: JRMO"
+ipai_close_36,Prepare WIP schedule summary per Job#,ipai_finance_close_seed.project_month_end_template,ipai_finance_close_seed.tag_wip,16.0,"Category: WIP
+Reviewed by: JPAL
+Approved by: CKVC
+Employee code: JRMO"
