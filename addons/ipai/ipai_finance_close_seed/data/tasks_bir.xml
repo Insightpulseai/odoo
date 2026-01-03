@@ -138,22 +138,22 @@
             <field name="project_id" ref="project_bir_tax_filing"/>
             <field name="description">BIR Form: Step\nPeriod: Process Detail</field>
         </record>
-        <record id="task_bir_26_1_preparation_gather_data_prepare_the_bir_form_and_dra" model="project.task">
+        <record id="task_bir_26_1_preparation_gather_data_prepare_the_bir_form_and_draft_the_pay" model="project.task">
             <field name="name">1. Preparation - Gather data, prepare the BIR Form, and draft the payment request (e.g., check voucher).</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
             <field name="description">BIR Form: 1. Preparation\nPeriod: Gather data, prepare the BIR Form, and draft the payment request (e.g., check voucher).</field>
         </record>
-        <record id="task_bir_27_2_report_approval_senior_finance_manager_sfm_reviews_and_a" model="project.task">
+        <record id="task_bir_27_2_report_approval_senior_finance_manager_sfm_reviews_and_approves_th" model="project.task">
             <field name="name">2. Report Approval - Senior Finance Manager (SFM) reviews and approves the report data for accuracy and compliance. (File Request is submitted to SFM.)</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
             <field name="description">BIR Form: 2. Report Approval\nPeriod: Senior Finance Manager (SFM) reviews and approves the report data for accuracy and compliance. (File Request is submitted to SFM.)</field>
         </record>
-        <record id="task_bir_28_3_payment_approval_the_approved_report_and_payment_request_" model="project.task">
+        <record id="task_bir_28_3_payment_approval_the_approved_report_and_payment_request_are_routed" model="project.task">
             <field name="name">3. Payment Approval - The approved report and payment request are routed. Finance Director (FD) reviews and approves the release of funds for remittance.</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
             <field name="description">BIR Form: 3. Payment Approval\nPeriod: The approved report and payment request are routed. Finance Director (FD) reviews and approves the release of funds for remittance.</field>
         </record>
-        <record id="task_bir_29_4_filing_payment_the_approved_form_is_filed_and_the_payme" model="project.task">
+        <record id="task_bir_29_4_filing_payment_the_approved_form_is_filed_and_the_payment_is_remi" model="project.task">
             <field name="name">4. Filing &amp; Payment - The approved form is Filed and the payment is Remitted (either electronically or over the counter).</field>
             <field name="project_id" ref="project_bir_tax_filing"/>
             <field name="description">BIR Form: 4. Filing &amp; Payment\nPeriod: The approved form is Filed and the payment is Remitted (either electronically or over the counter).</field>
