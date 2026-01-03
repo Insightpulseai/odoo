@@ -16352,6 +16352,64 @@
         {
           "compute": null,
           "index": false,
+          "name": "calendar_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "resource.calendar",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "month",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "year",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Integer"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai",
+      "name": "ipai.finance.close.generate.wizard",
+      "python_constraints": [],
+      "relations": [
+        "resource.calendar"
+      ],
+      "sql_constraints": [],
+      "table": "ipai_finance_close_generate_wizard"
+    },
+    {
+      "fields": [],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai",
+      "name": "ipai.finance.close.service",
+      "python_constraints": [],
+      "relations": [],
+      "sql_constraints": [],
+      "table": "ipai_finance_close_service"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
           "name": "active",
           "ondelete": null,
           "related": null,
@@ -19234,6 +19292,368 @@
         {
           "compute": null,
           "index": false,
+          "name": "attachment_id",
+          "ondelete": "cascade",
+          "related": null,
+          "relation": "ir.attachment",
+          "required": true,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "attachment_mimetype",
+          "ondelete": null,
+          "related": "attachment_id.mimetype",
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "attachment_name",
+          "ondelete": null,
+          "related": "attachment_id.name",
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "completed_at",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Datetime"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "confidence_score",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Float"
+        },
+        {
+          "compute": "_compute_duration",
+          "index": false,
+          "name": "duration_seconds",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Float"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "error_message",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "output_attachment_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "ir.attachment",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "provider_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "ipai.ocr.provider",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "res_id",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "res_model",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "result_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "result_text",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "retry_count",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "started_at",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Datetime"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "state",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Selection"
+        }
+      ],
+      "inherits": [
+        "mail.thread",
+        "mail.activity.mixin"
+      ],
+      "inherits_delegated": {},
+      "module": "ipai_ocr_gateway",
+      "name": "ipai.ocr.job",
+      "python_constraints": [],
+      "relations": [
+        "ipai.ocr.provider",
+        "ir.attachment"
+      ],
+      "sql_constraints": [],
+      "table": "ipai_ocr_job"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "active",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "auth_param_key",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "auth_type",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "base_url",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": "_compute_job_count",
+          "index": false,
+          "name": "job_count",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "job_ids",
+          "ondelete": null,
+          "related": null,
+          "relation": "ipai.ocr.job",
+          "required": false,
+          "store": true,
+          "type": "One2many"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "max_retries",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "notes",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "provider_type",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "sequence",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "supported_formats",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "timeout",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai_ocr_gateway",
+      "name": "ipai.ocr.provider",
+      "python_constraints": [],
+      "relations": [
+        "ipai.ocr.job"
+      ],
+      "sql_constraints": [],
+      "table": "ipai_ocr_provider"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
           "name": "active",
           "ondelete": null,
           "related": null,
@@ -19495,6 +19915,389 @@
       ],
       "sql_constraints": [],
       "table": "ipai_share_token"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "body",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "cost",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Float"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "delivered_at",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Datetime"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "error_code",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "error_message",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "external_id",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "from_number",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "partner_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "res.partner",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "provider_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "ipai.sms.provider",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "raw_response",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "res_id",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "res_model",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "retry_count",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "segments",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "sent_at",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Datetime"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "state",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "to_number",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        }
+      ],
+      "inherits": [
+        "mail.thread"
+      ],
+      "inherits_delegated": {},
+      "module": "ipai_sms_gateway",
+      "name": "ipai.sms.message",
+      "python_constraints": [],
+      "relations": [
+        "ipai.sms.provider",
+        "res.partner"
+      ],
+      "sql_constraints": [],
+      "table": "ipai_sms_message"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "account_sid",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "active",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "auth_param_key",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "base_url",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "max_retries",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": "_compute_message_count",
+          "index": false,
+          "name": "message_count",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "message_ids",
+          "ondelete": null,
+          "related": null,
+          "relation": "ipai.sms.message",
+          "required": false,
+          "store": true,
+          "type": "One2many"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "notes",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "provider_type",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "sender_id",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "sequence",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "timeout",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "webhook_enabled",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai_sms_gateway",
+      "name": "ipai.sms.provider",
+      "python_constraints": [],
+      "relations": [
+        "ipai.sms.message"
+      ],
+      "sql_constraints": [],
+      "table": "ipai_sms_provider"
     },
     {
       "fields": [
@@ -28496,6 +29299,17 @@
         },
         {
           "compute": null,
+          "index": false,
+          "name": "ipai_deadline_offset_workdays",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
           "index": true,
           "name": "ipai_owner_code",
           "ondelete": null,
@@ -30625,6 +31439,28 @@
           "required": false,
           "store": true,
           "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "ipai_copilot_api_key",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "ipai_copilot_api_url",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
         },
         {
           "compute": null,

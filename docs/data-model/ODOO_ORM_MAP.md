@@ -3045,6 +3045,31 @@ You cannot define another: please edit the existing one.)
 ### Non-persisted fields
 - _none_
 
+## ipai.finance.close.generate.wizard
+
+- Module: `ipai`
+- Model type: `TransientModel`
+- Table: `ipai_finance_close_generate_wizard`
+
+### Persisted fields
+- `calendar_id`: `Many2one` (relation=resource.calendar)
+- `month`: `Integer` (required)
+- `year`: `Integer` (required)
+
+### Non-persisted fields
+- _none_
+
+## ipai.finance.close.service
+
+- Module: `ipai`
+- Model type: `AbstractModel`
+- Table: `ipai_finance_close_service`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
 ## ipai.finance.directory
 
 - Module: `ipai`
@@ -3529,6 +3554,58 @@ You cannot define another: please edit the existing one.)
 ### Non-persisted fields
 - _none_
 
+## ipai.ocr.job
+
+- Module: `ipai_ocr_gateway`
+- Model type: `Model`
+- Table: `ipai_ocr_job`
+- _inherit: `mail.thread, mail.activity.mixin`
+
+### Persisted fields
+- `attachment_id`: `Many2one` (relation=ir.attachment, required, ondelete=cascade)
+- `attachment_mimetype`: `Char` (related=attachment_id.mimetype)
+- `attachment_name`: `Char` (related=attachment_id.name)
+- `completed_at`: `Datetime`
+- `confidence_score`: `Float`
+- `duration_seconds`: `Float` (compute=_compute_duration)
+- `error_message`: `Text`
+- `name`: `Char` (required)
+- `output_attachment_id`: `Many2one` (relation=ir.attachment)
+- `provider_id`: `Many2one` (relation=ipai.ocr.provider)
+- `res_id`: `Integer`
+- `res_model`: `Char`
+- `result_json`: `Text`
+- `result_text`: `Text`
+- `retry_count`: `Integer`
+- `started_at`: `Datetime`
+- `state`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## ipai.ocr.provider
+
+- Module: `ipai_ocr_gateway`
+- Model type: `Model`
+- Table: `ipai_ocr_provider`
+
+### Persisted fields
+- `active`: `Boolean`
+- `auth_param_key`: `Char`
+- `auth_type`: `Selection`
+- `base_url`: `Char`
+- `job_count`: `Integer` (compute=_compute_job_count)
+- `max_retries`: `Integer`
+- `name`: `Char` (required)
+- `notes`: `Text`
+- `provider_type`: `Selection` (required)
+- `sequence`: `Integer`
+- `supported_formats`: `Char`
+- `timeout`: `Integer`
+
+### Non-persisted fields
+- `job_ids`: `One2many` (relation=ipai.ocr.job)
+
 ## ipai.permission
 
 - Module: `ipai_platform_permissions`
@@ -3583,6 +3660,60 @@ You cannot define another: please edit the existing one.)
 
 ### Non-persisted fields
 - _none_
+
+## ipai.sms.message
+
+- Module: `ipai_sms_gateway`
+- Model type: `Model`
+- Table: `ipai_sms_message`
+- _inherit: `mail.thread`
+
+### Persisted fields
+- `body`: `Text` (required)
+- `cost`: `Float`
+- `delivered_at`: `Datetime`
+- `error_code`: `Char`
+- `error_message`: `Text`
+- `external_id`: `Char`
+- `from_number`: `Char`
+- `name`: `Char` (required)
+- `partner_id`: `Many2one` (relation=res.partner)
+- `provider_id`: `Many2one` (relation=ipai.sms.provider)
+- `raw_response`: `Text`
+- `res_id`: `Integer`
+- `res_model`: `Char`
+- `retry_count`: `Integer`
+- `segments`: `Integer`
+- `sent_at`: `Datetime`
+- `state`: `Selection`
+- `to_number`: `Char` (required)
+
+### Non-persisted fields
+- _none_
+
+## ipai.sms.provider
+
+- Module: `ipai_sms_gateway`
+- Model type: `Model`
+- Table: `ipai_sms_provider`
+
+### Persisted fields
+- `account_sid`: `Char`
+- `active`: `Boolean`
+- `auth_param_key`: `Char`
+- `base_url`: `Char`
+- `max_retries`: `Integer`
+- `message_count`: `Integer` (compute=_compute_message_count)
+- `name`: `Char` (required)
+- `notes`: `Text`
+- `provider_type`: `Selection` (required)
+- `sender_id`: `Char`
+- `sequence`: `Integer`
+- `timeout`: `Integer`
+- `webhook_enabled`: `Boolean`
+
+### Non-persisted fields
+- `message_ids`: `One2many` (relation=ipai.sms.message)
 
 ## ipai.studio.ai.history
 
@@ -5306,6 +5437,7 @@ You cannot define another: please edit the existing one.)
 - `hr_category_ids`: `Many2many`
 - `ipai_compliance_step`: `Selection` (index)
 - `ipai_days_to_deadline`: `Integer` (compute=_compute_ipai_deadline_metrics)
+- `ipai_deadline_offset_workdays`: `Integer`
 - `ipai_owner_code`: `Char` (index)
 - `ipai_owner_role`: `Selection` (index)
 - `ipai_status_bucket`: `Selection` (compute=_compute_ipai_deadline_metrics, index)
@@ -5855,6 +5987,8 @@ You cannot define another: please edit the existing one.)
 - `excluded_models_from_readonly`: `Char` (relation=Excluded Models from Read-only)
 - `group_activity_statement`: `Boolean` (relation=Enable OCA Activity & Detailed Activity Statements)
 - `group_outstanding_statement`: `Boolean` (relation=Enable OCA Outstanding Statements)
+- `ipai_copilot_api_key`: `Char`
+- `ipai_copilot_api_url`: `Char`
 - `ipai_enable_finance_project_analytics`: `Boolean`
 - `project_display_name_pattern`: `Char`
 - `project_inherit_assignments`: `Boolean` (related=company_id.project_inherit_assignments)
