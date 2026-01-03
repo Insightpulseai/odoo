@@ -51,8 +51,7 @@ jobs:
 
       - name: Run structure check
         run: |
-          chmod +x infra/ci/structure-check.sh
-          ./infra/ci/structure-check.sh
+          python3 infra/ci/structure_check.py
 
       - name: Check IPAI module manifests
         run: |

@@ -272,17 +272,345 @@
 ### Non-persisted fields
 - `template_ids`: `One2many` (relation=a1.template)
 
+## abstract.mpld3.parser
+
+- Module: `web_widget_mpld3_chart`
+- Model type: `AbstractModel`
+- Table: `abstract_mpld3_parser`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## account.account
+
+- Module: `account_financial_report`
+- Model type: `Model`
+- Table: `account_account`
+- _inherit: `account.account`
+
+### Persisted fields
+- `centralized`: `Boolean`
+- `hide_in_cash_flow`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## account.account.reconcile
+
+- Module: `account_reconcile_oca`
+- Model type: `Model`
+- Table: `N/A`
+- _inherit: `account.reconcile.abstract`
+
+### Persisted fields
+- `account_id`: `Many2one` (relation=account.account)
+- `active`: `Boolean`
+- `is_reconciled`: `Boolean`
+- `name`: `Char`
+- `partner_id`: `Many2one` (relation=res.partner)
+- `reconcile_data_info`: `Serialized`
+
+### Non-persisted fields
+- _none_
+
+## account.account.reconcile.data
+
+- Module: `account_reconcile_oca`
+- Model type: `TransientModel`
+- Table: `account_account_reconcile_data`
+
+### Persisted fields
+- `data`: `Serialized`
+- `reconcile_id`: `Integer` (required)
+- `user_id`: `Many2one` (relation=res.users, required)
+
+### Non-persisted fields
+- _none_
+
+## account.age.report.configuration
+
+- Module: `account_financial_report`
+- Model type: `Model`
+- Table: `account_age_report_configuration`
+- Python constraints:
+  - `_check_line_ids`
+
+### Persisted fields
+- `company_id`: `Many2one` (relation=res.company)
+- `name`: `Char` (required)
+
+### Non-persisted fields
+- `line_ids`: `One2many` (relation=account.age.report.configuration.line)
+
+## account.age.report.configuration.line
+
+- Module: `account_financial_report`
+- Model type: `Model`
+- Table: `account_age_report_configuration_line`
+- SQL constraints:
+  - `unique_name_config_combination`: `UNIQUE(name,account_age_report_config_id)` (Name must be unique per report configuration)
+- Python constraints:
+  - `_check_inferior_limit`
+
+### Persisted fields
+- `account_age_report_config_id`: `Many2one` (relation=account.age.report.configuration)
+- `inferior_limit`: `Integer`
+- `name`: `Char` (required)
+
+### Non-persisted fields
+- _none_
+
+## account.analytic.line
+
+- Module: `project_task_ancestor`
+- Model type: `Model`
+- Table: `account_analytic_line`
+- _inherit: `account.analytic.line`
+
+### Persisted fields
+- `ancestor_task_id`: `Many2one` (related=task_id.ancestor_id)
+- `date_time`: `Datetime`
+- `date_time_end`: `Datetime` (compute=_compute_date_time_end)
+- `show_time_control`: `Selection` (compute=_compute_show_time_control)
+- `stock_move_id`: `Many2one` (ondelete=cascade)
+- `stock_task_id`: `Many2one` (ondelete=cascade)
+
+### Non-persisted fields
+- _none_
+
+## account.bank.statement
+
+- Module: `account_reconcile_oca`
+- Model type: `Model`
+- Table: `account_bank_statement`
+- _inherit: `account.bank.statement`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## account.bank.statement.line
+
+- Module: `account_reconcile_analytic_tag`
+- Model type: `Model`
+- Table: `account_bank_statement_line`
+- _inherit: `account.bank.statement.line, account.reconcile.abstract`
+
+### Persisted fields
+- `aggregate_id`: `Integer` (compute=_compute_reconcile_aggregate)
+- `aggregate_name`: `Char` (compute=_compute_reconcile_aggregate)
+- `analytic_distribution`: `Json`
+- `analytic_precision`: `Integer`
+- `can_reconcile`: `Boolean`
+- `manual_account_id`: `Many2one` (relation=account.account)
+- `manual_amount`: `Monetary`
+- `manual_amount_in_currency`: `Monetary`
+- `manual_analytic_tag_ids`: `Many2many`
+- `manual_currency_id`: `Many2one` (relation=res.currency)
+- `manual_exchange_counterpart`: `Boolean`
+- `manual_in_currency`: `Boolean`
+- `manual_in_currency_id`: `Many2one` (relation=res.currency)
+- `manual_kind`: `Char`
+- `manual_line_id`: `Many2one` (relation=account.move.line)
+- `manual_model_id`: `Many2one` (relation=account.reconcile.model)
+- `manual_move_id`: `Many2one` (relation=account.move)
+- `manual_move_type`: `Selection`
+- `manual_name`: `Char`
+- `manual_original_amount`: `Monetary`
+- `manual_partner_id`: `Many2one` (relation=res.partner)
+- `previous_manual_amount_in_currency`: `Monetary`
+- `reconcile_aggregate`: `Char` (compute=_compute_reconcile_aggregate)
+- `reconcile_data`: `Serialized`
+- `reconcile_data_info`: `Serialized`
+- `reconcile_mode`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## account.group
+
+- Module: `account_financial_report`
+- Model type: `Model`
+- Table: `account_group`
+- _inherit: `account.group`
+
+### Persisted fields
+- `complete_code`: `Char` (relation=Full Code, compute=_compute_complete_code)
+- `complete_name`: `Char` (relation=Full Name, compute=_compute_complete_name)
+- `compute_account_ids`: `Many2many` (relation=account.account, compute=_compute_group_accounts)
+- `level`: `Integer` (compute=_compute_level)
+
+### Non-persisted fields
+- `account_ids`: `One2many` (compute=_compute_account_ids)
+- `group_child_ids`: `One2many`
+
+## account.journal
+
+- Module: `account_move_base_import`
+- Model type: `Model`
+- Table: `account_journal`
+- _inherit: `account.journal, mail.thread`
+
+### Persisted fields
+- `autovalidate_completed_move`: `Boolean`
+- `commission_account_id`: `Many2one`
+- `commission_analytic_account_id`: `Many2one`
+- `company_currency_id`: `Many2one` (related=company_id.currency_id)
+- `create_counterpart`: `Boolean`
+- `import_type`: `Selection`
+- `last_import_date`: `Datetime`
+- `launch_import_completion`: `Boolean`
+- `partner_id`: `Many2one`
+- `receivable_account_id`: `Many2one`
+- `reconcile_aggregate`: `Selection`
+- `reconcile_mode`: `Selection` (required)
+- `rule_ids`: `Many2many`
+- `split_counterpart`: `Boolean`
+- `used_for_completion`: `Boolean`
+- `used_for_import`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
 ## account.move
 
-- Module: `ipai`
+- Module: `account_in_payment`
 - Model type: `Model`
 - Table: `account_move`
-- _inherit: `account.move`
+- _inherit: `account.move, mail.thread`
 
 ### Persisted fields
 - `bir_2307_date`: `Date`
 - `bir_2307_generated`: `Boolean`
+- `completion_logs`: `Text`
 - `ewt_amount`: `Monetary` (compute=_compute_ewt_amount)
+- `financial_type`: `Selection` (compute=_compute_financial_type)
+- `import_partner_id`: `Many2one` (relation=res.partner)
+- `transaction_id`: `Char` (index)
+- `used_for_completion`: `Boolean` (related=journal_id.used_for_completion)
+
+### Non-persisted fields
+- _none_
+
+## account.move.completion.rule
+
+- Module: `account_move_base_import`
+- Model type: `Model`
+- Table: `account_move_completion_rule`
+
+### Persisted fields
+- `function_to_call`: `Selection`
+- `journal_ids`: `Many2many`
+- `name`: `Char`
+- `sequence`: `Integer`
+
+### Non-persisted fields
+- _none_
+
+## account.move.line
+
+- Module: `account_financial_report`
+- Model type: `Model`
+- Table: `account_move_line`
+- _inherit: `account.move.line`
+
+### Persisted fields
+- `already_completed`: `Boolean`
+- `analytic_account_ids`: `Many2many` (relation=account.analytic.account, compute=_compute_analytic_account_ids)
+
+### Non-persisted fields
+- _none_
+
+## account.reconcile.abstract
+
+- Module: `account_reconcile_analytic_tag`
+- Model type: `AbstractModel`
+- Table: `account_reconcile_abstract`
+- _inherit: `account.reconcile.abstract`
+
+### Persisted fields
+- `add_account_move_line_id`: `Many2one` (relation=account.move.line)
+- `company_currency_id`: `Many2one` (related=company_id.currency_id)
+- `company_id`: `Many2one` (relation=res.company)
+- `currency_id`: `Many2one` (relation=res.currency)
+- `foreign_currency_id`: `Many2one` (relation=res.currency)
+- `manual_delete`: `Boolean`
+- `manual_reference`: `Char`
+- `reconcile_data_info`: `Serialized` (compute=_compute_reconcile_data_info)
+
+### Non-persisted fields
+- _none_
+
+## account.reconcile.model
+
+- Module: `account_reconcile_model_oca`
+- Model type: `Model`
+- Table: `account_reconcile_model`
+- _inherit: `account.reconcile.model`
+
+### Persisted fields
+- `unique_matching`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## account.reconcile.model.line
+
+- Module: `account_reconcile_analytic_tag`
+- Model type: `Model`
+- Table: `account_reconcile_model_line`
+- _inherit: `account.reconcile.model.line`
+
+### Persisted fields
+- `analytic_tag_ids`: `Many2many`
+
+### Non-persisted fields
+- _none_
+
+## account.tax
+
+- Module: `account_tax_balance`
+- Model type: `Model`
+- Table: `account_tax`
+- _inherit: `account.tax`
+
+### Persisted fields
+- `balance`: `Float` (compute=_compute_balance)
+- `balance_refund`: `Float` (compute=_compute_balance)
+- `balance_regular`: `Float` (compute=_compute_balance)
+- `base_balance`: `Float` (compute=_compute_balance)
+- `base_balance_refund`: `Float` (compute=_compute_balance)
+- `base_balance_regular`: `Float` (compute=_compute_balance)
+- `has_moves`: `Boolean` (compute=_compute_has_moves)
+
+### Non-persisted fields
+- _none_
+
+## account_financial_report_abstract_wizard
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `account_financial_report_abstract_wizard`
+
+### Persisted fields
+- `company_id`: `Many2one`
+- `label_text_limit`: `Integer`
+
+### Non-persisted fields
+- _none_
+
+## activity.statement.wizard
+
+- Module: `partner_statement`
+- Model type: `TransientModel`
+- Table: `activity_statement_wizard`
+- _inherit: `statement.common.wizard`
+
+### Persisted fields
+- `date_start`: `Date` (required)
 
 ### Non-persisted fields
 - _none_
@@ -400,6 +728,334 @@
 ### Persisted fields
 - `color`: `Integer`
 - `name`: `Char` (required)
+
+### Non-persisted fields
+- _none_
+
+## afc.rag.service
+
+- Module: `ipai_ask_ai`
+- Model type: `AbstractModel`
+- Table: `afc_rag_service`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## aged.partner.balance.report.wizard
+
+- Module: `account_financial_report`
+- Model type: `TransientModel`
+- Table: `aged_partner_balance_report_wizard`
+- _inherit: `account_financial_report_abstract_wizard`
+
+### Persisted fields
+- `account_code_from`: `Many2one`
+- `account_code_to`: `Many2one`
+- `account_ids`: `Many2many` (required)
+- `age_partner_config_id`: `Many2one` (relation=account.age.report.configuration)
+- `date_at`: `Date` (required)
+- `date_from`: `Date`
+- `partner_ids`: `Many2many`
+- `payable_accounts_only`: `Boolean`
+- `receivable_accounts_only`: `Boolean`
+- `show_move_line_details`: `Boolean`
+- `target_move`: `Selection` (required)
+
+### Non-persisted fields
+- _none_
+
+## attachment.queue
+
+- Module: `attachment_queue`
+- Model type: `Model`
+- Table: `attachment_queue`
+- _inherit: `attachment.queue, mail.activity.mixin, mail.thread`
+- _inherits: `ir.attachment via attachment_id`
+
+### Persisted fields
+- `attachment_id`: `Many2one` (relation=ir.attachment, required, ondelete=cascade)
+- `date_done`: `Datetime`
+- `failure_emails`: `Char` (compute=_compute_failure_emails)
+- `file_type`: `Selection`
+- `fs_storage_id`: `Many2one` (relation=fs.storage, related=task_id.backend_id)
+- `method_type`: `Selection` (related=task_id.method_type)
+- `state`: `Selection` (required)
+- `state_message`: `Text`
+- `task_id`: `Many2one` (relation=attachment.synchronize.task)
+
+### Non-persisted fields
+- _none_
+
+## attachment.queue.reschedule
+
+- Module: `attachment_queue`
+- Model type: `TransientModel`
+- Table: `attachment_queue_reschedule`
+
+### Persisted fields
+- `attachment_ids`: `Many2many`
+
+### Non-persisted fields
+- _none_
+
+## attachment.synchronize.task
+
+- Module: `attachment_synchronize`
+- Model type: `Model`
+- Table: `attachment_synchronize_task`
+
+### Persisted fields
+- `active`: `Boolean` (relation=Enabled)
+- `after_import`: `Selection`
+- `avoid_duplicated_files`: `Boolean`
+- `backend_id`: `Many2one` (relation=fs.storage)
+- `count_attachment_done`: `Integer` (compute=_compute_count_state)
+- `count_attachment_failed`: `Integer` (compute=_compute_count_state)
+- `count_attachment_pending`: `Integer` (compute=_compute_count_state)
+- `failure_emails`: `Char`
+- `file_type`: `Selection`
+- `filepath`: `Char`
+- `method_type`: `Selection` (required)
+- `move_path`: `Char`
+- `name`: `Char` (required)
+- `new_name`: `Char`
+- `pattern`: `Char`
+
+### Non-persisted fields
+- `attachment_ids`: `One2many` (relation=attachment.queue)
+
+## auditlog.autovacuum
+
+- Module: `auditlog`
+- Model type: `TransientModel`
+- Table: `auditlog_autovacuum`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## auditlog.http.request
+
+- Module: `auditlog`
+- Model type: `Model`
+- Table: `auditlog_http_request`
+
+### Persisted fields
+- `display_name`: `Char` (relation=Name, compute=_compute_display_name)
+- `http_session_id`: `Many2one` (relation=auditlog.http.session, index)
+- `name`: `Char` (relation=Path)
+- `root_url`: `Char` (relation=Root URL)
+- `user_context`: `Char` (relation=Context)
+- `user_id`: `Many2one` (relation=res.users)
+
+### Non-persisted fields
+- `log_ids`: `One2many` (relation=auditlog.log)
+
+## auditlog.http.session
+
+- Module: `auditlog`
+- Model type: `Model`
+- Table: `auditlog_http_session`
+
+### Persisted fields
+- `display_name`: `Char` (relation=Name, compute=_compute_display_name)
+- `name`: `Char` (relation=Session ID, index)
+- `user_id`: `Many2one` (relation=res.users, index)
+
+### Non-persisted fields
+- `http_request_ids`: `One2many` (relation=auditlog.http.request)
+
+## auditlog.log
+
+- Module: `auditlog`
+- Model type: `Model`
+- Table: `auditlog_log`
+
+### Persisted fields
+- `http_request_id`: `Many2one` (relation=auditlog.http.request, index)
+- `http_session_id`: `Many2one` (relation=auditlog.http.session, index)
+- `log_type`: `Selection`
+- `method`: `Char`
+- `model_id`: `Many2one` (relation=ir.model, index, ondelete=set null)
+- `model_model`: `Char`
+- `model_name`: `Char`
+- `name`: `Char` (relation=Resource Name)
+- `res_id`: `Integer` (relation=Resource ID)
+- `res_ids`: `Char` (relation=Resource IDs)
+- `user_id`: `Many2one` (relation=res.users)
+
+### Non-persisted fields
+- `line_ids`: `One2many` (relation=auditlog.log.line)
+
+## auditlog.log.line
+
+- Module: `auditlog`
+- Model type: `Model`
+- Table: `auditlog_log_line`
+
+### Persisted fields
+- `field_description`: `Char` (relation=Description)
+- `field_id`: `Many2one` (relation=ir.model.fields, index, ondelete=set null)
+- `field_name`: `Char` (relation=Technical name)
+- `log_id`: `Many2one` (relation=auditlog.log, index, ondelete=cascade)
+- `new_value`: `Text`
+- `new_value_text`: `Text` (relation=New value Text)
+- `old_value`: `Text`
+- `old_value_text`: `Text` (relation=Old value Text)
+
+### Non-persisted fields
+- _none_
+
+## auditlog.log.line.view
+
+- Module: `auditlog`
+- Model type: `Model`
+- Table: `N/A`
+- _inherit: `auditlog.log.line`
+
+### Persisted fields
+- `http_request_id`: `Many2one` (relation=auditlog.http.request, index)
+- `http_session_id`: `Many2one` (relation=auditlog.http.session, index)
+- `log_type`: `Selection`
+- `method`: `Char`
+- `model_id`: `Many2one` (relation=ir.model)
+- `model_model`: `Char`
+- `model_name`: `Char`
+- `name`: `Char`
+- `res_id`: `Integer`
+- `user_id`: `Many2one` (relation=res.users)
+
+### Non-persisted fields
+- _none_
+
+## auditlog.rule
+
+- Module: `auditlog`
+- Model type: `Model`
+- Table: `auditlog_rule`
+- SQL constraints:
+  - `model_uniq`: `unique(model_id)` (There is already a rule defined on this model
+You cannot define another: please edit the existing one.)
+
+### Persisted fields
+- `action_id`: `Many2one` (relation=ir.actions.act_window)
+- `capture_record`: `Boolean`
+- `fields_to_exclude_ids`: `Many2many` (relation=ir.model.fields)
+- `log_create`: `Boolean` (relation=Log Creates)
+- `log_export_data`: `Boolean` (relation=Log Exports)
+- `log_read`: `Boolean` (relation=Log Reads)
+- `log_type`: `Selection` (required)
+- `log_unlink`: `Boolean` (relation=Log Deletes)
+- `log_write`: `Boolean` (relation=Log Writes)
+- `model_id`: `Many2one` (relation=ir.model, index, ondelete=set null)
+- `model_model`: `Char`
+- `model_name`: `Char`
+- `name`: `Char` (required)
+- `state`: `Selection` (required)
+- `user_ids`: `Many2many` (relation=res.users)
+- `users_to_exclude_ids`: `Many2many` (relation=res.users)
+
+### Non-persisted fields
+- _none_
+
+## autovacuum.mixin
+
+- Module: `autovacuum_message_attachment`
+- Model type: `AbstractModel`
+- Table: `autovacuum_mixin`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## base
+
+- Module: `autovacuum_message_attachment`
+- Model type: `AbstractModel`
+- Table: `base`
+- _inherit: `base`
+
+### Persisted fields
+- `smart_search`: `Char` (compute=_compute_smart_search)
+
+### Non-persisted fields
+- `assigned_attachment_ids`: `One2many` (relation=ir.attachment)
+
+## base.exception
+
+- Module: `base_exception`
+- Model type: `AbstractModel`
+- Table: `base_exception`
+- _inherit: `base.exception.method`
+
+### Persisted fields
+- `exception_ids`: `Many2many` (relation=exception.rule)
+- `exceptions_summary`: `Html` (compute=_compute_exceptions_summary)
+- `ignore_exception`: `Boolean` (relation=Ignore Exceptions)
+- `main_exception_id`: `Many2one` (relation=exception.rule, compute=_compute_main_error)
+
+### Non-persisted fields
+- _none_
+
+## base.exception.method
+
+- Module: `base_exception`
+- Model type: `AbstractModel`
+- Table: `base_exception_method`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## base.exception.test.purchase
+
+- Module: `base_exception`
+- Model type: `Model`
+- Table: `base_exception_test_purchase`
+- _inherit: `base.exception`
+- Python constraints:
+  - `test_purchase_check_exception`
+
+### Persisted fields
+- `active`: `Boolean`
+- `amount_total`: `Float` (compute=_compute_amount_total)
+- `name`: `Char` (required)
+- `partner_id`: `Many2one` (relation=res.partner)
+- `state`: `Selection`
+- `user_id`: `Many2one` (relation=res.users)
+
+### Non-persisted fields
+- `line_ids`: `One2many` (relation=base.exception.test.purchase.line)
+
+## base.exception.test.purchase.line
+
+- Module: `base_exception`
+- Model type: `Model`
+- Table: `base_exception_test_purchase_line`
+
+### Persisted fields
+- `amount`: `Float`
+- `lead_id`: `Many2one` (relation=base.exception.test.purchase, ondelete=cascade)
+- `name`: `Char`
+- `qty`: `Float`
+
+### Non-persisted fields
+- _none_
+
+## base.sequence.tester
+
+- Module: `base_sequence_option`
+- Model type: `Model`
+- Table: `base_sequence_tester`
+
+### Persisted fields
+- `name`: `Char`
+- `test_type`: `Selection`
 
 ### Non-persisted fields
 - _none_
@@ -666,6 +1322,240 @@
 ### Non-persisted fields
 - `line_ids`: `One2many` (relation=bir.withholding.line)
 
+## cleanup.create_indexes.line
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_create_indexes_line`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `field_id`: `Many2one` (relation=ir.model.fields, required)
+- `purged`: `Boolean` (relation=Created)
+- `wizard_id`: `Many2one` (relation=cleanup.create_indexes.wizard)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.create_indexes.wizard
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_create_indexes_wizard`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.create_indexes.line)
+
+## cleanup.purge.line
+
+- Module: `database_cleanup`
+- Model type: `AbstractModel`
+- Table: `cleanup_purge_line`
+
+### Persisted fields
+- `name`: `Char`
+- `purged`: `Boolean`
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.line.column
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_line_column`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `model_id`: `Many2one` (relation=ir.model, required, ondelete=CASCADE)
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard.column)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.line.data
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_line_data`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `data_id`: `Many2one` (relation=ir.model.data)
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard.data)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.line.field
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_line_field`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `field_id`: `Many2one`
+- `model_id`: `Many2one` (related=field_id.model_id)
+- `model_name`: `Char` (related=model_id.model)
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard.field)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.line.menu
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_line_menu`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `menu_id`: `Many2one` (relation=ir.ui.menu)
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard.menu)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.line.model
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_line_model`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard.model)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.line.module
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_line_module`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard.module)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.line.table
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_line_table`
+- _inherit: `cleanup.purge.line`
+
+### Persisted fields
+- `table_type`: `Selection`
+- `wizard_id`: `Many2one` (relation=cleanup.purge.wizard.table)
+
+### Non-persisted fields
+- _none_
+
+## cleanup.purge.wizard
+
+- Module: `database_cleanup`
+- Model type: `AbstractModel`
+- Table: `cleanup_purge_wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line)
+
+## cleanup.purge.wizard.column
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_wizard_column`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line.column)
+
+## cleanup.purge.wizard.data
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_wizard_data`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line.data)
+
+## cleanup.purge.wizard.field
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_wizard_field`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line.field)
+
+## cleanup.purge.wizard.menu
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_wizard_menu`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line.menu)
+
+## cleanup.purge.wizard.model
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_wizard_model`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line.model)
+
+## cleanup.purge.wizard.module
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_wizard_module`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line.module)
+
+## cleanup.purge.wizard.table
+
+- Module: `database_cleanup`
+- Model type: `TransientModel`
+- Table: `cleanup_purge_wizard_table`
+- _inherit: `cleanup.purge.wizard`
+
+### Persisted fields
+
+### Non-persisted fields
+- `purge_line_ids`: `One2many` (relation=cleanup.purge.line.table)
+
 ## close.approval.gate
 
 - Module: `ipai`
@@ -675,26 +1565,15 @@
 
 ### Persisted fields
 - `actual_value`: `Float`
-- `approval_notes`: `Text`
 - `approved_by`: `Many2one` (relation=res.users)
 - `approved_date`: `Datetime`
 - `approver_id`: `Many2one` (relation=res.users)
-- `approver_role`: `Selection` (required)
-- `approver_user_id`: `Many2one` (relation=res.users)
-- `block_on_exceptions`: `Boolean`
 - `block_reason`: `Text`
-- `blocking_exceptions`: `Many2many` (relation=close.exception)
-- `blocking_reason`: `Text`
-- `blocking_tasks`: `Many2many` (relation=close.task)
 - `company_id`: `Many2one` (relation=res.company, related=cycle_id.company_id)
 - `cycle_id`: `Many2one` (relation=close.cycle, required, index, ondelete=cascade)
-- `gate_level`: `Integer` (required)
 - `gate_type`: `Selection` (required)
-- `min_completion_pct`: `Float`
 - `name`: `Char` (required)
 - `notes`: `Html`
-- `required_approvals`: `Integer`
-- `required_task_states`: `Char`
 - `sequence`: `Integer`
 - `state`: `Selection` (required)
 - `template_id`: `Many2one` (relation=close.approval.gate.template)
@@ -735,12 +1614,7 @@
 
 ### Persisted fields
 - `a1_tasklist_id`: `Many2one` (relation=a1.tasklist)
-- `close_actual_date`: `Date`
-- `close_start_date`: `Date`
-- `close_target_date`: `Date`
-- `closing_period_id`: `Many2one` (relation=closing.period)
 - `company_id`: `Many2one` (relation=res.company, required)
-- `cycle_time_days`: `Integer` (compute=_compute_cycle_time)
 - `exception_count`: `Integer` (compute=_compute_exception_count)
 - `gates_ready`: `Boolean` (compute=_compute_gates_ready)
 - `name`: `Char` (required)
@@ -749,10 +1623,8 @@
 - `period_end`: `Date` (required)
 - `period_label`: `Char` (compute=_compute_period_label)
 - `period_start`: `Date` (required)
-- `period_type`: `Selection` (required)
 - `progress`: `Float` (compute=_compute_task_stats)
 - `state`: `Selection` (required)
-- `task_completion_pct`: `Float` (compute=_compute_task_stats)
 - `task_count`: `Integer` (compute=_compute_task_stats)
 - `task_done_count`: `Integer` (compute=_compute_task_stats)
 - `webhook_url`: `Char`
@@ -770,35 +1642,23 @@
 - _inherit: `mail.activity.mixin, mail.thread`
 
 ### Persisted fields
-- `amount`: `Monetary`
 - `assigned_to`: `Many2one` (relation=res.users)
 - `company_id`: `Many2one` (relation=res.company, related=cycle_id.company_id)
-- `currency_id`: `Many2one` (relation=res.currency)
 - `cycle_id`: `Many2one` (relation=close.cycle, required, index, ondelete=cascade)
 - `description`: `Html`
-- `detected_by`: `Many2one` (relation=res.users)
-- `detected_date`: `Datetime`
-- `escalated_date`: `Datetime`
 - `escalated_to`: `Many2one` (relation=res.users)
 - `escalation_count`: `Integer`
 - `escalation_deadline`: `Datetime`
-- `escalation_level`: `Integer`
 - `exception_type`: `Selection` (required)
 - `last_escalated`: `Datetime`
 - `name`: `Char` (required)
-- `related_account_id`: `Many2one` (relation=account.account)
-- `related_move_id`: `Many2one` (relation=account.move)
-- `related_partner_id`: `Many2one` (relation=res.partner)
 - `reported_by`: `Many2one` (relation=res.users)
 - `resolution`: `Html`
-- `resolution_action`: `Text`
 - `resolved_by`: `Many2one` (relation=res.users)
 - `resolved_date`: `Datetime`
-- `root_cause`: `Text`
 - `severity`: `Selection` (required)
 - `state`: `Selection` (required)
 - `task_id`: `Many2one` (relation=close.task, index, ondelete=set null)
-- `variance_pct`: `Float`
 
 ### Non-persisted fields
 - _none_
@@ -808,48 +1668,29 @@
 - Module: `ipai`
 - Model type: `Model`
 - Table: `close_task`
-- _inherit: `close.task, mail.activity.mixin, mail.thread`
+- _inherit: `mail.activity.mixin, mail.thread`
 
 ### Persisted fields
 - `a1_task_id`: `Many2one` (relation=a1.task)
 - `approval_deadline`: `Date`
 - `approval_done_by`: `Many2one` (relation=res.users)
 - `approval_done_date`: `Datetime`
-- `approve_done_date`: `Datetime`
-- `approve_due_date`: `Date`
-- `approve_notes`: `Text`
-- `approve_user_id`: `Many2one` (relation=res.users)
 - `approver_id`: `Many2one` (relation=res.users)
-- `attachment_ids`: `Many2many` (relation=ir.attachment)
 - `category_id`: `Many2one` (relation=close.task.category)
-- `checklist_done_pct`: `Float` (compute=_compute_checklist_pct)
 - `checklist_progress`: `Float` (compute=_compute_checklist_progress)
 - `company_id`: `Many2one` (relation=res.company, related=cycle_id.company_id)
 - `cycle_id`: `Many2one` (relation=close.cycle, required, index, ondelete=cascade)
-- `days_overdue`: `Integer` (compute=_compute_is_overdue)
-- `description`: `Text`
 - `external_key`: `Char` (index)
-- `gl_entry_count`: `Integer` (compute=_compute_gl_entry_count)
-- `gl_entry_ids`: `Many2many` (relation=account.move)
-- `has_exceptions`: `Boolean` (compute=_compute_has_exceptions)
 - `has_open_exceptions`: `Boolean` (compute=_compute_has_open_exceptions)
-- `is_overdue`: `Boolean` (compute=_compute_is_overdue)
 - `name`: `Char` (required)
 - `notes`: `Html`
 - `prep_deadline`: `Date`
 - `prep_done_by`: `Many2one` (relation=res.users)
 - `prep_done_date`: `Datetime`
-- `prep_due_date`: `Date`
-- `prep_notes`: `Text`
-- `prep_user_id`: `Many2one` (relation=res.users)
 - `preparer_id`: `Many2one` (relation=res.users)
 - `review_deadline`: `Date`
 - `review_done_by`: `Many2one` (relation=res.users)
 - `review_done_date`: `Datetime`
-- `review_due_date`: `Date`
-- `review_notes`: `Text`
-- `review_result`: `Selection`
-- `review_user_id`: `Many2one` (relation=res.users)
 - `reviewer_id`: `Many2one` (relation=res.users)
 - `sequence`: `Integer`
 - `state`: `Selection` (required)
@@ -865,7 +1706,6 @@
 - Model type: `Model`
 - Table: `close_task_category`
 - SQL constraints:
-  - `category_code_unique`: `unique(code)` (Category code must be unique)
   - `code_uniq`: `unique(code, company_id)` (Category code must be unique per company.)
   - `code_uniq`: `unique(code, company_id)` (Category code must be unique per company.)
 
@@ -875,14 +1715,7 @@
 - `code`: `Char` (required, index)
 - `color`: `Integer`
 - `company_id`: `Many2one` (relation=res.company, required)
-- `default_approve_days`: `Integer`
-- `default_approve_role`: `Selection`
-- `default_prep_days`: `Integer`
-- `default_prep_role`: `Selection`
-- `default_review_days`: `Integer`
-- `default_review_role`: `Selection`
 - `description`: `Text`
-- `gl_account_ids`: `Many2many` (relation=account.account)
 - `name`: `Char` (required)
 - `sequence`: `Integer`
 
@@ -896,18 +1729,13 @@
 - Table: `close_task_checklist`
 
 ### Persisted fields
-- `attachment_id`: `Many2one` (relation=ir.attachment)
 - `code`: `Char` (required)
-- `done_at`: `Datetime`
 - `done_by`: `Many2one` (relation=res.users)
 - `done_date`: `Datetime`
-- `evidence_type`: `Selection`
 - `instructions`: `Text`
 - `is_done`: `Boolean`
 - `is_required`: `Boolean`
 - `name`: `Char` (required)
-- `notes`: `Text`
-- `required`: `Boolean`
 - `sequence`: `Integer`
 - `task_id`: `Many2one` (relation=close.task, required, index, ondelete=cascade)
 
@@ -922,33 +1750,23 @@
 - SQL constraints:
   - `code_uniq`: `unique(code, company_id)` (Template code must be unique per company.)
   - `code_uniq`: `unique(code, company_id)` (Template code must be unique per company.)
-  - `template_code_unique`: `unique(code)` (Template code must be unique)
 
 ### Persisted fields
 - `a1_template_id`: `Many2one` (relation=a1.template)
 - `active`: `Boolean`
 - `approval_days`: `Float`
 - `approval_offset`: `Integer`
-- `approve_day_offset`: `Integer`
 - `approver_id`: `Many2one` (relation=res.users)
 - `approver_role`: `Selection`
 - `category_id`: `Many2one` (relation=close.task.category, index, ondelete=cascade)
 - `code`: `Char` (required, index)
 - `company_id`: `Many2one` (relation=res.company, required)
-- `creates_gl_entry`: `Boolean`
-- `default_approve_user_id`: `Many2one` (relation=res.users)
-- `default_prep_user_id`: `Many2one` (relation=res.users)
-- `default_review_user_id`: `Many2one` (relation=res.users)
 - `description`: `Html`
-- `gl_account_ids`: `Many2many` (relation=account.account)
 - `name`: `Char` (required)
-- `period_type`: `Selection`
-- `prep_day_offset`: `Integer`
 - `prep_days`: `Float`
 - `prep_offset`: `Integer`
 - `preparer_id`: `Many2one` (relation=res.users)
 - `preparer_role`: `Selection`
-- `review_day_offset`: `Integer`
 - `review_days`: `Float`
 - `review_offset`: `Integer`
 - `reviewer_id`: `Many2one` (relation=res.users)
@@ -966,11 +1784,9 @@
 
 ### Persisted fields
 - `code`: `Char` (required)
-- `evidence_type`: `Selection`
 - `instructions`: `Text`
 - `is_required`: `Boolean`
 - `name`: `Char` (required)
-- `required`: `Boolean`
 - `sequence`: `Integer`
 - `template_id`: `Many2one` (relation=close.task.template, required, ondelete=cascade)
 
@@ -1026,6 +1842,23 @@
 ### Non-persisted fields
 - _none_
 
+## credit.statement.import
+
+- Module: `account_move_base_import`
+- Model type: `TransientModel`
+- Table: `credit_statement_import`
+
+### Persisted fields
+- `commission_account_id`: `Many2one` (related=journal_id.commission_account_id)
+- `file_name`: `Char`
+- `input_statement`: `Binary` (required)
+- `journal_id`: `Many2one` (required)
+- `partner_id`: `Many2one` (related=journal_id.partner_id)
+- `receivable_account_id`: `Many2one` (related=journal_id.receivable_account_id)
+
+### Non-persisted fields
+- _none_
+
 ## crm.lead
 
 - Module: `ipai_crm_pipeline`
@@ -1062,6 +1895,47 @@
 ### Non-persisted fields
 - _none_
 
+## db.backup
+
+- Module: `auto_backup`
+- Model type: `Model`
+- Table: `db_backup`
+- _inherit: `mail.thread`
+- SQL constraints:
+  - `days_to_keep_positive`: `CHECK(days_to_keep >= 0)` (I cannot remove backups from the future. Ask Doc for that.)
+  - `name_unique`: `UNIQUE(name)` (Cannot duplicate a configuration.)
+- Python constraints:
+  - `_check_folder`
+
+### Persisted fields
+- `backup_format`: `Selection`
+- `days_to_keep`: `Integer` (required)
+- `folder`: `Char` (required)
+- `method`: `Selection`
+- `name`: `Char` (compute=_compute_name)
+- `sftp_host`: `Char` (relation=SFTP Server)
+- `sftp_password`: `Char` (relation=SFTP Password)
+- `sftp_port`: `Integer` (relation=SFTP Port)
+- `sftp_private_key`: `Char` (relation=Private key location)
+- `sftp_user`: `Char` (relation=Username in the SFTP Server)
+
+### Non-persisted fields
+- _none_
+
+## detailed.activity.statement.wizard
+
+- Module: `partner_statement`
+- Model type: `TransientModel`
+- Table: `detailed_activity_statement_wizard`
+- _inherit: `activity.statement.wizard`
+
+### Persisted fields
+- `show_aging_buckets`: `Boolean`
+- `show_balance`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
 ## discuss.channel
 
 - Module: `ipai_ask_ai`
@@ -1071,6 +1945,155 @@
 
 ### Persisted fields
 - `is_ai_channel`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## exception.rule
+
+- Module: `base_exception`
+- Model type: `Model`
+- Table: `exception_rule`
+- _inherit: `exception.rule`
+- Python constraints:
+  - `check_exception_type_consistency`
+
+### Persisted fields
+- `active`: `Boolean`
+- `code`: `Text` (relation=Python Code)
+- `description`: `Text`
+- `domain`: `Char`
+- `exception_type`: `Selection` (required)
+- `is_blocking`: `Boolean`
+- `method`: `Selection`
+- `model`: `Selection` (required)
+- `name`: `Char` (relation=Exception Name, required)
+- `sequence`: `Integer`
+- `test_purchase_ids`: `Many2many` (relation=base.exception.test.purchase)
+
+### Non-persisted fields
+- _none_
+
+## exception.rule.confirm
+
+- Module: `base_exception`
+- Model type: `AbstractModel`
+- Table: `exception_rule_confirm`
+
+### Persisted fields
+- `exception_ids`: `Many2many` (relation=exception.rule)
+- `ignore`: `Boolean` (relation=Ignore Exceptions)
+- `related_model_id`: `Many2one` (relation=base.exception)
+
+### Non-persisted fields
+- _none_
+
+## exception.rule.confirm.test.purchase
+
+- Module: `base_exception`
+- Model type: `TransientModel`
+- Table: `exception_rule_confirm_test_purchase`
+- _inherit: `exception.rule.confirm`
+
+### Persisted fields
+- `related_model_id`: `Many2one` (relation=base.exception.test.purchase)
+
+### Non-persisted fields
+- _none_
+
+## export.xlsx.wizard
+
+- Module: `excel_import_export`
+- Model type: `TransientModel`
+- Table: `export_xlsx_wizard`
+
+### Persisted fields
+- `data`: `Binary`
+- `name`: `Char`
+- `res_ids`: `Char` (required)
+- `res_model`: `Char` (required)
+- `state`: `Selection`
+- `template_id`: `Many2one` (relation=xlsx.template, required, ondelete=cascade)
+
+### Non-persisted fields
+- _none_
+
+## fetchmail.attach.mail.manually
+
+- Module: `fetchmail_attach_from_folder`
+- Model type: `TransientModel`
+- Table: `fetchmail_attach_mail_manually`
+
+### Persisted fields
+- `folder_id`: `Many2one`
+- `name`: `Char`
+
+### Non-persisted fields
+- `mail_ids`: `One2many` (relation=fetchmail.attach.mail.manually.mail)
+
+## fetchmail.attach.mail.manually.mail
+
+- Module: `fetchmail_attach_from_folder`
+- Model type: `TransientModel`
+- Table: `fetchmail_attach_mail_manually_mail`
+
+### Persisted fields
+- `body`: `Html`
+- `date`: `Datetime`
+- `email_from`: `Char` (relation=From)
+- `msgid`: `Char` (relation=Message id)
+- `object_id`: `Reference`
+- `subject`: `Char`
+- `wizard_id`: `Many2one` (relation=fetchmail.attach.mail.manually)
+
+### Non-persisted fields
+- _none_
+
+## fetchmail.server
+
+- Module: `fetchmail_attach_from_folder`
+- Model type: `Model`
+- Table: `fetchmail_server`
+- _inherit: `fetchmail.server`
+
+### Persisted fields
+- `cleanup_days`: `Integer`
+- `cleanup_folder`: `Char`
+- `error_notice_template_id`: `Many2one` (relation=mail.template)
+- `folders_available`: `Text` (compute=_compute_folders_available)
+- `folders_only`: `Boolean`
+- `object_id`: `Many2one`
+- `purge_days`: `Integer`
+- `server_type`: `Selection`
+
+### Non-persisted fields
+- `folder_ids`: `One2many`
+
+## fetchmail.server.folder
+
+- Module: `fetchmail_attach_from_folder`
+- Model type: `Model`
+- Table: `fetchmail_server_folder`
+
+### Persisted fields
+- `action_id`: `Many2one`
+- `active`: `Boolean`
+- `archive_path`: `Char`
+- `delete_matching`: `Boolean` (relation=Delete matches)
+- `domain`: `Char`
+- `fetch_unseen_only`: `Boolean`
+- `flag_nonmatching`: `Boolean`
+- `mail_field`: `Char` (relation=Field (email))
+- `match_algorithm`: `Selection` (required)
+- `match_first`: `Boolean` (relation=Use 1st match)
+- `model_field`: `Char` (relation=Field (model))
+- `model_id`: `Many2one` (required, ondelete=cascade)
+- `model_order`: `Char` (relation=Order (model))
+- `msg_state`: `Selection`
+- `path`: `Char` (required)
+- `sequence`: `Integer`
+- `server_id`: `Many2one` (relation=fetchmail.server)
+- `state`: `Selection` (required)
 
 ### Non-persisted fields
 - _none_
@@ -1311,6 +2334,55 @@
 ### Non-persisted fields
 - _none_
 
+## fs.storage
+
+- Module: `attachment_synchronize`
+- Model type: `Model`
+- Table: `fs_storage`
+- _inherit: `fs.storage`
+
+### Persisted fields
+- `export_task_count`: `Integer` (relation=Export Tasks, compute=_compute_export_task_count)
+- `import_task_count`: `Integer` (relation=Import Tasks, compute=_compute_import_task_count)
+
+### Non-persisted fields
+- `synchronize_task_ids`: `One2many` (relation=attachment.synchronize.task)
+
+## general.ledger.report.wizard
+
+- Module: `account_financial_report`
+- Model type: `TransientModel`
+- Table: `general_ledger_report_wizard`
+- _inherit: `account_financial_report_abstract_wizard`
+- Python constraints:
+  - `_check_company_id_date_range_id`
+
+### Persisted fields
+- `account_code_from`: `Many2one`
+- `account_code_to`: `Many2one`
+- `account_ids`: `Many2many`
+- `account_journal_ids`: `Many2many`
+- `centralize`: `Boolean`
+- `cost_center_ids`: `Many2many`
+- `date_from`: `Date` (required)
+- `date_range_id`: `Many2one`
+- `date_to`: `Date` (required)
+- `domain`: `Char`
+- `foreign_currency`: `Boolean`
+- `fy_start_date`: `Date` (compute=_compute_fy_start_date)
+- `grouped_by`: `Selection` (required)
+- `hide_account_at_0`: `Boolean`
+- `only_one_unaffected_earnings_account`: `Boolean`
+- `partner_ids`: `Many2many`
+- `payable_accounts_only`: `Boolean`
+- `receivable_accounts_only`: `Boolean`
+- `show_cost_center`: `Boolean`
+- `target_move`: `Selection` (required)
+- `unaffected_earnings_account`: `Many2one` (compute=_compute_unaffected_earnings_account)
+
+### Non-persisted fields
+- _none_
+
 ## hr.employee
 
 - Module: `ipai`
@@ -1340,6 +2412,72 @@
 - `requires_project`: `Boolean` (compute=_compute_requires_project)
 - `travel_request_id`: `Many2one` (relation=ipai.travel.request)
 - `x_master_control_submitted`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## hr.timesheet.switch
+
+- Module: `project_timesheet_time_control`
+- Model type: `TransientModel`
+- Table: `hr_timesheet_switch`
+
+### Persisted fields
+- `analytic_line_id`: `Many2one`
+- `company_id`: `Many2one` (required)
+- `date_time`: `Datetime` (required)
+- `date_time_end`: `Datetime`
+- `name`: `Char` (required)
+- `project_id`: `Many2one` (compute=_compute_project_id)
+- `running_timer_duration`: `Float` (compute=_compute_running_timer_duration)
+- `running_timer_id`: `Many2one` (ondelete=cascade)
+- `running_timer_start`: `Datetime` (related=running_timer_id.date_time)
+- `task_id`: `Many2one` (compute=_compute_task_id, index)
+
+### Non-persisted fields
+- _none_
+
+## hr.timesheet.time_control.mixin
+
+- Module: `project_timesheet_time_control`
+- Model type: `AbstractModel`
+- Table: `hr_timesheet_time_control_mixin`
+
+### Persisted fields
+- `show_time_control`: `Selection` (compute=_compute_show_time_control)
+
+### Non-persisted fields
+- _none_
+
+## iap.account
+
+- Module: `iap_alternative_provider`
+- Model type: `Model`
+- Table: `iap_account`
+- _inherit: `iap.account`
+
+### Persisted fields
+- `provider`: `Selection` (required)
+
+### Non-persisted fields
+- _none_
+
+## import.xlsx.wizard
+
+- Module: `excel_import_export`
+- Model type: `TransientModel`
+- Table: `import_xlsx_wizard`
+
+### Persisted fields
+- `attachment_ids`: `Many2many` (relation=ir.attachment, required)
+- `datas`: `Binary` (related=template_id.datas)
+- `filename`: `Char` (relation=Import File Name)
+- `fname`: `Char` (related=template_id.fname)
+- `import_file`: `Binary`
+- `res_id`: `Integer`
+- `res_model`: `Char`
+- `state`: `Selection`
+- `template_id`: `Many2one` (relation=xlsx.template, required, ondelete=cascade)
 
 ### Non-persisted fields
 - _none_
@@ -1534,18 +2672,22 @@
 - Module: `ipai`
 - Model type: `Model`
 - Table: `ipai_bir_form_schedule`
-- _inherit: `mail.activity.mixin, mail.thread`
+- _inherit: `ipai.bir.form.schedule, mail.activity.mixin, mail.thread`
 
 ### Persisted fields
 - `approval_date`: `Date`
 - `bir_deadline`: `Date` (required)
+- `filing_date`: `Date`
 - `form_code`: `Char` (required)
+- `last_reminder_sent`: `Datetime`
 - `period`: `Char` (required)
 - `prep_date`: `Date`
+- `reminder_count`: `Integer`
 - `responsible_approval_id`: `Many2one` (relation=ipai.finance.person)
 - `responsible_prep_id`: `Many2one` (relation=ipai.finance.person)
 - `responsible_review_id`: `Many2one` (relation=ipai.finance.person)
 - `review_date`: `Date`
+- `status`: `Selection`
 
 ### Non-persisted fields
 - `step_ids`: `One2many` (relation=ipai.bir.process.step)
@@ -1873,19 +3015,6 @@
 - `reported_by`: `Many2one` (relation=res.users, required)
 - `severity`: `Selection` (required)
 - `status`: `Selection` (required)
-
-### Non-persisted fields
-- _none_
-
-## ipai.export.seed.wizard
-
-- Module: `ipai_ppm_a1`
-- Model type: `TransientModel`
-- Table: `ipai_export_seed_wizard`
-
-### Persisted fields
-- `export_path`: `Char`
-- `webhook_url`: `Char`
 
 ### Non-persisted fields
 - _none_
@@ -2271,38 +3400,6 @@
 - `column_ids`: `One2many` (relation=ipai.grid.column)
 - `filter_ids`: `One2many` (relation=ipai.grid.filter)
 
-## ipai.import.seed.wizard
-
-- Module: `ipai_ppm_a1`
-- Model type: `TransientModel`
-- Table: `ipai_import_seed_wizard`
-
-### Persisted fields
-- `mode`: `Selection` (required)
-- `seed_json`: `Text` (required)
-
-### Non-persisted fields
-- _none_
-
-## ipai.localization.overlay
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_localization_overlay`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `active`: `Boolean`
-- `applies_to_code`: `Char` (required)
-- `country`: `Selection` (required)
-- `patch_payload`: `Text` (required)
-- `patch_type`: `Selection` (required)
-- `sequence`: `Integer`
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
 ## ipai.month.end.closing
 
 - Module: `ipai_month_end`
@@ -2468,128 +3565,6 @@
 ### Non-persisted fields
 - _none_
 
-## ipai.ppm.task
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_task`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `task_code_unique`: `unique(code, template_id)` (Task code must be unique per template.)
-
-### Persisted fields
-- `category`: `Char`
-- `code`: `Char` (required)
-- `due_offset_days`: `Integer`
-- `evidence_required`: `Boolean`
-- `name`: `Char` (required)
-- `owner_role`: `Char`
-- `phase`: `Selection`
-- `prep_offset`: `Integer`
-- `requires_approval`: `Boolean`
-- `review_offset`: `Integer`
-- `sap_reference`: `Char`
-- `sequence`: `Integer`
-- `template_id`: `Many2one` (relation=ipai.ppm.template, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- `checklist_line_ids`: `One2many` (relation=ipai.ppm.task.checklist)
-
-## ipai.ppm.task.checklist
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_task_checklist`
-
-### Persisted fields
-- `evidence_type`: `Selection` (required)
-- `label`: `Char` (required)
-- `notes`: `Char`
-- `required`: `Boolean`
-- `sequence`: `Integer`
-- `task_id`: `Many2one` (relation=ipai.ppm.task, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.ppm.tasklist
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_tasklist`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `name`: `Char` (required)
-- `period_end`: `Date` (required)
-- `period_start`: `Date` (required)
-- `status`: `Selection`
-- `template_id`: `Many2one` (relation=ipai.ppm.template, required, index, ondelete=restrict)
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=restrict)
-
-### Non-persisted fields
-- `taskrun_ids`: `One2many` (relation=ipai.ppm.taskrun)
-
-## ipai.ppm.taskrun
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_taskrun`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `approver_id`: `Many2one` (relation=res.users, ondelete=set null)
-- `assignee_id`: `Many2one` (relation=res.users, ondelete=set null)
-- `done_at`: `Datetime`
-- `name`: `Char` (required)
-- `started_at`: `Datetime`
-- `status`: `Selection`
-- `task_id`: `Many2one` (relation=ipai.ppm.task, required, index, ondelete=restrict)
-- `tasklist_id`: `Many2one` (relation=ipai.ppm.tasklist, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.ppm.template
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_template`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `template_code_unique`: `unique(code, workstream_id)` (Template code must be unique per workstream.)
-
-### Persisted fields
-- `code`: `Char` (required)
-- `is_active`: `Boolean`
-- `name`: `Char` (required)
-- `period_type`: `Selection` (required)
-- `sequence`: `Integer`
-- `version`: `Char`
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- `task_ids`: `One2many` (relation=ipai.ppm.task)
-
-## ipai.repo.export_run
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_repo_export_run`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `export_path`: `Char`
-- `exported_at`: `Datetime`
-- `name`: `Char` (required)
-- `payload_json`: `Text`
-- `state`: `Selection`
-- `webhook_status`: `Char`
-- `webhook_url`: `Char`
-
-### Non-persisted fields
-- _none_
-
 ## ipai.share.token
 
 - Module: `ipai_platform_permissions`
@@ -2605,72 +3580,6 @@
 - `permission_level`: `Selection` (required)
 - `scope_ref`: `Reference`
 - `scope_type`: `Selection` (required)
-
-### Non-persisted fields
-- _none_
-
-## ipai.stc.check
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_stc_check`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `stc_check_code_unique`: `unique(code)` (Check code must be unique.)
-
-### Persisted fields
-- `auto_run`: `Boolean`
-- `category`: `Char`
-- `code`: `Char` (required)
-- `description`: `Text`
-- `is_active`: `Boolean`
-- `name`: `Char` (required)
-- `rule_json`: `Text`
-- `sap_reference`: `Char`
-- `sequence`: `Integer`
-- `severity`: `Selection`
-- `worklist_type_id`: `Many2one` (relation=ipai.stc.worklist_type, ondelete=set null)
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.stc.scenario
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_stc_scenario`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `stc_scenario_code_unique`: `unique(code)` (Scenario code must be unique.)
-
-### Persisted fields
-- `bir_forms`: `Char`
-- `check_ids`: `Many2many` (relation=ipai.stc.check)
-- `code`: `Char` (required)
-- `frequency`: `Selection`
-- `name`: `Char` (required)
-- `notes`: `Text`
-- `run_day_offset`: `Integer`
-- `sap_reference`: `Char`
-- `sequence`: `Integer`
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.stc.worklist_type
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_stc_worklist_type`
-- SQL constraints:
-  - `stc_worklist_code_unique`: `unique(code)` (Worklist type code must be unique.)
-
-### Persisted fields
-- `code`: `Char` (required)
-- `description`: `Text`
-- `name`: `Char` (required)
 
 ### Non-persisted fields
 - _none_
@@ -3135,29 +4044,182 @@
 ### Non-persisted fields
 - _none_
 
-## ipai.workstream
+## ir.actions.act_multi
 
-- Module: `ipai_ppm_a1`
+- Module: `web_ir_actions_act_multi`
 - Model type: `Model`
-- Table: `ipai_workstream`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `workstream_code_unique`: `unique(code)` (Workstream code must be unique.)
+- Table: `ir_actions`
+- _inherit: `ir.actions.actions`
+
+### Persisted fields
+- `type`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## ir.actions.act_window.message
+
+- Module: `web_ir_actions_act_window_message`
+- Model type: `Model`
+- Table: `ir_actions`
+- _inherit: `ir.actions.actions`
+
+### Persisted fields
+- `type`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## ir.actions.act_window.view
+
+- Module: `web_timeline`
+- Model type: `Model`
+- Table: `ir_actions_act_window_view`
+- _inherit: `ir.actions.act_window.view`
+
+### Persisted fields
+- `view_mode`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## ir.actions.actions
+
+- Module: `base_temporary_action`
+- Model type: `Model`
+- Table: `ir_actions_actions`
+- _inherit: `ir.actions.actions`
+
+### Persisted fields
+- `is_temporary`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## ir.actions.report
+
+- Module: `account_financial_report`
+- Model type: `Model`
+- Table: `ir_actions_report`
+- _inherit: `ir.actions.report`
+
+### Persisted fields
+- `report_type`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## ir.attachment
+
+- Module: `attachment_unindex_content`
+- Model type: `Model`
+- Table: `ir_attachment`
+- _inherit: `autovacuum.mixin, ir.attachment`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ir.config_parameter
+
+- Module: `web_m2x_options`
+- Model type: `Model`
+- Table: `ir_config_parameter`
+- _inherit: `ir.config_parameter`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ir.cron
+
+- Module: `base_cron_exclusion`
+- Model type: `Model`
+- Table: `ir_cron`
+- _inherit: `ir.cron`
+- Python constraints:
+  - `_check_auto_exclusion`
+
+### Persisted fields
+- `email_template_id`: `Many2one`
+- `mutually_exclusive_cron_ids`: `Many2many`
+
+### Non-persisted fields
+- _none_
+
+## ir.exports
+
+- Module: `jsonifier`
+- Model type: `Model`
+- Table: `ir_exports`
+- _inherit: `ir.exports`
+
+### Persisted fields
+- `global_resolver_id`: `Many2one`
+- `language_agnostic`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## ir.exports.line
+
+- Module: `jsonifier`
+- Model type: `Model`
+- Table: `ir_exports_line`
+- _inherit: `ir.exports.line`
+- Python constraints:
+  - `_check_function_resolver`
+  - `_check_target`
 
 ### Persisted fields
 - `active`: `Boolean`
-- `code`: `Selection` (required)
-- `description`: `Text`
-- `name`: `Char` (required)
-- `odoo_anchor`: `Char`
-- `sap_anchor`: `Char`
+- `instance_method_name`: `Char`
+- `lang_id`: `Many2one`
+- `resolver_id`: `Many2one`
+- `target`: `Char`
 
 ### Non-persisted fields
-- `check_ids`: `One2many` (relation=ipai.stc.check)
-- `overlay_ids`: `One2many` (relation=ipai.localization.overlay)
-- `scenario_ids`: `One2many` (relation=ipai.stc.scenario)
-- `tasklist_ids`: `One2many` (relation=ipai.ppm.tasklist)
-- `template_ids`: `One2many` (relation=ipai.ppm.template)
+- _none_
+
+## ir.exports.resolver
+
+- Module: `jsonifier`
+- Model type: `Model`
+- Table: `ir_exports_resolver`
+
+### Persisted fields
+- `name`: `Char`
+- `python_code`: `Text`
+- `type`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## ir.fields.converter
+
+- Module: `html_text`
+- Model type: `AbstractModel`
+- Table: `ir_fields_converter`
+- _inherit: `ir.fields.converter`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ir.filters
+
+- Module: `web_widget_dropdown_dynamic`
+- Model type: `Model`
+- Table: `ir_filters`
+- _inherit: `ir.filters`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
 
 ## ir.http
 
@@ -3167,6 +4229,230 @@
 - _inherit: `ir.http`
 
 ### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ir.model
+
+- Module: `base_force_record_noupdate`
+- Model type: `Model`
+- Table: `ir_model`
+- _inherit: `ir.model`
+- Python constraints:
+  - `check_name_search_domain`
+  - `update_search_wo_restart`
+
+### Persisted fields
+- `active_custom_tracking`: `Boolean`
+- `add_open_tab_field`: `Boolean`
+- `add_smart_search`: `Boolean`
+- `automatic_custom_tracking`: `Boolean` (compute=_compute_automatic_custom_tracking)
+- `automatic_custom_tracking_domain`: `Char` (compute=_compute_automatic_custom_tracking_domain)
+- `force_noupdate`: `Boolean` (relation=Force No-Update)
+- `name_search_domain`: `Char`
+- `name_search_ids`: `Many2many` (relation=ir.model.fields)
+- `restrict_update`: `Boolean` (relation=Update Restrict Model)
+- `rpc_config_edit`: `Text`
+- `smart_search_warning`: `Html` (compute=_compute_smart_search_warning)
+- `tracked_field_count`: `Integer` (compute=_compute_tracked_field_count)
+- `update_allowed_group_ids`: `Many2many` (relation=res.groups)
+- `use_smart_name_search`: `Boolean`
+
+### Non-persisted fields
+- `comodel_field_ids`: `One2many` (relation=ir.model.fields)
+- `m2x_comodels_option_ids`: `One2many` (relation=m2x.create.edit.option)
+- `m2x_option_ids`: `One2many` (relation=m2x.create.edit.option)
+
+## ir.model.access
+
+- Module: `base_model_restrict_update`
+- Model type: `Model`
+- Table: `ir_model_access`
+- _inherit: `ir.model.access`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ir.model.data
+
+- Module: `base_force_record_noupdate`
+- Model type: `Model`
+- Table: `ir_model_data`
+- _inherit: `ir.model.data`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ir.model.fields
+
+- Module: `database_cleanup`
+- Model type: `Model`
+- Table: `ir_model_fields`
+- _inherit: `ir.model.fields`
+
+### Persisted fields
+- `can_have_options`: `Boolean` (compute=_compute_can_have_options)
+- `comodel_id`: `Many2one` (relation=ir.model, compute=_compute_comodel_id, index)
+- `custom_tracking`: `Boolean` (compute=_compute_custom_tracking)
+- `native_tracking`: `Boolean` (compute=_compute_native_tracking)
+- `trackable`: `Boolean` (compute=_compute_trackable)
+- `tracking_domain`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## ir.model.index.size
+
+- Module: `database_size`
+- Model type: `Model`
+- Table: `ir_model_index_size`
+
+### Persisted fields
+- `ir_model_size_id`: `Many2one` (required, index, ondelete=cascade)
+- `name`: `Char` (required)
+- `size`: `Integer`
+
+### Non-persisted fields
+- _none_
+
+## ir.model.relation.size
+
+- Module: `database_size`
+- Model type: `Model`
+- Table: `ir_model_relation_size`
+
+### Persisted fields
+- `ir_model_size_id`: `Many2one` (required, index, ondelete=cascade)
+- `name`: `Char` (required)
+- `size`: `Integer`
+
+### Non-persisted fields
+- _none_
+
+## ir.model.size
+
+- Module: `database_size`
+- Model type: `Model`
+- Table: `ir_model_size`
+- SQL constraints:
+  - `uniq_model_measurement_date`: `unique(model, measurement_date)` (There is already a measurement for this model on the given date)
+
+### Persisted fields
+- `attachment_size`: `Integer`
+- `indexes_size`: `Integer` (compute=_compute_indexes_size)
+- `measurement_date`: `Date` (relation=Date of Measurement, required)
+- `model`: `Char` (index)
+- `model_name`: `Char` (compute=_compute_model_name)
+- `relations_size`: `Integer` (compute=_compute_relations_size)
+- `table_size`: `Integer`
+- `total_database_size`: `Integer` (compute=_compute_total_sizes)
+- `total_model_size`: `Integer` (compute=_compute_total_sizes)
+- `total_table_size`: `Integer`
+- `tuples`: `Integer`
+
+### Non-persisted fields
+- `ir_model_index_size_ids`: `One2many`
+- `ir_model_relation_size_ids`: `One2many`
+
+## ir.model.size.report
+
+- Module: `database_size`
+- Model type: `Model`
+- Table: `N/A`
+
+### Persisted fields
+- `attachment_size`: `Integer`
+- `diff_total_database_size`: `Integer` (relation=Change in Total Database Size)
+- `diff_total_model_size`: `Integer` (relation=Change in Total Model Size)
+- `historical_attachment_size`: `Integer`
+- `historical_indexes_size`: `Integer` (relation=Historical Index Size)
+- `historical_measurement_date`: `Date` (relation=Historical Date of Measurement)
+- `historical_relations_size`: `Integer` (relation=Historical Many2many Tables Size)
+- `historical_table_size`: `Integer` (relation=Historical Bare Table Size)
+- `historical_total_database_size`: `Integer`
+- `historical_total_model_size`: `Integer`
+- `historical_total_table_size`: `Integer`
+- `historical_tuples`: `Integer` (relation=Historical Estimated Rows)
+- `indexes_size`: `Integer` (relation=Index Size)
+- `measurement_date`: `Date` (relation=Date of Measurement)
+- `model`: `Char`
+- `model_name`: `Char`
+- `relations_size`: `Integer` (relation=Many2many Tables Size)
+- `table_size`: `Integer` (relation=Bare Table Size)
+- `total_database_size`: `Integer`
+- `total_model_size`: `Integer`
+- `total_table_size`: `Integer`
+- `tuples`: `Integer` (relation=Estimated Rows)
+
+### Non-persisted fields
+- _none_
+
+## ir.module.author
+
+- Module: `module_analysis`
+- Model type: `Model`
+- Table: `ir_module_author`
+- SQL constraints:
+  - `name_uniq`: `unique(name)` (The name of the modules author should be unique per database!)
+
+### Persisted fields
+- `installed_module_ids`: `Many2many`
+- `installed_module_qty`: `Integer` (compute=_compute_installed_module_qty)
+- `name`: `Char` (required)
+
+### Non-persisted fields
+- _none_
+
+## ir.module.module
+
+- Module: `module_analysis`
+- Model type: `Model`
+- Table: `ir_module_module`
+- _inherit: `ir.module.module`
+
+### Persisted fields
+- `author_ids`: `Many2many`
+- `css_code_qty`: `Integer`
+- `is_oca_module`: `Boolean` (compute=_compute_is_oca_module)
+- `is_odoo_module`: `Boolean` (compute=_compute_is_odoo_module)
+- `js_code_qty`: `Integer`
+- `module_type_id`: `Many2one`
+- `python_code_qty`: `Integer`
+- `scss_code_qty`: `Integer`
+- `xml_code_qty`: `Integer`
+
+### Non-persisted fields
+- _none_
+
+## ir.module.type
+
+- Module: `module_analysis`
+- Model type: `Model`
+- Table: `ir_module_type`
+
+### Persisted fields
+- `installed_module_qty`: `Integer` (compute=_compute_installed_module_qty)
+- `name`: `Char` (required)
+- `sequence`: `Integer`
+
+### Non-persisted fields
+- `installed_module_ids`: `One2many`
+
+## ir.module.type.rule
+
+- Module: `module_analysis`
+- Model type: `Model`
+- Table: `ir_module_type_rule`
+
+### Persisted fields
+- `module_domain`: `Char` (required)
+- `module_type_id`: `Many2one` (required)
+- `sequence`: `Integer`
 
 ### Non-persisted fields
 - _none_
@@ -3183,11 +4469,262 @@
 ### Non-persisted fields
 - _none_
 
+## ir.sequence
+
+- Module: `base_sequence_option`
+- Model type: `Model`
+- Table: `ir_sequence`
+- _inherit: `ir.sequence`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ir.sequence.option
+
+- Module: `base_sequence_option`
+- Model type: `Model`
+- Table: `ir_sequence_option`
+- _inherit: `ir.sequence.option`
+
+### Persisted fields
+- `company_id`: `Many2one` (required, index)
+- `model`: `Selection` (required, index)
+- `name`: `Char`
+- `use_sequence_option`: `Boolean`
+
+### Non-persisted fields
+- `option_ids`: `One2many`
+
+## ir.sequence.option.line
+
+- Module: `base_sequence_option`
+- Model type: `Model`
+- Table: `ir_sequence_option_line`
+
+### Persisted fields
+- `base_id`: `Many2one` (required, index, ondelete=cascade)
+- `company_id`: `Many2one` (related=base_id.company_id)
+- `filter_domain`: `Char`
+- `implementation`: `Selection` (related=sequence_id.implementation)
+- `model`: `Selection` (related=base_id.model)
+- `name`: `Char` (required)
+- `prefix`: `Char` (related=sequence_id.prefix)
+- `sequence_id`: `Many2one` (required)
+- `suffix`: `Char` (related=sequence_id.suffix)
+- `use_sequence_option`: `Boolean` (related=base_id.use_sequence_option)
+
+### Non-persisted fields
+- _none_
+
+## ir.ui.view
+
+- Module: `base_view_inheritance_extension`
+- Model type: `Model`
+- Table: `ir_ui_view`
+- _inherit: `ir.ui.view`
+
+### Persisted fields
+- `type`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## journal.ledger.report.wizard
+
+- Module: `account_financial_report`
+- Model type: `TransientModel`
+- Table: `journal_ledger_report_wizard`
+- _inherit: `account_financial_report_abstract_wizard`
+
+### Persisted fields
+- `date_from`: `Date` (required)
+- `date_range_id`: `Many2one`
+- `date_to`: `Date` (required)
+- `foreign_currency`: `Boolean`
+- `group_option`: `Selection` (required)
+- `journal_ids`: `Many2many`
+- `move_target`: `Selection` (required)
+- `sort_option`: `Selection` (required)
+- `with_account_name`: `Boolean`
+- `with_auto_sequence`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## m2x.create.edit.option
+
+- Module: `web_m2x_options_manager`
+- Model type: `Model`
+- Table: `m2x_create_edit_option`
+- SQL constraints:
+  - `field_uniqueness`: `unique(field_id)` (Options must be unique for each field!)
+- Python constraints:
+  - `_check_field_can_have_options`
+
+### Persisted fields
+- `comodel_id`: `Many2one` (relation=ir.model, related=field_id.comodel_id)
+- `comodel_name`: `Char` (related=field_id.relation)
+- `field_id`: `Many2one` (relation=ir.model.fields, required, index, ondelete=cascade)
+- `field_name`: `Char` (related=field_id.name)
+- `model_id`: `Many2one` (relation=ir.model, related=field_id.model_id)
+- `model_name`: `Char` (related=field_id.model)
+- `name`: `Char` (compute=_compute_name)
+- `option_create`: `Selection` (required)
+- `option_create_edit`: `Selection` (required)
+
+### Non-persisted fields
+- _none_
+
+## mail.message
+
+- Module: `autovacuum_message_attachment`
+- Model type: `Model`
+- Table: `mail_message`
+- _inherit: `mail.message, autovacuum.mixin`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## mail.thread
+
+- Module: `fetchmail_notify_error_to_sender`
+- Model type: `AbstractModel`
+- Table: `mail_thread`
+- _inherit: `mail.thread`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## mail.tracking.value
+
+- Module: `tracking_manager`
+- Model type: `Model`
+- Table: `mail_tracking_value`
+- _inherit: `mail.tracking.value`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
 ## master.control.mixin
 
 - Module: `ipai`
 - Model type: `AbstractModel`
 - Table: `master_control_mixin`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## mis.cash_flow
+
+- Module: `mis_builder_cash_flow`
+- Model type: `Model`
+- Table: `N/A`
+
+### Persisted fields
+- `account_id`: `Many2one` (index)
+- `account_type`: `Selection` (related=account_id.account_type)
+- `company_id`: `Many2one` (index)
+- `credit`: `Float`
+- `date`: `Date` (index)
+- `debit`: `Float`
+- `full_reconcile_id`: `Many2one` (relation=account.full.reconcile, index)
+- `line_type`: `Selection` (index)
+- `move_line_id`: `Many2one`
+- `name`: `Char`
+- `parent_state`: `Selection`
+- `partner_id`: `Many2one`
+- `reconciled`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## mis.cash_flow.forecast_line
+
+- Module: `mis_builder_cash_flow`
+- Model type: `Model`
+- Table: `mis_cash_flow_forecast_line`
+- Python constraints:
+  - `_check_company_id_account_id`
+
+### Persisted fields
+- `account_id`: `Many2one` (required)
+- `balance`: `Float` (required)
+- `company_id`: `Many2one` (relation=res.company, required, index)
+- `date`: `Date` (required, index)
+- `name`: `Char` (required)
+- `partner_id`: `Many2one`
+
+### Non-persisted fields
+- _none_
+
+## mis.report.instance
+
+- Module: `mis_template_financial_report`
+- Model type: `Model`
+- Table: `mis_report_instance`
+- _inherit: `mis.report.instance`
+
+### Persisted fields
+- `allow_horizontal`: `Boolean` (compute=_compute_allow_horizontal)
+- `horizontal`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## mis.report.kpi
+
+- Module: `mis_template_financial_report`
+- Model type: `Model`
+- Table: `mis_report_kpi`
+- _inherit: `mis.report.kpi`
+
+### Persisted fields
+- `split_after`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## open.items.report.wizard
+
+- Module: `account_financial_report`
+- Model type: `TransientModel`
+- Table: `open_items_report_wizard`
+- _inherit: `account_financial_report_abstract_wizard, open.items.report.wizard`
+
+### Persisted fields
+- `account_code_from`: `Many2one`
+- `account_code_to`: `Many2one`
+- `account_ids`: `Many2many` (required)
+- `date_at`: `Date` (required)
+- `date_from`: `Date`
+- `foreign_currency`: `Boolean`
+- `grouped_by`: `Selection`
+- `hide_account_at_0`: `Boolean`
+- `partner_ids`: `Many2many`
+- `payable_accounts_only`: `Boolean`
+- `receivable_accounts_only`: `Boolean`
+- `show_partner_details`: `Boolean`
+- `target_move`: `Selection` (required)
+
+### Non-persisted fields
+- _none_
+
+## outstanding.statement.wizard
+
+- Module: `partner_statement`
+- Model type: `TransientModel`
+- Table: `outstanding_statement_wizard`
+- _inherit: `statement.common.wizard`
 
 ### Persisted fields
 
@@ -3462,6 +4999,77 @@
 ### Non-persisted fields
 - _none_
 
+## product.product
+
+- Module: `sale_project_task_recurrency`
+- Model type: `Model`
+- Table: `product_product`
+- _inherit: `product.product`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## product.set.line
+
+- Module: `project_task_stock_product_set`
+- Model type: `Model`
+- Table: `product_set_line`
+- _inherit: `product.set.line`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## product.template
+
+- Module: `sale_project_copy_tasks`
+- Model type: `Model`
+- Table: `product_template`
+- _inherit: `product.template`
+
+### Persisted fields
+- `recurring_task`: `Boolean`
+- `service_tracking`: `Selection`
+- `task_force_month`: `Selection`
+- `task_force_month_quarter`: `Selection`
+- `task_force_month_semester`: `Selection`
+- `task_repeat_interval`: `Integer`
+- `task_repeat_number`: `Integer`
+- `task_repeat_type`: `Selection`
+- `task_repeat_unit`: `Selection`
+- `task_repeat_until`: `Date`
+- `task_start_date_method`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## project.assignment
+
+- Module: `project_role`
+- Model type: `Model`
+- Table: `project_assignment`
+- _inherit: `mail.thread`
+- SQL constraints:
+  - `company_role_user_uniq`: `EXCLUDE (    company_id WITH =, role_id WITH =, user_id WITH =) WHERE (    project_id IS NULL)` (User may be assigned per role only once within a company!)
+  - `nocompany_role_user_uniq`: `EXCLUDE (role_id WITH =, user_id WITH =) WHERE (    project_id IS NULL AND company_id IS NULL)` (User may be assigned per role only once!)
+  - `project_role_user_uniq`: `UNIQUE (project_id, role_id, user_id)` (User may be assigned per role only once within a project!)
+- Python constraints:
+  - `_check`
+
+### Persisted fields
+- `active`: `Boolean`
+- `company_id`: `Many2one` (ondelete=cascade)
+- `name`: `Char` (compute=_compute_name, index)
+- `project_id`: `Many2one` (ondelete=cascade)
+- `role_id`: `Many2one` (required, ondelete=restrict)
+- `user_id`: `Many2one` (required, ondelete=restrict)
+
+### Non-persisted fields
+- _none_
+
 ## project.milestone
 
 - Module: `ipai`
@@ -3479,7 +5087,9 @@
 - `baseline_deadline`: `Date`
 - `completed_task_count`: `Integer` (compute=_compute_task_count)
 - `completion_criteria`: `Text`
+- `dedication`: `Integer` (compute=_compute_dedication)
 - `deliverables`: `Text`
+- `execution`: `Integer` (compute=_compute_execution)
 - `gate_status`: `Selection`
 - `last_alert_sent`: `Date`
 - `milestone_type`: `Selection` (required)
@@ -3496,53 +5106,166 @@
 - Module: `ipai`
 - Model type: `Model`
 - Table: `project_project`
-- _inherit: `project.project`
+- _inherit: `hr.timesheet.time_control.mixin, project.project`
+- SQL constraints:
+  - `name_required`: `CHECK(name IS NOT NULL)` (Project name is required)
+  - `project_key_unique`: `UNIQUE(key)` (Project key must be unique)
+  - `sequence_code_unique`: `UNIQUE(sequence_code)` (Sequence code must be unique)
 
 ### Persisted fields
 - `actual_finish`: `Date`
 - `actual_start`: `Date`
 - `baseline_finish`: `Date`
 - `baseline_start`: `Date`
+- `child_ids_count`: `Integer` (compute=_compute_child_ids_count)
 - `clarity_id`: `Char` (required, index)
 - `critical_milestone_count`: `Integer` (compute=_compute_milestone_stats)
+- `department_id`: `Many2one`
+- `group_ids`: `Many2many` (relation=res.groups)
 - `health_status`: `Selection` (required)
+- `hr_category_ids`: `Many2many`
 - `im_code`: `Char` (index)
+- `inherit_assignments`: `Boolean`
 - `ipai_finance_enabled`: `Boolean`
 - `ipai_im_code`: `Selection` (index)
 - `ipai_is_im_project`: `Boolean` (index)
 - `ipai_root_project_id`: `Many2one` (relation=project.project, index, ondelete=set null)
 - `is_program`: `Boolean` (index)
+- `is_template`: `Boolean`
+- `key`: `Char` (index)
+- `limit_role_to_assignments`: `Boolean`
+- `location_dest_id`: `Many2one` (index)
+- `location_id`: `Many2one` (index)
 - `milestone_count`: `Integer` (compute=_compute_milestone_stats)
+- `name`: `Char`
 - `overall_progress`: `Float` (compute=_compute_overall_progress)
 - `overall_status`: `Selection` (compute=_compute_overall_status)
-- `parent_id`: `Many2one` (relation=project.project, index, ondelete=restrict)
+- `parent_id`: `Many2one` (index)
+- `parent_path`: `Char`
 - `phase_count`: `Integer` (compute=_compute_phase_stats)
+- `picking_type_id`: `Many2one` (index)
 - `portfolio_id`: `Many2one` (relation=project.category)
 - `ppm_program_ids`: `Many2many` (relation=ppm.program)
+- `pr_required_states`: `Many2many` (relation=project.task.type)
 - `program_code`: `Char` (index)
 - `program_type`: `Selection` (index)
+- `purchase_count`: `Integer` (compute=_compute_purchase_info)
+- `purchase_invoice_count`: `Integer` (compute=_compute_purchase_invoice_info)
+- `purchase_invoice_line_total`: `Float` (compute=_compute_purchase_invoice_info)
+- `purchase_line_total`: `Integer` (compute=_compute_purchase_info)
+- `sequence_code`: `Char`
+- `stage_last_update_date`: `Datetime`
+- `stock_analytic_date`: `Date`
+- `tag_ids`: `Many2many`
+- `task_key_sequence_id`: `Many2one` (ondelete=restrict)
+- `type_id`: `Many2one`
+- `type_ids`: `Many2many`
 - `variance_finish`: `Integer` (compute=_compute_variances)
 - `variance_start`: `Integer` (compute=_compute_variances)
 - `x_cycle_code`: `Char` (index)
 
 ### Non-persisted fields
-- `child_ids`: `One2many` (relation=project.project)
+- `assignment_ids`: `One2many`
+- `child_ids`: `One2many`
 - `im_count`: `Integer` (compute=_compute_im_rollups)
 - `im_task_count`: `Integer` (compute=_compute_im_rollups)
+- `show_key_warning`: `Boolean` (compute=_compute_show_key_warning)
+- `stakeholder_ids`: `One2many` (relation=project.stakeholder)
+- `version_ids`: `One2many`
+
+## project.role
+
+- Module: `project_role`
+- Model type: `Model`
+- Table: `project_role`
+- SQL constraints:
+  - `name_company_uniq`: `UNIQUE (name, company_id)` (Role with such name already exists in the company!)
+  - `name_nocompany_uniq`: `EXCLUDE (name WITH =) WHERE (    company_id IS NULL)` (Shared role with such name already exists!)
+- Python constraints:
+  - `_check_active`
+  - `_check_name`
+
+### Persisted fields
+- `active`: `Boolean`
+- `company_id`: `Many2one` (ondelete=cascade)
+- `complete_name`: `Char` (compute=_compute_complete_name)
+- `description`: `Html`
+- `name`: `Char` (required)
+- `parent_id`: `Many2one` (index, ondelete=cascade)
+- `parent_path`: `Char` (index)
+
+### Non-persisted fields
+- `child_ids`: `One2many`
+
+## project.stakeholder
+
+- Module: `project_stakeholder`
+- Model type: `Model`
+- Table: `project_stakeholder`
+
+### Persisted fields
+- `note`: `Text`
+- `partner_id`: `Many2one` (relation=res.partner, required, index, ondelete=cascade)
+- `project_id`: `Many2one` (relation=project.project, required, index, ondelete=cascade)
+- `role_id`: `Many2one` (relation=project.stakeholder.role, required, ondelete=restrict)
+
+### Non-persisted fields
+- _none_
+
+## project.stakeholder.role
+
+- Module: `project_stakeholder`
+- Model type: `Model`
+- Table: `project_stakeholder_role`
+
+### Persisted fields
+- `name`: `Char` (required)
+
+### Non-persisted fields
+- _none_
+
+## project.tags
+
+- Module: `project_tag_hierarchy`
+- Model type: `Model`
+- Table: `project_tags`
+- _inherit: `project.tags`
+- Python constraints:
+  - `_check_parent_id`
+
+### Persisted fields
+- `allowed_project_ids`: `Many2many`
+- `company_id`: `Many2one`
+- `parent_id`: `Many2one` (index, ondelete=cascade)
+- `parent_path`: `Char` (index)
+
+### Non-persisted fields
+- `child_ids`: `One2many`
 
 ## project.task
 
 - Module: `ipai`
 - Model type: `Model`
 - Table: `project_task`
-- _inherit: `project.task`
+- _inherit: `analytic.mixin, hr.timesheet.time_control.mixin, project.task`
+- SQL constraints:
+  - `project_task_unique_code`: `UNIQUE (company_id, code)` (The code must be unique!)
+  - `task_key_unique`: `UNIQUE(key)` (Task key must be unique!)
 - Python constraints:
+  - `_check_employee_category_project`
+  - `_check_employee_category_user`
   - `_check_phase_hierarchy`
+  - `_check_planned_dates`
+  - `_check_pr_uri_required`
+  - `_check_subtasks_done_before_closing`
 
 ### Persisted fields
 - `activity_type`: `Selection` (index)
 - `actual_cost`: `Float`
 - `actual_hours`: `Float` (compute=_compute_actual_hours)
+- `allow_moves_action_assign`: `Boolean` (compute=_compute_allow_moves_action_assign)
+- `allow_moves_action_confirm`: `Boolean` (compute=_compute_allow_moves_action_confirm)
+- `ancestor_id`: `Many2one` (compute=_compute_ancestor_id)
 - `approval_duration`: `Float`
 - `approver_id`: `Many2one` (relation=res.users)
 - `auto_sync`: `Boolean`
@@ -3557,9 +5280,15 @@
 - `child_task_count`: `Integer` (compute=_compute_child_task_count)
 - `closing_due_date`: `Date`
 - `cluster`: `Selection`
+- `code`: `Char` (required)
 - `cost_variance`: `Float` (compute=_compute_variances)
 - `critical_path`: `Boolean` (compute=_compute_critical_path, index)
+- `description_template_id`: `Many2one` (relation=project.task.description.template)
+- `domain_hr_category_ids`: `Binary` (compute=_compute_domain_hr_category_ids)
+- `domain_user_ids`: `Binary` (compute=_compute_domain_user_ids)
+- `done_stock_moves`: `Boolean` (related=stage_id.done_stock_moves)
 - `earned_value`: `Float` (compute=_compute_earned_value)
+- `employee_ids`: `Many2many` (compute=_compute_employee_ids)
 - `erp_ref`: `Char`
 - `fd_id`: `Many2one` (relation=res.users)
 - `finance_category`: `Selection`
@@ -3572,7 +5301,9 @@
 - `gate_approver_id`: `Many2one` (relation=res.users)
 - `gate_decision`: `Selection`
 - `gate_milestone_id`: `Many2one` (relation=project.milestone)
+- `group_id`: `Many2one`
 - `has_gate`: `Boolean`
+- `hr_category_ids`: `Many2many`
 - `ipai_compliance_step`: `Selection` (index)
 - `ipai_days_to_deadline`: `Integer` (compute=_compute_ipai_deadline_metrics)
 - `ipai_owner_code`: `Char` (index)
@@ -3582,9 +5313,13 @@
 - `ipai_template_id`: `Many2one` (relation=ipai.finance.task.template, index, ondelete=set null)
 - `is_finance_ppm`: `Boolean` (compute=_compute_is_finance_ppm)
 - `is_phase`: `Boolean` (index)
+- `key`: `Char` (index)
 - `lag_days`: `Integer`
 - `lead_days`: `Integer`
+- `location_dest_id`: `Many2one` (index)
+- `location_id`: `Many2one` (index)
 - `milestone_count`: `Integer` (compute=_compute_milestone_count)
+- `notes`: `Html`
 - `owner_code`: `Char`
 - `period_covered`: `Char` (index)
 - `phase_baseline_finish`: `Date`
@@ -3593,9 +5328,18 @@
 - `phase_status`: `Selection`
 - `phase_type`: `Selection`
 - `phase_variance_days`: `Integer` (compute=_compute_phase_variance)
+- `picking_type_id`: `Many2one` (index)
+- `planned_date_end`: `Datetime` (compute=_compute_planned_date_end)
+- `planned_date_start`: `Datetime` (compute=_compute_planned_date_start)
 - `planned_hours`: `Float`
 - `planned_value`: `Float`
+- `portal_url`: `Char` (compute=_compute_portal_url)
+- `portal_url_visible`: `Boolean` (compute=_compute_portal_url)
+- `pr_required_states`: `Many2many` (related=project_id.pr_required_states)
+- `pr_uri`: `Char`
 - `prep_duration`: `Float`
+- `priority`: `Selection`
+- `project_department_id`: `Many2one` (related=project_id.department_id)
 - `relative_due`: `Char`
 - `remaining_hours`: `Float`
 - `resource_allocation`: `Float`
@@ -3603,9 +5347,23 @@
 - `reviewer_id`: `Many2one` (relation=res.users)
 - `role_code`: `Char` (index)
 - `schedule_variance`: `Float` (compute=_compute_variances)
+- `scrap_count`: `Integer` (compute=_compute_scrap_move_count)
 - `sfm_id`: `Many2one` (relation=res.users)
+- `stage_id`: `Many2one`
+- `stock_analytic_account_id`: `Many2one`
+- `stock_analytic_date`: `Date`
+- `stock_analytic_distribution`: `Json`
+- `stock_moves_is_locked`: `Boolean`
+- `stock_state`: `Selection` (compute=_compute_stock_state)
+- `tag_ids`: `Many2many`
 - `target_date`: `Date` (index)
 - `total_float`: `Integer` (compute=_compute_float)
+- `type_id`: `Many2one`
+- `unreserve_visible`: `Boolean` (compute=_compute_unreserve_visible)
+- `url`: `Char` (compute=_compute_task_url)
+- `use_stock_moves`: `Boolean` (related=stage_id.use_stock_moves)
+- `user_ids`: `Many2many`
+- `version_id`: `Many2one`
 - `wbs_code`: `Char` (compute=_compute_wbs_code)
 - `x_cycle_key`: `Char` (index)
 - `x_external_key`: `Char` (index)
@@ -3615,7 +5373,9 @@
 - `x_task_template_code`: `Char` (index)
 
 ### Non-persisted fields
-- _none_
+- `move_ids`: `One2many`
+- `scrap_ids`: `One2many`
+- `stock_analytic_line_ids`: `One2many`
 
 ## project.task.checklist.item
 
@@ -3638,6 +5398,100 @@
 ### Non-persisted fields
 - _none_
 
+## project.task.description.template
+
+- Module: `project_task_description_template`
+- Model type: `Model`
+- Table: `project_task_description_template`
+
+### Persisted fields
+- `active`: `Boolean`
+- `company_id`: `Many2one` (relation=res.company)
+- `description`: `Html` (required)
+- `name`: `Char` (required)
+
+### Non-persisted fields
+- _none_
+
+## project.task.merge
+
+- Module: `project_merge`
+- Model type: `TransientModel`
+- Table: `project_task_merge`
+
+### Persisted fields
+- `create_new_task`: `Boolean`
+- `dst_project_id`: `Many2one` (relation=project.project)
+- `dst_task_id`: `Many2one` (relation=project.task)
+- `dst_task_name`: `Char`
+- `task_ids`: `Many2many` (relation=project.task, required)
+- `user_ids`: `Many2many` (relation=res.users)
+
+### Non-persisted fields
+- _none_
+
+## project.task.stock.product.set.wizard
+
+- Module: `project_task_stock_product_set`
+- Model type: `TransientModel`
+- Table: `project_task_stock_product_set_wizard`
+- _inherit: `product.set.wizard`
+
+### Persisted fields
+- `task_id`: `Many2one` (required, ondelete=cascade)
+
+### Non-persisted fields
+- _none_
+
+## project.task.type
+
+- Module: `project_task_default_stage`
+- Model type: `Model`
+- Table: `project_task_type`
+- _inherit: `project.task.type`
+
+### Persisted fields
+- `case_default`: `Boolean`
+- `done_stock_moves`: `Boolean`
+- `task_state`: `Selection`
+- `use_stock_moves`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## project.type
+
+- Module: `project_type`
+- Model type: `Model`
+- Table: `project_type`
+- Python constraints:
+  - `check_parent_id`
+
+### Persisted fields
+- `code`: `Char`
+- `complete_name`: `Char` (compute=_compute_complete_name)
+- `description`: `Text`
+- `name`: `Char` (required)
+- `parent_id`: `Many2one`
+- `project_ok`: `Boolean`
+- `task_ok`: `Boolean`
+
+### Non-persisted fields
+- `child_ids`: `One2many`
+
+## project.version
+
+- Module: `project_version`
+- Model type: `Model`
+- Table: `project_version`
+
+### Persisted fields
+- `name`: `Char` (required)
+- `project_id`: `Many2one` (required)
+
+### Non-persisted fields
+- _none_
+
 ## purchase.order
 
 - Module: `ipai`
@@ -3651,15 +5505,366 @@
 ### Non-persisted fields
 - _none_
 
+## quick.start.screen
+
+- Module: `web_quick_start_screen`
+- Model type: `Model`
+- Table: `quick_start_screen`
+
+### Persisted fields
+- `action_ids`: `Many2many`
+- `name`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## quick.start.screen.action
+
+- Module: `web_quick_start_screen`
+- Model type: `Model`
+- Table: `quick_start_screen_action`
+
+### Persisted fields
+- `action_ref_id`: `Reference` (required)
+- `active`: `Boolean`
+- `color`: `Integer`
+- `context`: `Char`
+- `description`: `Html`
+- `domain`: `Char`
+- `icon_name`: `Char`
+- `image`: `Image` (relation=Start screen icon)
+- `name`: `Char` (required)
+- `sequence`: `Integer`
+
+### Non-persisted fields
+- _none_
+
+## report.a_f_r.report_aged_partner_balance_xlsx
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_a_f_r_report_aged_partner_balance_xlsx`
+- _inherit: `report.account_financial_report.abstract_report_xlsx`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.a_f_r.report_general_ledger_xlsx
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_a_f_r_report_general_ledger_xlsx`
+- _inherit: `report.account_financial_report.abstract_report_xlsx`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.a_f_r.report_journal_ledger_xlsx
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_a_f_r_report_journal_ledger_xlsx`
+- _inherit: `report.account_financial_report.abstract_report_xlsx`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.a_f_r.report_open_items_xlsx
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_a_f_r_report_open_items_xlsx`
+- _inherit: `report.account_financial_report.abstract_report_xlsx`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.a_f_r.report_trial_balance_xlsx
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_a_f_r_report_trial_balance_xlsx`
+- _inherit: `report.account_financial_report.abstract_report_xlsx`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.a_f_r.report_vat_report_xlsx
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_a_f_r_report_vat_report_xlsx`
+- _inherit: `report.account_financial_report.abstract_report_xlsx`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.abstract_report
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_abstract_report`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.abstract_report_xlsx
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_abstract_report_xlsx`
+- _inherit: `report.report_xlsx.abstract`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.aged_partner_balance
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_aged_partner_balance`
+- _inherit: `report.account_financial_report.abstract_report`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.general_ledger
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_general_ledger`
+- _inherit: `report.account_financial_report.abstract_report`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.journal_ledger
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_journal_ledger`
+- _inherit: `report.account_financial_report.abstract_report`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.open_items
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_open_items`
+- _inherit: `report.account_financial_report.abstract_report, report.account_financial_report.open_items`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.trial_balance
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_trial_balance`
+- _inherit: `report.account_financial_report.abstract_report`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.account_financial_report.vat_report
+
+- Module: `account_financial_report`
+- Model type: `AbstractModel`
+- Table: `report_account_financial_report_vat_report`
+- _inherit: `report.account_financial_report.abstract_report`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.p_s.report_activity_statement_xlsx
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `report_p_s_report_activity_statement_xlsx`
+- _inherit: `report.report_xlsx.abstract`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.p_s.report_detailed_activity_statement_xlsx
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `report_p_s_report_detailed_activity_statement_xlsx`
+- _inherit: `report.p_s.report_activity_statement_xlsx`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.p_s.report_outstanding_statement_xlsx
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `report_p_s_report_outstanding_statement_xlsx`
+- _inherit: `report.report_xlsx.abstract`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.partner_statement.activity_statement
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `report_partner_statement_activity_statement`
+- _inherit: `statement.common`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.partner_statement.detailed_activity_statement
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `report_partner_statement_detailed_activity_statement`
+- _inherit: `report.partner_statement.activity_statement`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.partner_statement.outstanding_statement
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `report_partner_statement_outstanding_statement`
+- _inherit: `statement.common`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## report.project.task.user
+
+- Module: `project_task_ancestor`
+- Model type: `Model`
+- Table: `report_project_task_user`
+- _inherit: `report.project.task.user`
+
+### Persisted fields
+- `ancestor_id`: `Many2one`
+- `planned_date_end`: `Datetime`
+- `planned_date_start`: `Datetime`
+
+### Non-persisted fields
+- _none_
+
+## report.xlsx.wizard
+
+- Module: `excel_import_export`
+- Model type: `TransientModel`
+- Table: `report_xlsx_wizard`
+
+### Persisted fields
+- `domain`: `Char`
+- `res_model`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## res.company
+
+- Module: `account_reconcile_oca`
+- Model type: `Model`
+- Table: `res_company`
+- _inherit: `res.company`
+
+### Persisted fields
+- `account_auto_reconcile_queue`: `Boolean`
+- `color_button_bg`: `Char` (relation=Button Background Color)
+- `color_button_bg_hover`: `Char` (relation=Button Background Color Hover)
+- `color_button_text`: `Char` (relation=Button Text Color)
+- `color_link_text`: `Char` (relation=Link Text Color)
+- `color_link_text_hover`: `Char` (relation=Link Text Color Hover)
+- `color_navbar_bg`: `Char` (relation=Navbar Background Color)
+- `color_navbar_bg_hover`: `Char` (relation=Navbar Background Color Hover)
+- `color_navbar_text`: `Char` (relation=Navbar Text Color)
+- `color_submenu_text`: `Char` (relation=Submenu Text Color)
+- `company_colors`: `Serialized`
+- `favicon`: `Binary`
+- `project_inherit_assignments`: `Boolean`
+- `project_limit_role_to_assignments`: `Boolean`
+- `reconcile_aggregate`: `Selection`
+- `scss_modif_timestamp`: `Char` (relation=SCSS Modif. Timestamp)
+- `user_tech_id`: `Many2one`
+
+### Non-persisted fields
+- _none_
+
 ## res.config.settings
 
-- Module: `ipai`
+- Module: `account_financial_report`
 - Model type: `TransientModel`
 - Table: `res_config_settings`
 - _inherit: `res.config.settings`
 
 ### Persisted fields
+- `account_auto_reconcile_queue`: `Boolean` (related=company_id.account_auto_reconcile_queue)
+- `age_partner_config_id`: `Many2one` (relation=account.age.report.configuration)
+- `database_size_purge`: `Boolean`
+- `database_size_retention_daily`: `Integer`
+- `database_size_retention_monthly`: `Integer`
+- `default_aging_type`: `Selection` (required)
+- `default_filter_negative_balances`: `Boolean` (relation=Exclude Negative Balances)
+- `default_filter_partners_non_due`: `Boolean`
+- `default_show_aging_buckets`: `Boolean`
+- `excluded_models_from_readonly`: `Char` (relation=Excluded Models from Read-only)
+- `group_activity_statement`: `Boolean` (relation=Enable OCA Activity & Detailed Activity Statements)
+- `group_outstanding_statement`: `Boolean` (relation=Enable OCA Outstanding Statements)
 - `ipai_enable_finance_project_analytics`: `Boolean`
+- `project_display_name_pattern`: `Char`
+- `project_inherit_assignments`: `Boolean` (related=company_id.project_inherit_assignments)
+- `project_limit_role_to_assignments`: `Boolean` (related=company_id.project_limit_role_to_assignments)
+- `pwa_background_color`: `Char` (relation=Background Color)
+- `pwa_icon`: `Binary` (relation=Icon)
+- `pwa_short_name`: `Char` (relation=Web App Short Name)
+- `pwa_theme_color`: `Char` (relation=Theme Color)
+- `reconcile_aggregate`: `Selection` (related=company_id.reconcile_aggregate)
+- `session_auto_close_timeout`: `Integer`
 - `superset_auto_sync`: `Boolean`
 - `superset_connection_id`: `Many2one` (relation=superset.connection)
 - `superset_create_analytics_views`: `Boolean`
@@ -3671,7 +5876,7 @@
 
 ## res.partner
 
-- Module: `ipai`
+- Module: `account_move_base_import`
 - Model type: `Model`
 - Table: `res_partner`
 - _inherit: `res.partner`
@@ -3679,6 +5884,7 @@
   - `_check_tin_format`
 
 ### Persisted fields
+- `bank_statement_label`: `Char`
 - `bir_registered`: `Boolean`
 - `bir_registration_date`: `Date`
 - `srm_overall_score`: `Float` (related=srm_supplier_id.overall_score)
@@ -3689,11 +5895,28 @@
 - `tin_branch_code`: `Char`
 
 ### Non-persisted fields
+- `stakeholder_ids`: `One2many` (relation=project.stakeholder)
+- `time_window_ids`: `One2many`
+
+## res.remote
+
+- Module: `base_remote`
+- Model type: `Model`
+- Table: `res_remote`
+- SQL constraints:
+  - `name_unique`: `unique(name)` (Hostname must be unique)
+
+### Persisted fields
+- `in_network`: `Boolean` (required)
+- `ip`: `Char` (required)
+- `name`: `Char` (required, index)
+
+### Non-persisted fields
 - _none_
 
 ## res.users
 
-- Module: `ipai`
+- Module: `base_model_restrict_update`
 - Model type: `Model`
 - Table: `res_users`
 - _inherit: `res.users`
@@ -3702,9 +5925,50 @@
   - `x_employee_code_uniq`: `UNIQUE(x_employee_code)` (Employee code must be unique)
   - `x_employee_code_unique`: `unique(x_employee_code)` (Employee code must be unique when set!)
   - `x_employee_code_unique`: `unique(x_employee_code)` (Employee code must be unique when set!)
+- Python constraints:
+  - `_check_is_readonly_user`
 
 ### Persisted fields
+- `apps_menu_search_type`: `Selection` (required)
+- `apps_menu_theme`: `Selection` (required)
+- `chatter_position`: `Selection`
+- `hr_category_ids`: `Many2many` (compute=_compute_hr_category_ids)
+- `is_readonly_user`: `Boolean` (relation=Read-only User)
+- `is_redirect_home`: `Boolean` (compute=_compute_redirect_home)
+- `notify_danger_channel_name`: `Char` (compute=_compute_channel_names)
+- `notify_default_channel_name`: `Char` (compute=_compute_channel_names)
+- `notify_info_channel_name`: `Char` (compute=_compute_channel_names)
+- `notify_success_channel_name`: `Char` (compute=_compute_channel_names)
+- `notify_warning_channel_name`: `Char` (compute=_compute_channel_names)
+- `quick_start_screen_id`: `Many2one`
 - `x_employee_code`: `Char` (index)
+
+### Non-persisted fields
+- _none_
+
+## sale.order
+
+- Module: `base_transaction_id`
+- Model type: `Model`
+- Table: `sale_order`
+- _inherit: `sale.order`
+
+### Persisted fields
+- `has_project_service_tracking_lines`: `Boolean` (compute=_compute_has_project_service_tracking_lines)
+- `transaction_id`: `Char` (relation=Transaction ID)
+
+### Non-persisted fields
+- _none_
+
+## sale.order.line
+
+- Module: `sale_project_copy_tasks`
+- Model type: `Model`
+- Table: `sale_order_line`
+- _inherit: `sale.order.line`
+
+### Persisted fields
+- `is_project_service_tracking_line`: `Boolean` (compute=_compute_is_project_service_tracking_line)
 
 ### Non-persisted fields
 - _none_
@@ -3851,6 +6115,80 @@
 ### Non-persisted fields
 - `qualification_ids`: `One2many` (relation=srm.qualification)
 - `scorecard_ids`: `One2many` (relation=srm.scorecard)
+
+## statement.common
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `statement_common`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## statement.common.wizard
+
+- Module: `partner_statement`
+- Model type: `AbstractModel`
+- Table: `statement_common_wizard`
+
+### Persisted fields
+- `account_type`: `Selection`
+- `aging_type`: `Selection` (required)
+- `company_id`: `Many2one` (required)
+- `date_end`: `Date` (required)
+- `excluded_accounts_selector`: `Char`
+- `filter_negative_balances`: `Boolean` (relation=Exclude Negative Balances)
+- `filter_partners_non_due`: `Boolean`
+- `name`: `Char`
+- `number_partner_ids`: `Integer`
+- `show_aging_buckets`: `Boolean`
+- `show_only_overdue`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## stock.move
+
+- Module: `project_task_stock`
+- Model type: `Model`
+- Table: `stock_move`
+- _inherit: `stock.move`
+
+### Persisted fields
+- `raw_material_task_id`: `Many2one`
+- `show_cancel_button_in_task`: `Boolean` (compute=_compute_show_cancel_button_in_task)
+- `task_id`: `Many2one`
+
+### Non-persisted fields
+- `analytic_line_ids`: `One2many`
+
+## stock.move.line
+
+- Module: `project_task_stock`
+- Model type: `Model`
+- Table: `stock_move_line`
+- _inherit: `stock.move.line`
+
+### Persisted fields
+- `task_id`: `Many2one` (compute=_compute_task_id)
+
+### Non-persisted fields
+- _none_
+
+## stock.scrap
+
+- Module: `project_task_stock`
+- Model type: `Model`
+- Table: `stock_scrap`
+- _inherit: `stock.scrap`
+
+### Persisted fields
+- `task_id`: `Many2one`
+
+### Non-persisted fields
+- _none_
 
 ## superset.analytics.view
 
@@ -3999,6 +6337,478 @@
 - `name`: `Char`
 - `sync_to_superset`: `Boolean`
 - `technical_name`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## test.partner.time.window
+
+- Module: `test_base_time_window`
+- Model type: `Model`
+- Table: `test_partner_time_window`
+- _inherit: `time.window.mixin`
+- Python constraints:
+  - `check_window_no_overlaps`
+
+### Persisted fields
+- `partner_id`: `Many2one` (relation=res.partner, required, index, ondelete=cascade)
+
+### Non-persisted fields
+- _none_
+
+## test.time.window.model
+
+- Module: `base_time_window`
+- Model type: `Model`
+- Table: `test_time_window_model`
+- _inherit: `time.window.mixin`
+
+### Persisted fields
+- `partner_id`: `Many2one` (relation=res.partner, required, index, ondelete=cascade)
+
+### Non-persisted fields
+- _none_
+
+## time.weekday
+
+- Module: `base_time_window`
+- Model type: `Model`
+- Table: `time_weekday`
+- SQL constraints:
+  - `name_uniq`: `UNIQUE(name)` (Name must be unique)
+
+### Persisted fields
+- `name`: `Selection` (required)
+
+### Non-persisted fields
+- _none_
+
+## time.window.mixin
+
+- Module: `base_time_window`
+- Model type: `AbstractModel`
+- Table: `time_window_mixin`
+- Python constraints:
+  - `_check_window_under_twenty_four_hours`
+  - `check_window_no_overlaps`
+
+### Persisted fields
+- `time_window_end`: `Float` (relation=To, required)
+- `time_window_start`: `Float` (relation=From, required)
+- `time_window_weekday_ids`: `Many2many` (required)
+
+### Non-persisted fields
+- _none_
+
+## timesheets.analysis.report
+
+- Module: `project_task_ancestor`
+- Model type: `Model`
+- Table: `timesheets_analysis_report`
+- _inherit: `timesheets.analysis.report`
+
+### Persisted fields
+- `ancestor_task_id`: `Many2one`
+
+### Non-persisted fields
+- _none_
+
+## trgm.index
+
+- Module: `base_search_fuzzy`
+- Model type: `Model`
+- Table: `trgm_index`
+
+### Persisted fields
+- `field_id`: `Many2one` (required, ondelete=set default)
+- `index_name`: `Char`
+- `index_type`: `Selection` (required)
+
+### Non-persisted fields
+- _none_
+
+## trial.balance.report.wizard
+
+- Module: `account_financial_report`
+- Model type: `TransientModel`
+- Table: `trial_balance_report_wizard`
+- _inherit: `account_financial_report_abstract_wizard`
+- Python constraints:
+  - `_check_company_id_date_range_id`
+  - `_check_show_hierarchy_level`
+
+### Persisted fields
+- `account_code_from`: `Many2one`
+- `account_code_to`: `Many2one`
+- `account_ids`: `Many2many`
+- `date_from`: `Date` (required)
+- `date_range_id`: `Many2one`
+- `date_to`: `Date` (required)
+- `foreign_currency`: `Boolean`
+- `fy_start_date`: `Date` (compute=_compute_fy_start_date)
+- `grouped_by`: `Selection`
+- `hide_account_at_0`: `Boolean`
+- `hide_parent_hierarchy_level`: `Boolean` (relation=Do not display parent levels)
+- `journal_ids`: `Many2many`
+- `limit_hierarchy_level`: `Boolean` (relation=Limit hierarchy levels)
+- `only_one_unaffected_earnings_account`: `Boolean`
+- `partner_ids`: `Many2many`
+- `payable_accounts_only`: `Boolean`
+- `receivable_accounts_only`: `Boolean`
+- `show_hierarchy`: `Boolean`
+- `show_hierarchy_level`: `Integer` (relation=Hierarchy Levels to display)
+- `show_partner_details`: `Boolean`
+- `target_move`: `Selection` (required)
+- `unaffected_earnings_account`: `Many2one` (compute=_compute_unaffected_earnings_account)
+
+### Non-persisted fields
+- _none_
+
+## upgrade.analysis
+
+- Module: `upgrade_analysis`
+- Model type: `Model`
+- Table: `upgrade_analysis`
+
+### Persisted fields
+- `analysis_date`: `Datetime`
+- `config_id`: `Many2one` (required)
+- `log`: `Text`
+- `state`: `Selection`
+- `upgrade_path`: `Char` (compute=_compute_upgrade_path)
+- `write_files`: `Boolean`
+
+### Non-persisted fields
+- _none_
+
+## upgrade.attribute
+
+- Module: `upgrade_analysis`
+- Model type: `Model`
+- Table: `upgrade_attribute`
+
+### Persisted fields
+- `name`: `Char`
+- `record_id`: `Many2one` (index, ondelete=CASCADE)
+- `value`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## upgrade.comparison.config
+
+- Module: `upgrade_analysis`
+- Model type: `Model`
+- Table: `upgrade_comparison_config`
+
+### Persisted fields
+- `analysis_qty`: `Integer` (compute=_compute_analysis_qty)
+- `database`: `Char` (required)
+- `name`: `Char`
+- `password`: `Char` (required)
+- `port`: `Integer` (required)
+- `server`: `Char` (required)
+- `username`: `Char` (required)
+- `version`: `Char`
+
+### Non-persisted fields
+- `analysis_ids`: `One2many`
+
+## upgrade.generate.record.wizard
+
+- Module: `upgrade_analysis`
+- Model type: `TransientModel`
+- Table: `upgrade_generate_record_wizard`
+
+### Persisted fields
+- `state`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## upgrade.install.wizard
+
+- Module: `upgrade_analysis`
+- Model type: `TransientModel`
+- Table: `upgrade_install_wizard`
+
+### Persisted fields
+- `module_ids`: `Many2many`
+- `module_qty`: `Integer` (compute=_compute_module_qty)
+- `state`: `Selection`
+
+### Non-persisted fields
+- _none_
+
+## upgrade.record
+
+- Module: `upgrade_analysis`
+- Model type: `Model`
+- Table: `upgrade_record`
+
+### Persisted fields
+- `definition`: `Char`
+- `domain`: `Char`
+- `field`: `Char`
+- `mode`: `Selection`
+- `model`: `Char`
+- `model_original_module`: `Char` (compute=_compute_model_original_module)
+- `model_type`: `Char` (compute=_compute_model_type)
+- `module`: `Char`
+- `name`: `Char`
+- `noupdate`: `Boolean`
+- `prefix`: `Char` (compute=_compute_prefix_and_suffix)
+- `suffix`: `Char` (compute=_compute_prefix_and_suffix)
+- `type`: `Selection`
+
+### Non-persisted fields
+- `attribute_ids`: `One2many`
+
+## vacuum.rule
+
+- Module: `autovacuum_message_attachment`
+- Model type: `Model`
+- Table: `vacuum_rule`
+- Python constraints:
+  - `_check_inheriting_model`
+  - `retention_time_not_null`
+
+### Persisted fields
+- `active`: `Boolean`
+- `company_id`: `Many2one` (relation=res.company)
+- `description`: `Text`
+- `empty_model`: `Boolean`
+- `empty_subtype`: `Boolean`
+- `filename_pattern`: `Char`
+- `inheriting_model`: `Char`
+- `message_subtype_ids`: `Many2many` (relation=mail.message.subtype)
+- `message_type`: `Selection`
+- `model`: `Char` (compute=_compute_model_id)
+- `model_filter_domain`: `Text`
+- `model_id`: `Many2one` (relation=ir.model, compute=_compute_model_id)
+- `model_ids`: `Many2many` (relation=ir.model)
+- `name`: `Char` (required)
+- `retention_time`: `Integer` (required)
+- `ttype`: `Selection` (required)
+
+### Non-persisted fields
+- _none_
+
+## vat.report.wizard
+
+- Module: `account_financial_report`
+- Model type: `TransientModel`
+- Table: `vat_report_wizard`
+- _inherit: `account_financial_report_abstract_wizard`
+- Python constraints:
+  - `_check_company_id_date_range_id`
+
+### Persisted fields
+- `based_on`: `Selection` (required)
+- `date_from`: `Date` (relation=Start Date, required)
+- `date_range_id`: `Many2one`
+- `date_to`: `Date` (relation=End Date, required)
+- `target_move`: `Selection` (required)
+- `tax_detail`: `Boolean` (relation=Detail Taxes)
+
+### Non-persisted fields
+- _none_
+
+## web.editor.class
+
+- Module: `web_editor_class_selector`
+- Model type: `Model`
+- Table: `web_editor_class`
+- SQL constraints:
+  - `class_name_uniq`: `unique(class_name)` (Class name must be unique)
+
+### Persisted fields
+- `active`: `Boolean`
+- `class_name`: `Char` (required)
+- `name`: `Char` (required)
+- `sequence`: `Integer`
+
+### Non-persisted fields
+- _none_
+
+## web.environment.ribbon.backend
+
+- Module: `web_environment_ribbon`
+- Model type: `AbstractModel`
+- Table: `web_environment_ribbon_backend`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## web.form.banner.rule
+
+- Module: `web_form_banner`
+- Model type: `Model`
+- Table: `web_form_banner_rule`
+- Python constraints:
+  - `_check_target_xpath`
+
+### Persisted fields
+- `active`: `Boolean`
+- `message`: `Text`
+- `message_is_html`: `Boolean` (relation=HTML)
+- `message_value_code`: `Text`
+- `model_id`: `Many2one` (relation=ir.model, required, ondelete=cascade)
+- `model_name`: `Char` (related=model_id.model)
+- `name`: `Char` (required)
+- `position`: `Selection` (required)
+- `sequence`: `Integer`
+- `severity`: `Selection` (required)
+- `target_xpath`: `Char` (relation=Target XPath)
+- `trigger_field_ids`: `Many2many` (relation=ir.model.fields)
+- `view_ids`: `Many2many` (relation=ir.ui.view)
+
+### Non-persisted fields
+- _none_
+
+## wizard.open.tax.balances
+
+- Module: `account_tax_balance`
+- Model type: `TransientModel`
+- Table: `wizard_open_tax_balances`
+
+### Persisted fields
+- `company_ids`: `Many2many` (required)
+- `date_range_id`: `Many2one` (relation=date.range)
+- `from_date`: `Date` (compute=_compute_date_range, required)
+- `target_move`: `Selection` (required)
+- `to_date`: `Date` (compute=_compute_date_range, required)
+
+### Non-persisted fields
+- _none_
+
+## xlsx.export
+
+- Module: `excel_import_export`
+- Model type: `AbstractModel`
+- Table: `xlsx_export`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## xlsx.import
+
+- Module: `excel_import_export`
+- Model type: `AbstractModel`
+- Table: `xlsx_import`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## xlsx.report
+
+- Module: `excel_import_export`
+- Model type: `AbstractModel`
+- Table: `xlsx_report`
+
+### Persisted fields
+- `choose_template`: `Boolean`
+- `data`: `Binary`
+- `name`: `Char`
+- `state`: `Selection`
+- `template_id`: `Many2one` (relation=xlsx.template, required, ondelete=cascade)
+
+### Non-persisted fields
+- _none_
+
+## xlsx.styles
+
+- Module: `excel_import_export`
+- Model type: `AbstractModel`
+- Table: `xlsx_styles`
+
+### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## xlsx.template
+
+- Module: `excel_import_export`
+- Model type: `Model`
+- Table: `xlsx_template`
+- Python constraints:
+  - `_check_action_model`
+
+### Persisted fields
+- `csv_delimiter`: `Char` (required)
+- `csv_extension`: `Char` (required)
+- `csv_quote`: `Boolean`
+- `datas`: `Binary`
+- `description`: `Char`
+- `export_action_id`: `Many2one` (ondelete=set null)
+- `fname`: `Char`
+- `gname`: `Char`
+- `import_action_id`: `Many2one` (ondelete=set null)
+- `input_instruction`: `Text`
+- `instruction`: `Text` (compute=_compute_output_instruction)
+- `name`: `Char` (required)
+- `post_import_hook`: `Char`
+- `redirect_action`: `Many2one`
+- `report_action_id`: `Many2one`
+- `report_menu_id`: `Many2one`
+- `res_model`: `Char`
+- `result_field`: `Char` (compute=_compute_result_field)
+- `result_model_id`: `Many2one`
+- `show_instruction`: `Boolean`
+- `to_csv`: `Boolean`
+- `use_report_wizard`: `Boolean`
+
+### Non-persisted fields
+- `export_ids`: `One2many`
+- `import_ids`: `One2many`
+
+## xlsx.template.export
+
+- Module: `excel_import_export`
+- Model type: `Model`
+- Table: `xlsx_template_export`
+
+### Persisted fields
+- `excel_cell`: `Char`
+- `field_cond`: `Char`
+- `field_name`: `Char`
+- `is_cont`: `Boolean`
+- `is_extend`: `Boolean`
+- `is_sum`: `Boolean`
+- `row_field`: `Char`
+- `section_type`: `Selection` (required)
+- `sequence`: `Integer`
+- `sheet`: `Char`
+- `style`: `Char`
+- `style_cond`: `Char`
+- `template_id`: `Many2one` (index, ondelete=cascade)
+
+### Non-persisted fields
+- _none_
+
+## xlsx.template.import
+
+- Module: `excel_import_export`
+- Model type: `Model`
+- Table: `xlsx_template_import`
+
+### Persisted fields
+- `excel_cell`: `Char`
+- `field_cond`: `Char`
+- `field_name`: `Char`
+- `no_delete`: `Boolean`
+- `row_field`: `Char`
+- `section_type`: `Selection` (required)
+- `sequence`: `Integer`
+- `sheet`: `Char`
+- `template_id`: `Many2one` (index, ondelete=cascade)
 
 ### Non-persisted fields
 - _none_

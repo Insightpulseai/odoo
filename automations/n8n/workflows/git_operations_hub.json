@@ -1,0 +1,366 @@
+{
+  "name": "Git Operations Hub",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "git-ops",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-node",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "git-ops"
+    },
+    {
+      "parameters": {},
+      "id": "manual-trigger",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [240, 480]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "op",
+              "name": "operation",
+              "value": "list-commits",
+              "type": "string"
+            },
+            {
+              "id": "owner",
+              "name": "owner",
+              "value": "jgtolentino",
+              "type": "string"
+            },
+            {
+              "id": "repo",
+              "name": "repo",
+              "value": "odoo-ce",
+              "type": "string"
+            },
+            {
+              "id": "branch",
+              "name": "branch",
+              "value": "main",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "test-data",
+      "name": "Test Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [440, 480]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "commits",
+              "leftValue": "={{ $json.operation }}",
+              "rightValue": "list-commits",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-commits",
+      "name": "If Commits",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [640, 140]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "branches",
+              "leftValue": "={{ $json.operation }}",
+              "rightValue": "list-branches",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-branches",
+      "name": "If Branches",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [640, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "pulls",
+              "leftValue": "={{ $json.operation }}",
+              "rightValue": "list-pulls",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-pulls",
+      "name": "If PRs",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [640, 460]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo }}/commits?sha={{ $json.branch || 'main' }}&per_page=10",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "get-commits",
+      "name": "Get Commits",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 140],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-pat",
+          "name": "GitHub PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo }}/branches",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "get-branches",
+      "name": "Get Branches",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-pat",
+          "name": "GitHub PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo }}/pulls?state=open",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "get-pulls",
+      "name": "Get PRs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 460],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-pat",
+          "name": "GitHub PAT"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.all()[0].json;\nlet result = { success: true, data: null, message: '', timestamp: new Date().toISOString() };\n\nif (Array.isArray(input)) {\n  if (input[0]?.sha && input[0]?.commit) {\n    result.message = 'Commits retrieved';\n    result.data = input.slice(0, 10).map(c => ({\n      sha: c.sha.substring(0, 7),\n      message: c.commit?.message?.split('\\n')[0],\n      author: c.commit?.author?.name,\n      date: c.commit?.author?.date\n    }));\n  } else if (input[0]?.name && input[0]?.commit) {\n    result.message = 'Branches retrieved';\n    result.data = input.map(b => ({ \n      name: b.name,\n      protected: b.protected,\n      sha: b.commit?.sha?.substring(0, 7)\n    }));\n  } else if (input[0]?.number && input[0]?.title) {\n    result.message = 'Pull requests retrieved';\n    result.data = input.map(pr => ({ \n      number: pr.number, \n      title: pr.title, \n      user: pr.user?.login,\n      state: pr.state,\n      url: pr.html_url\n    }));\n  }\n} else if (input.number && input.html_url) {\n  result.message = 'Issue created';\n  result.data = { number: input.number, url: input.html_url, title: input.title };\n} else if (input.message || input.error) {\n  result.success = false;\n  result.message = input.message || input.error || 'Operation failed';\n} else {\n  result.message = 'Operation completed';\n  result.data = input;\n}\n\nreturn result;"
+      },
+      "id": "format-result",
+      "name": "Format Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1360, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If Commits",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If Branches",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If PRs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Test Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Test Data": {
+      "main": [
+        [
+          {
+            "node": "If Commits",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If Branches",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If PRs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Commits": {
+      "main": [
+        [
+          {
+            "node": "Get Commits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Branches": {
+      "main": [
+        [
+          {
+            "node": "Get Branches",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If PRs": {
+      "main": [
+        [
+          {
+            "node": "Get PRs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Commits": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Branches": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get PRs": {
+      "main": [
+        [
+          {
+            "node": "Format Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Result": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}
