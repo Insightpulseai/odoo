@@ -14,7 +14,6 @@
   - `a1_template_checklist`
   - `a1_template_step`
   - `a1_workstream`
-  - `account_move`
   - `advisor_category`
   - `advisor_playbook`
   - `advisor_recommendation`
@@ -88,9 +87,6 @@
   - `project_task`
   - `project_task_checklist_item`
   - `purchase_order`
-  - `res_config_settings`
-  - `res_partner`
-  - `res_users`
   - `srm_kpi_category`
   - `srm_qualification`
   - `srm_qualification_checklist`
@@ -98,19 +94,16 @@
   - `srm_scorecard_line`
   - `srm_supplier`
 - Extended tables:
-  - `account_move`: bir_2307_date, bir_2307_generated, ewt_amount
   - `close_task`: a1_task_id, approval_deadline, approval_done_by, approval_done_date, approve_done_date, approve_due_date, approve_notes, approve_user_id, approver_id, attachment_ids, category_id, checklist_done_pct, checklist_ids, checklist_progress, company_id, cycle_id, days_overdue, description, exception_ids, external_key, gl_entry_count, gl_entry_ids, has_exceptions, has_open_exceptions, is_overdue, name, notes, prep_deadline, prep_done_by, prep_done_date, prep_due_date, prep_notes, prep_user_id, preparer_id, review_deadline, review_done_by, review_done_date, review_due_date, review_notes, review_result, review_user_id, reviewer_id, sequence, state, template_id
   - `hr_employee`: x_master_control_offboarded, x_master_control_onboarded
   - `hr_expense`: project_id, requires_project, travel_request_id, x_master_control_submitted
+  - `ipai_bir_form_schedule`: approval_date, bir_deadline, filing_date, form_code, last_reminder_sent, period, prep_date, reminder_count, responsible_approval_id, responsible_prep_id, responsible_review_id, review_date, status, step_ids
   - `ipai_workspace`: account_manager_id, active, brand_name, campaign_type, channel_mix, child_ids, client_id, closing_stage, code, color, company_id, date_end, date_start, engagement_count, entity_code, fiscal_period, industry, invoice_count, is_critical, link_ids, name, parent_id, planned_hours, progress, project_count, remaining_hours, sequence, stage, workspace_type
-  - `project_milestone`: alert_days_before, approval_date, approval_required, approver_id, baseline_deadline, completed_task_count, completion_criteria, deliverables, gate_status, last_alert_sent, milestone_type, risk_level, risk_notes, task_count, task_ids, variance_days
-  - `project_project`: actual_finish, actual_start, baseline_finish, baseline_start, child_ids, clarity_id, critical_milestone_count, health_status, im_code, im_count, im_task_count, ipai_finance_enabled, ipai_im_code, ipai_is_im_project, ipai_root_project_id, is_program, milestone_count, overall_progress, overall_status, parent_id, phase_count, portfolio_id, ppm_program_ids, program_code, program_type, variance_finish, variance_start, x_cycle_code
-  - `project_task`: activity_type, actual_cost, actual_hours, approval_duration, approver_id, auto_sync, bir_approval_due_date, bir_deadline, bir_form, bir_payment_due_date, bir_period_label, bir_prep_due_date, bir_related, bir_schedule_id, child_task_count, closing_due_date, cluster, cost_variance, critical_path, earned_value, erp_ref, fd_id, finance_category, finance_code, finance_deadline_type, finance_logframe_id, finance_person_id, finance_supervisor_id, free_float, gate_approver_id, gate_decision, gate_milestone_id, has_gate, ipai_compliance_step, ipai_days_to_deadline, ipai_owner_code, ipai_owner_role, ipai_status_bucket, ipai_task_category, ipai_template_id, is_finance_ppm, is_phase, lag_days, lead_days, milestone_count, owner_code, period_covered, phase_baseline_finish, phase_baseline_start, phase_progress, phase_status, phase_type, phase_variance_days, planned_hours, planned_value, prep_duration, relative_due, remaining_hours, resource_allocation, review_duration, reviewer_id, role_code, schedule_variance, sfm_id, target_date, total_float, wbs_code, x_cycle_key, x_external_key, x_obsolete, x_seed_hash, x_step_code, x_task_template_code
+  - `project_milestone`: alert_days_before, approval_date, approval_required, approver_id, baseline_deadline, completed_task_count, completion_criteria, dedication, deliverables, execution, gate_status, last_alert_sent, milestone_type, risk_level, risk_notes, task_count, task_ids, variance_days
+  - `project_project`: actual_finish, actual_start, assignment_ids, baseline_finish, baseline_start, child_ids, child_ids_count, clarity_id, critical_milestone_count, department_id, group_ids, health_status, hr_category_ids, im_code, im_count, im_task_count, inherit_assignments, ipai_finance_enabled, ipai_im_code, ipai_is_im_project, ipai_root_project_id, is_program, is_template, key, limit_role_to_assignments, location_dest_id, location_id, milestone_count, name, overall_progress, overall_status, parent_id, parent_path, phase_count, picking_type_id, portfolio_id, ppm_program_ids, pr_required_states, program_code, program_type, purchase_count, purchase_invoice_count, purchase_invoice_line_total, purchase_line_total, sequence_code, show_key_warning, stage_last_update_date, stakeholder_ids, stock_analytic_date, tag_ids, task_key_sequence_id, type_id, type_ids, variance_finish, variance_start, version_ids, x_cycle_code
+  - `project_task`: activity_type, actual_cost, actual_hours, allow_moves_action_assign, allow_moves_action_confirm, ancestor_id, approval_duration, approver_id, auto_sync, bir_approval_due_date, bir_deadline, bir_form, bir_payment_due_date, bir_period_label, bir_prep_due_date, bir_related, bir_schedule_id, child_task_count, closing_due_date, cluster, code, cost_variance, critical_path, description_template_id, domain_hr_category_ids, domain_user_ids, done_stock_moves, earned_value, employee_ids, erp_ref, fd_id, finance_category, finance_code, finance_deadline_type, finance_logframe_id, finance_person_id, finance_supervisor_id, free_float, gate_approver_id, gate_decision, gate_milestone_id, group_id, has_gate, hr_category_ids, ipai_compliance_step, ipai_days_to_deadline, ipai_owner_code, ipai_owner_role, ipai_status_bucket, ipai_task_category, ipai_template_id, is_finance_ppm, is_phase, key, lag_days, lead_days, location_dest_id, location_id, milestone_count, move_ids, notes, owner_code, period_covered, phase_baseline_finish, phase_baseline_start, phase_progress, phase_status, phase_type, phase_variance_days, picking_type_id, planned_date_end, planned_date_start, planned_hours, planned_value, portal_url, portal_url_visible, pr_required_states, pr_uri, prep_duration, priority, project_department_id, relative_due, remaining_hours, resource_allocation, review_duration, reviewer_id, role_code, schedule_variance, scrap_count, scrap_ids, sfm_id, stage_id, stock_analytic_account_id, stock_analytic_date, stock_analytic_distribution, stock_analytic_line_ids, stock_moves_is_locked, stock_state, tag_ids, target_date, total_float, type_id, unreserve_visible, url, use_stock_moves, user_ids, version_id, wbs_code, x_cycle_key, x_external_key, x_obsolete, x_seed_hash, x_step_code, x_task_template_code
   - `project_task_checklist_item`: actual_hours, assigned_user_id, blocker_description, completed_date, due_date, estimated_hours, notes, priority, status
   - `purchase_order`: x_master_control_submitted
-  - `res_config_settings`: ipai_enable_finance_project_analytics, superset_auto_sync, superset_connection_id, superset_create_analytics_views, superset_enable_rls, superset_sync_interval
-  - `res_partner`: bir_registered, bir_registration_date, srm_overall_score, srm_supplier_id, srm_tier, tax_type, tin, tin_branch_code
-  - `res_users`: x_employee_code
 - Relation tables:
   - `a1_check_result_attachment_ids_rel`
   - `a1_role_group_ids_rel`
@@ -124,6 +117,16 @@
   - `close_task_gl_entry_ids_rel`
   - `close_task_template_gl_account_ids_rel`
   - `ppm_program_project_rel`
+  - `project_pr_required`
+  - `project_project_group_ids_rel`
+  - `project_project_hr_category_ids_rel`
+  - `project_project_tag_ids_rel`
+  - `project_project_type_ids_rel`
+  - `project_task_employee_ids_rel`
+  - `project_task_hr_category_ids_rel`
+  - `project_task_pr_required_states_rel`
+  - `project_task_tag_ids_rel`
+  - `project_task_user_ids_rel`
   - `srm_qualification_document_ids_rel`
   - `srm_supplier_category_ids_rel`
 
