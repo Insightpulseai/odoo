@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0709b65aa05d01ac1595fc8d9685f4c7fb2df2fe
+> Commit: a54ef9c3598c3f4cc325b3351b07b567fe26182d
 
 ## 📚 Documentation
 
@@ -16,6 +16,7 @@
 | [Rules](.claude/commands/plan.md) | .claude/commands |
 | [Shipping Workflow](.claude/commands/ship.md) | .claude/commands |
 | [Primary Responsibility](.claude/commands/verify.md) | .claude/commands |
+| [BIR Compliance Automation Skill](.claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md) | .claude/superclaude/skills/finance/bir-compliance-automation |
 | [/implement Command](.continue/prompts/implement.md) | .continue/prompts |
 | [/plan Command](.continue/prompts/plan.md) | .continue/prompts |
 | [/ship Command](.continue/prompts/ship.md) | .continue/prompts |
@@ -88,6 +89,12 @@
 | [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
+| [AFC RAG Integration - Change Summary](addons/ipai_ask_ai/CHANGES.md) | addons/ipai_ask_ai |
+| [AFC RAG Deployment Checklist](addons/ipai_ask_ai/DEPLOYMENT_CHECKLIST.md) | addons/ipai_ask_ai |
+| [AFC RAG Integration - Deployment Complete ✅](addons/ipai_ask_ai/DEPLOYMENT_COMPLETE.md) | addons/ipai_ask_ai |
+| [AFC RAG Integration - Deployment Status](addons/ipai_ask_ai/DEPLOYMENT_STATUS.md) | addons/ipai_ask_ai |
+| [AFC RAG Integration - Deployment Guide](addons/ipai_ask_ai/README_AFC_RAG.md) | addons/ipai_ask_ai |
+| [Finance Month-End Closing - Deployment Summary](addons/ipai_finance_closing/DEPLOYMENT_COMPLETE.md) | addons/ipai_finance_closing |
 | [InsightPulse Finance Month-End Closing](addons/ipai_finance_closing/README.md) | addons/ipai_finance_closing |
 | [Finance PPM Umbrella Module](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing/README.md) | addons/ipai_month_end_closing |
@@ -125,10 +132,16 @@
 | [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
+| [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
+| [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
+| [BIR Compliance & Month-End Closing - Final Deployment Report](claudedocs/FINAL_DEPLOYMENT_REPORT.md) | claudedocs |
+| [Issue Resolution Report - AttributeError Fix + User Assignment](claudedocs/ISSUE_RESOLUTION_REPORT.md) | claudedocs |
+| [BIR Tax Filing Schedule Validation Report](claudedocs/bir-filing-validation-report.md) | claudedocs |
 | [Flutter Receipt OCR Module - Deployment Guide](clients/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | clients/flutter_receipt_ocr |
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
+| [Month-End Closing Tasks Import Guide](data/IMPORT_GUIDE.md) | data |
 | [Odoo 18 CE Project Import Templates](data/import_templates/README.md) | data/import_templates |
 | [Database Target Architecture](db/DB_TARGET_ARCHITECTURE.md) | db |
 | [RLS Roles and Permissions](db/rls/RLS_ROLES.md) | db/rls |
@@ -165,6 +178,7 @@
 | [Final Operability Checklist](docs/FINAL_OPERABILITY_CHECKLIST.md) | docs |
 | [FINAL READINESS CHECK & GIT COMMIT VERIFICATION](docs/FINAL_READINESS_CHECK.md) | docs |
 | [Finance PPM Implementation - Clarity/Notion-Style in Odoo CE](docs/FINANCE_PPM_IMPLEMENTATION.md) | docs |
+| [fin-workspace Automation Status](docs/FIN_WORKSPACE_AUTOMATION_STATUS.md) | docs |
 | [fin-workspace Automation Hardening Status](docs/FIN_WORKSPACE_HARDENING_STATUS.md) | docs |
 | [fin-workspace Setup Guide](docs/FIN_WORKSPACE_SETUP.md) | docs |
 | [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
@@ -313,6 +327,7 @@
 | [MCP Coordinator Deployment Guide](mcp/coordinator/DEPLOYMENT.md) | mcp/coordinator |
 | [MCP Coordinator](mcp/coordinator/README.md) | mcp/coordinator |
 | [Local MCP Server](mcp/local/README.md) | mcp/local |
+| [Odoo ERP MCP Server](mcp/servers/odoo-erp-server/README.md) | mcp/servers/odoo-erp-server |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
 | [n8n Finance Automation - Deployment Status](notion-n8n-monthly-close/DEPLOYMENT_STATUS.md) | notion-n8n-monthly-close |
 | [Deployment Summary - 2025-11-21](notion-n8n-monthly-close/DEPLOYMENT_SUMMARY.md) | notion-n8n-monthly-close |
@@ -410,6 +425,11 @@
 | [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Task Checklist](spec/odoo-apps-inventory/tasks.md) | spec/odoo-apps-inventory |
+| [Anthropic Use Cases vs InsightPulse Stack - Gap Analysis](spec/odoo-mcp-server/GAPS_ANALYSIS.md) | spec/odoo-mcp-server |
+| [Odoo MCP Server + BIR Compliance Skill](spec/odoo-mcp-server/README.md) | spec/odoo-mcp-server |
+| [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
+| [Odoo MCP Server - Implementation Plan](spec/odoo-mcp-server/plan.md) | spec/odoo-mcp-server |
+| [Odoo MCP Server - Product Requirements](spec/odoo-mcp-server/prd.md) | spec/odoo-mcp-server |
 | [Constitution — Parallel Control Planes](spec/parallel-control-planes/constitution.md) | spec/parallel-control-planes |
 | [Implementation Plan — Parallel Control Planes](spec/parallel-control-planes/plan.md) | spec/parallel-control-planes |
 | [Product Requirements — Parallel Control Planes](spec/parallel-control-planes/prd.md) | spec/parallel-control-planes |
@@ -438,6 +458,9 @@
 | [InsightPulse ERP – Platform Matrix (Concur / Cheqroom / Notion)](specs/MODULE_SERVICE_MATRIX.md) | specs |
 | [InsightPulse ERP – Technical Specifications](specs/README.md) | specs |
 | [InsightPulse ERP – v1 Scope Tasks](specs/tasks.md) | specs |
+| [Supabase Database Linter - Security Remediation Plan](supabase/SECURITY_LINTER_REMEDIATION.md) | supabase |
+| [AFC Close Manager — Canonical Schema Deployment Report](supabase/migrations/AFC_DEPLOYMENT_SUMMARY.md) | supabase/migrations |
+| [RLS Deployment Complete - Security Remediation Summary](supabase/migrations/RLS_DEPLOYMENT_COMPLETE.md) | supabase/migrations |
 | [Task: n8n Automation Strategy for Odoo CE](task.md) | . |
 | [Tasks – InsightPulse Odoo CE](tasks.md) | . |
 | [Agent Services Hard Delete Checklist](tasks/infra/AGENT_SERVICES_HARD_DELETE_CHECKLIST.md) | tasks/infra |
@@ -469,6 +492,7 @@
 | [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
 | [ipai_finance_bir_compliance](./addons/ipai/ipai_finance_bir_compliance) | ✅ |  |
+| [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ⚠️ | Missing manifest |
 | [ipai_finance_month_end](./addons/ipai/ipai_finance_month_end) | ✅ |  |
 | [ipai_finance_monthly_closing](./addons/ipai/ipai_finance_monthly_closing) | ✅ |  |
 | [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ✅ |  |
@@ -489,9 +513,7 @@
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
-| [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
-| [ipai_finance_close_seed](./addons/ipai_finance_close_seed) | ✅ |  |
 | [ipai_finance_closing](./addons/ipai_finance_closing) | ✅ | Month-end financial closing task template based on SAP Advanced Financial Closing |
 | [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ | Production go-live checklist for Finance PPM modules |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella) | ✅ |  |
@@ -505,7 +527,6 @@
 | [ipai_platform_permissions](./addons/ipai_platform_permissions) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai_platform_theme) | ✅ |  |
 | [ipai_platform_workflow](./addons/ipai_platform_workflow) | ✅ |  |
-| [ipai_ppm_a1](./addons/ipai_ppm_a1) | ✅ |  |
 | [ipai_sms_gateway](./addons/ipai_sms_gateway) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai_superset_connector) | ✅ | Apache Superset integration with managed dataset sync |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
