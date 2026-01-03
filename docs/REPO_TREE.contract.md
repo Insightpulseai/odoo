@@ -85,7 +85,7 @@ CI runs these checks on every PR:
 
 ## What NOT to Do
 
-- **DO NOT** create `src/apps/odoo/` or `src/addons/` paths
+- **DO NOT** create `src/apps/odoo_core/` or `src/addons/` paths
 - **DO NOT** invent alternative module locations
 - **DO NOT** bypass this contract without updating this file first
 - **DO NOT** trust agent audits that reference non-existent paths
