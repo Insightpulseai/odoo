@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6277ddb7e1aac3a78abb81245b6903bebaee978c
+> Commit: fff654de9a5ca058f6bb68adaca2bf47fb5435d8
 
 ```
 .
@@ -49,6 +49,7 @@
 │   │   ├── ci-odoo-oca.yml
 │   │   ├── control-room-ci.yml
 │   │   ├── databricks-dab-ci.yml
+│   │   ├── deploy-canary.yml
 │   │   ├── deploy-finance-ppm.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-production.yml
@@ -2301,7 +2302,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-714 directories, 1582 files
+714 directories, 1583 files
 ```
 
 ## 📊 Stats
@@ -2309,7 +2310,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 811 |
-| Files | 2266 |
+| Files | 2267 |
 | Python files | 600 |
 | XML files | 334 |
 | Markdown files | 428 |
