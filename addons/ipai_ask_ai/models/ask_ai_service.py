@@ -48,6 +48,10 @@ class IpaiAskAIService(models.TransientModel):
         _logger.info("Processing AI query: %s", query[:100])
 
         try:
+            # Check if query is about AFC/BIR compliance - use RAG system
+            if self._is_afc_query(query):
+                return self._process_afc_rag_query(query, context)
+
             # Parse the query intent
             intent = self._parse_query_intent(query)
 
@@ -58,8 +62,6 @@ class IpaiAskAIService(models.TransientModel):
                 result = self._execute_count_query(intent, context)
             elif intent["type"] == "aggregate":
                 result = self._execute_aggregate_query(intent, context)
-            elif intent["type"] == "rag":
-                result = self._generate_rag_response(query, context)
             elif intent["type"] == "help":
                 result = self._generate_help_response(intent)
             else:
@@ -156,15 +158,15 @@ class IpaiAskAIService(models.TransientModel):
         # Try to match patterns
         for pattern, intent_template in patterns.items():
             match = re.search(pattern, query_lower)
-        if match:
+            if match:
                 intent = intent_template.copy()
                 intent["query"] = query
                 intent["match"] = match.groups() if match.groups() else []
                 return intent
 
-        # Fallback to Generative AI (RAG)
+        # Default to generic query
         return {
-            "type": "rag",
+            "type": "generic",
             "query": query,
             "match": [],
         }
@@ -422,57 +424,95 @@ class IpaiAskAIService(models.TransientModel):
 
         return ai_partner
 
-    def _generate_rag_response(self, query, context):
-        """Generate a response using the external RAG service (Copilot)."""
-        import requests
-        
-        api_url = self.env['ir.config_parameter'].sudo().get_param('ipai_copilot.api_url')
-        api_key = self.env['ir.config_parameter'].sudo().get_param('ipai_copilot.api_key')
-        
-        if not api_url:
-            return {
-                "message": _("AI Configuration Error: Copilot API URL is not set. Please check Settings."),
-                "data": {}
-            }
-            
+    def _is_afc_query(self, query):
+        """
+        Determine if query is about AFC/BIR compliance topics.
+
+        Args:
+            query: User's question
+
+        Returns:
+            bool: True if query is AFC-related
+        """
+        query_lower = query.lower()
+
+        # AFC/BIR keywords
+        afc_keywords = [
+            "bir", "tax", "1700", "1601", "2550", "withholding",
+            "vat", "income tax", "quarterly", "annual",
+            "filing", "compliance", "close", "closing",
+            "gl", "general ledger", "posting", "reconciliation",
+            "sox", "audit", "segregation of duties", "sod",
+            "four-eyes", "preparer", "reviewer", "approver",
+        ]
+
+        return any(keyword in query_lower for keyword in afc_keywords)
+
+    def _process_afc_rag_query(self, query, context):
+        """
+        Process AFC/BIR compliance query using RAG system.
+
+        Args:
+            query: User's question
+            context: Query context
+
+        Returns:
+            dict: Response with AFC knowledge base answer
+        """
         try:
-           payload = {
-               "message": query,
-               "odoo": {
-                   "uid": self.env.uid,
-                   "db": self.env.cr.dbname,
-                   "context": context
-               }
-           }
-           
-           headers = {"Content-Type": "application/json"}
-           if api_key:
-               headers["Authorization"] = f"Bearer {api_key}"
-               
-           response = requests.post(api_url, json=payload, headers=headers, timeout=30)
-           
-           if response.status_code != 200:
-               _logger.error("Copilot API Error: %s - %s", response.status_code, response.text)
-               return {
-                   "message": _("I'm having trouble connecting to my brain. (Error %s)") % response.status_code
-               }
-               
-           data = response.json()
-           answer = data.get("answer", _("I couldn't generate an answer."))
-           citations = data.get("citations", [])
-           
-           # Append citations to message if present
-           if citations:
-               citation_text = "\n\nSources:\n" + "\n".join([f"- [{c.get('title', 'Link')}]({c.get('url', '#')})" for c in citations])
-               answer += citation_text
-               
-           return {
-               "message": answer,
-               "data": {"citations": citations}
-           }
-           
-        except Exception as e:
-            _logger.exception("RAG connection error: %s", str(e))
+            # Get AFC RAG service
+            AfcRag = self.env["afc.rag.service"]
+
+            # Build context with company info
+            rag_context = {
+                "company_id": self.env.company.id,
+                "employee_code": context.get("employee_code"),
+                "user_id": self.env.uid,
+            }
+
+            # Query knowledge base
+            result = AfcRag.query_knowledge_base(query, rag_context)
+
+            # Format sources for display
+            sources_text = ""
+            if result.get("sources"):
+                sources_text = "\n\n📚 Sources:\n"
+                for i, source in enumerate(result["sources"][:3], 1):
+                    sources_text += "• {} (similarity: {:.0%})\n".format(
+                        source["source"],
+                        source["similarity"]
+                    )
+
+            response_text = result["answer"] + sources_text
+
+            # Add confidence indicator
+            confidence = result.get("confidence", 0)
+            if confidence > 0.8:
+                confidence_emoji = "✅"
+            elif confidence > 0.6:
+                confidence_emoji = "⚠️"
+            else:
+                confidence_emoji = "❓"
+
+            response_text += f"\n\n{confidence_emoji} Confidence: {confidence:.0%}"
+
             return {
-                "message": _("I encountered a connection error while thinking. Please try again later.")
+                "success": True,
+                "response": response_text,
+                "data": {
+                    "sources": result.get("sources", []),
+                    "confidence": confidence,
+                    "type": "afc_rag",
+                },
+            }
+
+        except Exception as e:
+            _logger.exception("AFC RAG query failed: %s", str(e))
+            return {
+                "success": False,
+                "response": _(
+                    "I encountered an error accessing the AFC knowledge base. "
+                    "Please try again or contact support."
+                ),
+                "error": str(e),
             }
