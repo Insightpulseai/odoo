@@ -1,0 +1,8 @@
+id,depend_on_ids/id
+ipai_project.task_jan_review,ipai_project.task_jan_prep
+ipai_project.task_jan_approve,ipai_project.task_jan_review
+ipai_project.task_feb_prep,ipai_project.task_jan_approve
+ipai_project.task_feb_review,ipai_project.task_feb_prep
+ipai_project.task_feb_approve,ipai_project.task_feb_review
+ipai_project.task_bir_1601c_file,ipai_project.task_bir_1601c_prep
+ipai_project.task_bir_2550m_file,ipai_project.task_bir_2550m_prep
