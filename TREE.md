@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fff654de9a5ca058f6bb68adaca2bf47fb5435d8
+> Commit: a97765c86532538f62aa01ed4748f19487380c6f
 
 ```
 .
@@ -129,6 +129,13 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_copilot
+│   │   │   ├── controllers
+│   │   │   ├── models
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_custom_routes
@@ -1034,6 +1041,8 @@
 │   └── v0.2.1-quality-baseline-20251121.txt
 ├── bin
 │   ├── README.md
+│   ├── ci_sync_check.sh
+│   ├── copilot_drift_check.sh
 │   ├── finance-cli.sh
 │   ├── import_bir_schedules.py
 │   ├── odoo-tests.sh
@@ -1537,6 +1546,8 @@
 │   │   └── AGENT_AUDIT_RULES.md
 │   ├── design_system
 │   │   └── tokens.yaml
+│   ├── finance_close
+│   │   └── sop.md
 │   └── parity
 │       ├── baseline.json
 │       └── rubric.json
@@ -1638,9 +1649,11 @@
 ├── out
 │   ├── concur_demo
 │   │   └── catalog.json
-│   └── concur_demo_odoo_map
-│       ├── mapping.csv
-│       └── mapping.md
+│   ├── concur_demo_odoo_map
+│   │   ├── mapping.csv
+│   │   └── mapping.md
+│   └── copilot_index
+│       └── manifest.json
 ├── packages
 │   ├── agent-core
 │   │   ├── src
@@ -1717,6 +1730,7 @@
 │   ├── configure_zoho_smtp.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
+│   ├── copilot_ingest.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
 │   ├── deploy-bir-compliance.sh
@@ -1923,6 +1937,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── ipai-copilot
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ipai-month-end
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -2002,6 +2021,8 @@
 │   │   │   └── index.ts
 │   │   ├── github-mattermost-bridge
 │   │   │   └── index.ts
+│   │   ├── ipai-copilot
+│   │   │   └── index.ts
 │   │   ├── mcp-gateway
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
@@ -2066,7 +2087,8 @@
 │   │   ├── 20251227_database_webhooks.sql
 │   │   ├── 20251227_docs_ai_schema.sql
 │   │   ├── 20251227_mcp_job_queue_cron.sql
-│   │   └── 20251227_supabase_queues_setup.sql
+│   │   ├── 20251227_supabase_queues_setup.sql
+│   │   └── 202601030001_docs.sql
 │   ├── seed
 │   │   ├── 9000_core
 │   │   │   └── 9000_core_tenants_roles_users.sql
@@ -2302,15 +2324,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-714 directories, 1583 files
+723 directories, 1596 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 811 |
-| Files | 2267 |
-| Python files | 600 |
-| XML files | 334 |
-| Markdown files | 428 |
+| Directories | 824 |
+| Files | 2290 |
+| Python files | 607 |
+| XML files | 337 |
+| Markdown files | 433 |
