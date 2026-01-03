@@ -1,0 +1,238 @@
+{
+  "name": "System Health Check",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "health",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Health Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "health-check"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 5
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Every 5 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 200]
+    },
+    {
+      "parameters": {
+        "url": "http://159.223.75.148:8069/web/health",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-odoo",
+      "name": "Check Odoo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [250, 100],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://n8n.insightpulseai.net/healthz",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-n8n",
+      "name": "Check n8n",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [250, 250],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "http://159.223.75.148:8088/health",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "check-superset",
+      "name": "Check Superset",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [250, 400],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate health check results\nconst odoo = $('Check Odoo').first();\nconst n8n = $('Check n8n').first();\nconst superset = $('Check Superset').first();\n\nconst results = {\n  timestamp: new Date().toISOString(),\n  services: {\n    odoo: {\n      status: odoo.error ? 'DOWN' : 'UP',\n      url: 'http://159.223.75.148:8069',\n      responseTime: odoo.json?.$responseTime || null,\n      error: odoo.error?.message || null\n    },\n    n8n: {\n      status: n8n.error ? 'DOWN' : 'UP',\n      url: 'https://n8n.insightpulseai.net',\n      responseTime: n8n.json?.$responseTime || null,\n      error: n8n.error?.message || null\n    },\n    superset: {\n      status: superset.error ? 'DOWN' : 'UP',\n      url: 'http://159.223.75.148:8088',\n      responseTime: superset.json?.$responseTime || null,\n      error: superset.error?.message || null\n    }\n  },\n  summary: {\n    total: 3,\n    healthy: 0,\n    unhealthy: 0\n  }\n};\n\n// Count healthy/unhealthy\nfor (const [name, service] of Object.entries(results.services)) {\n  if (service.status === 'UP') {\n    results.summary.healthy++;\n  } else {\n    results.summary.unhealthy++;\n  }\n}\n\nresults.overall = results.summary.unhealthy === 0 ? 'HEALTHY' : 'DEGRADED';\n\nreturn { json: results };"
+      },
+      "id": "aggregate-results",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [500, 250]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-healthy",
+              "leftValue": "={{ $json.overall }}",
+              "rightValue": "HEALTHY",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "is-healthy",
+      "name": "Is Healthy?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [700, 250]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL || 'https://hooks.slack.com/services/YOUR/WEBHOOK/URL' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"#devops-alerts\",\n  \"username\": \"Health Monitor\",\n  \"icon_emoji\": \":rotating_light:\",\n  \"attachments\": [{\n    \"color\": \"danger\",\n    \"title\": \"🔴 System Health Alert\",\n    \"text\": \"One or more services are DOWN\",\n    \"fields\": [\n      {\n        \"title\": \"Odoo\",\n        \"value\": \"{{ $json.services.odoo.status }}\",\n        \"short\": true\n      },\n      {\n        \"title\": \"n8n\",\n        \"value\": \"{{ $json.services.n8n.status }}\",\n        \"short\": true\n      },\n      {\n        \"title\": \"Superset\",\n        \"value\": \"{{ $json.services.superset.status }}\",\n        \"short\": true\n      }\n    ],\n    \"ts\": {{ Math.floor(Date.now() / 1000) }}\n  }]\n}",
+        "options": {}
+      },
+      "id": "alert-slack",
+      "name": "Alert Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 350]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-healthy",
+      "name": "Respond Healthy",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [900, 150]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 503,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-unhealthy",
+      "name": "Respond Unhealthy",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1100, 350]
+    }
+  ],
+  "connections": {
+    "Health Webhook": {
+      "main": [
+        [
+          { "node": "Check Odoo", "type": "main", "index": 0 },
+          { "node": "Check n8n", "type": "main", "index": 0 },
+          { "node": "Check Superset", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Every 5 Minutes": {
+      "main": [
+        [
+          { "node": "Check Odoo", "type": "main", "index": 0 },
+          { "node": "Check n8n", "type": "main", "index": 0 },
+          { "node": "Check Superset", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Check Odoo": {
+      "main": [
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }],
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check n8n": {
+      "main": [
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }],
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }]
+      ]
+    },
+    "Check Superset": {
+      "main": [
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }],
+        [{ "node": "Aggregate Results", "type": "main", "index": 0 }]
+      ]
+    },
+    "Aggregate Results": {
+      "main": [
+        [{ "node": "Is Healthy?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Is Healthy?": {
+      "main": [
+        [{ "node": "Respond Healthy", "type": "main", "index": 0 }],
+        [
+          { "node": "Alert Slack", "type": "main", "index": 0 },
+          { "node": "Respond Unhealthy", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "tags": [
+    { "name": "monitoring" },
+    { "name": "health" }
+  ]
+}

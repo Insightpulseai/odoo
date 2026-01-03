@@ -6,9 +6,9 @@ import re
 
 import pandas as pd
 
-DEFAULT_XLSX = "infra/seed/Month-end Closing Task and Tax Filing ext.xlsx"
+DEFAULT_XLSX = "config/finance/Month-end Closing Task and Tax Filing (7).xlsx"
 MODULE_NAME = "ipai_finance_close_seed"
-OUT_DIR = Path("addons") / MODULE_NAME / "data"
+OUT_DIR = Path("addons/ipai") / MODULE_NAME / "data"
 
 
 def norm_duration_to_hours(value: str) -> float:
@@ -33,6 +33,7 @@ def write_tags_xml(tags: dict[str, str], output_path: Path) -> None:
             [
                 f"  <record id=\"{tag_id}\" model=\"project.tags\">",
                 f"    <field name=\"name\">{name}</field>",
+                f"    <field name=\"color\">{hash(name) % 10}</field>",
                 "  </record>",
                 "",
             ]
@@ -114,12 +115,12 @@ def main() -> None:
         if not bir_form or bir_form.lower() == "nan":
             continue
         period = (
-            pd.to_datetime(row["period_covered"]).date()
+            pd.to_datetime(row["period_covered"], errors='coerce').date()
             if pd.notna(row["period_covered"])
             else None
         )
         deadline = (
-            pd.to_datetime(row["deadline"]).date()
+            pd.to_datetime(row["deadline"], errors='coerce').date()
             if pd.notna(row["deadline"])
             else None
         )
@@ -146,20 +147,36 @@ def main() -> None:
     pd.DataFrame(bir_rows).to_csv(out_dir / "tasks_bir.csv", index=False)
 
     # ---------- Holidays ----------
-    holidays = pd.read_excel(
-        xlsx_path, sheet_name="Holidays & Calendar", usecols=["Date", "Holiday Name", "Type"]
-    )
-    holidays = holidays.dropna(subset=["Date", "Holiday Name"])
-    holidays["Date"] = pd.to_datetime(holidays["Date"]).dt.date
+    # CODEX: Excel sheet "Holidays & Calendar" is missing in current version.
+    # Hardcoding 2026 holidays based on PR requirements and standard PH holidays.
+    holidays_data = [
+        {"Date": "2026-01-01", "Holiday Name": "New Year's Day"},
+        {"Date": "2026-02-17", "Holiday Name": "Chinese New Year"},
+        {"Date": "2026-02-25", "Holiday Name": "EDSA People Power Revolution Anniversary"},
+        {"Date": "2026-04-02", "Holiday Name": "Maundy Thursday"},  # Fixed per PR
+        {"Date": "2026-04-03", "Holiday Name": "Good Friday"},      # Fixed per PR
+        {"Date": "2026-04-09", "Holiday Name": "Araw ng Kagitingan"},
+        {"Date": "2026-05-01", "Holiday Name": "Labor Day"},
+        {"Date": "2026-06-12", "Holiday Name": "Independence Day"},
+        {"Date": "2026-08-21", "Holiday Name": "Ninoy Aquino Day"},
+        {"Date": "2026-08-31", "Holiday Name": "National Heroes Day"},
+        {"Date": "2026-11-01", "Holiday Name": "All Saints' Day"},
+        {"Date": "2026-11-30", "Holiday Name": "Bonifacio Day"},
+        {"Date": "2026-12-25", "Holiday Name": "Christmas Day"},
+        {"Date": "2026-12-30", "Holiday Name": "Rizal Day"},
+    ]
+    holidays = pd.DataFrame(holidays_data)
 
     holiday_lines = ["<?xml version=\"1.0\" encoding=\"utf-8\"?>", "<odoo>"]
     for i, row in holidays.iterrows():
-        date_value = row["Date"].isoformat()
+        date_value = row["Date"]
         name = str(row["Holiday Name"]).strip()
+
         holiday_lines.extend(
             [
                 f"  <record id=\"ipai_holiday_{i + 1}\" model=\"resource.calendar.leaves\">",
                 f"    <field name=\"name\">{name}</field>",
+                f"    <field name=\"calendar_id\" ref=\"resource.resource_calendar_std\"/>",
                 f"    <field name=\"date_from\">{date_value} 00:00:00</field>",
                 f"    <field name=\"date_to\">{date_value} 23:59:59</field>",
                 "  </record>",

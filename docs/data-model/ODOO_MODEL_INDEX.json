@@ -7839,17 +7839,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "approval_notes",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "approved_by",
           "ondelete": null,
           "related": null,
@@ -7883,39 +7872,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "approver_role",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "approver_user_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "block_on_exceptions",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "block_reason",
           "ondelete": null,
           "related": null,
@@ -7923,39 +7879,6 @@
           "required": false,
           "store": true,
           "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "blocking_exceptions",
-          "ondelete": null,
-          "related": null,
-          "relation": "close.exception",
-          "required": false,
-          "store": true,
-          "type": "Many2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "blocking_reason",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "blocking_tasks",
-          "ondelete": null,
-          "related": null,
-          "relation": "close.task",
-          "required": false,
-          "store": true,
-          "type": "Many2many"
         },
         {
           "compute": null,
@@ -7982,17 +7905,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "gate_level",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "gate_type",
           "ondelete": null,
           "related": null,
@@ -8000,17 +7912,6 @@
           "required": true,
           "store": true,
           "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "min_completion_pct",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Float"
         },
         {
           "compute": null,
@@ -8037,28 +7938,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "required_approvals",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "required_task_states",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "sequence",
           "ondelete": null,
           "related": null,
@@ -8074,7 +7953,7 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
         },
@@ -8112,8 +7991,6 @@
       "relations": [
         "close.approval.gate.template",
         "close.cycle",
-        "close.exception",
-        "close.task",
         "res.company",
         "res.users"
       ],
@@ -8250,50 +8127,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "close_actual_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "close_start_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "close_target_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "closing_period_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "closing.period",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "company_id",
           "ondelete": null,
           "related": null,
@@ -8301,17 +8134,6 @@
           "required": true,
           "store": true,
           "type": "Many2one"
-        },
-        {
-          "compute": "_compute_cycle_time",
-          "index": false,
-          "name": "cycle_time_days",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
         },
         {
           "compute": "_compute_exception_count",
@@ -8424,17 +8246,6 @@
           "type": "Date"
         },
         {
-          "compute": null,
-          "index": false,
-          "name": "period_type",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
           "compute": "_compute_task_stats",
           "index": false,
           "name": "progress",
@@ -8452,20 +8263,9 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
-        },
-        {
-          "compute": "_compute_task_stats",
-          "index": false,
-          "name": "task_completion_pct",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Float"
         },
         {
           "compute": "_compute_task_stats",
@@ -8525,7 +8325,6 @@
         "close.approval.gate",
         "close.exception",
         "close.task",
-        "closing.period",
         "res.company"
       ],
       "sql_constraints": [
@@ -8544,17 +8343,6 @@
     },
     {
       "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "amount",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Monetary"
-        },
         {
           "compute": null,
           "index": false,
@@ -8579,17 +8367,6 @@
         },
         {
           "compute": null,
-          "index": false,
-          "name": "currency_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.currency",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
           "index": true,
           "name": "cycle_id",
           "ondelete": "cascade",
@@ -8608,40 +8385,7 @@
           "relation": null,
           "required": false,
           "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "detected_by",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "detected_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Datetime"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "escalated_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Datetime"
+          "type": "Html"
         },
         {
           "compute": null,
@@ -8679,17 +8423,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "escalation_level",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "exception_type",
           "ondelete": null,
           "related": null,
@@ -8723,39 +8456,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "related_account_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "account.account",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "related_move_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "account.move",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "related_partner_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.partner",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "reported_by",
           "ondelete": null,
           "related": null,
@@ -8774,17 +8474,6 @@
           "required": false,
           "store": true,
           "type": "Html"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "resolution_action",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
         },
         {
           "compute": null,
@@ -8811,17 +8500,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "root_cause",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "severity",
           "ondelete": null,
           "related": null,
@@ -8837,7 +8515,7 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
         },
@@ -8851,17 +8529,6 @@
           "required": false,
           "store": true,
           "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "variance_pct",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Float"
         }
       ],
       "inherits": [
@@ -8873,13 +8540,9 @@
       "name": "close.exception",
       "python_constraints": [],
       "relations": [
-        "account.account",
-        "account.move",
         "close.cycle",
         "close.task",
         "res.company",
-        "res.currency",
-        "res.partner",
         "res.users"
       ],
       "sql_constraints": [],
@@ -8934,50 +8597,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "approve_done_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Datetime"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "approve_due_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "approve_notes",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "approve_user_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "approver_id",
           "ondelete": null,
           "related": null,
@@ -8989,17 +8608,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "attachment_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ir.attachment",
-          "required": false,
-          "store": true,
-          "type": "Many2many"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "category_id",
           "ondelete": null,
           "related": null,
@@ -9007,17 +8615,6 @@
           "required": false,
           "store": true,
           "type": "Many2one"
-        },
-        {
-          "compute": "_compute_checklist_pct",
-          "index": false,
-          "name": "checklist_done_pct",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Float"
         },
         {
           "compute": null,
@@ -9064,28 +8661,6 @@
           "type": "Many2one"
         },
         {
-          "compute": "_compute_is_overdue",
-          "index": false,
-          "name": "days_overdue",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "description",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
           "compute": null,
           "index": false,
           "name": "exception_ids",
@@ -9108,53 +8683,9 @@
           "type": "Char"
         },
         {
-          "compute": "_compute_gl_entry_count",
-          "index": false,
-          "name": "gl_entry_count",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "gl_entry_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "account.move",
-          "required": false,
-          "store": true,
-          "type": "Many2many"
-        },
-        {
-          "compute": "_compute_has_exceptions",
-          "index": false,
-          "name": "has_exceptions",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
           "compute": "_compute_has_open_exceptions",
           "index": false,
           "name": "has_open_exceptions",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": "_compute_is_overdue",
-          "index": false,
-          "name": "is_overdue",
           "ondelete": null,
           "related": null,
           "relation": null,
@@ -9220,39 +8751,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "prep_due_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "prep_notes",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "prep_user_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "preparer_id",
           "ondelete": null,
           "related": null,
@@ -9297,50 +8795,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "review_due_date",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "review_notes",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "review_result",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "review_user_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "reviewer_id",
           "ondelete": null,
           "related": null,
@@ -9367,7 +8821,7 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
         },
@@ -9384,7 +8838,6 @@
         }
       ],
       "inherits": [
-        "close.task",
         "mail.activity.mixin",
         "mail.thread"
       ],
@@ -9394,13 +8847,11 @@
       "python_constraints": [],
       "relations": [
         "a1.task",
-        "account.move",
         "close.cycle",
         "close.exception",
         "close.task.category",
         "close.task.checklist",
         "close.task.template",
-        "ir.attachment",
         "res.company",
         "res.users"
       ],
@@ -9433,7 +8884,7 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "code",
           "ondelete": null,
           "related": null,
@@ -9467,72 +8918,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "default_approve_days",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_approve_role",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_prep_days",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_prep_role",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_review_days",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_review_role",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "description",
           "ondelete": null,
           "related": null,
@@ -9540,17 +8925,6 @@
           "required": false,
           "store": true,
           "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "gl_account_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "account.account",
-          "required": false,
-          "store": true,
-          "type": "Many2many"
         },
         {
           "compute": null,
@@ -9593,16 +8967,10 @@
       "python_constraints": [],
       "relations": [
         "a1.workstream",
-        "account.account",
         "close.task.template",
         "res.company"
       ],
       "sql_constraints": [
-        {
-          "message": "Category code must be unique",
-          "name": "category_code_unique",
-          "sql": "unique(code)"
-        },
         {
           "message": "Category code must be unique per company.",
           "name": "code_uniq",
@@ -9621,17 +8989,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "attachment_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "ir.attachment",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "code",
           "ondelete": null,
           "related": null,
@@ -9639,17 +8996,6 @@
           "required": true,
           "store": true,
           "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "done_at",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Datetime"
         },
         {
           "compute": null,
@@ -9672,17 +9018,6 @@
           "required": false,
           "store": true,
           "type": "Datetime"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "evidence_type",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
         },
         {
           "compute": null,
@@ -9731,28 +9066,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "notes",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "required",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "sequence",
           "ondelete": null,
           "related": null,
@@ -9763,7 +9076,7 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "task_id",
           "ondelete": "cascade",
           "related": null,
@@ -9780,7 +9093,6 @@
       "python_constraints": [],
       "relations": [
         "close.task",
-        "ir.attachment",
         "res.users"
       ],
       "sql_constraints": [],
@@ -9835,17 +9147,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "approve_day_offset",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "approver_id",
           "ondelete": null,
           "related": null,
@@ -9867,12 +9168,12 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "category_id",
-          "ondelete": null,
+          "ondelete": "cascade",
           "related": null,
           "relation": "close.task.category",
-          "required": true,
+          "required": false,
           "store": true,
           "type": "Many2one"
         },
@@ -9889,7 +9190,7 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "code",
           "ondelete": null,
           "related": null,
@@ -9912,68 +9213,13 @@
         {
           "compute": null,
           "index": false,
-          "name": "creates_gl_entry",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_approve_user_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_prep_user_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "default_review_user_id",
-          "ondelete": null,
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
           "name": "description",
           "ondelete": null,
           "related": null,
           "relation": null,
           "required": false,
           "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "gl_account_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "account.account",
-          "required": false,
-          "store": true,
-          "type": "Many2many"
+          "type": "Html"
         },
         {
           "compute": null,
@@ -9985,28 +9231,6 @@
           "required": true,
           "store": true,
           "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "period_type",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "prep_day_offset",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
         },
         {
           "compute": null,
@@ -10051,17 +9275,6 @@
           "required": false,
           "store": true,
           "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "review_day_offset",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
         },
         {
           "compute": null,
@@ -10126,7 +9339,6 @@
       "python_constraints": [],
       "relations": [
         "a1.template",
-        "account.account",
         "close.task.category",
         "close.task.template.checklist",
         "res.company",
@@ -10142,11 +9354,6 @@
           "message": "Template code must be unique per company.",
           "name": "code_uniq",
           "sql": "unique(code, company_id)"
-        },
-        {
-          "message": "Template code must be unique",
-          "name": "template_code_unique",
-          "sql": "unique(code)"
         }
       ],
       "table": "close_task_template"
@@ -10163,17 +9370,6 @@
           "required": true,
           "store": true,
           "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "evidence_type",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
         },
         {
           "compute": null,
@@ -10207,17 +9403,6 @@
           "required": true,
           "store": true,
           "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "required",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
         },
         {
           "compute": null,
@@ -16986,40 +16171,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "export_path",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "webhook_url",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        }
-      ],
-      "inherits": [],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.export.seed.wizard",
-      "python_constraints": [],
-      "relations": [],
-      "sql_constraints": [],
-      "table": "ipai_export_seed_wizard"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
           "name": "approval_deadline",
           "ondelete": null,
           "related": null,
@@ -19319,134 +18470,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "mode",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "seed_json",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Text"
-        }
-      ],
-      "inherits": [],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.import.seed.wizard",
-      "python_constraints": [],
-      "relations": [],
-      "sql_constraints": [],
-      "table": "ipai_import_seed_wizard"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "active",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "applies_to_code",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "country",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "patch_payload",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "patch_type",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sequence",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "workstream_id",
-          "ondelete": "cascade",
-          "related": null,
-          "relation": "ipai.workstream",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.localization.overlay",
-      "python_constraints": [],
-      "relations": [
-        "ipai.workstream"
-      ],
-      "sql_constraints": [],
-      "table": "ipai_localization_overlay"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
           "name": "company_id",
           "ondelete": null,
           "related": null,
@@ -20376,671 +19399,6 @@
         {
           "compute": null,
           "index": false,
-          "name": "category",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "checklist_line_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.ppm.task.checklist",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "code",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "due_offset_days",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "evidence_required",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "owner_role",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "phase",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "prep_offset",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "requires_approval",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "review_offset",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sap_reference",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sequence",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "template_id",
-          "ondelete": "cascade",
-          "related": null,
-          "relation": "ipai.ppm.template",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.ppm.task",
-      "python_constraints": [],
-      "relations": [
-        "ipai.ppm.task.checklist",
-        "ipai.ppm.template"
-      ],
-      "sql_constraints": [
-        {
-          "message": "Task code must be unique per template.",
-          "name": "task_code_unique",
-          "sql": "unique(code, template_id)"
-        }
-      ],
-      "table": "ipai_ppm_task"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "evidence_type",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "label",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "notes",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "required",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sequence",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "task_id",
-          "ondelete": "cascade",
-          "related": null,
-          "relation": "ipai.ppm.task",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.ppm.task.checklist",
-      "python_constraints": [],
-      "relations": [
-        "ipai.ppm.task"
-      ],
-      "sql_constraints": [],
-      "table": "ipai_ppm_task_checklist"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "period_end",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "period_start",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Date"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "status",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "taskrun_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.ppm.taskrun",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "template_id",
-          "ondelete": "restrict",
-          "related": null,
-          "relation": "ipai.ppm.template",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "workstream_id",
-          "ondelete": "restrict",
-          "related": null,
-          "relation": "ipai.workstream",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.ppm.tasklist",
-      "python_constraints": [],
-      "relations": [
-        "ipai.ppm.taskrun",
-        "ipai.ppm.template",
-        "ipai.workstream"
-      ],
-      "sql_constraints": [],
-      "table": "ipai_ppm_tasklist"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "approver_id",
-          "ondelete": "set null",
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "assignee_id",
-          "ondelete": "set null",
-          "related": null,
-          "relation": "res.users",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "done_at",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Datetime"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "started_at",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Datetime"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "status",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "task_id",
-          "ondelete": "restrict",
-          "related": null,
-          "relation": "ipai.ppm.task",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "tasklist_id",
-          "ondelete": "cascade",
-          "related": null,
-          "relation": "ipai.ppm.tasklist",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.ppm.taskrun",
-      "python_constraints": [],
-      "relations": [
-        "ipai.ppm.task",
-        "ipai.ppm.tasklist",
-        "res.users"
-      ],
-      "sql_constraints": [],
-      "table": "ipai_ppm_taskrun"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "code",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "is_active",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "period_type",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sequence",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "task_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.ppm.task",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "version",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "workstream_id",
-          "ondelete": "cascade",
-          "related": null,
-          "relation": "ipai.workstream",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.ppm.template",
-      "python_constraints": [],
-      "relations": [
-        "ipai.ppm.task",
-        "ipai.workstream"
-      ],
-      "sql_constraints": [
-        {
-          "message": "Template code must be unique per workstream.",
-          "name": "template_code_unique",
-          "sql": "unique(code, workstream_id)"
-        }
-      ],
-      "table": "ipai_ppm_template"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "export_path",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "exported_at",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Datetime"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "payload_json",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "state",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "webhook_status",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "webhook_url",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.repo.export_run",
-      "python_constraints": [],
-      "relations": [],
-      "sql_constraints": [],
-      "table": "ipai_repo_export_run"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
           "name": "active",
           "ondelete": null,
           "related": null,
@@ -21137,347 +19495,6 @@
       ],
       "sql_constraints": [],
       "table": "ipai_share_token"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "auto_run",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "category",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "code",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "description",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "is_active",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "rule_json",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sap_reference",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sequence",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "severity",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "worklist_type_id",
-          "ondelete": "set null",
-          "related": null,
-          "relation": "ipai.stc.worklist_type",
-          "required": false,
-          "store": true,
-          "type": "Many2one"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "workstream_id",
-          "ondelete": "cascade",
-          "related": null,
-          "relation": "ipai.workstream",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.stc.check",
-      "python_constraints": [],
-      "relations": [
-        "ipai.stc.worklist_type",
-        "ipai.workstream"
-      ],
-      "sql_constraints": [
-        {
-          "message": "Check code must be unique.",
-          "name": "stc_check_code_unique",
-          "sql": "unique(code)"
-        }
-      ],
-      "table": "ipai_stc_check"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "bir_forms",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "check_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.stc.check",
-          "required": false,
-          "store": true,
-          "type": "Many2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "code",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "frequency",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "notes",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "run_day_offset",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sap_reference",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sequence",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Integer"
-        },
-        {
-          "compute": null,
-          "index": true,
-          "name": "workstream_id",
-          "ondelete": "cascade",
-          "related": null,
-          "relation": "ipai.workstream",
-          "required": true,
-          "store": true,
-          "type": "Many2one"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.stc.scenario",
-      "python_constraints": [],
-      "relations": [
-        "ipai.stc.check",
-        "ipai.workstream"
-      ],
-      "sql_constraints": [
-        {
-          "message": "Scenario code must be unique.",
-          "name": "stc_scenario_code_unique",
-          "sql": "unique(code)"
-        }
-      ],
-      "table": "ipai_stc_scenario"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "code",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "description",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        }
-      ],
-      "inherits": [],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.stc.worklist_type",
-      "python_constraints": [],
-      "relations": [],
-      "sql_constraints": [
-        {
-          "message": "Worklist type code must be unique.",
-          "name": "stc_worklist_code_unique",
-          "sql": "unique(code)"
-        }
-      ],
-      "table": "ipai_stc_worklist_type"
     },
     {
       "fields": [
@@ -24159,154 +22176,6 @@
         }
       ],
       "table": "ipai_workspace_link"
-    },
-    {
-      "fields": [
-        {
-          "compute": null,
-          "index": false,
-          "name": "active",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Boolean"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "check_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.stc.check",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "code",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Selection"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "description",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Text"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "name",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": true,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "odoo_anchor",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "overlay_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.localization.overlay",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "sap_anchor",
-          "ondelete": null,
-          "related": null,
-          "relation": null,
-          "required": false,
-          "store": true,
-          "type": "Char"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "scenario_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.stc.scenario",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "tasklist_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.ppm.tasklist",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        },
-        {
-          "compute": null,
-          "index": false,
-          "name": "template_ids",
-          "ondelete": null,
-          "related": null,
-          "relation": "ipai.ppm.template",
-          "required": false,
-          "store": true,
-          "type": "One2many"
-        }
-      ],
-      "inherits": [
-        "mail.thread",
-        "mail.activity.mixin"
-      ],
-      "inherits_delegated": {},
-      "module": "ipai_ppm_a1",
-      "name": "ipai.workstream",
-      "python_constraints": [],
-      "relations": [
-        "ipai.localization.overlay",
-        "ipai.ppm.tasklist",
-        "ipai.ppm.template",
-        "ipai.stc.check",
-        "ipai.stc.scenario"
-      ],
-      "sql_constraints": [
-        {
-          "message": "Workstream code must be unique.",
-          "name": "workstream_code_unique",
-          "sql": "unique(code)"
-        }
-      ],
-      "table": "ipai_workstream"
     },
     {
       "fields": [
