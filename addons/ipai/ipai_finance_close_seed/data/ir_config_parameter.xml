@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Email template brand colors -->
+        <record id="ipai_mail_header_color" model="ir.config_parameter">
+            <field name="key">mail.default_template_header_color</field>
+            <field name="value">#111111</field>
+        </record>
+        <record id="ipai_mail_button_color" model="ir.config_parameter">
+            <field name="key">mail.default_template_button_color</field>
+            <field name="value">#F9D000</field>
+        </record>
+
+        <!-- Signup: invitation-only (no free signup) -->
+        <record id="ipai_auth_signup_uninvited" model="ir.config_parameter">
+            <field name="key">auth_signup.allow_uninvited</field>
+            <field name="value">False</field>
+        </record>
+        <record id="ipai_auth_signup_scope" model="ir.config_parameter">
+            <field name="key">auth_signup.invitation_scope</field>
+            <field name="value">b2b</field>
+        </record>
+
+        <!-- Keep reset password enabled on login page -->
+        <record id="ipai_auth_reset_password" model="ir.config_parameter">
+            <field name="key">auth_signup.reset_password</field>
+            <field name="value">True</field>
+        </record>
+    </data>
+</odoo>

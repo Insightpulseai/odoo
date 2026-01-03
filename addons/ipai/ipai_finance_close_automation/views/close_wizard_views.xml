@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Wizard Form View -->
+    <record id="view_ipai_close_generate_wizard_form" model="ir.ui.view">
+        <field name="name">ipai.finance.close.generate.wizard.form</field>
+        <field name="model">ipai.finance.close.generate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Month-End Close">
+                <group>
+                    <field name="year"/>
+                    <field name="month"/>
+                    <field name="calendar_id"/>
+                </group>
+                <footer>
+                    <button string="Generate" type="object" name="action_generate" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_ipai_close_generate_wizard" model="ir.actions.act_window">
+        <field name="name">Generate Month-End Close</field>
+        <field name="res_model">ipai.finance.close.generate.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_ipai_finance_close_root"
+              name="Finance Close"
+              parent="project.menu_main_pm"
+              sequence="55"/>
+    <menuitem id="menu_ipai_close_generate"
+              name="Generate Month-End Close"
+              parent="menu_ipai_finance_close_root"
+              action="action_ipai_close_generate_wizard"
+              sequence="10"/>
+</odoo>

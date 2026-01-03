@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="task_close_01_process_and_record_payroll_fi" model="project.task">
+            <field name="name">Process and record Payroll, Final Pay, SL Conversions, and early retirement accrual.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_payroll_personnel')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Payroll &amp; Personnel\nEmployee Code: RIM\nReviewed by: CKVC\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_02_calculate_and_record_the_month" model="project.task">
+            <field name="name">Calculate and record the monthly Tax Provision and PPB Provision (performance bonuses).</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_tax_provisions')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Tax &amp; Provisions\nEmployee Code: RIM\nReviewed by: CKVC\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_03_record_recurring_monthly_renta" model="project.task">
+            <field name="name">Record recurring monthly Rental Income/Expense and monthly amortization expense for employee hospitalization plans.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_rent_leases')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Rent &amp; Leases\nEmployee Code: RIM\nReviewed by: CKVC\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_04_record_accruals_for_consultanc" model="project.task">
+            <field name="name">Record accruals for Consultancy Fees and various routine General Expense Accruals.Estimated expense for which a vendor invoice has not yet been received.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals_expenses')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Accruals &amp; Expenses\nEmployee Code: RIM\nReviewed by: CKVC\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_05_process_and_record_payments_fo" model="project.task">
+            <field name="name">Process and record Payments for various Cash Advances. Recording the funding/issuance of cash to employees for expected business expenditures.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals_expenses')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Accruals &amp; Expenses\nEmployee Code: RIM\nReviewed by: CKVC\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_06_the_necessary_reversal_or_adju" model="project.task">
+            <field name="name">The necessary reversal or adjustment of temporary journal entries created in a previous month. Process reversal entries for the prior month's accruals and reclassifications.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_prior_period_review')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Prior Period Review\nEmployee Code: RIM\nReviewed by: CKVC\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_07_allocating_prepaid_expenses_an" model="project.task">
+            <field name="name">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Depreciation, Amortization for vehicles/purchases/LOA, and Amortization for all technology licenses and shared service costs.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Amortization &amp; Corporate\nEmployee Code: BOM\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_08_accrue_monthly_expenses_for_ma" model="project.task">
+            <field name="name">Accrue monthly expenses for Management and Royalty fees, consulting fees, and funds for Innovations/Initiatives. Brief Detail: Recognizing an expense for internal projects or strategic corporate investments not yet formally invoiced.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_corporate_accruals')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Corporate Accruals\nEmployee Code: BOM\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_09_monthly_tracking_and_recording" model="project.task">
+            <field name="name">Monthly tracking and recording of premiums for various corporate insurance policies. Record monthly accrual for various Corporate Insurance types and amortize prepaid Health Insurance.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_insurance')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Insurance\nEmployee Code: BOM\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_10_non_operating_financial_activi" model="project.task">
+            <field name="name">Non-operating financial activities including capital structure and compliance. Record monthly bank charges, perform revaluation of foreign currency bank accounts, and record the monthly expense portion of the Omnicom stock option grant.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_treasury_other')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Treasury &amp; Other\nEmployee Code: BOM\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_11_process_reversal_entries_for_a" model="project.task">
+            <field name="name">Process reversal entries for all prior month Accruals (e.g., trainings, production/retainers).</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_prior_period_review')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Prior Period Review\nEmployee Code: BOM\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_12_prepare_reports_for_flash_win" model="project.task">
+            <field name="name">Prepare reports for Flash, Wins &amp; Losses and Revenue.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_regional_reporting')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Regional Reporting\nEmployee Code: BOM\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_13_recognizing_revenue_and_billab" model="project.task">
+            <field name="name">Recognizing revenue and billable costs based on client contracts and project status. Accrue estimated Production, Retainer Fees, Media Commission, Creative Fees, and OOPC. Recording estimated Out-of-Pocket Costs that will eventually be billed to a client.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_client_billings')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Client Billings\nEmployee Code: JPAL\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_14_reconciling_and_reclassifying" model="project.task">
+            <field name="name">Reconciling and reclassifying costs to ensure they are correctly categorized as billable (WIP) or internal (OOP). Perform month-end Reclassifications of OOP to WIP (moves client-related expenses to an active project account) and necessary Reclass WIP to OOP (moves costs back if non-billable).</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_wip_oop_management')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: WIP/OOP Management\nEmployee Code: JPAL\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_15_allocating_prepaid_expenses_an" model="project.task">
+            <field name="name">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Amortization of the Business Permit and Amortization of LOA.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Amortization &amp; Corporate\nEmployee Code: JPAL\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_16_accrue_estimated_monthly_audit" model="project.task">
+            <field name="name">Accrue estimated monthly Audit Fees.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Amortization &amp; Corporate\nEmployee Code: JPAL\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_17_record_monthly_rental_expense" model="project.task">
+            <field name="name">Record monthly Rental Expense/Income related to intercompany transactions.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Amortization &amp; Corporate\nEmployee Code: JPAL\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_18_perform_month_end_revaluation" model="project.task">
+            <field name="name">Perform month-end Revaluation of Intercompany Balances. Adjusting intercompany balances to reflect the correct value at the month-end exchange rate.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_amortization_corporate')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Amortization &amp; Corporate\nEmployee Code: JPAL\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_19_prepare_reports_for_working_ca" model="project.task">
+            <field name="name">Prepare reports for Working Captital related to AR</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ar_aging_wc')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: AR Aging - WC\nEmployee Code: JPAL\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_20_process_and_record_cash_advanc" model="project.task">
+            <field name="name">Process and record Cash Advance (CA) Liquidations for specific project-related expenses.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ca_liquidations')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: CA Liquidations\nEmployee Code: LAS\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_21_prepare_ap_aging_report_for_wo" model="project.task">
+            <field name="name">Prepare AP Aging report for working captital submission</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ap_aging_wc')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: AP Aging - WC\nEmployee Code: LAS\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_22_prepare_how_s_summary_report" model="project.task">
+            <field name="name">Prepare HOW's summary report</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_oop')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: OOP\nEmployee Code: LAS\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_23_recording_transactions_for_fin" model="project.task">
+            <field name="name">Recording transactions for financed assets and long-term commitments. Record monthly interest expense on leased assets and process amortization reclassifications for prepaid corporate fees.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_asset_lease_entries')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Asset &amp; Lease Entries\nEmployee Code: LAS\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_24_correcting_entries_across_the" model="project.task">
+            <field name="name">Correcting entries across the general ledger (GL). Process required reclassifications between specific GL accounts and between Marketing Expense categories.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_reclassifications')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Reclassifications\nEmployee Code: LAS\nReviewed by: BOM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_25_compile_and_record_monthly_inp" model="project.task">
+            <field name="name">Compile and record monthly Input VAT entries (VAT paid on purchases) and the monthly VAT Report (cumulative summary of VAT activity).</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_vat_taxes')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: VAT &amp; Taxes\nEmployee Code: JLI\nReviewed by: JPAL\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_26_recording_estimated_expenses_f" model="project.task">
+            <field name="name">Recording estimated expenses for recurring monthly costs and recognizing non-fixed asset costs. Accrue recurring Expenses (estimated expense for regularly occurring services).</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals_assets')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Accruals &amp; Assets\nEmployee Code: JLI\nReviewed by: LAS\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_27_record_the_monthly_recognition" model="project.task">
+            <field name="name">Record the monthly recognition/capitalization of Other Computer Related Costs.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals_assets')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Accruals &amp; Assets\nEmployee Code: JLI\nReviewed by: LAS\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_28_prepare_ap_aging_report_with_d" model="project.task">
+            <field name="name">Prepare AP Aging report with detailed status per invoice.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ap_aging')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: AP Aging\nEmployee Code: JLI\nReviewed by: LAS\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_29_process_and_record_cash_advanc" model="project.task">
+            <field name="name">Process and record Cash Advance (CA) Liquidations submitted by employees.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_ca_liquidations')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: CA Liquidations\nEmployee Code: RMQB\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_30_accrue_monthly_expense_for_emp" model="project.task">
+            <field name="name">Accrue monthly expense for Employee Cellphone Allowance</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals_assets')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Accruals &amp; Assets\nEmployee Code: RMQB\nReviewed by: LAS\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_31_adjusting_a_recorded_expense_f" model="project.task">
+            <field name="name">Adjusting a recorded expense from one GL account to another to ensure correct reporting. Process reclassifications to correct expense categories (e.g., General Expense to Wireless and Meals).</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_expense_reclassification')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Expense Reclassification\nEmployee Code: RMQB\nReviewed by: RIM\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_32_compile_review_and_record_th" model="project.task">
+            <field name="name">Compile, review, and record the monthly VAT Report (Initial and additional entries).</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_vat_reporting')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: VAT Reporting\nEmployee Code: JAP\nReviewed by: JPAL\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_33_adjusting_costs_or_revenues_be" model="project.task">
+            <field name="name">Adjusting costs or revenues between different internal project codes or job numbers. Process and record Transfers of Job Codes for consultancy fees and corporate projects.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_job_transfers')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Job Transfers\nEmployee Code: JAP\nReviewed by: JPAL\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_34_record_specific_gl_reclassific" model="project.task">
+            <field name="name">Record specific GL reclassifications needed for month-end adjustments</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_job_transfers')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Job Transfers\nEmployee Code: JAP\nReviewed by: JPAL\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_35_compile_documents_for_the_atta" model="project.task">
+            <field name="name">Compile documents for the attachment of the revenue accruals.</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_accruals')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: Accruals\nEmployee Code: JRMO\nReviewed by: JPAL\nApproved by: CKVC</field>
+        </record>
+        <record id="task_close_36_prepare_wip_schedule_summary_p" model="project.task">
+            <field name="name">Prepare WIP schedule summary per Job#</field>
+            <field name="project_id" ref="project_month_end_template"/>
+            <field name="tag_ids" eval="[(6, 0, [ref('tag_wip')])]"/>
+            <field name="planned_hours">16.0</field>
+            <field name="description">Category: WIP\nEmployee Code: JRMO\nReviewed by: JPAL\nApproved by: CKVC</field>
+        </record>
+    </data>
+</odoo>
