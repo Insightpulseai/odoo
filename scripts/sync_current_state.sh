@@ -19,7 +19,15 @@ fi
 
 echo "[3/7] Regenerate Odoo DBML"
 if [ -f scripts/generate_odoo_dbml.py ]; then
-    python3 scripts/generate_odoo_dbml.py
+    # DBML generation requires DB connection
+    if [ -f /.dockerenv ]; then
+        python3 scripts/generate_odoo_dbml.py
+    elif command -v docker &> /dev/null && docker ps --format '{{.Names}}' | grep -q "^odoo-core$"; then
+        echo "Running DBML gen inside odoo-core container..."
+        docker exec -i odoo-core python3 scripts/generate_odoo_dbml.py
+    else
+        echo "SKIP: Odoo DB access required for DBML generation (container not running)"
+    fi
 else
     echo "SKIP: scripts/generate_odoo_dbml.py not found"
 fi
