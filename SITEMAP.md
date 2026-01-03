@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd651eaee85c5c921323130b282706a01f1de623
+> Commit: 0709b65aa05d01ac1595fc8d9685f4c7fb2df2fe
 
 ## 📚 Documentation
 
@@ -499,12 +499,14 @@
 | [ipai_grid_view](./addons/ipai_grid_view) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ | SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance |
+| [ipai_ocr_gateway](./addons/ipai_ocr_gateway) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
 | [ipai_platform_permissions](./addons/ipai_platform_permissions) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai_platform_theme) | ✅ |  |
 | [ipai_platform_workflow](./addons/ipai_platform_workflow) | ✅ |  |
 | [ipai_ppm_a1](./addons/ipai_ppm_a1) | ✅ |  |
+| [ipai_sms_gateway](./addons/ipai_sms_gateway) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai_superset_connector) | ✅ | Apache Superset integration with managed dataset sync |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai_theme_tbwa_backend) | ✅ | TBWA branding for Odoo backend - Black + Yellow + IBM Plex |
