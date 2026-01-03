@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4c4da6f8b7239d2e162a7d7b569593391e425076
+> Commit: dd651eaee85c5c921323130b282706a01f1de623
 
 ## 📚 Documentation
 
@@ -129,6 +129,7 @@
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
+| [Odoo 18 CE Project Import Templates](data/import_templates/README.md) | data/import_templates |
 | [Database Target Architecture](db/DB_TARGET_ARCHITECTURE.md) | db |
 | [RLS Roles and Permissions](db/rls/RLS_ROLES.md) | db/rls |
 | [Database Seeding Strategy](db/seeds/SEEDING_STRATEGY.md) | db/seeds |
