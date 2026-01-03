@@ -71,6 +71,14 @@ jobs:
           chmod +x scripts/report_ci_telemetry.sh
           scripts/report_ci_telemetry.sh "${{ job.status }}"
 
+      - name: Notify Slack
+        if: always()
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          chmod +x scripts/notify_slack.sh
+          scripts/notify_slack.sh "${{ job.status }}"
+
   data-model-drift:
     runs-on: ubuntu-latest
     steps:
