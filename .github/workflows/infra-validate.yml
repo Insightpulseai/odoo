@@ -44,8 +44,14 @@ jobs:
           bicep build main.bicep --outfile main.json
 
       - name: Validate ARM template (dev)
-        if: ${{ secrets.AZURE_CREDENTIALS != '' }}
+        if: always()
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
         run: |
+          if [ -z "$AZURE_CREDENTIALS" ]; then
+            echo "Skipping validation (AZURE_CREDENTIALS not set)"
+            exit 0
+          fi
           az deployment group validate \
             --resource-group rg-notion-ppm-dev \
             --template-file infra/azure/main.json \
