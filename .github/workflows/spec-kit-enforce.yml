@@ -3,21 +3,9 @@ name: Spec Kit Enforcement
 
 on:
   pull_request:
-    paths:
-      - "spec/**"
-      - ".github/workflows/spec-kit-enforce.yml"
-      - "CLAUDE.md"
-      - ".claude/**"
-      - "scripts/**"
   push:
     branches:
       - main
-    paths:
-      - "spec/**"
-      - ".github/workflows/spec-kit-enforce.yml"
-      - "CLAUDE.md"
-      - ".claude/**"
-      - "scripts/**"
 
 permissions:
   contents: read
