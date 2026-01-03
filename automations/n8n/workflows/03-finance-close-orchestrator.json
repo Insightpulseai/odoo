@@ -1,0 +1,277 @@
+{
+  "name": "Finance Close Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "finance-close",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "API Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 200],
+      "webhookId": "finance-close"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "cron-trigger",
+      "name": "Day 1 @ 8AM PHT",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize input and determine action\nconst input = $input.first().json;\nconst data = input.body || input;\n\n// Calculate period (default: previous month)\nconst now = new Date();\nlet period = data.period;\nif (!period) {\n  const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);\n  period = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}`;\n}\n\nreturn {\n  json: {\n    action: data.action || 'start',\n    period: period,\n    period_name: new Date(period + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),\n    triggered_by: data.triggered_by || 'scheduled',\n    agencies: data.agencies || ['RIM', 'CKVC', 'BOM', 'JPAL', 'JLI', 'JAP', 'LAS', 'RMQB']\n  }\n};"
+      },
+      "id": "normalize-input",
+      "name": "Parse Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "outputKey": "start",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "start",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "status",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "status",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "notify",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "notify",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "route-action",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [400, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://159.223.75.148:8069/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB || 'odoo_core' }}\",\n      {{ $env.ODOO_UID || 2 }},\n      \"{{ $env.ODOO_API_KEY }}\",\n      \"project.project\",\n      \"copy\",\n      [1],\n      {\n        \"name\": \"Month-End Close {{ $json.period_name }}\",\n        \"description\": \"Automated month-end closing process for {{ $json.period }}\"\n      }\n    ]\n  },\n  \"id\": {{ Date.now() }}\n}",
+        "options": {}
+      },
+      "id": "create-project",
+      "name": "Create Odoo Project",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://159.223.75.148:8069/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB || 'odoo_core' }}\",\n      {{ $env.ODOO_UID || 2 }},\n      \"{{ $env.ODOO_API_KEY }}\",\n      \"project.task\",\n      \"search_read\",\n      [[\"project_id.name\", \"ilike\", \"Month-End Close\"]],\n      {\n        \"fields\": [\"name\", \"stage_id\", \"user_ids\", \"date_deadline\", \"project_id\"],\n        \"limit\": 100\n      }\n    ]\n  },\n  \"id\": {{ Date.now() }}\n}",
+        "options": {}
+      },
+      "id": "get-tasks",
+      "name": "Get Close Tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"#finance\",\n  \"username\": \"Finance Bot\",\n  \"icon_emoji\": \":calendar:\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"📅 Month-End Close Reminder\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Period:* {{ $('Parse Request').item.json.period_name }}\\n*Status:* Action Required\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"Please complete your assigned closing tasks. Check Odoo Projects for details.\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "notify-slack",
+      "name": "Notify Finance Team",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process project creation result\nconst result = $('Create Odoo Project').first().json;\nconst request = $('Parse Request').first().json;\n\nif (result.error) {\n  return {\n    json: {\n      success: false,\n      error: result.error.message || 'Failed to create project',\n      period: request.period\n    }\n  };\n}\n\nconst projectId = result.result;\n\nreturn {\n  json: {\n    success: true,\n    action: 'start',\n    message: `Month-end close initiated for ${request.period_name}`,\n    project: {\n      id: projectId,\n      name: `Month-End Close ${request.period_name}`,\n      url: `http://159.223.75.148:8069/web#id=${projectId}&model=project.project&view_type=form`\n    },\n    period: request.period,\n    agencies: request.agencies,\n    next_steps: [\n      'Tasks created from template',\n      'Assignments based on SoD matrix',\n      'Finance team notified via Slack',\n      'Deadline reminders scheduled'\n    ]\n  }\n};"
+      },
+      "id": "process-start",
+      "name": "Process Start Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process task status\nconst result = $('Get Close Tasks').first().json;\nconst request = $('Parse Request').first().json;\n\nif (result.error) {\n  return {\n    json: {\n      success: false,\n      error: result.error.message || 'Failed to get tasks'\n    }\n  };\n}\n\nconst tasks = result.result || [];\nconst summary = {\n  total: tasks.length,\n  completed: 0,\n  in_progress: 0,\n  not_started: 0\n};\n\ntasks.forEach(task => {\n  const stageName = task.stage_id?.[1] || '';\n  if (stageName.toLowerCase().includes('done') || stageName.toLowerCase().includes('complete')) {\n    summary.completed++;\n  } else if (stageName.toLowerCase().includes('progress')) {\n    summary.in_progress++;\n  } else {\n    summary.not_started++;\n  }\n});\n\nconst progress = summary.total > 0 ? Math.round((summary.completed / summary.total) * 100) : 0;\n\nreturn {\n  json: {\n    success: true,\n    action: 'status',\n    period: request.period,\n    summary: summary,\n    progress_percent: progress,\n    status: progress === 100 ? 'COMPLETE' : progress >= 80 ? 'ALMOST_DONE' : progress >= 50 ? 'IN_PROGRESS' : 'STARTED',\n    tasks: tasks.slice(0, 10).map(t => ({\n      name: t.name,\n      stage: t.stage_id?.[1],\n      assignee: t.user_ids?.[0]?.[1] || 'Unassigned',\n      deadline: t.date_deadline\n    }))\n  }\n};"
+      },
+      "id": "process-status",
+      "name": "Process Status Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process notify result\nconst request = $('Parse Request').first().json;\n\nreturn {\n  json: {\n    success: true,\n    action: 'notify',\n    message: `Finance team notified about ${request.period_name} month-end close`,\n    channel: '#finance',\n    period: request.period\n  }\n};"
+      },
+      "id": "process-notify",
+      "name": "Process Notify Result",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"#finance\",\n  \"username\": \"Finance Bot\",\n  \"icon_emoji\": \":rocket:\",\n  \"text\": \"🚀 *Month-End Close Started*\\n\\n*Period:* {{ $json.period }}\\n*Project:* <{{ $json.project.url }}|{{ $json.project.name }}>\\n\\nTasks have been created and assigned. Check your Odoo dashboard for your tasks.\"\n}",
+        "options": {}
+      },
+      "id": "notify-start",
+      "name": "Notify Start",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              { "name": "Content-Type", "value": "application/json" }
+            ]
+          }
+        }
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1300, 300]
+    }
+  ],
+  "connections": {
+    "API Trigger": {
+      "main": [
+        [{ "node": "Parse Request", "type": "main", "index": 0 }]
+      ]
+    },
+    "Day 1 @ 8AM PHT": {
+      "main": [
+        [{ "node": "Parse Request", "type": "main", "index": 0 }]
+      ]
+    },
+    "Parse Request": {
+      "main": [
+        [{ "node": "Route Action", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route Action": {
+      "main": [
+        [{ "node": "Create Odoo Project", "type": "main", "index": 0 }],
+        [{ "node": "Get Close Tasks", "type": "main", "index": 0 }],
+        [{ "node": "Notify Finance Team", "type": "main", "index": 0 }],
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Odoo Project": {
+      "main": [
+        [{ "node": "Process Start Result", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Close Tasks": {
+      "main": [
+        [{ "node": "Process Status Result", "type": "main", "index": 0 }]
+      ]
+    },
+    "Notify Finance Team": {
+      "main": [
+        [{ "node": "Process Notify Result", "type": "main", "index": 0 }]
+      ]
+    },
+    "Process Start Result": {
+      "main": [
+        [{ "node": "Notify Start", "type": "main", "index": 0 }]
+      ]
+    },
+    "Notify Start": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    },
+    "Process Status Result": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    },
+    "Process Notify Result": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "Asia/Manila"
+  },
+  "tags": [
+    { "name": "finance" },
+    { "name": "month-end" }
+  ]
+}

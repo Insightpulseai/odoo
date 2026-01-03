@@ -1,0 +1,260 @@
+{
+  "name": "GitHub OAuth Callback Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "callback",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "oauth-webhook",
+      "name": "OAuth Callback Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "github-oauth-callback"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-code",
+              "leftValue": "={{ $json.query.code }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-code",
+      "name": "Has Auth Code?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://github.com/login/oauth/access_token",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "client_id",
+              "value": "Iv23liwGL7fnYySPPAjS"
+            },
+            {
+              "name": "client_secret",
+              "value": "={{ $env.GITHUB_CLIENT_SECRET }}"
+            },
+            {
+              "name": "code",
+              "value": "={{ $json.query.code }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "exchange-token",
+      "name": "Exchange Code for Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [400, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "check-token",
+              "leftValue": "={{ $json.access_token }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-token",
+      "name": "Token Received?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [600, 200]
+    },
+    {
+      "parameters": {
+        "url": "https://api.github.com/user",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/vnd.github+json"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "get-user",
+      "name": "Get GitHub User Info",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, 100]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Store token and user info\nconst tokenData = $('Exchange Code for Token').first().json;\nconst userData = $input.first().json;\n\nconsole.log('User authenticated:', userData.login);\n\nreturn {\n  json: {\n    success: true,\n    user: {\n      id: userData.id,\n      login: userData.login,\n      name: userData.name,\n      email: userData.email,\n      avatar_url: userData.avatar_url\n    },\n    token: {\n      access_token: tokenData.access_token,\n      token_type: tokenData.token_type,\n      scope: tokenData.scope\n    },\n    authenticated_at: new Date().toISOString()\n  }\n};"
+      },
+      "id": "prepare-response",
+      "name": "Prepare Success Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1000, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html>\n<head>\n  <title>Authorization Successful</title>\n  <style>\n    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }\n    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); text-align: center; max-width: 400px; }\n    .avatar { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 20px; }\n    h1 { color: #22c55e; margin: 0 0 10px; }\n    .user { color: #374151; font-size: 18px; margin-bottom: 20px; }\n    .success-icon { font-size: 48px; margin-bottom: 20px; }\n    .close-msg { color: #6b7280; font-size: 14px; }\n    .token-info { background: #f3f4f6; padding: 12px; border-radius: 8px; margin-top: 16px; font-family: monospace; font-size: 12px; word-break: break-all; }\n  </style>\n</head>\n<body>\n  <div class=\"card\">\n    <div class=\"success-icon\">✅</div>\n    <h1>Authorized!</h1>\n    <img src=\"{{ $json.user.avatar_url }}\" class=\"avatar\" alt=\"avatar\">\n    <p class=\"user\">Welcome, <strong>{{ $json.user.login }}</strong></p>\n    <p class=\"close-msg\">You can close this window.</p>\n    <div class=\"token-info\">Scopes: {{ $json.token.scope }}</div>\n  </div>\n</body>\n</html>",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "success-page",
+      "name": "Success Page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1200, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "=<!DOCTYPE html>\n<html>\n<head>\n  <title>Authorization Failed</title>\n  <style>\n    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #1f2937; }\n    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center; max-width: 400px; }\n    h1 { color: #ef4444; margin: 0 0 10px; }\n    .error-icon { font-size: 48px; margin-bottom: 20px; }\n    .message { color: #6b7280; margin-bottom: 20px; }\n    a { color: #3b82f6; text-decoration: none; }\n    .error-detail { background: #fef2f2; color: #991b1b; padding: 12px; border-radius: 8px; margin-top: 16px; font-size: 12px; }\n  </style>\n</head>\n<body>\n  <div class=\"card\">\n    <div class=\"error-icon\">❌</div>\n    <h1>Authorization Failed</h1>\n    <p class=\"message\">Could not exchange code for token</p>\n    <div class=\"error-detail\">{{ $json.error_description || $json.error || 'Token exchange failed' }}</div>\n    <p style=\"margin-top: 20px;\"><a href=\"https://github.com/login/oauth/authorize?client_id=Iv23liwGL7fnYySPPAjS&scope=repo,workflow&redirect_uri=https://n8n.insightpulseai.net/webhook/callback\">Try Again</a></p>\n  </div>\n</body>\n</html>",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "token-error-page",
+      "name": "Token Error Page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [800, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "<!DOCTYPE html>\n<html>\n<head>\n  <title>Missing Code</title>\n  <style>\n    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #1f2937; }\n    .card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); text-align: center; max-width: 400px; }\n    h1 { color: #f59e0b; margin: 0 0 10px; }\n    .warn-icon { font-size: 48px; margin-bottom: 20px; }\n    .message { color: #6b7280; margin-bottom: 20px; }\n    a { display: inline-block; background: #3b82f6; color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; }\n    a:hover { background: #2563eb; }\n  </style>\n</head>\n<body>\n  <div class=\"card\">\n    <div class=\"warn-icon\">⚠️</div>\n    <h1>No Authorization Code</h1>\n    <p class=\"message\">Please start the authorization flow from the beginning.</p>\n    <a href=\"https://github.com/login/oauth/authorize?client_id=Iv23liwGL7fnYySPPAjS&scope=repo,workflow&redirect_uri=https://n8n.insightpulseai.net/webhook/callback\">Authorize with GitHub</a>\n  </div>\n</body>\n</html>",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "text/html"
+              }
+            ]
+          }
+        }
+      },
+      "id": "no-code-page",
+      "name": "No Code Error Page",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [400, 450]
+    }
+  ],
+  "connections": {
+    "OAuth Callback Webhook": {
+      "main": [
+        [{ "node": "Has Auth Code?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Has Auth Code?": {
+      "main": [
+        [{ "node": "Exchange Code for Token", "type": "main", "index": 0 }],
+        [{ "node": "No Code Error Page", "type": "main", "index": 0 }]
+      ]
+    },
+    "Exchange Code for Token": {
+      "main": [
+        [{ "node": "Token Received?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Token Received?": {
+      "main": [
+        [{ "node": "Get GitHub User Info", "type": "main", "index": 0 }],
+        [{ "node": "Token Error Page", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get GitHub User Info": {
+      "main": [
+        [{ "node": "Prepare Success Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Prepare Success Response": {
+      "main": [
+        [{ "node": "Success Page", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    { "name": "oauth" },
+    { "name": "github" }
+  ]
+}
