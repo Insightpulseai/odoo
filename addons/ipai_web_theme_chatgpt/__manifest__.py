@@ -18,19 +18,6 @@ Features:
 - Pill/tag styling with full radius
 - Improved list headers and control panels
 - Focus ring styling for accessibility
-- Clean, product-style UI polish
-
-Design System:
-- Based on ChatGPT/modern SaaS visual language
-- Purple primary (#6d28d9) accent color
-- Neutral gray palette for text and borders
-- Consistent 8px/12px/16px border radius system
-- Subtle shadows for depth hierarchy
-
-Installation:
-1. Install this module
-2. Clear browser cache and refresh with ?debug=assets
-3. Enjoy the refreshed UI
 
 Note: This theme only affects the backend (web client).
 For website theming, use a separate website theme module.
@@ -39,10 +26,16 @@ For website theming, use a separate website theme module.
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
     "depends": ["web"],
-    "data": [
-        "views/assets.xml",
-    ],
-    "assets": {},
+    "data": [],
+    # Odoo 18 native asset bundling (preferred over template inheritance)
+    "assets": {
+        "web.assets_backend": [
+            # Design tokens must load first (variables for overrides)
+            "ipai_web_theme_chatgpt/static/src/scss/tokens.scss",
+            # Component overrides consume tokens
+            "ipai_web_theme_chatgpt/static/src/scss/backend_overrides.scss",
+        ],
+    },
     "demo": [],
     "installable": True,
     "application": False,

@@ -3,6 +3,11 @@
 // ============================================================================
 // Modern SaaS design language inspired by ChatGPT's clean, minimal aesthetic.
 // These tokens provide a consistent foundation for the entire UI.
+//
+// USAGE:
+// - Edit variables below to customize the theme palette
+// - Odoo/Bootstrap mappings at bottom ensure system-wide inheritance
+// - After changes, update module: ./odoo-bin -d <DB> -u ipai_web_theme_chatgpt
 
 // ============================================================================
 // TYPOGRAPHY
@@ -211,3 +216,44 @@ $ipai-table-header-bg: $ipai-neutral-50;
 $ipai-table-header-text: $ipai-muted;
 $ipai-table-row-hover: $ipai-neutral-50;
 $ipai-table-border: $ipai-border;
+
+// ============================================================================
+// ODOO / BOOTSTRAP VARIABLE MAPPINGS
+// ============================================================================
+// Map IPAI tokens to Odoo and Bootstrap variables for system-wide inheritance.
+// This reduces brittle selectors and ensures more components inherit styling.
+
+// Odoo brand color (used in navbar, primary actions)
+$o-brand-odoo: $ipai-primary !default;
+$o-brand-primary: $ipai-primary !default;
+
+// Bootstrap color overrides
+$primary: $ipai-primary !default;
+$secondary: $ipai-neutral-600 !default;
+$success: $ipai-success !default;
+$info: $ipai-info !default;
+$warning: $ipai-warning !default;
+$danger: $ipai-danger !default;
+$light: $ipai-neutral-100 !default;
+$dark: $ipai-neutral-900 !default;
+
+// Bootstrap border radius
+$border-radius: $ipai-radius-sm !default;
+$border-radius-sm: 6px !default;
+$border-radius-lg: $ipai-radius-md !default;
+
+// Bootstrap input/form styling
+$input-border-color: $ipai-border !default;
+$input-focus-border-color: $ipai-input-focus-border !default;
+$input-focus-box-shadow: 0 0 0 3px $ipai-input-focus-ring !default;
+
+// Bootstrap card styling
+$card-border-radius: $ipai-card-radius !default;
+$card-border-color: $ipai-card-border !default;
+
+// Bootstrap modal styling
+$modal-content-border-radius: $ipai-radius-lg !default;
+
+// Bootstrap dropdown styling
+$dropdown-border-radius: $ipai-radius-md !default;
+$dropdown-box-shadow: $ipai-shadow-lg !default;
