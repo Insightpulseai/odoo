@@ -235,16 +235,232 @@ Table a1_workstream {
 }
 
 Table account_account {
+  centralized boolean
+  create_date datetime
+  create_uid int
+  hide_in_cash_flow boolean
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table account_account_reconcile_data {
+  create_date datetime
+  create_uid int
+  data varchar
+  id int [pk]
+  reconcile_id int
+  user_id int
+  write_date datetime
+  write_uid int
+}
+
+Table account_age_report_configuration {
+  company_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  write_date datetime
+  write_uid int
+}
+
+Table account_age_report_configuration_line {
+  account_age_report_config_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  inferior_limit int
+  name varchar
+  write_date datetime
+  write_uid int
+  Note: 'unique_name_config_combination: UNIQUE(name,account_age_report_config_id) (Name must be unique per report configuration)'
+}
+
+Table account_analytic_account {
   id int [pk]
   Note: 'stub for core model'
+}
+
+Table account_analytic_line {
+  ancestor_task_id int
+  create_date datetime
+  create_uid int
+  date_time datetime
+  date_time_end datetime
+  id int [pk]
+  show_time_control varchar
+  stock_move_id int
+  stock_task_id int
+  write_date datetime
+  write_uid int
+}
+
+Table account_bank_statement {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table account_bank_statement_line {
+  aggregate_id int
+  aggregate_name varchar
+  analytic_distribution varchar
+  analytic_precision int
+  can_reconcile boolean
+  create_date datetime
+  create_uid int
+  id int [pk]
+  manual_amount decimal
+  manual_amount_in_currency decimal
+  manual_exchange_counterpart boolean
+  manual_in_currency boolean
+  manual_kind varchar
+  manual_move_type varchar
+  manual_name varchar
+  manual_original_amount decimal
+  previous_manual_amount_in_currency decimal
+  reconcile_aggregate varchar
+  reconcile_data varchar
+  reconcile_data_info varchar
+  reconcile_mode varchar
+  write_date datetime
+  write_uid int
+}
+
+Table account_bank_statement_line_manual_analytic_tag_ids_rel {
+  account_bank_statement_line_id int
+  id_id int
+}
+
+Table account_group {
+  complete_code varchar
+  complete_name varchar
+  create_date datetime
+  create_uid int
+  id int [pk]
+  level int
+  write_date datetime
+  write_uid int
+}
+
+Table account_journal {
+  autovalidate_completed_move boolean
+  commission_account_id int
+  commission_analytic_account_id int
+  company_currency_id int
+  create_counterpart boolean
+  create_date datetime
+  create_uid int
+  id int [pk]
+  import_type varchar
+  last_import_date datetime
+  launch_import_completion boolean
+  partner_id int
+  receivable_account_id int
+  reconcile_aggregate varchar
+  reconcile_mode varchar
+  split_counterpart boolean
+  used_for_completion boolean
+  used_for_import boolean
+  write_date datetime
+  write_uid int
+}
+
+Table account_journal_rule_ids_rel {
+  account_journal_id int
+  id_id int
 }
 
 Table account_move {
   bir_2307_date date
   bir_2307_generated boolean
+  completion_logs text
   create_date datetime
   create_uid int
   ewt_amount decimal
+  financial_type varchar
+  id int [pk]
+  import_partner_id int
+  transaction_id varchar
+  used_for_completion boolean
+  write_date datetime
+  write_uid int
+}
+
+Table account_move_completion_rule {
+  create_date datetime
+  create_uid int
+  function_to_call varchar
+  id int [pk]
+  name varchar
+  sequence int
+  write_date datetime
+  write_uid int
+}
+
+Table account_move_completion_rule_journal_ids_rel {
+  account_move_completion_rule_id int
+  id_id int
+}
+
+Table account_move_line {
+  already_completed boolean
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table account_move_line_analytic_account_ids_rel {
+  account_analytic_account_id int
+  account_move_line_id int
+}
+
+Table account_reconcile_model {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  unique_matching boolean
+  write_date datetime
+  write_uid int
+}
+
+Table account_reconcile_model_line {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table account_reconcile_model_line_analytic_tag_ids_rel {
+  account_reconcile_model_line_id int
+  id_id int
+}
+
+Table account_tax {
+  balance float
+  balance_refund float
+  balance_regular float
+  base_balance float
+  base_balance_refund float
+  base_balance_regular float
+  create_date datetime
+  create_uid int
+  has_moves boolean
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table activity_statement_wizard {
+  create_date datetime
+  create_uid int
+  date_start date
   id int [pk]
   write_date datetime
   write_uid int
@@ -355,9 +571,231 @@ Table advisor_tag {
   Note: 'name_unique: UNIQUE(name) (Tag name must be unique!)'
 }
 
+Table aged_partner_balance_report_wizard {
+  account_code_from int
+  account_code_to int
+  age_partner_config_id int
+  create_date datetime
+  create_uid int
+  date_at date
+  date_from date
+  id int [pk]
+  payable_accounts_only boolean
+  receivable_accounts_only boolean
+  show_move_line_details boolean
+  target_move varchar
+  write_date datetime
+  write_uid int
+}
+
+Table aged_partner_balance_report_wizard_account_ids_rel {
+  aged_partner_balance_report_wizard_id int
+  id_id int
+}
+
+Table aged_partner_balance_report_wizard_partner_ids_rel {
+  aged_partner_balance_report_wizard_id int
+  id_id int
+}
+
+Table attachment_queue {
+  attachment_id int
+  create_date datetime
+  create_uid int
+  date_done datetime
+  failure_emails varchar
+  file_type varchar
+  fs_storage_id int
+  id int [pk]
+  method_type varchar
+  state varchar
+  state_message text
+  task_id int
+  write_date datetime
+  write_uid int
+}
+
+Table attachment_queue_reschedule {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table attachment_queue_reschedule_attachment_ids_rel {
+  attachment_queue_reschedule_id int
+  id_id int
+}
+
+Table attachment_synchronize_task {
+  active boolean
+  after_import varchar
+  avoid_duplicated_files boolean
+  backend_id int
+  count_attachment_done int
+  count_attachment_failed int
+  count_attachment_pending int
+  create_date datetime
+  create_uid int
+  failure_emails varchar
+  file_type varchar
+  filepath varchar
+  id int [pk]
+  method_type varchar
+  move_path varchar
+  name varchar
+  new_name varchar
+  pattern varchar
+  write_date datetime
+  write_uid int
+}
+
+Table auditlog_autovacuum {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table auditlog_http_request {
+  create_date datetime
+  create_uid int
+  display_name varchar
+  http_session_id int
+  id int [pk]
+  name varchar
+  root_url varchar
+  user_context varchar
+  user_id int
+  write_date datetime
+  write_uid int
+}
+
+Table auditlog_http_session {
+  create_date datetime
+  create_uid int
+  display_name varchar
+  id int [pk]
+  name varchar
+  user_id int
+  write_date datetime
+  write_uid int
+}
+
+Table auditlog_log {
+  create_date datetime
+  create_uid int
+  http_request_id int
+  http_session_id int
+  id int [pk]
+  log_type varchar
+  method varchar
+  model_id int
+  model_model varchar
+  model_name varchar
+  name varchar
+  res_id int
+  res_ids varchar
+  user_id int
+  write_date datetime
+  write_uid int
+}
+
+Table auditlog_log_line {
+  create_date datetime
+  create_uid int
+  field_description varchar
+  field_id int
+  field_name varchar
+  id int [pk]
+  log_id int
+  new_value text
+  new_value_text text
+  old_value text
+  old_value_text text
+  write_date datetime
+  write_uid int
+}
+
+Table auditlog_rule {
+  action_id int
+  capture_record boolean
+  create_date datetime
+  create_uid int
+  id int [pk]
+  log_create boolean
+  log_export_data boolean
+  log_read boolean
+  log_type varchar
+  log_unlink boolean
+  log_write boolean
+  model_id int
+  model_model varchar
+  model_name varchar
+  name varchar
+  state varchar
+  write_date datetime
+  write_uid int
+  Note: 'model_uniq: unique(model_id) (There is already a rule defined on this model
+You cannot define another: please edit the existing one.)'
+}
+
+Table auditlog_rule_fields_to_exclude_ids_rel {
+  auditlog_rule_id int
+  ir_model_fields_id int
+}
+
+Table auditlog_rule_users_to_exclude_ids_rel {
+  auditlog_rule_id int
+  res_users_id int
+}
+
+Table audittail_rules_users {
+  rule_id int
+  user_id int
+}
+
 Table base_automation {
   id int [pk]
   Note: 'stub for core model'
+}
+
+Table base_exception_test_purchase {
+  active boolean
+  amount_total float
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  partner_id int
+  state varchar
+  user_id int
+  write_date datetime
+  write_uid int
+}
+
+Table base_exception_test_purchase_line {
+  amount float
+  create_date datetime
+  create_uid int
+  id int [pk]
+  lead_id int
+  name varchar
+  qty float
+  write_date datetime
+  write_uid int
+}
+
+Table base_sequence_tester {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  test_type varchar
+  write_date datetime
+  write_uid int
 }
 
 Table bir_alphalist {
@@ -584,6 +1022,151 @@ Table bir_withholding_return {
   write_uid int
 }
 
+Table cleanup_create_indexes_line {
+  create_date datetime
+  create_uid int
+  field_id int
+  id int [pk]
+  purged boolean
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_create_indexes_wizard {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_line_column {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  model_id int
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_line_data {
+  create_date datetime
+  create_uid int
+  data_id int
+  id int [pk]
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_line_field {
+  create_date datetime
+  create_uid int
+  field_id int
+  id int [pk]
+  model_id int
+  model_name varchar
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_line_menu {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  menu_id int
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_line_model {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_line_module {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_line_table {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  table_type varchar
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_wizard_column {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_wizard_data {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_wizard_field {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_wizard_menu {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_wizard_model {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_wizard_module {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table cleanup_purge_wizard_table {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
 Table close_approval_gate {
   actual_value float
   approval_notes text
@@ -681,7 +1264,7 @@ Table close_exception {
   create_uid int
   currency_id int
   cycle_id int
-  description varchar
+  description text
   detected_by int
   detected_date datetime
   escalated_date datetime
@@ -836,7 +1419,7 @@ Table close_task_template {
   default_approve_user_id int
   default_prep_user_id int
   default_review_user_id int
-  description varchar
+  description text
   id int [pk]
   name varchar
   period_type varchar
@@ -919,6 +1502,20 @@ Table compliance_check {
   write_uid int
 }
 
+Table credit_statement_import {
+  commission_account_id int
+  create_date datetime
+  create_uid int
+  file_name varchar
+  id int [pk]
+  input_statement binary
+  journal_id int
+  partner_id int
+  receivable_account_id int
+  write_date datetime
+  write_uid int
+}
+
 Table crm_lead {
   create_date datetime
   create_uid int
@@ -951,11 +1548,158 @@ Table crm_stage_required_fields_rel {
   stage_id int
 }
 
+Table date_range {
+  id int [pk]
+  Note: 'stub for core model'
+}
+
+Table db_backup {
+  backup_format varchar
+  create_date datetime
+  create_uid int
+  days_to_keep int
+  folder varchar
+  id int [pk]
+  method varchar
+  name varchar
+  sftp_host varchar
+  sftp_password varchar
+  sftp_port int
+  sftp_private_key varchar
+  sftp_user varchar
+  write_date datetime
+  write_uid int
+  Note: 'days_to_keep_positive: CHECK(days_to_keep >= 0) (I cannot remove backups from the future. Ask Doc for that.)\nname_unique: UNIQUE(name) (Cannot duplicate a configuration.)'
+}
+
+Table detailed_activity_statement_wizard {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  show_aging_buckets boolean
+  show_balance boolean
+  write_date datetime
+  write_uid int
+}
+
 Table discuss_channel {
   create_date datetime
   create_uid int
   id int [pk]
   is_ai_channel boolean
+  write_date datetime
+  write_uid int
+}
+
+Table exception_rule {
+  active boolean
+  code text
+  create_date datetime
+  create_uid int
+  description text
+  domain varchar
+  exception_type varchar
+  id int [pk]
+  is_blocking boolean
+  method varchar
+  model varchar
+  name varchar
+  sequence int
+  write_date datetime
+  write_uid int
+}
+
+Table exception_rule_confirm_test_purchase {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  related_model_id int
+  write_date datetime
+  write_uid int
+}
+
+Table exception_rule_test_purchase_ids_rel {
+  base_exception_test_purchase_id int
+  exception_rule_id int
+}
+
+Table export_xlsx_wizard {
+  create_date datetime
+  create_uid int
+  data binary
+  id int [pk]
+  name varchar
+  res_ids varchar
+  res_model varchar
+  state varchar
+  template_id int
+  write_date datetime
+  write_uid int
+}
+
+Table fetchmail_attach_mail_manually {
+  create_date datetime
+  create_uid int
+  folder_id int
+  id int [pk]
+  name varchar
+  write_date datetime
+  write_uid int
+}
+
+Table fetchmail_attach_mail_manually_mail {
+  body varchar
+  create_date datetime
+  create_uid int
+  date datetime
+  email_from varchar
+  id int [pk]
+  msgid varchar
+  object_id varchar
+  subject varchar
+  wizard_id int
+  write_date datetime
+  write_uid int
+}
+
+Table fetchmail_server {
+  cleanup_days int
+  cleanup_folder varchar
+  create_date datetime
+  create_uid int
+  error_notice_template_id int
+  folders_available text
+  folders_only boolean
+  id int [pk]
+  object_id int
+  purge_days int
+  server_type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table fetchmail_server_folder {
+  action_id int
+  active boolean
+  archive_path varchar
+  create_date datetime
+  create_uid int
+  delete_matching boolean
+  domain varchar
+  fetch_unseen_only boolean
+  flag_nonmatching boolean
+  id int [pk]
+  mail_field varchar
+  match_algorithm varchar
+  match_first boolean
+  model_field varchar
+  model_id int
+  model_order varchar
+  msg_state varchar
+  path varchar
+  sequence int
+  server_id int
+  state varchar
   write_date datetime
   write_uid int
 }
@@ -1163,6 +1907,61 @@ Table finance_task_template_dependency_rel {
   task_id int
 }
 
+Table fs_storage {
+  create_date datetime
+  create_uid int
+  export_task_count int
+  id int [pk]
+  import_task_count int
+  write_date datetime
+  write_uid int
+}
+
+Table general_ledger_report_wizard {
+  account_code_from int
+  account_code_to int
+  centralize boolean
+  create_date datetime
+  create_uid int
+  date_from date
+  date_range_id int
+  date_to date
+  domain varchar
+  foreign_currency boolean
+  fy_start_date date
+  grouped_by varchar
+  hide_account_at_0 boolean
+  id int [pk]
+  only_one_unaffected_earnings_account boolean
+  payable_accounts_only boolean
+  receivable_accounts_only boolean
+  show_cost_center boolean
+  target_move varchar
+  unaffected_earnings_account int
+  write_date datetime
+  write_uid int
+}
+
+Table general_ledger_report_wizard_account_ids_rel {
+  general_ledger_report_wizard_id int
+  id_id int
+}
+
+Table general_ledger_report_wizard_account_journal_ids_rel {
+  general_ledger_report_wizard_id int
+  id_id int
+}
+
+Table general_ledger_report_wizard_cost_center_ids_rel {
+  general_ledger_report_wizard_id int
+  id_id int
+}
+
+Table general_ledger_report_wizard_partner_ids_rel {
+  general_ledger_report_wizard_id int
+  id_id int
+}
+
 Table hr_employee {
   create_date datetime
   create_uid int
@@ -1188,6 +1987,54 @@ Table hr_expense {
 Table hr_payslip {
   id int [pk]
   Note: 'stub for core model'
+}
+
+Table hr_timesheet_switch {
+  analytic_line_id int
+  company_id int
+  create_date datetime
+  create_uid int
+  date_time datetime
+  date_time_end datetime
+  id int [pk]
+  name varchar
+  project_id int
+  running_timer_duration float
+  running_timer_id int
+  running_timer_start datetime
+  task_id int
+  write_date datetime
+  write_uid int
+}
+
+Table iap_account {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  provider varchar
+  write_date datetime
+  write_uid int
+}
+
+Table import_xlsx_wizard {
+  create_date datetime
+  create_uid int
+  datas binary
+  filename varchar
+  fname varchar
+  id int [pk]
+  import_file binary
+  res_id int
+  res_model varchar
+  state varchar
+  template_id int
+  write_date datetime
+  write_uid int
+}
+
+Table import_xlsx_wizard_attachment_ids_rel {
+  import_xlsx_wizard_id int
+  ir_attachment_id int
 }
 
 Table ipai_ask_ai_service {
@@ -1311,14 +2158,18 @@ Table ipai_bir_form_schedule {
   bir_deadline date
   create_date datetime
   create_uid int
+  filing_date date
   form_code varchar
   id int [pk]
+  last_reminder_sent datetime
   period varchar
   prep_date date
+  reminder_count int
   responsible_approval_id int
   responsible_prep_id int
   responsible_review_id int
   review_date date
+  status varchar
   write_date datetime
   write_uid int
 }
@@ -2604,19 +3455,466 @@ Table ipai_workstream {
   Note: 'workstream_code_unique: unique(code) (Workstream code must be unique.)'
 }
 
-Table ir_attachment {
+Table ir_actions {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ir_actions_act_window {
   id int [pk]
   Note: 'stub for core model'
+}
+
+Table ir_actions_act_window_view {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  view_mode varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ir_actions_actions {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  is_temporary boolean
+  write_date datetime
+  write_uid int
+}
+
+Table ir_actions_report {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  report_type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ir_attachment {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table ir_config_parameter {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table ir_cron {
+  create_date datetime
+  create_uid int
+  email_template_id int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table ir_cron_mutually_exclusive_cron_ids_rel {
+  id_id int
+  ir_cron_id int
+}
+
+Table ir_exports {
+  create_date datetime
+  create_uid int
+  global_resolver_id int
+  id int [pk]
+  language_agnostic boolean
+  write_date datetime
+  write_uid int
+}
+
+Table ir_exports_line {
+  active boolean
+  create_date datetime
+  create_uid int
+  id int [pk]
+  instance_method_name varchar
+  lang_id int
+  resolver_id int
+  target varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ir_exports_resolver {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  python_code text
+  type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ir_filters {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
 }
 
 Table ir_model {
+  active_custom_tracking boolean
+  add_open_tab_field boolean
+  add_smart_search boolean
+  automatic_custom_tracking boolean
+  automatic_custom_tracking_domain varchar
+  create_date datetime
+  create_uid int
+  force_noupdate boolean
+  id int [pk]
+  name_search_domain varchar
+  restrict_update boolean
+  rpc_config_edit text
+  smart_search_warning varchar
+  tracked_field_count int
+  use_smart_name_search boolean
+  write_date datetime
+  write_uid int
+}
+
+Table ir_model_access {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table ir_model_data {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table ir_model_fields {
+  can_have_options boolean
+  comodel_id int
+  create_date datetime
+  create_uid int
+  custom_tracking boolean
+  id int [pk]
+  native_tracking boolean
+  trackable boolean
+  tracking_domain varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ir_model_index_size {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  ir_model_size_id int
+  name varchar
+  size int
+  write_date datetime
+  write_uid int
+}
+
+Table ir_model_name_search_ids_rel {
+  ir_model_fields_id int
+  ir_model_id int
+}
+
+Table ir_model_relation_size {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  ir_model_size_id int
+  name varchar
+  size int
+  write_date datetime
+  write_uid int
+}
+
+Table ir_model_res_groups_update_allowed_rel {
+  ir_model_id int
+  res_groups_id int
+}
+
+Table ir_model_size {
+  attachment_size int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  indexes_size int
+  measurement_date date
+  model varchar
+  model_name varchar
+  relations_size int
+  table_size int
+  total_database_size int
+  total_model_size int
+  total_table_size int
+  tuples int
+  write_date datetime
+  write_uid int
+  Note: 'uniq_model_measurement_date: unique(model, measurement_date) (There is already a measurement for this model on the given date)'
+}
+
+Table ir_module_author {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  installed_module_qty int
+  name varchar
+  write_date datetime
+  write_uid int
+  Note: 'name_uniq: unique(name) (The name of the modules author should be unique per database!)'
+}
+
+Table ir_module_author_installed_module_ids_rel {
+  id_id int
+  ir_module_author_id int
+}
+
+Table ir_module_module {
+  create_date datetime
+  create_uid int
+  css_code_qty int
+  id int [pk]
+  is_oca_module boolean
+  is_odoo_module boolean
+  js_code_qty int
+  module_type_id int
+  python_code_qty int
+  scss_code_qty int
+  write_date datetime
+  write_uid int
+  xml_code_qty int
+}
+
+Table ir_module_module_author_ids_rel {
+  id_id int
+  ir_module_module_id int
+}
+
+Table ir_module_type {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  installed_module_qty int
+  name varchar
+  sequence int
+  write_date datetime
+  write_uid int
+}
+
+Table ir_module_type_rule {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  module_domain varchar
+  module_type_id int
+  sequence int
+  write_date datetime
+  write_uid int
+}
+
+Table ir_sequence {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table ir_sequence_option {
+  company_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  model varchar
+  name varchar
+  use_sequence_option boolean
+  write_date datetime
+  write_uid int
+}
+
+Table ir_sequence_option_line {
+  base_id int
+  company_id int
+  create_date datetime
+  create_uid int
+  filter_domain varchar
+  id int [pk]
+  implementation varchar
+  model varchar
+  name varchar
+  prefix varchar
+  sequence_id int
+  suffix varchar
+  use_sequence_option boolean
+  write_date datetime
+  write_uid int
+}
+
+Table ir_ui_menu {
   id int [pk]
   Note: 'stub for core model'
 }
 
-Table ir_model_fields {
+Table ir_ui_view {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table journal_ledger_report_wizard {
+  create_date datetime
+  create_uid int
+  date_from date
+  date_range_id int
+  date_to date
+  foreign_currency boolean
+  group_option varchar
+  id int [pk]
+  move_target varchar
+  sort_option varchar
+  with_account_name boolean
+  with_auto_sequence boolean
+  write_date datetime
+  write_uid int
+}
+
+Table journal_ledger_report_wizard_journal_ids_rel {
+  id_id int
+  journal_ledger_report_wizard_id int
+}
+
+Table m2x_create_edit_option {
+  comodel_id int
+  comodel_name varchar
+  create_date datetime
+  create_uid int
+  field_id int
+  field_name varchar
+  id int [pk]
+  model_id int
+  model_name varchar
+  name varchar
+  option_create varchar
+  option_create_edit varchar
+  write_date datetime
+  write_uid int
+  Note: 'field_uniqueness: unique(field_id) (Options must be unique for each field!)'
+}
+
+Table mail_message {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table mail_message_subtype {
   id int [pk]
   Note: 'stub for core model'
+}
+
+Table mail_template {
+  id int [pk]
+  Note: 'stub for core model'
+}
+
+Table mail_tracking_value {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table mis_cash_flow_forecast_line {
+  account_id int
+  balance float
+  company_id int
+  create_date datetime
+  create_uid int
+  date date
+  id int [pk]
+  name varchar
+  partner_id int
+  write_date datetime
+  write_uid int
+}
+
+Table mis_report_instance {
+  allow_horizontal boolean
+  create_date datetime
+  create_uid int
+  horizontal boolean
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table mis_report_kpi {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  split_after boolean
+  write_date datetime
+  write_uid int
+}
+
+Table open_items_report_wizard {
+  account_code_from int
+  account_code_to int
+  create_date datetime
+  create_uid int
+  date_at date
+  date_from date
+  foreign_currency boolean
+  grouped_by varchar
+  hide_account_at_0 boolean
+  id int [pk]
+  payable_accounts_only boolean
+  receivable_accounts_only boolean
+  show_partner_details boolean
+  target_move varchar
+  write_date datetime
+  write_uid int
+}
+
+Table open_items_report_wizard_account_ids_rel {
+  id_id int
+  open_items_report_wizard_id int
+}
+
+Table open_items_report_wizard_partner_ids_rel {
+  id_id int
+  open_items_report_wizard_id int
+}
+
+Table outstanding_statement_wizard {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
 }
 
 Table ph_holiday {
@@ -2854,8 +4152,53 @@ Table product_category {
 }
 
 Table product_product {
+  create_date datetime
+  create_uid int
   id int [pk]
-  Note: 'stub for core model'
+  write_date datetime
+  write_uid int
+}
+
+Table product_set_line {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table product_template {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  recurring_task boolean
+  service_tracking varchar
+  task_force_month varchar
+  task_force_month_quarter varchar
+  task_force_month_semester varchar
+  task_repeat_interval int
+  task_repeat_number int
+  task_repeat_type varchar
+  task_repeat_unit varchar
+  task_repeat_until date
+  task_start_date_method varchar
+  write_date datetime
+  write_uid int
+}
+
+Table project_assignment {
+  active boolean
+  company_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  project_id int
+  role_id int
+  user_id int
+  write_date datetime
+  write_uid int
+  Note: 'company_role_user_uniq: EXCLUDE (    company_id WITH =, role_id WITH =, user_id WITH =) WHERE (    project_id IS NULL) (User may be assigned per role only once within a company!)\nnocompany_role_user_uniq: EXCLUDE (role_id WITH =, user_id WITH =) WHERE (    project_id IS NULL AND company_id IS NULL) (User may be assigned per role only once!)\nproject_role_user_uniq: UNIQUE (project_id, role_id, user_id) (User may be assigned per role only once within a project!)'
 }
 
 Table project_category {
@@ -2873,7 +4216,9 @@ Table project_milestone {
   completion_criteria text
   create_date datetime
   create_uid int
+  dedication int
   deliverables text
+  execution int
   gate_status varchar
   id int [pk]
   last_alert_sent date
@@ -2886,42 +4231,144 @@ Table project_milestone {
   write_uid int
 }
 
+Table project_pr_required {
+  project_id int
+  state_id int
+}
+
 Table project_project {
   actual_finish date
   actual_start date
   baseline_finish date
   baseline_start date
+  child_ids_count int
   clarity_id varchar
   create_date datetime
   create_uid int
   critical_milestone_count int
+  department_id int
   health_status varchar
   id int [pk]
   im_code varchar
+  inherit_assignments boolean
   ipai_finance_enabled boolean
   ipai_im_code varchar
   ipai_is_im_project boolean
   ipai_root_project_id int
   is_program boolean
+  is_template boolean
+  key varchar
+  limit_role_to_assignments boolean
+  location_dest_id int
+  location_id int
   milestone_count int
+  name varchar
   overall_progress float
   overall_status varchar
   parent_id int
+  parent_path varchar
   phase_count int
+  picking_type_id int
   portfolio_id int
   program_code varchar
   program_type varchar
+  purchase_count int
+  purchase_invoice_count int
+  purchase_invoice_line_total float
+  purchase_line_total int
+  sequence_code varchar
+  stage_last_update_date datetime
+  stock_analytic_date date
+  task_key_sequence_id int
+  type_id int
   variance_finish int
   variance_start int
   write_date datetime
   write_uid int
   x_cycle_code varchar
+  Note: 'name_required: CHECK(name IS NOT NULL) (Project name is required)\nproject_key_unique: UNIQUE(key) (Project key must be unique)\nsequence_code_unique: UNIQUE(sequence_code) (Sequence code must be unique)'
+}
+
+Table project_project_group_ids_rel {
+  project_project_id int
+  res_groups_id int
+}
+
+Table project_project_hr_category_ids_rel {
+  id_id int
+  project_project_id int
+}
+
+Table project_project_tag_ids_rel {
+  id_id int
+  project_project_id int
+}
+
+Table project_project_type_ids_rel {
+  id_id int
+  project_project_id int
+}
+
+Table project_role {
+  active boolean
+  company_id int
+  complete_name varchar
+  create_date datetime
+  create_uid int
+  description varchar
+  id int [pk]
+  name varchar
+  parent_id int
+  parent_path varchar
+  write_date datetime
+  write_uid int
+  Note: 'name_company_uniq: UNIQUE (name, company_id) (Role with such name already exists in the company!)\nname_nocompany_uniq: EXCLUDE (name WITH =) WHERE (    company_id IS NULL) (Shared role with such name already exists!)'
+}
+
+Table project_stakeholder {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  note text
+  partner_id int
+  project_id int
+  role_id int
+  write_date datetime
+  write_uid int
+}
+
+Table project_stakeholder_role {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  write_date datetime
+  write_uid int
+}
+
+Table project_tags {
+  company_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  parent_id int
+  parent_path varchar
+  write_date datetime
+  write_uid int
+}
+
+Table project_tags_allowed_project_ids_rel {
+  id_id int
+  project_tags_id int
 }
 
 Table project_task {
   activity_type varchar
   actual_cost float
   actual_hours float
+  allow_moves_action_assign boolean
+  allow_moves_action_confirm boolean
+  ancestor_id int
   approval_duration float
   approver_id int
   auto_sync boolean
@@ -2936,10 +4383,14 @@ Table project_task {
   child_task_count int
   closing_due_date date
   cluster varchar
+  code varchar
   cost_variance float
   create_date datetime
   create_uid int
   critical_path boolean
+  domain_hr_category_ids binary
+  domain_user_ids binary
+  done_stock_moves boolean
   earned_value float
   erp_ref varchar
   fd_id int
@@ -2953,6 +4404,7 @@ Table project_task {
   gate_approver_id int
   gate_decision varchar
   gate_milestone_id int
+  group_id int
   has_gate boolean
   id int [pk]
   ipai_compliance_step varchar
@@ -2964,9 +4416,13 @@ Table project_task {
   ipai_template_id int
   is_finance_ppm boolean
   is_phase boolean
+  key varchar
   lag_days int
   lead_days int
+  location_dest_id int
+  location_id int
   milestone_count int
+  notes varchar
   owner_code varchar
   period_covered varchar
   phase_baseline_finish date
@@ -2975,9 +4431,17 @@ Table project_task {
   phase_status varchar
   phase_type varchar
   phase_variance_days int
+  picking_type_id int
+  planned_date_end datetime
+  planned_date_start datetime
   planned_hours float
   planned_value float
+  portal_url varchar
+  portal_url_visible boolean
+  pr_uri varchar
   prep_duration float
+  priority varchar
+  project_department_id int
   relative_due varchar
   remaining_hours float
   resource_allocation float
@@ -2985,9 +4449,21 @@ Table project_task {
   reviewer_id int
   role_code varchar
   schedule_variance float
+  scrap_count int
   sfm_id int
+  stage_id int
+  stock_analytic_account_id int
+  stock_analytic_date date
+  stock_analytic_distribution varchar
+  stock_moves_is_locked boolean
+  stock_state varchar
   target_date date
   total_float int
+  type_id int
+  unreserve_visible boolean
+  url varchar
+  use_stock_moves boolean
+  version_id int
   wbs_code varchar
   write_date datetime
   write_uid int
@@ -2997,6 +4473,7 @@ Table project_task {
   x_seed_hash varchar
   x_step_code varchar
   x_task_template_code varchar
+  Note: 'project_task_unique_code: UNIQUE (company_id, code) (The code must be unique!)\ntask_key_unique: UNIQUE(key) (Task key must be unique!)'
 }
 
 Table project_task_checklist_item {
@@ -3016,6 +4493,111 @@ Table project_task_checklist_item {
   write_uid int
 }
 
+Table project_task_description_template {
+  active boolean
+  company_id int
+  create_date datetime
+  create_uid int
+  description varchar
+  id int [pk]
+  name varchar
+  write_date datetime
+  write_uid int
+}
+
+Table project_task_employee_ids_rel {
+  id_id int
+  project_task_id int
+}
+
+Table project_task_hr_category_ids_rel {
+  id_id int
+  project_task_id int
+}
+
+Table project_task_merge {
+  create_date datetime
+  create_new_task boolean
+  create_uid int
+  dst_project_id int
+  dst_task_id int
+  dst_task_name varchar
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table project_task_merge_task_ids_rel {
+  project_task_id int
+  project_task_merge_id int
+}
+
+Table project_task_merge_user_ids_rel {
+  project_task_merge_id int
+  res_users_id int
+}
+
+Table project_task_pr_required_states_rel {
+  id_id int
+  project_task_id int
+}
+
+Table project_task_stock_product_set_wizard {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  task_id int
+  write_date datetime
+  write_uid int
+}
+
+Table project_task_tag_ids_rel {
+  id_id int
+  project_task_id int
+}
+
+Table project_task_type {
+  case_default boolean
+  create_date datetime
+  create_uid int
+  done_stock_moves boolean
+  id int [pk]
+  task_state varchar
+  use_stock_moves boolean
+  write_date datetime
+  write_uid int
+}
+
+Table project_task_user_ids_rel {
+  id_id int
+  project_task_id int
+}
+
+Table project_type {
+  code varchar
+  complete_name varchar
+  create_date datetime
+  create_uid int
+  description text
+  id int [pk]
+  name varchar
+  parent_id int
+  project_ok boolean
+  task_ok boolean
+  write_date datetime
+  write_uid int
+}
+
+Table project_version {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  project_id int
+  write_date datetime
+  write_uid int
+}
+
 Table purchase_order {
   create_date datetime
   create_uid int
@@ -3025,16 +4607,110 @@ Table purchase_order {
   x_master_control_submitted boolean
 }
 
-Table res_company {
-  id int [pk]
-  Note: 'stub for core model'
-}
-
-Table res_config_settings {
+Table quick_start_screen {
   create_date datetime
   create_uid int
   id int [pk]
+  name varchar
+  write_date datetime
+  write_uid int
+}
+
+Table quick_start_screen_action {
+  action_ref_id varchar
+  active boolean
+  color int
+  context varchar
+  create_date datetime
+  create_uid int
+  description varchar
+  domain varchar
+  icon_name varchar
+  id int [pk]
+  image varchar
+  name varchar
+  sequence int
+  write_date datetime
+  write_uid int
+}
+
+Table quick_start_screen_action_ids_rel {
+  id_id int
+  quick_start_screen_id int
+}
+
+Table report_project_task_user {
+  ancestor_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  planned_date_end datetime
+  planned_date_start datetime
+  write_date datetime
+  write_uid int
+}
+
+Table report_xlsx_wizard {
+  create_date datetime
+  create_uid int
+  domain varchar
+  id int [pk]
+  res_model varchar
+  write_date datetime
+  write_uid int
+}
+
+Table res_company {
+  account_auto_reconcile_queue boolean
+  color_button_bg varchar
+  color_button_bg_hover varchar
+  color_button_text varchar
+  color_link_text varchar
+  color_link_text_hover varchar
+  color_navbar_bg varchar
+  color_navbar_bg_hover varchar
+  color_navbar_text varchar
+  color_submenu_text varchar
+  company_colors varchar
+  create_date datetime
+  create_uid int
+  favicon binary
+  id int [pk]
+  project_inherit_assignments boolean
+  project_limit_role_to_assignments boolean
+  reconcile_aggregate varchar
+  scss_modif_timestamp varchar
+  user_tech_id int
+  write_date datetime
+  write_uid int
+}
+
+Table res_config_settings {
+  account_auto_reconcile_queue boolean
+  age_partner_config_id int
+  create_date datetime
+  create_uid int
+  database_size_purge boolean
+  database_size_retention_daily int
+  database_size_retention_monthly int
+  default_aging_type varchar
+  default_filter_negative_balances boolean
+  default_filter_partners_non_due boolean
+  default_show_aging_buckets boolean
+  excluded_models_from_readonly varchar
+  group_activity_statement boolean
+  group_outstanding_statement boolean
+  id int [pk]
   ipai_enable_finance_project_analytics boolean
+  project_display_name_pattern varchar
+  project_inherit_assignments boolean
+  project_limit_role_to_assignments boolean
+  pwa_background_color varchar
+  pwa_icon binary
+  pwa_short_name varchar
+  pwa_theme_color varchar
+  reconcile_aggregate varchar
+  session_auto_close_timeout int
   superset_auto_sync boolean
   superset_connection_id int
   superset_create_analytics_views boolean
@@ -3055,6 +4731,7 @@ Table res_groups {
 }
 
 Table res_partner {
+  bank_statement_label varchar
   bir_registered boolean
   bir_registration_date date
   create_date datetime
@@ -3070,14 +4747,61 @@ Table res_partner {
   write_uid int
 }
 
-Table res_users {
+Table res_remote {
   create_date datetime
   create_uid int
   id int [pk]
+  in_network boolean
+  ip varchar
+  name varchar
+  write_date datetime
+  write_uid int
+  Note: 'name_unique: unique(name) (Hostname must be unique)'
+}
+
+Table res_users {
+  apps_menu_search_type varchar
+  apps_menu_theme varchar
+  chatter_position varchar
+  create_date datetime
+  create_uid int
+  id int [pk]
+  is_readonly_user boolean
+  is_redirect_home boolean
+  notify_danger_channel_name varchar
+  notify_default_channel_name varchar
+  notify_info_channel_name varchar
+  notify_success_channel_name varchar
+  notify_warning_channel_name varchar
+  quick_start_screen_id int
   write_date datetime
   write_uid int
   x_employee_code varchar
   Note: 'x_employee_code_uniq: UNIQUE(x_employee_code) (Employee code must be unique)\nx_employee_code_unique: unique(x_employee_code) (Employee code must be unique when set!)'
+}
+
+Table res_users_hr_category_ids_rel {
+  id_id int
+  res_users_id int
+}
+
+Table sale_order {
+  create_date datetime
+  create_uid int
+  has_project_service_tracking_lines boolean
+  id int [pk]
+  transaction_id varchar
+  write_date datetime
+  write_uid int
+}
+
+Table sale_order_line {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  is_project_service_tracking_line boolean
+  write_date datetime
+  write_uid int
 }
 
 Table srm_kpi_category {
@@ -3212,6 +4936,35 @@ Table srm_supplier_category_ids_rel {
 Table stock_location {
   id int [pk]
   Note: 'stub for core model'
+}
+
+Table stock_move {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  raw_material_task_id int
+  show_cancel_button_in_task boolean
+  task_id int
+  write_date datetime
+  write_uid int
+}
+
+Table stock_move_line {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  task_id int
+  write_date datetime
+  write_uid int
+}
+
+Table stock_scrap {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  task_id int
+  write_date datetime
+  write_uid int
 }
 
 Table superset_analytics_view {
@@ -3352,6 +5105,287 @@ Table superset_dataset_wizard_field_ids_rel {
   superset_dataset_wizard_id int
 }
 
+Table test_partner_time_window {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  partner_id int
+  write_date datetime
+  write_uid int
+}
+
+Table test_time_window_model {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  partner_id int
+  write_date datetime
+  write_uid int
+}
+
+Table time_weekday {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  write_date datetime
+  write_uid int
+  Note: 'name_uniq: UNIQUE(name) (Name must be unique)'
+}
+
+Table timesheets_analysis_report {
+  ancestor_task_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  write_date datetime
+  write_uid int
+}
+
+Table trgm_index {
+  create_date datetime
+  create_uid int
+  field_id int
+  id int [pk]
+  index_name varchar
+  index_type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table trial_balance_report_wizard {
+  account_code_from int
+  account_code_to int
+  create_date datetime
+  create_uid int
+  date_from date
+  date_range_id int
+  date_to date
+  foreign_currency boolean
+  fy_start_date date
+  grouped_by varchar
+  hide_account_at_0 boolean
+  hide_parent_hierarchy_level boolean
+  id int [pk]
+  limit_hierarchy_level boolean
+  only_one_unaffected_earnings_account boolean
+  payable_accounts_only boolean
+  receivable_accounts_only boolean
+  show_hierarchy boolean
+  show_hierarchy_level int
+  show_partner_details boolean
+  target_move varchar
+  unaffected_earnings_account int
+  write_date datetime
+  write_uid int
+}
+
+Table trial_balance_report_wizard_account_ids_rel {
+  id_id int
+  trial_balance_report_wizard_id int
+}
+
+Table trial_balance_report_wizard_journal_ids_rel {
+  id_id int
+  trial_balance_report_wizard_id int
+}
+
+Table trial_balance_report_wizard_partner_ids_rel {
+  id_id int
+  trial_balance_report_wizard_id int
+}
+
+Table upgrade_analysis {
+  analysis_date datetime
+  config_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  log text
+  state varchar
+  upgrade_path varchar
+  write_date datetime
+  write_files boolean
+  write_uid int
+}
+
+Table upgrade_attribute {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  record_id int
+  value varchar
+  write_date datetime
+  write_uid int
+}
+
+Table upgrade_comparison_config {
+  analysis_qty int
+  create_date datetime
+  create_uid int
+  database varchar
+  id int [pk]
+  name varchar
+  password varchar
+  port int
+  server varchar
+  username varchar
+  version varchar
+  write_date datetime
+  write_uid int
+}
+
+Table upgrade_generate_record_wizard {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  state varchar
+  write_date datetime
+  write_uid int
+}
+
+Table upgrade_install_wizard {
+  create_date datetime
+  create_uid int
+  id int [pk]
+  module_qty int
+  state varchar
+  write_date datetime
+  write_uid int
+}
+
+Table upgrade_install_wizard_module_ids_rel {
+  id_id int
+  upgrade_install_wizard_id int
+}
+
+Table upgrade_record {
+  create_date datetime
+  create_uid int
+  definition varchar
+  domain varchar
+  field varchar
+  id int [pk]
+  mode varchar
+  model varchar
+  model_original_module varchar
+  model_type varchar
+  module varchar
+  name varchar
+  noupdate boolean
+  prefix varchar
+  suffix varchar
+  type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table vacuum_rule {
+  active boolean
+  company_id int
+  create_date datetime
+  create_uid int
+  description text
+  empty_model boolean
+  empty_subtype boolean
+  filename_pattern varchar
+  id int [pk]
+  inheriting_model varchar
+  message_type varchar
+  model varchar
+  model_filter_domain text
+  model_id int
+  name varchar
+  retention_time int
+  ttype varchar
+  write_date datetime
+  write_uid int
+}
+
+Table vacuum_rule_message_subtype_ids_rel {
+  mail_message_subtype_id int
+  vacuum_rule_id int
+}
+
+Table vacuum_rule_model_ids_rel {
+  ir_model_id int
+  vacuum_rule_id int
+}
+
+Table vat_report_wizard {
+  based_on varchar
+  create_date datetime
+  create_uid int
+  date_from date
+  date_range_id int
+  date_to date
+  id int [pk]
+  target_move varchar
+  tax_detail boolean
+  write_date datetime
+  write_uid int
+}
+
+Table web_editor_class {
+  active boolean
+  class_name varchar
+  create_date datetime
+  create_uid int
+  id int [pk]
+  name varchar
+  sequence int
+  write_date datetime
+  write_uid int
+  Note: 'class_name_uniq: unique(class_name) (Class name must be unique)'
+}
+
+Table web_form_banner_rule {
+  active boolean
+  create_date datetime
+  create_uid int
+  id int [pk]
+  message text
+  message_is_html boolean
+  message_value_code text
+  model_id int
+  model_name varchar
+  name varchar
+  position varchar
+  sequence int
+  severity varchar
+  target_xpath varchar
+  write_date datetime
+  write_uid int
+}
+
+Table web_form_banner_rule_trigger_field_rel {
+  ir_model_fields_id int
+  web_form_banner_rule_id int
+}
+
+Table web_form_banner_rule_view_ids_rel {
+  ir_ui_view_id int
+  web_form_banner_rule_id int
+}
+
+Table wizard_open_tax_balances {
+  create_date datetime
+  create_uid int
+  date_range_id int
+  from_date date
+  id int [pk]
+  target_move varchar
+  to_date date
+  write_date datetime
+  write_uid int
+}
+
+Table wizard_open_tax_balances_company_ids_rel {
+  id_id int
+  wizard_open_tax_balances_id int
+}
+
 Table workos_comment_mention_rel {
   comment_id int
   user_id int
@@ -3360,6 +5394,74 @@ Table workos_comment_mention_rel {
 Table workspace_member_rel {
   user_id int
   workspace_id int
+}
+
+Table xlsx_template {
+  create_date datetime
+  create_uid int
+  csv_delimiter varchar
+  csv_extension varchar
+  csv_quote boolean
+  datas binary
+  description varchar
+  export_action_id int
+  fname varchar
+  gname varchar
+  id int [pk]
+  import_action_id int
+  input_instruction text
+  instruction text
+  name varchar
+  post_import_hook varchar
+  redirect_action int
+  report_action_id int
+  report_menu_id int
+  res_model varchar
+  result_field varchar
+  result_model_id int
+  show_instruction boolean
+  to_csv boolean
+  use_report_wizard boolean
+  write_date datetime
+  write_uid int
+}
+
+Table xlsx_template_export {
+  create_date datetime
+  create_uid int
+  excel_cell varchar
+  field_cond varchar
+  field_name varchar
+  id int [pk]
+  is_cont boolean
+  is_extend boolean
+  is_sum boolean
+  row_field varchar
+  section_type varchar
+  sequence int
+  sheet varchar
+  style varchar
+  style_cond varchar
+  template_id int
+  write_date datetime
+  write_uid int
+}
+
+Table xlsx_template_import {
+  create_date datetime
+  create_uid int
+  excel_cell varchar
+  field_cond varchar
+  field_name varchar
+  id int [pk]
+  no_delete boolean
+  row_field varchar
+  section_type varchar
+  sequence int
+  sheet varchar
+  template_id int
+  write_date datetime
+  write_uid int
 }
 
 Ref: a1_check.close_gate_template_id > close_approval_gate_template.id
@@ -3403,6 +5505,16 @@ Ref: a1_workstream.close_category_id > close_task_category.id
 Ref: a1_workstream.company_id > res_company.id
 Ref: a1_workstream.owner_role_id > a1_role.id
 Ref: a1_workstream.owner_user_id > res_users.id
+Ref: account_account_reconcile_data.user_id > res_users.id
+Ref: account_age_report_configuration.company_id > res_company.id
+Ref: account_age_report_configuration_line.account_age_report_config_id > account_age_report_configuration.id
+Ref: account_bank_statement_line_manual_analytic_tag_ids_rel.account_bank_statement_line_id > account_bank_statement_line.id
+Ref: account_journal_rule_ids_rel.account_journal_id > account_journal.id
+Ref: account_move.import_partner_id > res_partner.id
+Ref: account_move_completion_rule_journal_ids_rel.account_move_completion_rule_id > account_move_completion_rule.id
+Ref: account_move_line_analytic_account_ids_rel.account_analytic_account_id > account_analytic_account.id
+Ref: account_move_line_analytic_account_ids_rel.account_move_line_id > account_move_line.id
+Ref: account_reconcile_model_line_analytic_tag_ids_rel.account_reconcile_model_line_id > account_reconcile_model_line.id
 Ref: advisor_playbook_category_ids_rel.advisor_category_id > advisor_category.id
 Ref: advisor_playbook_category_ids_rel.advisor_playbook_id > advisor_playbook.id
 Ref: advisor_recommendation.category_id > advisor_category.id
@@ -3412,6 +5524,34 @@ Ref: advisor_recommendation.playbook_id > advisor_playbook.id
 Ref: advisor_recommendation_tag_ids_rel.advisor_recommendation_id > advisor_recommendation.id
 Ref: advisor_recommendation_tag_ids_rel.advisor_tag_id > advisor_tag.id
 Ref: advisor_score.category_id > advisor_category.id
+Ref: aged_partner_balance_report_wizard.age_partner_config_id > account_age_report_configuration.id
+Ref: aged_partner_balance_report_wizard_account_ids_rel.aged_partner_balance_report_wizard_id > aged_partner_balance_report_wizard.id
+Ref: aged_partner_balance_report_wizard_partner_ids_rel.aged_partner_balance_report_wizard_id > aged_partner_balance_report_wizard.id
+Ref: attachment_queue.attachment_id > ir_attachment.id
+Ref: attachment_queue.fs_storage_id > fs_storage.id
+Ref: attachment_queue.task_id > attachment_synchronize_task.id
+Ref: attachment_queue_reschedule_attachment_ids_rel.attachment_queue_reschedule_id > attachment_queue_reschedule.id
+Ref: attachment_synchronize_task.backend_id > fs_storage.id
+Ref: auditlog_http_request.http_session_id > auditlog_http_session.id
+Ref: auditlog_http_request.user_id > res_users.id
+Ref: auditlog_http_session.user_id > res_users.id
+Ref: auditlog_log.http_request_id > auditlog_http_request.id
+Ref: auditlog_log.http_session_id > auditlog_http_session.id
+Ref: auditlog_log.model_id > ir_model.id
+Ref: auditlog_log.user_id > res_users.id
+Ref: auditlog_log_line.field_id > ir_model_fields.id
+Ref: auditlog_log_line.log_id > auditlog_log.id
+Ref: auditlog_rule.action_id > ir_actions_act_window.id
+Ref: auditlog_rule.model_id > ir_model.id
+Ref: auditlog_rule_fields_to_exclude_ids_rel.auditlog_rule_id > auditlog_rule.id
+Ref: auditlog_rule_fields_to_exclude_ids_rel.ir_model_fields_id > ir_model_fields.id
+Ref: auditlog_rule_users_to_exclude_ids_rel.auditlog_rule_id > auditlog_rule.id
+Ref: auditlog_rule_users_to_exclude_ids_rel.res_users_id > res_users.id
+Ref: audittail_rules_users.rule_id > res_users.id
+Ref: audittail_rules_users.user_id > auditlog_rule.id
+Ref: base_exception_test_purchase.partner_id > res_partner.id
+Ref: base_exception_test_purchase.user_id > res_users.id
+Ref: base_exception_test_purchase_line.lead_id > base_exception_test_purchase.id
 Ref: bir_alphalist.company_id > res_company.id
 Ref: bir_alphalist.currency_id > res_currency.id
 Ref: bir_alphalist_line.alphalist_id > bir_alphalist.id
@@ -3442,6 +5582,18 @@ Ref: bir_withholding_line.move_id > account_move.id
 Ref: bir_withholding_line.partner_id > res_partner.id
 Ref: bir_withholding_line.payslip_id > hr_payslip.id
 Ref: bir_withholding_line.return_id > bir_withholding_return.id
+Ref: cleanup_create_indexes_line.field_id > ir_model_fields.id
+Ref: cleanup_create_indexes_line.wizard_id > cleanup_create_indexes_wizard.id
+Ref: cleanup_purge_line_column.model_id > ir_model.id
+Ref: cleanup_purge_line_column.wizard_id > cleanup_purge_wizard_column.id
+Ref: cleanup_purge_line_data.data_id > ir_model_data.id
+Ref: cleanup_purge_line_data.wizard_id > cleanup_purge_wizard_data.id
+Ref: cleanup_purge_line_field.wizard_id > cleanup_purge_wizard_field.id
+Ref: cleanup_purge_line_menu.menu_id > ir_ui_menu.id
+Ref: cleanup_purge_line_menu.wizard_id > cleanup_purge_wizard_menu.id
+Ref: cleanup_purge_line_model.wizard_id > cleanup_purge_wizard_model.id
+Ref: cleanup_purge_line_module.wizard_id > cleanup_purge_wizard_module.id
+Ref: cleanup_purge_line_table.wizard_id > cleanup_purge_wizard_table.id
 Ref: close_approval_gate.approved_by > res_users.id
 Ref: close_approval_gate.approver_id > res_users.id
 Ref: close_approval_gate.approver_user_id > res_users.id
@@ -3511,6 +5663,13 @@ Ref: compliance_check.checked_by > res_users.id
 Ref: compliance_check.closing_id > closing_period.id
 Ref: crm_stage_required_fields_rel.field_id > ir_model_fields.id
 Ref: crm_stage_required_fields_rel.stage_id > crm_stage.id
+Ref: exception_rule_confirm_test_purchase.related_model_id > base_exception_test_purchase.id
+Ref: exception_rule_test_purchase_ids_rel.base_exception_test_purchase_id > base_exception_test_purchase.id
+Ref: exception_rule_test_purchase_ids_rel.exception_rule_id > exception_rule.id
+Ref: export_xlsx_wizard.template_id > xlsx_template.id
+Ref: fetchmail_attach_mail_manually_mail.wizard_id > fetchmail_attach_mail_manually.id
+Ref: fetchmail_server.error_notice_template_id > mail_template.id
+Ref: fetchmail_server_folder.server_id > fetchmail_server.id
 Ref: finance_bir_deadline.responsible_approval_id > ipai_finance_person.id
 Ref: finance_bir_deadline.responsible_prep_id > ipai_finance_person.id
 Ref: finance_bir_deadline.responsible_review_id > ipai_finance_person.id
@@ -3530,8 +5689,15 @@ Ref: finance_task_template.prep_user_id > res_users.id
 Ref: finance_task_template.review_user_id > res_users.id
 Ref: finance_task_template_dependency_rel.depends_on_id > finance_task_template.id
 Ref: finance_task_template_dependency_rel.task_id > finance_task_template.id
+Ref: general_ledger_report_wizard_account_ids_rel.general_ledger_report_wizard_id > general_ledger_report_wizard.id
+Ref: general_ledger_report_wizard_account_journal_ids_rel.general_ledger_report_wizard_id > general_ledger_report_wizard.id
+Ref: general_ledger_report_wizard_cost_center_ids_rel.general_ledger_report_wizard_id > general_ledger_report_wizard.id
+Ref: general_ledger_report_wizard_partner_ids_rel.general_ledger_report_wizard_id > general_ledger_report_wizard.id
 Ref: hr_expense.project_id > project_project.id
 Ref: hr_expense.travel_request_id > ipai_travel_request.id
+Ref: import_xlsx_wizard.template_id > xlsx_template.id
+Ref: import_xlsx_wizard_attachment_ids_rel.import_xlsx_wizard_id > import_xlsx_wizard.id
+Ref: import_xlsx_wizard_attachment_ids_rel.ir_attachment_id > ir_attachment.id
 Ref: ipai_asset.active_checkout_id > ipai_asset_checkout.id
 Ref: ipai_asset.category_id > ipai_asset_category.id
 Ref: ipai_asset.currency_id > res_currency.id
@@ -3680,6 +5846,21 @@ Ref: ipai_workspace.client_id > res_partner.id
 Ref: ipai_workspace.company_id > res_company.id
 Ref: ipai_workspace.parent_id > ipai_workspace.id
 Ref: ipai_workspace_link.workspace_id > ipai_workspace.id
+Ref: ir_cron_mutually_exclusive_cron_ids_rel.ir_cron_id > ir_cron.id
+Ref: ir_model_fields.comodel_id > ir_model.id
+Ref: ir_model_name_search_ids_rel.ir_model_fields_id > ir_model_fields.id
+Ref: ir_model_name_search_ids_rel.ir_model_id > ir_model.id
+Ref: ir_model_res_groups_update_allowed_rel.ir_model_id > ir_model.id
+Ref: ir_model_res_groups_update_allowed_rel.res_groups_id > res_groups.id
+Ref: ir_module_author_installed_module_ids_rel.ir_module_author_id > ir_module_author.id
+Ref: ir_module_module_author_ids_rel.ir_module_module_id > ir_module_module.id
+Ref: journal_ledger_report_wizard_journal_ids_rel.journal_ledger_report_wizard_id > journal_ledger_report_wizard.id
+Ref: m2x_create_edit_option.comodel_id > ir_model.id
+Ref: m2x_create_edit_option.field_id > ir_model_fields.id
+Ref: m2x_create_edit_option.model_id > ir_model.id
+Ref: mis_cash_flow_forecast_line.company_id > res_company.id
+Ref: open_items_report_wizard_account_ids_rel.open_items_report_wizard_id > open_items_report_wizard.id
+Ref: open_items_report_wizard_partner_ids_rel.open_items_report_wizard_id > open_items_report_wizard.id
 Ref: ph_holiday.company_id > res_company.id
 Ref: ppm_close_task.monthly_close_id > ppm_monthly_close.id
 Ref: ppm_close_task.template_id > ppm_close_template.id
@@ -3708,9 +5889,19 @@ Ref: ppm_risk.portfolio_id > ppm_portfolio.id
 Ref: ppm_risk.program_id > ppm_program.id
 Ref: ppm_risk.project_id > project_project.id
 Ref: project_milestone.approver_id > res_users.id
+Ref: project_pr_required.project_id > project_project.id
+Ref: project_pr_required.state_id > project_task_type.id
 Ref: project_project.ipai_root_project_id > project_project.id
-Ref: project_project.parent_id > project_project.id
 Ref: project_project.portfolio_id > project_category.id
+Ref: project_project_group_ids_rel.project_project_id > project_project.id
+Ref: project_project_group_ids_rel.res_groups_id > res_groups.id
+Ref: project_project_hr_category_ids_rel.project_project_id > project_project.id
+Ref: project_project_tag_ids_rel.project_project_id > project_project.id
+Ref: project_project_type_ids_rel.project_project_id > project_project.id
+Ref: project_stakeholder.partner_id > res_partner.id
+Ref: project_stakeholder.project_id > project_project.id
+Ref: project_stakeholder.role_id > project_stakeholder_role.id
+Ref: project_tags_allowed_project_ids_rel.project_tags_id > project_tags.id
 Ref: project_task.approver_id > res_users.id
 Ref: project_task.bir_schedule_id > ipai_finance_bir_schedule.id
 Ref: project_task.fd_id > res_users.id
@@ -3723,8 +5914,23 @@ Ref: project_task.ipai_template_id > ipai_finance_task_template.id
 Ref: project_task.reviewer_id > res_users.id
 Ref: project_task.sfm_id > res_users.id
 Ref: project_task_checklist_item.assigned_user_id > res_users.id
+Ref: project_task_description_template.company_id > res_company.id
+Ref: project_task_employee_ids_rel.project_task_id > project_task.id
+Ref: project_task_hr_category_ids_rel.project_task_id > project_task.id
+Ref: project_task_merge.dst_project_id > project_project.id
+Ref: project_task_merge.dst_task_id > project_task.id
+Ref: project_task_merge_task_ids_rel.project_task_id > project_task.id
+Ref: project_task_merge_task_ids_rel.project_task_merge_id > project_task_merge.id
+Ref: project_task_merge_user_ids_rel.project_task_merge_id > project_task_merge.id
+Ref: project_task_merge_user_ids_rel.res_users_id > res_users.id
+Ref: project_task_pr_required_states_rel.project_task_id > project_task.id
+Ref: project_task_tag_ids_rel.project_task_id > project_task.id
+Ref: project_task_user_ids_rel.project_task_id > project_task.id
+Ref: quick_start_screen_action_ids_rel.quick_start_screen_id > quick_start_screen.id
+Ref: res_config_settings.age_partner_config_id > account_age_report_configuration.id
 Ref: res_config_settings.superset_connection_id > superset_connection.id
 Ref: res_partner.srm_supplier_id > srm_supplier.id
+Ref: res_users_hr_category_ids_rel.res_users_id > res_users.id
 Ref: srm_qualification.approver_id > res_users.id
 Ref: srm_qualification.reviewer_id > res_users.id
 Ref: srm_qualification.supplier_id > srm_supplier.id
@@ -3753,6 +5959,25 @@ Ref: superset_dataset_wizard.connection_id > superset_connection.id
 Ref: superset_dataset_wizard.model_id > ir_model.id
 Ref: superset_dataset_wizard_field_ids_rel.ir_model_fields_id > ir_model_fields.id
 Ref: superset_dataset_wizard_field_ids_rel.superset_dataset_wizard_id > superset_dataset_wizard.id
+Ref: test_partner_time_window.partner_id > res_partner.id
+Ref: test_time_window_model.partner_id > res_partner.id
+Ref: trial_balance_report_wizard_account_ids_rel.trial_balance_report_wizard_id > trial_balance_report_wizard.id
+Ref: trial_balance_report_wizard_journal_ids_rel.trial_balance_report_wizard_id > trial_balance_report_wizard.id
+Ref: trial_balance_report_wizard_partner_ids_rel.trial_balance_report_wizard_id > trial_balance_report_wizard.id
+Ref: upgrade_install_wizard_module_ids_rel.upgrade_install_wizard_id > upgrade_install_wizard.id
+Ref: vacuum_rule.company_id > res_company.id
+Ref: vacuum_rule.model_id > ir_model.id
+Ref: vacuum_rule_message_subtype_ids_rel.mail_message_subtype_id > mail_message_subtype.id
+Ref: vacuum_rule_message_subtype_ids_rel.vacuum_rule_id > vacuum_rule.id
+Ref: vacuum_rule_model_ids_rel.ir_model_id > ir_model.id
+Ref: vacuum_rule_model_ids_rel.vacuum_rule_id > vacuum_rule.id
+Ref: web_form_banner_rule.model_id > ir_model.id
+Ref: web_form_banner_rule_trigger_field_rel.ir_model_fields_id > ir_model_fields.id
+Ref: web_form_banner_rule_trigger_field_rel.web_form_banner_rule_id > web_form_banner_rule.id
+Ref: web_form_banner_rule_view_ids_rel.ir_ui_view_id > ir_ui_view.id
+Ref: web_form_banner_rule_view_ids_rel.web_form_banner_rule_id > web_form_banner_rule.id
+Ref: wizard_open_tax_balances.date_range_id > date_range.id
+Ref: wizard_open_tax_balances_company_ids_rel.wizard_open_tax_balances_id > wizard_open_tax_balances.id
 Ref: workos_comment_mention_rel.comment_id > ipai_workos_comment.id
 Ref: workos_comment_mention_rel.user_id > res_users.id
 Ref: workspace_member_rel.user_id > res_users.id

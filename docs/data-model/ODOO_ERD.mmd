@@ -217,14 +217,209 @@ erDiagram
     int write_uid
   }
   account_account {
+    boolean centralized
+    datetime create_date
+    int create_uid
+    boolean hide_in_cash_flow
     int id
+    datetime write_date
+    int write_uid
+  }
+  account_account_reconcile_data {
+    datetime create_date
+    int create_uid
+    varchar data
+    int id
+    int reconcile_id
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  account_age_report_configuration {
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  account_age_report_configuration_line {
+    int account_age_report_config_id
+    datetime create_date
+    int create_uid
+    int id
+    int inferior_limit
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  account_analytic_account {
+    int id
+  }
+  account_analytic_line {
+    int ancestor_task_id
+    datetime create_date
+    int create_uid
+    datetime date_time
+    datetime date_time_end
+    int id
+    varchar show_time_control
+    int stock_move_id
+    int stock_task_id
+    datetime write_date
+    int write_uid
+  }
+  account_bank_statement {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  account_bank_statement_line {
+    int aggregate_id
+    varchar aggregate_name
+    varchar analytic_distribution
+    int analytic_precision
+    boolean can_reconcile
+    datetime create_date
+    int create_uid
+    int id
+    decimal manual_amount
+    decimal manual_amount_in_currency
+    boolean manual_exchange_counterpart
+    boolean manual_in_currency
+    varchar manual_kind
+    varchar manual_move_type
+    varchar manual_name
+    decimal manual_original_amount
+    decimal previous_manual_amount_in_currency
+    varchar reconcile_aggregate
+    varchar reconcile_data
+    varchar reconcile_data_info
+    varchar reconcile_mode
+    datetime write_date
+    int write_uid
+  }
+  account_bank_statement_line_manual_analytic_tag_ids_rel {
+    int account_bank_statement_line_id
+    int id_id
+  }
+  account_group {
+    varchar complete_code
+    varchar complete_name
+    datetime create_date
+    int create_uid
+    int id
+    int level
+    datetime write_date
+    int write_uid
+  }
+  account_journal {
+    boolean autovalidate_completed_move
+    int commission_account_id
+    int commission_analytic_account_id
+    int company_currency_id
+    boolean create_counterpart
+    datetime create_date
+    int create_uid
+    int id
+    varchar import_type
+    datetime last_import_date
+    boolean launch_import_completion
+    int partner_id
+    int receivable_account_id
+    varchar reconcile_aggregate
+    varchar reconcile_mode
+    boolean split_counterpart
+    boolean used_for_completion
+    boolean used_for_import
+    datetime write_date
+    int write_uid
+  }
+  account_journal_rule_ids_rel {
+    int account_journal_id
+    int id_id
   }
   account_move {
     date bir_2307_date
     boolean bir_2307_generated
+    text completion_logs
     datetime create_date
     int create_uid
     decimal ewt_amount
+    varchar financial_type
+    int id
+    int import_partner_id
+    varchar transaction_id
+    boolean used_for_completion
+    datetime write_date
+    int write_uid
+  }
+  account_move_completion_rule {
+    datetime create_date
+    int create_uid
+    varchar function_to_call
+    int id
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  account_move_completion_rule_journal_ids_rel {
+    int account_move_completion_rule_id
+    int id_id
+  }
+  account_move_line {
+    boolean already_completed
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  account_move_line_analytic_account_ids_rel {
+    int account_analytic_account_id
+    int account_move_line_id
+  }
+  account_reconcile_model {
+    datetime create_date
+    int create_uid
+    int id
+    boolean unique_matching
+    datetime write_date
+    int write_uid
+  }
+  account_reconcile_model_line {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  account_reconcile_model_line_analytic_tag_ids_rel {
+    int account_reconcile_model_line_id
+    int id_id
+  }
+  account_tax {
+    float balance
+    float balance_refund
+    float balance_regular
+    float base_balance
+    float base_balance_refund
+    float base_balance_regular
+    datetime create_date
+    int create_uid
+    boolean has_moves
+    int id
+    datetime write_date
+    int write_uid
+  }
+  activity_statement_wizard {
+    datetime create_date
+    int create_uid
+    date date_start
     int id
     datetime write_date
     int write_uid
@@ -325,8 +520,209 @@ erDiagram
     datetime write_date
     int write_uid
   }
+  aged_partner_balance_report_wizard {
+    int account_code_from
+    int account_code_to
+    int age_partner_config_id
+    datetime create_date
+    int create_uid
+    date date_at
+    date date_from
+    int id
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_move_line_details
+    varchar target_move
+    datetime write_date
+    int write_uid
+  }
+  aged_partner_balance_report_wizard_account_ids_rel {
+    int aged_partner_balance_report_wizard_id
+    int id_id
+  }
+  aged_partner_balance_report_wizard_partner_ids_rel {
+    int aged_partner_balance_report_wizard_id
+    int id_id
+  }
+  attachment_queue {
+    int attachment_id
+    datetime create_date
+    int create_uid
+    datetime date_done
+    varchar failure_emails
+    varchar file_type
+    int fs_storage_id
+    int id
+    varchar method_type
+    varchar state
+    text state_message
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  attachment_queue_reschedule {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  attachment_queue_reschedule_attachment_ids_rel {
+    int attachment_queue_reschedule_id
+    int id_id
+  }
+  attachment_synchronize_task {
+    boolean active
+    varchar after_import
+    boolean avoid_duplicated_files
+    int backend_id
+    int count_attachment_done
+    int count_attachment_failed
+    int count_attachment_pending
+    datetime create_date
+    int create_uid
+    varchar failure_emails
+    varchar file_type
+    varchar filepath
+    int id
+    varchar method_type
+    varchar move_path
+    varchar name
+    varchar new_name
+    varchar pattern
+    datetime write_date
+    int write_uid
+  }
+  auditlog_autovacuum {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_http_request {
+    datetime create_date
+    int create_uid
+    varchar display_name
+    int http_session_id
+    int id
+    varchar name
+    varchar root_url
+    varchar user_context
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_http_session {
+    datetime create_date
+    int create_uid
+    varchar display_name
+    int id
+    varchar name
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_log {
+    datetime create_date
+    int create_uid
+    int http_request_id
+    int http_session_id
+    int id
+    varchar log_type
+    varchar method
+    int model_id
+    varchar model_model
+    varchar model_name
+    varchar name
+    int res_id
+    varchar res_ids
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  auditlog_log_line {
+    datetime create_date
+    int create_uid
+    varchar field_description
+    int field_id
+    varchar field_name
+    int id
+    int log_id
+    text new_value
+    text new_value_text
+    text old_value
+    text old_value_text
+    datetime write_date
+    int write_uid
+  }
+  auditlog_rule {
+    int action_id
+    boolean capture_record
+    datetime create_date
+    int create_uid
+    int id
+    boolean log_create
+    boolean log_export_data
+    boolean log_read
+    varchar log_type
+    boolean log_unlink
+    boolean log_write
+    int model_id
+    varchar model_model
+    varchar model_name
+    varchar name
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  auditlog_rule_fields_to_exclude_ids_rel {
+    int auditlog_rule_id
+    int ir_model_fields_id
+  }
+  auditlog_rule_users_to_exclude_ids_rel {
+    int auditlog_rule_id
+    int res_users_id
+  }
+  audittail_rules_users {
+    int rule_id
+    int user_id
+  }
   base_automation {
     int id
+  }
+  base_exception_test_purchase {
+    boolean active
+    float amount_total
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int partner_id
+    varchar state
+    int user_id
+    datetime write_date
+    int write_uid
+  }
+  base_exception_test_purchase_line {
+    float amount
+    datetime create_date
+    int create_uid
+    int id
+    int lead_id
+    varchar name
+    float qty
+    datetime write_date
+    int write_uid
+  }
+  base_sequence_tester {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    varchar test_type
+    datetime write_date
+    int write_uid
   }
   bir_alphalist {
     int company_id
@@ -541,6 +937,135 @@ erDiagram
     datetime write_date
     int write_uid
   }
+  cleanup_create_indexes_line {
+    datetime create_date
+    int create_uid
+    int field_id
+    int id
+    boolean purged
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_create_indexes_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_column {
+    datetime create_date
+    int create_uid
+    int id
+    int model_id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_data {
+    datetime create_date
+    int create_uid
+    int data_id
+    int id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_field {
+    datetime create_date
+    int create_uid
+    int field_id
+    int id
+    int model_id
+    varchar model_name
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_menu {
+    datetime create_date
+    int create_uid
+    int id
+    int menu_id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_model {
+    datetime create_date
+    int create_uid
+    int id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_module {
+    datetime create_date
+    int create_uid
+    int id
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_line_table {
+    datetime create_date
+    int create_uid
+    int id
+    varchar table_type
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_column {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_data {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_field {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_menu {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_model {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_module {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  cleanup_purge_wizard_table {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
   close_approval_gate {
     float actual_value
     text approval_notes
@@ -632,7 +1157,7 @@ erDiagram
     int create_uid
     int currency_id
     int cycle_id
-    varchar description
+    text description
     int detected_by
     datetime detected_date
     datetime escalated_date
@@ -779,7 +1304,7 @@ erDiagram
     int default_approve_user_id
     int default_prep_user_id
     int default_review_user_id
-    varchar description
+    text description
     int id
     varchar name
     varchar period_type
@@ -856,6 +1381,19 @@ erDiagram
     datetime write_date
     int write_uid
   }
+  credit_statement_import {
+    int commission_account_id
+    datetime create_date
+    int create_uid
+    varchar file_name
+    int id
+    binary input_statement
+    int journal_id
+    int partner_id
+    int receivable_account_id
+    datetime write_date
+    int write_uid
+  }
   crm_lead {
     datetime create_date
     int create_uid
@@ -885,11 +1423,145 @@ erDiagram
     int field_id
     int stage_id
   }
+  date_range {
+    int id
+  }
+  db_backup {
+    varchar backup_format
+    datetime create_date
+    int create_uid
+    int days_to_keep
+    varchar folder
+    int id
+    varchar method
+    varchar name
+    varchar sftp_host
+    varchar sftp_password
+    int sftp_port
+    varchar sftp_private_key
+    varchar sftp_user
+    datetime write_date
+    int write_uid
+  }
+  detailed_activity_statement_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    boolean show_aging_buckets
+    boolean show_balance
+    datetime write_date
+    int write_uid
+  }
   discuss_channel {
     datetime create_date
     int create_uid
     int id
     boolean is_ai_channel
+    datetime write_date
+    int write_uid
+  }
+  exception_rule {
+    boolean active
+    text code
+    datetime create_date
+    int create_uid
+    text description
+    varchar domain
+    varchar exception_type
+    int id
+    boolean is_blocking
+    varchar method
+    varchar model
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  exception_rule_confirm_test_purchase {
+    datetime create_date
+    int create_uid
+    int id
+    int related_model_id
+    datetime write_date
+    int write_uid
+  }
+  exception_rule_test_purchase_ids_rel {
+    int base_exception_test_purchase_id
+    int exception_rule_id
+  }
+  export_xlsx_wizard {
+    datetime create_date
+    int create_uid
+    binary data
+    int id
+    varchar name
+    varchar res_ids
+    varchar res_model
+    varchar state
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_attach_mail_manually {
+    datetime create_date
+    int create_uid
+    int folder_id
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_attach_mail_manually_mail {
+    varchar body
+    datetime create_date
+    int create_uid
+    datetime date
+    varchar email_from
+    int id
+    varchar msgid
+    varchar object_id
+    varchar subject
+    int wizard_id
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_server {
+    int cleanup_days
+    varchar cleanup_folder
+    datetime create_date
+    int create_uid
+    int error_notice_template_id
+    text folders_available
+    boolean folders_only
+    int id
+    int object_id
+    int purge_days
+    varchar server_type
+    datetime write_date
+    int write_uid
+  }
+  fetchmail_server_folder {
+    int action_id
+    boolean active
+    varchar archive_path
+    datetime create_date
+    int create_uid
+    boolean delete_matching
+    varchar domain
+    boolean fetch_unseen_only
+    boolean flag_nonmatching
+    int id
+    varchar mail_field
+    varchar match_algorithm
+    boolean match_first
+    varchar model_field
+    int model_id
+    varchar model_order
+    varchar msg_state
+    varchar path
+    int sequence
+    int server_id
+    varchar state
     datetime write_date
     int write_uid
   }
@@ -1083,6 +1755,55 @@ erDiagram
     int depends_on_id
     int task_id
   }
+  fs_storage {
+    datetime create_date
+    int create_uid
+    int export_task_count
+    int id
+    int import_task_count
+    datetime write_date
+    int write_uid
+  }
+  general_ledger_report_wizard {
+    int account_code_from
+    int account_code_to
+    boolean centralize
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    varchar domain
+    boolean foreign_currency
+    date fy_start_date
+    varchar grouped_by
+    boolean hide_account_at_0
+    int id
+    boolean only_one_unaffected_earnings_account
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_cost_center
+    varchar target_move
+    int unaffected_earnings_account
+    datetime write_date
+    int write_uid
+  }
+  general_ledger_report_wizard_account_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
+  general_ledger_report_wizard_account_journal_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
+  general_ledger_report_wizard_cost_center_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
+  general_ledger_report_wizard_partner_ids_rel {
+    int general_ledger_report_wizard_id
+    int id_id
+  }
   hr_employee {
     datetime create_date
     int create_uid
@@ -1105,6 +1826,50 @@ erDiagram
   }
   hr_payslip {
     int id
+  }
+  hr_timesheet_switch {
+    int analytic_line_id
+    int company_id
+    datetime create_date
+    int create_uid
+    datetime date_time
+    datetime date_time_end
+    int id
+    varchar name
+    int project_id
+    float running_timer_duration
+    int running_timer_id
+    datetime running_timer_start
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  iap_account {
+    datetime create_date
+    int create_uid
+    int id
+    varchar provider
+    datetime write_date
+    int write_uid
+  }
+  import_xlsx_wizard {
+    datetime create_date
+    int create_uid
+    binary datas
+    varchar filename
+    varchar fname
+    int id
+    binary import_file
+    int res_id
+    varchar res_model
+    varchar state
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  import_xlsx_wizard_attachment_ids_rel {
+    int import_xlsx_wizard_id
+    int ir_attachment_id
   }
   ipai_ask_ai_service {
     datetime create_date
@@ -1220,14 +1985,18 @@ erDiagram
     date bir_deadline
     datetime create_date
     int create_uid
+    date filing_date
     varchar form_code
     int id
+    datetime last_reminder_sent
     varchar period
     date prep_date
+    int reminder_count
     int responsible_approval_id
     int responsible_prep_id
     int responsible_review_id
     date review_date
+    varchar status
     datetime write_date
     int write_uid
   }
@@ -2416,14 +3185,413 @@ erDiagram
     datetime write_date
     int write_uid
   }
-  ir_attachment {
+  ir_actions {
+    datetime create_date
+    int create_uid
     int id
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  ir_actions_act_window {
+    int id
+  }
+  ir_actions_act_window_view {
+    datetime create_date
+    int create_uid
+    int id
+    varchar view_mode
+    datetime write_date
+    int write_uid
+  }
+  ir_actions_actions {
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_temporary
+    datetime write_date
+    int write_uid
+  }
+  ir_actions_report {
+    datetime create_date
+    int create_uid
+    int id
+    varchar report_type
+    datetime write_date
+    int write_uid
+  }
+  ir_attachment {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_config_parameter {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_cron {
+    datetime create_date
+    int create_uid
+    int email_template_id
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_cron_mutually_exclusive_cron_ids_rel {
+    int id_id
+    int ir_cron_id
+  }
+  ir_exports {
+    datetime create_date
+    int create_uid
+    int global_resolver_id
+    int id
+    boolean language_agnostic
+    datetime write_date
+    int write_uid
+  }
+  ir_exports_line {
+    boolean active
+    datetime create_date
+    int create_uid
+    int id
+    varchar instance_method_name
+    int lang_id
+    int resolver_id
+    varchar target
+    datetime write_date
+    int write_uid
+  }
+  ir_exports_resolver {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    text python_code
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  ir_filters {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
   }
   ir_model {
+    boolean active_custom_tracking
+    boolean add_open_tab_field
+    boolean add_smart_search
+    boolean automatic_custom_tracking
+    varchar automatic_custom_tracking_domain
+    datetime create_date
+    int create_uid
+    boolean force_noupdate
     int id
+    varchar name_search_domain
+    boolean restrict_update
+    text rpc_config_edit
+    varchar smart_search_warning
+    int tracked_field_count
+    boolean use_smart_name_search
+    datetime write_date
+    int write_uid
+  }
+  ir_model_access {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_model_data {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
   }
   ir_model_fields {
+    boolean can_have_options
+    int comodel_id
+    datetime create_date
+    int create_uid
+    boolean custom_tracking
     int id
+    boolean native_tracking
+    boolean trackable
+    varchar tracking_domain
+    datetime write_date
+    int write_uid
+  }
+  ir_model_index_size {
+    datetime create_date
+    int create_uid
+    int id
+    int ir_model_size_id
+    varchar name
+    int size
+    datetime write_date
+    int write_uid
+  }
+  ir_model_name_search_ids_rel {
+    int ir_model_fields_id
+    int ir_model_id
+  }
+  ir_model_relation_size {
+    datetime create_date
+    int create_uid
+    int id
+    int ir_model_size_id
+    varchar name
+    int size
+    datetime write_date
+    int write_uid
+  }
+  ir_model_res_groups_update_allowed_rel {
+    int ir_model_id
+    int res_groups_id
+  }
+  ir_model_size {
+    int attachment_size
+    datetime create_date
+    int create_uid
+    int id
+    int indexes_size
+    date measurement_date
+    varchar model
+    varchar model_name
+    int relations_size
+    int table_size
+    int total_database_size
+    int total_model_size
+    int total_table_size
+    int tuples
+    datetime write_date
+    int write_uid
+  }
+  ir_module_author {
+    datetime create_date
+    int create_uid
+    int id
+    int installed_module_qty
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  ir_module_author_installed_module_ids_rel {
+    int id_id
+    int ir_module_author_id
+  }
+  ir_module_module {
+    datetime create_date
+    int create_uid
+    int css_code_qty
+    int id
+    boolean is_oca_module
+    boolean is_odoo_module
+    int js_code_qty
+    int module_type_id
+    int python_code_qty
+    int scss_code_qty
+    datetime write_date
+    int write_uid
+    int xml_code_qty
+  }
+  ir_module_module_author_ids_rel {
+    int id_id
+    int ir_module_module_id
+  }
+  ir_module_type {
+    datetime create_date
+    int create_uid
+    int id
+    int installed_module_qty
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ir_module_type_rule {
+    datetime create_date
+    int create_uid
+    int id
+    varchar module_domain
+    int module_type_id
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  ir_sequence {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  ir_sequence_option {
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    varchar model
+    varchar name
+    boolean use_sequence_option
+    datetime write_date
+    int write_uid
+  }
+  ir_sequence_option_line {
+    int base_id
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar filter_domain
+    int id
+    varchar implementation
+    varchar model
+    varchar name
+    varchar prefix
+    int sequence_id
+    varchar suffix
+    boolean use_sequence_option
+    datetime write_date
+    int write_uid
+  }
+  ir_ui_menu {
+    int id
+  }
+  ir_ui_view {
+    datetime create_date
+    int create_uid
+    int id
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  journal_ledger_report_wizard {
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    boolean foreign_currency
+    varchar group_option
+    int id
+    varchar move_target
+    varchar sort_option
+    boolean with_account_name
+    boolean with_auto_sequence
+    datetime write_date
+    int write_uid
+  }
+  journal_ledger_report_wizard_journal_ids_rel {
+    int id_id
+    int journal_ledger_report_wizard_id
+  }
+  m2x_create_edit_option {
+    int comodel_id
+    varchar comodel_name
+    datetime create_date
+    int create_uid
+    int field_id
+    varchar field_name
+    int id
+    int model_id
+    varchar model_name
+    varchar name
+    varchar option_create
+    varchar option_create_edit
+    datetime write_date
+    int write_uid
+  }
+  mail_message {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  mail_message_subtype {
+    int id
+  }
+  mail_template {
+    int id
+  }
+  mail_tracking_value {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  mis_cash_flow_forecast_line {
+    int account_id
+    float balance
+    int company_id
+    datetime create_date
+    int create_uid
+    date date
+    int id
+    varchar name
+    int partner_id
+    datetime write_date
+    int write_uid
+  }
+  mis_report_instance {
+    boolean allow_horizontal
+    datetime create_date
+    int create_uid
+    boolean horizontal
+    int id
+    datetime write_date
+    int write_uid
+  }
+  mis_report_kpi {
+    datetime create_date
+    int create_uid
+    int id
+    boolean split_after
+    datetime write_date
+    int write_uid
+  }
+  open_items_report_wizard {
+    int account_code_from
+    int account_code_to
+    datetime create_date
+    int create_uid
+    date date_at
+    date date_from
+    boolean foreign_currency
+    varchar grouped_by
+    boolean hide_account_at_0
+    int id
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_partner_details
+    varchar target_move
+    datetime write_date
+    int write_uid
+  }
+  open_items_report_wizard_account_ids_rel {
+    int id_id
+    int open_items_report_wizard_id
+  }
+  open_items_report_wizard_partner_ids_rel {
+    int id_id
+    int open_items_report_wizard_id
+  }
+  outstanding_statement_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
   }
   ph_holiday {
     int company_id
@@ -2645,7 +3813,49 @@ erDiagram
     int id
   }
   product_product {
+    datetime create_date
+    int create_uid
     int id
+    datetime write_date
+    int write_uid
+  }
+  product_set_line {
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  product_template {
+    datetime create_date
+    int create_uid
+    int id
+    boolean recurring_task
+    varchar service_tracking
+    varchar task_force_month
+    varchar task_force_month_quarter
+    varchar task_force_month_semester
+    int task_repeat_interval
+    int task_repeat_number
+    varchar task_repeat_type
+    varchar task_repeat_unit
+    date task_repeat_until
+    varchar task_start_date_method
+    datetime write_date
+    int write_uid
+  }
+  project_assignment {
+    boolean active
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int project_id
+    int role_id
+    int user_id
+    datetime write_date
+    int write_uid
   }
   project_category {
     int id
@@ -2660,7 +3870,9 @@ erDiagram
     text completion_criteria
     datetime create_date
     int create_uid
+    int dedication
     text deliverables
+    int execution
     varchar gate_status
     int id
     date last_alert_sent
@@ -2672,41 +3884,131 @@ erDiagram
     datetime write_date
     int write_uid
   }
+  project_pr_required {
+    int project_id
+    int state_id
+  }
   project_project {
     date actual_finish
     date actual_start
     date baseline_finish
     date baseline_start
+    int child_ids_count
     varchar clarity_id
     datetime create_date
     int create_uid
     int critical_milestone_count
+    int department_id
     varchar health_status
     int id
     varchar im_code
+    boolean inherit_assignments
     boolean ipai_finance_enabled
     varchar ipai_im_code
     boolean ipai_is_im_project
     int ipai_root_project_id
     boolean is_program
+    boolean is_template
+    varchar key
+    boolean limit_role_to_assignments
+    int location_dest_id
+    int location_id
     int milestone_count
+    varchar name
     float overall_progress
     varchar overall_status
     int parent_id
+    varchar parent_path
     int phase_count
+    int picking_type_id
     int portfolio_id
     varchar program_code
     varchar program_type
+    int purchase_count
+    int purchase_invoice_count
+    float purchase_invoice_line_total
+    int purchase_line_total
+    varchar sequence_code
+    datetime stage_last_update_date
+    date stock_analytic_date
+    int task_key_sequence_id
+    int type_id
     int variance_finish
     int variance_start
     datetime write_date
     int write_uid
     varchar x_cycle_code
   }
+  project_project_group_ids_rel {
+    int project_project_id
+    int res_groups_id
+  }
+  project_project_hr_category_ids_rel {
+    int id_id
+    int project_project_id
+  }
+  project_project_tag_ids_rel {
+    int id_id
+    int project_project_id
+  }
+  project_project_type_ids_rel {
+    int id_id
+    int project_project_id
+  }
+  project_role {
+    boolean active
+    int company_id
+    varchar complete_name
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    int parent_id
+    varchar parent_path
+    datetime write_date
+    int write_uid
+  }
+  project_stakeholder {
+    datetime create_date
+    int create_uid
+    int id
+    text note
+    int partner_id
+    int project_id
+    int role_id
+    datetime write_date
+    int write_uid
+  }
+  project_stakeholder_role {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  project_tags {
+    int company_id
+    datetime create_date
+    int create_uid
+    int id
+    int parent_id
+    varchar parent_path
+    datetime write_date
+    int write_uid
+  }
+  project_tags_allowed_project_ids_rel {
+    int id_id
+    int project_tags_id
+  }
   project_task {
     varchar activity_type
     float actual_cost
     float actual_hours
+    boolean allow_moves_action_assign
+    boolean allow_moves_action_confirm
+    int ancestor_id
     float approval_duration
     int approver_id
     boolean auto_sync
@@ -2721,10 +4023,14 @@ erDiagram
     int child_task_count
     date closing_due_date
     varchar cluster
+    varchar code
     float cost_variance
     datetime create_date
     int create_uid
     boolean critical_path
+    binary domain_hr_category_ids
+    binary domain_user_ids
+    boolean done_stock_moves
     float earned_value
     varchar erp_ref
     int fd_id
@@ -2738,6 +4044,7 @@ erDiagram
     int gate_approver_id
     varchar gate_decision
     int gate_milestone_id
+    int group_id
     boolean has_gate
     int id
     varchar ipai_compliance_step
@@ -2749,9 +4056,13 @@ erDiagram
     int ipai_template_id
     boolean is_finance_ppm
     boolean is_phase
+    varchar key
     int lag_days
     int lead_days
+    int location_dest_id
+    int location_id
     int milestone_count
+    varchar notes
     varchar owner_code
     varchar period_covered
     date phase_baseline_finish
@@ -2760,9 +4071,17 @@ erDiagram
     varchar phase_status
     varchar phase_type
     int phase_variance_days
+    int picking_type_id
+    datetime planned_date_end
+    datetime planned_date_start
     float planned_hours
     float planned_value
+    varchar portal_url
+    boolean portal_url_visible
+    varchar pr_uri
     float prep_duration
+    varchar priority
+    int project_department_id
     varchar relative_due
     float remaining_hours
     float resource_allocation
@@ -2770,9 +4089,21 @@ erDiagram
     int reviewer_id
     varchar role_code
     float schedule_variance
+    int scrap_count
     int sfm_id
+    int stage_id
+    int stock_analytic_account_id
+    date stock_analytic_date
+    varchar stock_analytic_distribution
+    boolean stock_moves_is_locked
+    varchar stock_state
     date target_date
     int total_float
+    int type_id
+    boolean unreserve_visible
+    varchar url
+    boolean use_stock_moves
+    int version_id
     varchar wbs_code
     datetime write_date
     int write_uid
@@ -2799,6 +4130,98 @@ erDiagram
     datetime write_date
     int write_uid
   }
+  project_task_description_template {
+    boolean active
+    int company_id
+    datetime create_date
+    int create_uid
+    varchar description
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  project_task_employee_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_hr_category_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_merge {
+    datetime create_date
+    boolean create_new_task
+    int create_uid
+    int dst_project_id
+    int dst_task_id
+    varchar dst_task_name
+    int id
+    datetime write_date
+    int write_uid
+  }
+  project_task_merge_task_ids_rel {
+    int project_task_id
+    int project_task_merge_id
+  }
+  project_task_merge_user_ids_rel {
+    int project_task_merge_id
+    int res_users_id
+  }
+  project_task_pr_required_states_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_stock_product_set_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  project_task_tag_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_task_type {
+    boolean case_default
+    datetime create_date
+    int create_uid
+    boolean done_stock_moves
+    int id
+    varchar task_state
+    boolean use_stock_moves
+    datetime write_date
+    int write_uid
+  }
+  project_task_user_ids_rel {
+    int id_id
+    int project_task_id
+  }
+  project_type {
+    varchar code
+    varchar complete_name
+    datetime create_date
+    int create_uid
+    text description
+    int id
+    varchar name
+    int parent_id
+    boolean project_ok
+    boolean task_ok
+    datetime write_date
+    int write_uid
+  }
+  project_version {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int project_id
+    datetime write_date
+    int write_uid
+  }
   purchase_order {
     datetime create_date
     int create_uid
@@ -2807,14 +4230,104 @@ erDiagram
     int write_uid
     boolean x_master_control_submitted
   }
-  res_company {
-    int id
-  }
-  res_config_settings {
+  quick_start_screen {
     datetime create_date
     int create_uid
     int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  quick_start_screen_action {
+    varchar action_ref_id
+    boolean active
+    int color
+    varchar context
+    datetime create_date
+    int create_uid
+    varchar description
+    varchar domain
+    varchar icon_name
+    int id
+    varchar image
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  quick_start_screen_action_ids_rel {
+    int id_id
+    int quick_start_screen_id
+  }
+  report_project_task_user {
+    int ancestor_id
+    datetime create_date
+    int create_uid
+    int id
+    datetime planned_date_end
+    datetime planned_date_start
+    datetime write_date
+    int write_uid
+  }
+  report_xlsx_wizard {
+    datetime create_date
+    int create_uid
+    varchar domain
+    int id
+    varchar res_model
+    datetime write_date
+    int write_uid
+  }
+  res_company {
+    boolean account_auto_reconcile_queue
+    varchar color_button_bg
+    varchar color_button_bg_hover
+    varchar color_button_text
+    varchar color_link_text
+    varchar color_link_text_hover
+    varchar color_navbar_bg
+    varchar color_navbar_bg_hover
+    varchar color_navbar_text
+    varchar color_submenu_text
+    varchar company_colors
+    datetime create_date
+    int create_uid
+    binary favicon
+    int id
+    boolean project_inherit_assignments
+    boolean project_limit_role_to_assignments
+    varchar reconcile_aggregate
+    varchar scss_modif_timestamp
+    int user_tech_id
+    datetime write_date
+    int write_uid
+  }
+  res_config_settings {
+    boolean account_auto_reconcile_queue
+    int age_partner_config_id
+    datetime create_date
+    int create_uid
+    boolean database_size_purge
+    int database_size_retention_daily
+    int database_size_retention_monthly
+    varchar default_aging_type
+    boolean default_filter_negative_balances
+    boolean default_filter_partners_non_due
+    boolean default_show_aging_buckets
+    varchar excluded_models_from_readonly
+    boolean group_activity_statement
+    boolean group_outstanding_statement
+    int id
     boolean ipai_enable_finance_project_analytics
+    varchar project_display_name_pattern
+    boolean project_inherit_assignments
+    boolean project_limit_role_to_assignments
+    varchar pwa_background_color
+    binary pwa_icon
+    varchar pwa_short_name
+    varchar pwa_theme_color
+    varchar reconcile_aggregate
+    int session_auto_close_timeout
     boolean superset_auto_sync
     int superset_connection_id
     boolean superset_create_analytics_views
@@ -2830,6 +4343,7 @@ erDiagram
     int id
   }
   res_partner {
+    varchar bank_statement_label
     boolean bir_registered
     date bir_registration_date
     datetime create_date
@@ -2844,13 +4358,55 @@ erDiagram
     datetime write_date
     int write_uid
   }
-  res_users {
+  res_remote {
     datetime create_date
     int create_uid
     int id
+    boolean in_network
+    varchar ip
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  res_users {
+    varchar apps_menu_search_type
+    varchar apps_menu_theme
+    varchar chatter_position
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_readonly_user
+    boolean is_redirect_home
+    varchar notify_danger_channel_name
+    varchar notify_default_channel_name
+    varchar notify_info_channel_name
+    varchar notify_success_channel_name
+    varchar notify_warning_channel_name
+    int quick_start_screen_id
     datetime write_date
     int write_uid
     varchar x_employee_code
+  }
+  res_users_hr_category_ids_rel {
+    int id_id
+    int res_users_id
+  }
+  sale_order {
+    datetime create_date
+    int create_uid
+    boolean has_project_service_tracking_lines
+    int id
+    varchar transaction_id
+    datetime write_date
+    int write_uid
+  }
+  sale_order_line {
+    datetime create_date
+    int create_uid
+    int id
+    boolean is_project_service_tracking_line
+    datetime write_date
+    int write_uid
   }
   srm_kpi_category {
     boolean active
@@ -2975,6 +4531,32 @@ erDiagram
   }
   stock_location {
     int id
+  }
+  stock_move {
+    datetime create_date
+    int create_uid
+    int id
+    int raw_material_task_id
+    boolean show_cancel_button_in_task
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  stock_move_line {
+    datetime create_date
+    int create_uid
+    int id
+    int task_id
+    datetime write_date
+    int write_uid
+  }
+  stock_scrap {
+    datetime create_date
+    int create_uid
+    int id
+    int task_id
+    datetime write_date
+    int write_uid
   }
   superset_analytics_view {
     boolean active
@@ -3105,6 +4687,259 @@ erDiagram
     int ir_model_fields_id
     int superset_dataset_wizard_id
   }
+  test_partner_time_window {
+    datetime create_date
+    int create_uid
+    int id
+    int partner_id
+    datetime write_date
+    int write_uid
+  }
+  test_time_window_model {
+    datetime create_date
+    int create_uid
+    int id
+    int partner_id
+    datetime write_date
+    int write_uid
+  }
+  time_weekday {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    datetime write_date
+    int write_uid
+  }
+  timesheets_analysis_report {
+    int ancestor_task_id
+    datetime create_date
+    int create_uid
+    int id
+    datetime write_date
+    int write_uid
+  }
+  trgm_index {
+    datetime create_date
+    int create_uid
+    int field_id
+    int id
+    varchar index_name
+    varchar index_type
+    datetime write_date
+    int write_uid
+  }
+  trial_balance_report_wizard {
+    int account_code_from
+    int account_code_to
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    boolean foreign_currency
+    date fy_start_date
+    varchar grouped_by
+    boolean hide_account_at_0
+    boolean hide_parent_hierarchy_level
+    int id
+    boolean limit_hierarchy_level
+    boolean only_one_unaffected_earnings_account
+    boolean payable_accounts_only
+    boolean receivable_accounts_only
+    boolean show_hierarchy
+    int show_hierarchy_level
+    boolean show_partner_details
+    varchar target_move
+    int unaffected_earnings_account
+    datetime write_date
+    int write_uid
+  }
+  trial_balance_report_wizard_account_ids_rel {
+    int id_id
+    int trial_balance_report_wizard_id
+  }
+  trial_balance_report_wizard_journal_ids_rel {
+    int id_id
+    int trial_balance_report_wizard_id
+  }
+  trial_balance_report_wizard_partner_ids_rel {
+    int id_id
+    int trial_balance_report_wizard_id
+  }
+  upgrade_analysis {
+    datetime analysis_date
+    int config_id
+    datetime create_date
+    int create_uid
+    int id
+    text log
+    varchar state
+    varchar upgrade_path
+    datetime write_date
+    boolean write_files
+    int write_uid
+  }
+  upgrade_attribute {
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int record_id
+    varchar value
+    datetime write_date
+    int write_uid
+  }
+  upgrade_comparison_config {
+    int analysis_qty
+    datetime create_date
+    int create_uid
+    varchar database
+    int id
+    varchar name
+    varchar password
+    int port
+    varchar server
+    varchar username
+    varchar version
+    datetime write_date
+    int write_uid
+  }
+  upgrade_generate_record_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  upgrade_install_wizard {
+    datetime create_date
+    int create_uid
+    int id
+    int module_qty
+    varchar state
+    datetime write_date
+    int write_uid
+  }
+  upgrade_install_wizard_module_ids_rel {
+    int id_id
+    int upgrade_install_wizard_id
+  }
+  upgrade_record {
+    datetime create_date
+    int create_uid
+    varchar definition
+    varchar domain
+    varchar field
+    int id
+    varchar mode
+    varchar model
+    varchar model_original_module
+    varchar model_type
+    varchar module
+    varchar name
+    boolean noupdate
+    varchar prefix
+    varchar suffix
+    varchar type
+    datetime write_date
+    int write_uid
+  }
+  vacuum_rule {
+    boolean active
+    int company_id
+    datetime create_date
+    int create_uid
+    text description
+    boolean empty_model
+    boolean empty_subtype
+    varchar filename_pattern
+    int id
+    varchar inheriting_model
+    varchar message_type
+    varchar model
+    text model_filter_domain
+    int model_id
+    varchar name
+    int retention_time
+    varchar ttype
+    datetime write_date
+    int write_uid
+  }
+  vacuum_rule_message_subtype_ids_rel {
+    int mail_message_subtype_id
+    int vacuum_rule_id
+  }
+  vacuum_rule_model_ids_rel {
+    int ir_model_id
+    int vacuum_rule_id
+  }
+  vat_report_wizard {
+    varchar based_on
+    datetime create_date
+    int create_uid
+    date date_from
+    int date_range_id
+    date date_to
+    int id
+    varchar target_move
+    boolean tax_detail
+    datetime write_date
+    int write_uid
+  }
+  web_editor_class {
+    boolean active
+    varchar class_name
+    datetime create_date
+    int create_uid
+    int id
+    varchar name
+    int sequence
+    datetime write_date
+    int write_uid
+  }
+  web_form_banner_rule {
+    boolean active
+    datetime create_date
+    int create_uid
+    int id
+    text message
+    boolean message_is_html
+    text message_value_code
+    int model_id
+    varchar model_name
+    varchar name
+    varchar position
+    int sequence
+    varchar severity
+    varchar target_xpath
+    datetime write_date
+    int write_uid
+  }
+  web_form_banner_rule_trigger_field_rel {
+    int ir_model_fields_id
+    int web_form_banner_rule_id
+  }
+  web_form_banner_rule_view_ids_rel {
+    int ir_ui_view_id
+    int web_form_banner_rule_id
+  }
+  wizard_open_tax_balances {
+    datetime create_date
+    int create_uid
+    int date_range_id
+    date from_date
+    int id
+    varchar target_move
+    date to_date
+    datetime write_date
+    int write_uid
+  }
+  wizard_open_tax_balances_company_ids_rel {
+    int id_id
+    int wizard_open_tax_balances_id
+  }
   workos_comment_mention_rel {
     int comment_id
     int user_id
@@ -3112,6 +4947,71 @@ erDiagram
   workspace_member_rel {
     int user_id
     int workspace_id
+  }
+  xlsx_template {
+    datetime create_date
+    int create_uid
+    varchar csv_delimiter
+    varchar csv_extension
+    boolean csv_quote
+    binary datas
+    varchar description
+    int export_action_id
+    varchar fname
+    varchar gname
+    int id
+    int import_action_id
+    text input_instruction
+    text instruction
+    varchar name
+    varchar post_import_hook
+    int redirect_action
+    int report_action_id
+    int report_menu_id
+    varchar res_model
+    varchar result_field
+    int result_model_id
+    boolean show_instruction
+    boolean to_csv
+    boolean use_report_wizard
+    datetime write_date
+    int write_uid
+  }
+  xlsx_template_export {
+    datetime create_date
+    int create_uid
+    varchar excel_cell
+    varchar field_cond
+    varchar field_name
+    int id
+    boolean is_cont
+    boolean is_extend
+    boolean is_sum
+    varchar row_field
+    varchar section_type
+    int sequence
+    varchar sheet
+    varchar style
+    varchar style_cond
+    int template_id
+    datetime write_date
+    int write_uid
+  }
+  xlsx_template_import {
+    datetime create_date
+    int create_uid
+    varchar excel_cell
+    varchar field_cond
+    varchar field_name
+    int id
+    boolean no_delete
+    varchar row_field
+    varchar section_type
+    int sequence
+    varchar sheet
+    int template_id
+    datetime write_date
+    int write_uid
   }
   a1_check ||--o{ close_approval_gate_template : "close_gate_template_id"
   a1_check ||--o{ res_company : "company_id"
@@ -3154,6 +5054,16 @@ erDiagram
   a1_workstream ||--o{ res_company : "company_id"
   a1_workstream ||--o{ a1_role : "owner_role_id"
   a1_workstream ||--o{ res_users : "owner_user_id"
+  account_account_reconcile_data ||--o{ res_users : "user_id"
+  account_age_report_configuration ||--o{ res_company : "company_id"
+  account_age_report_configuration_line ||--o{ account_age_report_configuration : "account_age_report_config_id"
+  account_bank_statement_line_manual_analytic_tag_ids_rel ||--o{ account_bank_statement_line : "account_bank_statement_line_id"
+  account_journal_rule_ids_rel ||--o{ account_journal : "account_journal_id"
+  account_move ||--o{ res_partner : "import_partner_id"
+  account_move_completion_rule_journal_ids_rel ||--o{ account_move_completion_rule : "account_move_completion_rule_id"
+  account_move_line_analytic_account_ids_rel ||--o{ account_analytic_account : "account_analytic_account_id"
+  account_move_line_analytic_account_ids_rel ||--o{ account_move_line : "account_move_line_id"
+  account_reconcile_model_line_analytic_tag_ids_rel ||--o{ account_reconcile_model_line : "account_reconcile_model_line_id"
   advisor_playbook_category_ids_rel ||--o{ advisor_category : "advisor_category_id"
   advisor_playbook_category_ids_rel ||--o{ advisor_playbook : "advisor_playbook_id"
   advisor_recommendation ||--o{ advisor_category : "category_id"
@@ -3163,6 +5073,34 @@ erDiagram
   advisor_recommendation_tag_ids_rel ||--o{ advisor_recommendation : "advisor_recommendation_id"
   advisor_recommendation_tag_ids_rel ||--o{ advisor_tag : "advisor_tag_id"
   advisor_score ||--o{ advisor_category : "category_id"
+  aged_partner_balance_report_wizard ||--o{ account_age_report_configuration : "age_partner_config_id"
+  aged_partner_balance_report_wizard_account_ids_rel ||--o{ aged_partner_balance_report_wizard : "aged_partner_balance_report_wizard_id"
+  aged_partner_balance_report_wizard_partner_ids_rel ||--o{ aged_partner_balance_report_wizard : "aged_partner_balance_report_wizard_id"
+  attachment_queue ||--o{ ir_attachment : "attachment_id"
+  attachment_queue ||--o{ fs_storage : "fs_storage_id"
+  attachment_queue ||--o{ attachment_synchronize_task : "task_id"
+  attachment_queue_reschedule_attachment_ids_rel ||--o{ attachment_queue_reschedule : "attachment_queue_reschedule_id"
+  attachment_synchronize_task ||--o{ fs_storage : "backend_id"
+  auditlog_http_request ||--o{ auditlog_http_session : "http_session_id"
+  auditlog_http_request ||--o{ res_users : "user_id"
+  auditlog_http_session ||--o{ res_users : "user_id"
+  auditlog_log ||--o{ auditlog_http_request : "http_request_id"
+  auditlog_log ||--o{ auditlog_http_session : "http_session_id"
+  auditlog_log ||--o{ ir_model : "model_id"
+  auditlog_log ||--o{ res_users : "user_id"
+  auditlog_log_line ||--o{ ir_model_fields : "field_id"
+  auditlog_log_line ||--o{ auditlog_log : "log_id"
+  auditlog_rule ||--o{ ir_actions_act_window : "action_id"
+  auditlog_rule ||--o{ ir_model : "model_id"
+  auditlog_rule_fields_to_exclude_ids_rel ||--o{ auditlog_rule : "auditlog_rule_id"
+  auditlog_rule_fields_to_exclude_ids_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  auditlog_rule_users_to_exclude_ids_rel ||--o{ auditlog_rule : "auditlog_rule_id"
+  auditlog_rule_users_to_exclude_ids_rel ||--o{ res_users : "res_users_id"
+  audittail_rules_users ||--o{ res_users : "rule_id"
+  audittail_rules_users ||--o{ auditlog_rule : "user_id"
+  base_exception_test_purchase ||--o{ res_partner : "partner_id"
+  base_exception_test_purchase ||--o{ res_users : "user_id"
+  base_exception_test_purchase_line ||--o{ base_exception_test_purchase : "lead_id"
   bir_alphalist ||--o{ res_company : "company_id"
   bir_alphalist ||--o{ res_currency : "currency_id"
   bir_alphalist_line ||--o{ bir_alphalist : "alphalist_id"
@@ -3193,6 +5131,18 @@ erDiagram
   bir_withholding_line ||--o{ res_partner : "partner_id"
   bir_withholding_line ||--o{ hr_payslip : "payslip_id"
   bir_withholding_line ||--o{ bir_withholding_return : "return_id"
+  cleanup_create_indexes_line ||--o{ ir_model_fields : "field_id"
+  cleanup_create_indexes_line ||--o{ cleanup_create_indexes_wizard : "wizard_id"
+  cleanup_purge_line_column ||--o{ ir_model : "model_id"
+  cleanup_purge_line_column ||--o{ cleanup_purge_wizard_column : "wizard_id"
+  cleanup_purge_line_data ||--o{ ir_model_data : "data_id"
+  cleanup_purge_line_data ||--o{ cleanup_purge_wizard_data : "wizard_id"
+  cleanup_purge_line_field ||--o{ cleanup_purge_wizard_field : "wizard_id"
+  cleanup_purge_line_menu ||--o{ ir_ui_menu : "menu_id"
+  cleanup_purge_line_menu ||--o{ cleanup_purge_wizard_menu : "wizard_id"
+  cleanup_purge_line_model ||--o{ cleanup_purge_wizard_model : "wizard_id"
+  cleanup_purge_line_module ||--o{ cleanup_purge_wizard_module : "wizard_id"
+  cleanup_purge_line_table ||--o{ cleanup_purge_wizard_table : "wizard_id"
   close_approval_gate ||--o{ res_users : "approved_by"
   close_approval_gate ||--o{ res_users : "approver_id"
   close_approval_gate ||--o{ res_users : "approver_user_id"
@@ -3262,6 +5212,13 @@ erDiagram
   compliance_check ||--o{ closing_period : "closing_id"
   crm_stage_required_fields_rel ||--o{ ir_model_fields : "field_id"
   crm_stage_required_fields_rel ||--o{ crm_stage : "stage_id"
+  exception_rule_confirm_test_purchase ||--o{ base_exception_test_purchase : "related_model_id"
+  exception_rule_test_purchase_ids_rel ||--o{ base_exception_test_purchase : "base_exception_test_purchase_id"
+  exception_rule_test_purchase_ids_rel ||--o{ exception_rule : "exception_rule_id"
+  export_xlsx_wizard ||--o{ xlsx_template : "template_id"
+  fetchmail_attach_mail_manually_mail ||--o{ fetchmail_attach_mail_manually : "wizard_id"
+  fetchmail_server ||--o{ mail_template : "error_notice_template_id"
+  fetchmail_server_folder ||--o{ fetchmail_server : "server_id"
   finance_bir_deadline ||--o{ ipai_finance_person : "responsible_approval_id"
   finance_bir_deadline ||--o{ ipai_finance_person : "responsible_prep_id"
   finance_bir_deadline ||--o{ ipai_finance_person : "responsible_review_id"
@@ -3281,8 +5238,15 @@ erDiagram
   finance_task_template ||--o{ res_users : "review_user_id"
   finance_task_template_dependency_rel ||--o{ finance_task_template : "depends_on_id"
   finance_task_template_dependency_rel ||--o{ finance_task_template : "task_id"
+  general_ledger_report_wizard_account_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
+  general_ledger_report_wizard_account_journal_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
+  general_ledger_report_wizard_cost_center_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
+  general_ledger_report_wizard_partner_ids_rel ||--o{ general_ledger_report_wizard : "general_ledger_report_wizard_id"
   hr_expense ||--o{ project_project : "project_id"
   hr_expense ||--o{ ipai_travel_request : "travel_request_id"
+  import_xlsx_wizard ||--o{ xlsx_template : "template_id"
+  import_xlsx_wizard_attachment_ids_rel ||--o{ import_xlsx_wizard : "import_xlsx_wizard_id"
+  import_xlsx_wizard_attachment_ids_rel ||--o{ ir_attachment : "ir_attachment_id"
   ipai_asset ||--o{ ipai_asset_checkout : "active_checkout_id"
   ipai_asset ||--o{ ipai_asset_category : "category_id"
   ipai_asset ||--o{ res_currency : "currency_id"
@@ -3431,6 +5395,21 @@ erDiagram
   ipai_workspace ||--o{ res_company : "company_id"
   ipai_workspace ||--o{ ipai_workspace : "parent_id"
   ipai_workspace_link ||--o{ ipai_workspace : "workspace_id"
+  ir_cron_mutually_exclusive_cron_ids_rel ||--o{ ir_cron : "ir_cron_id"
+  ir_model_fields ||--o{ ir_model : "comodel_id"
+  ir_model_name_search_ids_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  ir_model_name_search_ids_rel ||--o{ ir_model : "ir_model_id"
+  ir_model_res_groups_update_allowed_rel ||--o{ ir_model : "ir_model_id"
+  ir_model_res_groups_update_allowed_rel ||--o{ res_groups : "res_groups_id"
+  ir_module_author_installed_module_ids_rel ||--o{ ir_module_author : "ir_module_author_id"
+  ir_module_module_author_ids_rel ||--o{ ir_module_module : "ir_module_module_id"
+  journal_ledger_report_wizard_journal_ids_rel ||--o{ journal_ledger_report_wizard : "journal_ledger_report_wizard_id"
+  m2x_create_edit_option ||--o{ ir_model : "comodel_id"
+  m2x_create_edit_option ||--o{ ir_model_fields : "field_id"
+  m2x_create_edit_option ||--o{ ir_model : "model_id"
+  mis_cash_flow_forecast_line ||--o{ res_company : "company_id"
+  open_items_report_wizard_account_ids_rel ||--o{ open_items_report_wizard : "open_items_report_wizard_id"
+  open_items_report_wizard_partner_ids_rel ||--o{ open_items_report_wizard : "open_items_report_wizard_id"
   ph_holiday ||--o{ res_company : "company_id"
   ppm_close_task ||--o{ ppm_monthly_close : "monthly_close_id"
   ppm_close_task ||--o{ ppm_close_template : "template_id"
@@ -3459,9 +5438,19 @@ erDiagram
   ppm_risk ||--o{ ppm_program : "program_id"
   ppm_risk ||--o{ project_project : "project_id"
   project_milestone ||--o{ res_users : "approver_id"
+  project_pr_required ||--o{ project_project : "project_id"
+  project_pr_required ||--o{ project_task_type : "state_id"
   project_project ||--o{ project_project : "ipai_root_project_id"
-  project_project ||--o{ project_project : "parent_id"
   project_project ||--o{ project_category : "portfolio_id"
+  project_project_group_ids_rel ||--o{ project_project : "project_project_id"
+  project_project_group_ids_rel ||--o{ res_groups : "res_groups_id"
+  project_project_hr_category_ids_rel ||--o{ project_project : "project_project_id"
+  project_project_tag_ids_rel ||--o{ project_project : "project_project_id"
+  project_project_type_ids_rel ||--o{ project_project : "project_project_id"
+  project_stakeholder ||--o{ res_partner : "partner_id"
+  project_stakeholder ||--o{ project_project : "project_id"
+  project_stakeholder ||--o{ project_stakeholder_role : "role_id"
+  project_tags_allowed_project_ids_rel ||--o{ project_tags : "project_tags_id"
   project_task ||--o{ res_users : "approver_id"
   project_task ||--o{ ipai_finance_bir_schedule : "bir_schedule_id"
   project_task ||--o{ res_users : "fd_id"
@@ -3474,8 +5463,23 @@ erDiagram
   project_task ||--o{ res_users : "reviewer_id"
   project_task ||--o{ res_users : "sfm_id"
   project_task_checklist_item ||--o{ res_users : "assigned_user_id"
+  project_task_description_template ||--o{ res_company : "company_id"
+  project_task_employee_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_hr_category_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_merge ||--o{ project_project : "dst_project_id"
+  project_task_merge ||--o{ project_task : "dst_task_id"
+  project_task_merge_task_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_merge_task_ids_rel ||--o{ project_task_merge : "project_task_merge_id"
+  project_task_merge_user_ids_rel ||--o{ project_task_merge : "project_task_merge_id"
+  project_task_merge_user_ids_rel ||--o{ res_users : "res_users_id"
+  project_task_pr_required_states_rel ||--o{ project_task : "project_task_id"
+  project_task_tag_ids_rel ||--o{ project_task : "project_task_id"
+  project_task_user_ids_rel ||--o{ project_task : "project_task_id"
+  quick_start_screen_action_ids_rel ||--o{ quick_start_screen : "quick_start_screen_id"
+  res_config_settings ||--o{ account_age_report_configuration : "age_partner_config_id"
   res_config_settings ||--o{ superset_connection : "superset_connection_id"
   res_partner ||--o{ srm_supplier : "srm_supplier_id"
+  res_users_hr_category_ids_rel ||--o{ res_users : "res_users_id"
   srm_qualification ||--o{ res_users : "approver_id"
   srm_qualification ||--o{ res_users : "reviewer_id"
   srm_qualification ||--o{ srm_supplier : "supplier_id"
@@ -3504,6 +5508,25 @@ erDiagram
   superset_dataset_wizard ||--o{ ir_model : "model_id"
   superset_dataset_wizard_field_ids_rel ||--o{ ir_model_fields : "ir_model_fields_id"
   superset_dataset_wizard_field_ids_rel ||--o{ superset_dataset_wizard : "superset_dataset_wizard_id"
+  test_partner_time_window ||--o{ res_partner : "partner_id"
+  test_time_window_model ||--o{ res_partner : "partner_id"
+  trial_balance_report_wizard_account_ids_rel ||--o{ trial_balance_report_wizard : "trial_balance_report_wizard_id"
+  trial_balance_report_wizard_journal_ids_rel ||--o{ trial_balance_report_wizard : "trial_balance_report_wizard_id"
+  trial_balance_report_wizard_partner_ids_rel ||--o{ trial_balance_report_wizard : "trial_balance_report_wizard_id"
+  upgrade_install_wizard_module_ids_rel ||--o{ upgrade_install_wizard : "upgrade_install_wizard_id"
+  vacuum_rule ||--o{ res_company : "company_id"
+  vacuum_rule ||--o{ ir_model : "model_id"
+  vacuum_rule_message_subtype_ids_rel ||--o{ mail_message_subtype : "mail_message_subtype_id"
+  vacuum_rule_message_subtype_ids_rel ||--o{ vacuum_rule : "vacuum_rule_id"
+  vacuum_rule_model_ids_rel ||--o{ ir_model : "ir_model_id"
+  vacuum_rule_model_ids_rel ||--o{ vacuum_rule : "vacuum_rule_id"
+  web_form_banner_rule ||--o{ ir_model : "model_id"
+  web_form_banner_rule_trigger_field_rel ||--o{ ir_model_fields : "ir_model_fields_id"
+  web_form_banner_rule_trigger_field_rel ||--o{ web_form_banner_rule : "web_form_banner_rule_id"
+  web_form_banner_rule_view_ids_rel ||--o{ ir_ui_view : "ir_ui_view_id"
+  web_form_banner_rule_view_ids_rel ||--o{ web_form_banner_rule : "web_form_banner_rule_id"
+  wizard_open_tax_balances ||--o{ date_range : "date_range_id"
+  wizard_open_tax_balances_company_ids_rel ||--o{ wizard_open_tax_balances : "wizard_open_tax_balances_id"
   workos_comment_mention_rel ||--o{ ipai_workos_comment : "comment_id"
   workos_comment_mention_rel ||--o{ res_users : "user_id"
   workspace_member_rel ||--o{ res_users : "user_id"
