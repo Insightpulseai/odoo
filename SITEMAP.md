@@ -204,6 +204,13 @@
 | [RAG Architecture Implementation Plan](docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md) | docs |
 | [InsightPulseAI Documentation](docs/README.md) | docs |
 | [MCP Stack – Odoo + n8n + Mattermost + Superset + DO Agents](docs/README_MCP_STACK.md) | docs |
+| [Odoo Data Model Artifacts](docs/data-model/README.md) | docs/data-model |
+| [Odoo Canonical DBML Schema](docs/data-model/ODOO_CANONICAL_SCHEMA.dbml) | docs/data-model |
+| [Odoo ERD (Mermaid)](docs/data-model/ODOO_ERD.mmd) | docs/data-model |
+| [Odoo ERD (PlantUML)](docs/data-model/ODOO_ERD.puml) | docs/data-model |
+| [Odoo ORM Map](docs/data-model/ODOO_ORM_MAP.md) | docs/data-model |
+| [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
+| [Odoo Model Index](docs/data-model/ODOO_MODEL_INDEX.json) | docs/data-model |
 | [Repo Tree Contract (Authoritative)](docs/REPO_TREE.contract.md) | docs |
 | [Repo Tree (generated)](docs/REPO_TREE.generated.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
