@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6c015c91dc197d692d81d4d6a3cfc0257016b46b
+> Commit: 6277ddb7e1aac3a78abb81245b6903bebaee978c
 
 ## 📚 Documentation
 
@@ -60,7 +60,7 @@
 | [PostgreSQL Password Configuration Solution](POSTGRES_PASSWORD_SOLUTION.md) | . |
 | [Finance PPM Project Wrapper Implementation](PROJECT_WRAPPER_IMPLEMENTATION.md) | . |
 | [Finance PPM Project Integration - Implementation Summary](PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md) | . |
-| [InsightPulse Odoo CE – ERP Platform](README.md) | . |
+| [InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)](README.md) | . |
 | [Odoo CE v1.2.0 - Full Build Bundle](README_BUILD.md) | . |
 | [InsightPulse AI - CE Branding Patch v1.2.0](README_PATCH.md) | . |
 | [v0.9.0 - Infrastructure Unification Release](RELEASE_v0.9.0.md) | . |
