@@ -1176,6 +1176,14 @@
 │   │   ├── DB_RLS_POLICY_TEMPLATES.md
 │   │   ├── DB_TABLE_CLASSIFICATION_DRAFT.md
 │   │   └── DB_TARGET_ARCHITECTURE.md
+│   ├── data-model
+│   │   ├── ODOO_CANONICAL_SCHEMA.dbml
+│   │   ├── ODOO_ERD.mmd
+│   │   ├── ODOO_ERD.puml
+│   │   ├── ODOO_MODEL_INDEX.json
+│   │   ├── ODOO_MODULE_DELTAS.md
+│   │   ├── ODOO_ORM_MAP.md
+│   │   └── README.md
 │   ├── deployment
 │   │   ├── CLAUDE_CODE_CLI_PROMPT.md
 │   │   ├── DEPLOYMENT_EXECUTION_GUIDE.md
