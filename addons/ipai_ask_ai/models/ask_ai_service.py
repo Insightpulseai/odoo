@@ -58,6 +58,8 @@ class IpaiAskAIService(models.TransientModel):
                 result = self._execute_count_query(intent, context)
             elif intent["type"] == "aggregate":
                 result = self._execute_aggregate_query(intent, context)
+            elif intent["type"] == "rag":
+                result = self._generate_rag_response(query, context)
             elif intent["type"] == "help":
                 result = self._generate_help_response(intent)
             else:
@@ -154,15 +156,15 @@ class IpaiAskAIService(models.TransientModel):
         # Try to match patterns
         for pattern, intent_template in patterns.items():
             match = re.search(pattern, query_lower)
-            if match:
+        if match:
                 intent = intent_template.copy()
                 intent["query"] = query
                 intent["match"] = match.groups() if match.groups() else []
                 return intent
 
-        # Default to generic query
+        # Fallback to Generative AI (RAG)
         return {
-            "type": "generic",
+            "type": "rag",
             "query": query,
             "match": [],
         }
@@ -419,3 +421,58 @@ class IpaiAskAIService(models.TransientModel):
             })
 
         return ai_partner
+
+    def _generate_rag_response(self, query, context):
+        """Generate a response using the external RAG service (Copilot)."""
+        import requests
+        
+        api_url = self.env['ir.config_parameter'].sudo().get_param('ipai_copilot.api_url')
+        api_key = self.env['ir.config_parameter'].sudo().get_param('ipai_copilot.api_key')
+        
+        if not api_url:
+            return {
+                "message": _("AI Configuration Error: Copilot API URL is not set. Please check Settings."),
+                "data": {}
+            }
+            
+        try:
+           payload = {
+               "message": query,
+               "odoo": {
+                   "uid": self.env.uid,
+                   "db": self.env.cr.dbname,
+                   "context": context
+               }
+           }
+           
+           headers = {"Content-Type": "application/json"}
+           if api_key:
+               headers["Authorization"] = f"Bearer {api_key}"
+               
+           response = requests.post(api_url, json=payload, headers=headers, timeout=30)
+           
+           if response.status_code != 200:
+               _logger.error("Copilot API Error: %s - %s", response.status_code, response.text)
+               return {
+                   "message": _("I'm having trouble connecting to my brain. (Error %s)") % response.status_code
+               }
+               
+           data = response.json()
+           answer = data.get("answer", _("I couldn't generate an answer."))
+           citations = data.get("citations", [])
+           
+           # Append citations to message if present
+           if citations:
+               citation_text = "\n\nSources:\n" + "\n".join([f"- [{c.get('title', 'Link')}]({c.get('url', '#')})" for c in citations])
+               answer += citation_text
+               
+           return {
+               "message": answer,
+               "data": {"citations": citations}
+           }
+           
+        except Exception as e:
+            _logger.exception("RAG connection error: %s", str(e))
+            return {
+                "message": _("I encountered a connection error while thinking. Please try again later.")
+            }
