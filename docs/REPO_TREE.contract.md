@@ -115,7 +115,7 @@ If the team decides to adopt a `src/` structure in the future, the changes would
 ```
 odoo-ce/
 ├── src/
-│   ├── apps/odoo/              # Odoo core as submodule
+│   ├── apps/odoo_core/         # Odoo core as submodule (mock path)
 │   │   ├── addons/             # Built-in Odoo modules
 │   │   └── odoo/               # Odoo framework
 │   ├── addons/                 # Custom IPAI modules (moved from addons/)
@@ -130,11 +130,11 @@ odoo-ce/
 ### Required Changes for Future Refactor
 
 1. Move `addons/` contents to `src/addons/`
-2. Add Odoo core as submodule at `src/apps/odoo/`
+2. Add Odoo core as submodule at `src/apps/odoo_core/`
 3. Move OCA modules to `src/oca/`
 4. Update `deploy/odoo.conf`:
    ```ini
-   addons_path = /opt/odoo-ce/src/apps/odoo/addons,/opt/odoo-ce/src/addons,/opt/odoo-ce/src/oca
+   addons_path = /opt/odoo-ce/src/apps/odoo_core/addons,/opt/odoo-ce/src/addons,/opt/odoo-ce/src/oca
    ```
 5. Update all CI workflows
 6. Update this contract document
