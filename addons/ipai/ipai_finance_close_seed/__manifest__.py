@@ -22,6 +22,7 @@ Generated from: Month-end Closing Task and Tax Filing.xlsx
     "license": "LGPL-3",
     "depends": ["project", "resource"],
     "data": [
+        "data/ir_config_parameter.xml",
         "data/projects.xml",
         "data/tags.xml",
         "data/holidays.xml",
