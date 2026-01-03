@@ -88,6 +88,28 @@ jobs:
       - name: Fail if data-model artifacts drift
         run: git diff --exit-code docs/data-model/
 
+  import-headers-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate import CSV headers against contract
+        run: python scripts/import/validate_headers.py
+
+      - name: Report CI telemetry
+        if: always()
+        env:
+          N8N_CI_WEBHOOK_URL: ${{ secrets.N8N_CI_WEBHOOK_URL }}
+        run: |
+          chmod +x scripts/report_ci_telemetry.sh
+          scripts/report_ci_telemetry.sh "${{ job.status }}"
+
   repo-structure:
     runs-on: ubuntu-latest
     steps:
