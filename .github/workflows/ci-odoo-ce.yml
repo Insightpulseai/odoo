@@ -117,3 +117,30 @@ jobs:
         run: |
           chmod +x scripts/report_ci_telemetry.sh
           scripts/report_ci_telemetry.sh "${{ job.status }}"
+
+  seed-finance-close-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: python -m pip install --upgrade pip pandas openpyxl
+
+      - name: Regenerate seed artifacts
+        run: python scripts/seed_finance_close_from_xlsx.py
+
+      - name: Drift check
+        run: |
+          if ! git diff --quiet addons/ipai/ipai_finance_close_seed/data/; then
+            echo "::error::Finance close seed artifacts are out of sync with Excel source."
+            echo "Run: python scripts/seed_finance_close_from_xlsx.py"
+            git diff addons/ipai/ipai_finance_close_seed/data/
+            exit 1
+          fi
+          echo "✅ Finance close seed artifacts are up to date"
