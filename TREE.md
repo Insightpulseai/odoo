@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 58442fdd74a51ea258232567ada660afeabaafad
+> Commit: cd75c7237f65ae179f602ebff06a5a5de55b1af2
 
 ```
 .
@@ -44,6 +44,7 @@
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
+│   │   ├── checks-debug.yml
 │   │   ├── ci-odoo-ce.yml
 │   │   ├── ci-odoo-oca.yml
 │   │   ├── control-room-ci.yml
@@ -2284,7 +2285,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-709 directories, 1570 files
+709 directories, 1571 files
 ```
 
 ## 📊 Stats
@@ -2292,7 +2293,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 805 |
-| Files | 2252 |
+| Files | 2253 |
 | Python files | 595 |
 | XML files | 331 |
 | Markdown files | 427 |
