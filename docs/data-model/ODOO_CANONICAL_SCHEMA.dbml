@@ -681,7 +681,7 @@ Table close_exception {
   create_uid int
   currency_id int
   cycle_id int
-  description text
+  description varchar
   detected_by int
   detected_date datetime
   escalated_date datetime
@@ -836,7 +836,7 @@ Table close_task_template {
   default_approve_user_id int
   default_prep_user_id int
   default_review_user_id int
-  description text
+  description varchar
   id int [pk]
   name varchar
   period_type varchar
