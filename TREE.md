@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0709b65aa05d01ac1595fc8d9685f4c7fb2df2fe
+> Commit: a54ef9c3598c3f4cc325b3351b07b567fe26182d
 
 ```
 .
@@ -18,6 +18,9 @@
 │   │   ├── plan.md
 │   │   ├── ship.md
 │   │   └── verify.md
+│   ├── superclaude
+│   │   └── skills
+│   │       └── finance
 │   ├── project_memory.db
 │   ├── query_memory.py
 │   ├── settings.json
@@ -177,6 +180,8 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_finance_close_seed
+│   │   │   └── data
 │   │   ├── ipai_finance_month_end
 │   │   │   ├── data
 │   │   │   ├── models
@@ -341,9 +346,11 @@
 │   │   │   ├── __init__.py
 │   │   │   └── main.py
 │   │   ├── data
+│   │   │   ├── afc_config_params.xml
 │   │   │   └── ai_channel_data.xml
 │   │   ├── models
 │   │   │   ├── __init__.py
+│   │   │   ├── afc_rag_service.py
 │   │   │   ├── ask_ai_channel.py
 │   │   │   ├── ask_ai_service.py
 │   │   │   └── res_config_settings.py
@@ -355,6 +362,11 @@
 │   │   ├── views
 │   │   │   ├── ask_ai_views.xml
 │   │   │   └── res_config_settings_view.xml
+│   │   ├── CHANGES.md
+│   │   ├── DEPLOYMENT_CHECKLIST.md
+│   │   ├── DEPLOYMENT_COMPLETE.md
+│   │   ├── DEPLOYMENT_STATUS.md
+│   │   ├── README_AFC_RAG.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_bir_tax_compliance
@@ -380,28 +392,6 @@
 │   │   │   └── res_partner_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
-│   ├── ipai_close_orchestration
-│   │   ├── data
-│   │   │   ├── close_task_categories.xml
-│   │   │   ├── close_task_templates.xml
-│   │   │   └── ir_cron.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── close_approval_gate.py
-│   │   │   ├── close_cycle.py
-│   │   │   ├── close_exception.py
-│   │   │   ├── close_task.py
-│   │   │   └── close_task_category.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── security.xml
-│   │   ├── views
-│   │   │   ├── close_cycle_views.xml
-│   │   │   ├── close_exception_views.xml
-│   │   │   ├── close_task_views.xml
-│   │   │   └── menu.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
 │   ├── ipai_crm_pipeline
 │   │   ├── data
 │   │   │   └── crm_stage_rules.xml
@@ -418,21 +408,13 @@
 │   │   │   └── crm_stage_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
-│   ├── ipai_finance_close_seed
-│   │   ├── data
-│   │   │   ├── holidays.xml
-│   │   │   ├── projects.xml
-│   │   │   ├── tags.xml
-│   │   │   ├── tasks_bir.csv
-│   │   │   └── tasks_month_end.csv
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
 │   ├── ipai_finance_closing
 │   │   ├── data
 │   │   │   ├── closing_automation.xml
 │   │   │   └── closing_tasks.xml
 │   │   ├── security
 │   │   │   └── ir.model.access.csv
+│   │   ├── DEPLOYMENT_COMPLETE.md
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
@@ -581,38 +563,6 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── workflow_views.xml
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_ppm_a1
-│   │   ├── data
-│   │   │   ├── cron.xml
-│   │   │   └── sequences.xml
-│   │   ├── models
-│   │   │   ├── __init__.py
-│   │   │   ├── compliance.py
-│   │   │   ├── export_run.py
-│   │   │   ├── overlay.py
-│   │   │   ├── task.py
-│   │   │   ├── tasklist.py
-│   │   │   ├── template.py
-│   │   │   └── workstream.py
-│   │   ├── security
-│   │   │   ├── ir.model.access.csv
-│   │   │   └── security.xml
-│   │   ├── views
-│   │   │   ├── compliance_views.xml
-│   │   │   ├── export_run_views.xml
-│   │   │   ├── menu.xml
-│   │   │   ├── overlay_views.xml
-│   │   │   ├── task_views.xml
-│   │   │   ├── tasklist_views.xml
-│   │   │   ├── template_views.xml
-│   │   │   ├── wizard_views.xml
-│   │   │   └── workstream_views.xml
-│   │   ├── wizards
-│   │   │   ├── __init__.py
-│   │   │   ├── export_seed_wizard.py
-│   │   │   └── import_seed_wizard.py
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_sms_gateway
@@ -1057,10 +1007,18 @@
 ├── automations
 │   └── n8n
 │       ├── workflows
+│       │   ├── 01-health-check.json
+│       │   ├── 02-git-operations-hub.json
+│       │   ├── 03-finance-close-orchestrator.json
+│       │   ├── 04-bir-compliance.json
+│       │   ├── 05-github-oauth-callback.json
 │       │   ├── finance_closing_automation.json
+│       │   ├── git_operations_hub.json
 │       │   ├── odoo_reverse_mapper.json
 │       │   └── ppm_monthly_close_automation.json
-│       └── README_FINANCE_CLOSING.md
+│       ├── README_FINANCE_CLOSING.md
+│       ├── bir_deadline_reminder_workflow.json
+│       └── bir_overdue_nudge_workflow.json
 ├── baselines
 │   └── v0.2.1-quality-baseline-20251121.txt
 ├── bin
@@ -1078,6 +1036,12 @@
 │   ├── best_of_breed.yaml
 │   ├── equivalence_matrix.csv
 │   └── equivalence_matrix_workos_notion.csv
+├── claudedocs
+│   ├── 100_PERCENT_CLI_DEPLOYMENT.md
+│   ├── DEPLOYMENT_SUMMARY.md
+│   ├── FINAL_DEPLOYMENT_REPORT.md
+│   ├── ISSUE_RESOLUTION_REPORT.md
+│   └── bir-filing-validation-report.md
 ├── clients
 │   └── flutter_receipt_ocr
 │       ├── lib
@@ -1119,8 +1083,11 @@
 │   │   ├── 07_mail.activity.csv
 │   │   ├── README.md
 │   │   └── odoo_import_headers.contract.json
+│   ├── IMPORT_GUIDE.md
 │   ├── bir_calendar_2026.json
+│   ├── bir_december_2025_seed.xml
 │   ├── employee_directory.json
+│   ├── month_end_closing_tasks.csv
 │   ├── month_end_tasks.csv
 │   ├── notion_tasks_deduplicated.json
 │   ├── notion_tasks_parsed.json
@@ -1359,6 +1326,7 @@
 │   ├── FINAL_OPERABILITY_CHECKLIST.md
 │   ├── FINAL_READINESS_CHECK.md
 │   ├── FINANCE_PPM_IMPLEMENTATION.md
+│   ├── FIN_WORKSPACE_AUTOMATION_STATUS.md
 │   ├── FIN_WORKSPACE_HARDENING_STATUS.md
 │   ├── FIN_WORKSPACE_SETUP.md
 │   ├── GITHUB_SECRETS_SETUP.md
@@ -1479,7 +1447,8 @@
 │   │   │   ├── preflight-classify.yml
 │   │   │   └── spec-kit-check.yml
 │   │   ├── install-test.sh
-│   │   └── structure-check.sh
+│   │   ├── structure-check.sh
+│   │   └── structure_check.py
 │   ├── databricks
 │   │   ├── notebooks
 │   │   │   ├── bronze
@@ -1613,6 +1582,12 @@
 │   │   ├── README.md
 │   │   └── requirements.txt
 │   ├── servers
+│   │   ├── odoo-erp-server
+│   │   │   ├── src
+│   │   │   ├── .env.example
+│   │   │   ├── README.md
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
 │   │   ├── odoo-erp.yaml
 │   │   └── odoo-lab.yaml
 │   └── agentic-cloud.yaml
@@ -1778,6 +1753,7 @@
 │   ├── deploy-n8n-workflows.sh
 │   ├── deploy-odoo-modules.sh
 │   ├── deploy-to-server.sh
+│   ├── deploy_afc_rag.sh
 │   ├── deploy_custom_image.sh
 │   ├── deploy_notion_tasks.sh
 │   ├── deploy_prod.sh
@@ -1809,6 +1785,7 @@
 │   ├── introspect_project.py
 │   ├── map_logframe.py
 │   ├── new_conversation_entry.sh
+│   ├── notify_slack.sh
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
 │   ├── odoo_mattermost_integration.py
@@ -1824,12 +1801,14 @@
 │   ├── run_project_introspection.sh
 │   ├── scan_ipai_modules.py
 │   ├── seed_finance_close_from_xlsx.py
+│   ├── setup_afc_rag.sh
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
+│   ├── test_afc_rag.py
 │   ├── test_deploy_local.sh
 │   ├── update_diagram_manifest.py
 │   ├── validate-continue-config.sh
@@ -2009,6 +1988,12 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── odoo-mcp-server
+│   │   ├── GAPS_ANALYSIS.md
+│   │   ├── README.md
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   └── prd.md
 │   ├── parallel-control-planes
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -2091,6 +2076,13 @@
 │   │   ├── 20241220000001_master_control.sql
 │   │   ├── 20241220000002_master_data.sql
 │   │   ├── 20241221000001_control_room_api.sql
+│   │   ├── 20250101_afc_canonical_schema.sql
+│   │   ├── 20250101_afc_computation_triggers.sql
+│   │   ├── 20250101_afc_rls_comprehensive.sql
+│   │   ├── 20250101_afc_rls_fixed.sql
+│   │   ├── 20250101_afc_verification_tests.sql
+│   │   ├── 20250101_rls_deployment_actual_schema.sql
+│   │   ├── 20250101_security_linter_remediation.sql
 │   │   ├── 20251123_saas_feature_matrix.sql
 │   │   ├── 20251128_semantic_query_layer.sql
 │   │   ├── 202512071100_1000_CORE_SCHEMAS_AND_TENANCY.sql
@@ -2130,7 +2122,9 @@
 │   │   ├── 20251227_docs_ai_schema.sql
 │   │   ├── 20251227_mcp_job_queue_cron.sql
 │   │   ├── 20251227_supabase_queues_setup.sql
-│   │   └── 202601030001_docs.sql
+│   │   ├── 202601030001_docs.sql
+│   │   ├── AFC_DEPLOYMENT_SUMMARY.md
+│   │   └── RLS_DEPLOYMENT_COMPLETE.md
 │   ├── seed
 │   │   ├── 9000_core
 │   │   │   └── 9000_core_tenants_roles_users.sql
@@ -2152,6 +2146,7 @@
 │   ├── seeds
 │   │   ├── 001_hr_seed.sql
 │   │   └── 002_finance_seed.sql
+│   ├── SECURITY_LINTER_REMEDIATION.md
 │   └── config.toml
 ├── tasks
 │   └── infra
@@ -2281,6 +2276,7 @@
 ├── FINANCE_PPM_CE_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_IMPORT_GUIDE.md
+├── HOTFIX_OWLERROR.sh
 ├── IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
 ├── INFRASTRUCTURE_PLAN.md
 ├── INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
@@ -2367,7 +2363,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-731 directories, 1631 files
+727 directories, 1631 files
 ```
 
 ## 📊 Stats
@@ -2375,7 +2371,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 828 |
-| Files | 2315 |
-| Python files | 618 |
-| XML files | 339 |
-| Markdown files | 434 |
+| Files | 2328 |
+| Python files | 599 |
+| XML files | 321 |
+| Markdown files | 457 |
