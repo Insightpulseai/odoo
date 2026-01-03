@@ -1,0 +1,76 @@
+<templates xml:space="preserve">
+  <t t-name="ipai_copilot.copilot_panel_xml">
+    <div t-attf-class="ipai-copilot #{state.open ? 'open' : ''}">
+      <div class="ipai-copilot__backdrop" t-on-click="close"/>
+
+      <div class="ipai-copilot__panel">
+        <div class="ipai-copilot__header">
+          <div class="ipai-copilot__title">
+            <div class="ipai-copilot__brand">Copilot</div>
+            <div class="ipai-copilot__sub">Ask anything about your current work</div>
+          </div>
+          <div class="ipai-copilot__actions">
+            <button class="ipai-copilot__iconbtn" title="New chat" t-on-click="newChat">＋</button>
+            <button class="ipai-copilot__iconbtn" title="Close" t-on-click="close">✕</button>
+          </div>
+        </div>
+
+        <div class="ipai-copilot__body" t-ref="scrollArea">
+          <t t-if="state.messages.length === 0">
+            <div class="ipai-copilot__empty">
+              <div class="ipai-copilot__emptyTitle">How can I help?</div>
+              <div class="ipai-copilot__chips">
+                <button t-on-click="() => quickAsk('What are the month-end close steps for this month?')">Month-end close steps</button>
+                <button t-on-click="() => quickAsk('When is the BIR 1601-C deadline?')">BIR deadline</button>
+                <button t-on-click="() => quickAsk('Summarize the open tasks due this week.')">What’s due this week</button>
+              </div>
+            </div>
+          </t>
+
+          <t t-foreach="state.messages" t-as="m" t-key="m.id">
+            <div t-attf-class="ipai-copilot__msg #{m.role}">
+              <div class="ipai-copilot__bubble">
+                <t t-esc="m.text"/>
+                <t t-if="m.citations and m.citations.length">
+                  <div class="ipai-copilot__citations">
+                    <div class="ipai-copilot__citationsTitle">Sources</div>
+                    <t t-foreach="m.citations" t-as="c" t-key="c.key">
+                      <a t-att-href="c.url || '#'" target="_blank" rel="noreferrer">
+                        <t t-esc="c.title || c.source || 'source'"/>
+                      </a>
+                    </t>
+                  </div>
+                </t>
+              </div>
+            </div>
+          </t>
+
+          <t t-if="state.loading">
+            <div class="ipai-copilot__msg assistant">
+              <div class="ipai-copilot__bubble ipai-copilot__typing">
+                <span class="dot"/><span class="dot"/><span class="dot"/>
+              </div>
+            </div>
+          </t>
+        </div>
+
+        <div class="ipai-copilot__composer">
+          <textarea
+            t-ref="input"
+            t-model="state.draft"
+            placeholder="Message Copilot…"
+            rows="1"
+            t-on-keydown="onKeyDown"
+          />
+          <button class="ipai-copilot__send" t-on-click="send" t-att-disabled="!canSend">Send</button>
+        </div>
+      </div>
+    </div>
+  </t>
+
+  <t t-name="ipai_copilot.CopilotSystray">
+    <div class="o_systray_item ipai-copilot-systray" t-on-click="toggle" title="Copilot">
+      <span class="ipai-copilot-systray__icon">💬</span>
+    </div>
+  </t>
+</templates>
