@@ -147,7 +147,12 @@ RUN pip3 install --no-cache-dir --break-system-packages \
 # -----------------------------------------------------------------------------
 # Copy IPAI Custom Modules
 # -----------------------------------------------------------------------------
+# Copy contents of addons/ipai (nested modules)
+COPY --chown=odoo:odoo ./addons/ipai/ /mnt/odoo/addons/ipai/
+# Copy other IPAI modules from root addons (e.g. ipai_ask_ai)
 COPY --chown=odoo:odoo ./addons/ipai_* /mnt/odoo/addons/ipai/
+
+ENV IPAI_ADDONS_PATH=/mnt/odoo/addons/ipai
 
 # -----------------------------------------------------------------------------
 # Configuration and Entrypoint
