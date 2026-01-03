@@ -49,8 +49,8 @@ else
       ' > "${TMP_TREE}"
 fi
 
-# Escape backticks for safe insertion
-ESCAPED_TREE=$(sed 's/`/\\`/g' "${TMP_TREE}")
+# Escape backticks and slashes for safe insertion in Perl regex
+ESCAPED_TREE=$(sed 's/`/\\`/g' "${TMP_TREE}" | sed 's|/|\\/|g')
 
 # Replace the section between markers in TARGET_FILE
 perl -0pi -e "s/<!-- REPO_TREE_START -->.*?<!-- REPO_TREE_END -->/<!-- REPO_TREE_START -->\n\`\`\`text\n${ESCAPED_TREE}\n\`\`\`\n<!-- REPO_TREE_END -->/s" "${TARGET_FILE}"
