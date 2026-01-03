@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4c4da6f8b7239d2e162a7d7b569593391e425076
+> Commit: dd651eaee85c5c921323130b282706a01f1de623
 
 ```
 .
@@ -1080,6 +1080,15 @@
 │       ├── gold_embeddings.yaml
 │       └── silver_normalized_docs.yaml
 ├── data
+│   ├── import_templates
+│   │   ├── 01_project.task.type.csv
+│   │   ├── 02_project.project.csv
+│   │   ├── 03_project.milestone.csv
+│   │   ├── 04_project.task.csv
+│   │   ├── 05_project.task.dependencies.csv
+│   │   ├── 06_project.task.recurrence.csv
+│   │   ├── 07_mail.activity.csv
+│   │   └── README.md
 │   ├── bir_calendar_2026.json
 │   ├── employee_directory.json
 │   ├── month_end_tasks.csv
@@ -1672,6 +1681,11 @@
 │   │   ├── run_odoo_tests.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
+│   ├── import
+│   │   ├── import_activities.py
+│   │   ├── run_import_sequence.sh
+│   │   ├── verify_import.py
+│   │   └── verify_import.sh
 │   ├── kb
 │   │   ├── seed_oca_catalog.sql
 │   │   ├── seed_odoo_catalog.sql
@@ -1761,6 +1775,7 @@
 │   ├── install-git-hooks.sh
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
+│   ├── introspect_project.py
 │   ├── map_logframe.py
 │   ├── new_conversation_entry.sh
 │   ├── oca-sync.sh
@@ -1775,6 +1790,7 @@
 │   ├── report_ci_telemetry.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
+│   ├── run_project_introspection.sh
 │   ├── scan_ipai_modules.py
 │   ├── seed_finance_close_from_xlsx.py
 │   ├── setup_keycloak_db.sh
@@ -2320,15 +2336,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-718 directories, 1597 files
+720 directories, 1611 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 815 |
-| Files | 2281 |
-| Python files | 602 |
+| Directories | 817 |
+| Files | 2295 |
+| Python files | 605 |
 | XML files | 335 |
-| Markdown files | 433 |
+| Markdown files | 434 |
