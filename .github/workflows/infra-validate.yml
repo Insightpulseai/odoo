@@ -3,7 +3,11 @@ name: Infrastructure Validation
 # DISABLED: Project uses DigitalOcean, not Azure (per CLAUDE.md)
 # Azure services are prohibited for this project
 on:
-  workflow_dispatch: # Manual trigger only
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
   validate-bicep:
