@@ -43,6 +43,7 @@ Technical Stack:
         "security/ir.model.access.csv",
         "data/ai_channel_data.xml",
         "views/ask_ai_views.xml",
+        "views/res_config_settings_view.xml",
     ],
     "assets": {
         "web.assets_backend": [
