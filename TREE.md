@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4521c09d49f828314b29f6500254fd7ecdff57b5
+> Commit: 35a990578d5a5cab2af79f4233be1171c99b955e
 
 ```
 .
@@ -413,6 +413,15 @@
 │   │   ├── views
 │   │   │   ├── crm_lead_views.xml
 │   │   │   └── crm_stage_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_finance_close_seed
+│   │   ├── data
+│   │   │   ├── holidays.xml
+│   │   │   ├── projects.xml
+│   │   │   ├── tags.xml
+│   │   │   ├── tasks_bir.csv
+│   │   │   └── tasks_month_end.csv
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_closing
@@ -1751,6 +1760,7 @@
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
 │   ├── scan_ipai_modules.py
+│   ├── seed_finance_close_from_xlsx.py
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
@@ -2285,15 +2295,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-709 directories, 1571 files
+711 directories, 1579 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 805 |
-| Files | 2253 |
-| Python files | 595 |
-| XML files | 331 |
+| Directories | 807 |
+| Files | 2261 |
+| Python files | 598 |
+| XML files | 334 |
 | Markdown files | 427 |
