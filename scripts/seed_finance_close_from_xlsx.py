@@ -6,7 +6,7 @@ import re
 
 import pandas as pd
 
-DEFAULT_XLSX = "Month-end Closing Task and Tax Filing ext.xlsx"
+DEFAULT_XLSX = "infra/seed/Month-end Closing Task and Tax Filing ext.xlsx"
 MODULE_NAME = "ipai_finance_close_seed"
 OUT_DIR = Path("addons") / MODULE_NAME / "data"
 
