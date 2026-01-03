@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fff654de9a5ca058f6bb68adaca2bf47fb5435d8
+> Commit: a97765c86532538f62aa01ed4748f19487380c6f
 
 ## 📚 Documentation
 
@@ -308,6 +308,7 @@
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
 | [Agent Audit Rules](kb/audit/AGENT_AUDIT_RULES.md) | kb/audit |
+| [Month-End Close SOP](kb/finance_close/sop.md) | kb/finance_close |
 | [MCP Coordinator Deployment Guide](mcp/coordinator/DEPLOYMENT.md) | mcp/coordinator |
 | [MCP Coordinator](mcp/coordinator/README.md) | mcp/coordinator |
 | [Local MCP Server](mcp/local/README.md) | mcp/local |
@@ -384,6 +385,10 @@
 | [Delivery Plan — IPAI Control Center (v1.0.0)](spec/ipai-control-center/plan.md) | spec/ipai-control-center |
 | [Product Requirements Document — IPAI Control Center](spec/ipai-control-center/prd.md) | spec/ipai-control-center |
 | [Tasks — IPAI Control Center (v1.0.0)](spec/ipai-control-center/tasks.md) | spec/ipai-control-center |
+| [Constitution: IPAI Copilot](spec/ipai-copilot/constitution.md) | spec/ipai-copilot |
+| [Plan: IPAI Copilot](spec/ipai-copilot/plan.md) | spec/ipai-copilot |
+| [PRD: IPAI Copilot (Odoo CE)](spec/ipai-copilot/prd.md) | spec/ipai-copilot |
+| [Tasks: IPAI Copilot](spec/ipai-copilot/tasks.md) | spec/ipai-copilot |
 | [ipai_month_end Module Constitution](spec/ipai-month-end/constitution.md) | spec/ipai-month-end |
 | [ipai_month_end Implementation Plan](spec/ipai-month-end/plan.md) | spec/ipai-month-end |
 | [ipai_month_end - Product Requirements](spec/ipai-month-end/prd.md) | spec/ipai-month-end |
@@ -457,6 +462,7 @@
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai/ipai_clarity_ppm_parity) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai/ipai_close_orchestration) | ✅ |  |
+| [ipai_copilot](./addons/ipai/ipai_copilot) | ✅ |  |
 | [ipai_custom_routes](./addons/ipai/ipai_custom_routes) | ✅ |  |
 | [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ |  |
 | [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
