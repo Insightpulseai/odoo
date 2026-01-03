@@ -71,6 +71,18 @@ jobs:
           chmod +x scripts/report_ci_telemetry.sh
           scripts/report_ci_telemetry.sh "${{ job.status }}"
 
+  data-model-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate canonical data model artifacts
+        run: python scripts/generate_odoo_dbml.py
+
+      - name: Fail if data-model artifacts drift
+        run: git diff --exit-code docs/data-model/
+
   repo-structure:
     runs-on: ubuntu-latest
     steps:
