@@ -1565,28 +1565,17 @@ You cannot define another: please edit the existing one.)
 
 ### Persisted fields
 - `actual_value`: `Float`
-- `approval_notes`: `Text`
 - `approved_by`: `Many2one` (relation=res.users)
 - `approved_date`: `Datetime`
 - `approver_id`: `Many2one` (relation=res.users)
-- `approver_role`: `Selection` (required)
-- `approver_user_id`: `Many2one` (relation=res.users)
-- `block_on_exceptions`: `Boolean`
 - `block_reason`: `Text`
-- `blocking_exceptions`: `Many2many` (relation=close.exception)
-- `blocking_reason`: `Text`
-- `blocking_tasks`: `Many2many` (relation=close.task)
 - `company_id`: `Many2one` (relation=res.company, related=cycle_id.company_id)
 - `cycle_id`: `Many2one` (relation=close.cycle, required, index, ondelete=cascade)
-- `gate_level`: `Integer` (required)
 - `gate_type`: `Selection` (required)
-- `min_completion_pct`: `Float`
 - `name`: `Char` (required)
 - `notes`: `Html`
-- `required_approvals`: `Integer`
-- `required_task_states`: `Char`
 - `sequence`: `Integer`
-- `state`: `Selection`
+- `state`: `Selection` (required)
 - `template_id`: `Many2one` (relation=close.approval.gate.template)
 - `threshold_value`: `Float`
 
@@ -1625,12 +1614,7 @@ You cannot define another: please edit the existing one.)
 
 ### Persisted fields
 - `a1_tasklist_id`: `Many2one` (relation=a1.tasklist)
-- `close_actual_date`: `Date`
-- `close_start_date`: `Date`
-- `close_target_date`: `Date`
-- `closing_period_id`: `Many2one` (relation=closing.period)
 - `company_id`: `Many2one` (relation=res.company, required)
-- `cycle_time_days`: `Integer` (compute=_compute_cycle_time)
 - `exception_count`: `Integer` (compute=_compute_exception_count)
 - `gates_ready`: `Boolean` (compute=_compute_gates_ready)
 - `name`: `Char` (required)
@@ -1639,10 +1623,8 @@ You cannot define another: please edit the existing one.)
 - `period_end`: `Date` (required)
 - `period_label`: `Char` (compute=_compute_period_label)
 - `period_start`: `Date` (required)
-- `period_type`: `Selection` (required)
 - `progress`: `Float` (compute=_compute_task_stats)
-- `state`: `Selection`
-- `task_completion_pct`: `Float` (compute=_compute_task_stats)
+- `state`: `Selection` (required)
 - `task_count`: `Integer` (compute=_compute_task_stats)
 - `task_done_count`: `Integer` (compute=_compute_task_stats)
 - `webhook_url`: `Char`
@@ -1660,35 +1642,23 @@ You cannot define another: please edit the existing one.)
 - _inherit: `mail.activity.mixin, mail.thread`
 
 ### Persisted fields
-- `amount`: `Monetary`
 - `assigned_to`: `Many2one` (relation=res.users)
 - `company_id`: `Many2one` (relation=res.company, related=cycle_id.company_id)
-- `currency_id`: `Many2one` (relation=res.currency)
 - `cycle_id`: `Many2one` (relation=close.cycle, required, index, ondelete=cascade)
-- `description`: `Text`
-- `detected_by`: `Many2one` (relation=res.users)
-- `detected_date`: `Datetime`
-- `escalated_date`: `Datetime`
+- `description`: `Html`
 - `escalated_to`: `Many2one` (relation=res.users)
 - `escalation_count`: `Integer`
 - `escalation_deadline`: `Datetime`
-- `escalation_level`: `Integer`
 - `exception_type`: `Selection` (required)
 - `last_escalated`: `Datetime`
 - `name`: `Char` (required)
-- `related_account_id`: `Many2one` (relation=account.account)
-- `related_move_id`: `Many2one` (relation=account.move)
-- `related_partner_id`: `Many2one` (relation=res.partner)
 - `reported_by`: `Many2one` (relation=res.users)
 - `resolution`: `Html`
-- `resolution_action`: `Text`
 - `resolved_by`: `Many2one` (relation=res.users)
 - `resolved_date`: `Datetime`
-- `root_cause`: `Text`
 - `severity`: `Selection` (required)
-- `state`: `Selection`
+- `state`: `Selection` (required)
 - `task_id`: `Many2one` (relation=close.task, index, ondelete=set null)
-- `variance_pct`: `Float`
 
 ### Non-persisted fields
 - _none_
@@ -1698,51 +1668,32 @@ You cannot define another: please edit the existing one.)
 - Module: `ipai`
 - Model type: `Model`
 - Table: `close_task`
-- _inherit: `close.task, mail.activity.mixin, mail.thread`
+- _inherit: `mail.activity.mixin, mail.thread`
 
 ### Persisted fields
 - `a1_task_id`: `Many2one` (relation=a1.task)
 - `approval_deadline`: `Date`
 - `approval_done_by`: `Many2one` (relation=res.users)
 - `approval_done_date`: `Datetime`
-- `approve_done_date`: `Datetime`
-- `approve_due_date`: `Date`
-- `approve_notes`: `Text`
-- `approve_user_id`: `Many2one` (relation=res.users)
 - `approver_id`: `Many2one` (relation=res.users)
-- `attachment_ids`: `Many2many` (relation=ir.attachment)
 - `category_id`: `Many2one` (relation=close.task.category)
-- `checklist_done_pct`: `Float` (compute=_compute_checklist_pct)
 - `checklist_progress`: `Float` (compute=_compute_checklist_progress)
 - `company_id`: `Many2one` (relation=res.company, related=cycle_id.company_id)
 - `cycle_id`: `Many2one` (relation=close.cycle, required, index, ondelete=cascade)
-- `days_overdue`: `Integer` (compute=_compute_is_overdue)
-- `description`: `Text`
 - `external_key`: `Char` (index)
-- `gl_entry_count`: `Integer` (compute=_compute_gl_entry_count)
-- `gl_entry_ids`: `Many2many` (relation=account.move)
-- `has_exceptions`: `Boolean` (compute=_compute_has_exceptions)
 - `has_open_exceptions`: `Boolean` (compute=_compute_has_open_exceptions)
-- `is_overdue`: `Boolean` (compute=_compute_is_overdue)
 - `name`: `Char` (required)
 - `notes`: `Html`
 - `prep_deadline`: `Date`
 - `prep_done_by`: `Many2one` (relation=res.users)
 - `prep_done_date`: `Datetime`
-- `prep_due_date`: `Date`
-- `prep_notes`: `Text`
-- `prep_user_id`: `Many2one` (relation=res.users)
 - `preparer_id`: `Many2one` (relation=res.users)
 - `review_deadline`: `Date`
 - `review_done_by`: `Many2one` (relation=res.users)
 - `review_done_date`: `Datetime`
-- `review_due_date`: `Date`
-- `review_notes`: `Text`
-- `review_result`: `Selection`
-- `review_user_id`: `Many2one` (relation=res.users)
 - `reviewer_id`: `Many2one` (relation=res.users)
 - `sequence`: `Integer`
-- `state`: `Selection`
+- `state`: `Selection` (required)
 - `template_id`: `Many2one` (relation=close.task.template)
 
 ### Non-persisted fields
@@ -1755,24 +1706,16 @@ You cannot define another: please edit the existing one.)
 - Model type: `Model`
 - Table: `close_task_category`
 - SQL constraints:
-  - `category_code_unique`: `unique(code)` (Category code must be unique)
   - `code_uniq`: `unique(code, company_id)` (Category code must be unique per company.)
   - `code_uniq`: `unique(code, company_id)` (Category code must be unique per company.)
 
 ### Persisted fields
 - `a1_workstream_id`: `Many2one` (relation=a1.workstream)
 - `active`: `Boolean`
-- `code`: `Char` (required)
+- `code`: `Char` (required, index)
 - `color`: `Integer`
 - `company_id`: `Many2one` (relation=res.company, required)
-- `default_approve_days`: `Integer`
-- `default_approve_role`: `Selection`
-- `default_prep_days`: `Integer`
-- `default_prep_role`: `Selection`
-- `default_review_days`: `Integer`
-- `default_review_role`: `Selection`
 - `description`: `Text`
-- `gl_account_ids`: `Many2many` (relation=account.account)
 - `name`: `Char` (required)
 - `sequence`: `Integer`
 
@@ -1786,20 +1729,15 @@ You cannot define another: please edit the existing one.)
 - Table: `close_task_checklist`
 
 ### Persisted fields
-- `attachment_id`: `Many2one` (relation=ir.attachment)
 - `code`: `Char` (required)
-- `done_at`: `Datetime`
 - `done_by`: `Many2one` (relation=res.users)
 - `done_date`: `Datetime`
-- `evidence_type`: `Selection`
 - `instructions`: `Text`
 - `is_done`: `Boolean`
 - `is_required`: `Boolean`
 - `name`: `Char` (required)
-- `notes`: `Text`
-- `required`: `Boolean`
 - `sequence`: `Integer`
-- `task_id`: `Many2one` (relation=close.task, required, ondelete=cascade)
+- `task_id`: `Many2one` (relation=close.task, required, index, ondelete=cascade)
 
 ### Non-persisted fields
 - _none_
@@ -1812,33 +1750,23 @@ You cannot define another: please edit the existing one.)
 - SQL constraints:
   - `code_uniq`: `unique(code, company_id)` (Template code must be unique per company.)
   - `code_uniq`: `unique(code, company_id)` (Template code must be unique per company.)
-  - `template_code_unique`: `unique(code)` (Template code must be unique)
 
 ### Persisted fields
 - `a1_template_id`: `Many2one` (relation=a1.template)
 - `active`: `Boolean`
 - `approval_days`: `Float`
 - `approval_offset`: `Integer`
-- `approve_day_offset`: `Integer`
 - `approver_id`: `Many2one` (relation=res.users)
 - `approver_role`: `Selection`
-- `category_id`: `Many2one` (relation=close.task.category, required)
-- `code`: `Char` (required)
+- `category_id`: `Many2one` (relation=close.task.category, index, ondelete=cascade)
+- `code`: `Char` (required, index)
 - `company_id`: `Many2one` (relation=res.company, required)
-- `creates_gl_entry`: `Boolean`
-- `default_approve_user_id`: `Many2one` (relation=res.users)
-- `default_prep_user_id`: `Many2one` (relation=res.users)
-- `default_review_user_id`: `Many2one` (relation=res.users)
-- `description`: `Text`
-- `gl_account_ids`: `Many2many` (relation=account.account)
+- `description`: `Html`
 - `name`: `Char` (required)
-- `period_type`: `Selection`
-- `prep_day_offset`: `Integer`
 - `prep_days`: `Float`
 - `prep_offset`: `Integer`
 - `preparer_id`: `Many2one` (relation=res.users)
 - `preparer_role`: `Selection`
-- `review_day_offset`: `Integer`
 - `review_days`: `Float`
 - `review_offset`: `Integer`
 - `reviewer_id`: `Many2one` (relation=res.users)
@@ -1856,11 +1784,9 @@ You cannot define another: please edit the existing one.)
 
 ### Persisted fields
 - `code`: `Char` (required)
-- `evidence_type`: `Selection`
 - `instructions`: `Text`
 - `is_required`: `Boolean`
 - `name`: `Char` (required)
-- `required`: `Boolean`
 - `sequence`: `Integer`
 - `template_id`: `Many2one` (relation=close.task.template, required, ondelete=cascade)
 
@@ -3093,19 +3019,6 @@ You cannot define another: please edit the existing one.)
 ### Non-persisted fields
 - _none_
 
-## ipai.export.seed.wizard
-
-- Module: `ipai_ppm_a1`
-- Model type: `TransientModel`
-- Table: `ipai_export_seed_wizard`
-
-### Persisted fields
-- `export_path`: `Char`
-- `webhook_url`: `Char`
-
-### Non-persisted fields
-- _none_
-
 ## ipai.finance.bir_schedule
 
 - Module: `ipai`
@@ -3487,38 +3400,6 @@ You cannot define another: please edit the existing one.)
 - `column_ids`: `One2many` (relation=ipai.grid.column)
 - `filter_ids`: `One2many` (relation=ipai.grid.filter)
 
-## ipai.import.seed.wizard
-
-- Module: `ipai_ppm_a1`
-- Model type: `TransientModel`
-- Table: `ipai_import_seed_wizard`
-
-### Persisted fields
-- `mode`: `Selection` (required)
-- `seed_json`: `Text` (required)
-
-### Non-persisted fields
-- _none_
-
-## ipai.localization.overlay
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_localization_overlay`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `active`: `Boolean`
-- `applies_to_code`: `Char` (required)
-- `country`: `Selection` (required)
-- `patch_payload`: `Text` (required)
-- `patch_type`: `Selection` (required)
-- `sequence`: `Integer`
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
 ## ipai.month.end.closing
 
 - Module: `ipai_month_end`
@@ -3684,128 +3565,6 @@ You cannot define another: please edit the existing one.)
 ### Non-persisted fields
 - _none_
 
-## ipai.ppm.task
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_task`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `task_code_unique`: `unique(code, template_id)` (Task code must be unique per template.)
-
-### Persisted fields
-- `category`: `Char`
-- `code`: `Char` (required)
-- `due_offset_days`: `Integer`
-- `evidence_required`: `Boolean`
-- `name`: `Char` (required)
-- `owner_role`: `Char`
-- `phase`: `Selection`
-- `prep_offset`: `Integer`
-- `requires_approval`: `Boolean`
-- `review_offset`: `Integer`
-- `sap_reference`: `Char`
-- `sequence`: `Integer`
-- `template_id`: `Many2one` (relation=ipai.ppm.template, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- `checklist_line_ids`: `One2many` (relation=ipai.ppm.task.checklist)
-
-## ipai.ppm.task.checklist
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_task_checklist`
-
-### Persisted fields
-- `evidence_type`: `Selection` (required)
-- `label`: `Char` (required)
-- `notes`: `Char`
-- `required`: `Boolean`
-- `sequence`: `Integer`
-- `task_id`: `Many2one` (relation=ipai.ppm.task, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.ppm.tasklist
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_tasklist`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `name`: `Char` (required)
-- `period_end`: `Date` (required)
-- `period_start`: `Date` (required)
-- `status`: `Selection`
-- `template_id`: `Many2one` (relation=ipai.ppm.template, required, index, ondelete=restrict)
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=restrict)
-
-### Non-persisted fields
-- `taskrun_ids`: `One2many` (relation=ipai.ppm.taskrun)
-
-## ipai.ppm.taskrun
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_taskrun`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `approver_id`: `Many2one` (relation=res.users, ondelete=set null)
-- `assignee_id`: `Many2one` (relation=res.users, ondelete=set null)
-- `done_at`: `Datetime`
-- `name`: `Char` (required)
-- `started_at`: `Datetime`
-- `status`: `Selection`
-- `task_id`: `Many2one` (relation=ipai.ppm.task, required, index, ondelete=restrict)
-- `tasklist_id`: `Many2one` (relation=ipai.ppm.tasklist, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.ppm.template
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_ppm_template`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `template_code_unique`: `unique(code, workstream_id)` (Template code must be unique per workstream.)
-
-### Persisted fields
-- `code`: `Char` (required)
-- `is_active`: `Boolean`
-- `name`: `Char` (required)
-- `period_type`: `Selection` (required)
-- `sequence`: `Integer`
-- `version`: `Char`
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- `task_ids`: `One2many` (relation=ipai.ppm.task)
-
-## ipai.repo.export_run
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_repo_export_run`
-- _inherit: `mail.thread, mail.activity.mixin`
-
-### Persisted fields
-- `export_path`: `Char`
-- `exported_at`: `Datetime`
-- `name`: `Char` (required)
-- `payload_json`: `Text`
-- `state`: `Selection`
-- `webhook_status`: `Char`
-- `webhook_url`: `Char`
-
-### Non-persisted fields
-- _none_
-
 ## ipai.share.token
 
 - Module: `ipai_platform_permissions`
@@ -3821,72 +3580,6 @@ You cannot define another: please edit the existing one.)
 - `permission_level`: `Selection` (required)
 - `scope_ref`: `Reference`
 - `scope_type`: `Selection` (required)
-
-### Non-persisted fields
-- _none_
-
-## ipai.stc.check
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_stc_check`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `stc_check_code_unique`: `unique(code)` (Check code must be unique.)
-
-### Persisted fields
-- `auto_run`: `Boolean`
-- `category`: `Char`
-- `code`: `Char` (required)
-- `description`: `Text`
-- `is_active`: `Boolean`
-- `name`: `Char` (required)
-- `rule_json`: `Text`
-- `sap_reference`: `Char`
-- `sequence`: `Integer`
-- `severity`: `Selection`
-- `worklist_type_id`: `Many2one` (relation=ipai.stc.worklist_type, ondelete=set null)
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.stc.scenario
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_stc_scenario`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `stc_scenario_code_unique`: `unique(code)` (Scenario code must be unique.)
-
-### Persisted fields
-- `bir_forms`: `Char`
-- `check_ids`: `Many2many` (relation=ipai.stc.check)
-- `code`: `Char` (required)
-- `frequency`: `Selection`
-- `name`: `Char` (required)
-- `notes`: `Text`
-- `run_day_offset`: `Integer`
-- `sap_reference`: `Char`
-- `sequence`: `Integer`
-- `workstream_id`: `Many2one` (relation=ipai.workstream, required, index, ondelete=cascade)
-
-### Non-persisted fields
-- _none_
-
-## ipai.stc.worklist_type
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_stc_worklist_type`
-- SQL constraints:
-  - `stc_worklist_code_unique`: `unique(code)` (Worklist type code must be unique.)
-
-### Persisted fields
-- `code`: `Char` (required)
-- `description`: `Text`
-- `name`: `Char` (required)
 
 ### Non-persisted fields
 - _none_
@@ -4350,30 +4043,6 @@ You cannot define another: please edit the existing one.)
 
 ### Non-persisted fields
 - _none_
-
-## ipai.workstream
-
-- Module: `ipai_ppm_a1`
-- Model type: `Model`
-- Table: `ipai_workstream`
-- _inherit: `mail.thread, mail.activity.mixin`
-- SQL constraints:
-  - `workstream_code_unique`: `unique(code)` (Workstream code must be unique.)
-
-### Persisted fields
-- `active`: `Boolean`
-- `code`: `Selection` (required)
-- `description`: `Text`
-- `name`: `Char` (required)
-- `odoo_anchor`: `Char`
-- `sap_anchor`: `Char`
-
-### Non-persisted fields
-- `check_ids`: `One2many` (relation=ipai.stc.check)
-- `overlay_ids`: `One2many` (relation=ipai.localization.overlay)
-- `scenario_ids`: `One2many` (relation=ipai.stc.scenario)
-- `tasklist_ids`: `One2many` (relation=ipai.ppm.tasklist)
-- `template_ids`: `One2many` (relation=ipai.ppm.template)
 
 ## ir.actions.act_multi
 

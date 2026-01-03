@@ -1,0 +1,137 @@
+{
+  "name": "BIR Deadline Reminder (9AM & 5PM)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bir-reminder",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook Trigger - BIR Reminder",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=⏰ **BIR Filing Reminder - {{ $json.reminder_type === 'due_date_9am' ? '9AM' : '5PM' }}**\n\n**Form**: {{ $json.bir_form }}\n**Period**: {{ $json.period }}\n**Deadline**: TODAY ({{ $json.deadline }})\n**Status**: {{ $json.status }}\n\nPlease complete filing before end of day.\n\ncc: @{{ $json.responsible_email }}"
+            },
+            {
+              "name": "username",
+              "value": "BIR Reminder Bot"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":calendar:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "mattermost-send",
+      "name": "Send to Mattermost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"form\": $json.bir_form, \"reminder_type\": $json.reminder_type } }}"
+      },
+      "id": "webhook-response",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.responsible_email }}",
+              "operation": "contains",
+              "value2": "@omc.com"
+            }
+          ]
+        }
+      },
+      "id": "email-validation",
+      "name": "Validate Email",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [470, 500]
+    },
+    {
+      "parameters": {
+        "fromEmail": "bir-reminders@insightpulseai.net",
+        "toEmail": "={{ $json.responsible_email }}",
+        "subject": "=BIR Filing Reminder: {{ $json.bir_form }} - Due Today",
+        "emailType": "html",
+        "html": "=<h2>BIR Filing Reminder</h2>\n<p><strong>Form:</strong> {{ $json.bir_form }}</p>\n<p><strong>Period:</strong> {{ $json.period }}</p>\n<p><strong>Deadline:</strong> TODAY ({{ $json.deadline }})</p>\n<p><strong>Status:</strong> {{ $json.status }}</p>\n<p style=\"color: #d9534f;\">⚠️ Please complete this filing before end of day to avoid penalties.</p>"
+      },
+      "id": "send-email-backup",
+      "name": "Send Email (Backup)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [690, 500]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger - BIR Reminder": {
+      "main": [
+        [
+          {
+            "node": "Send to Mattermost",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Validate Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Mattermost": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Email": {
+      "main": [
+        [
+          {
+            "node": "Send Email (Backup)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-12-28T00:00:00.000Z",
+  "versionId": "1"
+}

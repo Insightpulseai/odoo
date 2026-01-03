@@ -1169,43 +1169,24 @@ Table cleanup_purge_wizard_table {
 
 Table close_approval_gate {
   actual_value float
-  approval_notes text
   approved_by int
   approved_date datetime
   approver_id int
-  approver_role varchar
-  approver_user_id int
-  block_on_exceptions boolean
   block_reason text
-  blocking_reason text
   company_id int
   create_date datetime
   create_uid int
   cycle_id int
-  gate_level int
   gate_type varchar
   id int [pk]
-  min_completion_pct float
   name varchar
   notes varchar
-  required_approvals int
-  required_task_states varchar
   sequence int
   state varchar
   template_id int
   threshold_value float
   write_date datetime
   write_uid int
-}
-
-Table close_approval_gate_blocking_exceptions_rel {
-  close_approval_gate_id int
-  close_exception_id int
-}
-
-Table close_approval_gate_blocking_tasks_rel {
-  close_approval_gate_id int
-  close_task_id int
 }
 
 Table close_approval_gate_template {
@@ -1227,14 +1208,9 @@ Table close_approval_gate_template {
 
 Table close_cycle {
   a1_tasklist_id int
-  close_actual_date date
-  close_start_date date
-  close_target_date date
-  closing_period_id int
   company_id int
   create_date datetime
   create_uid int
-  cycle_time_days int
   exception_count int
   gates_ready boolean
   id int [pk]
@@ -1244,10 +1220,8 @@ Table close_cycle {
   period_end date
   period_label varchar
   period_start date
-  period_type varchar
   progress float
   state varchar
-  task_completion_pct float
   task_count int
   task_done_count int
   webhook_url varchar
@@ -1257,38 +1231,26 @@ Table close_cycle {
 }
 
 Table close_exception {
-  amount decimal
   assigned_to int
   company_id int
   create_date datetime
   create_uid int
-  currency_id int
   cycle_id int
-  description text
-  detected_by int
-  detected_date datetime
-  escalated_date datetime
+  description varchar
   escalated_to int
   escalation_count int
   escalation_deadline datetime
-  escalation_level int
   exception_type varchar
   id int [pk]
   last_escalated datetime
   name varchar
-  related_account_id int
-  related_move_id int
-  related_partner_id int
   reported_by int
   resolution varchar
-  resolution_action text
   resolved_by int
   resolved_date datetime
-  root_cause text
   severity varchar
   state varchar
   task_id int
-  variance_pct float
   write_date datetime
   write_uid int
 }
@@ -1298,53 +1260,31 @@ Table close_task {
   approval_deadline date
   approval_done_by int
   approval_done_date datetime
-  approve_done_date datetime
-  approve_due_date date
-  approve_notes text
-  approve_user_id int
   approver_id int
   category_id int
-  checklist_done_pct float
   checklist_progress float
   company_id int
   create_date datetime
   create_uid int
   cycle_id int
-  days_overdue int
-  description text
   external_key varchar
-  gl_entry_count int
-  has_exceptions boolean
   has_open_exceptions boolean
   id int [pk]
-  is_overdue boolean
   name varchar
   notes varchar
   prep_deadline date
   prep_done_by int
   prep_done_date datetime
-  prep_due_date date
-  prep_notes text
-  prep_user_id int
   preparer_id int
   review_deadline date
   review_done_by int
   review_done_date datetime
-  review_due_date date
-  review_notes text
-  review_result varchar
-  review_user_id int
   reviewer_id int
   sequence int
   state varchar
   template_id int
   write_date datetime
   write_uid int
-}
-
-Table close_task_attachment_ids_rel {
-  close_task_id int
-  ir_attachment_id int
 }
 
 Table close_task_category {
@@ -1355,51 +1295,30 @@ Table close_task_category {
   company_id int
   create_date datetime
   create_uid int
-  default_approve_days int
-  default_approve_role varchar
-  default_prep_days int
-  default_prep_role varchar
-  default_review_days int
-  default_review_role varchar
   description text
   id int [pk]
   name varchar
   sequence int
   write_date datetime
   write_uid int
-  Note: 'category_code_unique: unique(code) (Category code must be unique)\ncode_uniq: unique(code, company_id) (Category code must be unique per company.)'
-}
-
-Table close_task_category_gl_account_ids_rel {
-  account_account_id int
-  close_task_category_id int
+  Note: 'code_uniq: unique(code, company_id) (Category code must be unique per company.)'
 }
 
 Table close_task_checklist {
-  attachment_id int
   code varchar
   create_date datetime
   create_uid int
-  done_at datetime
   done_by int
   done_date datetime
-  evidence_type varchar
   id int [pk]
   instructions text
   is_done boolean
   is_required boolean
   name varchar
-  notes text
-  required boolean
   sequence int
   task_id int
   write_date datetime
   write_uid int
-}
-
-Table close_task_gl_entry_ids_rel {
-  account_move_id int
-  close_task_id int
 }
 
 Table close_task_template {
@@ -1407,7 +1326,6 @@ Table close_task_template {
   active boolean
   approval_days float
   approval_offset int
-  approve_day_offset int
   approver_id int
   approver_role varchar
   category_id int
@@ -1415,20 +1333,13 @@ Table close_task_template {
   company_id int
   create_date datetime
   create_uid int
-  creates_gl_entry boolean
-  default_approve_user_id int
-  default_prep_user_id int
-  default_review_user_id int
-  description text
+  description varchar
   id int [pk]
   name varchar
-  period_type varchar
-  prep_day_offset int
   prep_days float
   prep_offset int
   preparer_id int
   preparer_role varchar
-  review_day_offset int
   review_days float
   review_offset int
   reviewer_id int
@@ -1436,28 +1347,21 @@ Table close_task_template {
   sequence int
   write_date datetime
   write_uid int
-  Note: 'code_uniq: unique(code, company_id) (Template code must be unique per company.)\ntemplate_code_unique: unique(code) (Template code must be unique)'
+  Note: 'code_uniq: unique(code, company_id) (Template code must be unique per company.)'
 }
 
 Table close_task_template_checklist {
   code varchar
   create_date datetime
   create_uid int
-  evidence_type varchar
   id int [pk]
   instructions text
   is_required boolean
   name varchar
-  required boolean
   sequence int
   template_id int
   write_date datetime
   write_uid int
-}
-
-Table close_task_template_gl_account_ids_rel {
-  account_account_id int
-  close_task_template_id int
 }
 
 Table closing_period {
@@ -2429,16 +2333,6 @@ Table ipai_equipment_incident {
   write_uid int
 }
 
-Table ipai_export_seed_wizard {
-  create_date datetime
-  create_uid int
-  export_path varchar
-  id int [pk]
-  webhook_url varchar
-  write_date datetime
-  write_uid int
-}
-
 Table ipai_finance_bir_schedule {
   approval_deadline date
   approval_task_id int
@@ -2762,31 +2656,6 @@ Table ipai_grid_view_visible_columns_rel {
   grid_view_id int
 }
 
-Table ipai_import_seed_wizard {
-  create_date datetime
-  create_uid int
-  id int [pk]
-  mode varchar
-  seed_json text
-  write_date datetime
-  write_uid int
-}
-
-Table ipai_localization_overlay {
-  active boolean
-  applies_to_code varchar
-  country varchar
-  create_date datetime
-  create_uid int
-  id int [pk]
-  patch_payload text
-  patch_type varchar
-  sequence int
-  workstream_id int
-  write_date datetime
-  write_uid int
-}
-
 Table ipai_month_end_closing {
   company_id int
   completed_tasks int
@@ -2914,103 +2783,6 @@ Table ipai_ph_holiday {
   Note: 'date_unique: UNIQUE(date) (Holiday already exists for this date!)'
 }
 
-Table ipai_ppm_task {
-  category varchar
-  code varchar
-  create_date datetime
-  create_uid int
-  due_offset_days int
-  evidence_required boolean
-  id int [pk]
-  name varchar
-  owner_role varchar
-  phase varchar
-  prep_offset int
-  requires_approval boolean
-  review_offset int
-  sap_reference varchar
-  sequence int
-  template_id int
-  write_date datetime
-  write_uid int
-  Note: 'task_code_unique: unique(code, template_id) (Task code must be unique per template.)'
-}
-
-Table ipai_ppm_task_checklist {
-  create_date datetime
-  create_uid int
-  evidence_type varchar
-  id int [pk]
-  label varchar
-  notes varchar
-  required boolean
-  sequence int
-  task_id int
-  write_date datetime
-  write_uid int
-}
-
-Table ipai_ppm_tasklist {
-  create_date datetime
-  create_uid int
-  id int [pk]
-  name varchar
-  period_end date
-  period_start date
-  status varchar
-  template_id int
-  workstream_id int
-  write_date datetime
-  write_uid int
-}
-
-Table ipai_ppm_taskrun {
-  approver_id int
-  assignee_id int
-  create_date datetime
-  create_uid int
-  done_at datetime
-  id int [pk]
-  name varchar
-  started_at datetime
-  status varchar
-  task_id int
-  tasklist_id int
-  write_date datetime
-  write_uid int
-}
-
-Table ipai_ppm_template {
-  code varchar
-  create_date datetime
-  create_uid int
-  id int [pk]
-  is_active boolean
-  name varchar
-  period_type varchar
-  sequence int
-  version varchar
-  workstream_id int
-  write_date datetime
-  write_uid int
-  Note: 'template_code_unique: unique(code, workstream_id) (Template code must be unique per workstream.)'
-}
-
-Table ipai_repo_export_run {
-  create_date datetime
-  create_uid int
-  export_path varchar
-  exported_at datetime
-  id int [pk]
-  name varchar
-  payload_json text
-  state varchar
-  webhook_status varchar
-  webhook_url varchar
-  write_date datetime
-  write_uid int
-}
-
 Table ipai_share_token {
   active boolean
   create_date datetime
@@ -3025,62 +2797,6 @@ Table ipai_share_token {
   scope_type varchar
   write_date datetime
   write_uid int
-}
-
-Table ipai_stc_check {
-  auto_run boolean
-  category varchar
-  code varchar
-  create_date datetime
-  create_uid int
-  description text
-  id int [pk]
-  is_active boolean
-  name varchar
-  rule_json text
-  sap_reference varchar
-  sequence int
-  severity varchar
-  worklist_type_id int
-  workstream_id int
-  write_date datetime
-  write_uid int
-  Note: 'stc_check_code_unique: unique(code) (Check code must be unique.)'
-}
-
-Table ipai_stc_scenario {
-  bir_forms varchar
-  code varchar
-  create_date datetime
-  create_uid int
-  frequency varchar
-  id int [pk]
-  name varchar
-  notes text
-  run_day_offset int
-  sap_reference varchar
-  sequence int
-  workstream_id int
-  write_date datetime
-  write_uid int
-  Note: 'stc_scenario_code_unique: unique(code) (Scenario code must be unique.)'
-}
-
-Table ipai_stc_scenario_check_ids_rel {
-  ipai_stc_check_id int
-  ipai_stc_scenario_id int
-}
-
-Table ipai_stc_worklist_type {
-  code varchar
-  create_date datetime
-  create_uid int
-  description text
-  id int [pk]
-  name varchar
-  write_date datetime
-  write_uid int
-  Note: 'stc_worklist_code_unique: unique(code) (Worklist type code must be unique.)'
 }
 
 Table ipai_studio_ai_history {
@@ -3438,21 +3154,6 @@ Table ipai_workspace_link {
   write_date datetime
   write_uid int
   Note: 'workspace_res_uniq: unique(workspace_id, res_model, res_id) (This record is already linked to the workspace.)'
-}
-
-Table ipai_workstream {
-  active boolean
-  code varchar
-  create_date datetime
-  create_uid int
-  description text
-  id int [pk]
-  name varchar
-  odoo_anchor varchar
-  sap_anchor varchar
-  write_date datetime
-  write_uid int
-  Note: 'workstream_code_unique: unique(code) (Workstream code must be unique.)'
 }
 
 Table ir_actions {
@@ -5596,68 +5297,42 @@ Ref: cleanup_purge_line_module.wizard_id > cleanup_purge_wizard_module.id
 Ref: cleanup_purge_line_table.wizard_id > cleanup_purge_wizard_table.id
 Ref: close_approval_gate.approved_by > res_users.id
 Ref: close_approval_gate.approver_id > res_users.id
-Ref: close_approval_gate.approver_user_id > res_users.id
 Ref: close_approval_gate.company_id > res_company.id
 Ref: close_approval_gate.cycle_id > close_cycle.id
 Ref: close_approval_gate.template_id > close_approval_gate_template.id
-Ref: close_approval_gate_blocking_exceptions_rel.close_approval_gate_id > close_approval_gate.id
-Ref: close_approval_gate_blocking_exceptions_rel.close_exception_id > close_exception.id
-Ref: close_approval_gate_blocking_tasks_rel.close_approval_gate_id > close_approval_gate.id
-Ref: close_approval_gate_blocking_tasks_rel.close_task_id > close_task.id
 Ref: close_approval_gate_template.a1_check_id > a1_check.id
 Ref: close_approval_gate_template.company_id > res_company.id
 Ref: close_cycle.a1_tasklist_id > a1_tasklist.id
-Ref: close_cycle.closing_period_id > closing_period.id
 Ref: close_cycle.company_id > res_company.id
 Ref: close_exception.assigned_to > res_users.id
 Ref: close_exception.company_id > res_company.id
-Ref: close_exception.currency_id > res_currency.id
 Ref: close_exception.cycle_id > close_cycle.id
-Ref: close_exception.detected_by > res_users.id
 Ref: close_exception.escalated_to > res_users.id
-Ref: close_exception.related_account_id > account_account.id
-Ref: close_exception.related_move_id > account_move.id
-Ref: close_exception.related_partner_id > res_partner.id
 Ref: close_exception.reported_by > res_users.id
 Ref: close_exception.resolved_by > res_users.id
 Ref: close_exception.task_id > close_task.id
 Ref: close_task.a1_task_id > a1_task.id
 Ref: close_task.approval_done_by > res_users.id
-Ref: close_task.approve_user_id > res_users.id
 Ref: close_task.approver_id > res_users.id
 Ref: close_task.category_id > close_task_category.id
 Ref: close_task.company_id > res_company.id
 Ref: close_task.cycle_id > close_cycle.id
 Ref: close_task.prep_done_by > res_users.id
-Ref: close_task.prep_user_id > res_users.id
 Ref: close_task.preparer_id > res_users.id
 Ref: close_task.review_done_by > res_users.id
-Ref: close_task.review_user_id > res_users.id
 Ref: close_task.reviewer_id > res_users.id
 Ref: close_task.template_id > close_task_template.id
-Ref: close_task_attachment_ids_rel.close_task_id > close_task.id
-Ref: close_task_attachment_ids_rel.ir_attachment_id > ir_attachment.id
 Ref: close_task_category.a1_workstream_id > a1_workstream.id
 Ref: close_task_category.company_id > res_company.id
-Ref: close_task_category_gl_account_ids_rel.account_account_id > account_account.id
-Ref: close_task_category_gl_account_ids_rel.close_task_category_id > close_task_category.id
-Ref: close_task_checklist.attachment_id > ir_attachment.id
 Ref: close_task_checklist.done_by > res_users.id
 Ref: close_task_checklist.task_id > close_task.id
-Ref: close_task_gl_entry_ids_rel.account_move_id > account_move.id
-Ref: close_task_gl_entry_ids_rel.close_task_id > close_task.id
 Ref: close_task_template.a1_template_id > a1_template.id
 Ref: close_task_template.approver_id > res_users.id
 Ref: close_task_template.category_id > close_task_category.id
 Ref: close_task_template.company_id > res_company.id
-Ref: close_task_template.default_approve_user_id > res_users.id
-Ref: close_task_template.default_prep_user_id > res_users.id
-Ref: close_task_template.default_review_user_id > res_users.id
 Ref: close_task_template.preparer_id > res_users.id
 Ref: close_task_template.reviewer_id > res_users.id
 Ref: close_task_template_checklist.template_id > close_task_template.id
-Ref: close_task_template_gl_account_ids_rel.account_account_id > account_account.id
-Ref: close_task_template_gl_account_ids_rel.close_task_template_id > close_task_template.id
 Ref: closing_period.company_id > res_company.id
 Ref: compliance_check.checked_by > res_users.id
 Ref: compliance_check.closing_id > closing_period.id
@@ -5767,7 +5442,6 @@ Ref: ipai_grid_view.active_filter_id > ipai_grid_filter.id
 Ref: ipai_grid_view.model_id > ir_model.id
 Ref: ipai_grid_view_visible_columns_rel.column_id > ipai_grid_column.id
 Ref: ipai_grid_view_visible_columns_rel.grid_view_id > ipai_grid_view.id
-Ref: ipai_localization_overlay.workstream_id > ipai_workstream.id
 Ref: ipai_month_end_closing.company_id > res_company.id
 Ref: ipai_month_end_task.approve_done_by > res_users.id
 Ref: ipai_month_end_task.approve_user_id > res_users.id
@@ -5783,21 +5457,7 @@ Ref: ipai_month_end_task_template.review_user_id > res_users.id
 Ref: ipai_month_end_template_step.template_id > ipai_month_end_template.id
 Ref: ipai_permission.group_id > res_groups.id
 Ref: ipai_permission.user_id > res_users.id
-Ref: ipai_ppm_task.template_id > ipai_ppm_template.id
-Ref: ipai_ppm_task_checklist.task_id > ipai_ppm_task.id
-Ref: ipai_ppm_tasklist.template_id > ipai_ppm_template.id
-Ref: ipai_ppm_tasklist.workstream_id > ipai_workstream.id
-Ref: ipai_ppm_taskrun.approver_id > res_users.id
-Ref: ipai_ppm_taskrun.assignee_id > res_users.id
-Ref: ipai_ppm_taskrun.task_id > ipai_ppm_task.id
-Ref: ipai_ppm_taskrun.tasklist_id > ipai_ppm_tasklist.id
-Ref: ipai_ppm_template.workstream_id > ipai_workstream.id
 Ref: ipai_share_token.created_by > res_users.id
-Ref: ipai_stc_check.worklist_type_id > ipai_stc_worklist_type.id
-Ref: ipai_stc_check.workstream_id > ipai_workstream.id
-Ref: ipai_stc_scenario.workstream_id > ipai_workstream.id
-Ref: ipai_stc_scenario_check_ids_rel.ipai_stc_check_id > ipai_stc_check.id
-Ref: ipai_stc_scenario_check_ids_rel.ipai_stc_scenario_id > ipai_stc_scenario.id
 Ref: ipai_studio_ai_history.automation_id > base_automation.id
 Ref: ipai_studio_ai_history.field_id > ir_model_fields.id
 Ref: ipai_studio_ai_history.model_id > ir_model.id

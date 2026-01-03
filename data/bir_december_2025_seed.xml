@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- December 2025 BIR Tax Filing Tasks (Month-End Closing Period) -->
+        <!-- Period Covered: December 1-31, 2025 -->
+        <!-- Filing Deadline: January 10, 2026 (1601-C), January 25, 2026 (2550Q Q4) -->
+
+        <!-- Finance Team Member IDs (from production res.users) -->
+        <!-- Khalil Veracruz: 65 (Finance Manager) -->
+        <!-- Rey Meran (TBWA): 77 (Finance Director) -->
+        <!-- Jerald Loterte: 72 (GL Specialist) -->
+        <!-- Jhoee Oliva: 74 (Tax Specialist) -->
+        <!-- Jasmin Ignacio: 73 (AP Specialist) -->
+        <!-- Jinky Paladin: 71 (AR Specialist) -->
+        <!-- Joana Maravillas: 70 (Reconciliation) -->
+
+        <!-- 1601-C Withholding Tax on Compensation - December 2025 (Due: JAN-10-2026) -->
+        <record id="bir_dec2025_1601c_prep" model="project.task">
+            <field name="name">[JAN-10] 1601-C Prep: Extract Dec 2025 Payroll</field>
+            <field name="project_id" ref="project.project_project_data_6"/>
+            <field name="date_deadline">2026-01-05</field>
+            <field name="user_ids" eval="[(6, 0, [72])]"/>  <!-- Jerald Loterte (GL) -->
+            <field name="description">Extract December 2025 payroll data from HR module. Verify employee records, compensation amounts, and withholding tax calculations.</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="bir_dec2025_1601c_review" model="project.task">
+            <field name="name">[JAN-10] 1601-C Review: Validate Dec 2025 WHT</field>
+            <field name="project_id" ref="project.project_project_data_6"/>
+            <field name="date_deadline">2026-01-07</field>
+            <field name="user_ids" eval="[(6, 0, [65])]"/>  <!-- Khalil Veracruz (Finance Manager) -->
+            <field name="description">Review and validate December 2025 withholding tax amounts. Cross-check against payroll register and tax tables.</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="bir_dec2025_1601c_approval" model="project.task">
+            <field name="name">[JAN-10] 1601-C Approval: Submit Dec 2025 via eFPS</field>
+            <field name="project_id" ref="project.project_project_data_6"/>
+            <field name="date_deadline">2026-01-09</field>
+            <field name="user_ids" eval="[(6, 0, [77])]"/>  <!-- Rey Meran (Finance Director) -->
+            <field name="description">Final approval and submission of December 2025 1601-C via eBIRForms/eFPS. Archive filed return and payment confirmation.</field>
+            <field name="priority">2</field>
+        </record>
+
+        <!-- 2550Q Quarterly Income Tax Return - Q4 2025 (Due: JAN-25-2026) -->
+        <record id="bir_q42025_2550q_prep" model="project.task">
+            <field name="name">[JAN-25] 2550Q Prep: Q4 2025 Income Summary</field>
+            <field name="project_id" ref="project.project_project_data_6"/>
+            <field name="date_deadline">2026-01-20</field>
+            <field name="user_ids" eval="[(6, 0, [74])]"/>  <!-- Jhoee Oliva (Tax Specialist) -->
+            <field name="description">Compile Q4 2025 income summary (Oct-Dec). Calculate quarterly income tax, prior quarter payments, and final tax due.</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="bir_q42025_2550q_review" model="project.task">
+            <field name="name">[JAN-25] 2550Q Review: Validate Q4 2025 Tax Computation</field>
+            <field name="project_id" ref="project.project_project_data_6"/>
+            <field name="date_deadline">2026-01-22</field>
+            <field name="user_ids" eval="[(6, 0, [65])]"/>  <!-- Khalil Veracruz (Finance Manager) -->
+            <field name="description">Review Q4 2025 income tax computation. Verify quarterly installment calculations and prior payments.</field>
+            <field name="priority">1</field>
+        </record>
+
+        <record id="bir_q42025_2550q_approval" model="project.task">
+            <field name="name">[JAN-25] 2550Q Approval: Submit Q4 2025 via eFPS</field>
+            <field name="project_id" ref="project.project_project_data_6"/>
+            <field name="date_deadline">2026-01-24</field>
+            <field name="user_ids" eval="[(6, 0, [77])]"/>  <!-- Rey Meran (Finance Director) -->
+            <field name="description">Final approval and submission of Q4 2025 2550Q via eBIRForms/eFPS. Process payment and archive filed return.</field>
+            <field name="priority">2</field>
+        </record>
+
+        <!-- Month-End Closing Tasks for December 2025 (Project 7) -->
+        <record id="close_dec2025_bank_recon" model="project.task">
+            <field name="name">[DEC-05] Bank Reconciliation - December 2025</field>
+            <field name="project_id" ref="project.project_project_data_7"/>
+            <field name="date_deadline">2026-01-05</field>
+            <field name="user_ids" eval="[(6, 0, [70])]"/>  <!-- Joana Maravillas (Reconciliation) -->
+            <field name="description">Reconcile all bank accounts for December 2025. Clear outstanding checks, deposits in transit, bank charges.</field>
+            <field name="priority">2</field>
+        </record>
+
+        <record id="close_dec2025_gl_recon" model="project.task">
+            <field name="name">[DEC-05] GL Reconciliation - December 2025</field>
+            <field name="project_id" ref="project.project_project_data_7"/>
+            <field name="date_deadline">2026-01-05</field>
+            <field name="user_ids" eval="[(6, 0, [72])]"/>  <!-- Jerald Loterte (GL Specialist) -->
+            <field name="description">Reconcile all GL accounts for December 2025. Verify subledger balances match GL, resolve discrepancies.</field>
+            <field name="priority">2</field>
+        </record>
+
+        <record id="close_dec2025_financials" model="project.task">
+            <field name="name">[DEC-07] Financial Statements - December 2025</field>
+            <field name="project_id" ref="project.project_project_data_7"/>
+            <field name="date_deadline">2026-01-07</field>
+            <field name="user_ids" eval="[(6, 0, [65])]"/>  <!-- Khalil Veracruz (Finance Manager) -->
+            <field name="description">Generate December 2025 financial statements (IS, BS, CF). Review for accuracy and completeness before sign-off.</field>
+            <field name="priority">2</field>
+        </record>
+
+        <record id="close_dec2025_signoff" model="project.task">
+            <field name="name">[DEC-07] Period Close Sign-Off - December 2025</field>
+            <field name="project_id" ref="project.project_project_data_7"/>
+            <field name="date_deadline">2026-01-07</field>
+            <field name="user_ids" eval="[(6, 0, [77])]"/>  <!-- Rey Meran (Finance Director) -->
+            <field name="description">Final sign-off for December 2025 period. Lock accounting period and approve financial statements.</field>
+            <field name="priority">3</field>
+        </record>
+
+    </data>
+</odoo>
