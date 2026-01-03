@@ -1,213 +1,217 @@
-# InsightPulse Odoo CE – ERP Platform
+# InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)
 
 [![odoo-ce-ci](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml/badge.svg)](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml)
 
-**Self-hosted Odoo Community Edition + OCA stack for expense management and equipment booking.**
+Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
+- PH Expense & Travel (Concur replacement)
+- Equipment booking (Cheqroom parity)
+- Finance month-end close + PH tax filing task automation
+- Canonical, versioned data-model artifacts (DBML/ERD/ORM maps) with CI drift gates
 
-## Overview
+Production URL: https://erp.insightpulseai.net
 
-This repository contains the **InsightPulse Odoo CE** implementation—a pure **Community Edition** deployment that replaces:
+---
 
-- **SAP Concur** for expense & travel management workflows (PH-focused)
-- **Cheqroom** for equipment catalog, bookings, and incident tracking
+## Key Constraints (Non-negotiable)
 
-### Key Constraints
+- ✅ **CE + OCA only** (no Enterprise modules, no IAP dependencies)
+- ✅ **No odoo.com upsells** (branding/links rewired)
+- ✅ **Self-hosted** via Docker/Kubernetes (DigitalOcean supported)
+- ✅ **Deterministic docs + seeds** (generated artifacts are versioned + drift-checked)
 
-✅ **CE + OCA only** – No Odoo Enterprise modules or IAP dependencies
-✅ **No odoo.com upsells** – All branding and links point to InsightPulse or OCA
-✅ **Self-hosted** – Full control via Docker/Kubernetes on DigitalOcean
-✅ **Production URL** – `https://erp.insightpulseai.net`
+---
 
-## Repository Structure
+## Repository Layout
 
 ```
 odoo-ce/
 ├── addons/                    # Custom InsightPulse modules
-│   ├── ipai_expense/          # PH expense & travel workflows
-│   ├── ipai_equipment/        # Equipment booking system
-│   └── ipai_ce_cleaner/       # Enterprise/IAP removal
-├── oca/                       # OCA community addons (git submodules)
+│   ├── ipai/                  # IPAI namespace (nested modules)
+│   │   ├── ipai_expense/      # PH expense & travel workflows
+│   │   ├── ipai_equipment/    # Equipment booking system
+│   │   ├── ipai_ce_cleaner/   # Enterprise/IAP removal
+│   │   ├── ipai_finance_*     # Finance PPM, BIR compliance, month-end
+│   │   ├── ipai_ppm*/         # Project Portfolio Management
+│   │   └── ...                # Additional IPAI modules
+│   ├── ipai_finance_close_seed/   # Finance close seed data
+│   ├── ipai_*                 # Flat IPAI modules (various)
+│   └── ...
+├── oca/                       # OCA community addons (submodules)
 ├── deploy/                    # Deployment configurations
 │   ├── docker-compose.yml     # Docker Compose stack
 │   ├── odoo.conf              # Odoo CE configuration
 │   └── nginx/                 # Nginx reverse proxy configs
-├── specs/                     # Product requirement documents
-│   └── 002-odoo-expense-equipment-mvp.prd.md
-├── .github/workflows/         # CI/CD pipelines
-│   └── ci-odoo-ce.yml         # CE/OCA guardrails
+├── docs/                      # Documentation
+│   └── data-model/            # Canonical DBML/ERD/ORM maps + JSON index
+├── scripts/                   # Deterministic generators + automation
+├── spec/                      # Spec bundles (constitution, PRD, plan, tasks)
+├── .github/workflows/         # CI/CD guardrails + drift gates
 ├── spec.md                    # Project specification
 ├── plan.md                    # Implementation plan
 └── tasks.md                   # Task checklist
 ```
 
-## Quick Start
+---
 
-### M1 One-Shot Deployment (Recommended)
+## Modules (IPAI)
 
-**For fresh DigitalOcean Ubuntu 22.04/24.04 droplets:**
+### Expense & Travel (PH)
+- **Module**: `ipai_expense` (in `addons/ipai/`)
+- Replaces Concur-style flows: requests → approvals → finance posting
 
-1. **Prepare DNS**
-   - Point `erp.insightpulseai.net` A record to your droplet IP
-   - Wait for DNS propagation (check with `host erp.insightpulseai.net`)
+### Equipment Booking
+- **Module**: `ipai_equipment` (in `addons/ipai/`)
+- Cheqroom parity MVP: catalog, bookings, check-in/out, incidents
 
-2. **SSH into droplet as root**
-   ```bash
-   ssh root@your-droplet-ip
-   ```
+### Finance Close Seed Data
+- **Module**: `ipai_finance_close_seed` (in `addons/`)
+- Seeds:
+  - Projects: `BIR Tax Filing`, `Month-End Close Template`, etc.
+  - Task category tags
+  - PH holidays (calendar leaves) for working-day computations
+  - Month-end close template tasks + BIR filing tasks
 
-3. **Download and run deployment script**
-   ```bash
-   curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/deploy_m1.sh.template -o deploy_m1.sh
-   chmod +x deploy_m1.sh
-   sudo ./deploy_m1.sh
-   ```
+### Finance PPM & Month-End
+- **Modules**: `ipai_finance_ppm`, `ipai_finance_month_end`, `ipai_ppm_monthly_close`
+- Project Portfolio Management for finance teams
+- Month-end close orchestration and task tracking
 
-4. **What it does**
-   - ✅ Installs Docker, Nginx, Certbot, UFW firewall
-   - ✅ Auto-generates strong database and admin passwords
-   - ✅ Clones repository and configures Odoo
-   - ✅ Obtains Let's Encrypt SSL certificate
-   - ✅ Starts Odoo stack with health checks
-   - ✅ Configures automated daily backups (2 AM UTC)
-   - ✅ Handles existing deployments safely (prompt: Update/Redeploy/Exit)
-
-5. **Access Odoo**
-   - Navigate to `https://erp.insightpulseai.net/web`
-   - Use admin password from deployment output
-   - Create database: `odoo` or `insightpulse`
-   - Install modules: `IPAI Expense & Travel`, `IPAI Equipment Management`
-
-6. **Credentials location**
-   ```bash
-   cat /opt/odoo-ce/deploy/.env  # Auto-generated secrets
-   tail -f /var/log/odoo_deploy.log  # Deployment logs
-   ```
-
-### Manual Deployment (Advanced)
-
-**Prerequisites:**
-- Docker & Docker Compose
-- Domain pointing to your server: `erp.insightpulseai.net`
-- Nginx (for SSL termination and reverse proxy)
-
-1. **Clone repository**
-   ```bash
-   git clone https://github.com/jgtolentino/odoo-ce.git
-   cd odoo-ce
-   ```
-
-2. **Configure secrets**
-   ```bash
-   cd deploy
-   # Generate strong passwords
-   DB_PASSWORD=$(openssl rand -base64 32)
-   ADMIN_PASSWORD=$(openssl rand -base64 32)
-
-   # Replace placeholders
-   sed -i "s/CHANGE_ME_STRONG_DB_PASSWORD/$DB_PASSWORD/g" odoo.conf docker-compose.yml
-   sed -i "s/CHANGE_ME_SUPERMASTER_PASSWORD/$ADMIN_PASSWORD/g" odoo.conf
-   ```
-
-3. **Start stack**
-   ```bash
-   docker compose up -d
-   ```
-
-4. **Configure Nginx**
-   ```bash
-   sudo cp nginx/erp.insightpulseai.net.conf /etc/nginx/sites-available/
-   sudo ln -s /etc/nginx/sites-available/erp.insightpulseai.net.conf \
-              /etc/nginx/sites-enabled/
-   sudo nginx -t && sudo systemctl reload nginx
-   ```
-
-5. **Obtain SSL certificate**
-   ```bash
-   sudo certbot certonly --standalone \
-     --email jgtolentino_rn@yahoo.com \
-     -d erp.insightpulseai.net
-   sudo systemctl reload nginx
-   ```
-
-6. **Access Odoo**
-   - Navigate to `https://erp.insightpulseai.net/web`
-   - Create database: `odoo` or `insightpulse`
-   - Install modules: `IPAI Expense & Travel`, `IPAI Equipment Management`
-
-## Custom Modules
-
-### `ipai_expense`
-PH-focused expense and travel management:
-- Expense capture with receipt attachments
-- Travel request workflows (Draft → Manager → Finance)
-- GL posting integration with CE `account` module
-- Project/job code tracking
-
-### `ipai_equipment`
-Cheqroom-style equipment management:
-- Asset catalog with serial numbers and conditions
-- Booking system with conflict detection
-- Check-out/check-in workflows
-- Incident reporting and maintenance tracking
-
-### `ipai_ce_cleaner`
-Enterprise/IAP removal:
+### CE Cleaner & Branding
+- **Modules**: `ipai_ce_cleaner`, `ipai_ce_branding`
 - Hides "Upgrade to Enterprise" banners
 - Removes IAP credit/SMS/email upsell menus
 - Rewires help links to InsightPulse docs or OCA
 
-## CI/CD Guardrails
+---
 
-GitHub Actions enforces CE/OCA-only policy:
+## Quick Start (Production - DigitalOcean)
 
-✅ **Fails build if**:
-- Enterprise module references detected in `addons/` or `oca/`
-- `odoo.com` links found in user-facing code
-
-See [`.github/workflows/ci-odoo-ce.yml`](.github/workflows/ci-odoo-ce.yml)
-
-## Development
-
-### Adding OCA Modules
+Recommended for fresh Ubuntu 22.04/24.04 droplet.
 
 ```bash
-# Add OCA repo as git submodule
-git submodule add https://github.com/OCA/account-financial-tools.git oca/account-financial-tools
-
-# Update odoo.conf addons_path if needed
-# Restart Odoo container
-docker compose restart odoo
+curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/deploy_m1.sh.template -o deploy_m1.sh
+chmod +x deploy_m1.sh
+sudo ./deploy_m1.sh
 ```
 
-### Local Testing
+Access:
+- https://erp.insightpulseai.net/web
+- Secrets:
 
 ```bash
-# Start stack locally
-cd deploy
-docker compose up
-
-# Watch logs
-docker compose logs -f odoo
+cat /opt/odoo-ce/deploy/.env
+tail -f /var/log/odoo_deploy.log
 ```
-
-## Documentation
-
-- **Project Spec**: [`spec.md`](spec.md)
-- **Implementation Plan**: [`plan.md`](plan.md)
-- **Task Checklist**: [`tasks.md`](tasks.md)
-- **PRD**: [`specs/002-odoo-expense-equipment-mvp.prd.md`](specs/002-odoo-expense-equipment-mvp.prd.md)
-
-## License
-
-Custom modules (`ipai_*`): **AGPL-3**
-OCA modules: See respective module licenses in `oca/`
-
-## Support
-
-- **Issues**: [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
-- **Documentation**: `https://docs.insightpulseai.net/erp`
-- **Owner**: InsightPulseAI – ERP Platform Team
 
 ---
 
-**Status**: Active development | MVP Phase 0-1 (CE/OCA Base Stack)
+## Quick Start (Local Dev)
+
+```bash
+git clone https://github.com/jgtolentino/odoo-ce.git
+cd odoo-ce
+cd deploy
+docker compose up -d
+docker compose logs -f odoo
+```
+
+---
+
+## Install IPAI Finance Close Module
+
+### Install seed
+
+```bash
+./odoo-bin -d <db> -i ipai_finance_close_seed --stop-after-init
+```
+
+### Verify seed counts
+
+```bash
+./odoo-bin shell -d <db> <<'PY'
+P=env['project.project'].sudo()
+T=env['project.task'].sudo()
+print("Projects:", P.search_count([]))
+print("Tasks:", T.search_count([]))
+PY
+```
+
+---
+
+## Canonical Data Model (DBML / ERD / ORM maps)
+
+Canonical, machine-readable outputs live in:
+
+- `docs/data-model/`
+  - `ODOO_CANONICAL_SCHEMA.dbml` — DBML schema for dbdiagram.io
+  - `ODOO_ERD.mmd` — Mermaid ER diagram
+  - `ODOO_ERD.puml` — PlantUML ER diagram
+  - `ODOO_ORM_MAP.md` — ORM map linking models, tables, fields
+  - `ODOO_MODULE_DELTAS.md` — Per-module schema deltas
+  - `ODOO_MODEL_INDEX.json` — Machine-readable index
+
+Regenerate deterministically:
+
+```bash
+python scripts/generate_odoo_dbml.py
+git diff --exit-code docs/data-model/
+```
+
+---
+
+## Deterministic Seed Generator (from Excel)
+
+If you update the source Excel or want to refresh seed artifacts:
+
+```bash
+python scripts/seed_finance_close_from_xlsx.py
+git diff --exit-code addons/ipai_finance_close_seed
+```
+
+---
+
+## CI/CD Guardrails (What must stay green)
+
+CI enforces:
+
+- **guardrails** — Block Enterprise modules and odoo.com links
+- **repo-structure** — Repo tree in spec.md must match generator
+- **data-model-drift** — `docs/data-model/` must match generator output
+- **spec-kit-enforce** — Spec bundles must have complete 4-file structure
+- **infra-validate** — Infrastructure template validation
+
+### Key workflows:
+
+| Workflow | Purpose |
+|----------|---------|
+| `ci-odoo-ce.yml` | Main guardrails + data-model drift |
+| `repo-structure.yml` | Repo tree consistency |
+| `spec-kit-enforce.yml` | Spec bundle validation |
+| `infra-validate.yml` | Infrastructure templates |
+| `auto-sitemap-tree.yml` | Auto-update SITEMAP.md/TREE.md |
+
+If CI fails, reproduce locally by running the same generator commands + `git diff --exit-code` checks above.
+
+---
+
+## Docs
+
+- `spec.md` — Project spec / repo snapshot
+- `plan.md` — Implementation plan
+- `tasks.md` — Task checklist
+- `docs/` — Architecture + deployment docs
+- `docs/data-model/` — Canonical schema outputs
+
+---
+
+## License
+
+- IPAI modules: **AGPL-3**
+- OCA modules: See each upstream repo/license
+
+---
+
+## Support
+
+- Issues: [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
+- Docs: https://docs.insightpulseai.net/erp
