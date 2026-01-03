@@ -1,0 +1,354 @@
+{
+  "name": "Git Operations Hub",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "git-ops",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 200],
+      "webhookId": "git-ops"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize input - handle both direct and nested body from MCP\nconst input = $input.first().json;\n\n// MCP sends data nested in body, direct webhook sends at root\nconst data = input.body || input;\n\nreturn {\n  json: {\n    operation: data.operation || 'list-commits',\n    owner: data.owner || 'jgtolentino',\n    repo: data.repo || 'insightpulse-odoo',\n    branch: data.branch || 'main',\n    title: data.title || '',\n    body: data.body_text || data.description || '',\n    labels: data.labels || [],\n    workflow_id: data.workflow_id || 'deploy.yml',\n    ref: data.ref || 'main'\n  }\n};"
+      },
+      "id": "normalize-input",
+      "name": "Normalize Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [200, 200]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "outputKey": "list-commits",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "list-commits",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "list-branches",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "list-branches",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "list-pulls",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "list-pulls",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "create-issue",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "create-issue",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            },
+            {
+              "outputKey": "trigger-workflow",
+              "conditions": {
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.operation }}",
+                    "rightValue": "trigger-workflow",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "route-operation",
+      "name": "Route Operation",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [400, 200]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo }}/commits",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "sha", "value": "={{ $json.branch }}" },
+            { "name": "per_page", "value": "10" }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "get-commits",
+      "name": "Get Commits",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 0],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo }}/branches",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "get-branches",
+      "name": "Get Branches",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 150],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.owner }}/{{ $json.repo }}/pulls",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "state", "value": "open" }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "get-pulls",
+      "name": "Get Pull Requests",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $('Normalize Input').item.json.owner }}/{{ $('Normalize Input').item.json.repo }}/issues",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"{{ $('Normalize Input').item.json.title }}\",\n  \"body\": \"{{ $('Normalize Input').item.json.body }}\",\n  \"labels\": {{ JSON.stringify($('Normalize Input').item.json.labels) }}\n}",
+        "options": {}
+      },
+      "id": "create-issue",
+      "name": "Create Issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 450],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $('Normalize Input').item.json.owner }}/{{ $('Normalize Input').item.json.repo }}/actions/workflows/{{ $('Normalize Input').item.json.workflow_id }}/dispatches",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ref\": \"{{ $('Normalize Input').item.json.ref }}\"\n}",
+        "options": {}
+      },
+      "id": "trigger-workflow",
+      "name": "Trigger GH Action",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 600],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format response based on operation type\nconst input = $input.first().json;\nconst operation = $('Normalize Input').first().json.operation;\n\nlet response = {\n  success: true,\n  operation: operation,\n  timestamp: new Date().toISOString(),\n  data: null\n};\n\nif (Array.isArray(input)) {\n  // Commits, branches, or PRs\n  if (operation === 'list-commits') {\n    response.data = input.slice(0, 10).map(c => ({\n      sha: c.sha?.substring(0, 7),\n      message: c.commit?.message?.split('\\n')[0] || 'No message',\n      author: c.commit?.author?.name || 'Unknown',\n      date: c.commit?.author?.date\n    }));\n    response.message = `Found ${input.length} commits`;\n  } else if (operation === 'list-branches') {\n    response.data = input.map(b => ({\n      name: b.name,\n      protected: b.protected\n    }));\n    response.message = `Found ${input.length} branches`;\n  } else if (operation === 'list-pulls') {\n    response.data = input.map(pr => ({\n      number: pr.number,\n      title: pr.title,\n      author: pr.user?.login,\n      state: pr.state,\n      created: pr.created_at\n    }));\n    response.message = `Found ${input.length} open PRs`;\n  }\n} else if (input.number) {\n  // Issue created\n  response.data = {\n    number: input.number,\n    title: input.title,\n    url: input.html_url\n  };\n  response.message = `Issue #${input.number} created`;\n} else if (operation === 'trigger-workflow') {\n  response.message = 'GitHub Action triggered successfully';\n  response.data = { workflow_id: $('Normalize Input').first().json.workflow_id };\n} else {\n  response.message = 'Operation completed';\n  response.data = input;\n}\n\nreturn { json: response };"
+      },
+      "id": "format-response",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-success",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: false, error: 'Unknown operation', received: $('Normalize Input').first().json }) }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "respond-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [650, 750]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [{ "node": "Normalize Input", "type": "main", "index": 0 }]
+      ]
+    },
+    "Normalize Input": {
+      "main": [
+        [{ "node": "Route Operation", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route Operation": {
+      "main": [
+        [{ "node": "Get Commits", "type": "main", "index": 0 }],
+        [{ "node": "Get Branches", "type": "main", "index": 0 }],
+        [{ "node": "Get Pull Requests", "type": "main", "index": 0 }],
+        [{ "node": "Create Issue", "type": "main", "index": 0 }],
+        [{ "node": "Trigger GH Action", "type": "main", "index": 0 }],
+        [{ "node": "Respond Error", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Commits": {
+      "main": [
+        [{ "node": "Format Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Branches": {
+      "main": [
+        [{ "node": "Format Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Get Pull Requests": {
+      "main": [
+        [{ "node": "Format Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Create Issue": {
+      "main": [
+        [{ "node": "Format Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Trigger GH Action": {
+      "main": [
+        [{ "node": "Format Response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Format Response": {
+      "main": [
+        [{ "node": "Respond", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "tags": [
+    { "name": "github" },
+    { "name": "devops" }
+  ]
+}

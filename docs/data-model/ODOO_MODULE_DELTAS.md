@@ -94,7 +94,6 @@
   - `srm_scorecard_line`
   - `srm_supplier`
 - Extended tables:
-  - `close_task`: a1_task_id, approval_deadline, approval_done_by, approval_done_date, approve_done_date, approve_due_date, approve_notes, approve_user_id, approver_id, attachment_ids, category_id, checklist_done_pct, checklist_ids, checklist_progress, company_id, cycle_id, days_overdue, description, exception_ids, external_key, gl_entry_count, gl_entry_ids, has_exceptions, has_open_exceptions, is_overdue, name, notes, prep_deadline, prep_done_by, prep_done_date, prep_due_date, prep_notes, prep_user_id, preparer_id, review_deadline, review_done_by, review_done_date, review_due_date, review_notes, review_result, review_user_id, reviewer_id, sequence, state, template_id
   - `hr_employee`: x_master_control_offboarded, x_master_control_onboarded
   - `hr_expense`: project_id, requires_project, travel_request_id, x_master_control_submitted
   - `ipai_bir_form_schedule`: approval_date, bir_deadline, filing_date, form_code, last_reminder_sent, period, prep_date, reminder_count, responsible_approval_id, responsible_prep_id, responsible_review_id, review_date, status, step_ids
@@ -110,12 +109,6 @@
   - `a1_template_check_rel`
   - `advisor_playbook_category_ids_rel`
   - `advisor_recommendation_tag_ids_rel`
-  - `close_approval_gate_blocking_exceptions_rel`
-  - `close_approval_gate_blocking_tasks_rel`
-  - `close_task_attachment_ids_rel`
-  - `close_task_category_gl_account_ids_rel`
-  - `close_task_gl_entry_ids_rel`
-  - `close_task_template_gl_account_ids_rel`
   - `ppm_program_project_rel`
   - `project_pr_required`
   - `project_project_group_ids_rel`
@@ -209,25 +202,6 @@
 ## ipai_platform_workflow
 
 - _No model changes detected._
-
-## ipai_ppm_a1
-
-- New tables:
-  - `ipai_export_seed_wizard`
-  - `ipai_import_seed_wizard`
-  - `ipai_localization_overlay`
-  - `ipai_ppm_task`
-  - `ipai_ppm_task_checklist`
-  - `ipai_ppm_tasklist`
-  - `ipai_ppm_taskrun`
-  - `ipai_ppm_template`
-  - `ipai_repo_export_run`
-  - `ipai_stc_check`
-  - `ipai_stc_scenario`
-  - `ipai_stc_worklist_type`
-  - `ipai_workstream`
-- Relation tables:
-  - `ipai_stc_scenario_check_ids_rel`
 
 ## ipai_superset_connector
 

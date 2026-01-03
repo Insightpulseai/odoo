@@ -1,0 +1,195 @@
+{
+  "name": "BIR Overdue Daily Nudge",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bir-overdue-nudge",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger-overdue",
+      "name": "Webhook Trigger - Overdue",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.penalty_risk }}",
+              "operation": "equals",
+              "value2": "HIGH"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "id": "check-penalty-risk",
+      "name": "Check Penalty Risk",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=🚨 **BIR OVERDUE ALERT - {{ $json.penalty_risk }} RISK**\n\n**Form**: {{ $json.bir_form }}\n**Period**: {{ $json.period }}\n**Original Deadline**: {{ $json.deadline }}\n**Days Overdue**: {{ $json.days_overdue }}\n**Penalty Risk**: {{ $json.penalty_risk }}\n\n⚠️ **IMMEDIATE ACTION REQUIRED** to avoid penalties.\n\ncc: @{{ $json.responsible_email }}\ncc: @khalil.veracruz@omc.com (Finance Director)"
+            },
+            {
+              "name": "username",
+              "value": "BIR Alert System"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":rotating_light:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "mattermost-high-priority",
+      "name": "Mattermost - High Priority (CC Director)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [690, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "=⚠️ **BIR Overdue Reminder**\n\n**Form**: {{ $json.bir_form }}\n**Period**: {{ $json.period }}\n**Original Deadline**: {{ $json.deadline }}\n**Days Overdue**: {{ $json.days_overdue }}\n**Penalty Risk**: {{ $json.penalty_risk }}\n\nPlease complete filing as soon as possible.\n\ncc: @{{ $json.responsible_email }}"
+            },
+            {
+              "name": "username",
+              "value": "BIR Reminder Bot"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":warning:"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "mattermost-normal",
+      "name": "Mattermost - Normal Priority",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [690, 400]
+    },
+    {
+      "parameters": {
+        "fromEmail": "bir-alerts@insightpulseai.net",
+        "toEmail": "=khalil.veracruz@omc.com, {{ $json.responsible_email }}",
+        "subject": "=URGENT: BIR Form {{ $json.bir_form }} Overdue - {{ $json.days_overdue }} Days",
+        "emailType": "html",
+        "html": "=<h2 style=\"color: #d9534f;\">🚨 URGENT: BIR Form Overdue</h2>\n<table style=\"width: 100%; border-collapse: collapse;\">\n<tr><td style=\"padding: 8px; border: 1px solid #ddd;\"><strong>Form:</strong></td><td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.bir_form }}</td></tr>\n<tr><td style=\"padding: 8px; border: 1px solid #ddd;\"><strong>Period:</strong></td><td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.period }}</td></tr>\n<tr><td style=\"padding: 8px; border: 1px solid #ddd;\"><strong>Original Deadline:</strong></td><td style=\"padding: 8px; border: 1px solid #ddd;\">{{ $json.deadline }}</td></tr>\n<tr><td style=\"padding: 8px; border: 1px solid #ddd;\"><strong>Days Overdue:</strong></td><td style=\"padding: 8px; border: 1px solid #ddd; color: #d9534f; font-weight: bold;\">{{ $json.days_overdue }} days</td></tr>\n<tr><td style=\"padding: 8px; border: 1px solid #ddd;\"><strong>Penalty Risk:</strong></td><td style=\"padding: 8px; border: 1px solid #ddd; color: #d9534f; font-weight: bold;\">{{ $json.penalty_risk }}</td></tr>\n</table>\n<p style=\"margin-top: 20px; padding: 12px; background: #fff3cd; border-left: 4px solid #ffc107;\">⚠️ <strong>Immediate action required</strong> to minimize penalty exposure.</p>"
+      },
+      "id": "send-email-director",
+      "name": "Email Finance Director",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [690, 100]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"success\": true, \"form\": $json.bir_form, \"days_overdue\": $json.days_overdue, \"penalty_risk\": $json.penalty_risk } }}"
+      },
+      "id": "webhook-response-overdue",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [910, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger - Overdue": {
+      "main": [
+        [
+          {
+            "node": "Check Penalty Risk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Penalty Risk": {
+      "main": [
+        [
+          {
+            "node": "Mattermost - High Priority (CC Director)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email Finance Director",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mattermost - Normal Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mattermost - High Priority (CC Director)": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mattermost - Normal Priority": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Finance Director": {
+      "main": [
+        [
+          {
+            "node": "Webhook Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-12-28T00:00:00.000Z",
+  "versionId": "1"
+}

@@ -1070,41 +1070,24 @@ entity cleanup_purge_wizard_table {
 }
 entity close_approval_gate {
   float actual_value
-  text approval_notes
   int approved_by
   datetime approved_date
   int approver_id
-  varchar approver_role
-  int approver_user_id
-  boolean block_on_exceptions
   text block_reason
-  text blocking_reason
   int company_id
   datetime create_date
   int create_uid
   int cycle_id
-  int gate_level
   varchar gate_type
   int id
-  float min_completion_pct
   varchar name
   varchar notes
-  int required_approvals
-  varchar required_task_states
   int sequence
   varchar state
   int template_id
   float threshold_value
   datetime write_date
   int write_uid
-}
-entity close_approval_gate_blocking_exceptions_rel {
-  int close_approval_gate_id
-  int close_exception_id
-}
-entity close_approval_gate_blocking_tasks_rel {
-  int close_approval_gate_id
-  int close_task_id
 }
 entity close_approval_gate_template {
   int a1_check_id
@@ -1124,14 +1107,9 @@ entity close_approval_gate_template {
 }
 entity close_cycle {
   int a1_tasklist_id
-  date close_actual_date
-  date close_start_date
-  date close_target_date
-  int closing_period_id
   int company_id
   datetime create_date
   int create_uid
-  int cycle_time_days
   int exception_count
   boolean gates_ready
   int id
@@ -1141,10 +1119,8 @@ entity close_cycle {
   date period_end
   varchar period_label
   date period_start
-  varchar period_type
   float progress
   varchar state
-  float task_completion_pct
   int task_count
   int task_done_count
   varchar webhook_url
@@ -1152,38 +1128,26 @@ entity close_cycle {
   int write_uid
 }
 entity close_exception {
-  decimal amount
   int assigned_to
   int company_id
   datetime create_date
   int create_uid
-  int currency_id
   int cycle_id
-  text description
-  int detected_by
-  datetime detected_date
-  datetime escalated_date
+  varchar description
   int escalated_to
   int escalation_count
   datetime escalation_deadline
-  int escalation_level
   varchar exception_type
   int id
   datetime last_escalated
   varchar name
-  int related_account_id
-  int related_move_id
-  int related_partner_id
   int reported_by
   varchar resolution
-  text resolution_action
   int resolved_by
   datetime resolved_date
-  text root_cause
   varchar severity
   varchar state
   int task_id
-  float variance_pct
   datetime write_date
   int write_uid
 }
@@ -1192,52 +1156,31 @@ entity close_task {
   date approval_deadline
   int approval_done_by
   datetime approval_done_date
-  datetime approve_done_date
-  date approve_due_date
-  text approve_notes
-  int approve_user_id
   int approver_id
   int category_id
-  float checklist_done_pct
   float checklist_progress
   int company_id
   datetime create_date
   int create_uid
   int cycle_id
-  int days_overdue
-  text description
   varchar external_key
-  int gl_entry_count
-  boolean has_exceptions
   boolean has_open_exceptions
   int id
-  boolean is_overdue
   varchar name
   varchar notes
   date prep_deadline
   int prep_done_by
   datetime prep_done_date
-  date prep_due_date
-  text prep_notes
-  int prep_user_id
   int preparer_id
   date review_deadline
   int review_done_by
   datetime review_done_date
-  date review_due_date
-  text review_notes
-  varchar review_result
-  int review_user_id
   int reviewer_id
   int sequence
   varchar state
   int template_id
   datetime write_date
   int write_uid
-}
-entity close_task_attachment_ids_rel {
-  int close_task_id
-  int ir_attachment_id
 }
 entity close_task_category {
   int a1_workstream_id
@@ -1247,12 +1190,6 @@ entity close_task_category {
   int company_id
   datetime create_date
   int create_uid
-  int default_approve_days
-  varchar default_approve_role
-  int default_prep_days
-  varchar default_prep_role
-  int default_review_days
-  varchar default_review_role
   text description
   int id
   varchar name
@@ -1260,41 +1197,27 @@ entity close_task_category {
   datetime write_date
   int write_uid
 }
-entity close_task_category_gl_account_ids_rel {
-  int account_account_id
-  int close_task_category_id
-}
 entity close_task_checklist {
-  int attachment_id
   varchar code
   datetime create_date
   int create_uid
-  datetime done_at
   int done_by
   datetime done_date
-  varchar evidence_type
   int id
   text instructions
   boolean is_done
   boolean is_required
   varchar name
-  text notes
-  boolean required
   int sequence
   int task_id
   datetime write_date
   int write_uid
-}
-entity close_task_gl_entry_ids_rel {
-  int account_move_id
-  int close_task_id
 }
 entity close_task_template {
   int a1_template_id
   boolean active
   float approval_days
   int approval_offset
-  int approve_day_offset
   int approver_id
   varchar approver_role
   int category_id
@@ -1302,20 +1225,13 @@ entity close_task_template {
   int company_id
   datetime create_date
   int create_uid
-  boolean creates_gl_entry
-  int default_approve_user_id
-  int default_prep_user_id
-  int default_review_user_id
-  text description
+  varchar description
   int id
   varchar name
-  varchar period_type
-  int prep_day_offset
   float prep_days
   int prep_offset
   int preparer_id
   varchar preparer_role
-  int review_day_offset
   float review_days
   int review_offset
   int reviewer_id
@@ -1328,20 +1244,14 @@ entity close_task_template_checklist {
   varchar code
   datetime create_date
   int create_uid
-  varchar evidence_type
   int id
   text instructions
   boolean is_required
   varchar name
-  boolean required
   int sequence
   int template_id
   datetime write_date
   int write_uid
-}
-entity close_task_template_gl_account_ids_rel {
-  int account_account_id
-  int close_task_template_id
 }
 entity closing_period {
   int bir_tasks
@@ -2237,15 +2147,6 @@ entity ipai_equipment_incident {
   datetime write_date
   int write_uid
 }
-entity ipai_export_seed_wizard {
-  datetime create_date
-  int create_uid
-  varchar export_path
-  int id
-  varchar webhook_url
-  datetime write_date
-  int write_uid
-}
 entity ipai_finance_bir_schedule {
   date approval_deadline
   int approval_task_id
@@ -2547,29 +2448,6 @@ entity ipai_grid_view_visible_columns_rel {
   int column_id
   int grid_view_id
 }
-entity ipai_import_seed_wizard {
-  datetime create_date
-  int create_uid
-  int id
-  varchar mode
-  text seed_json
-  datetime write_date
-  int write_uid
-}
-entity ipai_localization_overlay {
-  boolean active
-  varchar applies_to_code
-  varchar country
-  datetime create_date
-  int create_uid
-  int id
-  text patch_payload
-  varchar patch_type
-  int sequence
-  int workstream_id
-  datetime write_date
-  int write_uid
-}
 entity ipai_month_end_closing {
   int company_id
   int completed_tasks
@@ -2688,95 +2566,6 @@ entity ipai_ph_holiday {
   int write_uid
   int year
 }
-entity ipai_ppm_task {
-  varchar category
-  varchar code
-  datetime create_date
-  int create_uid
-  int due_offset_days
-  boolean evidence_required
-  int id
-  varchar name
-  varchar owner_role
-  varchar phase
-  int prep_offset
-  boolean requires_approval
-  int review_offset
-  varchar sap_reference
-  int sequence
-  int template_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_ppm_task_checklist {
-  datetime create_date
-  int create_uid
-  varchar evidence_type
-  int id
-  varchar label
-  varchar notes
-  boolean required
-  int sequence
-  int task_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_ppm_tasklist {
-  datetime create_date
-  int create_uid
-  int id
-  varchar name
-  date period_end
-  date period_start
-  varchar status
-  int template_id
-  int workstream_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_ppm_taskrun {
-  int approver_id
-  int assignee_id
-  datetime create_date
-  int create_uid
-  datetime done_at
-  int id
-  varchar name
-  datetime started_at
-  varchar status
-  int task_id
-  int tasklist_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_ppm_template {
-  varchar code
-  datetime create_date
-  int create_uid
-  int id
-  boolean is_active
-  varchar name
-  varchar period_type
-  int sequence
-  varchar version
-  int workstream_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_repo_export_run {
-  datetime create_date
-  int create_uid
-  varchar export_path
-  datetime exported_at
-  int id
-  varchar name
-  text payload_json
-  varchar state
-  varchar webhook_status
-  varchar webhook_url
-  datetime write_date
-  int write_uid
-}
 entity ipai_share_token {
   boolean active
   datetime create_date
@@ -2789,55 +2578,6 @@ entity ipai_share_token {
   varchar permission_level
   varchar scope_ref
   varchar scope_type
-  datetime write_date
-  int write_uid
-}
-entity ipai_stc_check {
-  boolean auto_run
-  varchar category
-  varchar code
-  datetime create_date
-  int create_uid
-  text description
-  int id
-  boolean is_active
-  varchar name
-  text rule_json
-  varchar sap_reference
-  int sequence
-  varchar severity
-  int worklist_type_id
-  int workstream_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_stc_scenario {
-  varchar bir_forms
-  varchar code
-  datetime create_date
-  int create_uid
-  varchar frequency
-  int id
-  varchar name
-  text notes
-  int run_day_offset
-  varchar sap_reference
-  int sequence
-  int workstream_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_stc_scenario_check_ids_rel {
-  int ipai_stc_check_id
-  int ipai_stc_scenario_id
-}
-entity ipai_stc_worklist_type {
-  varchar code
-  datetime create_date
-  int create_uid
-  text description
-  int id
-  varchar name
   datetime write_date
   int write_uid
 }
@@ -3171,19 +2911,6 @@ entity ipai_workspace_link {
   int res_id
   varchar res_model
   int workspace_id
-  datetime write_date
-  int write_uid
-}
-entity ipai_workstream {
-  boolean active
-  varchar code
-  datetime create_date
-  int create_uid
-  text description
-  int id
-  varchar name
-  varchar odoo_anchor
-  varchar sap_anchor
   datetime write_date
   int write_uid
 }
@@ -5147,68 +4874,42 @@ cleanup_purge_line_module }o--|| cleanup_purge_wizard_module : wizard_id
 cleanup_purge_line_table }o--|| cleanup_purge_wizard_table : wizard_id
 close_approval_gate }o--|| res_users : approved_by
 close_approval_gate }o--|| res_users : approver_id
-close_approval_gate }o--|| res_users : approver_user_id
 close_approval_gate }o--|| res_company : company_id
 close_approval_gate }o--|| close_cycle : cycle_id
 close_approval_gate }o--|| close_approval_gate_template : template_id
-close_approval_gate_blocking_exceptions_rel }o--|| close_approval_gate : close_approval_gate_id
-close_approval_gate_blocking_exceptions_rel }o--|| close_exception : close_exception_id
-close_approval_gate_blocking_tasks_rel }o--|| close_approval_gate : close_approval_gate_id
-close_approval_gate_blocking_tasks_rel }o--|| close_task : close_task_id
 close_approval_gate_template }o--|| a1_check : a1_check_id
 close_approval_gate_template }o--|| res_company : company_id
 close_cycle }o--|| a1_tasklist : a1_tasklist_id
-close_cycle }o--|| closing_period : closing_period_id
 close_cycle }o--|| res_company : company_id
 close_exception }o--|| res_users : assigned_to
 close_exception }o--|| res_company : company_id
-close_exception }o--|| res_currency : currency_id
 close_exception }o--|| close_cycle : cycle_id
-close_exception }o--|| res_users : detected_by
 close_exception }o--|| res_users : escalated_to
-close_exception }o--|| account_account : related_account_id
-close_exception }o--|| account_move : related_move_id
-close_exception }o--|| res_partner : related_partner_id
 close_exception }o--|| res_users : reported_by
 close_exception }o--|| res_users : resolved_by
 close_exception }o--|| close_task : task_id
 close_task }o--|| a1_task : a1_task_id
 close_task }o--|| res_users : approval_done_by
-close_task }o--|| res_users : approve_user_id
 close_task }o--|| res_users : approver_id
 close_task }o--|| close_task_category : category_id
 close_task }o--|| res_company : company_id
 close_task }o--|| close_cycle : cycle_id
 close_task }o--|| res_users : prep_done_by
-close_task }o--|| res_users : prep_user_id
 close_task }o--|| res_users : preparer_id
 close_task }o--|| res_users : review_done_by
-close_task }o--|| res_users : review_user_id
 close_task }o--|| res_users : reviewer_id
 close_task }o--|| close_task_template : template_id
-close_task_attachment_ids_rel }o--|| close_task : close_task_id
-close_task_attachment_ids_rel }o--|| ir_attachment : ir_attachment_id
 close_task_category }o--|| a1_workstream : a1_workstream_id
 close_task_category }o--|| res_company : company_id
-close_task_category_gl_account_ids_rel }o--|| account_account : account_account_id
-close_task_category_gl_account_ids_rel }o--|| close_task_category : close_task_category_id
-close_task_checklist }o--|| ir_attachment : attachment_id
 close_task_checklist }o--|| res_users : done_by
 close_task_checklist }o--|| close_task : task_id
-close_task_gl_entry_ids_rel }o--|| account_move : account_move_id
-close_task_gl_entry_ids_rel }o--|| close_task : close_task_id
 close_task_template }o--|| a1_template : a1_template_id
 close_task_template }o--|| res_users : approver_id
 close_task_template }o--|| close_task_category : category_id
 close_task_template }o--|| res_company : company_id
-close_task_template }o--|| res_users : default_approve_user_id
-close_task_template }o--|| res_users : default_prep_user_id
-close_task_template }o--|| res_users : default_review_user_id
 close_task_template }o--|| res_users : preparer_id
 close_task_template }o--|| res_users : reviewer_id
 close_task_template_checklist }o--|| close_task_template : template_id
-close_task_template_gl_account_ids_rel }o--|| account_account : account_account_id
-close_task_template_gl_account_ids_rel }o--|| close_task_template : close_task_template_id
 closing_period }o--|| res_company : company_id
 compliance_check }o--|| res_users : checked_by
 compliance_check }o--|| closing_period : closing_id
@@ -5318,7 +5019,6 @@ ipai_grid_view }o--|| ipai_grid_filter : active_filter_id
 ipai_grid_view }o--|| ir_model : model_id
 ipai_grid_view_visible_columns_rel }o--|| ipai_grid_column : column_id
 ipai_grid_view_visible_columns_rel }o--|| ipai_grid_view : grid_view_id
-ipai_localization_overlay }o--|| ipai_workstream : workstream_id
 ipai_month_end_closing }o--|| res_company : company_id
 ipai_month_end_task }o--|| res_users : approve_done_by
 ipai_month_end_task }o--|| res_users : approve_user_id
@@ -5334,21 +5034,7 @@ ipai_month_end_task_template }o--|| res_users : review_user_id
 ipai_month_end_template_step }o--|| ipai_month_end_template : template_id
 ipai_permission }o--|| res_groups : group_id
 ipai_permission }o--|| res_users : user_id
-ipai_ppm_task }o--|| ipai_ppm_template : template_id
-ipai_ppm_task_checklist }o--|| ipai_ppm_task : task_id
-ipai_ppm_tasklist }o--|| ipai_ppm_template : template_id
-ipai_ppm_tasklist }o--|| ipai_workstream : workstream_id
-ipai_ppm_taskrun }o--|| res_users : approver_id
-ipai_ppm_taskrun }o--|| res_users : assignee_id
-ipai_ppm_taskrun }o--|| ipai_ppm_task : task_id
-ipai_ppm_taskrun }o--|| ipai_ppm_tasklist : tasklist_id
-ipai_ppm_template }o--|| ipai_workstream : workstream_id
 ipai_share_token }o--|| res_users : created_by
-ipai_stc_check }o--|| ipai_stc_worklist_type : worklist_type_id
-ipai_stc_check }o--|| ipai_workstream : workstream_id
-ipai_stc_scenario }o--|| ipai_workstream : workstream_id
-ipai_stc_scenario_check_ids_rel }o--|| ipai_stc_check : ipai_stc_check_id
-ipai_stc_scenario_check_ids_rel }o--|| ipai_stc_scenario : ipai_stc_scenario_id
 ipai_studio_ai_history }o--|| base_automation : automation_id
 ipai_studio_ai_history }o--|| ir_model_fields : field_id
 ipai_studio_ai_history }o--|| ir_model : model_id
