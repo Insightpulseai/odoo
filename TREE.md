@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: af6fbed259dbee02b651ac010bc8d44e8bacdd1a
+> Commit: 58442fdd74a51ea258232567ada660afeabaafad
 
 ```
 .
@@ -1167,6 +1167,14 @@
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
 │   │   └── ipai_idp_pdf_processing.drawio
+│   ├── data-model
+│   │   ├── ODOO_CANONICAL_SCHEMA.dbml
+│   │   ├── ODOO_ERD.mmd
+│   │   ├── ODOO_ERD.puml
+│   │   ├── ODOO_MODEL_INDEX.json
+│   │   ├── ODOO_MODULE_DELTAS.md
+│   │   ├── ODOO_ORM_MAP.md
+│   │   └── README.md
 │   ├── db
 │   │   ├── DB_CONVENTIONS_AND_NAMING.md
 │   │   ├── DB_CURRENT_INVENTORY.md
@@ -1176,14 +1184,6 @@
 │   │   ├── DB_RLS_POLICY_TEMPLATES.md
 │   │   ├── DB_TABLE_CLASSIFICATION_DRAFT.md
 │   │   └── DB_TARGET_ARCHITECTURE.md
-│   ├── data-model
-│   │   ├── ODOO_CANONICAL_SCHEMA.dbml
-│   │   ├── ODOO_ERD.mmd
-│   │   ├── ODOO_ERD.puml
-│   │   ├── ODOO_MODEL_INDEX.json
-│   │   ├── ODOO_MODULE_DELTAS.md
-│   │   ├── ODOO_ORM_MAP.md
-│   │   └── README.md
 │   ├── deployment
 │   │   ├── CLAUDE_CODE_CLI_PROMPT.md
 │   │   ├── DEPLOYMENT_EXECUTION_GUIDE.md
@@ -1726,6 +1726,7 @@
 │   ├── generate_2026_schedule.py
 │   ├── generate_finance_dashboard.py
 │   ├── generate_module_docs.py
+│   ├── generate_odoo_dbml.py
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
 │   ├── image-diff-report.sh
@@ -2283,15 +2284,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-708 directories, 1562 files
+709 directories, 1570 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 804 |
-| Files | 2244 |
-| Python files | 594 |
+| Directories | 805 |
+| Files | 2252 |
+| Python files | 595 |
 | XML files | 331 |
-| Markdown files | 424 |
+| Markdown files | 427 |
