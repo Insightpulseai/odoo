@@ -174,9 +174,11 @@ git diff --exit-code addons/ipai_finance_close_seed
 
 CI enforces:
 
+- **Odoo 18 CE / OCA CI** — Lint, static checks, and unit tests
 - **guardrails** — Block Enterprise modules and odoo.com links
 - **repo-structure** — Repo tree in spec.md must match generator
 - **data-model-drift** — `docs/data-model/` must match generator output
+- **seed-finance-close-drift** — `addons/ipai_finance_close_seed` must match `seed_finance_close_from_xlsx.py` output
 - **spec-kit-enforce** — Spec bundles must have complete 4-file structure
 - **infra-validate** — Infrastructure template validation
 
