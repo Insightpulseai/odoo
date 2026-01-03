@@ -91,6 +91,7 @@ echo "=============================================="
 echo "STEP 1: CREATE PASSES (new records)"
 echo "=============================================="
 
+import_csv "1.0" "project.tags" "08_project.tags.csv" "create"
 import_csv "1.1" "project.task.type" "01_project.task.type.csv" "create"
 import_csv "1.2" "project.project" "02_project.project.csv" "create"
 import_csv "1.3" "project.milestone" "03_project.milestone.csv" "create"

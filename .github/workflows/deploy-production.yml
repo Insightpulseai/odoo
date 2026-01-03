@@ -23,7 +23,7 @@ on:
         default: 'latest'
         type: string
   workflow_run:
-    workflows: ["Build IPAI Odoo Images"]
+    workflows: ["All-Green Gates"]
     types:
       - completed
     branches:
