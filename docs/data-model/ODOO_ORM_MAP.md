@@ -696,7 +696,7 @@
 - `required_approvals`: `Integer`
 - `required_task_states`: `Char`
 - `sequence`: `Integer`
-- `state`: `Selection`
+- `state`: `Selection` (required)
 - `template_id`: `Many2one` (relation=close.approval.gate.template)
 - `threshold_value`: `Float`
 
@@ -751,7 +751,7 @@
 - `period_start`: `Date` (required)
 - `period_type`: `Selection` (required)
 - `progress`: `Float` (compute=_compute_task_stats)
-- `state`: `Selection`
+- `state`: `Selection` (required)
 - `task_completion_pct`: `Float` (compute=_compute_task_stats)
 - `task_count`: `Integer` (compute=_compute_task_stats)
 - `task_done_count`: `Integer` (compute=_compute_task_stats)
@@ -775,7 +775,7 @@
 - `company_id`: `Many2one` (relation=res.company, related=cycle_id.company_id)
 - `currency_id`: `Many2one` (relation=res.currency)
 - `cycle_id`: `Many2one` (relation=close.cycle, required, index, ondelete=cascade)
-- `description`: `Text`
+- `description`: `Html`
 - `detected_by`: `Many2one` (relation=res.users)
 - `detected_date`: `Datetime`
 - `escalated_date`: `Datetime`
@@ -796,7 +796,7 @@
 - `resolved_date`: `Datetime`
 - `root_cause`: `Text`
 - `severity`: `Selection` (required)
-- `state`: `Selection`
+- `state`: `Selection` (required)
 - `task_id`: `Many2one` (relation=close.task, index, ondelete=set null)
 - `variance_pct`: `Float`
 
@@ -852,7 +852,7 @@
 - `review_user_id`: `Many2one` (relation=res.users)
 - `reviewer_id`: `Many2one` (relation=res.users)
 - `sequence`: `Integer`
-- `state`: `Selection`
+- `state`: `Selection` (required)
 - `template_id`: `Many2one` (relation=close.task.template)
 
 ### Non-persisted fields
@@ -872,7 +872,7 @@
 ### Persisted fields
 - `a1_workstream_id`: `Many2one` (relation=a1.workstream)
 - `active`: `Boolean`
-- `code`: `Char` (required)
+- `code`: `Char` (required, index)
 - `color`: `Integer`
 - `company_id`: `Many2one` (relation=res.company, required)
 - `default_approve_days`: `Integer`
@@ -909,7 +909,7 @@
 - `notes`: `Text`
 - `required`: `Boolean`
 - `sequence`: `Integer`
-- `task_id`: `Many2one` (relation=close.task, required, ondelete=cascade)
+- `task_id`: `Many2one` (relation=close.task, required, index, ondelete=cascade)
 
 ### Non-persisted fields
 - _none_
@@ -932,14 +932,14 @@
 - `approve_day_offset`: `Integer`
 - `approver_id`: `Many2one` (relation=res.users)
 - `approver_role`: `Selection`
-- `category_id`: `Many2one` (relation=close.task.category, required)
-- `code`: `Char` (required)
+- `category_id`: `Many2one` (relation=close.task.category, index, ondelete=cascade)
+- `code`: `Char` (required, index)
 - `company_id`: `Many2one` (relation=res.company, required)
 - `creates_gl_entry`: `Boolean`
 - `default_approve_user_id`: `Many2one` (relation=res.users)
 - `default_prep_user_id`: `Many2one` (relation=res.users)
 - `default_review_user_id`: `Many2one` (relation=res.users)
-- `description`: `Text`
+- `description`: `Html`
 - `gl_account_ids`: `Many2many` (relation=account.account)
 - `name`: `Char` (required)
 - `period_type`: `Selection`
