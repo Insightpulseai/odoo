@@ -1,5 +1,5 @@
 === AUDIT SNAPSHOT ===
-Generated at: 2026-01-03T02:59:04Z
+Generated at: 2026-01-03T12:41:20Z
 
 === GIT STATE ===
 Remote:
@@ -9,56 +9,15 @@ origin	git@github.com:jgtolentino/odoo-ce.git (fetch)
 origin	git@github.com:jgtolentino/odoo-ce.git (push)
 
 Branch:
-codex/fix-ci-issues-for-pr-#104
+fix/green-main-20260103-1710
 
 Commit SHA:
-fcf752d5e76e6aca36395400de34441676739695
+678b8cc9182d6ace4608961e4d238d5fa2c10e5d
 
 Status (dirty check):
- M addons/ipai_ask_ai/__manifest__.py
- M addons/ipai_ask_ai/models/__init__.py
- M addons/ipai_ask_ai/models/ask_ai_service.py
  M audit/snapshot.txt
-?? .claude/superclaude/
-?? HOTFIX_OWLERROR.sh
-?? addons/ipai/ipai_finance_ppm/data/reminder_system_cron.xml
-?? addons/ipai/ipai_finance_ppm/models/bir_reminder_system.py
-?? addons/ipai_ask_ai/CHANGES.md
-?? addons/ipai_ask_ai/DEPLOYMENT_CHECKLIST.md
-?? addons/ipai_ask_ai/DEPLOYMENT_COMPLETE.md
-?? addons/ipai_ask_ai/DEPLOYMENT_STATUS.md
-?? addons/ipai_ask_ai/README_AFC_RAG.md
-?? addons/ipai_ask_ai/data/afc_config_params.xml
-?? addons/ipai_ask_ai/models/afc_rag_service.py
-?? addons/ipai_finance_closing/DEPLOYMENT_COMPLETE.md
-?? automations/n8n/bir_deadline_reminder_workflow.json
-?? automations/n8n/bir_overdue_nudge_workflow.json
-?? automations/n8n/workflows/01-health-check.json
-?? automations/n8n/workflows/02-git-operations-hub.json
-?? automations/n8n/workflows/03-finance-close-orchestrator.json
-?? automations/n8n/workflows/04-bir-compliance.json
-?? automations/n8n/workflows/05-github-oauth-callback.json
-?? automations/n8n/workflows/git_operations_hub.json
-?? claudedocs/
-?? data/IMPORT_GUIDE.md
-?? data/bir_december_2025_seed.xml
-?? data/month_end_closing_tasks.csv
-?? docs/FIN_WORKSPACE_AUTOMATION_STATUS.md
-?? mcp/servers/odoo-erp-server/
-?? scripts/deploy_afc_rag.sh
-?? scripts/setup_afc_rag.sh
-?? scripts/test_afc_rag.py
-?? spec/odoo-mcp-server/
-?? supabase/SECURITY_LINTER_REMEDIATION.md
-?? supabase/migrations/20250101_afc_canonical_schema.sql
-?? supabase/migrations/20250101_afc_computation_triggers.sql
-?? supabase/migrations/20250101_afc_rls_comprehensive.sql
-?? supabase/migrations/20250101_afc_rls_fixed.sql
-?? supabase/migrations/20250101_afc_verification_tests.sql
-?? supabase/migrations/20250101_rls_deployment_actual_schema.sql
-?? supabase/migrations/20250101_security_linter_remediation.sql
-?? supabase/migrations/AFC_DEPLOYMENT_SUMMARY.md
-?? supabase/migrations/RLS_DEPLOYMENT_COMPLETE.md
+?? branch_protection.json
+?? spec/odoo-ce/
 
 === SUBMODULES ===
 -e2de4d8a8ff0fe368f3222ff798ea56a2157d28d external-src/account-closing
@@ -101,44 +60,43 @@ PGDATABASE=<not set>
 === ADDONS PATH RESOLUTION ===
 Local addons/ directory:
 total 0
-drwxr-xr-x@  34 tbwa  staff  1088  3 Jan 10:53 .
-drwxr-xr-x@ 181 tbwa  staff  5792  3 Jan 10:53 ..
-drwx------@  36 tbwa  staff  1152 30 Dec 03:08 ipai
-drwxr-xr-x@  16 tbwa  staff   512  3 Jan 09:32 ipai_ask_ai
-drwxr-xr-x@   8 tbwa  staff   256 27 Dec 02:12 ipai_bir_tax_compliance
-drwxr-xr-x@   8 tbwa  staff   256 27 Dec 02:12 ipai_close_orchestration
-drwxr-xr-x@   9 tbwa  staff   288 27 Dec 02:12 ipai_crm_pipeline
-drwxr-xr-x@   5 tbwa  staff   160  3 Jan 10:53 ipai_finance_close_seed
-drwxr-xr-x@   8 tbwa  staff   256 30 Dec 03:44 ipai_finance_closing
-drwxr-xr-x@   9 tbwa  staff   288 27 Dec 02:12 ipai_finance_ppm_golive
-drwxr-xr-x@   7 tbwa  staff   224 30 Dec 03:08 ipai_finance_ppm_umbrella
-drwxr-xr-x@   9 tbwa  staff   288 29 Dec 14:31 ipai_grid_view
-drwxr-xr-x@   8 tbwa  staff   256 27 Dec 02:12 ipai_month_end
-drwxr-xr-x@   8 tbwa  staff   256 30 Dec 06:53 ipai_month_end_closing
-drwxr-xr-x@   7 tbwa  staff   224 27 Dec 02:12 ipai_platform_approvals
-drwxr-xr-x@   7 tbwa  staff   224 27 Dec 02:12 ipai_platform_audit
-drwxr-xr-x@   7 tbwa  staff   224 27 Dec 02:12 ipai_platform_permissions
-drwxr-xr-x@   6 tbwa  staff   192 30 Dec 06:40 ipai_platform_theme
-drwxr-xr-x@   7 tbwa  staff   224 27 Dec 02:12 ipai_platform_workflow
+drwxr-xr-x@  33 tbwa  staff  1056 Jan  3 17:02 .
+drwxr-xr-x@ 182 tbwa  staff  5824 Jan  3 17:03 ..
+drwxr-xr-x@  38 tbwa  staff  1216 Jan  3 17:04 ipai
+drwxr-xr-x@  16 tbwa  staff   512 Jan  3 17:02 ipai_ask_ai
+drwxr-xr-x@   8 tbwa  staff   256 Dec 27 02:12 ipai_bir_tax_compliance
+drwxr-xr-x@   9 tbwa  staff   288 Dec 27 02:12 ipai_crm_pipeline
+drwxr-xr-x@   8 tbwa  staff   256 Jan  3 17:02 ipai_finance_closing
+drwxr-xr-x@   9 tbwa  staff   288 Dec 27 02:12 ipai_finance_ppm_golive
+drwxr-xr-x@   7 tbwa  staff   224 Dec 30 03:08 ipai_finance_ppm_umbrella
+drwxr-xr-x@   9 tbwa  staff   288 Dec 29 14:31 ipai_grid_view
+drwxr-xr-x@   8 tbwa  staff   256 Dec 27 02:12 ipai_month_end
+drwxr-xr-x@   8 tbwa  staff   256 Dec 30 06:53 ipai_month_end_closing
+drwxr-xr-x@   8 tbwa  staff   256 Jan  3 17:01 ipai_ocr_gateway
+drwxr-xr-x@   7 tbwa  staff   224 Dec 27 02:12 ipai_platform_approvals
+drwxr-xr-x@   7 tbwa  staff   224 Dec 27 02:12 ipai_platform_audit
+drwxr-xr-x@   7 tbwa  staff   224 Dec 27 02:12 ipai_platform_permissions
+drwxr-xr-x@   6 tbwa  staff   192 Dec 30 06:40 ipai_platform_theme
+drwxr-xr-x@   7 tbwa  staff   224 Dec 27 02:12 ipai_platform_workflow
+drwxr-xr-x@   9 tbwa  staff   288 Jan  3 17:01 ipai_sms_gateway
 
 IPAI modules:
 addons/ipai_ask_ai
 addons/ipai_bir_tax_compliance
-addons/ipai_close_orchestration
 addons/ipai_crm_pipeline
-addons/ipai_finance_close_seed
 addons/ipai_finance_closing
 addons/ipai_finance_ppm_golive
 addons/ipai_finance_ppm_umbrella
 addons/ipai_grid_view
 addons/ipai_month_end
 addons/ipai_month_end_closing
+addons/ipai_ocr_gateway
 addons/ipai_platform_approvals
 addons/ipai_platform_audit
 addons/ipai_platform_permissions
 addons/ipai_platform_theme
 addons/ipai_platform_workflow
-addons/ipai_ppm_a1
+addons/ipai_sms_gateway
 addons/ipai_superset_connector
 addons/ipai_tbwa_finance
 addons/ipai_theme_tbwa_backend
@@ -155,46 +113,46 @@ addons/ipai_workos_views
 
 OCA modules (addons/oca):
 total 32
--rw-r--r--@  1 tbwa  staff    90 27 Dec 02:12 __init__.py
--rw-r--r--@  1 tbwa  staff   588 27 Dec 02:12 __manifest__.py
-drwxr-xr-x@  7 tbwa  staff   224 27 Dec 02:12 .
-drwxr-xr-x@ 34 tbwa  staff  1088  3 Jan 10:53 ..
--rw-r--r--@  1 tbwa  staff     0 27 Dec 02:12 .gitkeep
--rw-r--r--@  1 tbwa  staff  3607 27 Dec 02:12 manifest.yaml
--rw-r--r--@  1 tbwa  staff  3833 27 Dec 02:12 requirements.txt
+-rw-r--r--@  1 tbwa  staff    90 Dec 27 02:12 __init__.py
+-rw-r--r--@  1 tbwa  staff   588 Dec 27 02:12 __manifest__.py
+drwxr-xr-x@  7 tbwa  staff   224 Dec 27 02:12 .
+drwxr-xr-x@ 33 tbwa  staff  1056 Jan  3 17:02 ..
+-rw-r--r--@  1 tbwa  staff     0 Dec 27 02:12 .gitkeep
+-rw-r--r--@  1 tbwa  staff  3607 Dec 27 02:12 manifest.yaml
+-rw-r--r--@  1 tbwa  staff  3833 Dec 27 02:12 requirements.txt
 
 === DOCKER STATUS ===
 Docker containers:
-NAMES                                   IMAGE                                                   STATUS                       PORTS
-plane-worker-1                          plane-worker                                            Up 7 seconds                 8000/tcp
-plane-beat-worker-1                     plane-beat-worker                                       Up 7 seconds                 8000/tcp
-plane-api-1                             plane-api                                               Up 7 seconds                 0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
-plane-plane-mq-1                        rabbitmq:3.13.6-management-alpine                       Up About an hour             4369/tcp, 5671-5672/tcp, 15671-15672/tcp, 15691-15692/tcp, 25672/tcp
-plane-plane-minio-1                     minio/minio                                             Up About an hour             0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp, 0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
-plane-plane-db-1                        postgres:15.7-alpine                                    Up About an hour             0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
-plane-plane-redis-1                     valkey/valkey:7.2.11-alpine                             Up About an hour             0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
-supabase_studio_atomic-crm-demo         public.ecr.aws/supabase/studio:2025.12.23-sha-f3af2c3   Up About an hour (healthy)   0.0.0.0:54323->3000/tcp, [::]:54323->3000/tcp
-supabase_pg_meta_atomic-crm-demo        public.ecr.aws/supabase/postgres-meta:v0.95.1           Up About an hour (healthy)   8080/tcp
-supabase_edge_runtime_atomic-crm-demo   public.ecr.aws/supabase/edge-runtime:v1.69.28           Up About an hour             8081/tcp
-supabase_storage_atomic-crm-demo        public.ecr.aws/supabase/storage-api:v1.33.2             Up About an hour (healthy)   5000/tcp
-supabase_rest_atomic-crm-demo           public.ecr.aws/supabase/postgrest:v14.2                 Up About an hour             3000/tcp
-supabase_realtime_atomic-crm-demo       public.ecr.aws/supabase/realtime:v2.69.0                Up About an hour (healthy)   4000/tcp
-supabase_inbucket_atomic-crm-demo       public.ecr.aws/supabase/mailpit:v1.22.3                 Up About an hour (healthy)   1025/tcp, 1110/tcp, 0.0.0.0:54324->8025/tcp, [::]:54324->8025/tcp
-supabase_auth_atomic-crm-demo           public.ecr.aws/supabase/gotrue:v2.184.0                 Up About an hour (healthy)   9999/tcp
-supabase_kong_atomic-crm-demo           public.ecr.aws/supabase/kong:2.8.1                      Up About an hour (healthy)   8001/tcp, 8088/tcp, 8443-8444/tcp, 0.0.0.0:54321->8000/tcp, [::]:54321->8000/tcp
-supabase_db_atomic-crm-demo             public.ecr.aws/supabase/postgres:15.8.1.085             Up About an hour (healthy)   0.0.0.0:54322->5432/tcp, [::]:54322->5432/tcp
-odoo-accounting                         odoo:18.0                                               Up 3 hours                   8071-8072/tcp, 0.0.0.0:8071->8069/tcp, [::]:8071->8069/tcp
-odoo-core                               odoo:18.0                                               Up 3 hours                   0.0.0.0:8069->8069/tcp, [::]:8069->8069/tcp, 8071-8072/tcp
-odoo-marketing                          odoo:18.0                                               Up 3 hours                   8071-8072/tcp, 0.0.0.0:8070->8069/tcp, [::]:8070->8069/tcp
-odoo-postgres                           postgres:15-alpine                                      Up 3 hours                   5432/tcp
+NAMES                                   IMAGE                                                   STATUS                          PORTS
+plane-beat-worker-1                     plane-beat-worker                                       Restarting (1) 39 seconds ago   
+plane-worker-1                          plane-worker                                            Restarting (1) 39 seconds ago   
+plane-api-1                             plane-api                                               Restarting (1) 39 seconds ago   
+plane-plane-mq-1                        rabbitmq:3.13.6-management-alpine                       Up 4 hours                      4369/tcp, 5671-5672/tcp, 15671-15672/tcp, 15691-15692/tcp, 25672/tcp
+plane-plane-db-1                        postgres:15.7-alpine                                    Up 4 hours                      0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+plane-plane-minio-1                     minio/minio                                             Up 4 hours                      0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp, 0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+plane-plane-redis-1                     valkey/valkey:7.2.11-alpine                             Up 4 hours                      0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+supabase_studio_atomic-crm-demo         public.ecr.aws/supabase/studio:2025.12.23-sha-f3af2c3   Up 11 hours (healthy)           0.0.0.0:54323->3000/tcp, [::]:54323->3000/tcp
+supabase_pg_meta_atomic-crm-demo        public.ecr.aws/supabase/postgres-meta:v0.95.1           Up 11 hours (healthy)           8080/tcp
+supabase_edge_runtime_atomic-crm-demo   public.ecr.aws/supabase/edge-runtime:v1.69.28           Up 11 hours                     8081/tcp
+supabase_storage_atomic-crm-demo        public.ecr.aws/supabase/storage-api:v1.33.2             Up 11 hours (healthy)           5000/tcp
+supabase_rest_atomic-crm-demo           public.ecr.aws/supabase/postgrest:v14.2                 Up 11 hours                     3000/tcp
+supabase_realtime_atomic-crm-demo       public.ecr.aws/supabase/realtime:v2.69.0                Up 11 hours (healthy)           4000/tcp
+supabase_inbucket_atomic-crm-demo       public.ecr.aws/supabase/mailpit:v1.22.3                 Up 11 hours (healthy)           1025/tcp, 1110/tcp, 0.0.0.0:54324->8025/tcp, [::]:54324->8025/tcp
+supabase_auth_atomic-crm-demo           public.ecr.aws/supabase/gotrue:v2.184.0                 Up 11 hours (healthy)           9999/tcp
+supabase_kong_atomic-crm-demo           public.ecr.aws/supabase/kong:2.8.1                      Up 11 hours (healthy)           8001/tcp, 8088/tcp, 8443-8444/tcp, 0.0.0.0:54321->8000/tcp, [::]:54321->8000/tcp
+supabase_db_atomic-crm-demo             public.ecr.aws/supabase/postgres:15.8.1.085             Up 11 hours (healthy)           0.0.0.0:54322->5432/tcp, [::]:54322->5432/tcp
+odoo-accounting                         odoo:18.0                                               Up 13 hours                     8071-8072/tcp, 0.0.0.0:8071->8069/tcp, [::]:8071->8069/tcp
+odoo-core                               odoo:18.0                                               Up 8 hours                      0.0.0.0:8069->8069/tcp, [::]:8069->8069/tcp, 8071-8072/tcp
+odoo-marketing                          odoo:18.0                                               Up 13 hours                     8071-8072/tcp, 0.0.0.0:8070->8069/tcp, [::]:8070->8069/tcp
+odoo-postgres                           postgres:15-alpine                                      Up 13 hours                     5432/tcp
 
 Docker images (odoo-related):
-odoo                                    18.0                       87fb9d6c9a92   9 days ago          2.06GB
+odoo                                    18.0                       87fb9d6c9a92   10 days ago     2.06GB
 
 === SYSTEM INFO ===
 Hostname: Jakes-MacBook-Air.local
 OS: Darwin Jakes-MacBook-Air.local 24.6.0 Darwin Kernel Version 24.6.0: Mon Jul 14 11:29:54 PDT 2025; root:xnu-11417.140.69~1/RELEASE_ARM64_T8122 arm64
 Memory: unknown
-Disk: /dev/disk3s5   460Gi   337Gi    93Gi    79%     11M  980M    1%   /System/Volumes/Data
+Disk: /dev/disk3s5   460Gi   354Gi    78Gi    82%     12M  816M    1%   /System/Volumes/Data
 
 === END SNAPSHOT ===
