@@ -599,9 +599,21 @@ def generate_model_index(models: Dict[str, ModelDef]) -> Dict[str, Any]:
     return {"models": model_entries}
 
 
+def normalize_content(content: str) -> str:
+    normalized = content.replace("\r\n", "\n").replace("\r", "\n")
+    if not normalized.endswith("\n"):
+        normalized += "\n"
+    return normalized
+
+
 def write_file(path: Path, content: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(content, encoding="utf-8")
+    normalized = normalize_content(content)
+    if path.exists():
+        current = path.read_text(encoding="utf-8", errors="ignore")
+        if normalize_content(current) == normalized:
+            return
+    path.write_text(normalized, encoding="utf-8")
 
 
 def main() -> None:
@@ -622,7 +634,10 @@ def main() -> None:
     write_file(output_dir / "ODOO_ERD.puml", plantuml)
     write_file(output_dir / "ODOO_ORM_MAP.md", orm_map)
     write_file(output_dir / "ODOO_MODULE_DELTAS.md", module_deltas)
-    write_file(output_dir / "ODOO_MODEL_INDEX.json", json.dumps(model_index, indent=2, sort_keys=True))
+    write_file(
+        output_dir / "ODOO_MODEL_INDEX.json",
+        json.dumps(model_index, indent=2, sort_keys=True),
+    )
 
 
 if __name__ == "__main__":

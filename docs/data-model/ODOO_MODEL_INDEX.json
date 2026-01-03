@@ -4494,7 +4494,7 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
         },
@@ -4872,7 +4872,7 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
         },
@@ -5028,7 +5028,7 @@
           "relation": null,
           "required": false,
           "store": true,
-          "type": "Text"
+          "type": "Html"
         },
         {
           "compute": null,
@@ -5257,7 +5257,7 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
         },
@@ -5787,7 +5787,7 @@
           "ondelete": null,
           "related": null,
           "relation": null,
-          "required": false,
+          "required": true,
           "store": true,
           "type": "Selection"
         },
@@ -5853,7 +5853,7 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "code",
           "ondelete": null,
           "related": null,
@@ -6183,7 +6183,7 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "task_id",
           "ondelete": "cascade",
           "related": null,
@@ -6287,12 +6287,12 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "category_id",
-          "ondelete": null,
+          "ondelete": "cascade",
           "related": null,
           "relation": "close.task.category",
-          "required": true,
+          "required": false,
           "store": true,
           "type": "Many2one"
         },
@@ -6309,7 +6309,7 @@
         },
         {
           "compute": null,
-          "index": false,
+          "index": true,
           "name": "code",
           "ondelete": null,
           "related": null,
@@ -6382,7 +6382,7 @@
           "relation": null,
           "required": false,
           "store": true,
-          "type": "Text"
+          "type": "Html"
         },
         {
           "compute": null,
