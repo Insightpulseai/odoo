@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4521c09d49f828314b29f6500254fd7ecdff57b5
+> Commit: 35a990578d5a5cab2af79f4233be1171c99b955e
 
 ## 📚 Documentation
 
@@ -484,6 +484,7 @@
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai_close_orchestration) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
+| [ipai_finance_close_seed](./addons/ipai_finance_close_seed) | ✅ |  |
 | [ipai_finance_closing](./addons/ipai_finance_closing) | ✅ | Month-end financial closing task template based on SAP Advanced Financial Closing |
 | [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ | Production go-live checklist for Finance PPM modules |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella) | ✅ |  |
