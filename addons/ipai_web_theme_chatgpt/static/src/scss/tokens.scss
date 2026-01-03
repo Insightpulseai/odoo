@@ -1,0 +1,259 @@
+// ============================================================================
+// IPAI ChatGPT-style Design Tokens
+// ============================================================================
+// Modern SaaS design language inspired by ChatGPT's clean, minimal aesthetic.
+// These tokens provide a consistent foundation for the entire UI.
+//
+// USAGE:
+// - Edit variables below to customize the theme palette
+// - Odoo/Bootstrap mappings at bottom ensure system-wide inheritance
+// - After changes, update module: ./odoo-bin -d <DB> -u ipai_web_theme_chatgpt
+
+// ============================================================================
+// TYPOGRAPHY
+// ============================================================================
+
+$ipai-font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto,
+  "Helvetica Neue", Arial, sans-serif;
+$ipai-font-mono: "JetBrains Mono", "Fira Code", Consolas, Monaco, monospace;
+
+// Font Sizes
+$ipai-text-xs: 0.75rem;    // 12px
+$ipai-text-sm: 0.875rem;   // 14px
+$ipai-text-base: 1rem;     // 16px
+$ipai-text-lg: 1.125rem;   // 18px
+$ipai-text-xl: 1.25rem;    // 20px
+$ipai-text-2xl: 1.5rem;    // 24px
+
+// Font Weights
+$ipai-font-normal: 400;
+$ipai-font-medium: 500;
+$ipai-font-semibold: 600;
+$ipai-font-bold: 700;
+
+// ============================================================================
+// COLOR PALETTE
+// ============================================================================
+
+// Primary (Purple - main brand accent)
+$ipai-primary: #6d28d9;
+$ipai-primary-50: #f5f3ff;
+$ipai-primary-100: #ede9fe;
+$ipai-primary-200: #ddd6fe;
+$ipai-primary-300: #c4b5fd;
+$ipai-primary-400: #a78bfa;
+$ipai-primary-500: #8b5cf6;
+$ipai-primary-600: #7c3aed;
+$ipai-primary-700: #6d28d9;
+$ipai-primary-800: #5b21b6;
+$ipai-primary-900: #4c1d95;
+
+// Neutral (Gray scale for text, backgrounds, borders)
+$ipai-neutral-50: #fafafa;
+$ipai-neutral-100: #f5f5f5;
+$ipai-neutral-200: #e5e5e5;
+$ipai-neutral-300: #d4d4d4;
+$ipai-neutral-400: #a3a3a3;
+$ipai-neutral-500: #737373;
+$ipai-neutral-600: #525252;
+$ipai-neutral-700: #404040;
+$ipai-neutral-800: #262626;
+$ipai-neutral-900: #171717;
+
+// Semantic Colors (Surfaces and text)
+$ipai-bg-dark: #0b0f17;           // Dark shell background (optional)
+$ipai-surface: #ffffff;            // Cards and panels
+$ipai-surface-secondary: #f7f7fb;  // App background
+$ipai-border: #e5e7eb;             // Subtle borders
+$ipai-text: #111827;               // Primary text
+$ipai-text-secondary: #4b5563;     // Secondary text
+$ipai-muted: #6b7280;              // Muted/helper text
+
+// Status Colors
+$ipai-success: #16a34a;
+$ipai-success-50: #f0fdf4;
+$ipai-success-100: #dcfce7;
+$ipai-success-600: #16a34a;
+$ipai-success-700: #15803d;
+
+$ipai-warning: #f59e0b;
+$ipai-warning-50: #fffbeb;
+$ipai-warning-100: #fef3c7;
+$ipai-warning-600: #d97706;
+$ipai-warning-700: #b45309;
+
+$ipai-danger: #ef4444;
+$ipai-danger-50: #fef2f2;
+$ipai-danger-100: #fee2e2;
+$ipai-danger-600: #dc2626;
+$ipai-danger-700: #b91c1c;
+
+$ipai-info: #3b82f6;
+$ipai-info-50: #eff6ff;
+$ipai-info-100: #dbeafe;
+$ipai-info-600: #2563eb;
+$ipai-info-700: #1d4ed8;
+
+// ============================================================================
+// BORDER RADIUS
+// ============================================================================
+
+$ipai-radius-none: 0;
+$ipai-radius-sm: 8px;      // Small elements (inputs, buttons)
+$ipai-radius-md: 12px;     // Medium elements (cards, panels)
+$ipai-radius-lg: 16px;     // Large elements (modals, sheets)
+$ipai-radius-xl: 24px;     // Extra large (hero sections)
+$ipai-radius-full: 9999px; // Pills and avatars
+
+// ============================================================================
+// SHADOWS
+// ============================================================================
+
+$ipai-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+$ipai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+$ipai-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+$ipai-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10);
+$ipai-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
+
+// Colored shadows for depth
+$ipai-shadow-primary: 0 4px 14px rgba($ipai-primary, 0.25);
+$ipai-shadow-success: 0 4px 14px rgba($ipai-success, 0.25);
+$ipai-shadow-danger: 0 4px 14px rgba($ipai-danger, 0.25);
+
+// ============================================================================
+// SPACING
+// ============================================================================
+
+$ipai-space-0: 0;
+$ipai-space-1: 4px;
+$ipai-space-2: 8px;
+$ipai-space-3: 12px;
+$ipai-space-4: 16px;
+$ipai-space-5: 20px;
+$ipai-space-6: 24px;
+$ipai-space-8: 32px;
+$ipai-space-10: 40px;
+$ipai-space-12: 48px;
+
+$ipai-gap: 12px; // Default gap for flex/grid layouts
+
+// ============================================================================
+// TRANSITIONS
+// ============================================================================
+
+$ipai-duration-fast: 150ms;
+$ipai-duration-base: 200ms;
+$ipai-duration-slow: 300ms;
+
+$ipai-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+$ipai-ease-in: cubic-bezier(0.4, 0, 1, 1);
+$ipai-ease-out: cubic-bezier(0, 0, 0.2, 1);
+$ipai-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+// ============================================================================
+// Z-INDEX SCALE
+// ============================================================================
+
+$ipai-z-base: 0;
+$ipai-z-dropdown: 1000;
+$ipai-z-sticky: 1100;
+$ipai-z-modal-backdrop: 1200;
+$ipai-z-modal: 1250;
+$ipai-z-popover: 1300;
+$ipai-z-tooltip: 1400;
+$ipai-z-toast: 1500;
+
+// ============================================================================
+// COMPONENT TOKENS
+// ============================================================================
+
+// Navbar
+$ipai-navbar-bg: $ipai-primary;
+$ipai-navbar-text: #ffffff;
+$ipai-navbar-height: 46px;
+
+// Sidebar
+$ipai-sidebar-width: 256px;
+$ipai-sidebar-bg: $ipai-neutral-900;
+$ipai-sidebar-text: $ipai-neutral-300;
+$ipai-sidebar-active-bg: rgba(255, 255, 255, 0.1);
+$ipai-sidebar-active-text: #ffffff;
+
+// Buttons
+$ipai-btn-padding-y: $ipai-space-2;
+$ipai-btn-padding-x: $ipai-space-4;
+$ipai-btn-radius: $ipai-radius-sm;
+$ipai-btn-font-weight: $ipai-font-medium;
+
+// Inputs
+$ipai-input-padding-y: $ipai-space-2;
+$ipai-input-padding-x: $ipai-space-3;
+$ipai-input-radius: $ipai-radius-sm;
+$ipai-input-border: $ipai-border;
+$ipai-input-focus-ring: rgba($ipai-primary, 0.15);
+$ipai-input-focus-border: rgba($ipai-primary, 0.55);
+
+// Cards
+$ipai-card-padding: $ipai-space-4;
+$ipai-card-radius: $ipai-radius-md;
+$ipai-card-border: $ipai-border;
+$ipai-card-shadow: $ipai-shadow-sm;
+$ipai-card-bg: $ipai-surface;
+
+// Kanban
+$ipai-kanban-card-padding: $ipai-space-3;
+$ipai-kanban-card-radius: $ipai-radius-md;
+$ipai-kanban-column-gap: $ipai-space-3;
+
+// Pills/Tags
+$ipai-tag-padding-y: 2px;
+$ipai-tag-padding-x: 10px;
+$ipai-tag-radius: $ipai-radius-full;
+$ipai-tag-font-size: $ipai-text-xs;
+
+// Tables
+$ipai-table-header-bg: $ipai-neutral-50;
+$ipai-table-header-text: $ipai-muted;
+$ipai-table-row-hover: $ipai-neutral-50;
+$ipai-table-border: $ipai-border;
+
+// ============================================================================
+// ODOO / BOOTSTRAP VARIABLE MAPPINGS
+// ============================================================================
+// Map IPAI tokens to Odoo and Bootstrap variables for system-wide inheritance.
+// This reduces brittle selectors and ensures more components inherit styling.
+
+// Odoo brand color (used in navbar, primary actions)
+$o-brand-odoo: $ipai-primary !default;
+$o-brand-primary: $ipai-primary !default;
+
+// Bootstrap color overrides
+$primary: $ipai-primary !default;
+$secondary: $ipai-neutral-600 !default;
+$success: $ipai-success !default;
+$info: $ipai-info !default;
+$warning: $ipai-warning !default;
+$danger: $ipai-danger !default;
+$light: $ipai-neutral-100 !default;
+$dark: $ipai-neutral-900 !default;
+
+// Bootstrap border radius
+$border-radius: $ipai-radius-sm !default;
+$border-radius-sm: 6px !default;
+$border-radius-lg: $ipai-radius-md !default;
+
+// Bootstrap input/form styling
+$input-border-color: $ipai-border !default;
+$input-focus-border-color: $ipai-input-focus-border !default;
+$input-focus-box-shadow: 0 0 0 3px $ipai-input-focus-ring !default;
+
+// Bootstrap card styling
+$card-border-radius: $ipai-card-radius !default;
+$card-border-color: $ipai-card-border !default;
+
+// Bootstrap modal styling
+$modal-content-border-radius: $ipai-radius-lg !default;
+
+// Bootstrap dropdown styling
+$dropdown-border-radius: $ipai-radius-md !default;
+$dropdown-box-shadow: $ipai-shadow-lg !default;
