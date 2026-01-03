@@ -16,10 +16,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y shellcheck jq
           python -m pip install --upgrade pip
-          pip install yamllint
+          pip install yamllint==1.35.1
 
           # shfmt
-          curl -sSLo /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/latest/download/shfmt_v3.8.0_linux_amd64
+          curl -sSLo /usr/local/bin/shfmt https://github.com/mvdan/sh/releases/download/v3.8.0/shfmt_v3.8.0_linux_amd64
           chmod +x /usr/local/bin/shfmt
 
       - name: Shellcheck scripts
