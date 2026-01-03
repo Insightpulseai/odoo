@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: dd651eaee85c5c921323130b282706a01f1de623
+> Commit: 0709b65aa05d01ac1595fc8d9685f4c7fb2df2fe
 
 ```
 .
@@ -523,6 +523,19 @@
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
+│   ├── ipai_ocr_gateway
+│   │   ├── data
+│   │   │   └── ir_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── ipai_ocr_job.py
+│   │   │   └── ipai_ocr_provider.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── ipai_ocr_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
 │   ├── ipai_platform_approvals
 │   │   ├── models
 │   │   │   ├── __init__.py
@@ -600,6 +613,22 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── export_seed_wizard.py
 │   │   │   └── import_seed_wizard.py
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_sms_gateway
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── main.py
+│   │   ├── data
+│   │   │   └── ir_cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── ipai_sms_message.py
+│   │   │   └── ipai_sms_provider.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── views
+│   │   │   └── ipai_sms_views.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_superset_connector
@@ -1088,7 +1117,8 @@
 │   │   ├── 05_project.task.dependencies.csv
 │   │   ├── 06_project.task.recurrence.csv
 │   │   ├── 07_mail.activity.csv
-│   │   └── README.md
+│   │   ├── README.md
+│   │   └── odoo_import_headers.contract.json
 │   ├── bir_calendar_2026.json
 │   ├── employee_directory.json
 │   ├── month_end_tasks.csv
@@ -1684,6 +1714,7 @@
 │   ├── import
 │   │   ├── import_activities.py
 │   │   ├── run_import_sequence.sh
+│   │   ├── validate_headers.py
 │   │   ├── verify_import.py
 │   │   └── verify_import.sh
 │   ├── kb
@@ -2336,15 +2367,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-720 directories, 1611 files
+731 directories, 1631 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 817 |
-| Files | 2295 |
-| Python files | 605 |
-| XML files | 335 |
+| Directories | 828 |
+| Files | 2315 |
+| Python files | 618 |
+| XML files | 339 |
 | Markdown files | 434 |
