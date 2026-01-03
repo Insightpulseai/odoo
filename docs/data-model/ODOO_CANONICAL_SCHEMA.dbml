@@ -2356,6 +2356,17 @@ Table ipai_finance_bir_schedule {
   write_uid int
 }
 
+Table ipai_finance_close_generate_wizard {
+  calendar_id int
+  create_date datetime
+  create_uid int
+  id int [pk]
+  month int
+  write_date datetime
+  write_uid int
+  year int
+}
+
 Table ipai_finance_directory {
   active boolean
   code varchar
@@ -2754,6 +2765,51 @@ Table ipai_month_end_template_step {
   write_uid int
 }
 
+Table ipai_ocr_job {
+  attachment_id int
+  attachment_mimetype varchar
+  attachment_name varchar
+  completed_at datetime
+  confidence_score float
+  create_date datetime
+  create_uid int
+  duration_seconds float
+  error_message text
+  id int [pk]
+  name varchar
+  output_attachment_id int
+  provider_id int
+  res_id int
+  res_model varchar
+  result_json text
+  result_text text
+  retry_count int
+  started_at datetime
+  state varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ipai_ocr_provider {
+  active boolean
+  auth_param_key varchar
+  auth_type varchar
+  base_url varchar
+  create_date datetime
+  create_uid int
+  id int [pk]
+  job_count int
+  max_retries int
+  name varchar
+  notes text
+  provider_type varchar
+  sequence int
+  supported_formats varchar
+  timeout int
+  write_date datetime
+  write_uid int
+}
+
 Table ipai_permission {
   active boolean
   create_date datetime
@@ -2795,6 +2851,53 @@ Table ipai_share_token {
   permission_level varchar
   scope_ref varchar
   scope_type varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ipai_sms_message {
+  body text
+  cost float
+  create_date datetime
+  create_uid int
+  delivered_at datetime
+  error_code varchar
+  error_message text
+  external_id varchar
+  from_number varchar
+  id int [pk]
+  name varchar
+  partner_id int
+  provider_id int
+  raw_response text
+  res_id int
+  res_model varchar
+  retry_count int
+  segments int
+  sent_at datetime
+  state varchar
+  to_number varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ipai_sms_provider {
+  account_sid varchar
+  active boolean
+  auth_param_key varchar
+  base_url varchar
+  create_date datetime
+  create_uid int
+  id int [pk]
+  max_retries int
+  message_count int
+  name varchar
+  notes text
+  provider_type varchar
+  sender_id varchar
+  sequence int
+  timeout int
+  webhook_enabled boolean
   write_date datetime
   write_uid int
 }
@@ -4110,6 +4213,7 @@ Table project_task {
   id int [pk]
   ipai_compliance_step varchar
   ipai_days_to_deadline int
+  ipai_deadline_offset_workdays int
   ipai_owner_code varchar
   ipai_owner_role varchar
   ipai_status_bucket varchar
@@ -4402,6 +4506,8 @@ Table res_config_settings {
   group_activity_statement boolean
   group_outstanding_statement boolean
   id int [pk]
+  ipai_copilot_api_key varchar
+  ipai_copilot_api_url varchar
   ipai_enable_finance_project_analytics boolean
   project_display_name_pattern varchar
   project_inherit_assignments boolean
@@ -4484,6 +4590,11 @@ Table res_users {
 Table res_users_hr_category_ids_rel {
   id_id int
   res_users_id int
+}
+
+Table resource_calendar {
+  id int [pk]
+  Note: 'stub for core model'
 }
 
 Table sale_order {
@@ -5417,6 +5528,7 @@ Ref: ipai_finance_bir_schedule.prep_task_id > project_task.id
 Ref: ipai_finance_bir_schedule.review_task_id > project_task.id
 Ref: ipai_finance_bir_schedule.reviewer_id > res_users.id
 Ref: ipai_finance_bir_schedule.supervisor_id > res_users.id
+Ref: ipai_finance_close_generate_wizard.calendar_id > resource_calendar.id
 Ref: ipai_finance_directory.user_id > res_users.id
 Ref: ipai_finance_person.user_id > res_users.id
 Ref: ipai_finance_ppm_golive_checklist.created_by > res_users.id
@@ -5455,9 +5567,14 @@ Ref: ipai_month_end_task_template.approve_user_id > res_users.id
 Ref: ipai_month_end_task_template.prep_user_id > res_users.id
 Ref: ipai_month_end_task_template.review_user_id > res_users.id
 Ref: ipai_month_end_template_step.template_id > ipai_month_end_template.id
+Ref: ipai_ocr_job.attachment_id > ir_attachment.id
+Ref: ipai_ocr_job.output_attachment_id > ir_attachment.id
+Ref: ipai_ocr_job.provider_id > ipai_ocr_provider.id
 Ref: ipai_permission.group_id > res_groups.id
 Ref: ipai_permission.user_id > res_users.id
 Ref: ipai_share_token.created_by > res_users.id
+Ref: ipai_sms_message.partner_id > res_partner.id
+Ref: ipai_sms_message.provider_id > ipai_sms_provider.id
 Ref: ipai_studio_ai_history.automation_id > base_automation.id
 Ref: ipai_studio_ai_history.field_id > ir_model_fields.id
 Ref: ipai_studio_ai_history.model_id > ir_model.id

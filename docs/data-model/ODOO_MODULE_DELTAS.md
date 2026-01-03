@@ -58,6 +58,7 @@
   - `ipai_equipment_booking`
   - `ipai_equipment_incident`
   - `ipai_finance_bir_schedule`
+  - `ipai_finance_close_generate_wizard`
   - `ipai_finance_directory`
   - `ipai_finance_logframe`
   - `ipai_finance_person`
@@ -100,7 +101,7 @@
   - `ipai_workspace`: account_manager_id, active, brand_name, campaign_type, channel_mix, child_ids, client_id, closing_stage, code, color, company_id, date_end, date_start, engagement_count, entity_code, fiscal_period, industry, invoice_count, is_critical, link_ids, name, parent_id, planned_hours, progress, project_count, remaining_hours, sequence, stage, workspace_type
   - `project_milestone`: alert_days_before, approval_date, approval_required, approver_id, baseline_deadline, completed_task_count, completion_criteria, dedication, deliverables, execution, gate_status, last_alert_sent, milestone_type, risk_level, risk_notes, task_count, task_ids, variance_days
   - `project_project`: actual_finish, actual_start, assignment_ids, baseline_finish, baseline_start, child_ids, child_ids_count, clarity_id, critical_milestone_count, department_id, group_ids, health_status, hr_category_ids, im_code, im_count, im_task_count, inherit_assignments, ipai_finance_enabled, ipai_im_code, ipai_is_im_project, ipai_root_project_id, is_program, is_template, key, limit_role_to_assignments, location_dest_id, location_id, milestone_count, name, overall_progress, overall_status, parent_id, parent_path, phase_count, picking_type_id, portfolio_id, ppm_program_ids, pr_required_states, program_code, program_type, purchase_count, purchase_invoice_count, purchase_invoice_line_total, purchase_line_total, sequence_code, show_key_warning, stage_last_update_date, stakeholder_ids, stock_analytic_date, tag_ids, task_key_sequence_id, type_id, type_ids, variance_finish, variance_start, version_ids, x_cycle_code
-  - `project_task`: activity_type, actual_cost, actual_hours, allow_moves_action_assign, allow_moves_action_confirm, ancestor_id, approval_duration, approver_id, auto_sync, bir_approval_due_date, bir_deadline, bir_form, bir_payment_due_date, bir_period_label, bir_prep_due_date, bir_related, bir_schedule_id, child_task_count, closing_due_date, cluster, code, cost_variance, critical_path, description_template_id, domain_hr_category_ids, domain_user_ids, done_stock_moves, earned_value, employee_ids, erp_ref, fd_id, finance_category, finance_code, finance_deadline_type, finance_logframe_id, finance_person_id, finance_supervisor_id, free_float, gate_approver_id, gate_decision, gate_milestone_id, group_id, has_gate, hr_category_ids, ipai_compliance_step, ipai_days_to_deadline, ipai_owner_code, ipai_owner_role, ipai_status_bucket, ipai_task_category, ipai_template_id, is_finance_ppm, is_phase, key, lag_days, lead_days, location_dest_id, location_id, milestone_count, move_ids, notes, owner_code, period_covered, phase_baseline_finish, phase_baseline_start, phase_progress, phase_status, phase_type, phase_variance_days, picking_type_id, planned_date_end, planned_date_start, planned_hours, planned_value, portal_url, portal_url_visible, pr_required_states, pr_uri, prep_duration, priority, project_department_id, relative_due, remaining_hours, resource_allocation, review_duration, reviewer_id, role_code, schedule_variance, scrap_count, scrap_ids, sfm_id, stage_id, stock_analytic_account_id, stock_analytic_date, stock_analytic_distribution, stock_analytic_line_ids, stock_moves_is_locked, stock_state, tag_ids, target_date, total_float, type_id, unreserve_visible, url, use_stock_moves, user_ids, version_id, wbs_code, x_cycle_key, x_external_key, x_obsolete, x_seed_hash, x_step_code, x_task_template_code
+  - `project_task`: activity_type, actual_cost, actual_hours, allow_moves_action_assign, allow_moves_action_confirm, ancestor_id, approval_duration, approver_id, auto_sync, bir_approval_due_date, bir_deadline, bir_form, bir_payment_due_date, bir_period_label, bir_prep_due_date, bir_related, bir_schedule_id, child_task_count, closing_due_date, cluster, code, cost_variance, critical_path, description_template_id, domain_hr_category_ids, domain_user_ids, done_stock_moves, earned_value, employee_ids, erp_ref, fd_id, finance_category, finance_code, finance_deadline_type, finance_logframe_id, finance_person_id, finance_supervisor_id, free_float, gate_approver_id, gate_decision, gate_milestone_id, group_id, has_gate, hr_category_ids, ipai_compliance_step, ipai_days_to_deadline, ipai_deadline_offset_workdays, ipai_owner_code, ipai_owner_role, ipai_status_bucket, ipai_task_category, ipai_template_id, is_finance_ppm, is_phase, key, lag_days, lead_days, location_dest_id, location_id, milestone_count, move_ids, notes, owner_code, period_covered, phase_baseline_finish, phase_baseline_start, phase_progress, phase_status, phase_type, phase_variance_days, picking_type_id, planned_date_end, planned_date_start, planned_hours, planned_value, portal_url, portal_url_visible, pr_required_states, pr_uri, prep_duration, priority, project_department_id, relative_due, remaining_hours, resource_allocation, review_duration, reviewer_id, role_code, schedule_variance, scrap_count, scrap_ids, sfm_id, stage_id, stock_analytic_account_id, stock_analytic_date, stock_analytic_distribution, stock_analytic_line_ids, stock_moves_is_locked, stock_state, tag_ids, target_date, total_float, type_id, unreserve_visible, url, use_stock_moves, user_ids, version_id, wbs_code, x_cycle_key, x_external_key, x_obsolete, x_seed_hash, x_step_code, x_task_template_code
   - `project_task_checklist_item`: actual_hours, assigned_user_id, blocker_description, completed_date, due_date, estimated_hours, notes, priority, status
   - `purchase_order`: x_master_control_submitted
 - Relation tables:
@@ -184,6 +185,12 @@
 - Relation tables:
   - `ipai_task_template_dependency_rel`
 
+## ipai_ocr_gateway
+
+- New tables:
+  - `ipai_ocr_job`
+  - `ipai_ocr_provider`
+
 ## ipai_platform_approvals
 
 - _No model changes detected._
@@ -202,6 +209,12 @@
 ## ipai_platform_workflow
 
 - _No model changes detected._
+
+## ipai_sms_gateway
+
+- New tables:
+  - `ipai_sms_message`
+  - `ipai_sms_provider`
 
 ## ipai_superset_connector
 

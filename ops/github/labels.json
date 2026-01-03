@@ -1,0 +1,22 @@
+[
+    {
+        "name": "ci:drift",
+        "color": "FBCA04",
+        "description": "Schema/contract drift regeneration"
+    },
+    {
+        "name": "ci:contract",
+        "color": "FBCA04",
+        "description": "Repo/DBML/header contract updates"
+    },
+    {
+        "name": "ci:repo-structure",
+        "color": "FBCA04",
+        "description": "Repo tree / structure gate changes"
+    },
+    {
+        "name": "release:prod",
+        "color": "D93F0B",
+        "description": "Production release"
+    }
+]
