@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from datetime import date, timedelta
-from odoo import api, fields, models, _
+
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 
 class Project(models.Model):

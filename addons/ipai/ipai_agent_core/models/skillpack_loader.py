@@ -166,10 +166,12 @@ def load_skillpack_from_default_paths(env):
             knowledge = Knowledge.search([("key", "in", knowledge_keys)])
             skill.write({"knowledge_ids": [(6, 0, knowledge.ids)]})
 
-    _logger.info("Skillpack loaded: %d tools, %d knowledge, %d skills",
-                 len(manifest.get("tools", [])),
-                 len(manifest.get("knowledge", [])),
-                 len(manifest.get("skills", [])))
+    _logger.info(
+        "Skillpack loaded: %d tools, %d knowledge, %d skills",
+        len(manifest.get("tools", [])),
+        len(manifest.get("knowledge", [])),
+        len(manifest.get("skills", [])),
+    )
 
 
 def reload_skillpack(env):

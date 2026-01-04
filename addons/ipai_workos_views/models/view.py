@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+
 from odoo import api, fields, models
 
 
@@ -123,9 +124,11 @@ class IpaiWorkosView(models.Model):
     @api.model
     def get_views_for_database(self, database_id):
         """Get all views for a database (shared + user's private)."""
-        return self.search([
-            ("database_id", "=", database_id),
-            "|",
-            ("is_shared", "=", True),
-            ("user_id", "=", self.env.user.id),
-        ])
+        return self.search(
+            [
+                ("database_id", "=", database_id),
+                "|",
+                ("is_shared", "=", True),
+                ("user_id", "=", self.env.user.id),
+            ]
+        )

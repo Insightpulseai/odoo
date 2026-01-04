@@ -6,98 +6,109 @@ Optimized SQL views for common business intelligence needs.
 These views flatten Odoo's normalized structure for BI tools.
 """
 import logging
-from odoo import models, fields, api, _
+
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
 
 class SupersetAnalyticsView(models.Model):
-    _name = 'superset.analytics.view'
-    _description = 'Pre-built Analytics View'
-    _order = 'category, sequence, name'
+    _name = "superset.analytics.view"
+    _description = "Pre-built Analytics View"
+    _order = "category, sequence, name"
 
-    name = fields.Char(string='View Name', required=True)
-    technical_name = fields.Char(string='Technical Name', required=True)
-    category = fields.Selection([
-        ('sales', 'Sales Analytics'),
-        ('finance', 'Finance Analytics'),
-        ('inventory', 'Inventory Analytics'),
-        ('hr', 'HR Analytics'),
-        ('project', 'Project Analytics'),
-        ('bir', 'BIR Tax Compliance'),
-    ], string='Category', required=True)
-    
-    description = fields.Text(string='Description')
+    name = fields.Char(string="View Name", required=True)
+    technical_name = fields.Char(string="Technical Name", required=True)
+    category = fields.Selection(
+        [
+            ("sales", "Sales Analytics"),
+            ("finance", "Finance Analytics"),
+            ("inventory", "Inventory Analytics"),
+            ("hr", "HR Analytics"),
+            ("project", "Project Analytics"),
+            ("bir", "BIR Tax Compliance"),
+        ],
+        string="Category",
+        required=True,
+    )
+
+    description = fields.Text(string="Description")
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
-    
+
     # SQL Definition
-    sql_definition = fields.Text(string='SQL Definition', required=True)
-    
+    sql_definition = fields.Text(string="SQL Definition", required=True)
+
     # Dependencies
     required_modules = fields.Char(
-        string='Required Modules',
-        help='Comma-separated list of modules that must be installed',
+        string="Required Modules",
+        help="Comma-separated list of modules that must be installed",
     )
-    
+
     # Status
-    is_created = fields.Boolean(string='View Created', readonly=True)
-    last_refresh = fields.Datetime(string='Last Refresh', readonly=True)
+    is_created = fields.Boolean(string="View Created", readonly=True)
+    last_refresh = fields.Datetime(string="Last Refresh", readonly=True)
 
     def action_create_view(self):
         """Create the analytics view in PostgreSQL"""
         self.ensure_one()
-        
+
         view_sql = f"""
             CREATE OR REPLACE VIEW {self.technical_name} AS
             {self.sql_definition}
         """
-        
+
         try:
             self.env.cr.execute(view_sql)
-            self.write({
-                'is_created': True,
-                'last_refresh': fields.Datetime.now(),
-            })
-            _logger.info('Created analytics view: %s', self.technical_name)
-            
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': _('View Created'),
-                    'message': _('Analytics view "%s" created successfully') % self.name,
-                    'type': 'success',
+            self.write(
+                {
+                    "is_created": True,
+                    "last_refresh": fields.Datetime.now(),
                 }
+            )
+            _logger.info("Created analytics view: %s", self.technical_name)
+
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("View Created"),
+                    "message": _('Analytics view "%s" created successfully')
+                    % self.name,
+                    "type": "success",
+                },
             }
         except Exception as e:
-            _logger.error('Failed to create analytics view %s: %s', self.technical_name, str(e))
-            raise UserError(_('Failed to create view: %s') % str(e))
+            _logger.error(
+                "Failed to create analytics view %s: %s", self.technical_name, str(e)
+            )
+            raise UserError(_("Failed to create view: %s") % str(e))
 
     def action_drop_view(self):
         """Drop the analytics view"""
         self.ensure_one()
         try:
-            self.env.cr.execute(f'DROP VIEW IF EXISTS {self.technical_name} CASCADE')
+            self.env.cr.execute(f"DROP VIEW IF EXISTS {self.technical_name} CASCADE")
             self.is_created = False
         except Exception as e:
-            _logger.warning('Failed to drop view %s: %s', self.technical_name, str(e))
+            _logger.warning("Failed to drop view %s: %s", self.technical_name, str(e))
 
     @api.model
     def create_all_views(self):
         """Create all active analytics views"""
-        views = self.search([('active', '=', True)])
+        views = self.search([("active", "=", True)])
         created = 0
         errors = []
-        
+
         for view in views:
             try:
                 view.action_create_view()
                 created += 1
             except Exception as e:
-                errors.append(f'{view.name}: {str(e)}')
-        
+                errors.append(f"{view.name}: {str(e)}")
+
         return created, errors
 
 
@@ -109,11 +120,11 @@ ANALYTICS_VIEWS = {
     # -------------------------------------------------------------------------
     # SALES ANALYTICS
     # -------------------------------------------------------------------------
-    'sales_order_analysis': {
-        'name': 'Sales Order Analysis',
-        'category': 'sales',
-        'description': 'Comprehensive sales order metrics with customer and product dimensions',
-        'sql': """
+    "sales_order_analysis": {
+        "name": "Sales Order Analysis",
+        "category": "sales",
+        "description": "Comprehensive sales order metrics with customer and product dimensions",
+        "sql": """
 SELECT
     so.id AS order_id,
     so.name AS order_ref,
@@ -166,17 +177,16 @@ GROUP BY
     so.partner_id, rp.name, rp.city, rp.country_id, rpc.name,
     so.company_id, rcomp.name,
     so.create_date, so.write_date
-"""
+""",
     },
-    
     # -------------------------------------------------------------------------
     # FINANCE ANALYTICS
     # -------------------------------------------------------------------------
-    'account_move_analysis': {
-        'name': 'Journal Entry Analysis',
-        'category': 'finance',
-        'description': 'Account moves (invoices, bills, journal entries) with GL dimensions',
-        'sql': """
+    "account_move_analysis": {
+        "name": "Journal Entry Analysis",
+        "category": "finance",
+        "description": "Account moves (invoices, bills, journal entries) with GL dimensions",
+        "sql": """
 SELECT
     am.id AS move_id,
     am.name AS move_ref,
@@ -228,14 +238,13 @@ LEFT JOIN account_journal aj ON am.journal_id = aj.id
 LEFT JOIN res_company rcomp ON am.company_id = rcomp.id
 
 WHERE am.state = 'posted'
-"""
+""",
     },
-    
-    'account_move_line_analysis': {
-        'name': 'GL Line Item Analysis',
-        'category': 'finance',
-        'description': 'Detailed general ledger line items with full account dimensions',
-        'sql': """
+    "account_move_line_analysis": {
+        "name": "GL Line Item Analysis",
+        "category": "finance",
+        "description": "Detailed general ledger line items with full account dimensions",
+        "sql": """
 SELECT
     aml.id AS line_id,
     aml.name AS description,
@@ -286,14 +295,13 @@ LEFT JOIN account_journal aj ON aml.journal_id = aj.id
 LEFT JOIN res_company rcomp ON aml.company_id = rcomp.id
 
 WHERE am.state = 'posted'
-"""
+""",
     },
-    
-    'trial_balance_view': {
-        'name': 'Trial Balance',
-        'category': 'finance',
-        'description': 'Account balances aggregated by account for trial balance reporting',
-        'sql': """
+    "trial_balance_view": {
+        "name": "Trial Balance",
+        "category": "finance",
+        "description": "Account balances aggregated by account for trial balance reporting",
+        "sql": """
 SELECT
     aa.id AS account_id,
     aa.code AS account_code,
@@ -323,17 +331,16 @@ GROUP BY
     aa.id, aa.code, aa.name, aa.account_type,
     DATE_TRUNC('month', aml.date),
     aa.company_id, rcomp.name
-"""
+""",
     },
-    
     # -------------------------------------------------------------------------
     # BIR TAX COMPLIANCE
     # -------------------------------------------------------------------------
-    'bir_ewt_analysis': {
-        'name': 'BIR EWT Analysis (1601-EQ)',
-        'category': 'bir',
-        'description': 'Expanded Withholding Tax analysis for BIR 1601-EQ compliance',
-        'sql': """
+    "bir_ewt_analysis": {
+        "name": "BIR EWT Analysis (1601-EQ)",
+        "category": "bir",
+        "description": "Expanded Withholding Tax analysis for BIR 1601-EQ compliance",
+        "sql": """
 SELECT
     am.id AS move_id,
     am.name AS document_ref,
@@ -378,14 +385,13 @@ LEFT JOIN account_tax at ON aml.tax_line_id = at.id
 WHERE am.state = 'posted'
   AND am.move_type IN ('in_invoice', 'in_refund')
   AND aa.code LIKE '213%'  -- Withholding tax accounts
-"""
+""",
     },
-    
-    'bir_vat_analysis': {
-        'name': 'BIR VAT Analysis (2550Q)',
-        'category': 'bir',
-        'description': 'VAT input/output analysis for BIR 2550Q quarterly filing',
-        'sql': """
+    "bir_vat_analysis": {
+        "name": "BIR VAT Analysis (2550Q)",
+        "category": "bir",
+        "description": "VAT input/output analysis for BIR 2550Q quarterly filing",
+        "sql": """
 SELECT
     am.id AS move_id,
     am.name AS document_ref,
@@ -426,17 +432,16 @@ LEFT JOIN res_partner rp ON am.partner_id = rp.id
 WHERE am.state = 'posted'
   AND am.move_type IN ('out_invoice', 'out_refund', 'in_invoice', 'in_refund')
   AND am.amount_tax != 0
-"""
+""",
     },
-    
     # -------------------------------------------------------------------------
     # INVENTORY ANALYTICS
     # -------------------------------------------------------------------------
-    'stock_valuation_analysis': {
-        'name': 'Stock Valuation Analysis',
-        'category': 'inventory',
-        'description': 'Current stock levels with valuation by location and product',
-        'sql': """
+    "stock_valuation_analysis": {
+        "name": "Stock Valuation Analysis",
+        "category": "inventory",
+        "description": "Current stock levels with valuation by location and product",
+        "sql": """
 SELECT
     sq.id AS quant_id,
     sq.quantity,
@@ -471,17 +476,16 @@ LEFT JOIN stock_warehouse sw ON sl.warehouse_id = sw.id
 
 WHERE sl.usage = 'internal'
   AND sq.quantity > 0
-"""
+""",
     },
-    
     # -------------------------------------------------------------------------
     # PROJECT ANALYTICS
     # -------------------------------------------------------------------------
-    'project_task_analysis': {
-        'name': 'Project Task Analysis',
-        'category': 'project',
-        'description': 'Project tasks with time tracking and status metrics',
-        'sql': """
+    "project_task_analysis": {
+        "name": "Project Task Analysis",
+        "category": "project",
+        "description": "Project tasks with time tracking and status metrics",
+        "sql": """
 SELECT
     pt.id AS task_id,
     pt.name AS task_name,
@@ -521,17 +525,16 @@ JOIN project_project pp ON pt.project_id = pp.id
 LEFT JOIN project_task_type pts ON pt.stage_id = pts.id
 
 WHERE pt.active = true
-"""
+""",
     },
-    
     # -------------------------------------------------------------------------
     # HR ANALYTICS
     # -------------------------------------------------------------------------
-    'employee_analysis': {
-        'name': 'Employee Analysis',
-        'category': 'hr',
-        'description': 'Employee demographics and organizational structure',
-        'sql': """
+    "employee_analysis": {
+        "name": "Employee Analysis",
+        "category": "hr",
+        "description": "Employee demographics and organizational structure",
+        "sql": """
 SELECT
     he.id AS employee_id,
     he.name AS employee_name,
@@ -559,6 +562,6 @@ LEFT JOIN hr_employee hem ON he.parent_id = hem.id
 LEFT JOIN hr_job hj ON he.job_id = hj.id
 
 WHERE he.active = true
-"""
+""",
     },
 }

@@ -1,5 +1,1 @@
-from . import res_partner
-from . import bir_tax_return
-from . import bir_vat
-from . import bir_withholding
-from . import bir_filing_deadline
+from . import bir_filing_deadline, bir_tax_return, bir_vat, bir_withholding, res_partner

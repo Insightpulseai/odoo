@@ -6,7 +6,8 @@ Extends discuss.channel to support AI chat functionality.
 """
 
 import logging
-from odoo import api, fields, models, _
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -15,6 +16,7 @@ class DiscussChannel(models.Model):
     """
     Extension of discuss.channel for AI chat support.
     """
+
     _inherit = "discuss.channel"
 
     is_ai_channel = fields.Boolean(
@@ -83,11 +85,15 @@ class DiscussChannel(models.Model):
         ai_response = self._get_ai_response(message_body, context)
 
         # Get AI partner
-        ai_partner = self.env.ref("ipai_ask_ai.partner_ask_ai", raise_if_not_found=False)
+        ai_partner = self.env.ref(
+            "ipai_ask_ai.partner_ask_ai", raise_if_not_found=False
+        )
         if not ai_partner:
-            ai_partner = self.env["res.partner"].sudo().search([
-                ("email", "=", "ai@insightpulseai.net")
-            ], limit=1)
+            ai_partner = (
+                self.env["res.partner"]
+                .sudo()
+                .search([("email", "=", "ai@insightpulseai.net")], limit=1)
+            )
 
         # Post AI response
         ai_message = self.sudo().message_post(

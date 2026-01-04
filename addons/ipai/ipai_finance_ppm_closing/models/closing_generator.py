@@ -25,8 +25,9 @@ try:
 except ImportError:
     HAS_PYTZ = False
 
-from odoo import SUPERUSER_ID, api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import SUPERUSER_ID, api, fields, models
 
 _logger = logging.getLogger(__name__)
 

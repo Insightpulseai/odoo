@@ -1,9 +1,9 @@
 {
-    'name': 'IPAI Superset Connector',
-    'version': '18.0.1.0.0',
-    'category': 'Reporting/BI',
-    'summary': 'Apache Superset integration with managed dataset sync',
-    'description': """
+    "name": "IPAI Superset Connector",
+    "version": "18.0.1.0.0",
+    "category": "Reporting/BI",
+    "summary": "Apache Superset integration with managed dataset sync",
+    "description": """
 IPAI Superset Connector
 =======================
 
@@ -59,32 +59,32 @@ This module follows ipai_* patterns:
 - No monkey-patching or forks
 - OCA-compatible, AGPL-3 licensed
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
-        'mail',
-        'sale',
-        'account',
-        'stock',
-        'hr',
-        'project',
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "base",
+        "mail",
+        "sale",
+        "account",
+        "stock",
+        "hr",
+        "project",
     ],
-    'data': [
-        'security/superset_security.xml',
-        'security/ir.model.access.csv',
-        'data/superset_config.xml',
-        'data/analytics_views.xml',
-        'views/superset_dataset_views.xml',
-        'views/superset_connection_views.xml',
-        'views/res_config_settings_views.xml',
-        'wizards/dataset_wizard_views.xml',
+    "data": [
+        "security/superset_security.xml",
+        "security/ir.model.access.csv",
+        "data/superset_config.xml",
+        "data/analytics_views.xml",
+        "views/superset_dataset_views.xml",
+        "views/superset_connection_views.xml",
+        "views/res_config_settings_views.xml",
+        "wizards/dataset_wizard_views.xml",
     ],
-    'external_dependencies': {
-        'python': ['requests', 'psycopg2'],
+    "external_dependencies": {
+        "python": ["requests", "psycopg2"],
     },
-    'installable': True,
-    'application': True,
-    'auto_install': False,
+    "installable": True,
+    "application": True,
+    "auto_install": False,
 }

@@ -32,13 +32,15 @@ Example Usage:
     # Returns: {"status": "PASS", "created": 15, "updated": 3, "obsolete": 0, "warnings": [], "errors": []}
 """
 
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError, UserError
-import json
 import hashlib
+import json
 import logging
 from datetime import datetime, timedelta
+
 from dateutil.rrule import rrulestr
+from odoo.exceptions import UserError, ValidationError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 

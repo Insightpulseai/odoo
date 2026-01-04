@@ -1,5 +1,6 @@
-from odoo import api, fields, models
 from datetime import date, timedelta
+
+from odoo import api, fields, models
 
 
 class PhHoliday(models.Model):

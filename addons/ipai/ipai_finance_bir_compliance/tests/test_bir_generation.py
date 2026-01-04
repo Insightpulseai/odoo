@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Tests for ipai_finance_bir_compliance module."""
 from datetime import date
+
 from odoo.tests.common import TransactionCase
 
 

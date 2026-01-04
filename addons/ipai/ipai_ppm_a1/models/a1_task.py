@@ -4,8 +4,9 @@ A1 Task
 
 Individual task instance generated from a template for a specific period.
 """
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 
 class A1Task(models.Model):
