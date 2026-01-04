@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "InsightPulse Clarity PPM Parity",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Project Management",
     "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
     "description": """
@@ -28,17 +28,17 @@ Features:
 * Finance PPM integration for BIR tax filing
 * Mattermost notifications for phase gates
 
-Dependencies:
--------------
-* OCA project_key
-* OCA project_category
-* OCA project_wbs
-* OCA project_parent_task_filter
-* OCA project_milestone
-* OCA project_task_milestone
-* OCA project_task_dependency
-* OCA project_task_checklist
-* OCA project_timeline
+OCA Dependencies (add to external-src/OCA/project):
+----------------------------------------------------
+* project_key
+* project_category
+* project_wbs
+* project_parent_task_filter
+* project_milestone
+* project_task_milestone
+* project_task_dependency
+* project_task_checklist
+* project_timeline
 
 Author: InsightPulse AI
 License: AGPL-3
@@ -48,15 +48,16 @@ License: AGPL-3
     "license": "AGPL-3",
     "depends": [
         "project",
-        "project_key",
-        "project_category",
-        "project_wbs",
-        "project_parent_task_filter",
-        "project_milestone",
-        "project_task_milestone",
-        "project_task_dependency",
-        "project_task_checklist",
-        "project_timeline",
+        # OCA dependencies - uncomment when OCA/project submodule is added
+        # "project_key",
+        # "project_category",
+        # "project_wbs",
+        # "project_parent_task_filter",
+        # "project_milestone",
+        # "project_task_milestone",
+        # "project_task_dependency",
+        # "project_task_checklist",
+        # "project_timeline",
     ],
     "data": [
         "security/ir.model.access.csv",

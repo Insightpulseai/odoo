@@ -1,0 +1,638 @@
+{
+  "environment": {
+    "odoo_version": "18.0",
+    "custom_addons_root": "/home/user/odoo-ce/addons"
+  },
+  "results": {
+    "ipai_advisor": [
+      {
+        "module": "ipai_advisor",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ask_ai": [
+      {
+        "module": "ipai_ask_ai",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ask_ai_chatter": [
+      {
+        "module": "ipai_ask_ai_chatter",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_assets": [
+      {
+        "module": "ipai_assets",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_bir_compliance": [
+      {
+        "module": "ipai_bir_compliance",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_bir_tax_compliance": [
+      {
+        "module": "ipai_bir_tax_compliance",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ce_branding": [
+      {
+        "module": "ipai_ce_branding",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ce_cleaner": [
+      {
+        "module": "ipai_ce_cleaner",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_clarity_ppm_parity": [
+      {
+        "module": "ipai_clarity_ppm_parity",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_close_orchestration": [
+      {
+        "module": "ipai_close_orchestration",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_crm_pipeline": [
+      {
+        "module": "ipai_crm_pipeline",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_custom_routes": [
+      {
+        "module": "ipai_custom_routes",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_default_home": [
+      {
+        "module": "ipai_default_home",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_dev_studio_base": [
+      {
+        "module": "ipai_dev_studio_base",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_equipment": [
+      {
+        "module": "ipai_equipment",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_expense": [
+      {
+        "module": "ipai_expense",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_bir_compliance": [
+      {
+        "module": "ipai_finance_bir_compliance",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_close_automation": [
+      {
+        "module": "ipai_finance_close_automation",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_close_seed": [
+      {
+        "module": "ipai_finance_close_seed",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_closing": [
+      {
+        "module": "ipai_finance_closing",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_month_end": [
+      {
+        "module": "ipai_finance_month_end",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_monthly_closing": [
+      {
+        "module": "ipai_finance_monthly_closing",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm": [
+      {
+        "module": "ipai_finance_ppm",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_closing": [
+      {
+        "module": "ipai_finance_ppm_closing",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_dashboard": [
+      {
+        "module": "ipai_finance_ppm_dashboard",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_golive": [
+      {
+        "module": "ipai_finance_ppm_golive",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_tdi": [
+      {
+        "module": "ipai_finance_ppm_tdi",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_umbrella": [
+      {
+        "module": "ipai_finance_ppm_umbrella",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_project_hybrid": [
+      {
+        "module": "ipai_finance_project_hybrid",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_grid_view": [
+      {
+        "module": "ipai_grid_view",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_industry_accounting_firm": [
+      {
+        "module": "ipai_industry_accounting_firm",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_industry_marketing_agency": [
+      {
+        "module": "ipai_industry_marketing_agency",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_master_control": [
+      {
+        "module": "ipai_master_control",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_month_end": [
+      {
+        "module": "ipai_month_end",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_month_end_closing": [
+      {
+        "module": "ipai_month_end_closing",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ocr_gateway": [
+      {
+        "module": "ipai_ocr_gateway",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_approvals": [
+      {
+        "module": "ipai_platform_approvals",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_audit": [
+      {
+        "module": "ipai_platform_audit",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_permissions": [
+      {
+        "module": "ipai_platform_permissions",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_theme": [
+      {
+        "module": "ipai_platform_theme",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_workflow": [
+      {
+        "module": "ipai_platform_workflow",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_portal_fix": [
+      {
+        "module": "ipai_portal_fix",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ppm": [
+      {
+        "module": "ipai_ppm",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ppm_a1": [
+      {
+        "module": "ipai_ppm_a1",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ppm_monthly_close": [
+      {
+        "module": "ipai_ppm_monthly_close",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_project_program": [
+      {
+        "module": "ipai_project_program",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_sms_gateway": [
+      {
+        "module": "ipai_sms_gateway",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_srm": [
+      {
+        "module": "ipai_srm",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_studio_ai": [
+      {
+        "module": "ipai_studio_ai",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_superset_connector": [
+      {
+        "module": "ipai_superset_connector",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_tbwa_finance": [
+      {
+        "module": "ipai_tbwa_finance",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_theme_tbwa_backend": [
+      {
+        "module": "ipai_theme_tbwa_backend",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_web_theme_chatgpt": [
+      {
+        "module": "ipai_web_theme_chatgpt",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_affine": [
+      {
+        "module": "ipai_workos_affine",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_blocks": [
+      {
+        "module": "ipai_workos_blocks",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_canvas": [
+      {
+        "module": "ipai_workos_canvas",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_collab": [
+      {
+        "module": "ipai_workos_collab",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_core": [
+      {
+        "module": "ipai_workos_core",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_db": [
+      {
+        "module": "ipai_workos_db",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_search": [
+      {
+        "module": "ipai_workos_search",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_templates": [
+      {
+        "module": "ipai_workos_templates",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_views": [
+      {
+        "module": "ipai_workos_views",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workspace_core": [
+      {
+        "module": "ipai_workspace_core",
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ]
+  }
+}

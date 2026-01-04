@@ -20,7 +20,7 @@ Native Odoo implementation providing Cheqroom-style functionality:
 This is a PARITY MODULE - it clones Cheqroom workflows natively
 without external SaaS integration. See ADR-0001 for philosophy.
     """,
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Operations/Equipment",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.net",
@@ -30,7 +30,7 @@ without external SaaS integration. See ADR-0001 for philosophy.
         "mail",
         "hr",
         "stock",
-        "barcodes",
+        # "barcodes",  # TODO: Use OCA stock_barcodes when available
     ],
     "data": [
         "security/assets_security.xml",
