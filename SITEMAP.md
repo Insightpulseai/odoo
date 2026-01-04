@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c02ac8424c7d05681a54c5d3d0b39bd78e2d6e09
+> Commit: 6849d0ec4a14b31625052101ad57bb3059da93f1
 
 ## 📚 Documentation
 
@@ -598,19 +598,19 @@
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
-| [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ | Natural Language Customization Engine for Odoo |
+| [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
-| [ipai_finance_closing](./addons/ipai_finance_closing) | ✅ | Month-end financial closing task template based on SAP Advanced Financial Closing |
-| [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ | Production go-live checklist for Finance PPM modules |
+| [ipai_finance_closing](./addons/ipai_finance_closing) | ✅ |  |
+| [ipai_finance_ppm_golive](./addons/ipai_finance_ppm_golive) | ✅ |  |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella) | ✅ |  |
 | [ipai_finance_ppm_umbrella](./addons/ipai_finance_ppm_umbrella/addons/ipai_finance_ppm_umbrella) | ⚠️ | Missing manifest |
 | [ipai_grid_view](./addons/ipai_grid_view) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
-| [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ | SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance |
+| [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ |  |
 | [ipai_ocr_gateway](./addons/ipai_ocr_gateway) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
@@ -618,9 +618,9 @@
 | [ipai_platform_theme](./addons/ipai_platform_theme) | ✅ |  |
 | [ipai_platform_workflow](./addons/ipai_platform_workflow) | ✅ |  |
 | [ipai_sms_gateway](./addons/ipai_sms_gateway) | ✅ |  |
-| [ipai_superset_connector](./addons/ipai_superset_connector) | ✅ | Apache Superset integration with managed dataset sync |
+| [ipai_superset_connector](./addons/ipai_superset_connector) | ✅ |  |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
-| [ipai_theme_tbwa_backend](./addons/ipai_theme_tbwa_backend) | ✅ | TBWA branding skin - Black + Yellow + IBM Plex |
+| [ipai_theme_tbwa_backend](./addons/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_web_theme_chatgpt](./addons/ipai_web_theme_chatgpt) | ✅ |  |
 | [ipai_workos_affine](./addons/ipai_workos_affine) | ✅ |  |
 | [ipai_workos_blocks](./addons/ipai_workos_blocks) | ✅ |  |
