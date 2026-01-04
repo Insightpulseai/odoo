@@ -1,0 +1,95 @@
+name: IPAI AI Studio Smoke
+
+on:
+  pull_request:
+    paths:
+      - 'addons/ipai/ipai_ai_studio/**'
+      - '.github/workflows/ipai-ai-studio-smoke.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/ipai_ai_studio/**'
+      - '.github/workflows/ipai-ai-studio-smoke.yml'
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Odoo stop-after-init (install ipai_ai_studio)
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: "5432"
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: ipai_ai_studio_smoke
+        run: |
+          set -euo pipefail
+
+          # Use repo's existing Dockerfile if available, else use stock Odoo image
+          if [ -f Dockerfile ]; then
+            docker build -t ipai-odoo:ci .
+            ODOO_IMAGE=ipai-odoo:ci
+          else
+            ODOO_IMAGE=odoo:18.0
+          fi
+
+          docker run --rm --network host \
+            -v "${PWD}:/workspace" -w /workspace \
+            "${ODOO_IMAGE}" bash -lc '
+              set -euo pipefail
+              odoo --version
+
+              # Build addons-path: core + repo addons + nested ipai
+              CORE="/usr/lib/python3/dist-packages/odoo/addons"
+              ADDONS=""
+              [ -d "$CORE" ] && ADDONS="$CORE"
+              [ -d "/workspace/addons" ] && ADDONS="${ADDONS},/workspace/addons"
+              [ -d "/workspace/addons/ipai" ] && ADDONS="${ADDONS},/workspace/addons/ipai"
+              ADDONS="${ADDONS#,}"
+
+              echo "Using addons-path: $ADDONS"
+
+              odoo \
+                --db_host=127.0.0.1 --db_port=5432 --db_user=postgres --db_password=postgres \
+                -d ipai_ai_studio_smoke \
+                --addons-path "$ADDONS" \
+                -i ipai_ai_studio \
+                --stop-after-init \
+                --log-level=info
+            '
+
+      - name: Verify module installed
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: "5432"
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: ipai_ai_studio_smoke
+        run: |
+          # Check that the model and menu exist in DB
+          psql -c "SELECT name FROM ir_ui_menu WHERE name ILIKE '%AI Studio%' LIMIT 5;"
+          psql -c "SELECT model FROM ir_model WHERE model = 'ipai.ai_studio.run';"
+
+          # Verify at least 1 row returned for model
+          COUNT=$(psql -t -c "SELECT COUNT(*) FROM ir_model WHERE model = 'ipai.ai_studio.run';")
+          if [ "$COUNT" -lt 1 ]; then
+            echo "ERROR: ipai.ai_studio.run model not found in registry"
+            exit 1
+          fi
+          echo "OK: ipai_ai_studio module installed successfully"
