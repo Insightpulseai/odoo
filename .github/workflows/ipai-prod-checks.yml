@@ -1,0 +1,149 @@
+name: IPAI Production Checks
+
+on:
+  push:
+    paths:
+      - 'packages/ipai-design-tokens/**'
+      - 'apps/ipai-chatgpt-app/**'
+      - 'addons/ipai_ask_ai_chatter/**'
+      - 'addons/ipai_web_theme_chatgpt/**'
+      - 'scripts/sync-tokens.sh'
+      - 'scripts/oca-bootstrap.sh'
+  pull_request:
+    paths:
+      - 'packages/ipai-design-tokens/**'
+      - 'apps/ipai-chatgpt-app/**'
+      - 'addons/ipai_ask_ai_chatter/**'
+      - 'addons/ipai_web_theme_chatgpt/**'
+      - 'scripts/sync-tokens.sh'
+      - 'scripts/oca-bootstrap.sh'
+  workflow_dispatch:
+
+jobs:
+  validate-tokens:
+    name: Validate Design Tokens
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check token files exist
+        run: |
+          echo "Checking design tokens package..."
+          test -f packages/ipai-design-tokens/tokens.css || exit 1
+          test -f packages/ipai-design-tokens/tokens.scss || exit 1
+          test -f packages/ipai-design-tokens/tailwind.preset.js || exit 1
+          test -f packages/ipai-design-tokens/package.json || exit 1
+          echo "✓ All token files present"
+
+      - name: Validate tokens.css syntax
+        run: |
+          # Basic CSS validation - check for balanced braces
+          OPEN=$(grep -o '{' packages/ipai-design-tokens/tokens.css | wc -l)
+          CLOSE=$(grep -o '}' packages/ipai-design-tokens/tokens.css | wc -l)
+          if [ "$OPEN" -ne "$CLOSE" ]; then
+            echo "ERROR: Unbalanced braces in tokens.css"
+            exit 1
+          fi
+          echo "✓ tokens.css syntax OK"
+
+  validate-scripts:
+    name: Validate Scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check scripts exist and are executable
+        run: |
+          test -x scripts/sync-tokens.sh || exit 1
+          test -x scripts/oca-bootstrap.sh || exit 1
+          echo "✓ Scripts are executable"
+
+      - name: Shellcheck sync-tokens.sh
+        uses: ludeeus/action-shellcheck@master
+        with:
+          scandir: './scripts'
+          ignore_paths: 'node_modules'
+          severity: error
+        continue-on-error: true
+
+  validate-odoo-addons:
+    name: Validate Odoo Addons
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check addon manifests
+        run: |
+          echo "Checking ipai_ask_ai_chatter..."
+          test -f addons/ipai_ask_ai_chatter/__manifest__.py || exit 1
+          test -f addons/ipai_ask_ai_chatter/__init__.py || exit 1
+          test -f addons/ipai_ask_ai_chatter/security/ir.model.access.csv || exit 1
+
+          echo "Checking ipai_web_theme_chatgpt..."
+          test -f addons/ipai_web_theme_chatgpt/__manifest__.py || exit 1
+          test -f addons/ipai_web_theme_chatgpt/static/src/scss/tokens.scss || exit 1
+
+          echo "✓ All addon files present"
+
+      - name: Validate Python syntax
+        run: |
+          python3 -m py_compile addons/ipai_ask_ai_chatter/__manifest__.py
+          python3 -m py_compile addons/ipai_ask_ai_chatter/models/ask_ai_request.py
+          python3 -m py_compile addons/ipai_ask_ai_chatter/models/mail_message.py
+          echo "✓ Python syntax OK"
+
+  build-chatgpt-widget:
+    name: Build ChatGPT Widget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+          cache-dependency-path: apps/ipai-chatgpt-app/web/pnpm-lock.yaml
+
+      - name: Install web dependencies
+        working-directory: apps/ipai-chatgpt-app/web
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Build widget
+        working-directory: apps/ipai-chatgpt-app/web
+        run: pnpm build
+
+      - name: Check dist output
+        run: |
+          test -f apps/ipai-chatgpt-app/web/dist/index.html || exit 1
+          SIZE=$(wc -c < apps/ipai-chatgpt-app/web/dist/index.html)
+          echo "Widget size: $SIZE bytes"
+          # Warn if over 500KB
+          if [ "$SIZE" -gt 512000 ]; then
+            echo "WARNING: Widget is larger than 500KB"
+          fi
+          echo "✓ Widget built successfully"
+
+  validate-mcp-server:
+    name: Validate MCP Server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check server.js syntax
+        run: node --check apps/ipai-chatgpt-app/server/server.js
+
+      - name: Check package.json valid
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('apps/ipai-chatgpt-app/server/package.json'))"
+          echo "✓ Server package.json valid"
