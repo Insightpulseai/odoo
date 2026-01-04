@@ -50,6 +50,7 @@ export const DocsAiWidget: React.FC<DocsAiWidgetProps> = ({
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState<Record<string, number>>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom on new messages
@@ -132,8 +133,31 @@ export const DocsAiWidget: React.FC<DocsAiWidgetProps> = ({
   };
 
   const handleFeedback = async (messageId: string, score: number) => {
-    // TODO: Implement feedback submission
-    console.log("Feedback:", messageId, score);
+    // Prevent duplicate feedback for the same message
+    if (feedbackSubmitted[messageId] !== undefined) return;
+
+    // Optimistically mark as submitted
+    setFeedbackSubmitted((prev) => ({ ...prev, [messageId]: score }));
+
+    try {
+      // Construct feedback endpoint (same base URL, /feedback path)
+      const feedbackUrl = apiUrl.replace(/\/+$/, "") + "/feedback";
+
+      await fetch(feedbackUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messageId,
+          score,
+          tenantId,
+          surface,
+          userId,
+        }),
+      });
+    } catch (err) {
+      // Log error but don't revert UI - feedback is best-effort
+      console.error("Failed to submit feedback:", err);
+    }
   };
 
   const positionStyles =
@@ -304,33 +328,41 @@ export const DocsAiWidget: React.FC<DocsAiWidgetProps> = ({
 
             {/* Feedback buttons for assistant messages */}
             {m.role === "assistant" && m.id !== "welcome" && (
-              <div style={{ marginTop: 6, display: "flex", gap: 8 }}>
-                <button
-                  onClick={() => handleFeedback(m.id, 1)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: 14,
-                    opacity: 0.6,
-                  }}
-                  title="Helpful"
-                >
-                  +
-                </button>
-                <button
-                  onClick={() => handleFeedback(m.id, -1)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: 14,
-                    opacity: 0.6,
-                  }}
-                  title="Not helpful"
-                >
-                  -
-                </button>
+              <div style={{ marginTop: 6, display: "flex", gap: 8, alignItems: "center" }}>
+                {feedbackSubmitted[m.id] !== undefined ? (
+                  <span style={{ fontSize: 12, color: "#6b7280" }}>
+                    {feedbackSubmitted[m.id] === 1 ? "Thanks for your feedback!" : "Thanks, we'll improve!"}
+                  </span>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => handleFeedback(m.id, 1)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 14,
+                        opacity: 0.6,
+                      }}
+                      title="Helpful"
+                    >
+                      👍
+                    </button>
+                    <button
+                      onClick={() => handleFeedback(m.id, -1)}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: 14,
+                        opacity: 0.6,
+                      }}
+                      title="Not helpful"
+                    >
+                      👎
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
