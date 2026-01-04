@@ -12,7 +12,17 @@ import os
 import re
 from datetime import datetime, timedelta
 
+<<<<<<< HEAD
 import requests
+=======
+import os
+from odoo.exceptions import AccessError, UserError
+>>>>>>> be46fb92 (fix: Production hotfix - OwlError, OAuth loop, Gmail SMTP, Google OAuth SSO)
+
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
 
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError
@@ -369,6 +379,7 @@ class IpaiAskAIService(models.TransientModel):
         return {"message": message}
 
     def _generate_generic_response(self, query, context):
+<<<<<<< HEAD
         """Generate a generic response for unrecognized queries using Gemini."""
         # Try Gemini AI for generic queries
         gemini_response = self._call_gemini(query, context)
@@ -380,6 +391,14 @@ class IpaiAskAIService(models.TransientModel):
             }
 
         # Fallback to default response
+=======
+        """Generate a generic response for unrecognized queries."""
+        # Try Gemini if configured
+        gemini_response = self._query_gemini(query)
+        if gemini_response:
+            return {"message": gemini_response}
+
+>>>>>>> be46fb92 (fix: Production hotfix - OwlError, OAuth loop, Gmail SMTP, Google OAuth SSO)
         return {
             "message": _(
                 "I'm not sure how to answer that question. "
@@ -387,6 +406,29 @@ class IpaiAskAIService(models.TransientModel):
                 "Type 'help' to see what I can do."
             ),
         }
+
+    def _query_gemini(self, prompt):
+        """Query Google Gemini API."""
+        api_key = self.env['ir.config_parameter'].sudo().get_param('ipai_gemini.api_key')
+        if not api_key:
+            api_key = os.environ.get('GEMINI_API_KEY')
+        
+        if not api_key:
+            return None
+
+        if not genai:
+            _logger.warning("google-generativeai library not installed")
+            return None
+
+        try:
+            genai.configure(api_key=api_key)
+            model_name = self.env['ir.config_parameter'].sudo().get_param('ipai_gemini.model', 'gemini-pro')
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            _logger.error("Gemini API Error: %s", str(e))
+            return None
 
     def _format_currency(self, amount, currency=None):
         """Format amount as currency string."""

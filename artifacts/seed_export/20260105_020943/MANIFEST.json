@@ -1,0 +1,38 @@
+{
+  "run_id": "20260105_020943",
+  "run_utc": "2026-01-04T18:09:43.161969Z",
+  "odoo_url": "https://erp.insightpulseai.net",
+  "db_name": "odoo_core",
+  "username_redacted": "ad***n",
+  "script_checksum": "818e9b3d0cf56598bb4a4b7957b133eb546bbbfab3f7bd0601ec52e15e5afad1",
+  "status": "success",
+  "extracted_models": [
+    {
+      "model": "project.task",
+      "count": 181,
+      "domain": "[['project_id', 'in', [6, 15, 7]], ['active', 'in', [True, False]]]"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "tasks.csv",
+      "sha256": "b635f5955be96b8f38e3023b042dd0be4efcbbe9767ab6c02f9d30d68d97abca"
+    },
+    {
+      "name": "projects.csv",
+      "sha256": "dba1024bb55422e3aee87f834607a6f6cfd2d4517f8fae72fbaac66be1bf0d45"
+    },
+    {
+      "name": "stages.csv",
+      "sha256": "27402bd65b80d75a6933dc8d277add01ce86aa8ff8dbc0d935430348bf93fd0f"
+    },
+    {
+      "name": "tags.csv",
+      "sha256": "5115813ed701b5e9bda3aa95abc1c51746b70199a9c03ea4083373788028935f"
+    },
+    {
+      "name": "users.csv",
+      "sha256": "5efb1bad8fbdd721e8ae60a82f2712242d832605d156807b604cddb2d352db33"
+    }
+  ]
+}

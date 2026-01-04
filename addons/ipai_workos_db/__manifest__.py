@@ -14,7 +14,6 @@
     "author": "InsightPulse AI",
     "website": "https://insightpulse.ai",
     "license": "AGPL-3",
-    "icon": "fa-table",
     "depends": [
         "base",
         "web",

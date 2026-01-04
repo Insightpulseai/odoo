@@ -27,7 +27,6 @@ Technical Stack:
     "author": "IPAI Team",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "AGPL-3",
-    "icon": "fa-th-large",
     "depends": [
         "base",
         "web",

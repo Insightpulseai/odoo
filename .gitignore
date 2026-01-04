@@ -107,3 +107,5 @@ parity_report.json
 
 # DB Inventory tool output
 tools/db-inventory/output/
+.env.smtp
+*.env
