@@ -24,6 +24,7 @@ pipeline functionality while leveraging the IPAI design system.
     "author": "IPAI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
+    "icon": "fa-funnel-dollar",
     "depends": [
         "crm",
         "mail",

@@ -25,6 +25,7 @@ For website theming, use a separate website theme module.
     "author": "IPAI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
+    "icon": "fa-comments-dollar",
     "depends": ["web"],
     "data": [],
     # Odoo 18 native asset bundling (preferred over template inheritance)
