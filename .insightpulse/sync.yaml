@@ -1,0 +1,198 @@
+# InsightPulse Odoo - Directional Sync Configuration
+#
+# Defines sync targets, directions, and schedules for automated data synchronization.
+# Supports: PULL (remote→repo), PUSH (repo→remote), BIDIRECTIONAL (both directions)
+#
+# Last Updated: 2025-01-04
+
+version: "1.0"
+
+# Global defaults (can be overridden per target)
+defaults:
+  direction: bidirectional  # pull | push | bidirectional
+  dry_run: false
+  fail_on_diff: false
+  idempotent: true  # All sync operations must be idempotent
+  git_commit: true  # Commit changes after successful sync (PULL only)
+
+# Sync targets configuration
+targets:
+  # OCA Module Repositories (PULL-only: remote → repo)
+  oca_repos:
+    direction: pull
+    description: "Clone/update OCA community module repositories"
+    entrypoint: "scripts/sync-oca-repos.sh"
+    schedule: "0 2 * * *"  # Daily at 2 AM UTC
+    config:
+      base_dir: "insightpulse_odoo/addons/oca"
+      repos_count: 30
+      modules_expected: 100
+    outputs:
+      - "insightpulse_odoo/addons/oca/**"
+    verification:
+      command: "find insightpulse_odoo/addons/oca -name '__manifest__.py' | wc -l"
+      expected_min: 100
+    git_commit_message: "chore(oca): sync OCA repositories [skip ci]"
+
+  # DEPRECATED: Notion syncs no longer needed (2025-01-04)
+  # Keeping configuration for reference/potential future use
+
+  # # Notion Month-End Tasks (PUSH-only: repo → Notion)
+  # notion_monthend:
+  #   direction: push
+  #   description: "Push month-end closing tasks to Notion database"
+  #   entrypoint: "scripts/month_end_notion_sync.py"
+  #   schedule: "0 1 1 * *"  # Monthly on 1st at 1 AM
+  #   config:
+  #     env_vars:
+  #       - NOTION_API_TOKEN
+  #       - NOTION_MONTHEND_DB_ID
+  #   inputs:
+  #     - "docs/month_end_tasks_*.json"
+  #   verification:
+  #     command: "python scripts/month_end_notion_sync.py --verify"
+  #     expected_exit_code: 0
+
+  # # Notion BIR Compliance (PUSH-only: repo → Notion)
+  # notion_bir:
+  #   direction: push
+  #   description: "Push BIR compliance calendar to Notion database"
+  #   entrypoint: "scripts/bir_notion_sync.py"
+  #   schedule: "0 2 1 * *"  # Monthly on 1st at 2 AM
+  #   config:
+  #     env_vars:
+  #       - NOTION_API_TOKEN
+  #       - NOTION_BIR_DB_ID
+  #   inputs:
+  #     - "docs/bir_calendar_*.json"
+  #   verification:
+  #     command: "python scripts/bir_notion_sync.py --verify"
+  #     expected_exit_code: 0
+
+  # # Notion Field Documentation (PUSH-only: repo → Notion)
+  # notion_field_docs:
+  #   direction: push
+  #   description: "Push Odoo field documentation to Notion"
+  #   entrypoint: "scripts/notion_field_docs_sync.py"
+  #   schedule: "0 3 * * *"  # Daily at 3 AM UTC
+  #   config:
+  #     env_vars:
+  #       - NOTION_API_TOKEN
+  #       - NOTION_FIELD_DOCS_DB_ID
+  #   inputs:
+  #     - "docs/odoo_fields/**/*.md"
+  #   verification:
+  #     command: "python scripts/notion_field_docs_sync.py --verify"
+  #     expected_exit_code: 0
+
+  # Claude Config Sync (BIDIRECTIONAL: claude.md ↔ configs)
+  claude_config:
+    direction: bidirectional
+    description: "Sync claude.md with MCP configs, agent definitions, skills"
+    entrypoint: "scripts/sync-claude-configs.sh"
+    schedule: "0 4 * * *"  # Daily at 4 AM UTC
+    config:
+      claude_md: "claude.md"
+      mcp_config: "$HOME/.config/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json"
+      agent_dir: "$HOME/.claude/superclaude/agents"
+      skills_dir: "docs/claude-code-skills"
+    outputs:
+      - "docs/claude-config-drift.md"
+    verification:
+      command: "scripts/sync-claude-configs.sh"
+      expected_exit_code: 0
+    git_commit_message: "chore(claude): sync config from upstream [skip ci]"
+
+  # Skillsmith Catalog (PULL: generated skills → repo)
+  skillsmith_catalog:
+    direction: pull
+    description: "Pull generated skills from Skillsmith error mining"
+    entrypoint: "scripts/skillsmith_sync.py"
+    schedule: "0 5 * * 0"  # Weekly on Sunday at 5 AM
+    config:
+      skills_dir: "docs/claude-code-skills"
+      catalog_file: "services/skillsmith/catalog.json"
+    outputs:
+      - "docs/claude-code-skills/**"
+    verification:
+      command: "python scripts/skillsmith_sync.py --check"
+      expected_exit_code: 0
+    git_commit_message: "feat(skills): add generated skills from Skillsmith [skip ci]"
+
+  # Apps Truth Sync (PULL: live app list → docs)
+  apps_truth:
+    direction: pull
+    description: "Pull live app deployment truth from DigitalOcean"
+    entrypoint: "scripts/apps-truth-sync.sh"
+    schedule: "0 */6 * * *"  # Every 6 hours
+    config:
+      output_file: "docs/runtime/apps_truth.json"
+    outputs:
+      - "docs/runtime/apps_truth.json"
+    verification:
+      command: "test -f docs/runtime/apps_truth.json && jq -e '.apps | length > 0' docs/runtime/apps_truth.json"
+      expected_exit_code: 0
+    git_commit_message: "chore(docs): sync app deployment truth [skip ci]"
+
+  # Live to Docs Sync (PULL: production config → docs)
+  live_to_docs:
+    direction: pull
+    description: "Pull live production configuration to documentation"
+    entrypoint: "scripts/sync-live-to-docs.sh"
+    schedule: "0 */12 * * *"  # Every 12 hours
+    config:
+      outputs:
+        - "docs/runtime/ADDONS_PATH.prod.txt"
+        - "docs/runtime/DB_CONFIG.prod.txt"
+        - "docs/runtime/ENV_VARS.prod.txt"
+    outputs:
+      - "docs/runtime/**"
+    verification:
+      command: "test -f docs/runtime/ADDONS_PATH.prod.txt"
+      expected_exit_code: 0
+    git_commit_message: "chore(docs): sync live production config [skip ci]"
+
+# Safety and guardrails
+safety:
+  # Never commit secrets
+  secret_patterns:
+    - "NOTION_API_TOKEN"
+    - "NOTION_.*_DB_ID"
+    - "GITHUB_TOKEN"
+    - "SUPABASE_.*KEY"
+    - "password"
+    - "secret"
+
+  # Pre-sync validation
+  pre_sync_checks:
+    - name: "Git clean"
+      command: "git diff --quiet && git diff --staged --quiet"
+      skip_on_pull: false
+    - name: "No secrets in repo"
+      command: "git grep -i -E '(password|secret|token).*=' | grep -v '.insightpulse/sync.yaml' | grep -v 'env.example'"
+      expected_exit_code: 1  # Expect no matches
+
+  # Post-sync validation
+  post_sync_checks:
+    - name: "Valid JSON/YAML outputs"
+      command: "find docs/runtime -name '*.json' -exec jq empty {} \\;"
+      skip_on_push: true
+    - name: "Python compileall"
+      command: "python -m compileall scripts/"
+      skip_on_push: false
+
+  # Drift gates (must stay green)
+  drift_gates:
+    - name: "Claude config drift"
+      command: "scripts/sync-claude-configs.sh"
+      max_drift_score: 0
+    - name: "OCA module count"
+      command: "find insightpulse_odoo/addons/oca -name '__manifest__.py' | wc -l"
+      min_value: 100
+
+# Operational metadata
+metadata:
+  owner: "InsightPulse AI Team"
+  repo: "https://github.com/jgtolentino/insightpulse-odoo"
+  docs: "docs/DIRECTIONAL_SYNC.md"
+  last_updated: "2025-01-04"
