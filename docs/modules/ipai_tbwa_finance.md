@@ -1,74 +1,48 @@
 # ipai_tbwa_finance
 
-## Overview
-
-**Technical Name**: `ipai_tbwa_finance`
-**Summary**: Unified month-end closing + BIR tax compliance for TBWA Philippines
+**Status**: ✅ PASS
 **Version**: 18.0.1.0.0
-**License**: AGPL-3
 **Author**: IPAI / TBWA
+
+## Summary
+
+Unified month-end closing + BIR tax compliance for TBWA Philippines
 
 ## Dependencies
 
-### Odoo Core Modules
 - `base`
 - `mail`
 - `account`
 
-### IPAI Modules
-None
+## Module Contents
 
-## Data Model
+| Type | Count |
+|------|-------|
+| Models | 8 |
+| Views | 18 |
+| Menus | 9 |
+| Actions | 6 |
+| Data Files | 13 |
 
-### Python Models
-- `models/closing_period.py`
-- `models/finance_task_template.py`
-- `models/compliance_check.py`
-- `models/ph_holiday.py`
-- `models/bir_return.py`
-- `models/finance_task.py`
-- `models/res_partner.py`
+## Validation Results
 
-## Automation
+| Check | Status |
+|-------|--------|
+| Manifest | ✅ |
+| Python Syntax | ✅ |
+| XML Syntax | ✅ |
+| Security CSV | ✅ |
+| Init Imports | ✅ |
 
-### Scheduled Actions (Cron Jobs)
-- **TBWA Finance: Send Overdue Notifications** (`cron_overdue_notifications`)
-  - File: `data/ir_cron.xml`
+## Install/Upgrade
 
-## Configuration
+```bash
+# Install
+odoo -c /etc/odoo/odoo.conf -d YOUR_DB -i ipai_tbwa_finance --stop-after-init
 
-### Data Files
-- `data/ph_holidays.xml`
-- `data/compliance_checks.xml`
-- `data/ir_cron.xml`
-- `data/bir_form_types.xml`
-- `data/month_end_templates.xml`
-
-## Odoo 18 Compatibility
-
-### Known Issues
-✅ No known compatibility issues
-
-### Migration Notes
-- Odoo 18 removes the `ir.cron.numbercall` field
-- Cron jobs now run indefinitely by default (equivalent to `numbercall=-1`)
-- The `nextcall`, `interval_number`, and `interval_type` fields remain supported
-
-## Verification
-
-### Installation Check
-```sql
-SELECT name, state, latest_version
-FROM ir_module_module
-WHERE name = 'ipai_tbwa_finance';
--- Expected: state='installed'
+# Upgrade
+odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_tbwa_finance --stop-after-init
 ```
 
-### Cron Job Check
-```sql
-SELECT name, active, nextcall, interval_number, interval_type
-FROM ir_cron
-WHERE model = 'finance.task'
-  AND active = true;
--- Expected: 1 active cron job
-```
+---
+_Audited: 2026-01-04T10:26:06.841927_
