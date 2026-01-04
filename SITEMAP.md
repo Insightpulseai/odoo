@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c79f715bccd805fba2f01be4431a3dc3782b3093
+> Commit: 8b9bed3bb2ad9d6daa0bc1af6100200549c361d6
 
 ## 📚 Documentation
 
@@ -76,38 +76,64 @@
 | [📁 Repository Structure](TREE.md) | . |
 | [IPAI Verification Commands](VERIFY.md) | . |
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
+| [IPAI Module Namespace](addons/ipai/README.md) | addons/ipai |
 | [Clarity PPM Parity - Implementation Complete ✅](addons/ipai/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity - Quick Start Guide](addons/ipai/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Final Status](addons/ipai/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Test Report](addons/ipai/ipai_clarity_ppm_parity/TEST_REPORT.md) | addons/ipai/ipai_clarity_ppm_parity |
+| [IPAI Close Cycle Orchestration](addons/ipai/ipai_close_orchestration/README.md) | addons/ipai/ipai_close_orchestration |
 | [InsightPulse Custom Routes](addons/ipai/ipai_custom_routes/README.md) | addons/ipai/ipai_custom_routes |
 | [InsightPulse Default Home Page](addons/ipai/ipai_default_home/README.md) | addons/ipai/ipai_default_home |
 | [IPAI Equipment Management](addons/ipai/ipai_equipment/README.md) | addons/ipai/ipai_equipment |
 | [IPAI Expense & Travel (PH)](addons/ipai/ipai_expense/README.md) | addons/ipai/ipai_expense |
+| [IPAI Finance Monthly Closing](addons/ipai/ipai_finance_monthly_closing/README.md) | addons/ipai/ipai_finance_monthly_closing |
 | [IPAI Finance PPM](addons/ipai/ipai_finance_ppm/README.md) | addons/ipai/ipai_finance_ppm |
 | [Finance PPM Transaction Data Ingestion (TDI)](addons/ipai/ipai_finance_ppm_tdi/README.md) | addons/ipai/ipai_finance_ppm_tdi |
 | [ipai_finance_project_hybrid](addons/ipai/ipai_finance_project_hybrid/README.md) | addons/ipai/ipai_finance_project_hybrid |
 | [IPAI Portal Fix - Deployment Verification Report](addons/ipai/ipai_portal_fix/DEPLOYMENT_VERIFICATION.md) | addons/ipai/ipai_portal_fix |
 | [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
+| [IPAI PPM A1 Control Center](addons/ipai/ipai_ppm_a1/README.md) | addons/ipai/ipai_ppm_a1 |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
 | [AFC RAG Integration - Change Summary](addons/ipai_ask_ai/CHANGES.md) | addons/ipai_ask_ai |
 | [AFC RAG Deployment Checklist](addons/ipai_ask_ai/DEPLOYMENT_CHECKLIST.md) | addons/ipai_ask_ai |
 | [AFC RAG Integration - Deployment Complete ✅](addons/ipai_ask_ai/DEPLOYMENT_COMPLETE.md) | addons/ipai_ask_ai |
 | [AFC RAG Integration - Deployment Status](addons/ipai_ask_ai/DEPLOYMENT_STATUS.md) | addons/ipai_ask_ai |
+| [IPAI Ask AI Assistant](addons/ipai_ask_ai/README.md) | addons/ipai_ask_ai |
 | [AFC RAG Integration - Deployment Guide](addons/ipai_ask_ai/README_AFC_RAG.md) | addons/ipai_ask_ai |
+| [IPAI BIR Tax Compliance](addons/ipai_bir_tax_compliance/README.md) | addons/ipai_bir_tax_compliance |
+| [IPAI CRM - Pipeline Clone](addons/ipai_crm_pipeline/README.md) | addons/ipai_crm_pipeline |
 | [Finance Month-End Closing - Deployment Summary](addons/ipai_finance_closing/DEPLOYMENT_COMPLETE.md) | addons/ipai_finance_closing |
-| [InsightPulse Finance Month-End Closing](addons/ipai_finance_closing/README.md) | addons/ipai_finance_closing |
-| [Finance PPM Umbrella Module](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
+| [SAP AFC-Style Month-End Closing Template](addons/ipai_finance_closing/README.md) | addons/ipai_finance_closing |
+| [Finance PPM Go-Live Checklist](addons/ipai_finance_ppm_golive/README.md) | addons/ipai_finance_ppm_golive |
+| [IPAI Finance PPM – TBWA Complete Configuration](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
+| [IPAI Grid/List View](addons/ipai_grid_view/README.md) | addons/ipai_grid_view |
+| [IPAI Month-End Closing](addons/ipai_month_end/README.md) | addons/ipai_month_end |
 | [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing/README.md) | addons/ipai_month_end_closing |
+| [IPAI Platform - Approvals](addons/ipai_platform_approvals/README.md) | addons/ipai_platform_approvals |
+| [IPAI Platform - Audit Trail](addons/ipai_platform_audit/README.md) | addons/ipai_platform_audit |
+| [IPAI Platform Permissions](addons/ipai_platform_permissions/README.md) | addons/ipai_platform_permissions |
+| [IPAI Platform Theme](addons/ipai_platform_theme/README.md) | addons/ipai_platform_theme |
+| [IPAI Platform - Workflow Engine](addons/ipai_platform_workflow/README.md) | addons/ipai_platform_workflow |
 | [IPAI Superset Connector](addons/ipai_superset_connector/README.md) | addons/ipai_superset_connector |
-| [TBWA Backend Theme - Installation Guide](addons/ipai_theme_tbwa_backend/README.md) | addons/ipai_theme_tbwa_backend |
+| [IPAI TBWA Finance](addons/ipai_tbwa_finance/README.md) | addons/ipai_tbwa_finance |
+| [TBWA Backend Theme](addons/ipai_theme_tbwa_backend/README.md) | addons/ipai_theme_tbwa_backend |
 | [ipai_web_theme_chatgpt](addons/ipai_web_theme_chatgpt/README.md) | addons/ipai_web_theme_chatgpt |
+| [IPAI WorkOS - AFFiNE Clone (Umbrella)](addons/ipai_workos_affine/README.md) | addons/ipai_workos_affine |
+| [IPAI Work OS Blocks](addons/ipai_workos_blocks/README.md) | addons/ipai_workos_blocks |
+| [IPAI WorkOS - Canvas (Edgeless)](addons/ipai_workos_canvas/README.md) | addons/ipai_workos_canvas |
+| [IPAI Work OS Collaboration](addons/ipai_workos_collab/README.md) | addons/ipai_workos_collab |
+| [IPAI Work OS Core](addons/ipai_workos_core/README.md) | addons/ipai_workos_core |
+| [IPAI Work OS Database](addons/ipai_workos_db/README.md) | addons/ipai_workos_db |
+| [IPAI Work OS Search](addons/ipai_workos_search/README.md) | addons/ipai_workos_search |
+| [IPAI Work OS Templates](addons/ipai_workos_templates/README.md) | addons/ipai_workos_templates |
+| [IPAI Work OS Views](addons/ipai_workos_views/README.md) | addons/ipai_workos_views |
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
 | [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
+| [IPAI AI Studio - ChatGPT App](apps/chatgpt_ipai_ai_studio/README.md) | apps/chatgpt_ipai_ai_studio |
 | [devops-engineer](apps/devops-engineer/APP.md) | apps/devops-engineer |
 | [DO Advisor Agent](apps/do-advisor-agent/README.md) | apps/do-advisor-agent |
 | [DO Advisor - Unified Infrastructure Intelligence](apps/do-advisor-agent/prompts/unified_advisor.md) | apps/do-advisor-agent/prompts |
@@ -193,6 +219,7 @@
 | [Odoo CE v0.9.1 - Implementation Summary](docs/IMPLEMENTATION_SUMMARY.md) | docs |
 | [Odoo Industry Packs - OCA Dependencies Guide](docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md) | docs |
 | [Odoo CE/OCA 18 vs Enterprise Parity Analysis](docs/INDUSTRY_PARITY_ANALYSIS.md) | docs |
+| [IPAI Modules Index](docs/IPAI_MODULES_INDEX.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
 | [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
@@ -301,6 +328,7 @@
 | [PRD – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/prd.md) | docs/odoo-18-handbook/spec |
 | [Tasks – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/tasks.md) | docs/odoo-18-handbook/spec |
 | [Odoo Apps Parity Matrix](docs/odoo-apps-parity.md) | docs |
+| [Odoo Developer Tools (Debug Mode) — How we use it in IPAI](docs/odoo/DEVELOPER_TOOLS.md) | docs/odoo |
 | [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
 | [001 — 2025-12-31 — Initial setup](docs/ops/conversations/001 — 2025-12-31 — Initial setup.md) | docs/ops/conversations
 .
@@ -348,6 +376,9 @@
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
+| [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
+| [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
+| [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
@@ -489,6 +520,7 @@
 | Module | Status | Description |
 |--------|--------|-------------|
 | [ipai_advisor](./addons/ipai/ipai_advisor) | ✅ |  |
+| [ipai_agent_core](./addons/ipai/ipai_agent_core) | ✅ |  |
 | [ipai_ai_studio](./addons/ipai/ipai_ai_studio) | ✅ |  |
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
