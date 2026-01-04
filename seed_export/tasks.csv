@@ -1,0 +1,694 @@
+id,name,project_id,project_name,stage_id,stage_name,active,priority,sequence,date_deadline,parent_id,parent_name,company_id,description,user_logins,tag_names
+648,[DEC-07] Period Close Sign-Off - December 2025,7,Month-end closing,,,False,3,0,2026-01-07 23:00:00,,,,Final sign-off for December 2025 period. Lock accounting period and approve financial statements.,rey.meran@tbwa-smp.com,
+646,[DEC-05] GL Reconciliation - December 2025,7,Month-end closing,,,False,2,0,2026-01-05 23:00:00,,,,"Reconcile all GL accounts for December 2025. Verify subledger balances match GL, resolve discrepancies.",jerald.loterte@omc.com,
+645,[DEC-05] Bank Reconciliation - December 2025,7,Month-end closing,,,False,2,0,2026-01-05 23:00:00,,,,"Reconcile all bank accounts for December 2025. Clear outstanding checks, deposits in transit, bank charges.",joana.maravillas@omc.com,
+647,[DEC-07] Financial Statements - December 2025,7,Month-end closing,,,False,2,0,2026-01-07 23:00:00,,,,"Generate December 2025 financial statements (IS, BS, CF). Review for accuracy and completeness before sign-off.",khalil.veracruz@omc.com,
+641,[JAN-10] 1601-C Approval: Submit Dec 2025 via eFPS,6,BIR Tax Filing,,,False,2,0,2026-01-09 23:00:00,,,,Final approval and submission of December 2025 1601-C via eBIRForms/eFPS. Archive filed return and payment confirmation.,rey.meran@tbwa-smp.com,
+644,[JAN-25] 2550Q Approval: Submit Q4 2025 via eFPS,6,BIR Tax Filing,,,False,2,0,2026-01-24 23:00:00,,,,Final approval and submission of Q4 2025 2550Q via eBIRForms/eFPS. Process payment and archive filed return.,rey.meran@tbwa-smp.com,
+240,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,6,BIR Tax Filing,,,True,1,10,2025-12-09 23:00:00,,,,<p>Monthly remittance of withholding tax on employee compensation for November 2025</p>,,
+161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,6,BIR Tax Filing,,,True,1,10,2025-12-09 23:00:00,,,,<p>Monthly remittance of withholding tax on employee compensation for November 2025</p>,,
+241,[DEC-20] 2550M Monthly VAT Return - NOV 2025,6,BIR Tax Filing,,,True,1,20,2025-12-19 23:00:00,,,,<p>Monthly VAT declaration and payment for November 2025</p>,,
+169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,6,BIR Tax Filing,,,True,1,20,2025-12-19 23:00:00,,,,<p>Monthly VAT declaration and payment for November 2025</p>,,
+244,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,6,BIR Tax Filing,,,True,1,50,2026-01-09 23:00:00,,,,<p>Quarterly remittance of expanded withholding tax for Q4 2025</p>,,
+195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,6,BIR Tax Filing,,,True,1,50,2026-01-09 23:00:00,,,,<p>Quarterly remittance of expanded withholding tax for Q4 2025</p>,,
+246,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,6,BIR Tax Filing,,,True,1,70,2026-01-24 23:00:00,,,,<p>Quarterly VAT declaration and payment for Q4 2025</p>,,
+204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,6,BIR Tax Filing,,,True,1,70,2026-01-24 23:00:00,,,,<p>Quarterly VAT declaration and payment for Q4 2025</p>,,
+247,[JAN-31] 1604-CF Annual Info Return - CY 2025,6,BIR Tax Filing,,,True,1,80,2026-01-30 23:00:00,,,,<p>Annual Information Return of Income Taxes Withheld on Compensation</p>,,
+212,[JAN-31] 1604-CF Annual Info Return - CY 2025,6,BIR Tax Filing,,,True,1,80,2026-01-30 23:00:00,,,,<p>Annual Information Return of Income Taxes Withheld on Compensation</p>,,
+248,[JAN-31] 1604-E Annual Creditable Tax Return - CY 2025,6,BIR Tax Filing,,,True,1,90,2026-01-30 23:00:00,,,,<p>Annual Information Return of Creditable Income Taxes Withheld (Expanded/Final)</p>,,
+220,[JAN-31] 1604-E Annual Creditable Tax Return - CY 2025,6,BIR Tax Filing,,,True,1,90,2026-01-30 23:00:00,,,,<p>Annual Information Return of Creditable Income Taxes Withheld (Expanded/Final)</p>,,
+249,[JAN-31] Alphalist Submission - CY 2025,6,BIR Tax Filing,,,True,1,100,2026-01-30 23:00:00,,,,<p>Alphabetical List of Employees/Payees from whom taxes were withheld</p>,,
+221,[JAN-31] Alphalist Submission - CY 2025,6,BIR Tax Filing,,,True,1,100,2026-01-30 23:00:00,,,,<p>Alphabetical List of Employees/Payees from whom taxes were withheld</p>,,
+250,[FEB-28] 1702Q Quarterly Income Tax - Q4 2025,6,BIR Tax Filing,,,True,1,110,2026-02-27 23:00:00,,,,<p>Quarterly Income Tax Return for Q4 2025 (60 days after quarter)</p>,,
+228,[FEB-28] 1702Q Quarterly Income Tax - Q4 2025,6,BIR Tax Filing,,,True,1,110,2026-02-27 23:00:00,,,,<p>Quarterly Income Tax Return for Q4 2025 (60 days after quarter)</p>,,
+639,[JAN-10] 1601-C Prep: Extract Dec 2025 Payroll,6,BIR Tax Filing,,,False,1,0,2026-01-05 23:00:00,,,,"Extract December 2025 payroll data from HR module. Verify employee records, compensation amounts, and withholding tax calculations.",jerald.loterte@omc.com,
+640,[JAN-10] 1601-C Review: Validate Dec 2025 WHT,6,BIR Tax Filing,,,False,1,0,2026-01-07 23:00:00,,,,Review and validate December 2025 withholding tax amounts. Cross-check against payroll register and tax tables.,khalil.veracruz@omc.com,
+642,[JAN-25] 2550Q Prep: Q4 2025 Income Summary,6,BIR Tax Filing,,,False,1,0,2026-01-20 23:00:00,,,,"Compile Q4 2025 income summary (Oct-Dec). Calculate quarterly income tax, prior quarter payments, and final tax due.",jhoee.oliva@omc.com,
+643,[JAN-25] 2550Q Review: Validate Q4 2025 Tax Computation,6,BIR Tax Filing,,,False,1,0,2026-01-22 23:00:00,,,,Review Q4 2025 income tax computation. Verify quarterly installment calculations and prior payments.,khalil.veracruz@omc.com,
+612,1.1 Open New Posting Period,15,Month-End Close Template,313,Backlog,True,0,0,False,,,,"<p>## Objective
+Unlock new accounting period for transactions.
+
+## SAP Equivalent
+T-Code: OB52 - Open/Close Posting Periods
+
+## Odoo Action
+Settings → Accounting → Lock Dates
+- Verify new period is accessible
+- Confirm prior period locked for non-advisers
+
+## Checklist
+- [ ] New month period open for posting
+- [ ] Prior month locked for regular users
+- [ ] Exception users list verified
+        </p>",rey.meran@tbwa-smp.com,"Automated,GL"
+162,Extract payroll data from HR,6,BIR Tax Filing,,,True,0,1,2025-12-09 23:00:00,161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,,<p>Subtask for [DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025</p>,,
+170,Compile sales register (Output VAT),6,BIR Tax Filing,,,True,0,1,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+196,Extract quarterly expanded WT data,6,BIR Tax Filing,,,True,0,1,2026-01-09 23:00:00,195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,,<p>Subtask for [JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025</p>,,
+179,Extract payroll data from HR,6,BIR Tax Filing,,,True,0,1,2026-01-09 23:00:00,,,,<p>Subtask for [JAN-10] 1601-C Withholding Tax on Compensation - DEC 2025</p>,,
+187,Compile sales register (Output VAT),6,BIR Tax Filing,,,True,0,1,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+205,Consolidate monthly VAT data for quarter,6,BIR Tax Filing,,,True,0,1,2026-01-24 23:00:00,204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,,<p>Subtask for [JAN-25] 2550Q Quarterly VAT Return - Q4 2025</p>,,
+222,Export employee master data,6,BIR Tax Filing,,,True,0,1,2026-01-30 23:00:00,221,[JAN-31] Alphalist Submission - CY 2025,,<p>Subtask for [JAN-31] Alphalist Submission - CY 2025</p>,,
+213,Consolidate annual compensation data,6,BIR Tax Filing,,,True,0,1,2026-01-30 23:00:00,212,[JAN-31] 1604-CF Annual Info Return - CY 2025,,<p>Subtask for [JAN-31] 1604-CF Annual Info Return - CY 2025</p>,,
+613,1.2 Master Data Changes Review,15,Month-End Close Template,313,Backlog,True,0,1,False,,,,"<p>## Objective
+Review and validate master data changes made during the period.
+
+## SAP Equivalent
+Various master data reports
+
+## Checklist
+- [ ] New vendors created - verify tax IDs, bank accounts
+- [ ] New customers created - verify credit terms
+- [ ] Chart of accounts changes - verify proper authorization
+- [ ] Bank account modifications - verify approvals
+- [ ] Employee master changes - verify payroll impact
+
+## OCA Module Required
+auditlog - for change tracking
+        </p>",rey.meran@tbwa-smp.com,GL
+163,Calculate withholding tax per employee,6,BIR Tax Filing,,,True,0,2,2025-12-09 23:00:00,161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,,<p>Subtask for [DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025</p>,,
+171,Compile purchases register (Input VAT),6,BIR Tax Filing,,,True,0,2,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+197,Prepare 1601-EQ form,6,BIR Tax Filing,,,True,0,2,2026-01-09 23:00:00,195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,,<p>Subtask for [JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025</p>,,
+180,Calculate withholding tax per employee,6,BIR Tax Filing,,,True,0,2,2026-01-09 23:00:00,,,,<p>Subtask for [JAN-10] 1601-C Withholding Tax on Compensation - DEC 2025</p>,,
+188,Compile purchases register (Input VAT),6,BIR Tax Filing,,,True,0,2,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+206,Prepare relief schedule,6,BIR Tax Filing,,,True,0,2,2026-01-24 23:00:00,204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,,<p>Subtask for [JAN-25] 2550Q Quarterly VAT Return - Q4 2025</p>,,
+223,Consolidate annual income per employee,6,BIR Tax Filing,,,True,0,2,2026-01-30 23:00:00,221,[JAN-31] Alphalist Submission - CY 2025,,<p>Subtask for [JAN-31] Alphalist Submission - CY 2025</p>,,
+214,Generate Alphalist of employees,6,BIR Tax Filing,,,True,0,2,2026-01-30 23:00:00,212,[JAN-31] 1604-CF Annual Info Return - CY 2025,,<p>Subtask for [JAN-31] 1604-CF Annual Info Return - CY 2025</p>,,
+614,2.1 Process Pending Vendor Bills,15,Month-End Close Template,313,Backlog,True,0,2,False,,,,"<p>## Objective
+Ensure all vendor invoices for the period are posted.
+
+## SAP Equivalent
+T-Code: MIRO - Enter Incoming Invoice
+
+## Odoo Path
+Accounting → Vendors → Bills
+
+## Checklist
+- [ ] Review all draft bills
+- [ ] Validate 3-way match (PO → Receipt → Invoice)
+- [ ] Post approved bills
+- [ ] Flag discrepancies for resolution
+- [ ] Document any blocked invoices
+
+## Cut-off Rule
+Only post invoices with goods/services received by period end.
+        </p>",jasmin.ignacio@omc.com,AP
+164,Prepare 1601-C form,6,BIR Tax Filing,,,True,0,3,2025-12-09 23:00:00,161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,,<p>Subtask for [DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025</p>,,
+172,Reconcile VAT to GL,6,BIR Tax Filing,,,True,0,3,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+198,Prepare QAP (Quarterly Alphalist of Payees),6,BIR Tax Filing,,,True,0,3,2026-01-09 23:00:00,195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,,<p>Subtask for [JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025</p>,,
+181,Prepare 1601-C form,6,BIR Tax Filing,,,True,0,3,2026-01-09 23:00:00,,,,<p>Subtask for [JAN-10] 1601-C Withholding Tax on Compensation - DEC 2025</p>,,
+189,Reconcile VAT to GL,6,BIR Tax Filing,,,True,0,3,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+207,Prepare 2550Q form,6,BIR Tax Filing,,,True,0,3,2026-01-24 23:00:00,204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,,<p>Subtask for [JAN-25] 2550Q Quarterly VAT Return - Q4 2025</p>,,
+224,Generate Alphalist DAT file,6,BIR Tax Filing,,,True,0,3,2026-01-30 23:00:00,221,[JAN-31] Alphalist Submission - CY 2025,,<p>Subtask for [JAN-31] Alphalist Submission - CY 2025</p>,,
+215,Validate BIR 2316 forms issued,6,BIR Tax Filing,,,True,0,3,2026-01-30 23:00:00,212,[JAN-31] 1604-CF Annual Info Return - CY 2025,,<p>Subtask for [JAN-31] 1604-CF Annual Info Return - CY 2025</p>,,
+615,2.2 GR/IR Clearing and Accruals,15,Month-End Close Template,313,Backlog,True,0,3,False,,,,"<p>## Objective
+Clear Goods Receipt/Invoice Receipt account and post accruals.
+
+## SAP Equivalent
+T-Code: MR11 - GR/IR Clearing
+T-Code: F.13 - Automatic Clearing
+
+## Checklist
+- [ ] Run GR/IR reconciliation report
+- [ ] Clear matched items
+- [ ] Post accrual for uninvoiced receipts
+- [ ] Document residual balances
+
+## Accrual Entry Template
+Dr: Expense Account (based on PO)
+Cr: Accrued Liabilities
+
+## OCA Module
+account_cutoff_accrual_picking - automates this process
+        </p>",jasmin.ignacio@omc.com,AP
+165,Review and validate amounts,6,BIR Tax Filing,,,True,0,4,2025-12-09 23:00:00,161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,,<p>Subtask for [DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025</p>,,
+173,Prepare 2550M form,6,BIR Tax Filing,,,True,0,4,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+199,Review and validate amounts,6,BIR Tax Filing,,,True,0,4,2026-01-09 23:00:00,195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,,<p>Subtask for [JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025</p>,,
+182,Review and validate amounts,6,BIR Tax Filing,,,True,0,4,2026-01-09 23:00:00,,,,<p>Subtask for [JAN-10] 1601-C Withholding Tax on Compensation - DEC 2025</p>,,
+190,Prepare 2550M form,6,BIR Tax Filing,,,True,0,4,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+208,Review and validate amounts,6,BIR Tax Filing,,,True,0,4,2026-01-24 23:00:00,204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,,<p>Subtask for [JAN-25] 2550Q Quarterly VAT Return - Q4 2025</p>,,
+225,Validate DAT file format,6,BIR Tax Filing,,,True,0,4,2026-01-30 23:00:00,221,[JAN-31] Alphalist Submission - CY 2025,,<p>Subtask for [JAN-31] Alphalist Submission - CY 2025</p>,,
+216,Prepare 1604-CF form,6,BIR Tax Filing,,,True,0,4,2026-01-30 23:00:00,212,[JAN-31] 1604-CF Annual Info Return - CY 2025,,<p>Subtask for [JAN-31] 1604-CF Annual Info Return - CY 2025</p>,,
+616,2.3 Vendor Payment Run,15,Month-End Close Template,313,Backlog,True,0,4,False,,,,"<p>## Objective
+Execute scheduled vendor payments.
+
+## SAP Equivalent
+T-Code: F110 - Automatic Payment Program
+
+## Odoo Path
+Accounting → Vendors → Payments → Register Payment (Batch)
+
+## Checklist
+- [ ] Review payment proposal
+- [ ] Verify bank balance sufficiency
+- [ ] Confirm payment terms honored
+- [ ] Execute payment batch
+- [ ] Generate bank file (if applicable)
+- [ ] Confirm transmission to bank
+
+## Approval Required
+Finance Manager must approve before execution.
+
+## BIR Compliance
+Ensure EWT deducted per vendor tax codes (BIR 2307 generation).
+        </p>",jasmin.ignacio@omc.com,AP
+166,Submit via eFPS,6,BIR Tax Filing,,,True,0,5,2025-12-09 23:00:00,161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,,<p>Subtask for [DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025</p>,,
+174,Review and validate amounts,6,BIR Tax Filing,,,True,0,5,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+200,Submit via eFPS,6,BIR Tax Filing,,,True,0,5,2026-01-09 23:00:00,195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,,<p>Subtask for [JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025</p>,,
+183,Submit via eFPS,6,BIR Tax Filing,,,True,0,5,2026-01-09 23:00:00,,,,<p>Subtask for [JAN-10] 1601-C Withholding Tax on Compensation - DEC 2025</p>,,
+191,Review and validate amounts,6,BIR Tax Filing,,,True,0,5,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+209,Submit via eFPS,6,BIR Tax Filing,,,True,0,5,2026-01-24 23:00:00,204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,,<p>Subtask for [JAN-25] 2550Q Quarterly VAT Return - Q4 2025</p>,,
+226,Submit via eFPS,6,BIR Tax Filing,,,True,0,5,2026-01-30 23:00:00,221,[JAN-31] Alphalist Submission - CY 2025,,<p>Subtask for [JAN-31] Alphalist Submission - CY 2025</p>,,
+217,Review and validate totals,6,BIR Tax Filing,,,True,0,5,2026-01-30 23:00:00,212,[JAN-31] 1604-CF Annual Info Return - CY 2025,,<p>Subtask for [JAN-31] 1604-CF Annual Info Return - CY 2025</p>,,
+617,2.4 Post Customer Invoices,15,Month-End Close Template,313,Backlog,True,0,5,False,,,,"<p>## Objective
+Ensure all customer invoices for the period are posted.
+
+## SAP Equivalent
+T-Code: VF01 - Create Billing Document
+
+## Odoo Path
+Accounting → Customers → Invoices
+
+## Checklist
+- [ ] Review all draft invoices
+- [ ] Verify delivery documentation attached
+- [ ] Confirm pricing and terms
+- [ ] Post approved invoices
+- [ ] Send invoices to customers
+
+## Cut-off Rule
+Invoice all goods shipped/services rendered by period end.
+        </p>",jinky.paladin@omc.com,AR
+167,Process payment,6,BIR Tax Filing,,,True,0,6,2025-12-09 23:00:00,161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,,<p>Subtask for [DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025</p>,,
+175,Submit via eFPS,6,BIR Tax Filing,,,True,0,6,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+201,Process payment,6,BIR Tax Filing,,,True,0,6,2026-01-09 23:00:00,195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,,<p>Subtask for [JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025</p>,,
+184,Process payment,6,BIR Tax Filing,,,True,0,6,2026-01-09 23:00:00,,,,<p>Subtask for [JAN-10] 1601-C Withholding Tax on Compensation - DEC 2025</p>,,
+192,Submit via eFPS,6,BIR Tax Filing,,,True,0,6,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+210,Process payment,6,BIR Tax Filing,,,True,0,6,2026-01-24 23:00:00,204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,,<p>Subtask for [JAN-25] 2550Q Quarterly VAT Return - Q4 2025</p>,,
+227,Archive submission,6,BIR Tax Filing,,,True,0,6,2026-01-30 23:00:00,221,[JAN-31] Alphalist Submission - CY 2025,,<p>Subtask for [JAN-31] Alphalist Submission - CY 2025</p>,,
+218,Submit via eFPS with attachments,6,BIR Tax Filing,,,True,0,6,2026-01-30 23:00:00,212,[JAN-31] 1604-CF Annual Info Return - CY 2025,,<p>Subtask for [JAN-31] 1604-CF Annual Info Return - CY 2025</p>,,
+618,2.5 Revenue Cut-off Review,15,Month-End Close Template,313,Backlog,True,0,6,False,,,,"<p>## Objective
+Verify proper revenue recognition timing.
+
+## SAP Equivalent
+T-Code: VF44 - Maintain Billing Due List
+
+## Checklist
+- [ ] Verify all shipments invoiced
+- [ ] Review deferred revenue balances
+- [ ] Check revenue recognition schedules
+- [ ] Post revenue accruals if needed
+- [ ] Document any timing adjustments
+
+## OCA Module
+account_revenue_recognition_computation
+        </p>",jinky.paladin@omc.com,AR
+168,Archive filed return,6,BIR Tax Filing,,,True,0,7,2025-12-09 23:00:00,161,[DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025,,<p>Subtask for [DEC-10] 1601-C Withholding Tax on Compensation - NOV 2025</p>,,
+176,Process payment,6,BIR Tax Filing,,,True,0,7,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+202,Archive filed return,6,BIR Tax Filing,,,True,0,7,2026-01-09 23:00:00,195,[JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025,,<p>Subtask for [JAN-10] 1601-EQ Expanded Withholding Tax - Q4 2025</p>,,
+185,Archive filed return,6,BIR Tax Filing,,,True,0,7,2026-01-09 23:00:00,,,,<p>Subtask for [JAN-10] 1601-C Withholding Tax on Compensation - DEC 2025</p>,,
+193,Process payment,6,BIR Tax Filing,,,True,0,7,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+211,Archive filed return,6,BIR Tax Filing,,,True,0,7,2026-01-24 23:00:00,204,[JAN-25] 2550Q Quarterly VAT Return - Q4 2025,,<p>Subtask for [JAN-25] 2550Q Quarterly VAT Return - Q4 2025</p>,,
+219,Archive filed return,6,BIR Tax Filing,,,True,0,7,2026-01-30 23:00:00,212,[JAN-31] 1604-CF Annual Info Return - CY 2025,,<p>Subtask for [JAN-31] 1604-CF Annual Info Return - CY 2025</p>,,
+619,2.6 Dunning / Collections Run,15,Month-End Close Template,313,Backlog,True,0,7,False,,,,"<p>## Objective
+Send payment reminders for overdue invoices.
+
+## SAP Equivalent
+T-Code: F150 - Dunning Run
+
+## Odoo Path
+Accounting → Customers → Follow-up Reports
+
+## Checklist
+- [ ] Review aged receivables
+- [ ] Verify dunning levels correct
+- [ ] Execute dunning run
+- [ ] Review generated letters/emails
+- [ ] Approve and send reminders
+
+## OCA Module
+account_credit_control - enhanced dunning automation
+        </p>",jinky.paladin@omc.com,"AR,Automated"
+177,Archive filed return,6,BIR Tax Filing,,,True,0,8,2025-12-19 23:00:00,169,[DEC-20] 2550M Monthly VAT Return - NOV 2025,,<p>Subtask for [DEC-20] 2550M Monthly VAT Return - NOV 2025</p>,,
+194,Archive filed return,6,BIR Tax Filing,,,True,0,8,2026-01-19 23:00:00,,,,<p>Subtask for [JAN-20] 2550M Monthly VAT Return - DEC 2025</p>,,
+620,2.7 Bad Debt Provision Review,15,Month-End Close Template,313,Backlog,True,0,8,False,,,,"<p>## Objective
+Assess and adjust allowance for doubtful accounts.
+
+## SAP Equivalent
+T-Code: F.28 - Value Adjustment
+
+## Checklist
+- [ ] Review aging report (90+ days)
+- [ ] Assess collectibility of aged items
+- [ ] Calculate required provision
+- [ ] Post provision adjustment
+- [ ] Document rationale for write-offs
+
+## Journal Entry
+Dr: Bad Debt Expense
+Cr: Allowance for Doubtful Accounts
+        </p>",jinky.paladin@omc.com,AR
+621,2.8 Asset Capitalizations,15,Month-End Close Template,313,Backlog,True,0,9,False,,,,"<p>## Objective
+Capitalize assets in service and close AUC (Assets Under Construction).
+
+## SAP Equivalent
+T-Code: AIAB - Post AUC to Final Asset
+T-Code: AS01 - Create Asset Master
+
+## Odoo Path
+Accounting → Assets → Assets
+
+## Checklist
+- [ ] Review pending asset acquisitions
+- [ ] Verify asset categorization
+- [ ] Set in-service dates
+- [ ] Close completed AUC projects
+- [ ] Post capitalization entries
+
+## Approval Required
+Fixed asset capitalizations over threshold require approval.
+        </p>",jerald.loterte@omc.com,Assets
+753,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2025-12-09 23:00:00,,,,,,
+754,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2025-12-19 23:00:00,,,,,,
+756,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-01-09 23:00:00,,,,,,
+755,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-01-09 23:00:00,,,,,,
+757,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-01-24 23:00:00,,,,,,
+760,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-01-30 23:00:00,,,,,,
+759,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-01-30 23:00:00,,,,,,
+758,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-01-30 23:00:00,,,,,,
+92,[Month-end Close Process] Close accounting period in system and lock transactions.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+91,[Month-end Close Process] Perform final review of all accounts and financial statements.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+90,[Month-end Close Process] Update month-end closing checklist and sign-off.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+89,[Month-end Close Process] Archive all month-end documentation and supporting files.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+88,[GL Reconciliation] Review and close all subledgers to general ledger.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+87,[GL Reconciliation] Verify all expense accounts and match to supporting documents.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+86,[GL Reconciliation] Verify all revenue accounts and match to supporting documents.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+85,[GL Reconciliation] Reconcile all balance sheet accounts to supporting schedules.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+84,[Financial Reporting] Compile management reports and KPI dashboards.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+83,[Financial Reporting] Prepare variance analysis reports comparing actual vs budget.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+82,"[Financial Reporting] Prepare monthly financial statements (Balance Sheet, Income Statement, Cash Flow).",7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+81,[Financial Reporting] Generate final trial balance after all adjustments.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+80,[Financial Reporting] Prepare preliminary trial balance before final adjustments.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+79,[Journal Entries & Adjustments] Record intercompany transactions and eliminations.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+78,[Journal Entries & Adjustments] Process foreign exchange revaluation for foreign currency accounts.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+77,[Journal Entries & Adjustments] Record prepayment amortizations and deferrals.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+76,[Journal Entries & Adjustments] Prepare month-end adjusting journal entries for all accounts.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+75,[Fixed Assets & Depreciation] Reconcile fixed asset accounts to general ledger.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+74,[Fixed Assets & Depreciation] Update fixed asset register for new acquisitions and disposals.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+73,[Fixed Assets & Depreciation] Process depreciation for all fixed assets for the month.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+72,[AR/AP Reconciliation] Age analysis of payables and accrual verification.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+71,[AR/AP Reconciliation] Age analysis of receivables and provision for doubtful accounts.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+70,[AR/AP Reconciliation] Reconcile all accounts payable subsidiary ledgers to general ledger.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+69,[AR/AP Reconciliation] Reconcile all accounts receivable subsidiary ledgers to general ledger.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+68,[Bank Reconciliation] Prepare bank reconciliation statements with supporting documentation.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+67,[Bank Reconciliation] Investigate and resolve outstanding reconciling items from previous months.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+66,[Bank Reconciliation] Reconcile all bank accounts including petty cash and main operating accounts.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+65,[Tax & Provisions] Record percentage tax provisions for applicable transactions.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+64,[Tax & Provisions] Prepare tax reconciliation schedules and supporting documentation.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+63,[Tax & Provisions] Calculate and record VAT output and input tax for the month.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+62,[Tax & Provisions] Compute and record withholding tax provisions for the month.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+61,"[Payroll & Personnel] Record government-mandated benefits (SSS, PhilHealth, Pag-IBIG) contributions.",7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+60,[Payroll & Personnel] Reconcile employee advances and loan accounts.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+59,[Payroll & Personnel] Calculate and record payroll-related provisions and accruals.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+58,"[Payroll & Personnel] Process payroll for the current month including salaries, benefits, and deductions.",7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+57,[Accruals & Expenses] Review and reconcile all accrued expenses to ensure accuracy and completeness.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+56,[Accruals & Expenses] Record accruals for Consultancy Fees and various routine General Expense Accruals. Estimated expense for which a vendor invoice has not yet been received.,7,Month-end closing,,,True,0,10,2026-02-06 00:00:00,,,,,admin,
+761,Untitled to-do,6,BIR Tax Filing,,,True,0,10,2026-02-27 23:00:00,,,,,,
+743,Jerald Loterte,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+742,Joana Maravillas,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+741,Jhoee Oliva,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+740,Jasmin Ignacio,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+739,Jinky Paladin,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+738,Beng Manalo,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+737,Amor Lasaga,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+736,Cliff Dejecacion,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+735,Sally Brillantes,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+734,Rey Meran,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+733,Jake Tolentino,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+732,Khalil Veracruz,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+623,2.10 Asset Retirements/Disposals,15,Month-End Close Template,313,Backlog,True,0,10,False,,,,"<p>## Objective
+Process asset disposals and record gains/losses.
+
+## SAP Equivalent
+T-Code: ABAON - Asset Sale Without Customer
+
+## Odoo Path
+Accounting → Assets → [Select Asset] → Sell or Dispose
+
+## Checklist
+- [ ] Identify assets to retire
+- [ ] Verify disposal authorization
+- [ ] Record sale proceeds (if any)
+- [ ] Post disposal entries
+- [ ] Calculate and record gain/loss
+
+## Must complete BEFORE depreciation run.
+        </p>",jerald.loterte@omc.com,Assets
+274,Jake Tolentino,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+273,Cliff Dejecacion,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+272,Sally Brillantes,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+271,Joana Maravillas,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+270,Jhoee Oliva,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+269,Jasmin Ignacio,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+268,Jerald Loterte,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+267,Jinky Paladin,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+266,Beng Manalo,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+265,Amor Lasaga,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+264,Rey Meran,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+263,Khalil Veracruz,6,BIR Tax Filing,,,True,0,10,False,,,,,,
+622,2.9 Depreciation Posting Run,15,Month-End Close Template,313,Backlog,True,0,11,False,,,,"<p>## Objective
+Calculate and post monthly depreciation for all fixed assets.
+
+## SAP Equivalent
+T-Code: AFAB - Post Depreciation
+
+## Odoo Path
+Accounting → Assets → Compute Depreciation
+
+## Pre-requisites
+- All asset acquisitions entered
+- Asset disposals processed
+- Depreciation methods verified
+
+## Checklist
+- [ ] Preview depreciation calculation
+- [ ] Verify no errors in computation
+- [ ] Post depreciation entries
+- [ ] Confirm entries in GL
+
+## Note
+Run after all capitalizations and disposals are complete.
+        </p>",jerald.loterte@omc.com,"Assets,Automated"
+624,3.1 Reverse Prior Month Accruals,15,Month-End Close Template,313,Backlog,True,0,12,False,,,,"<p>## Objective
+Automatically reverse prior month accrual entries.
+
+## SAP Equivalent
+T-Code: F.81 - Reverse Accrual/Deferral Entries
+
+## Odoo Implementation
+Use ""Auto-Reverse"" flag on original accrual entries.
+
+## Checklist
+- [ ] Verify auto-reversals posted
+- [ ] Check reversal dates correct (Day 1)
+- [ ] Investigate any missing reversals
+
+## Note
+This should be fully automated via entry settings.
+        </p>",jerald.loterte@omc.com,"Automated,GL"
+625,3.2 Post Manual Accruals,15,Month-End Close Template,313,Backlog,True,0,13,False,,,,"<p>## Objective
+Post period-end accrual entries for expenses incurred but not invoiced.
+
+## SAP Equivalent
+T-Code: FBS1 - Enter Accrual/Deferral Document
+
+## Common Accruals
+- Payroll and benefits
+- Rent and utilities
+- Professional services
+- Interest expense
+- Bonuses and commissions
+
+## Checklist
+- [ ] Calculate accrual amounts
+- [ ] Prepare journal entry workpapers
+- [ ] Post accrual entries
+- [ ] Set auto-reverse flag
+- [ ] File supporting documentation
+
+## OCA Module
+account_move_template - for recurring entry templates
+        </p>",jerald.loterte@omc.com,GL
+626,3.3 Prepaid Expense Amortization,15,Month-End Close Template,313,Backlog,True,0,14,False,,,,"<p>## Objective
+Amortize prepaid expenses to expense accounts.
+
+## SAP Equivalent
+T-Code: FBS1 - Accrual/Deferral
+
+## Common Prepaids
+- Insurance premiums
+- Annual software licenses
+- Prepaid rent
+- Retainers
+
+## Checklist
+- [ ] Review prepaid schedule
+- [ ] Calculate monthly amortization
+- [ ] Post amortization entries
+- [ ] Verify remaining prepaid balances
+
+## OCA Module
+account_cutoff_prepaid - automates this process
+        </p>",jerald.loterte@omc.com,GL
+627,3.4 Update Foreign Exchange Rates,15,Month-End Close Template,313,Backlog,True,0,15,False,,,,"<p>## Objective
+Update currency exchange rates to period-end rates.
+
+## SAP Equivalent
+T-Code: OB08 - Maintain Exchange Rates
+
+## Odoo Path
+Accounting → Configuration → Currencies
+
+## Data Source
+BSP (Bangko Sentral ng Pilipinas) for PHP rates
+
+## Checklist
+- [ ] Fetch latest BSP rates
+- [ ] Update USD, EUR, other currencies
+- [ ] Verify rates applied correctly
+- [ ] Document rate source
+
+## OCA Module
+currency_rate_update - auto-fetches from BSP
+        </p>",jerald.loterte@omc.com,"Automated,GL"
+628,3.5 Foreign Currency Revaluation,15,Month-End Close Template,313,Backlog,True,0,16,False,,,,"<p>## Objective
+Revalue foreign currency monetary items at period-end rates.
+
+## SAP Equivalent
+T-Code: FAGL_FC_VAL - Foreign Currency Valuation
+
+## Items to Revalue
+- Foreign currency bank accounts
+- Foreign currency receivables
+- Foreign currency payables
+- Intercompany balances
+
+## Checklist
+- [ ] Verify FX rates updated
+- [ ] Run revaluation report (preview)
+- [ ] Review unrealized gains/losses
+- [ ] Post revaluation entries
+- [ ] Document significant FX impacts
+
+## Entry
+Dr/Cr: Asset/Liability (adjustment)
+Cr/Dr: Unrealized FX Gain/Loss
+        </p>",jerald.loterte@omc.com,GL
+629,4.1 Prepare BIR 1601-C (Withholding Tax - Compensation),15,Month-End Close Template,313,Backlog,True,0,17,False,,,,"<p>## Objective
+Prepare and file monthly withholding tax return for compensation.
+
+## BIR Form
+1601-C - Monthly Remittance Return of Income Taxes Withheld on Compensation
+
+## Due Date
+10th of the following month
+
+## Checklist
+- [ ] Run payroll withholding tax report
+- [ ] Reconcile to payroll register
+- [ ] Generate BIR 1601-C data
+- [ ] Upload to eBIRForms
+- [ ] Pay via authorized agent bank
+- [ ] File confirmation receipt
+
+## Penalty for Late Filing
+25% surcharge + 12% interest p.a.
+        </p>",jhoee.oliva@omc.com,Tax
+630,4.2 Prepare BIR 1601-EQ (Expanded Withholding Tax),15,Month-End Close Template,313,Backlog,True,0,18,False,,,,"<p>## Objective
+Prepare and file quarterly expanded withholding tax return.
+
+## BIR Form
+1601-EQ - Quarterly Remittance Return of Creditable Income Taxes Withheld (Expanded)
+
+## Due Date
+Last day of the month following the quarter
+
+## Checklist
+- [ ] Run EWT summary by tax code
+- [ ] Verify vendor TINs complete
+- [ ] Reconcile to AP payments
+- [ ] Generate BIR 2307 certificates
+- [ ] Upload to eBIRForms
+- [ ] Pay via authorized agent bank
+- [ ] Distribute BIR 2307 to vendors
+
+## BIR 2307 Generation
+Certificate of Creditable Tax Withheld at Source
+- Generate for each vendor
+- Provide to vendors by 20th of following month
+        </p>",jhoee.oliva@omc.com,Tax
+632,5.1 Bank Reconciliation,15,Month-End Close Template,313,Backlog,True,0,19,False,,,,"<p>## Objective
+Reconcile all bank accounts to bank statements.
+
+## SAP Equivalent
+T-Code: FF67 - Manual Bank Statement
+
+## Odoo Path
+Accounting → Banks → Reconcile
+
+## Checklist
+- [ ] Import bank statements
+- [ ] Match transactions automatically
+- [ ] Investigate unmatched items
+- [ ] Post bank charges/interest
+- [ ] Clear outstanding items
+- [ ] Document reconciling items
+- [ ] Approve reconciliation
+
+## OCA Module
+account_reconcile_oca - enhanced reconciliation UI
+        </p>",joana.maravillas@omc.com,Reporting
+631,4.3 Prepare BIR 2550M/2550Q (VAT Return),15,Month-End Close Template,313,Backlog,True,0,20,False,,,,"<p>## Objective
+Prepare and file VAT return.
+
+## BIR Forms
+- 2550M - Monthly VAT Declaration (if filing monthly)
+- 2550Q - Quarterly VAT Return
+
+## Due Dates
+- Monthly: 20th of following month
+- Quarterly: 25th of month following quarter
+
+## Checklist
+- [ ] Run Output VAT summary
+- [ ] Run Input VAT summary
+- [ ] Reconcile VAT accounts
+- [ ] Calculate VAT payable/creditable
+- [ ] Generate sales/purchase registers
+- [ ] Upload to eBIRForms
+- [ ] Pay VAT due via bank
+- [ ] File Summary Lists of Sales/Purchases (SLSP)
+
+## Key Reconciliation
+Output VAT (Sales) - Input VAT (Purchases) = VAT Payable
+        </p>",jhoee.oliva@omc.com,Tax
+633,5.2 Run Trial Balance,15,Month-End Close Template,313,Backlog,True,0,21,False,,,,"<p>## Objective
+Generate trial balance and verify debits equal credits.
+
+## SAP Equivalent
+T-Code: S_ALR_87012277 - G/L Account Balances
+
+## Odoo Path
+Accounting → Reporting → Trial Balance
+
+## Checklist
+- [ ] Run trial balance report
+- [ ] Verify total debits = total credits
+- [ ] Review significant balance changes
+- [ ] Compare to prior month
+- [ ] Investigate unusual items
+- [ ] Export to Excel for workpapers
+
+## OCA Module
+account_financial_report - enhanced TB with comparatives
+        </p>",khalil.veracruz@omc.com,Reporting
+634,5.3 Generate Financial Statements,15,Month-End Close Template,313,Backlog,True,0,22,False,,,,"<p>## Objective
+Generate monthly financial statements package.
+
+## SAP Equivalent
+T-Code: S_ALR_87012284 - Financial Statements
+
+## Reports to Generate
+1. Balance Sheet
+2. Profit &amp; Loss Statement
+3. Cash Flow Statement (indirect method)
+4. Statement of Changes in Equity (if required)
+
+## Checklist
+- [ ] Generate Balance Sheet
+- [ ] Generate P&amp;L
+- [ ] Generate Cash Flow
+- [ ] Compare to prior month/budget
+- [ ] Prepare variance explanations
+- [ ] Format for management review
+- [ ] Compile financial package
+
+## OCA Modules
+- account_financial_report
+- report_xlsx (Excel export)
+- mis_builder (custom layouts)
+        </p>",khalil.veracruz@omc.com,Reporting
+635,5.4 Subledger to GL Reconciliation,15,Month-End Close Template,313,Backlog,True,0,23,False,,,,"<p>## Objective
+Verify subledgers tie to general ledger control accounts.
+
+## SAP Equivalent
+Various reconciliation reports
+
+## Reconciliations Required
+1. AP Subledger → Accounts Payable GL
+2. AR Subledger → Accounts Receivable GL
+3. Asset Register → Fixed Assets GL
+4. Inventory Subledger → Inventory GL
+
+## Checklist
+- [ ] Run AP aging vs GL balance
+- [ ] Run AR aging vs GL balance
+- [ ] Run Asset register vs GL balance
+- [ ] Run Inventory valuation vs GL
+- [ ] Investigate and resolve differences
+- [ ] Document reconciling items
+
+## Note
+In Odoo, these should always match (real-time posting).
+Discrepancies indicate configuration issues.
+        </p>",joana.maravillas@omc.com,Reporting
+636,5.5 Management Review and Sign-off,15,Month-End Close Template,313,Backlog,True,0,24,False,,,,"<p>## Objective
+Obtain management approval for monthly close.
+
+## SAP Equivalent
+AFC: Approve Closing Tasks app
+
+## Review Package Contents
+1. Financial Statements (BS, P&amp;L, CF)
+2. Trial Balance
+3. Reconciliation summaries
+4. Variance analysis
+5. Key metrics/KPIs
+6. Management commentary
+
+## Checklist
+- [ ] Prepare review package
+- [ ] Schedule review meeting
+- [ ] Present financials to management
+- [ ] Address questions/concerns
+- [ ] Document decisions
+- [ ] Obtain sign-off approval
+
+## Approval Required
+Finance Director and/or CFO signature
+        </p>",rey.meran@tbwa-smp.com,Reporting
+637,5.6 Close Accounting Period,15,Month-End Close Template,313,Backlog,True,0,25,False,,,,"<p>## Objective
+Lock the accounting period to prevent further changes.
+
+## SAP Equivalent
+T-Code: OB52 - Close Posting Period
+
+## Odoo Path
+Settings → Accounting → Lock Dates
+
+## Actions
+1. Set Lock Date for All Users
+2. Archive closing workpapers
+3. Notify team of close completion
+
+## Checklist
+- [ ] All tasks completed
+- [ ] Management sign-off obtained
+- [ ] Set lock date in system
+- [ ] Send close completion notification
+- [ ] Archive closing package
+
+## Post-Close
+No further postings allowed without period unlock (audit trail).
+        </p>",rey.meran@tbwa-smp.com,"Automated,GL"
+245,[JAN-10] 1601-FQ Final Withholding Tax - Q4 2025,6,BIR Tax Filing,,,True,0,60,2026-01-09 23:00:00,,,,<p>Quarterly remittance of final withholding tax for Q4 2025</p>,,
+203,[JAN-10] 1601-FQ Final Withholding Tax - Q4 2025,6,BIR Tax Filing,,,True,0,60,2026-01-09 23:00:00,,,,<p>Quarterly remittance of final withholding tax for Q4 2025</p>,,

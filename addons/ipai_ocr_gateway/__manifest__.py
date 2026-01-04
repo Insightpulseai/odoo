@@ -26,7 +26,6 @@ Integration:
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",
     "license": "AGPL-3",
-    "icon": "fa-file-image",
     "depends": [
         "base",
         "mail",

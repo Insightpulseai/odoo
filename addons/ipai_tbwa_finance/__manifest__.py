@@ -29,7 +29,6 @@
     "author": "IPAI / TBWA",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "AGPL-3",
-    "icon": "fa-building",
     "depends": [
         "base",
         "mail",
