@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0ff707ce1a1da7ad6e41d71af9454a1fe7699731
+> Commit: d4f810ff525a29104fa48a9f0284fcd88bf467c5
 
 ```
 .
@@ -65,6 +65,7 @@
 │   │   ├── infra-validate.yml
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
+│   │   ├── nextjs.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── production-ready.yml
 │   │   ├── repo-structure.yml
@@ -2417,7 +2418,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-743 directories, 1669 files
+743 directories, 1670 files
 ```
 
 ## 📊 Stats
@@ -2425,7 +2426,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 845 |
-| Files | 2384 |
+| Files | 2385 |
 | Python files | 614 |
 | XML files | 327 |
 | Markdown files | 463 |
