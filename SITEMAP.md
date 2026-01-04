@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d695707b94de4f8fc7f860724a35ea0bdb5cbf07
+> Commit: 8b6332f9c5498c1c9f6d66a331f8b2819f30faba
 
 ## 📚 Documentation
 
@@ -158,6 +158,7 @@
 | [Agent Skills Framework - Session Report](docs/AGENT_FRAMEWORK_SESSION_REPORT.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
+| [CE/OCA Equivalents Audit Report](docs/CE_OCA_EQUIVALENTS_AUDIT.md) | docs |
 | [Custom Odoo Image Success Criteria Validation](docs/CUSTOM_IMAGE_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE 18 – Database & Worker Tuning](docs/DB_TUNING.md) | docs |
 | [DELIVERABLES & RELEASE CONTENTS](docs/DELIVERABLES_MANIFEST.md) | docs |
@@ -539,7 +540,7 @@
 | [ipai_sms_gateway](./addons/ipai_sms_gateway) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai_superset_connector) | ✅ | Apache Superset integration with managed dataset sync |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
-| [ipai_theme_tbwa_backend](./addons/ipai_theme_tbwa_backend) | ✅ | TBWA branding for Odoo backend - Black + Yellow + IBM Plex |
+| [ipai_theme_tbwa_backend](./addons/ipai_theme_tbwa_backend) | ✅ | TBWA branding skin - Black + Yellow + IBM Plex |
 | [ipai_web_theme_chatgpt](./addons/ipai_web_theme_chatgpt) | ✅ |  |
 | [ipai_workos_affine](./addons/ipai_workos_affine) | ✅ |  |
 | [ipai_workos_blocks](./addons/ipai_workos_blocks) | ✅ |  |
