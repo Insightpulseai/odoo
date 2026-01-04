@@ -1,169 +1,63 @@
-# TBWA Backend Theme - Installation Guide
+# TBWA Backend Theme
 
-## Quick Install (Docker - DigitalOcean)
+## 1. Overview
+TBWA branding skin - Black + Yellow + IBM Plex
 
-### Step 1: Copy module to server
+**Technical Name**: `ipai_theme_tbwa_backend`
+**Category**: Themes/Backend
+**Version**: 18.0.1.1.0
+**Author**: InsightPulse AI / TBWA Finance
 
+## 2. Functional Scope
+
+TBWA Backend Theme - Brand Skin
+===============================
+
+Applies TBWA corporate identity to Odoo backend.
+
+This is a **skin module** that overrides ipai_platform_theme token values:
+- TBWA Yellow (#FFD800) as primary accent
+- Black navbar/sidebar
+- IBM Plex Sans typography
+
+Architecture:
+- Depends on ipai_platform_theme (token source of truth)
+- Sets TBWA-specific color values via CSS custom property overrides
+- Contains SCSS variables for Odoo's Bootstrap/variable system
+- Contains backend.scss for component-level overrides
+
+DO NOT define new tokens here - only override existing ones.
+    
+
+## 3. Installation & Dependencies
+Dependencies (CE/OCA):
+- `web`
+- `ipai_platform_theme`
+
+## 4. Configuration
+Key system parameters or settings groups:
+- (Audit Pending)
+
+## 5. Data Model
+Defined Models:
+- No explicit new models detected (may inherit existing).
+
+## 6. User Interface
+- **Views**: 0 files
+- **Menus**: (Audit Pending)
+
+## 7. Security
+- **Access Rules**: `ir.model.access.csv` not found
+- **Groups**: `security.xml` not found
+
+## 8. Integrations
+- (Audit Pending)
+
+## 9. Verification Steps
 ```bash
-# From your local machine
-scp -r ipai_theme_tbwa_backend root@159.223.75.148:/opt/odoo/addons/
-```
+# Install
+odoo-bin -d <db> -i ipai_theme_tbwa_backend --stop-after-init
 
-Or using git (recommended):
-```bash
-# SSH into server
-ssh root@159.223.75.148
-
-# Clone/copy to addons path
-cd /opt/odoo/addons
-# If using git submodule or direct copy
-```
-
-### Step 2: Verify addons path includes the module location
-
-```bash
-# Check odoo.conf
-cat /opt/odoo/odoo.conf | grep addons_path
-
-# Should show something like:
-# addons_path = /opt/odoo/addons,/mnt/extra-addons
-```
-
-### Step 3: Install the module
-
-```bash
-# Method A: Docker exec (recommended)
-docker exec -it odoo-web odoo -c /etc/odoo/odoo.conf \
-    -d odoo_core \
-    -i ipai_theme_tbwa_backend \
-    --stop-after-init
-
-# Method B: If using docker-compose
-docker-compose exec web odoo -d odoo_core -i ipai_theme_tbwa_backend --stop-after-init
-```
-
-### Step 4: Restart and clear assets
-
-```bash
-# Restart container
-docker restart odoo-web
-
-# Force asset regeneration (if needed)
-docker exec -it odoo-web odoo -c /etc/odoo/odoo.conf \
-    -d odoo_core \
-    -u ipai_theme_tbwa_backend \
-    --stop-after-init
-```
-
-### Step 5: Clear browser cache
-
-```
-Ctrl+Shift+R (hard refresh)
-```
-
----
-
-## Troubleshooting
-
-### Module not found in Apps
-
-```bash
-# Update module list first
-docker exec -it odoo-web odoo shell -d odoo_core << 'EOF'
-env['ir.module.module'].update_list()
-env.cr.commit()
-EOF
-
-# Then search in Apps → Update Apps List → Search "TBWA"
-```
-
-### Assets not loading / old styles
-
-```bash
-# Clear asset cache
-docker exec -it odoo-web psql -U odoo -d odoo_core -c "
-DELETE FROM ir_attachment WHERE url LIKE '/web/assets/%';
-"
-
-# Restart
-docker restart odoo-web
-```
-
-### Check if module is installed
-
-```bash
-docker exec -it odoo-web psql -U odoo -d odoo_core -c "
-SELECT name, state FROM ir_module_module WHERE name = 'ipai_theme_tbwa_backend';
-"
-```
-
-### View asset bundles
-
-```bash
-# Check if SCSS is being loaded
-docker exec -it odoo-web psql -U odoo -d odoo_core -c "
-SELECT name, path FROM ir_asset WHERE path LIKE '%tbwa%';
-"
-```
-
----
-
-## Install via Odoo UI (Alternative)
-
-1. **Go to Apps** → Click "Update Apps List" (in top menu)
-2. **Remove "Apps" filter** (click the X on the filter)
-3. **Search**: `TBWA`
-4. **Click Install** on "TBWA Backend Theme (IPAI)"
-5. **Refresh browser** (Ctrl+Shift+R)
-
----
-
-## File Structure
-
-```
-ipai_theme_tbwa_backend/
-├── __init__.py
-├── __manifest__.py
-└── static/
-    └── src/
-        ├── scss/
-        │   ├── variables.scss      # Odoo/Bootstrap var overrides
-        │   ├── variables_dark.scss # Dark mode vars
-        │   ├── fonts.scss          # @font-face declarations
-        │   └── backend.scss        # UI component styling
-        └── fonts/
-            ├── IBMPlexSans-Regular.woff2
-            ├── IBMPlexSans-Medium.woff2
-            ├── IBMPlexSans-SemiBold.woff2
-            └── IBMPlexSans-Bold.woff2
-```
-
----
-
-## What Changes
-
-| Element | Before | After |
-|---------|--------|-------|
-| Primary color | Odoo Purple (#714B67) | TBWA Yellow (#FFD800) |
-| Navbar | Purple gradient | Solid Black |
-| Buttons | Purple bg, white text | Yellow bg, **black text** |
-| Font | Roboto | IBM Plex Sans |
-| Border radius | 4px | 14-16px (rounded) |
-| Cards | Flat | Subtle shadow + rounded |
-
----
-
-## With MuK Theme (Optional)
-
-If you have `muk_web_theme` installed, this theme works alongside it.
-The TBWA variables will override MuK's defaults.
-
-Install order:
-1. `muk_web_theme` (base theme)
-2. `ipai_theme_tbwa_backend` (branding layer)
-
-```bash
-docker exec -it odoo-web odoo -d odoo_core \
-    -i muk_web_theme,ipai_theme_tbwa_backend \
-    --stop-after-init
+# Upgrade
+odoo-bin -d <db> -u ipai_theme_tbwa_backend --stop-after-init
 ```
