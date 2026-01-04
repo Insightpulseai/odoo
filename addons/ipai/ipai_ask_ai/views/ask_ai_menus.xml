@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Ask AI Root Menu -->
+    <menuitem id="menu_ask_ai_root"
+              name="Ask AI"
+              web_icon="ipai_ask_ai,static/description/icon.png"
+              sequence="100"/>
+
+    <menuitem id="menu_ask_ai_chat"
+              name="Chat"
+              parent="menu_ask_ai_root"
+              action="action_ask_ai_chat"
+              sequence="10"/>
+
+    <menuitem id="menu_ask_ai_conversations"
+              name="History"
+              parent="menu_ask_ai_root"
+              action="action_ask_ai_conversations"
+              sequence="20"/>
+</odoo>
