@@ -136,6 +136,9 @@ jobs:
           fi
           echo "✅ All module structures valid"
 
+      - name: Validate Manifest Icons
+        run: python3 scripts/validate_manifest.py
+
   lint:
     name: Lint & Static Checks
     runs-on: ubuntu-latest
