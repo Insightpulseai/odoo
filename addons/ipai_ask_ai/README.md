@@ -1,14 +1,18 @@
 # IPAI Ask AI Assistant
 
-## 1. Overview
+## Overview
+
 AI-powered conversational assistant for Odoo
 
-**Technical Name**: `ipai_ask_ai`
-**Category**: Productivity/AI
-**Version**: 18.0.1.1.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_ask_ai`
+- **Version:** 18.0.1.1.0
+- **Category:** Productivity/AI
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 IPAI Ask AI Assistant
 =====================
@@ -23,73 +27,97 @@ An integrated AI-powered conversational assistant that:
 
 Features:
 - Chat window component with real-time messaging
-- Integration with discuss.channel for persistence
-- Context-aware responses based on current model/view
-- Support for business queries (customers, sales, etc.)
-- **AFC/BIR Compliance Queries** - Philippine tax filing and financial closing
-- **RAG-powered answers** - Retrieval-Augmented Generation using pgvector
-- Message threading and history
-- Mark as read functionality
-- Keyboard shortcuts (ESC to close, Enter to send)
+- Integration with...
 
-Technical Stack:
-- OWL Components for reactive chat UI
-- Discuss module integration for message storage
-- Custom AI service for response generation
-- **AFC RAG Service** - pgvector semantic search with Supabase integration
-- SCSS styling with IPAI platform tokens
+## Functional Scope
 
-Theming:
-- Uses ipai_platform_theme tokens for consistent branding
-- No hardcoded colors - all styling via CSS variables
-- Automatically inherits brand colors from theme modules
+### Data Models
 
-Dependencies:
-- psycopg2 (for Supabase vector search)
-- OpenAI API (for embeddings - optional, requires configuration)
-    
+- **ipai.ask.ai.service** (TransientModel)
+  - Ask AI Service
+- **afc.rag.service** (AbstractModel)
+  - AFC RAG Service
+- **res.config.settings** (TransientModel)
+  - Fields: 2 defined
+- **discuss.channel** (Model)
+  - Fields: 1 defined
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `web`
-- `mail`
-- `ipai_platform_theme`
+### Views
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+- : 1
 
-## 5. Data Model
-Defined Models:
-- `ipai.ask.ai.service`
-- `modelintent.get(model, res.partner)`
-- `if model_name == sale.order:`
-- `elif model_name == account.move:`
-- `if intent.get(filter) == unpaid and model_name == account.move:`
-- `if intent.get(filter) == overdue and model_name == project.task:`
-- `if model_name == res.partner:`
-- `modelintent.get(model, sale.order)`
-- `dbICP.get_param(afc.supabase.db_name) or os.getenv(POSTGRES_DATABASE, postgres)`
-- `if intent.get(filter) == my_tasks and model_name == project.task:`
-- `afc.rag.service`
+## Installation & Dependencies
 
-## 6. User Interface
-- **Views**: 5 files
-- **Menus**: (Audit Pending)
+### Dependencies
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` found
+- `base` (CE Core)
+- `web` (CE Core)
+- `mail` (CE Core)
+- `ipai_platform_theme` (IPAI)
 
-## 8. Integrations
-- (Audit Pending)
+### Installation
 
-## 9. Verification Steps
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_ask_ai --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_ask_ai --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_ask_ai --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_ask_ai --stop-after-init
 ```
+
+## Configuration
+
+### System Parameters
+
+- `afc.supabase.db_host`: db.spdtwktxdalcfigzeqrz.supabase.co
+- `afc.supabase.db_name`: postgres
+- `afc.supabase.db_user`: postgres
+- `afc.supabase.db_password`: CONFIGURE_VIA_ODOO_UI
+- `afc.supabase.db_port`: 5432
+- `openai.api_key`: CONFIGURE_VIA_ODOO_UI
+- `openai.embedding_model`: text-embedding-3-large
+
+## Security
+
+### Security Groups
+
+- `group_ask_ai_user`: User
+
+### Access Rules
+
+*1 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- OpenAI API / Claude API (AI Assistant)
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.1.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_ask_ai'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_ask_ai")]).state)'
+```
+
+## Data Files
+
+- `security/security.xml`
+- `security/ir.model.access.csv`
+- `data/ai_channel_data.xml`
+- `data/afc_config_params.xml`
+- `views/ask_ai_views.xml`
+- `views/res_config_settings_view.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

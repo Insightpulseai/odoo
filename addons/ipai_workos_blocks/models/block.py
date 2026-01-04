@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import json
-from odoo import api, fields, models
+
 from odoo.exceptions import ValidationError
 
+from odoo import api, fields, models
 
 BLOCK_TYPES = [
     ("paragraph", "Paragraph"),
@@ -98,7 +99,9 @@ class IpaiWorkosBlock(models.Model):
         for record in self:
             content = record._get_content()
             text = content.get("text", "")[:50]
-            record.name = f"[{record.block_type}] {text}" if text else f"[{record.block_type}]"
+            record.name = (
+                f"[{record.block_type}] {text}" if text else f"[{record.block_type}]"
+            )
 
     @api.depends("content_json")
     def _compute_content_text(self):
@@ -116,7 +119,9 @@ class IpaiWorkosBlock(models.Model):
                         texts.append(item["text"])
             record.content_text = " ".join(texts)
 
-    @api.depends("block_type", "content_json", "is_checked", "callout_icon", "callout_color")
+    @api.depends(
+        "block_type", "content_json", "is_checked", "callout_icon", "callout_color"
+    )
     def _compute_content_html(self):
         for record in self:
             record.content_html = record._render_html()
@@ -176,22 +181,22 @@ class IpaiWorkosBlock(models.Model):
         children_html = ""
         for child in self.child_block_ids:
             children_html += child._render_html()
-        return f'''
+        return f"""
             <details class="o_workos_toggle {collapsed}">
                 <summary>{text}</summary>
                 <div class="o_workos_toggle_content">{children_html}</div>
             </details>
-        '''
+        """
 
     def _render_callout(self, content):
         """Render callout block with icon and color."""
         text = content.get("text", "")
-        return f'''
+        return f"""
             <div class="o_workos_callout o_workos_callout_{self.callout_color}">
                 <span class="o_workos_callout_icon">{self.callout_icon}</span>
                 <span class="o_workos_callout_text">{text}</span>
             </div>
-        '''
+        """
 
     def _render_image(self):
         """Render image block."""
@@ -202,11 +207,11 @@ class IpaiWorkosBlock(models.Model):
     def _render_file(self):
         """Render file attachment block."""
         if self.attachment_id:
-            return f'''
+            return f"""
                 <a href="/web/content/{self.attachment_id.id}" class="o_workos_file">
                     {self.attachment_id.name}
                 </a>
-            '''
+            """
         return '<div class="o_workos_file_placeholder">No file</div>'
 
     @api.constrains("content_json")
@@ -220,7 +225,9 @@ class IpaiWorkosBlock(models.Model):
                     raise ValidationError(f"Invalid JSON content: {e}")
 
     @api.model
-    def create_block(self, page_id, block_type, content, sequence=None, parent_block_id=None):
+    def create_block(
+        self, page_id, block_type, content, sequence=None, parent_block_id=None
+    ):
         """Helper to create a block with proper content structure."""
         vals = {
             "page_id": page_id,

@@ -4,8 +4,9 @@ import json
 import logging
 from datetime import timedelta
 
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -21,17 +22,23 @@ class IpaiOcrJob(models.Model):
     name = fields.Char(
         string="Reference",
         required=True,
-        default=lambda self: self.env["ir.sequence"].next_by_code("ipai.ocr.job") or "OCR-NEW",
+        default=lambda self: self.env["ir.sequence"].next_by_code("ipai.ocr.job")
+        or "OCR-NEW",
         copy=False,
     )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("pending", "Pending"),
-        ("processing", "Processing"),
-        ("done", "Completed"),
-        ("failed", "Failed"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("pending", "Pending"),
+            ("processing", "Processing"),
+            ("done", "Completed"),
+            ("failed", "Failed"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     attachment_id = fields.Many2one(
         "ir.attachment",
@@ -106,22 +113,26 @@ class IpaiOcrJob(models.Model):
     def action_reset(self):
         """Reset failed job to draft."""
         for rec in self.filtered(lambda r: r.state == "failed"):
-            rec.write({
-                "state": "draft",
-                "error_message": False,
-                "retry_count": 0,
-            })
+            rec.write(
+                {
+                    "state": "draft",
+                    "error_message": False,
+                    "retry_count": 0,
+                }
+            )
         return True
 
     def _run_ocr(self):
         """Execute OCR processing."""
         self.ensure_one()
 
-        self.write({
-            "state": "processing",
-            "started_at": fields.Datetime.now(),
-            "error_message": False,
-        })
+        self.write(
+            {
+                "state": "processing",
+                "started_at": fields.Datetime.now(),
+                "error_message": False,
+            }
+        )
 
         try:
             # Get attachment data
@@ -134,13 +145,15 @@ class IpaiOcrJob(models.Model):
             result = self._call_ocr_provider(file_data)
 
             # Store results
-            self.write({
-                "state": "done",
-                "completed_at": fields.Datetime.now(),
-                "result_text": result.get("text", ""),
-                "result_json": json.dumps(result.get("raw", {})),
-                "confidence_score": result.get("confidence", 0.0),
-            })
+            self.write(
+                {
+                    "state": "done",
+                    "completed_at": fields.Datetime.now(),
+                    "result_text": result.get("text", ""),
+                    "result_json": json.dumps(result.get("raw", {})),
+                    "confidence_score": result.get("confidence", 0.0),
+                }
+            )
 
             # Create output attachment
             if result.get("text"):
@@ -150,12 +163,14 @@ class IpaiOcrJob(models.Model):
 
         except Exception as e:
             _logger.exception("OCR job %s failed: %s", self.name, str(e))
-            self.write({
-                "state": "failed",
-                "completed_at": fields.Datetime.now(),
-                "error_message": str(e),
-                "retry_count": self.retry_count + 1,
-            })
+            self.write(
+                {
+                    "state": "failed",
+                    "completed_at": fields.Datetime.now(),
+                    "error_message": str(e),
+                    "retry_count": self.retry_count + 1,
+                }
+            )
 
     def _call_ocr_provider(self, file_data):
         """Call the configured OCR provider."""
@@ -181,9 +196,10 @@ class IpaiOcrJob(models.Model):
     def _call_tesseract(self, file_data):
         """Local Tesseract OCR (requires pytesseract)."""
         try:
+            import io
+
             import pytesseract
             from PIL import Image
-            import io
 
             image = Image.open(io.BytesIO(file_data))
             text = pytesseract.image_to_string(image)
@@ -194,7 +210,9 @@ class IpaiOcrJob(models.Model):
                 "confidence": 0.9,
             }
         except ImportError:
-            raise UserError("pytesseract not installed. Install with: pip install pytesseract")
+            raise UserError(
+                "pytesseract not installed. Install with: pip install pytesseract"
+            )
 
     def _call_google_vision(self, file_data):
         """Google Cloud Vision API."""
@@ -209,10 +227,12 @@ class IpaiOcrJob(models.Model):
         url = f"{provider.base_url or 'https://vision.googleapis.com/v1'}/images:annotate?key={api_key}"
 
         payload = {
-            "requests": [{
-                "image": {"content": base64.b64encode(file_data).decode("utf-8")},
-                "features": [{"type": "TEXT_DETECTION"}],
-            }]
+            "requests": [
+                {
+                    "image": {"content": base64.b64encode(file_data).decode("utf-8")},
+                    "features": [{"type": "TEXT_DETECTION"}],
+                }
+            ]
         }
 
         response = requests.post(url, json=payload, timeout=provider.timeout)
@@ -246,7 +266,9 @@ class IpaiOcrJob(models.Model):
             "Content-Type": "application/octet-stream",
         }
 
-        response = requests.post(url, headers=headers, data=file_data, timeout=provider.timeout)
+        response = requests.post(
+            url, headers=headers, data=file_data, timeout=provider.timeout
+        )
         response.raise_for_status()
 
         # Azure uses async read - would need polling
@@ -296,13 +318,15 @@ class IpaiOcrJob(models.Model):
 
         output_name = f"{self.attachment_name or 'document'}_ocr.txt"
 
-        attachment = self.env["ir.attachment"].create({
-            "name": output_name,
-            "datas": base64.b64encode(text.encode("utf-8")),
-            "res_model": self.res_model or self._name,
-            "res_id": self.res_id or self.id,
-            "mimetype": "text/plain",
-        })
+        attachment = self.env["ir.attachment"].create(
+            {
+                "name": output_name,
+                "datas": base64.b64encode(text.encode("utf-8")),
+                "res_model": self.res_model or self._name,
+                "res_id": self.res_id or self.id,
+                "mimetype": "text/plain",
+            }
+        )
 
         self.output_attachment_id = attachment
 
@@ -311,9 +335,13 @@ class IpaiOcrJob(models.Model):
     @api.model
     def _cron_process_pending_jobs(self):
         """Cron job to process pending OCR jobs."""
-        pending = self.search([
-            ("state", "=", "pending"),
-        ], limit=10, order="create_date asc")
+        pending = self.search(
+            [
+                ("state", "=", "pending"),
+            ],
+            limit=10,
+            order="create_date asc",
+        )
 
         for job in pending:
             try:
@@ -333,15 +361,25 @@ class IpaiOcrJob(models.Model):
         processing_count = self.search_count([("state", "=", "processing")])
         failed_count = self.search_count([("state", "=", "failed")])
 
-        last_completed = self.search([
-            ("state", "=", "done"),
-        ], limit=1, order="completed_at desc")
+        last_completed = self.search(
+            [
+                ("state", "=", "done"),
+            ],
+            limit=1,
+            order="completed_at desc",
+        )
 
         return {
             "status": "healthy" if failed_count < 10 else "degraded",
             "pending_jobs": pending_count,
             "processing_jobs": processing_count,
             "failed_jobs": failed_count,
-            "last_completed": last_completed.completed_at.isoformat() if last_completed.completed_at else None,
-            "provider_count": self.env["ipai.ocr.provider"].search_count([("active", "=", True)]),
+            "last_completed": (
+                last_completed.completed_at.isoformat()
+                if last_completed.completed_at
+                else None
+            ),
+            "provider_count": self.env["ipai.ocr.provider"].search_count(
+                [("active", "=", True)]
+            ),
         }

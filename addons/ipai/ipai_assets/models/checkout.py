@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
-from odoo.exceptions import ValidationError
 from datetime import timedelta
+
+from odoo.exceptions import ValidationError
+
+from odoo import api, fields, models
 
 
 class AssetCheckout(models.Model):

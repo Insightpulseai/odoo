@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-from odoo import api, fields, models
 
+from odoo import api, fields, models
 
 PROPERTY_TYPES = [
     ("text", "Text"),

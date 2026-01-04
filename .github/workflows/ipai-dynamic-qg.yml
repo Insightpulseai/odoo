@@ -1,0 +1,108 @@
+name: IPAI Dynamic Install/Upgrade Gate
+
+on:
+  pull_request:
+    paths:
+      - "addons/ipai*/**"
+      - "addons/ipai/**"
+      - "scripts/ipai_install_upgrade_test.sh"
+      - "scripts/ipai_full_audit.py"
+  push:
+    branches:
+      - main
+    paths:
+      - "addons/ipai*/**"
+      - "addons/ipai/**"
+  workflow_dispatch: {}
+
+jobs:
+  static-audit:
+    name: Static Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run static audit
+        run: |
+          python scripts/ipai_full_audit.py
+
+      - name: Check for failures
+        run: |
+          # Fail if any module has FAIL status in static checks
+          if grep -q '"status": "FAIL"' artifacts/ipai_install_upgrade_matrix.json; then
+            echo "❌ Static validation failed for one or more modules"
+            grep -B5 '"status": "FAIL"' artifacts/ipai_install_upgrade_matrix.json
+            exit 1
+          fi
+          echo "✅ All modules passed static validation"
+
+      - name: Upload static audit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ipai-static-audit
+          path: |
+            artifacts/ipai_install_upgrade_matrix.json
+            artifacts/ipai_install_upgrade_matrix.csv
+            docs/IPAI_MODULES_INDEX.md
+
+  dynamic-qg:
+    name: Dynamic Install/Upgrade Test
+    runs-on: ubuntu-latest
+    needs: static-audit
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create test database
+        run: |
+          PGPASSWORD=odoo psql -h localhost -U odoo -d postgres -c "CREATE DATABASE ipai_test_db;"
+
+      - name: Run install/upgrade matrix
+        run: |
+          chmod +x scripts/ipai_install_upgrade_test.sh
+          # Run in CI mode (uses GitHub Actions services instead of spinning up containers)
+          CI_MODE=true ./scripts/ipai_install_upgrade_test.sh
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          TEST_DB: ipai_test_db
+
+      - name: Check test results
+        run: |
+          # Fail if any module has fail status
+          if grep -q ',fail,' artifacts/ipai_install_upgrade_matrix.csv; then
+            echo "❌ Install/upgrade tests failed for one or more modules"
+            grep ',fail,' artifacts/ipai_install_upgrade_matrix.csv
+            exit 1
+          fi
+          echo "✅ All modules passed install/upgrade tests"
+
+      - name: Upload dynamic test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ipai-dynamic-qg
+          path: |
+            artifacts/ipai_install_upgrade_matrix.json
+            artifacts/ipai_install_upgrade_matrix.csv
+            artifacts/logs/

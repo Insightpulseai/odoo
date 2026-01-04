@@ -1,14 +1,18 @@
 # PPM Monthly Close Scheduler
 
-## 1. Overview
+## Overview
+
 Automated monthly financial close scheduling with PPM and Notion workspace parity
 
-**Technical Name**: `ipai_ppm_monthly_close`
-**Category**: Project Management
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_ppm_monthly_close`
+- **Version:** 18.0.1.0.0
+- **Category:** Project Management
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 Monthly Financial Close Scheduler
 ==================================
@@ -25,52 +29,101 @@ Implements recurring monthly close workflow with:
 Features:
 ---------
 * Recurring schedule: 3rd business day before month-end
-* Multi-agency support (RIM, CKVC, BOM, JPAL, JLI, JAP, LAS, RMQB)
-* Role-based workflow (Owner → Reviewer → Approver)
-* Gantt visualization
-* Status tracking (To Do → In Progress → For Review → For Approval → Done)
+* Multi-agency support (RIM, CKVC, BO...
 
-Integration:
-------------
-* ipai_ppm_portfolio - Portfolio/program/project hierarchy
-* project - Core Odoo project management
-* mail - Activity tracking and notifications
-* n8n - Automation workflows
-    
+## Functional Scope
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `project`
-- `mail`
-- `resource`
+### Data Models
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+- **ppm.close.task** (Model)
+  - Monthly Close Task
+  - Fields: 25 defined
+- **ppm.close.template** (Model)
+  - Monthly Close Task Template
+  - Fields: 14 defined
+- **ppm.monthly.close** (Model)
+  - Monthly Financial Close Schedule
+  - Fields: 13 defined
 
-## 5. Data Model
-Defined Models:
-- `ppm.close.task`
-- `ppm.monthly.close`
-- `ppm.close.template`
+### Views
 
-## 6. User Interface
-- **Views**: 6 files
-- **Menus**: (Audit Pending)
+- : 3
+- Form: 3
+- Calendar: 1
+- Search: 1
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+### Menus
 
-## 8. Integrations
-- (Audit Pending)
+- `menu_ppm_monthly_close_root`: Monthly Close
+- `menu_ppm_monthly_close`: Close Schedules
+- `menu_ppm_close_task`: Tasks
+- `menu_ppm_close_template`: Templates
 
-## 9. Verification Steps
+## Installation & Dependencies
+
+### Dependencies
+
+- `base` (CE Core)
+- `project` (CE Core)
+- `mail` (CE Core)
+- `resource` (CE Core)
+
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_ppm_monthly_close --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_ppm_monthly_close --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_ppm_monthly_close --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_ppm_monthly_close --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+### Scheduled Actions
+
+- **Create Next Month's Close Schedule** (Active)
+- **Send Daily Task Reminders** (Active)
+
+## Security
+
+### Access Rules
+
+*6 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_ppm_monthly_close'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_ppm_monthly_close")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `data/ppm_close_template_data_REAL.xml`
+- `data/ppm_close_cron.xml`
+- `views/ppm_monthly_close_views.xml`
+- `views/ppm_close_task_views.xml`
+- `views/ppm_close_template_views.xml`
+- `views/ppm_close_menu.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

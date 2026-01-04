@@ -1941,6 +1941,118 @@ Table import_xlsx_wizard_attachment_ids_rel {
   ir_attachment_id int
 }
 
+Table ipai_agent_knowledge_source {
+  attachment_id int
+  content_text text
+  create_date datetime
+  create_uid int
+  id int [pk]
+  is_active boolean
+  key varchar
+  kind varchar
+  model_name varchar
+  name varchar
+  tags varchar
+  url varchar
+  write_date datetime
+  write_uid int
+  Note: 'knowledge_key_unique: unique(key) (Knowledge key must be unique.)'
+}
+
+Table ipai_agent_run {
+  completed_at datetime
+  create_date datetime
+  create_uid int
+  duration_seconds float
+  error_text text
+  id int [pk]
+  input_json text
+  input_text text
+  name varchar
+  output_json text
+  output_text text
+  skill_id int
+  skill_key varchar
+  started_at datetime
+  state varchar
+  tool_trace_json text
+  user_id int
+  write_date datetime
+  write_uid int
+}
+
+Table ipai_agent_skill {
+  create_date datetime
+  create_uid int
+  description text
+  guardrails text
+  id int [pk]
+  intents text
+  is_active boolean
+  key varchar
+  name varchar
+  run_count int
+  version varchar
+  workflow_json text
+  write_date datetime
+  write_uid int
+  Note: 'skill_key_unique: unique(key) (Skill key must be unique.)'
+}
+
+Table ipai_agent_tool {
+  create_date datetime
+  create_uid int
+  description text
+  id int [pk]
+  input_schema_json text
+  is_active boolean
+  key varchar
+  name varchar
+  output_schema_json text
+  requires_admin boolean
+  target_method varchar
+  target_model varchar
+  write_date datetime
+  write_uid int
+  Note: 'tool_key_unique: unique(key) (Tool key must be unique.)'
+}
+
+Table ipai_ai_studio_run {
+  create_date datetime
+  create_uid int
+  generated_files_json text
+  id int [pk]
+  module_name varchar
+  name varchar
+  prompt text
+  spec_json text
+  state varchar
+  validation_ok boolean
+  validation_report text
+  workspace_path varchar
+  write_date datetime
+  write_uid int
+}
+
+Table ipai_ask_ai_chatter_request {
+  create_date datetime
+  create_uid int
+  error text
+  id int [pk]
+  model varchar
+  payload_json text
+  question text
+  requested_by int
+  res_id int
+  response text
+  response_json text
+  source_message_id int
+  state varchar
+  uuid varchar
+  write_date datetime
+  write_uid int
+}
+
 Table ipai_ask_ai_service {
   create_date datetime
   create_uid int
@@ -2853,6 +2965,16 @@ Table ipai_share_token {
   scope_type varchar
   write_date datetime
   write_uid int
+}
+
+Table ipai_skill_knowledge_rel {
+  knowledge_id int
+  skill_id int
+}
+
+Table ipai_skill_tool_rel {
+  skill_id int
+  tool_id int
 }
 
 Table ipai_sms_message {
@@ -5484,6 +5606,11 @@ Ref: hr_expense.travel_request_id > ipai_travel_request.id
 Ref: import_xlsx_wizard.template_id > xlsx_template.id
 Ref: import_xlsx_wizard_attachment_ids_rel.import_xlsx_wizard_id > import_xlsx_wizard.id
 Ref: import_xlsx_wizard_attachment_ids_rel.ir_attachment_id > ir_attachment.id
+Ref: ipai_agent_knowledge_source.attachment_id > ir_attachment.id
+Ref: ipai_agent_run.skill_id > ipai_agent_skill.id
+Ref: ipai_agent_run.user_id > res_users.id
+Ref: ipai_ask_ai_chatter_request.requested_by > res_users.id
+Ref: ipai_ask_ai_chatter_request.source_message_id > mail_message.id
 Ref: ipai_asset.active_checkout_id > ipai_asset_checkout.id
 Ref: ipai_asset.category_id > ipai_asset_category.id
 Ref: ipai_asset.currency_id > res_currency.id
@@ -5573,6 +5700,10 @@ Ref: ipai_ocr_job.provider_id > ipai_ocr_provider.id
 Ref: ipai_permission.group_id > res_groups.id
 Ref: ipai_permission.user_id > res_users.id
 Ref: ipai_share_token.created_by > res_users.id
+Ref: ipai_skill_knowledge_rel.knowledge_id > ipai_agent_knowledge_source.id
+Ref: ipai_skill_knowledge_rel.skill_id > ipai_agent_skill.id
+Ref: ipai_skill_tool_rel.skill_id > ipai_agent_skill.id
+Ref: ipai_skill_tool_rel.tool_id > ipai_agent_tool.id
 Ref: ipai_sms_message.partner_id > res_partner.id
 Ref: ipai_sms_message.provider_id > ipai_sms_provider.id
 Ref: ipai_studio_ai_history.automation_id > base_automation.id

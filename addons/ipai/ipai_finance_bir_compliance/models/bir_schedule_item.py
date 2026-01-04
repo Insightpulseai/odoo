@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """BIR Schedule Item models for tax filing task generation."""
 from datetime import date
-from odoo import fields, models
+
 from odoo.addons.ipai_project_program.utils.date_utils import subtract_business_days
+
+from odoo import fields, models
 
 
 class IPAIBIRScheduleItem(models.Model):

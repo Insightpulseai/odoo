@@ -1,14 +1,18 @@
 # IPAI CRM - Pipeline Clone
 
-## 1. Overview
+## Overview
+
 Salesforce-like CRM pipeline experience
 
-**Technical Name**: `ipai_crm_pipeline`
-**Category**: Sales/CRM
-**Version**: 18.0.1.0.0
-**Author**: IPAI
+- **Technical Name:** `ipai_crm_pipeline`
+- **Version:** 18.0.1.0.0
+- **Category:** Sales/CRM
+- **License:** LGPL-3
+- **Author:** IPAI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 IPAI CRM Pipeline Clone
 =======================
@@ -26,39 +30,80 @@ Features:
 
 This module targets feature parity with Salesforce Sales Cloud
 pipeline functionality while leveraging the IPAI design system.
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `crm`
-- `mail`
-- `ipai_platform_workflow`
-- `ipai_platform_theme`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Data Models
 
-## 5. Data Model
-Defined Models:
-- No explicit new models detected (may inherit existing).
+- **crm.stage** (Model)
+  - Fields: 6 defined
+- **crm.lead** (Model)
+  - Fields: 6 defined
 
-## 6. User Interface
-- **Views**: 3 files
-- **Menus**: (Audit Pending)
+### Views
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+- : 3
 
-## 8. Integrations
-- (Audit Pending)
+### Menus
 
-## 9. Verification Steps
+- `ipai_crm_pipeline_menu`: IPAI Pipeline
+- `ipai_crm_stage_config_menu`: Stage Rules
+
+## Installation & Dependencies
+
+### Dependencies
+
+- `crm` (CE Core)
+- `mail` (CE Core)
+- `ipai_platform_workflow` (IPAI)
+- `ipai_platform_theme` (IPAI)
+
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_crm_pipeline --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_crm_pipeline --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_crm_pipeline --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_crm_pipeline --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+*No specific security configuration.*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_crm_pipeline'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_crm_pipeline")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `views/crm_lead_views.xml`
+- `views/crm_stage_views.xml`
+- `data/crm_stage_rules.xml`
+
+## Static Validation Status
+
+- Passed: 4
+- Warnings: 1
+- Failed: 0

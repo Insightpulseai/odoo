@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Wizard to convert legacy phases into IM child projects."""
-from odoo import _, fields, models
 from odoo.exceptions import UserError
+
+from odoo import _, fields, models
 
 
 class IPAIConvertPhasesWizard(models.TransientModel):

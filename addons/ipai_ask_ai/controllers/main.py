@@ -8,8 +8,9 @@ HTTP controllers for AI chat functionality.
 import json
 import logging
 
-from odoo import http
 from odoo.http import request
+
+from odoo import http
 
 _logger = logging.getLogger(__name__)
 

@@ -14,7 +14,7 @@ Example:
     Assign: task.user_ids = [(4, user.id)]
 """
 
-from odoo import models, fields, api
+from odoo import api, fields, models
 
 
 class ResUsers(models.Model):

@@ -18,10 +18,14 @@ class IpaCloseGenerateWizard(models.TransientModel):
     def action_generate(self):
         """Generate the month-end close project."""
         self.ensure_one()
-        res = self.env["ipai.finance.close.service"].sudo().generate_month_close(
-            self.year,
-            self.month,
-            calendar_id=self.calendar_id.id if self.calendar_id else None,
+        res = (
+            self.env["ipai.finance.close.service"]
+            .sudo()
+            .generate_month_close(
+                self.year,
+                self.month,
+                calendar_id=self.calendar_id.id if self.calendar_id else None,
+            )
         )
         return {
             "type": "ir.actions.act_window",

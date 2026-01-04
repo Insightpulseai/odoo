@@ -1,5 +1,6 @@
-from odoo import api, fields, models
 from dateutil.relativedelta import relativedelta
+
+from odoo import api, fields, models
 
 
 class BirFilingDeadline(models.Model):

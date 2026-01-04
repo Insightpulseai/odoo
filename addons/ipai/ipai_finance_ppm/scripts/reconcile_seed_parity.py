@@ -23,16 +23,16 @@ Exit codes:
     2: Failure (critical error, no changes made)
 """
 
+import argparse
 import json
 import sys
-import argparse
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Odoo imports
 try:
     import odoo
-    from odoo import api, SUPERUSER_ID
+    from odoo import SUPERUSER_ID, api
 except ImportError:
     print(
         "ERROR: Cannot import Odoo. Run via: docker exec odoo-ce python3 /path/to/script.py"

@@ -53,9 +53,9 @@ class IpaiWorkosSpace(models.Model):
     @api.depends("page_ids")
     def _compute_page_count(self):
         for record in self:
-            record.page_count = self.env["ipai.workos.page"].search_count([
-                ("space_id", "=", record.id)
-            ])
+            record.page_count = self.env["ipai.workos.page"].search_count(
+                [("space_id", "=", record.id)]
+            )
 
     def action_view_pages(self):
         """Open pages in this space."""

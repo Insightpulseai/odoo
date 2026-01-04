@@ -2482,6 +2482,103 @@ You cannot define another: please edit the existing one.)
 ### Non-persisted fields
 - _none_
 
+## ipai.agent.knowledge_source
+
+- Module: `ipai`
+- Model type: `Model`
+- Table: `ipai_agent_knowledge_source`
+- SQL constraints:
+  - `knowledge_key_unique`: `unique(key)` (Knowledge key must be unique.)
+  - `knowledge_key_unique`: `unique(key)` (Knowledge key must be unique.)
+
+### Persisted fields
+- `attachment_id`: `Many2one` (relation=ir.attachment)
+- `content_text`: `Text`
+- `is_active`: `Boolean`
+- `key`: `Char` (required, index)
+- `kind`: `Selection` (required)
+- `model_name`: `Char`
+- `name`: `Char` (required, index)
+- `tags`: `Char`
+- `url`: `Char`
+
+### Non-persisted fields
+- _none_
+
+## ipai.agent.run
+
+- Module: `ipai`
+- Model type: `Model`
+- Table: `ipai_agent_run`
+- _inherit: `mail.activity.mixin, mail.thread`
+
+### Persisted fields
+- `completed_at`: `Datetime`
+- `duration_seconds`: `Float` (compute=_compute_duration)
+- `error_text`: `Text`
+- `input_json`: `Text`
+- `input_text`: `Text`
+- `name`: `Char`
+- `output_json`: `Text`
+- `output_text`: `Text`
+- `skill_id`: `Many2one` (relation=ipai.agent.skill, required, ondelete=restrict)
+- `skill_key`: `Char` (related=skill_id.key)
+- `started_at`: `Datetime`
+- `state`: `Selection` (required)
+- `tool_trace_json`: `Text`
+- `user_id`: `Many2one` (relation=res.users)
+
+### Non-persisted fields
+- _none_
+
+## ipai.agent.skill
+
+- Module: `ipai`
+- Model type: `Model`
+- Table: `ipai_agent_skill`
+- SQL constraints:
+  - `skill_key_unique`: `unique(key)` (Skill key must be unique.)
+  - `skill_key_unique`: `unique(key)` (Skill key must be unique.)
+
+### Persisted fields
+- `description`: `Text`
+- `guardrails`: `Text`
+- `intents`: `Text`
+- `is_active`: `Boolean`
+- `key`: `Char` (required, index)
+- `knowledge_ids`: `Many2many` (relation=ipai.agent.knowledge_source)
+- `name`: `Char` (required, index)
+- `run_count`: `Integer` (compute=_compute_run_count)
+- `tool_ids`: `Many2many` (relation=ipai.agent.tool)
+- `version`: `Char`
+- `workflow_json`: `Text`
+
+### Non-persisted fields
+- `run_ids`: `One2many` (relation=ipai.agent.run)
+
+## ipai.agent.tool
+
+- Module: `ipai`
+- Model type: `Model`
+- Table: `ipai_agent_tool`
+- SQL constraints:
+  - `tool_key_unique`: `unique(key)` (Tool key must be unique.)
+  - `tool_key_unique`: `unique(key)` (Tool key must be unique.)
+
+### Persisted fields
+- `description`: `Text`
+- `input_schema_json`: `Text`
+- `is_active`: `Boolean`
+- `key`: `Char` (required, index)
+- `name`: `Char` (required, index)
+- `output_schema_json`: `Text`
+- `requires_admin`: `Boolean`
+- `target_method`: `Char` (required)
+- `target_model`: `Char` (required)
+
+### Non-persisted fields
+- _none_
+
 ## ipai.ai.studio.mixin
 
 - Module: `ipai`
@@ -2489,6 +2586,26 @@ You cannot define another: please edit the existing one.)
 - Table: `ipai_ai_studio_mixin`
 
 ### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ipai.ai_studio.run
+
+- Module: `ipai`
+- Model type: `Model`
+- Table: `ipai_ai_studio_run`
+
+### Persisted fields
+- `generated_files_json`: `Text`
+- `module_name`: `Char`
+- `name`: `Char` (required)
+- `prompt`: `Text`
+- `spec_json`: `Text`
+- `state`: `Selection` (required)
+- `validation_ok`: `Boolean`
+- `validation_report`: `Text`
+- `workspace_path`: `Char`
 
 ### Non-persisted fields
 - _none_
@@ -2516,6 +2633,28 @@ You cannot define another: please edit the existing one.)
 - Table: `ipai_ask_ai_service`
 
 ### Persisted fields
+
+### Non-persisted fields
+- _none_
+
+## ipai.ask_ai_chatter.request
+
+- Module: `ipai_ask_ai_chatter`
+- Model type: `Model`
+- Table: `ipai_ask_ai_chatter_request`
+
+### Persisted fields
+- `error`: `Text`
+- `model`: `Char` (required, index)
+- `payload_json`: `Text`
+- `question`: `Text` (required)
+- `requested_by`: `Many2one` (relation=res.users, required)
+- `res_id`: `Integer` (required, index)
+- `response`: `Text`
+- `response_json`: `Text`
+- `source_message_id`: `Many2one` (relation=mail.message)
+- `state`: `Selection` (required, index)
+- `uuid`: `Char` (index)
 
 ### Non-persisted fields
 - _none_
@@ -4713,7 +4852,7 @@ You cannot define another: please edit the existing one.)
 - Module: `autovacuum_message_attachment`
 - Model type: `Model`
 - Table: `mail_message`
-- _inherit: `mail.message, autovacuum.mixin`
+- _inherit: `autovacuum.mixin, mail.message`
 
 ### Persisted fields
 

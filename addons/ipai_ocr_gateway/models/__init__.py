@@ -1,3 +1,2 @@
 # -*- coding: utf-8 -*-
-from . import ipai_ocr_provider
-from . import ipai_ocr_job
+from . import ipai_ocr_job, ipai_ocr_provider

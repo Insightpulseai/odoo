@@ -23,9 +23,10 @@ License: AGPL-3
 import json
 import logging
 
-from odoo import http
-from odoo.http import request
 from odoo.exceptions import AccessError, UserError
+from odoo.http import request
+
+from odoo import http
 
 _logger = logging.getLogger(__name__)
 
@@ -77,7 +78,7 @@ class IpaiStudioAiApiController(http.Controller):
         type="json",
         auth="user",
         methods=["POST"],
-        csrf=False
+        csrf=False,
     )
     def process_command(self, command, context=None):
         """
@@ -108,7 +109,7 @@ class IpaiStudioAiApiController(http.Controller):
         type="json",
         auth="user",
         methods=["POST"],
-        csrf=False
+        csrf=False,
     )
     def analyze_command(self, command):
         """
@@ -141,7 +142,7 @@ class IpaiStudioAiApiController(http.Controller):
         type="json",
         auth="user",
         methods=["POST"],
-        csrf=False
+        csrf=False,
     )
     def create_field(self, model, field_name, field_type, label, required=False):
         """
@@ -160,23 +161,31 @@ class IpaiStudioAiApiController(http.Controller):
         try:
             # Validate inputs
             if not all([model, field_name, field_type, label]):
-                return _json_error("model, field_name, field_type, and label are required", "validation_error")
+                return _json_error(
+                    "model, field_name, field_type, and label are required",
+                    "validation_error",
+                )
 
             if not field_name.startswith("x_"):
                 field_name = f"x_{field_name}"
 
             # Check model exists
-            model_rec = request.env["ir.model"].sudo().search([("model", "=", model)], limit=1)
+            model_rec = (
+                request.env["ir.model"].sudo().search([("model", "=", model)], limit=1)
+            )
             if not model_rec:
                 return _json_error(f"Model '{model}' not found", "not_found")
 
             # Check field doesn't exist
-            existing = request.env["ir.model.fields"].sudo().search([
-                ("model", "=", model),
-                ("name", "=", field_name)
-            ], limit=1)
+            existing = (
+                request.env["ir.model.fields"]
+                .sudo()
+                .search([("model", "=", model), ("name", "=", field_name)], limit=1)
+            )
             if existing:
-                return _json_error(f"Field '{field_name}' already exists on {model}", "exists")
+                return _json_error(
+                    f"Field '{field_name}' already exists on {model}", "exists"
+                )
 
             # Create field
             field_vals = {
@@ -190,14 +199,16 @@ class IpaiStudioAiApiController(http.Controller):
 
             new_field = request.env["ir.model.fields"].sudo().create(field_vals)
 
-            return _json_response({
-                "id": new_field.id,
-                "name": new_field.name,
-                "model": model,
-                "type": field_type,
-                "label": label,
-                "required": required,
-            })
+            return _json_response(
+                {
+                    "id": new_field.id,
+                    "name": new_field.name,
+                    "model": model,
+                    "type": field_type,
+                    "label": label,
+                    "required": required,
+                }
+            )
 
         except Exception as e:
             _logger.exception("Error creating field")
@@ -208,7 +219,7 @@ class IpaiStudioAiApiController(http.Controller):
         type="json",
         auth="user",
         methods=["POST"],
-        csrf=False
+        csrf=False,
     )
     def execute_query(self, query_type, model, domain=None, limit=10, fields=None):
         """
@@ -261,11 +272,13 @@ class IpaiStudioAiApiController(http.Controller):
                             row[field] = val
                     results.append(row)
 
-                return _json_response({
-                    "model": model,
-                    "count": len(results),
-                    "records": results,
-                })
+                return _json_response(
+                    {
+                        "model": model,
+                        "count": len(results),
+                        "records": results,
+                    }
+                )
 
         except Exception as e:
             _logger.exception("Error executing query")
@@ -276,7 +289,7 @@ class IpaiStudioAiApiController(http.Controller):
         type="json",
         auth="user",
         methods=["POST"],
-        csrf=False
+        csrf=False,
     )
     def module_info(self, module_name):
         """
@@ -298,15 +311,17 @@ class IpaiStudioAiApiController(http.Controller):
             if not module:
                 return _json_error(f"Module '{module_name}' not found", "not_found")
 
-            return _json_response({
-                "name": module.name,
-                "shortdesc": module.shortdesc,
-                "version": module.installed_version or module.latest_version,
-                "state": module.state,
-                "author": module.author,
-                "summary": module.summary,
-                "depends": [d.name for d in module.dependencies_id],
-            })
+            return _json_response(
+                {
+                    "name": module.name,
+                    "shortdesc": module.shortdesc,
+                    "version": module.installed_version or module.latest_version,
+                    "state": module.state,
+                    "author": module.author,
+                    "summary": module.summary,
+                    "depends": [d.name for d in module.dependencies_id],
+                }
+            )
 
         except Exception as e:
             _logger.exception("Error getting module info")
@@ -322,7 +337,7 @@ class IpaiStudioAiApiController(http.Controller):
         type="json",
         auth="public",
         methods=["POST"],
-        csrf=False
+        csrf=False,
     )
     def public_process_command(self, command, context=None):
         """
@@ -352,7 +367,7 @@ class IpaiStudioAiApiController(http.Controller):
         type="json",
         auth="public",
         methods=["POST"],
-        csrf=False
+        csrf=False,
     )
     def public_query(self, query_type, model, domain=None, limit=10):
         """
@@ -373,7 +388,9 @@ class IpaiStudioAiApiController(http.Controller):
             ]
 
             if model not in safe_models:
-                return _json_error(f"Model '{model}' not allowed for public access", "forbidden")
+                return _json_error(
+                    f"Model '{model}' not allowed for public access", "forbidden"
+                )
 
             Model = request.env[model].sudo()
             search_domain = domain or []
@@ -384,12 +401,16 @@ class IpaiStudioAiApiController(http.Controller):
 
             else:
                 records = Model.search(search_domain, limit=min(limit, 100))
-                results = [{"id": r.id, "display_name": r.display_name} for r in records]
-                return _json_response({
-                    "model": model,
-                    "count": len(results),
-                    "records": results,
-                })
+                results = [
+                    {"id": r.id, "display_name": r.display_name} for r in records
+                ]
+                return _json_response(
+                    {
+                        "model": model,
+                        "count": len(results),
+                        "records": results,
+                    }
+                )
 
         except AccessError as e:
             return _json_error(str(e), "auth_error")
@@ -406,17 +427,19 @@ class IpaiStudioAiApiController(http.Controller):
         type="http",
         auth="none",
         methods=["GET"],
-        csrf=False
+        csrf=False,
     )
     def health(self):
         """Health check endpoint."""
         import json
-        response = json.dumps({
-            "status": "ok",
-            "service": "ipai_studio_ai",
-            "version": "18.0.1.0.0",
-        })
+
+        response = json.dumps(
+            {
+                "status": "ok",
+                "service": "ipai_studio_ai",
+                "version": "18.0.1.0.0",
+            }
+        )
         return request.make_response(
-            response,
-            headers=[("Content-Type", "application/json")]
+            response, headers=[("Content-Type", "application/json")]
         )

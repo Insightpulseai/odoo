@@ -1,14 +1,18 @@
 # IPAI Superset Connector
 
-## 1. Overview
+## Overview
+
 Apache Superset integration with managed dataset sync
 
-**Technical Name**: `ipai_superset_connector`
-**Category**: Reporting/BI
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_superset_connector`
+- **Version:** 18.0.1.0.0
+- **Category:** Reporting/BI
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** Yes
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 IPAI Superset Connector
 =======================
@@ -26,95 +30,128 @@ This module uses a **Direct PostgreSQL + Managed Views** approach:
    - Requires PostgreSQL streaming replication setup
 
 2. **Managed SQL Views**
-   - Creates optimized SQL views for common analytics needs
-   - Flattens Odoo's relational model for BI consumption
-   - Handles multi-company security via RLS
+...
 
-3. **Dataset Registry**
-   - Tracks which Odoo models are exposed to Superset
-   - Generates Superset dataset definitions via API
-   - Manages column metadata and relationships
+## Functional Scope
 
-Features
---------
-* Direct PostgreSQL connection (no middleware)
-* Pre-built analytics views for Sales, Finance, HR, Inventory
-* Row-Level Security (RLS) based on Odoo's ir.rule
-* Automated dataset refresh via Superset API
-* Multi-tenant support (company_id filtering)
-* BIR compliance views for Philippine tax reporting
+### Data Models
 
-Power BI Parity
----------------
-✓ Real-time data sync (via read replica)
-✓ Scheduled refresh (via Superset cron)
-✓ Multiple workspaces (via Superset schemas)
-✓ Table relationships (via SQL views)
-✓ Authentication (via PostgreSQL + RLS)
-✓ Custom metrics (via Superset metrics)
+- **superset.connection** (Model)
+  - Superset Connection
+  - Fields: 25 defined
+- **superset.analytics.view** (Model)
+  - Pre-built Analytics View
+  - Fields: 10 defined
+- **res.config.settings** (TransientModel)
+  - Fields: 5 defined
+- **superset.dataset** (Model)
+  - Superset Dataset
+  - Fields: 23 defined
+- **superset.dataset.column** (Model)
+  - Superset Dataset Column
+  - Fields: 11 defined
+- **superset.dataset.wizard** (TransientModel)
+  - Create Superset Dataset
+  - Fields: 10 defined
+- **superset.bulk.dataset.wizard** (TransientModel)
+  - Bulk Create Superset Datasets
+  - Fields: 3 defined
 
-NOT Implemented (by design):
-✗ KQL/Kusto queries (use SQL instead)
-✗ Microsoft Fabric (use Superset + PostgreSQL)
-✗ Eventhouse (use materialized views)
+### Views
 
-Architecture: Smart Delta
--------------------------
-This module follows ipai_* patterns:
-- Extends core models via _inherit
-- No monkey-patching or forks
-- OCA-compatible, AGPL-3 licensed
-    
+- Form: 3
+- : 1
+- Tree: 4
+- Search: 1
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `mail`
-- `sale`
-- `account`
-- `stock`
-- `hr`
-- `project`
+### Menus
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+- `menu_superset_create_dataset`: Create Dataset
+- `menu_superset_bulk_create`: Bulk Create
+- `menu_superset_datasets`: Datasets
+- `menu_superset_analytics_views`: Analytics Views
+- `menu_superset_root`: Superset
+- ... and 1 more
 
-## 5. Data Model
-Defined Models:
-- `tableself.view_name if self.source_type in (model, view) else self.technical_name`
-- `viewfields.Char(`
-- `rec.viewFalse`
-- `superset.dataset`
-- `db_connectionfields.Char(`
-- `tablemodel._table`
-- `technicalfields.Char(`
-- `superset.dataset.column`
-- `modelfields.Char(`
-- `cleanre.sub(r[^a-z0-9_], _, rec.technical_name.lower())`
-- `rec.viewfsuperset_{clean_name}`
-- `fieldfield.name`
-- `superset.connection`
-- `superset.analytics.view`
-- `self.technicalself.model_id.model.replace(., _)`
-- `technicalfields.Char(string=Technical Name, required=True)`
+## Installation & Dependencies
 
-## 6. User Interface
-- **Views**: 7 files
-- **Menus**: (Audit Pending)
+### Dependencies
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+- `base` (CE Core)
+- `mail` (CE Core)
+- `sale` (CE Core)
+- `account` (CE Core)
+- `stock` (CE Core)
+- `hr` (CE Core)
+- `project` (CE Core)
 
-## 8. Integrations
-- (Audit Pending)
+### Installation
 
-## 9. Verification Steps
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_superset_connector --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_superset_connector --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_superset_connector --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_superset_connector --stop-after-init
 ```
+
+## Configuration
+
+### System Parameters
+
+- `ipai_superset_connector.auto_sync`: False
+- `ipai_superset_connector.sync_interval`: daily
+- `ipai_superset_connector.enable_rls`: True
+
+### Scheduled Actions
+
+- **Superset: Sync Datasets** (Inactive)
+
+## Security
+
+### Security Groups
+
+- `group_superset_user`: Superset User
+- `group_superset_manager`: Superset Manager
+- `group_superset_admin`: Superset Administrator
+
+### Access Rules
+
+*13 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- Apache Superset (BI/Analytics)
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_superset_connector'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_superset_connector")]).state)'
+```
+
+## Data Files
+
+- `security/superset_security.xml`
+- `security/ir.model.access.csv`
+- `data/superset_config.xml`
+- `data/analytics_views.xml`
+- `views/superset_dataset_views.xml`
+- `views/superset_connection_views.xml`
+- `views/res_config_settings_views.xml`
+- `wizards/dataset_wizard_views.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

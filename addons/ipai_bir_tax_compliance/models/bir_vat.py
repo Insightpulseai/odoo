@@ -1,5 +1,6 @@
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 
 class BirVatReturn(models.Model):

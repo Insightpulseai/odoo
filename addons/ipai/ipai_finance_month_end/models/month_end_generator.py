@@ -2,8 +2,10 @@
 """Month-End Task Generator."""
 import logging
 from datetime import date
-from odoo import _, api, models
+
 from odoo.exceptions import UserError
+
+from odoo import _, api, models
 
 _logger = logging.getLogger(__name__)
 

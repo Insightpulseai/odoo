@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+
 from odoo import api, fields, models
 
 
@@ -78,12 +79,14 @@ class IpaiWorkosTemplate(models.Model):
         Block = self.env["ipai.workos.block"]
         blocks = self.get_blocks()
         for idx, block_def in enumerate(blocks):
-            Block.create({
-                "page_id": page.id,
-                "block_type": block_def.get("type", "paragraph"),
-                "content_json": json.dumps(block_def.get("content", {})),
-                "sequence": (idx + 1) * 10,
-            })
+            Block.create(
+                {
+                    "page_id": page.id,
+                    "block_type": block_def.get("type", "paragraph"),
+                    "content_json": json.dumps(block_def.get("content", {})),
+                    "sequence": (idx + 1) * 10,
+                }
+            )
         return page
 
     def apply_to_database(self, database):
@@ -94,24 +97,28 @@ class IpaiWorkosTemplate(models.Model):
         # Create properties
         properties = self.get_properties()
         for idx, prop_def in enumerate(properties):
-            Property.create({
-                "database_id": database.id,
-                "name": prop_def.get("name", f"Property {idx + 1}"),
-                "property_type": prop_def.get("type", "text"),
-                "sequence": (idx + 1) * 10,
-                "is_title": prop_def.get("is_title", False),
-                "options_json": json.dumps(prop_def.get("options", [])),
-            })
+            Property.create(
+                {
+                    "database_id": database.id,
+                    "name": prop_def.get("name", f"Property {idx + 1}"),
+                    "property_type": prop_def.get("type", "text"),
+                    "sequence": (idx + 1) * 10,
+                    "is_title": prop_def.get("is_title", False),
+                    "options_json": json.dumps(prop_def.get("options", [])),
+                }
+            )
 
         # Create default views
         views = json.loads(self.views_json or "[]")
         for view_def in views:
-            View.create({
-                "database_id": database.id,
-                "name": view_def.get("name", "Default"),
-                "view_type": view_def.get("type", "table"),
-                "is_default": view_def.get("is_default", False),
-            })
+            View.create(
+                {
+                    "database_id": database.id,
+                    "name": view_def.get("name", "Default"),
+                    "view_type": view_def.get("type", "table"),
+                    "is_default": view_def.get("is_default", False),
+                }
+            )
 
         return database
 
