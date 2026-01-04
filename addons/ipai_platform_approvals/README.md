@@ -1,14 +1,18 @@
 # IPAI Platform - Approvals
 
-## 1. Overview
+## Overview
+
 Role-based approval chains for IPAI modules
 
-**Technical Name**: `ipai_platform_approvals`
-**Category**: Technical
-**Version**: 18.0.1.0.0
-**Author**: IPAI
+- **Technical Name:** `ipai_platform_approvals`
+- **Version:** 18.0.1.0.0
+- **Category:** Technical
+- **License:** LGPL-3
+- **Author:** IPAI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 IPAI Platform Approvals
 =======================
@@ -24,39 +28,67 @@ Features:
 
 This module extends ipai_platform_workflow to add approval-specific
 functionality like approver resolution, delegation, and escalation.
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `mail`
-- `ipai_platform_workflow`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Data Models
 
-## 5. Data Model
-Defined Models:
-- `ipai.approval.mixin`
-- `my.model`
+- **ipai.approval.mixin** (AbstractModel)
+  - IPAI Approval Mixin
+  - Fields: 5 defined
 
-## 6. User Interface
-- **Views**: 1 files
-- **Menus**: (Audit Pending)
+## Installation & Dependencies
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+### Dependencies
 
-## 8. Integrations
-- (Audit Pending)
+- `base` (CE Core)
+- `mail` (CE Core)
+- `ipai_platform_workflow` (IPAI)
 
-## 9. Verification Steps
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_platform_approvals --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_platform_approvals --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_platform_approvals --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_platform_approvals --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+*No specific security configuration.*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_platform_approvals'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_platform_approvals")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `views/approval_views.xml`
+
+## Static Validation Status
+
+- Passed: 4
+- Warnings: 1
+- Failed: 0

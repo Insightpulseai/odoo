@@ -1,14 +1,18 @@
 # SAP AFC-Style Month-End Closing Template
 
-## 1. Overview
+## Overview
+
 Month-end financial closing task template based on SAP Advanced Financial Closing
 
-**Technical Name**: `ipai_finance_closing`
-**Category**: Accounting/Accounting
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_finance_closing`
+- **Version:** 18.0.1.0.0
+- **Category:** Accounting/Accounting
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 SAP AFC-Style Month-End Closing Template
 =========================================
@@ -23,58 +27,69 @@ Features:
 * Task dependencies matching SAP AFC workflow
 * Tags for GL, AP, AR, Assets, Tax, Reporting
 * Automated actions for recurring tasks
-* BIR (Philippines) tax compliance tasks
+* BIR (Phil...
 
-Functional Areas Covered:
-------------------------
-* Pre-Closing (period management, master data review)
-* Accounts Payable (bills, GR/IR, payments, accruals)
-* Accounts Receivable (invoices, revenue cutoff, dunning, bad debt)
-* Asset Accounting (capitalizations, depreciation, disposals)
-* General Ledger (accruals, prepaids, FX revaluation)
-* Tax Compliance (BIR 1601-C, 1601-EQ, 2550M/Q)
-* Reporting (bank recon, TB, financial statements)
+## Functional Scope
 
-Based on SAP Documentation:
---------------------------
-* SAP-docs/s4hana-cloud-advanced-financial-closing (CC-BY-4.0)
-* SAP Help Portal - Advanced Financial Closing Administration Guide
+## Installation & Dependencies
 
-No Python Code Required:
------------------------
-This module contains only XML data files and can be installed
-without any custom Python development.
-    
+### Dependencies
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `project`
-- `account`
+- `project` (CE Core)
+- `account` (CE Core)
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Installation
 
-## 5. Data Model
-Defined Models:
-- No explicit new models detected (may inherit existing).
-
-## 6. User Interface
-- **Views**: 1 files
-- **Menus**: (Audit Pending)
-
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
-
-## 8. Integrations
-- (Audit Pending)
-
-## 9. Verification Steps
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_finance_closing --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_finance_closing --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_finance_closing --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_finance_closing --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+### Scheduled Actions
+
+- **Update Currency Rates (BSP)** (Inactive)
+- **Auto-Reverse Prior Month Accruals** (Active)
+- **Weekly Customer Follow-up** (Active)
+- **Period Lock Reminder** (Active)
+
+## Security
+
+### Access Rules
+
+*4 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+*No external integrations.*
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_finance_closing'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_finance_closing")]).state)'
+```
+
+## Data Files
+
+- `data/closing_tasks.xml`
+
+## Static Validation Status
+
+- Passed: 4
+- Warnings: 0
+- Failed: 0

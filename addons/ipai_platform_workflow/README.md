@@ -1,14 +1,18 @@
 # IPAI Platform - Workflow Engine
 
-## 1. Overview
+## Overview
+
 Generic workflow state machine for IPAI modules
 
-**Technical Name**: `ipai_platform_workflow`
-**Category**: Technical
-**Version**: 18.0.1.0.0
-**Author**: IPAI
+- **Technical Name:** `ipai_platform_workflow`
+- **Version:** 18.0.1.0.0
+- **Category:** Technical
+- **License:** LGPL-3
+- **Author:** IPAI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 IPAI Platform Workflow Engine
 =============================
@@ -23,38 +27,66 @@ Features:
 
 This module serves as the foundation for approval workflows,
 status tracking, and process automation across all IPAI modules.
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `mail`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Data Models
 
-## 5. Data Model
-Defined Models:
-- `my.model`
-- `ipai.workflow.mixin`
+- **ipai.workflow.mixin** (AbstractModel)
+  - IPAI Workflow Mixin
+  - Fields: 3 defined
 
-## 6. User Interface
-- **Views**: 1 files
-- **Menus**: (Audit Pending)
+## Installation & Dependencies
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+### Dependencies
 
-## 8. Integrations
-- (Audit Pending)
+- `base` (CE Core)
+- `mail` (CE Core)
 
-## 9. Verification Steps
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_platform_workflow --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_platform_workflow --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_platform_workflow --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_platform_workflow --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+*No specific security configuration.*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_platform_workflow'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_platform_workflow")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `views/workflow_views.xml`
+
+## Static Validation Status
+
+- Passed: 4
+- Warnings: 1
+- Failed: 0

@@ -1,226 +1,1653 @@
-[
-  {
-    "module": "ipai_workos_affine",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_affine__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_core",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_core__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_bir_tax_compliance",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_bir_tax_compliance__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_close_orchestration",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_close_orchestration__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_finance_ppm",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_finance_ppm__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_finance_ppm_golive",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_finance_ppm_golive__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_month_end",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_month_end__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_ppm_a1",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_ppm_a1__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_superset_connector",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_superset_connector__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_tbwa_finance",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_tbwa_finance__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_ask_ai",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_ask_ai__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_crm_pipeline",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_crm_pipeline__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_finance_closing",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_finance_closing__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_finance_monthly_closing",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_finance_monthly_closing__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_finance_ppm_umbrella",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_finance_ppm_umbrella__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_grid_view",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_grid_view__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_month_end_closing",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_month_end_closing__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_platform_approvals",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_platform_approvals__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_platform_audit",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_platform_audit__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_platform_permissions",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_platform_permissions__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_platform_theme",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_platform_theme__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_platform_workflow",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_platform_workflow__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_ppm_monthly_close",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_ppm_monthly_close__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_theme_tbwa_backend",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_theme_tbwa_backend__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_blocks",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_blocks__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_canvas",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_canvas__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_collab",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_collab__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_db",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_db__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_search",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_search__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_templates",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_templates__install.log",
-    "upgrade_log": ""
-  },
-  {
-    "module": "ipai_workos_views",
-    "install_status": "FAIL",
-    "upgrade_status": "SKIPPED",
-    "install_log": "artifacts/logs/ipai_workos_views__install.log",
-    "upgrade_log": ""
-  }
-]
+{
+  "generated": "2026-01-04T10:06:09.747353",
+  "odoo_version": "18.0",
+  "modules": [
+    {
+      "name": "ipai_workos_affine",
+      "display_name": "IPAI WorkOS - AFFiNE Clone (Umbrella)",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_affine",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 0,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "ipai_workos_core",
+        "ipai_workos_blocks",
+        "ipai_workos_db",
+        "ipai_workos_views",
+        "ipai_workos_collab",
+        "ipai_workos_search",
+        "ipai_workos_templates",
+        "ipai_workos_canvas",
+        "ipai_platform_permissions",
+        "ipai_platform_audit"
+      ],
+      "data_files": []
+    },
+    {
+      "name": "ipai_workos_core",
+      "display_name": "IPAI Work OS Core",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_core",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 6 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 3,
+      "views_count": 10,
+      "menus_count": 5,
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "ipai_platform_permissions",
+        "ipai_platform_audit"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/workspace_views.xml",
+        "views/space_views.xml",
+        "views/page_views.xml",
+        "views/menu_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_bir_tax_compliance",
+      "display_name": "IPAI BIR Tax Compliance",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_bir_tax_compliance",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 18 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 10,
+      "views_count": 15,
+      "menus_count": 11,
+      "depends": [
+        "base",
+        "mail",
+        "account"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "data/bir_tax_rates.xml",
+        "data/bir_filing_deadlines.xml",
+        "data/ir_cron.xml",
+        "views/bir_tax_return_views.xml",
+        "views/bir_vat_views.xml",
+        "views/bir_withholding_views.xml",
+        "views/bir_dashboard_views.xml",
+        "views/res_partner_views.xml",
+        "views/menu.xml"
+      ]
+    },
+    {
+      "name": "ipai_close_orchestration",
+      "display_name": "IPAI Close Cycle Orchestration",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_close_orchestration",
+      "location": "nested",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 27 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 9,
+      "views_count": 20,
+      "menus_count": 10,
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "data_files": [
+        "security/close_security.xml",
+        "security/ir.model.access.csv",
+        "data/close_cron.xml",
+        "views/close_cycle_views.xml",
+        "views/close_task_views.xml",
+        "views/close_template_views.xml",
+        "views/close_exception_views.xml",
+        "views/close_gate_views.xml",
+        "views/close_menu.xml"
+      ]
+    },
+    {
+      "name": "ipai_finance_ppm",
+      "display_name": "IPAI Finance PPM",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm",
+      "location": "nested",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 10 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 17,
+      "views_count": 24,
+      "menus_count": 12,
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/finance_person_views.xml",
+        "views/finance_bir_deadline_views.xml",
+        "views/finance_task_views.xml",
+        "views/bir_schedule_views.xml",
+        "views/ppm_dashboard_views.xml",
+        "views/project_task_views.xml",
+        "views/menus.xml",
+        "data/finance_person_seed.xml",
+        "data/bir_schedule_seed.xml",
+        "data/finance_cron.xml"
+      ]
+    },
+    {
+      "name": "ipai_finance_ppm_golive",
+      "display_name": "Finance PPM Go-Live Checklist",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_finance_ppm_golive",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 6 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 3,
+      "views_count": 7,
+      "menus_count": 6,
+      "depends": [
+        "base",
+        "project"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "data/checklist_sections.xml",
+        "data/checklist_items.xml",
+        "views/golive_checklist_views.xml",
+        "views/golive_section_views.xml",
+        "views/golive_item_views.xml",
+        "views/golive_dashboard_views.xml",
+        "views/menus.xml",
+        "reports/golive_cfo_signoff.xml"
+      ]
+    },
+    {
+      "name": "ipai_month_end",
+      "display_name": "IPAI Month-End Closing",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_month_end",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 8 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 4,
+      "views_count": 15,
+      "menus_count": 6,
+      "depends": [
+        "base",
+        "mail",
+        "account"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "data/ph_holidays.xml",
+        "data/task_templates.xml",
+        "data/ir_cron.xml",
+        "views/ph_holiday_views.xml",
+        "views/task_template_views.xml",
+        "views/closing_views.xml",
+        "views/task_views.xml",
+        "views/menu.xml"
+      ]
+    },
+    {
+      "name": "ipai_ppm_a1",
+      "display_name": "IPAI PPM A1 Control Center",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_a1",
+      "location": "nested",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 33 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 11,
+      "views_count": 18,
+      "menus_count": 9,
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ],
+      "data_files": [
+        "security/a1_security.xml",
+        "security/ir.model.access.csv",
+        "data/a1_role_data.xml",
+        "views/a1_workstream_views.xml",
+        "views/a1_template_views.xml",
+        "views/a1_task_views.xml",
+        "views/a1_tasklist_views.xml",
+        "views/a1_check_views.xml",
+        "views/a1_menu.xml"
+      ]
+    },
+    {
+      "name": "ipai_superset_connector",
+      "display_name": "IPAI Superset Connector",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_superset_connector",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 13 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 7,
+      "views_count": 9,
+      "menus_count": 6,
+      "depends": [
+        "base",
+        "mail",
+        "sale",
+        "account",
+        "stock",
+        "hr",
+        "project"
+      ],
+      "data_files": [
+        "security/superset_security.xml",
+        "security/ir.model.access.csv",
+        "data/superset_config.xml",
+        "data/analytics_views.xml",
+        "views/superset_dataset_views.xml",
+        "views/superset_connection_views.xml",
+        "views/res_config_settings_views.xml",
+        "wizards/dataset_wizard_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_tbwa_finance",
+      "display_name": "IPAI TBWA Finance",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_tbwa_finance",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 14 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 8,
+      "views_count": 18,
+      "menus_count": 9,
+      "depends": [
+        "base",
+        "mail",
+        "account"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "data/ph_holidays.xml",
+        "data/month_end_templates.xml",
+        "data/bir_form_types.xml",
+        "data/compliance_checks.xml",
+        "data/ir_cron.xml",
+        "views/ph_holiday_views.xml",
+        "views/finance_task_views.xml",
+        "views/closing_period_views.xml",
+        "views/bir_return_views.xml",
+        "views/dashboard_views.xml",
+        "views/res_partner_views.xml",
+        "views/menu.xml"
+      ]
+    },
+    {
+      "name": "ipai",
+      "display_name": "IPAI Module Namespace",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 0,
+      "views_count": 199,
+      "menus_count": 114,
+      "depends": [
+        "base"
+      ],
+      "data_files": []
+    },
+    {
+      "name": "ipai_ask_ai",
+      "display_name": "IPAI Ask AI Assistant",
+      "version": "18.0.1.1.0",
+      "path": "/home/user/odoo-ce/addons/ipai_ask_ai",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 1 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 4,
+      "views_count": 1,
+      "menus_count": 0,
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "ipai_platform_theme"
+      ],
+      "data_files": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "data/ai_channel_data.xml",
+        "data/afc_config_params.xml",
+        "views/ask_ai_views.xml",
+        "views/res_config_settings_view.xml"
+      ]
+    },
+    {
+      "name": "ipai_crm_pipeline",
+      "display_name": "IPAI CRM - Pipeline Clone",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_crm_pipeline",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "WARNING",
+          "message": "ir.model.access.csv is empty"
+        }
+      ],
+      "errors": "",
+      "warnings": "ir.model.access.csv is empty",
+      "models_count": 2,
+      "views_count": 3,
+      "menus_count": 2,
+      "depends": [
+        "crm",
+        "mail",
+        "ipai_platform_workflow",
+        "ipai_platform_theme"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/crm_lead_views.xml",
+        "views/crm_stage_views.xml",
+        "data/crm_stage_rules.xml"
+      ]
+    },
+    {
+      "name": "ipai_finance_closing",
+      "display_name": "SAP AFC-Style Month-End Closing Template",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_finance_closing",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 0,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "project",
+        "account"
+      ],
+      "data_files": [
+        "data/closing_tasks.xml"
+      ]
+    },
+    {
+      "name": "ipai_finance_monthly_closing",
+      "display_name": "IPAI Finance Monthly Closing",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_monthly_closing",
+      "location": "nested",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "WARNING",
+          "message": "ir.model.access.csv is empty"
+        }
+      ],
+      "errors": "",
+      "warnings": "ir.model.access.csv is empty",
+      "models_count": 1,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "project"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/project_task_views.xml",
+        "data/project_templates.xml"
+      ]
+    },
+    {
+      "name": "ipai_finance_ppm_umbrella",
+      "display_name": "IPAI Finance PPM \u2013 TBWA Complete Configuration",
+      "version": "1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_finance_ppm_umbrella",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 0,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "ipai_finance_ppm",
+        "project"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "data/01_employees.xml",
+        "data/02_logframe_complete.xml",
+        "data/03_bir_schedule_2026.xml",
+        "data/04_closing_tasks.xml",
+        "data/05_raci_assignments.xml"
+      ]
+    },
+    {
+      "name": "ipai_grid_view",
+      "display_name": "IPAI Grid/List View",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_grid_view",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 7 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 4,
+      "views_count": 9,
+      "menus_count": 4,
+      "depends": [
+        "base",
+        "web",
+        "mail"
+      ],
+      "data_files": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "views/grid_view_views.xml",
+        "views/grid_column_views.xml",
+        "views/grid_filter_views.xml",
+        "data/demo_data.xml"
+      ]
+    },
+    {
+      "name": "ipai_month_end_closing",
+      "display_name": "IPAI Month-End Closing & BIR Tax Filing",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_month_end_closing",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 0,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "project",
+        "hr"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "data/ipai_users.xml",
+        "data/project_config.xml",
+        "data/ipai_closing_tasks.xml",
+        "data/ipai_bir_tasks.xml"
+      ]
+    },
+    {
+      "name": "ipai_platform_approvals",
+      "display_name": "IPAI Platform - Approvals",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_platform_approvals",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "WARNING",
+          "message": "ir.model.access.csv is empty"
+        }
+      ],
+      "errors": "",
+      "warnings": "ir.model.access.csv is empty",
+      "models_count": 1,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "base",
+        "mail",
+        "ipai_platform_workflow"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/approval_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_platform_audit",
+      "display_name": "IPAI Platform - Audit Trail",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_platform_audit",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 2 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 2,
+      "views_count": 3,
+      "menus_count": 0,
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/audit_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_platform_permissions",
+      "display_name": "IPAI Platform Permissions",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_platform_permissions",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 4 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 2,
+      "views_count": 3,
+      "menus_count": 0,
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/permission_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_platform_theme",
+      "display_name": "IPAI Platform Theme",
+      "version": "18.0.1.1.0",
+      "path": "/home/user/odoo-ce/addons/ipai_platform_theme",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 0,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "web"
+      ],
+      "data_files": []
+    },
+    {
+      "name": "ipai_platform_workflow",
+      "display_name": "IPAI Platform - Workflow Engine",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_platform_workflow",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "WARNING",
+          "message": "ir.model.access.csv is empty"
+        }
+      ],
+      "errors": "",
+      "warnings": "ir.model.access.csv is empty",
+      "models_count": 1,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/workflow_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_ppm_monthly_close",
+      "display_name": "PPM Monthly Close Scheduler",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_monthly_close",
+      "location": "nested",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 6 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 3,
+      "views_count": 8,
+      "menus_count": 4,
+      "depends": [
+        "base",
+        "project",
+        "mail",
+        "resource"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "data/ppm_close_template_data_REAL.xml",
+        "data/ppm_close_cron.xml",
+        "views/ppm_monthly_close_views.xml",
+        "views/ppm_close_task_views.xml",
+        "views/ppm_close_template_views.xml",
+        "views/ppm_close_menu.xml"
+      ]
+    },
+    {
+      "name": "ipai_theme_tbwa_backend",
+      "display_name": "TBWA Backend Theme",
+      "version": "18.0.1.1.0",
+      "path": "/home/user/odoo-ce/addons/ipai_theme_tbwa_backend",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 0,
+      "views_count": 0,
+      "menus_count": 0,
+      "depends": [
+        "web",
+        "ipai_platform_theme"
+      ],
+      "data_files": []
+    },
+    {
+      "name": "ipai_workos_blocks",
+      "display_name": "IPAI Work OS Blocks",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_blocks",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 2 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 1,
+      "views_count": 2,
+      "menus_count": 1,
+      "depends": [
+        "base",
+        "web",
+        "ipai_workos_core"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/block_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_workos_canvas",
+      "display_name": "IPAI WorkOS - Canvas (Edgeless)",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_canvas",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 2 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 1,
+      "views_count": 2,
+      "menus_count": 1,
+      "depends": [
+        "base",
+        "web",
+        "mail"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/canvas_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_workos_collab",
+      "display_name": "IPAI Work OS Collaboration",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_collab",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 2 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 1,
+      "views_count": 2,
+      "menus_count": 1,
+      "depends": [
+        "base",
+        "mail",
+        "ipai_workos_core"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/comment_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_workos_db",
+      "display_name": "IPAI Work OS Database",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_db",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 6 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 3,
+      "views_count": 4,
+      "menus_count": 1,
+      "depends": [
+        "base",
+        "web",
+        "ipai_workos_core"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/database_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_workos_search",
+      "display_name": "IPAI Work OS Search",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_search",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 3 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 2,
+      "views_count": 1,
+      "menus_count": 1,
+      "depends": [
+        "base",
+        "web",
+        "ipai_workos_core",
+        "ipai_workos_blocks",
+        "ipai_workos_db"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/search_views.xml"
+      ]
+    },
+    {
+      "name": "ipai_workos_templates",
+      "display_name": "IPAI Work OS Templates",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_templates",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 4 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 2,
+      "views_count": 3,
+      "menus_count": 1,
+      "depends": [
+        "base",
+        "web",
+        "ipai_workos_core",
+        "ipai_workos_blocks",
+        "ipai_workos_db"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/template_views.xml",
+        "data/default_templates.xml"
+      ]
+    },
+    {
+      "name": "ipai_workos_views",
+      "display_name": "IPAI Work OS Views",
+      "version": "18.0.1.0.0",
+      "path": "/home/user/odoo-ce/addons/ipai_workos_views",
+      "location": "top-level",
+      "install_status": "pending",
+      "upgrade_status": "pending",
+      "static_checks": [
+        {
+          "check": "manifest_syntax",
+          "status": "PASS",
+          "message": "Valid Python syntax"
+        },
+        {
+          "check": "init_exists",
+          "status": "PASS",
+          "message": "__init__.py present"
+        },
+        {
+          "check": "python_syntax",
+          "status": "PASS",
+          "message": "All Python files compile"
+        },
+        {
+          "check": "xml_syntax",
+          "status": "PASS",
+          "message": "All XML files are well-formed"
+        },
+        {
+          "check": "security_csv",
+          "status": "PASS",
+          "message": "ir.model.access.csv has 2 rules"
+        }
+      ],
+      "errors": "",
+      "warnings": "",
+      "models_count": 1,
+      "views_count": 2,
+      "menus_count": 1,
+      "depends": [
+        "base",
+        "web",
+        "ipai_workos_core",
+        "ipai_workos_db"
+      ],
+      "data_files": [
+        "security/ir.model.access.csv",
+        "views/view_views.xml"
+      ]
+    }
+  ]
+}
