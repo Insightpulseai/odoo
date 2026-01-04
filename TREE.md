@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 65cd6d01330ff2b668147b9162eafc60d8857eb3
+> Commit: 03e3c0a1a7539f0c4ccab01150e590c0023c2de8
 
 ```
 .
@@ -1525,6 +1525,8 @@
 │   ├── MCP_IMPLEMENTATION_STATUS.md
 │   ├── MCP_SUPABASE_INTEGRATION.md
 │   ├── MIXED_CONTENT_FIX.md
+│   ├── MODULE_STATUS_FINAL.md
+│   ├── MODULE_STATUS_REPORT.md
 │   ├── MONOREPO_STRUCTURE.md
 │   ├── MVP_GO_LIVE_CHECKLIST.md
 │   ├── N8N_CREDENTIALS_BOOTSTRAP.md
@@ -1947,6 +1949,7 @@
 │   ├── build_v0.9.1.sh
 │   ├── ce_oca_audit.py
 │   ├── check-enterprise-modules.sh
+│   ├── check_module_status.sh
 │   ├── check_project_tasks.py
 │   ├── ci_local.sh
 │   ├── ci_smoke_test.sh
@@ -1966,6 +1969,7 @@
 │   ├── deploy_afc_rag.sh
 │   ├── deploy_custom_image.sh
 │   ├── deploy_notion_tasks.sh
+│   ├── deploy_odoo_smart.sh
 │   ├── deploy_odoo_upgrade.sh
 │   ├── deploy_prod.sh
 │   ├── deploy_workos_prod.sh
@@ -1991,6 +1995,7 @@
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
+│   ├── install_all_ipai_modules.sh
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── introspect_project.py
@@ -2591,7 +2596,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-766 directories, 1820 files
+766 directories, 1825 files
 ```
 
 ## 📊 Stats
@@ -2599,7 +2604,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 868 |
-| Files | 2564 |
+| Files | 2569 |
 | Python files | 640 |
 | XML files | 337 |
-| Markdown files | 541 |
+| Markdown files | 543 |
