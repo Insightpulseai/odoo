@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 498f5a08ec98ccd8bcc3538635e9c0e3de00975e
+> Commit: 6d07f76665b09eacc87f0f62364cebe9e2f3ffa7
 
 ```
 .
@@ -249,6 +249,7 @@
 │   │   │   ├── scripts
 │   │   │   ├── security
 │   │   │   ├── static
+│   │   │   ├── tests
 │   │   │   ├── views
 │   │   │   ├── README.md
 │   │   │   ├── README.rst
@@ -307,6 +308,7 @@
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── tests
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ocr_expense
@@ -381,6 +383,11 @@
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_test_fixtures
+│   │   │   ├── models
+│   │   │   ├── tests
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_workspace_core
@@ -2327,6 +2334,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── test-coverage-improvement
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── workos-notion-clone
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -2691,15 +2703,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-796 directories, 1890 files
+802 directories, 1896 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 905 |
-| Files | 2665 |
-| Python files | 669 |
+| Directories | 911 |
+| Files | 2679 |
+| Python files | 679 |
 | XML files | 347 |
-| Markdown files | 551 |
+| Markdown files | 555 |

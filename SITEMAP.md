@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 498f5a08ec98ccd8bcc3538635e9c0e3de00975e
+> Commit: 6d07f76665b09eacc87f0f62364cebe9e2f3ffa7
 
 ## 📚 Documentation
 
@@ -539,6 +539,10 @@
 | [PRD — Seed Bundle](spec/seed-bundle/prd.md) | spec/seed-bundle |
 | [Tasks — Seed Bundle](spec/seed-bundle/tasks.md) | spec/seed-bundle |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
+| [Test Coverage Improvement — Constitution](spec/test-coverage-improvement/constitution.md) | spec/test-coverage-improvement |
+| [Test Coverage Improvement — Implementation Plan](spec/test-coverage-improvement/plan.md) | spec/test-coverage-improvement |
+| [Test Coverage Improvement — Product Requirements Document](spec/test-coverage-improvement/prd.md) | spec/test-coverage-improvement |
+| [Test Coverage Improvement — Task Checklist](spec/test-coverage-improvement/tasks.md) | spec/test-coverage-improvement |
 | [Notion Clone Module Constitution (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/constitution.md) | spec/workos-notion-clone |
 | [Plan — Notion Clone Module (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/plan.md) | spec/workos-notion-clone |
 | [PRD — Work OS Notion Clone (Odoo CE 18 + OCA 18) — Bootstrapped in `jgtolentino/odoo-ce`](spec/workos-notion-clone/prd.md) | spec/workos-notion-clone |
@@ -610,6 +614,7 @@
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
+| [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
