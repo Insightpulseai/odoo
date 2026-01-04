@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bab55e4e8295d51bbb15f72628d50b0c83df57e5
+> Commit: 118db8299e5915b26017719651478a35cdef1db9
 
 ```
 .
@@ -1125,6 +1125,48 @@
 │   │   ├── ipai_workos_search__install.log
 │   │   ├── ipai_workos_templates__install.log
 │   │   └── ipai_workos_views__install.log
+│   ├── seed_export
+│   │   ├── 20260105_020943
+│   │   │   ├── CHECKSUMS.txt
+│   │   │   ├── MANIFEST.json
+│   │   │   ├── projects.csv
+│   │   │   ├── stages.csv
+│   │   │   ├── tags.csv
+│   │   │   ├── tasks.csv
+│   │   │   └── users.csv
+│   │   ├── latest -> 20260105_020943
+│   │   └── 20260105_020943_full_export.zip
+│   ├── seed_replace
+│   │   ├── 20260105_023741
+│   │   │   ├── CHECKSUMS.txt
+│   │   │   ├── MANIFEST.json
+│   │   │   ├── projects.csv
+│   │   │   └── tasks.csv
+│   │   ├── 20260105_023756
+│   │   │   ├── CHECKSUMS.txt
+│   │   │   ├── MANIFEST.json
+│   │   │   ├── projects.csv
+│   │   │   └── tasks.csv
+│   │   ├── 20260105_023833
+│   │   │   ├── CHECKSUMS.txt
+│   │   │   ├── MANIFEST.json
+│   │   │   ├── projects.csv
+│   │   │   └── tasks.csv
+│   │   ├── 20260105_023848
+│   │   │   ├── CHECKSUMS.txt
+│   │   │   ├── MANIFEST.json
+│   │   │   ├── projects.csv
+│   │   │   └── tasks.csv
+│   │   ├── 20260105_023939
+│   │   │   ├── CHECKSUMS.txt
+│   │   │   ├── MANIFEST.json
+│   │   │   ├── projects.csv
+│   │   │   └── tasks.csv
+│   │   ├── 20260105_023741_seed.zip
+│   │   ├── 20260105_023756_seed.zip
+│   │   ├── 20260105_023833_seed.zip
+│   │   ├── 20260105_023848_seed.zip
+│   │   └── 20260105_023939_seed.zip
 │   ├── ce_oca_equivalents_audit.csv
 │   ├── ce_oca_equivalents_audit.json
 │   ├── ipai_install_upgrade_matrix.csv
@@ -1500,6 +1542,7 @@
 │   ├── DOCKER_VALIDATION_GUIDE.md
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
 │   ├── ECOSYSTEM_GUIDE.md
+│   ├── EMAIL_AND_OAUTH_SETUP.md
 │   ├── ENTERPRISE_FEATURE_GAP.yaml
 │   ├── EXECUTIVE_SUMMARY.md
 │   ├── FEATURE_CHEQROOM_PARITY.md
@@ -1549,6 +1592,7 @@
 │   ├── ODOO_PROGRAMMATIC_CONFIG.md
 │   ├── OFFLINE_TARBALL_DEPLOYMENT.md
 │   ├── PRD_ipai_ppm_portfolio.md
+│   ├── PRODUCTION_HOTFIX.md
 │   ├── PROD_READINESS_GAPS.md
 │   ├── PROD_SNAPSHOT_MANIFEST.md
 │   ├── QUICK_REFERENCE_SSO_SETUP.md
@@ -1564,6 +1608,7 @@
 │   ├── SITEMAP.md
 │   ├── SMTP_SETUP_SUMMARY.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
+│   ├── SUCCESS_CRITERIA.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
 │   ├── TESTING_ODOO_18.md
@@ -1944,6 +1989,7 @@
 │   ├── activate-n8n-workflows.sh
 │   ├── apply-supabase-schema.sh
 │   ├── assign_module_icons.py
+│   ├── audit_email_config.py
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
@@ -1959,10 +2005,13 @@
 │   ├── ci_smoke_test.sh
 │   ├── cleanup-branches.sh
 │   ├── configure_gmail_smtp.py
+│   ├── configure_gmail_smtp.sh
+│   ├── configure_google_oauth.sh
 │   ├── configure_zoho_smtp.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
 │   ├── copilot_ingest.py
+│   ├── count_xml_seeds.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
 │   ├── deploy-bir-compliance.sh
@@ -1971,20 +2020,27 @@
 │   ├── deploy-odoo-modules.sh
 │   ├── deploy-to-server.sh
 │   ├── deploy_afc_rag.sh
+│   ├── deploy_complete_fix.sh
 │   ├── deploy_custom_image.sh
 │   ├── deploy_notion_tasks.sh
 │   ├── deploy_odoo_smart.sh
 │   ├── deploy_odoo_upgrade.sh
 │   ├── deploy_prod.sh
+│   ├── deploy_with_credentials.sh
 │   ├── deploy_workos_prod.sh
 │   ├── deployment-checklist.sh
+│   ├── diagnose_smtp.sh
 │   ├── enhanced_health_check.sh
 │   ├── erp_config_cli.sh
+│   ├── export_todo_seed.py
+│   ├── extract_remote_data.py
 │   ├── finance_ppm_health_check.sh
 │   ├── finance_ppm_health_check.sql
 │   ├── finance_ppm_restore_golden.sh
 │   ├── fix-finance-ppm-schema.sh
 │   ├── fix-pay-invoices-online-error.py
+│   ├── fix_oauth_button.sh
+│   ├── fix_oauth_button_odoo_core.sh
 │   ├── full_deploy_sanity.sh
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
@@ -1995,6 +2051,7 @@
 │   ├── generate_odoo_dbml.py
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
+│   ├── hotfix_production.sh
 │   ├── image-diff-report.sh
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
@@ -2019,7 +2076,10 @@
 │   ├── parse_notion_tasks.py
 │   ├── policy-check.sh
 │   ├── pre_install_snapshot.sh
+│   ├── prod_access_check.py
+│   ├── prod_db_guess.py
 │   ├── release_gate.sh
+│   ├── replace_seed_from_excel.py
 │   ├── repo_health.sh
 │   ├── report_ci_telemetry.sh
 │   ├── run_clarity_ppm_reverse.sh
@@ -2044,11 +2104,18 @@
 │   ├── validate-spec-kit.sh
 │   ├── validate_m1.sh
 │   ├── validate_manifests.py
+│   ├── validate_production.sh
 │   ├── verify-https.sh
 │   ├── verify.sh
 │   ├── verify_backup.sh
 │   ├── verify_phase3.py
 │   └── worktree-setup.sh
+├── seed_export
+│   ├── projects.csv
+│   ├── stages.csv
+│   ├── tags.csv
+│   ├── tasks.csv
+│   └── users.csv
 ├── seeds
 │   ├── schema
 │   │   ├── afc_tasks.schema.yaml
@@ -2482,6 +2549,7 @@
 ├── .agentignore
 ├── .env.example
 ├── .env.production
+├── .env.smtp.example
 ├── .flake8
 ├── .gitignore
 ├── .gitmodules
@@ -2496,6 +2564,8 @@
 ├── CLAUDE_NEW.md
 ├── COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
 ├── CONTRIBUTING.md
+├── CREDENTIALS_SUMMARY.md
+├── DEPLOYMENT_CHECKLIST.md
 ├── DEPLOYMENT_COMPLETE.md
 ├── DEPLOYMENT_MVP.md
 ├── DEPLOYMENT_REPORT.md
@@ -2505,6 +2575,7 @@
 ├── DEPLOYMENT_VALIDATION_REPORT.md
 ├── DEPLOYMENT_VERIFICATION.md
 ├── DEPLOYMENT_WORKFLOW.md
+├── DEPLOY_NOW.md
 ├── Dockerfile
 ├── Dockerfile.v0.10.0
 ├── ERP_CONFIGURATION_SUMMARY.md
@@ -2514,6 +2585,7 @@
 ├── FINANCE_PPM_DASHBOARD_GUIDE.md
 ├── FINANCE_PPM_IMPORT_GUIDE.md
 ├── HOTFIX_OWLERROR.sh
+├── HOTFIX_SUMMARY.md
 ├── IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
 ├── INFRASTRUCTURE_PLAN.md
 ├── INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
@@ -2587,6 +2659,7 @@
 ├── parity_report.json
 ├── ph_holidays_2026.csv
 ├── plan.md
+├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
 ├── ppm_dashboard_views.xml
 ├── query_memory.py
@@ -2604,15 +2677,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-768 directories, 1831 files
+778 directories, 1894 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 870 |
-| Files | 2575 |
-| Python files | 642 |
+| Directories | 879 |
+| Files | 2638 |
+| Python files | 649 |
 | XML files | 337 |
-| Markdown files | 544 |
+| Markdown files | 551 |
