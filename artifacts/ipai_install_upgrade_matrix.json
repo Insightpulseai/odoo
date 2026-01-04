@@ -1,0 +1,226 @@
+[
+  {
+    "module": "ipai_workos_affine",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_affine__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_core",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_core__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_bir_tax_compliance",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_bir_tax_compliance__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_close_orchestration",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_close_orchestration__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_finance_ppm",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_finance_ppm__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_finance_ppm_golive",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_finance_ppm_golive__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_month_end",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_month_end__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_ppm_a1",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_ppm_a1__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_superset_connector",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_superset_connector__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_tbwa_finance",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_tbwa_finance__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_ask_ai",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_ask_ai__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_crm_pipeline",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_crm_pipeline__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_finance_closing",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_finance_closing__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_finance_monthly_closing",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_finance_monthly_closing__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_finance_ppm_umbrella",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_finance_ppm_umbrella__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_grid_view",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_grid_view__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_month_end_closing",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_month_end_closing__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_platform_approvals",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_platform_approvals__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_platform_audit",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_platform_audit__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_platform_permissions",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_platform_permissions__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_platform_theme",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_platform_theme__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_platform_workflow",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_platform_workflow__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_ppm_monthly_close",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_ppm_monthly_close__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_theme_tbwa_backend",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_theme_tbwa_backend__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_blocks",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_blocks__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_canvas",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_canvas__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_collab",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_collab__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_db",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_db__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_search",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_search__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_templates",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_templates__install.log",
+    "upgrade_log": ""
+  },
+  {
+    "module": "ipai_workos_views",
+    "install_status": "FAIL",
+    "upgrade_status": "SKIPPED",
+    "install_log": "artifacts/logs/ipai_workos_views__install.log",
+    "upgrade_log": ""
+  }
+]
