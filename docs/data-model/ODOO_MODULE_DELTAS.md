@@ -37,6 +37,11 @@
   - `finance_ppm_tdi_audit`
   - `hr_employee`
   - `hr_expense`
+  - `ipai_agent_knowledge_source`
+  - `ipai_agent_run`
+  - `ipai_agent_skill`
+  - `ipai_agent_tool`
+  - `ipai_ai_studio_run`
   - `ipai_asset`
   - `ipai_asset_category`
   - `ipai_asset_checkout`
@@ -110,6 +115,8 @@
   - `a1_template_check_rel`
   - `advisor_playbook_category_ids_rel`
   - `advisor_recommendation_tag_ids_rel`
+  - `ipai_skill_knowledge_rel`
+  - `ipai_skill_tool_rel`
   - `ppm_program_project_rel`
   - `project_pr_required`
   - `project_project_group_ids_rel`
@@ -131,6 +138,11 @@
   - `ipai_ask_ai_service`
 - Extended tables:
   - `discuss_channel`: is_ai_channel
+
+## ipai_ask_ai_chatter
+
+- New tables:
+  - `ipai_ask_ai_chatter_request`
 
 ## ipai_bir_tax_compliance
 

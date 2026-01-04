@@ -1783,6 +1783,109 @@ entity import_xlsx_wizard_attachment_ids_rel {
   int import_xlsx_wizard_id
   int ir_attachment_id
 }
+entity ipai_agent_knowledge_source {
+  int attachment_id
+  text content_text
+  datetime create_date
+  int create_uid
+  int id
+  boolean is_active
+  varchar key
+  varchar kind
+  varchar model_name
+  varchar name
+  varchar tags
+  varchar url
+  datetime write_date
+  int write_uid
+}
+entity ipai_agent_run {
+  datetime completed_at
+  datetime create_date
+  int create_uid
+  float duration_seconds
+  text error_text
+  int id
+  text input_json
+  text input_text
+  varchar name
+  text output_json
+  text output_text
+  int skill_id
+  varchar skill_key
+  datetime started_at
+  varchar state
+  text tool_trace_json
+  int user_id
+  datetime write_date
+  int write_uid
+}
+entity ipai_agent_skill {
+  datetime create_date
+  int create_uid
+  text description
+  text guardrails
+  int id
+  text intents
+  boolean is_active
+  varchar key
+  varchar name
+  int run_count
+  varchar version
+  text workflow_json
+  datetime write_date
+  int write_uid
+}
+entity ipai_agent_tool {
+  datetime create_date
+  int create_uid
+  text description
+  int id
+  text input_schema_json
+  boolean is_active
+  varchar key
+  varchar name
+  text output_schema_json
+  boolean requires_admin
+  varchar target_method
+  varchar target_model
+  datetime write_date
+  int write_uid
+}
+entity ipai_ai_studio_run {
+  datetime create_date
+  int create_uid
+  text generated_files_json
+  int id
+  varchar module_name
+  varchar name
+  text prompt
+  text spec_json
+  varchar state
+  boolean validation_ok
+  text validation_report
+  varchar workspace_path
+  datetime write_date
+  int write_uid
+}
+entity ipai_ask_ai_chatter_request {
+  datetime create_date
+  int create_uid
+  text error
+  int id
+  varchar model
+  text payload_json
+  text question
+  int requested_by
+  int res_id
+  text response
+  text response_json
+  int source_message_id
+  varchar state
+  varchar uuid
+  datetime write_date
+  int write_uid
+}
 entity ipai_ask_ai_service {
   datetime create_date
   int create_uid
@@ -2633,6 +2736,14 @@ entity ipai_share_token {
   varchar scope_type
   datetime write_date
   int write_uid
+}
+entity ipai_skill_knowledge_rel {
+  int knowledge_id
+  int skill_id
+}
+entity ipai_skill_tool_rel {
+  int skill_id
+  int tool_id
 }
 entity ipai_sms_message {
   text body
@@ -5054,6 +5165,11 @@ hr_expense }o--|| ipai_travel_request : travel_request_id
 import_xlsx_wizard }o--|| xlsx_template : template_id
 import_xlsx_wizard_attachment_ids_rel }o--|| import_xlsx_wizard : import_xlsx_wizard_id
 import_xlsx_wizard_attachment_ids_rel }o--|| ir_attachment : ir_attachment_id
+ipai_agent_knowledge_source }o--|| ir_attachment : attachment_id
+ipai_agent_run }o--|| ipai_agent_skill : skill_id
+ipai_agent_run }o--|| res_users : user_id
+ipai_ask_ai_chatter_request }o--|| res_users : requested_by
+ipai_ask_ai_chatter_request }o--|| mail_message : source_message_id
 ipai_asset }o--|| ipai_asset_checkout : active_checkout_id
 ipai_asset }o--|| ipai_asset_category : category_id
 ipai_asset }o--|| res_currency : currency_id
@@ -5143,6 +5259,10 @@ ipai_ocr_job }o--|| ipai_ocr_provider : provider_id
 ipai_permission }o--|| res_groups : group_id
 ipai_permission }o--|| res_users : user_id
 ipai_share_token }o--|| res_users : created_by
+ipai_skill_knowledge_rel }o--|| ipai_agent_knowledge_source : knowledge_id
+ipai_skill_knowledge_rel }o--|| ipai_agent_skill : skill_id
+ipai_skill_tool_rel }o--|| ipai_agent_skill : skill_id
+ipai_skill_tool_rel }o--|| ipai_agent_tool : tool_id
 ipai_sms_message }o--|| res_partner : partner_id
 ipai_sms_message }o--|| ipai_sms_provider : provider_id
 ipai_studio_ai_history }o--|| base_automation : automation_id
