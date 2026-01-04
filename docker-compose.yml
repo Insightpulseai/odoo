@@ -91,7 +91,7 @@ services:
     volumes:
       - ./addons:/mnt/extra-addons
       - odoo-core-web-data:/var/lib/odoo
-    command: ["odoo", "-d", "odoo_core"]
+    command: ["odoo", "-d", "odoo_core", "--proxy-mode"]
     dns:
       - 8.8.8.8
       - 8.8.4.4
