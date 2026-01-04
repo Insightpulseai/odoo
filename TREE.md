@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c79f715bccd805fba2f01be4431a3dc3782b3093
+> Commit: 8b9bed3bb2ad9d6daa0bc1af6100200549c361d6
 
 ```
 .
@@ -66,6 +66,7 @@
 │   │   ├── infra-validate.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-prod-checks.yml
+│   │   ├── ipai-quality-gate.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── nextjs.yml
 │   │   ├── notion-sync-ci.yml
@@ -94,6 +95,14 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_agent_core
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
 │   │   ├── ipai_ai_studio
 │   │   │   ├── models
 │   │   │   ├── security
@@ -145,6 +154,7 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── wizards
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_custom_routes
@@ -221,6 +231,7 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── README.md
 │   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -313,6 +324,7 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── wizards
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ppm_monthly_close
@@ -347,6 +359,7 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_studio_ai
+│   │   │   ├── controllers
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
@@ -362,6 +375,7 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── .gitkeep
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_ask_ai
@@ -389,6 +403,7 @@
 │   │   ├── DEPLOYMENT_CHECKLIST.md
 │   │   ├── DEPLOYMENT_COMPLETE.md
 │   │   ├── DEPLOYMENT_STATUS.md
+│   │   ├── README.md
 │   │   ├── README_AFC_RAG.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
@@ -422,6 +437,7 @@
 │   │   │   ├── bir_withholding_views.xml
 │   │   │   ├── menu.xml
 │   │   │   └── res_partner_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_crm_pipeline
@@ -438,6 +454,7 @@
 │   │   ├── views
 │   │   │   ├── crm_lead_views.xml
 │   │   │   └── crm_stage_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_closing
@@ -470,6 +487,7 @@
 │   │   │   ├── golive_item_views.xml
 │   │   │   ├── golive_section_views.xml
 │   │   │   └── menus.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_finance_ppm_umbrella
@@ -502,6 +520,7 @@
 │   │   │   ├── grid_column_views.xml
 │   │   │   ├── grid_filter_views.xml
 │   │   │   └── grid_view_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_month_end
@@ -523,6 +542,7 @@
 │   │   │   ├── ph_holiday_views.xml
 │   │   │   ├── task_template_views.xml
 │   │   │   └── task_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_month_end_closing
@@ -560,6 +580,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── approval_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_platform_audit
@@ -570,6 +591,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── audit_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_platform_permissions
@@ -580,6 +602,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── permission_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_platform_theme
@@ -587,6 +610,7 @@
 │   │   │   └── src
 │   │   ├── views
 │   │   │   └── assets.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_platform_workflow
@@ -597,6 +621,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── workflow_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_sms_gateway
@@ -665,6 +690,7 @@
 │   │   │   ├── menu.xml
 │   │   │   ├── ph_holiday_views.xml
 │   │   │   └── res_partner_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_theme_tbwa_backend
@@ -681,6 +707,7 @@
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_affine
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_blocks
@@ -693,6 +720,7 @@
 │   │   │   └── src
 │   │   ├── views
 │   │   │   └── block_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_canvas
@@ -705,6 +733,7 @@
 │   │   │   └── src
 │   │   ├── views
 │   │   │   └── canvas_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_collab
@@ -715,6 +744,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── comment_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_core
@@ -732,6 +762,7 @@
 │   │   │   ├── page_views.xml
 │   │   │   ├── space_views.xml
 │   │   │   └── workspace_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_db
@@ -746,6 +777,7 @@
 │   │   │   └── src
 │   │   ├── views
 │   │   │   └── database_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_search
@@ -756,6 +788,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── search_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_templates
@@ -768,6 +801,7 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── template_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_workos_views
@@ -780,6 +814,7 @@
 │   │   │   └── src
 │   │   ├── views
 │   │   │   └── view_views.xml
+│   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   └── oca
@@ -816,6 +851,13 @@
 │   │   │   └── app.json
 │   │   ├── APP.md
 │   │   └── spec.yaml
+│   ├── chatgpt_ipai_ai_studio
+│   │   ├── public
+│   │   │   └── widget.html
+│   │   ├── src
+│   │   │   └── server.js
+│   │   ├── README.md
+│   │   └── package.json
 │   ├── control-room
 │   │   ├── src
 │   │   │   ├── app
@@ -1048,8 +1090,43 @@
 │           ├── __init__.py
 │           └── __manifest__.py
 ├── artifacts
+│   ├── logs
+│   │   ├── ipai__install.log
+│   │   ├── ipai_ask_ai__install.log
+│   │   ├── ipai_bir_tax_compliance__install.log
+│   │   ├── ipai_close_orchestration__install.log
+│   │   ├── ipai_crm_pipeline__install.log
+│   │   ├── ipai_finance_closing__install.log
+│   │   ├── ipai_finance_monthly_closing__install.log
+│   │   ├── ipai_finance_ppm__install.log
+│   │   ├── ipai_finance_ppm_golive__install.log
+│   │   ├── ipai_finance_ppm_umbrella__install.log
+│   │   ├── ipai_grid_view__install.log
+│   │   ├── ipai_month_end__install.log
+│   │   ├── ipai_month_end_closing__install.log
+│   │   ├── ipai_platform_approvals__install.log
+│   │   ├── ipai_platform_audit__install.log
+│   │   ├── ipai_platform_permissions__install.log
+│   │   ├── ipai_platform_theme__install.log
+│   │   ├── ipai_platform_workflow__install.log
+│   │   ├── ipai_ppm_a1__install.log
+│   │   ├── ipai_ppm_monthly_close__install.log
+│   │   ├── ipai_superset_connector__install.log
+│   │   ├── ipai_tbwa_finance__install.log
+│   │   ├── ipai_theme_tbwa_backend__install.log
+│   │   ├── ipai_workos_affine__install.log
+│   │   ├── ipai_workos_blocks__install.log
+│   │   ├── ipai_workos_canvas__install.log
+│   │   ├── ipai_workos_collab__install.log
+│   │   ├── ipai_workos_core__install.log
+│   │   ├── ipai_workos_db__install.log
+│   │   ├── ipai_workos_search__install.log
+│   │   ├── ipai_workos_templates__install.log
+│   │   └── ipai_workos_views__install.log
 │   ├── ce_oca_equivalents_audit.csv
 │   ├── ce_oca_equivalents_audit.json
+│   ├── ipai_install_upgrade_matrix.csv
+│   ├── ipai_install_upgrade_matrix.json
 │   ├── ipai_quality_gate.csv
 │   └── ipai_quality_gate.json
 ├── audit
@@ -1308,6 +1385,8 @@
 │   │   ├── ipai_workos_search.md
 │   │   ├── ipai_workos_templates.md
 │   │   └── ipai_workos_views.md
+│   ├── odoo
+│   │   └── DEVELOPER_TOOLS.md
 │   ├── odoo-18-handbook
 │   │   ├── pages
 │   │   │   ├── 01-finance-accounting.md
@@ -1390,6 +1469,7 @@
 │   ├── IMPLEMENTATION_SUMMARY.md
 │   ├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
 │   ├── INDUSTRY_PARITY_ANALYSIS.md
+│   ├── IPAI_MODULES_INDEX.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
 │   ├── MATTERMOST_ALERTING_SETUP.md
@@ -1738,6 +1818,22 @@
 │       └── tokens.scss
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
+├── releasekit
+│   ├── fastlane
+│   │   ├── Appfile
+│   │   ├── Fastfile
+│   │   └── Gemfile
+│   ├── scripts
+│   │   ├── audit_android.sh
+│   │   ├── audit_ios.sh
+│   │   ├── build_android.sh
+│   │   └── build_ios.sh
+│   ├── store
+│   │   ├── android
+│   │   │   └── README.md
+│   │   └── ios
+│   │       └── README.md
+│   └── README.md
 ├── scripts
 │   ├── ci
 │   │   ├── constraints-gevent.txt
@@ -1847,6 +1943,7 @@
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── introspect_project.py
+│   ├── ipai_quality_gate.sh
 │   ├── map_logframe.py
 │   ├── new_conversation_entry.sh
 │   ├── notify_slack.sh
@@ -1944,6 +2041,8 @@
 │       ├── .env.example
 │       ├── README.md
 │       └── pyproject.toml
+├── skillpack
+│   └── manifest.json
 ├── skills
 │   ├── visio-drawio-export
 │   │   ├── docker
@@ -2440,15 +2539,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-748 directories, 1687 files
+766 directories, 1768 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 850 |
-| Files | 2415 |
-| Python files | 627 |
-| XML files | 330 |
-| Markdown files | 466 |
+| Directories | 868 |
+| Files | 2512 |
+| Python files | 638 |
+| XML files | 337 |
+| Markdown files | 497 |
