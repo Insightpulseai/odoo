@@ -31,7 +31,6 @@ Dependencies:
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",
     "license": "LGPL-3",
-    "icon": "fa-comments",
     "depends": [
         "base",
         "mail",

@@ -11,7 +11,6 @@
     "author": "InsightPulse AI",
     "website": "https://insightpulse.ai",
     "license": "AGPL-3",
-    "icon": "fa-cube",
     "depends": ["base"],
     "installable": True,
     "auto_install": False,
