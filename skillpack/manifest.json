@@ -1,0 +1,247 @@
+{
+  "name": "IPAI Skillpack",
+  "version": "1.0.0",
+  "description": "Agent skills, tools, and knowledge for IPAI Odoo modules",
+
+  "tools": [
+    {
+      "key": "ipai.studio.process_command",
+      "name": "Process NLP Command",
+      "description": "Process a natural language command and return analysis for field creation, automation, or query.",
+      "target_model": "ipai.studio.ai.service",
+      "target_method": "process_command",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "command": { "type": "string", "description": "Natural language command" },
+          "context": { "type": "object", "description": "Optional context (current model, view, etc.)" }
+        },
+        "required": ["command"]
+      },
+      "output_schema": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string" },
+          "confidence": { "type": "number" },
+          "ready": { "type": "boolean" },
+          "message": { "type": "string" },
+          "analysis": { "type": "object" }
+        }
+      }
+    },
+    {
+      "key": "ipai.studio.create_field",
+      "name": "Create Custom Field",
+      "description": "Create a new custom field on an Odoo model based on NLP analysis.",
+      "target_model": "ipai.studio.ai.service",
+      "target_method": "create_field_from_analysis",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "analysis": { "type": "object", "description": "Field analysis from process_command" }
+        },
+        "required": ["analysis"]
+      },
+      "requires_admin": true
+    },
+    {
+      "key": "ipai.studio.execute_query",
+      "name": "Execute Data Query",
+      "description": "Execute a query command and return results.",
+      "target_model": "ipai.studio.ai.service",
+      "target_method": "execute_query",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "analysis": { "type": "object", "description": "Query analysis from process_command" }
+        },
+        "required": ["analysis"]
+      }
+    },
+    {
+      "key": "ipai.ask_ai.send_message",
+      "name": "Send Ask AI Message",
+      "description": "Send a message to the Ask AI service and get a response.",
+      "target_model": "ipai.ask.ai.service",
+      "target_method": "process_message",
+      "input_schema": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "channel_id": { "type": "integer" }
+        },
+        "required": ["message"]
+      }
+    },
+    {
+      "key": "ipai.agent.reload_skillpack",
+      "name": "Reload Skillpack",
+      "description": "Reload skillpack definitions from JSON files into database.",
+      "target_model": "ipai.agent.skill",
+      "target_method": "reload_skillpack",
+      "requires_admin": true
+    },
+    {
+      "key": "odoo.module.update_list",
+      "name": "Update Module List",
+      "description": "Update the list of available Odoo modules.",
+      "target_model": "ir.module.module",
+      "target_method": "update_list",
+      "requires_admin": true
+    },
+    {
+      "key": "odoo.module.install",
+      "name": "Install Module",
+      "description": "Install an Odoo module by technical name.",
+      "target_model": "ir.module.module",
+      "target_method": "button_immediate_install",
+      "requires_admin": true
+    }
+  ],
+
+  "knowledge": [
+    {
+      "key": "odoo18.ce.dev",
+      "name": "Odoo 18 CE Development Guide",
+      "kind": "text",
+      "tags": ["odoo", "ce", "development", "18.0"],
+      "content_text": "Odoo 18 CE module structure:\n- __manifest__.py: Module metadata, depends, data files\n- models/: Python model classes (fields, methods, constraints)\n- views/: XML view definitions (tree, form, kanban, search)\n- security/: ir.model.access.csv + security.xml (groups, rules)\n- data/: Seed data XML files\n- static/: Assets (JS, CSS, images)\n\nKey patterns:\n- Use _inherit for model extension\n- Use compute fields with @api.depends\n- Use @api.constrains for validation\n- Never hardcode secrets\n- Follow OCA coding standards"
+    },
+    {
+      "key": "odoo18.oca.parity",
+      "name": "OCA Parity Guide",
+      "kind": "text",
+      "tags": ["oca", "parity", "enterprise"],
+      "content_text": "OCA replacements for Enterprise modules:\n- accountant → account_financial_report + mis_builder\n- knowledge → document_page + OCA/knowledge\n- web_studio → ipai_studio_ai (this module)\n- helpdesk → helpdesk_mgmt\n- planning → resource_booking + hr_holidays_*\n- sign → OCA/edi\n\nDenylist (never depend on):\n- Any module in enterprise/ folder\n- marketing_automation, appointment, voip, sale_amazon"
+    },
+    {
+      "key": "ipai.tokens.theming",
+      "name": "IPAI Token Theming System",
+      "kind": "text",
+      "tags": ["theme", "tokens", "scss", "css"],
+      "content_text": "IPAI uses CSS custom properties for theming:\n\nPlatform tokens (ipai_platform_theme/static/src/scss/tokens.scss):\n- --ipai-brand-primary: Primary brand color\n- --ipai-brand-ink: Text on primary\n- --ipai-text-primary: Main text color\n- --ipai-radius: Border radius\n- --ipai-shadow: Box shadows\n\nTBWA skin (ipai_theme_tbwa_backend/static/src/scss/tbwa_tokens.scss):\n- Overrides platform tokens with TBWA yellow (#FFD800)\n- IBM Plex Sans font family\n\nUsage: Always use var(--ipai-*) in SCSS, never hardcode hex colors."
+    },
+    {
+      "key": "ipai.quality.gate",
+      "name": "IPAI Quality Gate Rules",
+      "kind": "text",
+      "tags": ["quality", "ci", "validation"],
+      "content_text": "Quality gate checks for ipai_* modules:\n1. Manifest validity (valid Python dict, required keys)\n2. Dependencies exist (no enterprise-only deps)\n3. __init__.py imports all subpackages\n4. security/ir.model.access.csv exists and is valid\n5. No Python syntax errors (compileall)\n6. No XML parse errors\n7. No secrets in code\n\nRun: python scripts/ce_oca_audit.py\nArtifacts: artifacts/ipai_quality_gate.json"
+    },
+    {
+      "key": "ipai.agent.architecture",
+      "name": "IPAI Agent Architecture",
+      "kind": "text",
+      "tags": ["agent", "architecture", "skills"],
+      "content_text": "Agent architecture:\n\n1. Skills: High-level capabilities with intent routing\n   - workflow_json: Ordered list of tool keys\n   - guardrails: Safety constraints\n   - intents: Natural language triggers\n\n2. Tools: Atomic actions mapped to Odoo methods\n   - target_model + target_method\n   - input/output schemas for validation\n   - requires_admin flag\n\n3. Knowledge: Context sources for enrichment\n   - text, url, attachment, or model\n   - tagged for filtering\n\n4. Runs: Execution logs with full trace\n   - Audit trail of all tool calls\n   - Error capture and recovery"
+    }
+  ],
+
+  "skills": [
+    {
+      "key": "odoo.studio.nlp_customize",
+      "name": "Natural Language Customization",
+      "version": "1.0.0",
+      "description": "Process natural language commands to customize Odoo (add fields, automations, queries).",
+      "intents": [
+        "add a field",
+        "create a field",
+        "when something happens",
+        "show me my tasks",
+        "how many invoices"
+      ],
+      "workflow": [
+        "ipai.studio.process_command"
+      ],
+      "guardrails": [
+        "validate field names against reserved words",
+        "check model exists before modification",
+        "require confirmation for destructive actions"
+      ],
+      "tools": [
+        "ipai.studio.process_command",
+        "ipai.studio.create_field",
+        "ipai.studio.execute_query"
+      ],
+      "knowledge": [
+        "odoo18.ce.dev",
+        "ipai.quality.gate"
+      ]
+    },
+    {
+      "key": "odoo.ask_ai.conversation",
+      "name": "Ask AI Conversation",
+      "version": "1.0.0",
+      "description": "Interactive AI conversation for Odoo assistance.",
+      "intents": [
+        "help me with",
+        "how do I",
+        "what is",
+        "explain"
+      ],
+      "workflow": [
+        "ipai.ask_ai.send_message"
+      ],
+      "guardrails": [
+        "no confidential data disclosure",
+        "limit response length",
+        "audit all interactions"
+      ],
+      "tools": [
+        "ipai.ask_ai.send_message"
+      ],
+      "knowledge": [
+        "odoo18.ce.dev",
+        "odoo18.oca.parity",
+        "ipai.tokens.theming"
+      ]
+    },
+    {
+      "key": "odoo.module.management",
+      "name": "Module Management",
+      "version": "1.0.0",
+      "description": "Install and manage Odoo modules.",
+      "intents": [
+        "install module",
+        "update module list",
+        "check available modules"
+      ],
+      "workflow": [
+        "odoo.module.update_list",
+        "odoo.module.install"
+      ],
+      "guardrails": [
+        "admin-only for install operations",
+        "validate module exists before install",
+        "check dependencies before install"
+      ],
+      "tools": [
+        "odoo.module.update_list",
+        "odoo.module.install"
+      ],
+      "knowledge": [
+        "odoo18.ce.dev",
+        "odoo18.oca.parity"
+      ]
+    },
+    {
+      "key": "mobile.releasekit.scaffold",
+      "name": "Generate Store ReleaseKit",
+      "version": "1.0.0",
+      "description": "Generate fastlane + scripts + store listing templates for iOS and Android.",
+      "intents": [
+        "make this app publishable",
+        "generate app store release pipeline",
+        "prepare ios play store release"
+      ],
+      "workflow": [],
+      "guardrails": [
+        "admin-gate scaffold generation",
+        "no secrets written to repo",
+        "validate target SDK versions"
+      ],
+      "tools": [],
+      "knowledge": []
+    }
+  ]
+}

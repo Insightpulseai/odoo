@@ -1,0 +1,235 @@
+# Fastfile - Deployment automation for iOS and Android
+#
+# Usage:
+#   bundle exec fastlane ios beta        # Upload to TestFlight
+#   bundle exec fastlane ios release     # Submit to App Store
+#   bundle exec fastlane android internal # Upload to Play internal
+#   bundle exec fastlane android production # Submit to Play Store
+
+default_platform(:ios)
+
+# ============================================================================
+# ANDROID LANES
+# ============================================================================
+
+platform :android do
+  desc "Validate build configuration"
+  lane :validate do
+    gradle(
+      task: "assembleRelease",
+      project_dir: ENV.fetch("ANDROID_PROJECT_DIR", "../apps/flutter_app/android")
+    )
+    UI.success("Android build validated successfully")
+  end
+
+  desc "Upload AAB to Play Store internal track"
+  lane :internal do
+    aab_path = ENV.fetch("ANDROID_AAB_PATH") do
+      "../apps/flutter_app/build/app/outputs/bundle/release/app-release.aab"
+    end
+
+    unless File.exist?(aab_path)
+      UI.user_error!("AAB not found at #{aab_path}. Run build first.")
+    end
+
+    supply(
+      track: "internal",
+      aab: aab_path,
+      json_key_data: ENV.fetch("SUPPLY_JSON_KEY_DATA"),
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+
+    UI.success("Uploaded to Play Store internal track")
+  end
+
+  desc "Upload AAB to Play Store alpha track"
+  lane :alpha do
+    aab_path = ENV.fetch("ANDROID_AAB_PATH") do
+      "../apps/flutter_app/build/app/outputs/bundle/release/app-release.aab"
+    end
+
+    supply(
+      track: "alpha",
+      aab: aab_path,
+      json_key_data: ENV.fetch("SUPPLY_JSON_KEY_DATA")
+    )
+
+    UI.success("Uploaded to Play Store alpha track")
+  end
+
+  desc "Submit to Play Store production"
+  lane :production do
+    aab_path = ENV.fetch("ANDROID_AAB_PATH") do
+      "../apps/flutter_app/build/app/outputs/bundle/release/app-release.aab"
+    end
+
+    supply(
+      track: "production",
+      aab: aab_path,
+      json_key_data: ENV.fetch("SUPPLY_JSON_KEY_DATA"),
+      rollout: "0.1"  # 10% staged rollout
+    )
+
+    UI.success("Submitted to Play Store production (10% rollout)")
+  end
+
+  desc "Update Play Store metadata and screenshots"
+  lane :metadata do
+    supply(
+      skip_upload_aab: true,
+      metadata_path: "../releasekit/store/android/metadata"
+    )
+    UI.success("Play Store metadata updated")
+  end
+end
+
+# ============================================================================
+# iOS LANES
+# ============================================================================
+
+platform :ios do
+  desc "Validate iOS build configuration"
+  lane :validate do
+    build_app(
+      workspace: ENV.fetch("IOS_WORKSPACE", "../apps/flutter_app/ios/Runner.xcworkspace"),
+      scheme: ENV.fetch("IOS_SCHEME", "Runner"),
+      skip_archive: true,
+      skip_codesigning: true
+    )
+    UI.success("iOS build validated successfully")
+  end
+
+  desc "Upload to TestFlight"
+  lane :beta do
+    # App Store Connect API key
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_content: ENV.fetch("ASC_PRIVATE_KEY_P8"),
+      in_house: false
+    )
+
+    # Build if needed
+    if ENV["IOS_IPA_PATH"] && File.exist?(ENV["IOS_IPA_PATH"])
+      ipa_path = ENV["IOS_IPA_PATH"]
+    else
+      build_app(
+        workspace: ENV.fetch("IOS_WORKSPACE", "../apps/flutter_app/ios/Runner.xcworkspace"),
+        scheme: ENV.fetch("IOS_SCHEME", "Runner"),
+        export_method: "app-store"
+      )
+      ipa_path = lane_context[SharedValues::IPA_OUTPUT_PATH]
+    end
+
+    # Upload to TestFlight
+    pilot(
+      api_key: api_key,
+      ipa: ipa_path,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false
+    )
+
+    UI.success("Uploaded to TestFlight")
+  end
+
+  desc "Submit to App Store"
+  lane :release do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_content: ENV.fetch("ASC_PRIVATE_KEY_P8"),
+      in_house: false
+    )
+
+    deliver(
+      api_key: api_key,
+      submit_for_review: true,
+      automatic_release: false,
+      force: true,
+      skip_screenshots: ENV["SKIP_SCREENSHOTS"] == "true",
+      metadata_path: "../releasekit/store/ios/metadata"
+    )
+
+    UI.success("Submitted to App Store for review")
+  end
+
+  desc "Update App Store metadata only"
+  lane :metadata do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_content: ENV.fetch("ASC_PRIVATE_KEY_P8"),
+      in_house: false
+    )
+
+    deliver(
+      api_key: api_key,
+      skip_binary_upload: true,
+      metadata_path: "../releasekit/store/ios/metadata"
+    )
+
+    UI.success("App Store metadata updated")
+  end
+
+  desc "Download current metadata"
+  lane :download_metadata do
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_content: ENV.fetch("ASC_PRIVATE_KEY_P8"),
+      in_house: false
+    )
+
+    deliver(
+      api_key: api_key,
+      skip_binary_upload: true,
+      skip_metadata: false,
+      skip_screenshots: true,
+      force: true,
+      run_precheck_before_submit: false
+    )
+
+    UI.success("Downloaded App Store metadata")
+  end
+end
+
+# ============================================================================
+# SHARED LANES
+# ============================================================================
+
+desc "Increment version number"
+lane :bump_version do |options|
+  bump_type = options[:type] || "patch"
+
+  # Read current version from pubspec.yaml (Flutter)
+  pubspec = "../apps/flutter_app/pubspec.yaml"
+  if File.exist?(pubspec)
+    content = File.read(pubspec)
+    version_match = content.match(/version:\s*(\d+\.\d+\.\d+)\+(\d+)/)
+    if version_match
+      current_version = version_match[1]
+      build_number = version_match[2].to_i + 1
+
+      parts = current_version.split(".").map(&:to_i)
+      case bump_type
+      when "major"
+        parts[0] += 1
+        parts[1] = 0
+        parts[2] = 0
+      when "minor"
+        parts[1] += 1
+        parts[2] = 0
+      else
+        parts[2] += 1
+      end
+
+      new_version = parts.join(".")
+      new_version_string = "version: #{new_version}+#{build_number}"
+
+      File.write(pubspec, content.gsub(/version:\s*\d+\.\d+\.\d+\+\d+/, new_version_string))
+      UI.success("Bumped version to #{new_version}+#{build_number}")
+    end
+  end
+end

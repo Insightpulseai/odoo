@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="ipai_agent_root_menu"
+              name="IPAI Agents"
+              web_icon="ipai_agent_core,static/description/icon.png"
+              sequence="100"/>
+
+    <!-- Agent Core Submenu -->
+    <menuitem id="ipai_agent_core_menu"
+              name="Agent Core"
+              parent="ipai_agent_root_menu"
+              sequence="10"/>
+
+    <!-- Menu Items -->
+    <menuitem id="ipai_agent_skill_menu"
+              name="Skills"
+              parent="ipai_agent_core_menu"
+              action="ipai_agent_skill_action"
+              sequence="10"/>
+
+    <menuitem id="ipai_agent_tool_menu"
+              name="Tools"
+              parent="ipai_agent_core_menu"
+              action="ipai_agent_tool_action"
+              sequence="20"/>
+
+    <menuitem id="ipai_agent_knowledge_menu"
+              name="Knowledge"
+              parent="ipai_agent_core_menu"
+              action="ipai_agent_knowledge_action"
+              sequence="30"/>
+
+    <menuitem id="ipai_agent_run_menu"
+              name="Runs"
+              parent="ipai_agent_core_menu"
+              action="ipai_agent_run_action"
+              sequence="40"/>
+</odoo>
