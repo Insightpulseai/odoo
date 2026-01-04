@@ -1,0 +1,17 @@
+{
+  "name": "@ipai/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared design tokens for IPAI applications (Odoo, ChatGPT Apps SDK)",
+  "files": [
+    "tokens.css",
+    "tokens.scss",
+    "tailwind.preset.js"
+  ],
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./tokens.scss": "./tokens.scss",
+    "./tailwind.preset": "./tailwind.preset.js"
+  }
+}
