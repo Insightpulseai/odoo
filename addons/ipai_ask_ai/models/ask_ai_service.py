@@ -449,14 +449,14 @@ class IpaiAskAIService(models.TransientModel):
         """
         # Get API key from config parameter or environment
         IrConfig = self.env["ir.config_parameter"].sudo()
-        api_key = IrConfig.get_param("ipai_ask_ai.gemini_api_key") or os.getenv("GEMINI_API_KEY")
+        api_key = IrConfig.get_param("ipai_gemini.api_key") or os.getenv("GEMINI_API_KEY")
 
         if not api_key:
             _logger.warning("Gemini API key not configured")
             return {"success": False, "message": "Gemini API not configured"}
 
         # Get model name from config
-        model = IrConfig.get_param("ipai_ask_ai.gemini_model", "gemini-2.5-flash")
+        model = IrConfig.get_param("ipai_gemini.model", "gemini-2.5-flash")
 
         # Build system context
         system_context = (
