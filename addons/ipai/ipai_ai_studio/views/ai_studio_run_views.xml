@@ -20,6 +20,11 @@
     <field name="arch" type="xml">
       <form>
         <header>
+          <button name="action_run_pipeline"
+                  type="object"
+                  string="Run Pipeline (Draft→Install)"
+                  class="btn-success"
+                  confirm="This will draft spec, generate, validate, and install the module. Continue?"/>
           <button name="action_draft_spec_from_prompt"
                   type="object"
                   string="Draft Spec (Ask AI)"
@@ -31,6 +36,10 @@
           <button name="action_validate"
                   type="object"
                   string="Validate"/>
+          <button name="action_refresh_apps_list"
+                  type="object"
+                  string="Refresh Apps List"
+                  class="btn-secondary"/>
           <button name="action_apply"
                   type="object"
                   string="Apply"
@@ -39,7 +48,8 @@
                   type="object"
                   string="Install/Upgrade (Dev)"
                   class="btn-danger"
-                  confirm="This will install/upgrade the module on the current database. Continue?"/>
+                  confirm="This will install/upgrade the module on the current database. Continue?"
+                  groups="ipai_ai_studio.group_ipai_ai_studio_admin"/>
           <field name="state" widget="statusbar" statusbar_visible="draft,generated,validated,failed,applied"/>
         </header>
 

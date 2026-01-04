@@ -14,7 +14,7 @@ import os
 import re
 
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 
 from .generator import render_addon_from_spec
 from .validator import validate_generated_addon
@@ -320,8 +320,15 @@ class IpaiAiStudioRun(models.Model):
         """
         Optional: install generated module on current DB using Odoo's module API.
         This will mutate the DB; use only in dev/stage.
+        Gated by ipai_ai_studio.group_ipai_ai_studio_admin.
         """
         for rec in self:
+            # Admin gate for DB mutations
+            if not rec.env.user.has_group("ipai_ai_studio.group_ipai_ai_studio_admin"):
+                raise AccessError(
+                    _("AI Studio Admin group required to install/upgrade modules.")
+                )
+
             if not rec.module_name:
                 raise UserError(_("No module_name set."))
             if not rec.validation_ok:
@@ -346,6 +353,62 @@ class IpaiAiStudioRun(models.Model):
                 mod.button_immediate_install()
 
         return True
+
+    def action_refresh_apps_list(self):
+        """Refresh the module registry so newly generated modules are discoverable."""
+        self.env["ir.module.module"].sudo().update_list()
+        return True
+
+    def action_run_pipeline(self):
+        """
+        One-click pipeline:
+          Draft Spec → Generate → Validate → Refresh Apps List → Install/Upgrade
+
+        Final step (install) is gated by ipai_ai_studio_admin group.
+        Stops early if validation fails.
+        """
+        for rec in self:
+            # Step 1: Draft spec if we have a prompt but no spec
+            if rec.prompt and not rec.spec_json:
+                rec.action_draft_spec_from_prompt()
+
+            # Step 2: Generate addon from spec
+            rec.action_generate_from_spec()
+
+            # Step 3: Validate
+            rec.action_validate()
+            if not rec.validation_ok:
+                # Stop early; validation report already populated
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": _("Validation Failed"),
+                        "message": _("Check the Validation Report tab for details."),
+                        "type": "warning",
+                        "sticky": True,
+                    },
+                }
+
+            # Step 4: Refresh Apps List so module appears in registry
+            rec.action_refresh_apps_list()
+
+            # Step 5: Install/Upgrade (gated by admin group)
+            rec.action_install_on_db()
+
+            # Mark as applied
+            rec.state = "applied"
+
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Pipeline Complete"),
+                "message": _("Module generated, validated, and installed successfully."),
+                "type": "success",
+                "sticky": False,
+            },
+        }
 
     def _load_spec(self):
         """Parse and return spec JSON."""
