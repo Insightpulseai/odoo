@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d4f810ff525a29104fa48a9f0284fcd88bf467c5
+> Commit: 69f250b774161151a9b14871182f0676db7e8d54
 
 ```
 .
@@ -76,7 +76,8 @@
 │   │   ├── superset-bump.yml
 │   │   ├── sync-current-state.yml
 │   │   ├── sync-master.yml
-│   │   └── verify-gates.yml
+│   │   ├── verify-gates.yml
+│   │   └── workflow-yaml-validate.yml
 │   └── copilot-instructions.md
 ├── .insightpulse
 │   └── sync-config.yaml
@@ -2418,7 +2419,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-743 directories, 1670 files
+743 directories, 1671 files
 ```
 
 ## 📊 Stats
@@ -2426,7 +2427,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 845 |
-| Files | 2385 |
+| Files | 2386 |
 | Python files | 614 |
 | XML files | 327 |
 | Markdown files | 463 |
