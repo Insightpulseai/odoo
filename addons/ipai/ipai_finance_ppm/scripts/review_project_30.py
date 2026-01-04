@@ -3,7 +3,7 @@
 """Review project 30 tasks as they appear in the UI"""
 
 import odoo
-from odoo import api, SUPERUSER_ID
+from odoo import SUPERUSER_ID, api
 
 odoo.tools.config.parse_config(["-d", "production"])
 registry = odoo.registry("production")

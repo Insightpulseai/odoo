@@ -1,14 +1,18 @@
 # IPAI Finance PPM – TBWA Complete Configuration
 
-## 1. Overview
+## Overview
+
 Complete seed data for 8-employee Finance SSC with BIR compliance and month-end closing tasks
 
-**Technical Name**: `ipai_finance_ppm_umbrella`
-**Category**: Uncategorized
-**Version**: 1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_finance_ppm_umbrella`
+- **Version:** 1.0.0
+- **Category:** 
+- **License:** LGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 TBWA Finance PPM Umbrella Configuration
 ========================================
@@ -27,52 +31,65 @@ Complete seed data for Finance SSC operations:
 
 **Month-End Closing Tasks (36 entries):**
 - Payroll & Personnel
-- Tax & Provisions
-- Client Billings
-- WIP/OOP Management
-- AR/AP Aging
-- Accruals & Reclassifications
+- ...
 
-**RACI Matrix:**
-- Supervisor assignments per employee
-- Reviewer: CKVC (Finance Supervisor), JPAL, RIM, BOM, LAS
-- Approver: CKVC (Finance Director), RIM (Senior Finance Manager)
+## Functional Scope
 
-**Deadlines:**
-- Preparation: BIR Deadline - 4 business days
-- Review: BIR Deadline - 2 business days
-- Approval: BIR Deadline - 1 business day
-    
+## Installation & Dependencies
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `ipai_finance_ppm`
-- `project`
+### Dependencies
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+- `ipai_finance_ppm` (IPAI)
+- `project` (CE Core)
 
-## 5. Data Model
-Defined Models:
-- No explicit new models detected (may inherit existing).
+### Installation
 
-## 6. User Interface
-- **Views**: 5 files
-- **Menus**: (Audit Pending)
-
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` not found
-- **Groups**: `security.xml` not found
-
-## 8. Integrations
-- (Audit Pending)
-
-## 9. Verification Steps
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_finance_ppm_umbrella --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_finance_ppm_umbrella --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_finance_ppm_umbrella --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_finance_ppm_umbrella --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+*No specific security configuration.*
+
+## Integrations
+
+*No external integrations.*
+
+## Upgrade Notes
+
+- Current Version: 1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_finance_ppm_umbrella'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_finance_ppm_umbrella")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `data/01_employees.xml`
+- `data/02_logframe_complete.xml`
+- `data/03_bir_schedule_2026.xml`
+- `data/04_closing_tasks.xml`
+- `data/05_raci_assignments.xml`
+
+## Static Validation Status
+
+- Passed: 4
+- Warnings: 0
+- Failed: 0

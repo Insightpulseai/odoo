@@ -14,17 +14,17 @@ Exit codes:
     2: FAIL (missing templates, duplicate keys, or generator errors)
 """
 
+import argparse
 import json
 import sys
-import argparse
-from pathlib import Path
-from datetime import datetime
 from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
 
 # Odoo imports (assumes running via odoo shell or with PYTHONPATH set)
 try:
     import odoo
-    from odoo import api, SUPERUSER_ID
+    from odoo import SUPERUSER_ID, api
 except ImportError:
     print(
         "ERROR: Cannot import Odoo. Run via: docker exec odoo-ce python3 /path/to/script.py"

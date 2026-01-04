@@ -1,16 +1,20 @@
 # IPAI WorkOS - AFFiNE Clone (Umbrella)
 
-## 1. Overview
+## Overview
+
 Installs the full WorkOS AFFiNE-style suite
 
-**Technical Name**: `ipai_workos_affine`
-**Category**: Productivity
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_workos_affine`
+- **Version:** 18.0.1.0.0
+- **Category:** Productivity
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** Yes
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
-        Umbrella module that installs the complete Work OS suite providing
+Umbrella module that installs the complete Work OS suite providing
         AFFiNE/Notion-like functionality:
         - Pages with nested hierarchy
         - Block-based content editing
@@ -20,45 +24,63 @@ Installs the full WorkOS AFFiNE-style suite
         - Collaboration features
         - Global search
         - Templates
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `ipai_workos_core`
-- `ipai_workos_blocks`
-- `ipai_workos_db`
-- `ipai_workos_views`
-- `ipai_workos_collab`
-- `ipai_workos_search`
-- `ipai_workos_templates`
-- `ipai_workos_canvas`
-- `ipai_platform_permissions`
-- `ipai_platform_audit`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+## Installation & Dependencies
 
-## 5. Data Model
-Defined Models:
-- No explicit new models detected (may inherit existing).
+### Dependencies
 
-## 6. User Interface
-- **Views**: 0 files
-- **Menus**: (Audit Pending)
+- `ipai_workos_core` (IPAI)
+- `ipai_workos_blocks` (IPAI)
+- `ipai_workos_db` (IPAI)
+- `ipai_workos_views` (IPAI)
+- `ipai_workos_collab` (IPAI)
+- `ipai_workos_search` (IPAI)
+- `ipai_workos_templates` (IPAI)
+- `ipai_workos_canvas` (IPAI)
+- `ipai_platform_permissions` (IPAI)
+- `ipai_platform_audit` (IPAI)
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` not found
-- **Groups**: `security.xml` not found
+### Installation
 
-## 8. Integrations
-- (Audit Pending)
-
-## 9. Verification Steps
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_workos_affine --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_workos_affine --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_workos_affine --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_workos_affine --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+*No specific security configuration.*
+
+## Integrations
+
+*No external integrations.*
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_workos_affine'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_workos_affine")]).state)'
+```
+
+## Static Validation Status
+
+- Passed: 4
+- Warnings: 0
+- Failed: 0

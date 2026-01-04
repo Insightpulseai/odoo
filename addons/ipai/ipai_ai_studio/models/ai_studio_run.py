@@ -13,14 +13,14 @@ import json
 import os
 import re
 
-from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError
 
-from .generator import render_addon_from_spec
-from .validator import validate_generated_addon
-from .llm_client import draft_spec_json
-from .git_ops import commit_generated_module
+from odoo import _, api, fields, models
 
+from .generator import render_addon_from_spec
+from .git_ops import commit_generated_module
+from .llm_client import draft_spec_json
+from .validator import validate_generated_addon
 
 SAFE_MOD_RE = re.compile(r"^ipai_[a-z0-9_]+$")
 
@@ -123,6 +123,7 @@ class IpaiAiStudioRun(models.Model):
         # 2. Parse from Odoo's addons_path config
         try:
             from odoo.tools import config
+
             addons_path = config.get("addons_path", "")
             if addons_path:
                 # addons_path is comma-separated; prefer custom paths (not core)
@@ -144,7 +145,11 @@ class IpaiAiStudioRun(models.Model):
             # Go up: models/ -> ipai_ai_studio/ -> ipai/ -> addons/
             ipai_dir = os.path.dirname(os.path.dirname(this_file))
             addons_dir = os.path.dirname(ipai_dir)
-            if os.path.basename(addons_dir) in ("addons", "extra-addons", "custom-addons"):
+            if os.path.basename(addons_dir) in (
+                "addons",
+                "extra-addons",
+                "custom-addons",
+            ):
                 candidates.append(addons_dir)
             # Also add ipai/ itself as a candidate for generated/
             candidates.append(ipai_dir)
@@ -152,13 +157,15 @@ class IpaiAiStudioRun(models.Model):
             pass
 
         # 5. Common docker/deployment paths (fallback)
-        candidates.extend([
-            "/mnt/extra-addons",
-            "/opt/odoo/custom-addons",
-            "/home/user/odoo-ce/addons",
-            "/home/user/odoo-ce/addons/ipai",
-            "/workspace/addons",
-        ])
+        candidates.extend(
+            [
+                "/mnt/extra-addons",
+                "/opt/odoo/custom-addons",
+                "/home/user/odoo-ce/addons",
+                "/home/user/odoo-ce/addons/ipai",
+                "/workspace/addons",
+            ]
+        )
 
         # Deduplicate while preserving order
         seen = set()
@@ -183,7 +190,8 @@ class IpaiAiStudioRun(models.Model):
                 "No writable addons root found. Tried: %s\n\n"
                 "Set system parameter ipai_ai_studio.addons_root to a writable path, "
                 "or ensure one of the standard paths exists and is writable."
-            ) % tried
+            )
+            % tried
         )
 
     def _generated_base_dir(self):
@@ -234,9 +242,7 @@ class IpaiAiStudioRun(models.Model):
             spec = rec._load_spec()
             mod = spec.get("module_name") or rec.module_name
             if not mod or not SAFE_MOD_RE.match(mod):
-                raise UserError(
-                    _("Invalid module_name. Must match: ipai_[a-z0-9_]+")
-                )
+                raise UserError(_("Invalid module_name. Must match: ipai_[a-z0-9_]+"))
 
             rec.module_name = mod
 
@@ -291,10 +297,16 @@ class IpaiAiStudioRun(models.Model):
                 raise UserError(_("Validation must pass before applying."))
 
             icp = self.env["ir.config_parameter"].sudo()
-            mode = (icp.get_param("ipai_ai_studio.apply_mode") or "filesystem").strip().lower()
+            mode = (
+                (icp.get_param("ipai_ai_studio.apply_mode") or "filesystem")
+                .strip()
+                .lower()
+            )
 
             if mode == "git_commit":
-                repo_root = icp.get_param("ipai_ai_studio.repo_root") or "/home/user/odoo-ce"
+                repo_root = (
+                    icp.get_param("ipai_ai_studio.repo_root") or "/home/user/odoo-ce"
+                )
                 if not os.path.isdir(repo_root):
                     raise UserError(
                         _("Repo root not found. Set ipai_ai_studio.repo_root.")
@@ -404,7 +416,9 @@ class IpaiAiStudioRun(models.Model):
             "tag": "display_notification",
             "params": {
                 "title": _("Pipeline Complete"),
-                "message": _("Module generated, validated, and installed successfully."),
+                "message": _(
+                    "Module generated, validated, and installed successfully."
+                ),
                 "type": "success",
                 "sticky": False,
             },

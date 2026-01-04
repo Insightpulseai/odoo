@@ -2,6 +2,7 @@
 """Idempotent JSON seed loader for BIR schedule data."""
 import json
 import logging
+
 from odoo.modules.module import get_module_resource
 from odoo.tools import file_open
 

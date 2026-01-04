@@ -10,6 +10,7 @@ def post_init_hook(env):
     """Load skillpack JSON into database on module install."""
     try:
         from .models.skillpack_loader import load_skillpack_from_default_paths
+
         load_skillpack_from_default_paths(env)
         _logger.info("IPAI Agent Core: Skillpack loaded successfully")
     except Exception as e:

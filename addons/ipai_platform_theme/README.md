@@ -1,14 +1,18 @@
 # IPAI Platform Theme
 
-## 1. Overview
+## Overview
+
 Single source of truth for IPAI design tokens and branding
 
-**Technical Name**: `ipai_platform_theme`
-**Category**: Theme
-**Version**: 18.0.1.1.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_platform_theme`
+- **Version:** 18.0.1.1.0
+- **Category:** Theme
+- **License:** LGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
 IPAI Platform Theme - Design System Foundation
 ===============================================
@@ -22,52 +26,55 @@ Key Principles:
 - Skin modules (like ipai_theme_tbwa_backend) override values, not definitions
 - No hex codes should be used directly in other IPAI modules
 
-Token Categories:
-- Brand colors (primary, ink, surface, border)
-- Semantic colors (success, warning, error, info)
-- Typography (font family, sizes, weights)
-- Spacing scale
-- Border radii and shadows
-- Transitions and z-index layers
+Tok...
 
-Usage in Other Modules:
-- Add 'ipai_platform_theme' to depends
-- Use var(--ipai-brand-primary) instead of hex colors
-- Use var(--ipai-radius) instead of hardcoded border-radius
+## Functional Scope
 
-Odoo Integration:
-- Maps IPAI tokens to --o-brand-primary and other Odoo variables
-- Normalizes common Odoo components for consistent styling
-    
+## Installation & Dependencies
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `web`
+### Dependencies
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+- `web` (CE Core)
 
-## 5. Data Model
-Defined Models:
-- No explicit new models detected (may inherit existing).
+### Installation
 
-## 6. User Interface
-- **Views**: 0 files
-- **Menus**: (Audit Pending)
-
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` not found
-- **Groups**: `security.xml` not found
-
-## 8. Integrations
-- (Audit Pending)
-
-## 9. Verification Steps
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_platform_theme --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_platform_theme --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_platform_theme --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_platform_theme --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+*No specific security configuration.*
+
+## Integrations
+
+*No external integrations.*
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.1.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_platform_theme'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_platform_theme")]).state)'
+```
+
+## Static Validation Status
+
+- Passed: 4
+- Warnings: 0
+- Failed: 0

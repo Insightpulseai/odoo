@@ -19,12 +19,12 @@ Usage:
     # Or via Python
     python3 migrate_templates_v1_2_0.py --db production
 """
-import sys
 import argparse
-import odoo
-from odoo import api, SUPERUSER_ID
+import sys
 from collections import defaultdict
 
+import odoo
+from odoo import SUPERUSER_ID, api
 
 STEP_SUFFIXES = ["|PREP", "|REVIEW", "|APPROVAL"]
 

@@ -7,9 +7,9 @@ Performs strict validation to prevent UI breakage:
 - Python compiles without errors
 - XML parses correctly
 """
-import os
-import glob
 import compileall
+import glob
+import os
 from xml.etree import ElementTree as ET
 
 
@@ -69,12 +69,12 @@ def validate_generated_addon(addon_path: str):
     manifest_path = os.path.join(addon_path, "__manifest__.py")
     if os.path.isfile(manifest_path):
         try:
-            with open(manifest_path, 'r', encoding='utf-8') as f:
+            with open(manifest_path, "r", encoding="utf-8") as f:
                 content = f.read()
             manifest_dict = eval(content)
             if not isinstance(manifest_dict, dict):
                 fail("__manifest__.py does not evaluate to a dict")
-            elif 'name' not in manifest_dict:
+            elif "name" not in manifest_dict:
                 fail("__manifest__.py missing 'name' key")
             else:
                 info("__manifest__.py is valid")
@@ -85,12 +85,14 @@ def validate_generated_addon(addon_path: str):
     csvs = glob.glob(os.path.join(addon_path, "**/*.csv"), recursive=True)
     for csv_path in csvs:
         try:
-            with open(csv_path, 'r', encoding='utf-8') as f:
+            with open(csv_path, "r", encoding="utf-8") as f:
                 lines = f.readlines()
             if lines:
-                header = lines[0].strip().split(',')
-                if 'id' not in header:
-                    fail(f"CSV {os.path.basename(csv_path)}: missing 'id' column in header")
+                header = lines[0].strip().split(",")
+                if "id" not in header:
+                    fail(
+                        f"CSV {os.path.basename(csv_path)}: missing 'id' column in header"
+                    )
                 else:
                     info(f"CSV {os.path.basename(csv_path)} format OK")
         except Exception as e:

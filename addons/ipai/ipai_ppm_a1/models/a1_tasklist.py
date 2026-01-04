@@ -6,8 +6,10 @@ Represents a period-specific instance of the task set.
 Maps to close.cycle in the close orchestration module.
 """
 import logging
-from odoo import api, fields, models
+
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -300,6 +302,7 @@ class A1Tasklist(models.Model):
             return
 
         import json
+
         import requests
 
         data = {

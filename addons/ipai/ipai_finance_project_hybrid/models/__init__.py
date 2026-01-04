@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from . import finance_seed_service
-from . import finance_directory
-from . import bir_schedule
-from . import task_template
-from . import project
-from . import task
-from . import res_config_settings
+from . import (
+    bir_schedule,
+    finance_directory,
+    finance_seed_service,
+    project,
+    res_config_settings,
+    task,
+    task_template,
+)

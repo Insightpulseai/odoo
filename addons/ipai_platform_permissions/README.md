@@ -1,52 +1,94 @@
 # IPAI Platform Permissions
 
-## 1. Overview
+## Overview
+
 Scope-based permission and role management for IPAI modules
 
-**Technical Name**: `ipai_platform_permissions`
-**Category**: Hidden/Tools
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_platform_permissions`
+- **Version:** 18.0.1.0.0
+- **Category:** Hidden/Tools
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
-        Platform-level permission management providing:
+Platform-level permission management providing:
         - Workspace/space/page/db permission scopes
         - Role definitions (admin/member/guest)
         - Record rules generation
         - Share token management
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `mail`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Data Models
 
-## 5. Data Model
-Defined Models:
-- `ipai.share.token`
-- `ipai.permission`
+- **ipai.permission** (Model)
+  - IPAI Permission Scope
+  - Fields: 7 defined
+- **ipai.share.token** (Model)
+  - IPAI Share Token
+  - Fields: 7 defined
 
-## 6. User Interface
-- **Views**: 1 files
-- **Menus**: (Audit Pending)
+### Views
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+- : 2
+- Form: 1
 
-## 8. Integrations
-- (Audit Pending)
+## Installation & Dependencies
 
-## 9. Verification Steps
+### Dependencies
+
+- `base` (CE Core)
+- `mail` (CE Core)
+
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_platform_permissions --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_platform_permissions --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_platform_permissions --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_platform_permissions --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+### Access Rules
+
+*4 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_platform_permissions'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_platform_permissions")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `views/permission_views.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

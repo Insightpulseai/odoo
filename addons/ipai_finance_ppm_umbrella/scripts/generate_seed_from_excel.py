@@ -8,15 +8,18 @@ Output: addons/ipai_finance_ppm_umbrella/data/*.xml
 Usage:
     python3 addons/ipai_finance_ppm_umbrella/scripts/generate_seed_from_excel.py
 """
-import pandas as pd
-from pathlib import Path
-from lxml import etree
 from datetime import datetime
+from pathlib import Path
+
+import pandas as pd
+from lxml import etree
 
 # Paths
 # Script location: /Users/tbwa/Downloads/addons/ipai_finance_ppm_umbrella/scripts/generate_seed_from_excel.py
 # Project root: /Users/tbwa/Downloads
-BASE_DIR = Path(__file__).resolve().parents[3]  # Go up: scripts/ → ipai_finance_ppm_umbrella/ → addons/ → Downloads/
+BASE_DIR = (
+    Path(__file__).resolve().parents[3]
+)  # Go up: scripts/ → ipai_finance_ppm_umbrella/ → addons/ → Downloads/
 EXCEL_PATH = BASE_DIR / "config/finance/Month-end Closing Task and Tax Filing (7).xlsx"
 DATA_DIR = BASE_DIR / "addons/ipai_finance_ppm_umbrella/data"
 
@@ -102,11 +105,16 @@ def generate_logframe(closing_df: pd.DataFrame):
 
     # Get unique task categories (filter NaN and empty strings)
     categories = [
-        cat for cat in closing_df["task_category"].dropna().astype(str).unique()
+        cat
+        for cat in closing_df["task_category"].dropna().astype(str).unique()
         if cat.strip() and cat.lower() != "nan"
-    ][:12]  # Limit to 12 entries
+    ][
+        :12
+    ]  # Limit to 12 entries
 
-    comment = etree.Comment(" 12 Logframe Entries: Goal → Outcome → IM1/IM2 → Outputs → Activities ")
+    comment = etree.Comment(
+        " 12 Logframe Entries: Goal → Outcome → IM1/IM2 → Outputs → Activities "
+    )
     data.append(comment)
 
     # Predefined logframe hierarchy
@@ -147,25 +155,29 @@ def generate_logframe(closing_df: pd.DataFrame):
 
     # Add outputs from task categories (max 4)
     for idx, cat in enumerate(categories[:4], start=1):
-        logframe_entries.append({
-            "code": f"OUT-{idx:02d}",
-            "level": "output",
-            "name": f"{cat} Completed",
-            "indicators": f"# of {cat.lower()} tasks completed; Accuracy rate",
-            "verification": f"{cat} task checklist; approval signatures",
-            "assumptions": "Data available; systems accessible",
-        })
+        logframe_entries.append(
+            {
+                "code": f"OUT-{idx:02d}",
+                "level": "output",
+                "name": f"{cat} Completed",
+                "indicators": f"# of {cat.lower()} tasks completed; Accuracy rate",
+                "verification": f"{cat} task checklist; approval signatures",
+                "assumptions": "Data available; systems accessible",
+            }
+        )
 
     # Add activities from task categories (max 4)
     for idx, cat in enumerate(categories[:4], start=1):
-        logframe_entries.append({
-            "code": f"ACT-IM{(idx % 2) + 1}-{idx:02d}",
-            "level": f"activity_im{(idx % 2) + 1}",
-            "name": f"Execute {cat} Tasks",
-            "indicators": f"Task completion rate; Time to complete",
-            "verification": f"Task logs; timesheet records",
-            "assumptions": "Required documents available",
-        })
+        logframe_entries.append(
+            {
+                "code": f"ACT-IM{(idx % 2) + 1}-{idx:02d}",
+                "level": f"activity_im{(idx % 2) + 1}",
+                "name": f"Execute {cat} Tasks",
+                "indicators": f"Task completion rate; Time to complete",
+                "verification": f"Task logs; timesheet records",
+                "assumptions": "Required documents available",
+            }
+        )
 
     for idx, entry in enumerate(logframe_entries, start=1):
         rec = etree.SubElement(
@@ -178,7 +190,9 @@ def generate_logframe(closing_df: pd.DataFrame):
         etree.SubElement(rec, "field", name="code").text = entry["code"]
         etree.SubElement(rec, "field", name="name").text = entry["name"]
         etree.SubElement(rec, "field", name="indicators").text = entry["indicators"]
-        etree.SubElement(rec, "field", name="means_of_verification").text = entry["verification"]
+        etree.SubElement(rec, "field", name="means_of_verification").text = entry[
+            "verification"
+        ]
         etree.SubElement(rec, "field", name="assumptions").text = entry["assumptions"]
         etree.SubElement(rec, "field", name="sequence").text = str(idx * 10)
 
@@ -202,7 +216,9 @@ def generate_bir_schedule(tax_df: pd.DataFrame, employees: list):
     data.append(comment)
 
     # Filter valid rows (remove explanation rows at bottom)
-    tax_df_clean = tax_df[tax_df["bir_form"].notna() & (tax_df["bir_form"] != "Step")].copy()
+    tax_df_clean = tax_df[
+        tax_df["bir_form"].notna() & (tax_df["bir_form"] != "Step")
+    ].copy()
 
     record_count = 0
     for idx, row in tax_df_clean.iterrows():
@@ -259,18 +275,30 @@ def generate_bir_schedule(tax_df: pd.DataFrame, employees: list):
                     id=xml_id,
                     model="ipai.finance.bir_schedule",
                 )
-                etree.SubElement(rec, "field", name="name").text = f"{bir_form} – {period_covered} ({emp_code})"
-                etree.SubElement(rec, "field", name="period_covered").text = period_covered
+                etree.SubElement(rec, "field", name="name").text = (
+                    f"{bir_form} – {period_covered} ({emp_code})"
+                )
+                etree.SubElement(rec, "field", name="period_covered").text = (
+                    period_covered
+                )
 
                 # Deadlines
                 if filing_date:
-                    etree.SubElement(rec, "field", name="filing_deadline").text = filing_date
+                    etree.SubElement(rec, "field", name="filing_deadline").text = (
+                        filing_date
+                    )
                 if prep_date:
-                    etree.SubElement(rec, "field", name="prep_deadline").text = prep_date
+                    etree.SubElement(rec, "field", name="prep_deadline").text = (
+                        prep_date
+                    )
                 if review_date:
-                    etree.SubElement(rec, "field", name="review_deadline").text = review_date
+                    etree.SubElement(rec, "field", name="review_deadline").text = (
+                        review_date
+                    )
                 if approval_date:
-                    etree.SubElement(rec, "field", name="approval_deadline").text = approval_date
+                    etree.SubElement(rec, "field", name="approval_deadline").text = (
+                        approval_date
+                    )
 
                 # RACI assignments (default mapping from Excel)
                 # Supervisor: BOM, Reviewer: RIM (SFM), Approver: CKVC (FD)
@@ -279,7 +307,9 @@ def generate_bir_schedule(tax_df: pd.DataFrame, employees: list):
                 etree.SubElement(rec, "field", name="approver_id", ref="user_ckvc")
 
                 # Link to IM2 logframe (Tax Filing Compliance)
-                etree.SubElement(rec, "field", name="logframe_id", ref="logframe_004_im2")
+                etree.SubElement(
+                    rec, "field", name="logframe_id", ref="logframe_004_im2"
+                )
 
                 # Status
                 etree.SubElement(rec, "field", name="status").text = "not_started"
@@ -358,14 +388,26 @@ def generate_closing_tasks(closing_df: pd.DataFrame, categories: list):
             model="project.task",  # Using standard Odoo project.task
         )
         etree.SubElement(rec, "field", name="name").text = task_name
-        etree.SubElement(rec, "field", name="description").text = f"Category: {cat}\nEmployee: {current_employee or 'N/A'}"
+        etree.SubElement(rec, "field", name="description").text = (
+            f"Category: {cat}\nEmployee: {current_employee or 'N/A'}"
+        )
 
         # Link to Finance PPM project
-        etree.SubElement(rec, "field", name="project_id", ref="ipai_finance_ppm.project_month_end_closing")
+        etree.SubElement(
+            rec,
+            "field",
+            name="project_id",
+            ref="ipai_finance_ppm.project_month_end_closing",
+        )
 
         # Employee assignment (prep user)
         if current_employee:
-            etree.SubElement(rec, "field", name="user_ids", eval=f"[(4, ref('user_{current_employee.lower()}'))]")
+            etree.SubElement(
+                rec,
+                "field",
+                name="user_ids",
+                eval=f"[(4, ref('user_{current_employee.lower()}'))]",
+            )
 
         # Link to logframe
         lf_ref = logframe_ref_for_category(cat, categories)

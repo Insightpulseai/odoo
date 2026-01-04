@@ -1,4 +1,1 @@
-from . import ph_holiday
-from . import task_template
-from . import closing
-from . import task
+from . import closing, ph_holiday, task, task_template

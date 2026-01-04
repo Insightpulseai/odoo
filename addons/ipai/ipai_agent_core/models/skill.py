@@ -15,19 +15,13 @@ class IpaiAgentSkill(models.Model):
     key = fields.Char(
         required=True,
         index=True,
-        help="Stable identifier, e.g. 'odoo.ai_studio.build_module'"
+        help="Stable identifier, e.g. 'odoo.ai_studio.build_module'",
     )
     version = fields.Char(default="1.0.0")
     description = fields.Text()
-    intents = fields.Text(
-        help="One intent per line. Used for routing/discovery."
-    )
-    workflow_json = fields.Text(
-        help="JSON array of tool keys executed in order."
-    )
-    guardrails = fields.Text(
-        help="One guardrail per line. Safety constraints."
-    )
+    intents = fields.Text(help="One intent per line. Used for routing/discovery.")
+    workflow_json = fields.Text(help="JSON array of tool keys executed in order.")
+    guardrails = fields.Text(help="One guardrail per line. Safety constraints.")
     is_active = fields.Boolean(default=True)
 
     tool_ids = fields.Many2many(
@@ -35,21 +29,17 @@ class IpaiAgentSkill(models.Model):
         "ipai_skill_tool_rel",
         "skill_id",
         "tool_id",
-        string="Bound Tools"
+        string="Bound Tools",
     )
     knowledge_ids = fields.Many2many(
         "ipai.agent.knowledge_source",
         "ipai_skill_knowledge_rel",
         "skill_id",
         "knowledge_id",
-        string="Knowledge Sources"
+        string="Knowledge Sources",
     )
 
-    run_ids = fields.One2many(
-        "ipai.agent.run",
-        "skill_id",
-        string="Execution Runs"
-    )
+    run_ids = fields.One2many("ipai.agent.run", "skill_id", string="Execution Runs")
     run_count = fields.Integer(compute="_compute_run_count", store=True)
 
     _sql_constraints = [
@@ -65,6 +55,7 @@ class IpaiAgentSkill(models.Model):
         """Return ordered list of tool keys from workflow_json."""
         self.ensure_one()
         import json
+
         try:
             return json.loads(self.workflow_json or "[]")
         except (json.JSONDecodeError, TypeError):

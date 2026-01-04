@@ -1,52 +1,96 @@
 # IPAI WorkOS - Canvas (Edgeless)
 
-## 1. Overview
+## Overview
+
 Edgeless canvas surface for WorkOS (AFFiNE-style)
 
-**Technical Name**: `ipai_workos_canvas`
-**Category**: Productivity
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_workos_canvas`
+- **Version:** 18.0.1.0.0
+- **Category:** Productivity
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
-        Canvas module providing an edgeless infinite surface:
+Canvas module providing an edgeless infinite surface:
         - Pan and zoom navigation
         - Node-based content placement
         - Integration with blocks and pages
         - Collaborative canvas editing
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `web`
-- `mail`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Data Models
 
-## 5. Data Model
-Defined Models:
-- `ipai.workos.canvas`
+- **ipai.workos.canvas** (Model)
+  - WorkOS Canvas
+  - Fields: 5 defined
 
-## 6. User Interface
-- **Views**: 1 files
-- **Menus**: (Audit Pending)
+### Views
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+- : 1
+- Form: 1
 
-## 8. Integrations
-- (Audit Pending)
+### Menus
 
-## 9. Verification Steps
+- `menu_ipai_workos_canvas`: Canvas
+
+## Installation & Dependencies
+
+### Dependencies
+
+- `base` (CE Core)
+- `web` (CE Core)
+- `mail` (CE Core)
+
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_workos_canvas --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_workos_canvas --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_workos_canvas --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_workos_canvas --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+### Access Rules
+
+*2 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_workos_canvas'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_workos_canvas")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `views/canvas_views.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

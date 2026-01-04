@@ -18,11 +18,13 @@ Idempotency:
     - Upsert strategy: update if exists, create if new
 """
 
-from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
 import hashlib
 import json
 import logging
+
+from odoo.exceptions import ValidationError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 

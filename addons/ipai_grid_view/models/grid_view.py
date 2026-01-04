@@ -12,8 +12,10 @@ This model stores the configuration for grid/list views including:
 
 import json
 import logging
-from odoo import api, fields, models, _
+
 from odoo.exceptions import ValidationError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -25,6 +27,7 @@ class IpaiGridView(models.Model):
     Stores view settings, column configurations, and filter presets
     that persist across user sessions.
     """
+
     _name = "ipai.grid.view"
     _description = "Grid View Configuration"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -35,7 +38,7 @@ class IpaiGridView(models.Model):
         string="View Name",
         required=True,
         tracking=True,
-        help="Display name for this grid view configuration"
+        help="Display name for this grid view configuration",
     )
     active = fields.Boolean(default=True)
     sequence = fields.Integer(default=10)
@@ -47,67 +50,59 @@ class IpaiGridView(models.Model):
         required=True,
         ondelete="cascade",
         tracking=True,
-        help="The Odoo model this grid view displays"
+        help="The Odoo model this grid view displays",
     )
-    model_name = fields.Char(
-        related="model_id.model",
-        string="Model Name",
-        store=True
-    )
+    model_name = fields.Char(related="model_id.model", string="Model Name", store=True)
 
     # View type configuration
-    view_type = fields.Selection([
-        ("list", "List View"),
-        ("kanban", "Kanban View"),
-        ("table", "Table View"),
-    ], default="list", required=True, tracking=True)
+    view_type = fields.Selection(
+        [
+            ("list", "List View"),
+            ("kanban", "Kanban View"),
+            ("table", "Table View"),
+        ],
+        default="list",
+        required=True,
+        tracking=True,
+    )
 
     # Column configuration
     column_ids = fields.One2many(
         "ipai.grid.column",
         "grid_view_id",
         string="Columns",
-        help="Column definitions for this grid view"
+        help="Column definitions for this grid view",
     )
     visible_column_ids = fields.Many2many(
         "ipai.grid.column",
         "ipai_grid_view_visible_columns_rel",
         "grid_view_id",
         "column_id",
-        string="Visible Columns"
+        string="Visible Columns",
     )
 
     # Filter configuration
     filter_ids = fields.One2many(
-        "ipai.grid.filter",
-        "grid_view_id",
-        string="Saved Filters"
+        "ipai.grid.filter", "grid_view_id", string="Saved Filters"
     )
-    active_filter_id = fields.Many2one(
-        "ipai.grid.filter",
-        string="Active Filter"
-    )
+    active_filter_id = fields.Many2one("ipai.grid.filter", string="Active Filter")
 
     # JSON configuration storage
     config_json = fields.Text(
         string="Configuration (JSON)",
         default="{}",
-        help="Additional view configuration stored as JSON"
+        help="Additional view configuration stored as JSON",
     )
     sort_json = fields.Text(
         string="Sort Configuration (JSON)",
         default="[]",
-        help="Column sort order as JSON array"
+        help="Column sort order as JSON array",
     )
 
     # Pagination settings
-    page_size = fields.Integer(
-        default=10,
-        help="Number of records per page"
-    )
+    page_size = fields.Integer(default=10, help="Number of records per page")
     page_size_options = fields.Char(
-        default="10,25,50,100",
-        help="Comma-separated list of page size options"
+        default="10,25,50,100", help="Comma-separated list of page size options"
     )
 
     # Display settings
@@ -121,8 +116,7 @@ class IpaiGridView(models.Model):
 
     # Computed fields
     column_count = fields.Integer(
-        compute="_compute_column_count",
-        string="Number of Columns"
+        compute="_compute_column_count", string="Number of Columns"
     )
 
     @api.depends("column_ids")
@@ -184,12 +178,7 @@ class IpaiGridView(models.Model):
         total = Model.search_count(domain)
 
         # Fetch records
-        records = Model.search_read(
-            domain,
-            offset=offset,
-            limit=limit,
-            order=order
-        )
+        records = Model.search_read(domain, offset=offset, limit=limit, order=order)
 
         # Get model fields for column definitions
         model_fields = Model.fields_get()
@@ -222,14 +211,16 @@ class IpaiGridView(models.Model):
             if field_name.startswith("_") or field_data.get("store") is False:
                 continue
 
-            available_fields.append({
-                "name": field_name,
-                "string": field_data.get("string", field_name),
-                "type": field_data.get("type"),
-                "sortable": field_data.get("sortable", True),
-                "searchable": field_data.get("searchable", True),
-                "relation": field_data.get("relation"),
-            })
+            available_fields.append(
+                {
+                    "name": field_name,
+                    "string": field_data.get("string", field_name),
+                    "type": field_data.get("type"),
+                    "sortable": field_data.get("sortable", True),
+                    "searchable": field_data.get("searchable", True),
+                    "relation": field_data.get("relation"),
+                }
+            )
 
         return sorted(available_fields, key=lambda x: x.get("string", ""))
 
@@ -282,11 +273,13 @@ class IpaiGridView(models.Model):
             self.column_ids.unlink()
             available_fields = self.get_available_fields(self.model_name)
             for idx, field_info in enumerate(available_fields[:10]):
-                self.env["ipai.grid.column"].create({
-                    "grid_view_id": self.id,
-                    "field_name": field_info["name"],
-                    "label": field_info["string"],
-                    "field_type": field_info["type"],
-                    "sequence": idx * 10,
-                    "visible": True,
-                })
+                self.env["ipai.grid.column"].create(
+                    {
+                        "grid_view_id": self.id,
+                        "field_name": field_info["name"],
+                        "label": field_info["string"],
+                        "field_type": field_info["type"],
+                        "sequence": idx * 10,
+                        "visible": True,
+                    }
+                )
