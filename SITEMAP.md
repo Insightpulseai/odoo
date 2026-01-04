@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bf8cbbe613801492671be15e0904b80c405d47d8
+> Commit: c79f715bccd805fba2f01be4431a3dc3782b3093
 
 ## 📚 Documentation
 
@@ -168,6 +168,7 @@
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
 | [DigitalOcean SMTP Unblock Request](docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md) | docs |
 | [DigitalOcean Validation Framework](docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md) | docs |
+| [Directional Sync System](docs/DIRECTIONAL_SYNC.md) | docs |
 | [Dockerfile Changes: v0.9.0 → v0.9.1](docs/DOCKERFILE_COMPARISON.md) | docs |
 | [Docker Image-Based CD Migration Guide](docs/DOCKER_CD_MIGRATION_GUIDE.md) | docs |
 | [Docker Validation Guide](docs/DOCKER_VALIDATION_GUIDE.md) | docs |
