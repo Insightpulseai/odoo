@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+
 from odoo import api, fields, models
 
 
@@ -72,7 +73,9 @@ class IpaiWorkosComment(models.Model):
         for record in self:
             try:
                 target = self.env[record.target_model].browse(record.target_id)
-                record.target_name = target.display_name if target.exists() else "Deleted"
+                record.target_name = (
+                    target.display_name if target.exists() else "Deleted"
+                )
             except Exception:
                 record.target_name = "Unknown"
 
@@ -112,9 +115,7 @@ class IpaiWorkosComment(models.Model):
                 continue
 
             # Find matching users
-            users = self.env["res.users"].search([
-                ("login", "in", mentions)
-            ])
+            users = self.env["res.users"].search([("login", "in", mentions)])
             if users:
                 record.mentioned_user_ids = [(6, 0, users.ids)]
                 record._notify_mentioned_users(users)
@@ -131,19 +132,23 @@ class IpaiWorkosComment(models.Model):
 
     def action_resolve(self):
         """Mark comment as resolved."""
-        self.write({
-            "is_resolved": True,
-            "resolved_by": self.env.user.id,
-            "resolved_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "is_resolved": True,
+                "resolved_by": self.env.user.id,
+                "resolved_at": fields.Datetime.now(),
+            }
+        )
 
     def action_unresolve(self):
         """Mark comment as unresolved."""
-        self.write({
-            "is_resolved": False,
-            "resolved_by": False,
-            "resolved_at": False,
-        })
+        self.write(
+            {
+                "is_resolved": False,
+                "resolved_by": False,
+                "resolved_at": False,
+            }
+        )
 
     @api.model
     def get_comments_for_target(self, target_model, target_id, include_resolved=False):

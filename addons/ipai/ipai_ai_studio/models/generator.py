@@ -56,7 +56,9 @@ def _assert_depends_ok(env, depends):
         if not m:
             missing.append(d)
     if missing:
-        raise ValueError(f"Missing dependencies (not found in Apps registry): {', '.join(missing)}")
+        raise ValueError(
+            f"Missing dependencies (not found in Apps registry): {', '.join(missing)}"
+        )
 
 
 def _py(s: str) -> str:
@@ -102,7 +104,12 @@ def render_addon_from_spec(env, spec: dict) -> dict:
 
     files = {}
     files["__init__.py"] = "from . import models\n"
-    files["__manifest__.py"] = "{" + "\n" + "\n".join([f"    '{k}': {repr(v)}," for k, v in manifest.items()]) + "\n}\n"
+    files["__manifest__.py"] = (
+        "{"
+        + "\n"
+        + "\n".join([f"    '{k}': {repr(v)}," for k, v in manifest.items()])
+        + "\n}\n"
+    )
 
     # --- models ---
     files["models/__init__.py"] = "from . import models\n"
@@ -111,7 +118,9 @@ def render_addon_from_spec(env, spec: dict) -> dict:
     model_py = ["# -*- coding: utf-8 -*-", "from odoo import api, fields, models", ""]
     for m in models:
         model_name = m["name"]
-        class_name = "".join([p.capitalize() for p in model_name.replace(".", "_").split("_")])
+        class_name = "".join(
+            [p.capitalize() for p in model_name.replace(".", "_").split("_")]
+        )
         mail_thread = bool(m.get("mail_thread"))
         inherits = "models.Model"
         model_py.append(f"class {class_name}({inherits}):")
@@ -146,14 +155,18 @@ def render_addon_from_spec(env, spec: dict) -> dict:
                 line = f"    {fname} = fields.Datetime({', '.join(kwargs)})"
             elif ftype == "many2one":
                 comodel = f["comodel"]
-                line = f"    {fname} = fields.Many2one('{comodel}', {', '.join(kwargs)})"
+                line = (
+                    f"    {fname} = fields.Many2one('{comodel}', {', '.join(kwargs)})"
+                )
             elif ftype == "one2many":
                 comodel = f["comodel"]
                 inverse = f["inverse"]
                 line = f"    {fname} = fields.One2many('{comodel}', '{inverse}', {', '.join(kwargs)})"
             elif ftype == "many2many":
                 comodel = f["comodel"]
-                line = f"    {fname} = fields.Many2many('{comodel}', {', '.join(kwargs)})"
+                line = (
+                    f"    {fname} = fields.Many2many('{comodel}', {', '.join(kwargs)})"
+                )
             elif ftype == "selection":
                 selection = f.get("selection", [])
                 line = f"    {fname} = fields.Selection({repr(selection)}, {', '.join(kwargs)})"
@@ -186,7 +199,9 @@ def render_addon_from_spec(env, spec: dict) -> dict:
     files["security/security.xml"] = "\n".join(sec_lines) + "\n"
 
     # ir.model.access.csv
-    csv_lines = ["id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink"]
+    csv_lines = [
+        "id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink"
+    ]
     for a in access:
         model_underscore = a["model"].replace(".", "_")
         gid = a.get("group")  # xml id
@@ -293,12 +308,20 @@ def render_addon_from_spec(env, spec: dict) -> dict:
     if any_mail and "mail" not in depends:
         # patch manifest in-memory (keep deterministic)
         manifest["depends"] = depends + ["mail"]
-        files["__manifest__.py"] = "{" + "\n" + "\n".join([f"    '{k}': {repr(v)}," for k, v in manifest.items()]) + "\n}\n"
+        files["__manifest__.py"] = (
+            "{"
+            + "\n"
+            + "\n".join([f"    '{k}': {repr(v)}," for k, v in manifest.items()])
+            + "\n}\n"
+        )
 
     # Stamp spec for traceability
-    files[".ipai_spec.json"] = json.dumps(
-        {"generated_at": datetime.utcnow().isoformat() + "Z", "spec": spec},
-        indent=2
-    ) + "\n"
+    files[".ipai_spec.json"] = (
+        json.dumps(
+            {"generated_at": datetime.utcnow().isoformat() + "Z", "spec": spec},
+            indent=2,
+        )
+        + "\n"
+    )
 
     return files

@@ -1,5 +1,5 @@
 # ipai_workspace_core/models/workspace.py
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 
 
 class Workspace(models.Model):

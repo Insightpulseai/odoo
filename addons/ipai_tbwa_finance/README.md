@@ -1,16 +1,20 @@
 # IPAI TBWA Finance
 
-## 1. Overview
+## Overview
+
 Unified month-end closing + BIR tax compliance for TBWA Philippines
 
-**Technical Name**: `ipai_tbwa_finance`
-**Category**: Accounting
-**Version**: 18.0.1.0.0
-**Author**: IPAI / TBWA
+- **Technical Name:** `ipai_tbwa_finance`
+- **Version:** 18.0.1.0.0
+- **Category:** Accounting
+- **License:** AGPL-3
+- **Author:** IPAI / TBWA
+- **Application:** Yes
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
-        Complete finance operations module for TBWA Philippines combining:
+Complete finance operations module for TBWA Philippines combining:
 
         1. MONTH-END CLOSING (SAP AFC Replacement)
            - Template-driven 36-task checklist across 4 phases
@@ -21,54 +25,122 @@ Unified month-end closing + BIR tax compliance for TBWA Philippines
         2. BIR TAX COMPLIANCE (Philippine Statutory)
            - 36 eBIRForms support (VAT, WHT, Income, Excise)
            - Filing deadline calendar with alerts
-           - Auto-compute from Odoo transactions
-           - TIN validation
+           -...
 
-        SHARED COMPONENTS:
-           - Philippine holiday calendar (2024-2027)
-           - Unified task model with Kanban
-           - Single team configuration (BOM, RIM, CKVC)
-           - Integrated compliance dashboard
+## Functional Scope
 
-        Cost: Replaces SAP AFC ($500K-1M) + SAP Tax Compliance at zero licensing.
-    
+### Data Models
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `mail`
-- `account`
+- **bir.return** (Model)
+  - BIR Tax Return
+  - Fields: 15 defined
+- **bir.return.line** (Model)
+  - BIR Return Line
+  - Fields: 7 defined
+- **compliance.check** (Model)
+  - Compliance Check
+  - Fields: 12 defined
+- **res.partner** (Model)
+  - Fields: 5 defined
+- **ph.holiday** (Model)
+  - Philippine Holiday
+  - Fields: 5 defined
+- **finance.task.template** (Model)
+  - Finance Task Template
+  - Fields: 19 defined
+- **closing.period** (Model)
+  - Closing Period
+  - Fields: 15 defined
+- **finance.task** (Model)
+  - Finance Task
+  - Fields: 31 defined
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Views
 
-## 5. Data Model
-Defined Models:
-- `finance.task`
-- `compliance.check`
-- `closing.period`
-- `finance.task.template`
-- `ph.holiday`
-- `bir.return`
-- `bir.return.line`
+- : 8
+- Form: 5
+- Search: 2
+- Kanban: 2
+- Calendar: 1
 
-## 6. User Interface
-- **Views**: 12 files
-- **Menus**: (Audit Pending)
+### Menus
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+- `menu_tbwa_finance_root`: TBWA Finance
+- `menu_closing_periods`: Closing Periods
+- `menu_finance_tasks`: All Tasks
+- `menu_bir`: BIR Compliance
+- `menu_bir_returns`: BIR Returns
+- ... and 4 more
 
-## 8. Integrations
-- (Audit Pending)
+## Installation & Dependencies
 
-## 9. Verification Steps
+### Dependencies
+
+- `base` (CE Core)
+- `mail` (CE Core)
+- `account` (CE Core)
+
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_tbwa_finance --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_tbwa_finance --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_tbwa_finance --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_tbwa_finance --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+### Scheduled Actions
+
+- **TBWA Finance: Send Overdue Notifications** (Active)
+
+## Security
+
+### Access Rules
+
+*14 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_tbwa_finance'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_tbwa_finance")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `data/ph_holidays.xml`
+- `data/month_end_templates.xml`
+- `data/bir_form_types.xml`
+- `data/compliance_checks.xml`
+- `data/ir_cron.xml`
+- `views/ph_holiday_views.xml`
+- `views/finance_task_views.xml`
+- `views/closing_period_views.xml`
+- `views/bir_return_views.xml`
+- `views/dashboard_views.xml`
+- `views/res_partner_views.xml`
+- `views/menu.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

@@ -212,6 +212,7 @@ class CloseApprovalGate(models.Model):
             return
 
         import json
+
         import requests
 
         data = {

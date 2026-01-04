@@ -1,5 +1,6 @@
-from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+
+from odoo import api, fields, models
 
 
 class CrmLead(models.Model):
@@ -46,7 +47,9 @@ class CrmLead(models.Model):
         tracking=True,
     )
 
-    @api.depends("stage_id", "name", "contact_name", "partner_id", "email_from", "phone")
+    @api.depends(
+        "stage_id", "name", "contact_name", "partner_id", "email_from", "phone"
+    )
     def _compute_stage_rule_validated(self):
         """Check if all stage-required fields are filled."""
         for lead in self:
@@ -125,11 +128,15 @@ class CrmLead(models.Model):
                 "context": {
                     "default_res_model": "crm.lead",
                     "default_res_id": self.id,
-                    "default_activity_type_id": self.env.ref(
-                        "mail.mail_activity_data_call", raise_if_not_found=False
-                    ).id
-                    if self.env.ref("mail.mail_activity_data_call", raise_if_not_found=False)
-                    else False,
+                    "default_activity_type_id": (
+                        self.env.ref(
+                            "mail.mail_activity_data_call", raise_if_not_found=False
+                        ).id
+                        if self.env.ref(
+                            "mail.mail_activity_data_call", raise_if_not_found=False
+                        )
+                        else False
+                    ),
                 },
             }
 
@@ -151,7 +158,9 @@ class CrmLead(models.Model):
                 "default_name": f"Meeting: {self.name}",
                 "default_res_model": "crm.lead",
                 "default_res_id": self.id,
-                "default_opportunity_id": self.id if self.type == "opportunity" else False,
+                "default_opportunity_id": (
+                    self.id if self.type == "opportunity" else False
+                ),
             },
         }
 

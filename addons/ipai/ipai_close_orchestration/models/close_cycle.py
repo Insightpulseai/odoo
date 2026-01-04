@@ -7,8 +7,9 @@ Period-based closing run (maps from A1 Tasklist).
 import logging
 from datetime import timedelta
 
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -342,6 +343,7 @@ class CloseCycle(models.Model):
             return
 
         import json
+
         import requests
 
         data = {

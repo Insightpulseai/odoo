@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """IPAI Agent Tool model - callable actions mapped to Odoo methods."""
 
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 
 class IpaiAgentTool(models.Model):
@@ -16,18 +17,16 @@ class IpaiAgentTool(models.Model):
     key = fields.Char(
         required=True,
         index=True,
-        help="Stable identifier, e.g. 'ipai.ai_studio.draft_spec'"
+        help="Stable identifier, e.g. 'ipai.ai_studio.draft_spec'",
     )
     description = fields.Text()
 
     # Odoo execution target
     target_model = fields.Char(
-        required=True,
-        help="Target Odoo model, e.g. 'ipai.ai_studio.run'"
+        required=True, help="Target Odoo model, e.g. 'ipai.ai_studio.run'"
     )
     target_method = fields.Char(
-        required=True,
-        help="Method to call, e.g. 'action_draft_spec_from_prompt'"
+        required=True, help="Method to call, e.g. 'action_draft_spec_from_prompt'"
     )
 
     # Schema definitions (optional, for validation/docs)
@@ -36,8 +35,7 @@ class IpaiAgentTool(models.Model):
 
     is_active = fields.Boolean(default=True)
     requires_admin = fields.Boolean(
-        default=False,
-        help="If true, only admin users can execute this tool"
+        default=False, help="If true, only admin users can execute this tool"
     )
 
     _sql_constraints = [
@@ -87,6 +85,7 @@ class IpaiAgentTool(models.Model):
         """Parse and return input schema as dict."""
         self.ensure_one()
         import json
+
         try:
             return json.loads(self.input_schema_json or "{}")
         except (json.JSONDecodeError, TypeError):
@@ -96,6 +95,7 @@ class IpaiAgentTool(models.Model):
         """Parse and return output schema as dict."""
         self.ensure_one()
         import json
+
         try:
             return json.loads(self.output_schema_json or "{}")
         except (json.JSONDecodeError, TypeError):

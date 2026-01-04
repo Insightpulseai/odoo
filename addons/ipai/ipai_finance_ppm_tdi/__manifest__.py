@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "Finance PPM Transaction Data Ingestion (TDI)",
-    "version": "1.0.0",
+    "version": "18.0.1.0.0",
     "category": "Finance",
     "summary": "Import finance team, tasks, BIR calendar, and LogFrame data",
     "description": """

@@ -13205,6 +13205,583 @@
       "table": "import_xlsx_wizard"
     },
     {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "attachment_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "ir.attachment",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "content_text",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "is_active",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "key",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "kind",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "model_name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "tags",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "url",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai",
+      "name": "ipai.agent.knowledge_source",
+      "python_constraints": [],
+      "relations": [
+        "ir.attachment"
+      ],
+      "sql_constraints": [
+        {
+          "message": "Knowledge key must be unique.",
+          "name": "knowledge_key_unique",
+          "sql": "unique(key)"
+        },
+        {
+          "message": "Knowledge key must be unique.",
+          "name": "knowledge_key_unique",
+          "sql": "unique(key)"
+        }
+      ],
+      "table": "ipai_agent_knowledge_source"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "completed_at",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Datetime"
+        },
+        {
+          "compute": "_compute_duration",
+          "index": false,
+          "name": "duration_seconds",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Float"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "error_text",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "input_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "input_text",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "output_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "output_text",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "skill_id",
+          "ondelete": "restrict",
+          "related": null,
+          "relation": "ipai.agent.skill",
+          "required": true,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "skill_key",
+          "ondelete": null,
+          "related": "skill_id.key",
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "started_at",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Datetime"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "state",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "tool_trace_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "user_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "res.users",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        }
+      ],
+      "inherits": [
+        "mail.activity.mixin",
+        "mail.thread"
+      ],
+      "inherits_delegated": {},
+      "module": "ipai",
+      "name": "ipai.agent.run",
+      "python_constraints": [],
+      "relations": [
+        "ipai.agent.skill",
+        "res.users"
+      ],
+      "sql_constraints": [],
+      "table": "ipai_agent_run"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "description",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "guardrails",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "intents",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "is_active",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "key",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "knowledge_ids",
+          "ondelete": null,
+          "related": null,
+          "relation": "ipai.agent.knowledge_source",
+          "required": false,
+          "store": true,
+          "type": "Many2many"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": "_compute_run_count",
+          "index": false,
+          "name": "run_count",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "run_ids",
+          "ondelete": null,
+          "related": null,
+          "relation": "ipai.agent.run",
+          "required": false,
+          "store": true,
+          "type": "One2many"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "tool_ids",
+          "ondelete": null,
+          "related": null,
+          "relation": "ipai.agent.tool",
+          "required": false,
+          "store": true,
+          "type": "Many2many"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "version",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "workflow_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai",
+      "name": "ipai.agent.skill",
+      "python_constraints": [],
+      "relations": [
+        "ipai.agent.knowledge_source",
+        "ipai.agent.run",
+        "ipai.agent.tool"
+      ],
+      "sql_constraints": [
+        {
+          "message": "Skill key must be unique.",
+          "name": "skill_key_unique",
+          "sql": "unique(key)"
+        },
+        {
+          "message": "Skill key must be unique.",
+          "name": "skill_key_unique",
+          "sql": "unique(key)"
+        }
+      ],
+      "table": "ipai_agent_skill"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "description",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "input_schema_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "is_active",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "key",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "output_schema_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "requires_admin",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "target_method",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "target_model",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai",
+      "name": "ipai.agent.tool",
+      "python_constraints": [],
+      "relations": [],
+      "sql_constraints": [
+        {
+          "message": "Tool key must be unique.",
+          "name": "tool_key_unique",
+          "sql": "unique(key)"
+        },
+        {
+          "message": "Tool key must be unique.",
+          "name": "tool_key_unique",
+          "sql": "unique(key)"
+        }
+      ],
+      "table": "ipai_agent_tool"
+    },
+    {
       "fields": [],
       "inherits": [],
       "inherits_delegated": {},
@@ -13214,6 +13791,117 @@
       "relations": [],
       "sql_constraints": [],
       "table": "ipai_ai_studio_mixin"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "generated_files_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "module_name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "name",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "prompt",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "spec_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "state",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "validation_ok",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Boolean"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "validation_report",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "workspace_path",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai",
+      "name": "ipai.ai_studio.run",
+      "python_constraints": [],
+      "relations": [],
+      "sql_constraints": [],
+      "table": "ipai_ai_studio_run"
     },
     {
       "fields": [
@@ -13294,6 +13982,142 @@
       "relations": [],
       "sql_constraints": [],
       "table": "ipai_ask_ai_service"
+    },
+    {
+      "fields": [
+        {
+          "compute": null,
+          "index": false,
+          "name": "error",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "model",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Char"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "payload_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "question",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "requested_by",
+          "ondelete": null,
+          "related": null,
+          "relation": "res.users",
+          "required": true,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "res_id",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Integer"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "response",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "response_json",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Text"
+        },
+        {
+          "compute": null,
+          "index": false,
+          "name": "source_message_id",
+          "ondelete": null,
+          "related": null,
+          "relation": "mail.message",
+          "required": false,
+          "store": true,
+          "type": "Many2one"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "state",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": true,
+          "store": true,
+          "type": "Selection"
+        },
+        {
+          "compute": null,
+          "index": true,
+          "name": "uuid",
+          "ondelete": null,
+          "related": null,
+          "relation": null,
+          "required": false,
+          "store": true,
+          "type": "Char"
+        }
+      ],
+      "inherits": [],
+      "inherits_delegated": {},
+      "module": "ipai_ask_ai_chatter",
+      "name": "ipai.ask_ai_chatter.request",
+      "python_constraints": [],
+      "relations": [
+        "mail.message",
+        "res.users"
+      ],
+      "sql_constraints": [],
+      "table": "ipai_ask_ai_chatter_request"
     },
     {
       "fields": [
@@ -24956,8 +25780,8 @@
     {
       "fields": [],
       "inherits": [
-        "mail.message",
-        "autovacuum.mixin"
+        "autovacuum.mixin",
+        "mail.message"
       ],
       "inherits_delegated": {},
       "module": "autovacuum_message_attachment",

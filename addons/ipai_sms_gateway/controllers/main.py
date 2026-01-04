@@ -2,8 +2,9 @@
 import json
 import logging
 
-from odoo import http
 from odoo.http import request
+
+from odoo import http
 
 _logger = logging.getLogger(__name__)
 
@@ -11,7 +12,9 @@ _logger = logging.getLogger(__name__)
 class IpaiSmsController(http.Controller):
     """Controller for SMS webhook callbacks and health checks."""
 
-    @http.route("/ipai/sms/health", type="http", auth="none", methods=["GET"], csrf=False)
+    @http.route(
+        "/ipai/sms/health", type="http", auth="none", methods=["GET"], csrf=False
+    )
     def sms_health(self):
         """Health check endpoint for SMS gateway."""
         try:
@@ -28,7 +31,13 @@ class IpaiSmsController(http.Controller):
                 headers=[("Content-Type", "application/json")],
             )
 
-    @http.route("/ipai/sms/webhook/twilio", type="http", auth="none", methods=["POST"], csrf=False)
+    @http.route(
+        "/ipai/sms/webhook/twilio",
+        type="http",
+        auth="none",
+        methods=["POST"],
+        csrf=False,
+    )
     def twilio_webhook(self):
         """
         Twilio delivery receipt webhook.
@@ -64,7 +73,13 @@ class IpaiSmsController(http.Controller):
             _logger.exception("Twilio webhook error: %s", str(e))
             return request.make_response("Error", status=500)
 
-    @http.route("/ipai/sms/webhook/infobip", type="json", auth="none", methods=["POST"], csrf=False)
+    @http.route(
+        "/ipai/sms/webhook/infobip",
+        type="json",
+        auth="none",
+        methods=["POST"],
+        csrf=False,
+    )
     def infobip_webhook(self):
         """
         Infobip delivery receipt webhook.
@@ -106,7 +121,13 @@ class IpaiSmsController(http.Controller):
             _logger.exception("Infobip webhook error: %s", str(e))
             return {"status": "error", "message": str(e)}
 
-    @http.route("/ipai/sms/webhook/nexmo", type="http", auth="none", methods=["POST", "GET"], csrf=False)
+    @http.route(
+        "/ipai/sms/webhook/nexmo",
+        type="http",
+        auth="none",
+        methods=["POST", "GET"],
+        csrf=False,
+    )
     def nexmo_webhook(self):
         """
         Vonage/Nexmo delivery receipt webhook.

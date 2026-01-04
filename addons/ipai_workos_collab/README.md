@@ -1,55 +1,96 @@
 # IPAI Work OS Collaboration
 
-## 1. Overview
+## Overview
+
 Comments, mentions, and notifications
 
-**Technical Name**: `ipai_workos_collab`
-**Category**: Productivity
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_workos_collab`
+- **Version:** 18.0.1.0.0
+- **Category:** Productivity
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** No
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
-        Collaboration module providing Notion-like features:
+Collaboration module providing Notion-like features:
         - Comments on pages and database rows
         - @mentions with notifications
         - Activity log for edits/moves/shares
         - Integration with mail module
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `mail`
-- `ipai_workos_core`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Data Models
 
-## 5. Data Model
-Defined Models:
-- `record.targettarget.display_name if target.exists() else Deleted`
-- `record.targetUnknown`
-- `targetfields.Char(string=Target Name, compute=_compute_target_name)`
-- `ipai.workos.comment`
+- **ipai.workos.comment** (Model)
+  - Work OS Comment
+  - Fields: 14 defined
 
-## 6. User Interface
-- **Views**: 1 files
-- **Menus**: (Audit Pending)
+### Views
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+- : 1
+- Form: 1
 
-## 8. Integrations
-- (Audit Pending)
+### Menus
 
-## 9. Verification Steps
+- `menu_workos_comments`: Comments
+
+## Installation & Dependencies
+
+### Dependencies
+
+- `base` (CE Core)
+- `mail` (CE Core)
+- `ipai_workos_core` (IPAI)
+
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_workos_collab --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_workos_collab --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_workos_collab --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_workos_collab --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+### Access Rules
+
+*2 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_workos_collab'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_workos_collab")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `views/comment_views.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

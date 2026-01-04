@@ -6,8 +6,9 @@ import logging
 import re
 from datetime import date, datetime, timedelta
 
-from odoo import api, models
 from odoo.modules.module import get_module_resource
+
+from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
@@ -253,4 +254,8 @@ class IpaFinanceCloseService(models.AbstractModel):
             deadline = _add_workdays(self.env, base, -offset, calendar_obj=calendar_obj)
             t.write({"date_deadline": deadline.isoformat()})
 
-        return {"project_id": target.id, "project_name": target.name, "tasks": len(tasks)}
+        return {
+            "project_id": target.id,
+            "project_name": target.name,
+            "tasks": len(tasks),
+        }

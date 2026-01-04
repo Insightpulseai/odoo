@@ -6,8 +6,9 @@ Individual close task with prep → review → approval workflow.
 """
 import logging
 
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -268,6 +269,7 @@ class CloseTask(models.Model):
             return
 
         import json
+
         import requests
 
         data = {

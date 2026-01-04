@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 """Month-End Template models for task generation."""
 from datetime import date, timedelta
-from odoo import api, fields, models
+
 from odoo.addons.ipai_project_program.utils.date_utils import subtract_business_days
+
+from odoo import api, fields, models
 
 
 class IPAIMonthEndTemplate(models.Model):

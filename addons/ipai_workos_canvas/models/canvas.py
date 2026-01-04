@@ -50,6 +50,7 @@ class IpaiWorkosCanvas(models.Model):
     def get_viewport(self):
         """Get parsed viewport state."""
         import json
+
         try:
             return json.loads(self.viewport_json or '{"x": 0, "y": 0, "zoom": 1}')
         except json.JSONDecodeError:
@@ -58,6 +59,7 @@ class IpaiWorkosCanvas(models.Model):
     def get_nodes(self):
         """Get parsed nodes array."""
         import json
+
         try:
             return json.loads(self.nodes_json or "[]")
         except json.JSONDecodeError:
@@ -66,6 +68,7 @@ class IpaiWorkosCanvas(models.Model):
     def add_node(self, node_type, x, y, content=None):
         """Add a new node to the canvas."""
         import json
+
         nodes = self.get_nodes()
         new_node = {
             "id": f"node_{len(nodes) + 1}",
@@ -81,6 +84,7 @@ class IpaiWorkosCanvas(models.Model):
     def update_node(self, node_id, updates):
         """Update an existing node."""
         import json
+
         nodes = self.get_nodes()
         for node in nodes:
             if node.get("id") == node_id:
@@ -91,6 +95,7 @@ class IpaiWorkosCanvas(models.Model):
     def remove_node(self, node_id):
         """Remove a node from the canvas."""
         import json
+
         nodes = self.get_nodes()
         nodes = [n for n in nodes if n.get("id") != node_id]
         self.nodes_json = json.dumps(nodes)

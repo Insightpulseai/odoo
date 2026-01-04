@@ -1,6 +1,7 @@
-from odoo import models, fields, api
 import json
 from datetime import datetime
+
+from odoo import api, fields, models
 
 
 class AuditMixin(models.AbstractModel):

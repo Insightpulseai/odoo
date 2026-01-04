@@ -1,58 +1,114 @@
 # IPAI Work OS Core
 
-## 1. Overview
+## Overview
+
 Notion-style Work OS - Core module with workspaces, spaces, and pages
 
-**Technical Name**: `ipai_workos_core`
-**Category**: Productivity
-**Version**: 18.0.1.0.0
-**Author**: InsightPulse AI
+- **Technical Name:** `ipai_workos_core`
+- **Version:** 18.0.1.0.0
+- **Category:** Productivity
+- **License:** AGPL-3
+- **Author:** InsightPulse AI
+- **Application:** Yes
+- **Installable:** Yes
 
-## 2. Functional Scope
+## Business Use Case
 
-        Work OS Core provides the foundation for a Notion-like experience:
+Work OS Core provides the foundation for a Notion-like experience:
         - Workspaces as top-level containers
         - Spaces for organizing content within workspaces
         - Pages with nested page support (tree structure)
         - Sidebar navigation with page tree
         - Integration with blocks, databases, and other Work OS modules
-    
 
-## 3. Installation & Dependencies
-Dependencies (CE/OCA):
-- `base`
-- `web`
-- `mail`
-- `ipai_platform_permissions`
-- `ipai_platform_audit`
+## Functional Scope
 
-## 4. Configuration
-Key system parameters or settings groups:
-- (Audit Pending)
+### Data Models
 
-## 5. Data Model
-Defined Models:
-- `ipai.workos.space`
-- `_parentparent_id`
-- `ipai.workos.workspace`
-- `ipai.workos.page`
+- **ipai.workos.page** (Model)
+  - Work OS Page
+  - Fields: 15 defined
+- **ipai.workos.workspace** (Model)
+  - Work OS Workspace
+  - Fields: 9 defined
+- **ipai.workos.space** (Model)
+  - Work OS Space
+  - Fields: 10 defined
 
-## 6. User Interface
-- **Views**: 4 files
-- **Menus**: (Audit Pending)
+### Views
 
-## 7. Security
-- **Access Rules**: `ir.model.access.csv` found
-- **Groups**: `security.xml` not found
+- : 3
+- Kanban: 3
+- Form: 3
+- Search: 1
 
-## 8. Integrations
-- (Audit Pending)
+### Menus
 
-## 9. Verification Steps
+- `menu_workos_root`: Work OS
+- `menu_workos_workspaces`: Workspaces
+- `menu_workos_spaces`: Spaces
+- `menu_workos_pages`: Pages
+- `menu_workos_config`: Configuration
+
+## Installation & Dependencies
+
+### Dependencies
+
+- `base` (CE Core)
+- `web` (CE Core)
+- `mail` (CE Core)
+- `ipai_platform_permissions` (IPAI)
+- `ipai_platform_audit` (IPAI)
+
+### Installation
+
 ```bash
-# Install
-odoo-bin -d <db> -i ipai_workos_core --stop-after-init
+# Install module
+odoo-bin -d <database> -i ipai_workos_core --stop-after-init
 
-# Upgrade
-odoo-bin -d <db> -u ipai_workos_core --stop-after-init
+# Upgrade module
+odoo-bin -d <database> -u ipai_workos_core --stop-after-init
 ```
+
+## Configuration
+
+*No specific configuration required.*
+
+## Security
+
+### Access Rules
+
+*6 access rules defined in ir.model.access.csv*
+
+## Integrations
+
+- Odoo Mail (Email notifications)
+
+## Upgrade Notes
+
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
+
+## Verification Steps
+
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_workos_core'"
+
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_workos_core")]).state)'
+```
+
+## Data Files
+
+- `security/ir.model.access.csv`
+- `views/workspace_views.xml`
+- `views/space_views.xml`
+- `views/page_views.xml`
+- `views/menu_views.xml`
+
+## Static Validation Status
+
+- Passed: 5
+- Warnings: 0
+- Failed: 0

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 import pkgutil
-from odoo import api, fields, models, _
+
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 
 class FinanceSeedService(models.Model):

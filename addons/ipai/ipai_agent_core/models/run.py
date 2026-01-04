@@ -5,8 +5,9 @@ import json
 import logging
 from datetime import datetime
 
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -19,24 +20,23 @@ class IpaiAgentRun(models.Model):
     _order = "create_date desc"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    name = fields.Char(
-        default=lambda self: self._generate_name(),
-        tracking=True
-    )
+    name = fields.Char(default=lambda self: self._generate_name(), tracking=True)
     skill_id = fields.Many2one(
-        "ipai.agent.skill",
-        required=True,
-        tracking=True,
-        ondelete="restrict"
+        "ipai.agent.skill", required=True, tracking=True, ondelete="restrict"
     )
     skill_key = fields.Char(related="skill_id.key", store=True)
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("running", "Running"),
-        ("ok", "Completed"),
-        ("failed", "Failed"),
-    ], default="draft", required=True, tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("running", "Running"),
+            ("ok", "Completed"),
+            ("failed", "Failed"),
+        ],
+        default="draft",
+        required=True,
+        tracking=True,
+    )
 
     # Input/Output
     input_text = fields.Text(help="User prompt or input data")
@@ -45,9 +45,7 @@ class IpaiAgentRun(models.Model):
     output_json = fields.Text(help="Structured output as JSON")
 
     # Execution trace
-    tool_trace_json = fields.Text(
-        help="JSON array of tool calls with inputs/outputs"
-    )
+    tool_trace_json = fields.Text(help="JSON array of tool calls with inputs/outputs")
     error_text = fields.Text(help="Error message if failed")
 
     # Timing
@@ -57,9 +55,7 @@ class IpaiAgentRun(models.Model):
 
     # User context
     user_id = fields.Many2one(
-        "res.users",
-        default=lambda self: self.env.user,
-        tracking=True
+        "res.users", default=lambda self: self.env.user, tracking=True
     )
 
     def _generate_name(self):
@@ -88,11 +84,13 @@ class IpaiAgentRun(models.Model):
         if self.state not in ("draft", "failed"):
             raise UserError("Can only execute runs in draft or failed state")
 
-        self.write({
-            "state": "running",
-            "started_at": fields.Datetime.now(),
-            "error_text": False,
-        })
+        self.write(
+            {
+                "state": "running",
+                "started_at": fields.Datetime.now(),
+                "error_text": False,
+            }
+        )
 
         trace = []
         Tool = self.env["ipai.agent.tool"]
@@ -101,10 +99,9 @@ class IpaiAgentRun(models.Model):
             tool_keys = self.skill_id.get_workflow_tools()
 
             for tool_key in tool_keys:
-                tool = Tool.search([
-                    ("key", "=", tool_key),
-                    ("is_active", "=", True)
-                ], limit=1)
+                tool = Tool.search(
+                    [("key", "=", tool_key), ("is_active", "=", True)], limit=1
+                )
 
                 if not tool:
                     raise UserError(f"Tool not found or inactive: {tool_key}")
@@ -130,32 +127,38 @@ class IpaiAgentRun(models.Model):
                     trace.append(step)
 
             # Success
-            self.write({
-                "state": "ok",
-                "completed_at": fields.Datetime.now(),
-                "tool_trace_json": json.dumps(trace, ensure_ascii=False, indent=2),
-            })
+            self.write(
+                {
+                    "state": "ok",
+                    "completed_at": fields.Datetime.now(),
+                    "tool_trace_json": json.dumps(trace, ensure_ascii=False, indent=2),
+                }
+            )
 
         except Exception as e:
             _logger.exception("Agent run %s failed", self.id)
-            self.write({
-                "state": "failed",
-                "completed_at": fields.Datetime.now(),
-                "error_text": str(e),
-                "tool_trace_json": json.dumps(trace, ensure_ascii=False, indent=2),
-            })
+            self.write(
+                {
+                    "state": "failed",
+                    "completed_at": fields.Datetime.now(),
+                    "error_text": str(e),
+                    "tool_trace_json": json.dumps(trace, ensure_ascii=False, indent=2),
+                }
+            )
 
     def action_reset_to_draft(self):
         """Reset failed run to draft for retry."""
         for rec in self:
             if rec.state == "failed":
-                rec.write({
-                    "state": "draft",
-                    "started_at": False,
-                    "completed_at": False,
-                    "error_text": False,
-                    "tool_trace_json": False,
-                })
+                rec.write(
+                    {
+                        "state": "draft",
+                        "started_at": False,
+                        "completed_at": False,
+                        "error_text": False,
+                        "tool_trace_json": False,
+                    }
+                )
         return True
 
     def get_trace_list(self):

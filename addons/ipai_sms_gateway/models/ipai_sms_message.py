@@ -3,8 +3,9 @@ import json
 import logging
 from datetime import timedelta
 
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -20,18 +21,24 @@ class IpaiSmsMessage(models.Model):
     name = fields.Char(
         string="Reference",
         required=True,
-        default=lambda self: self.env["ir.sequence"].next_by_code("ipai.sms.message") or "SMS-NEW",
+        default=lambda self: self.env["ir.sequence"].next_by_code("ipai.sms.message")
+        or "SMS-NEW",
         copy=False,
     )
 
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("queued", "Queued"),
-        ("sending", "Sending"),
-        ("sent", "Sent"),
-        ("delivered", "Delivered"),
-        ("failed", "Failed"),
-    ], string="Status", default="draft", tracking=True)
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("queued", "Queued"),
+            ("sending", "Sending"),
+            ("sent", "Sent"),
+            ("delivered", "Delivered"),
+            ("failed", "Failed"),
+        ],
+        string="Status",
+        default="draft",
+        tracking=True,
+    )
 
     # Message content
     to_number = fields.Char(string="To Number", required=True)
@@ -100,16 +107,18 @@ class IpaiSmsMessage(models.Model):
             raise UserError("No SMS provider configured")
 
         # Create message record
-        message = self.create({
-            "to_number": to,
-            "from_number": provider.sender_id,
-            "body": body,
-            "provider_id": provider.id,
-            "res_model": context.get("res_model"),
-            "res_id": context.get("res_id"),
-            "partner_id": context.get("partner_id"),
-            "segments": self._calculate_segments(body),
-        })
+        message = self.create(
+            {
+                "to_number": to,
+                "from_number": provider.sender_id,
+                "body": body,
+                "provider_id": provider.id,
+                "res_model": context.get("res_model"),
+                "res_id": context.get("res_id"),
+                "partner_id": context.get("partner_id"),
+                "segments": self._calculate_segments(body),
+            }
+        )
 
         if context.get("async"):
             message.action_queue()
@@ -144,23 +153,27 @@ class IpaiSmsMessage(models.Model):
     def action_reset(self):
         """Reset failed message to draft."""
         for rec in self.filtered(lambda r: r.state == "failed"):
-            rec.write({
-                "state": "draft",
-                "error_code": False,
-                "error_message": False,
-                "retry_count": 0,
-            })
+            rec.write(
+                {
+                    "state": "draft",
+                    "error_code": False,
+                    "error_message": False,
+                    "retry_count": 0,
+                }
+            )
         return True
 
     def _send_sms(self):
         """Execute SMS sending."""
         self.ensure_one()
 
-        self.write({
-            "state": "sending",
-            "error_code": False,
-            "error_message": False,
-        })
+        self.write(
+            {
+                "state": "sending",
+                "error_code": False,
+                "error_message": False,
+            }
+        )
 
         try:
             provider = self.provider_id
@@ -169,23 +182,29 @@ class IpaiSmsMessage(models.Model):
 
             result = self._call_sms_provider()
 
-            self.write({
-                "state": "sent",
-                "sent_at": fields.Datetime.now(),
-                "external_id": result.get("message_id"),
-                "raw_response": json.dumps(result.get("raw", {})),
-                "cost": result.get("cost", 0.0),
-            })
+            self.write(
+                {
+                    "state": "sent",
+                    "sent_at": fields.Datetime.now(),
+                    "external_id": result.get("message_id"),
+                    "raw_response": json.dumps(result.get("raw", {})),
+                    "cost": result.get("cost", 0.0),
+                }
+            )
 
-            _logger.info("SMS %s sent successfully: %s", self.name, result.get("message_id"))
+            _logger.info(
+                "SMS %s sent successfully: %s", self.name, result.get("message_id")
+            )
 
         except Exception as e:
             _logger.exception("SMS %s failed: %s", self.name, str(e))
-            self.write({
-                "state": "failed",
-                "error_message": str(e),
-                "retry_count": self.retry_count + 1,
-            })
+            self.write(
+                {
+                    "state": "failed",
+                    "error_message": str(e),
+                    "retry_count": self.retry_count + 1,
+                }
+            )
 
     def _call_sms_provider(self):
         """Call the configured SMS provider."""
@@ -261,11 +280,13 @@ class IpaiSmsMessage(models.Model):
         }
 
         payload = {
-            "messages": [{
-                "destinations": [{"to": self.to_number}],
-                "from": self.from_number,
-                "text": self.body,
-            }]
+            "messages": [
+                {
+                    "destinations": [{"to": self.to_number}],
+                    "from": self.from_number,
+                    "text": self.body,
+                }
+            ]
         }
 
         response = requests.post(
@@ -278,7 +299,9 @@ class IpaiSmsMessage(models.Model):
         result = response.json()
 
         if response.status_code >= 400:
-            raise UserError(f"Infobip error: {result.get('requestError', {}).get('serviceException', {}).get('text', 'Unknown error')}")
+            raise UserError(
+                f"Infobip error: {result.get('requestError', {}).get('serviceException', {}).get('text', 'Unknown error')}"
+            )
 
         messages = result.get("messages", [{}])
         message_id = messages[0].get("messageId") if messages else None
@@ -313,7 +336,9 @@ class IpaiSmsMessage(models.Model):
 
         messages = result.get("messages", [{}])
         if messages and messages[0].get("status") != "0":
-            raise UserError(f"Nexmo error: {messages[0].get('error-text', 'Unknown error')}")
+            raise UserError(
+                f"Nexmo error: {messages[0].get('error-text', 'Unknown error')}"
+            )
 
         return {
             "message_id": messages[0].get("message-id") if messages else None,
@@ -356,7 +381,9 @@ class IpaiSmsMessage(models.Model):
             "raw": result,
         }
 
-    def update_delivery_status(self, external_id, status, error_code=None, error_message=None):
+    def update_delivery_status(
+        self, external_id, status, error_code=None, error_message=None
+    ):
         """
         Update message status from delivery receipt webhook.
 
@@ -385,9 +412,13 @@ class IpaiSmsMessage(models.Model):
     @api.model
     def _cron_process_queued_messages(self):
         """Cron job to send queued messages."""
-        queued = self.search([
-            ("state", "=", "queued"),
-        ], limit=50, order="create_date asc")
+        queued = self.search(
+            [
+                ("state", "=", "queued"),
+            ],
+            limit=50,
+            order="create_date asc",
+        )
 
         for msg in queued:
             try:
@@ -404,10 +435,14 @@ class IpaiSmsMessage(models.Model):
     def _cron_retry_failed_messages(self):
         """Cron job to retry failed messages."""
         # Retry messages that failed less than max_retries ago
-        failed = self.search([
-            ("state", "=", "failed"),
-            ("retry_count", "<", 3),
-        ], limit=20, order="create_date asc")
+        failed = self.search(
+            [
+                ("state", "=", "failed"),
+                ("retry_count", "<", 3),
+            ],
+            limit=20,
+            order="create_date asc",
+        )
 
         for msg in failed:
             try:
@@ -426,9 +461,13 @@ class IpaiSmsMessage(models.Model):
         sending_count = self.search_count([("state", "=", "sending")])
         failed_count = self.search_count([("state", "=", "failed")])
 
-        last_sent = self.search([
-            ("state", "in", ("sent", "delivered")),
-        ], limit=1, order="sent_at desc")
+        last_sent = self.search(
+            [
+                ("state", "in", ("sent", "delivered")),
+            ],
+            limit=1,
+            order="sent_at desc",
+        )
 
         return {
             "status": "healthy" if failed_count < 20 else "degraded",
@@ -436,5 +475,7 @@ class IpaiSmsMessage(models.Model):
             "sending_messages": sending_count,
             "failed_messages": failed_count,
             "last_sent": last_sent.sent_at.isoformat() if last_sent.sent_at else None,
-            "provider_count": self.env["ipai.sms.provider"].search_count([("active", "=", True)]),
+            "provider_count": self.env["ipai.sms.provider"].search_count(
+                [("active", "=", True)]
+            ),
         }

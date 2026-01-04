@@ -13,25 +13,25 @@ class IpaiAgentKnowledgeSource(models.Model):
 
     name = fields.Char(required=True, index=True)
     key = fields.Char(
-        required=True,
-        index=True,
-        help="Stable identifier, e.g. 'odoo18.ce.dev'"
+        required=True, index=True, help="Stable identifier, e.g. 'odoo18.ce.dev'"
     )
 
-    kind = fields.Selection([
-        ("attachment", "Attachment"),
-        ("url", "URL"),
-        ("model", "Odoo Model"),
-        ("text", "Inline Text"),
-    ], default="text", required=True)
+    kind = fields.Selection(
+        [
+            ("attachment", "Attachment"),
+            ("url", "URL"),
+            ("model", "Odoo Model"),
+            ("text", "Inline Text"),
+        ],
+        default="text",
+        required=True,
+    )
 
     # Source content based on kind
     url = fields.Char(help="URL for kind=url")
     model_name = fields.Char(help="Model name for kind=model")
     attachment_id = fields.Many2one(
-        "ir.attachment",
-        string="Attachment",
-        help="File attachment for kind=attachment"
+        "ir.attachment", string="Attachment", help="File attachment for kind=attachment"
     )
     content_text = fields.Text(help="Inline content for kind=text")
 
