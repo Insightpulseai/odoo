@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c02ac8424c7d05681a54c5d3d0b39bd78e2d6e09
+> Commit: 6849d0ec4a14b31625052101ad57bb3059da93f1
 
 ```
 .
@@ -66,6 +66,7 @@
 │   │   ├── health-check.yml
 │   │   ├── infra-validate.yml
 │   │   ├── ipai-ai-studio-smoke.yml
+│   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── ipai-quality-gate.yml
 │   │   ├── lakehouse-smoke.yml
@@ -1161,6 +1162,8 @@
 │   ├── import_bir_schedules.py
 │   ├── odoo-tests.sh
 │   └── postdeploy-finance.sh
+├── branding
+│   └── fluentui-system-icons
 ├── calendar
 │   ├── 2026_FinanceClosing_Master.csv
 │   └── FinanceClosing_RecurringTasks.ics
@@ -2000,6 +2003,8 @@
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── introspect_project.py
+│   ├── ipai_full_audit.py
+│   ├── ipai_install_upgrade_test.sh
 │   ├── ipai_quality_gate.sh
 │   ├── map_logframe.py
 │   ├── module_audit_agent.py
@@ -2597,15 +2602,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-766 directories, 1826 files
+768 directories, 1829 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 868 |
-| Files | 2570 |
-| Python files | 641 |
+| Directories | 870 |
+| Files | 2573 |
+| Python files | 642 |
 | XML files | 337 |
 | Markdown files | 543 |
