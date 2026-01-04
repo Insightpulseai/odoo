@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 03e3c0a1a7539f0c4ccab01150e590c0023c2de8
+> Commit: c02ac8424c7d05681a54c5d3d0b39bd78e2d6e09
 
 ```
 .
@@ -1940,6 +1940,7 @@
 │   ├── README.md
 │   ├── activate-n8n-workflows.sh
 │   ├── apply-supabase-schema.sh
+│   ├── assign_module_icons.py
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
@@ -2596,7 +2597,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-766 directories, 1825 files
+766 directories, 1826 files
 ```
 
 ## 📊 Stats
@@ -2604,7 +2605,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 868 |
-| Files | 2569 |
-| Python files | 640 |
+| Files | 2570 |
+| Python files | 641 |
 | XML files | 337 |
 | Markdown files | 543 |
