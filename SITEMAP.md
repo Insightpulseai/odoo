@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a54ef9c3598c3f4cc325b3351b07b567fe26182d
+> Commit: 4b28328bb100b72bec7d219e733c0261e96159e4
 
 ## 📚 Documentation
 
@@ -59,6 +59,7 @@
 | [Odoo 18 VS Code Development Setup](ODOO_18_VSCODE_SETUP.md) | . |
 | [InsightPulse OCR for Odoo Expenses - Service Definition](ODOO_OCR_SETUP.md) | . |
 | [PostgreSQL Password Configuration Solution](POSTGRES_PASSWORD_SOLUTION.md) | . |
+| [IPAI Odoo CE Production Deployment Guide](PROD_DEPLOY.md) | . |
 | [Finance PPM Project Wrapper Implementation](PROJECT_WRAPPER_IMPLEMENTATION.md) | . |
 | [Finance PPM Project Integration - Implementation Summary](PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md) | . |
 | [InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)](README.md) | . |
@@ -73,6 +74,7 @@
 | [Canonical Tag + Label Vocabulary](TAG_LABEL_VOCABULARY.md) | . |
 | [TBWA / InsightPulseAI Custom Module Standard](TBWA_IPAI_MODULE_STANDARD.md) | . |
 | [📁 Repository Structure](TREE.md) | . |
+| [IPAI Verification Commands](VERIFY.md) | . |
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
 | [Clarity PPM Parity - Implementation Complete ✅](addons/ipai/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity - Quick Start Guide](addons/ipai/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai/ipai_clarity_ppm_parity |
@@ -425,6 +427,10 @@
 | [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Task Checklist](spec/odoo-apps-inventory/tasks.md) | spec/odoo-apps-inventory |
+| [Odoo CE Platform Constitution](spec/odoo-ce/constitution.md) | spec/odoo-ce |
+| [Plan](spec/odoo-ce/plan.md) | spec/odoo-ce |
+| [PRD — Odoo CE (CE + OCA + IPAI)](spec/odoo-ce/prd.md) | spec/odoo-ce |
+| [Tasks](spec/odoo-ce/tasks.md) | spec/odoo-ce |
 | [Anthropic Use Cases vs InsightPulse Stack - Gap Analysis](spec/odoo-mcp-server/GAPS_ANALYSIS.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server + BIR Compliance Skill](spec/odoo-mcp-server/README.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
@@ -492,7 +498,8 @@
 | [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
 | [ipai_finance_bir_compliance](./addons/ipai/ipai_finance_bir_compliance) | ✅ |  |
-| [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ⚠️ | Missing manifest |
+| [ipai_finance_close_automation](./addons/ipai/ipai_finance_close_automation) | ✅ |  |
+| [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ✅ |  |
 | [ipai_finance_month_end](./addons/ipai/ipai_finance_month_end) | ✅ |  |
 | [ipai_finance_monthly_closing](./addons/ipai/ipai_finance_monthly_closing) | ✅ |  |
 | [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ✅ |  |
@@ -512,6 +519,7 @@
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ | Natural Language Customization Engine for Odoo |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
+| [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
 | [ipai_finance_closing](./addons/ipai_finance_closing) | ✅ | Month-end financial closing task template based on SAP Advanced Financial Closing |
