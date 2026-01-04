@@ -46,7 +46,6 @@ Dependencies:
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",
     "license": "AGPL-3",
-    "icon": "fa-robot",
     "depends": [
         "base",
         "web",

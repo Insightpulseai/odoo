@@ -6,7 +6,6 @@
     "website": "https://insightpulse.ai",
     "author": "InsightPulse AI",
     "license": "LGPL-3",
-    "icon": "fa-umbrella",
     "depends": ["ipai_finance_ppm", "project"],
     "data": [
         "security/ir.model.access.csv",

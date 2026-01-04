@@ -18,7 +18,6 @@
     "author": "IPAI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "AGPL-3",
-    "icon": "fa-calendar-check",
     "depends": [
         "base",
         "mail",
