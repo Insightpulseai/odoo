@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Ask AI Chatter (Headless)",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Productivity/AI",
     "summary": "Copilot-style @askai in chatter with async jobs + external executor",
     "description": """
@@ -26,7 +26,7 @@ Configuration (System Parameters):
 - ipai_ask_ai_chatter.timeout_seconds: HTTP timeout (default: 30)
 
 Dependencies:
-- OCA queue_job for async processing
+- OCA queue_job for async processing (add OCA/queue submodule)
     """,
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",
@@ -34,7 +34,7 @@ Dependencies:
     "depends": [
         "base",
         "mail",
-        "queue_job",
+        # "queue_job",  # TODO: Add OCA/queue submodule to external-src
     ],
     "data": [
         "security/ir.model.access.csv",

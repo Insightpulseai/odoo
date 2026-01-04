@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Ask AI Assistant",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Productivity/AI",
     "summary": "AI-powered conversational assistant for Odoo",
     "description": """
@@ -32,7 +32,12 @@ Technical Stack:
 - Discuss module integration for message storage
 - Custom AI service for response generation
 - **AFC RAG Service** - pgvector semantic search with Supabase integration
-- SCSS styling with modern chat design
+- SCSS styling with IPAI platform tokens
+
+Theming:
+- Uses ipai_platform_theme tokens for consistent branding
+- No hardcoded colors - all styling via CSS variables
+- Automatically inherits brand colors from theme modules
 
 Dependencies:
 - psycopg2 (for Supabase vector search)
@@ -45,6 +50,7 @@ Dependencies:
         "base",
         "web",
         "mail",
+        "ipai_platform_theme",  # Token source of truth
     ],
     "data": [
         "security/security.xml",

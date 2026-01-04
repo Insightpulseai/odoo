@@ -2,7 +2,7 @@
 {
     "name": "InsightPulse Dev Studio Base",
     "summary": "Base OCA/CE module bundle and dev tools for InsightPulse",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.1.0",
     "category": "Tools",
     "author": "InsightPulseAI",
     "website": "https://insightpulseai.com",
@@ -12,10 +12,10 @@
         "web",
         "mail",
         "contacts",
-        "board",
-        "base_automation",
+        # "board",  # TODO: Verify availability in Odoo 18 CE
+        # "base_automation",  # TODO: Add when base_automation is confirmed in addons_path
         "project",
-        "documents",
+        # "documents",  # Enterprise-only - use OCA dms when available
     ],
     "data": [],
     "installable": True,

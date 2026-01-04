@@ -1,0 +1,59 @@
+// ============================================================================
+// TBWA Token Overrides
+// ============================================================================
+// This file overrides ipai_platform_theme CSS custom properties with
+// TBWA-specific brand values. It loads AFTER tokens.scss.
+// ============================================================================
+
+:root {
+  // ============================================================================
+  // TBWA BRAND COLOR OVERRIDES
+  // ============================================================================
+
+  // Primary brand color - TBWA Yellow
+  --ipai-brand-primary: #FFD800;
+  --ipai-brand-primary-hover: #FFDD2D;
+  --ipai-brand-primary-light: #FFF8E3;
+  --ipai-brand-primary-rgb: 255, 216, 0;
+
+  // Ink color - pure black for TBWA
+  --ipai-brand-ink: #000000;
+
+  // Surface colors - clean whites with subtle gray
+  --ipai-brand-surface: #FFFFFF;
+  --ipai-brand-surface-alt: #F7F9FC;
+  --ipai-brand-muted: #F3F4F6;
+  --ipai-brand-border: #E5E7EB;
+
+  // Text colors - TBWA uses darker grays
+  --ipai-text-primary: #111827;
+  --ipai-text-secondary: #6B7280;
+  --ipai-text-muted: #9CA3AF;
+  --ipai-text-inverse: #FFFFFF;
+
+  // ============================================================================
+  // ODOO VARIABLE RE-MAPPING
+  // Ensure Odoo variables also pick up TBWA colors
+  // ============================================================================
+
+  --o-brand-primary: #FFD800;
+  --o-brand-odoo: #FFD800;
+  --o-enterprise-color: #FFD800;
+  --o-community-color: #FFD800;
+
+  // ============================================================================
+  // TBWA TYPOGRAPHY
+  // ============================================================================
+
+  --ipai-font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  // ============================================================================
+  // TBWA SPACING/RADIUS (Scout/InsightPulse style - more rounded)
+  // ============================================================================
+
+  --ipai-radius: 14px;
+  --ipai-radius-sm: 10px;
+  --ipai-radius-md: 14px;
+  --ipai-radius-lg: 16px;
+  --ipai-radius-xl: 20px;
+}
