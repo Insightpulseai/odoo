@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bab55e4e8295d51bbb15f72628d50b0c83df57e5
+> Commit: 118db8299e5915b26017719651478a35cdef1db9
 
 ## 📚 Documentation
 
@@ -33,6 +33,8 @@
 | [InsightPulse Odoo (Delta Architecture)](CLAUDE_NEW.md) | . |
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
 | [Contributing to Odoo CE](CONTRIBUTING.md) | . |
+| [Credentials Summary - Secure Reference](CREDENTIALS_SUMMARY.md) | . |
+| [Production Hotfix - Quick Deployment Checklist](DEPLOYMENT_CHECKLIST.md) | . |
 | [✅ DEPLOYMENT COMPLETE - All Custom Modules Fixed](DEPLOYMENT_COMPLETE.md) | . |
 | [Odoo CE Equipment MVP Deployment Guide](DEPLOYMENT_MVP.md) | . |
 | [WorkOS Production Deployment Report](DEPLOYMENT_REPORT.md) | . |
@@ -42,12 +44,14 @@
 | [Deployment Validation Report](DEPLOYMENT_VALIDATION_REPORT.md) | . |
 | [Deployment Verification - Strategic Portfolio Command Center](DEPLOYMENT_VERIFICATION.md) | . |
 | [Odoo CE v0.9.1 - Production Deployment Workflow](DEPLOYMENT_WORKFLOW.md) | . |
+| [Deploy Now - Quick Start Guide](DEPLOY_NOW.md) | . |
 | [InsightPulse ERP Configuration - Complete Summary](ERP_CONFIGURATION_SUMMARY.md) | . |
 | [EXECUTE NOW - DEPLOY v0.9.0 TO FIX 502 ERROR](EXECUTE_NOW.md) | . |
 | [Finance PPM Canonical State](FINANCE_PPM_CANONICAL.md) | . |
 | [Finance PPM Dashboard Implementation Guide for Odoo CE + OCA](FINANCE_PPM_CE_DASHBOARD_GUIDE.md) | . |
 | [Finance PPM Dashboard Implementation Guide](FINANCE_PPM_DASHBOARD_GUIDE.md) | . |
 | [Finance PPM Data Import Guide](FINANCE_PPM_IMPORT_GUIDE.md) | . |
+| [Production Hotfix Summary](HOTFIX_SUMMARY.md) | . |
 | [Identity & ChatOps Deployment Summary](IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md) | . |
 | [Infrastructure Improvement Plan](INFRASTRUCTURE_PLAN.md) | . |
 | [InsightPulse ERP Configuration Guide](INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md) | . |
@@ -202,6 +206,7 @@
 | [Docker Validation Guide](docs/DOCKER_VALIDATION_GUIDE.md) | docs |
 | [DOKS Deployment Success Criteria – Infra + Custom Features](docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE Ecosystem Guide for AI Agents](docs/ECOSYSTEM_GUIDE.md) | docs |
+| [Email & OAuth Configuration Guide](docs/EMAIL_AND_OAUTH_SETUP.md) | docs |
 | [Odoo CE v0.9.0 Audit - Executive Summary](docs/EXECUTIVE_SUMMARY.md) | docs |
 | [Cheqroom Parity Feature - Equipment Management on Odoo CE](docs/FEATURE_CHEQROOM_PARITY.md) | docs |
 | [SAP Concur Parity Feature - Expense Management on Odoo CE](docs/FEATURE_CONCUR_PARITY.md) | docs |
@@ -250,6 +255,7 @@
 | [Odoo 18 Programmatic Settings Configuration Guide](docs/ODOO_PROGRAMMATIC_CONFIG.md) | docs |
 | [Offline/Tarball Deployment Path](docs/OFFLINE_TARBALL_DEPLOYMENT.md) | docs |
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
+| [Production Hotfix Guide: OwlError & OAuth Loop](docs/PRODUCTION_HOTFIX.md) | docs |
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
 | [Production Snapshot Manifest](docs/PROD_SNAPSHOT_MANIFEST.md) | docs |
 | [Quick Reference: SSO & Permissions Setup](docs/QUICK_REFERENCE_SSO_SETUP.md) | docs |
@@ -264,6 +270,7 @@
 | [Odoo CE 18.0 - InsightPulse AI Module Sitemap](docs/SITEMAP.md) | docs |
 | [SMTP Setup Summary - Complete Status](docs/SMTP_SETUP_SUMMARY.md) | docs |
 | [SSO Configuration Validation Checklist](docs/SSO_VALIDATION_CHECKLIST.md) | docs |
+| [Success Criteria - Production Hotfix](docs/SUCCESS_CRITERIA.md) | docs |
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
