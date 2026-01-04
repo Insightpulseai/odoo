@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a54ef9c3598c3f4cc325b3351b07b567fe26182d
+> Commit: 4b28328bb100b72bec7d219e733c0261e96159e4
 
 ```
 .
@@ -63,6 +63,7 @@
 │   │   ├── finance-ppm-health.yml
 │   │   ├── health-check.yml
 │   │   ├── infra-validate.yml
+│   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── production-ready.yml
@@ -72,6 +73,7 @@
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── spec-validate.yml
 │   │   ├── superset-bump.yml
+│   │   ├── sync-current-state.yml
 │   │   ├── sync-master.yml
 │   │   └── verify-gates.yml
 │   └── copilot-instructions.md
@@ -180,8 +182,18 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_finance_close_automation
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── wizard
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_finance_close_seed
-│   │   │   └── data
+│   │   │   ├── data
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_finance_month_end
 │   │   │   ├── data
 │   │   │   ├── models
@@ -367,6 +379,15 @@
 │   │   ├── DEPLOYMENT_COMPLETE.md
 │   │   ├── DEPLOYMENT_STATUS.md
 │   │   ├── README_AFC_RAG.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ask_ai_chatter
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── ask_ai_request.py
+│   │   │   └── mail_message.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_bir_tax_compliance
@@ -835,6 +856,18 @@
 │   │   │   └── app.json
 │   │   ├── APP.md
 │   │   └── spec.yaml
+│   ├── ipai-chatgpt-app
+│   │   ├── server
+│   │   │   ├── package.json
+│   │   │   └── server.js
+│   │   └── web
+│   │       ├── src
+│   │       ├── index.html
+│   │       ├── package.json
+│   │       ├── postcss.config.js
+│   │       ├── tailwind.config.js
+│   │       ├── tsconfig.json
+│   │       └── vite.config.ts
 │   ├── ipai-control-center-docs
 │   │   ├── .vercel
 │   │   │   ├── README.txt
@@ -1653,6 +1686,9 @@
 │   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
 ├── ops
+│   ├── github
+│   │   ├── apply_labels.sh
+│   │   └── labels.json
 │   ├── DISASTER_RECOVERY.md
 │   └── backup-production.sh
 ├── out
@@ -1668,12 +1704,17 @@
 │   │   ├── src
 │   │   │   └── index.ts
 │   │   └── package.json
-│   └── github-app
-│       ├── src
-│       │   └── server.ts
-│       ├── .env.example
+│   ├── github-app
+│   │   ├── src
+│   │   │   └── server.ts
+│   │   ├── .env.example
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   └── ipai-design-tokens
 │       ├── package.json
-│       └── tsconfig.json
+│       ├── tailwind.preset.js
+│       ├── tokens.css
+│       └── tokens.scss
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
 ├── scripts
@@ -1683,6 +1724,7 @@
 │   │   ├── import-n8n-workflows.sh
 │   │   ├── install-oca-modules.sh
 │   │   ├── install_odoo_18.sh
+│   │   ├── introspect_feature_inventory.py
 │   │   ├── run_odoo_tests.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
@@ -1786,6 +1828,7 @@
 │   ├── map_logframe.py
 │   ├── new_conversation_entry.sh
 │   ├── notify_slack.sh
+│   ├── oca-bootstrap.sh
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
 │   ├── odoo_mattermost_integration.py
@@ -1794,6 +1837,7 @@
 │   ├── parse_notion_tasks.py
 │   ├── policy-check.sh
 │   ├── pre_install_snapshot.sh
+│   ├── release_gate.sh
 │   ├── repo_health.sh
 │   ├── report_ci_telemetry.sh
 │   ├── run_clarity_ppm_reverse.sh
@@ -1808,6 +1852,8 @@
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
+│   ├── sync-tokens.sh
+│   ├── sync_current_state.sh
 │   ├── test_afc_rag.py
 │   ├── test_deploy_local.sh
 │   ├── update_diagram_manifest.py
@@ -1984,6 +2030,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── odoo-apps-inventory
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── odoo-ce
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -2290,6 +2341,7 @@
 ├── ODOO_OCR_SETUP.md
 ├── POSTGRES_PASSWORD_SOLUTION.md
 ├── PRODUCTION_DEPLOY_WORKOS.sh
+├── PROD_DEPLOY.md
 ├── PROJECT_WRAPPER_IMPLEMENTATION.md
 ├── PROJECT_WRAPPER_IMPLEMENTATION_SUMMARY.md
 ├── README.md
@@ -2304,8 +2356,10 @@
 ├── TAG_LABEL_VOCABULARY.md
 ├── TBWA_IPAI_MODULE_STANDARD.md
 ├── TREE.md
+├── VERIFY.md
 ├── VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md
 ├── bir_deadlines_2026.csv
+├── branch_protection.json
 ├── constitution.md
 ├── custom_module_inventory.md
 ├── deploy_m1.sh.template
@@ -2363,15 +2417,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-727 directories, 1631 files
+743 directories, 1669 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 828 |
-| Files | 2328 |
-| Python files | 599 |
-| XML files | 321 |
-| Markdown files | 457 |
+| Directories | 845 |
+| Files | 2384 |
+| Python files | 614 |
+| XML files | 327 |
+| Markdown files | 463 |
