@@ -79,3 +79,6 @@
 	url = https://github.com/OCA/web.git
 	branch = 18.0
 	shallow = true
+[submodule "branding/fluentui-system-icons"]
+	path = branding/fluentui-system-icons
+	url = https://github.com/microsoft/fluentui-system-icons.git
