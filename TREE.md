@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e66f7b0662be4a07544b3bf61d4703037f77ebfb
+> Commit: 498f5a08ec98ccd8bcc3538635e9c0e3de00975e
 
 ```
 .
@@ -47,12 +47,9 @@
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
-│   │   ├── checks-debug.yml
-│   │   ├── ci-odoo-ce.yml
-│   │   ├── ci-odoo-oca.yml
+│   │   ├── ci.yml
 │   │   ├── control-room-ci.yml
 │   │   ├── databricks-dab-ci.yml
-│   │   ├── deploy-canary.yml
 │   │   ├── deploy-finance-ppm.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-odoo-prod.yml
@@ -60,7 +57,6 @@
 │   │   ├── diagrams-qa.yml
 │   │   ├── directional-sync.yml
 │   │   ├── docs-crawler-cron.yml
-│   │   ├── fin-workspace-lint.yml
 │   │   ├── fin-workspace-weekly-sync.yml
 │   │   ├── finance-ppm-health.yml
 │   │   ├── health-check.yml
@@ -68,20 +64,13 @@
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-prod-checks.yml
-│   │   ├── ipai-quality-gate.yml
 │   │   ├── lakehouse-smoke.yml
-│   │   ├── nextjs.yml
 │   │   ├── notion-sync-ci.yml
-│   │   ├── production-ready.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
-│   │   ├── spec-validate.yml
 │   │   ├── superset-bump.yml
-│   │   ├── sync-current-state.yml
-│   │   ├── sync-master.yml
-│   │   ├── verify-gates.yml
 │   │   └── workflow-yaml-validate.yml
 │   └── copilot-instructions.md
 ├── .insightpulse
@@ -2702,7 +2691,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-796 directories, 1901 files
+796 directories, 1890 files
 ```
 
 ## 📊 Stats
@@ -2710,7 +2699,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 905 |
-| Files | 2676 |
+| Files | 2665 |
 | Python files | 669 |
 | XML files | 347 |
 | Markdown files | 551 |
