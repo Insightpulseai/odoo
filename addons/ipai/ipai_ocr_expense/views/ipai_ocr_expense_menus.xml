@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- OCR Expense Menu Items -->
+    <menuitem id="menu_expense_ocr_root"
+              name="AI Digitization"
+              parent="hr_expense.menu_hr_expense_root"
+              sequence="50"/>
+
+    <menuitem id="menu_expense_ocr_queue"
+              name="OCR Queue"
+              parent="menu_expense_ocr_root"
+              action="action_expense_ocr_queue"
+              sequence="10"/>
+
+    <menuitem id="menu_expense_needs_review"
+              name="Needs Review"
+              parent="menu_expense_ocr_root"
+              action="action_expense_needs_review"
+              sequence="20"/>
+</odoo>
