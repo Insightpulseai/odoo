@@ -116,6 +116,8 @@ The system is designed to:
 |   `-- addons
 |-- artifacts
 |   |-- logs
+|   |-- seed_export
+|   |-- seed_replace
 |   |-- ce_oca_equivalents_audit.csv
 |   |-- ce_oca_equivalents_audit.json
 |   |-- ipai_install_upgrade_matrix.csv
@@ -267,6 +269,7 @@ The system is designed to:
 |   |-- DOCKER_VALIDATION_GUIDE.md
 |   |-- DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
 |   |-- ECOSYSTEM_GUIDE.md
+|   |-- EMAIL_AND_OAUTH_SETUP.md
 |   |-- ENTERPRISE_FEATURE_GAP.yaml
 |   |-- EXECUTIVE_SUMMARY.md
 |   |-- FEATURE_CHEQROOM_PARITY.md
@@ -316,6 +319,7 @@ The system is designed to:
 |   |-- ODOO_PROGRAMMATIC_CONFIG.md
 |   |-- OFFLINE_TARBALL_DEPLOYMENT.md
 |   |-- PRD_ipai_ppm_portfolio.md
+|   |-- PRODUCTION_HOTFIX.md
 |   |-- PROD_READINESS_GAPS.md
 |   |-- PROD_SNAPSHOT_MANIFEST.md
 |   |-- QUICK_REFERENCE_SSO_SETUP.md
@@ -331,6 +335,7 @@ The system is designed to:
 |   |-- SITEMAP.md
 |   |-- SMTP_SETUP_SUMMARY.md
 |   |-- SSO_VALIDATION_CHECKLIST.md
+|   |-- SUCCESS_CRITERIA.md
 |   |-- SUPERSET_PPM_ANALYTICS_GUIDE.md
 |   |-- TAGGING_STRATEGY.md
 |   |-- TESTING_ODOO_18.md
@@ -451,6 +456,7 @@ The system is designed to:
 |   |-- activate-n8n-workflows.sh
 |   |-- apply-supabase-schema.sh
 |   |-- assign_module_icons.py
+|   |-- audit_email_config.py
 |   |-- auto_error_handler.sh
 |   |-- backup_odoo.sh
 |   |-- baseline-validation.sh
@@ -468,10 +474,13 @@ The system is designed to:
 |   |-- cleanup-duplicate-dec2025-tasks.sql
 |   |-- cleanup_duplicate_users.sql
 |   |-- configure_gmail_smtp.py
+|   |-- configure_gmail_smtp.sh
+|   |-- configure_google_oauth.sh
 |   |-- configure_zoho_smtp.py
 |   |-- convert_csv_to_xml.py
 |   |-- convert_seed_to_xml.py
 |   |-- copilot_ingest.py
+|   |-- count_xml_seeds.py
 |   |-- create-module-readme.sh
 |   |-- create-release.sh
 |   |-- deploy-bir-compliance.sh
@@ -480,15 +489,20 @@ The system is designed to:
 |   |-- deploy-odoo-modules.sh
 |   |-- deploy-to-server.sh
 |   |-- deploy_afc_rag.sh
+|   |-- deploy_complete_fix.sh
 |   |-- deploy_custom_image.sh
 |   |-- deploy_notion_tasks.sh
 |   |-- deploy_odoo_smart.sh
 |   |-- deploy_odoo_upgrade.sh
 |   |-- deploy_prod.sh
+|   |-- deploy_with_credentials.sh
 |   |-- deploy_workos_prod.sh
 |   |-- deployment-checklist.sh
+|   |-- diagnose_smtp.sh
 |   |-- enhanced_health_check.sh
 |   |-- erp_config_cli.sh
+|   |-- export_todo_seed.py
+|   |-- extract_remote_data.py
 |   |-- finance_ppm_health_check.sh
 |   |-- finance_ppm_health_check.sql
 |   |-- finance_ppm_restore_golden.sh
@@ -506,6 +520,7 @@ The system is designed to:
 |   |-- generate_odoo_dbml.py
 |   |-- generate_seed_xml.py
 |   |-- healthcheck_odoo.sh
+|   |-- hotfix_production.sh
 |   |-- image-diff-report.sh
 |   |-- image_audit.sh
 |   |-- import_month_end_tasks.py
@@ -532,7 +547,10 @@ The system is designed to:
 |   |-- parse_notion_tasks.py
 |   |-- policy-check.sh
 |   |-- pre_install_snapshot.sh
+|   |-- prod_access_check.py
+|   |-- prod_db_guess.py
 |   |-- release_gate.sh
+|   |-- replace_seed_from_excel.py
 |   |-- repo_health.sh
 |   |-- report_ci_telemetry.sh
 |   |-- run_clarity_ppm_reverse.sh
@@ -557,11 +575,18 @@ The system is designed to:
 |   |-- validate-spec-kit.sh
 |   |-- validate_m1.sh
 |   |-- validate_manifests.py
+|   |-- validate_production.sh
 |   |-- verify-https.sh
 |   |-- verify.sh
 |   |-- verify_backup.sh
 |   |-- verify_phase3.py
 |   `-- worktree-setup.sh
+|-- seed_export
+|   |-- projects.csv
+|   |-- stages.csv
+|   |-- tags.csv
+|   |-- tasks.csv
+|   `-- users.csv
 |-- seeds
 |   |-- schema
 |   |-- scripts
@@ -664,6 +689,8 @@ The system is designed to:
 |-- .agentignore
 |-- .env.example
 |-- .env.production
+|-- .env.smtp
+|-- .env.smtp.example
 |-- .flake8
 |-- .gitignore
 |-- .gitmodules
@@ -678,6 +705,9 @@ The system is designed to:
 |-- CLAUDE_NEW.md
 |-- COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
 |-- CONTRIBUTING.md
+|-- CREDENTIALS_SUMMARY.md
+|-- DEPLOYMENT_CHECKLIST.md
+|-- DEPLOYMENT_COMPLETE.md
 |-- DEPLOYMENT_MVP.md
 |-- DEPLOYMENT_REPORT.md
 |-- DEPLOYMENT_REPORT_FINAL.md
@@ -686,21 +716,25 @@ The system is designed to:
 |-- DEPLOYMENT_VALIDATION_REPORT.md
 |-- DEPLOYMENT_VERIFICATION.md
 |-- DEPLOYMENT_WORKFLOW.md
+|-- DEPLOY_NOW.md
 |-- Dockerfile
 |-- Dockerfile.v0.10.0
 |-- ERP_CONFIGURATION_SUMMARY.md
 |-- EXECUTE_NOW.md
+|-- EXECUTE_NOW.sh
 |-- FINANCE_PPM_CANONICAL.md
 |-- FINANCE_PPM_CE_DASHBOARD_GUIDE.md
 |-- FINANCE_PPM_DASHBOARD_GUIDE.md
 |-- FINANCE_PPM_IMPORT_GUIDE.md
 |-- HOTFIX_OWLERROR.sh
+|-- HOTFIX_SUMMARY.md
 |-- IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md
 |-- INFRASTRUCTURE_PLAN.md
 |-- INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 |-- KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
 |-- MATTERMOST_OPEX_INTEGRATION.md
 |-- MCP_QUICK_START.md
+|-- Month-end Closing Task and Tax Filing ext.xlsx
 |-- NOVEMBER_2025_CLOSE_TIMELINE.md
 |-- NOVEMBER_2025_PPM_GO_LIVE_SUMMARY.md
 |-- OCR_PROJECT_COMPLETE.md
@@ -767,6 +801,7 @@ The system is designed to:
 |-- parity_report.json
 |-- ph_holidays_2026.csv
 |-- plan.md
+|-- pnpm-lock.yaml
 |-- pnpm-workspace.yaml
 |-- ppm_dashboard_views.xml
 |-- query_memory.py
