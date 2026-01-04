@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bf8cbbe613801492671be15e0904b80c405d47d8
+> Commit: c79f715bccd805fba2f01be4431a3dc3782b3093
 
 ```
 .
@@ -57,6 +57,7 @@
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-production.yml
 │   │   ├── diagrams-qa.yml
+│   │   ├── directional-sync.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── fin-workspace-lint.yml
 │   │   ├── fin-workspace-weekly-sync.yml
@@ -81,7 +82,8 @@
 │   │   └── workflow-yaml-validate.yml
 │   └── copilot-instructions.md
 ├── .insightpulse
-│   └── sync-config.yaml
+│   ├── sync-config.yaml
+│   └── sync.yaml
 ├── addons
 │   ├── ipai
 │   │   ├── ipai_advisor
@@ -1362,6 +1364,7 @@
 │   ├── DEPLOY_NOTION_WORKOS.md
 │   ├── DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md
 │   ├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
+│   ├── DIRECTIONAL_SYNC.md
 │   ├── DOCKERFILE_COMPARISON.md
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
@@ -1873,6 +1876,7 @@
 │   ├── spec_validate.sh
 │   ├── sync-tokens.sh
 │   ├── sync_current_state.sh
+│   ├── sync_directional.py
 │   ├── test_afc_rag.py
 │   ├── test_deploy_local.sh
 │   ├── update_diagram_manifest.py
@@ -2436,7 +2440,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-748 directories, 1683 files
+748 directories, 1687 files
 ```
 
 ## 📊 Stats
@@ -2444,7 +2448,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 850 |
-| Files | 2411 |
-| Python files | 626 |
+| Files | 2415 |
+| Python files | 627 |
 | XML files | 330 |
-| Markdown files | 465 |
+| Markdown files | 466 |
