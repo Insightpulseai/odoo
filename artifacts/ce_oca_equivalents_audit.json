@@ -1121,29 +1121,29 @@
     ],
     "ipai_ask_ai_chatter": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Dependency 'queue_job' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai_ask_ai_chatter/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_assets": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Dependency 'barcodes' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_assets/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_bir_compliance": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Missing reports/__init__.py",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_bir_compliance",
-        "fix_recommendation": "Create missing __init__.py file"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_bir_tax_compliance": [
@@ -1175,67 +1175,11 @@
     ],
     "ipai_clarity_ppm_parity": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Dependency 'project_key' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_category' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_wbs' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_parent_task_filter' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_milestone' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_task_milestone' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_task_dependency' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_task_checklist' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'project_timeline' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_close_orchestration": [
@@ -1276,25 +1220,11 @@
     ],
     "ipai_dev_studio_base": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Dependency 'board' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'base_automation' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
-      },
-      {
-        "status": "FAIL",
-        "stage": "static",
-        "error_summary": "Dependency 'documents' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_equipment": [
@@ -1398,11 +1328,11 @@
     ],
     "ipai_finance_ppm_golive": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Missing reports/__init__.py",
-        "file_line": "/home/user/odoo-ce/addons/ipai_finance_ppm_golive",
-        "fix_recommendation": "Create missing __init__.py file"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_finance_ppm_tdi": [
@@ -1416,11 +1346,11 @@
     ],
     "ipai_finance_ppm_umbrella": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Missing root __init__.py",
-        "file_line": "/home/user/odoo-ce/addons/ipai_finance_ppm_umbrella",
-        "fix_recommendation": "Create missing __init__.py file"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_finance_project_hybrid": [
@@ -1605,11 +1535,11 @@
     ],
     "ipai_studio_ai": [
       {
-        "status": "FAIL",
+        "status": "PASS",
         "stage": "static",
-        "error_summary": "Dependency 'base_automation' not found in addons path",
-        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_studio_ai/__manifest__.py",
-        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
       }
     ],
     "ipai_superset_connector": [

@@ -1,28 +1,18 @@
 module,status,stage,error_summary,file_line,fix_recommendation
 ipai_advisor,PASS,static,All static checks passed,,
 ipai_ask_ai,PASS,static,All static checks passed,,
-ipai_ask_ai_chatter,FAIL,static,Dependency 'queue_job' not found in addons path,/home/user/odoo-ce/addons/ipai_ask_ai_chatter/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_assets,FAIL,static,Dependency 'barcodes' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_assets/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_bir_compliance,FAIL,static,Missing reports/__init__.py,/home/user/odoo-ce/addons/ipai/ipai_bir_compliance,Create missing __init__.py file
+ipai_ask_ai_chatter,PASS,static,All static checks passed,,
+ipai_assets,PASS,static,All static checks passed,,
+ipai_bir_compliance,PASS,static,All static checks passed,,
 ipai_bir_tax_compliance,PASS,static,All static checks passed,,
 ipai_ce_branding,PASS,static,All static checks passed,,
 ipai_ce_cleaner,PASS,static,All static checks passed,,
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_key' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_category' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_wbs' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_parent_task_filter' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_milestone' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_task_milestone' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_task_dependency' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_task_checklist' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_clarity_ppm_parity,FAIL,static,Dependency 'project_timeline' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py,Add missing dependency to addons path or remove from depends
+ipai_clarity_ppm_parity,PASS,static,All static checks passed,,
 ipai_close_orchestration,PASS,static,All static checks passed,,
 ipai_crm_pipeline,PASS,static,All static checks passed,,
 ipai_custom_routes,PASS,static,All static checks passed,,
 ipai_default_home,PASS,static,All static checks passed,,
-ipai_dev_studio_base,FAIL,static,Dependency 'board' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_dev_studio_base,FAIL,static,Dependency 'base_automation' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py,Add missing dependency to addons path or remove from depends
-ipai_dev_studio_base,FAIL,static,Dependency 'documents' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py,Add missing dependency to addons path or remove from depends
+ipai_dev_studio_base,PASS,static,All static checks passed,,
 ipai_equipment,PASS,static,All static checks passed,,
 ipai_expense,PASS,static,All static checks passed,,
 ipai_finance_bir_compliance,PASS,static,All static checks passed,,
@@ -34,9 +24,9 @@ ipai_finance_monthly_closing,PASS,static,All static checks passed,,
 ipai_finance_ppm,PASS,static,All static checks passed,,
 ipai_finance_ppm_closing,PASS,static,All static checks passed,,
 ipai_finance_ppm_dashboard,PASS,static,All static checks passed,,
-ipai_finance_ppm_golive,FAIL,static,Missing reports/__init__.py,/home/user/odoo-ce/addons/ipai_finance_ppm_golive,Create missing __init__.py file
+ipai_finance_ppm_golive,PASS,static,All static checks passed,,
 ipai_finance_ppm_tdi,PASS,static,All static checks passed,,
-ipai_finance_ppm_umbrella,FAIL,static,Missing root __init__.py,/home/user/odoo-ce/addons/ipai_finance_ppm_umbrella,Create missing __init__.py file
+ipai_finance_ppm_umbrella,PASS,static,All static checks passed,,
 ipai_finance_project_hybrid,PASS,static,All static checks passed,,
 ipai_grid_view,PASS,static,All static checks passed,,
 ipai_industry_accounting_firm,PASS,static,All static checks passed,,
@@ -57,7 +47,7 @@ ipai_ppm_monthly_close,PASS,static,All static checks passed,,
 ipai_project_program,PASS,static,All static checks passed,,
 ipai_sms_gateway,PASS,static,All static checks passed,,
 ipai_srm,PASS,static,All static checks passed,,
-ipai_studio_ai,FAIL,static,Dependency 'base_automation' not found in addons path,/home/user/odoo-ce/addons/ipai/ipai_studio_ai/__manifest__.py,Add missing dependency to addons path or remove from depends
+ipai_studio_ai,PASS,static,All static checks passed,,
 ipai_superset_connector,PASS,static,All static checks passed,,
 ipai_tbwa_finance,PASS,static,All static checks passed,,
 ipai_theme_tbwa_backend,PASS,static,All static checks passed,,
