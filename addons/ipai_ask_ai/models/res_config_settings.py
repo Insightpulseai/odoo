@@ -16,3 +16,14 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="ipai_copilot.api_key",
         help="API Key for the Copilot service (optional for local/stub)",
     )
+    ipai_gemini_api_key = fields.Char(
+        string='Google Gemini API Key',
+        config_parameter='ipai_ask_ai.gemini_api_key',
+        help='API Key for Google Gemini AI service (used for generic queries)'
+    )
+    ipai_gemini_model = fields.Char(
+        string='Gemini Model',
+        config_parameter='ipai_ask_ai.gemini_model',
+        help='Gemini model to use (e.g., gemini-2.5-flash, gemini-3.0-flash)',
+        default='gemini-2.5-flash'
+    )
