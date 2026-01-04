@@ -1,0 +1,35 @@
+name: module-catalog-drift
+
+on:
+  pull_request:
+    paths:
+      - "addons/**/__manifest__.py"
+      - "artifacts/module_catalog.json"
+      - "scripts/emit_module_catalog.py"
+      - "scripts/enforce_assets_policy.py"
+  push:
+    branches: [ main ]
+    paths:
+      - "addons/**/__manifest__.py"
+      - "artifacts/module_catalog.json"
+      - "scripts/emit_module_catalog.py"
+      - "scripts/enforce_assets_policy.py"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with: 
+          python-version: "3.11"
+          
+      - name: Generate Module Catalog
+        run: python3 scripts/emit_module_catalog.py
+        
+      - name: Check for Drift
+        run: git diff --exit-code artifacts/module_catalog.json
+        
+      - name: Enforce Assets Policy
+        run: python3 scripts/enforce_assets_policy.py
