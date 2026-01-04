@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 69f250b774161151a9b14871182f0676db7e8d54
+> Commit: d695707b94de4f8fc7f860724a35ea0bdb5cbf07
 
 ```
 .
@@ -1387,6 +1387,7 @@
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
 │   ├── ODOO_18_EE_TO_CE_OCA_PARITY.md
+│   ├── ODOO_ADDONS_PATH_CONFIGURATION.md
 │   ├── ODOO_APPS_CATALOG.md
 │   ├── ODOO_ARCHITECT_PERSONA.md
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
@@ -2419,7 +2420,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-743 directories, 1671 files
+743 directories, 1672 files
 ```
 
 ## 📊 Stats
@@ -2427,7 +2428,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 845 |
-| Files | 2386 |
+| Files | 2387 |
 | Python files | 614 |
 | XML files | 327 |
-| Markdown files | 463 |
+| Markdown files | 464 |
