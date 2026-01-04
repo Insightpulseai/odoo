@@ -105,30 +105,85 @@ class IpaiAiStudioRun(models.Model):
 
     def _addons_root_candidates(self):
         """
-        Best-effort: pick a writable addons root from common self-hosted layouts.
-        You can hard-pin via system parameter: ipai_ai_studio.addons_root
+        Smart addons root detection with multiple fallback sources:
+        1. System parameter: ipai_ai_studio.addons_root (highest priority)
+        2. Odoo config addons_path (parsed from odoo.tools.config)
+        3. Environment variable: ODOO_EXTRA_ADDONS
+        4. This module's own directory (parent of ipai_ai_studio)
+        5. Common docker/deployment paths as fallback
         """
+        candidates = []
         icp = self.env["ir.config_parameter"].sudo()
+
+        # 1. System parameter (highest priority)
         pinned = icp.get_param("ipai_ai_studio.addons_root")
         if pinned:
-            return [pinned]
+            candidates.append(pinned)
 
-        return [
-            "/mnt/extra-addons",                 # common docker mount
-            "/opt/odoo/custom-addons",           # common custom
-            "/home/user/odoo-ce/addons",         # your observed layout
-            "/workspace/addons",                 # CI-ish
-        ]
+        # 2. Parse from Odoo's addons_path config
+        try:
+            from odoo.tools import config
+            addons_path = config.get("addons_path", "")
+            if addons_path:
+                # addons_path is comma-separated; prefer custom paths (not core)
+                for p in addons_path.split(","):
+                    p = p.strip()
+                    if p and not p.endswith("/odoo/addons"):
+                        candidates.append(p)
+        except Exception:
+            pass
+
+        # 3. Environment variable
+        env_addons = os.environ.get("ODOO_EXTRA_ADDONS")
+        if env_addons:
+            candidates.append(env_addons)
+
+        # 4. Detect from this module's own location (parent dir of ipai_ai_studio)
+        try:
+            this_file = os.path.abspath(__file__)
+            # Go up: models/ -> ipai_ai_studio/ -> ipai/ -> addons/
+            ipai_dir = os.path.dirname(os.path.dirname(this_file))
+            addons_dir = os.path.dirname(ipai_dir)
+            if os.path.basename(addons_dir) in ("addons", "extra-addons", "custom-addons"):
+                candidates.append(addons_dir)
+            # Also add ipai/ itself as a candidate for generated/
+            candidates.append(ipai_dir)
+        except Exception:
+            pass
+
+        # 5. Common docker/deployment paths (fallback)
+        candidates.extend([
+            "/mnt/extra-addons",
+            "/opt/odoo/custom-addons",
+            "/home/user/odoo-ce/addons",
+            "/home/user/odoo-ce/addons/ipai",
+            "/workspace/addons",
+        ])
+
+        # Deduplicate while preserving order
+        seen = set()
+        unique = []
+        for c in candidates:
+            if c and c not in seen:
+                seen.add(c)
+                unique.append(c)
+        return unique
 
     def _resolve_addons_root(self):
-        for p in self._addons_root_candidates():
+        """Find first writable addons root from candidates."""
+        candidates = self._addons_root_candidates()
+        for p in candidates:
             if p and os.path.isdir(p) and os.access(p, os.W_OK):
                 return p
+
+        # Provide helpful error with attempted paths
+        tried = ", ".join(candidates[:5]) + ("..." if len(candidates) > 5 else "")
         raise UserError(
             _(
-                "No writable addons root found. Set system parameter "
-                "ipai_ai_studio.addons_root to a writable path."
-            )
+                "No writable addons root found. Tried: %s\n\n"
+                "Set system parameter ipai_ai_studio.addons_root to a writable path, "
+                "or ensure one of the standard paths exists and is writable."
+            ) % tried
         )
 
     def _generated_base_dir(self):
