@@ -23,6 +23,7 @@ sensitive data and operations across all IPAI modules.
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
+    "icon": "fa-history",
     "depends": ["base", "mail"],
     "data": [
         "security/ir.model.access.csv",

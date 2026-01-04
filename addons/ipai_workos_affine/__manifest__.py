@@ -19,6 +19,7 @@
     "author": "InsightPulse AI",
     "website": "https://insightpulse.ai",
     "license": "AGPL-3",
+    "icon": "fa-layer-group",
     "depends": [
         "ipai_workos_core",
         "ipai_workos_blocks",

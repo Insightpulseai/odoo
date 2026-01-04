@@ -22,6 +22,7 @@ functionality like approver resolution, delegation, and escalation.
     "author": "IPAI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
+    "icon": "fa-check-circle",
     "depends": ["base", "mail", "ipai_platform_workflow"],
     "data": [
         "security/ir.model.access.csv",
