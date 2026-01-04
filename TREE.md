@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 118db8299e5915b26017719651478a35cdef1db9
+> Commit: e66f7b0662be4a07544b3bf61d4703037f77ebfb
 
 ```
 .
@@ -108,6 +108,22 @@
 │   │   ├── ipai_ai_studio
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ask_ai
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ask_ai_chatter
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -302,6 +318,14 @@
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ocr_expense
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_portal_fix
@@ -2057,6 +2081,7 @@
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
 │   ├── install_all_ipai_modules.sh
+│   ├── install_finance_stack.sh
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
 │   ├── introspect_project.py
@@ -2677,15 +2702,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-778 directories, 1894 files
+796 directories, 1901 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 879 |
-| Files | 2638 |
-| Python files | 649 |
-| XML files | 337 |
+| Directories | 905 |
+| Files | 2676 |
+| Python files | 669 |
+| XML files | 347 |
 | Markdown files | 551 |
