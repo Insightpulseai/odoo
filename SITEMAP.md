@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3009ad0a58c2a12634b10d623fa248c3cf339a03
+> Commit: 65cd6d01330ff2b668147b9162eafc60d8857eb3
 
 ## 📚 Documentation
 
@@ -192,6 +192,7 @@
 | [Deployment Guide: Finance Stack Health Monitoring & Automation](docs/DEPLOYMENT_GUIDE.md) | docs |
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
+| [Odoo Developer Tools (Debug Mode) — IPAI Usage Guide](docs/DEVELOPER_TOOLS.md) | docs |
 | [DigitalOcean SMTP Unblock Request](docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md) | docs |
 | [DigitalOcean Validation Framework](docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md) | docs |
 | [Directional Sync System](docs/DIRECTIONAL_SYNC.md) | docs |
@@ -296,19 +297,61 @@
 | [IPAI Module Suite - Operations Runbook](docs/ipai/OPERATIONS_RUNBOOK.md) | docs/ipai |
 | [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
 | [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
-| [IPAI Module Suite - Technical Documentation Index](docs/modules/INDEX.md) | docs/modules |
+| [IPAI Module Index](docs/modules/INDEX.md) | docs/modules |
+| [ipai_advisor](docs/modules/ipai_advisor.md) | docs/modules |
+| [ipai_agent_core](docs/modules/ipai_agent_core.md) | docs/modules |
+| [ipai_ask_ai](docs/modules/ipai_ask_ai.md) | docs/modules |
+| [ipai_ask_ai_chatter](docs/modules/ipai_ask_ai_chatter.md) | docs/modules |
+| [ipai_assets](docs/modules/ipai_assets.md) | docs/modules |
+| [ipai_bir_compliance](docs/modules/ipai_bir_compliance.md) | docs/modules |
 | [ipai_bir_tax_compliance](docs/modules/ipai_bir_tax_compliance.md) | docs/modules |
+| [ipai_ce_branding](docs/modules/ipai_ce_branding.md) | docs/modules |
+| [ipai_ce_cleaner](docs/modules/ipai_ce_cleaner.md) | docs/modules |
+| [ipai_clarity_ppm_parity](docs/modules/ipai_clarity_ppm_parity.md) | docs/modules |
 | [ipai_close_orchestration](docs/modules/ipai_close_orchestration.md) | docs/modules |
 | [ipai_crm_pipeline](docs/modules/ipai_crm_pipeline.md) | docs/modules |
+| [ipai_custom_routes](docs/modules/ipai_custom_routes.md) | docs/modules |
+| [ipai_default_home](docs/modules/ipai_default_home.md) | docs/modules |
+| [ipai_dev_studio_base](docs/modules/ipai_dev_studio_base.md) | docs/modules |
+| [ipai_equipment](docs/modules/ipai_equipment.md) | docs/modules |
+| [ipai_expense](docs/modules/ipai_expense.md) | docs/modules |
+| [ipai_finance_bir_compliance](docs/modules/ipai_finance_bir_compliance.md) | docs/modules |
+| [ipai_finance_close_automation](docs/modules/ipai_finance_close_automation.md) | docs/modules |
+| [ipai_finance_close_seed](docs/modules/ipai_finance_close_seed.md) | docs/modules |
+| [ipai_finance_closing](docs/modules/ipai_finance_closing.md) | docs/modules |
+| [ipai_finance_month_end](docs/modules/ipai_finance_month_end.md) | docs/modules |
+| [ipai_finance_monthly_closing](docs/modules/ipai_finance_monthly_closing.md) | docs/modules |
+| [ipai_finance_ppm](docs/modules/ipai_finance_ppm.md) | docs/modules |
+| [ipai_finance_ppm_closing](docs/modules/ipai_finance_ppm_closing.md) | docs/modules |
+| [ipai_finance_ppm_dashboard](docs/modules/ipai_finance_ppm_dashboard.md) | docs/modules |
 | [ipai_finance_ppm_golive](docs/modules/ipai_finance_ppm_golive.md) | docs/modules |
+| [ipai_finance_ppm_tdi](docs/modules/ipai_finance_ppm_tdi.md) | docs/modules |
+| [ipai_finance_ppm_umbrella](docs/modules/ipai_finance_ppm_umbrella.md) | docs/modules |
+| [ipai_finance_project_hybrid](docs/modules/ipai_finance_project_hybrid.md) | docs/modules |
+| [ipai_grid_view](docs/modules/ipai_grid_view.md) | docs/modules |
+| [ipai_industry_accounting_firm](docs/modules/ipai_industry_accounting_firm.md) | docs/modules |
+| [ipai_industry_marketing_agency](docs/modules/ipai_industry_marketing_agency.md) | docs/modules |
+| [ipai_master_control](docs/modules/ipai_master_control.md) | docs/modules |
 | [ipai_month_end](docs/modules/ipai_month_end.md) | docs/modules |
+| [ipai_month_end_closing](docs/modules/ipai_month_end_closing.md) | docs/modules |
+| [ipai_ocr_gateway](docs/modules/ipai_ocr_gateway.md) | docs/modules |
 | [ipai_platform_approvals](docs/modules/ipai_platform_approvals.md) | docs/modules |
 | [ipai_platform_audit](docs/modules/ipai_platform_audit.md) | docs/modules |
 | [ipai_platform_permissions](docs/modules/ipai_platform_permissions.md) | docs/modules |
 | [ipai_platform_theme](docs/modules/ipai_platform_theme.md) | docs/modules |
 | [ipai_platform_workflow](docs/modules/ipai_platform_workflow.md) | docs/modules |
+| [ipai_portal_fix](docs/modules/ipai_portal_fix.md) | docs/modules |
+| [ipai_ppm](docs/modules/ipai_ppm.md) | docs/modules |
 | [ipai_ppm_a1](docs/modules/ipai_ppm_a1.md) | docs/modules |
+| [ipai_ppm_monthly_close](docs/modules/ipai_ppm_monthly_close.md) | docs/modules |
+| [ipai_project_program](docs/modules/ipai_project_program.md) | docs/modules |
+| [ipai_sms_gateway](docs/modules/ipai_sms_gateway.md) | docs/modules |
+| [ipai_srm](docs/modules/ipai_srm.md) | docs/modules |
+| [ipai_studio_ai](docs/modules/ipai_studio_ai.md) | docs/modules |
+| [ipai_superset_connector](docs/modules/ipai_superset_connector.md) | docs/modules |
 | [ipai_tbwa_finance](docs/modules/ipai_tbwa_finance.md) | docs/modules |
+| [ipai_theme_tbwa_backend](docs/modules/ipai_theme_tbwa_backend.md) | docs/modules |
+| [ipai_web_theme_chatgpt](docs/modules/ipai_web_theme_chatgpt.md) | docs/modules |
 | [ipai_workos_affine](docs/modules/ipai_workos_affine.md) | docs/modules |
 | [ipai_workos_blocks](docs/modules/ipai_workos_blocks.md) | docs/modules |
 | [ipai_workos_canvas](docs/modules/ipai_workos_canvas.md) | docs/modules |
@@ -318,6 +361,7 @@
 | [ipai_workos_search](docs/modules/ipai_workos_search.md) | docs/modules |
 | [ipai_workos_templates](docs/modules/ipai_workos_templates.md) | docs/modules |
 | [ipai_workos_views](docs/modules/ipai_workos_views.md) | docs/modules |
+| [ipai_workspace_core](docs/modules/ipai_workspace_core.md) | docs/modules |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md) | docs/odoo-18-handbook |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/README.md) | docs/odoo-18-handbook |
 | [Finance & Accounting Overview – InsightPulseAI Edition](docs/odoo-18-handbook/pages/01-finance-accounting.md) | docs/odoo-18-handbook/pages |
