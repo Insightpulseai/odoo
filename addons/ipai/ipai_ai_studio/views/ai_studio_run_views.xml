@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_ipai_ai_studio_run_tree" model="ir.ui.view">
+    <field name="name">ipai.ai_studio.run.tree</field>
+    <field name="model">ipai.ai_studio.run</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="state"/>
+        <field name="module_name"/>
+        <field name="validation_ok"/>
+        <field name="create_date"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_ipai_ai_studio_run_form" model="ir.ui.view">
+    <field name="name">ipai.ai_studio.run.form</field>
+    <field name="model">ipai.ai_studio.run</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_draft_spec_from_prompt"
+                  type="object"
+                  string="Draft Spec (Ask AI)"
+                  class="btn-primary"/>
+          <button name="action_generate_from_spec"
+                  type="object"
+                  string="Generate"
+                  class="btn-primary"/>
+          <button name="action_validate"
+                  type="object"
+                  string="Validate"/>
+          <button name="action_apply"
+                  type="object"
+                  string="Apply"
+                  class="btn-secondary"/>
+          <button name="action_install_on_db"
+                  type="object"
+                  string="Install/Upgrade (Dev)"
+                  class="btn-danger"
+                  confirm="This will install/upgrade the module on the current database. Continue?"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,generated,validated,failed,applied"/>
+        </header>
+
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="module_name" placeholder="ipai_example_app"/>
+            <field name="workspace_path" readonly="1"/>
+            <field name="validation_ok" readonly="1"/>
+          </group>
+
+          <notebook>
+            <page string="Request">
+              <field name="prompt" placeholder="Describe the app you want... e.g., 'Create a vendor portal app with vendor name, email, and status fields'" nolabel="1"/>
+            </page>
+
+            <page string="Spec JSON">
+              <field name="spec_json" nolabel="1"
+                     placeholder='{"module_name":"ipai_example_app","app_name":"Example App","depends":["base"],"models":[...],"views":{...},"security":{...}}'/>
+            </page>
+
+            <page string="Generated Files">
+              <field name="generated_files_json" nolabel="1" readonly="1"/>
+            </page>
+
+            <page string="Validation Report">
+              <field name="validation_report" nolabel="1" readonly="1"/>
+            </page>
+          </notebook>
+        </sheet>
+      </form>
+    </field>
+  </record>
+</odoo>
