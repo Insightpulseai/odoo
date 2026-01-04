@@ -9,3 +9,4 @@ access_ipai_close_task_template,ipai.close.task.template,model_ipai_close_task_t
 access_ipai_close_task_step,ipai.close.task.step,model_ipai_close_task_step,base.group_user,1,1,1,1
 access_ipai_close_generation_run,ipai.close.generation.run,model_ipai_close_generation_run,base.group_user,1,1,1,1
 access_ipai_close_generated_map,ipai.close.generated.map,model_ipai_close_generated_map,base.group_user,1,1,1,1
+access_finance_recurrence_rule,finance.recurrence.rule,model_finance_recurrence_rule,base.group_user,1,1,1,1
