@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d695707b94de4f8fc7f860724a35ea0bdb5cbf07
+> Commit: 8b6332f9c5498c1c9f6d66a331f8b2819f30faba
 
 ```
 .
@@ -451,6 +451,7 @@
 │   │   │   ├── golive_item.py
 │   │   │   └── golive_section.py
 │   │   ├── reports
+│   │   │   ├── __init__.py
 │   │   │   └── golive_cfo_signoff.xml
 │   │   ├── security
 │   │   │   └── ir.model.access.csv
@@ -473,6 +474,7 @@
 │   │   ├── scripts
 │   │   │   └── generate_seed_from_excel.py
 │   │   ├── README.md
+│   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_grid_view
 │   │   ├── data
@@ -1036,6 +1038,11 @@
 │           ├── README.rst
 │           ├── __init__.py
 │           └── __manifest__.py
+├── artifacts
+│   ├── ce_oca_equivalents_audit.csv
+│   ├── ce_oca_equivalents_audit.json
+│   ├── ipai_quality_gate.csv
+│   └── ipai_quality_gate.json
 ├── audit
 │   ├── snapshot.json
 │   └── snapshot.txt
@@ -1338,6 +1345,7 @@
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
+│   ├── CE_OCA_EQUIVALENTS_AUDIT.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
 │   ├── DELIVERABLES_MANIFEST.md
@@ -1781,6 +1789,7 @@
 │   ├── build_and_push_version.sh
 │   ├── build_v0.10.0.sh
 │   ├── build_v0.9.1.sh
+│   ├── ce_oca_audit.py
 │   ├── check-enterprise-modules.sh
 │   ├── check_project_tasks.py
 │   ├── ci_local.sh
@@ -2420,15 +2429,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-743 directories, 1672 files
+744 directories, 1680 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 845 |
-| Files | 2387 |
-| Python files | 614 |
+| Directories | 846 |
+| Files | 2398 |
+| Python files | 618 |
 | XML files | 327 |
-| Markdown files | 464 |
+| Markdown files | 465 |
