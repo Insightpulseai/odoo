@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8b6332f9c5498c1c9f6d66a331f8b2819f30faba
+> Commit: bf8cbbe613801492671be15e0904b80c405d47d8
 
 ```
 .
@@ -63,6 +63,7 @@
 │   │   ├── finance-ppm-health.yml
 │   │   ├── health-check.yml
 │   │   ├── infra-validate.yml
+│   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── nextjs.yml
@@ -86,6 +87,12 @@
 │   │   ├── ipai_advisor
 │   │   │   ├── controllers
 │   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_studio
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
@@ -2429,15 +2436,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-744 directories, 1680 files
+748 directories, 1683 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 846 |
-| Files | 2398 |
-| Python files | 618 |
-| XML files | 327 |
+| Directories | 850 |
+| Files | 2411 |
+| Python files | 626 |
+| XML files | 330 |
 | Markdown files | 465 |
