@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6849d0ec4a14b31625052101ad57bb3059da93f1
+> Commit: 8ed5036de62f05197037d980b976c53be0e1bfe8
 
 ## 📚 Documentation
 
@@ -33,6 +33,7 @@
 | [InsightPulse Odoo (Delta Architecture)](CLAUDE_NEW.md) | . |
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
 | [Contributing to Odoo CE](CONTRIBUTING.md) | . |
+| [✅ DEPLOYMENT COMPLETE - All Custom Modules Fixed](DEPLOYMENT_COMPLETE.md) | . |
 | [Odoo CE Equipment MVP Deployment Guide](DEPLOYMENT_MVP.md) | . |
 | [WorkOS Production Deployment Report](DEPLOYMENT_REPORT.md) | . |
 | [WorkOS Production Deployment Report](DEPLOYMENT_REPORT_FINAL.md) | . |
