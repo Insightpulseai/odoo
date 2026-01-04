@@ -1,53 +1,72 @@
-// IPAI Design System Tokens
-// Generated from: kb/design_system/tokens.yaml
-// Inspired by SAP Fiori design principles with modern SaaS sensibilities
-
 // ============================================================================
-// COLOR TOKENS
+// IPAI Platform Design System - Core Tokens
+// ============================================================================
+// Single source of truth for all IPAI/Odoo theming.
+// These CSS custom properties can be overridden by skin modules.
 // ============================================================================
 
 :root {
-  // Primary
-  --ipai-primary: #0070f3;
-  --ipai-primary-light: #3291ff;
-  --ipai-primary-dark: #0051a3;
+  // ============================================================================
+  // BRAND TOKENS (Override these in skin modules like ipai_theme_tbwa_backend)
+  // ============================================================================
 
-  // Secondary
-  --ipai-secondary: #7928ca;
-  --ipai-secondary-light: #8a3fd1;
-  --ipai-secondary-dark: #5f1fa0;
+  // Primary brand color - used for buttons, links, focus states
+  --ipai-brand-primary: #F9C300;     // TBWA Yellow (default)
+  --ipai-brand-primary-hover: #FFDD2D;
+  --ipai-brand-primary-light: #FFF8E3;
+  --ipai-brand-primary-rgb: 249, 195, 0;  // For rgba() usage
 
-  // Semantic Colors
-  --ipai-success: #0ca678;
-  --ipai-success-light: #12b886;
-  --ipai-success-dark: #099268;
+  // Ink color - text on primary backgrounds
+  --ipai-brand-ink: #0B0B0B;
 
-  --ipai-warning: #f59f00;
-  --ipai-warning-light: #fcc419;
-  --ipai-warning-dark: #e67700;
+  // Surface colors
+  --ipai-brand-surface: #FFFFFF;
+  --ipai-brand-surface-alt: #F7F9FC;
+  --ipai-brand-muted: #F5F5F5;
+  --ipai-brand-border: #E5E7EB;
 
-  --ipai-error: #e03131;
-  --ipai-error-light: #f03e3e;
-  --ipai-error-dark: #c92a2a;
+  // Text colors
+  --ipai-text-primary: #111827;
+  --ipai-text-secondary: #6B7280;
+  --ipai-text-muted: #9CA3AF;
+  --ipai-text-inverse: #FFFFFF;
 
-  // Neutral Scale
-  --ipai-neutral-50: #fafafa;
-  --ipai-neutral-100: #f5f5f5;
-  --ipai-neutral-200: #e5e5e5;
-  --ipai-neutral-300: #d4d4d4;
-  --ipai-neutral-400: #a3a3a3;
-  --ipai-neutral-500: #737373;
-  --ipai-neutral-600: #525252;
-  --ipai-neutral-700: #404040;
-  --ipai-neutral-800: #262626;
-  --ipai-neutral-900: #171717;
+  // ============================================================================
+  // SEMANTIC COLORS
+  // ============================================================================
+
+  --ipai-success: #10B981;
+  --ipai-success-light: #D1FAE5;
+  --ipai-success-dark: #059669;
+
+  --ipai-warning: #F59E0B;
+  --ipai-warning-light: #FEF3C7;
+  --ipai-warning-dark: #D97706;
+
+  --ipai-error: #EF4444;
+  --ipai-error-light: #FEE2E2;
+  --ipai-error-dark: #DC2626;
+
+  --ipai-info: #3B82F6;
+  --ipai-info-light: #DBEAFE;
+  --ipai-info-dark: #2563EB;
+
+  // ============================================================================
+  // ODOO VARIABLE MAPPING
+  // Map IPAI tokens to Odoo's CSS custom properties
+  // ============================================================================
+
+  --o-brand-primary: var(--ipai-brand-primary);
+  --o-brand-odoo: var(--ipai-brand-primary);
+  --o-enterprise-color: var(--ipai-brand-primary);
+  --o-community-color: var(--ipai-brand-primary);
 
   // ============================================================================
   // TYPOGRAPHY TOKENS
   // ============================================================================
 
-  --ipai-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --ipai-font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --ipai-font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ipai-font-mono: "JetBrains Mono", "Fira Code", Consolas, monospace;
 
   // Font Sizes
   --ipai-text-xs: 0.75rem;    // 12px
@@ -89,15 +108,13 @@
   // BORDER TOKENS
   // ============================================================================
 
-  // Border Radius
-  --ipai-radius-none: 0;
-  --ipai-radius-sm: 0.25rem;   // 4px
-  --ipai-radius-base: 0.5rem;  // 8px
-  --ipai-radius-md: 0.75rem;   // 12px
-  --ipai-radius-lg: 1rem;      // 16px
+  --ipai-radius: 10px;         // Default border radius
+  --ipai-radius-sm: 6px;
+  --ipai-radius-md: 12px;
+  --ipai-radius-lg: 16px;
+  --ipai-radius-xl: 20px;
   --ipai-radius-full: 9999px;
 
-  // Border Width
   --ipai-border-thin: 1px;
   --ipai-border-base: 2px;
   --ipai-border-thick: 4px;
@@ -107,10 +124,11 @@
   // ============================================================================
 
   --ipai-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --ipai-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --ipai-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --ipai-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --ipai-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --ipai-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --ipai-shadow-panel: 0 8px 24px rgba(0, 0, 0, 0.08);
 
   // ============================================================================
   // TRANSITION TOKENS
@@ -133,29 +151,4 @@
   --ipai-z-modal: 1200;
   --ipai-z-tooltip: 1300;
   --ipai-z-toast: 1400;
-
-  // ============================================================================
-  // COMPONENT-SPECIFIC TOKENS
-  // ============================================================================
-
-  // Kanban Card
-  --ipai-kanban-card-padding: var(--ipai-space-3);
-  --ipai-kanban-card-radius: var(--ipai-radius-base);
-  --ipai-kanban-card-gap: var(--ipai-space-2);
-
-  // Form Fields
-  --ipai-input-padding-y: var(--ipai-space-2);
-  --ipai-input-padding-x: var(--ipai-space-3);
-  --ipai-input-radius: var(--ipai-radius-sm);
-  --ipai-input-border: var(--ipai-border-thin);
-
-  // Buttons
-  --ipai-btn-padding-y: var(--ipai-space-2);
-  --ipai-btn-padding-x: var(--ipai-space-4);
-  --ipai-btn-radius: var(--ipai-radius-base);
-
-  // Cards
-  --ipai-card-padding: var(--ipai-space-4);
-  --ipai-card-radius: var(--ipai-radius-md);
-  --ipai-card-shadow: var(--ipai-shadow-base);
 }
