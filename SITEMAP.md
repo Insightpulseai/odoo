@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 65cd6d01330ff2b668147b9162eafc60d8857eb3
+> Commit: 03e3c0a1a7539f0c4ccab01150e590c0023c2de8
 
 ## 📚 Documentation
 
@@ -228,6 +228,8 @@
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |
 | [MCP + Supabase Integration Architecture](docs/MCP_SUPABASE_INTEGRATION.md) | docs |
 | [Mixed Content Fix - HTTPS Asset Loading](docs/MIXED_CONTENT_FIX.md) | docs |
+| [IPAI Custom Modules - Complete Status Report](docs/MODULE_STATUS_FINAL.md) | docs |
+| [Odoo CE Custom Modules Status Report](docs/MODULE_STATUS_REPORT.md) | docs |
 | [fin-workspace Monorepo Structure](docs/MONOREPO_STRUCTURE.md) | docs |
 | [Odoo CE MVP Go-Live Checklist](docs/MVP_GO_LIVE_CHECKLIST.md) | docs |
 | [n8n Credentials Bootstrap – Finance Stack](docs/N8N_CREDENTIALS_BOOTSTRAP.md) | docs |
