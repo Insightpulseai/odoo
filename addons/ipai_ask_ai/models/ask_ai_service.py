@@ -8,12 +8,14 @@ natural language queries and generating contextual responses.
 
 import json
 import logging
+import os
 import re
 from datetime import datetime, timedelta
 
-from odoo.exceptions import AccessError, UserError
+import requests
 
 from odoo import _, api, fields, models
+from odoo.exceptions import AccessError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -367,7 +369,17 @@ class IpaiAskAIService(models.TransientModel):
         return {"message": message}
 
     def _generate_generic_response(self, query, context):
-        """Generate a generic response for unrecognized queries."""
+        """Generate a generic response for unrecognized queries using Gemini."""
+        # Try Gemini AI for generic queries
+        gemini_response = self._call_gemini(query, context)
+
+        if gemini_response.get("success"):
+            return {
+                "message": gemini_response["message"],
+                "data": {"source": "gemini"},
+            }
+
+        # Fallback to default response
         return {
             "message": _(
                 "I'm not sure how to answer that question. "
@@ -381,6 +393,86 @@ class IpaiAskAIService(models.TransientModel):
         if currency is None:
             currency = self.env.company.currency_id
         return "%s %.2f" % (currency.symbol or "$", amount)
+
+    def _call_gemini(self, query, context):
+        """
+        Call Google Gemini API for generic query responses.
+
+        Args:
+            query: User's question
+            context: Query context
+
+        Returns:
+            dict: Response with success flag and message
+        """
+        # Get API key from config parameter or environment
+        IrConfig = self.env["ir.config_parameter"].sudo()
+        api_key = IrConfig.get_param("ipai_ask_ai.gemini_api_key") or os.getenv("GEMINI_API_KEY")
+
+        if not api_key:
+            _logger.warning("Gemini API key not configured")
+            return {"success": False, "message": "Gemini API not configured"}
+
+        # Get model name from config
+        model = IrConfig.get_param("ipai_ask_ai.gemini_model", "gemini-2.5-flash")
+
+        # Build system context
+        system_context = (
+            "You are an AI assistant integrated into an Odoo ERP system. "
+            "Provide helpful, concise business-focused responses. "
+            "If the user asks about data you don't have access to, "
+            "politely suggest they use specific Odoo features or menus."
+        )
+
+        # Gemini REST API endpoint
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "contents": [{
+                "parts": [{
+                    "text": f"{system_context}\n\nUser question: {query}"
+                }]
+            }],
+            "generationConfig": {
+                "temperature": 0.7,
+                "maxOutputTokens": 500,
+            }
+        }
+
+        try:
+            response = requests.post(
+                url,
+                headers=headers,
+                params={"key": api_key},
+                json=payload,
+                timeout=10
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                if "candidates" in data and len(data["candidates"]) > 0:
+                    message = data["candidates"][0]["content"]["parts"][0]["text"]
+                    return {
+                        "success": True,
+                        "message": message.strip(),
+                    }
+                else:
+                    _logger.warning("Gemini returned no candidates")
+                    return {"success": False, "message": "No response from Gemini"}
+            else:
+                _logger.error("Gemini API error: %s - %s", response.status_code, response.text)
+                return {"success": False, "message": f"Gemini API error: {response.status_code}"}
+
+        except requests.Timeout:
+            _logger.error("Gemini API timeout")
+            return {"success": False, "message": "Gemini API timeout"}
+        except Exception as e:
+            _logger.exception("Gemini API exception: %s", str(e))
+            return {"success": False, "message": f"Gemini error: {str(e)}"}
 
     @api.model
     def get_or_create_ai_channel(self):
