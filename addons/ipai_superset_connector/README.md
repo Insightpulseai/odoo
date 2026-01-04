@@ -1,245 +1,120 @@
 # IPAI Superset Connector
 
-**Odoo 18 CE ↔ Apache Superset Integration**  
+## 1. Overview
+Apache Superset integration with managed dataset sync
+
+**Technical Name**: `ipai_superset_connector`
+**Category**: Reporting/BI
+**Version**: 18.0.1.0.0
+**Author**: InsightPulse AI
+
+## 2. Functional Scope
+
+IPAI Superset Connector
+=======================
+
+Enterprise-grade Apache Superset integration for Odoo 18 CE.
 Replaces Power BI Connector ($400) with zero licensing cost.
 
-## Architecture Improvements over Original Spec
+Architecture
+------------
+This module uses a **Direct PostgreSQL + Managed Views** approach:
 
-The original spec proposed a custom SQLAlchemy dialect to query Odoo directly. This is fundamentally flawed because **Odoo doesn't speak SQL** - it uses JSON-RPC/XML-RPC.
+1. **Read Replica Connection** (Recommended)
+   - Superset connects directly to Odoo's PostgreSQL read replica
+   - Zero ETL latency, real-time dashboards
+   - Requires PostgreSQL streaming replication setup
 
-### What We Built Instead
+2. **Managed SQL Views**
+   - Creates optimized SQL views for common analytics needs
+   - Flattens Odoo's relational model for BI consumption
+   - Handles multi-company security via RLS
 
-| Approach | Original Spec | This Implementation |
-|----------|--------------|---------------------|
-| Data Access | Custom SQLAlchemy shim (fragile) | Direct PostgreSQL + SQL Views |
-| Latency | High (API translation) | Low (native SQL) |
-| Complexity | Very High | Medium |
-| Reliability | Poor | Excellent |
-| Superset Features | Limited | Full |
+3. **Dataset Registry**
+   - Tracks which Odoo models are exposed to Superset
+   - Generates Superset dataset definitions via API
+   - Manages column metadata and relationships
 
-### Architecture
+Features
+--------
+* Direct PostgreSQL connection (no middleware)
+* Pre-built analytics views for Sales, Finance, HR, Inventory
+* Row-Level Security (RLS) based on Odoo's ir.rule
+* Automated dataset refresh via Superset API
+* Multi-tenant support (company_id filtering)
+* BIR compliance views for Philippine tax reporting
 
-```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│                 │     │                  │     │                 │
-│  Apache         │────▶│  PostgreSQL      │◀────│  Odoo 18 CE     │
-│  Superset       │ SQL │  (Read Replica)  │ ORM │                 │
-│                 │     │                  │     │                 │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-                               ▲
-                               │
-                        ┌──────┴──────┐
-                        │   SQL Views  │
-                        │   (Managed)  │
-                        └─────────────┘
-```
+Power BI Parity
+---------------
+✓ Real-time data sync (via read replica)
+✓ Scheduled refresh (via Superset cron)
+✓ Multiple workspaces (via Superset schemas)
+✓ Table relationships (via SQL views)
+✓ Authentication (via PostgreSQL + RLS)
+✓ Custom metrics (via Superset metrics)
 
-**Key Design Decisions:**
+NOT Implemented (by design):
+✗ KQL/Kusto queries (use SQL instead)
+✗ Microsoft Fabric (use Superset + PostgreSQL)
+✗ Eventhouse (use materialized views)
 
-1. **Direct PostgreSQL Connection** - Superset connects to Odoo's PostgreSQL database directly
-2. **Managed SQL Views** - Module creates optimized views that flatten Odoo's relational model
-3. **No Middleware** - Zero ETL latency, real-time dashboards
-4. **Row-Level Security** - Multi-tenant filtering via `company_id`
+Architecture: Smart Delta
+-------------------------
+This module follows ipai_* patterns:
+- Extends core models via _inherit
+- No monkey-patching or forks
+- OCA-compatible, AGPL-3 licensed
+    
 
-## Features
+## 3. Installation & Dependencies
+Dependencies (CE/OCA):
+- `base`
+- `mail`
+- `sale`
+- `account`
+- `stock`
+- `hr`
+- `project`
 
-### Power BI Parity Matrix
+## 4. Configuration
+Key system parameters or settings groups:
+- (Audit Pending)
 
-| Feature | Power BI Connector | This Module | Notes |
-|---------|-------------------|-------------|-------|
-| Real-time Sync | ✓ via API | ✓ via SQL | Faster |
-| Scheduled Refresh | ✓ | ✓ | Superset cron |
-| Multiple Workspaces | ✓ | ✓ | Schemas |
-| Table Relationships | ✓ | ✓ | SQL JOINs |
-| Authentication | MSAL | PostgreSQL + RLS | Simpler |
-| Custom Metrics | ✓ | ✓ | Superset metrics |
-| **Cost** | **$400** | **$0** | Zero license |
+## 5. Data Model
+Defined Models:
+- `tableself.view_name if self.source_type in (model, view) else self.technical_name`
+- `viewfields.Char(`
+- `rec.viewFalse`
+- `superset.dataset`
+- `db_connectionfields.Char(`
+- `tablemodel._table`
+- `technicalfields.Char(`
+- `superset.dataset.column`
+- `modelfields.Char(`
+- `cleanre.sub(r[^a-z0-9_], _, rec.technical_name.lower())`
+- `rec.viewfsuperset_{clean_name}`
+- `fieldfield.name`
+- `superset.connection`
+- `superset.analytics.view`
+- `self.technicalself.model_id.model.replace(., _)`
+- `technicalfields.Char(string=Technical Name, required=True)`
 
-### Pre-built Analytics Views
+## 6. User Interface
+- **Views**: 7 files
+- **Menus**: (Audit Pending)
 
-| View | Category | Description |
-|------|----------|-------------|
-| `superset_sales_order_analysis` | Sales | Orders with customer dimensions |
-| `superset_account_move_analysis` | Finance | Journal entries with GL dimensions |
-| `superset_trial_balance` | Finance | Account balances by period |
-| `superset_bir_vat_analysis` | BIR | VAT I/O for 2550Q filing |
-| `superset_stock_valuation` | Inventory | Stock levels with valuation |
-| `superset_project_task_analysis` | Project | Tasks with status metrics |
-| `superset_employee_analysis` | HR | Employee demographics |
+## 7. Security
+- **Access Rules**: `ir.model.access.csv` found
+- **Groups**: `security.xml` not found
 
-## Installation
+## 8. Integrations
+- (Audit Pending)
 
-### Prerequisites
-
-1. **Apache Superset** - Running instance
-2. **PostgreSQL Read Replica** (recommended) - Or direct access to Odoo's database
-3. **Odoo 18 CE** - With this module installed
-
-### Install Module
-
+## 9. Verification Steps
 ```bash
-# Copy to addons folder
-cp -r ipai_superset_connector /mnt/extra-addons/
+# Install
+odoo-bin -d <db> -i ipai_superset_connector --stop-after-init
 
-# Update and install
-docker exec -it odoo-web odoo -d your_db -i ipai_superset_connector --stop-after-init
+# Upgrade
+odoo-bin -d <db> -u ipai_superset_connector --stop-after-init
 ```
-
-### Configure Connection
-
-1. Go to **Superset → Connections → Create**
-2. Enter Superset URL and credentials
-3. Enter PostgreSQL connection details (Odoo's database)
-4. Click **Test Connection**
-5. Click **Create Database in Superset**
-
-### Create Datasets
-
-**Option A: Single Dataset**
-1. Go to **Superset → Create Dataset**
-2. Select an Odoo model
-3. Choose fields to include
-4. Click **Create Dataset**
-
-**Option B: Bulk Create**
-1. Go to **Superset → Bulk Create**
-2. Select a preset (Sales, Finance, etc.)
-3. Click **Create Datasets**
-
-### Create Analytics Views
-
-1. Go to **Settings → Superset**
-2. Click **Create All Analytics Views**
-3. Views are now available in Superset
-
-## API Reference
-
-### Superset Connection Model
-
-```python
-from odoo import api, models
-
-# Get connection
-conn = self.env['superset.connection'].browse(1)
-
-# Test connection
-conn.action_test_connection()
-
-# Create database in Superset
-conn.action_create_database_connection()
-
-# Sync all datasets
-conn.action_sync_all_datasets()
-
-# API calls
-result = conn._api_call('GET', '/api/v1/database/')
-```
-
-### Superset Dataset Model
-
-```python
-# Create dataset
-dataset = self.env['superset.dataset'].create({
-    'name': 'My Dataset',
-    'technical_name': 'my_dataset',
-    'connection_id': conn.id,
-    'source_type': 'model',
-    'model_id': self.env.ref('sale.model_sale_order').id,
-    'include_all_fields': True,
-})
-
-# Generate SQL
-dataset.action_generate_sql()
-
-# Create view in PostgreSQL
-dataset.action_create_view()
-
-# Sync to Superset
-dataset.action_sync_to_superset()
-```
-
-## PostgreSQL Setup
-
-### Option 1: Read Replica (Recommended)
-
-```sql
--- On primary server, create replication slot
-SELECT pg_create_logical_replication_slot('superset_replica', 'pgoutput');
-
--- On replica, create read-only user
-CREATE USER superset_reader WITH PASSWORD 'secure_password';
-GRANT CONNECT ON DATABASE odoo TO superset_reader;
-GRANT USAGE ON SCHEMA public TO superset_reader;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO superset_reader;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO superset_reader;
-```
-
-### Option 2: Direct Access (Simpler)
-
-```sql
--- Create read-only user on Odoo's database
-CREATE USER superset_reader WITH PASSWORD 'secure_password';
-GRANT CONNECT ON DATABASE odoo TO superset_reader;
-GRANT USAGE ON SCHEMA public TO superset_reader;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO superset_reader;
-
--- Grant access to future tables
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO superset_reader;
-```
-
-## Multi-Tenant / Row-Level Security
-
-Enable RLS in dataset settings to filter by `company_id`:
-
-```sql
--- Example: User can only see their company's data
-CREATE POLICY company_isolation ON superset_sales_order_analysis
-    FOR SELECT
-    USING (company_id = current_setting('app.company_id')::integer);
-```
-
-In Superset, configure RLS rules per role.
-
-## Comparison: Original Spec vs This Implementation
-
-### Original Spec Issues
-
-1. **Impossible Architecture** - SQLAlchemy dialect can't translate SQL to Odoo's JSON-RPC
-2. **No Working Code** - Only pseudocode stubs
-3. **Missing Connection Pooling** - Odoo's API is stateless
-4. **No Error Handling** - Production-critical
-5. **No Caching Strategy** - Performance issue
-
-### This Implementation Fixes
-
-1. **Direct PostgreSQL** - Works natively with Superset
-2. **Complete Module** - Production-ready Odoo module
-3. **SQL Views** - Optimized for BI queries
-4. **Full Error Handling** - Try/except, logging, user feedback
-5. **Managed Metadata** - Tracks sync status, last refresh
-
-## Smart Delta Architecture
-
-This module follows the `ipai_*` Smart Delta pattern:
-
-- ✓ Extends core models via `_inherit`
-- ✓ No monkey-patching or forks
-- ✓ OCA-compatible manifest
-- ✓ AGPL-3 licensed
-- ✓ Marketplace-ready
-
-## Roadmap
-
-- [ ] Superset chart/dashboard creation from Odoo
-- [ ] Webhook-based cache invalidation
-- [ ] n8n workflow integration for ETL
-- [ ] Materialized views for heavy aggregations
-- [ ] Apache Druid integration for real-time analytics
-
-## License
-
-AGPL-3.0 (OCA-compatible)
-
-## Author
-
-InsightPulse AI - https://insightpulseai.net

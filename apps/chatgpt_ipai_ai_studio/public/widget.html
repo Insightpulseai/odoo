@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPAI AI Studio</title>
+    <style>
+        :root {
+            --brand-primary: #F9C300;
+            --brand-ink: #0B0B0B;
+            --surface: #ffffff;
+            --surface-alt: #f7f9fc;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --border: #e5e7eb;
+            --success: #10b981;
+            --error: #ef4444;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--surface-alt);
+            color: var(--text-primary);
+            padding: 16px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--brand-primary);
+            color: var(--brand-ink);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            font-size: 24px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header p {
+            font-size: 13px;
+            opacity: 0.8;
+            margin-top: 2px;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--brand-primary);
+            box-shadow: 0 0 0 3px rgba(249, 195, 0, 0.2);
+        }
+
+        .button-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 100px;
+            padding: 10px 16px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--brand-primary);
+            color: var(--brand-ink);
+        }
+
+        .btn-primary:hover {
+            background: #ffdd2d;
+        }
+
+        .btn-secondary {
+            background: var(--surface-alt);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: #eef2ff;
+            border-color: var(--brand-primary);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .output {
+            margin-top: 20px;
+        }
+
+        .output-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .output-content {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 14px;
+            border-radius: var(--radius-sm);
+            font-family: "JetBrains Mono", "Fira Code", Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            margin-top: 16px;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status.loading {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .footer {
+            padding: 12px 20px;
+            background: var(--surface-alt);
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: var(--brand-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <span class="header-icon">✨</span>
+                <div>
+                    <h1>IPAI AI Studio</h1>
+                    <p>Customize Odoo with natural language</p>
+                </div>
+            </div>
+
+            <div class="content">
+                <div class="input-group">
+                    <label for="prompt">What would you like to do?</label>
+                    <textarea id="prompt" placeholder="Examples:
+• Add a phone number field to contacts
+• Show my overdue tasks
+• When an invoice is confirmed, send an email"></textarea>
+                </div>
+
+                <div class="button-row">
+                    <button class="btn-primary" id="runBtn">Run Command</button>
+                    <button class="btn-secondary" id="analyzeBtn">Analyze Only</button>
+                </div>
+
+                <div id="statusContainer"></div>
+
+                <div class="output" id="outputContainer" style="display: none;">
+                    <div class="output-label">Response</div>
+                    <div class="output-content" id="outputContent">Waiting...</div>
+                </div>
+            </div>
+
+            <div class="footer">
+                Powered by <a href="https://insightpulseai.net" target="_blank">InsightPulse AI</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        const promptEl = document.getElementById('prompt');
+        const runBtn = document.getElementById('runBtn');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const statusContainer = document.getElementById('statusContainer');
+        const outputContainer = document.getElementById('outputContainer');
+        const outputContent = document.getElementById('outputContent');
+
+        function showStatus(type, message) {
+            const icons = {
+                success: '✓',
+                error: '✗',
+                loading: ''
+            };
+            const spinnerHtml = type === 'loading' ? '<div class="spinner"></div>' : '';
+            statusContainer.innerHTML = `
+                <div class="status ${type}">
+                    ${spinnerHtml}
+                    <span>${icons[type] || ''} ${message}</span>
+                </div>
+            `;
+        }
+
+        function showOutput(data) {
+            outputContainer.style.display = 'block';
+            outputContent.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+        }
+
+        async function callTool(name, args) {
+            try {
+                if (window.openai && window.openai.callTool) {
+                    return await window.openai.callTool({ name, arguments: args });
+                } else {
+                    // Fallback for testing outside ChatGPT
+                    console.log('Tool call (mock):', name, args);
+                    return { mock: true, tool: name, args };
+                }
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        async function handleRun() {
+            const prompt = promptEl.value.trim();
+            if (!prompt) {
+                showStatus('error', 'Please enter a command');
+                return;
+            }
+
+            runBtn.disabled = true;
+            analyzeBtn.disabled = true;
+            showStatus('loading', 'Processing command...');
+
+            try {
+                const result = await callTool('odoo_ai_studio_process_command', { command: prompt });
+                showStatus('success', 'Command processed successfully');
+                showOutput(result);
+            } catch (error) {
+                showStatus('error', `Error: ${error.message || 'Unknown error'}`);
+                showOutput({ error: error.message });
+            } finally {
+                runBtn.disabled = false;
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        async function handleAnalyze() {
+            const prompt = promptEl.value.trim();
+            if (!prompt) {
+                showStatus('error', 'Please enter a command');
+                return;
+            }
+
+            runBtn.disabled = true;
+            analyzeBtn.disabled = true;
+            showStatus('loading', 'Analyzing command...');
+
+            try {
+                const result = await callTool('odoo_ai_studio_analyze', { command: prompt });
+                showStatus('success', 'Analysis complete');
+                showOutput(result);
+            } catch (error) {
+                showStatus('error', `Error: ${error.message || 'Unknown error'}`);
+                showOutput({ error: error.message });
+            } finally {
+                runBtn.disabled = false;
+                analyzeBtn.disabled = false;
+            }
+        }
+
+        runBtn.addEventListener('click', handleRun);
+        analyzeBtn.addEventListener('click', handleAnalyze);
+
+        // Handle Enter key in textarea (Shift+Enter for newline)
+        promptEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleRun();
+            }
+        });
+
+        // Show any pre-populated tool output
+        if (window.openai && window.openai.toolOutput) {
+            showOutput(window.openai.toolOutput);
+        }
+    </script>
+</body>
+</html>

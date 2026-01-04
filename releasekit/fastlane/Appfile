@@ -1,0 +1,12 @@
+# Appfile - Fastlane app configuration
+# Environment variables should be set in CI/CD or .env file
+
+# iOS Configuration
+app_identifier(ENV["IOS_BUNDLE_ID"]) if ENV["IOS_BUNDLE_ID"]
+apple_id(ENV["APPLE_ID"]) if ENV["APPLE_ID"]
+team_id(ENV["APPLE_TEAM_ID"]) if ENV["APPLE_TEAM_ID"]
+itc_team_id(ENV["ITC_TEAM_ID"]) if ENV["ITC_TEAM_ID"]
+
+# Android Configuration
+json_key_data(ENV["SUPPLY_JSON_KEY_DATA"]) if ENV["SUPPLY_JSON_KEY_DATA"]
+package_name(ENV["ANDROID_PACKAGE_NAME"]) if ENV["ANDROID_PACKAGE_NAME"]
