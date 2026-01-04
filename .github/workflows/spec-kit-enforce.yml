@@ -98,13 +98,7 @@ jobs:
             echo "Validating YAML files in spec bundles..."
             while IFS= read -r f; do
               [ -z "$f" ] && continue
-              python3 - <<PY
-import yaml, sys
-p = r"""$f"""
-with open(p, "r", encoding="utf-8") as fh:
-    yaml.safe_load(fh)
-print("OK:", p)
-PY
+              python3 -c "import yaml; yaml.safe_load(open(r'''$f''', encoding='utf-8')); print('OK:', r'''$f''')"
             done <<< "$yaml_files"
           else
             echo "No YAML files found under spec/."

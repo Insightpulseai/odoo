@@ -1,89 +1,100 @@
-name: Infrastructure Validation
+name: Infrastructure Validation (DigitalOcean)
 
-# DISABLED: Project uses DigitalOcean, not Azure (per CLAUDE.md)
-# Azure services are prohibited for this project
 on:
-  workflow_dispatch:
   pull_request:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: infra-validate-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  validate-bicep:
-    name: Validate Bicep Templates
+  validate-docker:
+    name: Validate Docker / Compose
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Azure CLI
+      - name: Show versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker --version
+          docker compose version
+
+      - name: Validate compose files (if present)
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(docker-compose.yml docker-compose.yaml docker-compose.*.yml docker-compose.*.yaml)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No docker-compose files found; skipping."
+            exit 0
+          fi
+          for f in "${files[@]}"; do
+            echo "==> docker compose config: $f"
+            docker compose -f "$f" config >/dev/null
+          done
+
+      - name: Validate ops files (non-blocking)
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f CLAUDE.md || echo "::warning::Missing CLAUDE.md"
+          test -d .github/workflows || echo "::warning::Missing .github/workflows"
+
+  azure-lint-optional:
+    name: (Optional) Azure Bicep Lint (manual only)
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    env:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Skip if no AZURE_CREDENTIALS
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${AZURE_CREDENTIALS:-}" ]; then
+            echo "AZURE_CREDENTIALS not set; skipping Azure lint."
+            exit 0
+          fi
+
+      - name: Azure login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-        continue-on-error: true
 
       - name: Install Bicep CLI
+        shell: bash
         run: |
+          set -euo pipefail
           curl -Lo bicep https://github.com/Azure/bicep/releases/latest/download/bicep-linux-x64
           chmod +x ./bicep
           sudo mv ./bicep /usr/local/bin/bicep
           bicep --version
 
-      - name: Lint Bicep files
+      - name: Lint Bicep files (soft)
+        shell: bash
         run: |
+          set -euo pipefail
+          if [ ! -d infra/azure ]; then
+            echo "infra/azure not present; skipping."
+            exit 0
+          fi
           cd infra/azure
           for file in $(find . -name "*.bicep"); do
             echo "Linting $file"
             bicep lint "$file" || true
           done
-
-      - name: Build Bicep templates
-        run: |
-          cd infra/azure
-          bicep build main.bicep --outfile main.json
-
-      - name: Validate ARM template (dev)
-        if: always()
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-        run: |
-          if [ -z "$AZURE_CREDENTIALS" ]; then
-            echo "Skipping validation (AZURE_CREDENTIALS not set)"
-            exit 0
-          fi
-          az deployment group validate \
-            --resource-group rg-notion-ppm-dev \
-            --template-file infra/azure/main.json \
-            --parameters infra/azure/parameters/dev.parameters.json
-        continue-on-error: true
-
-      - name: Upload ARM template
-        uses: actions/upload-artifact@v4
-        with:
-          name: arm-template
-          path: infra/azure/main.json
-          retention-days: 7
-
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run Checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          directory: infra/azure
-          framework: bicep
-          soft_fail: true
-          output_format: sarif
-          output_file_path: checkov-results.sarif
-
-      - name: Upload SARIF results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: checkov-results.sarif
-        continue-on-error: true
