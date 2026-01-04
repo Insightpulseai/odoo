@@ -14,7 +14,7 @@
     "author": "InsightPulse AI",
     "website": "https://insightpulse.ai",
     "license": "AGPL-3",
-    "depends": ["base", "web", "mail"],
+    "depends": ["base", "web", "mail", "ipai_workos_core"],
     "data": [
         "security/ir.model.access.csv",
         "views/canvas_views.xml",
