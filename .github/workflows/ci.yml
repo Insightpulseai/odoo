@@ -1,10 +1,14 @@
-name: Odoo 18 CE / OCA CI
+name: CI
 
 on:
   push:
     branches: [ main, "18.0", "18.0-*", "claude/*" ]
   pull_request:
     branches: [ main, "18.0", "18.0-*" ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
