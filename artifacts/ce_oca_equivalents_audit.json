@@ -1,0 +1,1742 @@
+{
+  "environment": {
+    "odoo_version": "18.0",
+    "addons_paths": {
+      "custom": "/home/user/odoo-ce/addons",
+      "custom_nested": "/home/user/odoo-ce/addons/ipai",
+      "oca": "/home/user/odoo-ce/external-src",
+      "ce_core": "/usr/lib/python3/dist-packages/odoo/addons"
+    }
+  },
+  "modules": [
+    {
+      "name": "sale_management",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/sale_management",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "pos_restaurant",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/pos_restaurant",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "account",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/account",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "ipai_workos_core",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai_workos_core",
+      "manifest_name": "IPAI Work OS Core",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "ipai_platform_permissions",
+        "ipai_platform_audit"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "crm",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/crm",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "mrp_workorder",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "mrp_multi_level",
+        "mrp_multi_level_estimate",
+        "mrp_production_request",
+        "mrp_workorder_sequence"
+      ],
+      "oca_repos": [
+        "OCA/manufacture"
+      ],
+      "oca_parity": "90%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Missing tablet view, but core functionality covered"
+    },
+    {
+      "name": "website",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "stock",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/stock",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "accountant",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "account_financial_report",
+        "mis_builder",
+        "mis_builder_budget",
+        "account_asset_management",
+        "account_reconcile_oca"
+      ],
+      "oca_repos": [
+        "OCA/account-financial-reporting",
+        "OCA/mis-builder",
+        "OCA/account-financial-tools"
+      ],
+      "oca_parity": "95%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Full replacement except for some automated entries"
+    },
+    {
+      "name": "knowledge",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "knowledge"
+      ],
+      "oca_repos": [
+        "OCA/knowledge"
+      ],
+      "oca_parity": "70%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Basic knowledge base, or use control_room.kb custom replacement"
+    },
+    {
+      "name": "purchase",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/purchase",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "point_of_sale",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/point_of_sale",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "project",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/project",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "website_sale",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_sale",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "mrp",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mrp",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "mass_mailing",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mass_mailing",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "timesheet_grid",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "hr_timesheet_sheet",
+        "hr_timesheet_task_required",
+        "project_timesheet_time_control"
+      ],
+      "oca_repos": [
+        "OCA/timesheet",
+        "OCA/project"
+      ],
+      "oca_parity": "90%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Grid view via sheet, slightly different UX"
+    },
+    {
+      "name": "hr_expense",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_expense",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "web_studio",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "50%",
+      "notes": "Enterprise-only module (not available in CE). OCA: No direct OCA equivalent; use control_room.studio custom replacement"
+    },
+    {
+      "name": "hr_holidays",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_holidays",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "hr_recruitment",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_recruitment",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "industry_fsm",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "fieldservice",
+        "fieldservice_project"
+      ],
+      "oca_repos": [
+        "OCA/field-service"
+      ],
+      "oca_parity": "80%",
+      "notes": "Enterprise-only module (not available in CE). OCA: OCA Field Service suite provides good coverage"
+    },
+    {
+      "name": "hr",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "data_recycle",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "auto_backup",
+        "database_cleanup"
+      ],
+      "oca_repos": [
+        "OCA/server-tools"
+      ],
+      "oca_parity": "50%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Different approach; cleanup vs recycle bin"
+    },
+    {
+      "name": "ipai_bir_tax_compliance",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai_bir_tax_compliance",
+      "manifest_name": "IPAI BIR Tax Compliance",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "account"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "ipai_close_orchestration",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai/ipai_close_orchestration",
+      "manifest_name": "IPAI Close Cycle Orchestration",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "ipai_finance_ppm",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm",
+      "manifest_name": "IPAI Finance PPM",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "ipai_finance_ppm_golive",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai_finance_ppm_golive",
+      "manifest_name": "Finance PPM Go-Live Checklist",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "project"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "ipai_month_end",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai_month_end",
+      "manifest_name": "IPAI Month-End Closing",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "account"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "ipai_ppm_a1",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_a1",
+      "manifest_name": "IPAI PPM A1 Control Center",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "ipai_superset_connector",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai_superset_connector",
+      "manifest_name": "IPAI Superset Connector",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "sale",
+        "account",
+        "stock",
+        "hr",
+        "project"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "ipai_tbwa_finance",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai_tbwa_finance",
+      "manifest_name": "IPAI TBWA Finance",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "account"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    },
+    {
+      "name": "maintenance",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/maintenance",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "marketing_card",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "0%",
+      "notes": "Enterprise-only module (not available in CE). OCA: No OCA equivalent; Enterprise-specific feature"
+    },
+    {
+      "name": "sign",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "60%",
+      "notes": "Enterprise-only module (not available in CE). OCA: No direct OCA equivalent; use control_room.sign with DocuSign integration"
+    },
+    {
+      "name": "helpdesk",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "helpdesk_mgmt",
+        "helpdesk_mgmt_timesheet",
+        "helpdesk_mgmt_project"
+      ],
+      "oca_repos": [
+        "OCA/helpdesk"
+      ],
+      "oca_parity": "85%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Full ticketing, SLA via custom fields"
+    },
+    {
+      "name": "sale_subscription",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "sale_subscription"
+      ],
+      "oca_repos": [
+        "OCA/sale-workflow"
+      ],
+      "oca_parity": "80%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Core subscription logic, may need customization"
+    },
+    {
+      "name": "quality_control",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "quality_control",
+        "quality_control_stock"
+      ],
+      "oca_repos": [
+        "OCA/manufacture"
+      ],
+      "oca_parity": "70%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Basic QC, advanced metrics via Control Room"
+    },
+    {
+      "name": "website_slides",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_slides",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "planning",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "project_timeline",
+        "project_stage_closed",
+        "project_task_dependency"
+      ],
+      "oca_repos": [
+        "OCA/project"
+      ],
+      "oca_parity": "75%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Timeline view available, Gantt needs frontend work"
+    },
+    {
+      "name": "website_event",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_event",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "mail",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mail",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "contacts",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/contacts",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "calendar",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/calendar",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "social",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "60%",
+      "notes": "Enterprise-only module (not available in CE). OCA: n8n workflows for posting, no unified dashboard (n8n replacement available)"
+    },
+    {
+      "name": "hr_appraisal",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "hr_appraisal"
+      ],
+      "oca_repos": [
+        "OCA/hr"
+      ],
+      "oca_parity": "85%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Basic appraisal flow, customize for goals"
+    },
+    {
+      "name": "fleet",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/fleet",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "marketing_automation",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "mass_mailing_automation"
+      ],
+      "oca_repos": [
+        "OCA/social"
+      ],
+      "oca_parity": "60%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Basic automation; use n8n for complex workflows"
+    },
+    {
+      "name": "im_livechat",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/im_livechat",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "appointment",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "calendar_ics"
+      ],
+      "oca_repos": [
+        "OCA/calendar"
+      ],
+      "oca_parity": "60%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Limited OCA options; use control_room.booking custom replacement"
+    },
+    {
+      "name": "survey",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/survey",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "web_mobile",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "web_responsive"
+      ],
+      "oca_repos": [
+        "OCA/web"
+      ],
+      "oca_parity": "50%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Responsive web only; no native mobile app"
+    },
+    {
+      "name": "repair",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/repair",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "hr_attendance",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_attendance",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "mass_mailing_sms",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/mass_mailing_sms",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "stock_barcode",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [
+        "stock_barcodes"
+      ],
+      "oca_repos": [
+        "OCA/stock-logistics-barcode"
+      ],
+      "oca_parity": "70%",
+      "notes": "Enterprise-only module (not available in CE). OCA: Basic barcode scanning; or use control_room.barcode"
+    },
+    {
+      "name": "project_todo",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/project_todo",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "hr_skills",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_skills",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "voip",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "0%",
+      "notes": "Enterprise-only module (not available in CE). OCA: No OCA equivalent; requires third-party integration"
+    },
+    {
+      "name": "lunch",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/lunch",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "website_hr_recruitment",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/website_hr_recruitment",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "sale_amazon",
+      "classification": "enterprise-only",
+      "found_path": null,
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Unknown",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "0%",
+      "notes": "Enterprise-only module (not available in CE). OCA: No OCA equivalent; use n8n Amazon connector"
+    },
+    {
+      "name": "hr_contract",
+      "classification": "CE",
+      "found_path": "/usr/lib/python3/dist-packages/odoo/addons/hr_contract",
+      "manifest_name": null,
+      "version": null,
+      "depends": [],
+      "is_application": false,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Odoo CE core module"
+    },
+    {
+      "name": "ipai_workos_affine",
+      "classification": "custom",
+      "found_path": "/home/user/odoo-ce/addons/ipai_workos_affine",
+      "manifest_name": "IPAI WorkOS - AFFiNE Clone (Umbrella)",
+      "version": "18.0.1.0.0",
+      "depends": [
+        "ipai_workos_core",
+        "ipai_workos_blocks",
+        "ipai_workos_db",
+        "ipai_workos_views",
+        "ipai_workos_collab",
+        "ipai_workos_search",
+        "ipai_workos_templates",
+        "ipai_workos_canvas",
+        "ipai_platform_permissions",
+        "ipai_platform_audit"
+      ],
+      "is_application": true,
+      "installable": "Y",
+      "upgradeable": "Unknown",
+      "oca_equivalents": [],
+      "oca_repos": [],
+      "oca_parity": "",
+      "notes": "Custom IPAI module"
+    }
+  ],
+  "quality_gate": {
+    "ipai_advisor": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ask_ai": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ask_ai_chatter": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'queue_job' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai_ask_ai_chatter/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      }
+    ],
+    "ipai_assets": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'barcodes' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_assets/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      }
+    ],
+    "ipai_bir_compliance": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Missing reports/__init__.py",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_bir_compliance",
+        "fix_recommendation": "Create missing __init__.py file"
+      }
+    ],
+    "ipai_bir_tax_compliance": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ce_branding": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ce_cleaner": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_clarity_ppm_parity": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_key' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_category' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_wbs' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_parent_task_filter' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_milestone' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_task_milestone' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_task_dependency' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_task_checklist' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'project_timeline' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      }
+    ],
+    "ipai_close_orchestration": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_crm_pipeline": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_custom_routes": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_default_home": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_dev_studio_base": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'board' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'base_automation' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      },
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'documents' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      }
+    ],
+    "ipai_equipment": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_expense": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_bir_compliance": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_close_automation": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_close_seed": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_closing": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_month_end": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_monthly_closing": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_closing": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_dashboard": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_golive": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Missing reports/__init__.py",
+        "file_line": "/home/user/odoo-ce/addons/ipai_finance_ppm_golive",
+        "fix_recommendation": "Create missing __init__.py file"
+      }
+    ],
+    "ipai_finance_ppm_tdi": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_finance_ppm_umbrella": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Missing root __init__.py",
+        "file_line": "/home/user/odoo-ce/addons/ipai_finance_ppm_umbrella",
+        "fix_recommendation": "Create missing __init__.py file"
+      }
+    ],
+    "ipai_finance_project_hybrid": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_grid_view": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_industry_accounting_firm": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_industry_marketing_agency": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_master_control": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_month_end": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_month_end_closing": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ocr_gateway": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_approvals": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_audit": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_permissions": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_theme": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_platform_workflow": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_portal_fix": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ppm": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ppm_a1": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_ppm_monthly_close": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_project_program": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_sms_gateway": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_srm": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_studio_ai": [
+      {
+        "status": "FAIL",
+        "stage": "static",
+        "error_summary": "Dependency 'base_automation' not found in addons path",
+        "file_line": "/home/user/odoo-ce/addons/ipai/ipai_studio_ai/__manifest__.py",
+        "fix_recommendation": "Add missing dependency to addons path or remove from depends"
+      }
+    ],
+    "ipai_superset_connector": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_tbwa_finance": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_theme_tbwa_backend": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_web_theme_chatgpt": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_affine": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_blocks": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_canvas": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_collab": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_core": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_db": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_search": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_templates": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workos_views": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ],
+    "ipai_workspace_core": [
+      {
+        "status": "PASS",
+        "stage": "static",
+        "error_summary": "All static checks passed",
+        "file_line": "",
+        "fix_recommendation": ""
+      }
+    ]
+  }
+}
