@@ -14,6 +14,7 @@
     "author": "InsightPulse AI",
     "website": "https://insightpulse.ai",
     "license": "AGPL-3",
+    "icon": "fa-draw-polygon",
     "depends": ["base", "web", "mail", "ipai_workos_core"],
     "data": [
         "security/ir.model.access.csv",

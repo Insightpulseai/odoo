@@ -21,6 +21,7 @@ status tracking, and process automation across all IPAI modules.
     "author": "IPAI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
+    "icon": "fa-project-diagram",
     "depends": ["base", "mail"],
     "data": [
         "security/ir.model.access.csv",

@@ -36,6 +36,7 @@ Odoo Integration:
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
+    "icon": "fa-palette",
     "depends": ["web"],
     "assets": {
         # Backend assets - tokens + normalize

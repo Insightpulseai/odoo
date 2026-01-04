@@ -26,6 +26,7 @@
     "author": "IPAI",
     "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "AGPL-3",
+    "icon": "fa-file-invoice",
     "depends": [
         "base",
         "mail",
