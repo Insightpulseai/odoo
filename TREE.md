@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3009ad0a58c2a12634b10d623fa248c3cf339a03
+> Commit: 65cd6d01330ff2b668147b9162eafc60d8857eb3
 
 ```
 .
@@ -1129,7 +1129,10 @@
 │   ├── ipai_install_upgrade_matrix.csv
 │   ├── ipai_install_upgrade_matrix.json
 │   ├── ipai_quality_gate.csv
-│   └── ipai_quality_gate.json
+│   ├── ipai_quality_gate.json
+│   ├── module_audit_baseline.json
+│   ├── module_audit_matrix.csv
+│   └── module_audit_matrix.json
 ├── audit
 │   ├── snapshot.json
 │   └── snapshot.txt
@@ -1365,18 +1368,60 @@
 │   ├── modules
 │   │   ├── INDEX.md
 │   │   ├── generation_summary.json
+│   │   ├── ipai_advisor.md
+│   │   ├── ipai_agent_core.md
+│   │   ├── ipai_ask_ai.md
+│   │   ├── ipai_ask_ai_chatter.md
+│   │   ├── ipai_assets.md
+│   │   ├── ipai_bir_compliance.md
 │   │   ├── ipai_bir_tax_compliance.md
+│   │   ├── ipai_ce_branding.md
+│   │   ├── ipai_ce_cleaner.md
+│   │   ├── ipai_clarity_ppm_parity.md
 │   │   ├── ipai_close_orchestration.md
 │   │   ├── ipai_crm_pipeline.md
+│   │   ├── ipai_custom_routes.md
+│   │   ├── ipai_default_home.md
+│   │   ├── ipai_dev_studio_base.md
+│   │   ├── ipai_equipment.md
+│   │   ├── ipai_expense.md
+│   │   ├── ipai_finance_bir_compliance.md
+│   │   ├── ipai_finance_close_automation.md
+│   │   ├── ipai_finance_close_seed.md
+│   │   ├── ipai_finance_closing.md
+│   │   ├── ipai_finance_month_end.md
+│   │   ├── ipai_finance_monthly_closing.md
+│   │   ├── ipai_finance_ppm.md
+│   │   ├── ipai_finance_ppm_closing.md
+│   │   ├── ipai_finance_ppm_dashboard.md
 │   │   ├── ipai_finance_ppm_golive.md
+│   │   ├── ipai_finance_ppm_tdi.md
+│   │   ├── ipai_finance_ppm_umbrella.md
+│   │   ├── ipai_finance_project_hybrid.md
+│   │   ├── ipai_grid_view.md
+│   │   ├── ipai_industry_accounting_firm.md
+│   │   ├── ipai_industry_marketing_agency.md
+│   │   ├── ipai_master_control.md
 │   │   ├── ipai_month_end.md
+│   │   ├── ipai_month_end_closing.md
+│   │   ├── ipai_ocr_gateway.md
 │   │   ├── ipai_platform_approvals.md
 │   │   ├── ipai_platform_audit.md
 │   │   ├── ipai_platform_permissions.md
 │   │   ├── ipai_platform_theme.md
 │   │   ├── ipai_platform_workflow.md
+│   │   ├── ipai_portal_fix.md
+│   │   ├── ipai_ppm.md
 │   │   ├── ipai_ppm_a1.md
+│   │   ├── ipai_ppm_monthly_close.md
+│   │   ├── ipai_project_program.md
+│   │   ├── ipai_sms_gateway.md
+│   │   ├── ipai_srm.md
+│   │   ├── ipai_studio_ai.md
+│   │   ├── ipai_superset_connector.md
 │   │   ├── ipai_tbwa_finance.md
+│   │   ├── ipai_theme_tbwa_backend.md
+│   │   ├── ipai_web_theme_chatgpt.md
 │   │   ├── ipai_workos_affine.md
 │   │   ├── ipai_workos_blocks.md
 │   │   ├── ipai_workos_canvas.md
@@ -1385,7 +1430,8 @@
 │   │   ├── ipai_workos_db.md
 │   │   ├── ipai_workos_search.md
 │   │   ├── ipai_workos_templates.md
-│   │   └── ipai_workos_views.md
+│   │   ├── ipai_workos_views.md
+│   │   └── ipai_workspace_core.md
 │   ├── odoo
 │   │   └── DEVELOPER_TOOLS.md
 │   ├── odoo-18-handbook
@@ -1442,6 +1488,7 @@
 │   ├── DEPLOYMENT_GUIDE.md
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
 │   ├── DEPLOY_NOTION_WORKOS.md
+│   ├── DEVELOPER_TOOLS.md
 │   ├── DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md
 │   ├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
 │   ├── DIRECTIONAL_SYNC.md
@@ -1837,12 +1884,14 @@
 │   └── README.md
 ├── scripts
 │   ├── ci
+│   │   ├── compare_audit_baseline.py
 │   │   ├── constraints-gevent.txt
 │   │   ├── deploy-ipai-modules.sh
 │   │   ├── import-n8n-workflows.sh
 │   │   ├── install-oca-modules.sh
 │   │   ├── install_odoo_18.sh
 │   │   ├── introspect_feature_inventory.py
+│   │   ├── module_drift_gate.sh
 │   │   ├── run_odoo_tests.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
@@ -1947,6 +1996,7 @@
 │   ├── introspect_project.py
 │   ├── ipai_quality_gate.sh
 │   ├── map_logframe.py
+│   ├── module_audit_agent.py
 │   ├── new_conversation_entry.sh
 │   ├── notify_slack.sh
 │   ├── oca-bootstrap.sh
@@ -2541,7 +2591,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-766 directories, 1770 files
+766 directories, 1820 files
 ```
 
 ## 📊 Stats
@@ -2549,7 +2599,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 868 |
-| Files | 2514 |
-| Python files | 638 |
+| Files | 2564 |
+| Python files | 640 |
 | XML files | 337 |
-| Markdown files | 497 |
+| Markdown files | 541 |
