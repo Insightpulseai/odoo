@@ -1,317 +1,574 @@
 # Odoo Module Deployment Guide
 
-**Version:** 1.0.0
-**Last Updated:** 2025-11-22
-**Purpose:** Step-by-step guide for deploying IPAI custom modules to production
+**Purpose**: Comprehensive guide for deploying Odoo 18.0 CE modules with proper install vs upgrade detection
+
+**Last Updated**: 2026-01-04
 
 ---
 
-## Overview
+## Critical Concepts
 
-This guide documents the deployment procedure for IPAI custom Odoo CE modules to production (`erp.insightpulseai.net`).
+### Install vs Upgrade
 
-**Available Modules:**
-- `ipai_ce_cleaner` - Enterprise/IAP removal
-- `ipai_expense` - PH expense & travel workflows
-- `ipai_equipment` - Equipment booking system
-- `ipai_ocr_expense` - OCR integration for expenses
-- `ipai_finance_monthly_closing` - Finance closing + BIR tasks
+**Install (`-i`)**: Use when module is NOT in database or state is `uninstalled`
+```bash
+odoo -c /etc/odoo/odoo.conf -d production -i ipai_platform_theme --stop-after-init
+```
+
+**Upgrade (`-u`)**: Use when module state is `installed` or `to upgrade`
+```bash
+odoo -c /etc/odoo/odoo.conf -d production -u ipai_platform_theme --stop-after-init
+```
+
+**Common Error**: Clicking "Upgrade" on an uninstalled module
+```
+Error: Cannot upgrade module 'ipai_platform_theme' - module is not installed
+```
+**Fix**: Install first, then upgrade on subsequent deployments
+
+### Display Name vs Technical Name
+
+- **Display Name**: "IPAI Platform – Theme Tokens" (what you see in UI)
+- **Technical Name**: `ipai_platform_theme` (folder name, used in CLI)
+
+Always use technical name for CLI operations.
 
 ---
 
-## Deployment Methods
+## Prerequisites
 
-### Method 1: Automated Script (Recommended)
+### Access Requirements
+- SSH access to production droplet: `ssh root@159.223.75.148`
+- Docker container running: `odoo-erp-prod`
+- Database name: `odoo` (or `production` depending on environment)
+- Odoo config: `/etc/odoo/odoo.conf`
 
-Use the deployment script that follows the `deploy_odoo_module` skill from the Agent Skills Architecture.
-
-**Deploy single module:**
-```bash
-cd /home/user/odoo-ce
-./scripts/deploy-odoo-modules.sh ipai_expense
-```
-
-**Deploy multiple modules:**
-```bash
-./scripts/deploy-odoo-modules.sh ipai_expense ipai_equipment ipai_finance_monthly_closing
-```
-
-**Deploy all modules:**
-```bash
-./scripts/deploy-odoo-modules.sh --all
-```
-
-**What the script does:**
-1. ✅ Validates modules exist locally
-2. ✅ Checks CE/OCA compliance (no Enterprise deps)
-3. ✅ Rsyncs modules to `/opt/odoo/custom-addons/` on server
-4. ✅ Restarts Odoo container
-5. ✅ Optionally upgrades modules in Odoo
-6. ✅ Checks Odoo health endpoint
-
-### Method 2: Manual Deployment
-
-**Step-by-step manual process:**
-
-```bash
-# 1. Validate module locally
-ls -la addons/ipai_expense
-cat addons/ipai_expense/__manifest__.py
-
-# 2. Check CE/OCA compliance
-grep -r "OEEL" addons/ipai_expense  # Should return empty
-grep -r "odoo.com" addons/ipai_expense  # Should be empty (except comments)
-
-# 3. Rsync to server
-rsync -avz --delete \
-  --exclude="*.pyc" \
-  --exclude="__pycache__" \
-  addons/ipai_expense/ \
-  root@erp.insightpulseai.net:/opt/odoo/custom-addons/ipai_expense/
-
-# 4. Restart Odoo container
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1"
-
-# Wait 10 seconds for Odoo to start
-sleep 10
-
-# 5. Upgrade module (optional)
-ssh root@erp.insightpulseai.net \
-  "docker exec odoo-odoo-1 odoo -d odoo -u ipai_expense --workers=0 --stop-after-init"
-
-# 6. Restart again after upgrade
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1"
-
-# 7. Check health
-curl -I https://erp.insightpulseai.net/web/health
-```
+### Required Scripts
+- `scripts/check_module_status.sh` - Check module database state
+- `scripts/deploy_odoo_smart.sh` - Smart deploy with auto-detection
+- `scripts/deploy_odoo_upgrade.sh` - Legacy upgrade-only script
 
 ---
 
-## Pre-Deployment Checklist
+## Deployment Workflows
 
-Before deploying any module:
+### Workflow 1: Check Module Status (Always Start Here)
 
-- [ ] Module exists in `addons/` directory
-- [ ] `__manifest__.py` is present and valid
-- [ ] No Enterprise modules in `depends` list
-- [ ] No `OEEL` license references
-- [ ] No `odoo.com` links in user-facing code
-- [ ] CI checks pass (GitHub Actions green)
-- [ ] Local testing completed
-- [ ] Database backup taken (if schema changes)
-- [ ] SSH access to `root@erp.insightpulseai.net` configured
-
----
-
-## Post-Deployment Steps
-
-After deployment:
-
-1. **Access Odoo:**
-   - Navigate to https://erp.insightpulseai.net/web
-   - Log in as admin
-
-2. **Update Apps List:**
-   - Go to **Apps** → Three dots menu → **Update Apps List**
-   - This refreshes the module list
-
-3. **Install or Upgrade Module:**
-
-   **For new installation:**
-   - Search for module name (e.g., "IPAI Expense")
-   - Click **Install**
-
-   **For upgrade:**
-   - Search for module name
-   - If upgrade available, click **Upgrade**
-
-4. **Verify Installation:**
-   - Check module appears in Apps list
-   - Test basic functionality
-   - Check Odoo logs for errors:
-     ```bash
-     ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 100"
-     ```
-
----
-
-## Troubleshooting
-
-### Module Won't Install
-
-**Symptom:** Module doesn't appear in Apps list or fails to install
-
-**Diagnosis:**
 ```bash
-# Check if module exists on server
-ssh root@erp.insightpulseai.net "ls -la /opt/odoo/custom-addons/ipai_expense"
+# Check single module
+ssh root@159.223.75.148
+docker exec -i odoo-erp-prod bash -lc "
+  psql -U odoo -d odoo -c \"
+    SELECT name, state, latest_version
+    FROM ir_module_module
+    WHERE name = 'ipai_platform_theme';
+  \"
+"
 
-# Check Odoo logs
-ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 100 | grep -i error"
+# Check multiple modules using helper script
+ODOO_MODULES=ipai_platform_theme,ipai_finance_ppm,ipai_finance_ppm_umbrella \
+  ./scripts/check_module_status.sh
 ```
 
-**Common Causes:**
-- Missing dependency module
-- Syntax error in Python code
-- Missing `ir.model.access.csv` file
-- Wrong `depends` list in `__manifest__.py`
-
-**Solution:**
-1. Fix issue locally
-2. Redeploy module
-3. Restart Odoo
-4. Try installation again
-
-### CI Fails with Enterprise Module Detected
-
-**Symptom:** GitHub Actions fails with "Enterprise module detected"
-
-**Diagnosis:**
-```bash
-# Check for Enterprise references
-grep -r "OEEL" addons/ipai_expense
-grep -r "enterprise" addons/ipai_expense/__manifest__.py
+**Output Example**:
+```
+================================================================================
+Module                                   State           Version
+================================================================================
+ipai_platform_theme                      📦 uninstalled  18.0.1.0.0
+ipai_finance_ppm                         ✅ installed    18.0.1.0.0
+ipai_finance_ppm_umbrella                ✅ installed    1.0.0
+================================================================================
 ```
 
-**Solution:**
-1. Remove Enterprise module from `depends` list
-2. Find CE/OCA alternative
-3. Update code to use CE-only features
-4. Commit changes
-5. Wait for CI to pass
-6. Redeploy
+**Legend**:
+- ✅ `installed` → Use `-u` (upgrade)
+- 📦 `uninstalled` → Use `-i` (install)
+- ⏳ `to install` → Already queued for install
+- ⬆️ `to upgrade` → Already queued for upgrade
+- ⚠️ Other states → Check manually
 
-### Odoo Won't Start After Deployment
+### Workflow 2: Smart Deploy (Recommended)
 
-**Symptom:** Odoo container crashes or won't start
+Auto-detects install vs upgrade:
 
-**Diagnosis:**
 ```bash
-# Check container status
-ssh root@erp.insightpulseai.net "docker ps -a | grep odoo"
+# Deploy single module
+ODOO_MODULES=ipai_platform_theme ./scripts/deploy_odoo_smart.sh
+
+# Deploy multiple modules
+ODOO_MODULES=ipai_finance_ppm,ipai_finance_ppm_umbrella ./scripts/deploy_odoo_smart.sh
+
+# Dry-run (shows what would happen without executing)
+ODOO_MODULES=ipai_platform_theme ./scripts/deploy_odoo_smart.sh --dry-run
+```
+
+**What it does**:
+1. Queries `ir_module_module` for each module
+2. Separates into INSTALL list and UPGRADE list
+3. Runs `odoo -i <install-list>` for new modules
+4. Runs `odoo -u <upgrade-list>` for existing modules
+5. Restarts container
+6. Shows logs
+
+### Workflow 3: Manual Install (First-Time Deployment)
+
+When deploying a module for the first time:
+
+```bash
+ssh root@159.223.75.148
+
+# Single module install
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo \
+    -i ipai_platform_theme --stop-after-init
+"
+
+# Multiple modules install (comma-separated, no spaces)
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo \
+    -i ipai_finance_ppm,ipai_finance_ppm_umbrella --stop-after-init
+"
+
+# Restart container
+docker restart odoo-erp-prod
 
 # Check logs
-ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 200"
+docker logs --tail=200 odoo-erp-prod
 ```
 
-**Common Causes:**
-- Syntax error in Python code
-- Missing Python dependency
-- Database migration failure
+### Workflow 4: Manual Upgrade (Existing Modules)
 
-**Solution:**
-1. Restore from backup if available
-2. Fix syntax errors locally
-3. Redeploy corrected code
-4. Restart Odoo
+When updating code for already-installed modules:
 
-### Module Upgrade Fails
-
-**Symptom:** Module upgrade command fails or times out
-
-**Diagnosis:**
 ```bash
-# Run upgrade manually and watch logs
-ssh root@erp.insightpulseai.net \
-  "docker exec odoo-odoo-1 odoo -d odoo -u ipai_expense --workers=0 --stop-after-init --log-level=debug"
+ssh root@159.223.75.148
+
+# Single module upgrade
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo \
+    -u ipai_platform_theme --stop-after-init
+"
+
+# Multiple modules upgrade
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo \
+    -u ipai_finance_ppm,ipai_finance_ppm_umbrella --stop-after-init
+"
+
+# Restart container
+docker restart odoo-erp-prod
+
+# Check logs
+docker logs --tail=200 odoo-erp-prod
 ```
-
-**Common Causes:**
-- Database schema change incompatible
-- Missing migration script
-- Circular dependency
-
-**Solution:**
-1. Check migration logs
-2. Add migration script if needed (`migrations/18.0.1.0.1/pre-migrate.py`)
-3. Restore from backup if critical
-4. Contact Odoo CE community for help
 
 ---
 
-## Rollback Procedure
+## Verification Steps
 
-If deployment causes issues:
+### Step 1: Check Installation Status
 
-**Step 1: Restore Previous Module Version**
 ```bash
-# Get previous version from git
-git log --oneline addons/ipai_expense  # Find commit hash
-git checkout <commit-hash> addons/ipai_expense
+# Via CLI
+docker exec -i odoo-erp-prod bash -lc "
+  psql -U odoo -d odoo -c \"
+    SELECT name, state, latest_version
+    FROM ir_module_module
+    WHERE name IN ('ipai_platform_theme', 'ipai_finance_ppm');
+  \"
+"
 
-# Redeploy old version
-./scripts/deploy-odoo-modules.sh ipai_expense
+# Expected output for successful install:
+#        name         |   state   | latest_version
+# --------------------+-----------+----------------
+# ipai_platform_theme | installed | 18.0.1.0.0
+# ipai_finance_ppm    | installed | 18.0.1.0.0
 ```
 
-**Step 2: Restore Database (if schema changed)**
+### Step 2: Check Odoo Logs
+
 ```bash
-# Connect to server
-ssh root@erp.insightpulseai.net
+# Last 200 lines
+docker logs --tail=200 odoo-erp-prod
+
+# Follow live logs
+docker logs -f odoo-erp-prod
+
+# Search for errors
+docker logs odoo-erp-prod 2>&1 | grep -i "error\|warning\|traceback"
+```
+
+**Success indicators**:
+```
+INFO odoo odoo.modules.loading: Modules loaded.
+INFO odoo odoo.modules.registry: Registry loaded in X.XXs
+```
+
+**Failure indicators**:
+```
+ERROR odoo odoo.modules.loading: Module ipai_platform_theme: loading failed
+Traceback (most recent call last):
+```
+
+### Step 3: Check UI (Optional)
+
+1. Login to Odoo: `https://erp.insightpulseai.net`
+2. Go to Apps menu
+3. Search for module by technical name (e.g., `ipai_platform_theme`)
+4. Should show green checkmark with "Installed" status
+
+### Step 4: Verify Dependencies
+
+Check that all dependency modules are also installed:
+
+```bash
+# Example: ipai_finance_ppm_umbrella depends on ipai_finance_ppm
+docker exec -i odoo-erp-prod bash -lc "
+  psql -U odoo -d odoo -c \"
+    SELECT
+      m1.name as module,
+      m1.state,
+      d.name as depends_on,
+      m2.state as dependency_state
+    FROM ir_module_module m1
+    JOIN ir_module_module_dependency d ON d.module_id = m1.id
+    LEFT JOIN ir_module_module m2 ON m2.name = d.name
+    WHERE m1.name = 'ipai_finance_ppm_umbrella';
+  \"
+"
+```
+
+**Expected**: All dependencies should have `state = 'installed'`
+
+---
+
+## Common Issues & Fixes
+
+### Issue 1: "Module not found in module list"
+
+**Symptom**:
+```
+⚠️  ipai_platform_theme: not found in module list (will attempt install)
+```
+
+**Cause**: Module folder not in `addons_path` or Odoo hasn't scanned it
+
+**Fix**:
+```bash
+# Check if module folder exists
+ls -la /opt/odoo-ce/addons/ipai_platform_theme/
+
+# Check addons_path in config
+docker exec -i odoo-erp-prod cat /etc/odoo/odoo.conf | grep addons_path
+
+# Update Apps List in Odoo UI
+# Settings → Apps → Update Apps List
+
+# Or via CLI
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo --update=all --stop-after-init
+"
+```
+
+### Issue 2: "Cannot upgrade module - not installed"
+
+**Symptom**:
+```
+ERROR odoo odoo.modules.loading: Cannot upgrade module 'ipai_platform_theme' - module is not installed
+```
+
+**Cause**: Clicked "Upgrade" button on uninstalled module
+
+**Fix**:
+```bash
+# Option A: Install via UI
+# Apps → Search "ipai_platform_theme" → Click "Install"
+
+# Option B: Install via CLI
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_platform_theme --stop-after-init
+"
+docker restart odoo-erp-prod
+```
+
+### Issue 3: Missing Dependency Error
+
+**Symptom**:
+```
+ERROR odoo odoo.modules.loading: Module ipai_finance_ppm_umbrella: dependency ipai_finance_ppm is not installed
+```
+
+**Cause**: Trying to install module without its dependencies
+
+**Fix**:
+```bash
+# Install dependency first
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_finance_ppm --stop-after-init
+"
+
+# Then install dependent module
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_finance_ppm_umbrella --stop-after-init
+"
+
+# Or install both together (Odoo handles order automatically)
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_finance_ppm,ipai_finance_ppm_umbrella --stop-after-init
+"
+```
+
+### Issue 4: Module Stuck in "to upgrade" State
+
+**Symptom**:
+```
+ipai_platform_theme                      ⬆️  to upgrade  18.0.1.0.0
+```
+
+**Cause**: Upgrade was queued but not executed
+
+**Fix**:
+```bash
+# Force upgrade
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -u ipai_platform_theme --stop-after-init
+"
+docker restart odoo-erp-prod
+
+# Verify state changed to 'installed'
+docker exec -i odoo-erp-prod bash -lc "
+  psql -U odoo -d odoo -c \"
+    SELECT name, state FROM ir_module_module WHERE name = 'ipai_platform_theme';
+  \"
+"
+```
+
+### Issue 5: Missing `__init__.py` Error
+
+**Symptom**:
+```
+ERROR odoo odoo.modules.module: module ipai_finance_ppm_umbrella: __init__.py not found
+```
+
+**Cause**: Module folder missing `__init__.py` file
+
+**Fix**:
+```bash
+# Check if __init__.py exists
+ls -la /opt/odoo-ce/addons/ipai_finance_ppm_umbrella/__init__.py
+
+# Create if missing (empty file is OK for umbrella modules)
+touch /opt/odoo-ce/addons/ipai_finance_ppm_umbrella/__init__.py
+
+# Or with minimal content
+echo "# -*- coding: utf-8 -*-" > /opt/odoo-ce/addons/ipai_finance_ppm_umbrella/__init__.py
+
+# Retry installation
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_finance_ppm_umbrella --stop-after-init
+"
+```
+
+---
+
+## Rollback Procedures
+
+### Rollback Option 1: Uninstall Module
+
+```bash
+# Uninstall via CLI
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo \
+    --uninstall=ipai_platform_theme --stop-after-init
+"
+docker restart odoo-erp-prod
+
+# Or via UI
+# Apps → Search module → Uninstall
+```
+
+**Warning**: Uninstalling removes module data (records, menus, etc.)
+
+### Rollback Option 2: Restore Previous Code
+
+```bash
+# Git rollback on server
+ssh root@159.223.75.148
+cd /opt/odoo-ce
+git log --oneline -5  # Find commit before deployment
+git checkout <commit-hash>
+
+# Restart container to reload modules
+docker restart odoo-erp-prod
+
+# Verify rollback
+docker logs --tail=100 odoo-erp-prod
+```
+
+### Rollback Option 3: Database Backup Restore
+
+```bash
+# Only if module caused data corruption
+
+# List backups
+docker exec -i odoo-erp-prod ls -lh /var/lib/odoo/backups/
 
 # Restore from backup
-cd /opt/odoo-ce/backups
-docker exec odoo-db-1 psql -U odoo < odoo-backup-YYYYMMDD.sql
-```
+docker exec -i odoo-erp-prod bash -lc "
+  dropdb -U odoo odoo
+  createdb -U odoo odoo
+  psql -U odoo -d odoo < /var/lib/odoo/backups/odoo_backup_<timestamp>.sql
+"
 
-**Step 3: Restart Odoo**
-```bash
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1"
+docker restart odoo-erp-prod
 ```
 
 ---
 
 ## Best Practices
 
-1. **Always deploy during maintenance windows** (low usage periods)
-2. **Test in staging first** (if available)
-3. **Take database backup before schema changes**
-4. **Deploy one module at a time** for easier troubleshooting
-5. **Monitor logs for 5-10 minutes after deployment**
-6. **Notify users before deploying critical modules**
-7. **Have rollback plan ready**
-8. **Document deployment in changelog**
+### 1. Always Check Status First
+
+```bash
+# Before any deployment
+ODOO_MODULES=ipai_platform_theme ./scripts/check_module_status.sh
+```
+
+### 2. Use Smart Deploy Script
+
+```bash
+# Let automation handle install vs upgrade detection
+ODOO_MODULES=ipai_platform_theme ./scripts/deploy_odoo_smart.sh
+```
+
+### 3. Deploy to Staging First
+
+```bash
+# Test on staging environment
+ssh root@staging.insightpulseai.net
+docker exec -i odoo-staging bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_platform_theme --stop-after-init
+"
+
+# If successful, deploy to production
+ssh root@159.223.75.148
+docker exec -i odoo-erp-prod bash -lc "
+  odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_platform_theme --stop-after-init
+"
+```
+
+### 4. Monitor Logs During Deployment
+
+```bash
+# In one terminal: follow logs
+ssh root@159.223.75.148
+docker logs -f odoo-erp-prod
+
+# In another terminal: deploy
+ODOO_MODULES=ipai_platform_theme ./scripts/deploy_odoo_smart.sh
+```
+
+### 5. Document Module Dependencies
+
+Create `docs/modules/<module-name>.md` with:
+```markdown
+# ipai_finance_ppm_umbrella
+
+**Depends on**: ipai_finance_ppm, project
+
+**Data files**:
+- 01_employees.xml (8 employees)
+- 02_logframe_complete.xml
+- 03_bir_schedule_2026.xml (22 BIR forms)
+
+**Install order**:
+1. ipai_finance_ppm
+2. ipai_finance_ppm_umbrella
+```
 
 ---
 
-## Deployment Schedule
+## Quick Reference Commands
 
-**Recommended deployment times (PH time):**
-- **Weekdays:** 6:00 PM - 8:00 PM (after business hours)
-- **Weekends:** Anytime
+### Check module status
+```bash
+docker exec -i odoo-erp-prod psql -U odoo -d odoo -c \
+  "SELECT name, state FROM ir_module_module WHERE name = 'ipai_platform_theme';"
+```
 
-**Avoid deploying during:**
-- Month-end closing (last 3 days of month)
-- BIR filing deadlines
-- Peak usage hours (9:00 AM - 5:00 PM PH time)
+### Install new module
+```bash
+docker exec -i odoo-erp-prod bash -lc \
+  "odoo -c /etc/odoo/odoo.conf -d odoo -i ipai_platform_theme --stop-after-init"
+docker restart odoo-erp-prod
+```
+
+### Upgrade existing module
+```bash
+docker exec -i odoo-erp-prod bash -lc \
+  "odoo -c /etc/odoo/odoo.conf -d odoo -u ipai_platform_theme --stop-after-init"
+docker restart odoo-erp-prod
+```
+
+### Check logs
+```bash
+docker logs --tail=200 odoo-erp-prod
+```
+
+### List all installed modules
+```bash
+docker exec -i odoo-erp-prod psql -U odoo -d odoo -c \
+  "SELECT name, state, latest_version FROM ir_module_module WHERE state = 'installed' ORDER BY name;"
+```
 
 ---
 
-## Related Documentation
+## Troubleshooting Decision Tree
 
-- **Agent Skills Registry:** `agents/AGENT_SKILLS_REGISTRY.yaml` → `deploy_odoo_module` skill
-- **Execution Procedures:** `agents/procedures/EXECUTION_PROCEDURES.yaml` → `build_new_feature`
-- **Module Service Matrix:** `specs/MODULE_SERVICE_MATRIX.md`
-- **Project Spec:** `spec.md`
-- **Implementation Plan:** `plan.md`
+```
+Module deployment fails
+  |
+  ├─ "Module not found"
+  │   └─ Check folder exists → Update Apps List → Retry
+  |
+  ├─ "Cannot upgrade - not installed"
+  │   └─ Use -i instead of -u → Install first
+  |
+  ├─ "Dependency not installed"
+  │   └─ Install dependency first → Then install module
+  |
+  ├─ "Missing __init__.py"
+  │   └─ Create empty __init__.py → Retry
+  |
+  └─ Other error
+      └─ Check logs → Search error message → Fix root cause
+```
 
 ---
 
 ## Support
 
-**If deployment fails:**
-1. Check troubleshooting section above
-2. Review Odoo logs: `docker logs odoo-odoo-1`
-3. Consult knowledge base: `agents/knowledge/KNOWLEDGE_BASE_INDEX.yaml`
-4. Create GitHub issue with logs and error messages
+**Scripts**:
+- `scripts/check_module_status.sh` - Status checker
+- `scripts/deploy_odoo_smart.sh` - Smart deploy
+- `scripts/deploy_odoo_upgrade.sh` - Legacy upgrade
 
-**Contacts:**
-- **Infrastructure:** DevOps team
-- **Odoo Modules:** Platform Team
-- **Emergency:** Restore from backup first, debug later
+**Documentation**:
+- `docs/MODULE_STATUS_FINAL.md` - Complete module inventory
+- `docs/ODOO_ADDONS_PATH_CONFIGURATION.md` - Addons path setup
+- `docs/CE_OCA_EQUIVALENTS_AUDIT.md` - Enterprise to CE mapping
+
+**Emergency Contact**:
+- Jake Tolentino (jgtolentino_rn@yahoo.com)
+
+**Server Access**:
+- Production droplet: `ssh root@159.223.75.148`
+- Container: `docker exec -i odoo-erp-prod bash`
+- Database: `psql -U odoo -d odoo`
 
 ---
 
-**Document Version:** 1.0.0
-**Last Review:** 2025-11-22
-**Next Review:** Monthly (check for updates)
+**Last Updated**: 2026-01-04
+**Generated By**: Claude Code SuperClaude Framework
+**Status**: ✅ PRODUCTION READY
