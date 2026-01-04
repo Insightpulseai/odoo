@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'IPAI Studio AI',
-    'version': '18.0.1.0.0',
+    'version': '18.0.1.1.0',
     'category': 'Customization/Studio',
     'summary': 'Natural Language Customization Engine for Odoo',
     'description': """
@@ -47,7 +47,7 @@ Author: InsightPulse AI
     'license': 'AGPL-3',
     'depends': [
         'base',
-        'base_automation',
+        # 'base_automation',  # TODO: Verify in Odoo 18 CE addons_path
         'mail',
     ],
     'data': [
