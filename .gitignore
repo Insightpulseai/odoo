@@ -109,3 +109,18 @@ parity_report.json
 tools/db-inventory/output/
 .env.smtp
 *.env
+
+# Odoo import exports (generated, may contain sensitive data)
+**/odoo_import_*.csv
+**/odoo_import_*.xlsx
+**/*_mapped.xlsx
+**/*_PassA_*.csv
+**/*_PassB_*.csv
+
+# Raw source workbooks (sensitive data)
+**/Month-end Closing Task and Tax Filing*.xlsx
+data/source.xlsx
+
+# Keep templates and sample files
+!templates/odoo/import/*.csv
+!data/user_map.csv
