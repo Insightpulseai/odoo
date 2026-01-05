@@ -463,7 +463,7 @@ class StudioAIService(models.AbstractModel):
 
         # Detect view type
         if re.search(r"\b(list|tree)\b", command):
-            result["analysis"]["view_type"] = "tree"
+            result["analysis"]["view_type"] = "list"
         elif re.search(r"\b(kanban)\b", command):
             result["analysis"]["view_type"] = "kanban"
         elif re.search(r"\b(search)\b", command):
@@ -680,7 +680,7 @@ class StudioAIService(models.AbstractModel):
                     "type": "ir.actions.act_window",
                     "name": _("Query Results"),
                     "res_model": analysis["model"],
-                    "view_mode": "tree,form",
+                    "view_mode": "list,form",
                     "domain": domain,
                     "target": "current",
                 }

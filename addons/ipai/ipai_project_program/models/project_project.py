@@ -80,7 +80,7 @@ class ProjectProject(models.Model):
             "type": "ir.actions.act_window",
             "name": "Implementation Modules",
             "res_model": "project.project",
-            "view_mode": "kanban,tree,form",
+            "view_mode": "kanban,list,form",
             "domain": [("parent_id", "=", self.id)],
             "context": {"default_parent_id": self.id},
         }
@@ -92,7 +92,7 @@ class ProjectProject(models.Model):
             "type": "ir.actions.act_window",
             "name": "IM Tasks",
             "res_model": "project.task",
-            "view_mode": "kanban,tree,form",
+            "view_mode": "kanban,list,form",
             "domain": [("project_id", "in", self.child_ids.ids)],
             "context": {},
         }

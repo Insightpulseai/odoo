@@ -37,6 +37,6 @@ class GenerateIMProjectsWizard(models.TransientModel):
             "type": "ir.actions.act_window",
             "name": _("IM Projects"),
             "res_model": "project.project",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("id", "in", [im1.id, im2.id])],
         }

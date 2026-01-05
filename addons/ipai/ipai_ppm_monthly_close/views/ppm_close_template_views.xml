@@ -56,6 +56,6 @@
     <record id="action_ppm_close_template" model="ir.actions.act_window">
         <field name="name">Task Templates</field>
         <field name="res_model">ppm.close.template</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>

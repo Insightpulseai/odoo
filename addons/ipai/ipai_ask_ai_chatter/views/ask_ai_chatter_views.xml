@@ -78,7 +78,7 @@
     <record id="action_ask_ai_requests" model="ir.actions.act_window">
         <field name="name">AI Requests</field>
         <field name="res_model">ask.ai.request</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_my_requests': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

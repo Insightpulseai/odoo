@@ -119,7 +119,7 @@ class A1Workstream(models.Model):
             "type": "ir.actions.act_window",
             "name": f"Templates - {self.name}",
             "res_model": "a1.template",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("workstream_id", "=", self.id)],
             "context": {"default_workstream_id": self.id},
         }
