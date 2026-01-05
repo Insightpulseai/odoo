@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: eebb5d64d51bec4fa77ec76fe66bd8d62a76b032
+> Commit: 113cbdd9bcc8206993d8a8437b07001781a3abfa
 
 ```
 .
@@ -66,6 +66,7 @@
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── notion-sync-ci.yml
+│   │   ├── odoo-import-artifacts.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
@@ -368,6 +369,12 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_project_suite
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_srm
 │   │   │   ├── data
 │   │   │   ├── models
@@ -1288,7 +1295,8 @@
 │   ├── month_end_tasks.csv
 │   ├── notion_tasks_deduplicated.json
 │   ├── notion_tasks_parsed.json
-│   └── notion_tasks_with_logframe.json
+│   ├── notion_tasks_with_logframe.json
+│   └── user_map.csv
 ├── db
 │   ├── migrations
 │   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
@@ -2068,6 +2076,7 @@
 │   ├── generate_2026_schedule.py
 │   ├── generate_finance_dashboard.py
 │   ├── generate_module_docs.py
+│   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
@@ -2091,6 +2100,7 @@
 │   ├── oca-bootstrap.sh
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
+│   ├── odoo_import_project_suite.py
 │   ├── odoo_mattermost_integration.py
 │   ├── odoo_smoke_close.sh
 │   ├── package_image_tarball.sh
@@ -2323,6 +2333,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── project-ce
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── pulser-master-control
 │   │   ├── capability-registry.yaml
 │   │   ├── constitution.md
@@ -2481,11 +2496,18 @@
 │   └── infra
 │       └── AGENT_SERVICES_HARD_DELETE_CHECKLIST.md
 ├── templates
-│   └── module_readme
-│       ├── CONFIGURE.rst
-│       ├── CONTRIBUTORS.rst
-│       ├── DESCRIPTION.rst
-│       └── USAGE.rst
+│   ├── module_readme
+│   │   ├── CONFIGURE.rst
+│   │   ├── CONTRIBUTORS.rst
+│   │   ├── DESCRIPTION.rst
+│   │   └── USAGE.rst
+│   └── odoo
+│       └── import
+│           ├── README.md
+│           ├── calendar_events_template.csv
+│           ├── projects_template.csv
+│           ├── stages_template.csv
+│           └── tasks_template.csv
 ├── tests
 │   ├── load
 │   │   └── odoo_login_and_nav.js
@@ -2703,15 +2725,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-802 directories, 1896 files
+809 directories, 1911 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 911 |
-| Files | 2679 |
-| Python files | 679 |
-| XML files | 347 |
-| Markdown files | 555 |
+| Directories | 918 |
+| Files | 2712 |
+| Python files | 693 |
+| XML files | 354 |
+| Markdown files | 560 |
