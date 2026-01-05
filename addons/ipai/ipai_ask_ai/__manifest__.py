@@ -31,8 +31,8 @@ Technical:
     """,
     "version": "18.0.1.0.0",
     "category": "Productivity/AI",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ask_ai",
     "license": "AGPL-3",
     "depends": [
         "base",

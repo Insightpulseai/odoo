@@ -32,8 +32,8 @@ The generator creates:
     """,
     "version": "18.0.1.1.0",
     "category": "Accounting/Finance",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm_closing",
     "license": "AGPL-3",
     "depends": [
         "project",

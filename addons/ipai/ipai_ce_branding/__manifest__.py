@@ -18,7 +18,7 @@
         - Option B: Add your image and update $ipai-login-bg-url in login.scss
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ce_branding",
     "license": "AGPL-3",
     "depends": ["web", "base"],
     "data": [

@@ -31,8 +31,8 @@ SAP Mapping:
 * Concur → Odoo Expenses + Master Control approval workflow
 * Signavio → BPMN → Master Control process runtime
     """,
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_master_control",
     "license": "LGPL-3",
     "depends": [
         "base",
