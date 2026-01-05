@@ -1,11 +1,7 @@
 name: ipai-module-matrix
 
 on:
-  pull_request:
-    paths:
-      - 'addons/ipai/**'
-      - 'scripts/audit_ipai_modules.py'
-      - 'scripts/test_ipai_install_upgrade.py'
+  # NOTE: PR trigger removed - module matrix audit runs on main push only
   push:
     branches: [main]
     paths:

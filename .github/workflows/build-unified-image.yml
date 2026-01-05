@@ -33,14 +33,7 @@ on:
       - 'config/**'
       - 'vendor/**'
       - '.github/workflows/build-unified-image.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'addons/**'
-      - 'docker/**'
-      - 'config/**'
-      - 'vendor/**'
+  # NOTE: pull_request trigger removed - builds are expensive and should only run on main
   workflow_dispatch:
     inputs:
       push_image:

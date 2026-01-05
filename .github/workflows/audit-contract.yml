@@ -1,10 +1,10 @@
 name: audit-contract
 
 on:
+  # NOTE: PR trigger removed - audit contract runs on main push only
   push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   repo-contract:

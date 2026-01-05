@@ -1,9 +1,10 @@
 name: docs-architecture-sync
 
 on:
-  pull_request:
+  # NOTE: PR trigger removed - docs sync is not essential for PR validation
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   sync:

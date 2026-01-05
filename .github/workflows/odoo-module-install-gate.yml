@@ -1,10 +1,8 @@
 name: Odoo Module Install Gate
 
 on:
-  pull_request:
-    paths:
-      - 'addons/**'
-      - 'config/ship_set.txt'
+  # NOTE: PR trigger removed - module install gate is heavy (runs Odoo + DB)
+  # Run on main push only to validate merged code
   push:
     branches:
       - main
