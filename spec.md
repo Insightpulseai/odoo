@@ -115,6 +115,7 @@ The system is designed to:
 |-- archive
 |   `-- addons
 |-- artifacts
+|   |-- branch_cleanup
 |   |-- logs
 |   |-- seed_export
 |   |-- seed_replace
@@ -510,6 +511,8 @@ The system is designed to:
 |   |-- fix-pay-invoices-online-error.py
 |   |-- fix_home_manual.sql
 |   |-- fix_home_page.sql
+|   |-- fix_oauth_button.sh
+|   |-- fix_oauth_button_odoo_core.sh
 |   |-- full_deploy_sanity.sh
 |   |-- gen_repo_tree.sh
 |   |-- gen_repo_tree_fallback.sh
@@ -528,6 +531,7 @@ The system is designed to:
 |   |-- insert-december-2025-tasks.sql.bak
 |   |-- install-git-hooks.sh
 |   |-- install_all_ipai_modules.sh
+|   |-- install_finance_stack.sh
 |   |-- install_ipai_finance_ppm.sh
 |   |-- install_module_xmlrpc.py
 |   |-- introspect_project.py
@@ -553,6 +557,7 @@ The system is designed to:
 |   |-- replace_seed_from_excel.py
 |   |-- repo_health.sh
 |   |-- report_ci_telemetry.sh
+|   |-- report_stale_branches.sh
 |   |-- run_clarity_ppm_reverse.sh
 |   |-- run_odoo_migrations.sh
 |   |-- run_project_introspection.sh
@@ -626,6 +631,7 @@ The system is designed to:
 |   |-- parallel-control-planes
 |   |-- pulser-master-control
 |   |-- seed-bundle
+|   |-- test-coverage-improvement
 |   |-- workos-notion-clone
 |   |-- constitution.md
 |   |-- plan.md
