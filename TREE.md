@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f3c8228177a28d9ed57cbc27b67d29c3d616d75f
+> Commit: ec04cb86c456919783e521a597358042a04cc1b1
 
 ```
 .
@@ -1595,6 +1595,7 @@
 │   ├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
 │   ├── INDUSTRY_PARITY_ANALYSIS.md
 │   ├── IPAI_MODULES_INDEX.md
+│   ├── IPAI_MODULE_INSTALLATION_ORDER.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
 │   ├── MATTERMOST_ALERTING_SETUP.md
@@ -2728,7 +2729,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-810 directories, 1913 files
+810 directories, 1914 files
 ```
 
 ## 📊 Stats
@@ -2736,7 +2737,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 919 |
-| Files | 2714 |
+| Files | 2715 |
 | Python files | 693 |
 | XML files | 354 |
-| Markdown files | 561 |
+| Markdown files | 562 |
