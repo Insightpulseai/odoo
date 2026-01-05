@@ -10,6 +10,9 @@
     "depends": [
         "base",
         "web",
+        # OCA server-brand foundation (CE cleanup)
+        "remove_odoo_enterprise",
+        "disable_odoo_online",
     ],
     "data": [
         "views/ipai_ce_cleaner_views.xml",
