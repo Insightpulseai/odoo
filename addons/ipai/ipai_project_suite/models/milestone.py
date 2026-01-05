@@ -117,7 +117,7 @@ class ProjectMilestone(models.Model):
             "name": f"Tasks for {self.name}",
             "type": "ir.actions.act_window",
             "res_model": "project.task",
-            "view_mode": "tree,form,kanban",
+            "view_mode": "list,form,kanban",
             "domain": [("ipai_milestone_id", "=", self.id)],
             "context": {"default_ipai_milestone_id": self.id, "default_project_id": self.project_id.id},
         }

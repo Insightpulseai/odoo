@@ -291,7 +291,7 @@ class A1Tasklist(models.Model):
             "type": "ir.actions.act_window",
             "name": f"Tasks - {self.name}",
             "res_model": "a1.task",
-            "view_mode": "tree,form,kanban",
+            "view_mode": "list,form,kanban",
             "domain": [("tasklist_id", "=", self.id)],
             "context": {"default_tasklist_id": self.id},
         }

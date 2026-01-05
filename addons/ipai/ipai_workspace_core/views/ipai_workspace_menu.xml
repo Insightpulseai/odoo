@@ -8,7 +8,7 @@
   <record id="action_ipai_workspace" model="ir.actions.act_window">
     <field name="name">Workspaces</field>
     <field name="res_model">ipai.workspace</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
     <field name="context">{}</field>
   </record>
 

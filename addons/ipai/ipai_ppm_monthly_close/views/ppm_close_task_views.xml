@@ -100,14 +100,14 @@
     <record id="action_ppm_close_task" model="ir.actions.act_window">
         <field name="name">Closing Tasks</field>
         <field name="res_model">ppm.close.task</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Action from Monthly Close -->
     <record id="action_ppm_close_task_from_close" model="ir.actions.act_window">
         <field name="name">Tasks</field>
         <field name="res_model">ppm.close.task</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('monthly_close_id', '=', active_id)]</field>
         <field name="context">{'default_monthly_close_id': active_id}</field>
     </record>
