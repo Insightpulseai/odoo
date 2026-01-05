@@ -1,9 +1,9 @@
 {
-    "name": "IPAI Month-End Closing & BIR Tax Filing",
-    "version": "18.0.1.0.0",
-    "category": "Accounting/Accounting",
-    "summary": "SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance",
-    "description": """
+    'name': 'IPAI Month-End Closing & BIR Tax Filing',
+    'version': '18.0.1.0.0',
+    'category': 'Accounting/Accounting',
+    'summary': 'SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance',
+    'description': """
 IPAI Month-End Closing & BIR Tax Filing
 =======================================
 
@@ -43,28 +43,27 @@ BIR Compliance
 Architecture: Smart Delta
 -------------------------
 This module follows the ipai_* Smart Delta pattern:
-
 - Extends core Odoo project module
 - No monkey-patching or forks
 - OCA-compatible, marketplace-ready
 - AGPL-3 licensed
-""",
-    "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
-    "license": "AGPL-3",
-    "depends": [
-        "project",
-        "hr",
+    """,
+    'author': 'InsightPulse AI',
+    'website': 'https://insightpulseai.net',
+    'license': 'AGPL-3',
+    'depends': [
+        'project',
+        'hr',
     ],
-    "data": [
-        "security/ir.model.access.csv",
-        "data/ipai_users.xml",
-        "data/project_config.xml",
-        "data/ipai_closing_tasks.xml",
-        "data/ipai_bir_tasks.xml",
+    'data': [
+        'security/ir.model.access.csv',
+        'data/ipai_users.xml',
+        'data/project_config.xml',
+        'data/ipai_closing_tasks.xml',
+        'data/ipai_bir_tasks.xml',
     ],
-    "demo": [],
-    "installable": True,
-    "application": False,
-    "auto_install": False,
+    'demo': [],
+    'installable': True,
+    'application': False,
+    'auto_install': False,
 }

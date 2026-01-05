@@ -1,22 +1,22 @@
 # IPAI Module Inventory
 
-Generated: 2026-01-05 10:40:33
+Generated: 2026-01-05 10:17:13
 
 ## Summary
 
 | Metric | Count |
 |--------|-------|
-| Total Modules | 43 |
-| OK Status | 43 |
+| Total Modules | 42 |
+| OK Status | 42 |
 | Enterprise Deps | 0 |
-| Applications | 9 |
-| Installable | 43 |
+| Applications | 14 |
+| Installable | 42 |
 
 ## Recommendations Summary
 
 | Recommendation | Count |
 |----------------|-------|
-| KEEP | 37 |
+| KEEP | 36 |
 | DEMOTE | 6 |
 | REVIEW | 0 |
 | REFACTOR | 0 |
@@ -26,8 +26,8 @@ Generated: 2026-01-05 10:40:33
 | Module | Version | App | Rec | Type | Reason |
 |--------|---------|-----|-----|------|--------|
 | ipai | 18.0.1.0.0 | No | KEEP | namespace | Namespace/container module |
-| ipai_advisor | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
-| ipai_agent_core | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
+| ipai_advisor | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
+| ipai_agent_core | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_ai_studio | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_ask_ai | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_ask_ai_chatter | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
@@ -40,7 +40,7 @@ Generated: 2026-01-05 10:40:33
 | ipai_custom_routes | 18.0.1.0.0 | No | DEMOTE | patch | Technical patch - should be application=False |
 | ipai_default_home | 18.0.3.0.0 | No | KEEP | integration | AI/Integration functionality |
 | ipai_dev_studio_base | 18.0.1.1.0 | No | KEEP | integration | AI/Integration functionality |
-| ipai_equipment | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
+| ipai_equipment | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_expense | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_finance_bir_compliance | 18.0.1.0.0 | No | KEEP | core_business | Core business logic for finance/tax compliance |
 | ipai_finance_close_automation | 18.0.1.0.0 | No | KEEP | core_business | Core business logic for finance/tax compliance |
@@ -54,17 +54,16 @@ Generated: 2026-01-05 10:40:33
 | ipai_finance_project_hybrid | 18.0.1.0.0 | No | KEEP | core_business | Core business logic for finance/tax compliance |
 | ipai_industry_accounting_firm | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
 | ipai_industry_marketing_agency | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
-| ipai_marketing_ai | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_master_control | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
 | ipai_ocr_expense | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
 | ipai_portal_fix | 18.0.1.0.1 | No | DEMOTE | patch | Technical patch - should be application=False |
-| ipai_ppm | 18.0.1.0.0 | No | KEEP | core_business | Core business logic for finance/tax compliance |
-| ipai_ppm_a1 | 18.0.1.0.0 | No | KEEP | core_business | Core business logic for finance/tax compliance |
+| ipai_ppm | 18.0.1.0.0 | Yes | KEEP | core_business | Core business logic for finance/tax compliance |
+| ipai_ppm_a1 | 18.0.1.0.0 | Yes | KEEP | core_business | Core business logic for finance/tax compliance |
 | ipai_ppm_monthly_close | 18.0.1.0.0 | No | KEEP | core_business | Core business logic for finance/tax compliance |
 | ipai_project_program | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
 | ipai_project_suite | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |
 | ipai_srm | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
-| ipai_studio_ai | 18.0.1.1.0 | No | KEEP | integration | AI/Integration functionality |
+| ipai_studio_ai | 18.0.1.1.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_superset_connector | 18.0.1.0.0 | Yes | KEEP | integration | AI/Integration functionality |
 | ipai_test_fixtures | 18.0.1.0.0 | No | DEMOTE | test | Test support module - should be application=False |
 | ipai_workspace_core | 18.0.1.0.0 | No | KEEP | integration | AI/Integration functionality |

@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d84f6e799542c247530b6aac4ffd366d8ded9534
+> Commit: 84ae4e2203ef17d9ee4b298fbc32e2fadf992d8a
 
 ```
 .
@@ -72,6 +72,7 @@
 │   │   ├── module-catalog-drift.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
+│   │   ├── odoo-module-install-gate.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
@@ -127,6 +128,10 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_auth_oauth_internal
+│   │   │   ├── models
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_bir_compliance
@@ -310,6 +315,9 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_marketing_ai
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_master_control
 │   │   │   ├── data
 │   │   │   ├── models
@@ -397,6 +405,16 @@
 │   │   │   ├── wizards
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_superset_connector
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_test_fixtures
 │   │   │   ├── models
 │   │   │   ├── tests
@@ -431,6 +449,7 @@
 │   │   ├── static
 │   │   │   └── src
 │   │   ├── views
+│   │   │   ├── ai_settings_view.xml
 │   │   │   ├── ask_ai_views.xml
 │   │   │   └── res_config_settings_view.xml
 │   │   ├── CHANGES.md
@@ -580,6 +599,24 @@
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_month_end_closing
+│   │   ├── data
+│   │   │   ├── project_milestone.xml
+│   │   │   ├── project_project.xml
+│   │   │   ├── project_tags.xml
+│   │   │   ├── project_task_closing.xml
+│   │   │   ├── project_task_tax.xml
+│   │   │   ├── project_task_type.xml
+│   │   │   └── resource_calendar_leaves.xml
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── description
+│   │   ├── views
+│   │   │   └── menus.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_month_end_closing.backup
 │   │   ├── data
 │   │   │   ├── closing_tasks.xml
 │   │   │   ├── hr_employees.xml
@@ -1275,7 +1312,8 @@
 │   │   └── sap_help.yaml
 │   ├── capability_map.yaml
 │   ├── odoo.conf.template
-│   └── pipeline.yaml
+│   ├── pipeline.yaml
+│   └── ship_set.txt
 ├── contracts
 │   └── delta
 │       ├── bronze_raw_pages.yaml
@@ -1405,6 +1443,13 @@
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
 │   │   └── ipai_idp_pdf_processing.drawio
+│   ├── audits
+│   │   └── ipai_modules
+│   │       ├── README.md
+│   │       ├── inventory.csv
+│   │       ├── inventory.json
+│   │       ├── inventory.md
+│   │       └── oca_overlap_map.yaml
 │   ├── data-model
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
@@ -1571,6 +1616,7 @@
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
 │   ├── DEPLOY_NOTION_WORKOS.md
 │   ├── DEVELOPER_TOOLS.md
+│   ├── DIGITALOCEAN_EMAIL_SETUP.md
 │   ├── DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md
 │   ├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
 │   ├── DIRECTIONAL_SYNC.md
@@ -2029,6 +2075,7 @@
 │   ├── apply-supabase-schema.sh
 │   ├── assign_module_icons.py
 │   ├── audit_email_config.py
+│   ├── audit_ipai_modules.py
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
@@ -2048,6 +2095,8 @@
 │   ├── configure_gmail_smtp.py
 │   ├── configure_gmail_smtp.sh
 │   ├── configure_google_oauth.sh
+│   ├── configure_mailgun_smtp.py
+│   ├── configure_sendgrid_smtp.py
 │   ├── configure_zoho_smtp.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
@@ -2146,6 +2195,7 @@
 │   ├── sync_directional.py
 │   ├── test_afc_rag.py
 │   ├── test_deploy_local.sh
+│   ├── test_ipai_install_upgrade.py
 │   ├── update_diagram_manifest.py
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
@@ -2742,15 +2792,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-810 directories, 1927 files
+829 directories, 1958 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 919 |
-| Files | 2728 |
-| Python files | 697 |
-| XML files | 354 |
-| Markdown files | 563 |
+| Directories | 942 |
+| Files | 2778 |
+| Python files | 718 |
+| XML files | 369 |
+| Markdown files | 567 |

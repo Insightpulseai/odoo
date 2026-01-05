@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d84f6e799542c247530b6aac4ffd366d8ded9534
+> Commit: 84ae4e2203ef17d9ee4b298fbc32e2fadf992d8a
 
 ## 📚 Documentation
 
@@ -114,6 +114,7 @@
 | [IPAI Finance PPM – TBWA Complete Configuration](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [IPAI Grid/List View](addons/ipai_grid_view/README.md) | addons/ipai_grid_view |
 | [IPAI Month-End Closing](addons/ipai_month_end/README.md) | addons/ipai_month_end |
+| [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing.backup/README.md) | addons/ipai_month_end_closing.backup |
 | [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing/README.md) | addons/ipai_month_end_closing |
 | [IPAI Platform - Approvals](addons/ipai_platform_approvals/README.md) | addons/ipai_platform_approvals |
 | [IPAI Platform - Audit Trail](addons/ipai_platform_audit/README.md) | addons/ipai_platform_audit |
@@ -198,6 +199,7 @@
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
 | [Odoo Developer Tools (Debug Mode) — IPAI Usage Guide](docs/DEVELOPER_TOOLS.md) | docs |
+| [DigitalOcean Email Setup for Odoo CE 18](docs/DIGITALOCEAN_EMAIL_SETUP.md) | docs |
 | [DigitalOcean SMTP Unblock Request](docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md) | docs |
 | [DigitalOcean Validation Framework](docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md) | docs |
 | [Directional Sync System](docs/DIRECTIONAL_SYNC.md) | docs |
@@ -282,6 +284,8 @@
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
+| [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
+| [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
 | [Odoo ORM Map](docs/data-model/ODOO_ORM_MAP.md) | docs/data-model |
@@ -591,6 +595,7 @@
 | [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
+| [ipai_auth_oauth_internal](./addons/ipai/ipai_auth_oauth_internal) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
 | [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
@@ -613,6 +618,7 @@
 | [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
+| [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai/ipai_ocr_expense) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
@@ -623,9 +629,10 @@
 | [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
+| [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
-| [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
+| [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ | AI chat agents with ChatGPT/Gemini provider toggles |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
@@ -636,6 +643,7 @@
 | [ipai_grid_view](./addons/ipai_grid_view) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ |  |
+| [ipai_month_end_closing.backup](./addons/ipai_month_end_closing.backup) | ✅ | SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance |
 | [ipai_ocr_gateway](./addons/ipai_ocr_gateway) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
@@ -666,6 +674,7 @@
 | [ipai_ocr_expense](./archive/addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
+| [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 
 ## 🔧 Configuration Files
 

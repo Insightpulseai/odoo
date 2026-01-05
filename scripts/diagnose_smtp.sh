@@ -88,9 +88,26 @@ else
     PORT_587_BLOCKED=true
 fi
 
-# === Test 5: Port 25 (Legacy) ===
+# === Test 5: Port 2525 (Alternative - DigitalOcean Workaround) ===
 echo ""
-echo ">>> [Test 5/6] Testing SMTP port 25 (legacy)..."
+echo ">>> [Test 5/7] Testing SMTP port 2525 (DigitalOcean workaround)..."
+echo "   Port 2525 bypasses DigitalOcean SMTP blocking"
+echo ""
+
+timeout 10 docker exec "$CONTAINER_NAME" nc -zv smtp.sendgrid.net 2525 > /dev/null 2>&1
+PORT_2525_RESULT=$?
+
+if [[ $PORT_2525_RESULT -eq 0 ]]; then
+    echo "✓ PASS: Port 2525 is open and reachable"
+    PORT_2525_BLOCKED=false
+else
+    echo "❌ FAIL: Port 2525 is BLOCKED or unreachable"
+    PORT_2525_BLOCKED=true
+fi
+
+# === Test 6: Port 25 (Legacy) ===
+echo ""
+echo ">>> [Test 6/7] Testing SMTP port 25 (legacy)..."
 
 timeout 10 docker exec "$CONTAINER_NAME" nc -zv smtp.gmail.com 25 > /dev/null 2>&1
 PORT_25_RESULT=$?
@@ -103,9 +120,9 @@ else
     PORT_25_BLOCKED=true
 fi
 
-# === Test 6: Python SMTP Test ===
+# === Test 7: Python SMTP Test ===
 echo ""
-echo ">>> [Test 6/6] Testing Python SMTP library connection..."
+echo ">>> [Test 7/7] Testing Python SMTP library connection..."
 
 docker exec "$CONTAINER_NAME" python3 <<'PYTHON_EOF'
 import socket
@@ -160,6 +177,14 @@ else
     ((TESTS_FAILED++))
 fi
 
+if [[ $PORT_2525_BLOCKED == false ]]; then
+    echo "Port 2525 (Alt SMTP):  ✓ PASS (RECOMMENDED for DigitalOcean)"
+    ((TESTS_PASSED++))
+else
+    echo "Port 2525 (Alt SMTP):  ❌ FAIL (BLOCKED)"
+    ((TESTS_FAILED++))
+fi
+
 if [[ $PORT_25_BLOCKED == false ]]; then
     echo "Port 25 (Legacy):      ✓ PASS (not used)"
 else
@@ -180,40 +205,57 @@ echo "Tests Failed: $TESTS_FAILED"
 echo ""
 
 # === RECOMMENDATIONS ===
-if [[ $PORT_465_BLOCKED == true ]] && [[ $PORT_587_BLOCKED == true ]]; then
+if [[ $PORT_465_BLOCKED == true ]] && [[ $PORT_587_BLOCKED == true ]] && [[ $PORT_2525_BLOCKED == false ]]; then
     echo "=================================================="
-    echo "❌ CRITICAL: DIGITALOCEAN SMTP BLOCKING DETECTED"
+    echo "⚠️  DIGITALOCEAN SMTP BLOCKING DETECTED"
+    echo "✅ PORT 2525 IS AVAILABLE - USE THIS!"
     echo "=================================================="
     echo ""
-    echo "All SMTP ports (25, 465, 587) are blocked."
-    echo "This is DigitalOcean's default spam prevention policy."
+    echo "Standard SMTP ports (25, 465, 587) are blocked by DigitalOcean."
+    echo "However, PORT 2525 is OPEN and can be used for email sending."
     echo ""
-    echo "SOLUTION OPTIONS:"
+    echo "RECOMMENDED SOLUTION: Use Port 2525"
     echo ""
-    echo "Option 1: Request SMTP Unblock from DigitalOcean (RECOMMENDED)"
-    echo "  1. Submit support ticket: https://cloud.digitalocean.com/support/tickets/new"
-    echo "  2. Subject: 'Request to unblock outbound SMTP ports (25, 465, 587)'"
-    echo "  3. Explain: 'Production Odoo ERP needs to send transaction emails'"
-    echo "  4. Provide: Droplet ID, business use case, anti-spam measures"
-    echo "  5. Wait: 24-48 hours for review and approval"
+    echo "Option 1: SendGrid (DigitalOcean Partner - RECOMMENDED)"
+    echo "  1. Sign up: https://signup.sendgrid.com/"
+    echo "  2. Create API Key: Settings > API Keys"
+    echo "  3. Configure Odoo:"
+    echo "     docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_sendgrid_smtp.py"
+    echo "  4. Set password in Odoo UI to your API key"
     echo ""
-    echo "Option 2: Use SMTP Relay Service (IMMEDIATE WORKAROUND)"
-    echo "  - SendGrid (DigitalOcean partner): Free tier 100 emails/day"
-    echo "  - Mailgun: Free tier 5,000 emails/month"
-    echo "  - Amazon SES: \$0.10 per 1,000 emails"
+    echo "Option 2: Mailgun"
+    echo "  1. Sign up: https://www.mailgun.com/"
+    echo "  2. Add domain and configure DNS (SPF, DKIM)"
+    echo "  3. Configure Odoo:"
+    echo "     docker exec -i odoo-core odoo shell -d odoo_core < scripts/configure_mailgun_smtp.py"
     echo ""
-    echo "  Configure relay in Odoo:"
-    echo "    SMTP Server: smtp.sendgrid.net (or relay provider)"
-    echo "    Port: 587 (STARTTLS)"
-    echo "    Username: apikey (for SendGrid)"
-    echo "    Password: <API_KEY>"
+    echo "See: docs/DIGITALOCEAN_EMAIL_SETUP.md for complete instructions"
     echo ""
-    echo "Option 3: Use Alternative Port (if available)"
-    echo "  Some providers allow port 2525 (non-standard SMTP)"
+    exit 0
+
+elif [[ $PORT_465_BLOCKED == true ]] && [[ $PORT_587_BLOCKED == true ]] && [[ $PORT_2525_BLOCKED == true ]]; then
+    echo "=================================================="
+    echo "❌ CRITICAL: ALL SMTP PORTS BLOCKED"
+    echo "=================================================="
     echo ""
-    echo "Option 4: Move to Different Cloud Provider"
-    echo "  AWS, GCP, Azure don't block SMTP by default"
-    echo "  (but requires migration)"
+    echo "All SMTP ports (25, 465, 587, 2525) are blocked."
+    echo "This is unusual - even port 2525 should normally work."
+    echo ""
+    echo "TROUBLESHOOTING:"
+    echo ""
+    echo "1. Check firewall rules:"
+    echo "   ufw status"
+    echo "   iptables -L -n"
+    echo ""
+    echo "2. Check Docker network:"
+    echo "   docker network inspect odoo-network"
+    echo ""
+    echo "3. Request SMTP Unblock from DigitalOcean:"
+    echo "   See: docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md"
+    echo ""
+    echo "4. Use API-Based Email Sending:"
+    echo "   Install OCA mail_tracking_mailgun module"
+    echo "   Uses HTTPS (port 443) which is never blocked"
     echo ""
     exit 1
 elif [[ $PORT_465_BLOCKED == true ]] && [[ $PORT_587_BLOCKED == false ]]; then
