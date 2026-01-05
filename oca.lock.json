@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "updated": "2025-12-17T04:33:00Z",
+  "updated": "2026-01-05T00:00:00Z",
   "repositories": {
     "web": {
       "url": "https://github.com/OCA/web",
@@ -19,7 +19,13 @@
       "modules": [
         "project_wbs",
         "project_template",
-        "project_task_template"
+        "project_task_template",
+        "project_task_dependency",
+        "project_task_recurring",
+        "project_stage_closed",
+        "project_timeline",
+        "project_task_default_stage",
+        "project_task_code"
       ]
     },
     "account-financial-reporting": {
@@ -43,7 +49,79 @@
       "branch": "18.0",
       "commit": "adec64e27900e7527262ef02071b74d2e1d47c8f",
       "modules": [
-        "base_view_inheritance_extension"
+        "base_view_inheritance_extension",
+        "auditlog"
+      ]
+    },
+    "timesheet": {
+      "url": "https://github.com/OCA/timesheet",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "hr_timesheet_sheet",
+        "hr_timesheet_task_required"
+      ]
+    },
+    "dms": {
+      "url": "https://github.com/OCA/dms",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "dms",
+        "dms_field",
+        "dms_attachment_link"
+      ]
+    },
+    "mis-builder": {
+      "url": "https://github.com/OCA/mis-builder",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "mis_builder",
+        "mis_builder_budget"
+      ]
+    },
+    "reporting-engine": {
+      "url": "https://github.com/OCA/reporting-engine",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "report_xlsx",
+        "report_xlsx_helper"
+      ]
+    },
+    "server-ux": {
+      "url": "https://github.com/OCA/server-ux",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "date_range",
+        "server_action_mass_edit"
+      ]
+    },
+    "account-analytic": {
+      "url": "https://github.com/OCA/account-analytic",
+      "branch": "18.0",
+      "commit": null,
+      "modules": []
+    },
+    "contract": {
+      "url": "https://github.com/OCA/contract",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "contract",
+        "contract_sale",
+        "contract_variable_quantity"
+      ]
+    },
+    "social": {
+      "url": "https://github.com/OCA/social",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "mail_activity_board",
+        "mail_tracking"
       ]
     }
   }
