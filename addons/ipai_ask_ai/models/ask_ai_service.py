@@ -8,11 +8,24 @@ natural language queries and generating contextual responses.
 
 import json
 import logging
+import os
 import re
 from datetime import datetime, timedelta
 
-from odoo import api, fields, models, _
-from odoo.exceptions import UserError, AccessError
+<<<<<<< HEAD
+import requests
+=======
+import os
+from odoo.exceptions import AccessError, UserError
+>>>>>>> be46fb92 (fix: Production hotfix - OwlError, OAuth loop, Gmail SMTP, Google OAuth SSO)
+
+try:
+    import google.generativeai as genai
+except ImportError:
+    genai = None
+
+from odoo import _, api, fields, models
+from odoo.exceptions import AccessError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -27,6 +40,7 @@ class IpaiAskAIService(models.TransientModel):
     - Database queries based on user intent
     - Response generation with business data
     """
+
     _name = "ipai.ask.ai.service"
     _description = "Ask AI Service"
 
@@ -87,7 +101,9 @@ class IpaiAskAIService(models.TransientModel):
             _logger.exception("Error processing AI query: %s", str(e))
             return {
                 "success": False,
-                "response": _("I encountered an error processing your request. Please try again."),
+                "response": _(
+                    "I encountered an error processing your request. Please try again."
+                ),
                 "error": str(e),
             }
 
@@ -214,7 +230,8 @@ class IpaiAskAIService(models.TransientModel):
             # Try to provide helpful response
             search_term = intent["match"][-1] if intent.get("match") else ""
             return {
-                "message": _("I couldn't find any %s%s.") % (
+                "message": _("I couldn't find any %s%s.")
+                % (
                     model_name.replace(".", " ").replace("_", " "),
                     " matching '%s'" % search_term if search_term else "",
                 ),
@@ -222,8 +239,13 @@ class IpaiAskAIService(models.TransientModel):
             }
 
         # Format response
-        record_names = [r.get("display_name", r.get("name", "Unnamed")) for r in records[:5]]
-        message = _("I found %d %s") % (count, model_name.replace(".", " ").replace("_", " "))
+        record_names = [
+            r.get("display_name", r.get("name", "Unnamed")) for r in records[:5]
+        ]
+        message = _("I found %d %s") % (
+            count,
+            model_name.replace(".", " ").replace("_", " "),
+        )
 
         if count <= 5:
             message += ": " + ", ".join(record_names)
@@ -300,11 +322,13 @@ class IpaiAskAIService(models.TransientModel):
 
         # Invoice filters
         if intent.get("filter") == "unpaid" and model_name == "account.move":
-            domain.extend([
-                ("move_type", "in", ["out_invoice", "out_refund"]),
-                ("payment_state", "!=", "paid"),
-                ("state", "=", "posted"),
-            ])
+            domain.extend(
+                [
+                    ("move_type", "in", ["out_invoice", "out_refund"]),
+                    ("payment_state", "!=", "paid"),
+                    ("state", "=", "posted"),
+                ]
+            )
 
         try:
             records = Model.search(domain)
@@ -313,13 +337,15 @@ class IpaiAskAIService(models.TransientModel):
                 total = sum(records.mapped("amount_total"))
                 count = len(records)
                 message = _("You have %d orders totaling %s this period.") % (
-                    count, self._format_currency(total)
+                    count,
+                    self._format_currency(total),
                 )
             elif model_name == "account.move":
                 total = sum(records.mapped("amount_residual"))
                 count = len(records)
                 message = _("You have %d unpaid invoices totaling %s.") % (
-                    count, self._format_currency(total)
+                    count,
+                    self._format_currency(total),
                 )
             else:
                 count = len(records)
@@ -353,7 +379,26 @@ class IpaiAskAIService(models.TransientModel):
         return {"message": message}
 
     def _generate_generic_response(self, query, context):
+<<<<<<< HEAD
+        """Generate a generic response for unrecognized queries using Gemini."""
+        # Try Gemini AI for generic queries
+        gemini_response = self._call_gemini(query, context)
+
+        if gemini_response.get("success"):
+            return {
+                "message": gemini_response["message"],
+                "data": {"source": "gemini"},
+            }
+
+        # Fallback to default response
+=======
         """Generate a generic response for unrecognized queries."""
+        # Try Gemini if configured
+        gemini_response = self._query_gemini(query)
+        if gemini_response:
+            return {"message": gemini_response}
+
+>>>>>>> be46fb92 (fix: Production hotfix - OwlError, OAuth loop, Gmail SMTP, Google OAuth SSO)
         return {
             "message": _(
                 "I'm not sure how to answer that question. "
@@ -362,11 +407,114 @@ class IpaiAskAIService(models.TransientModel):
             ),
         }
 
+    def _query_gemini(self, prompt):
+        """Query Google Gemini API."""
+        api_key = self.env['ir.config_parameter'].sudo().get_param('ipai_gemini.api_key')
+        if not api_key:
+            api_key = os.environ.get('GEMINI_API_KEY')
+        
+        if not api_key:
+            return None
+
+        if not genai:
+            _logger.warning("google-generativeai library not installed")
+            return None
+
+        try:
+            genai.configure(api_key=api_key)
+            model_name = self.env['ir.config_parameter'].sudo().get_param('ipai_gemini.model', 'gemini-pro')
+            model = genai.GenerativeModel(model_name)
+            response = model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            _logger.error("Gemini API Error: %s", str(e))
+            return None
+
     def _format_currency(self, amount, currency=None):
         """Format amount as currency string."""
         if currency is None:
             currency = self.env.company.currency_id
         return "%s %.2f" % (currency.symbol or "$", amount)
+
+    def _call_gemini(self, query, context):
+        """
+        Call Google Gemini API for generic query responses.
+
+        Args:
+            query: User's question
+            context: Query context
+
+        Returns:
+            dict: Response with success flag and message
+        """
+        # Get API key from config parameter or environment
+        IrConfig = self.env["ir.config_parameter"].sudo()
+        api_key = IrConfig.get_param("ipai_gemini.api_key") or os.getenv("GEMINI_API_KEY")
+
+        if not api_key:
+            _logger.warning("Gemini API key not configured")
+            return {"success": False, "message": "Gemini API not configured"}
+
+        # Get model name from config
+        model = IrConfig.get_param("ipai_gemini.model", "gemini-2.5-flash")
+
+        # Build system context
+        system_context = (
+            "You are an AI assistant integrated into an Odoo ERP system. "
+            "Provide helpful, concise business-focused responses. "
+            "If the user asks about data you don't have access to, "
+            "politely suggest they use specific Odoo features or menus."
+        )
+
+        # Gemini REST API endpoint
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+
+        headers = {
+            "Content-Type": "application/json",
+        }
+
+        payload = {
+            "contents": [{
+                "parts": [{
+                    "text": f"{system_context}\n\nUser question: {query}"
+                }]
+            }],
+            "generationConfig": {
+                "temperature": 0.7,
+                "maxOutputTokens": 500,
+            }
+        }
+
+        try:
+            response = requests.post(
+                url,
+                headers=headers,
+                params={"key": api_key},
+                json=payload,
+                timeout=10
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                if "candidates" in data and len(data["candidates"]) > 0:
+                    message = data["candidates"][0]["content"]["parts"][0]["text"]
+                    return {
+                        "success": True,
+                        "message": message.strip(),
+                    }
+                else:
+                    _logger.warning("Gemini returned no candidates")
+                    return {"success": False, "message": "No response from Gemini"}
+            else:
+                _logger.error("Gemini API error: %s - %s", response.status_code, response.text)
+                return {"success": False, "message": f"Gemini API error: {response.status_code}"}
+
+        except requests.Timeout:
+            _logger.error("Gemini API timeout")
+            return {"success": False, "message": "Gemini API timeout"}
+        except Exception as e:
+            _logger.exception("Gemini API exception: %s", str(e))
+            return {"success": False, "message": f"Gemini error: {str(e)}"}
 
     @api.model
     def get_or_create_ai_channel(self):
@@ -381,11 +529,14 @@ class IpaiAskAIService(models.TransientModel):
         partner = user.partner_id
 
         # Look for existing AI channel
-        existing = Channel.search([
-            ("name", "=", "Ask AI"),
-            ("channel_partner_ids", "in", [partner.id]),
-            ("channel_type", "=", "chat"),
-        ], limit=1)
+        existing = Channel.search(
+            [
+                ("name", "=", "Ask AI"),
+                ("channel_partner_ids", "in", [partner.id]),
+                ("channel_type", "=", "chat"),
+            ],
+            limit=1,
+        )
 
         if existing:
             return existing
@@ -393,15 +544,19 @@ class IpaiAskAIService(models.TransientModel):
         # Create new AI channel
         ai_partner = self._get_or_create_ai_partner()
 
-        channel = Channel.create({
-            "name": "Ask AI",
-            "channel_type": "chat",
-            "channel_partner_ids": [(4, partner.id), (4, ai_partner.id)],
-        })
+        channel = Channel.create(
+            {
+                "name": "Ask AI",
+                "channel_type": "chat",
+                "channel_partner_ids": [(4, partner.id), (4, ai_partner.id)],
+            }
+        )
 
         # Post welcome message
         channel.message_post(
-            body=_("Hello! I'm your AI assistant. Ask me anything about your business data."),
+            body=_(
+                "Hello! I'm your AI assistant. Ask me anything about your business data."
+            ),
             author_id=ai_partner.id,
             message_type="comment",
         )
@@ -411,16 +566,24 @@ class IpaiAskAIService(models.TransientModel):
     @api.model
     def _get_or_create_ai_partner(self):
         """Get or create the AI bot partner."""
-        ai_partner = self.env.ref("ipai_ask_ai.partner_ask_ai", raise_if_not_found=False)
+        ai_partner = self.env.ref(
+            "ipai_ask_ai.partner_ask_ai", raise_if_not_found=False
+        )
 
         if not ai_partner:
-            ai_partner = self.env["res.partner"].sudo().create({
-                "name": "Ask AI",
-                "email": "ai@insightpulseai.net",
-                "is_company": False,
-                "type": "contact",
-                "active": True,
-            })
+            ai_partner = (
+                self.env["res.partner"]
+                .sudo()
+                .create(
+                    {
+                        "name": "Ask AI",
+                        "email": "ai@insightpulseai.net",
+                        "is_company": False,
+                        "type": "contact",
+                        "active": True,
+                    }
+                )
+            )
 
         return ai_partner
 
@@ -438,12 +601,32 @@ class IpaiAskAIService(models.TransientModel):
 
         # AFC/BIR keywords
         afc_keywords = [
-            "bir", "tax", "1700", "1601", "2550", "withholding",
-            "vat", "income tax", "quarterly", "annual",
-            "filing", "compliance", "close", "closing",
-            "gl", "general ledger", "posting", "reconciliation",
-            "sox", "audit", "segregation of duties", "sod",
-            "four-eyes", "preparer", "reviewer", "approver",
+            "bir",
+            "tax",
+            "1700",
+            "1601",
+            "2550",
+            "withholding",
+            "vat",
+            "income tax",
+            "quarterly",
+            "annual",
+            "filing",
+            "compliance",
+            "close",
+            "closing",
+            "gl",
+            "general ledger",
+            "posting",
+            "reconciliation",
+            "sox",
+            "audit",
+            "segregation of duties",
+            "sod",
+            "four-eyes",
+            "preparer",
+            "reviewer",
+            "approver",
         ]
 
         return any(keyword in query_lower for keyword in afc_keywords)
@@ -479,8 +662,7 @@ class IpaiAskAIService(models.TransientModel):
                 sources_text = "\n\n📚 Sources:\n"
                 for i, source in enumerate(result["sources"][:3], 1):
                     sources_text += "• {} (similarity: {:.0%})\n".format(
-                        source["source"],
-                        source["similarity"]
+                        source["source"], source["similarity"]
                     )
 
             response_text = result["answer"] + sources_text

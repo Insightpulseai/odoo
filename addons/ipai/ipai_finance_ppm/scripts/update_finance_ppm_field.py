@@ -3,7 +3,7 @@
 """Update is_finance_ppm field for all tasks in project 30"""
 
 import odoo
-from odoo import api, SUPERUSER_ID
+from odoo import SUPERUSER_ID, api
 
 # Initialize Odoo
 odoo.tools.config.parse_config(["-d", "production"])

@@ -1,0 +1,33 @@
+module,install_ok,upgrade_ok,errors,warnings,duration_s,db_name,log_excerpt_path,tested_commit
+ipai_workos_affine,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_affine__install.log,HEAD
+ipai_workos_core,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_core__install.log,HEAD
+ipai_bir_tax_compliance,pending,pending,"","",0,test_db,artifacts/logs/ipai_bir_tax_compliance__install.log,HEAD
+ipai_close_orchestration,pending,pending,"","",0,test_db,artifacts/logs/ipai_close_orchestration__install.log,HEAD
+ipai_finance_ppm,pending,pending,"","",0,test_db,artifacts/logs/ipai_finance_ppm__install.log,HEAD
+ipai_finance_ppm_golive,pending,pending,"","",0,test_db,artifacts/logs/ipai_finance_ppm_golive__install.log,HEAD
+ipai_month_end,pending,pending,"","",0,test_db,artifacts/logs/ipai_month_end__install.log,HEAD
+ipai_ppm_a1,pending,pending,"","",0,test_db,artifacts/logs/ipai_ppm_a1__install.log,HEAD
+ipai_superset_connector,pending,pending,"","",0,test_db,artifacts/logs/ipai_superset_connector__install.log,HEAD
+ipai_tbwa_finance,pending,pending,"","",0,test_db,artifacts/logs/ipai_tbwa_finance__install.log,HEAD
+ipai,pending,pending,"","",0,test_db,artifacts/logs/ipai__install.log,HEAD
+ipai_ask_ai,pending,pending,"","",0,test_db,artifacts/logs/ipai_ask_ai__install.log,HEAD
+ipai_crm_pipeline,pending,pending,"","ir.model.access.csv is empty",0,test_db,artifacts/logs/ipai_crm_pipeline__install.log,HEAD
+ipai_finance_closing,pending,pending,"","",0,test_db,artifacts/logs/ipai_finance_closing__install.log,HEAD
+ipai_finance_monthly_closing,pending,pending,"","ir.model.access.csv is empty",0,test_db,artifacts/logs/ipai_finance_monthly_closing__install.log,HEAD
+ipai_finance_ppm_umbrella,pending,pending,"","",0,test_db,artifacts/logs/ipai_finance_ppm_umbrella__install.log,HEAD
+ipai_grid_view,pending,pending,"","",0,test_db,artifacts/logs/ipai_grid_view__install.log,HEAD
+ipai_month_end_closing,pending,pending,"","",0,test_db,artifacts/logs/ipai_month_end_closing__install.log,HEAD
+ipai_platform_approvals,pending,pending,"","ir.model.access.csv is empty",0,test_db,artifacts/logs/ipai_platform_approvals__install.log,HEAD
+ipai_platform_audit,pending,pending,"","",0,test_db,artifacts/logs/ipai_platform_audit__install.log,HEAD
+ipai_platform_permissions,pending,pending,"","",0,test_db,artifacts/logs/ipai_platform_permissions__install.log,HEAD
+ipai_platform_theme,pending,pending,"","",0,test_db,artifacts/logs/ipai_platform_theme__install.log,HEAD
+ipai_platform_workflow,pending,pending,"","ir.model.access.csv is empty",0,test_db,artifacts/logs/ipai_platform_workflow__install.log,HEAD
+ipai_ppm_monthly_close,pending,pending,"","",0,test_db,artifacts/logs/ipai_ppm_monthly_close__install.log,HEAD
+ipai_theme_tbwa_backend,pending,pending,"","",0,test_db,artifacts/logs/ipai_theme_tbwa_backend__install.log,HEAD
+ipai_workos_blocks,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_blocks__install.log,HEAD
+ipai_workos_canvas,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_canvas__install.log,HEAD
+ipai_workos_collab,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_collab__install.log,HEAD
+ipai_workos_db,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_db__install.log,HEAD
+ipai_workos_search,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_search__install.log,HEAD
+ipai_workos_templates,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_templates__install.log,HEAD
+ipai_workos_views,pending,pending,"","",0,test_db,artifacts/logs/ipai_workos_views__install.log,HEAD

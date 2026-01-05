@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import re
 import logging
+import re
+
+from odoo.tools import html2plaintext
 
 from odoo import api, models
-from odoo.tools import html2plaintext
 
 _logger = logging.getLogger(__name__)
 
@@ -43,8 +44,7 @@ class MailMessage(models.Model):
                 continue
 
             _logger.info(
-                "Ask AI triggered on %s,%s: %s",
-                msg.model, msg.res_id, question[:100]
+                "Ask AI triggered on %s,%s: %s", msg.model, msg.res_id, question[:100]
             )
 
             # Create request + enqueue job

@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ask_ai_conversation,ask.ai.conversation,model_ask_ai_conversation,base.group_user,1,1,1,1
+access_ask_ai_message,ask.ai.message,model_ask_ai_message,base.group_user,1,1,1,0
+access_afc_rag_service,afc.rag.service,model_afc_rag_service,base.group_user,1,0,0,0
+access_llm_client_service,llm.client.service,model_llm_client_service,base.group_user,1,0,0,0

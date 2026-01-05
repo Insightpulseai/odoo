@@ -117,16 +117,21 @@ class IpaiWorkosPage(models.Model):
             "res_model": "ipai.workos.page",
             "view_mode": "tree,form",
             "domain": [("parent_id", "=", self.id)],
-            "context": {"default_parent_id": self.id, "default_space_id": self.space_id.id},
+            "context": {
+                "default_parent_id": self.id,
+                "default_space_id": self.space_id.id,
+            },
         }
 
     @api.model
     def get_page_tree(self, space_id):
         """Get hierarchical page tree for sidebar navigation."""
-        pages = self.search([
-            ("space_id", "=", space_id),
-            ("parent_id", "=", False),
-        ])
+        pages = self.search(
+            [
+                ("space_id", "=", space_id),
+                ("parent_id", "=", False),
+            ]
+        )
         return self._build_tree(pages)
 
     def _build_tree(self, pages):

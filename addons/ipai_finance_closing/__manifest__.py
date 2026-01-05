@@ -1,9 +1,9 @@
 {
-    'name': 'SAP AFC-Style Month-End Closing Template',
-    'version': '18.0.1.0.0',
-    'category': 'Accounting/Accounting',
-    'summary': 'Month-end financial closing task template based on SAP Advanced Financial Closing',
-    'description': """
+    "name": "SAP AFC-Style Month-End Closing Template",
+    "version": "18.0.1.0.0",
+    "category": "Accounting/Accounting",
+    "summary": "Month-end financial closing task template based on SAP Advanced Financial Closing",
+    "description": """
 SAP AFC-Style Month-End Closing Template
 =========================================
 
@@ -39,20 +39,20 @@ No Python Code Required:
 This module contains only XML data files and can be installed
 without any custom Python development.
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': [
-        'project',
-        'account',
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": [
+        "project",
+        "account",
     ],
-    'data': [
-        'data/closing_tasks.xml',
+    "data": [
+        "data/closing_tasks.xml",
         # 'data/closing_automation.xml',  # Disabled: Automation requires additional configuration
     ],
-    'demo': [],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
-    'images': [],
+    "demo": [],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
+    "images": [],
 }

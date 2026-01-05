@@ -9,8 +9,9 @@ import json
 import logging
 from datetime import datetime
 
-from odoo import api, fields, models
 from odoo.exceptions import UserError
+
+from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 

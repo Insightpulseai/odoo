@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Task Form Inherit -->
+    <record id="view_task_form_ipai_inherit" model="ir.ui.view">
+        <field name="name">project.task.form.ipai</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <!-- Hidden computed fields for visibility -->
+            <xpath expr="//sheet" position="before">
+                <field name="ipai_dependencies_enabled" invisible="1"/>
+                <field name="ipai_milestones_enabled" invisible="1"/>
+                <field name="ipai_raci_enabled" invisible="1"/>
+            </xpath>
+
+            <!-- Add milestone field in header area -->
+            <xpath expr="//group[@name='project_task_details']" position="inside">
+                <field name="ipai_milestone_id"
+                       invisible="not ipai_milestones_enabled"
+                       domain="[('project_id', '=', project_id)]"/>
+            </xpath>
+
+            <!-- Add feature tabs in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <!-- Dependencies Tab -->
+                <page string="Dependencies" name="ipai_dependencies" invisible="not ipai_dependencies_enabled">
+                    <group>
+                        <group string="This Task Depends On">
+                            <field name="ipai_dependency_ids" nolabel="1" context="{'default_task_id': active_id}">
+                                <tree editable="bottom">
+                                    <field name="depends_on_task_id" domain="[('project_id', '=', parent.project_id), ('id', '!=', parent.id)]"/>
+                                    <field name="dependency_type"/>
+                                    <field name="lag_days"/>
+                                </tree>
+                            </field>
+                        </group>
+                        <group string="Tasks That Depend On This">
+                            <field name="ipai_dependent_ids" nolabel="1" readonly="1">
+                                <tree>
+                                    <field name="task_id"/>
+                                    <field name="dependency_type"/>
+                                    <field name="lag_days"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </group>
+                </page>
+
+                <!-- RACI Tab -->
+                <page string="RACI" name="ipai_raci" invisible="not ipai_raci_enabled">
+                    <field name="ipai_raci_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="user_id"/>
+                            <field name="role"/>
+                            <field name="notes"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

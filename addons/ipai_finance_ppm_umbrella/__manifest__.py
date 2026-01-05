@@ -1,7 +1,9 @@
 {
     "name": "IPAI Finance PPM – TBWA Complete Configuration",
     "summary": "Complete seed data for 8-employee Finance SSC with BIR compliance and month-end closing tasks",
-    "version": "1.0.0",
+    "version": "18.0.1.0.0",
+    "category": "Accounting/Finance",
+    "website": "https://insightpulse.ai",
     "author": "InsightPulse AI",
     "license": "LGPL-3",
     "depends": ["ipai_finance_ppm", "project"],

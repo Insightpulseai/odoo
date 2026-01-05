@@ -9,11 +9,12 @@ with the Odoo AI assistant for intelligent financial compliance queries.
 import json
 import logging
 import os
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
 
 import psycopg2
-from odoo import api, fields, models, _
 from odoo.exceptions import UserError
+
+from odoo import _, api, fields, models
 
 _logger = logging.getLogger(__name__)
 
@@ -25,11 +26,14 @@ class AfcRagService(models.AbstractModel):
     Provides semantic search capabilities over the AFC knowledge base
     using pgvector embeddings stored in Supabase.
     """
+
     _name = "afc.rag.service"
     _description = "AFC RAG Service"
 
     @api.model
-    def semantic_search(self, query: str, top_k: int = 5, company_id: Optional[int] = None) -> List[Dict[str, Any]]:
+    def semantic_search(
+        self, query: str, top_k: int = 5, company_id: Optional[int] = None
+    ) -> List[Dict[str, Any]]:
         """
         Perform semantic search over AFC document chunks.
 
@@ -50,16 +54,11 @@ class AfcRagService(models.AbstractModel):
 
             # Execute vector similarity search
             results = self._execute_vector_search(
-                db_config,
-                query_embedding,
-                top_k,
-                company_id
+                db_config, query_embedding, top_k, company_id
             )
 
             _logger.info(
-                "AFC RAG search for '%s' returned %d results",
-                query[:50],
-                len(results)
+                "AFC RAG search for '%s' returned %d results", query[:50], len(results)
             )
 
             return results
@@ -69,7 +68,9 @@ class AfcRagService(models.AbstractModel):
             return []
 
     @api.model
-    def query_knowledge_base(self, question: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+    def query_knowledge_base(
+        self, question: str, context: Optional[Dict] = None
+    ) -> Dict[str, Any]:
         """
         Query the AFC knowledge base and return enriched response.
 
@@ -91,7 +92,9 @@ class AfcRagService(models.AbstractModel):
 
         if not chunks:
             return {
-                "answer": _("I don't have enough information about that topic in my knowledge base."),
+                "answer": _(
+                    "I don't have enough information about that topic in my knowledge base."
+                ),
                 "sources": [],
                 "confidence": 0.0,
             }
@@ -127,17 +130,27 @@ class AfcRagService(models.AbstractModel):
         ICP = self.env["ir.config_parameter"].sudo()
 
         db_host = ICP.get_param("afc.supabase.db_host") or os.getenv("POSTGRES_HOST")
-        db_name = ICP.get_param("afc.supabase.db_name") or os.getenv("POSTGRES_DATABASE", "postgres")
-        db_user = ICP.get_param("afc.supabase.db_user") or os.getenv("POSTGRES_USER", "postgres")
-        db_password = ICP.get_param("afc.supabase.db_password") or os.getenv("POSTGRES_PASSWORD")
-        db_port = ICP.get_param("afc.supabase.db_port") or os.getenv("POSTGRES_PORT", "5432")
+        db_name = ICP.get_param("afc.supabase.db_name") or os.getenv(
+            "POSTGRES_DATABASE", "postgres"
+        )
+        db_user = ICP.get_param("afc.supabase.db_user") or os.getenv(
+            "POSTGRES_USER", "postgres"
+        )
+        db_password = ICP.get_param("afc.supabase.db_password") or os.getenv(
+            "POSTGRES_PASSWORD"
+        )
+        db_port = ICP.get_param("afc.supabase.db_port") or os.getenv(
+            "POSTGRES_PORT", "5432"
+        )
 
         if not all([db_host, db_password]):
-            raise UserError(_(
-                "AFC RAG service not configured. "
-                "Please set Supabase connection parameters in System Parameters "
-                "or environment variables."
-            ))
+            raise UserError(
+                _(
+                    "AFC RAG service not configured. "
+                    "Please set Supabase connection parameters in System Parameters "
+                    "or environment variables."
+                )
+            )
 
         return {
             "host": db_host,
@@ -178,7 +191,7 @@ class AfcRagService(models.AbstractModel):
         db_config: Dict[str, str],
         query_embedding: List[float],
         top_k: int,
-        company_id: Optional[int] = None
+        company_id: Optional[int] = None,
     ) -> List[Dict[str, Any]]:
         """
         Execute pgvector similarity search in Supabase.
@@ -228,13 +241,15 @@ class AfcRagService(models.AbstractModel):
 
             results = []
             for row in rows:
-                results.append({
-                    "id": row[0],
-                    "content": row[1],
-                    "source": row[2],
-                    "metadata": row[3],
-                    "similarity": float(row[4]),
-                })
+                results.append(
+                    {
+                        "id": row[0],
+                        "content": row[1],
+                        "source": row[2],
+                        "metadata": row[3],
+                        "similarity": float(row[4]),
+                    }
+                )
 
             return results
 
@@ -266,10 +281,7 @@ class AfcRagService(models.AbstractModel):
 
     @api.model
     def _generate_answer(
-        self,
-        question: str,
-        knowledge_context: str,
-        user_context: Dict[str, Any]
+        self, question: str, knowledge_context: str, user_context: Dict[str, Any]
     ) -> str:
         """
         Generate answer using retrieved knowledge and LLM.
@@ -342,5 +354,7 @@ class AfcRagService(models.AbstractModel):
                 "status": "error",
                 "chunk_count": 0,
                 "embedding_count": 0,
-                "message": _("AFC RAG service unavailable: {error}").format(error=str(e)),
+                "message": _("AFC RAG service unavailable: {error}").format(
+                    error=str(e)
+                ),
             }

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'IPAI Studio AI',
-    'version': '18.0.1.1.0',
-    'category': 'Customization/Studio',
-    'summary': 'Natural Language Customization Engine for Odoo',
-    'description': """
+    "name": "IPAI Studio AI",
+    "version": "18.0.1.1.0",
+    "category": "Customization/Studio",
+    "summary": "Natural Language Customization Engine for Odoo",
+    "description": """
 IPAI Studio AI - Natural Language Customization
 ================================================
 
@@ -42,32 +42,32 @@ Integrates with IPAI AI Assistant for conversational customization.
 License: AGPL-3
 Author: InsightPulse AI
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.com',
-    'license': 'AGPL-3',
-    'depends': [
-        'base',
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_studio_ai",
+    "license": "AGPL-3",
+    "depends": [
+        "base",
         # 'base_automation',  # TODO: Verify in Odoo 18 CE addons_path
-        'mail',
+        "mail",
     ],
-    'data': [
-        'security/ir.model.access.csv',
-        'security/security.xml',
-        'data/studio_ai_data.xml',
-        'views/studio_ai_views.xml',
-        'views/studio_ai_wizard_views.xml',
-        'views/menu_views.xml',
+    "data": [
+        "security/ir.model.access.csv",
+        "security/security.xml",
+        "data/studio_ai_data.xml",
+        "views/studio_ai_views.xml",
+        "views/studio_ai_wizard_views.xml",
+        "views/menu_views.xml",
     ],
-    'assets': {
-        'web.assets_backend': [
-            'ipai_studio_ai/static/src/js/studio_ai_widget.js',
-            'ipai_studio_ai/static/src/css/studio_ai.css',
-            'ipai_studio_ai/static/src/xml/studio_ai_templates.xml',
+    "assets": {
+        "web.assets_backend": [
+            "ipai_studio_ai/static/src/js/studio_ai_widget.js",
+            "ipai_studio_ai/static/src/css/studio_ai.css",
+            "ipai_studio_ai/static/src/xml/studio_ai_templates.xml",
         ],
     },
-    'installable': True,
-    'auto_install': False,
-    'application': True,
-    'sequence': 10,
-    'images': ['static/description/banner.png'],
+    "installable": True,
+    "auto_install": False,
+    "application": True,
+    "sequence": 10,
+    "images": ["static/description/banner.png"],
 }

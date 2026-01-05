@@ -6,6 +6,7 @@ from . import (
     closing_step,
     finance_bir_deadline,
     finance_person,
+    finance_recurrence,
     finance_task,
     ppm_dashboard,
     project_task,

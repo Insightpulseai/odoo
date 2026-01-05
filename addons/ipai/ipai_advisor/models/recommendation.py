@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-from odoo import models, fields, api
+
+from odoo import api, fields, models
 
 
 class AdvisorRecommendation(models.Model):

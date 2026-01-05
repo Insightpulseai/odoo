@@ -1,219 +1,164 @@
 # IPAI Finance PPM
 
-**TBWA Finance Logical Framework + BIR PPM on Odoo CE 18**
-
 ## Overview
 
-Complete project portfolio management system for Finance SSC with:
+Finance Project Portfolio Management (Notion Parity).
 
-- **Logical Framework** tracking (Goal → Outcome → IM1/IM2 → Outputs → Activities)
-- **BIR Tax Filing Calendar** with auto-created tasks
-- **ECharts Dashboard** (Clarity PPM-inspired)
-- **Multi-Agency Support** (RIM, CKVC, BOM, JPAL, JLI, JAP, LAS, RMQB)
+- **Technical Name:** `ipai_finance_ppm`
+- **Version:** 18.0.1.0.0
+- **Category:** Accounting/Finance
+- **License:** AGPL-3
+- **Author:** InsightPulseAI
+- **Application:** Yes
+- **Installable:** Yes
 
-## Features
+## Business Use Case
 
-### 1. Finance Logical Framework (`ipai.finance.logframe`)
+*No business use case documented.*
 
-Tracks strategic objectives with:
-- Hierarchical levels (Goal, Outcome, IM1, IM2, Outputs, Activities)
-- Indicators, Means of Verification, Assumptions
-- Linked project tasks
-- Integration with BIR schedule
+## Functional Scope
 
-**Levels**:
-- **Goal**: 100% compliant and timely month-end closing and tax filing
-- **Outcome**: Zero-penalty compliance with timely financial reporting
-- **IM1**: Month-end closing processes completed accurately and on schedule
-- **IM2**: Complete, on-time tax filing for payroll, VAT, and withholding taxes
-- **Outputs**: Reconciliations, Journal Entries, BIR Forms
-- **Activities**: Daily operations (Bank Recon, GL Recon, Tax Computation, etc.)
+### Data Models
 
-### 2. BIR Filing Calendar (`ipai.finance.bir_schedule`)
+- **ipai.close.task.step** (Model)
+  - Month-End Close Task Step
+  - Fields: 7 defined
+- **ipai.finance.logframe** (Model)
+  - Finance Logical Framework
+  - Fields: 10 defined
+- **ipai.finance.bir_schedule** (Model)
+  - BIR Filing Schedule
+  - Fields: 15 defined
+- **project.task** (Model)
+  - Fields: 1 defined
+- **ipai.close.generator** (Model)
+  - Closing Task Generator
+  - Fields: 1 defined
+- **ipai.bir.form.schedule** (Model)
+  - Fields: 4 defined
+- **finance.ppm.dashboard** (Model)
+  - Finance PPM Automation Dashboard
+  - Fields: 10 defined
+- **finance.bir.deadline** (Model)
+  - BIR Tax Filing Deadline
+  - Fields: 14 defined
+- **project.task** (Model)
+  - Fields: 18 defined
+- **ipai.bir.form.schedule** (Model)
+  - BIR Compliance Schedule
+  - Fields: 10 defined
+- **ipai.bir.process.step** (Model)
+  - BIR Process Step
+  - Fields: 7 defined
+- **res.users** (Model)
+  - Fields: 1 defined
+- **ipai.finance.task.template** (Model)
+  - Finance SSC Monthly Task Template
+  - Fields: 13 defined
+- **ipai.finance.person** (Model)
+  - Finance Team Directory
+  - Fields: 5 defined
+- **ipai.close.task.template** (Model)
+  - Closing Task Template
+  - Fields: 29 defined
+- **ipai.close.generation.run** (Model)
+  - Closing Task Generation Run
+  - Fields: 23 defined
+- **ipai.close.generated.map** (Model)
+  - Generated Task Mapping
+  - Fields: 6 defined
 
-Comprehensive BIR tax form tracking:
-- Filing deadlines from BIR calendar
-- Internal deadlines: Preparation, Review, Approval
-- Responsible persons: Supervisor, Reviewer, Approver
-- Status tracking: Not Started → In Progress → Submitted → Filed
-- Completion percentage
-- Auto-created project tasks via cron
+### Views
 
-**Forms Tracked**:
-- 1601-C (Monthly Withholding Tax on Compensation)
-- 0619-E (Expanded Withholding Tax Monthly Remittance)
-- 2550Q (Quarterly VAT Return)
-- 1702-RT (Annual Income Tax Return)
-- 1601-EQ (Expanded WHT Quarterly)
-- 1601-FQ (Final WHT Quarterly)
+- : 10
+- Form: 7
+- Calendar: 2
+- Search: 3
+- Kanban: 2
 
-### 3. ECharts Dashboard
+### Menus
 
-Clarity PPM-inspired visualizations:
-- BIR deadline timeline (bar chart with color-coded status)
-- Completion percentage tracking
-- Status distribution (pie chart)
-- Logframe task distribution
-- KPI cards: Total Forms, On-Time Rate, At Risk, Late Filings
+- `menu_finance_directory`: Directory
+- `menu_finance_generated_tasks`: Generated Tasks
+- `menu_finance_tasks`: Monthly Tasks
+- `menu_finance_bir_deadlines`: BIR Deadlines
+- `menu_finance_calendar`: Compliance Calendar
+- ... and 7 more
 
-**Access**: `/ipai/finance/ppm`
+## Installation & Dependencies
 
-### 4. Automated Task Creation
+### Dependencies
 
-Daily cron job (8AM) creates 3 tasks per BIR form:
-1. **Preparation** (due: prep_deadline) → assigned to Finance Supervisor
-2. **Review** (due: review_deadline) → assigned to Senior Finance Manager
-3. **Approval** (due: approval_deadline) → assigned to Finance Director
+- `base` (CE Core)
+- `mail` (CE Core)
+- `project` (CE Core)
 
-All tasks linked to:
-- Project: "TBWA Finance – Month-End & BIR"
-- Logframe: IM2 "Tax Filing Compliance"
-- BIR Schedule: Specific form
+### Installation
 
-## Installation
+```bash
+# Install module
+odoo-bin -d <database> -i ipai_finance_ppm --stop-after-init
 
-1. Copy module to `addons/ipai_finance_ppm/`
-2. Update Apps List in Odoo
-3. Search "IPAI Finance PPM"
-4. Click Install
+# Upgrade module
+odoo-bin -d <database> -u ipai_finance_ppm --stop-after-init
+```
 
 ## Configuration
 
-### 1. Assign Responsible Users
+### System Parameters
 
-Go to **Finance PPM → BIR Calendar** and edit each form to assign:
-- Finance Supervisor
-- Senior Finance Manager
-- Finance Director
+- `bir.reminder.mattermost.webhook`: https://mattermost.insightpulseai.net/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
+- `bir.reminder.n8n.webhook`: https://ipa.insightpulseai.net/webhook/bir-reminder
+- `bir.overdue.n8n.webhook`: https://ipa.insightpulseai.net/webhook/bir-overdue-nudge
 
-### 2. Verify Cron Job
+### Scheduled Actions
 
-Go to **Settings → Technical → Automation → Scheduled Actions** and verify:
-- **Finance PPM: Sync BIR Tasks** is Active
-- Next execution: 2025-11-24 08:00:00
-- Runs daily
+- **Finance PPM: Generate Daily Tasks** (Active)
+- **BIR Deadline Reminder - 9AM** (Active)
+- **BIR Deadline Reminder - 5PM** (Active)
+- **BIR Overdue Daily Nudge** (Active)
 
-### 3. Check Project
+## Security
 
-Go to **Project** and verify:
-- "TBWA Finance – Month-End & BIR" project exists
-- Tasks are being created automatically
+### Access Rules
 
-## Usage
+*10 access rules defined in ir.model.access.csv*
 
-### View Dashboard
+## Integrations
 
-1. Go to **Finance PPM → Dashboard**
-2. View ECharts visualizations:
-   - BIR filing timeline
-   - Completion tracking
-   - Status distribution
-   - Logframe overview
+- Odoo Mail (Email notifications)
 
-### Manage Logframe
+## Upgrade Notes
 
-1. Go to **Finance PPM → Logframe**
-2. View hierarchical objectives
-3. Click entry to see:
-   - Indicators
-   - Means of Verification
-   - Assumptions
-   - Linked tasks
+- Current Version: 18.0.1.0.0
+- No breaking changes documented
 
-### Track BIR Filings
+## Verification Steps
 
-1. Go to **Finance PPM → BIR Calendar**
-2. View upcoming filings
-3. Update status: Not Started → In Progress → Submitted → Filed
-4. Track completion percentage
-5. View auto-created tasks
+```bash
+# 1. Verify module is installed
+psql -d <database> -c "SELECT name, state FROM ir_module_module WHERE name = 'ipai_finance_ppm'"
 
-### Work with Tasks
-
-1. Go to **Project → Tasks**
-2. Filter by: "TBWA Finance – Month-End & BIR"
-3. View tasks organized by BIR form
-4. Update task status
-
-## Data Model
-
-```
-ipai.finance.logframe (Logical Framework)
-├── level: Selection (goal, outcome, im1, im2, output, activity_im1, activity_im2)
-├── code: Char (e.g., "IM2", "OUT-1", "ACT-1.1")
-├── name: Char (Objective description)
-├── indicators: Text
-├── means_of_verification: Text
-├── assumptions: Text
-├── task_ids: One2many (project.task)
-└── bir_schedule_id: Many2one (ipai.finance.bir_schedule)
-
-ipai.finance.bir_schedule (BIR Filing Calendar)
-├── name: Char (e.g., "1601-C (Compensation) – Dec 2025")
-├── period_covered: Char
-├── filing_deadline: Date (BIR deadline)
-├── prep_deadline: Date (Internal: BIR - 4 days)
-├── review_deadline: Date (Internal: BIR - 2 days)
-├── approval_deadline: Date (Internal: BIR - 1 day)
-├── supervisor_id: Many2one (res.users)
-├── reviewer_id: Many2one (res.users)
-├── approver_id: Many2one (res.users)
-├── status: Selection (not_started, in_progress, submitted, filed, late)
-├── completion_pct: Float
-├── task_ids: One2many (project.task)
-└── logframe_id: Many2one (ipai.finance.logframe)
-
-project.task (Extended)
-├── finance_logframe_id: Many2one (ipai.finance.logframe)
-├── bir_schedule_id: Many2one (ipai.finance.bir_schedule)
-└── is_finance_ppm: Boolean (Computed)
+# 2. Check module info
+odoo-bin shell -d <database> -c 'print(env["ir.module.module"].search([("name", "=", "ipai_finance_ppm")]).state)'
 ```
 
-## Seed Data
+## Data Files
 
-Module includes seed data for:
-- 1 Project: "TBWA Finance – Month-End & BIR"
-- 12 Logframe entries (Goal, Outcome, IM1, IM2, 3 Outputs, 4 Activities)
-- 8 BIR schedule entries (Dec 2025 - Q1 2026 forms)
+- `security/ir.model.access.csv`
+- `views/finance_person_views.xml`
+- `views/finance_bir_deadline_views.xml`
+- `views/finance_task_views.xml`
+- `views/bir_schedule_views.xml`
+- `views/ppm_dashboard_views.xml`
+- `views/project_task_views.xml`
+- `views/menus.xml`
+- `data/finance_person_seed.xml`
+- `data/bir_schedule_seed.xml`
+- `data/finance_cron.xml`
 
-## API Endpoints
+## Static Validation Status
 
-- `GET /ipai/finance/ppm` - Dashboard (HTML)
-- `POST /ipai/finance/ppm/api/bir` - BIR data (JSON)
-- `POST /ipai/finance/ppm/api/logframe` - Logframe data (JSON)
-
-## ECharts Integration
-
-Dashboard uses ECharts 5.5.1 for:
-- Bar charts (deadlines, completion)
-- Pie charts (status distribution)
-- Color-coded visualizations (green=filed, orange=in_progress, red=late)
-- Responsive design
-
-## Dependencies
-
-- `base` - Odoo base module
-- `project` - Project management module
-- `web` - Web framework
-
-## License
-
-LGPL-3
-
-## Author
-
-InsightPulse AI
-https://insightpulseai.com
-
-## Support
-
-For issues or feature requests, contact Finance SSC team.
-
-## Changelog
-
-### 1.0.0 (2025-11-23)
-- Initial release
-- Logframe tracking
-- BIR calendar with auto-tasks
-- ECharts dashboard
-- 8 BIR forms seeded
+- Passed: 5
+- Warnings: 0
+- Failed: 0

@@ -66,14 +66,17 @@ class IpaiWorkosSearch(models.TransientModel):
             domain.extend(domain_extra)
 
         pages = Page.search(domain, limit=limit)
-        return [{
-            "id": p.id,
-            "name": p.name,
-            "icon": p.icon,
-            "space_id": p.space_id.id,
-            "space_name": p.space_id.name,
-            "model": "ipai.workos.page",
-        } for p in pages]
+        return [
+            {
+                "id": p.id,
+                "name": p.name,
+                "icon": p.icon,
+                "space_id": p.space_id.id,
+                "space_name": p.space_id.name,
+                "model": "ipai.workos.page",
+            }
+            for p in pages
+        ]
 
     def _search_databases(self, query, limit=20, domain_extra=None):
         """Search databases by name."""
@@ -83,13 +86,16 @@ class IpaiWorkosSearch(models.TransientModel):
             domain.extend(domain_extra)
 
         dbs = Database.search(domain, limit=limit)
-        return [{
-            "id": d.id,
-            "name": d.name,
-            "icon": d.icon,
-            "row_count": d.row_count,
-            "model": "ipai.workos.database",
-        } for d in dbs]
+        return [
+            {
+                "id": d.id,
+                "name": d.name,
+                "icon": d.icon,
+                "row_count": d.row_count,
+                "model": "ipai.workos.database",
+            }
+            for d in dbs
+        ]
 
     def _search_blocks(self, query, limit=20, domain_extra=None):
         """Search blocks by content text."""
@@ -100,14 +106,17 @@ class IpaiWorkosSearch(models.TransientModel):
             pass
 
         blocks = Block.search(domain, limit=limit)
-        return [{
-            "id": b.id,
-            "type": b.block_type,
-            "preview": (b.content_text or "")[:100],
-            "page_id": b.page_id.id,
-            "page_name": b.page_id.name,
-            "model": "ipai.workos.block",
-        } for b in blocks]
+        return [
+            {
+                "id": b.id,
+                "type": b.block_type,
+                "preview": (b.content_text or "")[:100],
+                "page_id": b.page_id.id,
+                "page_name": b.page_id.name,
+                "model": "ipai.workos.block",
+            }
+            for b in blocks
+        ]
 
     def _search_rows(self, query, database_id, limit=20):
         """Search rows in a specific database."""
@@ -117,11 +126,14 @@ class IpaiWorkosSearch(models.TransientModel):
             ("name", "ilike", query),
         ]
         rows = Row.search(domain, limit=limit)
-        return [{
-            "id": r.id,
-            "name": r.name,
-            "model": "ipai.workos.row",
-        } for r in rows]
+        return [
+            {
+                "id": r.id,
+                "name": r.name,
+                "model": "ipai.workos.row",
+            }
+            for r in rows
+        ]
 
 
 class IpaiWorkosSearchHistory(models.Model):
@@ -144,14 +156,19 @@ class IpaiWorkosSearchHistory(models.Model):
     @api.model
     def log_search(self, query, result_count=0):
         """Log a search query."""
-        return self.create({
-            "query": query,
-            "result_count": result_count,
-        })
+        return self.create(
+            {
+                "query": query,
+                "result_count": result_count,
+            }
+        )
 
     @api.model
     def get_recent_searches(self, limit=10):
         """Get recent searches for current user."""
-        return self.search([
-            ("user_id", "=", self.env.user.id),
-        ], limit=limit)
+        return self.search(
+            [
+                ("user_id", "=", self.env.user.id),
+            ],
+            limit=limit,
+        )

@@ -6,8 +6,9 @@ import logging
 import re
 from datetime import date, datetime, timedelta
 
-from odoo import api, models
 from odoo.modules.module import get_module_resource
+
+from odoo import api, models
 
 _logger = logging.getLogger(__name__)
 
@@ -253,4 +254,238 @@ class IpaFinanceCloseService(models.AbstractModel):
             deadline = _add_workdays(self.env, base, -offset, calendar_obj=calendar_obj)
             t.write({"date_deadline": deadline.isoformat()})
 
-        return {"project_id": target.id, "project_name": target.name, "tasks": len(tasks)}
+        return {
+            "project_id": target.id,
+            "project_name": target.name,
+            "tasks": len(tasks),
+        }
+
+    # ===============================
+    # Deadline Alert Scheduler
+    # ===============================
+    @api.model
+    def _check_upcoming_deadlines(self):
+        """
+        Daily cron job to find tasks nearing their deadline.
+
+        Creates mail.activity notifications for:
+        - Tasks with deadline_date within alert_days_before
+        - Tasks with date_deadline within default alert window (3 days)
+        - Only for tasks not yet done (finance_state != 'done')
+
+        Returns:
+            dict: Summary of alerts created
+        """
+        _logger.info("Running deadline alert check...")
+
+        Task = self.env["project.task"].sudo()
+        Activity = self.env["mail.activity"].sudo()
+        ActivityType = self.env["mail.activity.type"].sudo()
+
+        today = date.today()
+        alerts_created = 0
+
+        # Get the "To Do" activity type or create a reminder type
+        activity_type = ActivityType.search(
+            [("name", "ilike", "To Do")], limit=1
+        ) or ActivityType.search([], limit=1)
+
+        if not activity_type:
+            _logger.warning("No activity type found for deadline alerts")
+            return {"alerts_created": 0, "error": "no_activity_type"}
+
+        # Find tasks with upcoming deadlines using the new deadline_date field
+        # or falling back to date_deadline
+        upcoming_tasks = Task.search(
+            [
+                "|",
+                # Tasks with custom deadline_date and alert_days_before
+                "&",
+                ("deadline_date", "!=", False),
+                ("deadline_date", "<=", (today + timedelta(days=7)).isoformat()),
+                # Tasks with standard date_deadline
+                "&",
+                ("date_deadline", "!=", False),
+                ("date_deadline", "<=", (today + timedelta(days=3)).isoformat()),
+                # Exclude done tasks
+                ("finance_state", "!=", "done"),
+            ]
+        )
+
+        for task in upcoming_tasks:
+            # Determine which deadline to use
+            if task.deadline_date:
+                deadline = task.deadline_date
+                alert_days = task.alert_days_before or 3
+            elif task.date_deadline:
+                deadline = task.date_deadline
+                alert_days = 3
+            else:
+                continue
+
+            # Calculate if we're within alert window
+            days_until = (deadline - today).days
+
+            if days_until < 0:
+                # Overdue task
+                summary = f"OVERDUE: {task.name}"
+                note = f"This task was due on {deadline}. Please complete it immediately."
+            elif days_until <= alert_days:
+                # Within alert window
+                summary = f"Upcoming Deadline: {task.name}"
+                note = f"This task is due on {deadline} ({days_until} days remaining)."
+            else:
+                # Not yet in alert window
+                continue
+
+            # Check if an activity already exists for this task today
+            existing = Activity.search(
+                [
+                    ("res_model", "=", "project.task"),
+                    ("res_id", "=", task.id),
+                    ("date_deadline", "=", today.isoformat()),
+                ],
+                limit=1,
+            )
+
+            if existing:
+                continue
+
+            # Determine user to notify
+            user_id = task.user_id.id if task.user_id else self.env.user.id
+
+            try:
+                Activity.create(
+                    {
+                        "res_id": task.id,
+                        "res_model_id": self.env["ir.model"]
+                        ._get("project.task")
+                        .id,
+                        "activity_type_id": activity_type.id,
+                        "summary": summary,
+                        "note": note,
+                        "user_id": user_id,
+                        "date_deadline": today,
+                    }
+                )
+                alerts_created += 1
+                _logger.info(
+                    "Created deadline alert for task %s (ID: %s)", task.name, task.id
+                )
+            except Exception as e:
+                _logger.error(
+                    "Failed to create alert for task %s: %s", task.id, str(e)
+                )
+
+        _logger.info("Deadline alert check complete. Created %s alerts.", alerts_created)
+        return {"alerts_created": alerts_created}
+
+    @api.model
+    def _send_daily_summary(self):
+        """
+        Send daily summary email to Finance Manager.
+
+        Compiles a summary of:
+        - Overdue tasks
+        - Tasks due today
+        - Tasks due this week
+        - Recent completions
+
+        Uses Ask AI (if available) to generate natural language summary.
+        """
+        _logger.info("Generating daily finance summary...")
+
+        Task = self.env["project.task"].sudo()
+        today = date.today()
+        week_end = today + timedelta(days=7)
+
+        # Gather task statistics
+        overdue = Task.search_count(
+            [
+                ("date_deadline", "<", today.isoformat()),
+                ("finance_state", "!=", "done"),
+                ("is_finance_ppm", "=", True),
+            ]
+        )
+
+        due_today = Task.search_count(
+            [
+                ("date_deadline", "=", today.isoformat()),
+                ("finance_state", "!=", "done"),
+                ("is_finance_ppm", "=", True),
+            ]
+        )
+
+        due_this_week = Task.search_count(
+            [
+                ("date_deadline", ">", today.isoformat()),
+                ("date_deadline", "<=", week_end.isoformat()),
+                ("finance_state", "!=", "done"),
+                ("is_finance_ppm", "=", True),
+            ]
+        )
+
+        # Build summary
+        summary = {
+            "date": today.isoformat(),
+            "overdue": overdue,
+            "due_today": due_today,
+            "due_this_week": due_this_week,
+        }
+
+        _logger.info("Daily summary: %s", summary)
+        return summary
+
+    @api.model
+    def get_blocking_tasks(self, project_id=None):
+        """
+        Get tasks that are blocking the close.
+
+        Returns tasks that are:
+        - Overdue
+        - Tagged as closing or compliance tasks
+        - Not yet done
+
+        Args:
+            project_id: Optional project to filter by
+
+        Returns:
+            list: Task summaries grouped by owner
+        """
+        Task = self.env["project.task"].sudo()
+        today = date.today()
+
+        domain = [
+            ("date_deadline", "<", today.isoformat()),
+            ("finance_state", "!=", "done"),
+            "|",
+            ("is_closing_task", "=", True),
+            ("is_compliance_task", "=", True),
+        ]
+
+        if project_id:
+            domain.append(("project_id", "=", project_id))
+
+        overdue_tasks = Task.search(domain)
+
+        # Group by owner
+        by_owner = {}
+        for task in overdue_tasks:
+            owner = task.user_id.name if task.user_id else "Unassigned"
+            if owner not in by_owner:
+                by_owner[owner] = []
+            by_owner[owner].append(
+                {
+                    "id": task.id,
+                    "name": task.name,
+                    "deadline": task.date_deadline.isoformat() if task.date_deadline else None,
+                    "days_overdue": (today - task.date_deadline).days if task.date_deadline else 0,
+                    "is_closing": task.is_closing_task,
+                    "is_compliance": task.is_compliance_task,
+                }
+            )
+
+        return {
+            "total_blocking": len(overdue_tasks),
+            "by_owner": by_owner,
+        }

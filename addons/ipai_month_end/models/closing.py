@@ -1,5 +1,6 @@
 from datetime import timedelta
-from odoo import models, fields, api
+
+from odoo import api, fields, models
 
 
 class MonthEndClosing(models.Model):

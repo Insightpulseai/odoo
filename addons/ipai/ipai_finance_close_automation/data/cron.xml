@@ -16,5 +16,35 @@ env['ipai.finance.close.service'].sudo().generate_month_close(today.year, today.
             <field name="numbercall">-1</field>
             <field name="active">True</field>
         </record>
+
+        <!-- Daily cron to check upcoming deadlines and create alerts -->
+        <record id="ir_cron_ipai_deadline_alerts" model="ir.cron">
+            <field name="name">IPAI: Check Upcoming Deadlines (Daily @ 8AM)</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="state">code</field>
+            <field name="code">
+env['ipai.finance.close.service'].sudo()._check_upcoming_deadlines()
+            </field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=8, minute=0, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
+
+        <!-- Daily cron to send summary to Finance Manager -->
+        <record id="ir_cron_ipai_daily_summary" model="ir.cron">
+            <field name="name">IPAI: Daily Finance Summary (Daily @ 8:30AM)</field>
+            <field name="model_id" ref="project.model_project_project"/>
+            <field name="state">code</field>
+            <field name="code">
+env['ipai.finance.close.service'].sudo()._send_daily_summary()
+            </field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="nextcall" eval="(DateTime.now().replace(hour=8, minute=30, second=0)).strftime('%Y-%m-%d %H:%M:%S')"/>
+        </record>
     </data>
 </odoo>

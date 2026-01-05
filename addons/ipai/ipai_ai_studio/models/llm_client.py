@@ -6,6 +6,7 @@ Uses OpenAI-compatible chat.completions API to draft Odoo module specs from prom
 """
 import json
 import re
+
 import requests
 
 _JSON_BLOCK_RE = re.compile(r"\{.*\}", re.S)
@@ -106,10 +107,6 @@ def draft_spec_json(
     r.raise_for_status()
     data = r.json()
 
-    content = (
-        (data.get("choices") or [{}])[0]
-        .get("message", {})
-        .get("content", "")
-    )
+    content = (data.get("choices") or [{}])[0].get("message", {}).get("content", "")
 
     return _extract_json(content)

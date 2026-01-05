@@ -31,8 +31,8 @@ Automation:
 Bridged from A1 Control Center (ipai_ppm_a1) for seamless
 configuration-to-execution flow.
     """,
-    "author": "IPAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_close_orchestration",
     "license": "LGPL-3",
     "depends": [
         "base",

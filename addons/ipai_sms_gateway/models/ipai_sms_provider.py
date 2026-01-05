@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+
 from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
@@ -16,39 +17,40 @@ class IpaiSmsProvider(models.Model):
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
 
-    provider_type = fields.Selection([
-        ("twilio", "Twilio"),
-        ("infobip", "Infobip"),
-        ("nexmo", "Vonage/Nexmo"),
-        ("custom", "Custom HTTP API"),
-    ], string="Provider Type", required=True, default="twilio")
+    provider_type = fields.Selection(
+        [
+            ("twilio", "Twilio"),
+            ("infobip", "Infobip"),
+            ("nexmo", "Vonage/Nexmo"),
+            ("custom", "Custom HTTP API"),
+        ],
+        string="Provider Type",
+        required=True,
+        default="twilio",
+    )
 
     # API Configuration
     base_url = fields.Char(
-        string="API Base URL",
-        help="Base URL for the SMS provider API"
+        string="API Base URL", help="Base URL for the SMS provider API"
     )
 
     account_sid = fields.Char(
-        string="Account SID / API User",
-        help="Account identifier for the provider"
+        string="Account SID / API User", help="Account identifier for the provider"
     )
 
     # Secrets stored via system params
     auth_param_key = fields.Char(
         string="Auth Token Parameter",
-        help="System parameter key containing the auth token (e.g., ipai.sms.twilio_token)"
+        help="System parameter key containing the auth token (e.g., ipai.sms.twilio_token)",
     )
 
     sender_id = fields.Char(
         string="Sender ID / From Number",
-        help="Default sender phone number or alphanumeric ID"
+        help="Default sender phone number or alphanumeric ID",
     )
 
     timeout = fields.Integer(
-        string="Timeout (seconds)",
-        default=30,
-        help="Request timeout"
+        string="Timeout (seconds)", default=30, help="Request timeout"
     )
 
     max_retries = fields.Integer(
@@ -58,16 +60,12 @@ class IpaiSmsProvider(models.Model):
 
     # Webhook configuration
     webhook_enabled = fields.Boolean(
-        string="Enable Webhooks",
-        default=True,
-        help="Enable delivery receipt webhooks"
+        string="Enable Webhooks", default=True, help="Enable delivery receipt webhooks"
     )
 
     notes = fields.Text(string="Notes")
 
-    message_ids = fields.One2many(
-        "ipai.sms.message", "provider_id", string="Messages"
-    )
+    message_ids = fields.One2many("ipai.sms.message", "provider_id", string="Messages")
     message_count = fields.Integer(compute="_compute_message_count")
 
     @api.depends("message_ids")
@@ -79,8 +77,10 @@ class IpaiSmsProvider(models.Model):
         """Retrieve auth token from system parameters."""
         self.ensure_one()
         if self.auth_param_key:
-            return self.env["ir.config_parameter"].sudo().get_param(
-                self.auth_param_key, default=""
+            return (
+                self.env["ir.config_parameter"]
+                .sudo()
+                .get_param(self.auth_param_key, default="")
             )
         return ""
 

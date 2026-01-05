@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+
 from odoo import api, fields, models
 
 
@@ -86,7 +87,7 @@ class IpaiWorkosRow(models.Model):
         elif prop.property_type == "multi_select":
             options = prop.get_options()
             labels = []
-            for v in (value or []):
+            for v in value or []:
                 opt = next((o for o in options if o.get("id") == v), None)
                 if opt:
                     labels.append(opt.get("label", ""))

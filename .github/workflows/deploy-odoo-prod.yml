@@ -1,0 +1,79 @@
+name: Deploy Odoo Prod (upgrade module)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "addons/ipai/**"
+      - "scripts/deploy_odoo_upgrade.sh"
+      - ".github/workflows/deploy-odoo-prod.yml"
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Modules to deploy (comma separated)'
+        required: true
+        default: 'ipai_studio_ai'
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'upgrade'
+        type: choice
+        options:
+        - upgrade
+        - install
+
+concurrency:
+  group: odoo-prod-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.ODOO_PROD_HOST }}
+          username: ${{ secrets.ODOO_PROD_USER }}
+          key: ${{ secrets.ODOO_PROD_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            # Adjust path if your repo is elsewhere, e.g. /workspace/odoo-ce
+            # Trying common locations or user provided path
+            TARGET_DIR="/workspace/odoo-ce" 
+            if [ -d "/opt/odoo-ce" ]; then TARGET_DIR="/opt/odoo-ce"; fi
+            if [ -d "/srv/odoo-ce" ]; then TARGET_DIR="/srv/odoo-ce"; fi
+            
+            # Allow override via secret if needed, otherwise fallback to detection
+            TARGET_DIR="${{ secrets.ODOO_REPO_PATH || '/workspace' }}"
+            
+            echo "Deploying to $TARGET_DIR"
+            cd "$TARGET_DIR" || { echo "Directory $TARGET_DIR not found"; exit 1; }
+            
+            git fetch --all
+            git checkout main
+            git pull --ff-only
+            chmod +x scripts/deploy_odoo_upgrade.sh
+            
+            # Determine params from inputs or defaults
+            MODULES="${{ github.event.inputs.modules || 'ipai_studio_ai' }}"
+            ACTION="${{ github.event.inputs.action || 'upgrade' }}"
+
+            # Run the upgrade script
+            ODOO_CONTAINER=odoo-erp-prod \
+            ODOO_DB=${{ secrets.ODOO_PROD_DB }} \
+            ODOO_MODULES="$MODULES" \
+            ODOO_ACTION="$ACTION" \
+            scripts/deploy_odoo_upgrade.sh
+
+            # --- POST-DEPLOY MARKERS ---
+            echo "::group::Details"
+            echo "SHA=$(git rev-parse --short HEAD)"
+            
+            echo ">>> Container Status"
+            docker ps --filter "name=odoo-erp-prod" --format "CONTAINER={{.Names}} STATUS={{.Status}}"
+            
+            echo ">>> Recent Logs (Verification)"
+            # Check for success/error signals in recent logs
+            docker logs --tail=50 odoo-erp-prod 2>&1 | grep -E "Initiating shutdown|Ready|loaded|Traceback|ERROR" || true
+            echo "::endgroup::"

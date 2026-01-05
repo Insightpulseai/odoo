@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "InsightPulse AI - CE Branding",
-    "version": "1.2.0",
+    "version": "18.0.1.2.0",
     "category": "Customization",
     "summary": "Custom branding for Odoo CE login and backend",
     "description": """
@@ -18,7 +18,7 @@
         - Option B: Add your image and update $ipai-login-bg-url in login.scss
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ce_branding",
     "license": "AGPL-3",
     "depends": ["web", "base"],
     "data": [

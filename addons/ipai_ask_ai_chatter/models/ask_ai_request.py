@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
-import uuid
-import requests
 import logging
+import uuid
+
+import requests
+from odoo.tools import html2plaintext
 
 from odoo import api, fields, models
-from odoo.tools import html2plaintext
 
 _logger = logging.getLogger(__name__)
 
@@ -58,7 +59,9 @@ class IpaiAskAiChatterRequest(models.Model):
             "api_url": ICP.get_param("ipai_ask_ai_chatter.api_url", ""),
             "api_key": ICP.get_param("ipai_ask_ai_chatter.api_key", ""),
             "trigger": ICP.get_param("ipai_ask_ai_chatter.trigger", "@askai"),
-            "context_n": int(ICP.get_param("ipai_ask_ai_chatter.context_messages", "12")),
+            "context_n": int(
+                ICP.get_param("ipai_ask_ai_chatter.context_messages", "12")
+            ),
             "timeout": int(ICP.get_param("ipai_ask_ai_chatter.timeout_seconds", "30")),
         }
 
@@ -66,18 +69,18 @@ class IpaiAskAiChatterRequest(models.Model):
     def create_from_message(self, message, question_text):
         """Create a request from a chatter message and enqueue the job."""
         cfg = self._cfg()
-        req = self.create({
-            "model": message.model,
-            "res_id": message.res_id,
-            "question": question_text.strip(),
-            "requested_by": self.env.user.id,
-            "source_message_id": message.id,
-            "state": "queued",
-        })
+        req = self.create(
+            {
+                "model": message.model,
+                "res_id": message.res_id,
+                "question": question_text.strip(),
+                "requested_by": self.env.user.id,
+                "source_message_id": message.id,
+                "state": "queued",
+            }
+        )
         # Enqueue job via OCA queue_job
-        req.with_delay(
-            description=f"Ask AI: {req.model},{req.res_id}"
-        )._run_job()
+        req.with_delay(description=f"Ask AI: {req.model},{req.res_id}")._run_job()
         return req
 
     def _build_context(self):
@@ -85,22 +88,28 @@ class IpaiAskAiChatterRequest(models.Model):
         self.ensure_one()
         cfg = self._cfg()
         record = self.env[self.model].browse(self.res_id).sudo()
-        msgs = self.env["mail.message"].sudo().search(
-            [
-                ("model", "=", self.model),
-                ("res_id", "=", self.res_id),
-                ("message_type", "=", "comment"),
-            ],
-            order="date desc",
-            limit=cfg["context_n"],
+        msgs = (
+            self.env["mail.message"]
+            .sudo()
+            .search(
+                [
+                    ("model", "=", self.model),
+                    ("res_id", "=", self.res_id),
+                    ("message_type", "=", "comment"),
+                ],
+                order="date desc",
+                limit=cfg["context_n"],
+            )
         )
         messages = []
         for m in reversed(msgs):
-            messages.append({
-                "author": (m.author_id.name or "") if m.author_id else "",
-                "date": fields.Datetime.to_string(m.date) if m.date else "",
-                "body": html2plaintext(m.body or ""),
-            })
+            messages.append(
+                {
+                    "author": (m.author_id.name or "") if m.author_id else "",
+                    "date": fields.Datetime.to_string(m.date) if m.date else "",
+                    "body": html2plaintext(m.body or ""),
+                }
+            )
         return record, messages
 
     def _post_answer(self, record, answer_text, citations=None):
@@ -132,7 +141,9 @@ class IpaiAskAiChatterRequest(models.Model):
 
         try:
             record, messages = self._build_context()
-            base_url = self.env["ir.config_parameter"].sudo().get_param("web.base.url", "")
+            base_url = (
+                self.env["ir.config_parameter"].sudo().get_param("web.base.url", "")
+            )
 
             payload = {
                 "request_id": self.uuid,
@@ -141,7 +152,11 @@ class IpaiAskAiChatterRequest(models.Model):
                     "model": self.model,
                     "id": self.res_id,
                     "display_name": record.display_name if record else "",
-                    "url": f"{base_url}/web#id={self.res_id}&model={self.model}" if base_url else "",
+                    "url": (
+                        f"{base_url}/web#id={self.res_id}&model={self.model}"
+                        if base_url
+                        else ""
+                    ),
                 },
                 "context": {"messages": messages},
                 "user": {
@@ -151,7 +166,9 @@ class IpaiAskAiChatterRequest(models.Model):
                 },
                 "meta": {
                     "db": self.env.cr.dbname,
-                    "source_message_id": self.source_message_id.id if self.source_message_id else None,
+                    "source_message_id": (
+                        self.source_message_id.id if self.source_message_id else None
+                    ),
                 },
             }
 

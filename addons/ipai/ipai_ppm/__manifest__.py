@@ -35,7 +35,7 @@ License: LGPL-3
     "version": "18.0.1.0.0",
     "category": "Project Management",
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ppm",
     "license": "LGPL-3",
     "depends": [
         "project",

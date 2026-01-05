@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--
+            Seed skillpack data is loaded via post_init_hook from
+            skillpack/manifest.json (recommended) or inline here.
+
+            This file is a placeholder - actual loading happens via
+            models/skillpack_loader.py
+        -->
+    </data>
+</odoo>

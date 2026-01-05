@@ -23,13 +23,14 @@ Usage:
     # Run inside container (compare both DBs)
     ssh root@159.223.75.148 'cd /root/odoo-ce && docker exec -i odoo-ce python3 < addons/ipai_finance_ppm/scripts/check_seed_parity.py' -- --db odoo production
 """
+import argparse
 import json
 import os
 import sys
-import argparse
-import odoo
-from odoo import api, SUPERUSER_ID
 from pathlib import Path
+
+import odoo
+from odoo import SUPERUSER_ID, api
 
 # Configuration
 SEED_FILE_NAME = "closing_v1_2_0.json"

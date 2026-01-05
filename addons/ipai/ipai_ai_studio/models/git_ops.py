@@ -13,11 +13,7 @@ from datetime import datetime
 def _run(cmd, cwd):
     """Run a git command and return (returncode, output)."""
     p = subprocess.run(
-        cmd,
-        cwd=cwd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True
+        cmd, cwd=cwd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
     )
     return p.returncode, p.stdout
 
@@ -49,7 +45,9 @@ def commit_generated_module(repo_root: str, module_rel_path: str, module_name: s
         raise RuntimeError(f"Not a git repository: {repo_root}\n{o}")
 
     # Save current branch to return to later (optional)
-    rc, current_branch = _run(["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_root)
+    rc, current_branch = _run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"], cwd=repo_root
+    )
     current_branch = current_branch.strip()
 
     # Create new branch
@@ -69,7 +67,7 @@ def commit_generated_module(repo_root: str, module_rel_path: str, module_name: s
     # Commit
     commit_msg = f"feat(ai-studio): generate {module_name}"
     rc, o = _run(["git", "commit", "-m", commit_msg], cwd=repo_root)
-    out.append(f"$ git commit -m \"{commit_msg}\"\n{o}")
+    out.append(f'$ git commit -m "{commit_msg}"\n{o}')
     if rc != 0:
         # Try to go back to original branch
         _run(["git", "checkout", current_branch], cwd=repo_root)
