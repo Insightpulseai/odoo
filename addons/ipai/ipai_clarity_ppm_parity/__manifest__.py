@@ -44,7 +44,7 @@ Author: InsightPulse AI
 License: AGPL-3
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_clarity_ppm_parity",
     "license": "AGPL-3",
     "depends": [
         "project",

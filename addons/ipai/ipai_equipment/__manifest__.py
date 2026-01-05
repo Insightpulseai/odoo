@@ -4,8 +4,8 @@
     "summary": "Cheqroom-style equipment catalog, bookings, and incidents on Odoo CE + OCA.",
     "version": "18.0.1.0.0",
     "category": "Inventory",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_equipment",
     "license": "AGPL-3",
     "depends": [
         "stock",

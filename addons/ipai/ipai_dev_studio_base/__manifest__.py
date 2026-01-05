@@ -4,8 +4,8 @@
     "summary": "Base OCA/CE module bundle and dev tools for InsightPulse",
     "version": "18.0.1.1.0",
     "category": "Tools",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.com",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_dev_studio_base",
     "license": "LGPL-3",
     "depends": [
         "base",
