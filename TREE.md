@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 113cbdd9bcc8206993d8a8437b07001781a3abfa
+> Commit: f3c8228177a28d9ed57cbc27b67d29c3d616d75f
 
 ```
 .
@@ -1430,6 +1430,9 @@
 │   │       └── manifest.json
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
+│   ├── golive
+│   │   ├── TBWA_OMC_PH_GOLIVE_CHECKLIST.csv
+│   │   └── TBWA_OMC_PH_GOLIVE_GUIDE.md
 │   ├── ipai
 │   │   ├── ARCHITECTURE.md
 │   │   ├── CHANGELOG.md
@@ -2725,15 +2728,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-809 directories, 1911 files
+810 directories, 1913 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 918 |
-| Files | 2712 |
+| Directories | 919 |
+| Files | 2714 |
 | Python files | 693 |
 | XML files | 354 |
-| Markdown files | 560 |
+| Markdown files | 561 |
