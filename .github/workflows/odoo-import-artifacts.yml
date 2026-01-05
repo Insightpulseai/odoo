@@ -1,0 +1,123 @@
+# LEGACY WORKFLOW - Disabled pending script restoration
+# This workflow depends on missing scripts:
+# - scripts/generate_month_end_imports.py
+# - scripts/odoo_import_project_suite.py
+#
+# Converted to manual-only workflow to prevent CI failures
+# Re-enable by removing this comment block and restoring scripts
+
+name: Odoo Import Artifacts (LEGACY - Manual Only)
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (validate only, no import)'
+        required: false
+        default: 'true'
+        type: boolean
+      run_import:
+        description: 'Run import to Odoo after generating CSVs'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  generate-csvs:
+    name: Generate Import CSVs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check script dependencies
+        run: |
+          echo "::warning::This workflow depends on missing scripts"
+          echo "Required scripts:"
+          echo "  - scripts/generate_month_end_imports.py"
+          echo "  - scripts/odoo_import_project_suite.py"
+          echo ""
+          echo "Current status:"
+          ls -la scripts/generate_month_end_imports.py 2>&1 || echo "❌ Missing"
+          ls -la scripts/odoo_import_project_suite.py 2>&1 || echo "❌ Missing"
+          echo ""
+          echo "This workflow has been disabled to prevent CI failures."
+          echo "To re-enable: restore missing scripts and update this workflow."
+          exit 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install pandas openpyxl requests
+
+      - name: Fetch source workbook
+        env:
+          IMPORT_SOURCE_URL: ${{ secrets.IMPORT_SOURCE_URL }}
+        run: |
+          if [ -z "$IMPORT_SOURCE_URL" ]; then
+            echo "Warning: IMPORT_SOURCE_URL not set, using sample data"
+            mkdir -p data
+            # Create minimal sample workbook for testing
+            python3 -c "
+import pandas as pd
+with pd.ExcelWriter('data/source.xlsx', engine='openpyxl') as writer:
+    pd.DataFrame({
+        'Task Category': ['Finance'],
+        'Detailed Task': ['Sample Task'],
+        'Activity': ['Preparation'],
+        'Date': ['2026-01-15'],
+        'Email': ['test@example.com']
+    }).to_excel(writer, sheet_name='Closing Task - Gannt Chart', index=False)
+    pd.DataFrame({
+        'Detailed Monthly Tasks': ['Sample Task'],
+        'Preparation': ['Y'],
+        'Review': ['Y'],
+        'Approval': ['Y']
+    }).to_excel(writer, sheet_name='Closing Task', index=False)
+    pd.DataFrame({
+        'BIR Form': ['BIR Form 0619E'],
+        'Period Covered': ['January 2026'],
+        'BIR Filing & Payment Deadline (2026)': ['2026-01-20']
+    }).to_excel(writer, sheet_name='Tax Filing', index=False)
+    pd.DataFrame({
+        'Date': ['2026-01-01'],
+        'Holiday Name': ['New Year'],
+        'Type': ['Holiday']
+    }).to_excel(writer, sheet_name='Holidays & Calendar', index=False)
+print('Created sample workbook')
+"
+          else
+            mkdir -p data
+            curl -L "$IMPORT_SOURCE_URL" -o data/source.xlsx
+            ls -lah data/source.xlsx
+          fi
+
+      - name: Generate CSVs (SKIPPED - missing script)
+        run: |
+          echo "::warning::Skipping CSV generation - script missing"
+          echo "Would run: python3 scripts/generate_month_end_imports.py"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: odoo-import-csvs
+          path: |
+            data/source.xlsx
+          if-no-files-found: warn
+
+  import-to-odoo:
+    name: Import to Odoo (SKIPPED)
+    needs: generate-csvs
+    runs-on: ubuntu-latest
+    if: ${{ inputs.run_import == true || inputs.run_import == 'true' }}
+    steps:
+      - name: Skip import
+        run: |
+          echo "::warning::Import step skipped - workflow disabled"
+          echo "Missing dependencies prevent execution"
+          exit 0
