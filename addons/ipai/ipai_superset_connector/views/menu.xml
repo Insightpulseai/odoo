@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Root Menu -->
+        <menuitem id="menu_superset_root"
+                  name="Analytics"
+                  sequence="90"
+                  web_icon="ipai_superset_connector,static/description/icon.png"
+                  groups="group_superset_user"/>
+
+        <!-- Dashboards Menu -->
+        <menuitem id="menu_superset_dashboards"
+                  name="Dashboards"
+                  parent="menu_superset_root"
+                  action="action_superset_dashboard_list"
+                  sequence="10"/>
+
+        <!-- Configuration Menu -->
+        <menuitem id="menu_superset_config"
+                  name="Configuration"
+                  parent="menu_superset_root"
+                  sequence="90"
+                  groups="group_superset_manager"/>
+
+        <!-- Dashboard Configuration -->
+        <menuitem id="menu_superset_dashboard_config"
+                  name="Dashboard Mapping"
+                  parent="menu_superset_config"
+                  action="action_superset_dashboard"
+                  sequence="10"/>
+
+        <!-- Audit Log -->
+        <menuitem id="menu_superset_audit"
+                  name="Access Audit"
+                  parent="menu_superset_config"
+                  action="action_superset_audit"
+                  sequence="20"/>
+
+    </data>
+</odoo>
