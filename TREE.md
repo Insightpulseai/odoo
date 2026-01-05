@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 557c9ea4ef9c00f1eb06931723576dbf925d8402
+> Commit: 755b251dadbea8fab2d277317519bea5b5cf41c5
 
 ```
 .
@@ -165,6 +165,10 @@
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── README.rst
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_chatgpt_sdk_theme
+│   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_clarity_ppm_parity
@@ -2809,15 +2813,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-842 directories, 1962 files
+844 directories, 1964 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 955 |
-| Files | 2782 |
-| Python files | 718 |
+| Directories | 959 |
+| Files | 2789 |
+| Python files | 720 |
 | XML files | 369 |
 | Markdown files | 569 |
