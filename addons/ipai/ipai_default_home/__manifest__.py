@@ -31,7 +31,7 @@ Author: InsightPulse AI
 License: AGPL-3
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_default_home",
     "license": "AGPL-3",
     "depends": [
         "base",

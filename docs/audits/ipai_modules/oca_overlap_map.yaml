@@ -1,0 +1,249 @@
+# OCA Overlap Mapping for IPAI Modules
+# Generated: 2026-01-05
+#
+# This file maps IPAI modules to potential OCA equivalents.
+# Strategy: OCA first, IPAI only for differentiating features.
+
+oca_baseline_required:
+  # Must-have OCA modules that should be installed BEFORE auditing IPAI redundancy
+  server_brand:
+    repo: https://github.com/OCA/server-brand
+    branch: "18.0"
+    modules:
+      - remove_odoo_enterprise  # CE hygiene - removes enterprise branding
+      - disable_odoo_online     # CE hygiene - disables odoo.com features
+
+  server_auth:
+    repo: https://github.com/OCA/server-auth
+    branch: "18.0"
+    modules:
+      - password_security       # Security baseline
+
+  server_tools:
+    repo: https://github.com/OCA/server-tools
+    branch: "18.0"
+    modules:
+      - auditlog               # Generic CRUD audit logging
+
+  server_ux:
+    repo: https://github.com/OCA/server-ux
+    branch: "18.0"
+    modules:
+      - server_action_mass_edit # Mass editing capabilities
+      - date_range             # Date range utilities
+
+  reporting_engine:
+    repo: https://github.com/OCA/reporting-engine
+    branch: "18.0"
+    modules:
+      - report_xlsx            # Excel report export
+      - report_xlsx_helper     # Helper for xlsx reports
+
+  web:
+    repo: https://github.com/OCA/web
+    branch: "18.0"
+    modules:
+      - web_responsive         # Responsive UI
+
+  queue:
+    repo: https://github.com/OCA/queue
+    branch: "18.0"
+    modules:
+      - queue_job              # Async job processing (critical for AI Studio)
+
+  partner_contact:
+    repo: https://github.com/OCA/partner-contact
+    branch: "18.0"
+    modules:
+      - partner_firstname      # Partner name handling
+
+ipai_overlap_analysis:
+  # IPAI modules with potential OCA overlap
+
+  ipai_ce_branding:
+    classification: C  # OCA-overlapped
+    overlaps_with:
+      - module: remove_odoo_enterprise
+        repo: OCA/server-brand
+        reason: "Both hide enterprise branding; prefer OCA for standard CE hygiene"
+    recommendation: KEEP_AS_DELTA
+    notes: "Keep only if it adds InsightPulse-specific branding beyond CE cleanup"
+
+  ipai_ce_cleaner:
+    classification: C  # OCA-overlapped
+    overlaps_with:
+      - module: remove_odoo_enterprise
+        repo: OCA/server-brand
+      - module: disable_odoo_online
+        repo: OCA/server-brand
+    recommendation: REVIEW
+    notes: "May be redundant with OCA server-brand modules"
+
+  ipai_platform_audit:
+    classification: C  # OCA-overlapped (if exists)
+    overlaps_with:
+      - module: auditlog
+        repo: OCA/server-tools
+        reason: "OCA auditlog provides generic CRUD logging"
+    recommendation: KEEP_AS_DELTA
+    notes: "Keep only for domain-specific audit events (finance close, BIR filing)"
+
+ipai_differentiators:
+  # IPAI modules that are true differentiators (no OCA equivalent)
+
+  ipai_finance_ppm:
+    classification: B  # Functional differentiator
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "Core TBWA Finance PPM workflows - no OCA equivalent"
+
+  ipai_finance_bir_compliance:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "PH BIR tax compliance - localization differentiator"
+
+  ipai_finance_month_end:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "Month-end closing workflows - domain differentiator"
+
+  ipai_close_orchestration:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "Close cycle management - domain differentiator"
+
+  ipai_ask_ai:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "AI RAG engine - no OCA equivalent"
+
+  ipai_studio_ai:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "AI-driven customization - no OCA equivalent"
+
+  ipai_ai_studio:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "AI module builder - differentiator"
+
+  ipai_superset_connector:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "BI integration - custom connector"
+
+  ipai_advisor:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "Azure Advisor-style recommendations - differentiator"
+
+  ipai_agent_core:
+    classification: B
+    overlaps_with: []
+    recommendation: KEEP
+    notes: "AI agent registry - differentiator"
+
+ipai_umbrellas:
+  # Pure umbrella modules (depends + minimal config)
+
+  ipai:
+    classification: A  # Pure umbrella
+    recommendation: KEEP
+    notes: "Namespace module"
+
+  ipai_ai_studio:
+    classification: A
+    recommendation: KEEP
+    notes: "Umbrella for AI studio features"
+
+  ipai_marketing_ai:
+    classification: A
+    recommendation: KEEP
+    notes: "Umbrella for marketing AI features"
+
+ipai_supporting:
+  # Supporting modules (seeds, patches, helpers)
+
+  ipai_finance_close_seed:
+    classification: A  # Pure data
+    recommendation: KEEP
+    notes: "Seed data for month-end/BIR - required for onboarding"
+
+  ipai_portal_fix:
+    classification: D  # Patch
+    recommendation: KEEP
+    notes: "Bug fix - keep until Odoo 18 fixes upstream"
+
+  ipai_custom_routes:
+    classification: D  # Patch
+    recommendation: KEEP
+    notes: "URL routing patches"
+
+  ipai_test_fixtures:
+    classification: D  # Test support
+    recommendation: KEEP
+    notes: "Test fixtures - should stay application=False"
+
+decision_matrix:
+  # Final classification summary
+  # A = Umbrella (pure depends)
+  # B = Functional differentiator (keep)
+  # C = OCA-overlapped (review for merge/removal)
+  # D = Supporting (patches, tests, seeds)
+
+  keep_as_is:
+    - ipai
+    - ipai_finance_ppm
+    - ipai_finance_ppm_closing
+    - ipai_finance_ppm_tdi
+    - ipai_finance_ppm_dashboard
+    - ipai_finance_bir_compliance
+    - ipai_finance_month_end
+    - ipai_finance_close_automation
+    - ipai_finance_close_seed
+    - ipai_finance_monthly_closing
+    - ipai_finance_project_hybrid
+    - ipai_close_orchestration
+    - ipai_project_program
+    - ipai_clarity_ppm_parity
+    - ipai_ppm_monthly_close
+    - ipai_ppm
+    - ipai_ppm_a1
+    - ipai_ask_ai
+    - ipai_ask_ai_chatter
+    - ipai_studio_ai
+    - ipai_ai_studio
+    - ipai_marketing_ai
+    - ipai_agent_core
+    - ipai_superset_connector
+    - ipai_advisor
+    - ipai_bir_compliance
+    - ipai_expense
+    - ipai_ocr_expense
+    - ipai_equipment
+    - ipai_assets
+    - ipai_srm
+    - ipai_master_control
+    - ipai_workspace_core
+    - ipai_dev_studio_base
+    - ipai_default_home
+    - ipai_industry_marketing_agency
+    - ipai_industry_accounting_firm
+    - ipai_project_suite
+
+  review_for_oca_merge:
+    - ipai_ce_branding      # May overlap with remove_odoo_enterprise
+    - ipai_ce_cleaner       # May overlap with server-brand modules
+
+  keep_as_patches:
+    - ipai_portal_fix       # Bug fix patch
+    - ipai_custom_routes    # URL routing patch
+    - ipai_test_fixtures    # Test support

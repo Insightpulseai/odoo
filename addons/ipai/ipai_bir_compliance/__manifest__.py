@@ -26,8 +26,8 @@ Dependencies:
 * account (Odoo native)
 * OCA account-invoicing (for withholding tax logic)
     """,
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_bir_compliance",
     "license": "AGPL-3",
     "depends": [
         "account",

@@ -5,8 +5,8 @@
     "version": "18.0.1.0.0",
     "category": "Accounting/Finance",
     "license": "AGPL-3",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_monthly_closing",
     "depends": ["project"],
     "data": [
         "security/ir.model.access.csv",

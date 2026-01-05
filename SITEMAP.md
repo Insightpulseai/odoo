@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 95fe47b4691f24a34acffbc8d760a554e7b4b2ed
+> Commit: 33b2c4a2e3aa4dac4dc944c3c5194700fa4cb967
 
 ## 📚 Documentation
 
@@ -227,6 +227,7 @@
 | [Odoo Industry Packs - OCA Dependencies Guide](docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md) | docs |
 | [Odoo CE/OCA 18 vs Enterprise Parity Analysis](docs/INDUSTRY_PARITY_ANALYSIS.md) | docs |
 | [IPAI Modules Index](docs/IPAI_MODULES_INDEX.md) | docs |
+| [IPAI Module Installation Order](docs/IPAI_MODULE_INSTALLATION_ORDER.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
 | [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
@@ -262,6 +263,7 @@
 | [RAG Architecture Implementation Plan](docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md) | docs |
 | [InsightPulseAI Documentation](docs/README.md) | docs |
 | [MCP Stack – Odoo + n8n + Mattermost + Superset + DO Agents](docs/README_MCP_STACK.md) | docs |
+| [GO-LIVE RELEASE MANIFEST (Odoo 18 CE + IPAI)](docs/RELEASE_NOTES_GO_LIVE.md) | docs |
 | [Repo Tree Contract (Authoritative)](docs/REPO_TREE.contract.md) | docs |
 | [Repo Tree (generated)](docs/REPO_TREE.generated.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
@@ -280,6 +282,8 @@
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
+| [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
+| [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
 | [Odoo ORM Map](docs/data-model/ODOO_ORM_MAP.md) | docs/data-model |
@@ -301,6 +305,7 @@
 | [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
+| [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [IPAI Module Suite - System Architecture](docs/ipai/ARCHITECTURE.md) | docs/ipai |
 | [IPAI Module Suite - Changelog](docs/ipai/CHANGELOG.md) | docs/ipai |
 | [IPAI Module Suite - Installation Guide](docs/ipai/INSTALLATION.md) | docs/ipai |
@@ -530,6 +535,10 @@
 | [Tasks — Parallel Control Planes](spec/parallel-control-planes/tasks.md) | spec/parallel-control-planes |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
+| [Constitution — Project CE Suite (Toggleable)](spec/project-ce/constitution.md) | spec/project-ce |
+| [Plan — Implementation](spec/project-ce/plan.md) | spec/project-ce |
+| [PRD — Odoo 18 CE Project Suite (Toggleable)](spec/project-ce/prd.md) | spec/project-ce |
+| [Tasks — Checklist](spec/project-ce/tasks.md) | spec/project-ce |
 | [Pulser Master Control — Constitution](spec/pulser-master-control/constitution.md) | spec/pulser-master-control |
 | [Pulser Master Control — Implementation Plan](spec/pulser-master-control/plan.md) | spec/pulser-master-control |
 | [Pulser Master Control — Product Requirements Document](spec/pulser-master-control/prd.md) | spec/pulser-master-control |
@@ -562,6 +571,7 @@
 | [Task: n8n Automation Strategy for Odoo CE](task.md) | . |
 | [Tasks – InsightPulse Odoo CE](tasks.md) | . |
 | [Agent Services Hard Delete Checklist](tasks/infra/AGENT_SERVICES_HARD_DELETE_CHECKLIST.md) | tasks/infra |
+| [Odoo Month-end Close + Tax Filing Import (CE)](templates/odoo/import/README.md) | templates/odoo/import |
 | [Database Instance Inventory Scanner](tools/db-inventory/README.md) | tools/db-inventory |
 | [Kapa-style Docs Copilot for Odoo CE + OCA 18.0](tools/docs-crawler/README.md) | tools/docs-crawler |
 | [Documentation Catalogue → Odoo CE/OCA Mapper](tools/docs_catalog/README.md) | tools/docs_catalog |
@@ -605,6 +615,7 @@
 | [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
+| [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai/ipai_ocr_expense) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
@@ -612,8 +623,10 @@
 | [ipai_ppm_a1](./addons/ipai/ipai_ppm_a1) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
+| [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
+| [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
@@ -657,6 +670,7 @@
 | [ipai_ocr_expense](./archive/addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
+| [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 
 ## 🔧 Configuration Files
 
