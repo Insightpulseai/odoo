@@ -1,0 +1,51 @@
+name: Diagrams - Enforce Draw.io Exports
+
+on:
+  pull_request:
+    paths:
+      - "docs/architecture/**/*.drawio"
+      - "docs/architecture/**/*.png"
+      - "scripts/export_drawio.sh"
+      - ".github/workflows/diagrams-drawio-enforce.yml"
+  push:
+    branches: [ main ]
+    paths:
+      - "docs/architecture/**/*.drawio"
+      - "docs/architecture/**/*.png"
+      - "scripts/export_drawio.sh"
+      - ".github/workflows/diagrams-drawio-enforce.yml"
+
+jobs:
+  export-and-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Docker version
+        run: docker --version
+
+      - name: Export diagrams (deterministic)
+        env:
+          # Keep these stable for deterministic output
+          DRAWIO_EXPORT_IMAGE: "jgraph/drawio:24.7.8"
+          DRAWIO_SCALE: "2"
+          DRAWIO_BORDER: "10"
+        run: |
+          bash scripts/export_drawio.sh
+
+      - name: Fail if generated PNGs are out of sync
+        run: |
+          if ! git diff --quiet; then
+            echo "❌ Generated PNGs are out of sync with .drawio sources."
+            echo ""
+            echo "Run locally:"
+            echo "  ./scripts/export_drawio.sh"
+            echo "Then commit the updated PNG(s)."
+            echo ""
+            git status --porcelain
+            git diff --name-only
+            exit 1
+          fi

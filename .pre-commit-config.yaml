@@ -140,6 +140,14 @@ repos:
         pass_filenames: false
         files: ^spec/
 
+      # Validate manifest icons
+      - id: odoo-manifest-check
+        name: Odoo Manifest Validator
+        entry: python3 scripts/validate_manifest.py
+        language: system
+        files: __manifest__\.py$
+        pass_filenames: false
+
 # =============================================================================
 # CI Configuration
 # =============================================================================
