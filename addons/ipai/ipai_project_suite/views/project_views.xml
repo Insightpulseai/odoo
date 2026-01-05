@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Project Form Inherit -->
+    <record id="view_project_form_ipai_inherit" model="ir.ui.view">
+        <field name="name">project.project.form.ipai</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <!-- Add smart buttons for milestones and budgets -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="%(action_ipai_milestone_project)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-flag"
+                        invisible="not ipai_milestones_enabled">
+                    <field name="ipai_milestone_count" widget="statinfo" string="Milestones"/>
+                </button>
+                <button name="%(action_ipai_budget_project)d"
+                        type="action"
+                        class="oe_stat_button"
+                        icon="fa-money"
+                        invisible="not ipai_budgeting_enabled">
+                    <field name="ipai_budget_count" widget="statinfo" string="Budgets"/>
+                </button>
+            </xpath>
+
+            <!-- Hidden computed fields for visibility -->
+            <xpath expr="//sheet" position="before">
+                <field name="ipai_milestones_enabled" invisible="1"/>
+                <field name="ipai_budgeting_enabled" invisible="1"/>
+                <field name="ipai_raci_enabled" invisible="1"/>
+            </xpath>
+
+            <!-- Add RACI tab in notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="RACI Matrix" name="ipai_raci" invisible="not ipai_raci_enabled">
+                    <field name="ipai_raci_ids" nolabel="1">
+                        <tree editable="bottom">
+                            <field name="user_id"/>
+                            <field name="role"/>
+                            <field name="notes"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action for Milestones from Project -->
+    <record id="action_ipai_milestone_project" model="ir.actions.act_window">
+        <field name="name">Milestones</field>
+        <field name="res_model">ipai.project.milestone</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[('project_id', '=', active_id)]</field>
+        <field name="context">{'default_project_id': active_id}</field>
+    </record>
+
+    <!-- Action for Budgets from Project -->
+    <record id="action_ipai_budget_project" model="ir.actions.act_window">
+        <field name="name">Budgets</field>
+        <field name="res_model">ipai.project.budget</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('project_id', '=', active_id)]</field>
+        <field name="context">{'default_project_id': active_id}</field>
+    </record>
+</odoo>
