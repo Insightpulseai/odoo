@@ -1,0 +1,39 @@
+name: icons-drift
+
+on:
+  pull_request:
+    paths:
+      - "branding/module_icons.yaml"
+      - "scripts/export_module_icons.py"
+      - "addons/**/static/description/icon.png"
+      - ".github/workflows/icons-drift.yml"
+  push:
+    branches: [ main ]
+    paths:
+      - "branding/module_icons.yaml"
+      - "scripts/export_module_icons.py"
+      - "addons/**/static/description/icon.png"
+      - ".github/workflows/icons-drift.yml"
+
+jobs:
+  icons:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: 
+          submodules: recursive
+      
+      - uses: actions/setup-python@v5
+        with: 
+          python-version: "3.11"
+          
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y libcairo2-dev
+          pip install cairosvg pyyaml
+          
+      - name: Generate Icons
+        run: python3 scripts/export_module_icons.py
+        
+      - name: Check for Drift
+        run: git diff --exit-code addons/**/static/description/icon.png

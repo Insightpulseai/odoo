@@ -7,6 +7,24 @@ on:
       - "addons/ipai/**"
       - "scripts/deploy_odoo_upgrade.sh"
       - ".github/workflows/deploy-odoo-prod.yml"
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Modules to deploy (comma separated)'
+        required: true
+        default: 'ipai_studio_ai'
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'upgrade'
+        type: choice
+        options:
+        - upgrade
+        - install
+
+concurrency:
+  group: odoo-prod-deploy
+  cancel-in-progress: false
 
 jobs:
   deploy:
@@ -37,8 +55,25 @@ jobs:
             git pull --ff-only
             chmod +x scripts/deploy_odoo_upgrade.sh
             
+            # Determine params from inputs or defaults
+            MODULES="${{ github.event.inputs.modules || 'ipai_studio_ai' }}"
+            ACTION="${{ github.event.inputs.action || 'upgrade' }}"
+
             # Run the upgrade script
             ODOO_CONTAINER=odoo-erp-prod \
             ODOO_DB=${{ secrets.ODOO_PROD_DB }} \
-            ODOO_MODULES=ipai_studio_ai \
+            ODOO_MODULES="$MODULES" \
+            ODOO_ACTION="$ACTION" \
             scripts/deploy_odoo_upgrade.sh
+
+            # --- POST-DEPLOY MARKERS ---
+            echo "::group::Details"
+            echo "SHA=$(git rev-parse --short HEAD)"
+            
+            echo ">>> Container Status"
+            docker ps --filter "name=odoo-erp-prod" --format "CONTAINER={{.Names}} STATUS={{.Status}}"
+            
+            echo ">>> Recent Logs (Verification)"
+            # Check for success/error signals in recent logs
+            docker logs --tail=50 odoo-erp-prod 2>&1 | grep -E "Initiating shutdown|Ready|loaded|Traceback|ERROR" || true
+            echo "::endgroup::"
