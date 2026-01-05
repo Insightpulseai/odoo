@@ -25,8 +25,8 @@ Program (PRJ-2025-002)
     """,
     "version": "18.0.1.0.0",
     "category": "Project",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_project_program",
     "license": "LGPL-3",
     "depends": ["project", "mail"],
     "data": [

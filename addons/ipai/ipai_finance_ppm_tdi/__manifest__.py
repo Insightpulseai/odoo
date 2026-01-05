@@ -19,8 +19,8 @@ Features:
 - Audit trail for all imports
 - Integration with ipai_finance_monthly_closing module
     """,
-    "author": "InsightPulse AI - Jake Tolentino",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm_tdi",
     "license": "AGPL-3",
     "depends": [
         "base",

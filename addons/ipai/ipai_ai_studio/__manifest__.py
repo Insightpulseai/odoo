@@ -5,7 +5,7 @@
     "summary": "AI-driven Studio-like module generator for Odoo CE (spec -> addon scaffold -> validate -> apply)",
     "category": "Productivity",
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.com",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ai_studio",
     "license": "LGPL-3",
     "depends": ["base", "web"],
     "data": [
