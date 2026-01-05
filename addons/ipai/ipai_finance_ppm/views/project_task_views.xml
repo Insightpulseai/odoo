@@ -62,7 +62,7 @@
     <record id="action_finance_ppm_tasks" model="ir.actions.act_window">
         <field name="name">Finance PPM Tasks</field>
         <field name="res_model">project.task</field>
-        <field name="view_mode">tree,form,kanban,calendar,timeline</field>
+        <field name="view_mode">list,form,kanban,calendar,timeline</field>
         <field name="domain">[('is_finance_ppm', '=', True)]</field>
         <field name="context">{
             'search_default_my_tasks': 1,

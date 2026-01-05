@@ -1,14 +1,15 @@
 name: Diagrams QA & Export
 
 on:
-  pull_request:
+  # NOTE: PR trigger removed - diagram export is not essential for PR validation
+  push:
+    branches: [main]
     paths:
       - "**/*.vsdx"
       - "**/*.drawio"
       - "**/*.dio"
       - "docs/diagrams/**"
       - "skills/visio-drawio-export/**"
-
   workflow_dispatch:
     inputs:
       visual_regression:

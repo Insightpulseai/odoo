@@ -1,15 +1,13 @@
 name: Seeds / Validate
 
 on:
-  pull_request:
-    paths:
-      - 'seeds/**'
-      - '.github/workflows/seeds-validate.yml'
+  # NOTE: PR trigger removed - seeds validation runs on main push only
   push:
-    branches: ["**"]
+    branches: [main]
     paths:
       - 'seeds/**'
       - '.github/workflows/seeds-validate.yml'
+  workflow_dispatch:
 
 jobs:
   validate:

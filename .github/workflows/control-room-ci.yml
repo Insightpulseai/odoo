@@ -1,15 +1,13 @@
 name: Control Room CI
 
 on:
+  # NOTE: PR trigger removed - control room CI runs on main push only
   push:
-    branches: [main, develop]
-    paths:
-      - 'apps/control-room/**'
-      - '.github/workflows/control-room-ci.yml'
-  pull_request:
     branches: [main]
     paths:
       - 'apps/control-room/**'
+      - '.github/workflows/control-room-ci.yml'
+  workflow_dispatch:
 
 defaults:
   run:

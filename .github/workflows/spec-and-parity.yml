@@ -1,17 +1,9 @@
 name: Spec + Parity Gates
 
 on:
-  pull_request:
-    paths:
-      - "spec/**"
-      - "catalog/**"
-      - "kb/**"
-      - "tools/parity/**"
-      - "tools/audit/**"
-      - "addons/ipai_*/**"
-      - ".github/workflows/spec-and-parity.yml"
+  # NOTE: PR trigger removed - spec parity gate runs on main push only
   push:
-    branches: [main, master]
+    branches: [main]
     paths:
       - "spec/**"
       - "catalog/**"
@@ -20,6 +12,7 @@ on:
       - "tools/audit/**"
       - "addons/ipai_*/**"
       - ".github/workflows/spec-and-parity.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
