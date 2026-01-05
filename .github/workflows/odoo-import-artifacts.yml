@@ -32,51 +32,54 @@ jobs:
           pip install -U pip
           pip install pandas openpyxl requests
 
-      - name: Fetch source workbook
+      - name: Create sample workbook if no URL
+        if: ${{ !secrets.IMPORT_SOURCE_URL }}
+        run: |
+          mkdir -p data
+          cat > /tmp/create_sample.py << 'PYEOF'
+          import pandas as pd
+          from pathlib import Path
+          Path("data").mkdir(parents=True, exist_ok=True)
+          with pd.ExcelWriter('data/source.xlsx', engine='openpyxl') as writer:
+              pd.DataFrame({
+                  'Task Category': ['Finance'],
+                  'Detailed Task': ['Sample Task'],
+                  'Activity': ['Preparation'],
+                  'Date': ['2026-01-15'],
+                  'Email': ['test@example.com'],
+              }).to_excel(writer, sheet_name='Closing Task - Gannt Chart', index=False)
+
+              pd.DataFrame({
+                  'Detailed Monthly Tasks': ['Sample Task'],
+                  'Preparation': ['Y'],
+                  'Review': ['Y'],
+                  'Approval': ['Y'],
+              }).to_excel(writer, sheet_name='Closing Task', index=False)
+
+              pd.DataFrame({
+                  'BIR Form': ['BIR Form 0619E'],
+                  'Period Covered': ['January 2026'],
+                  'BIR Filing & Payment Deadline (2026)': ['2026-01-20'],
+              }).to_excel(writer, sheet_name='Tax Filing', index=False)
+
+              pd.DataFrame({
+                  'Date': ['2026-01-01'],
+                  'Holiday Name': ['New Year'],
+                  'Type': ['Holiday'],
+              }).to_excel(writer, sheet_name='Holidays & Calendar', index=False)
+          print("Created sample workbook: data/source.xlsx")
+          PYEOF
+          python3 /tmp/create_sample.py
+          echo "::warning::IMPORT_SOURCE_URL not set, using sample data"
+
+      - name: Fetch source workbook from URL
+        if: ${{ secrets.IMPORT_SOURCE_URL }}
         env:
           IMPORT_SOURCE_URL: ${{ secrets.IMPORT_SOURCE_URL }}
         run: |
-          set -e
           mkdir -p data
-          if [ -z "$IMPORT_SOURCE_URL" ]; then
-            echo "::warning::IMPORT_SOURCE_URL not set, using sample data"
-            python3 - <<'PY'
-import pandas as pd
-from pathlib import Path
-Path("data").mkdir(parents=True, exist_ok=True)
-with pd.ExcelWriter('data/source.xlsx', engine='openpyxl') as writer:
-    pd.DataFrame({
-        'Task Category': ['Finance'],
-        'Detailed Task': ['Sample Task'],
-        'Activity': ['Preparation'],
-        'Date': ['2026-01-15'],
-        'Email': ['test@example.com'],
-    }).to_excel(writer, sheet_name='Closing Task - Gannt Chart', index=False)
-
-    pd.DataFrame({
-        'Detailed Monthly Tasks': ['Sample Task'],
-        'Preparation': ['Y'],
-        'Review': ['Y'],
-        'Approval': ['Y'],
-    }).to_excel(writer, sheet_name='Closing Task', index=False)
-
-    pd.DataFrame({
-        'BIR Form': ['BIR Form 0619E'],
-        'Period Covered': ['January 2026'],
-        'BIR Filing & Payment Deadline (2026)': ['2026-01-20'],
-    }).to_excel(writer, sheet_name='Tax Filing', index=False)
-
-    pd.DataFrame({
-        'Date': ['2026-01-01'],
-        'Holiday Name': ['New Year'],
-        'Type': ['Holiday'],
-    }).to_excel(writer, sheet_name='Holidays & Calendar', index=False)
-print("Created sample workbook: data/source.xlsx")
-PY
-          else
-            curl -L "$IMPORT_SOURCE_URL" -o data/source.xlsx
-            ls -lah data/source.xlsx
-          fi
+          curl -L "$IMPORT_SOURCE_URL" -o data/source.xlsx
+          ls -lah data/source.xlsx
 
       - name: Generate CSVs (auto-skip if scripts missing)
         run: |
