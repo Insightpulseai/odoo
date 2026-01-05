@@ -1,6 +1,6 @@
 {
-  "generated_at": "2026-01-05T10:17:13.643297",
-  "total_modules": 42,
+  "generated_at": "2026-01-05T10:40:33.049510",
+  "total_modules": 43,
   "modules": [
     {
       "module_name": "ipai_industry_marketing_agency",
@@ -344,7 +344,7 @@
       ],
       "assets": {},
       "installable": true,
-      "application": true,
+      "application": false,
       "auto_install": false,
       "enterprise_deps": [],
       "has_enterprise_deps": false,
@@ -529,7 +529,9 @@
       "summary": "Custom branding for Odoo CE login and backend",
       "depends": [
         "web",
-        "base"
+        "base",
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
       ],
       "data": [
         "views/ce_branding_views.xml",
@@ -587,7 +589,7 @@
       ],
       "assets": {},
       "installable": true,
-      "application": true,
+      "application": false,
       "auto_install": false,
       "enterprise_deps": [],
       "has_enterprise_deps": false,
@@ -722,7 +724,7 @@
       ],
       "assets": {},
       "installable": true,
-      "application": true,
+      "application": false,
       "auto_install": false,
       "enterprise_deps": [],
       "has_enterprise_deps": false,
@@ -1168,6 +1170,48 @@
       }
     },
     {
+      "module_name": "ipai_marketing_ai",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_marketing_ai",
+      "manifest_exists": true,
+      "name": "IPAI Marketing AI (Content + Social Hygiene)",
+      "version": "18.0.1.0.0",
+      "author": "InsightPulse AI",
+      "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_marketing_ai",
+      "license": "LGPL-3",
+      "category": "Marketing",
+      "summary": "Umbrella module for AI-powered marketing automation workflows",
+      "depends": [
+        "base",
+        "mail",
+        "mass_mailing",
+        "ipai_ask_ai",
+        "ipai_agent_core"
+      ],
+      "data": [],
+      "assets": {},
+      "installable": true,
+      "application": true,
+      "auto_install": false,
+      "enterprise_deps": [],
+      "has_enterprise_deps": false,
+      "has_models": false,
+      "has_views": false,
+      "has_controllers": false,
+      "has_security": false,
+      "has_static": false,
+      "has_data": false,
+      "has_wizard": false,
+      "python_file_count": 1,
+      "xml_file_count": 0,
+      "status": "OK",
+      "classification": {
+        "type": "integration",
+        "oca_overlap": [],
+        "recommendation": "KEEP",
+        "reason": "AI/Integration functionality"
+      }
+    },
+    {
       "module_name": "ipai_agent_core",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_agent_core",
       "manifest_exists": true,
@@ -1194,7 +1238,7 @@
       ],
       "assets": {},
       "installable": true,
-      "application": true,
+      "application": false,
       "auto_install": false,
       "enterprise_deps": [],
       "has_enterprise_deps": false,
@@ -1297,7 +1341,7 @@
         ]
       },
       "installable": true,
-      "application": true,
+      "application": false,
       "auto_install": false,
       "enterprise_deps": [],
       "has_enterprise_deps": false,
@@ -1393,7 +1437,7 @@
       ],
       "assets": {},
       "installable": true,
-      "application": true,
+      "application": false,
       "auto_install": false,
       "enterprise_deps": [],
       "has_enterprise_deps": false,
@@ -1513,7 +1557,9 @@
       "summary": "Hides Enterprise/IAP upsells and rewires links away from odoo.com.",
       "depends": [
         "base",
-        "web"
+        "web",
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
       ],
       "data": [
         "views/ipai_ce_cleaner_views.xml"
@@ -1949,7 +1995,7 @@
       "has_static": false,
       "has_data": false,
       "has_wizard": false,
-      "python_file_count": 211,
+      "python_file_count": 212,
       "xml_file_count": 184,
       "status": "OK",
       "classification": {
@@ -1988,15 +2034,15 @@
     }
   ],
   "summary": {
-    "ok": 42,
+    "ok": 43,
     "enterprise_deps": 0,
     "deprecated": 0,
     "parse_error": 0,
-    "applications": 14,
-    "installable": 42
+    "applications": 9,
+    "installable": 43
   },
   "recommendations": {
-    "keep": 36,
+    "keep": 37,
     "demote": 6,
     "review": 0,
     "refactor": 0

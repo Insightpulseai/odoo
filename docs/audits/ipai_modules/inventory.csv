@@ -6,15 +6,15 @@ ipai_test_fixtures,IPAI Test Fixtures,18.0.1.0.0,InsightPulse AI,AGPL-3,Hidden/T
 ipai_ask_ai,IPAI Ask AI,18.0.1.0.0,InsightPulse AI,AGPL-3,Productivity/AI,True,True,False,4,False,,5,4,True,True,True,OK,integration,KEEP,AI/Integration functionality
 ipai_finance_ppm_closing,IPAI Finance PPM Closing Generator,18.0.1.1.0,InsightPulse AI,AGPL-3,Accounting/Finance,True,False,False,3,False,,8,1,True,False,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
 ipai_expense,IPAI Expense & Travel (PH),18.0.1.0.0,InsightPulse AI,AGPL-3,Human Resources/Expenses,True,True,False,4,False,,3,4,True,True,False,OK,integration,KEEP,AI/Integration functionality
-ipai_advisor,IPAI Ops Advisor,18.0.1.0.0,InsightPulse AI,LGPL-3,Operations,True,True,False,2,False,,6,8,True,True,True,OK,integration,KEEP,AI/Integration functionality
+ipai_advisor,IPAI Ops Advisor,18.0.1.0.0,InsightPulse AI,LGPL-3,Operations,True,False,False,2,False,,6,8,True,True,True,OK,integration,KEEP,AI/Integration functionality
 ipai_superset_connector,IPAI Superset Connector,18.0.1.0.0,InsightPulse AI,LGPL-3,Reporting/BI,True,True,False,2,False,,5,6,True,True,True,OK,integration,KEEP,AI/Integration functionality
 ipai_finance_ppm_tdi,Finance PPM Transaction Data Ingestion (TDI),18.0.1.0.0,InsightPulse AI,AGPL-3,Finance,True,False,False,4,False,,7,10,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
 ipai_clarity_ppm_parity,InsightPulse Clarity PPM Parity,18.0.1.1.0,InsightPulse AI,AGPL-3,Project Management,True,False,False,1,False,,6,8,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
-ipai_ce_branding,InsightPulse AI - CE Branding,18.0.1.2.0,InsightPulse AI,AGPL-3,Customization,True,False,False,2,False,,1,2,False,True,False,OK,branding,DEMOTE,Branding/UI customization - should be application=False
-ipai_ppm_a1,IPAI PPM A1 Control Center,18.0.1.0.0,InsightPulse AI,LGPL-3,Project/Portfolio,True,True,False,3,False,,8,8,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
+ipai_ce_branding,InsightPulse AI - CE Branding,18.0.1.2.0,InsightPulse AI,AGPL-3,Customization,True,False,False,4,False,,1,2,False,True,False,OK,branding,DEMOTE,Branding/UI customization - should be application=False
+ipai_ppm_a1,IPAI PPM A1 Control Center,18.0.1.0.0,InsightPulse AI,LGPL-3,Project/Portfolio,True,False,False,3,False,,8,8,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
 ipai_custom_routes,InsightPulse Custom Routes,18.0.1.0.0,InsightPulse AI,AGPL-3,Extra Tools,True,False,False,6,False,,2,1,False,False,True,OK,patch,DEMOTE,Technical patch - should be application=False
 ipai_finance_month_end,IPAI Finance Month-End (Templates + Generator),18.0.1.0.0,InsightPulse AI,LGPL-3,Accounting/Project,True,False,False,3,False,,7,4,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
-ipai_equipment,IPAI Equipment Management,18.0.1.0.0,InsightPulse AI,AGPL-3,Inventory,True,True,False,3,False,,3,2,True,True,False,OK,integration,KEEP,AI/Integration functionality
+ipai_equipment,IPAI Equipment Management,18.0.1.0.0,InsightPulse AI,AGPL-3,Inventory,True,False,False,3,False,,3,2,True,True,False,OK,integration,KEEP,AI/Integration functionality
 ipai_master_control,Master Control - Work Intake,18.0.1.0.0,InsightPulse AI,LGPL-3,Productivity,True,False,False,4,False,,6,1,True,False,False,OK,integration,KEEP,AI/Integration functionality
 ipai_srm,IPAI Supplier Relationship Management,18.0.1.0.0,InsightPulse AI,AGPL-3,Inventory/Purchase,True,True,False,4,False,,6,7,True,True,False,OK,integration,KEEP,AI/Integration functionality
 ipai_default_home,InsightPulse Custom Home Page,18.0.3.0.0,InsightPulse AI,AGPL-3,Extra Tools,True,False,False,3,False,,2,3,False,True,True,OK,integration,KEEP,AI/Integration functionality
@@ -24,14 +24,15 @@ ipai_close_orchestration,IPAI Close Cycle Orchestration,18.0.1.0.0,InsightPulse 
 ipai_finance_close_automation,IPAI Finance Close Automation,18.0.1.0.0,InsightPulse AI,LGPL-3,Accounting/Project,True,False,False,3,False,,4,2,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
 ipai_project_program,IPAI Project Program (Program + IM Projects),18.0.1.0.0,InsightPulse AI,LGPL-3,Project,True,False,False,2,False,,10,5,True,True,False,OK,integration,KEEP,AI/Integration functionality
 ipai_bir_compliance,IPAI Tax Shield (Philippines),18.0.1.0.0,InsightPulse AI,AGPL-3,Accounting/Localizations,True,False,False,1,False,,3,2,True,False,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
-ipai_agent_core,IPAI Agent Core,18.0.1.0.0,InsightPulse AI,LGPL-3,Productivity/AI,True,True,False,2,False,,7,7,True,True,False,OK,integration,KEEP,AI/Integration functionality
+ipai_marketing_ai,IPAI Marketing AI (Content + Social Hygiene),18.0.1.0.0,InsightPulse AI,LGPL-3,Marketing,True,True,False,5,False,,1,0,False,False,False,OK,integration,KEEP,AI/Integration functionality
+ipai_agent_core,IPAI Agent Core,18.0.1.0.0,InsightPulse AI,LGPL-3,Productivity/AI,True,False,False,2,False,,7,7,True,True,False,OK,integration,KEEP,AI/Integration functionality
 ipai_finance_project_hybrid,IPAI Finance Project Hybrid (IM1/IM2 + BIR + Month-End Generators),18.0.1.0.0,InsightPulse AI,LGPL-3,Project,True,False,False,2,False,,12,10,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
-ipai_studio_ai,IPAI Studio AI,18.0.1.1.0,InsightPulse AI,AGPL-3,Customization/Studio,True,True,False,2,False,,5,6,True,True,True,OK,integration,KEEP,AI/Integration functionality
+ipai_studio_ai,IPAI Studio AI,18.0.1.1.0,InsightPulse AI,AGPL-3,Customization/Studio,True,False,False,2,False,,5,6,True,True,True,OK,integration,KEEP,AI/Integration functionality
 ipai_finance_bir_compliance,IPAI Finance BIR Compliance (Schedule + Generator),18.0.1.0.0,InsightPulse AI,LGPL-3,Accounting/Project,True,False,False,3,False,,7,4,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
-ipai_ppm,IPAI Portfolio & Program Management,18.0.1.0.0,InsightPulse AI,LGPL-3,Project Management,True,True,False,3,False,,6,8,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
+ipai_ppm,IPAI Portfolio & Program Management,18.0.1.0.0,InsightPulse AI,LGPL-3,Project Management,True,False,False,3,False,,6,8,True,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
 ipai_workspace_core,InsightPulse Workspace Core,18.0.1.0.0,InsightPulse AI,AGPL-3,InsightPulse/Core,True,False,False,1,False,,2,2,True,True,False,OK,integration,KEEP,AI/Integration functionality
 ipai_ai_studio,IPAI AI Studio (CE) - AI-driven Module Builder,18.0.1.0.0,InsightPulse AI,LGPL-3,Productivity,True,True,False,2,False,,6,3,True,True,False,OK,integration,KEEP,AI/Integration functionality
-ipai_ce_cleaner,IPAI CE Cleaner (No Enterprise/IAP),18.0.1.0.0,InsightPulse AI,AGPL-3,Tools,True,False,False,2,False,,1,2,False,True,False,OK,branding,DEMOTE,Branding/UI customization - should be application=False
+ipai_ce_cleaner,IPAI CE Cleaner (No Enterprise/IAP),18.0.1.0.0,InsightPulse AI,AGPL-3,Tools,True,False,False,4,False,,1,2,False,True,False,OK,branding,DEMOTE,Branding/UI customization - should be application=False
 ipai_finance_ppm,IPAI Finance PPM,18.0.1.0.0,InsightPulse AI,AGPL-3,Accounting/Finance,True,True,False,3,False,,23,18,True,True,True,OK,core_business,KEEP,Core business logic for finance/tax compliance
 ipai_finance_ppm_dashboard,IPAI Finance PPM Dashboard,18.0.1.0.0,InsightPulse AI,AGPL-3,Accounting/Reporting,True,False,False,2,False,,1,2,False,True,False,OK,core_business,KEEP,Core business logic for finance/tax compliance
 ipai_industry_accounting_firm,InsightPulse Industry - Accounting Firm,18.0.1.0.0,InsightPulse AI,LGPL-3,InsightPulse/Vertical,True,False,False,1,False,,2,1,True,True,False,OK,integration,KEEP,AI/Integration functionality
@@ -40,4 +41,4 @@ ipai_assets,IPAI Asset Checkout,18.0.1.1.0,InsightPulse AI,AGPL-3,Operations/Equ
 ipai_project_suite,IPAI Project Suite (CE),18.0.1.0.0,InsightPulse AI,LGPL-3,Project,True,False,False,2,False,,10,7,True,True,False,OK,integration,KEEP,AI/Integration functionality
 ipai_finance_close_seed,IPAI Finance Close Seed,18.0.1.0.0,InsightPulse AI,LGPL-3,Accounting/Project,True,False,False,2,False,,1,6,False,False,False,OK,seed,DEMOTE,Data seeding module - should be application=False
 ipai_portal_fix,IPAI Portal Fix,18.0.1.0.1,InsightPulse AI,AGPL-3,Technical,True,False,True,1,False,,4,1,True,True,True,OK,patch,DEMOTE,Technical patch - should be application=False
-ipai,IPAI Module Namespace,18.0.1.0.0,InsightPulse AI,AGPL-3,Hidden,True,False,False,1,False,,211,184,False,False,False,OK,namespace,KEEP,Namespace/container module
+ipai,IPAI Module Namespace,18.0.1.0.0,InsightPulse AI,AGPL-3,Hidden,True,False,False,1,False,,212,184,False,False,False,OK,namespace,KEEP,Namespace/container module
