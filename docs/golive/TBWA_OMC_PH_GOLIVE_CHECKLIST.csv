@@ -1,0 +1,71 @@
+Area,Step,Owner,Due Date,Gate,Evidence Link,Status
+0-Prerequisites,Prod URL correct (https://erp.insightpulseai.net),IT Admin,,System,URL returns 200,Pending
+0-Prerequisites,Mail queue cron enabled (so invites/reset works),IT Admin,,System,ir.cron active for Email Queue,Pending
+0-Prerequisites,Correct company + timezone + currency + fiscal year,Finance Lead,,System,Settings screenshot,Pending
+0-Prerequisites,Users created (no demo logins for real operations),IT Admin,,System,res.users list export,Pending
+0-Prerequisites,Outgoing email server set (Gmail OAuth OR Zoho SMTP),IT Admin,,Email,ir.mail_server config screenshot,Pending
+0-Prerequisites,Test: send 1 invite + 1 password reset successfully,IT Admin,,Email,Received email screenshot,Pending
+0-Prerequisites,Domain allowlist set (omc.com/tbwa-smp.com) for invite tool,IT Admin,,Email,System param ipai.ask_ai.domain_allowlist,Pending
+0-Prerequisites,Ask AI provider selected (openai or gemini),IT Admin,,Ask AI,System param ipai.ask_ai.provider,Pending
+0-Prerequisites,Ask AI API key saved in Settings,IT Admin,,Ask AI,Settings screenshot (masked key),Pending
+0-Prerequisites,Ask AI smoke test returns response,IT Admin,,Ask AI,Shell test output,Pending
+A-Opening Entries,Create AR Clearing (Current Assets / Allow Reconciliation),Finance Lead,,AR/AP Setup,account.account record,Pending
+A-Opening Entries,Create AP Clearing (Current Liabilities / Allow Reconciliation),Finance Lead,,AR/AP Setup,account.account record,Pending
+A-Opening Entries,Validate: Open invoices + credits + payments reconcile vs AR aging,Finance Lead,,AR/AP Validation,Reconciliation report,Pending
+A-Opening Entries,Validate: Open bills + refunds + payments reconcile vs AP aging,Finance Lead,,AR/AP Validation,Reconciliation report,Pending
+A-Opening Entries,Multi-currency: Currency rates updated before import (if applicable),Finance Lead,,FX,res.currency.rate records,Pending
+A-Opening Entries,Import: Customers + Vendors (partners),Finance Lead,,Import,Import log / count,Pending
+A-Opening Entries,Import: Open invoices / credit notes,Finance Lead,,Import,Import log / count,Pending
+A-Opening Entries,Import: Open bills / refunds,Finance Lead,,Import,Import log / count,Pending
+A-Opening Entries,Import: Payment initial balances mapped correctly (if needed),Finance Lead,,Import,Journal entry screenshot,Pending
+A-Opening Entries,Gate check: AR Clearing nets to 0,Finance Lead,,Gate,GL report AR Clearing = 0,Pending
+A-Opening Entries,Gate check: AP Clearing nets to 0,Finance Lead,,Gate,GL report AP Clearing = 0,Pending
+B-Inventory (Optional),Decision: Do you hold stock? (Skip if no),Finance Lead,,Decision,Decision log,Pending
+B-Inventory (Optional),Enable automatic stock accounting (if automated valuation),Finance Lead,,Inventory,Accounting settings screenshot,Pending
+B-Inventory (Optional),Configure product categories: costing + valuation,Finance Lead,,Inventory,product.category records,Pending
+B-Inventory (Optional),Create Inventory Clearing (Current Asset / Allow Reconciliation),Finance Lead,,Inventory,account.account record,Pending
+B-Inventory (Optional),Configure Inventory Adjustment location accounts,Finance Lead,,Inventory,stock.location screenshot,Pending
+B-Inventory (Optional),Import products + costs,Finance Lead,,Import,Import log / count,Pending
+B-Inventory (Optional),Import initial on-hand quantities (inventory adjustment),Finance Lead,,Import,stock.quant records,Pending
+B-Inventory (Optional),Gate check: inventory value matches opening balance,Finance Lead,,Gate,Balance sheet screenshot,Pending
+C-Trial Balance,Choose bank method: Outstanding accounts (C-A) OR Bank Clearing (C-B),Finance Lead,,Decision,Decision log,Pending
+C-Trial Balance,Create Outstanding Receipts (Current Asset / reconcilable) [if C-A],Finance Lead,,Bank Setup,account.account record,Pending
+C-Trial Balance,Create Outstanding Payments (Current Asset / reconcilable) [if C-A],Finance Lead,,Bank Setup,account.account record,Pending
+C-Trial Balance,Configure bank journal outstanding accounts [if C-A],Finance Lead,,Bank Setup,account.journal screenshot,Pending
+C-Trial Balance,Create Bank Clearing (Current Asset / reconcilable) [if C-B],Finance Lead,,Bank Setup,account.account record,Pending
+C-Trial Balance,Map AR to AR Clearing considering open invoices/credits,Finance Lead,,TB Mapping,Mapping worksheet,Pending
+C-Trial Balance,Exclude open customer payments from AR (handle separately),Finance Lead,,TB Mapping,Mapping worksheet,Pending
+C-Trial Balance,Map AP to AP Clearing considering open bills/refunds,Finance Lead,,TB Mapping,Mapping worksheet,Pending
+C-Trial Balance,Exclude open vendor payments from AP,Finance Lead,,TB Mapping,Mapping worksheet,Pending
+C-Trial Balance,Inventory mapped per B1/B2 decision,Finance Lead,,TB Mapping,Mapping worksheet,Pending
+C-Trial Balance,Import TB journal entry + post,Finance Lead,,Import,Journal entry posted screenshot,Pending
+C-Trial Balance,Gate check: GL AR Clearing = 0,Finance Lead,,Gate,General Ledger report,Pending
+C-Trial Balance,Gate check: GL AP Clearing = 0,Finance Lead,,Gate,General Ledger report,Pending
+C-Trial Balance,Gate check: GL Inventory Clearing = 0 (if used),Finance Lead,,Gate,General Ledger report,Pending
+D-Project Command Center,Install ipai_month_end_closing,IT Admin,,Module,Module installed screenshot,Pending
+D-Project Command Center,Install ipai_bir_tax_compliance,IT Admin,,Module,Module installed screenshot,Pending
+D-Project Command Center,Install ipai_close_orchestration,IT Admin,,Module,Module installed screenshot,Pending
+D-Project Command Center,Install project (core),IT Admin,,Module,Module installed screenshot,Pending
+D-Project Command Center,Finance Supervisor = Beng Manalo (beng.manalo@omc.com),Finance Lead,,Ownership,res.users record,Pending
+D-Project Command Center,Replace any placeholder roles before import,Finance Lead,,Ownership,CSV audit (no <<MAP:),Pending
+D-Project Command Center,Confirm assignees exist as Internal Users (not contacts only),IT Admin,,Ownership,res.users export,Pending
+D-Project Command Center,Projects created (Month-end close / Tax filing),Finance Lead,,Project Setup,project.project records,Pending
+D-Project Command Center,Stages created (match your stage gates),Finance Lead,,Project Setup,project.task.type records,Pending
+D-Project Command Center,Tasks imported (parents then children),Finance Lead,,Import,Import log / count,Pending
+D-Project Command Center,Dependencies imported (if enabled),Finance Lead,,Import,Import log / count,Pending
+D-Project Command Center,Calendar events imported (holidays / deadline anchors),Finance Lead,,Import,calendar.event records,Pending
+D-Project Command Center,Gate: Preparation -> Review requires required tasks complete,Finance Lead,,Stage Gate,Stage config screenshot,Pending
+D-Project Command Center,Gate: Review -> Approval requires Beng approval,Finance Lead,,Stage Gate,Stage config screenshot,Pending
+D-Project Command Center,Gate: Approval -> Done requires posting/locks complete,Finance Lead,,Stage Gate,Stage config screenshot,Pending
+D-Project Command Center,Executive dashboard: close progress + tax deadlines + blockers,Finance Lead,,Dashboard,Dashboard screenshot,Pending
+D-Project Command Center,Executive dashboard: Ask AI link visible,Finance Lead,,Dashboard,Dashboard screenshot,Pending
+E-Invite Onboarding,Outgoing email works,IT Admin,,Email,Test email received,Pending
+E-Invite Onboarding,User invite flow works: create user -> send reset email -> user sets password,IT Admin,,Email,End-to-end test log,Pending
+E-Invite Onboarding,No public signup enabled (invite-only mode),IT Admin,,Security,Settings screenshot,Pending
+F-Go/No-Go Gates,Outgoing servers configured and active,IT Admin,,Final Gate,Shell script output,Pending
+F-Go/No-Go Gates,Required users exist (beng.manalo@omc.com),IT Admin,,Final Gate,Shell script output,Pending
+F-Go/No-Go Gates,Close/Tax projects exist,Finance Lead,,Final Gate,Shell script output,Pending
+F-Go/No-Go Gates,Placeholder tasks = 0,Finance Lead,,Final Gate,Shell script output,Pending
+F-Go/No-Go Gates,Final sign-off: Finance Supervisor,Beng Manalo,,Sign-off,Signed checklist,Pending
+F-Go/No-Go Gates,Final sign-off: IT Admin,IT Admin,,Sign-off,Signed checklist,Pending
+F-Go/No-Go Gates,Go-Live Date confirmed,Project Lead,,Sign-off,Calendar invite,Pending
