@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 84ae4e2203ef17d9ee4b298fbc32e2fadf992d8a
+> Commit: 92fbed11b83ab668878b33a25e8233d03c1b03a0
 
 ```
 .
@@ -67,6 +67,7 @@
 │   │   ├── infra-validate.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-dynamic-qg.yml
+│   │   ├── ipai-module-matrix.yml
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── module-catalog-drift.yml
@@ -84,6 +85,19 @@
 │   ├── sync-config.yaml
 │   └── sync.yaml
 ├── addons
+│   ├── OCA
+│   │   ├── account-financial-reporting
+│   │   ├── automation
+│   │   ├── dms
+│   │   ├── helpdesk
+│   │   ├── partner-contact
+│   │   ├── queue
+│   │   ├── reporting-engine
+│   │   ├── server-auth
+│   │   ├── server-brand
+│   │   ├── server-tools
+│   │   ├── server-ux
+│   │   └── web
 │   ├── ipai
 │   │   ├── ipai_advisor
 │   │   │   ├── controllers
@@ -1449,6 +1463,7 @@
 │   │       ├── inventory.csv
 │   │       ├── inventory.json
 │   │       ├── inventory.md
+│   │       ├── oca_modules_vendored.txt
 │   │       └── oca_overlap_map.yaml
 │   ├── data-model
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
@@ -2792,15 +2807,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-829 directories, 1958 files
+842 directories, 1960 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 942 |
-| Files | 2778 |
+| Directories | 955 |
+| Files | 2780 |
 | Python files | 718 |
 | XML files | 369 |
 | Markdown files | 567 |
