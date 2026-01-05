@@ -5,7 +5,7 @@
         <field name="model">res.config.settings</field>
         <field name="inherit_id" ref="base.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//div[hasclass('settings')]" position="inside">
+            <xpath expr="//form[@class='oe_form_configuration']" position="inside">
                 <div class="app_settings_block" data-string="AI Configuration" string="AI Configuration" data-key="ipai_ask_ai">
                     <h2>AI Provider Configuration</h2>
                     <div class="row mt16 o_settings_container">
