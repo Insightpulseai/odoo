@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: cd605af39472080debb56dc9604a98cfaea398bb
+> Commit: cf23481d6e7492f3b93f6a10a7f7a80a2ff65dcd
 
 ## 📚 Documentation
 
@@ -114,6 +114,7 @@
 | [IPAI Finance PPM – TBWA Complete Configuration](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [IPAI Grid/List View](addons/ipai_grid_view/README.md) | addons/ipai_grid_view |
 | [IPAI Month-End Closing](addons/ipai_month_end/README.md) | addons/ipai_month_end |
+| [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing.backup/README.md) | addons/ipai_month_end_closing.backup |
 | [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing/README.md) | addons/ipai_month_end_closing |
 | [IPAI Platform - Approvals](addons/ipai_platform_approvals/README.md) | addons/ipai_platform_approvals |
 | [IPAI Platform - Audit Trail](addons/ipai_platform_audit/README.md) | addons/ipai_platform_audit |
@@ -631,7 +632,7 @@
 | [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
-| [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
+| [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ | AI chat agents with ChatGPT/Gemini provider toggles |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |
@@ -642,6 +643,7 @@
 | [ipai_grid_view](./addons/ipai_grid_view) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ |  |
+| [ipai_month_end_closing.backup](./addons/ipai_month_end_closing.backup) | ✅ | SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance |
 | [ipai_ocr_gateway](./addons/ipai_ocr_gateway) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
