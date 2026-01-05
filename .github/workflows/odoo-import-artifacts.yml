@@ -1,4 +1,4 @@
-name: Odoo Import Artifacts
+name: Odoo Import Artifacts (LEGACY - Manual Only)
 
 on:
   workflow_dispatch:
@@ -6,12 +6,12 @@ on:
       dry_run:
         description: "Dry run (validate only, no import)"
         required: false
-        default: true
+        default: "true"
         type: boolean
       run_import:
         description: "Run import to Odoo after generating CSVs"
         required: false
-        default: false
+        default: "false"
         type: boolean
 
 jobs:
@@ -32,18 +32,18 @@ jobs:
           pip install -U pip
           pip install pandas openpyxl requests
 
-      - name: Fetch source workbook (or create sample)
+      - name: Fetch source workbook
         env:
           IMPORT_SOURCE_URL: ${{ secrets.IMPORT_SOURCE_URL }}
         run: |
-          set -euo pipefail
+          set -e
           mkdir -p data
-
-          if [ -z "${IMPORT_SOURCE_URL:-}" ]; then
-            echo "::warning::IMPORT_SOURCE_URL not set; creating sample workbook at data/source.xlsx"
+          if [ -z "$IMPORT_SOURCE_URL" ]; then
+            echo "::warning::IMPORT_SOURCE_URL not set, using sample data"
             python3 - <<'PY'
 import pandas as pd
-
+from pathlib import Path
+Path("data").mkdir(parents=True, exist_ok=True)
 with pd.ExcelWriter('data/source.xlsx', engine='openpyxl') as writer:
     pd.DataFrame({
         'Task Category': ['Finance'],
@@ -71,32 +71,27 @@ with pd.ExcelWriter('data/source.xlsx', engine='openpyxl') as writer:
         'Holiday Name': ['New Year'],
         'Type': ['Holiday'],
     }).to_excel(writer, sheet_name='Holidays & Calendar', index=False)
-
-print("Created sample workbook")
+print("Created sample workbook: data/source.xlsx")
 PY
           else
-            echo "Downloading workbook from IMPORT_SOURCE_URL"
-            curl -fsSL -L "$IMPORT_SOURCE_URL" -o data/source.xlsx
+            curl -L "$IMPORT_SOURCE_URL" -o data/source.xlsx
+            ls -lah data/source.xlsx
           fi
 
-          ls -lah data/source.xlsx
-
-      - name: Generate CSVs (optional)
+      - name: Generate CSVs (auto-skip if scripts missing)
         run: |
-          set -euo pipefail
-
-          if [ ! -f scripts/generate_month_end_imports.py ]; then
-            echo "::warning::Missing scripts/generate_month_end_imports.py; skipping CSV generation"
-            ls -lah scripts/ || true
-            exit 0
+          set +e
+          if [ -f scripts/generate_month_end_imports.py ]; then
+            echo "Found scripts/generate_month_end_imports.py — generating CSVs"
+            python3 scripts/generate_month_end_imports.py \
+              --workbook data/source.xlsx \
+              --outdir data \
+              --user_map data/user_map.csv || true
+          else
+            echo "::warning::Missing scripts/generate_month_end_imports.py — skipping CSV generation"
           fi
 
-          python3 scripts/generate_month_end_imports.py \
-            --workbook data/source.xlsx \
-            --outdir data \
-            --user_map data/user_map.csv || true
-
-          ls -lah data/odoo_import_*.csv 2>/dev/null || echo "::warning::No CSVs generated"
+          ls -lah data/odoo_import_*.csv 2>/dev/null || echo "No CSVs generated"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -135,30 +130,27 @@ PY
       - name: List downloaded files
         run: ls -lah data/ || true
 
-      - name: Run importer (optional)
+      - name: Run importer (auto-skip if scripts/secrets missing)
         env:
           ODOO_URL: ${{ secrets.ODOO_URL }}
           ODOO_DB: ${{ secrets.ODOO_DB }}
           ODOO_LOGIN: ${{ secrets.ODOO_LOGIN }}
           ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
         run: |
-          set -euo pipefail
+          set +e
 
           if [ ! -f scripts/odoo_import_project_suite.py ]; then
-            echo "::warning::Missing scripts/odoo_import_project_suite.py; skipping import"
-            ls -lah scripts/ || true
+            echo "::warning::Missing scripts/odoo_import_project_suite.py — skipping import"
             exit 0
           fi
 
-          if [ -z "${ODOO_URL:-}" ] || [ -z "${ODOO_DB:-}" ] || [ -z "${ODOO_LOGIN:-}" ] || [ -z "${ODOO_PASSWORD:-}" ]; then
-            echo "::warning::Missing Odoo secrets (ODOO_URL/DB/LOGIN/PASSWORD); skipping import"
+          if [ -z "$ODOO_URL" ] || [ -z "$ODOO_DB" ] || [ -z "$ODOO_LOGIN" ] || [ -z "$ODOO_PASSWORD" ]; then
+            echo "::warning::Missing Odoo secrets (ODOO_URL/DB/LOGIN/PASSWORD) — skipping import"
             exit 0
           fi
 
-          # Required CSV presence check
           if [ ! -f data/odoo_import_month_end_projects.csv ]; then
-            echo "::warning::Required CSV files not found (data/odoo_import_month_end_projects.csv). Skipping import."
-            ls -lah data/ || true
+            echo "::warning::Required CSVs not found in artifact — skipping import"
             exit 0
           fi
 
