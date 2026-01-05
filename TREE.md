@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 92fbed11b83ab668878b33a25e8233d03c1b03a0
+> Commit: 557c9ea4ef9c00f1eb06931723576dbf925d8402
 
 ```
 .
@@ -2690,6 +2690,7 @@
 ├── CHANGELOG.md
 ├── CI_CD_AUTOMATION_SUMMARY.md
 ├── CI_CD_TROUBLESHOOTING_GUIDE.md
+├── CI_MINIMAL_SET.md
 ├── CLAUDE.md
 ├── CLAUDE_NEW.md
 ├── COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
@@ -2737,6 +2738,7 @@
 ├── README_BUILD.md
 ├── README_PATCH.md
 ├── RELEASE_v0.9.0.md
+├── REPORT.md
 ├── REPO_RESTRUCTURE_PLAN.md
 ├── SAFETY_MECHANISMS.md
 ├── SECURITY.md
@@ -2807,7 +2809,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-842 directories, 1960 files
+842 directories, 1962 files
 ```
 
 ## 📊 Stats
@@ -2815,7 +2817,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 955 |
-| Files | 2780 |
+| Files | 2782 |
 | Python files | 718 |
 | XML files | 369 |
-| Markdown files | 567 |
+| Markdown files | 569 |

@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 92fbed11b83ab668878b33a25e8233d03c1b03a0
+> Commit: 557c9ea4ef9c00f1eb06931723576dbf925d8402
 
 ## 📚 Documentation
 
@@ -29,6 +29,7 @@
 | [Changelog - Odoo CE & Finance PPM](CHANGELOG.md) | . |
 | [CI/CD Automation Infrastructure - Deployment Summary](CI_CD_AUTOMATION_SUMMARY.md) | . |
 | [CI/CD Troubleshooting Guide - GitHub Actions Database Connection](CI_CD_TROUBLESHOOTING_GUIDE.md) | . |
+| [CI Minimal Set - Workflow Reduction Plan](CI_MINIMAL_SET.md) | . |
 | [CLAUDE.md — Odoo CE Project](CLAUDE.md) | . |
 | [InsightPulse Odoo (Delta Architecture)](CLAUDE_NEW.md) | . |
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
@@ -71,6 +72,7 @@
 | [Odoo CE v1.2.0 - Full Build Bundle](README_BUILD.md) | . |
 | [InsightPulse AI - CE Branding Patch v1.2.0](README_PATCH.md) | . |
 | [v0.9.0 - Infrastructure Unification Release](RELEASE_v0.9.0.md) | . |
+| [CI Pipeline Fix Report](REPORT.md) | . |
 | [Odoo CE Repository Restructure Plan](REPO_RESTRUCTURE_PLAN.md) | . |
 | [Finance PPM Safety Mechanisms](SAFETY_MECHANISMS.md) | . |
 | [Security Policy](SECURITY.md) | . |
