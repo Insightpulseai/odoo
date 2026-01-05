@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ad019c67a77f4994763e8c1bb72192662c1ac04c
+> Commit: cd605af39472080debb56dc9604a98cfaea398bb
 
 ```
 .
@@ -1595,6 +1595,7 @@
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
 │   ├── DEPLOY_NOTION_WORKOS.md
 │   ├── DEVELOPER_TOOLS.md
+│   ├── DIGITALOCEAN_EMAIL_SETUP.md
 │   ├── DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md
 │   ├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
 │   ├── DIRECTIONAL_SYNC.md
@@ -2073,6 +2074,8 @@
 │   ├── configure_gmail_smtp.py
 │   ├── configure_gmail_smtp.sh
 │   ├── configure_google_oauth.sh
+│   ├── configure_mailgun_smtp.py
+│   ├── configure_sendgrid_smtp.py
 │   ├── configure_zoho_smtp.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
@@ -2768,7 +2771,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-823 directories, 1940 files
+823 directories, 1943 files
 ```
 
 ## 📊 Stats
@@ -2776,7 +2779,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 936 |
-| Files | 2759 |
-| Python files | 714 |
+| Files | 2762 |
+| Python files | 716 |
 | XML files | 360 |
-| Markdown files | 565 |
+| Markdown files | 566 |

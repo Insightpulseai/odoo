@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ad019c67a77f4994763e8c1bb72192662c1ac04c
+> Commit: cd605af39472080debb56dc9604a98cfaea398bb
 
 ## 📚 Documentation
 
@@ -198,6 +198,7 @@
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
 | [Odoo Developer Tools (Debug Mode) — IPAI Usage Guide](docs/DEVELOPER_TOOLS.md) | docs |
+| [DigitalOcean Email Setup for Odoo CE 18](docs/DIGITALOCEAN_EMAIL_SETUP.md) | docs |
 | [DigitalOcean SMTP Unblock Request](docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md) | docs |
 | [DigitalOcean Validation Framework](docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md) | docs |
 | [Directional Sync System](docs/DIRECTIONAL_SYNC.md) | docs |
