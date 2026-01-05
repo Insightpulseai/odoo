@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d84f6e799542c247530b6aac4ffd366d8ded9534
+> Commit: 33b2c4a2e3aa4dac4dc944c3c5194700fa4cb967
 
 ```
 .
@@ -310,6 +310,9 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_marketing_ai
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_master_control
 │   │   │   ├── data
 │   │   │   ├── models
@@ -395,6 +398,16 @@
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── wizards
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_superset_connector
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_test_fixtures
@@ -1405,6 +1418,13 @@
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
 │   │   └── ipai_idp_pdf_processing.drawio
+│   ├── audits
+│   │   └── ipai_modules
+│   │       ├── README.md
+│   │       ├── inventory.csv
+│   │       ├── inventory.json
+│   │       ├── inventory.md
+│   │       └── oca_overlap_map.yaml
 │   ├── data-model
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
@@ -2029,6 +2049,7 @@
 │   ├── apply-supabase-schema.sh
 │   ├── assign_module_icons.py
 │   ├── audit_email_config.py
+│   ├── audit_ipai_modules.py
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
@@ -2146,6 +2167,7 @@
 │   ├── sync_directional.py
 │   ├── test_afc_rag.py
 │   ├── test_deploy_local.sh
+│   ├── test_ipai_install_upgrade.py
 │   ├── update_diagram_manifest.py
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
@@ -2742,15 +2764,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-810 directories, 1927 files
+821 directories, 1938 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 919 |
-| Files | 2728 |
-| Python files | 697 |
-| XML files | 354 |
-| Markdown files | 563 |
+| Directories | 934 |
+| Files | 2755 |
+| Python files | 710 |
+| XML files | 360 |
+| Markdown files | 565 |
