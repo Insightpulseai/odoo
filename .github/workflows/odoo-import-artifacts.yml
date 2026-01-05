@@ -1,0 +1,145 @@
+name: Odoo Import Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (validate only, no import)'
+        required: false
+        default: 'false'
+        type: boolean
+      run_import:
+        description: 'Run import to Odoo after generating CSVs'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  generate-csvs:
+    name: Generate Import CSVs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install pandas openpyxl requests
+
+      - name: Fetch source workbook
+        env:
+          IMPORT_SOURCE_URL: ${{ secrets.IMPORT_SOURCE_URL }}
+        run: |
+          if [ -z "$IMPORT_SOURCE_URL" ]; then
+            echo "Warning: IMPORT_SOURCE_URL not set, using sample data"
+            # Create minimal sample workbook for testing
+            python3 -c "
+import pandas as pd
+with pd.ExcelWriter('data/source.xlsx', engine='openpyxl') as writer:
+    pd.DataFrame({
+        'Task Category': ['Finance'],
+        'Detailed Task': ['Sample Task'],
+        'Activity': ['Preparation'],
+        'Date': ['2026-01-15'],
+        'Email': ['test@example.com']
+    }).to_excel(writer, sheet_name='Closing Task - Gannt Chart', index=False)
+    pd.DataFrame({
+        'Detailed Monthly Tasks': ['Sample Task'],
+        'Preparation': ['Y'],
+        'Review': ['Y'],
+        'Approval': ['Y']
+    }).to_excel(writer, sheet_name='Closing Task', index=False)
+    pd.DataFrame({
+        'BIR Form': ['BIR Form 0619E'],
+        'Period Covered': ['January 2026'],
+        'BIR Filing & Payment Deadline (2026)': ['2026-01-20']
+    }).to_excel(writer, sheet_name='Tax Filing', index=False)
+    pd.DataFrame({
+        'Date': ['2026-01-01'],
+        'Holiday Name': ['New Year'],
+        'Type': ['Holiday']
+    }).to_excel(writer, sheet_name='Holidays & Calendar', index=False)
+print('Created sample workbook')
+"
+          else
+            mkdir -p data
+            curl -L "$IMPORT_SOURCE_URL" -o data/source.xlsx
+            ls -lah data/source.xlsx
+          fi
+
+      - name: Generate CSVs
+        run: |
+          python3 scripts/generate_month_end_imports.py \
+            --workbook data/source.xlsx \
+            --outdir data \
+            --user_map data/user_map.csv || true
+
+          ls -lah data/odoo_import_*.csv 2>/dev/null || echo "No CSVs generated"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: odoo-import-csvs
+          path: |
+            data/odoo_import_*.csv
+          if-no-files-found: warn
+
+  import-to-odoo:
+    name: Import to Odoo
+    needs: generate-csvs
+    runs-on: ubuntu-latest
+    if: ${{ inputs.run_import == true || inputs.run_import == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -U pip
+          pip install requests
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: odoo-import-csvs
+          path: data
+
+      - name: List downloaded files
+        run: ls -lah data/
+
+      - name: Run importer
+        env:
+          ODOO_URL: ${{ secrets.ODOO_URL }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          ODOO_LOGIN: ${{ secrets.ODOO_LOGIN }}
+          ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
+        run: |
+          DRY_RUN_FLAG=""
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            DRY_RUN_FLAG="--dry_run"
+          fi
+
+          # Check if required files exist
+          if [ ! -f data/odoo_import_month_end_projects.csv ]; then
+            echo "Error: Required CSV files not found"
+            exit 1
+          fi
+
+          python3 scripts/odoo_import_project_suite.py \
+            --projects data/odoo_import_month_end_projects.csv \
+            --stages data/odoo_import_month_end_stages.csv \
+            --tasks_parents data/odoo_import_month_end_tasks_PassA_parents.csv \
+            --tasks_children data/odoo_import_month_end_tasks_PassB_children.csv \
+            --calendar_events data/odoo_import_month_end_calendar_events.csv \
+            $DRY_RUN_FLAG

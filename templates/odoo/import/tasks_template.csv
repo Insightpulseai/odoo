@@ -1,0 +1,3 @@
+External ID (optional),Task Name* (project.task/name),Project Name* (project_id/name),Stage Name (stage_id/name),Assignee Emails (comma-separated) (user_ids/login),Start Date (planned_date_begin or date_start),Due Date (date_deadline),End Date (planned_date_end) (optional),Planned Hours (planned_hours),Priority (0-3),Tags (comma-separated) (tag_ids/name),Description (plain text),Parent Task External ID (optional parent_id/id)
+task_parent_001,Parent Task,Example Project,Preparation,alice@example.com,2026-01-10,2026-01-15,2026-01-15,6,1,Setup,Example parent task,
+task_child_001,Child Task - Review,Example Project,Review,bob@example.com,2026-01-11,2026-01-12,2026-01-12,2,1,Review,Example child task,task_parent_001

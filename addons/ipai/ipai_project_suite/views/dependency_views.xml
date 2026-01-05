@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Dependency Tree View -->
+    <record id="view_ipai_dependency_tree" model="ir.ui.view">
+        <field name="name">ipai.project.task.dependency.tree</field>
+        <field name="model">ipai.project.task.dependency</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="task_id"/>
+                <field name="depends_on_task_id"/>
+                <field name="dependency_type"/>
+                <field name="lag_days"/>
+                <field name="project_id" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Dependency Form View -->
+    <record id="view_ipai_dependency_form" model="ir.ui.view">
+        <field name="name">ipai.project.task.dependency.form</field>
+        <field name="model">ipai.project.task.dependency</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="task_id"/>
+                            <field name="project_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="depends_on_task_id"
+                                   domain="[('project_id', '=', project_id), ('id', '!=', task_id)]"/>
+                            <field name="dependency_type"/>
+                            <field name="lag_days"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Dependency Action -->
+    <record id="action_ipai_dependency" model="ir.actions.act_window">
+        <field name="name">Task Dependencies</field>
+        <field name="res_model">ipai.project.task.dependency</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No dependencies defined
+            </p>
+            <p>
+                Define task dependencies to establish the order in which tasks should be completed.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ipai_dependency"
+              name="Task Dependencies"
+              parent="project.menu_project_config"
+              action="action_ipai_dependency"
+              sequence="51"/>
+</odoo>
