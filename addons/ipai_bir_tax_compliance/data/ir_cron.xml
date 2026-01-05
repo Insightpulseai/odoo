@@ -8,7 +8,6 @@
         <field name="code">model._cron_generate_deadlines()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">months</field>
-        <field name="numbercall">-1</field>
         <field name="active">True</field>
         <field name="nextcall" eval="(DateTime.now().replace(day=1) + timedelta(days=32)).replace(day=1, hour=1, minute=0, second=0)"/>
     </record>
@@ -21,7 +20,6 @@
         <field name="code">model._cron_send_deadline_alerts()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">days</field>
-        <field name="numbercall">-1</field>
         <field name="active">True</field>
         <field name="nextcall" eval="(DateTime.now() + timedelta(days=1)).replace(hour=8, minute=0, second=0)"/>
     </record>
