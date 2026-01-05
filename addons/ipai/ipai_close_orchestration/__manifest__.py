@@ -37,6 +37,7 @@ configuration-to-execution flow.
     "depends": [
         "base",
         "mail",
+        "project",
     ],
     "data": [
         "security/close_security.xml",

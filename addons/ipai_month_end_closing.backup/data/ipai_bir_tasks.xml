@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- PROJECT: BIR Tax Filing -->
+        <record id="project_bir_tax_filing" model="project.project">
+            <field name="name">BIR Tax Filing</field>
+            <field name="description">Philippine BIR tax compliance - forms, deadlines, and filing requirements</field>
+            <field name="allow_subtasks" eval="True"/>
+            <field name="allow_task_dependencies" eval="True"/>
+        </record>
+
+        <!-- 1601-C (Compensation) - Dec 2025 -->
+        <record id="task_bir_000" model="project.task">
+            <field name="name">[Jan-15] 1601-C (Compensation) - Dec 2025</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-01-15</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="task_bir_000_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_000"/>
+            <field name="date_deadline">2025-01-09</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_000_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_000"/>
+            <field name="date_deadline">2025-01-13</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_000_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_000"/>
+            <field name="date_deadline">2025-01-14</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_000_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_000"/>
+            <field name="date_deadline">2025-01-15</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Jan 2026 -->
+        <record id="task_bir_001" model="project.task">
+            <field name="name">[Feb-10] 1601-C / 0619-E - Jan 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-02-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="task_bir_001_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_001"/>
+            <field name="date_deadline">2025-02-04</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_001_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_001"/>
+            <field name="date_deadline">2025-02-06</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_001_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_001"/>
+            <field name="date_deadline">2025-02-07</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_001_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_001"/>
+            <field name="date_deadline">2025-02-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Feb 2026 -->
+        <record id="task_bir_002" model="project.task">
+            <field name="name">[Mar-10] 1601-C / 0619-E - Feb 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-03-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="task_bir_002_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_002"/>
+            <field name="date_deadline">2025-03-04</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_002_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_002"/>
+            <field name="date_deadline">2025-03-06</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_002_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_002"/>
+            <field name="date_deadline">2025-03-07</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_002_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_002"/>
+            <field name="date_deadline">2025-03-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Mar 2026 -->
+        <record id="task_bir_003" model="project.task">
+            <field name="name">[Apr-10] 1601-C / 0619-E - Mar 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-04-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="task_bir_003_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_003"/>
+            <field name="date_deadline">2025-04-04</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_003_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_003"/>
+            <field name="date_deadline">2025-04-08</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_003_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_003"/>
+            <field name="date_deadline">2025-04-09</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_003_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_003"/>
+            <field name="date_deadline">2025-04-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Apr 2026 -->
+        <record id="task_bir_004" model="project.task">
+            <field name="name">[May-10] 1601-C / 0619-E - Apr 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-05-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="task_bir_004_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_004"/>
+            <field name="date_deadline">2025-05-06</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_004_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_004"/>
+            <field name="date_deadline">2025-05-08</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_004_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_004"/>
+            <field name="date_deadline">2025-05-09</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_004_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_004"/>
+            <field name="date_deadline">2025-05-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - May 2026 -->
+        <record id="task_bir_005" model="project.task">
+            <field name="name">[Jun-10] 1601-C / 0619-E - May 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-06-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="task_bir_005_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_005"/>
+            <field name="date_deadline">2025-06-04</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_005_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_005"/>
+            <field name="date_deadline">2025-06-06</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_005_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_005"/>
+            <field name="date_deadline">2025-06-09</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_005_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_005"/>
+            <field name="date_deadline">2025-06-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Jun 2026 -->
+        <record id="task_bir_006" model="project.task">
+            <field name="name">[Jul-10] 1601-C / 0619-E - Jun 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-07-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="task_bir_006_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_006"/>
+            <field name="date_deadline">2025-07-04</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_006_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_006"/>
+            <field name="date_deadline">2025-07-08</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_006_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_006"/>
+            <field name="date_deadline">2025-07-09</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_006_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_006"/>
+            <field name="date_deadline">2025-07-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Jul 2026 -->
+        <record id="task_bir_007" model="project.task">
+            <field name="name">[Aug-10] 1601-C / 0619-E - Jul 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-08-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="task_bir_007_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_007"/>
+            <field name="date_deadline">2025-08-05</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_007_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_007"/>
+            <field name="date_deadline">2025-08-07</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_007_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_007"/>
+            <field name="date_deadline">2025-08-08</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_007_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_007"/>
+            <field name="date_deadline">2025-08-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Aug 2026 -->
+        <record id="task_bir_008" model="project.task">
+            <field name="name">[Sep-10] 1601-C / 0619-E - Aug 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-09-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">90</field>
+        </record>
+
+        <record id="task_bir_008_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_008"/>
+            <field name="date_deadline">2025-09-04</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_008_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_008"/>
+            <field name="date_deadline">2025-09-08</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_008_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_008"/>
+            <field name="date_deadline">2025-09-09</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_008_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_008"/>
+            <field name="date_deadline">2025-09-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Sep 2026 -->
+        <record id="task_bir_009" model="project.task">
+            <field name="name">[Oct-12] 1601-C / 0619-E - Sep 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2026-10-12</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">100</field>
+        </record>
+
+        <record id="task_bir_009_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_009"/>
+            <field name="date_deadline">2026-10-06</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_009_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_009"/>
+            <field name="date_deadline">2026-10-08</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_009_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_009"/>
+            <field name="date_deadline">2026-10-09</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_009_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_009"/>
+            <field name="date_deadline">2026-10-12</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Oct 2026 -->
+        <record id="task_bir_010" model="project.task">
+            <field name="name">[Nov-10] 1601-C / 0619-E - Oct 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-11-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">110</field>
+        </record>
+
+        <record id="task_bir_010_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_010"/>
+            <field name="date_deadline">2025-11-04</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_010_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_010"/>
+            <field name="date_deadline">2025-11-06</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_010_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_010"/>
+            <field name="date_deadline">2025-11-07</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_010_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_010"/>
+            <field name="date_deadline">2025-11-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-C / 0619-E - Nov 2026 -->
+        <record id="task_bir_011" model="project.task">
+            <field name="name">[Dec-10] 1601-C / 0619-E - Nov 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-12-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">120</field>
+        </record>
+
+        <record id="task_bir_011_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_011"/>
+            <field name="date_deadline">2025-12-03</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_011_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_011"/>
+            <field name="date_deadline">2025-12-05</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_011_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_011"/>
+            <field name="date_deadline">2025-12-09</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_011_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_011"/>
+            <field name="date_deadline">2025-12-10</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-EQ (Quarterly EWT) - Q4 2025 -->
+        <record id="task_bir_012" model="project.task">
+            <field name="name">[Jan-30] 1601-EQ (Quarterly EWT) - Q4 2025</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-01-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">130</field>
+        </record>
+
+        <record id="task_bir_012_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_012"/>
+            <field name="date_deadline">2025-01-24</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_012_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_012"/>
+            <field name="date_deadline">2025-01-28</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_012_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_012"/>
+            <field name="date_deadline">2025-01-29</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_012_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_012"/>
+            <field name="date_deadline">2025-01-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1702-RT/EX (Income Tax) - Annual 2025 -->
+        <record id="task_bir_013" model="project.task">
+            <field name="name">[Apr-15] 1702-RT/EX (Income Tax) - Annual 2025</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-04-15</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">140</field>
+        </record>
+
+        <record id="task_bir_013_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_013"/>
+            <field name="date_deadline">2025-04-09</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_013_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_013"/>
+            <field name="date_deadline">2025-04-11</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_013_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_013"/>
+            <field name="date_deadline">2025-04-14</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_013_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_013"/>
+            <field name="date_deadline">2025-04-15</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 2550Q (VAT) - Q1 2026 -->
+        <record id="task_bir_014" model="project.task">
+            <field name="name">[Apr-27] 2550Q (VAT) - Q1 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2026-04-27</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">150</field>
+        </record>
+
+        <record id="task_bir_014_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_014"/>
+            <field name="date_deadline">2026-04-21</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_014_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_014"/>
+            <field name="date_deadline">2026-04-23</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_014_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_014"/>
+            <field name="date_deadline">2026-04-24</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_014_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_014"/>
+            <field name="date_deadline">2026-04-27</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-EQ (Quarterly EWT) - Q1 2026 -->
+        <record id="task_bir_015" model="project.task">
+            <field name="name">[Apr-30] 1601-EQ (Quarterly EWT) - Q1 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-04-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">160</field>
+        </record>
+
+        <record id="task_bir_015_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_015"/>
+            <field name="date_deadline">2025-04-24</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_015_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_015"/>
+            <field name="date_deadline">2025-04-28</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_015_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_015"/>
+            <field name="date_deadline">2025-04-29</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_015_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_015"/>
+            <field name="date_deadline">2025-04-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 2550Q (VAT) - Q2 2026 -->
+        <record id="task_bir_016" model="project.task">
+            <field name="name">[Jul-27] 2550Q (VAT) - Q2 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2026-07-27</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">170</field>
+        </record>
+
+        <record id="task_bir_016_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_016"/>
+            <field name="date_deadline">2026-07-21</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_016_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_016"/>
+            <field name="date_deadline">2026-07-23</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_016_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_016"/>
+            <field name="date_deadline">2026-07-24</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_016_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_016"/>
+            <field name="date_deadline">2026-07-27</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1702Q (Quarterly Income Tax) - Q2 2026 -->
+        <record id="task_bir_017" model="project.task">
+            <field name="name">[May-30] 1702Q (Quarterly Income Tax) - Q2 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-05-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">180</field>
+        </record>
+
+        <record id="task_bir_017_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_017"/>
+            <field name="date_deadline">2025-05-26</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_017_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_017"/>
+            <field name="date_deadline">2025-05-28</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_017_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_017"/>
+            <field name="date_deadline">2025-05-29</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_017_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_017"/>
+            <field name="date_deadline">2025-05-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-EQ (Quarterly EWT) - Q2 2026 -->
+        <record id="task_bir_018" model="project.task">
+            <field name="name">[Jul-31] 1601-EQ (Quarterly EWT) - Q2 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-07-31</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">190</field>
+        </record>
+
+        <record id="task_bir_018_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_018"/>
+            <field name="date_deadline">2025-07-25</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_018_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_018"/>
+            <field name="date_deadline">2025-07-29</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_018_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_018"/>
+            <field name="date_deadline">2025-07-30</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_018_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_018"/>
+            <field name="date_deadline">2025-07-31</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 2550Q (VAT) - Q3 2026 -->
+        <record id="task_bir_019" model="project.task">
+            <field name="name">[Oct-26] 2550Q (VAT) - Q3 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2026-10-26</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">200</field>
+        </record>
+
+        <record id="task_bir_019_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_019"/>
+            <field name="date_deadline">2026-10-20</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_019_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_019"/>
+            <field name="date_deadline">2026-10-22</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_019_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_019"/>
+            <field name="date_deadline">2026-10-23</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_019_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_019"/>
+            <field name="date_deadline">2026-10-26</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1702Q (Quarterly Income Tax) - Q3 2026 -->
+        <record id="task_bir_020" model="project.task">
+            <field name="name">[Aug-29] 1702Q (Quarterly Income Tax) - Q3 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-08-29</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">210</field>
+        </record>
+
+        <record id="task_bir_020_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_020"/>
+            <field name="date_deadline">2025-08-25</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_020_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_020"/>
+            <field name="date_deadline">2025-08-27</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_020_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_020"/>
+            <field name="date_deadline">2025-08-28</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_020_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_020"/>
+            <field name="date_deadline">2025-08-29</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+        <!-- 1601-EQ (Quarterly EWT) - Q3 2026 -->
+        <record id="task_bir_021" model="project.task">
+            <field name="name">[Oct-30] 1601-EQ (Quarterly EWT) - Q3 2026</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="date_deadline">2025-10-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+            <field name="sequence">220</field>
+        </record>
+
+        <record id="task_bir_021_prep" model="project.task">
+            <field name="name">1. Prep &amp; File Request</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_021"/>
+            <field name="date_deadline">2025-10-24</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+        <record id="task_bir_021_review" model="project.task">
+            <field name="name">2. Report Approval (SFM)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_021"/>
+            <field name="date_deadline">2025-10-28</field>
+            <field name="user_ids" eval="[(4, ref('user_rim'))]"/>
+        </record>
+        <record id="task_bir_021_approval" model="project.task">
+            <field name="name">3. Payment Approval (FD)</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_021"/>
+            <field name="date_deadline">2025-10-29</field>
+            <field name="user_ids" eval="[(4, ref('user_ckvc'))]"/>
+        </record>
+        <record id="task_bir_021_file" model="project.task">
+            <field name="name">4. Filing &amp; Payment</field>
+            <field name="project_id" ref="project_bir_tax_filing"/>
+            <field name="parent_id" ref="task_bir_021"/>
+            <field name="date_deadline">2025-10-30</field>
+            <field name="user_ids" eval="[(4, ref('user_bom'))]"/>
+        </record>
+
+    </data>
+</odoo>
