@@ -43,11 +43,12 @@ BIR Compliance
 Architecture: Smart Delta
 -------------------------
 This module follows the ipai_* Smart Delta pattern:
+
 - Extends core Odoo project module
 - No monkey-patching or forks
 - OCA-compatible, marketplace-ready
 - AGPL-3 licensed
-    """,
+""",
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",
     "license": "AGPL-3",
