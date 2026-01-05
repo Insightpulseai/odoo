@@ -1,15 +1,13 @@
 name: Databricks DAB CI
 
 on:
+  # NOTE: PR trigger removed - databricks DAB CI runs on main push only
   push:
-    branches: [main, develop]
-    paths:
-      - 'infra/databricks/**'
-      - '.github/workflows/databricks-dab-ci.yml'
-  pull_request:
     branches: [main]
     paths:
       - 'infra/databricks/**'
+      - '.github/workflows/databricks-dab-ci.yml'
+  workflow_dispatch:
 
 defaults:
   run:

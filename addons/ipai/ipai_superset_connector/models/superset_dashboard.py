@@ -123,7 +123,7 @@ class SupersetDashboard(models.Model):
             "name": f"Access Log: {self.name}",
             "type": "ir.actions.act_window",
             "res_model": "ipai.superset.audit",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("dashboard_id", "=", self.id)],
             "context": {"default_dashboard_id": self.id},
         }

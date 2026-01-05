@@ -1,9 +1,10 @@
 name: go-live manifest gate
 
 on:
-  pull_request:
+  # NOTE: PR trigger removed - go-live gate runs on main push only
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   gate:

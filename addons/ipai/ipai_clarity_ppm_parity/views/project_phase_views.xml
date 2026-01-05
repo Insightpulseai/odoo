@@ -26,7 +26,7 @@
     <record id="action_project_phases" model="ir.actions.act_window">
         <field name="name">Project Phases</field>
         <field name="res_model">project.task</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('is_phase', '=', True)]</field>
         <field name="context">{'default_is_phase': True}</field>
     </record>

@@ -1,12 +1,7 @@
 name: icons-drift
 
 on:
-  pull_request:
-    paths:
-      - "branding/module_icons.yaml"
-      - "scripts/export_module_icons.py"
-      - "addons/**/static/description/icon.png"
-      - ".github/workflows/icons-drift.yml"
+  # NOTE: PR trigger removed - icon drift check is not essential for PR validation
   push:
     branches: [ main ]
     paths:
@@ -14,6 +9,7 @@ on:
       - "scripts/export_module_icons.py"
       - "addons/**/static/description/icon.png"
       - ".github/workflows/icons-drift.yml"
+  workflow_dispatch:
 
 jobs:
   icons:

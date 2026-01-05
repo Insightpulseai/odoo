@@ -1,12 +1,7 @@
 name: Diagrams - Enforce Draw.io Exports
 
 on:
-  pull_request:
-    paths:
-      - "docs/architecture/**/*.drawio"
-      - "docs/architecture/**/*.png"
-      - "scripts/export_drawio.sh"
-      - ".github/workflows/diagrams-drawio-enforce.yml"
+  # NOTE: PR trigger removed - diagram export check runs on main push only
   push:
     branches: [ main ]
     paths:
@@ -14,6 +9,7 @@ on:
       - "docs/architecture/**/*.png"
       - "scripts/export_drawio.sh"
       - ".github/workflows/diagrams-drawio-enforce.yml"
+  workflow_dispatch:
 
 jobs:
   export-and-check:

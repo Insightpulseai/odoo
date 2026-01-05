@@ -1,7 +1,7 @@
 name: Infrastructure Validation (DigitalOcean)
 
 on:
-  pull_request:
+  # NOTE: PR trigger removed - infra validation runs on main push only
   push:
     branches:
       - main

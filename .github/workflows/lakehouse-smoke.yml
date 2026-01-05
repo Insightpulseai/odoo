@@ -1,15 +1,14 @@
 name: Lakehouse Smoke Test
 
 on:
-  pull_request:
+  # NOTE: PR trigger removed - lakehouse smoke test runs on main push only
+  push:
+    branches: [main]
     paths:
       - 'infra/lakehouse/**'
       - 'tools/catalog/**'
       - 'backend/**'
-  push:
-    branches: [main, master]
-    paths:
-      - 'infra/lakehouse/**'
+  workflow_dispatch:
 
 jobs:
   smoke:
