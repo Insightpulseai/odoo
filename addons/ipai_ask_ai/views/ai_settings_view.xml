@@ -19,7 +19,7 @@
                                 <div class="text-muted">
                                     Enable ChatGPT integration with your own OpenAI API key
                                 </div>
-                                <div class="content-group" attrs="{'invisible': [('ai_use_chatgpt', '=', False)]}">
+                                <div class="content-group" invisible="ai_use_chatgpt == False">
                                     <div class="mt16">
                                         <label for="ai_chatgpt_key" class="o_light_label"/>
                                         <field name="ai_chatgpt_key" password="True" placeholder="sk-..." class="oe_inline"/>
@@ -38,7 +38,7 @@
                                 <div class="text-muted">
                                     Enable Google Gemini integration with your own API key
                                 </div>
-                                <div class="content-group" attrs="{'invisible': [('ai_use_gemini', '=', False)]}">
+                                <div class="content-group" invisible="ai_use_gemini == False">
                                     <div class="mt16">
                                         <label for="ai_gemini_key" class="o_light_label"/>
                                         <field name="ai_gemini_key" password="True" placeholder="AIza..." class="oe_inline"/>
