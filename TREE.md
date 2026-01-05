@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: cd605af39472080debb56dc9604a98cfaea398bb
+> Commit: cf23481d6e7492f3b93f6a10a7f7a80a2ff65dcd
 
 ```
 .
@@ -72,6 +72,7 @@
 │   │   ├── module-catalog-drift.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
+│   │   ├── odoo-module-install-gate.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
@@ -448,6 +449,7 @@
 │   │   ├── static
 │   │   │   └── src
 │   │   ├── views
+│   │   │   ├── ai_settings_view.xml
 │   │   │   ├── ask_ai_views.xml
 │   │   │   └── res_config_settings_view.xml
 │   │   ├── CHANGES.md
@@ -597,6 +599,24 @@
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_month_end_closing
+│   │   ├── data
+│   │   │   ├── project_milestone.xml
+│   │   │   ├── project_project.xml
+│   │   │   ├── project_tags.xml
+│   │   │   ├── project_task_closing.xml
+│   │   │   ├── project_task_tax.xml
+│   │   │   ├── project_task_type.xml
+│   │   │   └── resource_calendar_leaves.xml
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── static
+│   │   │   └── description
+│   │   ├── views
+│   │   │   └── menus.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_month_end_closing.backup
 │   │   ├── data
 │   │   │   ├── closing_tasks.xml
 │   │   │   ├── hr_employees.xml
@@ -1292,7 +1312,8 @@
 │   │   └── sap_help.yaml
 │   ├── capability_map.yaml
 │   ├── odoo.conf.template
-│   └── pipeline.yaml
+│   ├── pipeline.yaml
+│   └── ship_set.txt
 ├── contracts
 │   └── delta
 │       ├── bronze_raw_pages.yaml
@@ -2771,15 +2792,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-823 directories, 1943 files
+829 directories, 1958 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 936 |
-| Files | 2762 |
-| Python files | 716 |
-| XML files | 360 |
-| Markdown files | 566 |
+| Directories | 942 |
+| Files | 2778 |
+| Python files | 718 |
+| XML files | 369 |
+| Markdown files | 567 |
