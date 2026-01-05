@@ -67,7 +67,7 @@ Author: InsightPulse AI
     },
     "installable": True,
     "auto_install": False,
-    "application": True,
+    "application": False,  # Use ipai_ai_studio as main umbrella
     "sequence": 10,
     "images": ["static/description/banner.png"],
 }
