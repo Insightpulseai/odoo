@@ -39,11 +39,13 @@ addons/*
 !addons/tbwa_*/
 !addons/tbwa_*/**
 
-# New layered structure (addons/ipai/ and addons/oca/)
+# New layered structure (addons/ipai/ and addons/OCA/)
 !addons/ipai/
 !addons/ipai/**
 !addons/oca/
 !addons/oca/**
+!addons/OCA/
+!addons/OCA/**
 
 # Common ignores
 addons/**/__pycache__/

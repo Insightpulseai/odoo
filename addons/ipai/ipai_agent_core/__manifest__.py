@@ -51,6 +51,6 @@ License: LGPL-3
     ],
     "post_init_hook": "post_init_hook",
     "installable": True,
-    "application": True,
+    "application": False,  # Library/registry module
     "auto_install": False,
 }

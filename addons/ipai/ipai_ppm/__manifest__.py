@@ -54,6 +54,6 @@ License: LGPL-3
         "data/kpi_definitions.xml",
     ],
     "installable": True,
-    "application": True,
+    "application": False,  # Use ipai_finance_ppm as main entry point
     "auto_install": False,
 }

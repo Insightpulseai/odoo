@@ -58,6 +58,6 @@ License: LGPL-3
         "views/menus.xml",
     ],
     "installable": True,
-    "application": True,
+    "application": False,  # Supporting module, not a main install target
     "auto_install": False,
 }

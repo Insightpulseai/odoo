@@ -18,6 +18,6 @@
         "views/ipai_equipment_views.xml",
     ],
     "installable": True,
-    "application": True,
+    "application": False,  # Use ipai_assets as main entry point
     "auto_install": False,
 }

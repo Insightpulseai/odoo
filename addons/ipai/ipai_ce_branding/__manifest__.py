@@ -20,7 +20,13 @@
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ce_branding",
     "license": "AGPL-3",
-    "depends": ["web", "base"],
+    "depends": [
+        "web",
+        "base",
+        # OCA server-brand foundation (CE cleanup)
+        "remove_odoo_enterprise",
+        "disable_odoo_online",
+    ],
     "data": [
         "views/ce_branding_views.xml",
         "views/assets.xml",
