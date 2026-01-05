@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ea8ba76e9bb42b0e26ddbc968cef96250b65a74b
+> Commit: d84f6e799542c247530b6aac4ffd366d8ded9534
 
 ```
 .
@@ -54,17 +54,22 @@
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-odoo-prod.yml
 │   │   ├── deploy-production.yml
+│   │   ├── diagrams-drawio-enforce.yml
 │   │   ├── diagrams-qa.yml
 │   │   ├── directional-sync.yml
+│   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── fin-workspace-weekly-sync.yml
 │   │   ├── finance-ppm-health.yml
+│   │   ├── go-live-manifest-gate.yml
 │   │   ├── health-check.yml
+│   │   ├── icons-drift.yml
 │   │   ├── infra-validate.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
+│   │   ├── module-catalog-drift.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── repo-structure.yml
@@ -1229,6 +1234,7 @@
 │   ├── copilot_drift_check.sh
 │   ├── finance-cli.sh
 │   ├── import_bir_schedules.py
+│   ├── odoo-check-gate
 │   ├── odoo-tests.sh
 │   └── postdeploy-finance.sh
 ├── branding
@@ -1631,6 +1637,7 @@
 │   ├── RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
 │   ├── README.md
 │   ├── README_MCP_STACK.md
+│   ├── RELEASE_NOTES_GO_LIVE.md
 │   ├── REPO_SNAPSHOT.json
 │   ├── REPO_TREE.contract.md
 │   ├── REPO_TREE.generated.md
@@ -2031,11 +2038,13 @@
 │   ├── build_v0.9.1.sh
 │   ├── ce_oca_audit.py
 │   ├── check-enterprise-modules.sh
+│   ├── check_go_live_manifest.py
 │   ├── check_module_status.sh
 │   ├── check_project_tasks.py
 │   ├── ci_local.sh
 │   ├── ci_smoke_test.sh
 │   ├── cleanup-branches.sh
+│   ├── configure_base_url.py
 │   ├── configure_gmail_smtp.py
 │   ├── configure_gmail_smtp.sh
 │   ├── configure_google_oauth.sh
@@ -2079,11 +2088,13 @@
 │   ├── generate_2026_finance_calendar.py
 │   ├── generate_2026_schedule.py
 │   ├── generate_finance_dashboard.py
+│   ├── generate_go_live_checklist.py
 │   ├── generate_module_docs.py
 │   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
+│   ├── hotfix_icon_crash.sh
 │   ├── hotfix_production.sh
 │   ├── image-diff-report.sh
 │   ├── image_audit.sh
@@ -2117,6 +2128,7 @@
 │   ├── replace_seed_from_excel.py
 │   ├── repo_health.sh
 │   ├── report_ci_telemetry.sh
+│   ├── report_stale_branches.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
 │   ├── run_project_introspection.sh
@@ -2138,6 +2150,7 @@
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
 │   ├── validate_m1.sh
+│   ├── validate_manifest.py
 │   ├── validate_manifests.py
 │   ├── validate_production.sh
 │   ├── verify-https.sh
@@ -2729,7 +2742,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-810 directories, 1914 files
+810 directories, 1927 files
 ```
 
 ## 📊 Stats
@@ -2737,7 +2750,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 919 |
-| Files | 2715 |
-| Python files | 693 |
+| Files | 2728 |
+| Python files | 697 |
 | XML files | 354 |
-| Markdown files | 562 |
+| Markdown files | 563 |
