@@ -9,7 +9,7 @@
         It provides the base namespace for the module hierarchy.
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulse.ai",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai",
     "license": "AGPL-3",
     "depends": ["base"],
     "installable": True,

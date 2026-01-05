@@ -4,8 +4,8 @@
     "summary": "Finance Project Portfolio Management (Notion Parity).",
     "version": "18.0.1.0.0",
     "category": "Accounting/Finance",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm",
     "license": "AGPL-3",
     "depends": [
         "base",

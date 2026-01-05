@@ -22,8 +22,8 @@ without external SaaS integration. See ADR-0001 for philosophy.
     """,
     "version": "18.0.1.1.0",
     "category": "Operations/Equipment",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_assets",
     "license": "AGPL-3",
     "depends": [
         "base",

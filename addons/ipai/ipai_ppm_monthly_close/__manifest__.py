@@ -33,7 +33,7 @@ Integration:
 * n8n - Automation workflows
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ppm_monthly_close",
     "license": "AGPL-3",
     "depends": [
         "base",

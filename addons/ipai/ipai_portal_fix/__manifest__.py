@@ -27,8 +27,8 @@ safe default values for commonly used template variables:
 
 This ensures templates can safely check these variables without KeyError.
     """,
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_portal_fix",
     "license": "AGPL-3",
     "depends": [
         "portal",

@@ -20,7 +20,7 @@ All features are controlled via Settings toggles (ir.config_parameter).
 When disabled, feature tabs/menus are hidden with no functional side effects.
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.com",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_project_suite",
     "category": "Project",
     "license": "LGPL-3",
     "depends": [
