@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: eebb5d64d51bec4fa77ec76fe66bd8d62a76b032
+> Commit: 113cbdd9bcc8206993d8a8437b07001781a3abfa
 
 ## 📚 Documentation
 
@@ -530,6 +530,10 @@
 | [Tasks — Parallel Control Planes](spec/parallel-control-planes/tasks.md) | spec/parallel-control-planes |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
+| [Constitution — Project CE Suite (Toggleable)](spec/project-ce/constitution.md) | spec/project-ce |
+| [Plan — Implementation](spec/project-ce/plan.md) | spec/project-ce |
+| [PRD — Odoo 18 CE Project Suite (Toggleable)](spec/project-ce/prd.md) | spec/project-ce |
+| [Tasks — Checklist](spec/project-ce/tasks.md) | spec/project-ce |
 | [Pulser Master Control — Constitution](spec/pulser-master-control/constitution.md) | spec/pulser-master-control |
 | [Pulser Master Control — Implementation Plan](spec/pulser-master-control/plan.md) | spec/pulser-master-control |
 | [Pulser Master Control — Product Requirements Document](spec/pulser-master-control/prd.md) | spec/pulser-master-control |
@@ -562,6 +566,7 @@
 | [Task: n8n Automation Strategy for Odoo CE](task.md) | . |
 | [Tasks – InsightPulse Odoo CE](tasks.md) | . |
 | [Agent Services Hard Delete Checklist](tasks/infra/AGENT_SERVICES_HARD_DELETE_CHECKLIST.md) | tasks/infra |
+| [Odoo Month-end Close + Tax Filing Import (CE)](templates/odoo/import/README.md) | templates/odoo/import |
 | [Database Instance Inventory Scanner](tools/db-inventory/README.md) | tools/db-inventory |
 | [Kapa-style Docs Copilot for Odoo CE + OCA 18.0](tools/docs-crawler/README.md) | tools/docs-crawler |
 | [Documentation Catalogue → Odoo CE/OCA Mapper](tools/docs_catalog/README.md) | tools/docs_catalog |
@@ -612,6 +617,7 @@
 | [ipai_ppm_a1](./addons/ipai/ipai_ppm_a1) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
+| [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
