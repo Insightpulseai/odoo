@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend hr.expense form view with OCR button and fields -->
+    <record id="view_hr_expense_form_ocr" model="ir.ui.view">
+        <field name="name">hr.expense.form.ocr</field>
+        <field name="model">hr.expense</field>
+        <field name="inherit_id" ref="hr_expense.hr_expense_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add OCR button in header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_extract_from_receipt"
+                        type="object"
+                        string="Extract from Receipt"
+                        class="btn-secondary"
+                        icon="fa-magic"
+                        invisible="not message_main_attachment_id"/>
+            </xpath>
+
+            <!-- Add OCR info in a new page -->
+            <xpath expr="//notebook" position="inside">
+                <page string="OCR Data" name="ocr_data"
+                      invisible="not ocr_extracted_at">
+                    <group>
+                        <group string="Extraction Info">
+                            <field name="ocr_extracted_at" readonly="1"/>
+                            <field name="ocr_confidence" readonly="1"
+                                   widget="percentage"/>
+                            <field name="ocr_vendor_name" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Raw OCR Response">
+                        <field name="ocr_raw_response" readonly="1"
+                               widget="text" nolabel="1"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add OCR columns to tree view -->
+    <record id="view_hr_expense_tree_ocr" model="ir.ui.view">
+        <field name="name">hr.expense.tree.ocr</field>
+        <field name="model">hr.expense</field>
+        <field name="inherit_id" ref="hr_expense.view_my_expenses_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='total_amount_currency']" position="after">
+                <field name="ocr_confidence" optional="hide"
+                       widget="percentage"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
