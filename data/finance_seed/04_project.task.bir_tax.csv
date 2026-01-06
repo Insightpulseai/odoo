@@ -1,0 +1,148 @@
+id,name,project_id/id,tag_ids/id,date_deadline,planned_hours,sequence,description
+ipai_seed.task_bir_jan_1601c,1601-C (Withholding Tax) - January 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-02-10,8,10,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: January 2026
+Prep Request: 2026-02-04
+Report Approval: 2026-02-06
+Payment Approval: 2026-02-09
+Deadline: 2026-02-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_jan_0619e,0619-E (VAT Declaration) - January 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-02-20,8,20,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: January 2026
+Deadline: 2026-02-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_feb_1601c,1601-C (Withholding Tax) - February 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-03-10,8,30,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: February 2026
+Prep Request: 2026-03-04
+Report Approval: 2026-03-06
+Payment Approval: 2026-03-09
+Deadline: 2026-03-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_feb_0619e,0619-E (VAT Declaration) - February 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-03-20,8,40,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: February 2026
+Deadline: 2026-03-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_mar_1601c,1601-C (Withholding Tax) - March 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-04-10,8,50,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: March 2026
+Deadline: 2026-04-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_mar_0619e,0619-E (VAT Declaration) - March 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-04-20,8,60,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: March 2026
+Deadline: 2026-04-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q1_2550q,2550Q (Quarterly VAT) - Q1 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_2550q,2026-04-25,16,70,"BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q1 2026 (Jan-Mar)
+Prep Request: 2026-04-19
+Report Approval: 2026-04-21
+Payment Approval: 2026-04-23
+Deadline: 2026-04-25 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q1_1601eq,1601-EQ (Quarterly EWT) - Q1 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601eq,2026-04-30,16,80,"BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q1 2026 (Jan-Mar)
+Prep Request: 2026-04-24
+Report Approval: 2026-04-28
+Payment Approval: 2026-04-29
+Deadline: 2026-04-30
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_apr_1601c,1601-C (Withholding Tax) - April 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-05-11,8,90,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: April 2026
+Deadline: 2026-05-11 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_apr_0619e,0619-E (VAT Declaration) - April 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-05-20,8,100,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: April 2026
+Deadline: 2026-05-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_2026_1702rt,1702-RT (Annual Income Tax) - 2025,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1702rt,2026-04-15,24,85,"BIR Form: 1702-RT/EX (Annual Income Tax Return)
+Period: Calendar Year 2025
+Prep Request: 2026-04-09
+Report Approval: 2026-04-13
+Payment Approval: 2026-04-14
+Deadline: 2026-04-15
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_may_1601c,1601-C (Withholding Tax) - May 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-06-10,8,110,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: May 2026
+Deadline: 2026-06-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_may_0619e,0619-E (VAT Declaration) - May 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-06-22,8,120,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: May 2026
+Deadline: 2026-06-22 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_jun_1601c,1601-C (Withholding Tax) - June 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-07-10,8,130,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: June 2026
+Deadline: 2026-07-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_jun_0619e,0619-E (VAT Declaration) - June 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-07-20,8,140,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: June 2026
+Deadline: 2026-07-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q2_2550q,2550Q (Quarterly VAT) - Q2 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_2550q,2026-07-25,16,150,"BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q2 2026 (Apr-Jun)
+Deadline: 2026-07-25 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q2_1601eq,1601-EQ (Quarterly EWT) - Q2 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601eq,2026-07-31,16,160,"BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q2 2026 (Apr-Jun)
+Deadline: 2026-07-31
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_jul_1601c,1601-C (Withholding Tax) - July 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-08-10,8,170,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: July 2026
+Deadline: 2026-08-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_jul_0619e,0619-E (VAT Declaration) - July 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-08-20,8,180,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: July 2026
+Deadline: 2026-08-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_aug_1601c,1601-C (Withholding Tax) - August 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-09-10,8,190,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: August 2026
+Deadline: 2026-09-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_aug_0619e,0619-E (VAT Declaration) - August 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-09-21,8,200,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: August 2026
+Deadline: 2026-09-21 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_sep_1601c,1601-C (Withholding Tax) - September 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-10-12,8,210,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: September 2026
+Deadline: 2026-10-12 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_sep_0619e,0619-E (VAT Declaration) - September 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-10-20,8,220,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: September 2026
+Deadline: 2026-10-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q3_2550q,2550Q (Quarterly VAT) - Q3 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_2550q,2026-10-26,16,230,"BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q3 2026 (Jul-Sep)
+Deadline: 2026-10-26 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q3_1601eq,1601-EQ (Quarterly EWT) - Q3 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601eq,2026-10-30,16,240,"BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q3 2026 (Jul-Sep)
+Deadline: 2026-10-30
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_oct_1601c,1601-C (Withholding Tax) - October 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-11-10,8,250,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: October 2026
+Deadline: 2026-11-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_oct_0619e,0619-E (VAT Declaration) - October 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-11-20,8,260,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: October 2026
+Deadline: 2026-11-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_nov_1601c,1601-C (Withholding Tax) - November 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2026-12-10,8,270,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: November 2026
+Deadline: 2026-12-10
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_nov_0619e,0619-E (VAT Declaration) - November 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2026-12-21,8,280,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: November 2026
+Deadline: 2026-12-21 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_dec_1601c,1601-C (Withholding Tax) - December 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601c,2027-01-11,8,290,"BIR Form: 1601-C (Monthly Withholding Tax on Compensation)
+Period: December 2026
+Deadline: 2027-01-11 (moved from weekend)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_dec_0619e,0619-E (VAT Declaration) - December 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_0619e,2027-01-20,8,300,"BIR Form: 0619-E (Monthly VAT Declaration)
+Period: December 2026
+Deadline: 2027-01-20
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q4_2550q,2550Q (Quarterly VAT) - Q4 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_2550q,2027-01-25,16,310,"BIR Form: 2550Q (Quarterly VAT Return)
+Period: Q4 2026 (Oct-Dec)
+Deadline: 2027-01-25 (within 25 days after quarter end)
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
+ipai_seed.task_bir_q4_1601eq,1601-EQ (Quarterly EWT) - Q4 2026,ipai_seed.project_bir_tax_filing,ipai_seed.tag_bir_1601eq,2027-01-29,16,320,"BIR Form: 1601-EQ (Quarterly Expanded Withholding Tax)
+Period: Q4 2026 (Oct-Dec)
+Deadline: 2027-01-29
+Preparer: BOM | Reviewer: RIM | Approver: CKVC"
