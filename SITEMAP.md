@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 755b251dadbea8fab2d277317519bea5b5cf41c5
+> Commit: 7d0eeee17589245acb88909ef4c27541d86d7def
 
 ## 📚 Documentation
 
@@ -193,6 +193,7 @@
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
 | [CE/OCA Equivalents Audit Report](docs/CE_OCA_EQUIVALENTS_AUDIT.md) | docs |
+| [CE + OCA Project Stack Mapping (Odoo 18)](docs/CE_OCA_PROJECT_STACK.md) | docs |
 | [Custom Odoo Image Success Criteria Validation](docs/CUSTOM_IMAGE_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE 18 – Database & Worker Tuning](docs/DB_TUNING.md) | docs |
 | [DELIVERABLES & RELEASE CONTENTS](docs/DELIVERABLES_MANIFEST.md) | docs |
