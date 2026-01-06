@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI AI Core",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Productivity",
     "summary": "Provider-based AI threads/messages/citations for Odoo CE 18 (works with OCA AI UI).",
     "description": """

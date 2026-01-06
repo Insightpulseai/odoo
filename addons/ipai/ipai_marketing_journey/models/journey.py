@@ -198,7 +198,7 @@ class MarketingJourney(models.Model):
             "type": "ir.actions.act_window",
             "name": "Participants",
             "res_model": "marketing.journey.participant",
-            "view_mode": "tree,form",
+            "view_mode": "list,form",
             "domain": [("journey_id", "=", self.id)],
             "context": {"default_journey_id": self.id},
         }
