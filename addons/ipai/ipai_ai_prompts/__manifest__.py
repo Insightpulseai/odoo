@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI AI Prompts Library",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Productivity/AI",
     "summary": "Prompt templates and topic library for AI interactions",
     "description": """

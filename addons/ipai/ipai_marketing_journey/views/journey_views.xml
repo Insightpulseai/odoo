@@ -146,7 +146,7 @@
     <record id="action_marketing_journey" model="ir.actions.act_window">
         <field name="name">Journeys</field>
         <field name="res_model">marketing.journey</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_marketing_journey_search"/>
         <field name="context">{'search_default_filter_active': 1}</field>
         <field name="help" type="html">

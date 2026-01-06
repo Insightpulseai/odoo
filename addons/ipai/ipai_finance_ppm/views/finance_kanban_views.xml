@@ -20,7 +20,7 @@
                     colors='{"draft": "muted", "active": "warning", "review": "danger", "done": "success"}'/>
 
                 <templates>
-                    <t t-name="kanban-box">
+                    <t t-name="card">
                         <div t-attf-class="oe_kanban_global_click #{record.color.raw_value ? 'oe_kanban_color_' + record.color.raw_value : ''}">
                             <div class="oe_kanban_content">
                                 <!-- Header with badges -->
