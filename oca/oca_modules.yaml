@@ -1,0 +1,195 @@
+# OCA Module Configuration for InsightPulse Finance SSC
+# =====================================================
+# This file defines the OCA modules to install for Odoo 18 CE
+# Organized by priority tier and functional area
+
+version: "18.0"
+last_updated: "2026-01-06"
+
+# =============================================================================
+# TIER 1: CORE FINANCE (Install First)
+# =============================================================================
+tier1_core_finance:
+  - repo: OCA/account-financial-tools
+    branch: "18.0"
+    modules:
+      - account_lock_date          # Period locking
+      - account_fiscal_year        # Fiscal year management
+      - account_move_name_sequence # Custom invoice sequences
+      - account_journal_lock_date  # Journal-level locking
+
+  - repo: OCA/account-financial-reporting
+    branch: "18.0"
+    modules:
+      - account_financial_report   # Trial balance, General Ledger
+      - account_financial_report_qweb  # PDF reports
+
+  - repo: OCA/account-reconcile
+    branch: "18.0"
+    modules:
+      - account_reconcile_oca      # Enhanced bank reconciliation
+      - account_reconcile_restrict_partner_mismatch
+
+  - repo: OCA/reporting-engine
+    branch: "18.0"
+    modules:
+      - report_xlsx                # Excel report export
+      - report_xlsx_helper         # XLSX helper functions
+      - report_qweb_pdf_watermark  # PDF watermarks
+
+# =============================================================================
+# TIER 2: WORKFLOW & OPERATIONS
+# =============================================================================
+tier2_workflow:
+  - repo: OCA/purchase-workflow
+    branch: "18.0"
+    modules:
+      - purchase_order_approval_block
+      - purchase_order_type
+      - purchase_request
+
+  - repo: OCA/sale-workflow
+    branch: "18.0"
+    modules:
+      - sale_order_type
+      - sale_order_line_sequence
+
+  - repo: OCA/hr-expense
+    branch: "18.0"
+    modules:
+      - hr_expense_advance_clearing
+      - hr_expense_sequence
+
+  - repo: OCA/project
+    branch: "18.0"
+    modules:
+      - project_task_default_stage
+      - project_timeline
+
+# =============================================================================
+# TIER 3: INTEGRATION & API
+# =============================================================================
+tier3_integration:
+  - repo: OCA/rest-framework
+    branch: "18.0"
+    modules:
+      - base_rest                  # REST API framework
+      - base_rest_auth_user_service
+      - base_rest_demo
+      - graphql_base              # GraphQL support
+
+  - repo: OCA/connector
+    branch: "18.0"
+    modules:
+      - connector                  # Generic connector framework
+      - queue_job                  # Background job processing
+
+  - repo: OCA/storage
+    branch: "18.0"
+    modules:
+      - storage_backend            # External storage abstraction
+      - storage_backend_s3         # S3/DO Spaces support
+
+# =============================================================================
+# TIER 4: REPORTING & BI
+# =============================================================================
+tier4_reporting:
+  - repo: OCA/margin-analysis
+    branch: "18.0"
+    modules:
+      - sale_margin_delivered      # Margin on delivered qty
+
+  - repo: OCA/purchase-reporting
+    branch: "18.0"
+    modules:
+      - purchase_report_payment_term
+
+  - repo: OCA/management-system
+    branch: "18.0"
+    modules:
+      - document_page              # Knowledge base
+      - document_page_approval     # Document approval workflow
+
+# =============================================================================
+# TIER 5: AI & FUTURE-READY
+# =============================================================================
+tier5_ai:
+  - repo: OCA/ai
+    branch: "18.0"
+    modules:
+      # Watch this repo - early stage but promising
+      # - ai_integration_base
+
+# =============================================================================
+# INSTALLATION COMMANDS
+# =============================================================================
+#
+# Option 1: Git Submodules (Recommended for version control)
+#
+# cd /opt/odoo-ce
+# git submodule add -b 18.0 https://github.com/OCA/account-financial-tools.git oca/account-financial-tools
+# git submodule add -b 18.0 https://github.com/OCA/account-financial-reporting.git oca/account-financial-reporting
+# git submodule add -b 18.0 https://github.com/OCA/account-reconcile.git oca/account-reconcile
+# git submodule add -b 18.0 https://github.com/OCA/reporting-engine.git oca/reporting-engine
+# git submodule add -b 18.0 https://github.com/OCA/rest-framework.git oca/rest-framework
+# git submodule add -b 18.0 https://github.com/OCA/hr-expense.git oca/hr-expense
+# git submodule init && git submodule update
+#
+# Option 2: Direct Clone
+#
+# mkdir -p /opt/odoo-ce/oca
+# cd /opt/odoo-ce/oca
+# git clone -b 18.0 --depth 1 https://github.com/OCA/account-financial-tools.git
+# git clone -b 18.0 --depth 1 https://github.com/OCA/account-financial-reporting.git
+# ...
+#
+# Option 3: pip (if modules are on PyPI)
+#
+# pip install odoo18-addon-account_financial_report
+# pip install odoo18-addon-report_xlsx
+# ...
+#
+# =============================================================================
+# ODOO CONFIGURATION
+# =============================================================================
+#
+# Update odoo.conf addons_path:
+#
+# [options]
+# addons_path = /opt/odoo/addons,/opt/odoo-ce/addons/ipai,/opt/odoo-ce/oca/account-financial-tools,/opt/odoo-ce/oca/account-financial-reporting,/opt/odoo-ce/oca/account-reconcile,/opt/odoo-ce/oca/reporting-engine,/opt/odoo-ce/oca/rest-framework
+#
+# =============================================================================
+# DOCKER VOLUME MOUNT
+# =============================================================================
+#
+# In docker-compose.yml:
+#
+# volumes:
+#   - ./oca/account-financial-tools:/mnt/extra-addons/oca/account-financial-tools:ro
+#   - ./oca/account-financial-reporting:/mnt/extra-addons/oca/account-financial-reporting:ro
+#   - ./oca/account-reconcile:/mnt/extra-addons/oca/account-reconcile:ro
+#   - ./oca/reporting-engine:/mnt/extra-addons/oca/reporting-engine:ro
+#   - ./oca/rest-framework:/mnt/extra-addons/oca/rest-framework:ro
+#
+# =============================================================================
+# MODULE INSTALLATION ORDER
+# =============================================================================
+#
+# 1. Install base dependencies first:
+#    - queue_job (for background processing)
+#    - report_xlsx (for Excel exports)
+#
+# 2. Install financial modules:
+#    - account_financial_report
+#    - account_lock_date
+#    - account_reconcile_oca
+#
+# 3. Install workflow modules:
+#    - purchase_request
+#    - hr_expense_advance_clearing
+#
+# 4. Install integration modules:
+#    - base_rest
+#    - storage_backend_s3
+#
+# =============================================================================

@@ -1,0 +1,267 @@
+{
+  "name": "Expense Receipt Capture",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "expense-receipt",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-receipt",
+      "name": "Webhook - Receipt Upload",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "expense-receipt-webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ocr.insightpulseai.net/api/ocr/receipt",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image",
+              "value": "={{ $json.data }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "paddleocr-receipt",
+      "name": "PaddleOCR - Extract Receipt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "messages": {
+          "values": [
+            {
+              "content": "Extract receipt data from the following OCR text and return as JSON with these fields:\n- merchant_name: string\n- merchant_tin: string (Philippine TIN if visible)\n- receipt_date: string (YYYY-MM-DD)\n- receipt_number: string (OR number if visible)\n- subtotal: number\n- vat_amount: number (12% VAT if applicable)\n- total_amount: number\n- payment_method: string (cash, credit_card, gcash, etc.)\n- expense_category: string (one of: meals, transportation, supplies, communication, accommodation, other)\n- description: string (brief description of purchase)\n\nOCR Text:\n{{ $json.text }}\n\nReturn ONLY valid JSON, no markdown.",
+              "role": "user"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 1500
+        }
+      },
+      "id": "claude-receipt",
+      "name": "Claude - Structure Receipt",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1,
+      "position": [690, 300],
+      "credentials": {
+        "anthropicApi": {
+          "id": "anthropic-api",
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude response and prepare for Odoo hr.expense\nconst receiptData = JSON.parse($input.first().json.text);\n\n// Map expense category to Odoo product\nconst categoryMap = {\n  'meals': 1, // product.product ID for Meals expense\n  'transportation': 2,\n  'supplies': 3,\n  'communication': 4,\n  'accommodation': 5,\n  'other': 6,\n};\n\n// Prepare Odoo hr.expense record\nconst odooExpense = {\n  name: receiptData.description || `${receiptData.merchant_name} - ${receiptData.receipt_date}`,\n  product_id: categoryMap[receiptData.expense_category] || 6,\n  unit_amount: receiptData.total_amount,\n  quantity: 1,\n  date: receiptData.receipt_date,\n  reference: receiptData.receipt_number,\n  payment_mode: receiptData.payment_method === 'cash' ? 'own_account' : 'company_account',\n  // Employee will be set based on authenticated user\n  employee_id: $json.employee_id || null,\n  // BIR fields\n  x_merchant_tin: receiptData.merchant_tin,\n  x_vat_amount: receiptData.vat_amount,\n};\n\nreturn {\n  json: {\n    expense: odooExpense,\n    raw: receiptData,\n    employee_id: $json.employee_id,\n  }\n};"
+      },
+      "id": "transform-expense",
+      "name": "Transform - Expense Format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "policy-check",
+              "leftValue": "={{ $json.raw.total_amount }}",
+              "rightValue": 5000,
+              "operator": {
+                "type": "number",
+                "operation": "lte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "policy-check",
+      "name": "Policy Check - Amount <= 5000",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1130, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_PASSWORD }}\",\n      \"hr.expense\",\n      \"create\",\n      [{{ JSON.stringify($json.expense) }}]\n    ]\n  },\n  \"id\": 1\n}",
+        "options": {}
+      },
+      "id": "odoo-create-expense",
+      "name": "Odoo - Create Expense",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1350, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://chat.insightpulseai.net/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"finance-general\",\n  \"username\": \"Expense Bot\",\n  \"icon_emoji\": \":receipt:\",\n  \"text\": \"#### :warning: Policy Violation Alert\\n| Field | Value |\\n|:--|:--|\\n| **Amount** | PHP {{ $json.raw.total_amount }} |\\n| **Threshold** | PHP 5,000 |\\n| **Merchant** | {{ $json.raw.merchant_name }} |\\n| **Category** | {{ $json.raw.expense_category }} |\\n\\n**Action Required:** Manager approval needed for expenses > PHP 5,000\"\n}",
+        "options": {}
+      },
+      "id": "policy-violation-alert",
+      "name": "Alert - Policy Violation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1350, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\"success\": true, \"expense_id\": $json.result, \"amount\": $json.raw.total_amount, \"requires_approval\": false} }}"
+      },
+      "id": "respond-success",
+      "name": "Respond - Created",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1570, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\"success\": true, \"expense_id\": $json.result, \"amount\": $json.raw.total_amount, \"requires_approval\": true, \"message\": \"Expense exceeds policy threshold. Manager approval required.\"} }}"
+      },
+      "id": "respond-approval-needed",
+      "name": "Respond - Approval Needed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1570, 400]
+    }
+  ],
+  "connections": {
+    "Webhook - Receipt Upload": {
+      "main": [
+        [
+          {
+            "node": "PaddleOCR - Extract Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PaddleOCR - Extract Receipt": {
+      "main": [
+        [
+          {
+            "node": "Claude - Structure Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude - Structure Receipt": {
+      "main": [
+        [
+          {
+            "node": "Transform - Expense Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform - Expense Format": {
+      "main": [
+        [
+          {
+            "node": "Policy Check - Amount <= 5000",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Policy Check - Amount <= 5000": {
+      "main": [
+        [
+          {
+            "node": "Odoo - Create Expense",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Alert - Policy Violation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo - Create Expense": {
+      "main": [
+        [
+          {
+            "node": "Respond - Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert - Policy Violation": {
+      "main": [
+        [
+          {
+            "node": "Respond - Approval Needed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateId": "insightpulse-expense-receipt-v1"
+  },
+  "tags": [
+    {
+      "name": "expense",
+      "id": "4"
+    },
+    {
+      "name": "ocr",
+      "id": "2"
+    },
+    {
+      "name": "hr",
+      "id": "5"
+    }
+  ]
+}
