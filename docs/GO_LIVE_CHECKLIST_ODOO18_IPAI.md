@@ -1,105 +1,112 @@
 # Odoo 18 CE + OCA + IPAI Go-Live Checklist (InsightPulseAI)
 
-This checklist is for: Dockerized Odoo 18 CE on DO droplet + nginx reverse proxy + OCA modules + IPAI custom suite
-and optional AI (OpenAI/Gemini) + OCR/Digitalization service.
+**Version**: 2.0
+**Stack**: Dockerized Odoo 18 CE on DO droplet + nginx reverse proxy + OCA modules + IPAI custom suite
+**Optional**: AI (OpenAI/Gemini) + OCR/Digitalization service
+**Last Updated**: January 2026
 
 ---
 
-## 0) Platform / Infra Health (must be ✅ before functional testing)
+## 0) Platform / Infra Health (must be green before functional testing)
+
+### 0.1 Domain + TLS
 
 - [ ] Domain + TLS ok: https://erp.insightpulseai.net loads without mixed-content errors
+- [ ] Certificate valid and not expiring within 30 days
+- [ ] HSTS headers configured
+
+### 0.2 Container Health
+
 - [ ] Odoo container healthy:
   - [ ] `docker ps` shows `odoo-erp-prod` running
   - [ ] `docker logs -n 200 odoo-erp-prod` shows no repeating tracebacks
-- [ ] Outbound HTTPS from container works (for AI/OCR):
-  - [ ] `curl -sS https://api.openai.com` (or gemini endpoint) returns a response (no DNS/egress block)
 - [ ] Workers restart policy set; no crash loop
 - [ ] Filestore volume mounted & writable
+
+### 0.3 Outbound Connectivity (for AI/OCR)
+
+- [ ] Outbound HTTPS from container works:
+  - [ ] `curl -sS https://api.openai.com` returns a response (no DNS/egress block)
+  - [ ] `curl -sS https://generativelanguage.googleapis.com` returns a response
+
+### 0.4 Database Health
+
+- [ ] PostgreSQL 15 running and healthy
+- [ ] Database backup schedule active
+- [ ] Connection pooling configured
 
 ---
 
 ## 1) Critical Odoo 18 Compatibility Gate (prevents UI hard-stops)
 
-### 1.1 Fix act_window view_mode breaking change (tree → list)
+> **CRITICAL**: Odoo 18 renamed `tree` view mode to `list`. Kanban views now require `t-name="card"` template. These breaking changes will crash the UI if not fixed.
 
-Odoo 18 renamed `tree` to `list` in view_mode. Legacy actions will fail with:
-> "View types not defined tree found in act_window action ..."
+### 1.1 Fix act_window view_mode breaking change (tree -> list)
 
-- [ ] Run ORM fixer (module hook or script) to replace any `tree` in:
-  - `ir.actions.act_window.view_mode`
-  - action view definitions that still reference tree
-
-**Fix options:**
-
-```bash
-# Option A: Upgrade the compat module (runs post-migrate automatically)
-docker exec -it odoo-erp-prod bash -lc 'odoo -d odoo -u ipai_v18_compat --stop-after-init'
-docker restart odoo-erp-prod
-
-# Option B: Run standalone script
-docker exec -it odoo-erp-prod bash -lc '
-  export ODOO_DB=odoo
-  export ODOO_CONF=/etc/odoo/odoo.conf
-  python /mnt/extra-addons/ipai/scripts/fix_odoo18_views.py
-'
-docker restart odoo-erp-prod
-```
+- [ ] Install `ipai_v18_compat` module:
+  ```bash
+  docker exec -it odoo-erp-prod odoo -d odoo -u ipai_v18_compat --stop-after-init
+  docker restart odoo-erp-prod
+  ```
+- [ ] OR run standalone fix script:
+  ```bash
+  docker exec -it odoo-erp-prod python /mnt/extra-addons/ipai/scripts/fix_odoo18_views.py
+  ```
+- [ ] Verify no `tree` view_mode remains:
+  ```bash
+  docker exec -it odoo-erp-prod odoo shell -d odoo -c /etc/odoo/odoo.conf << 'EOF'
+  actions = env['ir.actions.act_window'].sudo().search([('view_mode', 'ilike', 'tree')])
+  print(f"Actions with tree view_mode: {len(actions)}")
+  for a in actions[:10]:
+      print(f"  - {a.id}: {a.name} ({a.view_mode})")
+  EOF
+  ```
 
 ### 1.2 Fix broken kanban views missing `t-name="card"`
 
-Odoo 18 requires kanban views to have a `t-name="card"` template. Missing it triggers:
-> "Missing 'card' template."
+- [ ] Detect kanban views missing card template (script will log these)
+- [ ] Option A: Patch the views in source modules
+- [ ] Option B: Enable auto-deactivation via system parameter:
+  ```bash
+  docker exec -it odoo-erp-prod odoo shell -d odoo -c /etc/odoo/odoo.conf << 'EOF'
+  env["ir.config_parameter"].sudo().set_param("ipai_v18_compat.deactivate_broken_kanban", "1")
+  print("Set ipai_v18_compat.deactivate_broken_kanban=1")
+  EOF
+  ```
 
-- [ ] Detect kanban views missing card template
-- [ ] Either patch them (if you own the view) or deactivate them (safer)
+### 1.3 Verification (Evidence)
 
-**To auto-deactivate broken kanbans:**
-
-```bash
-# Set system parameter to enable deactivation
-docker exec -it odoo-erp-prod bash -lc '
-  odoo shell -d odoo <<PY
-p = env["ir.config_parameter"].sudo()
-p.set_param("ipai_v18_compat.deactivate_broken_kanban", "1")
-print("set ipai_v18_compat.deactivate_broken_kanban=1")
-env.cr.commit()
-PY
-'
-
-# Then run the compat module upgrade
-docker exec -it odoo-erp-prod bash -lc 'odoo -d odoo -u ipai_v18_compat --stop-after-init'
-docker restart odoo-erp-prod
-```
-
-### 1.3 Verification
-
-- [ ] No more client errors like:
-  - "View types not defined tree found in act_window action …"
-  - "Missing 'card' template."
-
-```bash
-# Check logs for remaining issues
-docker logs -n 200 odoo-erp-prod | egrep -i "Missing .card.|View types not defined|Traceback" || echo "✓ No view errors found"
-```
+- [ ] No client errors in browser console:
+  - [ ] No "View types not defined tree found in act_window action ..."
+  - [ ] No "Missing 'card' template."
+- [ ] Verify logs are clean:
+  ```bash
+  docker logs -n 200 odoo-erp-prod | grep -iE "Missing .card.|View types not defined|Traceback" || echo "Clean!"
+  ```
 
 ---
 
 ## 2) Email / Invites / Reset Password (Outbound-only baseline)
 
+### 2.1 Outgoing SMTP Configuration
+
 - [ ] Outgoing SMTP configured (Mailgun 2525 / TLS STARTTLS)
 - [ ] Odoo test connection successful
 - [ ] From filtering set (e.g. *@insightpulseai.net)
+
+### 2.2 Email Delivery Tests
+
 - [ ] Send test:
   - [ ] Invite user email arrives
   - [ ] Password reset email arrives
-- [ ] No mail queue stuck: Settings → Technical → Emails
-
-**Verification:**
-
-```bash
-# Check for email errors
-docker logs -n 200 odoo-erp-prod | egrep -i "smtp|mail|email" | tail -20
-```
+- [ ] No mail queue stuck: Settings -> Technical -> Emails
+- [ ] Check mail.mail model for failed records:
+  ```bash
+  docker exec -it odoo-erp-prod odoo shell -d odoo << 'EOF'
+  failed = env['mail.mail'].sudo().search([('state', '=', 'exception')])
+  print(f"Failed emails: {len(failed)}")
+  EOF
+  ```
 
 ---
 
@@ -107,189 +114,272 @@ docker logs -n 200 odoo-erp-prod | egrep -i "smtp|mail|email" | tail -20
 
 ### 3.1 Provider Setup
 
-- [ ] Settings → AI Provider Configuration
+- [ ] Settings -> AI Provider Configuration
   - [ ] "Use your own ChatGPT account" enabled + key saved
   - [ ] "Use your own Google Gemini account" enabled + key saved
-  - [ ] Model endpoint configured (if using DigitalOcean GenAI)
 
-### 3.2 Verification
+### 3.2 Functional Tests
 
-- [ ] Ask AI channel responds (Discuss → Ask AI)
+- [ ] Ask AI channel responds (Discuss -> Ask AI)
+- [ ] Test simple prompt: "Say OK" returns response
+
+### 3.3 Verification
+
 - [ ] No provider errors in logs:
-
-```bash
-docker logs -n 200 odoo-erp-prod | egrep -i "ai|openai|gemini|http|traceback" | tail -20
-```
-
-### 3.3 DigitalOcean Model Endpoints (if applicable)
-
-If using DO GenAI instead of direct OpenAI/Gemini:
-
-- [ ] System Parameter `ipai.ai_endpoint_url` set to DO endpoint
-- [ ] System Parameter `ipai.ai_api_key` set to DO API key
-- [ ] Test completion works through DO proxy
+  ```bash
+  docker logs -n 200 odoo-erp-prod | grep -iE "ai|openai|gemini|http.*error|traceback" || echo "Clean!"
+  ```
+- [ ] API key not exposed in logs or UI
 
 ---
 
-## 4) Expenses + Document Digitalization (OCR) readiness
+## 4) Expenses + Document Digitalization (OCR) Readiness
 
-### 4.1 Core expenses flow
+### 4.1 Core Expenses Flow
 
-- [ ] Products exist for expense categories (Meals/Transpo/Misc/etc)
+- [ ] Products exist for expense categories:
+  - [ ] Meals
+  - [ ] Transportation
+  - [ ] Accommodation
+  - [ ] Miscellaneous
 - [ ] Employee Expense Journal configured
-- [ ] Payment modes correct ("Employee (to reimburse)" vs "Company")
-- [ ] End-to-end:
-  - [ ] Create expenses → Create report → Submit → Approve → Post journal entry
+- [ ] Payment modes correct:
+  - [ ] "Employee (to reimburse)"
+  - [ ] "Company"
 
-### 4.2 Incoming email expenses (optional)
+### 4.2 End-to-End Expense Test
+
+- [ ] Create expense
+- [ ] Create expense report
+- [ ] Submit for approval
+- [ ] Approve expense report
+- [ ] Post journal entry
+- [ ] Verify GL entries created
+
+### 4.3 Incoming Email Expenses (optional)
 
 - [ ] Alias configured (expense@insightpulseai.net)
-- [ ] Email gateway routes to Odoo (inbound) OR disabled if out-of-scope
+- [ ] Email gateway routes to Odoo (inbound)
+- [ ] OR mark as "disabled/out-of-scope"
 
-### 4.3 OCR / Receipt ingestion
+### 4.4 OCR / Receipt Ingestion
 
-Pick ONE:
+Pick ONE approach:
 
-**Option A: Use ipai_expense_ocr module (recommended)**
+**Option A: Odoo Built-in OCR (if available)**
+- [ ] OCR provider configured in Settings
+- [ ] IAP account linked (if applicable)
 
-- [ ] Module `ipai_expense_ocr` installed
-- [ ] Settings → Expenses → OCR Configuration:
-  - [ ] OCR Backend selected (OpenAI Vision / Gemini Vision / Custom)
-  - [ ] API keys configured
-- [ ] Test: Upload receipt → "Extract from Receipt" button → fields populated
+**Option B: Custom OCR Microservice (recommended for CE)**
+- [ ] Define endpoint in System Parameters: `ipai.ocr.endpoint`
+- [ ] Define auth token in System Parameters: `ipai.ocr.api_key`
+- [ ] ipai_ocr_expense module installed
 
-**Option B: Custom OCR microservice**
+### 4.5 OCR Verification
 
-- [ ] Define endpoint + auth in System Parameters:
-  - `ipai.ocr_endpoint_url`
-  - `ipai.ocr_api_key`
-- [ ] Upload receipt → OCR job → extracted fields mapped to expense
-
-### 4.4 Evidence
-
-- [ ] Upload receipt produces structured fields (date, merchant, amount)
-- [ ] At least one receipt processed successfully
+- [ ] Upload receipt produces structured fields:
+  - [ ] Date extracted
+  - [ ] Merchant extracted
+  - [ ] Amount extracted
+- [ ] At least one receipt processed successfully end-to-end
 
 ---
 
-## 5) Accounting Go-Live (adapted from community checklist)
+## 5) Accounting Go-Live (Opening Balances)
 
-### A) Opening entries (accrual basis)
+> Adapted from Odoo community best practices for accrual-basis accounting
 
-**Open invoices/bills:**
+### 5.A Opening Entries (Open Invoices/Bills)
 
-- [ ] Create AR Clearing (reconcilable current asset)
-- [ ] Create AP Clearing (reconcilable current liability)
-- [ ] Validate totals vs open AR/AP balances
-- [ ] Import open invoices/credit notes
-- [ ] Import open bills/refunds
-- [ ] Reconcile clearing accounts to zero where expected
+#### Create Clearing Accounts
+- [ ] Create AR Clearing account (reconcilable current asset)
+- [ ] Create AP Clearing account (reconcilable current liability)
+- [ ] Validate totals vs open AR/AP balances from prior system
 
-### B) Inventory (only if holding stock)
+#### Import Open Documents
+- [ ] Import open invoices
+- [ ] Import open credit notes
+- [ ] Import open vendor bills
+- [ ] Import open vendor refunds/credit memos
 
-**Automated valuation:**
+#### Reconciliation
+- [ ] Reconcile AR Clearing to zero (or expected balance)
+- [ ] Reconcile AP Clearing to zero (or expected balance)
 
-- [ ] Product categories configured (costing + valuation)
+### 5.B Inventory (only if holding stock)
+
+#### Automated Valuation
+- [ ] Product categories configured:
+  - [ ] Costing method set (FIFO/Average/Standard)
+  - [ ] Valuation method set (Automated)
 - [ ] Inventory clearing account configured
-- [ ] Import on-hand quantities & validate stock valuation vs initial balance
+- [ ] Import on-hand quantities
+- [ ] Validate stock valuation vs initial balance
 
-**Manual valuation:**
+#### Manual Valuation
+- [ ] Ensure no stock valuation expected on balance sheet
+- [ ] Mark as "not applicable" if no inventory
 
-- [ ] Ensure no stock valuation is expected on balance sheet
+### 5.C Trial Balance Import
 
-### C) Trial balance import
+#### Bank Account Method Selection
+- [ ] Choose outstanding receipt/payment accounts (if using payment entries)
+- [ ] OR use bank clearing account (if not using payment entries)
 
-- [ ] Choose bank method:
-  - [ ] Outstanding receipt/payment accounts (if using payment entries)
-  - [ ] Bank clearing (if not)
-- [ ] Modify trial balance to account for AR/AP/inventory clearing approach
-- [ ] Post TB journal entry
-- [ ] Validate clearing accounts (AR/AP/Inventory) are consistent
+#### Trial Balance Entry
+- [ ] Modify TB to account for AR/AP/Inventory clearing approach
+- [ ] Post Trial Balance journal entry as opening entry
+- [ ] Set journal entry date to cutover date
 
----
-
-## 6) SCSS/CSS Asset Compilation (prevents "Style compilation failed")
-
-- [ ] No "Style compilation failed" banner in UI
-- [ ] CSS loads properly (check DevTools Network tab for 200 status)
-
-**If asset compilation fails:**
-
-```bash
-# Diagnose
-./scripts/odoo/diagnose_scss_error.sh odoo-erp-prod odoo
-
-# Purge and rebuild
-./scripts/odoo/purge_assets.sh odoo-erp-prod odoo
-```
+#### Validation
+- [ ] AR Clearing account balance = 0 (or expected)
+- [ ] AP Clearing account balance = 0 (or expected)
+- [ ] Inventory Clearing account balance = 0 (or expected)
+- [ ] Balance sheet balances
 
 ---
 
-## 7) Final Smoke Tests (non-negotiable)
+## 6) Final Smoke Tests (non-negotiable)
 
-### 7.1 UI Health
+### 6.1 UI/UX Validation
 
 - [ ] No blocking JS client errors in normal navigation
 - [ ] Settings pages open without Owl "Oops" modal
-- [ ] All menu items accessible without view errors
+- [ ] All installed app menus accessible
 
-### 7.2 Core Functions
+### 6.2 Core Workflows
 
-- [ ] Create a user → invitation email arrives
-- [ ] Ask AI answers "Say OK" (Discuss → Ask AI)
+- [ ] Create a user -> invitation email works
+- [ ] Ask AI answers "Say OK" (if AI enabled)
 - [ ] Create & submit an expense report
 - [ ] Accounting reports load without access errors
+- [ ] PDF reports generate correctly
 
-### 7.3 Infrastructure
+### 6.3 Module Compatibility
 
-- [ ] Backups/snapshot taken
-- [ ] Health check endpoint responds: `curl -I https://erp.insightpulseai.net/web/health`
+- [ ] All IPAI modules installed without error
+- [ ] All OCA dependencies resolved
+- [ ] Module upgrade completes successfully:
+  ```bash
+  docker exec -it odoo-erp-prod odoo -d odoo -u all --stop-after-init
+  ```
+
+### 6.4 Backup Verification
+
+- [ ] Backup snapshot taken
+- [ ] Backup restoration tested on separate instance
+- [ ] Filestore included in backup
 
 ---
 
-## 8) Post-Go-Live Monitoring
+## 7) Post-Fix Verification Commands
 
-### Daily checks (first week)
+Run these after any fixes:
 
 ```bash
-# Check for errors
-docker logs --since 24h odoo-erp-prod | egrep -i "error|traceback|exception" | wc -l
+# Check for tree view_mode remnants
+docker exec -it odoo-erp-prod odoo shell -d odoo << 'EOF'
+tree_actions = env['ir.actions.act_window'].sudo().search([('view_mode', 'ilike', 'tree')])
+print(f"Actions with 'tree': {len(tree_actions)}")
+EOF
 
-# Check container health
-docker ps | grep odoo
+# Check for broken kanban views
+docker exec -it odoo-erp-prod odoo shell -d odoo << 'EOF'
+kanban_views = env['ir.ui.view'].sudo().search([('type', '=', 'kanban'), ('active', '=', True)])
+broken = [v for v in kanban_views if 't-name="card"' not in (v.arch_db or '') and "t-name='card'" not in (v.arch_db or '')]
+print(f"Broken kanban views: {len(broken)}")
+for v in broken[:10]:
+    print(f"  - {v.id}: {v.name} ({v.model})")
+EOF
 
-# Check disk space
-df -h /var/lib/docker
+# Check for client errors in logs
+docker logs -n 500 odoo-erp-prod 2>&1 | grep -iE "traceback|error|exception|missing" | head -20
+
+# General health check
+docker exec -it odoo-erp-prod odoo shell -d odoo << 'EOF'
+print("=== Module Status ===")
+for mod in env['ir.module.module'].sudo().search([('name', 'like', 'ipai_%')]):
+    print(f"  {mod.name}: {mod.state}")
+print("\n=== Database Info ===")
+cr = env.cr
+cr.execute("SELECT version();")
+print(f"  PostgreSQL: {cr.fetchone()[0]}")
+EOF
 ```
 
-### Weekly checks
+---
 
-- [ ] Review System Parameters for any unauthorized changes
-- [ ] Check mail queue for stuck emails
-- [ ] Verify backup jobs completed successfully
-- [ ] Review user activity logs for anomalies
+## 8) Sign-Off
+
+### Technical Sign-Off
+
+- [ ] All Section 0-1 checks passed (Platform + V18 Compat)
+- [ ] All Section 2-4 checks passed (Email + AI + Expenses)
+- [ ] Section 5 Accounting opening complete
+- [ ] Section 6 smoke tests all green
+
+**Signed By**: _________________________ (DevOps Lead)
+**Date/Time**: _________________________
+
+### Business Sign-Off
+
+- [ ] Core business processes verified
+- [ ] User acceptance testing complete
+- [ ] Training delivered
+- [ ] Go-live approved
+
+**Signed By**: _________________________ (Business Owner)
+**Date/Time**: _________________________
 
 ---
 
-## Quick Reference: Fix Commands
+## Quick Reference: ipai_v18_compat Module
 
-| Issue | Command |
-|-------|---------|
-| tree→list fix | `docker exec -it odoo-erp-prod bash -lc 'odoo -d odoo -u ipai_v18_compat --stop-after-init'` |
-| Asset purge | `./scripts/odoo/purge_assets.sh odoo-erp-prod odoo` |
-| View errors | `docker logs -n 200 odoo-erp-prod \| egrep -i "view\|tree\|kanban"` |
-| AI errors | `docker logs -n 200 odoo-erp-prod \| egrep -i "ai\|openai\|gemini"` |
-| SMTP errors | `docker logs -n 200 odoo-erp-prod \| egrep -i "smtp\|mail"` |
+### Installation
+
+```bash
+# Standard installation (migration runs automatically)
+docker exec -it odoo-erp-prod odoo -d odoo -i ipai_v18_compat --stop-after-init
+docker restart odoo-erp-prod
+```
+
+### Upgrade (re-run migration)
+
+```bash
+docker exec -it odoo-erp-prod odoo -d odoo -u ipai_v18_compat --stop-after-init
+docker restart odoo-erp-prod
+```
+
+### Enable Auto-Deactivation of Broken Kanban
+
+```bash
+docker exec -it odoo-erp-prod odoo shell -d odoo << 'EOF'
+env["ir.config_parameter"].sudo().set_param("ipai_v18_compat.deactivate_broken_kanban", "1")
+env.cr.commit()
+print("Enabled auto-deactivation")
+EOF
+```
 
 ---
 
-## Related Documentation
+## Appendix A: Common Odoo 18 Breaking Changes
 
-- [CE + OCA Project Stack Mapping](./CE_OCA_PROJECT_STACK.md)
-- [Enterprise to CE/OCA Mapping](./ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md)
-- [OCA Apps Parity](./odoo-apps-parity.md)
+| Change | Impact | Fix |
+|--------|--------|-----|
+| `tree` -> `list` in view_mode | UI crashes with "View types not defined tree" | Run ipai_v18_compat migration |
+| Kanban requires `t-name="card"` | UI crashes with "Missing 'card' template" | Patch views or deactivate |
+| `arch` -> `arch_db` in views | Code accessing `arch` may fail | Update to use `arch_db` |
+| `search_count` signature change | Existing code may break | Check domain parameter |
 
 ---
 
-*Last updated: 2026-01-06*
-*Stack: Odoo 18 CE + OCA + IPAI custom modules*
+## Appendix B: Related Documentation
+
+- [CLAUDE.md](../CLAUDE.md) - Project conventions and commands
+- [GO_LIVE_CHECKLIST.md](GO_LIVE_CHECKLIST.md) - Original comprehensive checklist
+- [ODOO_18_EE_TO_CE_OCA_PARITY.md](ODOO_18_EE_TO_CE_OCA_PARITY.md) - Enterprise to CE mapping
+- [TESTING_ODOO_18.md](TESTING_ODOO_18.md) - Testing guide
+
+---
+
+*This checklist extends the original GO_LIVE_CHECKLIST.md with Odoo 18-specific compatibility fixes and AI/OCR readiness sections.*

@@ -1,35 +1,49 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Odoo 18 Compatibility Fixes",
+    "summary": "Post-migrate hotfixes for Odoo 18 view_mode rename (tree->list) and kanban card template issues",
+    "description": """
+IPAI Odoo 18 Compatibility Fixes
+================================
+
+This module provides automatic fixes for breaking changes in Odoo 18:
+
+1. **tree -> list View Mode Rename**
+   Odoo 18 renamed the 'tree' view mode to 'list'. This module automatically
+   updates all ir.actions.act_window records that still use 'tree' in their
+   view_mode field.
+
+2. **Kanban Card Template Requirement**
+   Odoo 18 requires kanban views to have a `t-name="card"` template. This module
+   detects kanban views missing this template and optionally deactivates them.
+
+Usage
+-----
+
+**Installation:**
+    odoo -d <database> -i ipai_v18_compat --stop-after-init
+
+**Re-run migration:**
+    odoo -d <database> -u ipai_v18_compat --stop-after-init
+
+**Enable auto-deactivation of broken kanban views:**
+    Set system parameter: ipai_v18_compat.deactivate_broken_kanban = 1
+
+Configuration
+-------------
+
+System Parameters:
+- ipai_v18_compat.deactivate_broken_kanban: Set to "1" to automatically
+  deactivate kanban views missing the card template.
+    """,
     "version": "18.0.1.0.0",
     "category": "Technical",
-    "summary": "Patches legacy view_mode 'tree' → 'list' and fixes broken kanbans",
-    "description": """
-IPAI Odoo 18 Compatibility Module
-=================================
-
-This module automatically fixes common Odoo 18 breaking changes:
-
-1. **view_mode tree → list**: Odoo 18 renamed 'tree' to 'list' in ir.actions.act_window.
-   This module patches all actions that still reference 'tree'.
-
-2. **Kanban card template**: Odoo 18 requires t-name="card" in kanban templates.
-   This module can detect and report broken kanban views.
-
-The fixes run automatically:
-- On module install (post_init_hook)
-- On module upgrade (migrations/post-migrate.py)
-
-You can also run the fix manually via the wrapper script:
-    python addons/ipai/scripts/fix_odoo18_views.py
-
-""",
     "author": "InsightPulse AI",
-    "website": "https://insightpulse.ai",
+    "website": "https://github.com/jgtolentino/odoo-ce",
     "license": "LGPL-3",
     "depends": ["base"],
     "data": [],
     "installable": True,
+    "application": False,
     "auto_install": False,
-    "post_init_hook": "post_init_hook",
 }

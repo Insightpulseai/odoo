@@ -1,0 +1,3 @@
+id,name,active,description,allow_subtasks,allow_recurring_tasks,allow_task_dependencies,allow_milestones
+ipai_seed.project_month_end_close,Month-End Close,true,Monthly financial closing tasks organized by phase,true,true,true,true
+ipai_seed.project_bir_tax_filing,BIR Tax Filing,true,BIR tax compliance filings (1601-C; 0619-E; 2550M; 2550Q; 1601-EQ; 1702-RT),true,true,true,true

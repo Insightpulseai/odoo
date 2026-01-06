@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Prompt Form View -->
+    <record id="view_ipai_ai_prompt_form" model="ir.ui.view">
+        <field name="name">ipai.ai.prompt.form</field>
+        <field name="model">ipai.ai.prompt</field>
+        <field name="arch" type="xml">
+            <form string="AI Prompt">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Prompt Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="topic_id"/>
+                            <field name="prompt_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="output_format"/>
+                            <field name="icon"/>
+                            <field name="show_in_menu"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Prompt Template" name="template">
+                            <field name="prompt_template"
+                                   placeholder="Enter your prompt template. Use {{variable}} for placeholders..."
+                                   widget="ace" options="{'mode': 'text'}"/>
+                            <group>
+                                <field name="variable_names" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Output Instructions" name="output">
+                            <field name="output_instructions"
+                                   placeholder="Additional instructions for how the AI should format its response..."/>
+                        </page>
+                        <page string="System Prompt Override" name="system">
+                            <field name="system_prompt_override"
+                                   placeholder="Leave empty to use the topic's system prompt..."/>
+                        </page>
+                        <page string="Examples" name="examples" invisible="prompt_type != 'few_shot'">
+                            <field name="examples"
+                                   placeholder="Input: example question&#10;Output: example answer&#10;&#10;Input: another question&#10;Output: another answer"/>
+                        </page>
+                        <page string="Usage" name="usage">
+                            <group>
+                                <group>
+                                    <field name="usage_count" readonly="1"/>
+                                    <field name="last_used" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Prompt Tree View -->
+    <record id="view_ipai_ai_prompt_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.prompt.tree</field>
+        <field name="model">ipai.ai.prompt</field>
+        <field name="arch" type="xml">
+            <tree string="AI Prompts" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="topic_id"/>
+                <field name="prompt_type" widget="badge"/>
+                <field name="output_format"/>
+                <field name="show_in_menu"/>
+                <field name="usage_count"/>
+                <field name="active" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Prompt Search View -->
+    <record id="view_ipai_ai_prompt_search" model="ir.ui.view">
+        <field name="name">ipai.ai.prompt.search</field>
+        <field name="model">ipai.ai.prompt</field>
+        <field name="arch" type="xml">
+            <search string="Search Prompts">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="topic_id"/>
+                <filter name="filter_quick" string="Quick Actions" domain="[('prompt_type', '=', 'quick')]"/>
+                <filter name="filter_templates" string="Templates" domain="[('prompt_type', '=', 'template')]"/>
+                <filter name="filter_menu" string="In Menu" domain="[('show_in_menu', '=', True)]"/>
+                <separator/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="filter_archived" string="Archived" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_topic" string="Topic" context="{'group_by': 'topic_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'prompt_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Prompt Action -->
+    <record id="action_ipai_ai_prompt" model="ir.actions.act_window">
+        <field name="name">AI Prompts</field>
+        <field name="res_model">ipai.ai.prompt</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_ipai_ai_prompt_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first AI prompt template
+            </p>
+            <p>
+                Define reusable prompts with variable placeholders.
+                Use {{variable}} syntax for dynamic content.
+            </p>
+        </field>
+    </record>
+</odoo>

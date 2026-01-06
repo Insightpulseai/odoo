@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 755b251dadbea8fab2d277317519bea5b5cf41c5
+> Commit: 19c6fbfaf178736f7a1f7a5bc34bcc3db9da869c
 
 ```
 .
@@ -115,6 +115,38 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_ai_audit
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_core
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_prompts
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_provider_kapa
+│   │   │   ├── models
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_provider_pulser
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_studio
 │   │   │   ├── models
 │   │   │   ├── security
@@ -336,6 +368,14 @@
 │   │   ├── ipai_marketing_ai
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_marketing_journey
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_master_control
 │   │   │   ├── data
 │   │   │   ├── models
@@ -388,6 +428,20 @@
 │   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_project_gantt
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_project_profitability_bridge
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_project_program
 │   │   │   ├── data
 │   │   │   ├── models
@@ -436,6 +490,19 @@
 │   │   ├── ipai_test_fixtures
 │   │   │   ├── models
 │   │   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_fluent2
+│   │   │   ├── static
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_v18_compat
+│   │   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_web_fluent2
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_workspace_core
@@ -1339,6 +1406,15 @@
 │       ├── gold_embeddings.yaml
 │       └── silver_normalized_docs.yaml
 ├── data
+│   ├── finance_seed
+│   │   ├── 01_project.tags.csv
+│   │   ├── 02_project.project.csv
+│   │   ├── 03_project.task.month_end.csv
+│   │   ├── 04_project.task.bir_tax.csv
+│   │   ├── README.md
+│   │   ├── import_all.py
+│   │   ├── import_finance_seed.sh
+│   │   └── update_tasks_after_import.py
 │   ├── import_templates
 │   │   ├── 01_project.task.type.csv
 │   │   ├── 02_project.project.csv
@@ -1349,6 +1425,8 @@
 │   │   ├── 07_mail.activity.csv
 │   │   ├── README.md
 │   │   └── odoo_import_headers.contract.json
+│   ├── templates
+│   │   └── user_assignments_template.csv
 │   ├── IMPORT_GUIDE.md
 │   ├── bir_calendar_2026.json
 │   ├── bir_december_2025_seed.xml
@@ -1627,6 +1705,7 @@
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
+│   ├── CE_OCA_PROJECT_STACK.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
 │   ├── DELIVERABLES_MANIFEST.md
@@ -1660,6 +1739,7 @@
 │   ├── GITHUB_SECRETS_SETUP.md
 │   ├── GIT_WORKTREE_STRATEGY.md
 │   ├── GO_LIVE_CHECKLIST.md
+│   ├── GO_LIVE_CHECKLIST_ODOO18_IPAI.md
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── IMPLEMENTATION_SUMMARY.md
@@ -1720,6 +1800,7 @@
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── ZOHO_DNS_SETUP.md
 │   ├── branch-cleanup-analysis.md
+│   ├── notion-odoo-substitute-catalog.md
 │   ├── odoo-apps-parity.md
 │   ├── odoo_core_schema.sql
 │   ├── supabase-integration.md
@@ -2014,6 +2095,8 @@
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   └── ipai-design-tokens
+│       ├── src
+│       │   └── build.ts
 │       ├── package.json
 │       ├── tailwind.preset.js
 │       ├── tokens.css
@@ -2079,6 +2162,11 @@
 │   ├── prod
 │   │   ├── deploy_workos.sh
 │   │   └── verify_workos.sh
+│   ├── seeds
+│   │   ├── generate_project_stack_csv.py
+│   │   └── generate_project_stack_xlsx.py
+│   ├── sql
+│   │   └── update_phase_tags.sql
 │   ├── sync
 │   │   ├── docs-to-kb.js
 │   │   ├── generate-sitemap.js
@@ -2095,6 +2183,7 @@
 │   ├── assign_module_icons.py
 │   ├── audit_email_config.py
 │   ├── audit_ipai_modules.py
+│   ├── audit_oca_modules.py
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
@@ -2150,6 +2239,7 @@
 │   ├── fix-pay-invoices-online-error.py
 │   ├── fix_oauth_button.sh
 │   ├── fix_oauth_button_odoo_core.sh
+│   ├── fix_odoo18_views.py
 │   ├── full_deploy_sanity.sh
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
@@ -2168,6 +2258,7 @@
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
+│   ├── install-notion-stack.sh
 │   ├── install_all_ipai_modules.sh
 │   ├── install_finance_stack.sh
 │   ├── install_ipai_finance_ppm.sh
@@ -2209,6 +2300,7 @@
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
+│   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
@@ -2216,6 +2308,8 @@
 │   ├── test_deploy_local.sh
 │   ├── test_ipai_install_upgrade.py
 │   ├── update_diagram_manifest.py
+│   ├── update_task_phase_tags.sh
+│   ├── update_tasks_after_import.py
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
 │   ├── validate_m1.sh
@@ -2260,6 +2354,19 @@
 │   │   │   ├── 40_kpis.yaml
 │   │   │   ├── 50_roles_raci.yaml
 │   │   │   └── 90_odoo_mapping.yaml
+│   │   ├── project_stack
+│   │   │   ├── csv
+│   │   │   ├── 00_workstream.yaml
+│   │   │   ├── 10_partners.yaml
+│   │   │   ├── 20_analytic_accounts.yaml
+│   │   │   ├── 30_products.yaml
+│   │   │   ├── 40_projects.yaml
+│   │   │   ├── 50_tags.yaml
+│   │   │   ├── 60_stages.yaml
+│   │   │   ├── 70_tasks.yaml
+│   │   │   ├── 80_timesheets.yaml
+│   │   │   ├── 90_odoo_mapping.yaml
+│   │   │   └── project_stack_import.xlsx
 │   │   └── stc_tax_compliance
 │   │       ├── 00_workstream.yaml
 │   │       ├── 10_worklist_types.yaml
@@ -2813,15 +2920,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-844 directories, 1964 files
+896 directories, 2019 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 959 |
-| Files | 2789 |
-| Python files | 720 |
-| XML files | 369 |
-| Markdown files | 569 |
+| Directories | 1023 |
+| Files | 2929 |
+| Python files | 779 |
+| XML files | 401 |
+| Markdown files | 573 |

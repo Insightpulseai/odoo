@@ -1,14 +1,22 @@
 # -*- coding: utf-8 -*-
 """
-Post-migration script for ipai_v18_compat module upgrade.
+IPAI Odoo 18 Compatibility Post-Migration Script
 
-This script runs after the module is upgraded, ensuring that any new
-actions introduced by other module upgrades also get patched.
+This script runs automatically when the ipai_v18_compat module is upgraded.
+It fixes two critical Odoo 18 breaking changes:
 
-Fixes:
-1. view_mode 'tree' → 'list' (Odoo 18 breaking change)
-2. Kanban views missing t-name="card" template (optional deactivation)
+1. tree -> list: Updates ir.actions.act_window.view_mode from 'tree' to 'list'
+2. Kanban card template: Detects (and optionally deactivates) kanban views
+   missing the required t-name="card" template.
+
+Usage:
+    # Standard upgrade (runs this migration)
+    odoo -d <database> -u ipai_v18_compat --stop-after-init
+
+    # Enable auto-deactivation of broken kanban views
+    # Set system parameter: ipai_v18_compat.deactivate_broken_kanban = 1
 """
+
 import logging
 
 _logger = logging.getLogger(__name__)
@@ -16,71 +24,93 @@ _logger = logging.getLogger(__name__)
 
 def _fix_tree_to_list(env):
     """
-    Fix view_mode 'tree' → 'list' for all ir.actions.act_window records.
+    Replace 'tree' with 'list' in ir.actions.act_window.view_mode.
 
-    Odoo 18 renamed 'tree' to 'list'. This function patches all actions
-    that still reference the old 'tree' view type.
+    Odoo 18 renamed the 'tree' view type to 'list'. Actions using the old
+    'tree' keyword will fail with:
+        "View types not defined tree found in act_window action ..."
 
     Returns:
-        int: Number of actions patched
+        int: Number of actions updated
     """
     ActWindow = env["ir.actions.act_window"].sudo()
     actions = ActWindow.search([("view_mode", "ilike", "tree")])
 
     changed = 0
-    for a in actions:
-        modes = [m.strip() for m in (a.view_mode or "").split(",") if m.strip()]
+    for action in actions:
+        modes = [m.strip() for m in (action.view_mode or "").split(",") if m.strip()]
         if not modes:
             continue
+
         new_modes = ["list" if m == "tree" else m for m in modes]
+
         if new_modes != modes:
+            old_mode = action.view_mode
+            action.write({"view_mode": ",".join(new_modes)})
             _logger.info(
-                "ipai_v18_compat: patching action %s [%s]: '%s' → '%s'",
-                a.id, a.name, a.view_mode, ",".join(new_modes)
+                "ipai_v18_compat: Updated action %s (%s): '%s' -> '%s'",
+                action.id,
+                action.name,
+                old_mode,
+                ",".join(new_modes),
             )
-            a.write({"view_mode": ",".join(new_modes)})
             changed += 1
 
-    _logger.warning("ipai_v18_compat: tree→list updated %s act_window actions", changed)
+    _logger.warning(
+        "ipai_v18_compat: tree->list migration completed. Updated %s act_window actions.",
+        changed,
+    )
     return changed
 
 
 def _find_kanban_missing_card(env):
     """
-    Find kanban views missing t-name="card" template.
+    Find active kanban views missing the required t-name="card" template.
 
-    Odoo 18 requires kanban views to have a card template. Missing it
-    triggers KanbanArchParser errors.
+    Odoo 18's KanbanArchParser requires a <templates><t t-name="card">...</t></templates>
+    structure. Views missing this will fail with:
+        "Missing 'card' template."
 
     Returns:
-        list: List of view records with missing card template
+        recordset: ir.ui.view records with broken kanban templates
     """
     View = env["ir.ui.view"].sudo()
     views = View.search([("type", "=", "kanban"), ("active", "=", True)])
 
-    broken = []
-    for v in views:
-        arch = v.arch_db or ""
+    broken = View.browse()
+    for view in views:
+        arch = view.arch_db or ""
+        # Check for both single and double quote variants
         if 't-name="card"' not in arch and "t-name='card'" not in arch:
-            broken.append(v)
+            broken |= view
             _logger.info(
-                "ipai_v18_compat: broken kanban: id=%s xmlid=%s name=%s model=%s module=%s",
-                v.id, v.xml_id, v.name, v.model, getattr(v, 'module', 'N/A')
+                "ipai_v18_compat: Kanban view missing card template: "
+                "id=%s, xml_id=%s, name=%s, model=%s, module=%s",
+                view.id,
+                view.xml_id or "(no xml_id)",
+                view.name,
+                view.model,
+                view.module or "(unknown)",
             )
 
     _logger.warning(
-        "ipai_v18_compat: found %s active kanban views missing card template",
-        len(broken)
+        "ipai_v18_compat: Found %s active kanban views missing 't-name=\"card\"' template.",
+        len(broken),
     )
     return broken
 
 
-def _deactivate_views(env, views):
+def _deactivate_broken_views(env, views):
     """
-    Deactivate broken views to prevent UI crashes.
+    Deactivate broken kanban views to prevent UI crashes.
 
-    This is a safety measure - it's better to have missing views than
-    crashing UI. The views can be patched and reactivated later.
+    This is the safest approach: it allows the system to boot while you
+    patch the source modules. The views can be re-activated after fixing
+    their templates.
+
+    Args:
+        env: Odoo environment
+        views: recordset of ir.ui.view to deactivate
 
     Returns:
         int: Number of views deactivated
@@ -88,48 +118,89 @@ def _deactivate_views(env, views):
     if not views:
         return 0
 
-    view_ids = [v.id for v in views]
-    env["ir.ui.view"].sudo().browse(view_ids).write({"active": False})
-    _logger.warning("ipai_v18_compat: deactivated %s broken kanban views", len(views))
+    deactivated = []
+    for view in views:
+        deactivated.append(
+            {
+                "id": view.id,
+                "xml_id": view.xml_id or "(no xml_id)",
+                "name": view.name,
+                "model": view.model,
+            }
+        )
+
+    views.write({"active": False})
+
+    for info in deactivated:
+        _logger.warning(
+            "ipai_v18_compat: DEACTIVATED kanban view id=%s xml_id=%s name=%s model=%s",
+            info["id"],
+            info["xml_id"],
+            info["name"],
+            info["model"],
+        )
+
+    _logger.warning(
+        "ipai_v18_compat: Deactivated %s broken kanban views. "
+        "Re-activate after fixing their templates.",
+        len(views),
+    )
     return len(views)
 
 
 def migrate(cr, version):
     """
-    Post-migration hook for module upgrade.
+    Post-migration hook for ipai_v18_compat module.
 
-    Re-runs the view_mode fix to catch any new actions that may have
-    been introduced by other module installations/upgrades.
+    This function is automatically called by Odoo during module upgrade.
 
-    To enable automatic deactivation of broken kanban views, set:
-        Settings → Technical → Parameters → System Parameters
-        key: ipai_v18_compat.deactivate_broken_kanban = 1
+    Args:
+        cr: Database cursor
+        version: Current module version (before migration)
     """
-    from odoo import api, SUPERUSER_ID
+    # Import here to avoid issues during module loading
+    from odoo.api import Environment
+    from odoo import SUPERUSER_ID
 
-    env = api.Environment(cr, SUPERUSER_ID, {})
-    _logger.warning("ipai_v18_compat: post-migrate start (version=%s)", version)
+    _logger.warning(
+        "ipai_v18_compat: Starting post-migration (from version=%s)", version
+    )
 
-    # Fix tree → list in view_mode
-    changed = _fix_tree_to_list(env)
+    env = Environment(cr, SUPERUSER_ID, {})
 
-    # Find broken kanban views
+    # Fix 1: tree -> list in view_mode
+    tree_count = _fix_tree_to_list(env)
+
+    # Fix 2: Find broken kanban views
     broken_kanban = _find_kanban_missing_card(env)
 
-    # Check if auto-deactivation is enabled via system parameter
-    deactivate = env["ir.config_parameter"].sudo().get_param(
-        "ipai_v18_compat.deactivate_broken_kanban"
-    ) in ("1", "true", "True")
+    # Optionally deactivate broken views (opt-in via system parameter)
+    # Set in Odoo: Settings -> Technical -> Parameters -> System Parameters
+    # Key: ipai_v18_compat.deactivate_broken_kanban = 1
+    deactivate_param = (
+        env["ir.config_parameter"]
+        .sudo()
+        .get_param("ipai_v18_compat.deactivate_broken_kanban", "0")
+    )
+    should_deactivate = deactivate_param in ("1", "true", "True", "yes", "Yes")
 
-    deactivated = 0
-    if deactivate and broken_kanban:
-        deactivated = _deactivate_views(env, broken_kanban)
+    deactivated_count = 0
+    if should_deactivate and broken_kanban:
+        deactivated_count = _deactivate_broken_views(env, broken_kanban)
+    elif broken_kanban:
+        _logger.warning(
+            "ipai_v18_compat: To auto-deactivate broken kanban views, set system parameter "
+            "'ipai_v18_compat.deactivate_broken_kanban' to '1'"
+        )
 
-    # Clear registry cache to ensure changes take effect
+    # Clear caches to ensure changes take effect
     env.registry.clear_cache()
 
     _logger.warning(
-        "ipai_v18_compat: post-migrate done. "
-        "Patched %d actions, found %d broken kanbans, deactivated %d views.",
-        changed, len(broken_kanban), deactivated
+        "ipai_v18_compat: Post-migration completed. "
+        "tree->list: %s actions updated, "
+        "broken kanban: %s found, %s deactivated.",
+        tree_count,
+        len(broken_kanban),
+        deactivated_count,
     )

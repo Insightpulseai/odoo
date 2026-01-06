@@ -1,2 +1,3 @@
 # -*- coding: utf-8 -*-
-from .hooks import post_init_hook
+# IPAI Odoo 18 Compatibility Fixes
+# This module provides post-migration fixes via migrations/18.0.1.0.0/post-migrate.py

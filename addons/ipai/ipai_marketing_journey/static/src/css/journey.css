@@ -1,0 +1,90 @@
+/* Marketing Journey Builder Styles */
+
+/* Journey Status Colors */
+.o_marketing_journey .badge-running {
+    background-color: #28a745;
+    color: white;
+}
+
+.o_marketing_journey .badge-paused {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.o_marketing_journey .badge-stopped {
+    background-color: #dc3545;
+    color: white;
+}
+
+.o_marketing_journey .badge-draft {
+    background-color: #17a2b8;
+    color: white;
+}
+
+/* Node Type Indicators */
+.o_journey_node_entry {
+    border-left: 4px solid #28a745;
+}
+
+.o_journey_node_exit {
+    border-left: 4px solid #dc3545;
+}
+
+.o_journey_node_email {
+    border-left: 4px solid #17a2b8;
+}
+
+.o_journey_node_delay {
+    border-left: 4px solid #ffc107;
+}
+
+.o_journey_node_branch {
+    border-left: 4px solid #6f42c1;
+}
+
+.o_journey_node_action {
+    border-left: 4px solid #fd7e14;
+}
+
+/* Participant State Colors */
+.o_participant_enrolled {
+    color: #17a2b8;
+}
+
+.o_participant_in_progress {
+    color: #007bff;
+}
+
+.o_participant_waiting {
+    color: #ffc107;
+}
+
+.o_participant_completed {
+    color: #28a745;
+}
+
+.o_participant_error {
+    color: #dc3545;
+}
+
+.o_participant_exited {
+    color: #6c757d;
+}
+
+/* Statistics Cards */
+.o_journey_stat_card {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.o_journey_stat_card .stat-value {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.o_journey_stat_card .stat-label {
+    font-size: 0.9em;
+    color: #6c757d;
+}

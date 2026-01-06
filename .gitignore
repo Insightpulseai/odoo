@@ -51,6 +51,9 @@ addons/*
 addons/**/__pycache__/
 addons/**/*.pyc
 
+# Node.js
+node_modules/
+
 # Docker
 .env
 docker-compose.override.yml
@@ -98,6 +101,7 @@ temp/
 !scripts/lakehouse/*.sql
 !infra/lakehouse/**/*.sql
 !tools/audit/*.sql
+!scripts/sql/*.sql
 
 # Parity audit generated files
 parity_report.json
