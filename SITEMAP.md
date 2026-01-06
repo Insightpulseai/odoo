@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 782fea9a7a4656d6ba225fcbea132908978d1522
+> Commit: ad9be7232ad0b4ba7adc6613515cb1b210eb71d9
 
 ## 📚 Documentation
 
@@ -474,6 +474,7 @@
 | [Scripts Directory](scripts/README.md) | scripts |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
+| [IPAI Skills](skills/README.md) | skills |
 | [BIR Tax Filing Skill](skills/bir-tax-filing/SKILL.md) | skills/bir-tax-filing |
 | [Expense Processing Skill](skills/expense-processing/SKILL.md) | skills/expense-processing |
 | [Finance SSC Month-End Closing](skills/finance-month-end/SKILL.md) | skills/finance-month-end |
@@ -483,6 +484,10 @@
 | [ADK Control Room — Implementation Plan](spec/adk-control-room/plan.md) | spec/adk-control-room |
 | [ADK Control Room — Product Requirements Document](spec/adk-control-room/prd.md) | spec/adk-control-room |
 | [ADK Control Room — Task Checklist](spec/adk-control-room/tasks.md) | spec/adk-control-room |
+| [Auto-Claude Framework Constitution](spec/auto-claude-framework/constitution.md) | spec/auto-claude-framework |
+| [Auto-Claude Framework Implementation Plan](spec/auto-claude-framework/plan.md) | spec/auto-claude-framework |
+| [Auto-Claude Framework PRD](spec/auto-claude-framework/prd.md) | spec/auto-claude-framework |
+| [Auto-Claude Framework Tasks](spec/auto-claude-framework/tasks.md) | spec/auto-claude-framework |
 | [BIR Tax Compliance - Constitution](spec/bir-tax-compliance/constitution.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Implementation Plan](spec/bir-tax-compliance/plan.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Product Requirements](spec/bir-tax-compliance/prd.md) | spec/bir-tax-compliance |
@@ -689,6 +694,7 @@
 | [ipai_project_profitability_bridge](./addons/ipai/ipai_project_profitability_bridge) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
+| [ipai_skill_api](./addons/ipai/ipai_skill_api) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
