@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1c532a3cb00b1080f8a5d318738c4372b47dacc2
+> Commit: 38b5de1d6099175c932a0208f79c23d79d3df91f
 
 ```
 .
@@ -261,6 +261,13 @@
 │   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_expense_ocr
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_finance_bir_compliance
 │   │   │   ├── data
 │   │   │   ├── models
@@ -500,7 +507,8 @@
 │   │   ├── ipai_v18_compat
 │   │   │   ├── migrations
 │   │   │   ├── __init__.py
-│   │   │   └── __manifest__.py
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
 │   │   ├── ipai_web_fluent2
 │   │   │   ├── static
 │   │   │   ├── views
@@ -512,6 +520,8 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── scripts
+│   │   │   └── fix_odoo18_views.py
 │   │   ├── .gitkeep
 │   │   ├── README.md
 │   │   ├── __init__.py
@@ -2168,8 +2178,11 @@
 │   │   ├── mirror_gold_to_supabase.py
 │   │   └── validate_contracts.py
 │   ├── odoo
+│   │   ├── diagnose_scss_error.sh
+│   │   ├── fix_broken_action.sh
 │   │   ├── install-ce-apps.sh
 │   │   ├── install-oca-modules.sh
+│   │   ├── purge_assets.sh
 │   │   ├── verify-ce-apps.sh
 │   │   ├── verify-full-parity.sh
 │   │   └── verify-oca-modules.sh
@@ -2183,6 +2196,7 @@
 │   │   ├── deploy_workos.sh
 │   │   └── verify_workos.sh
 │   ├── seeds
+│   │   ├── convert_expense_template_to_odoo.py
 │   │   ├── generate_project_stack_csv.py
 │   │   └── generate_project_stack_xlsx.py
 │   ├── sql
@@ -2940,15 +2954,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-906 directories, 2029 files
+912 directories, 2037 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1043 |
-| Files | 2961 |
-| Python files | 779 |
-| XML files | 401 |
+| Directories | 1049 |
+| Files | 2976 |
+| Python files | 787 |
+| XML files | 404 |
 | Markdown files | 573 |
