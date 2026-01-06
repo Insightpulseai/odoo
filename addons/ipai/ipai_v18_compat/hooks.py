@@ -4,10 +4,9 @@ Odoo 18 Compatibility Hooks
 
 This module provides automatic fixes for Odoo 18 breaking changes:
 1. view_mode 'tree' → 'list' migration
-2. Kanban view card template detection
+2. Kanban view card template detection and optional deactivation
 """
 import logging
-import re
 
 _logger = logging.getLogger(__name__)
 
@@ -28,22 +27,26 @@ def fix_odoo18_views(env):
     _logger.info("Starting Odoo 18 view_mode compatibility fix...")
 
     # Find all actions with 'tree' in view_mode
-    actions = env["ir.actions.act_window"].search([
-        ("view_mode", "ilike", "tree")
-    ])
+    ActWindow = env["ir.actions.act_window"].sudo()
+    actions = ActWindow.search([("view_mode", "ilike", "tree")])
 
     patched_count = 0
     for action in actions:
-        old_mode = action.view_mode
-        # Replace 'tree' with 'list' while preserving other modes
-        new_mode = re.sub(r'\btree\b', 'list', old_mode)
+        # Parse comma-separated modes
+        modes = [m.strip() for m in (action.view_mode or "").split(",") if m.strip()]
+        if not modes:
+            continue
 
-        if new_mode != old_mode:
+        # Replace 'tree' with 'list'
+        new_modes = ["list" if m == "tree" else m for m in modes]
+
+        if new_modes != modes:
+            new_mode_str = ",".join(new_modes)
             _logger.info(
                 "Patching action %s [%s]: '%s' → '%s'",
-                action.id, action.name, old_mode, new_mode
+                action.id, action.name, action.view_mode, new_mode_str
             )
-            action.write({"view_mode": new_mode})
+            action.write({"view_mode": new_mode_str})
             patched_count += 1
 
     _logger.info(
@@ -57,8 +60,8 @@ def detect_broken_kanbans(env):
     """
     Detect kanban views missing t-name="card" template.
 
-    Odoo 18 requires kanban views to use t-name="card" instead of
-    the old t-name="kanban-box" pattern.
+    Odoo 18 requires kanban views to have a t-name="card" template.
+    Views missing this template will cause KanbanArchParser errors.
 
     Args:
         env: Odoo environment
@@ -68,19 +71,20 @@ def detect_broken_kanbans(env):
     """
     _logger.info("Scanning for broken kanban views...")
 
-    broken_views = []
-    kanban_views = env["ir.ui.view"].search([
+    View = env["ir.ui.view"].sudo()
+    kanban_views = View.search([
         ("type", "=", "kanban"),
         ("active", "=", True)
     ])
 
+    broken_views = []
     for view in kanban_views:
         arch = view.arch_db or ""
-        # Check for old kanban-box pattern without card template
-        if 'kanban-box' in arch and 't-name="card"' not in arch:
+        # Check for missing card template (both quote styles)
+        if 't-name="card"' not in arch and "t-name='card'" not in arch:
             _logger.warning(
-                "Kanban view %s [%s] may need t-name='card' template",
-                view.id, view.name
+                "Kanban view %s [%s] model=%s may need t-name='card' template",
+                view.id, view.name, view.model
             )
             broken_views.append(view)
 
@@ -91,29 +95,68 @@ def detect_broken_kanbans(env):
     return broken_views
 
 
+def deactivate_broken_views(env, views):
+    """
+    Deactivate broken views to prevent UI crashes.
+
+    This is a safety measure - it's better to have missing views than
+    crashing UI. The views can be patched and reactivated later.
+
+    Args:
+        env: Odoo environment
+        views: List of view records to deactivate
+
+    Returns:
+        int: Number of views deactivated
+    """
+    if not views:
+        return 0
+
+    view_ids = [v.id for v in views]
+    env["ir.ui.view"].sudo().browse(view_ids).write({"active": False})
+    _logger.warning("Deactivated %d broken kanban views", len(views))
+    return len(views)
+
+
 def post_init_hook(env):
     """
     Post-init hook called when module is installed.
 
     Automatically runs compatibility fixes on module installation.
+
+    To enable automatic deactivation of broken kanban views, set:
+        Settings → Technical → Parameters → System Parameters
+        key: ipai_v18_compat.deactivate_broken_kanban = 1
     """
     _logger.info("Running ipai_v18_compat post_init_hook...")
 
     # Fix tree → list in view_mode
     patched = fix_odoo18_views(env)
 
-    # Detect (but don't auto-fix) broken kanbans
+    # Detect broken kanbans
     broken = detect_broken_kanbans(env)
 
-    if broken:
+    # Check if auto-deactivation is enabled via system parameter
+    deactivate = env["ir.config_parameter"].sudo().get_param(
+        "ipai_v18_compat.deactivate_broken_kanban"
+    ) in ("1", "true", "True")
+
+    deactivated = 0
+    if deactivate and broken:
+        deactivated = deactivate_broken_views(env, broken)
+    elif broken:
         _logger.warning(
             "Found %d kanban views that may need manual fixes. "
-            "Check logs for details.",
+            "Set system parameter 'ipai_v18_compat.deactivate_broken_kanban=1' "
+            "to auto-deactivate. Check logs for details.",
             len(broken)
         )
 
+    # Clear registry cache
+    env.registry.clear_cache()
+
     _logger.info(
         "ipai_v18_compat post_init_hook complete. "
-        "Patched %d actions, detected %d kanban issues.",
-        patched, len(broken)
+        "Patched %d actions, found %d kanban issues, deactivated %d views.",
+        patched, len(broken), deactivated
     )

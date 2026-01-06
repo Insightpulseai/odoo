@@ -3,39 +3,52 @@
 """
 Odoo 18 View Compatibility Fix Script
 
-Standalone script wrapper for fixing Odoo 18 view_mode breaking changes.
+Standalone script for fixing Odoo 18 view_mode breaking changes.
 Can be run during deployment or manually via shell.
 
+Fixes:
+1. view_mode 'tree' → 'list' (Odoo 18 breaking change)
+2. Kanban views missing t-name="card" template (optional deactivation)
+
 Usage:
-    # From Odoo shell
-    python addons/ipai/scripts/fix_odoo18_views.py
+    # Set environment variables
+    export ODOO_DB=odoo
+    export ODOO_CONF=/etc/odoo/odoo.conf
 
-    # Or via odoo-bin shell
-    odoo-bin shell -d odoo_core --addons-path=addons/ipai
-    >>> exec(open('addons/ipai/scripts/fix_odoo18_views.py').read())
+    # Run (detect only)
+    python fix_odoo18_views.py
 
-    # Or directly with database connection
-    python addons/ipai/scripts/fix_odoo18_views.py --database odoo_core
+    # Run with auto-deactivation of broken kanbans
+    export DEACTIVATE_BROKEN_KANBAN=1
+    python fix_odoo18_views.py
 
-This script provides the same functionality as the ipai_v18_compat module
-but can be run independently without installing the module.
+Docker usage:
+    docker exec -it odoo-erp-prod bash -lc '
+      export ODOO_DB=odoo
+      export ODOO_CONF=/etc/odoo/odoo.conf
+      # optional: export DEACTIVATE_BROKEN_KANBAN=1
+      python /mnt/extra-addons/ipai/scripts/fix_odoo18_views.py
+    '
+    docker restart odoo-erp-prod
 """
-import argparse
-import logging
-import re
+import os
 import sys
+import logging
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger("fix_odoo18_views")
 
 
 def fix_tree_to_list(env):
     """
     Fix view_mode 'tree' → 'list' for all ir.actions.act_window records.
+
+    Odoo 18 renamed 'tree' to 'list'. This function patches all actions
+    that still reference the old 'tree' view type.
 
     Args:
         env: Odoo environment
@@ -43,155 +56,160 @@ def fix_tree_to_list(env):
     Returns:
         int: Number of actions patched
     """
-    _logger.info("Searching for actions with 'tree' in view_mode...")
+    ActWindow = env["ir.actions.act_window"].sudo()
+    actions = ActWindow.search([("view_mode", "ilike", "tree")])
 
-    actions = env["ir.actions.act_window"].search([
-        ("view_mode", "ilike", "tree")
-    ])
+    _logger.info("Found %s actions with 'tree' in view_mode", len(actions))
 
-    _logger.info("Found %d actions to check", len(actions))
-
-    patched_count = 0
-    for action in actions:
-        old_mode = action.view_mode
-        new_mode = re.sub(r'\btree\b', 'list', old_mode)
-
-        if new_mode != old_mode:
+    changed = 0
+    for a in actions:
+        modes = [m.strip() for m in (a.view_mode or "").split(",") if m.strip()]
+        if not modes:
+            continue
+        new_modes = ["list" if m == "tree" else m for m in modes]
+        if new_modes != modes:
             _logger.info(
-                "  [%d] %s: '%s' → '%s'",
-                action.id, action.name or "(no name)", old_mode, new_mode
+                "  [%s] %s: '%s' → '%s'",
+                a.id, a.name or "(no name)", a.view_mode, ",".join(new_modes)
             )
-            action.write({"view_mode": new_mode})
-            patched_count += 1
+            a.write({"view_mode": ",".join(new_modes)})
+            changed += 1
 
-    return patched_count
+    _logger.info("tree→list updated %s actions", changed)
+    return changed
 
 
-def detect_broken_kanbans(env):
+def list_broken_kanban(env):
     """
-    Detect kanban views that may need t-name="card" template.
+    Find kanban views missing t-name="card" template.
+
+    Odoo 18 requires kanban views to have a card template. Missing it
+    triggers KanbanArchParser errors.
 
     Args:
         env: Odoo environment
 
     Returns:
-        list: List of potentially broken view IDs and names
+        list: List of view records with missing card template
     """
-    _logger.info("Scanning kanban views for potential issues...")
+    View = env["ir.ui.view"].sudo()
+    views = View.search([("type", "=", "kanban"), ("active", "=", True)])
+
+    _logger.info("Scanning %s active kanban views...", len(views))
 
     broken = []
-    kanban_views = env["ir.ui.view"].search([
-        ("type", "=", "kanban"),
-        ("active", "=", True)
-    ])
+    for v in views:
+        arch = v.arch_db or ""
+        if 't-name="card"' not in arch and "t-name='card'" not in arch:
+            broken.append(v)
 
-    for view in kanban_views:
-        arch = view.arch_db or ""
-        if 'kanban-box' in arch and 't-name="card"' not in arch:
-            broken.append({
-                "id": view.id,
-                "name": view.name,
-                "model": view.model,
-            })
-            _logger.warning(
-                "  [%d] %s (model: %s) - may need t-name='card'",
-                view.id, view.name, view.model
-            )
+    _logger.info("Found %s active kanban views missing card template", len(broken))
+
+    # Log details for first 200 broken views
+    for v in broken[:200]:
+        _logger.info(
+            "  broken kanban: id=%s xmlid=%s name=%s model=%s module=%s",
+            v.id, v.xml_id, v.name, v.model, getattr(v, 'module', 'N/A')
+        )
 
     return broken
 
 
-def main_with_env(env):
+def deactivate_views(env, views):
     """
-    Main function when Odoo environment is available.
+    Deactivate broken views to prevent UI crashes.
+
+    This is a safety measure - it's better to have missing views than
+    crashing UI. The views can be patched and reactivated later.
 
     Args:
         env: Odoo environment
+        views: List of view records to deactivate
+
+    Returns:
+        int: Number of views deactivated
     """
-    _logger.info("=" * 60)
-    _logger.info("Odoo 18 View Compatibility Fix")
-    _logger.info("=" * 60)
+    if not views:
+        return 0
 
-    # Fix tree → list
-    patched = fix_tree_to_list(env)
-    _logger.info("Patched %d actions (tree → list)", patched)
-
-    # Detect broken kanbans
-    broken = detect_broken_kanbans(env)
-    _logger.info("Found %d potentially broken kanban views", len(broken))
-
-    if broken:
-        _logger.info("")
-        _logger.info("Kanban views needing manual review:")
-        for v in broken:
-            _logger.info("  - [%d] %s (model: %s)", v["id"], v["name"], v["model"])
-
-    _logger.info("")
-    _logger.info("=" * 60)
-    _logger.info("Fix complete!")
-    _logger.info("=" * 60)
-
-    # Commit the transaction
-    env.cr.commit()
-
-    return {"patched": patched, "broken_kanbans": len(broken)}
+    view_ids = [v.id for v in views]
+    env["ir.ui.view"].sudo().browse(view_ids).write({"active": False})
+    _logger.info("Deactivated %s views", len(views))
+    return len(views)
 
 
 def main():
     """
-    Standalone entry point with argument parsing.
+    Main entry point for standalone script execution.
     """
-    parser = argparse.ArgumentParser(
-        description="Fix Odoo 18 view_mode breaking changes"
-    )
-    parser.add_argument(
-        "-d", "--database",
-        default="odoo_core",
-        help="Database name (default: odoo_core)"
-    )
-    parser.add_argument(
-        "-c", "--config",
-        help="Odoo config file path"
-    )
-    args = parser.parse_args()
+    db = os.environ.get("ODOO_DB", "odoo")
+    conf = os.environ.get("ODOO_CONF", "/etc/odoo/odoo.conf")
+    deactivate_broken = os.environ.get("DEACTIVATE_BROKEN_KANBAN") == "1"
 
-    # Check if we're already in Odoo environment
+    _logger.info("=" * 60)
+    _logger.info("Odoo 18 View Compatibility Fix")
+    _logger.info("=" * 60)
+    _logger.info("Database: %s", db)
+    _logger.info("Config: %s", conf)
+    _logger.info("Deactivate broken kanbans: %s", deactivate_broken)
+    _logger.info("=" * 60)
+
     try:
-        # Try to use existing environment (e.g., from odoo shell)
+        import odoo
         from odoo import api, SUPERUSER_ID
-        from odoo.cli import server
         from odoo.tools import config
 
-        if args.config:
-            config.parse_config(["-c", args.config])
+        # Parse config and setup Odoo
+        config.parse_config(["-c", conf, "-d", db])
 
-        # Get database registry
-        from odoo.modules.registry import Registry
-        registry = Registry(args.database)
+        # For Odoo 18, use the new setup pattern
+        try:
+            odoo.setup()
+        except AttributeError:
+            # Fallback for older setup pattern
+            pass
 
-        with registry.cursor() as cr:
-            env = api.Environment(cr, SUPERUSER_ID, {})
-            result = main_with_env(env)
-            return result
+        with api.Environment.manage():
+            registry = odoo.registry(db)
+            with registry.cursor() as cr:
+                env = api.Environment(cr, SUPERUSER_ID, {})
 
-    except ImportError:
+                # Fix tree → list
+                changed = fix_tree_to_list(env)
+
+                # Find broken kanbans
+                broken = list_broken_kanban(env)
+
+                # Optionally deactivate broken views
+                deactivated = 0
+                if deactivate_broken and broken:
+                    deactivated = deactivate_views(env, broken)
+
+                # Clear cache
+                env.registry.clear_cache()
+
+                # Commit changes
+                cr.commit()
+
+                _logger.info("")
+                _logger.info("=" * 60)
+                _logger.info("Summary:")
+                _logger.info("  - Actions patched (tree→list): %s", changed)
+                _logger.info("  - Broken kanbans found: %s", len(broken))
+                _logger.info("  - Views deactivated: %s", deactivated)
+                _logger.info("=" * 60)
+
+    except ImportError as e:
         _logger.error(
             "Odoo not found in Python path. "
-            "Run this script from Odoo shell or set PYTHONPATH."
+            "Run this script from within the Odoo container or set PYTHONPATH. "
+            "Error: %s", e
         )
         sys.exit(1)
     except Exception as e:
-        _logger.error("Error: %s", e)
+        _logger.error("Error: %s", e, exc_info=True)
         sys.exit(1)
 
 
-# Allow running from Odoo shell with exec()
 if __name__ == "__main__":
     main()
-else:
-    # When exec'd from Odoo shell, 'env' should be available
-    try:
-        if 'env' in dir():
-            main_with_env(env)  # noqa: F821
-    except NameError:
-        pass  # Not in Odoo shell context
