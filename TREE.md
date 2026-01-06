@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ac4b2083481814fed8df57f3479372e411a31109
+> Commit: 5d153245e08e54a746752b3a3b8d67140328b5cb
 
 ```
 .
@@ -115,6 +115,17 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_ai_core
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_provider_kapa
+│   │   │   ├── models
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_studio
 │   │   │   ├── models
 │   │   │   ├── security
@@ -388,6 +399,20 @@
 │   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_project_gantt
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_project_profitability_bridge
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_project_program
 │   │   │   ├── data
 │   │   │   ├── models
@@ -438,8 +463,17 @@
 │   │   │   ├── tests
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_fluent2
+│   │   │   ├── static
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_v18_compat
 │   │   │   ├── migrations
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_web_fluent2
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_workspace_core
@@ -1737,6 +1771,7 @@
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── ZOHO_DNS_SETUP.md
 │   ├── branch-cleanup-analysis.md
+│   ├── notion-odoo-substitute-catalog.md
 │   ├── odoo-apps-parity.md
 │   ├── odoo_core_schema.sql
 │   ├── supabase-integration.md
@@ -2031,6 +2066,8 @@
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   └── ipai-design-tokens
+│       ├── src
+│       │   └── build.ts
 │       ├── package.json
 │       ├── tailwind.preset.js
 │       ├── tokens.css
@@ -2192,6 +2229,7 @@
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
+│   ├── install-notion-stack.sh
 │   ├── install_all_ipai_modules.sh
 │   ├── install_finance_stack.sh
 │   ├── install_ipai_finance_ppm.sh
@@ -2233,6 +2271,7 @@
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
+│   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
@@ -2852,15 +2891,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-852 directories, 1995 files
+875 directories, 2011 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 968 |
-| Files | 2829 |
-| Python files | 730 |
-| XML files | 369 |
-| Markdown files | 572 |
+| Directories | 1000 |
+| Files | 2879 |
+| Python files | 754 |
+| XML files | 381 |
+| Markdown files | 573 |
