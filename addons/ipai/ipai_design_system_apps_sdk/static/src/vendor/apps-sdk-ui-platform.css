@@ -31,28 +31,39 @@
 }
 
 /* =============================================================================
-   BASE VARIABLES (Apps SDK UI Compatible)
+   BASE VARIABLES (TBWA Brand - Light Theme)
    ============================================================================= */
 
 :root {
-  /* Color Tokens - Dark Theme */
-  --color-bg-primary: #0b0f19;
-  --color-bg-secondary: #0f172a;
-  --color-bg-tertiary: #1e293b;
+  /* TBWA Brand Colors */
+  --tbwa-yellow: #FBCE10;
+  --tbwa-yellow-hover: #FCD605;
+  --tbwa-black: #000000;
+  --tbwa-white: #FFFFFF;
+  --tbwa-brown-gold: #AB9338;
+  --tbwa-charcoal: #19160E;
+  --tbwa-sand: #C8C4AB;
+  --tbwa-ink-700: #4D4630;
 
-  --color-text-primary: rgba(255, 255, 255, 0.92);
-  --color-text-secondary: rgba(255, 255, 255, 0.70);
-  --color-text-muted: rgba(255, 255, 255, 0.50);
+  /* Color Tokens - Light Theme */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F8F8F8;
+  --color-bg-tertiary: #F3F2F8;
 
-  --color-border-default: rgba(255, 255, 255, 0.10);
-  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --color-text-primary: #19160E;
+  --color-text-secondary: #4D4630;
+  --color-text-muted: #888888;
+
+  --color-border-default: #C8C4AB;
+  --color-border-subtle: #ECE7D8;
 
   /* Semantic Colors */
-  --color-accent: #f7d046;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  --color-accent: #FBCE10;
+  --color-success: #30B636;
+  --color-warning: #FA9807;
+  --color-error: #D6193E;
+  --color-info: #3876B5;
+  --color-critical: #890304;
 
   /* Spacing */
   --space-1: 4px;
@@ -92,11 +103,11 @@
   --leading-normal: 1.5;
   --leading-relaxed: 1.625;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.45);
-  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+  /* Shadows (Light Theme - subtle) */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.18);
 
   /* Transitions */
   --transition-fast: 100ms ease;
@@ -291,6 +302,9 @@
 .bg-tertiary { background-color: var(--color-bg-tertiary); }
 .bg-transparent { background-color: transparent; }
 .bg-accent { background-color: var(--color-accent); }
+.bg-brand { background-color: var(--tbwa-yellow); }
+.bg-brand-black { background-color: var(--tbwa-black); }
+.bg-cream { background-color: #FBF4CC; }
 
 /* =============================================================================
    VISIBILITY & DISPLAY
@@ -412,11 +426,46 @@
    ============================================================================= */
 
 .focus-visible:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--tbwa-yellow);
   outline-offset: 2px;
 }
 
 .focus-ring:focus {
-  box-shadow: 0 0 0 3px rgba(247, 208, 70, 0.25);
+  box-shadow: 0 0 0 3px rgba(251, 206, 16, 0.25);
   outline: none;
 }
+
+/* =============================================================================
+   TBWA WORKFLOW UI UTILITIES
+   ============================================================================= */
+
+.tbwa-header {
+  background-color: var(--tbwa-black);
+  color: var(--tbwa-yellow);
+}
+
+.tbwa-header-title {
+  color: var(--tbwa-yellow);
+  font-weight: 600;
+}
+
+.tbwa-cta {
+  background-color: var(--tbwa-yellow);
+  color: #111111;
+  font-weight: 600;
+}
+
+.tbwa-cta:hover {
+  background-color: var(--tbwa-yellow-hover);
+}
+
+.tbwa-tat-bar {
+  background-color: var(--tbwa-black);
+  color: var(--tbwa-white);
+}
+
+.tbwa-reminder { color: var(--color-warning); }
+.tbwa-overdue { color: var(--color-error); }
+.tbwa-critical { color: var(--color-critical); }
+.tbwa-success { color: var(--color-success); }
+.tbwa-info { color: var(--color-info); }
