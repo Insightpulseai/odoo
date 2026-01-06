@@ -1,0 +1,3 @@
+id,name,save_type,is_hidden,company_id/id
+__import__.dms_storage_default,Default Storage,database,False,base.main_company
+__import__.dms_storage_attachments,Attachments Storage,attachment,False,base.main_company
