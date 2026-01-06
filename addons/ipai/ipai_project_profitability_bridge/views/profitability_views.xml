@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree view -->
+    <record id="view_ipai_project_profitability_tree" model="ir.ui.view">
+        <field name="name">ipai.project.profitability.tree</field>
+        <field name="model">ipai.project.profitability</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="margin_pct > 20" decoration-warning="margin_pct > 0 and margin_pct &lt;= 20" decoration-danger="margin_pct &lt;= 0">
+                <field name="project_id"/>
+                <field name="revenue" sum="Total Revenue"/>
+                <field name="cost" sum="Total Cost"/>
+                <field name="margin" sum="Total Margin"/>
+                <field name="margin_pct" widget="progressbar"/>
+                <field name="timesheet_hours" sum="Total Hours" optional="show"/>
+                <field name="timesheet_cost" sum="Total Timesheet Cost" optional="hide"/>
+                <field name="analytic_line_count" optional="hide"/>
+                <field name="last_computed_at" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_ipai_project_profitability_form" model="ir.ui.view">
+        <field name="name">ipai.project.profitability.form</field>
+        <field name="model">ipai.project.profitability</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_recompute" type="object" string="Recompute" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="project_id" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Financial KPIs">
+                            <field name="revenue"/>
+                            <field name="cost"/>
+                            <field name="margin"/>
+                            <field name="margin_pct" widget="percentage"/>
+                        </group>
+                        <group string="Timesheet Details">
+                            <field name="timesheet_hours"/>
+                            <field name="timesheet_cost"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Metadata">
+                            <field name="analytic_line_count"/>
+                            <field name="last_computed_at"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Pivot view -->
+    <record id="view_ipai_project_profitability_pivot" model="ir.ui.view">
+        <field name="name">ipai.project.profitability.pivot</field>
+        <field name="model">ipai.project.profitability</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="project_id" type="row"/>
+                <field name="revenue" type="measure"/>
+                <field name="cost" type="measure"/>
+                <field name="margin" type="measure"/>
+                <field name="margin_pct" type="measure"/>
+                <field name="timesheet_hours" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph view -->
+    <record id="view_ipai_project_profitability_graph" model="ir.ui.view">
+        <field name="name">ipai.project.profitability.graph</field>
+        <field name="model">ipai.project.profitability</field>
+        <field name="arch" type="xml">
+            <graph type="bar">
+                <field name="project_id"/>
+                <field name="revenue" type="measure"/>
+                <field name="cost" type="measure"/>
+                <field name="margin" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="view_ipai_project_profitability_search" model="ir.ui.view">
+        <field name="name">ipai.project.profitability.search</field>
+        <field name="model">ipai.project.profitability</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="project_id"/>
+                <filter string="Profitable" name="profitable" domain="[('margin', '>', 0)]"/>
+                <filter string="Unprofitable" name="unprofitable" domain="[('margin', '&lt;=', 0)]"/>
+                <filter string="High Margin (>20%)" name="high_margin" domain="[('margin_pct', '>', 20)]"/>
+                <separator/>
+                <filter string="Has Timesheets" name="has_timesheets" domain="[('timesheet_hours', '>', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Project" name="group_project" context="{'group_by': 'project_id'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ipai_project_profitability" model="ir.actions.act_window">
+        <field name="name">Profitability (IPAI)</field>
+        <field name="res_model">ipai.project.profitability</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_ipai_project_profitability_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No profitability data yet
+            </p>
+            <p>
+                Click "Recompute All" to calculate profitability KPIs from analytic lines.
+            </p>
+        </field>
+    </record>
+
+    <!-- Server action to recompute all -->
+    <record id="action_recompute_all_profitability" model="ir.actions.server">
+        <field name="name">Recompute All Profitability</field>
+        <field name="model_id" ref="model_ipai_project_profitability"/>
+        <field name="binding_model_id" ref="model_ipai_project_profitability"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+count = env["ipai.project.profitability"].recompute_all()
+action = {
+    "type": "ir.actions.client",
+    "tag": "display_notification",
+    "params": {
+        "title": "Profitability Recomputed",
+        "message": f"Updated {count} project(s).",
+        "type": "success",
+        "sticky": False,
+        "next": {"type": "ir.actions.client", "tag": "reload"},
+    },
+}
+        </field>
+    </record>
+</odoo>
