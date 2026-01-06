@@ -6,8 +6,6 @@ import clsx from 'clsx';
 import {
   LayoutDashboard,
   GitBranch,
-  AlertTriangle,
-  Lightbulb,
   FolderKanban,
   Settings,
 } from 'lucide-react';
@@ -15,8 +13,6 @@ import {
 const navigation = [
   { name: 'Overview', href: '/overview', icon: LayoutDashboard },
   { name: 'Pipelines', href: '/pipelines', icon: GitBranch },
-  { name: 'Data Quality', href: '/data-quality', icon: AlertTriangle },
-  { name: 'Advisor', href: '/advisor', icon: Lightbulb },
   { name: 'Projects', href: '/projects', icon: FolderKanban },
 ];
 
