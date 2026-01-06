@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1b296512e31ae5c444668f726891a1fa968b0c1e
+> Commit: 52f751d18b53640a8b91fc08f4fb9adc93fbd147
 
 ```
 .
@@ -1353,6 +1353,8 @@
 │   │   ├── 07_mail.activity.csv
 │   │   ├── README.md
 │   │   └── odoo_import_headers.contract.json
+│   ├── templates
+│   │   └── user_assignments_template.csv
 │   ├── IMPORT_GUIDE.md
 │   ├── bir_calendar_2026.json
 │   ├── bir_december_2025_seed.xml
@@ -2088,6 +2090,8 @@
 │   ├── seeds
 │   │   ├── generate_project_stack_csv.py
 │   │   └── generate_project_stack_xlsx.py
+│   ├── sql
+│   │   └── update_phase_tags.sql
 │   ├── sync
 │   │   ├── docs-to-kb.js
 │   │   ├── generate-sitemap.js
@@ -2227,6 +2231,8 @@
 │   ├── test_deploy_local.sh
 │   ├── test_ipai_install_upgrade.py
 │   ├── update_diagram_manifest.py
+│   ├── update_task_phase_tags.sh
+│   ├── update_tasks_after_import.py
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
 │   ├── validate_m1.sh
@@ -2837,15 +2843,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-849 directories, 1983 files
+851 directories, 1987 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 965 |
-| Files | 2817 |
-| Python files | 727 |
+| Directories | 967 |
+| Files | 2821 |
+| Python files | 728 |
 | XML files | 369 |
 | Markdown files | 571 |
