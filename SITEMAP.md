@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f85a083cf18ece7cb05201f13f4b67087c88eaf4
+> Commit: a42fc69f418ecb5744607749c5d544f88aae8a9d
 
 ## 📚 Documentation
 
@@ -297,6 +297,7 @@
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
+| [Claude Connector Configuration Guide](docs/connectors/CLAUDE_CONNECTORS.md) | docs/connectors |
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
 | [Odoo ORM Map](docs/data-model/ODOO_ORM_MAP.md) | docs/data-model |
 | [Odoo Data Model Artifacts](docs/data-model/README.md) | docs/data-model |
@@ -318,6 +319,8 @@
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
+| [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
+| [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
 | [Mattermost Integration](docs/integrations/MATTERMOST.md) | docs/integrations |
 | [n8n Integration](docs/integrations/N8N.md) | docs/integrations |
@@ -430,9 +433,15 @@
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
+| [TBWA Finance SSC Handbook](handbook/README.md) | handbook |
+| [Summary](handbook/SUMMARY.md) | handbook |
+| [BIR Tax Calendar](handbook/compliance/bir/calendar.md) | handbook/compliance/bir |
+| [Month-End Closing Checklist](handbook/finance/month-end/checklist.md) | handbook/finance/month-end |
+| [How to Spend Company Money](handbook/finance/policies/spending.md) | handbook/finance/policies |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
+| [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
@@ -464,6 +473,9 @@
 | [Scripts Directory](scripts/README.md) | scripts |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
+| [BIR Tax Filing Skill](skills/bir-tax-filing/SKILL.md) | skills/bir-tax-filing |
+| [Expense Processing Skill](skills/expense-processing/SKILL.md) | skills/expense-processing |
+| [Finance SSC Month-End Closing](skills/finance-month-end/SKILL.md) | skills/finance-month-end |
 | [Visio-DrawIO Export Skill](skills/visio-drawio-export/README.md) | skills/visio-drawio-export |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
 | [ADK Control Room — Constitution](spec/adk-control-room/constitution.md) | spec/adk-control-room |
