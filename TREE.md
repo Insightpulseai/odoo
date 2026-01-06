@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 782fea9a7a4656d6ba225fcbea132908978d1522
+> Commit: ad9be7232ad0b4ba7adc6613515cb1b210eb71d9
 
 ```
 .
@@ -554,6 +554,12 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_skill_api
+│   │   │   ├── controllers
+│   │   │   ├── security
+│   │   │   ├── tests
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_srm
@@ -2591,10 +2597,20 @@
 ├── skills
 │   ├── bir-tax-filing
 │   │   └── SKILL.md
+│   ├── ci-run-validate
+│   │   └── skill.yaml
 │   ├── expense-processing
 │   │   └── SKILL.md
 │   ├── finance-month-end
 │   │   └── SKILL.md
+│   ├── finance-ppm-health
+│   │   └── skill.yaml
+│   ├── kg-entity-expand
+│   │   └── skill.yaml
+│   ├── odoo-module-audit
+│   │   └── skill.yaml
+│   ├── odoo-module-scaffold
+│   │   └── skill.yaml
 │   ├── visio-drawio-export
 │   │   ├── docker
 │   │   │   ├── Dockerfile
@@ -2609,11 +2625,17 @@
 │   │   │   └── validate.js
 │   │   ├── README.md
 │   │   └── skill.yaml
+│   ├── README.md
 │   ├── architecture_diagrams.skill.json
 │   ├── superset_mcp.skill.json
 │   └── visio_drawio_export.skill.json
 ├── spec
 │   ├── adk-control-room
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── auto-claude-framework
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -2867,6 +2889,7 @@
 │   │   ├── 20251227_mcp_job_queue_cron.sql
 │   │   ├── 20251227_supabase_queues_setup.sql
 │   │   ├── 202601030001_docs.sql
+│   │   ├── 20260106000001_kg_schema.sql
 │   │   ├── AFC_DEPLOYMENT_SUMMARY.md
 │   │   └── RLS_DEPLOYMENT_COMPLETE.md
 │   ├── seed
@@ -2909,6 +2932,12 @@
 │           ├── stages_template.csv
 │           └── tasks_template.csv
 ├── tests
+│   ├── api
+│   │   └── test_skill_api_contract.py
+│   ├── e2e
+│   │   └── playwright
+│   │       ├── agent-core.spec.ts
+│   │       └── playwright.config.ts
 │   ├── load
 │   │   └── odoo_login_and_nav.js
 │   ├── playwright
@@ -3138,15 +3167,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1008 directories, 2125 files
+1021 directories, 2141 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1148 |
-| Files | 3205 |
-| Python files | 875 |
-| XML files | 436 |
-| Markdown files | 609 |
+| Directories | 1161 |
+| Files | 3227 |
+| Python files | 882 |
+| XML files | 437 |
+| Markdown files | 614 |
