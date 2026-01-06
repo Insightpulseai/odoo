@@ -1,0 +1,137 @@
+# Finance PPM Health Check Skill
+# Validates Finance PPM module health and data integrity
+
+name: finance_ppm_health
+version: 1.0.0
+key: finance.ppm.health
+description: |
+  Check Finance PPM module health.
+  Validates balances, postings, and period status.
+
+intents:
+  - check finance health
+  - PPM status
+  - validate accounting
+  - month end status
+  - check balances
+
+guardrails:
+  - Read-only access to accounting data
+  - Do not post or modify entries
+  - Report discrepancies only
+
+tools:
+  - key: finance.query_moves
+    name: Query Journal Entries
+    target_model: ipai.finance.health
+    target_method: query_recent_moves
+    description: Get recent journal entries summary
+
+  - key: finance.check_balances
+    name: Check Balances
+    target_model: ipai.finance.health
+    target_method: check_trial_balance
+    description: Verify trial balance integrity
+
+  - key: finance.check_periods
+    name: Check Periods
+    target_model: ipai.finance.health
+    target_method: check_period_status
+    description: Check fiscal period status
+
+  - key: finance.check_unposted
+    name: Check Unposted
+    target_model: ipai.finance.health
+    target_method: check_unposted_entries
+    description: Find unposted journal entries
+
+  - key: finance.report
+    name: Generate Report
+    target_model: ipai.finance.health
+    target_method: generate_health_report
+    description: Generate health check report
+
+workflow:
+  - finance.query_moves
+  - finance.check_balances
+  - finance.check_periods
+  - finance.check_unposted
+  - finance.report
+
+input_schema:
+  type: object
+  properties:
+    company_id:
+      type: integer
+      description: Company ID (defaults to main company)
+    date_from:
+      type: string
+      format: date
+      description: Start date for analysis
+    date_to:
+      type: string
+      format: date
+      description: End date for analysis
+    include_details:
+      type: boolean
+      default: false
+      description: Include detailed line items
+
+output_schema:
+  type: object
+  properties:
+    healthy:
+      type: boolean
+    checks:
+      type: array
+      items:
+        type: object
+        properties:
+          name: { type: string }
+          passed: { type: boolean }
+          message: { type: string }
+          details: { type: object }
+    metrics:
+      type: object
+      properties:
+        total_entries: { type: integer }
+        unposted_count: { type: integer }
+        balance_diff: { type: number }
+        open_periods: { type: integer }
+    issues:
+      type: array
+      items:
+        type: object
+        properties:
+          severity: { type: string }
+          category: { type: string }
+          message: { type: string }
+          resolution: { type: string }
+    report_summary:
+      type: string
+
+agentInstructions: |
+  When the user asks about finance/accounting health:
+
+  1. **Determine Scope**:
+     - Identify company (default to main)
+     - Determine date range (default to current period)
+
+  2. **Run Checks**:
+     - Execute all health check tools
+     - Collect metrics and issues
+
+  3. **Analyze Results**:
+     - Identify critical issues (imbalances, missing posts)
+     - Categorize by severity
+
+  4. **Report**:
+     - Overall healthy/unhealthy status
+     - List issues with resolutions
+     - Metrics summary for quick review
+
+  Example output:
+  "Finance PPM Health: UNHEALTHY. 3 issues found:
+   - CRITICAL: Trial balance off by 1,234.56
+   - WARNING: 15 unposted entries in current period
+   - INFO: 2 periods still open"

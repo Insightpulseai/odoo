@@ -2,7 +2,80 @@
 # Maps Enterprise modules to OCA replacements
 
 version: "18.0"
-updated: "2024-01-01"
+updated: "2026-01-06"
+
+# =============================================================================
+# Agent Framework Dependencies (Auto-Claude / Skill Runtime)
+# =============================================================================
+
+agent_framework:
+  description: "OCA modules powering the Auto-Claude agent framework"
+
+  queue:
+    description: "Background job execution for async skill runs"
+    repos:
+      - https://github.com/OCA/queue
+    branch: "18.0"
+    modules:
+      - queue_job           # Core async job queue
+      - queue_job_cron      # Run Scheduled Actions as queue jobs
+      - queue_job_batch     # Fan-out/fan-in batches
+
+  rest_framework:
+    description: "REST API endpoints for skill/tool calling"
+    repos:
+      - https://github.com/OCA/rest-framework
+    branch: "18.0"
+    modules:
+      - base_rest           # High-level REST APIs + OpenAPI
+      - base_rest_pydantic  # Pydantic DTOs for schema validation
+
+  connector:
+    description: "Component registry for skills-as-plugins"
+    repos:
+      - https://github.com/OCA/connector
+    branch: "18.0"
+    modules:
+      - component           # Decoupled components registry
+      - component_event     # Event hooks
+
+  server_auth:
+    description: "API authentication for agent-to-Odoo calls"
+    repos:
+      - https://github.com/OCA/server-auth
+    branch: "18.0"
+    modules:
+      - auth_jwt            # JWT bearer auth
+      - auth_api_key        # API key auth
+
+  server_env:
+    description: "Environment-based configuration"
+    repos:
+      - https://github.com/OCA/server-env
+    branch: "18.0"
+    modules:
+      - server_environment  # Move config out of DB
+
+  automation:
+    description: "Automation triggers for agent runs"
+    repos:
+      - https://github.com/OCA/automation
+    branch: "18.0"
+    modules:
+      - automation_oca      # Rules/automation on threaded models
+
+  server_tools:
+    description: "Ops and maintainability utilities"
+    repos:
+      - https://github.com/OCA/server-tools
+    branch: "18.0"
+    modules:
+      - module_analysis     # Module audit (core vs OCA vs custom)
+      - module_auto_update  # Automatic module updates
+
+# =============================================================================
+# Enterprise Replacement Mappings
+# =============================================================================
 
 replacements:
   # Enterprise Module -> OCA Replacement(s)
