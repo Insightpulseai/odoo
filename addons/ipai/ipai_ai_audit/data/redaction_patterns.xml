@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Redaction Patterns (stored in ir.config_parameter) -->
+        <!-- Additional patterns beyond the defaults in ai_redaction_service.py -->
+        <record id="config_param_redaction_patterns" model="ir.config_parameter">
+            <field name="key">ipai_ai_audit.redaction_patterns</field>
+            <field name="value"># Custom redaction patterns (one per line: pattern|replacement)
+# Example:
+# (?i)salary[\s:=]+\d+|[SALARY]
+# (?i)bonus[\s:=]+\d+|[BONUS]
+</field>
+        </record>
+
+        <!-- Default Governance Rules -->
+        <record id="governance_rule_default_allow" model="ipai.ai.governance.rule">
+            <field name="name">Default Allow</field>
+            <field name="code">default_allow</field>
+            <field name="rule_type">allow</field>
+            <field name="sequence">100</field>
+            <field name="apply_to_all">True</field>
+            <field name="log_all_requests">True</field>
+            <field name="description">Default rule: Allow all AI requests for all users. Lower priority rules can override this.</field>
+        </record>
+
+        <record id="governance_rule_rate_limit" model="ipai.ai.governance.rule">
+            <field name="name">Standard Rate Limit</field>
+            <field name="code">standard_rate_limit</field>
+            <field name="rule_type">rate_limit</field>
+            <field name="sequence">50</field>
+            <field name="apply_to_all">True</field>
+            <field name="rate_limit_count">100</field>
+            <field name="rate_limit_period">day</field>
+            <field name="log_all_requests">True</field>
+            <field name="description">Standard daily rate limit of 100 requests per user.</field>
+        </record>
+    </data>
+</odoo>

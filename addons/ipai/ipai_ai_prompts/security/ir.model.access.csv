@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_ai_topic_user,ipai.ai.topic.user,model_ipai_ai_topic,base.group_user,1,0,0,0
+access_ipai_ai_topic_admin,ipai.ai.topic.admin,model_ipai_ai_topic,base.group_system,1,1,1,1
+access_ipai_ai_prompt_user,ipai.ai.prompt.user,model_ipai_ai_prompt,base.group_user,1,0,0,0
+access_ipai_ai_prompt_admin,ipai.ai.prompt.admin,model_ipai_ai_prompt,base.group_system,1,1,1,1

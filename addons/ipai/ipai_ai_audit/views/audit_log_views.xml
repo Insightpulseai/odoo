@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Audit Log Form View -->
+    <record id="view_ipai_ai_audit_log_form" model="ir.ui.view">
+        <field name="name">ipai.ai.audit.log.form</field>
+        <field name="model">ipai.ai.audit.log</field>
+        <field name="arch" type="xml">
+            <form string="AI Audit Log" create="0" edit="0">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Request Info">
+                            <field name="user_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="request_time"/>
+                            <field name="response_time"/>
+                            <field name="duration_ms"/>
+                        </group>
+                        <group string="AI Details">
+                            <field name="provider"/>
+                            <field name="model"/>
+                            <field name="source"/>
+                            <field name="total_tokens"/>
+                        </group>
+                    </group>
+                    <group string="Context" invisible="not res_model">
+                        <group>
+                            <field name="res_model"/>
+                            <field name="res_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Request" name="request">
+                            <field name="request_content" readonly="1"/>
+                            <group>
+                                <field name="request_hash" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Response" name="response">
+                            <field name="response_content" readonly="1"/>
+                            <group>
+                                <field name="response_hash" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Error" name="error" invisible="state != 'error'">
+                            <field name="error_message" readonly="1"/>
+                        </page>
+                        <page string="Governance" name="governance">
+                            <group>
+                                <field name="governance_rule_id"/>
+                                <field name="is_redacted"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Audit Log Tree View -->
+    <record id="view_ipai_ai_audit_log_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.audit.log.tree</field>
+        <field name="model">ipai.ai.audit.log</field>
+        <field name="arch" type="xml">
+            <tree string="AI Audit Logs" create="0" edit="0"
+                  decoration-danger="state == 'error'"
+                  decoration-warning="state == 'blocked'">
+                <field name="request_time"/>
+                <field name="user_id"/>
+                <field name="provider"/>
+                <field name="model"/>
+                <field name="source"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'success'"
+                       decoration-danger="state == 'error'"
+                       decoration-warning="state == 'blocked'"/>
+                <field name="total_tokens"/>
+                <field name="duration_ms"/>
+                <field name="is_redacted"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Audit Log Search View -->
+    <record id="view_ipai_ai_audit_log_search" model="ir.ui.view">
+        <field name="name">ipai.ai.audit.log.search</field>
+        <field name="model">ipai.ai.audit.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Audit Logs">
+                <field name="user_id"/>
+                <field name="provider"/>
+                <field name="model"/>
+                <field name="source"/>
+                <filter name="filter_success" string="Successful" domain="[('state', '=', 'success')]"/>
+                <filter name="filter_error" string="Errors" domain="[('state', '=', 'error')]"/>
+                <filter name="filter_blocked" string="Blocked" domain="[('state', '=', 'blocked')]"/>
+                <separator/>
+                <filter name="filter_today" string="Today"
+                        domain="[('request_time', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="filter_week" string="This Week"
+                        domain="[('request_time', '>=', (context_today() - relativedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="filter_redacted" string="Redacted" domain="[('is_redacted', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_provider" string="Provider" context="{'group_by': 'provider'}"/>
+                    <filter name="group_model" string="Model" context="{'group_by': 'model'}"/>
+                    <filter name="group_source" string="Source" context="{'group_by': 'source'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'request_time:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Audit Log Pivot View -->
+    <record id="view_ipai_ai_audit_log_pivot" model="ir.ui.view">
+        <field name="name">ipai.ai.audit.log.pivot</field>
+        <field name="model">ipai.ai.audit.log</field>
+        <field name="arch" type="xml">
+            <pivot string="AI Usage Analysis">
+                <field name="user_id" type="row"/>
+                <field name="request_time" type="col" interval="day"/>
+                <field name="total_tokens" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Audit Log Graph View -->
+    <record id="view_ipai_ai_audit_log_graph" model="ir.ui.view">
+        <field name="name">ipai.ai.audit.log.graph</field>
+        <field name="model">ipai.ai.audit.log</field>
+        <field name="arch" type="xml">
+            <graph string="AI Usage" type="line">
+                <field name="request_time" interval="day"/>
+                <field name="total_tokens" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Audit Log Action -->
+    <record id="action_ipai_ai_audit_log" model="ir.actions.act_window">
+        <field name="name">AI Audit Logs</field>
+        <field name="res_model">ipai.ai.audit.log</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_ipai_ai_audit_log_search"/>
+        <field name="context">{'search_default_filter_today': 1}</field>
+    </record>
+</odoo>
