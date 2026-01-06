@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
-import PageContainer from '@/components/layout/PageContainer';
-import Card from '@/components/common/Card';
-import Badge from '@/components/common/Badge';
+import { PageContainer, PageContent } from '@/components/layout/PageContainer';
+import { Header } from '@/components/layout/Header';
+import { Card } from '@/components/common/Card';
+import { Badge } from '@/components/common/Badge';
 
 interface Calendar {
   id: string;
@@ -47,7 +48,7 @@ function CalendarCard({ calendar }: { calendar: Calendar }) {
             {calendar.default_duration} min • {calendar.timezone}
           </p>
         </div>
-        <Badge variant={calendar.is_active ? 'success' : 'default'}>
+        <Badge variant={calendar.is_active ? 'success' : 'neutral'}>
           {calendar.is_active ? 'Active' : 'Inactive'}
         </Badge>
       </div>
@@ -90,11 +91,13 @@ async function CalendarsList() {
 
 export default function BookingPage() {
   return (
-    <PageContainer
-      title="Appointments"
-      description="Manage booking calendars and availability"
-    >
-      <div className="mb-6 flex justify-end">
+    <PageContainer>
+      <Header
+        title="Appointments"
+        subtitle="Manage booking calendars and availability"
+      />
+      <PageContent>
+        <div className="mb-6 flex justify-end">
         <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">
           + New Calendar
         </button>
@@ -104,14 +107,15 @@ export default function BookingPage() {
         <CalendarsList />
       </Suspense>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold text-white mb-4">Today's Appointments</h2>
-        <Card>
-          <p className="text-gray-400 text-center py-4">
-            No appointments scheduled for today
-          </p>
-        </Card>
-      </div>
+        <div className="mt-8">
+          <h2 className="text-xl font-semibold text-white mb-4">Today's Appointments</h2>
+          <Card>
+            <p className="text-gray-400 text-center py-4">
+              No appointments scheduled for today
+            </p>
+          </Card>
+        </div>
+      </PageContent>
     </PageContainer>
   );
 }

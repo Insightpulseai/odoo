@@ -100,7 +100,7 @@ export function JobsTable({ jobs, loading, onJobClick }: JobsTableProps) {
 
   return (
     <Card padding="none">
-      <DataTable
+      <DataTable<Job>
         columns={columns}
         data={jobs}
         keyField="jobId"

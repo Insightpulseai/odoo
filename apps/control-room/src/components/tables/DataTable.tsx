@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import clsx from 'clsx';
 
 interface Column<T> {
-  key: string;
+  key: keyof T | string;
   header: string;
   render?: (item: T) => ReactNode;
   className?: string;
@@ -19,7 +19,7 @@ interface DataTableProps<T> {
   loading?: boolean;
 }
 
-export function DataTable<T extends Record<string, unknown>>({
+export function DataTable<T>({
   columns,
   data,
   keyField,
@@ -50,7 +50,7 @@ export function DataTable<T extends Record<string, unknown>>({
           <tr className="border-b border-surface-700">
             {columns.map((column) => (
               <th
-                key={column.key}
+                key={String(column.key)}
                 className={clsx(
                   'px-4 py-3 text-left text-xs font-medium text-surface-200 uppercase tracking-wider',
                   column.className
@@ -75,7 +75,7 @@ export function DataTable<T extends Record<string, unknown>>({
             >
               {columns.map((column) => (
                 <td
-                  key={column.key}
+                  key={String(column.key)}
                   className={clsx(
                     'px-4 py-3 text-sm text-white',
                     column.className
@@ -83,7 +83,7 @@ export function DataTable<T extends Record<string, unknown>>({
                 >
                   {column.render
                     ? column.render(item)
-                    : String(item[column.key] ?? '-')}
+                    : String((item as any)[column.key] ?? '-')}
                 </td>
               ))}
             </tr>
