@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Finance Prompts -->
+        <record id="prompt_finance_blocking_tasks" model="ipai.ai.prompt">
+            <field name="name">What's Blocking the Close?</field>
+            <field name="code">finance.blocking_tasks</field>
+            <field name="topic_id" ref="topic_finance"/>
+            <field name="prompt_type">quick</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-exclamation-triangle</field>
+            <field name="prompt_template">What tasks are currently blocking the month-end close? List them by owner and priority, with the number of days overdue.</field>
+            <field name="output_format">markdown</field>
+            <field name="show_in_menu">True</field>
+        </record>
+
+        <record id="prompt_finance_deadlines" model="ipai.ai.prompt">
+            <field name="name">Upcoming Deadlines</field>
+            <field name="code">finance.deadlines</field>
+            <field name="topic_id" ref="topic_finance"/>
+            <field name="prompt_type">quick</field>
+            <field name="sequence">20</field>
+            <field name="icon">fa-calendar</field>
+            <field name="prompt_template">What are the upcoming finance deadlines in the next {{days}} days? Include BIR filings, month-end tasks, and any recurring obligations.</field>
+            <field name="output_format">list</field>
+            <field name="show_in_menu">True</field>
+        </record>
+
+        <record id="prompt_finance_variance" model="ipai.ai.prompt">
+            <field name="name">Explain Variance</field>
+            <field name="code">finance.variance</field>
+            <field name="topic_id" ref="topic_finance"/>
+            <field name="prompt_type">template</field>
+            <field name="sequence">30</field>
+            <field name="icon">fa-line-chart</field>
+            <field name="prompt_template">Analyze the variance between {{actual}} (actual) and {{budget}} (budget) for {{account}}.
+
+Provide:
+1. Percentage variance
+2. Possible explanations
+3. Recommended actions</field>
+            <field name="output_format">markdown</field>
+            <field name="show_in_menu">False</field>
+        </record>
+
+        <!-- Marketing Prompts -->
+        <record id="prompt_marketing_email_subject" model="ipai.ai.prompt">
+            <field name="name">Generate Email Subject Lines</field>
+            <field name="code">marketing.email_subject</field>
+            <field name="topic_id" ref="topic_marketing"/>
+            <field name="prompt_type">quick</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-envelope</field>
+            <field name="prompt_template">Generate 5 compelling email subject lines for a {{campaign_type}} campaign targeting {{audience}}. The key message is: {{key_message}}
+
+Requirements:
+- Keep under 50 characters
+- Create urgency where appropriate
+- Avoid spam trigger words
+- Include one with personalization</field>
+            <field name="output_format">list</field>
+            <field name="show_in_menu">True</field>
+        </record>
+
+        <record id="prompt_marketing_social_post" model="ipai.ai.prompt">
+            <field name="name">Draft Social Media Post</field>
+            <field name="code">marketing.social_post</field>
+            <field name="topic_id" ref="topic_marketing"/>
+            <field name="prompt_type">template</field>
+            <field name="sequence">20</field>
+            <field name="icon">fa-share-alt</field>
+            <field name="prompt_template">Create a social media post for {{platform}} about: {{topic}}
+
+Target audience: {{audience}}
+Tone: {{tone}}
+Include: {{include_elements}}
+
+Also suggest relevant hashtags.</field>
+            <field name="output_format">text</field>
+            <field name="show_in_menu">True</field>
+        </record>
+
+        <!-- HR Prompts -->
+        <record id="prompt_hr_job_description" model="ipai.ai.prompt">
+            <field name="name">Draft Job Description</field>
+            <field name="code">hr.job_description</field>
+            <field name="topic_id" ref="topic_hr"/>
+            <field name="prompt_type">template</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-file-text</field>
+            <field name="prompt_template">Create a job description for the position: {{position}}
+
+Department: {{department}}
+Experience Level: {{experience_level}}
+Key Responsibilities: {{responsibilities}}
+
+Include:
+- About the role
+- Key responsibilities (5-7 bullet points)
+- Requirements
+- Nice to have
+- Benefits highlights</field>
+            <field name="output_format">markdown</field>
+            <field name="show_in_menu">True</field>
+        </record>
+
+        <!-- Technical Prompts -->
+        <record id="prompt_tech_error_analysis" model="ipai.ai.prompt">
+            <field name="name">Analyze Error</field>
+            <field name="code">tech.error_analysis</field>
+            <field name="topic_id" ref="topic_tech"/>
+            <field name="prompt_type">template</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-bug</field>
+            <field name="prompt_template">Analyze this error and suggest solutions:
+
+Error: {{error_message}}
+Context: {{context}}
+Steps to reproduce: {{steps}}
+
+Provide:
+1. Likely cause
+2. Immediate fix
+3. Long-term solution
+4. Prevention measures</field>
+            <field name="output_format">markdown</field>
+            <field name="show_in_menu">True</field>
+        </record>
+
+        <!-- General Prompts -->
+        <record id="prompt_general_summarize" model="ipai.ai.prompt">
+            <field name="name">Summarize Document</field>
+            <field name="code">general.summarize</field>
+            <field name="topic_id" ref="topic_general"/>
+            <field name="prompt_type">quick</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-file-text-o</field>
+            <field name="prompt_template">Summarize the following document in 3-5 key bullet points:
+
+{{content}}</field>
+            <field name="output_format">list</field>
+            <field name="show_in_menu">True</field>
+        </record>
+
+        <record id="prompt_general_rewrite" model="ipai.ai.prompt">
+            <field name="name">Rewrite for Clarity</field>
+            <field name="code">general.rewrite</field>
+            <field name="topic_id" ref="topic_general"/>
+            <field name="prompt_type">quick</field>
+            <field name="sequence">20</field>
+            <field name="icon">fa-pencil</field>
+            <field name="prompt_template">Rewrite the following text to be clearer and more professional:
+
+{{text}}</field>
+            <field name="output_format">text</field>
+            <field name="show_in_menu">True</field>
+        </record>
+    </data>
+</odoo>
