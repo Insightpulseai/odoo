@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Provider Tree -->
+    <record id="view_ipai_ai_provider_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.provider.tree</field>
+        <field name="model">ipai.ai.provider</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="is_default"/>
+                <field name="total_requests"/>
+                <field name="avg_latency_ms" widget="float" digits="[6,0]"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Provider Form -->
+    <record id="view_ipai_ai_provider_form" model="ir.ui.view">
+        <field name="name">ipai.ai.provider.form</field>
+        <field name="model">ipai.ai.provider</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Provider Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Configuration">
+                            <field name="provider_type"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="is_default"/>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="total_requests"/>
+                            <field name="total_tokens"/>
+                            <field name="avg_latency_ms"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Note:</strong> Provider credentials (API keys, URLs) are configured
+                        in the provider-specific module settings (e.g., IPAI Kapa Provider).
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Thread Tree -->
+    <record id="view_ipai_ai_thread_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.thread.tree</field>
+        <field name="model">ipai.ai.thread</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="name"/>
+                <field name="provider_id"/>
+                <field name="user_id"/>
+                <field name="message_count"/>
+                <field name="state"/>
+                <field name="external_thread_id" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Thread Search -->
+    <record id="view_ipai_ai_thread_search" model="ir.ui.view">
+        <field name="name">ipai.ai.thread.search</field>
+        <field name="model">ipai.ai.thread</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="provider_id"/>
+                <filter string="My Threads" name="my_threads"
+                        domain="[('user_id', '=', uid)]"/>
+                <filter string="Active" name="active"
+                        domain="[('state', '=', 'active')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="User" name="group_user"
+                            context="{'group_by': 'user_id'}"/>
+                    <filter string="Provider" name="group_provider"
+                            context="{'group_by': 'provider_id'}"/>
+                    <filter string="Date" name="group_date"
+                            context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Thread Form -->
+    <record id="view_ipai_ai_thread_form" model="ir.ui.view">
+        <field name="name">ipai.ai.thread.form</field>
+        <field name="model">ipai.ai.thread</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="provider_id"/>
+                            <field name="user_id"/>
+                            <field name="external_thread_id"/>
+                        </group>
+                        <group>
+                            <field name="message_count"/>
+                            <field name="create_date"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Messages">
+                            <field name="message_ids" nolabel="1" readonly="1">
+                                <tree>
+                                    <field name="create_date"/>
+                                    <field name="role"/>
+                                    <field name="content" widget="text"/>
+                                    <field name="citation_count"/>
+                                    <field name="provider_latency_ms" optional="hide"/>
+                                    <field name="confidence" optional="hide"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Message Tree (for embedded views) -->
+    <record id="view_ipai_ai_message_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.message.tree</field>
+        <field name="model">ipai.ai.message</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="create_date"/>
+                <field name="thread_id"/>
+                <field name="role"/>
+                <field name="content"/>
+                <field name="citation_count"/>
+                <field name="provider_latency_ms"/>
+                <field name="confidence"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Message Form -->
+    <record id="view_ipai_ai_message_form" model="ir.ui.view">
+        <field name="name">ipai.ai.message.form</field>
+        <field name="model">ipai.ai.message</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="thread_id"/>
+                            <field name="role"/>
+                            <field name="create_date"/>
+                        </group>
+                        <group>
+                            <field name="provider_latency_ms"/>
+                            <field name="provider_status"/>
+                            <field name="confidence"/>
+                            <field name="tokens_used"/>
+                        </group>
+                    </group>
+                    <group string="Content">
+                        <field name="content" nolabel="1" widget="html"/>
+                    </group>
+                    <notebook>
+                        <page string="Citations">
+                            <field name="citation_ids" nolabel="1">
+                                <tree>
+                                    <field name="rank"/>
+                                    <field name="title"/>
+                                    <field name="url" widget="url"/>
+                                    <field name="snippet"/>
+                                    <field name="score"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

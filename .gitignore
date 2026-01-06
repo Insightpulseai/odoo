@@ -51,6 +51,9 @@ addons/*
 addons/**/__pycache__/
 addons/**/*.pyc
 
+# Node.js
+node_modules/
+
 # Docker
 .env
 docker-compose.override.yml
