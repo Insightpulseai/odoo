@@ -1,0 +1,122 @@
+# Odoo Module Scaffold Skill
+# Creates new Odoo module structure following IPAI conventions
+
+name: odoo_module_scaffold
+version: 1.0.0
+key: odoo.module.scaffold
+description: |
+  Scaffold a new Odoo module with IPAI conventions.
+  Creates directory structure, manifest, models, views, and security.
+
+intents:
+  - create new module
+  - scaffold module
+  - generate module structure
+  - new ipai module
+
+guardrails:
+  - Only create in addons/ipai/ directory
+  - Use ipai_ prefix for module names
+  - Follow OCA coding standards
+  - Do not overwrite existing modules
+
+tools:
+  - key: scaffold.dirs
+    name: Create Directories
+    target_model: ipai.scaffold.runner
+    target_method: create_module_dirs
+    description: Create module directory structure
+
+  - key: scaffold.manifest
+    name: Write Manifest
+    target_model: ipai.scaffold.runner
+    target_method: write_manifest
+    description: Generate __manifest__.py file
+
+  - key: scaffold.models
+    name: Write Models
+    target_model: ipai.scaffold.runner
+    target_method: write_models
+    description: Generate models/__init__.py and base model
+
+  - key: scaffold.views
+    name: Write Views
+    target_model: ipai.scaffold.runner
+    target_method: write_views
+    description: Generate views XML files
+
+  - key: scaffold.security
+    name: Write Security
+    target_model: ipai.scaffold.runner
+    target_method: write_security
+    description: Generate security files
+
+workflow:
+  - scaffold.dirs
+  - scaffold.manifest
+  - scaffold.models
+  - scaffold.views
+  - scaffold.security
+
+input_schema:
+  type: object
+  required:
+    - module_name
+  properties:
+    module_name:
+      type: string
+      description: Technical module name (will be prefixed with ipai_)
+    display_name:
+      type: string
+      description: Human-readable module name
+    description:
+      type: string
+      description: Module description
+    depends:
+      type: array
+      items: { type: string }
+      default: ["base"]
+      description: Module dependencies
+    models:
+      type: array
+      items:
+        type: object
+        properties:
+          name: { type: string }
+          description: { type: string }
+      description: Models to create
+
+output_schema:
+  type: object
+  properties:
+    module_path:
+      type: string
+    files_created:
+      type: array
+      items: { type: string }
+    next_steps:
+      type: array
+      items: { type: string }
+
+agentInstructions: |
+  When the user asks to create a new Odoo module:
+
+  1. **Gather Requirements**:
+     - Get module name (technical name)
+     - Get display name and description
+     - Determine dependencies
+     - Identify models to create
+
+  2. **Validate**:
+     - Ensure module name follows conventions
+     - Check module doesn't already exist
+     - Verify dependencies are valid
+
+  3. **Scaffold**:
+     - Run workflow tools in order
+     - Create directory structure
+     - Generate all boilerplate files
+
+  4. **Report**:
+     - List all files created
+     - Provide next steps (add to addons_path, install, etc.)

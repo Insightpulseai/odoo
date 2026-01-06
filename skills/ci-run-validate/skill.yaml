@@ -1,0 +1,124 @@
+# CI Run Validate Skill
+# Validates CI pipeline status and gates
+
+name: ci_run_validate
+version: 1.0.0
+key: ci.run.validate
+description: |
+  Validate CI pipeline status for a given ref.
+  Checks all gates, tests, and quality checks.
+
+intents:
+  - check CI status
+  - validate pipeline
+  - are all checks green
+  - CI gate status
+  - can I merge this
+
+guardrails:
+  - Read-only access to CI systems
+  - Do not trigger new builds
+  - Report actual status only
+
+tools:
+  - key: ci.fetch_status
+    name: Fetch CI Status
+    target_model: ipai.ci.bridge
+    target_method: fetch_workflow_status
+    description: Get status of CI workflows for ref
+
+  - key: ci.check_gates
+    name: Check Gates
+    target_model: ipai.ci.bridge
+    target_method: check_required_gates
+    description: Verify required status checks
+
+  - key: ci.fetch_logs
+    name: Fetch Logs
+    target_model: ipai.ci.bridge
+    target_method: fetch_failure_logs
+    description: Get logs for failed jobs
+
+  - key: ci.summarize
+    name: Summarize
+    target_model: ipai.ci.bridge
+    target_method: summarize_status
+    description: Generate human-readable summary
+
+workflow:
+  - ci.fetch_status
+  - ci.check_gates
+  - ci.fetch_logs
+  - ci.summarize
+
+input_schema:
+  type: object
+  required:
+    - ref
+  properties:
+    ref:
+      type: string
+      description: Git ref (branch, tag, or commit SHA)
+    repo:
+      type: string
+      default: jgtolentino/odoo-ce
+      description: Repository (owner/repo format)
+    include_logs:
+      type: boolean
+      default: true
+      description: Include failure logs in output
+
+output_schema:
+  type: object
+  properties:
+    all_green:
+      type: boolean
+    workflows:
+      type: array
+      items:
+        type: object
+        properties:
+          name: { type: string }
+          status: { type: string }
+          conclusion: { type: string }
+          url: { type: string }
+    required_gates:
+      type: object
+      properties:
+        passed: { type: array, items: { type: string } }
+        failed: { type: array, items: { type: string } }
+        pending: { type: array, items: { type: string } }
+    failure_logs:
+      type: array
+      items:
+        type: object
+        properties:
+          job: { type: string }
+          log_excerpt: { type: string }
+    summary:
+      type: string
+    can_merge:
+      type: boolean
+
+agentInstructions: |
+  When the user asks about CI status:
+
+  1. **Fetch Status**:
+     - Get all workflow runs for the ref
+     - Include check runs and status checks
+
+  2. **Check Gates**:
+     - Verify all required status checks
+     - Identify any blockers
+
+  3. **Analyze Failures**:
+     - If any checks failed, fetch relevant logs
+     - Extract key error messages
+
+  4. **Report**:
+     - Clear pass/fail summary
+     - List of failing checks with reasons
+     - can_merge boolean for quick decision
+
+  Example output:
+  "CI Status: 3/5 checks passed. Blocked by: lint (missing docstrings), tests (2 failures). Cannot merge."
