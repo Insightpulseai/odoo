@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7a2459e0b9999e9c37ebd476f4f2ad0364268f06
+> Commit: 85f395eb3db4811667608d784ab873c9109213d4
 
 ## 📚 Documentation
 
@@ -317,6 +317,11 @@
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
+| [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
+| [Mattermost Integration](docs/integrations/MATTERMOST.md) | docs/integrations |
+| [n8n Integration](docs/integrations/N8N.md) | docs/integrations |
+| [OCA Subtree Migration Plan](docs/integrations/OCA_SUBTREE_MIGRATION.md) | docs/integrations |
+| [Operations Stack Overview](docs/integrations/OPS_STACK.md) | docs/integrations |
 | [IPAI Module Suite - System Architecture](docs/ipai/ARCHITECTURE.md) | docs/ipai |
 | [IPAI Module Suite - Changelog](docs/ipai/CHANGELOG.md) | docs/ipai |
 | [IPAI Module Suite - Installation Guide](docs/ipai/INSTALLATION.md) | docs/ipai |
@@ -422,11 +427,13 @@
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
+| [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
+| [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
 | [Agent Audit Rules](kb/audit/AGENT_AUDIT_RULES.md) | kb/audit |
 | [Month-End Close SOP](kb/finance_close/sop.md) | kb/finance_close |
@@ -642,12 +649,16 @@
 | [ipai_finance_ppm_dashboard](./addons/ipai/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_finance_ppm_tdi](./addons/ipai/ipai_finance_ppm_tdi) | ✅ |  |
 | [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
+| [ipai_focalboard_connector](./addons/ipai/ipai_focalboard_connector) | ✅ |  |
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
+| [ipai_integrations](./addons/ipai/ipai_integrations) | ✅ |  |
 | [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
 | [ipai_marketing_journey](./addons/ipai/ipai_marketing_journey) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
+| [ipai_mattermost_connector](./addons/ipai/ipai_mattermost_connector) | ✅ |  |
 | [ipai_module_gating](./addons/ipai/ipai_module_gating) | ✅ |  |
+| [ipai_n8n_connector](./addons/ipai/ipai_n8n_connector) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai/ipai_ocr_expense) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
