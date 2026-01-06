@@ -1,0 +1,187 @@
+name: Diagram Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/diagrams/**/*.mmd'
+      - 'docs/diagrams/**/*.mermaid'
+      - 'docs/diagrams/**/*.drawio'
+      - 'docs/diagrams/mappings/**'
+      - 'tools/diagramflow/**'
+      - '.github/workflows/diagrams.yml'
+  pull_request:
+    paths:
+      - 'docs/diagrams/**/*.mmd'
+      - 'docs/diagrams/**/*.mermaid'
+      - 'docs/diagrams/**/*.drawio'
+      - 'docs/diagrams/mappings/**'
+      - 'tools/diagramflow/**'
+      - '.github/workflows/diagrams.yml'
+
+jobs:
+  # ===========================================================================
+  # Build diagramflow tool
+  # ===========================================================================
+  build-tool:
+    name: Build diagramflow
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: tools/diagramflow
+        run: npm ci
+
+      - name: Build TypeScript
+        working-directory: tools/diagramflow
+        run: npm run build
+
+      - name: Upload built tool
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagramflow-dist
+          path: tools/diagramflow/dist/
+          retention-days: 1
+
+  # ===========================================================================
+  # Convert Mermaid to BPMN/draw.io
+  # ===========================================================================
+  convert-diagrams:
+    name: Convert Mermaid Diagrams
+    needs: build-tool
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: tools/diagramflow
+        run: npm ci
+
+      - name: Download built tool
+        uses: actions/download-artifact@v4
+        with:
+          name: diagramflow-dist
+          path: tools/diagramflow/dist/
+
+      - name: Convert Mermaid to BPMN/draw.io
+        run: |
+          node tools/diagramflow/dist/cli.js build \
+            --input docs/diagrams \
+            --output docs/diagrams
+
+      - name: Check for drift
+        run: |
+          if [ -n "$(git status --porcelain docs/diagrams/)" ]; then
+            echo "::error::Diagram artifacts out of sync with Mermaid sources"
+            git status --porcelain docs/diagrams/
+            git diff docs/diagrams/
+            exit 1
+          fi
+          echo "All diagram artifacts up-to-date"
+
+  # ===========================================================================
+  # Export PNG from draw.io (on main only)
+  # ===========================================================================
+  export-png:
+    name: Export PNG
+    needs: convert-diagrams
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install draw.io Desktop
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb wget
+          wget -q https://github.com/jgraph/drawio-desktop/releases/download/v24.7.17/drawio-amd64-24.7.17.deb
+          sudo dpkg -i drawio-amd64-24.7.17.deb || sudo apt-get install -f -y
+
+      - name: Export draw.io to PNG
+        run: |
+          mkdir -p docs/diagrams/export
+          for f in docs/diagrams/*.drawio; do
+            [ -e "$f" ] || continue
+            base="$(basename "$f" .drawio)"
+            echo "Exporting $base.png..."
+            xvfb-run -a drawio --export --format png \
+              --output "docs/diagrams/export/${base}.png" "$f" || true
+          done
+
+      - name: Export draw.io to SVG
+        run: |
+          for f in docs/diagrams/*.drawio; do
+            [ -e "$f" ] || continue
+            base="$(basename "$f" .drawio)"
+            echo "Exporting $base.svg..."
+            xvfb-run -a drawio --export --format svg \
+              --output "docs/diagrams/export/${base}.svg" "$f" || true
+          done
+
+      - name: Upload exported diagrams
+        uses: actions/upload-artifact@v4
+        with:
+          name: diagram-exports
+          path: docs/diagrams/export/
+          retention-days: 30
+
+  # ===========================================================================
+  # Validate BPMN
+  # ===========================================================================
+  validate-bpmn:
+    name: Validate BPMN
+    needs: convert-diagrams
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install bpmn-js
+        run: npm install -g bpmn-moddle
+
+      - name: Validate BPMN files
+        run: |
+          for f in docs/diagrams/*.bpmn; do
+            [ -e "$f" ] || continue
+            echo "Validating $(basename "$f")..."
+            # Basic XML validation
+            xmllint --noout "$f" 2>/dev/null || {
+              echo "::error::Invalid XML in $f"
+              exit 1
+            }
+          done
+          echo "All BPMN files valid"
+
+  # ===========================================================================
+  # Summary
+  # ===========================================================================
+  diagram-ci-complete:
+    name: Diagram CI Complete
+    needs: [build-tool, convert-diagrams, validate-bpmn]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check job results
+        run: |
+          if [ "${{ needs.build-tool.result }}" != "success" ] || \
+             [ "${{ needs.convert-diagrams.result }}" != "success" ] || \
+             [ "${{ needs.validate-bpmn.result }}" != "success" ]; then
+            echo "One or more diagram CI jobs failed"
+            exit 1
+          fi
+          echo "All diagram CI jobs passed!"
