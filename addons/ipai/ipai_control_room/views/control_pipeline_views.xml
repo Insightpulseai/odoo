@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Pipeline Views ==================== -->
+
+    <!-- Pipeline Tree View -->
+    <record id="control_pipeline_view_tree" model="ir.ui.view">
+        <field name="name">control.pipeline.tree</field>
+        <field name="model">control.pipeline</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="not active"
+                  decoration-danger="last_run_state == 'failed'"
+                  decoration-success="last_run_state == 'succeeded'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="trigger_type"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="last_run_state" widget="badge"
+                       decoration-success="last_run_state == 'succeeded'"
+                       decoration-danger="last_run_state == 'failed'"
+                       decoration-warning="last_run_state == 'running'"
+                       decoration-info="last_run_state == 'queued'"/>
+                <field name="last_run_at"/>
+                <field name="run_count"/>
+                <field name="success_rate" widget="progressbar"/>
+                <field name="active" column_invisible="True"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Pipeline Form View -->
+    <record id="control_pipeline_view_form" model="ir.ui.view">
+        <field name="name">control.pipeline.form</field>
+        <field name="model">control.pipeline</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_trigger_run" type="object"
+                            string="Run Now" class="oe_highlight"
+                            invisible="not active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="action"
+                                name="%(ipai_control_room.action_control_run)d"
+                                icon="fa-play"
+                                context="{'search_default_pipeline_id': active_id}">
+                            <field string="Runs" name="run_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Pipeline Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="trigger_type"/>
+                            <field name="schedule_id" invisible="trigger_type != 'schedule'"/>
+                            <field name="event_filter" invisible="trigger_type != 'event'"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="project_id"/>
+                            <field name="owner_id"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Stages &amp; Steps" name="stages">
+                            <field name="stage_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="step_count"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Last Run" name="last_run">
+                            <group>
+                                <group>
+                                    <field name="last_run_id"/>
+                                    <field name="last_run_state"/>
+                                    <field name="last_run_at"/>
+                                </group>
+                                <group>
+                                    <field name="success_rate" widget="progressbar"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description" placeholder="Pipeline purpose and documentation..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Pipeline Kanban View -->
+    <record id="control_pipeline_view_kanban" model="ir.ui.view">
+        <field name="name">control.pipeline.kanban</field>
+        <field name="model">control.pipeline</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="trigger_type"/>
+                <field name="last_run_state"/>
+                <field name="last_run_at"/>
+                <field name="success_rate"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_content">
+                            <div class="o_kanban_record_title">
+                                <strong><field name="name"/></strong>
+                            </div>
+                            <div class="o_kanban_record_subtitle">
+                                <field name="trigger_type"/>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="last_run_state" widget="badge"/>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <field name="success_rate" widget="progressbar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Pipeline Search View -->
+    <record id="control_pipeline_view_search" model="ir.ui.view">
+        <field name="name">control.pipeline.search</field>
+        <field name="model">control.pipeline</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="owner_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Manual" name="manual" domain="[('trigger_type', '=', 'manual')]"/>
+                <filter string="Scheduled" name="scheduled" domain="[('trigger_type', '=', 'schedule')]"/>
+                <separator/>
+                <filter string="Last Run Failed" name="failed" domain="[('last_run_state', '=', 'failed')]"/>
+                <filter string="Last Run Succeeded" name="succeeded" domain="[('last_run_state', '=', 'succeeded')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Owner" name="group_owner" context="{'group_by': 'owner_id'}"/>
+                    <filter string="Trigger Type" name="group_trigger" context="{'group_by': 'trigger_type'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Pipeline Action -->
+    <record id="action_control_pipeline" model="ir.actions.act_window">
+        <field name="name">Pipelines</field>
+        <field name="res_model">control.pipeline</field>
+        <field name="view_mode">tree,kanban,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first pipeline
+            </p>
+            <p>
+                Pipelines automate data workflows with stages and steps.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== Pipeline Stage Views ==================== -->
+
+    <record id="control_pipeline_stage_view_form" model="ir.ui.view">
+        <field name="name">control.pipeline.stage.form</field>
+        <field name="model">control.pipeline.stage</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="pipeline_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Steps" name="steps">
+                            <field name="step_ids">
+                                <tree editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="kind"/>
+                                    <field name="enabled"/>
+                                    <field name="timeout_s"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== Pipeline Step Views ==================== -->
+
+    <record id="control_pipeline_step_view_form" model="ir.ui.view">
+        <field name="name">control.pipeline.step.form</field>
+        <field name="model">control.pipeline.step</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="kind"/>
+                            <field name="sequence"/>
+                            <field name="enabled"/>
+                        </group>
+                        <group>
+                            <field name="stage_id"/>
+                            <field name="pipeline_id"/>
+                            <field name="connector_id"/>
+                            <field name="timeout_s"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration" name="config">
+                            <group>
+                                <field name="params_json" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                        </page>
+                        <page string="Input/Output Schema" name="schema">
+                            <group>
+                                <group string="Input Schema">
+                                    <field name="input_spec_json" nolabel="1" widget="ace" options="{'mode': 'json'}"/>
+                                </group>
+                                <group string="Output Schema">
+                                    <field name="output_spec_json" nolabel="1" widget="ace" options="{'mode': 'json'}"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Retry Policy" name="retry">
+                            <field name="retry_policy_json" widget="ace" options="{'mode': 'json'}"/>
+                            <field name="continue_on_error"/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== Environment Views ==================== -->
+
+    <record id="control_env_view_tree" model="ir.ui.view">
+        <field name="name">control.env.tree</field>
+        <field name="model">control.env</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="control_env_view_form" model="ir.ui.view">
+        <field name="name">control.env.form</field>
+        <field name="model">control.env</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration" name="config">
+                            <field name="config_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_env" model="ir.actions.act_window">
+        <field name="name">Environments</field>
+        <field name="res_model">control.env</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
