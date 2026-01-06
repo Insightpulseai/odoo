@@ -1,0 +1,172 @@
+/**
+ * IPAI Platform Theme Tokens
+ *
+ * Core design tokens for the InsightPulse AI platform.
+ * These CSS custom properties provide consistent styling across
+ * Odoo backend and frontend applications.
+ */
+
+:root {
+    /* ================================================================
+     * BRAND COLORS
+     * ================================================================ */
+    --ipai-brand-primary: #0066cc;
+    --ipai-brand-primary-hover: #0052a3;
+    --ipai-brand-primary-active: #003d7a;
+    --ipai-brand-secondary: #00a3cc;
+    --ipai-brand-accent: #ff6b35;
+
+    /* ================================================================
+     * NEUTRAL COLORS
+     * ================================================================ */
+    --ipai-neutral-100: #ffffff;
+    --ipai-neutral-200: #f5f5f5;
+    --ipai-neutral-300: #e0e0e0;
+    --ipai-neutral-400: #bdbdbd;
+    --ipai-neutral-500: #9e9e9e;
+    --ipai-neutral-600: #757575;
+    --ipai-neutral-700: #616161;
+    --ipai-neutral-800: #424242;
+    --ipai-neutral-900: #212121;
+
+    /* ================================================================
+     * SEMANTIC COLORS
+     * ================================================================ */
+    --ipai-success: #28a745;
+    --ipai-success-bg: #d4edda;
+    --ipai-warning: #ffc107;
+    --ipai-warning-bg: #fff3cd;
+    --ipai-danger: #dc3545;
+    --ipai-danger-bg: #f8d7da;
+    --ipai-info: #17a2b8;
+    --ipai-info-bg: #d1ecf1;
+
+    /* ================================================================
+     * TYPOGRAPHY
+     * ================================================================ */
+    --ipai-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                        "Helvetica Neue", Arial, sans-serif;
+    --ipai-font-family-mono: "SF Mono", "Monaco", "Inconsolata", "Fira Code",
+                             "Fira Mono", "Droid Sans Mono", monospace;
+
+    --ipai-font-size-xs: 0.75rem;    /* 12px */
+    --ipai-font-size-sm: 0.875rem;   /* 14px */
+    --ipai-font-size-base: 1rem;     /* 16px */
+    --ipai-font-size-lg: 1.125rem;   /* 18px */
+    --ipai-font-size-xl: 1.25rem;    /* 20px */
+    --ipai-font-size-2xl: 1.5rem;    /* 24px */
+    --ipai-font-size-3xl: 1.875rem;  /* 30px */
+    --ipai-font-size-4xl: 2.25rem;   /* 36px */
+
+    --ipai-font-weight-normal: 400;
+    --ipai-font-weight-medium: 500;
+    --ipai-font-weight-semibold: 600;
+    --ipai-font-weight-bold: 700;
+
+    --ipai-line-height-tight: 1.25;
+    --ipai-line-height-normal: 1.5;
+    --ipai-line-height-relaxed: 1.75;
+
+    /* ================================================================
+     * SPACING
+     * ================================================================ */
+    --ipai-spacing-0: 0;
+    --ipai-spacing-1: 0.25rem;   /* 4px */
+    --ipai-spacing-2: 0.5rem;    /* 8px */
+    --ipai-spacing-3: 0.75rem;   /* 12px */
+    --ipai-spacing-4: 1rem;      /* 16px */
+    --ipai-spacing-5: 1.25rem;   /* 20px */
+    --ipai-spacing-6: 1.5rem;    /* 24px */
+    --ipai-spacing-8: 2rem;      /* 32px */
+    --ipai-spacing-10: 2.5rem;   /* 40px */
+    --ipai-spacing-12: 3rem;     /* 48px */
+    --ipai-spacing-16: 4rem;     /* 64px */
+
+    /* ================================================================
+     * BORDERS & RADIUS
+     * ================================================================ */
+    --ipai-border-width: 1px;
+    --ipai-border-color: var(--ipai-neutral-300);
+
+    --ipai-radius-none: 0;
+    --ipai-radius-sm: 0.125rem;  /* 2px */
+    --ipai-radius-base: 0.25rem; /* 4px */
+    --ipai-radius-md: 0.375rem;  /* 6px */
+    --ipai-radius-lg: 0.5rem;    /* 8px */
+    --ipai-radius-xl: 0.75rem;   /* 12px */
+    --ipai-radius-2xl: 1rem;     /* 16px */
+    --ipai-radius-full: 9999px;
+
+    /* ================================================================
+     * SHADOWS
+     * ================================================================ */
+    --ipai-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --ipai-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --ipai-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --ipai-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --ipai-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+    /* ================================================================
+     * TRANSITIONS
+     * ================================================================ */
+    --ipai-transition-fast: 150ms;
+    --ipai-transition-base: 200ms;
+    --ipai-transition-slow: 300ms;
+    --ipai-transition-timing: cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* ================================================================
+     * Z-INDEX SCALE
+     * ================================================================ */
+    --ipai-z-dropdown: 1000;
+    --ipai-z-sticky: 1020;
+    --ipai-z-fixed: 1030;
+    --ipai-z-modal-backdrop: 1040;
+    --ipai-z-modal: 1050;
+    --ipai-z-popover: 1060;
+    --ipai-z-tooltip: 1070;
+}
+
+/* ================================================================
+ * DARK THEME OVERRIDES
+ * ================================================================ */
+[data-theme="dark"],
+.o_dark_mode {
+    --ipai-brand-primary: #4da6ff;
+    --ipai-brand-primary-hover: #66b3ff;
+    --ipai-brand-primary-active: #80c0ff;
+
+    --ipai-neutral-100: #1a1a1a;
+    --ipai-neutral-200: #2d2d2d;
+    --ipai-neutral-300: #404040;
+    --ipai-neutral-400: #525252;
+    --ipai-neutral-500: #737373;
+    --ipai-neutral-600: #a3a3a3;
+    --ipai-neutral-700: #d4d4d4;
+    --ipai-neutral-800: #e5e5e5;
+    --ipai-neutral-900: #f5f5f5;
+
+    --ipai-border-color: var(--ipai-neutral-400);
+}
+
+/* ================================================================
+ * RISK BADGE STYLES (for module gating)
+ * ================================================================ */
+.o_field_badge[data-value="stable"] {
+    background-color: var(--ipai-success-bg) !important;
+    color: var(--ipai-success) !important;
+}
+
+.o_field_badge[data-value="beta"] {
+    background-color: var(--ipai-warning-bg) !important;
+    color: #856404 !important;
+}
+
+.o_field_badge[data-value="experimental"] {
+    background-color: var(--ipai-danger-bg) !important;
+    color: var(--ipai-danger) !important;
+}
+
+.o_field_badge[data-value="deprecated"] {
+    background-color: #343a40 !important;
+    color: #ffffff !important;
+}
