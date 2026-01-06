@@ -1,0 +1,1227 @@
+{
+  "generated_at": "2026-01-06T07:13:51.175763",
+  "odoo_version": 18,
+  "addons_path": "/home/user/odoo-ce/addons/ipai",
+  "total_modules": 57,
+  "summary": {
+    "stable": 31,
+    "beta": 26,
+    "experimental": 0,
+    "deprecated": 0,
+    "blocked": 0
+  },
+  "modules": {
+    "ipai_advisor": {
+      "name": "ipai_advisor",
+      "display_name": "IPAI Ops Advisor",
+      "summary": "Azure Advisor-style recommendations engine for operational governance",
+      "category": "Operations",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 5,
+      "blocked": false,
+      "reasons": [
+        "IPAI module 'ipai_advisor' doesn't match known domain prefixes"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail"
+      ]
+    },
+    "ipai_agent_core": {
+      "name": "ipai_agent_core",
+      "display_name": "IPAI Agent Core",
+      "summary": "Skill/tool/knowledge registry + run logs for IPAI agents",
+      "category": "Productivity/AI",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "web"
+      ]
+    },
+    "ipai_ai_audit": {
+      "name": "ipai_ai_audit",
+      "display_name": "IPAI AI Audit & Governance",
+      "summary": "AI usage logging, redaction, and governance controls",
+      "category": "Productivity/AI",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_ai_provider_pulser"
+      ]
+    },
+    "ipai_ai_core": {
+      "name": "ipai_ai_core",
+      "display_name": "IPAI AI Core",
+      "summary": "Provider-based AI threads/messages/citations for Odoo CE 18 (works with OCA AI UI).",
+      "category": "Productivity",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "web"
+      ]
+    },
+    "ipai_ai_prompts": {
+      "name": "ipai_ai_prompts",
+      "display_name": "IPAI AI Prompts Library",
+      "summary": "Prompt templates and topic library for AI interactions",
+      "category": "Productivity/AI",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_agent_core",
+        "ipai_ai_provider_pulser"
+      ]
+    },
+    "ipai_ai_provider_kapa": {
+      "name": "ipai_ai_provider_kapa",
+      "display_name": "IPAI AI Provider: Kapa",
+      "summary": "Kapa-style RAG provider for IPAI AI Core.",
+      "category": "Productivity",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "ipai_ai_core"
+      ]
+    },
+    "ipai_ai_provider_pulser": {
+      "name": "ipai_ai_provider_pulser",
+      "display_name": "IPAI AI Provider - Pulser Gateway",
+      "summary": "AI provider adapter for Pulser/self-hosted AI gateway",
+      "category": "Productivity/AI",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_agent_core"
+      ]
+    },
+    "ipai_ai_studio": {
+      "name": "ipai_ai_studio",
+      "display_name": "IPAI AI Studio (CE) - AI-driven Module Builder",
+      "summary": "AI-driven Studio-like module generator for Odoo CE (spec -> addon scaffold -> validate -> apply)",
+      "category": "Productivity",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "web"
+      ]
+    },
+    "ipai_ask_ai": {
+      "name": "ipai_ask_ai",
+      "display_name": "IPAI Ask AI",
+      "summary": "ERP-aware RAG Engine for Finance and Month-End Close workflows",
+      "category": "Productivity/AI",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "project",
+        "ipai_finance_ppm"
+      ]
+    },
+    "ipai_ask_ai_chatter": {
+      "name": "ipai_ask_ai_chatter",
+      "display_name": "IPAI Ask AI Chatter",
+      "summary": "Integrate Ask AI into Odoo Chatter for contextual AI assistance",
+      "category": "Productivity/AI",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "mail",
+        "ipai_ask_ai"
+      ]
+    },
+    "ipai_assets": {
+      "name": "ipai_assets",
+      "display_name": "IPAI Asset Checkout",
+      "summary": "Equipment and asset checkout tracking (Cheqroom-style parity)",
+      "category": "Operations/Equipment",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 5,
+      "blocked": false,
+      "reasons": [
+        "IPAI module 'ipai_assets' doesn't match known domain prefixes"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.1.0",
+      "depends": [
+        "base",
+        "mail",
+        "hr",
+        "stock"
+      ]
+    },
+    "ipai_auth_oauth_internal": {
+      "name": "ipai_auth_oauth_internal",
+      "display_name": "IPAI OAuth Internal User",
+      "summary": "Makes OAuth users Internal Users instead of Portal users",
+      "category": "Technical",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: auth_oauth"
+      ],
+      "deps_missing": [
+        "auth_oauth"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "auth_oauth"
+      ]
+    },
+    "ipai_bir_compliance": {
+      "name": "ipai_bir_compliance",
+      "display_name": "IPAI Tax Shield (Philippines)",
+      "summary": "BIR 2307 Generator & Alphalist/RELIEF DAT File Engine",
+      "category": "Accounting/Localizations",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "account"
+      ]
+    },
+    "ipai_ce_branding": {
+      "name": "ipai_ce_branding",
+      "display_name": "InsightPulse AI - CE Branding",
+      "summary": "Custom branding for Odoo CE login and backend",
+      "category": "Customization",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: remove_odoo_enterprise, disable_odoo_online"
+      ],
+      "deps_missing": [
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.2.0",
+      "depends": [
+        "web",
+        "base",
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
+      ]
+    },
+    "ipai_ce_cleaner": {
+      "name": "ipai_ce_cleaner",
+      "display_name": "IPAI CE Cleaner (No Enterprise/IAP)",
+      "summary": "Hides Enterprise/IAP upsells and rewires links away from odoo.com.",
+      "category": "Tools",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: remove_odoo_enterprise, disable_odoo_online"
+      ],
+      "deps_missing": [
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "web",
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
+      ]
+    },
+    "ipai_chatgpt_sdk_theme": {
+      "name": "ipai_chatgpt_sdk_theme",
+      "display_name": "IPAI ChatGPT App SDK Theme",
+      "summary": "Design tokens and theme aligned to ChatGPT App SDK design system",
+      "category": "Themes",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "web",
+        "website"
+      ]
+    },
+    "ipai_clarity_ppm_parity": {
+      "name": "ipai_clarity_ppm_parity",
+      "display_name": "InsightPulse Clarity PPM Parity",
+      "summary": "Broadcom Clarity PPM feature parity for Odoo 18 CE with complete WBS hierarchy",
+      "category": "Project Management",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.1.0",
+      "depends": [
+        "project"
+      ]
+    },
+    "ipai_close_orchestration": {
+      "name": "ipai_close_orchestration",
+      "display_name": "IPAI Close Cycle Orchestration",
+      "summary": "Close Cycle Orchestration - Cycles, Tasks, Templates, Checklists, Exceptions, Gates",
+      "category": "Accounting/Close",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ]
+    },
+    "ipai_custom_routes": {
+      "name": "ipai_custom_routes",
+      "display_name": "InsightPulse Custom Routes",
+      "summary": "Clean URL routes for Odoo apps (/odoo/discuss, /odoo/invoicing, etc.)",
+      "category": "Extra Tools",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: calendar"
+      ],
+      "deps_missing": [
+        "calendar"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "calendar",
+        "project",
+        "hr_expense"
+      ]
+    },
+    "ipai_default_home": {
+      "name": "ipai_default_home",
+      "display_name": "InsightPulse Custom Home Page",
+      "summary": "Custom app grid home page with modern styling",
+      "category": "Extra Tools",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.3.0.0",
+      "depends": [
+        "base",
+        "web",
+        "mail"
+      ]
+    },
+    "ipai_dev_studio_base": {
+      "name": "ipai_dev_studio_base",
+      "display_name": "InsightPulse Dev Studio Base",
+      "summary": "Base OCA/CE module bundle and dev tools for InsightPulse",
+      "category": "Tools",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.1.0",
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "contacts",
+        "project"
+      ]
+    },
+    "ipai_equipment": {
+      "name": "ipai_equipment",
+      "display_name": "IPAI Equipment Management",
+      "summary": "Cheqroom-style equipment catalog, bookings, and incidents on Odoo CE + OCA.",
+      "category": "Inventory",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 60,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: maintenance",
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended",
+        "IPAI module 'ipai_equipment' doesn't match known domain prefixes"
+      ],
+      "deps_missing": [
+        "maintenance"
+      ],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "stock",
+        "maintenance",
+        "project"
+      ]
+    },
+    "ipai_expense": {
+      "name": "ipai_expense",
+      "display_name": "IPAI Expense & Travel (PH)",
+      "summary": "PH-focused expense & travel workflows (SAP Concur-style) on Odoo CE + OCA.",
+      "category": "Human Resources/Expenses",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended",
+        "IPAI module 'ipai_expense' doesn't match known domain prefixes"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "hr",
+        "hr_expense",
+        "account",
+        "project"
+      ]
+    },
+    "ipai_finance_bir_compliance": {
+      "name": "ipai_finance_bir_compliance",
+      "display_name": "IPAI Finance BIR Compliance (Schedule + Generator)",
+      "summary": "JSON-seeded BIR schedule that generates Prep/Review/Approval/Filing tasks into IM2",
+      "category": "Accounting/Project",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "mail",
+        "ipai_project_program"
+      ]
+    },
+    "ipai_finance_close_automation": {
+      "name": "ipai_finance_close_automation",
+      "display_name": "IPAI Finance Close Automation",
+      "summary": "Month-end close generator with working-day deadline offsets",
+      "category": "Accounting/Project",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: resource"
+      ],
+      "deps_missing": [
+        "resource"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "resource",
+        "ipai_finance_close_seed"
+      ]
+    },
+    "ipai_finance_close_seed": {
+      "name": "ipai_finance_close_seed",
+      "display_name": "IPAI Finance Close Seed",
+      "summary": "Seed data for Month-End Close + BIR Tax Filing + PH Holidays",
+      "category": "Accounting/Project",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: resource"
+      ],
+      "deps_missing": [
+        "resource"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "resource"
+      ]
+    },
+    "ipai_finance_month_end": {
+      "name": "ipai_finance_month_end",
+      "display_name": "IPAI Finance Month-End (Templates + Generator)",
+      "summary": "JSON-seeded month-end templates that generate Preparation/Review/Approval tasks into IM1",
+      "category": "Accounting/Project",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "mail",
+        "ipai_project_program"
+      ]
+    },
+    "ipai_finance_monthly_closing": {
+      "name": "ipai_finance_monthly_closing",
+      "display_name": "IPAI Finance Monthly Closing",
+      "summary": "Structured month-end closing and BIR filing on top of Projects (CE/OCA-only).",
+      "category": "Accounting/Finance",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project"
+      ]
+    },
+    "ipai_finance_ppm": {
+      "name": "ipai_finance_ppm",
+      "display_name": "IPAI Finance PPM",
+      "summary": "Finance Project Portfolio Management (Notion Parity).",
+      "category": "Accounting/Finance",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ]
+    },
+    "ipai_finance_ppm_closing": {
+      "name": "ipai_finance_ppm_closing",
+      "display_name": "IPAI Finance PPM Closing Generator",
+      "summary": "Idempotent Month-End Close & BIR Task Generator with audit trail.",
+      "category": "Accounting/Finance",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.1.0",
+      "depends": [
+        "project",
+        "ipai_finance_ppm",
+        "ipai_ppm_monthly_close"
+      ]
+    },
+    "ipai_finance_ppm_dashboard": {
+      "name": "ipai_finance_ppm_dashboard",
+      "display_name": "IPAI Finance PPM Dashboard",
+      "summary": "Month-end & BIR calendar dashboard (Gantt + calendar graph)",
+      "category": "Accounting/Reporting",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "web"
+      ]
+    },
+    "ipai_finance_ppm_tdi": {
+      "name": "ipai_finance_ppm_tdi",
+      "display_name": "Finance PPM Transaction Data Ingestion (TDI)",
+      "summary": "Import finance team, tasks, BIR calendar, and LogFrame data",
+      "category": "Finance",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "project",
+        "hr",
+        "account"
+      ]
+    },
+    "ipai_finance_project_hybrid": {
+      "name": "ipai_finance_project_hybrid",
+      "display_name": "IPAI Finance Project Hybrid (IM1/IM2 + BIR + Month-End Generators)",
+      "summary": "Turns finance phases into IM projects, seeds finance directory/BIR schedule, generates month-end + compliance tasks, and adds analytics dashboards.",
+      "category": "Project",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "mail"
+      ]
+    },
+    "ipai_industry_accounting_firm": {
+      "name": "ipai_industry_accounting_firm",
+      "display_name": "InsightPulse Industry - Accounting Firm",
+      "summary": "Accounting firm vertical with month-end closing and compliance workflows",
+      "category": "InsightPulse/Vertical",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "ipai_workspace_core"
+      ]
+    },
+    "ipai_industry_marketing_agency": {
+      "name": "ipai_industry_marketing_agency",
+      "display_name": "InsightPulse Industry - Marketing Agency",
+      "summary": "Marketing agency vertical with campaign-specific fields and workflows",
+      "category": "InsightPulse/Vertical",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "ipai_workspace_core"
+      ]
+    },
+    "ipai_marketing_ai": {
+      "name": "ipai_marketing_ai",
+      "display_name": "IPAI Marketing AI (Content + Social Hygiene)",
+      "summary": "Umbrella module for AI-powered marketing automation workflows",
+      "category": "Marketing",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: mass_mailing"
+      ],
+      "deps_missing": [
+        "mass_mailing"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "mass_mailing",
+        "ipai_ask_ai",
+        "ipai_agent_core"
+      ]
+    },
+    "ipai_marketing_journey": {
+      "name": "ipai_marketing_journey",
+      "display_name": "IPAI Marketing Journey Builder",
+      "summary": "Node-based marketing journey builder (Enterprise MA substitute)",
+      "category": "Marketing",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 55,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: mass_mailing, utm",
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [
+        "mass_mailing",
+        "utm"
+      ],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "mass_mailing",
+        "utm",
+        "ipai_agent_core"
+      ]
+    },
+    "ipai_master_control": {
+      "name": "ipai_master_control",
+      "display_name": "Master Control - Work Intake",
+      "summary": "Bridge Odoo events to Master Control work items",
+      "category": "Productivity",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "hr",
+        "hr_expense",
+        "purchase"
+      ]
+    },
+    "ipai_module_gating": {
+      "name": "ipai_module_gating",
+      "display_name": "IPAI Module Production Gating",
+      "summary": "Automated production readiness assessment and install/upgrade gating for Odoo modules",
+      "category": "Technical",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base"
+      ]
+    },
+    "ipai_ocr_expense": {
+      "name": "ipai_ocr_expense",
+      "display_name": "IPAI OCR Expense Digitization",
+      "summary": "AI-powered receipt scanning and expense digitization",
+      "category": "Human Resources/Expenses",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "hr_expense",
+        "ipai_expense"
+      ]
+    },
+    "ipai_platform_theme": {
+      "name": "ipai_platform_theme",
+      "display_name": "IPAI Platform Theme Tokens",
+      "summary": "Core design tokens and theme infrastructure for IPAI platform",
+      "category": "Themes",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "web"
+      ]
+    },
+    "ipai_portal_fix": {
+      "name": "ipai_portal_fix",
+      "display_name": "IPAI Portal Fix",
+      "summary": "Fixes KeyError: website in portal.frontend_layout template",
+      "category": "Technical",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: portal"
+      ],
+      "deps_missing": [
+        "portal"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.1",
+      "depends": [
+        "portal"
+      ]
+    },
+    "ipai_ppm": {
+      "name": "ipai_ppm",
+      "display_name": "IPAI Portfolio & Program Management",
+      "summary": "Portfolio/Program governance layer with risk register, KPI snapshots, and resource allocation",
+      "category": "Project Management",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 5,
+      "blocked": false,
+      "reasons": [
+        "IPAI module 'ipai_ppm' doesn't match known domain prefixes"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "hr",
+        "mail"
+      ]
+    },
+    "ipai_ppm_a1": {
+      "name": "ipai_ppm_a1",
+      "display_name": "IPAI PPM A1 Control Center",
+      "summary": "A1 Control Center - Workstreams, Templates, Tasks, Checks + Seed Import/Export",
+      "category": "Project/Portfolio",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "project"
+      ]
+    },
+    "ipai_ppm_monthly_close": {
+      "name": "ipai_ppm_monthly_close",
+      "display_name": "PPM Monthly Close Scheduler",
+      "summary": "Automated monthly financial close scheduling with PPM and Notion workspace parity",
+      "category": "Project Management",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 30,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: resource"
+      ],
+      "deps_missing": [
+        "resource"
+      ],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "project",
+        "mail",
+        "resource"
+      ]
+    },
+    "ipai_project_gantt": {
+      "name": "ipai_project_gantt",
+      "display_name": "IPAI Project Gantt (CE)",
+      "summary": "Community Gantt-like planning view for Project tasks (no Enterprise deps).",
+      "category": "Project",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "web"
+      ]
+    },
+    "ipai_project_profitability_bridge": {
+      "name": "ipai_project_profitability_bridge",
+      "display_name": "IPAI Project Profitability Bridge",
+      "summary": "Lightweight profitability KPIs per project using analytic lines (CE-safe).",
+      "category": "Project",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 55,
+      "blocked": false,
+      "reasons": [
+        "Unmet dependencies: analytic",
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [
+        "analytic"
+      ],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "analytic",
+        "web"
+      ]
+    },
+    "ipai_project_program": {
+      "name": "ipai_project_program",
+      "display_name": "IPAI Project Program (Program + IM Projects)",
+      "summary": "Program (parent project) + Implementation Modules (IM1/IM2) as child projects + Directory + seed loader",
+      "category": "Project",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "mail"
+      ]
+    },
+    "ipai_project_suite": {
+      "name": "ipai_project_suite",
+      "display_name": "IPAI Project Suite (CE)",
+      "summary": "Toggleable enterprise-like project management features for Odoo CE",
+      "category": "Project",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "project",
+        "mail"
+      ]
+    },
+    "ipai_srm": {
+      "name": "ipai_srm",
+      "display_name": "IPAI Supplier Relationship Management",
+      "summary": "Supplier lifecycle and performance management (SAP SRM/Ariba-style parity)",
+      "category": "Inventory/Purchase",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 5,
+      "blocked": false,
+      "reasons": [
+        "IPAI module 'ipai_srm' doesn't match known domain prefixes"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "mail",
+        "purchase",
+        "contacts"
+      ]
+    },
+    "ipai_studio_ai": {
+      "name": "ipai_studio_ai",
+      "display_name": "IPAI Studio AI",
+      "summary": "Natural Language Customization Engine for Odoo",
+      "category": "Customization/Studio",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.1.0",
+      "depends": [
+        "base",
+        "mail"
+      ]
+    },
+    "ipai_superset_connector": {
+      "name": "ipai_superset_connector",
+      "display_name": "IPAI Superset Connector",
+      "summary": "Embed Superset dashboards in Odoo with guest token authentication",
+      "category": "Reporting/BI",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "web"
+      ]
+    },
+    "ipai_test_fixtures": {
+      "name": "ipai_test_fixtures",
+      "display_name": "IPAI Test Fixtures",
+      "summary": "Shared test fixtures and factory methods for IPAI modules",
+      "category": "Hidden/Tools",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base",
+        "hr",
+        "project"
+      ]
+    },
+    "ipai_theme_fluent2": {
+      "name": "ipai_theme_fluent2",
+      "display_name": "IPAI Fluent 2 Theme Tokens",
+      "summary": "Microsoft Fluent 2 design tokens for Odoo backend",
+      "category": "Themes",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "web"
+      ]
+    },
+    "ipai_v18_compat": {
+      "name": "ipai_v18_compat",
+      "display_name": "IPAI Odoo 18 Compatibility Fixes",
+      "summary": "Post-migrate hotfixes for Odoo 18 view_mode rename (tree->list) and kanban card template issues",
+      "category": "Technical",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 0,
+      "blocked": false,
+      "reasons": [],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "base"
+      ]
+    },
+    "ipai_web_fluent2": {
+      "name": "ipai_web_fluent2",
+      "display_name": "IPAI Web Fluent 2 Theme Layer",
+      "summary": "Fluent 2 design tokens + UI styling for Odoo CE 18 backend (and optional frontend/login).",
+      "category": "Themes/Backend",
+      "license": "LGPL-3",
+      "installable": true,
+      "stage": "stable",
+      "score": 5,
+      "blocked": false,
+      "reasons": [
+        "IPAI module 'ipai_web_fluent2' doesn't match known domain prefixes"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": false,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "web",
+        "mail"
+      ]
+    },
+    "ipai_workspace_core": {
+      "name": "ipai_workspace_core",
+      "display_name": "InsightPulse Workspace Core",
+      "summary": "Unified workspace model for marketing agencies and accounting firms.",
+      "category": "InsightPulse/Core",
+      "license": "AGPL-3",
+      "installable": true,
+      "stage": "beta",
+      "score": 25,
+      "blocked": false,
+      "reasons": [
+        "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+      ],
+      "deps_missing": [],
+      "v18_compat_required": true,
+      "version": "18.0.1.0.0",
+      "depends": [
+        "ipai_dev_studio_base"
+      ]
+    }
+  }
+}

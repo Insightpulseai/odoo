@@ -1,0 +1,202 @@
+# .github/workflows/module-gating.yml
+name: Module Production Gating
+
+on:
+  pull_request:
+    paths:
+      - 'addons/ipai/**'
+      - 'scripts/generate_module_health_report.py'
+  push:
+    branches:
+      - main
+    paths:
+      - 'addons/ipai/**'
+      - 'scripts/generate_module_health_report.py'
+  workflow_dispatch:
+    inputs:
+      check_mode:
+        description: 'Fail if blocked modules exist'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: module-gating-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  module-health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Generate Module Health Report
+        id: health-report
+        run: |
+          set -euo pipefail
+          python3 scripts/generate_module_health_report.py --output-dir ./module-health-output
+
+      - name: Display Summary
+        run: |
+          echo "## Module Health Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Extract summary from JSON
+          if [ -f ./module-health-output/modules_status.json ]; then
+            total=$(jq -r '.total_modules' ./module-health-output/modules_status.json)
+            stable=$(jq -r '.summary.stable' ./module-health-output/modules_status.json)
+            beta=$(jq -r '.summary.beta' ./module-health-output/modules_status.json)
+            experimental=$(jq -r '.summary.experimental' ./module-health-output/modules_status.json)
+            deprecated=$(jq -r '.summary.deprecated' ./module-health-output/modules_status.json)
+            blocked=$(jq -r '.summary.blocked' ./module-health-output/modules_status.json)
+
+            echo "| Stage | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ Stable | $stable |" >> $GITHUB_STEP_SUMMARY
+            echo "| ⚠️ Beta | $beta |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🧪 Experimental | $experimental |" >> $GITHUB_STEP_SUMMARY
+            echo "| ☠️ Deprecated | $deprecated |" >> $GITHUB_STEP_SUMMARY
+            echo "| 🚫 Blocked | $blocked |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Total Modules:** $total" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Check for High-Risk Modules
+        run: |
+          set -euo pipefail
+
+          if [ -f ./module-health-output/modules_status.json ]; then
+            # List modules with score >= 40
+            high_risk=$(jq -r '.modules | to_entries[] | select(.value.score >= 40) | "\(.key): score=\(.value.score), stage=\(.value.stage)"' ./module-health-output/modules_status.json)
+
+            if [ -n "$high_risk" ]; then
+              echo "## High-Risk Modules (score >= 40)" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "$high_risk" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+              echo "::warning::Found high-risk modules. See job summary for details."
+            fi
+          fi
+
+      - name: Validate No Blocked Modules (Strict Mode)
+        if: github.event.inputs.check_mode == 'true' || github.event_name == 'push'
+        run: |
+          set -euo pipefail
+
+          if [ -f ./module-health-output/modules_status.json ]; then
+            blocked=$(jq -r '.summary.blocked' ./module-health-output/modules_status.json)
+
+            if [ "$blocked" -gt 0 ]; then
+              echo "::error::Found $blocked blocked module(s)!"
+
+              # List blocked modules
+              echo "Blocked modules:"
+              jq -r '.modules | to_entries[] | select(.value.blocked == true) | "  - \(.key): \(.value.reasons | join("; "))"' ./module-health-output/modules_status.json
+
+              # In strict mode on push to main, this should fail
+              # For PRs, we just warn
+              if [ "${{ github.event_name }}" = "push" ]; then
+                exit 1
+              fi
+            fi
+          fi
+
+      - name: Upload Health Report Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: module-health-report
+          path: ./module-health-output/
+          retention-days: 30
+
+  manifest-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate All Manifests
+        run: |
+          set -euo pipefail
+
+          fail=0
+
+          while IFS= read -r manifest; do
+            module_name=$(dirname "$manifest" | xargs basename)
+
+            # Check manifest is valid Python
+            if ! python3 -c "import ast; ast.literal_eval(open('$manifest').read())" 2>/dev/null; then
+              echo "::error file=$manifest::Invalid manifest syntax in $module_name"
+              fail=1
+              continue
+            fi
+
+            # Check version format (18.x.x.x)
+            version=$(python3 -c "import ast; m = ast.literal_eval(open('$manifest').read()); print(m.get('version', ''))")
+            if [[ ! "$version" =~ ^18\. ]]; then
+              echo "::warning file=$manifest::Module $module_name has non-18.x version: $version"
+            fi
+
+            # Check required fields
+            for field in name version depends; do
+              has_field=$(python3 -c "import ast; m = ast.literal_eval(open('$manifest').read()); print('$field' in m)")
+              if [ "$has_field" = "False" ]; then
+                echo "::error file=$manifest::Module $module_name missing required field: $field"
+                fail=1
+              fi
+            done
+
+          done < <(find addons/ipai -name "__manifest__.py" -type f)
+
+          exit $fail
+
+      - name: Check Dependency Graph
+        run: |
+          set -euo pipefail
+
+          # Build list of available modules
+          available_modules=""
+          while IFS= read -r manifest; do
+            module_name=$(dirname "$manifest" | xargs basename)
+            available_modules="$available_modules $module_name"
+          done < <(find addons/ipai -name "__manifest__.py" -type f)
+
+          # Add known base modules
+          base_modules="base web mail contacts project hr hr_expense account sale purchase stock crm website"
+          all_modules="$available_modules $base_modules"
+
+          # Check each module's dependencies
+          warn_count=0
+          while IFS= read -r manifest; do
+            module_name=$(dirname "$manifest" | xargs basename)
+
+            deps=$(python3 -c "import ast; m = ast.literal_eval(open('$manifest').read()); print(' '.join(m.get('depends', [])))")
+
+            for dep in $deps; do
+              if [[ ! " $all_modules " =~ " $dep " ]]; then
+                echo "::warning file=$manifest::Module $module_name depends on unknown module: $dep"
+                ((warn_count++)) || true
+              fi
+            done
+
+          done < <(find addons/ipai -name "__manifest__.py" -type f)
+
+          if [ "$warn_count" -gt 0 ]; then
+            echo "Found $warn_count dependency warnings"
+          fi
