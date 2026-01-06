@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import IPAI design tokens */
+@import '@ipai/design-tokens/tokens.css';
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ipai-bg text-ipai-text font-ipai antialiased;
+  }
+
+  /* Better focus styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-ipai-primary ring-offset-2 ring-offset-ipai-bg;
+  }
+}
+
+@layer components {
+  /* Solution page specific utilities */
+  .solution-section {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .solution-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .solution-heading {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+  }
+
+  .solution-subheading {
+    @apply text-lg md:text-xl text-ipai-muted max-w-3xl;
+  }
+
+  /* Glass morphism card */
+  .glass-card {
+    @apply bg-ipai-surface/50 backdrop-blur-xl border border-ipai-border rounded-ipai-lg shadow-ipai;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-ipai-primary to-ipai-primary2;
+  }
+
+  /* Logo grid grayscale effect */
+  .logo-grayscale {
+    @apply grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300;
+  }
+}
+
+@layer utilities {
+  /* Animation delays */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  /* Responsive text balance */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
