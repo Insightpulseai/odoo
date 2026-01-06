@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7d0eeee17589245acb88909ef4c27541d86d7def
+> Commit: 1b296512e31ae5c444668f726891a1fa968b0c1e
 
 ```
 .
@@ -436,6 +436,10 @@
 │   │   ├── ipai_test_fixtures
 │   │   │   ├── models
 │   │   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_v18_compat
+│   │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_workspace_core
@@ -1661,6 +1665,7 @@
 │   ├── GITHUB_SECRETS_SETUP.md
 │   ├── GIT_WORKTREE_STRATEGY.md
 │   ├── GO_LIVE_CHECKLIST.md
+│   ├── GO_LIVE_CHECKLIST_ODOO18_IPAI.md
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── IMPLEMENTATION_SUMMARY.md
@@ -2155,6 +2160,7 @@
 │   ├── fix-pay-invoices-online-error.py
 │   ├── fix_oauth_button.sh
 │   ├── fix_oauth_button_odoo_core.sh
+│   ├── fix_odoo18_views.py
 │   ├── full_deploy_sanity.sh
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
@@ -2831,15 +2837,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-847 directories, 1979 files
+849 directories, 1983 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 962 |
-| Files | 2812 |
-| Python files | 723 |
+| Directories | 965 |
+| Files | 2817 |
+| Python files | 727 |
 | XML files | 369 |
-| Markdown files | 570 |
+| Markdown files | 571 |
