@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 52f751d18b53640a8b91fc08f4fb9adc93fbd147
+> Commit: ac4b2083481814fed8df57f3479372e411a31109
 
 ## 📚 Documentation
 
@@ -178,6 +178,7 @@
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
 | [Month-End Closing Tasks Import Guide](data/IMPORT_GUIDE.md) | data |
+| [Finance Seed Data](data/finance_seed/README.md) | data/finance_seed |
 | [Odoo 18 CE Project Import Templates](data/import_templates/README.md) | data/import_templates |
 | [Database Target Architecture](db/DB_TARGET_ARCHITECTURE.md) | db |
 | [RLS Roles and Permissions](db/rls/RLS_ROLES.md) | db/rls |

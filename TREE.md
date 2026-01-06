@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 52f751d18b53640a8b91fc08f4fb9adc93fbd147
+> Commit: ac4b2083481814fed8df57f3479372e411a31109
 
 ```
 .
@@ -1343,6 +1343,15 @@
 │       ├── gold_embeddings.yaml
 │       └── silver_normalized_docs.yaml
 ├── data
+│   ├── finance_seed
+│   │   ├── 01_project.tags.csv
+│   │   ├── 02_project.project.csv
+│   │   ├── 03_project.task.month_end.csv
+│   │   ├── 04_project.task.bir_tax.csv
+│   │   ├── README.md
+│   │   ├── import_all.py
+│   │   ├── import_finance_seed.sh
+│   │   └── update_tasks_after_import.py
 │   ├── import_templates
 │   │   ├── 01_project.task.type.csv
 │   │   ├── 02_project.project.csv
@@ -2843,15 +2852,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-851 directories, 1987 files
+852 directories, 1995 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 967 |
-| Files | 2821 |
-| Python files | 728 |
+| Directories | 968 |
+| Files | 2829 |
+| Python files | 730 |
 | XML files | 369 |
-| Markdown files | 571 |
+| Markdown files | 572 |
