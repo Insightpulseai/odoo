@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f85a083cf18ece7cb05201f13f4b67087c88eaf4
+> Commit: a42fc69f418ecb5744607749c5d544f88aae8a9d
 
 ```
 .
@@ -1461,8 +1461,11 @@
 │       │   ├── 03-finance-close-orchestrator.json
 │       │   ├── 04-bir-compliance.json
 │       │   ├── 05-github-oauth-callback.json
+│       │   ├── bir_deadline_reminder.json
+│       │   ├── expense_receipt_capture.json
 │       │   ├── finance_closing_automation.json
 │       │   ├── git_operations_hub.json
+│       │   ├── invoice_ocr_to_odoo.json
 │       │   ├── odoo_reverse_mapper.json
 │       │   └── ppm_monthly_close_automation.json
 │       ├── README_FINANCE_CLOSING.md
@@ -1672,6 +1675,8 @@
 │   │       ├── inventory.md
 │   │       ├── oca_modules_vendored.txt
 │   │       └── oca_overlap_map.yaml
+│   ├── connectors
+│   │   └── CLAUDE_CONNECTORS.md
 │   ├── data-model
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
@@ -1706,6 +1711,9 @@
 │   ├── golive
 │   │   ├── TBWA_OMC_PH_GOLIVE_CHECKLIST.csv
 │   │   └── TBWA_OMC_PH_GOLIVE_GUIDE.md
+│   ├── integration
+│   │   ├── INSIGHTPULSE_ROADMAP.md
+│   │   └── SLACK_INTEGRATION_SETUP.md
 │   ├── integrations
 │   │   ├── FOCALBOARD.md
 │   │   ├── MATTERMOST.md
@@ -1986,6 +1994,18 @@
 │   ├── reporting-engine
 │   ├── server-tools
 │   └── web
+├── handbook
+│   ├── compliance
+│   │   └── bir
+│   │       └── calendar.md
+│   ├── finance
+│   │   ├── month-end
+│   │   │   └── checklist.md
+│   │   └── policies
+│   │       └── spending.md
+│   ├── .gitbook.yaml
+│   ├── README.md
+│   └── SUMMARY.md
 ├── infra
 │   ├── azure
 │   │   ├── modules
@@ -2017,6 +2037,8 @@
 │   │   │   ├── jobs.yml
 │   │   │   └── schemas.yml
 │   │   └── databricks.yml
+│   ├── dns
+│   │   └── mailgun_dns_records.md
 │   ├── docker
 │   │   └── odoo.conf
 │   ├── doctl
@@ -2033,10 +2055,13 @@
 │   │   └── docker-compose.yml
 │   ├── links
 │   │   └── collab-stack.md
+│   ├── mattermost
+│   │   └── channel_setup.json
 │   └── superset
 │       ├── README.md
 │       ├── do-app-spec.yaml
-│       └── manifest.json
+│       ├── manifest.json
+│       └── virtual_datasets.sql
 ├── inventory
 │   ├── latest -> runs/20251231T020517Z
 │   └── runs
@@ -2142,6 +2167,11 @@
 │   │   ├── Dockerfile
 │   │   ├── README.md
 │   │   └── requirements.txt
+│   ├── n8n-mcp
+│   │   └── server.py
+│   ├── odoo-mcp
+│   │   ├── config.yaml
+│   │   └── server.py
 │   ├── servers
 │   │   ├── odoo-erp-server
 │   │   │   ├── src
@@ -2192,7 +2222,8 @@
 │   ├── N8N_CLI_README.md
 │   └── WORKFLOW_CONVENTIONS.md
 ├── oca
-│   └── .gitkeep
+│   ├── .gitkeep
+│   └── oca_modules.yaml
 ├── ocr-adapter
 │   ├── scripts
 │   │   ├── README.md
@@ -2276,6 +2307,8 @@
 │   │   ├── run_odoo_tests.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
+│   ├── fixes
+│   │   └── fix_odoo_email_config.sh
 │   ├── import
 │   │   ├── import_activities.py
 │   │   ├── run_import_sequence.sh
@@ -2412,6 +2445,7 @@
 │   ├── install_finance_stack.sh
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
+│   ├── install_oca_modules.sh
 │   ├── introspect_project.py
 │   ├── ipai_full_audit.py
 │   ├── ipai_install_upgrade_test.sh
@@ -2547,6 +2581,12 @@
 ├── skillpack
 │   └── manifest.json
 ├── skills
+│   ├── bir-tax-filing
+│   │   └── SKILL.md
+│   ├── expense-processing
+│   │   └── SKILL.md
+│   ├── finance-month-end
+│   │   └── SKILL.md
 │   ├── visio-drawio-export
 │   │   ├── docker
 │   │   │   ├── Dockerfile
@@ -3074,15 +3114,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-987 directories, 2082 files
+1003 directories, 2106 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1127 |
-| Files | 3158 |
-| Python files | 869 |
+| Directories | 1143 |
+| Files | 3182 |
+| Python files | 871 |
 | XML files | 436 |
-| Markdown files | 591 |
+| Markdown files | 603 |
