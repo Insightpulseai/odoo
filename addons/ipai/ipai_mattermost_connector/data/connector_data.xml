@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Default Mattermost connector (demo/template) -->
+    <record id="connector_mattermost_default" model="ipai.integration.connector">
+        <field name="name">Mattermost (InsightPulse AI)</field>
+        <field name="code">mattermost_ipai</field>
+        <field name="connector_type">mattermost</field>
+        <field name="base_url">https://chat.insightpulseai.net</field>
+        <field name="api_version">v4</field>
+        <field name="auth_type">token</field>
+        <field name="state">draft</field>
+    </record>
+</odoo>
