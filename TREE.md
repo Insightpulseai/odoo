@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 19c6fbfaf178736f7a1f7a5bc34bcc3db9da869c
+> Commit: 1c532a3cb00b1080f8a5d318738c4372b47dacc2
 
 ```
 .
@@ -47,6 +47,7 @@
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
+│   │   ├── ci-web.yml
 │   │   ├── ci.yml
 │   │   ├── control-room-ci.yml
 │   │   ├── databricks-dab-ci.yml
@@ -1139,11 +1140,30 @@
 │   │   ├── app.py
 │   │   ├── package.json
 │   │   └── requirements.txt
-│   └── superset-analytics
-│       ├── do
-│       │   └── app.json
-│       ├── APP.md
-│       └── spec.yaml
+│   ├── superset-analytics
+│   │   ├── do
+│   │   │   └── app.json
+│   │   ├── APP.md
+│   │   └── spec.yaml
+│   └── web
+│       ├── content
+│       │   └── solutions
+│       ├── public
+│       │   └── solutions
+│       ├── scripts
+│       │   └── check-assets.mjs
+│       ├── src
+│       │   ├── app
+│       │   ├── components
+│       │   └── lib
+│       ├── .env.example
+│       ├── .gitignore
+│       ├── next-env.d.ts
+│       ├── next.config.js
+│       ├── package.json
+│       ├── postcss.config.js
+│       ├── tailwind.config.js
+│       └── tsconfig.json
 ├── archive
 │   └── addons
 │       ├── ipai_accounting_firm_pack
@@ -2920,15 +2940,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-896 directories, 2019 files
+906 directories, 2029 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1023 |
-| Files | 2929 |
+| Directories | 1043 |
+| Files | 2961 |
 | Python files | 779 |
 | XML files | 401 |
 | Markdown files | 573 |
