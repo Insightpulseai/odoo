@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Connector Tree View -->
+    <record id="view_integration_connector_tree" model="ir.ui.view">
+        <field name="name">ipai.integration.connector.tree</field>
+        <field name="model">ipai.integration.connector</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="connector_type"/>
+                <field name="base_url"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'" decoration-warning="state == 'testing'" decoration-danger="state == 'error'" decoration-muted="state == 'draft'"/>
+                <field name="last_ping"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Connector Form View -->
+    <record id="view_integration_connector_form" model="ir.ui.view">
+        <field name="name">ipai.integration.connector.form</field>
+        <field name="model">ipai.integration.connector</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection" type="object" string="Test Connection" class="btn-secondary" invisible="state == 'active'"/>
+                    <button name="action_activate" type="object" string="Activate" class="btn-primary" invisible="state != 'testing'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,testing,active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_integration_webhook)d" type="action" class="oe_stat_button" icon="fa-link">
+                            <field name="webhook_ids" widget="statinfo" string="Webhooks"/>
+                        </button>
+                        <button name="%(action_integration_bot)d" type="action" class="oe_stat_button" icon="fa-robot">
+                            <field name="bot_ids" widget="statinfo" string="Bots"/>
+                        </button>
+                        <button name="%(action_integration_oauth)d" type="action" class="oe_stat_button" icon="fa-key">
+                            <field name="oauth_app_ids" widget="statinfo" string="OAuth Apps"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Connector Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="connector_type"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="base_url" widget="url"/>
+                            <field name="api_version"/>
+                            <field name="auth_type"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Status" name="status">
+                            <group>
+                                <field name="last_ping"/>
+                                <field name="last_error" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Audit Logs" name="audit">
+                            <field name="audit_ids" readonly="1">
+                                <tree limit="20">
+                                    <field name="create_date"/>
+                                    <field name="action"/>
+                                    <field name="message"/>
+                                    <field name="level" widget="badge"/>
+                                    <field name="user_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Connector Action -->
+    <record id="action_integration_connector" model="ir.actions.act_window">
+        <field name="name">Connectors</field>
+        <field name="res_model">ipai.integration.connector</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first integration connector
+            </p>
+            <p>
+                Connectors define connections to external services like
+                Mattermost, Focalboard, and n8n.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Board Tree View -->
+    <record id="view_focalboard_board_tree" model="ir.ui.view">
+        <field name="name">ipai.focalboard.board.tree</field>
+        <field name="model">ipai.focalboard.board</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="title"/>
+                <field name="board_type"/>
+                <field name="project_id"/>
+                <field name="sync_enabled"/>
+                <field name="card_count"/>
+                <field name="last_sync"/>
+                <field name="connector_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Board Form View -->
+    <record id="view_focalboard_board_form" model="ir.ui.view">
+        <field name="name">ipai.focalboard.board.form</field>
+        <field name="model">ipai.focalboard.board</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_sync_cards" type="object" string="Sync Cards" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_sync_cards" type="object" class="oe_stat_button" icon="fa-refresh">
+                            <field name="card_count" widget="statinfo" string="Cards"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                            <field name="board_type"/>
+                            <field name="icon"/>
+                            <field name="connector_id"/>
+                        </group>
+                        <group>
+                            <field name="fb_board_id"/>
+                            <field name="fb_workspace_id"/>
+                            <field name="project_id"/>
+                            <field name="last_sync"/>
+                        </group>
+                    </group>
+                    <group string="Sync Settings">
+                        <field name="sync_enabled"/>
+                        <field name="sync_direction"/>
+                    </group>
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <notebook>
+                        <page string="Cards" name="cards">
+                            <field name="card_ids">
+                                <tree>
+                                    <field name="title"/>
+                                    <field name="task_id"/>
+                                    <field name="sync_status" widget="badge"/>
+                                    <field name="last_sync"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Board Action -->
+    <record id="action_focalboard_board" model="ir.actions.act_window">
+        <field name="name">Focalboard Boards</field>
+        <field name="res_model">ipai.focalboard.board</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Card Tree View -->
+    <record id="view_focalboard_card_tree" model="ir.ui.view">
+        <field name="name">ipai.focalboard.card.tree</field>
+        <field name="model">ipai.focalboard.card</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="title"/>
+                <field name="board_id"/>
+                <field name="task_id"/>
+                <field name="sync_status" widget="badge" decoration-success="sync_status == 'synced'" decoration-warning="sync_status == 'pending'" decoration-danger="sync_status in ('conflict', 'error')"/>
+                <field name="last_sync"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Card Form View -->
+    <record id="view_focalboard_card_form" model="ir.ui.view">
+        <field name="name">ipai.focalboard.card.form</field>
+        <field name="model">ipai.focalboard.card</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_odoo_task" type="object" string="Create Odoo Task" class="btn-primary" invisible="task_id"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                            <field name="board_id"/>
+                            <field name="task_id"/>
+                        </group>
+                        <group>
+                            <field name="fb_card_id"/>
+                            <field name="sync_status"/>
+                            <field name="last_sync"/>
+                        </group>
+                    </group>
+                    <group string="Properties" invisible="not properties_json">
+                        <field name="properties_json" widget="ace" options="{'mode': 'json'}" nolabel="1"/>
+                    </group>
+                    <group string="Sync Error" invisible="not sync_error">
+                        <field name="sync_error" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Card Action -->
+    <record id="action_focalboard_card" model="ir.actions.act_window">
+        <field name="name">Focalboard Cards</field>
+        <field name="res_model">ipai.focalboard.card</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu items under Integrations -->
+    <menuitem id="menu_focalboard"
+        name="Focalboard"
+        parent="ipai_integrations.menu_integrations_config"
+        sequence="60"/>
+
+    <menuitem id="menu_focalboard_boards"
+        name="Boards"
+        parent="menu_focalboard"
+        action="action_focalboard_board"
+        sequence="10"/>
+
+    <menuitem id="menu_focalboard_cards"
+        name="Cards"
+        parent="menu_focalboard"
+        action="action_focalboard_card"
+        sequence="20"/>
+</odoo>

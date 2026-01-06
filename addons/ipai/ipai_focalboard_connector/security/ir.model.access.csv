@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_focalboard_board_user,ipai.focalboard.board.user,model_ipai_focalboard_board,ipai_integrations.group_integration_user,1,0,0,0
+access_focalboard_board_manager,ipai.focalboard.board.manager,model_ipai_focalboard_board,ipai_integrations.group_integration_manager,1,1,1,1
+access_focalboard_card_user,ipai.focalboard.card.user,model_ipai_focalboard_card,ipai_integrations.group_integration_user,1,0,0,0
+access_focalboard_card_manager,ipai.focalboard.card.manager,model_ipai_focalboard_card,ipai_integrations.group_integration_manager,1,1,1,1
