@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a42fc69f418ecb5744607749c5d544f88aae8a9d
+> Commit: 782fea9a7a4656d6ba225fcbea132908978d1522
 
 ```
 .
@@ -57,6 +57,7 @@
 │   │   ├── deploy-production.yml
 │   │   ├── diagrams-drawio-enforce.yml
 │   │   ├── diagrams-qa.yml
+│   │   ├── diagrams.yml
 │   │   ├── directional-sync.yml
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
@@ -147,6 +148,7 @@
 │   │   ├── ipai_ai_core
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── tests
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -1662,6 +1664,7 @@
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
+│   │   ├── IPAI_AI_PLATFORM_ORD.md
 │   │   ├── README.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
@@ -1678,6 +1681,8 @@
 │   ├── connectors
 │   │   └── CLAUDE_CONNECTORS.md
 │   ├── data-model
+│   │   ├── IPAI_AI_PLATFORM_ERD.mmd
+│   │   ├── IPAI_AI_PLATFORM_SCHEMA.dbml
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
 │   │   ├── ODOO_ERD.puml
@@ -1703,9 +1708,12 @@
 │   │   ├── README.md
 │   │   └── WORKOS_DEPLOYMENT_PACKAGE.md
 │   ├── diagrams
-│   │   └── architecture
-│   │       ├── README.md
-│   │       └── manifest.json
+│   │   ├── architecture
+│   │   │   ├── README.md
+│   │   │   └── manifest.json
+│   │   ├── mappings
+│   │   │   └── azure_to_do_supabase_odoo.yaml
+│   │   └── ipai_platform_flow.mmd
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2664,6 +2672,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── ipai-ai-platform
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ipai-ai-platform-odoo18
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -2923,6 +2936,17 @@
 │   ├── db-inventory
 │   │   ├── README.md
 │   │   └── inventory.py
+│   ├── diagramflow
+│   │   ├── src
+│   │   │   ├── cli.ts
+│   │   │   ├── index.ts
+│   │   │   ├── parseMermaid.ts
+│   │   │   ├── remap.ts
+│   │   │   ├── toBpmn.ts
+│   │   │   └── toDrawio.ts
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   └── tsconfig.json
 │   ├── docs-crawler
 │   │   ├── .env.example
 │   │   ├── README.md
@@ -3114,15 +3138,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1003 directories, 2106 files
+1008 directories, 2125 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1143 |
-| Files | 3182 |
-| Python files | 871 |
+| Directories | 1148 |
+| Files | 3205 |
+| Python files | 875 |
 | XML files | 436 |
-| Markdown files | 603 |
+| Markdown files | 609 |
