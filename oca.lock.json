@@ -50,7 +50,9 @@
       "commit": "adec64e27900e7527262ef02071b74d2e1d47c8f",
       "modules": [
         "base_view_inheritance_extension",
-        "auditlog"
+        "auditlog",
+        "base_automation",
+        "auth_saml"
       ]
     },
     "timesheet": {
@@ -86,8 +88,13 @@
       "branch": "18.0",
       "commit": null,
       "modules": [
+        "report_substitute",
         "report_xlsx",
-        "report_xlsx_helper"
+        "report_xlsx_helper",
+        "report_py3o",
+        "report_csv",
+        "bi_sql_editor",
+        "sql_export"
       ]
     },
     "server-ux": {
@@ -122,6 +129,18 @@
       "modules": [
         "mail_activity_board",
         "mail_tracking"
+      ]
+    },
+    "ai": {
+      "url": "https://github.com/OCA/ai",
+      "branch": "18.0",
+      "commit": null,
+      "modules": [
+        "ai_oca_bridge",
+        "ai_oca_bridge_chatter",
+        "ai_oca_bridge_document_page",
+        "ai_oca_bridge_extra_parameters",
+        "ai_oca_native_generate_ollama"
       ]
     }
   }

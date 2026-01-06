@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_config_settings_ipai_kapa" model="ir.ui.view">
+        <field name="name">res.config.settings.ipai.kapa</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="IPAI Kapa Provider" string="IPAI Kapa Provider">
+                    <h2>Kapa RAG Provider</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <i class="fa fa-cloud"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="ipai_kapa_base_url" string="Base URL"/>
+                                <div class="text-muted">
+                                    API endpoint URL (leave empty for default)
+                                </div>
+                                <field name="ipai_kapa_base_url"
+                                       placeholder="https://api.kapa.ai"
+                                       class="o_light_label"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <i class="fa fa-folder"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="ipai_kapa_project_id" string="Project ID"/>
+                                <div class="text-muted">
+                                    Your Kapa project identifier
+                                </div>
+                                <field name="ipai_kapa_project_id"
+                                       placeholder="your_project_id"
+                                       class="o_light_label"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <i class="fa fa-key"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="ipai_kapa_api_key" string="API Key"/>
+                                <div class="text-muted">
+                                    Your Kapa API key (keep confidential)
+                                </div>
+                                <field name="ipai_kapa_api_key"
+                                       password="True"
+                                       placeholder="Enter API key"
+                                       class="o_light_label"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt16">
+                        <div class="col-12">
+                            <div class="alert alert-info" role="alert">
+                                <strong>Setup Steps:</strong>
+                                <ol class="mb-0">
+                                    <li>Enter your Kapa API credentials above</li>
+                                    <li>Go to <strong>AI (IPAI) → Providers</strong></li>
+                                    <li>Create a provider with type "Kapa-style RAG"</li>
+                                    <li>Mark it as default for your company</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
