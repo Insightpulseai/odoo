@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI AI Provider - Pulser Gateway",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Productivity/AI",
     "summary": "AI provider adapter for Pulser/self-hosted AI gateway",
     "description": """

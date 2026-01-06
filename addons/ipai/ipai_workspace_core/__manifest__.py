@@ -2,7 +2,7 @@
 {
     "name": "InsightPulse Workspace Core",
     "summary": "Unified workspace model for marketing agencies and accounting firms.",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "InsightPulse/Core",
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_workspace_core",

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Project Profitability Bridge",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Project",
     "summary": "Lightweight profitability KPIs per project using analytic lines (CE-safe).",
     "description": """

@@ -121,7 +121,7 @@
     <record id="action_marketing_journey_participant" model="ir.actions.act_window">
         <field name="name">Participants</field>
         <field name="res_model">marketing.journey.participant</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_marketing_journey_participant_search"/>
     </record>
 
@@ -149,6 +149,6 @@
     <record id="action_marketing_journey_execution_log" model="ir.actions.act_window">
         <field name="name">Execution Logs</field>
         <field name="res_model">marketing.journey.execution.log</field>
-        <field name="view_mode">tree</field>
+        <field name="view_mode">list</field>
     </record>
 </odoo>

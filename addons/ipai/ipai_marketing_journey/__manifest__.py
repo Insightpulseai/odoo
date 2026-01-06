@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Marketing Journey Builder",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Marketing",
     "summary": "Node-based marketing journey builder (Enterprise MA substitute)",
     "description": """
