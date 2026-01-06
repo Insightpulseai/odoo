@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: cfc673307cc8d8fab8ad8d58f3e3b5d4e7eb583b
+> Commit: f85a083cf18ece7cb05201f13f4b67087c88eaf4
 
 ```
 .
@@ -1112,11 +1112,15 @@
 │   │   ├── README.md
 │   │   └── package.json
 │   ├── control-room
+│   │   ├── public
+│   │   │   └── assets
 │   │   ├── src
 │   │   │   ├── app
+│   │   │   ├── assets
 │   │   │   ├── components
 │   │   │   └── types
 │   │   ├── .env.example
+│   │   ├── FINANCE_LANDING_CHECKLIST.md
 │   │   ├── next.config.js
 │   │   ├── package.json
 │   │   ├── postcss.config.js
@@ -3070,15 +3074,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-984 directories, 2081 files
+987 directories, 2082 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1136 |
-| Files | 3150 |
+| Directories | 1127 |
+| Files | 3158 |
 | Python files | 869 |
 | XML files | 436 |
-| Markdown files | 590 |
+| Markdown files | 591 |

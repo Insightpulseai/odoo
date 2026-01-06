@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: cfc673307cc8d8fab8ad8d58f3e3b5d4e7eb583b
+> Commit: f85a083cf18ece7cb05201f13f4b67087c88eaf4
 
 ## 📚 Documentation
 
@@ -145,6 +145,7 @@
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
 | [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
 | [IPAI AI Studio - ChatGPT App](apps/chatgpt_ipai_ai_studio/README.md) | apps/chatgpt_ipai_ai_studio |
+| [Finance Landing Page Implementation - Verification Checklist](apps/control-room/FINANCE_LANDING_CHECKLIST.md) | apps/control-room |
 | [devops-engineer](apps/devops-engineer/APP.md) | apps/devops-engineer |
 | [DO Advisor Agent](apps/do-advisor-agent/README.md) | apps/do-advisor-agent |
 | [DO Advisor - Unified Infrastructure Intelligence](apps/do-advisor-agent/prompts/unified_advisor.md) | apps/do-advisor-agent/prompts |
