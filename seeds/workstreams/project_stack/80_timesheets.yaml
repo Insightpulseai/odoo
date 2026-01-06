@@ -1,0 +1,198 @@
+# Timesheets (Analytic Lines)
+# Model: account.analytic.line
+# Import order: 8 (last - requires tasks to exist)
+
+timesheets:
+  # ============================================================
+  # PROJECT ALPHA TIMESHEETS
+  # ============================================================
+
+  - id: ipai_ts_alpha_001
+    date: "2026-01-08"
+    employee_id: null  # Will be assigned to current user or specific employee
+    project_id: ipai_proj_alpha
+    task_id: ipai_task_alpha_001
+    name: "Kickoff meeting preparation and call"
+    unit_amount: 2.0  # Hours
+    account_id: ipai_aa_acme_alpha
+
+  - id: ipai_ts_alpha_002
+    date: "2026-01-10"
+    employee_id: null
+    project_id: ipai_proj_alpha
+    task_id: ipai_task_alpha_002
+    name: "Stakeholder interviews - day 1"
+    unit_amount: 4.0
+    account_id: ipai_aa_acme_alpha
+
+  - id: ipai_ts_alpha_003
+    date: "2026-01-11"
+    employee_id: null
+    project_id: ipai_proj_alpha
+    task_id: ipai_task_alpha_002
+    name: "Stakeholder interviews - day 2"
+    unit_amount: 4.0
+    account_id: ipai_aa_acme_alpha
+
+  - id: ipai_ts_alpha_004
+    date: "2026-01-13"
+    employee_id: null
+    project_id: ipai_proj_alpha
+    task_id: ipai_task_alpha_002
+    name: "Requirements documentation - draft"
+    unit_amount: 6.0
+    account_id: ipai_aa_acme_alpha
+
+  - id: ipai_ts_alpha_005
+    date: "2026-01-17"
+    employee_id: null
+    project_id: ipai_proj_alpha
+    task_id: ipai_task_alpha_003
+    name: "Requirements document - v1 completion"
+    unit_amount: 8.0
+    account_id: ipai_aa_acme_alpha
+
+  - id: ipai_ts_alpha_006
+    date: "2026-01-21"
+    employee_id: null
+    project_id: ipai_proj_alpha
+    task_id: ipai_task_alpha_005
+    name: "UI component development - forms"
+    unit_amount: 6.0
+    account_id: ipai_aa_acme_alpha
+
+  - id: ipai_ts_alpha_007
+    date: "2026-01-22"
+    employee_id: null
+    project_id: ipai_proj_alpha
+    task_id: ipai_task_alpha_005
+    name: "UI component development - tables"
+    unit_amount: 4.0
+    account_id: ipai_aa_acme_alpha
+
+  # ============================================================
+  # PROJECT BETA TIMESHEETS
+  # ============================================================
+
+  - id: ipai_ts_beta_001
+    date: "2026-02-01"
+    employee_id: null
+    project_id: ipai_proj_beta
+    task_id: ipai_task_beta_001
+    name: "Platform evaluation - Shopify"
+    unit_amount: 4.0
+    account_id: ipai_aa_acme_beta
+
+  - id: ipai_ts_beta_002
+    date: "2026-02-03"
+    employee_id: null
+    project_id: ipai_proj_beta
+    task_id: ipai_task_beta_001
+    name: "Platform evaluation - WooCommerce"
+    unit_amount: 4.0
+    account_id: ipai_aa_acme_beta
+
+  - id: ipai_ts_beta_003
+    date: "2026-02-05"
+    employee_id: null
+    project_id: ipai_proj_beta
+    task_id: ipai_task_beta_001
+    name: "Comparison matrix and recommendation draft"
+    unit_amount: 4.0
+    account_id: ipai_aa_acme_beta
+
+  # ============================================================
+  # PROJECT GAMMA TIMESHEETS
+  # ============================================================
+
+  - id: ipai_ts_gamma_001
+    date: "2026-01-15"
+    employee_id: null
+    project_id: ipai_proj_gamma
+    task_id: ipai_task_gamma_001
+    name: "Discovery workshop - day 1"
+    unit_amount: 4.0
+    account_id: ipai_aa_globex_gamma
+
+  - id: ipai_ts_gamma_002
+    date: "2026-01-16"
+    employee_id: null
+    project_id: ipai_proj_gamma
+    task_id: ipai_task_gamma_001
+    name: "Discovery workshop - day 2"
+    unit_amount: 4.0
+    account_id: ipai_aa_globex_gamma
+
+  - id: ipai_ts_gamma_003
+    date: "2026-01-21"
+    employee_id: null
+    project_id: ipai_proj_gamma
+    task_id: ipai_task_gamma_002
+    name: "Finance process mapping"
+    unit_amount: 6.0
+    account_id: ipai_aa_globex_gamma
+
+  # ============================================================
+  # INTERNAL TIMESHEETS (Non-Billable)
+  # ============================================================
+
+  - id: ipai_ts_internal_001
+    date: "2026-01-15"
+    employee_id: null
+    project_id: ipai_proj_internal_dev
+    task_id: ipai_task_internal_001
+    name: "Infrastructure planning"
+    unit_amount: 4.0
+    account_id: ipai_aa_tbwa_internal
+
+# Odoo import field mapping
+odoo_import:
+  model: account.analytic.line
+  fields:
+    - name: id
+      column: External ID
+      required: true
+
+    - name: date
+      column: Date
+      type: date
+      required: true
+
+    - name: employee_id
+      column: Employee
+      type: many2one
+      relation: hr.employee
+      notes: "Leave blank to assign to current user or assign later"
+
+    - name: project_id
+      column: Project
+      type: many2one
+      relation: project.project
+      required: true
+
+    - name: task_id
+      column: Task
+      type: many2one
+      relation: project.task
+
+    - name: name
+      column: Description
+      required: true
+
+    - name: unit_amount
+      column: Hours
+      type: float
+      required: true
+
+    - name: account_id
+      column: Analytic Account
+      type: many2one
+      relation: account.analytic.account
+
+# Summary statistics (for verification)
+summary:
+  total_hours_alpha: 34.0
+  total_hours_beta: 12.0
+  total_hours_gamma: 14.0
+  total_hours_internal: 4.0
+  grand_total_hours: 64.0
