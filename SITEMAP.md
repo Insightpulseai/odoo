@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5d153245e08e54a746752b3a3b8d67140328b5cb
+> Commit: 5517450c0946a45759715e65c69539993101d03f
 
 ## 📚 Documentation
 
@@ -597,8 +597,11 @@
 |--------|--------|-------------|
 | [ipai_advisor](./addons/ipai/ipai_advisor) | ✅ |  |
 | [ipai_agent_core](./addons/ipai/ipai_agent_core) | ✅ |  |
+| [ipai_ai_audit](./addons/ipai/ipai_ai_audit) | ✅ |  |
 | [ipai_ai_core](./addons/ipai/ipai_ai_core) | ✅ |  |
+| [ipai_ai_prompts](./addons/ipai/ipai_ai_prompts) | ✅ |  |
 | [ipai_ai_provider_kapa](./addons/ipai/ipai_ai_provider_kapa) | ✅ |  |
+| [ipai_ai_provider_pulser](./addons/ipai/ipai_ai_provider_pulser) | ✅ |  |
 | [ipai_ai_studio](./addons/ipai/ipai_ai_studio) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
@@ -628,6 +631,7 @@
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
 | [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
+| [ipai_marketing_journey](./addons/ipai/ipai_marketing_journey) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai/ipai_ocr_expense) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
