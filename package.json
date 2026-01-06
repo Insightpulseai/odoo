@@ -10,9 +10,14 @@
   "scripts": {
     "dev:github-app": "npm --workspace packages/github-app run dev",
     "dev:runner": "npm --workspace apps/pulser-runner run dev",
+    "dev:web": "npm --workspace @ipai/web run dev",
     "build": "npm --workspace packages/github-app run build",
+    "build:web": "npm --workspace @ipai/web run build",
     "lint": "npm --workspace packages/github-app run lint || true",
-    "typecheck": "npm --workspace packages/github-app run typecheck || true"
+    "lint:web": "npm --workspace @ipai/web run lint || true",
+    "typecheck": "npm --workspace packages/github-app run typecheck || true",
+    "typecheck:web": "npm --workspace @ipai/web run type-check || true",
+    "check-assets:web": "npm --workspace @ipai/web run check-assets"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
