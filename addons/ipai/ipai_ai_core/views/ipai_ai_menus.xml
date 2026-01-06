@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root menu under Customization -->
+    <menuitem id="menu_ipai_ai_root"
+              name="AI (IPAI)"
+              parent="base.menu_custom"
+              sequence="25"/>
+
+    <!-- AI Threads action -->
+    <record id="action_ipai_ai_threads" model="ir.actions.act_window">
+        <field name="name">AI Threads</field>
+        <field name="res_model">ipai.ai.thread</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_my_threads': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No AI conversations yet
+            </p>
+            <p>
+                Start a conversation using Ask AI in chatter or the AI menu.
+            </p>
+        </field>
+    </record>
+
+    <!-- AI Providers action -->
+    <record id="action_ipai_ai_providers" model="ir.actions.act_window">
+        <field name="name">AI Providers</field>
+        <field name="res_model">ipai.ai.provider</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No AI providers configured
+            </p>
+            <p>
+                Add an AI provider (Kapa, OpenAI, Anthropic, etc.) to enable Ask AI.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu items -->
+    <menuitem id="menu_ipai_ai_threads"
+              name="Threads"
+              parent="menu_ipai_ai_root"
+              action="action_ipai_ai_threads"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_ai_providers"
+              name="Providers"
+              parent="menu_ipai_ai_root"
+              action="action_ipai_ai_providers"
+              groups="base.group_system"
+              sequence="20"/>
+</odoo>
