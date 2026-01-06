@@ -4,22 +4,28 @@ on:
   push:
     branches: [main]
     paths:
+      - 'addons/ipai/ipai_ai_core/**'
       - 'addons/ipai/ipai_ai_agents_ui/**'
       - 'addons/ipai/ipai_ai_connectors/**'
       - 'addons/ipai/ipai_ai_sources_odoo/**'
-      - 'spec/ipai-ai-platform-odoo18/**'
+      - 'addons/ipai/ipai_workspace_core/**'
+      - 'spec/ipai-ai-platform/**'
       - 'db/migrations/*_IPAI_KB*.sql'
       - 'docs/architecture/IPAI_AI_PLATFORM*'
+      - 'docs/data-model/IPAI_AI_PLATFORM*'
       - 'docs/api/openapi.ipai_ai_platform.yaml'
       - '.github/workflows/ipai-ai-platform-ci.yml'
   pull_request:
     paths:
+      - 'addons/ipai/ipai_ai_core/**'
       - 'addons/ipai/ipai_ai_agents_ui/**'
       - 'addons/ipai/ipai_ai_connectors/**'
       - 'addons/ipai/ipai_ai_sources_odoo/**'
-      - 'spec/ipai-ai-platform-odoo18/**'
+      - 'addons/ipai/ipai_workspace_core/**'
+      - 'spec/ipai-ai-platform/**'
       - 'db/migrations/*_IPAI_KB*.sql'
       - 'docs/architecture/IPAI_AI_PLATFORM*'
+      - 'docs/data-model/IPAI_AI_PLATFORM*'
       - 'docs/api/openapi.ipai_ai_platform.yaml'
       - '.github/workflows/ipai-ai-platform-ci.yml'
 
@@ -43,7 +49,8 @@ jobs:
 
       - name: Run flake8
         run: |
-          flake8 addons/ipai/ipai_ai_agents_ui \
+          flake8 addons/ipai/ipai_ai_core \
+                 addons/ipai/ipai_ai_agents_ui \
                  addons/ipai/ipai_ai_connectors \
                  addons/ipai/ipai_ai_sources_odoo \
                  --max-line-length=120 \
@@ -52,6 +59,7 @@ jobs:
       - name: Check black formatting
         run: |
           black --check --line-length=120 \
+                addons/ipai/ipai_ai_core \
                 addons/ipai/ipai_ai_agents_ui \
                 addons/ipai/ipai_ai_connectors \
                 addons/ipai/ipai_ai_sources_odoo || echo "Black formatting check failed (non-blocking)"
@@ -59,6 +67,7 @@ jobs:
       - name: Check isort
         run: |
           isort --check-only \
+                addons/ipai/ipai_ai_core \
                 addons/ipai/ipai_ai_agents_ui \
                 addons/ipai/ipai_ai_connectors \
                 addons/ipai/ipai_ai_sources_odoo || echo "isort check failed (non-blocking)"
@@ -112,18 +121,19 @@ jobs:
       - name: Check spec files exist
         run: |
           echo "Checking spec kit bundle..."
-          test -f spec/ipai-ai-platform-odoo18/constitution.md || exit 1
-          test -f spec/ipai-ai-platform-odoo18/prd.md || exit 1
-          test -f spec/ipai-ai-platform-odoo18/plan.md || exit 1
-          test -f spec/ipai-ai-platform-odoo18/tasks.md || exit 1
+          test -f spec/ipai-ai-platform/constitution.md || exit 1
+          test -f spec/ipai-ai-platform/prd.md || exit 1
+          test -f spec/ipai-ai-platform/plan.md || exit 1
+          test -f spec/ipai-ai-platform/tasks.md || exit 1
           echo "All spec files present"
 
       - name: Check documentation exists
         run: |
           echo "Checking documentation..."
           test -f docs/architecture/IPAI_AI_PLATFORM_ARCH.md || exit 1
-          test -f docs/architecture/IPAI_AI_PLATFORM_ERD.dbml || exit 1
-          test -f docs/ord/IPAI_AI_PLATFORM_ORD.md || exit 1
+          test -f docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml || exit 1
+          test -f docs/data-model/IPAI_AI_PLATFORM_ERD.mmd || exit 1
+          test -f docs/architecture/IPAI_AI_PLATFORM_ORD.md || exit 1
           test -f docs/api/openapi.ipai_ai_platform.yaml || exit 1
           echo "All documentation files present"
 

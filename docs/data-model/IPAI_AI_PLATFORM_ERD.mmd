@@ -1,0 +1,228 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#0078d4', 'lineColor': '#0078d4'}}}%%
+erDiagram
+    %% ==========================================================================
+    %% IPAI AI Platform - Entity Relationship Diagram
+    %% Generated: 2025-01-06
+    %% Render at: https://mermaid.live
+    %% ==========================================================================
+
+    %% --------------------------------------------------------------------------
+    %% Odoo Core Entities
+    %% --------------------------------------------------------------------------
+
+    res_company {
+        integer id PK
+        varchar name
+        timestamp create_date
+        timestamp write_date
+    }
+
+    res_users {
+        integer id PK
+        varchar name
+        varchar login UK
+        integer company_id FK
+    }
+
+    project_project {
+        integer id PK
+        varchar name
+        boolean active
+        integer company_id FK
+        integer user_id FK
+    }
+
+    project_task {
+        integer id PK
+        varchar name
+        text description
+        integer project_id FK
+        integer stage_id
+    }
+
+    mail_channel {
+        integer id PK
+        varchar name
+        varchar channel_type
+    }
+
+    mail_message {
+        integer id PK
+        varchar model
+        integer res_id
+        text body
+        integer author_id FK
+    }
+
+    %% --------------------------------------------------------------------------
+    %% IPAI AI Core Entities
+    %% --------------------------------------------------------------------------
+
+    ipai_ai_provider {
+        integer id PK
+        varchar name
+        integer sequence
+        varchar provider_type "kapa|openai|anthropic|ollama"
+        boolean active
+        integer company_id FK
+        boolean is_default
+        integer total_requests
+        integer total_tokens
+        float avg_latency_ms
+    }
+
+    ipai_ai_thread {
+        integer id PK
+        varchar name
+        integer provider_id FK
+        integer company_id FK
+        varchar external_thread_id
+        integer user_id FK
+        varchar state "active|closed"
+        integer message_count
+    }
+
+    ipai_ai_message {
+        integer id PK
+        integer thread_id FK
+        varchar role "user|assistant|system"
+        text content
+        integer provider_latency_ms
+        varchar provider_status
+        float confidence
+        integer tokens_used
+        integer citation_count
+    }
+
+    ipai_ai_citation {
+        integer id PK
+        integer message_id FK
+        integer rank
+        varchar source_id
+        varchar title
+        varchar url
+        text snippet
+        float score
+    }
+
+    ipai_ai_prompt {
+        integer id PK
+        varchar name
+        varchar code UK
+        text template
+        text variables_json
+        boolean active
+        integer company_id FK
+    }
+
+    ipai_ai_audit {
+        integer id PK
+        varchar operation "ask|search|feedback"
+        integer provider_id FK
+        integer user_id FK
+        integer thread_id FK
+        integer message_id FK
+        text request_json
+        text response_json
+        integer latency_ms
+        varchar status
+        text error_message
+    }
+
+    %% --------------------------------------------------------------------------
+    %% IPAI AI Connectors
+    %% --------------------------------------------------------------------------
+
+    ipai_ai_event {
+        integer id PK
+        varchar source "n8n|github|slack"
+        varchar event_type
+        varchar ref
+        text payload_json
+        boolean processed
+        timestamp processed_date
+        integer processor_id FK
+        text notes
+    }
+
+    %% --------------------------------------------------------------------------
+    %% IPAI Workspace
+    %% --------------------------------------------------------------------------
+
+    ipai_workspace {
+        integer id PK
+        varchar name
+        text description
+        varchar visibility "private|internal|public"
+        integer company_id FK
+        integer project_id FK
+        integer channel_id FK
+        boolean active
+        integer create_uid FK
+    }
+
+    ipai_workspace_member {
+        integer id PK
+        integer workspace_id FK
+        integer user_id FK
+        varchar role "member|admin|owner"
+    }
+
+    %% --------------------------------------------------------------------------
+    %% Supabase KB (External Reference)
+    %% --------------------------------------------------------------------------
+
+    kb_chunks {
+        bigint id PK
+        varchar tenant_ref "odoo_company:N"
+        varchar source_type "odoo_task|odoo_kb"
+        varchar source_ref "model:id"
+        varchar title
+        varchar url
+        text content
+        vector embedding "1536 dims"
+        timestamp updated_at
+    }
+
+    %% ==========================================================================
+    %% Relationships
+    %% ==========================================================================
+
+    %% Odoo Core
+    res_users ||--o{ res_company : "belongs_to"
+    project_project ||--o{ res_company : "belongs_to"
+    project_project ||--o{ res_users : "managed_by"
+    project_task ||--o{ project_project : "belongs_to"
+    mail_message ||--o{ res_users : "authored_by"
+
+    %% AI Provider & Thread
+    ipai_ai_provider ||--o{ res_company : "belongs_to"
+    ipai_ai_thread ||--o{ ipai_ai_provider : "uses"
+    ipai_ai_thread ||--o{ res_users : "owned_by"
+
+    %% Messages & Citations
+    ipai_ai_message ||--o{ ipai_ai_thread : "belongs_to"
+    ipai_ai_citation ||--o{ ipai_ai_message : "belongs_to"
+
+    %% Prompts
+    ipai_ai_prompt ||--o{ res_company : "scoped_to"
+
+    %% Audit Trail
+    ipai_ai_audit ||--o{ ipai_ai_provider : "tracks"
+    ipai_ai_audit ||--o{ res_users : "performed_by"
+    ipai_ai_audit ||--o| ipai_ai_thread : "for_thread"
+    ipai_ai_audit ||--o| ipai_ai_message : "for_message"
+
+    %% Events
+    ipai_ai_event ||--o| res_users : "processed_by"
+
+    %% Workspace
+    ipai_workspace ||--o{ res_company : "belongs_to"
+    ipai_workspace ||--o| project_project : "contains"
+    ipai_workspace ||--o| mail_channel : "contains"
+    ipai_workspace ||--o{ res_users : "created_by"
+    ipai_workspace_member ||--o{ ipai_workspace : "belongs_to"
+    ipai_workspace_member ||--o{ res_users : "is_user"
+
+    %% KB (conceptual - external)
+    %% kb_chunks relates to Odoo records via source_ref

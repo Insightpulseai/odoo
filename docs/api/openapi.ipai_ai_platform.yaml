@@ -38,6 +38,8 @@ tags:
     description: Ask AI panel endpoints
   - name: Connectors
     description: Integration webhook endpoints
+  - name: Workspaces
+    description: Workspace/Space management
   - name: Supabase KB
     description: Knowledge base RPCs
 
@@ -191,6 +193,103 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
+
+  # ============================================================================
+  # Workspace Endpoints
+  # ============================================================================
+
+  /ipai_workspaces/list:
+    post:
+      tags: [Workspaces]
+      summary: List user's workspaces
+      description: |
+        Returns all workspaces the current user has access to.
+        Access is determined by workspace visibility and membership.
+      security:
+        - odooSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            example:
+              jsonrpc: "2.0"
+              method: call
+              params: {}
+              id: 1
+      responses:
+        '200':
+          description: List of workspaces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceListResponse'
+
+  /ipai_workspaces/create:
+    post:
+      tags: [Workspaces]
+      summary: Create a new workspace
+      description: |
+        Creates a new workspace with automatic creation of:
+        - Linked project (project.project)
+        - Linked discuss channel (mail.channel)
+        - Owner membership for the creator
+      security:
+        - odooSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            example:
+              jsonrpc: "2.0"
+              method: call
+              params:
+                name: "Product Team Space"
+                description: "Workspace for the product team"
+                visibility: private
+              id: 1
+      responses:
+        '200':
+          description: Workspace created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceCreateResponse'
+
+  /ipai_workspaces/members:
+    post:
+      tags: [Workspaces]
+      summary: Manage workspace members
+      description: |
+        Add, remove, or update workspace members.
+        Requires admin role on the workspace.
+      security:
+        - odooSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            example:
+              jsonrpc: "2.0"
+              method: call
+              params:
+                workspace_id: 1
+                action: add
+                user_ids: [5, 6, 7]
+                role: member
+              id: 1
+      responses:
+        '200':
+          description: Members updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MemberResponse'
 
   # ============================================================================
   # Supabase KB RPCs
@@ -521,3 +620,98 @@ components:
         score:
           type: number
           description: Similarity score (0-1, higher is better)
+
+    # =========================================================================
+    # Workspace Schemas
+    # =========================================================================
+
+    Workspace:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        visibility:
+          type: string
+          enum: [private, internal, public]
+        project_id:
+          type: integer
+        channel_id:
+          type: integer
+        role:
+          type: string
+          enum: [member, admin, owner]
+          description: Current user's role in this workspace
+        member_count:
+          type: integer
+
+    WorkspaceListResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            ok:
+              type: boolean
+            workspaces:
+              type: array
+              items:
+                $ref: '#/components/schemas/Workspace'
+            error:
+              type: string
+
+    WorkspaceCreateResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            ok:
+              type: boolean
+            workspace:
+              $ref: '#/components/schemas/Workspace'
+            error:
+              type: string
+
+    WorkspaceMember:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        user_name:
+          type: string
+        role:
+          type: string
+          enum: [member, admin, owner]
+
+    MemberResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            ok:
+              type: boolean
+            members:
+              type: array
+              items:
+                $ref: '#/components/schemas/WorkspaceMember'
+            error:
+              type: string
