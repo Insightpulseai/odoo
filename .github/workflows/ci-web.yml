@@ -1,0 +1,81 @@
+name: CI - Web App
+
+on:
+  push:
+    branches: [main, claude/**]
+    paths:
+      - 'apps/web/**'
+      - 'packages/ipai-design-tokens/**'
+      - '.github/workflows/ci-web.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'packages/ipai-design-tokens/**'
+
+jobs:
+  build:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build design tokens
+        run: npm --workspace @ipai/design-tokens run build
+
+      - name: Check assets
+        run: npm run check-assets:web
+
+      - name: Type check
+        run: npm run typecheck:web
+
+      - name: Lint
+        run: npm run lint:web
+
+      - name: Build
+        run: npm run build:web
+
+  asset-check:
+    name: Asset Manifest Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify asset directories exist
+        run: |
+          echo "Checking required asset directories..."
+          dirs=(
+            "apps/web/public/solutions/financial-services/bg"
+            "apps/web/public/solutions/financial-services/hero"
+            "apps/web/public/solutions/financial-services/logos"
+            "apps/web/public/solutions/financial-services/use-cases"
+            "apps/web/public/solutions/financial-services/resources"
+            "apps/web/public/solutions/financial-services/partners"
+          )
+          for dir in "${dirs[@]}"; do
+            if [ -d "$dir" ]; then
+              echo "✓ $dir"
+            else
+              echo "✗ Missing: $dir"
+              exit 1
+            fi
+          done
+          echo "All required directories exist!"
