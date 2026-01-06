@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 755b251dadbea8fab2d277317519bea5b5cf41c5
+> Commit: 7d0eeee17589245acb88909ef4c27541d86d7def
 
 ```
 .
@@ -1627,6 +1627,7 @@
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
+│   ├── CE_OCA_PROJECT_STACK.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
 │   ├── DELIVERABLES_MANIFEST.md
@@ -2079,6 +2080,9 @@
 │   ├── prod
 │   │   ├── deploy_workos.sh
 │   │   └── verify_workos.sh
+│   ├── seeds
+│   │   ├── generate_project_stack_csv.py
+│   │   └── generate_project_stack_xlsx.py
 │   ├── sync
 │   │   ├── docs-to-kb.js
 │   │   ├── generate-sitemap.js
@@ -2095,6 +2099,7 @@
 │   ├── assign_module_icons.py
 │   ├── audit_email_config.py
 │   ├── audit_ipai_modules.py
+│   ├── audit_oca_modules.py
 │   ├── auto_error_handler.sh
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
@@ -2260,6 +2265,19 @@
 │   │   │   ├── 40_kpis.yaml
 │   │   │   ├── 50_roles_raci.yaml
 │   │   │   └── 90_odoo_mapping.yaml
+│   │   ├── project_stack
+│   │   │   ├── csv
+│   │   │   ├── 00_workstream.yaml
+│   │   │   ├── 10_partners.yaml
+│   │   │   ├── 20_analytic_accounts.yaml
+│   │   │   ├── 30_products.yaml
+│   │   │   ├── 40_projects.yaml
+│   │   │   ├── 50_tags.yaml
+│   │   │   ├── 60_stages.yaml
+│   │   │   ├── 70_tasks.yaml
+│   │   │   ├── 80_timesheets.yaml
+│   │   │   ├── 90_odoo_mapping.yaml
+│   │   │   └── project_stack_import.xlsx
 │   │   └── stc_tax_compliance
 │   │       ├── 00_workstream.yaml
 │   │       ├── 10_worklist_types.yaml
@@ -2813,15 +2831,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-844 directories, 1964 files
+847 directories, 1979 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 959 |
-| Files | 2789 |
-| Python files | 720 |
+| Directories | 962 |
+| Files | 2812 |
+| Python files | 723 |
 | XML files | 369 |
-| Markdown files | 569 |
+| Markdown files | 570 |
