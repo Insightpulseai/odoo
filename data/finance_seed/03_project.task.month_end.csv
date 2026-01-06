@@ -1,0 +1,109 @@
+id,name,project_id/id,tag_ids/id,planned_hours,sequence,description
+ipai_seed.task_me_01,"[I.1] Process and record Payroll, Final Pay, SL Conversions, and early retirement accrual",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_1,ipai_seed.tag_payroll_personnel",16,10,"Phase I: Initial & Compliance
+Category: Payroll & Personnel
+Prep by: RIM | Review: CKVC | Approve: CKVC"
+ipai_seed.task_me_02,"[I.2] Calculate and record monthly Tax Provision and PPB Provision",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_1,ipai_seed.tag_tax_provisions",16,20,"Phase I: Initial & Compliance
+Category: Tax & Provisions
+Prep by: RIM | Review: CKVC | Approve: CKVC"
+ipai_seed.task_me_03,"[I.3] Record recurring monthly Rental Income/Expense and hospitalization plan amortization",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_1,ipai_seed.tag_rent_leases",16,30,"Phase I: Initial & Compliance
+Category: Rent & Leases
+Prep by: RIM | Review: CKVC | Approve: CKVC"
+ipai_seed.task_me_04,"[I.4] Record accruals for Consultancy Fees and General Expense Accruals",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_1,ipai_seed.tag_accruals_expenses",16,40,"Phase I: Initial & Compliance
+Category: Accruals & Expenses
+Prep by: RIM | Review: CKVC | Approve: CKVC"
+ipai_seed.task_me_05,"[I.5] Process and record Payments for various Cash Advances",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_1,ipai_seed.tag_accruals_expenses",16,50,"Phase I: Initial & Compliance
+Category: Accruals & Expenses
+Prep by: RIM | Review: CKVC | Approve: CKVC"
+ipai_seed.task_me_06,"[I.6] Process reversal entries for prior month accruals and reclassifications",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_1,ipai_seed.tag_prior_period_review",16,60,"Phase I: Initial & Compliance
+Category: Prior Period Review
+Prep by: RIM | Review: CKVC | Approve: CKVC"
+ipai_seed.task_me_07,"[II.1] Record monthly Depreciation, Amortization for vehicles/purchases/LOA",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_2,ipai_seed.tag_amortization_corporate",16,70,"Phase II: Accruals & Amortization
+Category: Amortization & Corporate
+Prep by: BOM | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_08,"[II.2] Accrue monthly Management/Royalty fees and Innovations/Initiatives funds",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_2,ipai_seed.tag_corporate_accruals",16,80,"Phase II: Accruals & Amortization
+Category: Corporate Accruals
+Prep by: BOM | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_09,"[II.3] Record monthly Corporate Insurance accrual and prepaid Health Insurance amortization",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_2,ipai_seed.tag_insurance",16,90,"Phase II: Accruals & Amortization
+Category: Insurance
+Prep by: BOM | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_10,"[II.4] Record bank charges, FX revaluation, and stock option expense",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_2,ipai_seed.tag_treasury_other",16,100,"Phase II: Accruals & Amortization
+Category: Treasury & Other
+Prep by: BOM | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_11,"[II.5] Process reversal entries for prior month Accruals (trainings, production/retainers)",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_2,ipai_seed.tag_prior_period_review",16,110,"Phase II: Accruals & Amortization
+Category: Prior Period Review
+Prep by: BOM | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_12,"[II.6] Prepare reports for Flash, Wins & Losses and Revenue",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_2,ipai_seed.tag_regional_reporting",16,120,"Phase II: Accruals & Amortization
+Category: Regional Reporting
+Prep by: BOM | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_13,"[III.1] Accrue Production, Retainer Fees, Media Commission, Creative Fees, and OOPC",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_client_billings",16,130,"Phase III: WIP
+Category: Client Billings
+Prep by: JPAL | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_14,"[III.2] Perform month-end Reclassifications of OOP to WIP and WIP to OOP",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_wip_oop_management",16,140,"Phase III: WIP
+Category: WIP/OOP Management
+Prep by: JPAL | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_15,"[III.3] Record monthly Amortization of Business Permit and LOA",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_amortization_corporate",16,150,"Phase III: WIP
+Category: Amortization & Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_16,"[III.4] Accrue estimated monthly Audit Fees",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_amortization_corporate",16,160,"Phase III: WIP
+Category: Amortization & Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_17,"[III.5] Record monthly Intercompany Rental Expense/Income",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_amortization_corporate",16,170,"Phase III: WIP
+Category: Amortization & Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_18,"[III.6] Perform month-end Revaluation of Intercompany Balances",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_amortization_corporate",16,180,"Phase III: WIP
+Category: Amortization & Corporate
+Prep by: JPAL | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_19,"[III.7] Prepare Working Capital reports for AR",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_ar_aging_wc",16,190,"Phase III: WIP
+Category: AR Aging - WC
+Prep by: JPAL | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_20,"[III.8] Process and record CA Liquidations for project-related expenses",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_ca_liquidations",16,200,"Phase III: WIP
+Category: CA Liquidations
+Prep by: LAS | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_21,"[III.9] Prepare AP Aging report for working capital submission",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_ap_aging_wc",16,210,"Phase III: WIP
+Category: AP Aging - WC
+Prep by: LAS | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_22,"[III.10] Prepare HOW's summary report",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_oop",16,220,"Phase III: WIP
+Category: OOP
+Prep by: LAS | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_23,"[III.11] Record monthly interest expense on leased assets and amortization reclass",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_asset_lease_entries",16,230,"Phase III: WIP
+Category: Asset & Lease Entries
+Prep by: LAS | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_24,"[III.12] Process GL reclassifications and Marketing Expense categories",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_3,ipai_seed.tag_reclassifications",16,240,"Phase III: WIP
+Category: Reclassifications
+Prep by: LAS | Review: BOM | Approve: CKVC"
+ipai_seed.task_me_25,"[IV.1] Compile and record monthly Input VAT entries and VAT Report",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_vat_taxes",16,250,"Phase IV: Final Adjustments
+Category: VAT & Taxes
+Prep by: JLI | Review: JPAL | Approve: CKVC"
+ipai_seed.task_me_26,"[IV.2] Accrue recurring Expenses for monthly costs",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_accruals_assets",16,260,"Phase IV: Final Adjustments
+Category: Accruals & Assets
+Prep by: JLI | Review: LAS | Approve: CKVC"
+ipai_seed.task_me_27,"[IV.3] Record monthly capitalization of Other Computer Related Costs",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_accruals_assets",16,270,"Phase IV: Final Adjustments
+Category: Accruals & Assets
+Prep by: JLI | Review: LAS | Approve: CKVC"
+ipai_seed.task_me_28,"[IV.4] Prepare AP Aging report with detailed status per invoice",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_ap_aging",16,280,"Phase IV: Final Adjustments
+Category: AP Aging
+Prep by: JLI | Review: LAS | Approve: CKVC"
+ipai_seed.task_me_29,"[IV.5] Process and record CA Liquidations submitted by employees",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_ca_liquidations",16,290,"Phase IV: Final Adjustments
+Category: CA Liquidations
+Prep by: RMQB | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_30,"[IV.6] Accrue monthly Employee Cellphone Allowance expense",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_accruals_assets",16,300,"Phase IV: Final Adjustments
+Category: Accruals & Assets
+Prep by: RMQB | Review: LAS | Approve: CKVC"
+ipai_seed.task_me_31,"[IV.7] Process expense reclassifications (General Expense to Wireless/Meals)",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_expense_reclassification",16,310,"Phase IV: Final Adjustments
+Category: Expense Reclassification
+Prep by: RMQB | Review: RIM | Approve: CKVC"
+ipai_seed.task_me_32,"[IV.8] Compile and record monthly VAT Report (Initial and additional entries)",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_vat_reporting",16,320,"Phase IV: Final Adjustments
+Category: VAT Reporting
+Prep by: JAP | Review: JPAL | Approve: CKVC"
+ipai_seed.task_me_33,"[IV.9] Process and record Job Code Transfers for consultancy/corporate projects",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_job_transfers",16,330,"Phase IV: Final Adjustments
+Category: Job Transfers
+Prep by: JAP | Review: JPAL | Approve: CKVC"
+ipai_seed.task_me_34,"[IV.10] Record specific GL reclassifications for month-end adjustments",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_job_transfers",16,340,"Phase IV: Final Adjustments
+Category: Job Transfers
+Prep by: JAP | Review: JPAL | Approve: CKVC"
+ipai_seed.task_me_35,"[IV.11] Compile documents for revenue accrual attachments",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_accruals",16,350,"Phase IV: Final Adjustments
+Category: Accruals
+Prep by: JRMO | Review: JPAL | Approve: CKVC"
+ipai_seed.task_me_36,"[IV.12] Prepare WIP schedule summary per Job#",ipai_seed.project_month_end_close,"ipai_seed.tag_phase_4,ipai_seed.tag_wip",16,360,"Phase IV: Final Adjustments
+Category: WIP
+Prep by: JRMO | Review: JPAL | Approve: CKVC"
