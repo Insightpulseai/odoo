@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Audit Tree View -->
+    <record id="view_integration_audit_tree" model="ir.ui.view">
+        <field name="name">ipai.integration.audit.tree</field>
+        <field name="model">ipai.integration.audit</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" default_order="create_date desc">
+                <field name="create_date"/>
+                <field name="connector_id"/>
+                <field name="connector_type"/>
+                <field name="action"/>
+                <field name="message"/>
+                <field name="level" widget="badge" decoration-info="level == 'debug'" decoration-success="level == 'info'" decoration-warning="level == 'warning'" decoration-danger="level == 'error'"/>
+                <field name="user_id"/>
+                <field name="duration_ms" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Audit Form View -->
+    <record id="view_integration_audit_form" model="ir.ui.view">
+        <field name="name">ipai.integration.audit.form</field>
+        <field name="model">ipai.integration.audit</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="create_date"/>
+                            <field name="connector_id"/>
+                            <field name="action"/>
+                            <field name="level"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="request_method"/>
+                            <field name="request_url"/>
+                            <field name="response_code"/>
+                            <field name="duration_ms"/>
+                            <field name="ip_address"/>
+                        </group>
+                    </group>
+                    <group string="Message">
+                        <field name="message" nolabel="1"/>
+                    </group>
+                    <group string="Request Payload" invisible="not request_payload">
+                        <field name="request_payload" nolabel="1" widget="ace" options="{'mode': 'json'}"/>
+                    </group>
+                    <group string="Response Body" invisible="not response_body">
+                        <field name="response_body" nolabel="1" widget="ace" options="{'mode': 'json'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Audit Search View -->
+    <record id="view_integration_audit_search" model="ir.ui.view">
+        <field name="name">ipai.integration.audit.search</field>
+        <field name="model">ipai.integration.audit</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="action"/>
+                <field name="message"/>
+                <field name="connector_id"/>
+                <filter name="errors" string="Errors" domain="[('level', '=', 'error')]"/>
+                <filter name="warnings" string="Warnings" domain="[('level', 'in', ['warning', 'error'])]"/>
+                <filter name="today" string="Today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <separator/>
+                <filter name="mattermost" string="Mattermost" domain="[('connector_type', '=', 'mattermost')]"/>
+                <filter name="focalboard" string="Focalboard" domain="[('connector_type', '=', 'focalboard')]"/>
+                <filter name="n8n" string="n8n" domain="[('connector_type', '=', 'n8n')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_connector" string="Connector" context="{'group_by': 'connector_id'}"/>
+                    <filter name="group_level" string="Level" context="{'group_by': 'level'}"/>
+                    <filter name="group_action" string="Action" context="{'group_by': 'action'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Audit Action -->
+    <record id="action_integration_audit" model="ir.actions.act_window">
+        <field name="name">Audit Logs</field>
+        <field name="res_model">ipai.integration.audit</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No audit logs yet
+            </p>
+            <p>
+                Audit logs track all integration activity including
+                API calls, webhooks, and configuration changes.
+            </p>
+        </field>
+    </record>
+</odoo>

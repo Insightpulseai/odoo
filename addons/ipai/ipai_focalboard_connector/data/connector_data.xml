@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Default Focalboard connector (demo/template) -->
+    <record id="connector_focalboard_default" model="ipai.integration.connector">
+        <field name="name">Focalboard (InsightPulse AI)</field>
+        <field name="code">focalboard_ipai</field>
+        <field name="connector_type">focalboard</field>
+        <field name="base_url">https://boards.insightpulseai.net</field>
+        <field name="api_version">v2</field>
+        <field name="auth_type">token</field>
+        <field name="state">draft</field>
+    </record>
+</odoo>

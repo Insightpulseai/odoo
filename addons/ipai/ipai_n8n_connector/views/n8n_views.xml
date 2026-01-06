@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Workflow Tree View -->
+    <record id="view_n8n_workflow_tree" model="ir.ui.view">
+        <field name="name">ipai.n8n.workflow.tree</field>
+        <field name="model">ipai.n8n.workflow</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="trigger_type"/>
+                <field name="active_in_n8n"/>
+                <field name="execution_count"/>
+                <field name="last_sync"/>
+                <field name="connector_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Workflow Form View -->
+    <record id="view_n8n_workflow_form" model="ir.ui.view">
+        <field name="name">ipai.n8n.workflow.form</field>
+        <field name="model">ipai.n8n.workflow</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_trigger" type="object" string="Trigger Workflow" class="btn-primary" invisible="trigger_type != 'webhook'"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button type="object" name="action_trigger" class="oe_stat_button" icon="fa-play" invisible="trigger_type != 'webhook'">
+                            <span>Trigger</span>
+                        </button>
+                        <button type="action" class="oe_stat_button" icon="fa-history">
+                            <field name="execution_count" widget="statinfo" string="Executions"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="connector_id"/>
+                            <field name="n8n_workflow_id"/>
+                        </group>
+                        <group>
+                            <field name="trigger_type"/>
+                            <field name="webhook_path" invisible="trigger_type != 'webhook'"/>
+                            <field name="active_in_n8n"/>
+                            <field name="last_sync"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Executions" name="executions">
+                            <field name="execution_ids" readonly="1">
+                                <tree limit="20">
+                                    <field name="create_date"/>
+                                    <field name="trigger_source"/>
+                                    <field name="status" widget="badge" decoration-success="status == 'success'" decoration-warning="status == 'running'" decoration-danger="status == 'error'"/>
+                                    <field name="duration_ms"/>
+                                    <field name="n8n_execution_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Workflow Action -->
+    <record id="action_n8n_workflow" model="ir.actions.act_window">
+        <field name="name">n8n Workflows</field>
+        <field name="res_model">ipai.n8n.workflow</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Execution Tree View -->
+    <record id="view_n8n_execution_tree" model="ir.ui.view">
+        <field name="name">ipai.n8n.execution.tree</field>
+        <field name="model">ipai.n8n.execution</field>
+        <field name="arch" type="xml">
+            <tree default_order="create_date desc">
+                <field name="create_date"/>
+                <field name="workflow_id"/>
+                <field name="trigger_source"/>
+                <field name="status" widget="badge" decoration-success="status == 'success'" decoration-warning="status in ('waiting', 'running')" decoration-danger="status == 'error'" decoration-muted="status == 'canceled'"/>
+                <field name="duration_ms"/>
+                <field name="n8n_execution_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Execution Form View -->
+    <record id="view_n8n_execution_form" model="ir.ui.view">
+        <field name="name">ipai.n8n.execution.form</field>
+        <field name="model">ipai.n8n.execution</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="workflow_id"/>
+                            <field name="n8n_execution_id"/>
+                            <field name="trigger_source"/>
+                            <field name="status"/>
+                        </group>
+                        <group>
+                            <field name="started_at"/>
+                            <field name="finished_at"/>
+                            <field name="duration_ms"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Input Data" name="input" invisible="not input_data">
+                            <field name="input_data" widget="ace" options="{'mode': 'json'}" nolabel="1"/>
+                        </page>
+                        <page string="Output Data" name="output" invisible="not output_data">
+                            <field name="output_data" widget="ace" options="{'mode': 'json'}" nolabel="1"/>
+                        </page>
+                        <page string="Error" name="error" invisible="status != 'error'">
+                            <field name="error_message" nolabel="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Execution Action -->
+    <record id="action_n8n_execution" model="ir.actions.act_window">
+        <field name="name">Workflow Executions</field>
+        <field name="res_model">ipai.n8n.execution</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu items under Integrations -->
+    <menuitem id="menu_n8n"
+        name="n8n"
+        parent="ipai_integrations.menu_integrations_config"
+        sequence="70"/>
+
+    <menuitem id="menu_n8n_workflows"
+        name="Workflows"
+        parent="menu_n8n"
+        action="action_n8n_workflow"
+        sequence="10"/>
+
+    <menuitem id="menu_n8n_executions"
+        name="Executions"
+        parent="menu_n8n"
+        action="action_n8n_execution"
+        sequence="20"/>
+</odoo>

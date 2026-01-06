@@ -1,0 +1,223 @@
+# ipai-ops-stack Docker Compose
+# Mattermost + Focalboard + n8n + Superset
+#
+# Usage:
+#   cp .env.example .env
+#   docker compose up -d
+
+version: "3.8"
+
+services:
+  # ===========================================
+  # Reverse Proxy (Caddy - automatic TLS)
+  # ===========================================
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - mattermost
+      - focalboard
+      - n8n
+      - superset
+    networks:
+      - ops_network
+
+  # ===========================================
+  # PostgreSQL (shared database server)
+  # ===========================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_MULTIPLE_DATABASES: mattermost,focalboard,superset
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ops_network
+
+  # ===========================================
+  # Mattermost
+  # ===========================================
+  mattermost:
+    image: mattermost/mattermost-team-edition:9.5
+    container_name: mattermost
+    restart: unless-stopped
+    environment:
+      MM_SQLSETTINGS_DRIVERNAME: postgres
+      MM_SQLSETTINGS_DATASOURCE: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/mattermost?sslmode=disable
+      MM_SERVICESETTINGS_SITEURL: https://chat.insightpulseai.net
+      MM_SERVICESETTINGS_LISTENADDRESS: :8065
+    volumes:
+      - mattermost_data:/mattermost/data
+      - mattermost_logs:/mattermost/logs
+      - mattermost_config:/mattermost/config
+      - mattermost_plugins:/mattermost/plugins
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8065/api/v4/system/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ops_network
+
+  # ===========================================
+  # Focalboard
+  # ===========================================
+  focalboard:
+    image: mattermost/focalboard:7.11
+    container_name: focalboard
+    restart: unless-stopped
+    environment:
+      FOCALBOARD_PORT: 8000
+      FOCALBOARD_DBTYPE: postgres
+      FOCALBOARD_DBCONFIG: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/focalboard?sslmode=disable
+      FOCALBOARD_SERVERROOT: https://boards.insightpulseai.net
+    volumes:
+      - focalboard_data:/opt/focalboard/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v2/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ops_network
+
+  # ===========================================
+  # n8n
+  # ===========================================
+  n8n:
+    image: n8nio/n8n:1.25.1
+    container_name: n8n
+    restart: unless-stopped
+    environment:
+      N8N_HOST: n8n.insightpulseai.net
+      N8N_PROTOCOL: https
+      N8N_PORT: 5678
+      WEBHOOK_URL: https://n8n.insightpulseai.net/
+      GENERIC_TIMEZONE: ${TZ:-Asia/Manila}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+    volumes:
+      - n8n_data:/home/node/.n8n
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ops_network
+
+  # ===========================================
+  # Superset
+  # ===========================================
+  superset-redis:
+    image: redis:7-alpine
+    container_name: superset-redis
+    restart: unless-stopped
+    volumes:
+      - superset_redis:/data
+    networks:
+      - ops_network
+
+  superset:
+    image: apache/superset:3.1.0
+    container_name: superset
+    restart: unless-stopped
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
+      SQLALCHEMY_DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/superset
+      REDIS_HOST: superset-redis
+      REDIS_PORT: 6379
+    volumes:
+      - superset_home:/app/superset_home
+    depends_on:
+      postgres:
+        condition: service_healthy
+      superset-redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - ops_network
+
+  superset-worker:
+    image: apache/superset:3.1.0
+    container_name: superset-worker
+    restart: unless-stopped
+    command: celery --app=superset.tasks.celery_app:app worker -O fair -l INFO
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
+      SQLALCHEMY_DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/superset
+      REDIS_HOST: superset-redis
+      REDIS_PORT: 6379
+    depends_on:
+      - superset
+      - superset-redis
+    networks:
+      - ops_network
+
+  # Superset init (run once)
+  superset-init:
+    image: apache/superset:3.1.0
+    container_name: superset-init
+    command: >
+      /bin/bash -lc "
+      superset db upgrade &&
+      superset init &&
+      (superset fab create-admin
+        --username ${SUPERSET_ADMIN_USER:-admin}
+        --firstname Admin --lastname User
+        --email ${SUPERSET_ADMIN_EMAIL:-admin@insightpulseai.net}
+        --password ${SUPERSET_ADMIN_PASSWORD} || true)
+      "
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
+      SQLALCHEMY_DATABASE_URI: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/superset
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - ops_network
+
+networks:
+  ops_network:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data:
+  mattermost_data:
+  mattermost_logs:
+  mattermost_config:
+  mattermost_plugins:
+  focalboard_data:
+  n8n_data:
+  superset_redis:
+  superset_home:
