@@ -10,7 +10,7 @@
     <record id="action_ipai_ai_threads" model="ir.actions.act_window">
         <field name="name">AI Threads</field>
         <field name="res_model">ipai.ai.thread</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_my_threads': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -26,7 +26,7 @@
     <record id="action_ipai_ai_providers" model="ir.actions.act_window">
         <field name="name">AI Providers</field>
         <field name="res_model">ipai.ai.provider</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

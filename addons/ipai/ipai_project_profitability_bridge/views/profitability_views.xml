@@ -114,7 +114,7 @@
     <record id="action_ipai_project_profitability" model="ir.actions.act_window">
         <field name="name">Profitability (IPAI)</field>
         <field name="res_model">ipai.project.profitability</field>
-        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="view_mode">list,form,pivot,graph</field>
         <field name="search_view_id" ref="view_ipai_project_profitability_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

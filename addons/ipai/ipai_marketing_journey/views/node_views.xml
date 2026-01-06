@@ -113,6 +113,6 @@
     <record id="action_marketing_journey_node" model="ir.actions.act_window">
         <field name="name">Journey Nodes</field>
         <field name="res_model">marketing.journey.node</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>
