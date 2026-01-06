@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a42fc69f418ecb5744607749c5d544f88aae8a9d
+> Commit: 782fea9a7a4656d6ba225fcbea132908978d1522
 
 ## 📚 Documentation
 
@@ -293,6 +293,7 @@
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
+| [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
@@ -530,6 +531,10 @@
 | [Plan — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/plan.md) | spec/ipai-ai-platform-odoo18 |
 | [PRD — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/prd.md) | spec/ipai-ai-platform-odoo18 |
 | [Tasks — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/tasks.md) | spec/ipai-ai-platform-odoo18 |
+| [Constitution - IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform/constitution.md) | spec/ipai-ai-platform |
+| [Plan - IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform/plan.md) | spec/ipai-ai-platform |
+| [PRD - IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform/prd.md) | spec/ipai-ai-platform |
+| [Tasks - IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform/tasks.md) | spec/ipai-ai-platform |
 | [Constitution — IPAI Control Center (Spec Kit)](spec/ipai-control-center/constitution.md) | spec/ipai-control-center |
 | [Delivery Plan — IPAI Control Center (v1.0.0)](spec/ipai-control-center/plan.md) | spec/ipai-control-center |
 | [Product Requirements Document — IPAI Control Center](spec/ipai-control-center/prd.md) | spec/ipai-control-center |
@@ -611,6 +616,7 @@
 | [Agent Services Hard Delete Checklist](tasks/infra/AGENT_SERVICES_HARD_DELETE_CHECKLIST.md) | tasks/infra |
 | [Odoo Month-end Close + Tax Filing Import (CE)](templates/odoo/import/README.md) | templates/odoo/import |
 | [Database Instance Inventory Scanner](tools/db-inventory/README.md) | tools/db-inventory |
+| [diagramflow](tools/diagramflow/README.md) | tools/diagramflow |
 | [Kapa-style Docs Copilot for Odoo CE + OCA 18.0](tools/docs-crawler/README.md) | tools/docs-crawler |
 | [Documentation Catalogue → Odoo CE/OCA Mapper](tools/docs_catalog/README.md) | tools/docs_catalog |
 | [Walkthrough - Notion Parity Modules](walkthrough.md) | . |
