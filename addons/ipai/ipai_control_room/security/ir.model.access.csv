@@ -1,0 +1,64 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+# Pipeline Models - User Access (Read + Trigger)
+access_control_pipeline_user,control.pipeline.user,model_control_pipeline,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_pipeline_stage_user,control.pipeline.stage.user,model_control_pipeline_stage,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_pipeline_step_user,control.pipeline.step.user,model_control_pipeline_step,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_run_user,control.run.user,model_control_run,ipai_control_room.group_control_room_user,1,1,1,0
+access_control_run_event_user,control.run.event.user,model_control_run_event,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_artifact_user,control.artifact.user,model_control_artifact,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_schedule_user,control.schedule.user,model_control_schedule,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_env_user,control.env.user,model_control_env,ipai_control_room.group_control_room_user,1,0,0,0
+# DQ Models - User Access
+access_control_dq_rule_user,control.dq.rule.user,model_control_dq_rule,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_dq_check_run_user,control.dq.check.run.user,model_control_dq_check_run,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_dq_issue_user,control.dq.issue.user,model_control_dq_issue,ipai_control_room.group_control_room_user,1,1,0,0
+# Advisor Models - User Access
+access_control_advice_user,control.advice.user,model_control_advice,ipai_control_room.group_control_room_user,1,1,0,0
+access_control_playbook_user,control.playbook.user,model_control_playbook,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_action_user,control.action.user,model_control_action,ipai_control_room.group_control_room_user,1,1,1,0
+# Settings Models - User Access (Read Only)
+access_control_connector_user,control.connector.user,model_control_connector,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_feature_flag_user,control.feature.flag.user,model_control_feature_flag,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_notification_channel_user,control.notification.channel.user,model_control_notification_channel,ipai_control_room.group_control_room_user,1,0,0,0
+access_control_secret_ref_user,control.secret.ref.user,model_control_secret_ref,ipai_control_room.group_control_room_user,0,0,0,0
+# Pipeline Models - Operator Access (Full except delete)
+access_control_pipeline_operator,control.pipeline.operator,model_control_pipeline,ipai_control_room.group_control_room_operator,1,1,1,0
+access_control_pipeline_stage_operator,control.pipeline.stage.operator,model_control_pipeline_stage,ipai_control_room.group_control_room_operator,1,1,1,1
+access_control_pipeline_step_operator,control.pipeline.step.operator,model_control_pipeline_step,ipai_control_room.group_control_room_operator,1,1,1,1
+access_control_run_operator,control.run.operator,model_control_run,ipai_control_room.group_control_room_operator,1,1,1,1
+access_control_run_event_operator,control.run.event.operator,model_control_run_event,ipai_control_room.group_control_room_operator,1,1,1,0
+access_control_artifact_operator,control.artifact.operator,model_control_artifact,ipai_control_room.group_control_room_operator,1,1,1,1
+access_control_schedule_operator,control.schedule.operator,model_control_schedule,ipai_control_room.group_control_room_operator,1,1,1,0
+access_control_env_operator,control.env.operator,model_control_env,ipai_control_room.group_control_room_operator,1,1,1,0
+# DQ Models - Operator Access
+access_control_dq_rule_operator,control.dq.rule.operator,model_control_dq_rule,ipai_control_room.group_control_room_operator,1,1,1,0
+access_control_dq_check_run_operator,control.dq.check.run.operator,model_control_dq_check_run,ipai_control_room.group_control_room_operator,1,1,1,0
+access_control_dq_issue_operator,control.dq.issue.operator,model_control_dq_issue,ipai_control_room.group_control_room_operator,1,1,1,0
+# Advisor Models - Operator Access
+access_control_advice_operator,control.advice.operator,model_control_advice,ipai_control_room.group_control_room_operator,1,1,1,0
+access_control_playbook_operator,control.playbook.operator,model_control_playbook,ipai_control_room.group_control_room_operator,1,1,1,0
+access_control_action_operator,control.action.operator,model_control_action,ipai_control_room.group_control_room_operator,1,1,1,0
+# Settings Models - Operator Access (Read Only for most)
+access_control_connector_operator,control.connector.operator,model_control_connector,ipai_control_room.group_control_room_operator,1,0,0,0
+access_control_feature_flag_operator,control.feature.flag.operator,model_control_feature_flag,ipai_control_room.group_control_room_operator,1,0,0,0
+access_control_notification_channel_operator,control.notification.channel.operator,model_control_notification_channel,ipai_control_room.group_control_room_operator,1,0,0,0
+access_control_secret_ref_operator,control.secret.ref.operator,model_control_secret_ref,ipai_control_room.group_control_room_operator,1,0,0,0
+# All Models - Admin Access (Full)
+access_control_pipeline_admin,control.pipeline.admin,model_control_pipeline,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_pipeline_stage_admin,control.pipeline.stage.admin,model_control_pipeline_stage,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_pipeline_step_admin,control.pipeline.step.admin,model_control_pipeline_step,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_run_admin,control.run.admin,model_control_run,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_run_event_admin,control.run.event.admin,model_control_run_event,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_artifact_admin,control.artifact.admin,model_control_artifact,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_schedule_admin,control.schedule.admin,model_control_schedule,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_env_admin,control.env.admin,model_control_env,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_dq_rule_admin,control.dq.rule.admin,model_control_dq_rule,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_dq_check_run_admin,control.dq.check.run.admin,model_control_dq_check_run,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_dq_issue_admin,control.dq.issue.admin,model_control_dq_issue,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_advice_admin,control.advice.admin,model_control_advice,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_playbook_admin,control.playbook.admin,model_control_playbook,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_action_admin,control.action.admin,model_control_action,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_connector_admin,control.connector.admin,model_control_connector,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_feature_flag_admin,control.feature.flag.admin,model_control_feature_flag,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_notification_channel_admin,control.notification.channel.admin,model_control_notification_channel,ipai_control_room.group_control_room_admin,1,1,1,1
+access_control_secret_ref_admin,control.secret.ref.admin,model_control_secret_ref,ipai_control_room.group_control_room_admin,1,1,1,1

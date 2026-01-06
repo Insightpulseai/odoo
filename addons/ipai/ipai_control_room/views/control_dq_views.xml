@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== DQ Rule Views ==================== -->
+
+    <!-- DQ Rule Tree View -->
+    <record id="control_dq_rule_view_tree" model="ir.ui.view">
+        <field name="name">control.dq.rule.tree</field>
+        <field name="model">control.dq.rule</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="not active">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="scope"/>
+                <field name="rule_type"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'high'"
+                       decoration-info="severity == 'medium'"/>
+                <field name="last_check_status" widget="badge"
+                       decoration-success="last_check_status == 'pass'"
+                       decoration-danger="last_check_status == 'fail'"/>
+                <field name="open_issue_count"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="active" column_invisible="True"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- DQ Rule Form View -->
+    <record id="control_dq_rule_view_form" model="ir.ui.view">
+        <field name="name">control.dq.rule.form</field>
+        <field name="model">control.dq.rule</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_run_check" type="object" string="Run Check"
+                            class="oe_highlight" invisible="not active"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="action"
+                                name="%(ipai_control_room.action_control_dq_issue)d"
+                                icon="fa-exclamation-triangle"
+                                context="{'search_default_rule_id': active_id}">
+                            <field string="Open Issues" name="open_issue_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Rule Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="scope"/>
+                            <field name="target"/>
+                            <field name="target_field"/>
+                        </group>
+                        <group>
+                            <field name="rule_type"/>
+                            <field name="severity"/>
+                            <field name="sla_minutes"/>
+                            <field name="check_frequency"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="project_id"/>
+                            <field name="owner_id"/>
+                        </group>
+                        <group>
+                            <field name="last_check_at"/>
+                            <field name="last_check_status"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration" name="config">
+                            <group invisible="rule_type not in ('range', 'row_count')">
+                                <field name="threshold"/>
+                            </group>
+                            <group invisible="rule_type != 'enum'">
+                                <field name="allowed_values" placeholder="value1, value2, value3"/>
+                            </group>
+                            <group invisible="rule_type != 'regex'">
+                                <field name="regex_pattern" placeholder="^[A-Z0-9]+$"/>
+                            </group>
+                            <group invisible="rule_type != 'custom_sql'">
+                                <field name="custom_sql" widget="ace" options="{'mode': 'sql'}"/>
+                            </group>
+                            <group>
+                                <field name="params_json" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                        </page>
+                        <page string="Check History" name="history">
+                            <field name="check_run_ids">
+                                <tree decoration-success="state == 'pass'"
+                                      decoration-danger="state == 'fail'">
+                                    <field name="checked_at"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="row_count"/>
+                                    <field name="failure_count"/>
+                                    <field name="failure_rate"/>
+                                    <field name="duration_ms"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Issues" name="issues">
+                            <field name="issue_ids">
+                                <tree decoration-danger="status == 'open'"
+                                      decoration-warning="status in ('ack', 'in_progress')">
+                                    <field name="opened_at"/>
+                                    <field name="summary"/>
+                                    <field name="status" widget="badge"/>
+                                    <field name="assignee_id"/>
+                                    <field name="is_sla_breached"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Remediation" name="remediation">
+                            <group>
+                                <field name="description" placeholder="What this rule checks..."/>
+                            </group>
+                            <group>
+                                <field name="remediation" placeholder="Steps to fix issues..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- DQ Rule Search View -->
+    <record id="control_dq_rule_view_search" model="ir.ui.view">
+        <field name="name">control.dq.rule.search</field>
+        <field name="model">control.dq.rule</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="target"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <separator/>
+                <filter string="Critical" name="critical" domain="[('severity', '=', 'critical')]"/>
+                <filter string="Failing" name="failing" domain="[('last_check_status', '=', 'fail')]"/>
+                <filter string="Has Open Issues" name="has_issues" domain="[('open_issue_count', '>', 0)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Severity" name="group_severity" context="{'group_by': 'severity'}"/>
+                    <filter string="Scope" name="group_scope" context="{'group_by': 'scope'}"/>
+                    <filter string="Rule Type" name="group_type" context="{'group_by': 'rule_type'}"/>
+                    <filter string="Owner" name="group_owner" context="{'group_by': 'owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- DQ Rule Action -->
+    <record id="action_control_dq_rule" model="ir.actions.act_window">
+        <field name="name">Data Quality Rules</field>
+        <field name="res_model">control.dq.rule</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first data quality rule
+            </p>
+            <p>
+                Rules define validation checks for your data.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== DQ Check Run Views ==================== -->
+
+    <record id="control_dq_check_run_view_tree" model="ir.ui.view">
+        <field name="name">control.dq.check.run.tree</field>
+        <field name="model">control.dq.check.run</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="state == 'pass'"
+                  decoration-danger="state == 'fail'"
+                  decoration-warning="state == 'error'">
+                <field name="checked_at"/>
+                <field name="rule_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'pass'"
+                       decoration-danger="state == 'fail'"
+                       decoration-warning="state == 'error'"/>
+                <field name="row_count"/>
+                <field name="failure_count"/>
+                <field name="failure_rate" widget="progressbar"/>
+                <field name="duration_ms"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="control_dq_check_run_view_form" model="ir.ui.view">
+        <field name="name">control.dq.check.run.form</field>
+        <field name="model">control.dq.check.run</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_create_issue" type="object" string="Create Issue"
+                            class="oe_highlight" invisible="state != 'fail' or issue_id"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="rule_id"/>
+                            <field name="run_id"/>
+                            <field name="checked_at"/>
+                            <field name="state"/>
+                        </group>
+                        <group>
+                            <field name="row_count"/>
+                            <field name="failure_count"/>
+                            <field name="failure_rate"/>
+                            <field name="duration_ms"/>
+                        </group>
+                    </group>
+                    <group invisible="state != 'error'">
+                        <field name="error_message"/>
+                    </group>
+                    <notebook>
+                        <page string="Metrics" name="metrics">
+                            <field name="metrics_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Sample Data" name="sample" invisible="not sample_json">
+                            <field name="sample_json" widget="ace" options="{'mode': 'json'}"/>
+                            <field name="sample_artifact_id"/>
+                        </page>
+                        <page string="Issue" name="issue" invisible="not issue_id">
+                            <field name="issue_id"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_dq_check_run" model="ir.actions.act_window">
+        <field name="name">Check Runs</field>
+        <field name="res_model">control.dq.check.run</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ==================== DQ Issue Views ==================== -->
+
+    <record id="control_dq_issue_view_tree" model="ir.ui.view">
+        <field name="name">control.dq.issue.tree</field>
+        <field name="model">control.dq.issue</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="status == 'open'"
+                  decoration-warning="status in ('ack', 'in_progress')"
+                  decoration-muted="status in ('resolved', 'wont_fix')">
+                <field name="name"/>
+                <field name="rule_id"/>
+                <field name="severity" widget="badge"
+                       decoration-danger="severity == 'critical'"
+                       decoration-warning="severity == 'high'"
+                       decoration-info="severity == 'medium'"/>
+                <field name="status" widget="badge"
+                       decoration-danger="status == 'open'"
+                       decoration-warning="status in ('ack', 'in_progress')"
+                       decoration-success="status == 'resolved'"/>
+                <field name="assignee_id" widget="many2one_avatar_user"/>
+                <field name="opened_at"/>
+                <field name="sla_due_at"/>
+                <field name="is_sla_breached" widget="boolean"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="control_dq_issue_view_form" model="ir.ui.view">
+        <field name="name">control.dq.issue.form</field>
+        <field name="model">control.dq.issue</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_acknowledge" type="object" string="Acknowledge"
+                            invisible="status != 'open'" class="oe_highlight"/>
+                    <button name="action_start_progress" type="object" string="Start Progress"
+                            invisible="status not in ('open', 'ack')" class="oe_highlight"/>
+                    <button name="action_resolve" type="object" string="Resolve"
+                            invisible="status not in ('open', 'ack', 'in_progress')" class="oe_highlight"/>
+                    <button name="action_wont_fix" type="object" string="Won't Fix"
+                            invisible="status not in ('open', 'ack', 'in_progress')"/>
+                    <button name="action_reopen" type="object" string="Reopen"
+                            invisible="status not in ('resolved', 'wont_fix')"/>
+                    <button name="action_create_task" type="object" string="Create Task"
+                            invisible="task_id"/>
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="open,ack,in_progress,resolved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="summary" placeholder="Issue Summary"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="rule_id"/>
+                            <field name="severity"/>
+                            <field name="assignee_id"/>
+                            <field name="team_id"/>
+                        </group>
+                        <group>
+                            <field name="opened_at"/>
+                            <field name="acknowledged_at"/>
+                            <field name="closed_at"/>
+                            <field name="sla_due_at"/>
+                            <field name="is_sla_breached"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Details" name="details">
+                            <group>
+                                <field name="description" placeholder="Issue details..."/>
+                            </group>
+                            <group string="Evidence">
+                                <field name="evidence_json" nolabel="1" widget="ace" options="{'mode': 'json'}"/>
+                            </group>
+                        </page>
+                        <page string="Resolution" name="resolution" invisible="status not in ('resolved', 'wont_fix')">
+                            <group>
+                                <field name="root_cause" placeholder="Root cause analysis..."/>
+                            </group>
+                            <group>
+                                <field name="resolution" placeholder="How it was resolved..."/>
+                            </group>
+                        </page>
+                        <page string="Related" name="related">
+                            <group>
+                                <field name="related_run_id"/>
+                                <field name="task_id"/>
+                            </group>
+                            <field name="check_run_ids">
+                                <tree>
+                                    <field name="checked_at"/>
+                                    <field name="state"/>
+                                    <field name="failure_count"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="control_dq_issue_view_search" model="ir.ui.view">
+        <field name="name">control.dq.issue.search</field>
+        <field name="model">control.dq.issue</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="summary"/>
+                <field name="rule_id"/>
+                <field name="assignee_id"/>
+                <filter string="Open" name="open" domain="[('status', '=', 'open')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('status', 'in', ('ack', 'in_progress'))]"/>
+                <filter string="Resolved" name="resolved" domain="[('status', '=', 'resolved')]"/>
+                <separator/>
+                <filter string="SLA Breached" name="sla_breached" domain="[('is_sla_breached', '=', True)]"/>
+                <filter string="Critical" name="critical" domain="[('severity', '=', 'critical')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Severity" name="group_severity" context="{'group_by': 'severity'}"/>
+                    <filter string="Rule" name="group_rule" context="{'group_by': 'rule_id'}"/>
+                    <filter string="Assignee" name="group_assignee" context="{'group_by': 'assignee_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_control_dq_issue" model="ir.actions.act_window">
+        <field name="name">Data Quality Issues</field>
+        <field name="res_model">control.dq.issue</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_open': 1, 'search_default_in_progress': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No data quality issues
+            </p>
+            <p>
+                Issues are created when data quality checks fail.
+            </p>
+        </field>
+    </record>
+</odoo>
