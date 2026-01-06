@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 38b5de1d6099175c932a0208f79c23d79d3df91f
+> Commit: 6598ee7166580ce65b02e9766fe8145ccb52e5d5
 
 ## 📚 Documentation
 
@@ -319,6 +319,7 @@
 | [IPAI Module Suite - Operations Runbook](docs/ipai/OPERATIONS_RUNBOOK.md) | docs/ipai |
 | [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
 | [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
+| [Module Production Readiness Status](docs/module-health/MODULES_PROD_STATUS.md) | docs/module-health |
 | [IPAI Module Index](docs/modules/INDEX.md) | docs/modules |
 | [ipai_advisor](docs/modules/ipai_advisor.md) | docs/modules |
 | [ipai_agent_core](docs/modules/ipai_agent_core.md) | docs/modules |
@@ -634,7 +635,9 @@
 | [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
 | [ipai_marketing_journey](./addons/ipai/ipai_marketing_journey) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
+| [ipai_module_gating](./addons/ipai/ipai_module_gating) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai/ipai_ocr_expense) | ✅ |  |
+| [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm](./addons/ipai/ipai_ppm) | ✅ |  |
 | [ipai_ppm_a1](./addons/ipai/ipai_ppm_a1) | ✅ |  |
