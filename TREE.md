@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 38b5de1d6099175c932a0208f79c23d79d3df91f
+> Commit: 6598ee7166580ce65b02e9766fe8145ccb52e5d5
 
 ```
 .
@@ -72,6 +72,7 @@
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── module-catalog-drift.yml
+│   │   ├── module-gating.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
@@ -391,12 +392,23 @@
 │   │   │   ├── tests
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_module_gating
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ocr_expense
 │   │   │   ├── controllers
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_platform_theme
+│   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_portal_fix
@@ -1619,6 +1631,9 @@
 │   │   ├── README.md
 │   │   ├── SECURITY_MODEL.md
 │   │   └── module_scan.json
+│   ├── module-health
+│   │   ├── MODULES_PROD_STATUS.md
+│   │   └── modules_status.json
 │   ├── modules
 │   │   ├── INDEX.md
 │   │   ├── generation_summary.json
@@ -2282,6 +2297,7 @@
 │   ├── generate_finance_dashboard.py
 │   ├── generate_go_live_checklist.py
 │   ├── generate_module_docs.py
+│   ├── generate_module_health_report.py
 │   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
 │   ├── generate_seed_xml.py
@@ -2954,15 +2970,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-912 directories, 2037 files
+920 directories, 2045 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1049 |
-| Files | 2976 |
-| Python files | 787 |
-| XML files | 404 |
-| Markdown files | 573 |
+| Directories | 1059 |
+| Files | 2991 |
+| Python files | 794 |
+| XML files | 407 |
+| Markdown files | 574 |
