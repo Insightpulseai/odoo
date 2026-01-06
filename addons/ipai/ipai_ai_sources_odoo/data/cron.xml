@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Scheduled action to export recent Odoo changes to Supabase KB -->
+    <record id="ir_cron_ipai_kb_export_recent" model="ir.cron">
+        <field name="name">IPAI KB Export (Recent Changes)</field>
+        <field name="model_id" ref="model_ipai_kb_exporter"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_export_recent()</field>
+        <field name="interval_number">15</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+        <field name="priority">100</field>
+    </record>
+</odoo>
