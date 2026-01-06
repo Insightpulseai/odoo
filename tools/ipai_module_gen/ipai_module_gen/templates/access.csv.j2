@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+{% for model in models %}
+access_{{ model.name | replace('.', '_') }}_user,{{ model.name }} user,model_{{ model.name | replace('.', '_') }},group_{{ module }}_user,1,1,1,0
+access_{{ model.name | replace('.', '_') }}_manager,{{ model.name }} manager,model_{{ model.name | replace('.', '_') }},group_{{ module }}_manager,1,1,1,1
+{% endfor %}
