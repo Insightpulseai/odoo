@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Connector Views ==================== -->
+
+    <record id="control_connector_view_tree" model="ir.ui.view">
+        <field name="name">control.connector.tree</field>
+        <field name="model">control.connector</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="not active">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="connector_type" widget="badge"/>
+                <field name="host"/>
+                <field name="last_health_status" widget="badge"
+                       decoration-success="last_health_status == 'ok'"
+                       decoration-warning="last_health_status == 'warn'"
+                       decoration-danger="last_health_status == 'error'"/>
+                <field name="last_health_at"/>
+                <field name="active" column_invisible="True"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="control_connector_view_form" model="ir.ui.view">
+        <field name="name">control.connector.form</field>
+        <field name="model">control.connector</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection" type="object"
+                            string="Test Connection" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Connector Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="connector_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="secret_ref_id"/>
+                        </group>
+                    </group>
+                    <group string="Connection">
+                        <group>
+                            <field name="host"/>
+                            <field name="port"/>
+                            <field name="database"/>
+                        </group>
+                        <group>
+                            <field name="last_health_status"/>
+                            <field name="last_health_at"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration" name="config">
+                            <field name="config_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Health" name="health">
+                            <field name="health_message"/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_connector" model="ir.actions.act_window">
+        <field name="name">Connectors</field>
+        <field name="res_model">control.connector</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+    <!-- ==================== Feature Flag Views ==================== -->
+
+    <record id="control_feature_flag_view_tree" model="ir.ui.view">
+        <field name="name">control.feature.flag.tree</field>
+        <field name="model">control.feature.flag</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="key"/>
+                <field name="name"/>
+                <field name="scope" widget="badge"/>
+                <field name="enabled" widget="boolean_toggle"/>
+                <field name="rollout_percentage"/>
+                <field name="valid_from"/>
+                <field name="valid_until"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="control_feature_flag_view_form" model="ir.ui.view">
+        <field name="name">control.feature.flag.form</field>
+        <field name="model">control.feature.flag</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="key"/>
+                            <field name="name"/>
+                            <field name="enabled"/>
+                        </group>
+                        <group>
+                            <field name="scope"/>
+                            <field name="rollout_percentage"/>
+                        </group>
+                    </group>
+                    <group invisible="scope != 'company'">
+                        <field name="company_id"/>
+                    </group>
+                    <group invisible="scope != 'project'">
+                        <field name="project_id"/>
+                    </group>
+                    <group invisible="scope != 'user'">
+                        <field name="user_id"/>
+                    </group>
+                    <group string="Validity Period">
+                        <group>
+                            <field name="valid_from"/>
+                        </group>
+                        <group>
+                            <field name="valid_until"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Configuration" name="config">
+                            <field name="config_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_feature_flag" model="ir.actions.act_window">
+        <field name="name">Feature Flags</field>
+        <field name="res_model">control.feature.flag</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ==================== Notification Channel Views ==================== -->
+
+    <record id="control_notification_channel_view_tree" model="ir.ui.view">
+        <field name="name">control.notification.channel.tree</field>
+        <field name="model">control.notification.channel</field>
+        <field name="arch" type="xml">
+            <tree decoration-muted="not active">
+                <field name="name"/>
+                <field name="channel_type" widget="badge"/>
+                <field name="event_filter"/>
+                <field name="min_severity"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="control_notification_channel_view_form" model="ir.ui.view">
+        <field name="name">control.notification.channel.form</field>
+        <field name="model">control.notification.channel</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_send_test" type="object"
+                            string="Send Test" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Channel Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="channel_type"/>
+                            <field name="connector_id"
+                                   invisible="channel_type in ('email', 'odoo_chat')"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="event_filter"/>
+                            <field name="min_severity"/>
+                        </group>
+                    </group>
+                    <group invisible="channel_type != 'email'" string="Email Settings">
+                        <field name="email_to"/>
+                        <field name="email_cc"/>
+                        <field name="email_template_id"/>
+                    </group>
+                    <group invisible="event_filter != 'custom'" string="Custom Filter">
+                        <field name="custom_filter_json" widget="ace" options="{'mode': 'json'}"/>
+                    </group>
+                    <group string="Rate Limiting">
+                        <field name="rate_limit_enabled"/>
+                        <field name="rate_limit_per_hour"
+                               invisible="not rate_limit_enabled"/>
+                    </group>
+                    <notebook>
+                        <page string="Routing" name="routing">
+                            <field name="routing_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_notification_channel" model="ir.actions.act_window">
+        <field name="name">Notification Channels</field>
+        <field name="res_model">control.notification.channel</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+    <!-- ==================== Secret Reference Views ==================== -->
+
+    <record id="control_secret_ref_view_tree" model="ir.ui.view">
+        <field name="name">control.secret.ref.tree</field>
+        <field name="model">control.secret.ref</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="provider" widget="badge"/>
+                <field name="ref_key"/>
+                <field name="secret_type"/>
+                <field name="last_rotated_at"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="control_secret_ref_view_form" model="ir.ui.view">
+        <field name="name">control.secret.ref.form</field>
+        <field name="model">control.secret.ref</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="alert alert-warning" role="alert">
+                        <strong>Security Note:</strong> This record stores only a reference key, not the actual secret.
+                        The secret value is stored in the external secret manager.
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="provider"/>
+                            <field name="ref_key"/>
+                        </group>
+                        <group>
+                            <field name="secret_type"/>
+                            <field name="last_rotated_at"/>
+                            <field name="rotation_period_days"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                    <notebook>
+                        <page string="Usage" name="usage">
+                            <field name="connector_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="connector_type"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Usage notes (NOT the secret value)..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_secret_ref" model="ir.actions.act_window">
+        <field name="name">Secret References</field>
+        <field name="res_model">control.secret.ref</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
