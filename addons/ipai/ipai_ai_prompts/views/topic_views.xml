@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Topic Form View -->
+    <record id="view_ipai_ai_topic_form" model="ir.ui.view">
+        <field name="name">ipai.ai.topic.form</field>
+        <field name="model">ipai.ai.topic</field>
+        <field name="arch" type="xml">
+            <form string="AI Topic">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Topic Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="icon"/>
+                            <field name="color" widget="color_picker"/>
+                            <field name="prompt_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Persona">
+                        <group>
+                            <field name="persona_name"/>
+                            <field name="persona_tone"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="System Prompt" name="system_prompt">
+                            <field name="system_prompt" placeholder="Enter the base system prompt for this topic..."/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Prompts" name="prompts">
+                            <field name="prompt_ids">
+                                <tree>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="prompt_type" widget="badge"/>
+                                    <field name="usage_count"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Applicable Models" name="models">
+                            <field name="model_ids" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Topic Tree View -->
+    <record id="view_ipai_ai_topic_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.topic.tree</field>
+        <field name="model">ipai.ai.topic</field>
+        <field name="arch" type="xml">
+            <tree string="AI Topics" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category" widget="badge"/>
+                <field name="prompt_count"/>
+                <field name="active" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Topic Kanban View -->
+    <record id="view_ipai_ai_topic_kanban" model="ir.ui.view">
+        <field name="name">ipai.ai.topic.kanban</field>
+        <field name="model">ipai.ai.topic</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category"/>
+                <field name="icon"/>
+                <field name="prompt_count"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card oe_kanban_global_click">
+                            <div class="o_kanban_record_top">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <i t-att-class="'fa ' + record.icon.value" style="margin-right: 5px;"/>
+                                        <field name="name"/>
+                                    </strong>
+                                </div>
+                                <field name="category" widget="badge"/>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <span><field name="prompt_count"/> prompts</span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Topic Action -->
+    <record id="action_ipai_ai_topic" model="ir.actions.act_window">
+        <field name="name">AI Topics</field>
+        <field name="res_model">ipai.ai.topic</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first AI topic
+            </p>
+            <p>
+                Topics organize prompts by domain (Finance, Marketing, etc.)
+                and define the base system prompt for each category.
+            </p>
+        </field>
+    </record>
+</odoo>

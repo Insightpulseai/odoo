@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Governance Rule Form View -->
+    <record id="view_ipai_ai_governance_rule_form" model="ir.ui.view">
+        <field name="name">ipai.ai.governance.rule.form</field>
+        <field name="model">ipai.ai.governance.rule</field>
+        <field name="arch" type="xml">
+            <form string="AI Governance Rule">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Rule Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="rule_type"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="log_all_requests"/>
+                            <field name="log_blocked_only"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Scope" name="scope">
+                            <group>
+                                <field name="apply_to_all"/>
+                            </group>
+                            <group invisible="apply_to_all">
+                                <group>
+                                    <field name="group_ids" widget="many2many_tags"/>
+                                </group>
+                                <group>
+                                    <field name="user_ids" widget="many2many_tags"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Filters" name="filters">
+                            <group>
+                                <group>
+                                    <field name="provider_filter" placeholder="e.g., openai"/>
+                                    <field name="model_filter" placeholder="e.g., gpt-4"/>
+                                    <field name="source_filter" placeholder="e.g., chatter"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Rate Limits" name="rate_limits" invisible="rule_type != 'rate_limit'">
+                            <group>
+                                <group>
+                                    <field name="rate_limit_count"/>
+                                    <field name="rate_limit_period"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Token Limits" name="token_limits">
+                            <group>
+                                <group>
+                                    <field name="max_tokens_per_request"/>
+                                    <field name="max_tokens_per_day"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Content Rules" name="content">
+                            <group>
+                                <field name="block_patterns"
+                                       placeholder="Regex patterns to block (one per line)"/>
+                            </group>
+                            <group>
+                                <field name="required_patterns"
+                                       placeholder="Required patterns (one per line)"/>
+                            </group>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Governance Rule Tree View -->
+    <record id="view_ipai_ai_governance_rule_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.governance.rule.tree</field>
+        <field name="model">ipai.ai.governance.rule</field>
+        <field name="arch" type="xml">
+            <tree string="AI Governance Rules" decoration-muted="not active">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="rule_type" widget="badge"
+                       decoration-success="rule_type == 'allow'"
+                       decoration-danger="rule_type == 'deny'"
+                       decoration-warning="rule_type == 'rate_limit'"
+                       decoration-info="rule_type == 'require_approval'"/>
+                <field name="apply_to_all"/>
+                <field name="active" invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Governance Rule Action -->
+    <record id="action_ipai_ai_governance_rule" model="ir.actions.act_window">
+        <field name="name">AI Governance Rules</field>
+        <field name="res_model">ipai.ai.governance.rule</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first AI governance rule
+            </p>
+            <p>
+                Define rules to control AI usage: rate limits, content restrictions, and user permissions.
+            </p>
+        </field>
+    </record>
+</odoo>
