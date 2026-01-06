@@ -1,0 +1,308 @@
+# Azure to DigitalOcean/Supabase/Odoo Stack Mapping
+#
+# This file maps Azure Architecture Center services to the equivalent
+# components in the InsightPulse AI stack:
+# - DigitalOcean (compute, networking, storage)
+# - Supabase (database, auth, realtime, storage)
+# - Kubernetes (DOKS)
+# - Odoo CE 18 (ERP)
+# - n8n (workflow automation)
+# - Cloudflare (CDN, DNS, WAF)
+#
+# Usage:
+#   node tools/diagramflow/dist/cli.js remap -f diagram.drawio -m docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml
+
+mappings:
+  # ============================================================================
+  # Compute Services
+  # ============================================================================
+
+  azure.app_service:
+    label: "DO App Platform"
+    description: "Platform-as-a-Service for web apps"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.functions:
+    label: "Supabase Edge Functions"
+    description: "Serverless functions at the edge (Deno runtime)"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  azure.container_instances:
+    label: "DO App Platform (Container)"
+    description: "Container deployment on App Platform"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.aks:
+    label: "DOKS (DigitalOcean Kubernetes)"
+    description: "Managed Kubernetes service"
+    icon_style: "shape=mxgraph.kubernetes.k8s;whiteSpace=wrap;fillColor=#326CE5;strokeColor=#1a4d9e;"
+
+  azure.virtual_machines:
+    label: "DO Droplet"
+    description: "Virtual private server"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.batch:
+    label: "n8n Batch Workflow"
+    description: "Batch processing via n8n workflows"
+    fillColor: "#EA4B71"
+    strokeColor: "#B83A59"
+
+  # ============================================================================
+  # Database Services
+  # ============================================================================
+
+  azure.sql_database:
+    label: "Supabase Postgres"
+    description: "Managed PostgreSQL with Supabase"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  azure.cosmos_db:
+    label: "Supabase Postgres + JSONB"
+    description: "Document storage using PostgreSQL JSONB"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  azure.postgresql:
+    label: "Supabase Postgres"
+    description: "Managed PostgreSQL"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  azure.mysql:
+    label: "DO Managed MySQL"
+    description: "DigitalOcean managed MySQL"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.redis_cache:
+    label: "DO Managed Redis"
+    description: "DigitalOcean managed Redis"
+    fillColor: "#DC382D"
+    strokeColor: "#A82921"
+
+  # ============================================================================
+  # Storage Services
+  # ============================================================================
+
+  azure.storage_account:
+    label: "DO Spaces (S3)"
+    description: "Object storage (S3-compatible)"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.blob_storage:
+    label: "DO Spaces"
+    description: "Blob/object storage"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.file_storage:
+    label: "Supabase Storage"
+    description: "File storage with Supabase"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  azure.queue_storage:
+    label: "Supabase Realtime"
+    description: "Queue via Supabase Realtime pub/sub"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  # ============================================================================
+  # Networking Services
+  # ============================================================================
+
+  azure.virtual_network:
+    label: "DO VPC"
+    description: "Virtual Private Cloud"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.load_balancer:
+    label: "DO Load Balancer"
+    description: "Managed load balancer"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.application_gateway:
+    label: "Cloudflare Gateway"
+    description: "Application-level gateway with WAF"
+    fillColor: "#F48120"
+    strokeColor: "#C06518"
+
+  azure.cdn:
+    label: "Cloudflare CDN"
+    description: "Content delivery network"
+    fillColor: "#F48120"
+    strokeColor: "#C06518"
+
+  azure.dns:
+    label: "Cloudflare DNS"
+    description: "Managed DNS"
+    fillColor: "#F48120"
+    strokeColor: "#C06518"
+
+  azure.front_door:
+    label: "Cloudflare"
+    description: "Global load balancing and CDN"
+    fillColor: "#F48120"
+    strokeColor: "#C06518"
+
+  azure.firewall:
+    label: "DO Cloud Firewall"
+    description: "Network firewall"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.waf:
+    label: "Cloudflare WAF"
+    description: "Web Application Firewall"
+    fillColor: "#F48120"
+    strokeColor: "#C06518"
+
+  # ============================================================================
+  # Integration Services
+  # ============================================================================
+
+  azure.api_management:
+    label: "Kong / Supabase API"
+    description: "API gateway"
+    fillColor: "#003366"
+    strokeColor: "#002244"
+
+  azure.service_bus:
+    label: "n8n + Supabase Realtime"
+    description: "Message bus via n8n and Supabase"
+    fillColor: "#EA4B71"
+    strokeColor: "#B83A59"
+
+  azure.event_hub:
+    label: "Supabase Realtime"
+    description: "Event streaming"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  azure.event_grid:
+    label: "n8n Webhooks"
+    description: "Event routing via n8n"
+    fillColor: "#EA4B71"
+    strokeColor: "#B83A59"
+
+  azure.logic_apps:
+    label: "n8n Workflows"
+    description: "Workflow automation"
+    fillColor: "#EA4B71"
+    strokeColor: "#B83A59"
+
+  # ============================================================================
+  # Security & Identity
+  # ============================================================================
+
+  azure.active_directory:
+    label: "Supabase Auth / Keycloak"
+    description: "Identity provider"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  azure.key_vault:
+    label: "DO Secrets + Vault"
+    description: "Secrets management"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.security_center:
+    label: "Cloudflare Security"
+    description: "Security monitoring"
+    fillColor: "#F48120"
+    strokeColor: "#C06518"
+
+  # ============================================================================
+  # Monitoring & Management
+  # ============================================================================
+
+  azure.monitor:
+    label: "DO Monitoring"
+    description: "Infrastructure monitoring"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.log_analytics:
+    label: "Loki / Grafana"
+    description: "Log aggregation and analysis"
+    fillColor: "#F46800"
+    strokeColor: "#C05200"
+
+  azure.application_insights:
+    label: "Sentry / PostHog"
+    description: "Application performance monitoring"
+    fillColor: "#362D59"
+    strokeColor: "#251E40"
+
+  # ============================================================================
+  # AI/ML Services
+  # ============================================================================
+
+  azure.cognitive_services:
+    label: "OpenAI API"
+    description: "AI/ML APIs"
+    fillColor: "#10A37F"
+    strokeColor: "#0A7A5C"
+
+  azure.openai:
+    label: "OpenAI API"
+    description: "GPT models"
+    fillColor: "#10A37F"
+    strokeColor: "#0A7A5C"
+
+  azure.search:
+    label: "Supabase pgvector"
+    description: "Vector search"
+    fillColor: "#3ECF8E"
+    strokeColor: "#2CA06A"
+
+  # ============================================================================
+  # Application Services (Odoo/IPAI specific)
+  # ============================================================================
+
+  azure.webapp_erp:
+    label: "Odoo CE 18"
+    description: "Enterprise Resource Planning"
+    fillColor: "#714B67"
+    strokeColor: "#5A3C52"
+
+  azure.webapp_crm:
+    label: "Odoo CRM"
+    description: "Customer Relationship Management"
+    fillColor: "#714B67"
+    strokeColor: "#5A3C52"
+
+  azure.webapp_ecommerce:
+    label: "Odoo eCommerce"
+    description: "Online sales platform"
+    fillColor: "#714B67"
+    strokeColor: "#5A3C52"
+
+  # ============================================================================
+  # Container Services
+  # ============================================================================
+
+  azure.container_registry:
+    label: "DO Container Registry"
+    description: "Docker image registry"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+  azure.container_apps:
+    label: "DO App Platform (Container)"
+    description: "Serverless containers"
+    fillColor: "#0080FF"
+    strokeColor: "#0050A0"
+
+defaults:
+  style: "rounded=1;whiteSpace=wrap;html=1;"
