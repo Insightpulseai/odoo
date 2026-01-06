@@ -1,0 +1,167 @@
+{
+  "name": "BIR Deadline Reminder",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "schedule-daily",
+      "name": "Schedule - Daily 8 AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// BIR Tax Calendar - Philippine Tax Deadlines\nconst today = new Date();\nconst currentMonth = today.getMonth() + 1;\nconst currentDay = today.getDate();\nconst currentYear = today.getFullYear();\n\n// Helper to calculate deadline\nfunction getDeadline(day, monthOffset = 0) {\n  const deadline = new Date(currentYear, currentMonth - 1 + monthOffset, day);\n  return deadline;\n}\n\n// Helper to check if deadline is within N days\nfunction isWithinDays(deadline, days) {\n  const diff = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));\n  return diff >= 0 && diff <= days;\n}\n\nconst deadlines = [];\n\n// Monthly deadlines\nconst monthlyDeadlines = [\n  { form: '1601-C', name: 'Monthly Withholding Tax', day: 10, description: 'Compensation withholding tax' },\n  { form: '1601-E', name: 'Monthly Expanded Withholding Tax', day: 10, description: 'EWT on payments to contractors' },\n  { form: '2550M', name: 'Monthly VAT Declaration', day: 20, description: 'Monthly VAT (if applicable)' },\n  { form: '1606', name: 'Monthly Final Withholding Tax', day: 10, description: 'Final tax on dividends, royalties' },\n];\n\nmonthlyDeadlines.forEach(d => {\n  const deadline = getDeadline(d.day, 1); // Next month\n  if (isWithinDays(deadline, 7)) {\n    deadlines.push({\n      ...d,\n      deadline: deadline.toISOString().split('T')[0],\n      daysUntil: Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)),\n      priority: Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)) <= 3 ? 'high' : 'medium',\n    });\n  }\n});\n\n// Quarterly deadlines (if in quarter-end month)\nif ([3, 6, 9, 12].includes(currentMonth)) {\n  const quarterlyDeadlines = [\n    { form: '2550Q', name: 'Quarterly VAT Return', day: 25, description: 'Quarterly VAT declaration' },\n    { form: '1601-Q', name: 'Quarterly Income Tax', day: 15, description: 'Quarterly income tax' },\n    { form: '1701Q', name: 'Quarterly Income Tax (Individuals)', day: 15, description: 'For self-employed' },\n  ];\n  \n  quarterlyDeadlines.forEach(d => {\n    const deadline = getDeadline(d.day, 1);\n    if (isWithinDays(deadline, 14)) {\n      deadlines.push({\n        ...d,\n        deadline: deadline.toISOString().split('T')[0],\n        daysUntil: Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)),\n        priority: Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)) <= 5 ? 'high' : 'medium',\n      });\n    }\n  });\n}\n\n// Annual deadlines (January-April)\nif (currentMonth >= 1 && currentMonth <= 4) {\n  const annualDeadlines = [\n    { form: '1604-CF', name: 'Annual Information Return (Compensation)', day: 31, month: 1, description: 'Alphalist of employees' },\n    { form: '1604-E', name: 'Annual Information Return (EWT)', day: 1, month: 3, description: 'Alphalist of payees' },\n    { form: '1702-RT', name: 'Annual Income Tax Return (Corp)', day: 15, month: 4, description: 'Corporate annual ITR' },\n    { form: '1701', name: 'Annual Income Tax Return (Indiv)', day: 15, month: 4, description: 'Individual annual ITR' },\n  ];\n  \n  annualDeadlines.forEach(d => {\n    const deadline = new Date(currentYear, d.month - 1, d.day);\n    if (isWithinDays(deadline, 30)) {\n      deadlines.push({\n        ...d,\n        deadline: deadline.toISOString().split('T')[0],\n        daysUntil: Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)),\n        priority: Math.ceil((deadline - today) / (1000 * 60 * 60 * 24)) <= 7 ? 'high' : 'medium',\n      });\n    }\n  });\n}\n\nreturn {\n  json: {\n    date: today.toISOString().split('T')[0],\n    upcomingDeadlines: deadlines,\n    hasUrgent: deadlines.some(d => d.priority === 'high'),\n    count: deadlines.length,\n  }\n};"
+      },
+      "id": "calculate-deadlines",
+      "name": "Calculate Upcoming Deadlines",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-deadlines",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-deadlines",
+      "name": "Has Upcoming Deadlines?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Format deadlines for Mattermost message\nconst data = $input.first().json;\nconst deadlines = data.upcomingDeadlines;\n\nlet message = '#### :calendar: BIR Filing Deadlines\\n\\n';\n\nif (data.hasUrgent) {\n  message += ':warning: **URGENT: You have deadlines within 3 days!**\\n\\n';\n}\n\nmessage += '| Form | Description | Deadline | Days Left | Priority |\\n';\nmessage += '|:-----|:------------|:---------|:----------|:---------|\\n';\n\ndeadlines\n  .sort((a, b) => a.daysUntil - b.daysUntil)\n  .forEach(d => {\n    const priorityIcon = d.priority === 'high' ? ':red_circle:' : ':yellow_circle:';\n    message += `| ${d.form} | ${d.name} | ${d.deadline} | ${d.daysUntil} | ${priorityIcon} ${d.priority} |\\n`;\n  });\n\nmessage += '\\n---\\n';\nmessage += '_File via [eFPS](https://efps.bir.gov.ph) or [eBIRForms](https://ebirforms.bir.gov.ph)_';\n\nreturn {\n  json: {\n    message: message,\n    hasUrgent: data.hasUrgent,\n    channel: data.hasUrgent ? 'bir-alerts' : 'bir-filings',\n  }\n};"
+      },
+      "id": "format-message",
+      "name": "Format Mattermost Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://chat.insightpulseai.net/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $json.channel }}\",\n  \"username\": \"BIR Compliance Bot\",\n  \"icon_emoji\": \":bir:\",\n  \"text\": {{ JSON.stringify($json.message) }}\n}",
+        "options": {}
+      },
+      "id": "mattermost-post",
+      "name": "Post to Mattermost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {},
+      "id": "no-deadlines",
+      "name": "No Deadlines - Skip",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [910, 400]
+    }
+  ],
+  "connections": {
+    "Schedule - Daily 8 AM": {
+      "main": [
+        [
+          {
+            "node": "Calculate Upcoming Deadlines",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Upcoming Deadlines": {
+      "main": [
+        [
+          {
+            "node": "Has Upcoming Deadlines?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Upcoming Deadlines?": {
+      "main": [
+        [
+          {
+            "node": "Format Mattermost Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Deadlines - Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Mattermost Message": {
+      "main": [
+        [
+          {
+            "node": "Post to Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateId": "insightpulse-bir-reminder-v1"
+  },
+  "tags": [
+    {
+      "name": "bir",
+      "id": "6"
+    },
+    {
+      "name": "compliance",
+      "id": "7"
+    },
+    {
+      "name": "scheduled",
+      "id": "8"
+    }
+  ]
+}

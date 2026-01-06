@@ -1,0 +1,60 @@
+# Odoo MCP Server Configuration
+# ==============================
+
+server:
+  name: odoo-mcp
+  version: 1.0.0
+  description: MCP server for Odoo 18 CE integration
+
+connection:
+  url: ${ODOO_URL:-https://erp.insightpulseai.net}
+  database: ${ODOO_DB:-odoo}
+  username: ${ODOO_USER:-admin}
+  # Password should be set via environment variable ODOO_PASSWORD
+
+options:
+  timeout: 30  # seconds
+  retry_count: 3
+  retry_delay: 1  # seconds
+
+# Tool permissions
+permissions:
+  read:
+    - odoo_search
+    - odoo_read
+    - odoo_fields_get
+  write:
+    - odoo_create
+    - odoo_write
+  execute:
+    - odoo_execute
+
+# Model restrictions (optional whitelist)
+allowed_models:
+  # Accounting
+  - account.move
+  - account.move.line
+  - account.journal
+  - account.account
+  - account.tax
+  - account.payment
+  - account.bank.statement
+  # Partners
+  - res.partner
+  - res.company
+  - res.users
+  # HR
+  - hr.employee
+  - hr.expense
+  - hr.expense.sheet
+  # Projects
+  - project.project
+  - project.task
+  # Products
+  - product.product
+  - product.template
+
+# Logging
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
