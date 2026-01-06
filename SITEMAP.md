@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6cbd8ee0ebc1fa7fdd83aa153728e0c7822d4b5f
+> Commit: 7a2459e0b9999e9c37ebd476f4f2ad0364268f06
 
 ## 📚 Documentation
 
@@ -84,6 +84,9 @@
 | [IPAI Verification Commands](VERIFY.md) | . |
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
 | [IPAI Module Namespace](addons/ipai/README.md) | addons/ipai |
+| [IPAI AI Agents UI](addons/ipai/ipai_ai_agents_ui/README.md) | addons/ipai/ipai_ai_agents_ui |
+| [IPAI AI Connectors](addons/ipai/ipai_ai_connectors/README.md) | addons/ipai/ipai_ai_connectors |
+| [IPAI AI Sources (Odoo Export)](addons/ipai/ipai_ai_sources_odoo/README.md) | addons/ipai/ipai_ai_sources_odoo |
 | [Clarity PPM Parity - Implementation Complete ✅](addons/ipai/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity - Quick Start Guide](addons/ipai/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Final Status](addons/ipai/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai/ipai_clarity_ppm_parity |
@@ -288,6 +291,7 @@
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
+| [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
@@ -411,6 +415,7 @@
 .
 . |
 | [Conversations Index](docs/ops/conversations/INDEX.md) | docs/ops/conversations |
+| [IPAI AI Platform - Object Relationship Document (ORD)](docs/ord/IPAI_AI_PLATFORM_ORD.md) | docs/ord |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
@@ -501,6 +506,10 @@
 | [InsightPulse Mobile Plan](spec/insightpulse-mobile/plan.md) | spec/insightpulse-mobile |
 | [InsightPulse Mobile App - Product Requirements](spec/insightpulse-mobile/prd.md) | spec/insightpulse-mobile |
 | [InsightPulse Mobile - Task Checklist](spec/insightpulse-mobile/tasks.md) | spec/insightpulse-mobile |
+| [Constitution — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/constitution.md) | spec/ipai-ai-platform-odoo18 |
+| [Plan — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/plan.md) | spec/ipai-ai-platform-odoo18 |
+| [PRD — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/prd.md) | spec/ipai-ai-platform-odoo18 |
+| [Tasks — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/tasks.md) | spec/ipai-ai-platform-odoo18 |
 | [Constitution — IPAI Control Center (Spec Kit)](spec/ipai-control-center/constitution.md) | spec/ipai-control-center |
 | [Delivery Plan — IPAI Control Center (v1.0.0)](spec/ipai-control-center/plan.md) | spec/ipai-control-center |
 | [Product Requirements Document — IPAI Control Center](spec/ipai-control-center/prd.md) | spec/ipai-control-center |
@@ -598,11 +607,14 @@
 |--------|--------|-------------|
 | [ipai_advisor](./addons/ipai/ipai_advisor) | ✅ |  |
 | [ipai_agent_core](./addons/ipai/ipai_agent_core) | ✅ |  |
+| [ipai_ai_agents_ui](./addons/ipai/ipai_ai_agents_ui) | ✅ |  |
 | [ipai_ai_audit](./addons/ipai/ipai_ai_audit) | ✅ |  |
+| [ipai_ai_connectors](./addons/ipai/ipai_ai_connectors) | ✅ |  |
 | [ipai_ai_core](./addons/ipai/ipai_ai_core) | ✅ |  |
 | [ipai_ai_prompts](./addons/ipai/ipai_ai_prompts) | ✅ |  |
 | [ipai_ai_provider_kapa](./addons/ipai/ipai_ai_provider_kapa) | ✅ |  |
 | [ipai_ai_provider_pulser](./addons/ipai/ipai_ai_provider_pulser) | ✅ |  |
+| [ipai_ai_sources_odoo](./addons/ipai/ipai_ai_sources_odoo) | ✅ |  |
 | [ipai_ai_studio](./addons/ipai/ipai_ai_studio) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |

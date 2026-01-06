@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6cbd8ee0ebc1fa7fdd83aa153728e0c7822d4b5f
+> Commit: 7a2459e0b9999e9c37ebd476f4f2ad0364268f06
 
 ```
 .
@@ -66,6 +66,7 @@
 │   │   ├── health-check.yml
 │   │   ├── icons-drift.yml
 │   │   ├── infra-validate.yml
+│   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-module-matrix.yml
@@ -117,11 +118,30 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_ai_agents_ui
+│   │   │   ├── controllers
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── tests
+│   │   │   ├── ui
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_audit
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_connectors
+│   │   │   ├── controllers
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_core
@@ -147,6 +167,15 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_sources_odoo
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_studio
@@ -1483,7 +1512,8 @@
 │   ├── migrations
 │   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
 │   │   ├── 202512070002_REORG_COPY_DATA.sql
-│   │   └── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
+│   │   ├── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
+│   │   └── 202601060001_IPAI_KB_CHUNKS.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -1574,8 +1604,12 @@
 ├── docs
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
+│   ├── api
+│   │   └── openapi.ipai_ai_platform.yaml
 │   ├── architecture
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
+│   │   ├── IPAI_AI_PLATFORM_ARCH.md
+│   │   ├── IPAI_AI_PLATFORM_ERD.dbml
 │   │   ├── README.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
@@ -1722,6 +1756,8 @@
 │   │   │   ├── INDEX.md
 │   │   │   └── index.json
 │   │   └── CONVERSATIONS_README.md
+│   ├── ord
+│   │   └── IPAI_AI_PLATFORM_ORD.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
@@ -2525,6 +2561,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── ipai-ai-platform-odoo18
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ipai-control-center
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -2970,15 +3011,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-920 directories, 2045 files
+942 directories, 2064 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1059 |
-| Files | 2991 |
-| Python files | 794 |
-| XML files | 407 |
-| Markdown files | 574 |
+| Directories | 1087 |
+| Files | 3046 |
+| Python files | 815 |
+| XML files | 414 |
+| Markdown files | 583 |
