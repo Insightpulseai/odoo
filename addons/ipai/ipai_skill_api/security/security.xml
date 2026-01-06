@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Agent API User Group -->
+        <record id="group_agent_api_user" model="res.groups">
+            <field name="name">Agent API User</field>
+            <field name="comment">Users who can access agent skills via REST API</field>
+            <field name="category_id" ref="base.module_category_productivity"/>
+        </record>
+
+        <!-- Agent API Manager Group -->
+        <record id="group_agent_api_manager" model="res.groups">
+            <field name="name">Agent API Manager</field>
+            <field name="comment">Users who can manage agent skills and runs</field>
+            <field name="category_id" ref="base.module_category_productivity"/>
+            <field name="implied_ids" eval="[(4, ref('group_agent_api_user'))]"/>
+        </record>
+    </data>
+</odoo>
