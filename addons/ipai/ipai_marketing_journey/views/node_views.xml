@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Node Form View -->
+    <record id="view_marketing_journey_node_form" model="ir.ui.view">
+        <field name="name">marketing.journey.node.form</field>
+        <field name="model">marketing.journey.node</field>
+        <field name="arch" type="xml">
+            <form string="Journey Node">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="node_type"/>
+                            <field name="sequence"/>
+                            <field name="journey_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="is_entry" readonly="1"/>
+                            <field name="is_exit" readonly="1"/>
+                            <field name="participant_count" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Email Configuration -->
+                    <group string="Email Configuration" invisible="node_type != 'email'">
+                        <field name="mailing_id" domain="[('mailing_type', '=', 'mail')]"
+                               options="{'no_create': True}"/>
+                    </group>
+
+                    <!-- Delay Configuration -->
+                    <group string="Delay Configuration" invisible="node_type != 'delay'">
+                        <group>
+                            <field name="delay_value"/>
+                            <field name="delay_unit"/>
+                        </group>
+                    </group>
+
+                    <!-- Branch Configuration -->
+                    <group string="Branch Configuration" invisible="node_type != 'branch'">
+                        <field name="branch_domain" widget="domain"
+                               options="{'model': 'parent.journey_id.model_id'}"/>
+                    </group>
+
+                    <!-- Action Configuration -->
+                    <group string="Action Configuration" invisible="node_type != 'action'">
+                        <field name="server_action_id"/>
+                    </group>
+
+                    <!-- Tag Configuration -->
+                    <group string="Tag Configuration" invisible="node_type != 'tag'">
+                        <field name="tag_action"/>
+                        <field name="partner_tag_ids" widget="many2many_tags"/>
+                    </group>
+
+                    <!-- Activity Configuration -->
+                    <group string="Activity Configuration" invisible="node_type != 'activity'">
+                        <field name="activity_type_id"/>
+                        <field name="activity_summary"/>
+                        <field name="activity_user_id"/>
+                    </group>
+
+                    <!-- Statistics -->
+                    <group string="Statistics" name="statistics">
+                        <group>
+                            <field name="success_count" readonly="1"/>
+                            <field name="error_count" readonly="1"/>
+                        </group>
+                    </group>
+
+                    <!-- Connections -->
+                    <notebook>
+                        <page string="Outgoing Connections" name="outgoing">
+                            <field name="outgoing_edge_ids">
+                                <tree>
+                                    <field name="target_node_id"/>
+                                    <field name="edge_type"/>
+                                    <field name="label"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Incoming Connections" name="incoming">
+                            <field name="incoming_edge_ids">
+                                <tree>
+                                    <field name="source_node_id"/>
+                                    <field name="edge_type"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Node Tree View -->
+    <record id="view_marketing_journey_node_tree" model="ir.ui.view">
+        <field name="name">marketing.journey.node.tree</field>
+        <field name="model">marketing.journey.node</field>
+        <field name="arch" type="xml">
+            <tree string="Journey Nodes">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="journey_id"/>
+                <field name="node_type" widget="badge"/>
+                <field name="participant_count"/>
+                <field name="success_count"/>
+                <field name="error_count"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Node Action -->
+    <record id="action_marketing_journey_node" model="ir.actions.act_window">
+        <field name="name">Journey Nodes</field>
+        <field name="res_model">marketing.journey.node</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
