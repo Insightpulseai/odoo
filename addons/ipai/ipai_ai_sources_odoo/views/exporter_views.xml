@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Tree View for Export Runs -->
+    <record id="view_ipai_kb_export_run_tree" model="ir.ui.view">
+        <field name="name">ipai.kb.export.run.tree</field>
+        <field name="model">ipai.kb.export.run</field>
+        <field name="arch" type="xml">
+            <tree string="KB Export Runs" decoration-success="state == 'success'" decoration-danger="state == 'failed'" decoration-info="state == 'running'">
+                <field name="started_at"/>
+                <field name="state" widget="badge" decoration-success="state == 'success'" decoration-danger="state == 'failed'" decoration-info="state == 'running'"/>
+                <field name="chunks_count"/>
+                <field name="duration_seconds" widget="float_time"/>
+                <field name="completed_at"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for Export Runs -->
+    <record id="view_ipai_kb_export_run_form" model="ir.ui.view">
+        <field name="name">ipai.kb.export.run.form</field>
+        <field name="model">ipai.kb.export.run</field>
+        <field name="arch" type="xml">
+            <form string="KB Export Run">
+                <sheet>
+                    <group>
+                        <group string="Run Details">
+                            <field name="state"/>
+                            <field name="chunks_count"/>
+                            <field name="started_at"/>
+                            <field name="completed_at"/>
+                            <field name="duration_seconds" widget="float_time"/>
+                        </group>
+                        <group string="Organization">
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Error" attrs="{'invisible': [('error_message', '=', False)]}">
+                        <field name="error_message" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_ipai_kb_export_run_search" model="ir.ui.view">
+        <field name="name">ipai.kb.export.run.search</field>
+        <field name="model">ipai.kb.export.run</field>
+        <field name="arch" type="xml">
+            <search string="Search Export Runs">
+                <filter name="filter_success" string="Success" domain="[('state', '=', 'success')]"/>
+                <filter name="filter_failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                <filter name="filter_running" string="Running" domain="[('state', '=', 'running')]"/>
+                <separator/>
+                <filter name="filter_today" string="Today" domain="[('started_at', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter name="filter_week" string="This Week" domain="[('started_at', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'started_at:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ipai_kb_export_run" model="ir.actions.act_window">
+        <field name="name">KB Export Runs</field>
+        <field name="res_model">ipai.kb.export.run</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_ipai_kb_export_run_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No export runs yet
+            </p>
+            <p>
+                Export runs are created automatically by the scheduled cron job
+                that syncs Odoo data to the knowledge base.
+            </p>
+        </field>
+    </record>
+</odoo>

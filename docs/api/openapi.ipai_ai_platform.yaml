@@ -1,0 +1,523 @@
+openapi: 3.0.3
+info:
+  title: IPAI AI Platform API
+  description: |
+    REST API for the IPAI AI Platform running on Odoo CE 18.
+
+    ## Authentication
+
+    - **Odoo Endpoints**: Use session cookies (same-origin requests)
+    - **Connector Endpoint**: Use shared token in request params
+    - **Supabase RPCs**: Use API key in headers
+
+    ## JSON-RPC Format
+
+    All Odoo endpoints use JSON-RPC 2.0 format:
+    ```json
+    {
+      "jsonrpc": "2.0",
+      "method": "call",
+      "params": { ... },
+      "id": 1
+    }
+    ```
+
+  version: 1.0.0
+  contact:
+    name: InsightPulse AI
+    url: https://github.com/jgtolentino/odoo-ce
+
+servers:
+  - url: https://erp.insightpulseai.net
+    description: Production Odoo server
+  - url: https://spdtwktxdalcfigzeqrz.supabase.co
+    description: Supabase (KB vector store)
+
+tags:
+  - name: AI Agents
+    description: Ask AI panel endpoints
+  - name: Connectors
+    description: Integration webhook endpoints
+  - name: Supabase KB
+    description: Knowledge base RPCs
+
+paths:
+  # ============================================================================
+  # AI Agents Endpoints
+  # ============================================================================
+
+  /ipai_ai_agents/bootstrap:
+    post:
+      tags: [AI Agents]
+      summary: Initialize AI panel
+      description: |
+        Returns available agents and configuration for the current user.
+        Requires authenticated Odoo session.
+      security:
+        - odooSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            example:
+              jsonrpc: "2.0"
+              method: call
+              params: {}
+              id: 1
+      responses:
+        '200':
+          description: Bootstrap data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BootstrapResponse'
+
+  /ipai_ai_agents/ask:
+    post:
+      tags: [AI Agents]
+      summary: Send message to AI agent
+      description: |
+        Sends a user message, retrieves evidence from KB, calls LLM,
+        and returns the response with citations.
+      security:
+        - odooSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            example:
+              jsonrpc: "2.0"
+              method: call
+              params:
+                provider_id: 1
+                message: "How do I create a new project?"
+                thread_id: null
+              id: 1
+      responses:
+        '200':
+          description: AI response with citations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AskResponse'
+
+  /ipai_ai_agents/feedback:
+    post:
+      tags: [AI Agents]
+      summary: Submit feedback on AI response
+      description: Records user feedback (helpful/not helpful) on an AI message.
+      security:
+        - odooSession: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            example:
+              jsonrpc: "2.0"
+              method: call
+              params:
+                message_id: 42
+                rating: helpful
+                reason: "Accurate and well-cited"
+              id: 1
+      responses:
+        '200':
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackResponse'
+
+  # ============================================================================
+  # Connector Endpoints
+  # ============================================================================
+
+  /ipai_ai_connectors/event:
+    post:
+      tags: [Connectors]
+      summary: Receive integration event
+      description: |
+        Webhook endpoint for external systems (n8n, GitHub, Slack) to send events.
+        Requires token authentication.
+      security:
+        - connectorToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            example:
+              jsonrpc: "2.0"
+              method: call
+              params:
+                token: "your_secret_token"
+                source: n8n
+                event_type: workflow.completed
+                ref: "workflow_123"
+                payload:
+                  status: success
+                  output: { key: value }
+              id: 1
+      responses:
+        '200':
+          description: Event created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventResponse'
+
+  /ipai_ai_connectors/health:
+    post:
+      tags: [Connectors]
+      summary: Health check
+      description: Returns module health status. No authentication required.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  # ============================================================================
+  # Supabase KB RPCs
+  # ============================================================================
+
+  /rest/v1/rpc/search_chunks:
+    post:
+      tags: [Supabase KB]
+      summary: Vector search in KB
+      description: |
+        Searches knowledge base using vector similarity.
+        Returns chunks ranked by cosine similarity to query embedding.
+      security:
+        - supabaseApiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [p_tenant_ref, p_query_embedding]
+              properties:
+                p_tenant_ref:
+                  type: string
+                  example: "odoo_company:1"
+                p_query_embedding:
+                  type: array
+                  items:
+                    type: number
+                  description: 1536-dimension embedding vector
+                p_limit:
+                  type: integer
+                  default: 8
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KBChunk'
+
+  /rest/v1/rpc/search_chunks_text:
+    post:
+      tags: [Supabase KB]
+      summary: Text search in KB (fallback)
+      description: |
+        Text-based search when embeddings are not available.
+        Uses ILIKE matching on title and content.
+      security:
+        - supabaseApiKey: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [p_tenant_ref, p_query]
+              properties:
+                p_tenant_ref:
+                  type: string
+                  example: "odoo_company:1"
+                p_query:
+                  type: string
+                  example: "project workflow"
+                p_limit:
+                  type: integer
+                  default: 8
+      responses:
+        '200':
+          description: Search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KBChunk'
+
+components:
+  securitySchemes:
+    odooSession:
+      type: apiKey
+      in: cookie
+      name: session_id
+      description: Odoo session cookie
+
+    connectorToken:
+      type: apiKey
+      in: query
+      name: token
+      description: Shared secret token (IPAI_CONNECTORS_TOKEN)
+
+    supabaseApiKey:
+      type: apiKey
+      in: header
+      name: apikey
+      description: Supabase API key
+
+  schemas:
+    # =========================================================================
+    # Common Schemas
+    # =========================================================================
+
+    JsonRpcRequest:
+      type: object
+      required: [jsonrpc, method, params, id]
+      properties:
+        jsonrpc:
+          type: string
+          enum: ["2.0"]
+        method:
+          type: string
+          enum: [call]
+        params:
+          type: object
+        id:
+          type: integer
+
+    JsonRpcError:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+            debug:
+              type: string
+
+    # =========================================================================
+    # Bootstrap Schemas
+    # =========================================================================
+
+    BootstrapResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            agents:
+              type: array
+              items:
+                $ref: '#/components/schemas/Agent'
+            user:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+            company:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+            config:
+              type: object
+              properties:
+                max_message_length:
+                  type: integer
+                supports_streaming:
+                  type: boolean
+
+    Agent:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        provider_type:
+          type: string
+          enum: [kapa, openai, anthropic, ollama]
+        is_default:
+          type: boolean
+
+    # =========================================================================
+    # Ask Schemas
+    # =========================================================================
+
+    AskResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            ok:
+              type: boolean
+            thread_id:
+              type: integer
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/Message'
+            error:
+              type: string
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        role:
+          type: string
+          enum: [user, assistant, system]
+        content:
+          type: string
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+        create_date:
+          type: string
+          format: date-time
+
+    Citation:
+      type: object
+      properties:
+        rank:
+          type: integer
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+        snippet:
+          type: string
+        score:
+          type: number
+
+    # =========================================================================
+    # Feedback Schemas
+    # =========================================================================
+
+    FeedbackResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            ok:
+              type: boolean
+            error:
+              type: string
+
+    # =========================================================================
+    # Event Schemas
+    # =========================================================================
+
+    EventResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            ok:
+              type: boolean
+            event_id:
+              type: integer
+            error:
+              type: string
+
+    # =========================================================================
+    # Health Schemas
+    # =========================================================================
+
+    HealthResponse:
+      type: object
+      properties:
+        jsonrpc:
+          type: string
+        id:
+          type: integer
+        result:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [ok]
+            module:
+              type: string
+            version:
+              type: string
+
+    # =========================================================================
+    # KB Schemas
+    # =========================================================================
+
+    KBChunk:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        url:
+          type: string
+          format: uri
+        content:
+          type: string
+        score:
+          type: number
+          description: Similarity score (0-1, higher is better)
