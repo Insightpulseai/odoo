@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7a2459e0b9999e9c37ebd476f4f2ad0364268f06
+> Commit: 85f395eb3db4811667608d784ab873c9109213d4
 
 ```
 .
@@ -391,6 +391,15 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_focalboard_connector
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_industry_accounting_firm
 │   │   │   ├── models
 │   │   │   ├── security
@@ -400,6 +409,15 @@
 │   │   ├── ipai_industry_marketing_agency
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_integrations
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -421,10 +439,29 @@
 │   │   │   ├── tests
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_mattermost_connector
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_module_gating
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_n8n_connector
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -1657,6 +1694,12 @@
 │   ├── golive
 │   │   ├── TBWA_OMC_PH_GOLIVE_CHECKLIST.csv
 │   │   └── TBWA_OMC_PH_GOLIVE_GUIDE.md
+│   ├── integrations
+│   │   ├── FOCALBOARD.md
+│   │   ├── MATTERMOST.md
+│   │   ├── N8N.md
+│   │   ├── OCA_SUBTREE_MIGRATION.md
+│   │   └── OPS_STACK.md
 │   ├── ipai
 │   │   ├── ARCHITECTURE.md
 │   │   ├── CHANGELOG.md
@@ -1778,6 +1821,12 @@
 │   │   ├── ODOO_MODEL_SNAPSHOT.prod.json
 │   │   ├── WORKOS_MODELS.prod.json
 │   │   └── WORKOS_MODULES.prod.csv
+│   ├── templates
+│   │   └── ipai-ops-stack
+│   │       ├── caddy
+│   │       ├── docker
+│   │       ├── scripts
+│   │       └── README.md
 │   ├── workflows
 │   │   └── hire-to-retire-bpmn.html
 │   ├── 003-odoo-ce-custom-image-spec.md
@@ -1970,6 +2019,8 @@
 │   │   ├── .env.example
 │   │   ├── README.md
 │   │   └── docker-compose.yml
+│   ├── links
+│   │   └── collab-stack.md
 │   └── superset
 │       ├── README.md
 │       ├── do-app-spec.yaml
@@ -3011,15 +3062,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-942 directories, 2064 files
+978 directories, 2079 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1087 |
-| Files | 3046 |
-| Python files | 815 |
-| XML files | 414 |
-| Markdown files | 583 |
+| Directories | 1127 |
+| Files | 3122 |
+| Python files | 852 |
+| XML files | 428 |
+| Markdown files | 590 |
