@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_n8n_workflow_user,ipai.n8n.workflow.user,model_ipai_n8n_workflow,ipai_integrations.group_integration_user,1,0,0,0
+access_n8n_workflow_manager,ipai.n8n.workflow.manager,model_ipai_n8n_workflow,ipai_integrations.group_integration_manager,1,1,1,1
+access_n8n_execution_user,ipai.n8n.execution.user,model_ipai_n8n_execution,ipai_integrations.group_integration_user,1,0,0,0
+access_n8n_execution_manager,ipai.n8n.execution.manager,model_ipai_n8n_execution,ipai_integrations.group_integration_manager,1,1,1,0

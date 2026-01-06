@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Default configuration parameters for integrations -->
+
+    <!-- Mattermost defaults -->
+    <record id="config_mattermost_url" model="ir.config_parameter">
+        <field name="key">ipai_integrations.mattermost_url</field>
+        <field name="value">https://chat.insightpulseai.net</field>
+    </record>
+
+    <!-- Focalboard defaults -->
+    <record id="config_focalboard_url" model="ir.config_parameter">
+        <field name="key">ipai_integrations.focalboard_url</field>
+        <field name="value">https://boards.insightpulseai.net</field>
+    </record>
+
+    <!-- n8n defaults -->
+    <record id="config_n8n_url" model="ir.config_parameter">
+        <field name="key">ipai_integrations.n8n_url</field>
+        <field name="value">https://n8n.insightpulseai.net</field>
+    </record>
+
+    <!-- Audit log retention (days) -->
+    <record id="config_audit_retention" model="ir.config_parameter">
+        <field name="key">ipai_integrations.audit_retention_days</field>
+        <field name="value">90</field>
+    </record>
+</odoo>

@@ -1,0 +1,26 @@
+# ipai-ops-stack Caddyfile
+# Automatic TLS via Let's Encrypt
+
+# Mattermost
+chat.insightpulseai.net {
+    reverse_proxy mattermost:8065
+    encode gzip
+}
+
+# Focalboard
+boards.insightpulseai.net {
+    reverse_proxy focalboard:8000
+    encode gzip
+}
+
+# n8n
+n8n.insightpulseai.net {
+    reverse_proxy n8n:5678
+    encode gzip
+}
+
+# Superset
+superset.insightpulseai.net {
+    reverse_proxy superset:8088
+    encode gzip
+}
