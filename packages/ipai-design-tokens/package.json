@@ -1,17 +1,33 @@
 {
   "name": "@ipai/design-tokens",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "Shared design tokens for IPAI applications (Odoo, ChatGPT Apps SDK)",
+  "description": "Fluent 2 design tokens for IPAI applications (Odoo, Next.js, Vite)",
   "files": [
+    "dist/",
     "tokens.css",
     "tokens.scss",
     "tailwind.preset.js"
   ],
   "exports": {
+    "./fluent.css": "./dist/fluent.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./tailwind-preset": "./dist/tailwind-preset.cjs",
     "./tokens.css": "./tokens.css",
     "./tokens.scss": "./tokens.scss",
     "./tailwind.preset": "./tailwind.preset.js"
+  },
+  "scripts": {
+    "build": "tsx src/build.ts",
+    "build:watch": "tsx watch src/build.ts",
+    "sync:odoo": "cp dist/fluent.css ../../addons/ipai/ipai_theme_fluent2/static/src/css/fluent2.css && echo '✓ Synced to ipai_theme_fluent2'"
+  },
+  "dependencies": {
+    "@fluentui/tokens": "^1.0.0-alpha.17"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.3"
   }
 }
