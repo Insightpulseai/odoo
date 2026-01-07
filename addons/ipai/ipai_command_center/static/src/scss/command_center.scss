@@ -1,0 +1,276 @@
+/**
+ * IPAI Command Center Styles
+ * Uses TBWA brand design system
+ */
+
+.o_command_center_dashboard {
+  padding: var(--ipai-space-lg, 16px);
+  background: var(--ipai-bg, #FFFFFF);
+  min-height: 100%;
+
+  // Dashboard header
+  .cc-header {
+    background: var(--brand-black, #000000);
+    color: var(--brand-yellow, #FBCE10);
+    padding: var(--ipai-space-lg, 16px) var(--ipai-space-xl, 24px);
+    border-radius: var(--ipai-radius-lg, 14px);
+    margin-bottom: var(--ipai-space-xl, 24px);
+
+    .cc-header-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .cc-header-subtitle {
+      color: var(--brand-white, #FFFFFF);
+      font-size: 14px;
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+  }
+
+  // Stats grid
+  .cc-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--ipai-space-lg, 16px);
+    margin-bottom: var(--ipai-space-xl, 24px);
+  }
+
+  // Stat card
+  .cc-stat-card {
+    background: var(--brand-white, #FFFFFF);
+    border: 1px solid var(--accent-sand, #C8C4AB);
+    border-radius: var(--ipai-radius-lg, 14px);
+    padding: var(--ipai-space-lg, 16px);
+    box-shadow: var(--ipai-shadow-sm, 0 1px 2px rgba(0,0,0,0.08));
+
+    .cc-stat-label {
+      font-size: 12px;
+      color: var(--ink-700, #4D4630);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .cc-stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--accent-charcoal, #19160E);
+      line-height: 1;
+    }
+
+    .cc-stat-trend {
+      font-size: 13px;
+      margin-top: 8px;
+
+      &.up {
+        color: var(--status-success, #30B636);
+      }
+
+      &.down {
+        color: var(--status-danger, #D6193E);
+      }
+    }
+
+    // Variants
+    &.success {
+      border-left: 4px solid var(--status-success, #30B636);
+    }
+
+    &.warning {
+      border-left: 4px solid var(--status-warning, #FA9807);
+    }
+
+    &.danger {
+      border-left: 4px solid var(--status-danger, #D6193E);
+    }
+
+    &.info {
+      border-left: 4px solid var(--status-info, #3876B5);
+    }
+  }
+
+  // Content sections
+  .cc-section {
+    background: var(--brand-white, #FFFFFF);
+    border: 1px solid var(--accent-sand, #C8C4AB);
+    border-radius: var(--ipai-radius-lg, 14px);
+    margin-bottom: var(--ipai-space-xl, 24px);
+    overflow: hidden;
+
+    .cc-section-header {
+      background: var(--gray-50, #F8F8F8);
+      padding: var(--ipai-space-md, 12px) var(--ipai-space-lg, 16px);
+      border-bottom: 1px solid var(--cream-200, #ECE7D8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .cc-section-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--accent-charcoal, #19160E);
+        margin: 0;
+      }
+    }
+
+    .cc-section-body {
+      padding: var(--ipai-space-lg, 16px);
+    }
+  }
+
+  // Run timeline
+  .cc-run-timeline {
+    .cc-run-item {
+      display: flex;
+      align-items: flex-start;
+      padding: var(--ipai-space-md, 12px) 0;
+      border-bottom: 1px solid var(--cream-200, #ECE7D8);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .cc-run-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: var(--ipai-space-md, 12px);
+        flex-shrink: 0;
+
+        &.pending {
+          background: var(--gray-100, #F3F2F8);
+          color: var(--ink-700, #4D4630);
+        }
+
+        &.running {
+          background: rgba(251, 206, 16, 0.15);
+          color: var(--brand-yellow, #FBCE10);
+        }
+
+        &.done {
+          background: rgba(48, 182, 54, 0.12);
+          color: var(--status-success, #30B636);
+        }
+
+        &.failed {
+          background: rgba(214, 25, 62, 0.12);
+          color: var(--status-danger, #D6193E);
+        }
+      }
+
+      .cc-run-content {
+        flex: 1;
+        min-width: 0;
+
+        .cc-run-name {
+          font-weight: 500;
+          color: var(--accent-charcoal, #19160E);
+          margin-bottom: 4px;
+        }
+
+        .cc-run-meta {
+          font-size: 12px;
+          color: var(--ink-700, #4D4630);
+        }
+      }
+
+      .cc-run-status {
+        flex-shrink: 0;
+        margin-left: var(--ipai-space-md, 12px);
+      }
+    }
+  }
+
+  // Alert badges
+  .cc-alert-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.critical {
+      background: rgba(137, 3, 4, 0.12);
+      color: var(--status-critical, #890304);
+    }
+
+    &.error {
+      background: rgba(214, 25, 62, 0.12);
+      color: var(--status-danger, #D6193E);
+    }
+
+    &.warning {
+      background: rgba(250, 152, 7, 0.12);
+      color: var(--status-warning, #FA9807);
+    }
+
+    &.info {
+      background: rgba(56, 118, 181, 0.12);
+      color: var(--status-info, #3876B5);
+    }
+  }
+
+  // Quick actions
+  .cc-quick-actions {
+    display: flex;
+    gap: var(--ipai-space-md, 12px);
+    flex-wrap: wrap;
+
+    .cc-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: var(--ipai-radius-md, 10px);
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      border: none;
+
+      &.primary {
+        background: var(--brand-yellow, #FBCE10);
+        color: #111111;
+
+        &:hover {
+          background: var(--brand-yellow-hover, #FCD605);
+        }
+      }
+
+      &.secondary {
+        background: var(--brand-white, #FFFFFF);
+        color: var(--accent-charcoal, #19160E);
+        border: 1px solid var(--accent-sand, #C8C4AB);
+
+        &:hover {
+          background: var(--cream-200, #ECE7D8);
+        }
+      }
+    }
+  }
+}
+
+// Odoo view customizations for Command Center
+.o_action_manager .o_view_controller[data-model="ipai.command.center.run"],
+.o_action_manager .o_view_controller[data-model="ipai.command.center.alert"] {
+  .o_list_view {
+    .o_data_row {
+      &.text-danger {
+        background: rgba(214, 25, 62, 0.05);
+      }
+
+      &.text-warning {
+        background: rgba(250, 152, 7, 0.05);
+      }
+    }
+  }
+}

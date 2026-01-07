@@ -1,5 +1,10 @@
 # Smart Delta 3-Edition Odoo CE Deployment
 # Core, Marketing, Accounting editions share Postgres but have different module sets
+#
+# Extended Platform Configuration:
+# - OCA modules mounted from ./addons/oca/
+# - IPAI modules mounted from ./addons/ipai/
+# - Use profiles for tiered initialization
 
 version: '3.8'
 
@@ -31,7 +36,8 @@ services:
       - PASSWORD=odoo
       - DB_NAME=odoo_core
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
       - odoo-core-web-data:/var/lib/odoo
     # Install all CE core modules in dependency order
     command: >
@@ -67,13 +73,46 @@ services:
       - PASSWORD=odoo
       - DB_NAME=odoo_core
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
       - odoo-core-web-data:/var/lib/odoo
     command: ["odoo", "-d", "odoo_core", "-i", "ipai_dev_studio_base,ipai_workspace_core,ipai_ce_branding", "--stop-after-init"]
     networks:
       - odoo-network
     restart: "no"
     profiles: ["init"]
+
+  # Init service - Extended Platform OCA modules
+  odoo-core-extended-init:
+    image: odoo:18.0
+    container_name: odoo-core-extended-init
+    depends_on:
+      - postgres
+    environment:
+      - HOST=postgres
+      - USER=odoo
+      - PASSWORD=odoo
+      - DB_NAME=odoo_core
+    volumes:
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
+      - odoo-core-web-data:/var/lib/odoo
+    # Phase 1-4: Foundation + UX + Queue + Reporting
+    command: >
+      odoo -d odoo_core -i
+      base_view_inheritance_extension,auditlog,date_range,
+      web_responsive,web_dialog_size,
+      queue_job,
+      report_xlsx,mis_builder,account_financial_report,
+      spreadsheet_oca,spreadsheet_dashboard_oca,
+      base_rest,
+      mail_activity_board,mail_debrand,
+      ipai_design_system_apps_sdk,ipai_ask_ai,ipai_command_center
+      --stop-after-init
+    networks:
+      - odoo-network
+    restart: "no"
+    profiles: ["extended-init"]
 
   # Runtime service (normal operation)
   odoo-core:
@@ -89,8 +128,10 @@ services:
       - PASSWORD=odoo
       - DB_NAME=odoo_core
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
       - odoo-core-web-data:/var/lib/odoo
+      - ./config/odoo-core.conf:/etc/odoo/odoo.conf:ro
     command: ["odoo", "-d", "odoo_core", "--proxy-mode"]
     dns:
       - 8.8.8.8
@@ -112,7 +153,8 @@ services:
       - PASSWORD=odoo
       - DB_NAME=odoo_marketing
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
       - odoo-marketing-web-data:/var/lib/odoo
     command: ["odoo", "-d", "odoo_marketing", "-i", "ipai_dev_studio_base,ipai_workspace_core,ipai_ce_branding,ipai_industry_marketing_agency", "--stop-after-init"]
     networks:
@@ -134,7 +176,8 @@ services:
       - PASSWORD=odoo
       - DB_NAME=odoo_marketing
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
       - odoo-marketing-web-data:/var/lib/odoo
     command: ["odoo", "-d", "odoo_marketing"]
     dns:
@@ -157,7 +200,8 @@ services:
       - PASSWORD=odoo
       - DB_NAME=odoo_accounting
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
       - odoo-accounting-web-data:/var/lib/odoo
     command: ["odoo", "-d", "odoo_accounting", "-i", "ipai_dev_studio_base,ipai_workspace_core,ipai_ce_branding,ipai_industry_accounting_firm", "--stop-after-init"]
     networks:
@@ -179,7 +223,8 @@ services:
       - PASSWORD=odoo
       - DB_NAME=odoo_accounting
     volumes:
-      - ./addons:/mnt/extra-addons
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
       - odoo-accounting-web-data:/var/lib/odoo
     command: ["odoo", "-d", "odoo_accounting"]
     dns:
