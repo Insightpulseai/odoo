@@ -1,15 +1,18 @@
 # AIUX Shipping Manifest
-# Deterministic, shippable bundle for Odoo 18 CE + OCA + AIUX
-# Generated: 2026-01-07
+# Deterministic, shippable bundle for Odoo 18 CE + OCA + AIUX + Document AI
+# Generated: 2026-01-08
+# Updated: Added OCR/Document AI integration
 
 bundle:
   name: ipai-aiux-bundle
-  version: 1.0.0
+  version: 1.1.0
   target_odoo_major: 18
-  timestamp: "2026-01-07T00:00:00Z"
+  timestamp: "2026-01-08T00:00:00Z"
   description: |
-    Self-hosted Odoo 18 CE + OCA deployment with AIUX theme and Ask AI widget.
-    Uses sidepanel mode (not fullscreen) for widget display modes.
+    Self-hosted Odoo 18 CE + OCA deployment with:
+    - AIUX theme and Ask AI widget (sidepanel mode, not fullscreen)
+    - Document Intelligence (OCR) for invoice/bill extraction
+    - Mailgun email integration
 
 odoo:
   major: 18
@@ -70,6 +73,8 @@ ipai_modules:
     - ipai_ask_ai
     - ipai_ask_ai_chatter
     - ipai_ai_core
+  document_ai:
+    - ipai_document_ai
 
 # Widget mode types (corrected naming)
 # IMPORTANT: Use 'sidepanel' NOT 'fullscreen'
@@ -80,6 +85,27 @@ widget_modes:
     - sidepanel  # Full side panel (NOT fullscreen)
   default: minimize
 
+# OCR Service configuration
+ocr_service:
+  enabled: true
+  base_url_env: OCR_BASE_URL
+  default_url: "http://ocr:8000"
+  endpoints:
+    health: /health
+    extract: /v1/ocr/extract
+    extract_async: /v1/ocr/extract-async
+    job_status: /v1/ocr/jobs/{job_id}
+  settings:
+    timeout_seconds: 60
+    max_file_mb: 25
+    retry_attempts: 3
+    retry_delay_seconds: 5
+  supported_formats:
+    - application/pdf
+    - image/jpeg
+    - image/png
+    - image/tiff
+
 install_order:
   # Phase 1: Odoo base
   - stage: odoo_base
@@ -87,6 +113,7 @@ install_order:
       - base
       - web
       - mail
+      - account
 
   # Phase 2: OCA base modules
   - stage: oca_base
@@ -127,6 +154,11 @@ install_order:
       - ipai_ask_ai
       - ipai_ask_ai_chatter
 
+  # Phase 8: IPAI Document AI
+  - stage: ipai_document_ai
+    modules:
+      - ipai_document_ai
+
 gates:
   required:
     - id: clean_db_install
@@ -158,6 +190,14 @@ gates:
       description: /api/ai/chat endpoint responds
       command: curl -sf -X POST http://localhost:8069/api/ai/chat -H "Content-Type: application/json"
 
+    - id: ocr_service_health
+      description: OCR service is healthy
+      command: curl -sf http://ocr:8000/health
+
+    - id: document_ai_endpoint
+      description: Document AI upload endpoint responds
+      command: curl -sf http://localhost:8069/ipai/document_ai/health
+
 runtime_config:
   odoo_conf:
     db_host: db
@@ -176,8 +216,11 @@ runtime_config:
     limit_time_real: 1200
 
   environment:
-    - DB_PASSWORD  # Required
-    - ODOO_ADMIN_PASSWORD  # Optional, defaults to admin
+    - DB_PASSWORD           # Required - database password
+    - ODOO_ADMIN_PASSWORD   # Optional - defaults to admin
+    - OCR_BASE_URL          # Optional - defaults to http://ocr:8000
+    - OCR_TIMEOUT_SECONDS   # Optional - defaults to 60
+    - OCR_MAX_MB            # Optional - defaults to 25
 
 assets:
   bundles:
@@ -195,3 +238,11 @@ verification:
     assets: scripts/aiux/verify_assets.sh
   artifacts:
     proof: docs/releases/AIUX_SHIP_PROOF.md
+  runbooks:
+    mailgun: ops/runbooks/mailgun_domain_verification.md
+    ocr: ops/runbooks/ocr_service.md
+
+documentation:
+  prd: docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md
+  architecture:
+    ocr: docs/architecture/OCR_PIPELINE.md
