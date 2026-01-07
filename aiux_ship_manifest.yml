@@ -1,0 +1,197 @@
+# AIUX Shipping Manifest
+# Deterministic, shippable bundle for Odoo 18 CE + OCA + AIUX
+# Generated: 2026-01-07
+
+bundle:
+  name: ipai-aiux-bundle
+  version: 1.0.0
+  target_odoo_major: 18
+  timestamp: "2026-01-07T00:00:00Z"
+  description: |
+    Self-hosted Odoo 18 CE + OCA deployment with AIUX theme and Ask AI widget.
+    Uses sidepanel mode (not fullscreen) for widget display modes.
+
+odoo:
+  major: 18
+  minor: 0
+  image: odoo:18.0
+  git_ref: "18.0"
+  addons_paths:
+    - /mnt/extra-addons
+    - /mnt/extra-addons/ipai
+    - /mnt/extra-addons/oca
+
+database:
+  canonical_db_name: odoo
+  dbfilter_regex: "^(odoo|insightpulse)$"
+  list_db: false
+  db_host_service: db
+  db_user: odoo
+  db_password_env: DB_PASSWORD
+
+oca:
+  branch: "18.0"
+  repos:
+    - server-tools
+    - web
+    - account-financial-tools
+    - account-invoicing
+    - sale-workflow
+    - crm
+    - hr
+    - project
+  modules:
+    base:
+      - base_technical_user
+      - base_view_inheritance_extension
+      - module_auto_update
+    web:
+      - web_responsive
+      - web_refresher
+      - web_no_bubble
+    accounting:
+      - account_financial_report
+      - account_move_line_report_xls
+      - account_journal_lock_date
+    sales:
+      - sale_order_line_sequence
+      - sale_order_archive
+
+ipai_modules:
+  core:
+    - ipai_dev_studio_base
+    - ipai_workspace_core
+    - ipai_ce_branding
+  theme:
+    - ipai_theme_aiux
+  aiux:
+    - ipai_aiux_chat
+  ai:
+    - ipai_ask_ai
+    - ipai_ask_ai_chatter
+    - ipai_ai_core
+
+# Widget mode types (corrected naming)
+# IMPORTANT: Use 'sidepanel' NOT 'fullscreen'
+widget_modes:
+  types:
+    - minimize   # Collapsed pill state
+    - popup      # Floating chat window
+    - sidepanel  # Full side panel (NOT fullscreen)
+  default: minimize
+
+install_order:
+  # Phase 1: Odoo base
+  - stage: odoo_base
+    modules:
+      - base
+      - web
+      - mail
+
+  # Phase 2: OCA base modules
+  - stage: oca_base
+    modules:
+      - base_technical_user
+      - base_view_inheritance_extension
+      - web_responsive
+      - web_refresher
+
+  # Phase 3: OCA accounting
+  - stage: oca_accounting
+    modules:
+      - account_financial_report
+      - account_journal_lock_date
+
+  # Phase 4: OCA sales
+  - stage: oca_sales
+    modules:
+      - sale_order_line_sequence
+      - sale_order_archive
+
+  # Phase 5: IPAI core
+  - stage: ipai_core
+    modules:
+      - ipai_dev_studio_base
+      - ipai_workspace_core
+      - ipai_ce_branding
+
+  # Phase 6: IPAI theme
+  - stage: ipai_theme_aiux
+    modules:
+      - ipai_theme_aiux
+
+  # Phase 7: IPAI AIUX chat
+  - stage: ipai_aiux_chat
+    modules:
+      - ipai_aiux_chat
+      - ipai_ask_ai
+      - ipai_ask_ai_chatter
+
+gates:
+  required:
+    - id: clean_db_install
+      description: Fresh database install completes without errors
+      command: odoo-bin -d $DB_NAME -i base --stop-after-init
+
+    - id: module_upgrade_idempotent
+      description: Module upgrade runs twice without errors
+      command: odoo-bin -d $DB_NAME -u all --stop-after-init
+
+    - id: assets_backend_build_ok
+      description: Backend assets compile without errors
+      command: curl -sf http://localhost:8069/web/assets/backend
+
+    - id: web_login_accessible
+      description: /web/login returns HTTP 200
+      command: curl -sf -o /dev/null -w "%{http_code}" http://localhost:8069/web/login
+
+    - id: assets_accessible
+      description: Asset bundles return HTTP 200
+      command: curl -sf http://localhost:8069/web/assets/
+
+    - id: no_traceback_in_logs
+      description: No Python tracebacks in Odoo logs
+      command: "! docker logs odoo 2>&1 | grep -q 'Traceback'"
+
+  optional:
+    - id: ai_chat_endpoint
+      description: /api/ai/chat endpoint responds
+      command: curl -sf -X POST http://localhost:8069/api/ai/chat -H "Content-Type: application/json"
+
+runtime_config:
+  odoo_conf:
+    db_host: db
+    db_port: 5432
+    db_user: odoo
+    db_password: "${DB_PASSWORD}"
+    db_name: odoo
+    dbfilter: "^(odoo|insightpulse)$"
+    list_db: "False"
+    log_level: info
+    workers: 4
+    max_cron_threads: 2
+    limit_memory_hard: 2684354560
+    limit_memory_soft: 2147483648
+    limit_time_cpu: 600
+    limit_time_real: 1200
+
+  environment:
+    - DB_PASSWORD  # Required
+    - ODOO_ADMIN_PASSWORD  # Optional, defaults to admin
+
+assets:
+  bundles:
+    - web.assets_backend
+    - web.assets_common
+    - web.assets_frontend
+  endpoints:
+    - /web/assets/backend
+    - /web/assets/common
+    - /web/assets/frontend
+
+verification:
+  scripts:
+    install: scripts/aiux/verify_install.sh
+    assets: scripts/aiux/verify_assets.sh
+  artifacts:
+    proof: docs/releases/AIUX_SHIP_PROOF.md
