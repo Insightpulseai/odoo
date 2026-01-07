@@ -1,0 +1,515 @@
+# =============================================================================
+# Extended Platform Module Install Order
+# =============================================================================
+# Odoo 18 CE + OCA Extended Platform - Production Install Sequence
+#
+# IMPORTANT: Install modules in this exact order to ensure dependency safety.
+# Each tier must complete before proceeding to the next.
+#
+# Usage:
+#   1. Pull OCA repos: gitaggregate -c config/oca-repos.yaml
+#   2. Install tier by tier using Odoo CLI or UI
+#   3. Verify each tier before proceeding
+# =============================================================================
+
+version: "18.0"
+updated: "2026-01-06"
+description: "Ship-ready extended platform install order"
+
+# =============================================================================
+# PHASE 1: Foundation (Must install first - no dependencies on later tiers)
+# =============================================================================
+
+phase_1_foundation:
+  name: "Foundation"
+  description: "Core server utilities and framework primitives"
+  install_order: 1
+
+  modules:
+    # Server Tools - base dependencies for everything
+    - name: base_view_inheritance_extension
+      repo: server-tools
+      description: "Improved view inheritance for OCA modules"
+      required: true
+
+    - name: auditlog
+      repo: server-tools
+      description: "Track CRUD operations for audit trail"
+      required: true
+
+    - name: base_exception
+      repo: server-tools
+      description: "Exception framework for business rules"
+      required: false
+
+    - name: base_technical_user
+      repo: server-tools
+      description: "Technical user for automated operations"
+      required: false
+
+    # Server UX - date range is critical for periods/reporting
+    - name: date_range
+      repo: server-ux
+      description: "Canonical fiscal periods/date windows"
+      required: true
+
+    - name: server_action_mass_edit
+      repo: server-ux
+      description: "Mass edit operations"
+      required: false
+
+    # Server Backend - user roles
+    - name: base_user_role
+      repo: server-backend
+      description: "User role management"
+      required: false
+
+  install_command: |
+    odoo -d $DB -i base_view_inheritance_extension,auditlog,date_range --stop-after-init
+
+  verify_command: |
+    # Check modules are installed
+    echo "SELECT name FROM ir_module_module WHERE state='installed' AND name IN ('base_view_inheritance_extension','auditlog','date_range');" | psql -d $DB
+
+# =============================================================================
+# PHASE 2: Platform UX (Modern web client, responsive, dialogs)
+# =============================================================================
+
+phase_2_platform_ux:
+  name: "Platform UX"
+  description: "App launcher patterns, responsive backend, dialog enhancements"
+  install_order: 2
+  depends_on: ["phase_1_foundation"]
+
+  modules:
+    - name: web_responsive
+      repo: web
+      description: "Mobile-ready backend with app drawer"
+      required: true
+
+    - name: web_dialog_size
+      repo: web
+      description: "Full-width dialogs"
+      required: true
+
+    - name: web_refresher
+      repo: web
+      description: "Refresh button in views"
+      required: false
+
+    - name: web_m2x_options
+      repo: web
+      description: "Many2one/Many2many field options"
+      required: false
+
+    - name: web_advanced_search
+      repo: web
+      description: "Advanced search operators"
+      required: false
+
+  install_command: |
+    odoo -d $DB -i web_responsive,web_dialog_size --stop-after-init
+
+# =============================================================================
+# PHASE 3: Background Processing (Agent Runtime)
+# =============================================================================
+
+phase_3_background_processing:
+  name: "Background Processing"
+  description: "Queue job - async execution for AI, imports, sync, reporting"
+  install_order: 3
+  depends_on: ["phase_1_foundation"]
+
+  modules:
+    - name: queue_job
+      repo: queue
+      description: "Background job queue - agent runtime"
+      required: true
+
+    - name: queue_job_cron
+      repo: queue
+      description: "Cron-based job execution"
+      required: true
+
+  install_command: |
+    odoo -d $DB -i queue_job,queue_job_cron --stop-after-init
+
+  notes: |
+    After installing queue_job, configure jobrunner in odoo.conf:
+    [queue_job]
+    channels = root:4,high:2,medium:2,low:1
+    scheme = http
+    host = localhost
+    port = 8069
+
+# =============================================================================
+# PHASE 4: Reporting & BI (Enterprise-like reporting in CE)
+# =============================================================================
+
+phase_4_reporting:
+  name: "Reporting & BI"
+  description: "MIS Builder, financial reports, XLSX export, KPI dashboards"
+  install_order: 4
+  depends_on: ["phase_1_foundation", "phase_3_background_processing"]
+
+  modules:
+    # Reporting Engine base
+    - name: report_xlsx
+      repo: reporting-engine
+      description: "Excel report export"
+      required: true
+
+    - name: report_xlsx_helper
+      repo: reporting-engine
+      description: "XLSX helper functions"
+      required: true
+
+    - name: sql_request_abstract
+      repo: reporting-engine
+      description: "SQL request abstraction"
+      required: true
+
+    - name: bi_sql_editor
+      repo: reporting-engine
+      description: "SQL editor for BI queries"
+      required: true
+
+    - name: kpi_dashboard
+      repo: reporting-engine
+      description: "KPI dashboards"
+      required: true
+
+    # MIS Builder
+    - name: mis_builder
+      repo: mis-builder
+      description: "Fast KPI matrix reports (P&L, BS)"
+      required: true
+
+    - name: mis_builder_budget
+      repo: mis-builder
+      description: "Budget features for MIS Builder"
+      required: false
+
+    # Account Financial Reporting
+    - name: account_financial_report
+      repo: account-financial-reporting
+      description: "Trial balance, General Ledger reports"
+      required: true
+
+    # Account Financial Tools
+    - name: date_range_account
+      repo: server-ux
+      description: "Date range for accounting periods"
+      required: true
+      depends: ["date_range", "account"]
+
+    - name: account_lock_date
+      repo: account-financial-tools
+      description: "Period locking"
+      required: true
+
+    - name: account_fiscal_year
+      repo: account-financial-tools
+      description: "Fiscal year management"
+      required: true
+
+  install_command: |
+    odoo -d $DB -i report_xlsx,sql_request_abstract,bi_sql_editor,kpi_dashboard,mis_builder,account_financial_report,account_lock_date,account_fiscal_year --stop-after-init
+
+# =============================================================================
+# PHASE 5: Spreadsheet Dashboards (CE Spreadsheet Alternative)
+# =============================================================================
+
+phase_5_spreadsheet:
+  name: "Spreadsheet Dashboards"
+  description: "CE replacement for Odoo Enterprise Spreadsheets"
+  install_order: 5
+  depends_on: ["phase_4_reporting"]
+
+  modules:
+    - name: spreadsheet_oca
+      repo: spreadsheet
+      description: "Spreadsheet editor (CE alternative to Enterprise)"
+      required: true
+
+    - name: spreadsheet_dashboard_oca
+      repo: spreadsheet
+      description: "Spreadsheet dashboard editor"
+      required: true
+
+  install_command: |
+    odoo -d $DB -i spreadsheet_oca,spreadsheet_dashboard_oca --stop-after-init
+
+# =============================================================================
+# PHASE 6: Documents & Knowledge (CE Knowledge Alternative)
+# =============================================================================
+
+phase_6_knowledge:
+  name: "Documents & Knowledge"
+  description: "Internal wiki, document pages, DMS"
+  install_order: 6
+  depends_on: ["phase_1_foundation"]
+
+  modules:
+    - name: document_page
+      repo: knowledge
+      description: "Internal documentation pages"
+      required: true
+
+    - name: document_page_approval
+      repo: knowledge
+      description: "Document approval workflow"
+      required: false
+
+    - name: dms
+      repo: dms
+      description: "Document management system"
+      required: true
+
+    - name: dms_field
+      repo: dms
+      description: "DMS field widget"
+      required: false
+
+  install_command: |
+    odoo -d $DB -i document_page,dms --stop-after-init
+
+# =============================================================================
+# PHASE 7: API Layer (REST for AI + External Tools)
+# =============================================================================
+
+phase_7_api:
+  name: "API Layer"
+  description: "REST framework, Pydantic bindings, GraphQL for AI/tools"
+  install_order: 7
+  depends_on: ["phase_1_foundation"]
+
+  modules:
+    - name: base_rest
+      repo: rest-framework
+      description: "REST API framework"
+      required: true
+
+    - name: base_rest_pydantic
+      repo: rest-framework
+      description: "Pydantic bindings for REST"
+      required: true
+
+    - name: graphql_base
+      repo: rest-framework
+      description: "GraphQL support"
+      required: false
+
+  install_command: |
+    odoo -d $DB -i base_rest,base_rest_pydantic --stop-after-init
+
+  notes: |
+    After installing, create your API endpoints:
+    - /ai/chat (Ask AI)
+    - /ai/tools/* (agent actions)
+    - /command-center/* (metrics + runs)
+
+# =============================================================================
+# PHASE 8: Mail & Audit Polish
+# =============================================================================
+
+phase_8_mail_audit:
+  name: "Mail & Audit"
+  description: "Production mail hygiene, activity board, tracking"
+  install_order: 8
+  depends_on: ["phase_1_foundation"]
+
+  modules:
+    - name: mail_activity_board
+      repo: social
+      description: "Activity board view"
+      required: true
+
+    - name: mail_tracking
+      repo: social
+      description: "Mail tracking for delivery status"
+      required: false
+
+    - name: mail_debrand
+      repo: social
+      description: "Remove Odoo branding from emails"
+      required: true
+
+  install_command: |
+    odoo -d $DB -i mail_activity_board,mail_debrand --stop-after-init
+
+# =============================================================================
+# PHASE 9: Workflow Extensions (Operations)
+# =============================================================================
+
+phase_9_workflow:
+  name: "Workflow Extensions"
+  description: "Purchase, sale, expense, project, contract workflows"
+  install_order: 9
+  depends_on: ["phase_1_foundation", "phase_3_background_processing"]
+
+  modules:
+    # Bank Reconciliation
+    - name: account_reconcile_oca
+      repo: account-reconcile
+      description: "Enhanced bank reconciliation"
+      required: true
+
+    # Purchase Workflow
+    - name: purchase_request
+      repo: purchase-workflow
+      description: "Purchase request workflow"
+      required: false
+
+    - name: purchase_order_type
+      repo: purchase-workflow
+      description: "Purchase order types"
+      required: false
+
+    # Sale Workflow
+    - name: sale_order_type
+      repo: sale-workflow
+      description: "Sale order types"
+      required: false
+
+    # Expense
+    - name: hr_expense_advance_clearing
+      repo: hr-expense
+      description: "Expense advance clearing"
+      required: false
+
+    # Project
+    - name: project_task_default_stage
+      repo: project
+      description: "Default stage for tasks"
+      required: false
+
+    - name: project_timeline
+      repo: project
+      description: "Project timeline view"
+      required: false
+
+    # Contract
+    - name: contract
+      repo: contract
+      description: "Recurring contracts"
+      required: false
+
+  install_command: |
+    odoo -d $DB -i account_reconcile_oca --stop-after-init
+
+# =============================================================================
+# PHASE 10: IPAI Platform Modules (Custom)
+# =============================================================================
+
+phase_10_ipai_platform:
+  name: "IPAI Platform"
+  description: "Custom IPAI platform modules for extended functionality"
+  install_order: 10
+  depends_on: ["phase_1_foundation", "phase_2_platform_ux", "phase_3_background_processing", "phase_7_api"]
+
+  modules:
+    # Design System (inject Apps SDK UI everywhere)
+    - name: ipai_design_system_apps_sdk
+      repo: ipai
+      description: "Apps SDK UI design tokens for all IPAI apps"
+      required: true
+
+    # Command Center (ops + finance + AI cockpit)
+    - name: ipai_command_center
+      repo: ipai
+      description: "Platform cockpit with runs, KPIs, alerts"
+      required: true
+
+    # Ask AI (ChatGPT-style popup)
+    - name: ipai_ask_ai
+      repo: ipai
+      description: "Ask AI popup interface"
+      required: true
+
+    # Agent Runtime Bridge
+    - name: ipai_agent_core
+      repo: ipai
+      description: "Agent core framework"
+      required: true
+
+  install_command: |
+    odoo -d $DB -i ipai_design_system_apps_sdk,ipai_command_center,ipai_ask_ai,ipai_agent_core --stop-after-init
+
+# =============================================================================
+# QUICK INSTALL: Minimal "Ship It" Bundle
+# =============================================================================
+
+quick_install_minimal:
+  name: "Minimal Ship Bundle"
+  description: "Smallest bundle for complete extended platform"
+
+  oca_modules:
+    - base_view_inheritance_extension  # server-tools
+    - auditlog                         # server-tools
+    - date_range                       # server-ux
+    - web_responsive                   # web
+    - queue_job                        # queue
+    - report_xlsx                      # reporting-engine
+    - mis_builder                      # mis-builder
+    - account_financial_report         # account-financial-reporting
+    - spreadsheet_oca                  # spreadsheet
+    - spreadsheet_dashboard_oca        # spreadsheet
+    - base_rest                        # rest-framework
+    - mail_activity_board              # social
+    - mail_debrand                     # social
+
+  ipai_modules:
+    - ipai_design_system_apps_sdk      # Apps SDK UI look everywhere
+    - ipai_ask_ai                      # Ask AI popup
+    - ipai_command_center              # Platform cockpit
+
+  single_line_install: |
+    odoo -d $DB -i base_view_inheritance_extension,auditlog,date_range,web_responsive,queue_job,report_xlsx,mis_builder,account_financial_report,spreadsheet_oca,spreadsheet_dashboard_oca,base_rest,mail_activity_board,mail_debrand,ipai_design_system_apps_sdk,ipai_ask_ai,ipai_command_center --stop-after-init
+
+# =============================================================================
+# DOCKER PROFILE: Extended Platform Init
+# =============================================================================
+
+docker_init_profile:
+  name: "extended-platform-init"
+  description: "Docker compose profile for extended platform initialization"
+
+  compose_command: |
+    docker compose --profile extended-init up -d
+
+  init_command: |
+    # Install in phases with verification
+    docker exec -it odoo-core odoo -d odoo_core -i base_view_inheritance_extension,auditlog,date_range --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_core -i web_responsive,queue_job --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_core -i report_xlsx,mis_builder,account_financial_report --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_core -i spreadsheet_oca,base_rest,mail_activity_board --stop-after-init
+    docker exec -it odoo-core odoo -d odoo_core -i ipai_design_system_apps_sdk,ipai_ask_ai,ipai_command_center --stop-after-init
+
+# =============================================================================
+# VERIFICATION CHECKLIST
+# =============================================================================
+
+verification_checklist:
+  - step: "Check OCA modules installed"
+    command: |
+      SELECT name, state FROM ir_module_module
+      WHERE name IN ('queue_job','mis_builder','base_rest','spreadsheet_oca')
+      AND state = 'installed';
+
+  - step: "Check IPAI modules installed"
+    command: |
+      SELECT name, state FROM ir_module_module
+      WHERE name LIKE 'ipai_%' AND state = 'installed';
+
+  - step: "Verify queue_job is running"
+    command: |
+      docker exec -it odoo-core tail -f /var/log/odoo/odoo.log | grep -i "queue_job"
+
+  - step: "Test REST API endpoint"
+    command: |
+      curl -X POST https://erp.example.com/api/health -H "Content-Type: application/json"
+
+  - step: "Verify design system loaded"
+    command: |
+      # In browser devtools: document.documentElement.classList.contains('ipai-appsdk')

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root Menu -->
+    <menuitem id="menu_command_center_root"
+              name="Command Center"
+              web_icon="ipai_command_center,static/description/icon.png"
+              sequence="1"/>
+
+    <!-- Dashboard -->
+    <menuitem id="menu_command_center_dashboard"
+              name="Dashboard"
+              parent="menu_command_center_root"
+              action="action_command_center_dashboard"
+              sequence="1"/>
+
+    <!-- Runs -->
+    <menuitem id="menu_command_center_runs"
+              name="Runs"
+              parent="menu_command_center_root"
+              action="action_command_center_runs"
+              sequence="10"/>
+
+    <!-- Alerts -->
+    <menuitem id="menu_command_center_alerts"
+              name="Alerts"
+              parent="menu_command_center_root"
+              action="action_command_center_alerts"
+              sequence="20"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_command_center_config"
+              name="Configuration"
+              parent="menu_command_center_root"
+              groups="base.group_system"
+              sequence="100"/>
+
+</odoo>
