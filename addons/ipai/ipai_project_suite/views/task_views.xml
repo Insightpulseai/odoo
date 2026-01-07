@@ -27,20 +27,20 @@
                     <group>
                         <group string="This Task Depends On">
                             <field name="ipai_dependency_ids" nolabel="1" context="{'default_task_id': active_id}">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="depends_on_task_id" domain="[('project_id', '=', parent.project_id), ('id', '!=', parent.id)]"/>
                                     <field name="dependency_type"/>
                                     <field name="lag_days"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                         <group string="Tasks That Depend On This">
                             <field name="ipai_dependent_ids" nolabel="1" readonly="1">
-                                <tree>
+                                <list>
                                     <field name="task_id"/>
                                     <field name="dependency_type"/>
                                     <field name="lag_days"/>
-                                </tree>
+                                </list>
                             </field>
                         </group>
                     </group>
@@ -49,11 +49,11 @@
                 <!-- RACI Tab -->
                 <page string="RACI" name="ipai_raci" invisible="not ipai_raci_enabled">
                     <field name="ipai_raci_ids" nolabel="1">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="user_id"/>
                             <field name="role"/>
                             <field name="notes"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>

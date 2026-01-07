@@ -62,7 +62,7 @@
                     <notebook>
                         <page string="Nodes" name="nodes">
                             <field name="node_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="node_type"/>
@@ -70,18 +70,18 @@
                                     <field name="delay_value" invisible="node_type != 'delay'"/>
                                     <field name="delay_unit" invisible="node_type != 'delay'"/>
                                     <field name="participant_count"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Edges" name="edges">
                             <field name="edge_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="source_node_id"/>
                                     <field name="target_node_id"/>
                                     <field name="edge_type"/>
                                     <field name="label"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Description" name="description">
@@ -103,7 +103,7 @@
         <field name="name">marketing.journey.tree</field>
         <field name="model">marketing.journey</field>
         <field name="arch" type="xml">
-            <tree string="Marketing Journeys" decoration-muted="not active">
+            <list string="Marketing Journeys" decoration-muted="not active">
                 <field name="name"/>
                 <field name="state" widget="badge"
                        decoration-success="state == 'running'"
@@ -116,7 +116,7 @@
                 <field name="completed_participant_count"/>
                 <field name="last_run"/>
                 <field name="active" invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 
