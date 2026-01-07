@@ -1,132 +1,155 @@
-# Diagramflow
+# diagramflow
 
-Convert Mermaid flowchart diagrams to BPMN 2.0 XML and draw.io format.
+Deterministic diagram pipeline for converting Mermaid to BPMN 2.0 and draw.io with Azure service remapping.
 
 ## Features
 
-- Parse Mermaid flowchart syntax
-- Generate BPMN 2.0 XML (compatible with Camunda, Activiti, etc.)
-- Generate draw.io/diagrams.net XML
-- Support for common shapes: rectangles, diamonds, circles, stadiums
-- Edge labels and styling
-- Subgraph support
+- **Mermaid → BPMN 2.0**: Convert flowcharts to SAP Signavio-compatible BPMN XML
+- **Mermaid → draw.io**: Generate draw.io XML as source of truth
+- **Azure Remapping**: Swap Azure services for target stack (DO/Supabase/Odoo)
+- **CI Integration**: Drift checking for deterministic builds
 
 ## Installation
 
 ```bash
 cd tools/diagramflow
-pip install -e .
+npm install
+npm run build
 ```
 
 ## Usage
 
-### CLI
+### Build Diagrams (Mermaid → BPMN + draw.io)
 
 ```bash
-# Convert to both BPMN and draw.io
-diagramflow input.mmd
+# Build all Mermaid files in docs/diagrams
+npm run diagram:build
 
-# Convert to BPMN only
-diagramflow input.mmd -f bpmn
-
-# Convert to draw.io only
-diagramflow input.mmd -f drawio
-
-# Specify output directory
-diagramflow input.mmd -d output/
-
-# Shortcut commands
-mermaid2bpmn input.mmd
-mermaid2drawio input.mmd
+# Or with custom paths
+node dist/cli.js build --input src/diagrams --output dist/diagrams
 ```
 
-### Python API
+### Check for Drift (CI Mode)
 
-```python
-from diagramflow import MermaidParser, BPMNGenerator, DrawIOGenerator
+```bash
+npm run diagram:ci
 
-# Parse Mermaid
-source = """
-flowchart TB
-    A[Start] --> B{Decision}
-    B -->|Yes| C[Action 1]
-    B -->|No| D[Action 2]
-    C --> E[End]
-    D --> E
-"""
-
-parser = MermaidParser()
-chart = parser.parse(source)
-
-# Generate BPMN
-bpmn = BPMNGenerator()
-bpmn.save(chart, "output.bpmn")
-
-# Generate draw.io
-drawio = DrawIOGenerator()
-drawio.save(chart, "output.drawio")
+# Fails if generated files don't match
 ```
 
-## Supported Mermaid Syntax
+### Remap Azure Services
 
-### Shapes
+```bash
+# Remap Azure services to DO/Supabase/Odoo stack
+node dist/cli.js remap \
+  --file diagram.drawio \
+  --mapping docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml
 
-| Mermaid | Shape | BPMN |
-|---------|-------|------|
-| `[text]` | Rectangle | Task |
-| `{text}` | Diamond | Gateway |
-| `((text))` | Circle | Event |
-| `(text)` | Stadium | Task |
-| `[[text]]` | Subroutine | SubProcess |
+# Generate mapping template from existing diagram
+node dist/cli.js remap --file diagram.drawio --template
+```
 
-### Edges
-
-| Mermaid | Description |
-|---------|-------------|
-| `-->` | Solid arrow |
-| `-.->` | Dotted arrow |
-| `-->|label|` | Arrow with label |
-| `---` | Line (no arrow) |
-
-### Direction
-
-- `TB` - Top to bottom (default)
-- `BT` - Bottom to top
-- `LR` - Left to right
-- `RL` - Right to left
-
-## Example
-
-Input (`process.mmd`):
+## Mermaid Conventions (BPMN-aligned)
 
 ```mermaid
 flowchart LR
-    Start((Start)) --> Review[Review Request]
-    Review --> Decision{Approved?}
-    Decision -->|Yes| Process[Process Order]
-    Decision -->|No| Reject[Send Rejection]
-    Process --> End((End))
-    Reject --> End
+
+subgraph Pool_Name
+  S((Start))        %% Start event
+  T1[Task]          %% Task
+  G{Decision?}      %% Gateway
+  T2[[Service]]     %% Service task
+  T3[/User Task/]   %% User task
+  E(((End)))        %% End event
+end
+
+S --> T1 --> G
+G --> |Yes| T2 --> E
+G --> |No| T3 --> E
 ```
 
-Output files:
-- `process.bpmn` - BPMN 2.0 XML
-- `process.drawio` - draw.io XML
+### Node Types
 
-## Integration with ipai-gen
+| Mermaid Shape | BPMN Element |
+|---------------|--------------|
+| `((Label))` | Start Event |
+| `(((Label)))` | End Event |
+| `[Label]` | Task |
+| `{Label?}` | Exclusive Gateway |
+| `[[Label]]` | Service Task |
+| `[/Label/]` | User Task |
+| `([Label])` | Timer Event |
 
-The diagramflow tool integrates with the IPAI module generator:
+### Edge Types
 
-1. Place Mermaid diagrams in `docs/diagrams/*.mmd`
-2. Run `diagramflow docs/diagrams/*.mmd -d docs/diagrams/`
-3. Run `ipai-gen` to update wiki diagram references
+| Mermaid Arrow | BPMN Flow |
+|---------------|-----------|
+| `-->` | Sequence Flow |
+| `-.->` | Message Flow (cross-pool) |
+| `-->|Label|` | Labeled Flow |
 
-## Dependencies
+## Output Files
 
-- Python 3.10+
-- lxml (for XML generation)
-- PyYAML (for configuration)
+For each `.mmd` or `.mermaid` file:
+
+- `{name}.bpmn` - BPMN 2.0 XML (Signavio-compatible)
+- `{name}.drawio` - draw.io XML (source of truth)
+- `export/{name}.png` - PNG export (via CI)
+- `export/{name}.svg` - SVG export (via CI)
+
+## Azure Mapping
+
+Tag Azure services in draw.io with `svc=azure.xxx`:
+
+```
+[Azure App Service | svc=azure.app_service]
+```
+
+Then remap using the CLI:
+
+```bash
+node dist/cli.js remap -f diagram.drawio -m mappings/azure_to_do_supabase_odoo.yaml
+```
+
+### Supported Azure Services
+
+See `docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml` for full mapping.
+
+| Azure Service | Target |
+|--------------|--------|
+| App Service | DO App Platform |
+| Functions | Supabase Edge Functions |
+| AKS | DOKS (DO Kubernetes) |
+| SQL Database | Supabase Postgres |
+| Storage Account | DO Spaces |
+| Event Hub | Supabase Realtime |
+| Logic Apps | n8n Workflows |
+
+## CI Integration
+
+The `.github/workflows/diagrams.yml` workflow:
+
+1. Builds the diagramflow tool
+2. Converts Mermaid → BPMN/draw.io
+3. Checks for drift (fails if out of sync)
+4. Exports PNG/SVG on main branch
+5. Validates BPMN XML
+
+## Programmatic API
+
+```typescript
+import { parseMermaid, toBpmnXml, toDrawioXml } from './dist/index.js';
+
+const src = `
+flowchart LR
+  S((Start)) --> T[Task] --> E(((End)))
+`;
+
+const model = parseMermaid(src);
+const bpmn = toBpmnXml(model);
+const drawio = toDrawioXml(model);
+```
 
 ## License
 
-LGPL-3.0
+AGPL-3.0

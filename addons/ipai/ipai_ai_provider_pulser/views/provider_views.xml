@@ -80,7 +80,7 @@
         <field name="name">ipai.ai.provider.config.tree</field>
         <field name="model">ipai.ai.provider.config</field>
         <field name="arch" type="xml">
-            <tree string="AI Providers" decoration-muted="not active">
+            <list string="AI Providers" decoration-muted="not active">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
@@ -89,7 +89,7 @@
                 <field name="total_requests"/>
                 <field name="last_used"/>
                 <field name="active" invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 

@@ -1,0 +1,10 @@
+id,name,parent_id/id,storage_id/id,company_id/id
+__import__.dms_dir_company,Company Documents,,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_finance,Finance,__import__.dms_dir_company,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_hr,Human Resources,__import__.dms_dir_company,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_legal,Legal & Compliance,__import__.dms_dir_company,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_projects,Projects,__import__.dms_dir_company,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_templates,Templates,__import__.dms_dir_company,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_reports,Reports Archive,__import__.dms_dir_finance,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_policies,Policies,__import__.dms_dir_hr,__import__.dms_storage_default,base.main_company
+__import__.dms_dir_contracts,Contracts,__import__.dms_dir_legal,__import__.dms_storage_default,base.main_company

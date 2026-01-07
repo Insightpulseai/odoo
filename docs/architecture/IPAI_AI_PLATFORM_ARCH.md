@@ -349,9 +349,138 @@ IPAI_KB_EXPORT_LOOKBACK_HOURS=24
 IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.net
 ```
 
+## Workspace Architecture
+
+### Workspace Model
+
+Workspaces provide Notion-style teamspaces using Odoo primitives:
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                           ipai.workspace                               │
+│                                                                        │
+│   Fields:                                                              │
+│   - name: Char                                                         │
+│   - description: Text                                                  │
+│   - visibility: Selection (private|internal|public)                    │
+│   - company_id: Many2one(res.company)                                  │
+│                                                                        │
+│   Linked Objects (auto-created):                                       │
+│   - project_id: Many2one(project.project)                              │
+│   - channel_id: Many2one(mail.channel)                                 │
+│                                                                        │
+└────────────────────────┬───────────────────────────────────────────────┘
+                         │
+                         │ One-to-many
+                         ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                       ipai.workspace.member                            │
+│                                                                        │
+│   Fields:                                                              │
+│   - workspace_id: Many2one(ipai.workspace)                             │
+│   - user_id: Many2one(res.users)                                       │
+│   - role: Selection (member|admin|owner)                               │
+│                                                                        │
+│   Unique constraint: (workspace_id, user_id)                           │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### Access Control Rules
+
+| Visibility | Access |
+|------------|--------|
+| `private` | Only explicit members (member, admin, owner) |
+| `internal` | All users in the same company |
+| `public` | All authenticated users |
+
+### Workspace Creation Flow
+
+```
+User clicks "Create Space"
+         │
+         ▼
+┌────────────────┐
+│   Wizard UI    │
+│  Name/Desc/Vis │
+└───────┬────────┘
+        │
+        ▼
+┌────────────────┐     ┌─────────────────┐
+│  Create        │────►│ project.project │
+│  workspace     │     │ (linked)        │
+└───────┬────────┘     └─────────────────┘
+        │
+        │              ┌─────────────────┐
+        ├─────────────►│  mail.channel   │
+        │              │  (linked)       │
+        │              └─────────────────┘
+        │
+        │              ┌─────────────────┐
+        └─────────────►│workspace.member │
+                       │ (role=owner)    │
+                       └─────────────────┘
+```
+
+## Deployment Checklist
+
+### Pre-deployment
+
+- [ ] Environment variables configured
+- [ ] Supabase KB schema deployed
+- [ ] SSL certificates valid
+- [ ] Backup strategy verified
+
+### Post-deployment
+
+- [ ] Health check endpoints responding
+- [ ] AI panel opens (Alt+Shift+F)
+- [ ] Ask flow returns citations
+- [ ] Connector endpoint accepts events
+- [ ] KB export cron running
+
+## Monitoring Dashboards
+
+### Key Metrics
+
+| Metric | Source | Alert |
+|--------|--------|-------|
+| Ask Latency P95 | ipai.ai.audit | > 5s |
+| Error Rate | ipai.ai.audit | > 1% |
+| KB Sync Lag | ir.cron | > 1 hour |
+| Active Threads | ipai.ai.thread | Trend |
+
+### Log Queries
+
+```sql
+-- Recent errors
+SELECT create_date, operation, error_message
+FROM ipai_ai_audit
+WHERE status = 'error'
+ORDER BY create_date DESC
+LIMIT 20;
+
+-- Latency distribution
+SELECT
+  date_trunc('hour', create_date) as hour,
+  percentile_cont(0.5) WITHIN GROUP (ORDER BY latency_ms) as p50,
+  percentile_cont(0.95) WITHIN GROUP (ORDER BY latency_ms) as p95
+FROM ipai_ai_audit
+WHERE create_date > now() - interval '24 hours'
+GROUP BY hour
+ORDER BY hour;
+```
+
 ## References
 
 - Odoo CE 18 docs: https://www.odoo.com/documentation/18.0
 - Supabase pgvector: https://supabase.com/docs/guides/ai
 - Fluent UI React: https://react.fluentui.dev
 - OpenAI API: https://platform.openai.com/docs
+- IPAI AI Platform Spec: [/spec/ipai-ai-platform](/spec/ipai-ai-platform)
+- IPAI AI Platform DBML: [/docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml](/docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml)
+- IPAI AI Platform ORD: [/docs/architecture/IPAI_AI_PLATFORM_ORD.md](/docs/architecture/IPAI_AI_PLATFORM_ORD.md)
+- IPAI AI Platform API: [/docs/api/openapi.ipai_ai_platform.yaml](/docs/api/openapi.ipai_ai_platform.yaml)
+
+---
+
+*Last updated: 2025-01-06*

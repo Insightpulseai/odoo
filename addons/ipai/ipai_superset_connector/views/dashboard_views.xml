@@ -6,7 +6,7 @@
             <field name="name">ipai.superset.dashboard.tree</field>
             <field name="model">ipai.superset.dashboard</field>
             <field name="arch" type="xml">
-                <tree string="Superset Dashboards">
+                <list string="Superset Dashboards">
                     <field name="sequence" widget="handle"/>
                     <field name="name"/>
                     <field name="superset_dashboard_id"/>
@@ -14,7 +14,7 @@
                     <field name="rls_by_company"/>
                     <field name="access_count" string="Views"/>
                     <field name="active"/>
-                </tree>
+                </list>
             </field>
         </record>
 

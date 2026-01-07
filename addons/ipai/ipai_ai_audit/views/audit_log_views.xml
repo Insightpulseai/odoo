@@ -64,7 +64,7 @@
         <field name="name">ipai.ai.audit.log.tree</field>
         <field name="model">ipai.ai.audit.log</field>
         <field name="arch" type="xml">
-            <tree string="AI Audit Logs" create="0" edit="0"
+            <list string="AI Audit Logs" create="0" edit="0"
                   decoration-danger="state == 'error'"
                   decoration-warning="state == 'blocked'">
                 <field name="request_time"/>
@@ -79,7 +79,7 @@
                 <field name="total_tokens"/>
                 <field name="duration_ms"/>
                 <field name="is_redacted"/>
-            </tree>
+            </list>
         </field>
     </record>
 

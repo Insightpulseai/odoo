@@ -88,7 +88,7 @@
         <field name="name">ipai.ai.governance.rule.tree</field>
         <field name="model">ipai.ai.governance.rule</field>
         <field name="arch" type="xml">
-            <tree string="AI Governance Rules" decoration-muted="not active">
+            <list string="AI Governance Rules" decoration-muted="not active">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
@@ -99,7 +99,7 @@
                        decoration-info="rule_type == 'require_approval'"/>
                 <field name="apply_to_all"/>
                 <field name="active" invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 

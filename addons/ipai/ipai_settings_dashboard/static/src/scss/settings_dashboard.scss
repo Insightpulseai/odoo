@@ -1,0 +1,226 @@
+// =============================================================================
+// IPAI Settings Dashboard - TBWA Styled
+// =============================================================================
+// Extends the TBWA theme for the AI settings dashboard.
+// Uses IPAI design tokens from ipai_chatgpt_sdk_theme.
+// =============================================================================
+
+.o_ipai_settings_dashboard {
+  // Header styling
+  .o_ipai_settings_header {
+    padding: var(--ipai-space-4, 1rem) 0;
+    margin-bottom: var(--ipai-space-4, 1rem);
+    border-bottom: 2px solid var(--ipai-border, rgba(0, 0, 0, 0.1));
+  }
+
+  .o_ipai_title {
+    font-size: var(--ipai-font-size-xl, 1.25rem);
+    font-weight: var(--ipai-font-weight-semibold, 600);
+    color: var(--ipai-fg, #0f172a);
+    margin: 0;
+
+    i {
+      color: var(--tbwa-yellow, #fedd00);
+    }
+  }
+
+  // Section titles
+  .o_ipai_section_title {
+    font-size: var(--ipai-font-size-lg, 1.125rem);
+    font-weight: var(--ipai-font-weight-medium, 500);
+    color: var(--ipai-fg, #0f172a);
+    margin: var(--ipai-space-6, 1.5rem) 0 var(--ipai-space-3, 0.75rem) 0;
+    display: flex;
+    align-items: center;
+
+    img {
+      height: 24px;
+      width: auto;
+    }
+  }
+
+  // Dividers
+  .o_ipai_divider {
+    height: 1px;
+    background: var(--ipai-border-muted, rgba(0, 0, 0, 0.06));
+    margin: var(--ipai-space-6, 1.5rem) 0;
+  }
+
+  // Primary setting box (default provider)
+  .o_ipai_primary_setting {
+    background: var(--ipai-bg-subtle, #f8fafc);
+    border-radius: var(--ipai-radius, 12px);
+    padding: var(--ipai-space-4, 1rem);
+    border: 1px solid var(--ipai-border, rgba(0, 0, 0, 0.1));
+
+    .o_setting_left_pane {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: var(--ipai-space-2, 0.5rem);
+    }
+  }
+
+  // Setting boxes
+  .o_setting_box {
+    .o_setting_left_pane {
+      i {
+        color: var(--ipai-fg-muted, #64748b);
+        font-size: 1rem;
+      }
+    }
+
+    .o_setting_right_pane {
+      label {
+        font-weight: var(--ipai-font-weight-medium, 500);
+        color: var(--ipai-fg, #0f172a);
+      }
+
+      .text-muted {
+        font-size: var(--ipai-font-size-sm, 0.875rem);
+        color: var(--ipai-fg-muted, #64748b);
+      }
+    }
+  }
+
+  // Input styling
+  input.o_light_label,
+  select {
+    border-radius: var(--ipai-radius-sm, 8px);
+    border: 1px solid var(--ipai-input-border, rgba(0, 0, 0, 0.14));
+    padding: var(--ipai-space-2, 0.5rem) var(--ipai-space-3, 0.75rem);
+    font-size: var(--ipai-font-size-sm, 0.875rem);
+    transition: border-color var(--ipai-transition, 150ms ease),
+                box-shadow var(--ipai-transition, 150ms ease);
+
+    &:hover {
+      border-color: var(--ipai-input-border-hover, rgba(0, 0, 0, 0.24));
+    }
+
+    &:focus {
+      border-color: var(--tbwa-yellow, #fedd00);
+      box-shadow: 0 0 0 3px rgba(254, 221, 0, 0.2);
+      outline: none;
+    }
+  }
+
+  // Password fields
+  input[type="password"] {
+    font-family: var(--ipai-font-mono, monospace);
+    letter-spacing: 0.1em;
+  }
+
+  // Buttons
+  .btn-outline-primary {
+    border-color: var(--tbwa-yellow, #fedd00);
+    color: var(--ipai-fg, #0f172a);
+
+    &:hover {
+      background: var(--tbwa-yellow, #fedd00);
+      border-color: var(--tbwa-yellow, #fedd00);
+      color: var(--tbwa-black, #1a1a1a);
+    }
+  }
+
+  .btn-secondary {
+    background: var(--ipai-bg-muted, #f1f5f9);
+    border-color: var(--ipai-border, rgba(0, 0, 0, 0.1));
+    color: var(--ipai-fg, #0f172a);
+
+    &:hover {
+      background: var(--ipai-bg-active, #e2e8f0);
+    }
+  }
+
+  // Radio buttons for provider selection
+  .o_radio_item {
+    padding: var(--ipai-space-3, 0.75rem) var(--ipai-space-4, 1rem);
+    border-radius: var(--ipai-radius-sm, 8px);
+    border: 1px solid var(--ipai-border, rgba(0, 0, 0, 0.1));
+    margin-right: var(--ipai-space-2, 0.5rem);
+    transition: all var(--ipai-transition, 150ms ease);
+
+    &:hover {
+      border-color: var(--tbwa-yellow, #fedd00);
+      background: var(--ipai-bg-hover, #f1f5f9);
+    }
+
+    &.o_radio_checked {
+      border-color: var(--tbwa-yellow, #fedd00);
+      background: rgba(254, 221, 0, 0.1);
+
+      label {
+        font-weight: var(--ipai-font-weight-semibold, 600);
+      }
+    }
+  }
+
+  // Alert/info boxes
+  .alert-info {
+    background: var(--ipai-info-bg, #e0f2fe);
+    border: 1px solid var(--ipai-info, #0ea5e9);
+    border-radius: var(--ipai-radius, 12px);
+    color: var(--ipai-fg, #0f172a);
+
+    a {
+      color: var(--ipai-accent, #0ea5e9);
+
+      &:hover {
+        color: var(--ipai-accent-hover, #0284c7);
+      }
+    }
+  }
+
+  // Checkboxes
+  .o_boolean_toggle {
+    .slider {
+      background: var(--ipai-bg-muted, #f1f5f9);
+      border: 1px solid var(--ipai-border, rgba(0, 0, 0, 0.1));
+
+      &::before {
+        background: white;
+        box-shadow: var(--ipai-shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.06));
+      }
+    }
+
+    input:checked + .slider {
+      background: var(--tbwa-yellow, #fedd00);
+      border-color: var(--tbwa-yellow-dark, #e5c700);
+    }
+  }
+
+  // Provider logo placeholders
+  .o_ipai_provider_logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+}
+
+// Dark mode support
+:root.ipai-theme-dark .o_ipai_settings_dashboard {
+  .o_ipai_primary_setting {
+    background: var(--ipai-bg-subtle, #1e293b);
+    border-color: var(--ipai-border, rgba(255, 255, 255, 0.1));
+  }
+
+  .o_ipai_title,
+  .o_ipai_section_title {
+    color: var(--ipai-fg, #f8fafc);
+  }
+
+  .o_setting_box .o_setting_right_pane label {
+    color: var(--ipai-fg, #f8fafc);
+  }
+
+  input.o_light_label,
+  select {
+    background: var(--ipai-input-bg, #1e293b);
+    color: var(--ipai-fg, #f8fafc);
+    border-color: var(--ipai-input-border, rgba(255, 255, 255, 0.14));
+
+    &::placeholder {
+      color: var(--ipai-input-placeholder, #64748b);
+    }
+  }
+}

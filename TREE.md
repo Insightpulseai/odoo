@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a42fc69f418ecb5744607749c5d544f88aae8a9d
+> Commit: 49c2c4908028c983419c13c1c55bb9bc7cee3b54
 
 ```
 .
@@ -57,6 +57,7 @@
 │   │   ├── deploy-production.yml
 │   │   ├── diagrams-drawio-enforce.yml
 │   │   ├── diagrams-qa.yml
+│   │   ├── diagrams.yml
 │   │   ├── directional-sync.yml
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
@@ -147,6 +148,7 @@
 │   │   ├── ipai_ai_core
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── tests
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -256,6 +258,13 @@
 │   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_command_center
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_control_room
 │   │   │   ├── data
 │   │   │   ├── models
@@ -276,6 +285,10 @@
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_design_system_apps_sdk
+│   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_dev_studio_base
@@ -554,6 +567,18 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_settings_dashboard
+│   │   │   ├── models
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_skill_api
+│   │   │   ├── controllers
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_srm
 │   │   │   ├── data
 │   │   │   ├── models
@@ -590,12 +615,35 @@
 │   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_tbwa_backend
+│   │   │   ├── static
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ui_brand_tokens
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_v18_compat
 │   │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
 │   │   ├── ipai_web_fluent2
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_web_icons_fluent
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_web_theme_tbwa
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
@@ -1519,6 +1567,9 @@
 │   │   ├── odoo_docs.yaml
 │   │   └── sap_help.yaml
 │   ├── capability_map.yaml
+│   ├── extended-platform-install-order.yaml
+│   ├── oca-repos.yaml
+│   ├── odoo-core.conf
 │   ├── odoo.conf.template
 │   ├── pipeline.yaml
 │   └── ship_set.txt
@@ -1561,6 +1612,19 @@
 │   ├── notion_tasks_with_logframe.json
 │   └── user_map.csv
 ├── db
+│   ├── import-templates
+│   │   └── extended-platform
+│   │       ├── README.md
+│   │       ├── account_fiscal_year.csv
+│   │       ├── auditlog_rule.csv
+│   │       ├── date_range.csv
+│   │       ├── date_range_type.csv
+│   │       ├── dms_category.csv
+│   │       ├── dms_directory.csv
+│   │       ├── dms_storage.csv
+│   │       ├── document_page.csv
+│   │       ├── kpi_dashboard.csv
+│   │       └── queue_job_channel.csv
 │   ├── migrations
 │   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
 │   │   ├── 202512070002_REORG_COPY_DATA.sql
@@ -1657,11 +1721,13 @@
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
 │   ├── api
+│   │   ├── EXTENDED_PLATFORM_API.md
 │   │   └── openapi.ipai_ai_platform.yaml
 │   ├── architecture
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
+│   │   ├── IPAI_AI_PLATFORM_ORD.md
 │   │   ├── README.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
@@ -1675,9 +1741,18 @@
 │   │       ├── inventory.md
 │   │       ├── oca_modules_vendored.txt
 │   │       └── oca_overlap_map.yaml
+│   ├── claude_code
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── QUICK_REFERENCE.md
+│   │   └── README.md
 │   ├── connectors
 │   │   └── CLAUDE_CONNECTORS.md
 │   ├── data-model
+│   │   ├── EXTENDED_PLATFORM_ERD.mmd
+│   │   ├── EXTENDED_PLATFORM_ORM_MAP.md
+│   │   ├── EXTENDED_PLATFORM_SCHEMA.dbml
+│   │   ├── IPAI_AI_PLATFORM_ERD.mmd
+│   │   ├── IPAI_AI_PLATFORM_SCHEMA.dbml
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
 │   │   ├── ODOO_ERD.puml
@@ -1703,9 +1778,12 @@
 │   │   ├── README.md
 │   │   └── WORKOS_DEPLOYMENT_PACKAGE.md
 │   ├── diagrams
-│   │   └── architecture
-│   │       ├── README.md
-│   │       └── manifest.json
+│   │   ├── architecture
+│   │   │   ├── README.md
+│   │   │   └── manifest.json
+│   │   ├── mappings
+│   │   │   └── azure_to_do_supabase_odoo.yaml
+│   │   └── ipai_platform_flow.mmd
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -1825,6 +1903,15 @@
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
 │   │   └── runbook.md
+│   ├── releases
+│   │   ├── DEPLOYMENT_PROOFS
+│   │   │   ├── README.md
+│   │   │   ├── deploy_run_166.json
+│   │   │   ├── deploy_run_166_jobs.json
+│   │   │   └── release_tag_prod-20260106-1741.json
+│   │   ├── GO_LIVE_MANIFEST.md
+│   │   ├── WHAT_SHIPPED.json
+│   │   └── WHAT_SHIPPED.md
 │   ├── repo
 │   │   ├── GIT_STATE.prod.txt
 │   │   ├── REPO_SNAPSHOT.prod.json
@@ -1856,6 +1943,7 @@
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
 │   ├── CE_OCA_PROJECT_STACK.md
+│   ├── CLAUDE_CODE_SETUP.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
 │   ├── DELIVERABLES_MANIFEST.md
@@ -1950,6 +2038,7 @@
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── ZOHO_DNS_SETUP.md
 │   ├── branch-cleanup-analysis.md
+│   ├── llms.txt
 │   ├── notion-odoo-substitute-catalog.md
 │   ├── odoo-apps-parity.md
 │   ├── odoo_core_schema.sql
@@ -2271,7 +2360,9 @@
 │   │   └── tsconfig.json
 │   └── ipai-design-tokens
 │       ├── src
-│       │   └── build.ts
+│       │   ├── react
+│       │   ├── build.ts
+│       │   └── odooTokens.ts
 │       ├── package.json
 │       ├── tailwind.preset.js
 │       ├── tokens.css
@@ -2296,6 +2387,7 @@
 │   └── README.md
 ├── scripts
 │   ├── ci
+│   │   ├── audit_tree_tags.sh
 │   │   ├── compare_audit_baseline.py
 │   │   ├── constraints-gevent.txt
 │   │   ├── deploy-ipai-modules.sh
@@ -2583,10 +2675,20 @@
 ├── skills
 │   ├── bir-tax-filing
 │   │   └── SKILL.md
+│   ├── ci-run-validate
+│   │   └── skill.yaml
 │   ├── expense-processing
 │   │   └── SKILL.md
 │   ├── finance-month-end
 │   │   └── SKILL.md
+│   ├── finance-ppm-health
+│   │   └── skill.yaml
+│   ├── kg-entity-expand
+│   │   └── skill.yaml
+│   ├── odoo-module-audit
+│   │   └── skill.yaml
+│   ├── odoo-module-scaffold
+│   │   └── skill.yaml
 │   ├── visio-drawio-export
 │   │   ├── docker
 │   │   │   ├── Dockerfile
@@ -2601,11 +2703,17 @@
 │   │   │   └── validate.js
 │   │   ├── README.md
 │   │   └── skill.yaml
+│   ├── README.md
 │   ├── architecture_diagrams.skill.json
 │   ├── superset_mcp.skill.json
 │   └── visio_drawio_export.skill.json
 ├── spec
 │   ├── adk-control-room
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── auto-claude-framework
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -2660,6 +2768,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── insightpulse-mobile
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── ipai-ai-platform
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -2854,6 +2967,7 @@
 │   │   ├── 20251227_mcp_job_queue_cron.sql
 │   │   ├── 20251227_supabase_queues_setup.sql
 │   │   ├── 202601030001_docs.sql
+│   │   ├── 20260106000001_kg_schema.sql
 │   │   ├── AFC_DEPLOYMENT_SUMMARY.md
 │   │   └── RLS_DEPLOYMENT_COMPLETE.md
 │   ├── seed
@@ -2896,6 +3010,12 @@
 │           ├── stages_template.csv
 │           └── tasks_template.csv
 ├── tests
+│   ├── api
+│   │   └── test_skill_api_contract.py
+│   ├── e2e
+│   │   └── playwright
+│   │       ├── agent-core.spec.ts
+│   │       └── playwright.config.ts
 │   ├── load
 │   │   └── odoo_login_and_nav.js
 │   ├── playwright
@@ -2923,6 +3043,17 @@
 │   ├── db-inventory
 │   │   ├── README.md
 │   │   └── inventory.py
+│   ├── diagramflow
+│   │   ├── src
+│   │   │   ├── cli.ts
+│   │   │   ├── index.ts
+│   │   │   ├── parseMermaid.ts
+│   │   │   ├── remap.ts
+│   │   │   ├── toBpmn.ts
+│   │   │   └── toDrawio.ts
+│   │   ├── README.md
+│   │   ├── package.json
+│   │   └── tsconfig.json
 │   ├── docs-crawler
 │   │   ├── .env.example
 │   │   ├── README.md
@@ -3114,15 +3245,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1003 directories, 2106 files
+1053 directories, 2187 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1143 |
-| Files | 3182 |
-| Python files | 871 |
-| XML files | 436 |
-| Markdown files | 603 |
+| Directories | 1215 |
+| Files | 3319 |
+| Python files | 906 |
+| XML files | 447 |
+| Markdown files | 624 |
