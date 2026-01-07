@@ -1,0 +1,100 @@
+/* IPAI Expense OCR Styles */
+
+/* OCR Status Badge */
+.o_expense_ocr_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Duplicate Warning */
+.o_expense_duplicate_warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 16px;
+}
+
+/* Confidence Display */
+.o_expense_ocr_confidence {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.o_expense_ocr_confidence .o_progress {
+    flex: 1;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.o_expense_ocr_confidence .o_progress_bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.o_expense_ocr_confidence .o_progress_bar.high {
+    background-color: #28a745;
+}
+
+.o_expense_ocr_confidence .o_progress_bar.medium {
+    background-color: #ffc107;
+}
+
+.o_expense_ocr_confidence .o_progress_bar.low {
+    background-color: #dc3545;
+}
+
+/* Scan Button */
+.o_expense_scan_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.o_expense_scan_btn .fa-magic {
+    animation: none;
+}
+
+.o_expense_scan_btn.processing .fa-magic {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Extracted Fields Panel */
+.o_expense_ocr_fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.o_expense_ocr_field {
+    display: flex;
+    flex-direction: column;
+}
+
+.o_expense_ocr_field_label {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 4px;
+}
+
+.o_expense_ocr_field_value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.o_expense_ocr_field_confidence {
+    font-size: 10px;
+    color: #6c757d;
+}

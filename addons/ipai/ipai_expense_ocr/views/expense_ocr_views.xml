@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- OCR Result Tree View -->
+    <record id="expense_ocr_result_view_tree" model="ir.ui.view">
+        <field name="name">ipai.expense.ocr.result.tree</field>
+        <field name="model">ipai.expense.ocr.result</field>
+        <field name="arch" type="xml">
+            <tree string="OCR Results">
+                <field name="expense_id"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'processing'"
+                       decoration-warning="state == 'needs_review'"
+                       decoration-success="state in ('extracted', 'applied')"
+                       decoration-danger="state == 'failed'"/>
+                <field name="merchant_name"/>
+                <field name="receipt_date"/>
+                <field name="total_amount"/>
+                <field name="confidence" widget="progressbar"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- OCR Result Form View -->
+    <record id="expense_ocr_result_view_form" model="ir.ui.view">
+        <field name="name">ipai.expense.ocr.result.form</field>
+        <field name="model">ipai.expense.ocr.result</field>
+        <field name="arch" type="xml">
+            <form string="OCR Result">
+                <header>
+                    <button name="action_extract" type="object" string="Re-Extract"
+                            invisible="state not in ('queued', 'failed')"/>
+                    <button name="action_apply" type="object" string="Apply to Expense"
+                            class="btn-primary"
+                            invisible="state != 'extracted'"/>
+                    <button name="action_retry" type="object" string="Retry"
+                            invisible="state != 'failed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="queued,processing,extracted,applied"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="expense_id"/>
+                            <field name="attachment_id"/>
+                            <field name="confidence" widget="progressbar"/>
+                            <field name="processing_duration"/>
+                        </group>
+                        <group>
+                            <field name="ocr_job_id" invisible="not ocr_job_id"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Extracted Fields" name="fields">
+                            <group>
+                                <group>
+                                    <label for="merchant_name"/>
+                                    <div class="o_row">
+                                        <field name="merchant_name"/>
+                                        <span class="text-muted">
+                                            (<field name="merchant_confidence" widget="float" digits="[1,0]"/>%)
+                                        </span>
+                                    </div>
+
+                                    <label for="receipt_date"/>
+                                    <div class="o_row">
+                                        <field name="receipt_date"/>
+                                        <span class="text-muted">
+                                            (<field name="date_confidence" widget="float" digits="[1,0]"/>%)
+                                        </span>
+                                    </div>
+
+                                    <label for="payment_method"/>
+                                    <div class="o_row">
+                                        <field name="payment_method"/>
+                                        <span class="text-muted" invisible="not payment_method">
+                                            (<field name="payment_confidence" widget="float" digits="[1,0]"/>%)
+                                        </span>
+                                    </div>
+                                </group>
+                                <group>
+                                    <label for="total_amount"/>
+                                    <div class="o_row">
+                                        <field name="total_amount"/>
+                                        <field name="currency_code"/>
+                                        <span class="text-muted">
+                                            (<field name="amount_confidence" widget="float" digits="[1,0]"/>%)
+                                        </span>
+                                    </div>
+
+                                    <label for="tax_amount"/>
+                                    <div class="o_row">
+                                        <field name="tax_amount"/>
+                                        <span class="text-muted" invisible="not tax_amount">
+                                            (<field name="tax_confidence" widget="float" digits="[1,0]"/>%)
+                                        </span>
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Extracted Text" name="text">
+                            <field name="extracted_text" readonly="1"/>
+                        </page>
+                        <page string="Raw Data" name="raw" groups="base.group_no_one">
+                            <field name="extraction_json" readonly="1"/>
+                        </page>
+                        <page string="Errors" name="errors" invisible="not error_message">
+                            <field name="error_message" readonly="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="expense_ocr_result_action" model="ir.actions.act_window">
+        <field name="name">Expense OCR Results</field>
+        <field name="res_model">ipai.expense.ocr.result</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No OCR results yet
+            </p>
+            <p>
+                OCR results will appear here when expenses are scanned.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu under Expenses -->
+    <menuitem
+        id="menu_expense_ocr_results"
+        name="OCR Results"
+        parent="hr_expense.menu_hr_expense_root"
+        action="expense_ocr_result_action"
+        sequence="50"
+        groups="group_expense_ocr_user"/>
+</odoo>

@@ -12,6 +12,8 @@ bundle:
     Self-hosted Odoo 18 CE + OCA deployment with:
     - AIUX theme and Ask AI widget (sidepanel mode, not fullscreen)
     - Document Intelligence (OCR) for invoice/bill extraction
+    - Expense OCR with receipt scanning and duplicate detection
+    - Sinch SMS/verification integration
     - Mailgun email integration
 
 odoo:
@@ -75,6 +77,8 @@ ipai_modules:
     - ipai_ai_core
   document_ai:
     - ipai_document_ai
+  expense:
+    - ipai_expense_ocr
 
 # Widget mode types (corrected naming)
 # IMPORTANT: Use 'sidepanel' NOT 'fullscreen'
@@ -159,6 +163,11 @@ install_order:
     modules:
       - ipai_document_ai
 
+  # Phase 9: IPAI Expense OCR
+  - stage: ipai_expense_ocr
+    modules:
+      - ipai_expense_ocr
+
 gates:
   required:
     - id: clean_db_install
@@ -198,6 +207,10 @@ gates:
       description: Document AI upload endpoint responds
       command: curl -sf http://localhost:8069/ipai/document_ai/health
 
+    - id: expense_ocr_endpoint
+      description: Expense OCR status endpoint responds
+      command: curl -sf http://localhost:8069/ipai/expense_ocr/health
+
 runtime_config:
   odoo_conf:
     db_host: db
@@ -221,6 +234,15 @@ runtime_config:
     - OCR_BASE_URL          # Optional - defaults to http://ocr:8000
     - OCR_TIMEOUT_SECONDS   # Optional - defaults to 60
     - OCR_MAX_MB            # Optional - defaults to 25
+    # Expense OCR
+    - EXPENSE_OCR_DUPLICATE_DAYS   # Optional - defaults to 90
+    - EXPENSE_OCR_AUTO_APPLY       # Optional - defaults to false
+    - EXPENSE_OCR_REVIEW_THRESHOLD # Optional - defaults to 0.70
+    # Sinch SMS
+    - SINCH_API_KEY         # Optional - Sinch API key
+    - SINCH_API_SECRET      # Optional - Sinch API secret
+    - SINCH_PROJECT_ID      # Optional - Sinch project ID
+    - SINCH_SENDER_ID       # Optional - Sinch sender ID
 
 assets:
   bundles:
@@ -241,6 +263,8 @@ verification:
   runbooks:
     mailgun: ops/runbooks/mailgun_domain_verification.md
     ocr: ops/runbooks/ocr_service.md
+    sinch: ops/runbooks/sinch_setup.md
+    expense_ocr: ops/runbooks/expenses_ocr_runbook.md
 
 documentation:
   prd: docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md
