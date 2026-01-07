@@ -1,0 +1,316 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "metadata": {
+    "generated_at": "2026-01-06T18:07:00Z",
+    "generator": "ReleaseBot",
+    "version": "1.0.0",
+    "repository": "jgtolentino/odoo-ce"
+  },
+  "environment": "production",
+  "target_url": "https://erp.insightpulseai.net",
+  "current_state": {
+    "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+    "tag": "prod-20260106-1741",
+    "docker_image": "ghcr.io/jgtolentino/odoo-ce:edge-standard",
+    "deployed_at": "2026-01-06T17:40:17Z"
+  },
+  "previous_state": {
+    "head_sha": "a42fc69f418ecb5744607749c5d544f88aae8a9d",
+    "tag": "prod-20260106-1643",
+    "deployed_at": "2026-01-06T16:41:48Z"
+  },
+  "deployments": [
+    {
+      "workflow": "Deploy to Production",
+      "workflow_file": ".github/workflows/deploy-production.yml",
+      "run_id": "20756736863",
+      "run_number": 166,
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736863",
+      "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+      "head_branch": "main",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-01-06T17:40:17Z",
+      "commit_range": {
+        "from": "a42fc69f418ecb5744607749c5d544f88aae8a9d",
+        "to": "782fea9a7a4656d6ba225fcbea132908978d1522"
+      },
+      "prs": [
+        {
+          "number": 165,
+          "title": "Upgrade React Fluent UI design system",
+          "sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+          "merged_at": "2026-01-06T17:40:14Z",
+          "author": "jgtolentino",
+          "html_url": "https://github.com/jgtolentino/odoo-ce/pull/165",
+          "changed_files": 28,
+          "additions": 5888,
+          "deletions": 18
+        }
+      ],
+      "changes": {
+        "features": [
+          {
+            "name": "IPAI AI Platform Spec Bundle",
+            "description": "Spec kit for IPAI AI Platform with constitution, PRD, plan, and tasks",
+            "files": [
+              "spec/ipai-ai-platform/constitution.md",
+              "spec/ipai-ai-platform/prd.md",
+              "spec/ipai-ai-platform/plan.md",
+              "spec/ipai-ai-platform/tasks.md"
+            ]
+          },
+          {
+            "name": "DiagramFlow Tool",
+            "description": "Mermaid to BPMN/Draw.io diagram converter",
+            "files": [
+              "tools/diagramflow/README.md",
+              "tools/diagramflow/package.json",
+              "tools/diagramflow/src/cli.ts",
+              "tools/diagramflow/src/index.ts",
+              "tools/diagramflow/src/parseMermaid.ts",
+              "tools/diagramflow/src/remap.ts",
+              "tools/diagramflow/src/toBpmn.ts",
+              "tools/diagramflow/src/toDrawio.ts",
+              "tools/diagramflow/tsconfig.json"
+            ]
+          },
+          {
+            "name": "Workspace OpenAPI Enhancements",
+            "description": "Workspaces endpoints and schemas for AI Platform",
+            "files": [
+              "docs/api/openapi.ipai_ai_platform.yaml"
+            ]
+          }
+        ],
+        "modules": [
+          {
+            "name": "ipai_ai_core",
+            "change_type": "tests_added",
+            "installed": null,
+            "upgraded": null,
+            "version": null,
+            "files": [
+              "addons/ipai/ipai_ai_core/tests/__init__.py",
+              "addons/ipai/ipai_ai_core/tests/test_provider.py",
+              "addons/ipai/ipai_ai_core/tests/test_service.py",
+              "addons/ipai/ipai_ai_core/tests/test_thread.py"
+            ],
+            "verification_status": "UNVERIFIED",
+            "verification_note": "Module install/upgrade not executed by Deploy to Production workflow"
+          }
+        ],
+        "oca_dependencies": [],
+        "infra": [
+          {
+            "name": "diagrams.yml workflow",
+            "change_type": "added",
+            "file": ".github/workflows/diagrams.yml",
+            "description": "New workflow for diagram generation/validation"
+          },
+          {
+            "name": "ipai-ai-platform-ci.yml workflow",
+            "change_type": "modified",
+            "file": ".github/workflows/ipai-ai-platform-ci.yml",
+            "description": "Updated module paths and validation checks"
+          }
+        ],
+        "data": [],
+        "documentation": [
+          {
+            "file": "docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml",
+            "type": "added",
+            "description": "DBML schema for AI Platform"
+          },
+          {
+            "file": "docs/data-model/IPAI_AI_PLATFORM_ERD.mmd",
+            "type": "added",
+            "description": "Mermaid ERD diagram"
+          },
+          {
+            "file": "docs/architecture/IPAI_AI_PLATFORM_ARCH.md",
+            "type": "modified",
+            "description": "Workspace design and deployment checklist"
+          },
+          {
+            "file": "docs/architecture/IPAI_AI_PLATFORM_ORD.md",
+            "type": "added",
+            "description": "Object Relationship Document"
+          },
+          {
+            "file": "docs/diagrams/ipai_platform_flow.mmd",
+            "type": "added",
+            "description": "Platform flow diagram"
+          },
+          {
+            "file": "docs/diagrams/mappings/azure_to_do_supabase_odoo.yaml",
+            "type": "added",
+            "description": "Azure/Supabase/Odoo field mappings"
+          }
+        ]
+      },
+      "jobs": [
+        {
+          "name": "Pre-flight Checks",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-01-06T17:40:31Z",
+          "completed_at": "2026-01-06T17:40:36Z"
+        },
+        {
+          "name": "Deploy to Production",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-01-06T17:40:41Z",
+          "completed_at": "2026-01-06T17:40:48Z"
+        },
+        {
+          "name": "Production Smoke Test",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-01-06T17:40:51Z",
+          "completed_at": "2026-01-06T17:41:54Z"
+        },
+        {
+          "name": "Auto-Tag Release",
+          "status": "completed",
+          "conclusion": "success",
+          "started_at": "2026-01-06T17:41:56Z",
+          "completed_at": "2026-01-06T17:42:04Z"
+        }
+      ],
+      "release_tag": {
+        "name": "prod-20260106-1741",
+        "url": "https://github.com/jgtolentino/odoo-ce/releases/tag/prod-20260106-1741",
+        "created_at": "2026-01-06T17:40:14Z"
+      },
+      "proofs": [
+        {
+          "type": "workflow_run",
+          "path": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736863",
+          "description": "GitHub Actions workflow run"
+        },
+        {
+          "type": "release_tag",
+          "path": "https://github.com/jgtolentino/odoo-ce/releases/tag/prod-20260106-1741",
+          "description": "Auto-created release tag"
+        }
+      ]
+    }
+  ],
+  "not_deployed": {
+    "reason": "Deploy runs #167/#168 cancelled, #169 skipped due to concurrency",
+    "commits": [
+      {
+        "sha": "ad9be7232ad0b4ba7adc6613515cb1b210eb71d9",
+        "message": "feat(agent): scaffold Auto-Claude framework infrastructure (#166)",
+        "pr_number": 166,
+        "pr_title": "Set up Auto-Claude autonomous coding framework",
+        "pr_url": "https://github.com/jgtolentino/odoo-ce/pull/166"
+      },
+      {
+        "sha": "07e7aa6c620f5debc75ec821f204b7bf5d059f8e",
+        "message": "docs: auto-update SITEMAP.md and TREE.md [skip ci]",
+        "pr_number": null,
+        "pr_title": null,
+        "pr_url": null
+      },
+      {
+        "sha": "1b4a754ee2627b6e814ec849339cc2916b052d87",
+        "message": "docs: auto-update SITEMAP.md and TREE.md [skip ci]",
+        "pr_number": null,
+        "pr_title": null,
+        "pr_url": null
+      }
+    ]
+  },
+  "failed_workflows": [
+    {
+      "workflow": "Deploy Odoo Prod (upgrade module)",
+      "run_number": 25,
+      "run_id": "20756751844",
+      "head_sha": "ad9be7232ad0b4ba7adc6613515cb1b210eb71d9",
+      "conclusion": "failure",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756751844"
+    },
+    {
+      "workflow": "Deploy Odoo Prod (upgrade module)",
+      "run_number": 24,
+      "run_id": "20756736843",
+      "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+      "conclusion": "failure",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736843"
+    },
+    {
+      "workflow": "Deploy Finance PPM to Production",
+      "run_number": 39,
+      "run_id": "20756751847",
+      "head_sha": "ad9be7232ad0b4ba7adc6613515cb1b210eb71d9",
+      "conclusion": "failure",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756751847"
+    },
+    {
+      "workflow": "Deploy Finance PPM to Production",
+      "run_number": 38,
+      "run_id": "20756736845",
+      "head_sha": "782fea9a7a4656d6ba225fcbea132908978d1522",
+      "conclusion": "failure",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756736845"
+    }
+  ],
+  "skipped_workflows": [
+    {
+      "workflow": "Deploy to Production",
+      "run_number": 169,
+      "run_id": "20756767811",
+      "head_sha": "1b4a754ee2627b6e814ec849339cc2916b052d87",
+      "conclusion": "skipped",
+      "reason": "All jobs skipped - likely due to workflow_run condition not met",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756767811"
+    },
+    {
+      "workflow": "Deploy to Production",
+      "run_number": 168,
+      "run_id": "20756751912",
+      "head_sha": "ad9be7232ad0b4ba7adc6613515cb1b210eb71d9",
+      "conclusion": "cancelled",
+      "reason": "Cancelled due to concurrency group",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756751912"
+    },
+    {
+      "workflow": "Deploy to Production",
+      "run_number": 167,
+      "run_id": "20756749248",
+      "head_sha": "07e7aa6c620f5debc75ec821f204b7bf5d059f8e",
+      "conclusion": "cancelled",
+      "reason": "Cancelled due to concurrency group",
+      "html_url": "https://github.com/jgtolentino/odoo-ce/actions/runs/20756749248"
+    }
+  ],
+  "unverified": [
+    {
+      "item": "Odoo module install/upgrade",
+      "reason": "Deploy to Production workflow does not execute -u module commands",
+      "risk": "LOW",
+      "note": "Code deployed, module state on server unknown"
+    },
+    {
+      "item": "Database migrations",
+      "reason": "No migration logs available in workflow output",
+      "risk": "LOW",
+      "note": "No migrations in commit range"
+    },
+    {
+      "item": "Docker image pull on server",
+      "reason": "SSH step output not captured in GitHub API",
+      "risk": "LOW",
+      "note": "Workflow succeeded"
+    },
+    {
+      "item": "Health check response",
+      "reason": "Smoke test stub doesn't capture response body",
+      "risk": "LOW",
+      "note": "Job succeeded"
+    }
+  ]
+}
