@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ad9be7232ad0b4ba7adc6613515cb1b210eb71d9
+> Commit: 41445a0cc2413225a22ac32e50d39ff9b14ecd8d
 
 ```
 .
@@ -258,6 +258,13 @@
 │   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_command_center
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_control_room
 │   │   │   ├── data
 │   │   │   ├── models
@@ -278,6 +285,10 @@
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_design_system_apps_sdk
+│   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_dev_studio_base
@@ -1527,6 +1538,9 @@
 │   │   ├── odoo_docs.yaml
 │   │   └── sap_help.yaml
 │   ├── capability_map.yaml
+│   ├── extended-platform-install-order.yaml
+│   ├── oca-repos.yaml
+│   ├── odoo-core.conf
 │   ├── odoo.conf.template
 │   ├── pipeline.yaml
 │   └── ship_set.txt
@@ -1569,6 +1583,19 @@
 │   ├── notion_tasks_with_logframe.json
 │   └── user_map.csv
 ├── db
+│   ├── import-templates
+│   │   └── extended-platform
+│   │       ├── README.md
+│   │       ├── account_fiscal_year.csv
+│   │       ├── auditlog_rule.csv
+│   │       ├── date_range.csv
+│   │       ├── date_range_type.csv
+│   │       ├── dms_category.csv
+│   │       ├── dms_directory.csv
+│   │       ├── dms_storage.csv
+│   │       ├── document_page.csv
+│   │       ├── kpi_dashboard.csv
+│   │       └── queue_job_channel.csv
 │   ├── migrations
 │   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
 │   │   ├── 202512070002_REORG_COPY_DATA.sql
@@ -1665,6 +1692,7 @@
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
 │   ├── api
+│   │   ├── EXTENDED_PLATFORM_API.md
 │   │   └── openapi.ipai_ai_platform.yaml
 │   ├── architecture
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
@@ -1687,6 +1715,9 @@
 │   ├── connectors
 │   │   └── CLAUDE_CONNECTORS.md
 │   ├── data-model
+│   │   ├── EXTENDED_PLATFORM_ERD.mmd
+│   │   ├── EXTENDED_PLATFORM_ORM_MAP.md
+│   │   ├── EXTENDED_PLATFORM_SCHEMA.dbml
 │   │   ├── IPAI_AI_PLATFORM_ERD.mmd
 │   │   ├── IPAI_AI_PLATFORM_SCHEMA.dbml
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
@@ -3167,15 +3198,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1021 directories, 2141 files
+1030 directories, 2163 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1161 |
-| Files | 3227 |
-| Python files | 882 |
-| XML files | 437 |
-| Markdown files | 614 |
+| Directories | 1179 |
+| Files | 3263 |
+| Python files | 889 |
+| XML files | 441 |
+| Markdown files | 617 |
