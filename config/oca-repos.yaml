@@ -1,0 +1,247 @@
+# =============================================================================
+# OCA Git-Aggregator Configuration for Extended Platform
+# =============================================================================
+# Odoo 18.0 CE + OCA Extended Platform Bundle
+#
+# Usage:
+#   pip install git-aggregator
+#   gitaggregate -c config/oca-repos.yaml
+#
+# This config pulls OCA repos into ./addons/oca/ with pinned commits
+# for reproducible builds.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# TIER 0: Foundation (Dependencies for everything else)
+# -----------------------------------------------------------------------------
+
+./addons/oca/server-tools:
+  remotes:
+    origin: https://github.com/OCA/server-tools.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+  # depth: 1  # Shallow clone for faster CI
+
+./addons/oca/server-ux:
+  remotes:
+    origin: https://github.com/OCA/server-ux.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/server-backend:
+  remotes:
+    origin: https://github.com/OCA/server-backend.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 1: Platform UX (App Launcher + Modern Web Client)
+# -----------------------------------------------------------------------------
+
+./addons/oca/web:
+  remotes:
+    origin: https://github.com/OCA/web.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 2: Background Processing + Agent Runtime
+# -----------------------------------------------------------------------------
+
+./addons/oca/queue:
+  remotes:
+    origin: https://github.com/OCA/queue.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 3: Calendar + Periods + Scheduling
+# -----------------------------------------------------------------------------
+
+./addons/oca/calendar:
+  remotes:
+    origin: https://github.com/OCA/calendar.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 4: Reporting Engine + Finance Reporting
+# -----------------------------------------------------------------------------
+
+./addons/oca/reporting-engine:
+  remotes:
+    origin: https://github.com/OCA/reporting-engine.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/mis-builder:
+  remotes:
+    origin: https://github.com/OCA/mis-builder.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/account-financial-reporting:
+  remotes:
+    origin: https://github.com/OCA/account-financial-reporting.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/account-financial-tools:
+  remotes:
+    origin: https://github.com/OCA/account-financial-tools.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 5: Spreadsheet Dashboards (CE Spreadsheet Alternative)
+# -----------------------------------------------------------------------------
+
+./addons/oca/spreadsheet:
+  remotes:
+    origin: https://github.com/OCA/spreadsheet.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 6: Documents + Knowledge (CE Knowledge Alternative)
+# -----------------------------------------------------------------------------
+
+./addons/oca/knowledge:
+  remotes:
+    origin: https://github.com/OCA/knowledge.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/dms:
+  remotes:
+    origin: https://github.com/OCA/dms.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 7: API Layer (REST + Pydantic for AI/Tools)
+# -----------------------------------------------------------------------------
+
+./addons/oca/rest-framework:
+  remotes:
+    origin: https://github.com/OCA/rest-framework.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 8: Audit + Mail Polish
+# -----------------------------------------------------------------------------
+
+./addons/oca/social:
+  remotes:
+    origin: https://github.com/OCA/social.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 9: Workflow + Operations (Extended)
+# -----------------------------------------------------------------------------
+
+./addons/oca/account-reconcile:
+  remotes:
+    origin: https://github.com/OCA/account-reconcile.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/purchase-workflow:
+  remotes:
+    origin: https://github.com/OCA/purchase-workflow.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/sale-workflow:
+  remotes:
+    origin: https://github.com/OCA/sale-workflow.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/hr-expense:
+  remotes:
+    origin: https://github.com/OCA/hr-expense.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/project:
+  remotes:
+    origin: https://github.com/OCA/project.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/contract:
+  remotes:
+    origin: https://github.com/OCA/contract.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/timesheet:
+  remotes:
+    origin: https://github.com/OCA/timesheet.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 10: Connectors + Storage
+# -----------------------------------------------------------------------------
+
+./addons/oca/connector:
+  remotes:
+    origin: https://github.com/OCA/connector.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+./addons/oca/storage:
+  remotes:
+    origin: https://github.com/OCA/storage.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 11: AI/ML (Experimental)
+# -----------------------------------------------------------------------------
+
+./addons/oca/ai:
+  remotes:
+    origin: https://github.com/OCA/ai.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
+
+# -----------------------------------------------------------------------------
+# TIER 12: Localization (Philippines)
+# -----------------------------------------------------------------------------
+
+./addons/oca/l10n-philippines:
+  remotes:
+    origin: https://github.com/OCA/l10n-philippines.git
+  target: origin 18.0
+  merges:
+    - origin 18.0
