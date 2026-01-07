@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem
+        id="menu_ipai_document_ai_root"
+        name="Document AI"
+        web_icon="ipai_document_ai,static/description/icon.png"
+        sequence="100"
+        groups="group_document_ai_user"/>
+
+    <!-- Documents Menu -->
+    <menuitem
+        id="menu_ipai_document_ai_documents"
+        name="Documents"
+        parent="menu_ipai_document_ai_root"
+        action="ipai_document_action"
+        sequence="10"/>
+
+    <!-- Configuration Menu -->
+    <menuitem
+        id="menu_ipai_document_ai_config"
+        name="Configuration"
+        parent="menu_ipai_document_ai_root"
+        sequence="90"
+        groups="group_document_ai_admin"/>
+</odoo>
