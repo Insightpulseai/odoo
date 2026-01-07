@@ -6,7 +6,7 @@
         <field name="name">ipai.studio.ai.history.tree</field>
         <field name="model">ipai.studio.ai.history</field>
         <field name="arch" type="xml">
-            <tree string="Studio AI History" decoration-success="result == 'executed'" decoration-danger="result == 'failed'" decoration-muted="result == 'cancelled'">
+            <list string="Studio AI History" decoration-success="result == 'executed'" decoration-danger="result == 'failed'" decoration-muted="result == 'cancelled'">
                 <field name="create_date" string="Date"/>
                 <field name="command" string="Command"/>
                 <field name="command_type" string="Type"/>
@@ -14,7 +14,7 @@
                 <field name="confidence" widget="progressbar"/>
                 <field name="result" string="Status"/>
                 <field name="user_id" widget="many2one_avatar_user"/>
-            </tree>
+            </list>
         </field>
     </record>
 
