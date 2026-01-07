@@ -1,6 +1,6 @@
 # IPAI Ship PRD — Odoo 18 CE + OCA Essentials + AIUX + AskAI (Self-Hosted)
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Date:** 2026-01-08
 **Owner:** InsightPulse AI
 **Status:** Draft → Review → Approved
@@ -84,6 +84,7 @@ Deliver a production-grade **Odoo 18 CE + OCA** ERP that:
 | `ipai_ask_ai` | Server-side AI endpoints, auth, logging, rate limits |
 | `ipai_aiux_chat` | Chat widget OWL component |
 | `ipai_document_ai` | OCR integration + document extraction |
+| `ipai_expense_ocr` | Expense receipt OCR + duplicate detection |
 | Finance/closing stack | Already in repo |
 
 ---
@@ -153,6 +154,80 @@ Provide **self-hosted OCR + document understanding** that replaces Enterprise "D
 3) **API Contract + Runbook**
    - `ops/runbooks/ocr_service.md`
    - `docs/architecture/OCR_PIPELINE.md`
+
+### 4.5 Expense OCR — Ship Scope (Self-Hosted)
+
+#### Goal
+
+Provide **expense receipt scanning + extraction** with **duplicate detection** that complements the general Document Intelligence stack.
+
+#### What we ship
+
+1) **Odoo Module: `ipai_expense_ocr`**
+   - Extends `hr.expense` with OCR capabilities
+   - Adds "Scan Receipt" action on expense forms
+   - Sends receipt images to OCR service
+   - Extracts: merchant, date, amount, currency, tax
+   - **Duplicate detection**: SHA256 hash prevents duplicate submissions
+   - Queue-based async processing
+
+2) **Extracted Fields**
+
+   | Field | Description | Confidence Threshold |
+   |-------|-------------|---------------------|
+   | `merchant_name` | Store/vendor name | 0.70 |
+   | `receipt_date` | Transaction date | 0.85 |
+   | `total_amount` | Total paid | 0.85 |
+   | `currency` | Currency code | 0.80 |
+   | `tax_amount` | Tax/VAT amount | 0.75 |
+   | `payment_method` | Cash/Card/etc | 0.60 |
+
+3) **Workflow States**
+
+   ```
+   queued → processing → extracted|needs_review|failed → applied
+   ```
+
+   - **queued**: Waiting for OCR processing
+   - **processing**: Being extracted
+   - **extracted**: High-confidence results ready
+   - **needs_review**: Low confidence (<0.70), manual review required
+   - **applied**: Fields applied to expense
+   - **failed**: Extraction failed
+
+4) **Duplicate Detection**
+   - SHA256 hash computed on receipt upload
+   - Compared against recent expenses (configurable window, default 90 days)
+   - Warning displayed if duplicate found
+   - User can override and submit anyway
+
+5) **Runbook**
+   - `ops/runbooks/expenses_ocr_runbook.md`
+
+### 4.6 Sinch SMS/Verification — Ship Scope
+
+#### Goal
+
+Provide **SMS messaging + phone verification** capabilities using Sinch as the provider (Enterprise offset for SMS features).
+
+#### What we ship
+
+1) **Integration Points**
+   - SMS notifications for expense approvals
+   - Phone verification for user onboarding
+   - OTP delivery for sensitive operations
+
+2) **Configuration**
+
+   | Environment Variable | Description |
+   |---------------------|-------------|
+   | `SINCH_API_KEY` | Sinch API key |
+   | `SINCH_API_SECRET` | Sinch API secret |
+   | `SINCH_PROJECT_ID` | Sinch project ID |
+   | `SINCH_SENDER_ID` | Sender ID or phone number |
+
+3) **Runbook**
+   - `ops/runbooks/sinch_setup.md`
 
 ---
 
@@ -446,6 +521,20 @@ dig +short CNAME email.$DOMAIN
 - [ ] Extracted fields display with confidence scores
 - [ ] "Apply to record" successfully maps fields
 
+### Expense OCR
+
+- [ ] Receipt scan action available on expense forms
+- [ ] OCR extraction returns merchant, date, amount fields
+- [ ] Duplicate detection flags matching receipts
+- [ ] Low-confidence results route to review queue
+- [ ] "Apply to expense" successfully maps extracted fields
+
+### Sinch SMS
+
+- [ ] Sinch API credentials configured
+- [ ] Test SMS sends successfully
+- [ ] Phone verification flow works
+
 ### Mailgun
 
 - [ ] Domain verified in Mailgun
@@ -482,9 +571,12 @@ dig +short CNAME email.$DOMAIN
 | `addons/ipai/ipai_ask_ai/` | API + RBAC + logging |
 | `addons/ipai/ipai_aiux_chat/` | Chat widget |
 | `addons/ipai/ipai_document_ai/` | OCR integration |
+| `addons/ipai/ipai_expense_ocr/` | Expense receipt OCR |
 | `packages/ipai-design-tokens/` | Design tokens |
 | `ops/runbooks/mailgun_domain_verification.md` | Mail setup runbook |
 | `ops/runbooks/ocr_service.md` | OCR service runbook |
+| `ops/runbooks/sinch_setup.md` | Sinch SMS setup runbook |
+| `ops/runbooks/expenses_ocr_runbook.md` | Expense OCR operations |
 | `docs/architecture/OCR_PIPELINE.md` | OCR architecture |
 | `aiux_ship_manifest.yml` | Shipping manifest |
 
