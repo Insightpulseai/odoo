@@ -35,11 +35,11 @@
             <xpath expr="//notebook" position="inside">
                 <page string="RACI Matrix" name="ipai_raci" invisible="not ipai_raci_enabled">
                     <field name="ipai_raci_ids" nolabel="1">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="user_id"/>
                             <field name="role"/>
                             <field name="notes"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>

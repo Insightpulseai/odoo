@@ -4,13 +4,13 @@
     <field name="name">ipai.ai_studio.run.tree</field>
     <field name="model">ipai.ai_studio.run</field>
     <field name="arch" type="xml">
-      <tree>
+      <list>
         <field name="name"/>
         <field name="state"/>
         <field name="module_name"/>
         <field name="validation_ok"/>
         <field name="create_date"/>
-      </tree>
+      </list>
     </field>
   </record>
 

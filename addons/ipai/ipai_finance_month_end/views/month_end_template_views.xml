@@ -45,13 +45,13 @@
                     <notebook>
                         <page string="Steps" name="steps">
                             <field name="step_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="activity_type"/>
                                     <field name="role_code"/>
                                     <field name="offset_days"/>
                                     <field name="business_days_before"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

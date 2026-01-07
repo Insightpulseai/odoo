@@ -5,13 +5,13 @@
         <field name="name">ipai.project.task.dependency.tree</field>
         <field name="model">ipai.project.task.dependency</field>
         <field name="arch" type="xml">
-            <tree editable="bottom">
+            <list editable="bottom">
                 <field name="task_id"/>
                 <field name="depends_on_task_id"/>
                 <field name="dependency_type"/>
                 <field name="lag_days"/>
                 <field name="project_id" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
