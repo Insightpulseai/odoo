@@ -1,15 +1,17 @@
 {
   "name": "@ipai/design-tokens",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "Fluent 2 design tokens for IPAI applications (Odoo, Next.js, Vite)",
+  "description": "Design tokens for IPAI applications: Fluent 2, Material 3 Expressive (Odoo, Next.js, Vite)",
   "files": [
     "dist/",
     "src/",
     "tokens.css",
     "tokens.scss",
-    "tailwind.preset.js"
+    "tailwind.preset.js",
+    "tailwind-material3.preset.js",
+    "material3-expressive.css"
   ],
   "exports": {
     ".": {
@@ -22,6 +24,16 @@
     "./tokens.css": "./tokens.css",
     "./tokens.scss": "./tokens.scss",
     "./tailwind.preset": "./tailwind.preset.js",
+    "./tailwind-material3.preset": "./tailwind-material3.preset.js",
+    "./material3-expressive.css": "./material3-expressive.css",
+    "./material3Theme": {
+      "import": "./src/material3Theme.ts",
+      "types": "./src/material3Theme.ts"
+    },
+    "./react/Material3Components": {
+      "import": "./src/react/Material3Components.tsx",
+      "types": "./src/react/Material3Components.tsx"
+    },
     "./odooTokens": {
       "import": "./src/odooTokens.ts",
       "types": "./src/odooTokens.ts"
