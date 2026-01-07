@@ -1,0 +1,173 @@
+/* IPAI Document AI Styles */
+
+/* Document Card */
+.o_ipai_document_card {
+    border: 1px solid var(--o-color-border, #dee2e6);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    background: var(--o-color-bg, #fff);
+}
+
+.o_ipai_document_card:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Confidence Badge */
+.o_ipai_confidence_badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.o_ipai_confidence_badge.high {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.o_ipai_confidence_badge.medium {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.o_ipai_confidence_badge.low {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Extracted Fields Panel */
+.o_ipai_extracted_fields {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    background: var(--o-color-bg-secondary, #f8f9fa);
+    border-radius: 8px;
+}
+
+.o_ipai_field_item {
+    display: flex;
+    flex-direction: column;
+}
+
+.o_ipai_field_label {
+    font-size: 12px;
+    color: var(--o-color-muted, #6c757d);
+    margin-bottom: 4px;
+}
+
+.o_ipai_field_value {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.o_ipai_field_confidence {
+    font-size: 10px;
+    color: var(--o-color-muted, #6c757d);
+    margin-top: 2px;
+}
+
+/* Upload Drop Zone */
+.o_ipai_upload_zone {
+    border: 2px dashed var(--o-color-border, #dee2e6);
+    border-radius: 8px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.o_ipai_upload_zone:hover,
+.o_ipai_upload_zone.dragover {
+    border-color: var(--o-color-primary, #0d6efd);
+    background-color: rgba(13, 110, 253, 0.05);
+}
+
+.o_ipai_upload_zone .o_icon {
+    font-size: 48px;
+    color: var(--o-color-muted, #6c757d);
+    margin-bottom: 16px;
+}
+
+.o_ipai_upload_zone .o_text {
+    font-size: 16px;
+    color: var(--o-color-muted, #6c757d);
+}
+
+/* Processing Indicator */
+.o_ipai_processing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.o_ipai_processing .o_spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--o-color-border, #dee2e6);
+    border-top-color: var(--o-color-primary, #0d6efd);
+    border-radius: 50%;
+    animation: o_ipai_spin 1s linear infinite;
+    margin-right: 12px;
+}
+
+@keyframes o_ipai_spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Review Panel */
+.o_ipai_review_panel {
+    padding: 16px;
+    background: var(--o-color-bg-secondary, #f8f9fa);
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.o_ipai_review_panel .o_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.o_ipai_review_panel .o_title {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.o_ipai_review_panel .o_actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Status Badges */
+.o_ipai_status_draft {
+    background-color: var(--o-color-secondary, #6c757d);
+    color: white;
+}
+
+.o_ipai_status_processing {
+    background-color: var(--o-color-info, #17a2b8);
+    color: white;
+}
+
+.o_ipai_status_ready {
+    background-color: var(--o-color-warning, #ffc107);
+    color: #212529;
+}
+
+.o_ipai_status_applied {
+    background-color: var(--o-color-success, #28a745);
+    color: white;
+}
+
+.o_ipai_status_failed {
+    background-color: var(--o-color-danger, #dc3545);
+    color: white;
+}
