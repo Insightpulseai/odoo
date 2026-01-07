@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 41445a0cc2413225a22ac32e50d39ff9b14ecd8d
+> Commit: 1e2c392f1dcee98d07f2eedd5b425955a55fca26
 
 ## 📚 Documentation
 
@@ -200,6 +200,7 @@
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
 | [CE/OCA Equivalents Audit Report](docs/CE_OCA_EQUIVALENTS_AUDIT.md) | docs |
 | [CE + OCA Project Stack Mapping (Odoo 18)](docs/CE_OCA_PROJECT_STACK.md) | docs |
+| [Claude Code Setup Guide](docs/CLAUDE_CODE_SETUP.md) | docs |
 | [Custom Odoo Image Success Criteria Validation](docs/CUSTOM_IMAGE_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE 18 – Database & Worker Tuning](docs/DB_TUNING.md) | docs |
 | [DELIVERABLES & RELEASE CONTENTS](docs/DELIVERABLES_MANIFEST.md) | docs |
@@ -300,6 +301,9 @@
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
+| [Claude Code Setup Implementation Summary](docs/claude_code/IMPLEMENTATION_SUMMARY.md) | docs/claude_code |
+| [Claude Code Quick Reference Card](docs/claude_code/QUICK_REFERENCE.md) | docs/claude_code |
+| [Claude Code Project Index](docs/claude_code/README.md) | docs/claude_code |
 | [Claude Connector Configuration Guide](docs/connectors/CLAUDE_CONNECTORS.md) | docs/connectors |
 | [Extended Platform ORM Mapping](docs/data-model/EXTENDED_PLATFORM_ORM_MAP.md) | docs/data-model |
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
@@ -699,12 +703,14 @@
 | [ipai_project_profitability_bridge](./addons/ipai/ipai_project_profitability_bridge) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
+| [ipai_settings_dashboard](./addons/ipai/ipai_settings_dashboard) | ✅ |  |
 | [ipai_skill_api](./addons/ipai/ipai_skill_api) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
+| [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_v18_compat](./addons/ipai/ipai_v18_compat) | ✅ |  |
 | [ipai_web_fluent2](./addons/ipai/ipai_web_fluent2) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
