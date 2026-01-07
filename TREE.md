@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 41445a0cc2413225a22ac32e50d39ff9b14ecd8d
+> Commit: 1e2c392f1dcee98d07f2eedd5b425955a55fca26
 
 ```
 .
@@ -567,6 +567,12 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_settings_dashboard
+│   │   │   ├── models
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_skill_api
 │   │   │   ├── controllers
 │   │   │   ├── security
@@ -606,6 +612,10 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_fluent2
+│   │   │   ├── static
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_tbwa_backend
 │   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -1712,6 +1722,10 @@
 │   │       ├── inventory.md
 │   │       ├── oca_modules_vendored.txt
 │   │       └── oca_overlap_map.yaml
+│   ├── claude_code
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── QUICK_REFERENCE.md
+│   │   └── README.md
 │   ├── connectors
 │   │   └── CLAUDE_CONNECTORS.md
 │   ├── data-model
@@ -1901,6 +1915,7 @@
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
 │   ├── CE_OCA_PROJECT_STACK.md
+│   ├── CLAUDE_CODE_SETUP.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
 │   ├── DELIVERABLES_MANIFEST.md
@@ -1995,6 +2010,7 @@
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── ZOHO_DNS_SETUP.md
 │   ├── branch-cleanup-analysis.md
+│   ├── llms.txt
 │   ├── notion-odoo-substitute-catalog.md
 │   ├── odoo-apps-parity.md
 │   ├── odoo_core_schema.sql
@@ -2341,6 +2357,7 @@
 │   └── README.md
 ├── scripts
 │   ├── ci
+│   │   ├── audit_tree_tags.sh
 │   │   ├── compare_audit_baseline.py
 │   │   ├── constraints-gevent.txt
 │   │   ├── deploy-ipai-modules.sh
@@ -3198,15 +3215,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1030 directories, 2163 files
+1037 directories, 2173 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1179 |
-| Files | 3263 |
-| Python files | 889 |
-| XML files | 441 |
-| Markdown files | 617 |
+| Directories | 1190 |
+| Files | 3282 |
+| Python files | 896 |
+| XML files | 443 |
+| Markdown files | 621 |
