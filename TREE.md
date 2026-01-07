@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1e2c392f1dcee98d07f2eedd5b425955a55fca26
+> Commit: 49c2c4908028c983419c13c1c55bb9bc7cee3b54
 
 ```
 .
@@ -619,12 +619,31 @@
 │   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_ui_brand_tokens
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_v18_compat
 │   │   │   ├── migrations
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
 │   │   ├── ipai_web_fluent2
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_web_icons_fluent
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_web_theme_tbwa
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
@@ -1884,6 +1903,15 @@
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
 │   │   └── runbook.md
+│   ├── releases
+│   │   ├── DEPLOYMENT_PROOFS
+│   │   │   ├── README.md
+│   │   │   ├── deploy_run_166.json
+│   │   │   ├── deploy_run_166_jobs.json
+│   │   │   └── release_tag_prod-20260106-1741.json
+│   │   ├── GO_LIVE_MANIFEST.md
+│   │   ├── WHAT_SHIPPED.json
+│   │   └── WHAT_SHIPPED.md
 │   ├── repo
 │   │   ├── GIT_STATE.prod.txt
 │   │   ├── REPO_SNAPSHOT.prod.json
@@ -2332,7 +2360,9 @@
 │   │   └── tsconfig.json
 │   └── ipai-design-tokens
 │       ├── src
-│       │   └── build.ts
+│       │   ├── react
+│       │   ├── build.ts
+│       │   └── odooTokens.ts
 │       ├── package.json
 │       ├── tailwind.preset.js
 │       ├── tokens.css
@@ -3215,15 +3245,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1037 directories, 2173 files
+1053 directories, 2187 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1190 |
-| Files | 3282 |
-| Python files | 896 |
-| XML files | 443 |
-| Markdown files | 621 |
+| Directories | 1215 |
+| Files | 3319 |
+| Python files | 906 |
+| XML files | 447 |
+| Markdown files | 624 |

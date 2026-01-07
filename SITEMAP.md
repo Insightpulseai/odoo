@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1e2c392f1dcee98d07f2eedd5b425955a55fca26
+> Commit: 49c2c4908028c983419c13c1c55bb9bc7cee3b54
 
 ## 📚 Documentation
 
@@ -436,6 +436,9 @@
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
+| [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
+| [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
+| [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
@@ -711,8 +714,11 @@
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
+| [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |
 | [ipai_v18_compat](./addons/ipai/ipai_v18_compat) | ✅ |  |
 | [ipai_web_fluent2](./addons/ipai/ipai_web_fluent2) | ✅ |  |
+| [ipai_web_icons_fluent](./addons/ipai/ipai_web_icons_fluent) | ✅ |  |
+| [ipai_web_theme_tbwa](./addons/ipai/ipai_web_theme_tbwa) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ | AI chat agents with ChatGPT/Gemini provider toggles |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
