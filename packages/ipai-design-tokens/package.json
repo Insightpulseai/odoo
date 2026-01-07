@@ -1,22 +1,31 @@
 {
   "name": "@ipai/design-tokens",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "Fluent 2 design tokens for IPAI applications (Odoo, Next.js, Vite)",
   "files": [
     "dist/",
+    "src/",
     "tokens.css",
     "tokens.scss",
     "tailwind.preset.js"
   ],
   "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
     "./fluent.css": "./dist/fluent.css",
     "./tokens.json": "./dist/tokens.json",
     "./tailwind-preset": "./dist/tailwind-preset.cjs",
     "./tokens.css": "./tokens.css",
     "./tokens.scss": "./tokens.scss",
-    "./tailwind.preset": "./tailwind.preset.js"
+    "./tailwind.preset": "./tailwind.preset.js",
+    "./odooTokens": {
+      "import": "./src/odooTokens.ts",
+      "types": "./src/odooTokens.ts"
+    }
   },
   "scripts": {
     "build": "tsx src/build.ts",

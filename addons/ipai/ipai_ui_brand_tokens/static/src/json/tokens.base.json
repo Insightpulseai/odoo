@@ -1,0 +1,42 @@
+{
+  "palette": {
+    "primary": "#000000",
+    "primaryHover": "#1A1A1A",
+    "accent": "#FBBF24",
+    "accentHover": "#F59E0B",
+    "success": "#10B981",
+    "warning": "#F59E0B",
+    "danger": "#EF4444",
+    "info": "#3B82F6"
+  },
+  "surface": {
+    "bg": "#FFFFFF",
+    "card": "#F9FAFB",
+    "elevated": "#FFFFFF",
+    "border": "#E5E7EB"
+  },
+  "text": {
+    "primary": "#111827",
+    "secondary": "#6B7280",
+    "onPrimary": "#FFFFFF",
+    "onAccent": "#000000"
+  },
+  "radius": {
+    "sm": "4px",
+    "md": "8px",
+    "lg": "12px"
+  },
+  "shadow": {
+    "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+    "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+    "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1)"
+  },
+  "typography": {
+    "fontFamily": "\"Segoe UI\", system-ui, -apple-system, sans-serif"
+  },
+  "meta": {
+    "preset": "tbwa",
+    "iconPack": "fluent",
+    "version": "1.0.0"
+  }
+}
