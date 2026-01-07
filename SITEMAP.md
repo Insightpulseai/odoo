@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2c03528c1ec04727df5c6256242a25cb5bd27d7d
+> Commit: 8f3885350776f97a7af34e1128c8f7010dc711e8
 
 ## 📚 Documentation
 
@@ -657,6 +657,7 @@
 | [ipai_ai_provider_pulser](./addons/ipai/ipai_ai_provider_pulser) | ✅ |  |
 | [ipai_ai_sources_odoo](./addons/ipai/ipai_ai_sources_odoo) | ✅ |  |
 | [ipai_ai_studio](./addons/ipai/ipai_ai_studio) | ✅ |  |
+| [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ | AIUX Chat Interface |
 | [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
@@ -673,6 +674,7 @@
 | [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ |  |
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
 | [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
+| [ipai_document_ai](./addons/ipai/ipai_document_ai) | ✅ | Document Intelligence Integration |
 | [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
 | [ipai_expense_ocr](./addons/ipai/ipai_expense_ocr) | ✅ |  |
@@ -712,6 +714,7 @@
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
+| [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ | AIUX Design System Theme |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |

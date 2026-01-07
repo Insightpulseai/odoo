@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2c03528c1ec04727df5c6256242a25cb5bd27d7d
+> Commit: 8f3885350776f97a7af34e1128c8f7010dc711e8
 
 ```
 .
@@ -186,6 +186,8 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_aiux_chat
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ask_ai
 │   │   │   ├── controllers
 │   │   │   ├── data
@@ -294,6 +296,8 @@
 │   │   ├── ipai_dev_studio_base
 │   │   │   ├── models
 │   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_document_ai
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_equipment
 │   │   │   ├── models
@@ -610,6 +614,8 @@
 │   │   │   ├── models
 │   │   │   ├── tests
 │   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_aiux
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_fluent2
 │   │   │   ├── static
@@ -3235,6 +3241,7 @@
 ├── ppm_dashboard_views.xml
 ├── query_memory.py
 ├── requirements.txt
+├── ship_v1_1_0.sh
 ├── spec.md
 ├── task.md
 ├── tasks.md
@@ -3248,15 +3255,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1053 directories, 2190 files
+1056 directories, 2194 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1215 |
-| Files | 3323 |
-| Python files | 906 |
+| Directories | 1218 |
+| Files | 3327 |
+| Python files | 909 |
 | XML files | 447 |
 | Markdown files | 624 |
