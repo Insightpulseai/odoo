@@ -5,7 +5,7 @@
     <field name="name">ipai.workspace.tree</field>
     <field name="model">ipai.workspace</field>
     <field name="arch" type="xml">
-      <tree string="Workspaces">
+      <list string="Workspaces">
         <field name="sequence" widget="handle"/>
         <field name="name"/>
         <field name="workspace_type"/>
@@ -24,7 +24,7 @@
         <field name="engagement_count"/>
         <field name="invoice_count"/>
         <field name="company_id" groups="base.group_multi_company"/>
-      </tree>
+      </list>
     </field>
   </record>
 
@@ -63,7 +63,7 @@
           <notebook>
             <page string="Hierarchy">
               <field name="child_ids">
-                <tree>
+                <list>
                   <field name="sequence" widget="handle"/>
                   <field name="name"/>
                   <field name="workspace_type"/>
@@ -73,17 +73,17 @@
                   <field name="remaining_hours"/>
                   <field name="progress" widget="progressbar"/>
                   <field name="is_critical"/>
-                </tree>
+                </list>
               </field>
             </page>
             <page string="Links">
               <field name="link_ids">
-                <tree editable="bottom">
+                <list editable="bottom">
                   <field name="link_type"/>
                   <field name="res_model"/>
                   <field name="res_id"/>
                   <field name="display_name" readonly="1"/>
-                </tree>
+                </list>
               </field>
             </page>
             <page string="Chatter">

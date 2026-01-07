@@ -67,7 +67,7 @@
         <field name="name">ipai.ai.prompt.tree</field>
         <field name="model">ipai.ai.prompt</field>
         <field name="arch" type="xml">
-            <tree string="AI Prompts" decoration-muted="not active">
+            <list string="AI Prompts" decoration-muted="not active">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
@@ -77,7 +77,7 @@
                 <field name="show_in_menu"/>
                 <field name="usage_count"/>
                 <field name="active" invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 

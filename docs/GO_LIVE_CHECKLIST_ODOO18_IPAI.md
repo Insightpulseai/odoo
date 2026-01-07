@@ -84,6 +84,30 @@
   docker logs -n 200 odoo-erp-prod | grep -iE "Missing .card.|View types not defined|Traceback" || echo "Clean!"
   ```
 
+### 1.4 XML View Tag Migration (`<tree>` → `<list>`)
+
+Odoo 17+ renamed the `<tree>` XML tag to `<list>`. While Odoo 18 supports both for backward compatibility, Odoo 19 may break.
+
+| Version | `<tree>` | `<list>` |
+|---------|----------|----------|
+| Odoo 16 | ✅ | ❌ |
+| Odoo 17 | ⚠️ deprecated | ✅ |
+| Odoo 18 | ⚠️ warnings | ✅ |
+| Odoo 19 | ❌ may break | ✅ |
+
+- [ ] Audit custom modules for deprecated `<tree>` tags:
+
+```bash
+# Run audit script
+./scripts/ci/audit_tree_tags.sh addons/ipai
+
+# Quick fix (review changes before committing)
+sed -i 's/<tree /<list /g; s/<\/tree>/<\/list>/g' <file>
+```
+
+- [ ] Update `view_mode="tree,form"` to `view_mode="list,form"` in action definitions
+- [ ] No deprecation warnings in logs for view tags
+
 ---
 
 ## 2) Email / Invites / Reset Password (Outbound-only baseline)

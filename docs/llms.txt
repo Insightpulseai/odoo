@@ -1,0 +1,147 @@
+# odoo-ce: InsightPulse AI Odoo CE + OCA Platform
+
+## Critical Documentation
+
+- CLAUDE.md: Project rules and conventions
+- docs/CLAUDE_CODE_SETUP.md: Claude Code setup guide
+- docs/claude_code/README.md: Project index for AI assistants
+- scripts/verify.sh: Unified verification script
+
+## Architecture
+
+- docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
+- docs/data-model/ODOO_CANONICAL_SCHEMA.dbml
+- docs/db/DB_TARGET_ARCHITECTURE.md
+
+## Deployment
+
+- docs/deployment/DEPLOYMENT_EXECUTION_GUIDE.md
+- docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md
+- docs/GO_LIVE_CHECKLIST.md
+- DEPLOYMENT_COMPLETE.md
+
+## Odoo Modules
+
+### Finance PPM (Primary)
+- addons/ipai/ipai_finance_ppm/
+- addons/ipai/ipai_finance_ppm_dashboard/
+- addons/ipai/ipai_finance_ppm_closing/
+- addons/ipai/ipai_finance_ppm_golive/
+- addons/ipai/ipai_finance_ppm_umbrella/
+- docs/ppm/architecture.md
+- docs/ppm/runbook.md
+
+### AI Integration
+- addons/ipai/ipai_ask_ai/
+- addons/ipai/ipai_ai_core/
+- addons/ipai/ipai_ai_studio/
+
+### WorkOS (Notion Parity)
+- addons/ipai/ipai_workos_core/
+- addons/ipai/ipai_workos_canvas/
+- addons/ipai/ipai_workos_db/
+- addons/ipai/ipai_workos_blocks/
+
+### Platform
+- addons/ipai/ipai_platform_theme/
+- addons/ipai/ipai_platform_workflow/
+- addons/ipai/ipai_platform_approvals/
+- addons/ipai/ipai_platform_audit/
+
+## Control Room UI
+
+- apps/control-room/src/app/theme/tbwaFluentTheme.ts
+- apps/control-room/src/app/finance/page.tsx
+- apps/control-room/FINANCE_LANDING_CHECKLIST.md
+
+## Automation
+
+- automations/n8n/workflows/
+- automations/n8n/README_FINANCE_CLOSING.md
+
+## Scripts
+
+- scripts/verify.sh: Main verification
+- scripts/repo_health.sh: Structure check
+- scripts/spec_validate.sh: Spec validation
+- scripts/deploy-odoo-modules.sh: Module deployment
+- scripts/validate_manifests.py: Manifest validation
+
+## Spec-Kit
+
+- spec/pulser-master-control/: Reference implementation
+- constitution.md: Global non-negotiables
+
+## Module Documentation
+
+- docs/modules/INDEX.md
+- docs/modules/ipai_finance_ppm.md
+- docs/modules/ipai_ask_ai.md
+- docs/modules/ipai_workos_core.md
+
+## Navigation
+
+### For Odoo Development
+Start: docs/ODOO_18_CE_CHEATSHEET.md
+OCA Standards: docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
+Module Structure: docs/ipai/ARCHITECTURE.md
+
+### For Control Room UI
+Start: apps/control-room/README.md
+Theme: apps/control-room/src/app/theme/tbwaFluentTheme.ts
+Assets: apps/control-room/public/assets/finance/
+
+### For Finance PPM
+Start: docs/ppm/architecture.md
+Data Model: docs/ppm/data-dictionary.md
+Operations: docs/ppm/runbook.md
+
+### For Deployment
+Start: docs/deployment/DEPLOYMENT_EXECUTION_GUIDE.md
+Docker: deploy/docker-compose.prod.yml
+K8s: deploy/k8s/
+
+## Key Concepts
+
+- Medallion Architecture: Bronze → Silver → Gold → Platinum
+- Spec-Kit: constitution.md + prd.md + plan.md + tasks.md
+- OCA Compliance: AGPL-3 + proper structure + tests
+- TBWA Branding: #F1C100 (yellow) + #000000 (black)
+- Finance PPM: BIR calendar + Clarity PPM parity + ECharts
+
+## Quality Gates
+
+Before commit:
+1. ./scripts/verify.sh
+2. ./scripts/repo_health.sh
+3. ./scripts/spec_validate.sh
+
+CI enforces:
+- Python syntax
+- Formatting (black, isort)
+- Module install tests
+- Spec validation
+- Docker build
+
+## Stack
+
+- Odoo: CE 18.0 + OCA modules
+- Frontend: Next.js 14 + Fluent UI v9
+- Database: PostgreSQL 15
+- Automation: n8n + Mattermost
+- Hosting: DigitalOcean
+- Storage: Supabase (external)
+
+## Agent Commands
+
+- /project:plan: Create implementation plan
+- /project:implement: Execute plan
+- /project:verify: Run verification
+- /project:ship: Full workflow
+
+## Personas
+
+- odoo_developer: Odoo module work
+- finance_ssc_expert: BIR, Finance PPM
+- bi_architect: Superset, analytics
+- devops_engineer: Docker, deployment

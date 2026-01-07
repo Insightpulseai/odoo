@@ -5,7 +5,7 @@
         <field name="name">ipai.project.profitability.tree</field>
         <field name="model">ipai.project.profitability</field>
         <field name="arch" type="xml">
-            <tree decoration-success="margin_pct > 20" decoration-warning="margin_pct > 0 and margin_pct &lt;= 20" decoration-danger="margin_pct &lt;= 0">
+            <list decoration-success="margin_pct > 20" decoration-warning="margin_pct > 0 and margin_pct &lt;= 20" decoration-danger="margin_pct &lt;= 0">
                 <field name="project_id"/>
                 <field name="revenue" sum="Total Revenue"/>
                 <field name="cost" sum="Total Cost"/>
@@ -16,7 +16,7 @@
                 <field name="analytic_line_count" optional="hide"/>
                 <field name="last_computed_at" optional="show"/>
                 <field name="company_id" groups="base.group_multi_company" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 

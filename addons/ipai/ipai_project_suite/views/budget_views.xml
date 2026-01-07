@@ -5,7 +5,7 @@
         <field name="name">ipai.project.budget.tree</field>
         <field name="model">ipai.project.budget</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="state == 'closed'"
+            <list decoration-muted="state == 'closed'"
                   decoration-info="state == 'draft'"
                   decoration-success="state == 'approved'">
                 <field name="project_id"/>
@@ -18,7 +18,7 @@
                        decoration-info="state == 'draft'"
                        decoration-success="state == 'approved'"
                        decoration-muted="state == 'closed'"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -59,7 +59,7 @@
                     <notebook>
                         <page string="Budget Lines" name="lines">
                             <field name="line_ids" nolabel="1">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="category"/>
@@ -67,7 +67,7 @@
                                     <field name="actual_amount"/>
                                     <field name="variance"/>
                                     <field name="notes" optional="hide"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Notes" name="notes">

@@ -5,7 +5,7 @@
         <field name="name">ipai.agent.run.tree</field>
         <field name="model">ipai.agent.run</field>
         <field name="arch" type="xml">
-            <tree decoration-success="state == 'ok'"
+            <list decoration-success="state == 'ok'"
                   decoration-danger="state == 'failed'"
                   decoration-info="state == 'running'">
                 <field name="name"/>
@@ -15,7 +15,7 @@
                 <field name="started_at"/>
                 <field name="duration_seconds" widget="float_time"/>
                 <field name="create_date"/>
-            </tree>
+            </list>
         </field>
     </record>
 
