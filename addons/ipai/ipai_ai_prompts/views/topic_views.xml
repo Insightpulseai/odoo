@@ -41,13 +41,13 @@
                         </page>
                         <page string="Prompts" name="prompts">
                             <field name="prompt_ids">
-                                <tree>
+                                <list>
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="code"/>
                                     <field name="prompt_type" widget="badge"/>
                                     <field name="usage_count"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Applicable Models" name="models">
@@ -64,14 +64,14 @@
         <field name="name">ipai.ai.topic.tree</field>
         <field name="model">ipai.ai.topic</field>
         <field name="arch" type="xml">
-            <tree string="AI Topics" decoration-muted="not active">
+            <list string="AI Topics" decoration-muted="not active">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="category" widget="badge"/>
                 <field name="prompt_count"/>
                 <field name="active" invisible="1"/>
-            </tree>
+            </list>
         </field>
     </record>
 

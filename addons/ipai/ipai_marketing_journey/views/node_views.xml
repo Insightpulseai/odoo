@@ -71,19 +71,19 @@
                     <notebook>
                         <page string="Outgoing Connections" name="outgoing">
                             <field name="outgoing_edge_ids">
-                                <tree>
+                                <list>
                                     <field name="target_node_id"/>
                                     <field name="edge_type"/>
                                     <field name="label"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Incoming Connections" name="incoming">
                             <field name="incoming_edge_ids">
-                                <tree>
+                                <list>
                                     <field name="source_node_id"/>
                                     <field name="edge_type"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -97,7 +97,7 @@
         <field name="name">marketing.journey.node.tree</field>
         <field name="model">marketing.journey.node</field>
         <field name="arch" type="xml">
-            <tree string="Journey Nodes">
+            <list string="Journey Nodes">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="journey_id"/>
@@ -105,7 +105,7 @@
                 <field name="participant_count"/>
                 <field name="success_count"/>
                 <field name="error_count"/>
-            </tree>
+            </list>
         </field>
     </record>
 

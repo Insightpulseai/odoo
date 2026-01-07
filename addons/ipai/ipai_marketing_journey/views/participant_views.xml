@@ -53,7 +53,7 @@
                     <notebook>
                         <page string="Execution History" name="history">
                             <field name="execution_log_ids">
-                                <tree>
+                                <list>
                                     <field name="execution_date"/>
                                     <field name="node_id"/>
                                     <field name="node_type" widget="badge"/>
@@ -61,7 +61,7 @@
                                            decoration-success="state == 'success'"
                                            decoration-danger="state == 'error'"/>
                                     <field name="message"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -75,7 +75,7 @@
         <field name="name">marketing.journey.participant.tree</field>
         <field name="model">marketing.journey.participant</field>
         <field name="arch" type="xml">
-            <tree string="Journey Participants"
+            <list string="Journey Participants"
                   decoration-muted="state in ('completed', 'exited')"
                   decoration-danger="state == 'error'">
                 <field name="display_name"/>
@@ -89,7 +89,7 @@
                        decoration-danger="state == 'error'"/>
                 <field name="enrolled_date"/>
                 <field name="wait_until"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -130,7 +130,7 @@
         <field name="name">marketing.journey.execution.log.tree</field>
         <field name="model">marketing.journey.execution.log</field>
         <field name="arch" type="xml">
-            <tree string="Execution Logs">
+            <list string="Execution Logs">
                 <field name="execution_date"/>
                 <field name="journey_id"/>
                 <field name="participant_id"/>
@@ -141,7 +141,7 @@
                        decoration-danger="state == 'error'"
                        decoration-warning="state == 'skipped'"/>
                 <field name="message"/>
-            </tree>
+            </list>
         </field>
     </record>
 
