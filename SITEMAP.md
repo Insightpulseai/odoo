@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 39df0e4c1136c99a39bad2a7e0e18cd959007690
+> Commit: 595f5a024a485d469368b097bb7e101a0be74102
 
 ## 📚 Documentation
 
@@ -122,7 +122,6 @@
 | [IPAI Finance PPM – TBWA Complete Configuration](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [IPAI Grid/List View](addons/ipai_grid_view/README.md) | addons/ipai_grid_view |
 | [IPAI Month-End Closing](addons/ipai_month_end/README.md) | addons/ipai_month_end |
-| [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing.backup/README.md) | addons/ipai_month_end_closing.backup |
 | [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing/README.md) | addons/ipai_month_end_closing |
 | [IPAI Platform - Approvals](addons/ipai_platform_approvals/README.md) | addons/ipai_platform_approvals |
 | [IPAI Platform - Audit Trail](addons/ipai_platform_audit/README.md) | addons/ipai_platform_audit |
@@ -776,7 +775,6 @@
 | [ipai_grid_view](./addons/ipai_grid_view) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ |  |
-| [ipai_month_end_closing.backup](./addons/ipai_month_end_closing.backup) | ✅ | SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance |
 | [ipai_ocr_gateway](./addons/ipai_ocr_gateway) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
