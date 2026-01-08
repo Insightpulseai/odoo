@@ -1,0 +1,186 @@
+# IPAI Capability Map - SAP-aligned module definitions
+# This file defines capabilities that map to Odoo modules, specs, and wiki pages.
+# Run `ipai-gen` to generate scaffolds from this spec.
+
+namespace: ipai
+odoo_series: "18.0"
+addons_root: "addons"
+spec_root: "spec"
+wiki_root: "docs/wiki"
+
+capabilities:
+  # AI Platform
+  - sap_id: "AI-AGENTS"
+    slug: "ai-agents"
+    title: "AI Agents & RAG"
+    sap_doc: ""
+    odoo:
+      layer: "ipai"
+      module: "ipai_ai_agents"
+      summary: "AI agents with RAG retrieval, citations, and feedback loop"
+      depends: ["base", "web", "mail"]
+      models:
+        - name: "ipai.ai.agent"
+          description: "AI agent configuration"
+        - name: "ipai.ai.thread"
+          description: "Conversation thread"
+        - name: "ipai.ai.message"
+          description: "Chat message with citations"
+        - name: "ipai.ai.source"
+          description: "Knowledge source definition"
+      menus:
+        - name: "AI"
+          parent: ""
+          action: ""
+        - name: "Ask AI"
+          parent: "ai_menu_root"
+          action: "action_ai_chat"
+        - name: "Agents"
+          parent: "ai_menu_config"
+          action: "action_ai_agent"
+      views:
+        - model: "ipai.ai.agent"
+          type: "form"
+        - model: "ipai.ai.agent"
+          type: "tree"
+        - model: "ipai.ai.thread"
+          type: "tree"
+
+  # Approvals
+  - sap_id: "WF-APPROVALS"
+    slug: "approvals"
+    title: "Approval Workflows"
+    sap_doc: ""
+    odoo:
+      layer: "ipai"
+      module: "ipai_approvals"
+      summary: "Generic approval workflows (Enterprise parity)"
+      depends: ["base", "mail", "hr"]
+      models:
+        - name: "ipai.approval.type"
+          description: "Approval type definition"
+        - name: "ipai.approval.request"
+          description: "Approval request workflow"
+        - name: "ipai.approval.approver"
+          description: "Approver tracking"
+      menus:
+        - name: "Approvals"
+          parent: ""
+          action: ""
+        - name: "My Requests"
+          parent: "approvals_menu_root"
+          action: "action_approval_request_my"
+        - name: "To Approve"
+          parent: "approvals_menu_root"
+          action: "action_approval_request_to_approve"
+      views:
+        - model: "ipai.approval.type"
+          type: "form"
+        - model: "ipai.approval.type"
+          type: "tree"
+        - model: "ipai.approval.request"
+          type: "form"
+        - model: "ipai.approval.request"
+          type: "tree"
+
+  # Financial Closing
+  - sap_id: "FI-CLOSE-AFC"
+    slug: "fi-close-afc"
+    title: "Advanced Financial Closing"
+    sap_doc: "https://help.sap.com/docs/"
+    odoo:
+      layer: "ipai"
+      module: "ipai_finance_close_manager"
+      summary: "Advanced Financial Closing - close calendar, tasks, lock, audit"
+      depends: ["account", "mail", "project"]
+      models:
+        - name: "ipai.finance.close_cycle"
+          description: "Close cycle (month-end) header"
+        - name: "ipai.finance.close_task"
+          description: "Close tasks linked to cycle"
+      menus:
+        - name: "Financial Closing"
+          parent: "account.menu_finance"
+          action: "action_close_cycle"
+      views:
+        - model: "ipai.finance.close_cycle"
+          type: "form"
+        - model: "ipai.finance.close_cycle"
+          type: "tree"
+
+  # Expense Management
+  - sap_id: "FI-EXP"
+    slug: "expense-automation"
+    title: "Expense Automation"
+    sap_doc: ""
+    odoo:
+      layer: "ipai"
+      module: "ipai_expense_automation"
+      summary: "Automated expense processing with OCR and approvals"
+      depends: ["hr_expense", "mail"]
+      models:
+        - name: "ipai.expense.rule"
+          description: "Expense automation rules"
+        - name: "ipai.expense.receipt"
+          description: "OCR-processed receipt"
+      menus:
+        - name: "Expense Rules"
+          parent: "hr_expense.menu_hr_expense_root"
+          action: "action_expense_rule"
+      views:
+        - model: "ipai.expense.rule"
+          type: "form"
+        - model: "ipai.expense.rule"
+          type: "tree"
+
+  # BIR Tax Compliance (Philippines)
+  - sap_id: "FI-TAX-BIR"
+    slug: "bir-tax-compliance"
+    title: "BIR Tax Compliance"
+    sap_doc: ""
+    odoo:
+      layer: "ipai"
+      module: "ipai_finance_bir_compliance"
+      summary: "Philippine BIR tax compliance, forms, and e-filing"
+      depends: ["account", "l10n_ph"]
+      models:
+        - name: "ipai.bir.form"
+          description: "BIR form template"
+        - name: "ipai.bir.filing"
+          description: "BIR filing record"
+      menus:
+        - name: "BIR Compliance"
+          parent: "account.menu_finance"
+          action: "action_bir_filing"
+      views:
+        - model: "ipai.bir.filing"
+          type: "form"
+        - model: "ipai.bir.filing"
+          type: "tree"
+
+  # HR - Hire to Retire
+  - sap_id: "HR-H2R"
+    slug: "hire-to-retire"
+    title: "Hire to Retire"
+    sap_doc: ""
+    odoo:
+      layer: "ipai"
+      module: "ipai_hr_lifecycle"
+      summary: "Complete employee lifecycle management"
+      depends: ["hr", "hr_contract", "hr_recruitment", "mail"]
+      models:
+        - name: "ipai.hr.lifecycle"
+          description: "Employee lifecycle tracker"
+        - name: "ipai.hr.onboarding"
+          description: "Onboarding checklist"
+        - name: "ipai.hr.offboarding"
+          description: "Offboarding checklist"
+      menus:
+        - name: "Lifecycle"
+          parent: "hr.menu_hr_root"
+          action: "action_hr_lifecycle"
+      views:
+        - model: "ipai.hr.lifecycle"
+          type: "form"
+        - model: "ipai.hr.lifecycle"
+          type: "tree"
