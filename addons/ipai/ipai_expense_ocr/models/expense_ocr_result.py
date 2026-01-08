@@ -142,8 +142,16 @@ class ExpenseOcrResult(models.Model):
             try:
                 self.receipt_date = fields.Date.from_string(date_field["value"])
                 self.date_confidence = date_field.get("conf", 0.0)
-            except (ValueError, TypeError):
-                pass
+            except (ValueError, TypeError) as exc:
+                # If the OCR service returns an invalid date, log and reset date fields
+                _logger.warning(
+                    "Failed to parse receipt_date '%s' for OCR result %s: %s",
+                    date_field.get("value"),
+                    self.id or "new",
+                    exc,
+                )
+                self.receipt_date = False
+                self.date_confidence = 0.0
 
         # Total amount
         total = fields_data.get("total", {})
