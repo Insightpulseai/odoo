@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8f3885350776f97a7af34e1128c8f7010dc711e8
+> Commit: 5f09e289f1a6ecc55ae563fc0336ba94597fd6c8
 
 ## 📚 Documentation
 
@@ -418,7 +418,11 @@
 | [Tasks – InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/spec/tasks.md) | docs/odoo-18-handbook/spec |
 | [Odoo Apps Parity Matrix](docs/odoo-apps-parity.md) | docs |
 | [Odoo Developer Tools (Debug Mode) — How we use it in IPAI](docs/odoo/DEVELOPER_TOOLS.md) | docs/odoo |
+| [Antigravity MCP Configuration](docs/ops/ANTIGRAVITY_MCP.md) | docs/ops |
 | [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
+| [Local Dev (Docker Compose)](docs/ops/LOCAL_DEV.md) | docs/ops |
+| [Production Recovery Runbook](docs/ops/RECOVERY.md) | docs/ops |
+| [Ship Verification Runbook](docs/ops/SHIP_VERIFICATION.md) | docs/ops |
 | [001 — 2025-12-31 — Initial setup](docs/ops/conversations/001 — 2025-12-31 — Initial setup.md) | docs/ops/conversations
 .
 .
