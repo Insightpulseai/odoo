@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d31ee5d59161cd2eacb01ea11532d0f910dce468
+> Commit: d6ba3372b0966d5eca27173448648baf955e0d3e
 
 ```
 .
@@ -69,6 +69,7 @@
 │   │   ├── infra-validate.yml
 │   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
+│   │   ├── ipai-determinism.yml
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-module-matrix.yml
 │   │   ├── ipai-prod-checks.yml
@@ -83,6 +84,7 @@
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── superset-bump.yml
+│   │   ├── wiki-sync.yml
 │   │   └── workflow-yaml-validate.yml
 │   └── copilot-instructions.md
 ├── .insightpulse
@@ -128,6 +130,16 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_ai_agents
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_agents_ui
 │   │   │   ├── controllers
 │   │   │   ├── security
@@ -196,6 +208,16 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_aiux_chat
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_approvals
+│   │   │   ├── data
+│   │   │   ├── demo
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── wizard
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ask_ai
 │   │   │   ├── controllers
@@ -1798,6 +1820,7 @@
 │   │   │   └── manifest.json
 │   │   ├── mappings
 │   │   │   └── azure_to_do_supabase_odoo.yaml
+│   │   ├── .gitkeep
 │   │   └── ipai_platform_flow.mmd
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
@@ -1953,6 +1976,14 @@
 │   │       ├── docker
 │   │       ├── scripts
 │   │       └── README.md
+│   ├── wiki
+│   │   ├── Architecture.md
+│   │   ├── Configuration.md
+│   │   ├── Diagrams.md
+│   │   ├── Home.md
+│   │   ├── Installation.md
+│   │   ├── cap-ai-agents.md
+│   │   └── cap-approvals.md
 │   ├── workflows
 │   │   └── hire-to-retire-bpmn.html
 │   ├── 003-odoo-ce-custom-image-spec.md
@@ -2617,6 +2648,7 @@
 │   ├── verify.sh
 │   ├── verify_backup.sh
 │   ├── verify_phase3.py
+│   ├── wiki_sync.sh
 │   └── worktree-setup.sh
 ├── seed_export
 │   ├── projects.csv
@@ -2819,7 +2851,19 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── ipai-odoo18-enterprise-patch
+│   │   └── capability_map.yaml
 │   ├── ipai-tbwa-finance
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── kapa-plus
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── kapa-reverse
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -3066,6 +3110,12 @@
 │   │   ├── README.md
 │   │   └── inventory.py
 │   ├── diagramflow
+│   │   ├── diagramflow
+│   │   │   ├── __init__.py
+│   │   │   ├── bpmn.py
+│   │   │   ├── cli.py
+│   │   │   ├── drawio.py
+│   │   │   └── parser.py
 │   │   ├── src
 │   │   │   ├── cli.ts
 │   │   │   ├── index.ts
@@ -3075,6 +3125,7 @@
 │   │   │   └── toDrawio.ts
 │   │   ├── README.md
 │   │   ├── package.json
+│   │   ├── pyproject.toml
 │   │   └── tsconfig.json
 │   ├── docs-crawler
 │   │   ├── .env.example
@@ -3088,6 +3139,12 @@
 │   │   ├── crawl_docs.py
 │   │   ├── map_to_odoo.py
 │   │   └── odoo_map.yaml
+│   ├── ipai_module_gen
+│   │   ├── ipai_module_gen
+│   │   │   ├── templates
+│   │   │   ├── __init__.py
+│   │   │   └── generate.py
+│   │   └── pyproject.toml
 │   ├── parity
 │   │   ├── parity_audit.py
 │   │   └── validate_spec_kit.py
@@ -3269,15 +3326,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1057 directories, 2207 files
+1079 directories, 2242 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1219 |
-| Files | 3340 |
-| Python files | 909 |
-| XML files | 447 |
-| Markdown files | 629 |
+| Directories | 1243 |
+| Files | 3422 |
+| Python files | 937 |
+| XML files | 462 |
+| Markdown files | 646 |
