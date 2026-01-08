@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d31ee5d59161cd2eacb01ea11532d0f910dce468
+> Commit: d6ba3372b0966d5eca27173448648baf955e0d3e
 
 ## 📚 Documentation
 
@@ -84,9 +84,11 @@
 | [IPAI Verification Commands](VERIFY.md) | . |
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
 | [IPAI Module Namespace](addons/ipai/README.md) | addons/ipai |
+| [ipai_ai_agents (Odoo CE/OCA 18)](addons/ipai/ipai_ai_agents/README.md) | addons/ipai/ipai_ai_agents |
 | [IPAI AI Agents UI](addons/ipai/ipai_ai_agents_ui/README.md) | addons/ipai/ipai_ai_agents_ui |
 | [IPAI AI Connectors](addons/ipai/ipai_ai_connectors/README.md) | addons/ipai/ipai_ai_connectors |
 | [IPAI AI Sources (Odoo Export)](addons/ipai/ipai_ai_sources_odoo/README.md) | addons/ipai/ipai_ai_sources_odoo |
+| [ipai_approvals (Enterprise Parity)](addons/ipai/ipai_approvals/README.md) | addons/ipai/ipai_approvals |
 | [Clarity PPM Parity - Implementation Complete ✅](addons/ipai/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity - Quick Start Guide](addons/ipai/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai/ipai_clarity_ppm_parity |
 | [Clarity PPM Parity Module - Final Status](addons/ipai/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai/ipai_clarity_ppm_parity |
@@ -448,6 +450,13 @@
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
+| [Architecture](docs/wiki/Architecture.md) | docs/wiki |
+| [Configuration](docs/wiki/Configuration.md) | docs/wiki |
+| [Diagrams](docs/wiki/Diagrams.md) | docs/wiki |
+| [IPAI Platform Wiki](docs/wiki/Home.md) | docs/wiki |
+| [Installation Guide](docs/wiki/Installation.md) | docs/wiki |
+| [AI Agents & RAG](docs/wiki/cap-ai-agents.md) | docs/wiki |
+| [Approval Workflows](docs/wiki/cap-approvals.md) | docs/wiki |
 | [Gemini Agent Operating Contract (ipai_workspace / odoo-ce)](gemini.md) | . |
 | [TBWA Finance SSC Handbook](handbook/README.md) | handbook |
 | [Summary](handbook/SUMMARY.md) | handbook |
@@ -571,6 +580,14 @@
 | [IPAI TBWA Finance - Implementation Plan](spec/ipai-tbwa-finance/plan.md) | spec/ipai-tbwa-finance |
 | [IPAI TBWA Finance - Product Requirements Document](spec/ipai-tbwa-finance/prd.md) | spec/ipai-tbwa-finance |
 | [IPAI TBWA Finance - Tasks](spec/ipai-tbwa-finance/tasks.md) | spec/ipai-tbwa-finance |
+| [Kapa-Plus Constitution](spec/kapa-plus/constitution.md) | spec/kapa-plus |
+| [Plan — Kapa-Plus](spec/kapa-plus/plan.md) | spec/kapa-plus |
+| [PRD — Kapa-Plus (Improved Knowledge Support AI)](spec/kapa-plus/prd.md) | spec/kapa-plus |
+| [Tasks — Kapa-Plus](spec/kapa-plus/tasks.md) | spec/kapa-plus |
+| [Kapa-Reverse Constitution](spec/kapa-reverse/constitution.md) | spec/kapa-reverse |
+| [Plan — Kapa-Reverse](spec/kapa-reverse/plan.md) | spec/kapa-reverse |
+| [PRD — Kapa-Reverse (Improved Knowledge Support AI)](spec/kapa-reverse/prd.md) | spec/kapa-reverse |
+| [Tasks — Kapa-Reverse](spec/kapa-reverse/tasks.md) | spec/kapa-reverse |
 | [Constitution: Knowledge Hub](spec/knowledge-hub/constitution.md) | spec/knowledge-hub |
 | [Implementation Plan: Knowledge Hub](spec/knowledge-hub/plan.md) | spec/knowledge-hub |
 | [PRD: Knowledge Hub](spec/knowledge-hub/prd.md) | spec/knowledge-hub |
@@ -653,6 +670,7 @@
 |--------|--------|-------------|
 | [ipai_advisor](./addons/ipai/ipai_advisor) | ✅ |  |
 | [ipai_agent_core](./addons/ipai/ipai_agent_core) | ✅ |  |
+| [ipai_ai_agents](./addons/ipai/ipai_ai_agents) | ✅ |  |
 | [ipai_ai_agents_ui](./addons/ipai/ipai_ai_agents_ui) | ✅ |  |
 | [ipai_ai_audit](./addons/ipai/ipai_ai_audit) | ✅ |  |
 | [ipai_ai_connectors](./addons/ipai/ipai_ai_connectors) | ✅ |  |
@@ -663,6 +681,7 @@
 | [ipai_ai_sources_odoo](./addons/ipai/ipai_ai_sources_odoo) | ✅ |  |
 | [ipai_ai_studio](./addons/ipai/ipai_ai_studio) | ✅ |  |
 | [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ | AIUX Chat Interface |
+| [ipai_approvals](./addons/ipai/ipai_approvals) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
@@ -771,6 +790,8 @@
 | [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
+| [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
+| [ipai_module_gen](./tools/ipai_module_gen/ipai_module_gen) | ⚠️ | Missing manifest |
 
 ## 🔧 Configuration Files
 
