@@ -5,14 +5,14 @@
         <field name="name">ipai.n8n.workflow.tree</field>
         <field name="model">ipai.n8n.workflow</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="trigger_type"/>
                 <field name="active_in_n8n"/>
                 <field name="execution_count"/>
                 <field name="last_sync"/>
                 <field name="connector_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -50,13 +50,13 @@
                     <notebook>
                         <page string="Executions" name="executions">
                             <field name="execution_ids" readonly="1">
-                                <tree limit="20">
+                                <list limit="20">
                                     <field name="create_date"/>
                                     <field name="trigger_source"/>
                                     <field name="status" widget="badge" decoration-success="status == 'success'" decoration-warning="status == 'running'" decoration-danger="status == 'error'"/>
                                     <field name="duration_ms"/>
                                     <field name="n8n_execution_id"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -69,7 +69,7 @@
     <record id="action_n8n_workflow" model="ir.actions.act_window">
         <field name="name">n8n Workflows</field>
         <field name="res_model">ipai.n8n.workflow</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Execution Tree View -->
@@ -77,14 +77,14 @@
         <field name="name">ipai.n8n.execution.tree</field>
         <field name="model">ipai.n8n.execution</field>
         <field name="arch" type="xml">
-            <tree default_order="create_date desc">
+            <list default_order="create_date desc">
                 <field name="create_date"/>
                 <field name="workflow_id"/>
                 <field name="trigger_source"/>
                 <field name="status" widget="badge" decoration-success="status == 'success'" decoration-warning="status in ('waiting', 'running')" decoration-danger="status == 'error'" decoration-muted="status == 'canceled'"/>
                 <field name="duration_ms"/>
                 <field name="n8n_execution_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -128,7 +128,7 @@
     <record id="action_n8n_execution" model="ir.actions.act_window">
         <field name="name">Workflow Executions</field>
         <field name="res_model">ipai.n8n.execution</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Menu items under Integrations -->

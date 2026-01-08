@@ -45,11 +45,6 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    environment:
-      # Database connection
-      HOST: db
-      USER: odoo
-      PASSWORD: ${DB_PASSWORD:-CHANGE_ME_STRONG_DB_PASSWORD}
     command: -- --config /etc/odoo/odoo.conf
     volumes:
       # Main config (read-only for security)
@@ -74,6 +69,7 @@ services:
       - "127.0.0.1:8069:8069"
     networks:
       - odoo_backend
+      - odoo-ce_odoo-network
     # Health check defined in Dockerfile
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
@@ -147,6 +143,8 @@ services:
 
 networks:
   odoo_backend:
+  odoo-ce_odoo-network:
+    external: true
 
 volumes:
   odoo-db-data:

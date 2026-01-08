@@ -28,6 +28,7 @@
     ],
     "assets": {
         "web.assets_backend": [
+            "ipai_finance_ppm/static/src/js/ppm_dashboard.js",
             "ipai_finance_ppm/static/src/js/semantic-search/api.js",
             "ipai_finance_ppm/static/src/js/semantic-search/MonthlyRevenueSearch.js",
             "ipai_finance_ppm/static/src/xml/monthly_revenue_search.xml",

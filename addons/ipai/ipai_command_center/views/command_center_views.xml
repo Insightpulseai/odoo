@@ -12,7 +12,7 @@
         <field name="name">ipai.command.center.alert.tree</field>
         <field name="model">ipai.command.center.alert</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="alert_type == 'critical'"
+            <list decoration-danger="alert_type == 'critical'"
                   decoration-warning="alert_type == 'error'"
                   decoration-info="alert_type == 'warning'">
                 <field name="create_date" string="Time"/>
@@ -27,7 +27,7 @@
                        decoration-danger="state == 'active'"/>
                 <field name="run_id" optional="show"/>
                 <field name="user_id" optional="show"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -110,7 +110,7 @@
     <record id="action_command_center_alerts" model="ir.actions.act_window">
         <field name="name">Alerts</field>
         <field name="res_model">ipai.command.center.alert</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_active': 1}</field>
     </record>
 
