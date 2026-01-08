@@ -80,43 +80,66 @@ docker compose -f docker-compose.prod.yml run --rm odoo bash -lc \
 
 # Scenario 2: 500 Internal Server Error (Assets)
 **Symptoms:** `/web/login` works, but styles are broken or `/web/assets/...` returns 500.
-**Cause:** Corrupted Odoo asset bundles (JS/CSS), often after module updates or file permission issues.
+**Cause:** Asset compiler (SASS/JS) failure, corrupted filestore, or database asset records.
 
-## 1. Quick Fix (Regenerate Assets)
-Clears the `ir.attachment` records for compiled assets and forces regeneration.
+## 1. Diagnostics (Root Cause)
+
+Before fixing, try to identify *why* it failed.
+
+### A) Check Logs for Compilation Errors
+```bash
+docker compose -f docker-compose.prod.yml logs --tail 200 odoo | grep -iE "error|sass|traceback"
+```
+
+### B) Verify SASS/RTLCSS Availability
+If the image is missing dependencies, assets cannot compile.
+```bash
+docker compose -f docker-compose.prod.yml exec odoo which sass
+docker compose -f docker-compose.prod.yml exec odoo which rtlcss
+# Should return paths (e.g., /usr/bin/sass). If empty, image is broken.
+```
+
+### C) Identify Broken Modules
+```bash
+docker compose -f docker-compose.prod.yml exec db psql -U odoo -d odoo -c \
+"SELECT name, state, write_date FROM ir_module_module WHERE state = 'installed' ORDER BY write_date DESC LIMIT 10;"
+```
+
+## 2. Quick Fix (Regenerate Assets)
+Clears the `ir.attachment` records and QWeb cache via Odoo shell.
 
 ```bash
 cd /opt/odoo-ce || cd ~/odoo-ce
-
-# Execute deletion inside the container
 docker compose -f docker-compose.prod.yml exec odoo odoo -d odoo --no-http --stop-after-init shell << 'EOF'
 env['ir.attachment'].search([('name', 'like', 'web.assets_%'), ('res_model', '=', 'ir.ui.view')]).unlink()
 env['ir.qweb'].clear_caches()
 env.cr.commit()
 print("Assets cleared.")
 EOF
-
-# Restart to rebuild
 docker compose -f docker-compose.prod.yml restart odoo
 ```
 
-## 2. Check Permissions (Corrupt Filestore)
-
-If the quick fix fails, ensure volume permissions are correct.
+## 3. Docker-Specific Debug (DEV_MODE)
+Force Odoo to serve assets directly without bundling (slow but bypasses compilation errors for debugging).
 
 ```bash
-# Fix ownership of the var/lib/odoo directory inside container (run as root)
-docker compose -f docker-compose.prod.yml exec -u root odoo chown -R odoo:odoo /var/lib/odoo
+# Spin up a temporary container with DEV_MODE=assets
+docker run -d --name odoo-debug \
+  -e DEV_MODE=assets \
+  --volumes-from ipai-ce \
+  --network container:ipai-db \
+  ghcr.io/jgtolentino/odoo-ce:v0.9.0
 ```
+*Note: This specific command depends on your exact container names/volumes.*
 
-## 3. Database Cleanup (Nuclear Option)
-Use this only if the Quick Fix doesn't work. It deletes *all* compiled assets and QWeb cache.
+## 4. Full Recovery (Nuclear Option)
+If Quick Fix fails, wipe everything from disk and DB.
 
 ```bash
-# Backup first!
+# 1. Backup
 docker compose -f docker-compose.prod.yml exec db pg_dump -U odoo odoo > backup_assets_500.sql
 
-# Connect to DB and wipe assets
+# 2. Database Cleanup
 docker compose -f docker-compose.prod.yml exec db psql -U odoo -d odoo << 'SQL'
 DELETE FROM ir_attachment WHERE name LIKE '/web/%';
 DELETE FROM ir_attachment WHERE name LIKE 'web.assets%';
@@ -125,24 +148,15 @@ DELETE FROM ir_attachment WHERE name LIKE '%assets_bundle%';
 TRUNCATE ir_qweb;
 SQL
 
-# Clear filestore cache from disk
+# 3. Filestore Cleanup
 docker compose -f docker-compose.prod.yml exec odoo rm -rf /var/lib/odoo/.local/share/Odoo/filestore/odoo/web/
 
-# Regenerate
+# 4. Permissions Repair
+docker compose -f docker-compose.prod.yml exec -u root odoo chown -R odoo:odoo /var/lib/odoo
+
+# 5. Regenerate
 docker compose -f docker-compose.prod.yml exec odoo odoo -d odoo -u web --stop-after-init
 
-# Restart
+# 6. Restart
 docker compose -f docker-compose.prod.yml restart odoo
-```
-
-## 4. Identify Broken Module
-If assets still fail, a specific module might be pushing bad SCSS/JS.
-
-```bash
-# Check recent installs
-docker compose -f docker-compose.prod.yml exec db psql -U odoo -d odoo -c \
-"SELECT name, state, write_date FROM ir_module_module WHERE state = 'installed' ORDER BY write_date DESC LIMIT 10;"
-
-# Uninstall suspect module (e.g., ipai_theme_aiux if recent)
-docker compose -f docker-compose.prod.yml exec odoo odoo -d odoo -u ipai_theme_aiux --stop-after-init
 ```
