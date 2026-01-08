@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 39df0e4c1136c99a39bad2a7e0e18cd959007690
+> Commit: 595f5a024a485d469368b097bb7e101a0be74102
 
 ```
 .
@@ -896,20 +896,6 @@
 │   │   │   └── description
 │   │   ├── views
 │   │   │   └── menus.xml
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
-│   ├── ipai_month_end_closing.backup
-│   │   ├── data
-│   │   │   ├── closing_tasks.xml
-│   │   │   ├── hr_employees.xml
-│   │   │   ├── ipai_bir_tasks.xml
-│   │   │   ├── ipai_closing_tasks.xml
-│   │   │   ├── ipai_users.xml
-│   │   │   ├── project_config.xml
-│   │   │   └── tax_filing_tasks.xml
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
@@ -3411,15 +3397,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1106 directories, 2300 files
+1103 directories, 2289 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1270 |
-| Files | 3493 |
-| Python files | 952 |
-| XML files | 465 |
-| Markdown files | 663 |
+| Directories | 1267 |
+| Files | 3482 |
+| Python files | 950 |
+| XML files | 458 |
+| Markdown files | 662 |
