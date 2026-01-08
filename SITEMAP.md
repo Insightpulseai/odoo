@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0eddd318f617489753b47afde2e3fe294b63504c
+> Commit: d31ee5d59161cd2eacb01ea11532d0f910dce468
 
 ## 📚 Documentation
 
@@ -448,6 +448,7 @@
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
+| [Gemini Agent Operating Contract (ipai_workspace / odoo-ce)](gemini.md) | . |
 | [TBWA Finance SSC Handbook](handbook/README.md) | handbook |
 | [Summary](handbook/SUMMARY.md) | handbook |
 | [BIR Tax Calendar](handbook/compliance/bir/calendar.md) | handbook/compliance/bir |
