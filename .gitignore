@@ -60,7 +60,11 @@ node_modules/
 docker-compose.override.yml
 
 # IDE
-.vscode/
+# .vscode/
+!/.vscode/extensions.json
+!/.vscode/settings.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
 .idea/
 *.swp
 *.swo
@@ -116,6 +120,10 @@ parity_report.json
 tools/db-inventory/output/
 .env.smtp
 *.env
+!.env.local
+!docker-compose.local.yml
+!config/odoo.conf.local
+*.code-workspace
 
 # Odoo import exports (generated, may contain sensitive data)
 **/odoo_import_*.csv

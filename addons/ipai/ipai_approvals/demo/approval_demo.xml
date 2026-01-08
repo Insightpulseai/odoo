@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Demo Approval Type: Purchase Order -->
+        <record id="demo_approval_type_purchase" model="ipai.approval.type">
+            <field name="name">Purchase Order Approval</field>
+            <field name="res_model">purchase.order</field>
+            <field name="approval_type">manager</field>
+            <field name="manager_levels">1</field>
+            <field name="minimum_approvers">1</field>
+            <field name="auto_approve_amount">500</field>
+            <field name="amount_field">amount_total</field>
+            <field name="description">Approval workflow for purchase orders. Orders under $500 are auto-approved.</field>
+        </record>
+
+        <!-- Demo Approval Type: Expense -->
+        <record id="demo_approval_type_expense" model="ipai.approval.type">
+            <field name="name">Expense Report Approval</field>
+            <field name="res_model">hr.expense.sheet</field>
+            <field name="approval_type">manager</field>
+            <field name="manager_levels">1</field>
+            <field name="minimum_approvers">1</field>
+            <field name="auto_approve_amount">100</field>
+            <field name="description">Approval workflow for expense reports. Small expenses under $100 are auto-approved.</field>
+        </record>
+
+        <!-- Demo Approval Type: General (User-based) -->
+        <record id="demo_approval_type_general" model="ipai.approval.type">
+            <field name="name">General Approval</field>
+            <field name="approval_type">user</field>
+            <field name="minimum_approvers">1</field>
+            <field name="approver_ids" eval="[(6, 0, [ref('base.user_admin')])]"/>
+            <field name="description">General approval workflow for miscellaneous requests.</field>
+        </record>
+    </data>
+</odoo>

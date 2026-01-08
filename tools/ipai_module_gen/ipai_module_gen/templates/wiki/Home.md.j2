@@ -1,0 +1,42 @@
+# IPAI Platform Wiki
+
+Welcome to the IPAI Platform documentation wiki.
+
+## Overview
+
+IPAI (InsightPulse AI) provides enterprise-grade capabilities for Odoo CE, bridging the gap with SAP and Odoo Enterprise features.
+
+## Capabilities
+
+| SAP ID | Capability | Spec |
+|--------|------------|------|
+{% for cap in capabilities %}
+| {{ cap.sap_id }} | [{{ cap.title }}](cap-{{ cap.slug }}) | [spec](../spec/{{ cap.slug }}/) |
+{% endfor %}
+
+## Quick Links
+
+- [Architecture Overview](Architecture)
+- [Installation Guide](Installation)
+- [Configuration](Configuration)
+- [Diagrams](Diagrams)
+
+## Module Index
+
+### IPAI Core Modules
+
+Modules in `addons/ipai/` provide core platform functionality.
+
+### Delta Modules
+
+Modules in `addons/delta/` provide customization layers.
+
+## Resources
+
+- [GitHub Repository](https://github.com/jgtolentino/odoo-ce)
+- [Odoo CE Documentation](https://www.odoo.com/documentation/18.0/)
+- [OCA Modules](https://github.com/OCA)
+
+## Contributing
+
+See the contribution guidelines in the main repository.

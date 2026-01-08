@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_approval_type_user,ipai.approval.type user,model_ipai_approval_type,group_approval_user,1,0,0,0
+access_ipai_approval_type_manager,ipai.approval.type manager,model_ipai_approval_type,group_approval_manager,1,1,1,1
+access_ipai_approval_request_user,ipai.approval.request user,model_ipai_approval_request,group_approval_user,1,1,1,0
+access_ipai_approval_request_manager,ipai.approval.request manager,model_ipai_approval_request,group_approval_manager,1,1,1,1
+access_ipai_approval_approver_user,ipai.approval.approver user,model_ipai_approval_approver,group_approval_user,1,1,0,0
+access_ipai_approval_approver_manager,ipai.approval.approver manager,model_ipai_approval_approver,group_approval_manager,1,1,1,1
+access_ipai_approval_delegate_wizard,ipai.approval.delegate.wizard,model_ipai_approval_delegate_wizard,group_approval_user,1,1,1,1

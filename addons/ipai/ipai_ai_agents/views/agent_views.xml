@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Agent Tree View -->
+    <record id="view_ipai_ai_agent_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.tree</field>
+        <field name="model">ipai.ai.agent</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="enabled"/>
+                <field name="provider"/>
+                <field name="model"/>
+                <field name="read_only"/>
+                <field name="thread_count"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Agent Form View -->
+    <record id="view_ipai_ai_agent_form" model="ir.ui.view">
+        <field name="name">ipai.ai.agent.form</field>
+        <field name="model">ipai.ai.agent</field>
+        <field name="arch" type="xml">
+            <form string="AI Agent">
+                <header>
+                    <button name="action_view_threads" type="object" string="View Conversations" class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_threads" type="object" class="oe_stat_button" icon="fa-comments">
+                            <field name="thread_count" widget="statinfo" string="Conversations"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Disabled" bg_color="bg-danger" invisible="enabled"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Agent Name..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="enabled"/>
+                            <field name="read_only"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group>
+                            <field name="provider"/>
+                            <field name="model" placeholder="gpt-4o-mini"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="System Prompt" name="prompt">
+                            <field name="system_prompt" placeholder="System instructions for the agent..."/>
+                        </page>
+                        <page string="Policies" name="policies">
+                            <group>
+                                <field name="allowed_models_json" widget="json"/>
+                                <field name="allowed_tools_json" widget="json"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Agent Action -->
+    <record id="action_ipai_ai_agent" model="ir.actions.act_window">
+        <field name="name">AI Agents</field>
+        <field name="res_model">ipai.ai.agent</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first AI Agent
+            </p>
+            <p>
+                AI Agents power the "Ask AI" functionality. Configure system prompts,
+                models, and policies to customize how the agent responds.
+            </p>
+        </field>
+    </record>
+</odoo>
