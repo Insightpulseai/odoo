@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_catalog_asset_user,ipai.catalog.asset user,model_ipai_catalog_asset,base.group_user,1,0,0,0
+access_ipai_catalog_asset_admin,ipai.catalog.asset admin,model_ipai_catalog_asset,base.group_system,1,1,1,1
+access_ipai_catalog_tool_user,ipai.catalog.tool user,model_ipai_catalog_tool,base.group_user,1,0,0,0
+access_ipai_catalog_tool_admin,ipai.catalog.tool admin,model_ipai_catalog_tool,base.group_system,1,1,1,1
