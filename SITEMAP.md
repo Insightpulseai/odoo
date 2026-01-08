@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 457f738d1382366caefe0afb992a9916f2f37255
+> Commit: e0e3aaa8ca94412a6cd1e06b9e380c9662379c56
 
 ## 📚 Documentation
 
@@ -424,9 +424,13 @@
 | [Odoo Developer Tools (Debug Mode) — How we use it in IPAI](docs/odoo/DEVELOPER_TOOLS.md) | docs/odoo |
 | [Antigravity MCP Configuration](docs/ops/ANTIGRAVITY_MCP.md) | docs/ops |
 | [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
+| [Kickoff → Go-Live Checklist (CE/OCA/IPAI)](docs/ops/GO_LIVE_CHECKLIST.md) | docs/ops |
 | [Local Dev (Docker Compose)](docs/ops/LOCAL_DEV.md) | docs/ops |
+| [Preventing 502 Bad Gateway Errors in Odoo](docs/ops/PREVENT_502.md) | docs/ops |
 | [Production Recovery Runbook](docs/ops/RECOVERY.md) | docs/ops |
 | [Ship Verification Runbook](docs/ops/SHIP_VERIFICATION.md) | docs/ops |
+| [Verification Commands Reference](docs/ops/VERIFICATION_COMMANDS.md) | docs/ops |
+| [WHAT_SHIPPED - Release [TAG]](docs/ops/WHAT_SHIPPED.template.md) | docs/ops |
 | [001 — 2025-12-31 — Initial setup](docs/ops/conversations/001 — 2025-12-31 — Initial setup.md) | docs/ops/conversations
 .
 .
@@ -440,10 +444,13 @@
 .
 . |
 | [Conversations Index](docs/ops/conversations/INDEX.md) | docs/ops/conversations |
+| [Production Redeploy Runbook](docs/ops/production_redeploy_runbook.md) | docs/ops |
 | [IPAI AI Platform - Object Relationship Document (ORD)](docs/ord/IPAI_AI_PLATFORM_ORD.md) | docs/ord |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
+| [IPAI AIUX Ship Bundle PRD](docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md) | docs/prd |
+| [Odoo 18 CE Fresh Redeploy PRD](docs/prd/ODOO18_DO_FRESH_REDEPLOY.md) | docs/prd |
 | [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
 | [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
@@ -491,6 +498,10 @@
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
+| [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
+| [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
+| [OCR Service Operations Runbook](ops/runbooks/ocr_service.md) | ops/runbooks |
+| [Sinch SMS/OTP Setup Runbook](ops/runbooks/sinch_setup.md) | ops/runbooks |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
