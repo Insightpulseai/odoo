@@ -113,20 +113,24 @@ Always run before committing:
 ```
 odoo-ce/
 ├── addons/                    # Odoo modules
-│   ├── ipai/                  # IPAI custom modules (37 modules)
+│   ├── ipai/                  # IPAI custom modules (80+ modules)
 │   │   ├── ipai_dev_studio_base/
 │   │   ├── ipai_workspace_core/
 │   │   ├── ipai_finance_ppm/
 │   │   ├── ipai_master_control/
+│   │   ├── ipai_ai_agents/
+│   │   ├── ipai_approvals/
 │   │   └── ...
-│   └── oca/                   # OCA community modules (submodules)
+│   ├── OCA/                   # OCA community modules (12 repos)
+│   └── oca/                   # OCA submodules
 │
-├── apps/                      # Applications (19 apps)
+├── apps/                      # Applications (20 apps)
 │   ├── pulser-runner/         # Automation runner
 │   ├── control-room/          # Control plane UI
 │   ├── control-room-api/      # Control plane API
 │   ├── bi-architect/          # BI analytics
 │   ├── mcp-coordinator/       # MCP coordination
+│   ├── web/                   # Web frontend
 │   └── ...
 │
 ├── packages/                  # Shared packages (3 packages)
@@ -134,13 +138,13 @@ odoo-ce/
 │   ├── github-app/            # GitHub App integration
 │   └── ipai-design-tokens/    # Design system tokens
 │
-├── spec/                      # Spec bundles (24 feature specs)
+├── spec/                      # Spec bundles (32 feature specs)
 │   ├── constitution.md        # Root non-negotiable rules
 │   ├── prd.md                 # Root product requirements
 │   ├── pulser-master-control/ # Example spec bundle
 │   └── ...
 │
-├── scripts/                   # Automation scripts (90+ scripts)
+├── scripts/                   # Automation scripts (160+ scripts)
 │   ├── ci/                    # CI-specific scripts
 │   ├── deploy-odoo-modules.sh
 │   ├── repo_health.sh
@@ -185,7 +189,7 @@ odoo-ce/
 │   ├── settings.json          # Allowed tools config
 │   └── commands/              # Slash commands
 │
-├── .github/workflows/         # CI/CD pipelines (42 workflows)
+├── .github/workflows/         # CI/CD pipelines (47 workflows)
 │
 ├── docker-compose.yml         # Main compose file
 ├── package.json               # Node.js monorepo config
@@ -201,20 +205,28 @@ All custom modules use the `ipai_` prefix organized by domain:
 
 | Domain | Prefix Pattern | Examples |
 |--------|---------------|----------|
-| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance` |
-| Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit` |
+| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_agents`, `ipai_ai_core`, `ipai_agent_core` |
+| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance`, `ipai_finance_month_end` |
+| Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit`, `ipai_platform_approvals` |
 | Workspace | `ipai_workspace_*` | `ipai_workspace_core` |
 | Studio | `ipai_dev_studio_*`, `ipai_studio_*` | `ipai_dev_studio_base`, `ipai_studio_ai` |
-| Industry | `ipai_industry_*` | `ipai_industry_marketing_agency` |
-| WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks` |
-| Theme | `ipai_theme_*`, `ipai_web_theme_*` | `ipai_theme_tbwa_backend` |
+| Industry | `ipai_industry_*` | `ipai_industry_marketing_agency`, `ipai_industry_accounting_firm` |
+| WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks`, `ipai_workos_canvas` |
+| Theme/UI | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*` | `ipai_theme_tbwa_backend`, `ipai_ui_brand_tokens` |
+| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_mattermost_connector`, `ipai_superset_connector` |
+| PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
 
 ### Key Module Hierarchy
 
 ```
-ipai_dev_studio_base       # Base dependencies (install first)
-    └── ipai_workspace_core     # Core workspace functionality
-        └── ipai_ce_branding    # CE branding layer
+ipai_dev_studio_base           # Base dependencies (install first)
+    └── ipai_workspace_core    # Core workspace functionality
+        └── ipai_ce_branding   # CE branding layer
+            ├── ipai_ai_core   # AI core framework
+            │   ├── ipai_ai_agents     # Agent system
+            │   └── ipai_ai_prompts    # Prompt management
+            ├── ipai_finance_ppm       # Finance PPM
+            │   └── ipai_finance_month_end
             └── [other modules]
 ```
 
@@ -232,7 +244,7 @@ spec/<feature-slug>/
 └── tasks.md          # Task checklist with status
 ```
 
-### Current Spec Bundles (24)
+### Current Spec Bundles (32)
 
 - `pulser-master-control` - Master control plane
 - `close-orchestration` - Month-end close workflows
@@ -241,6 +253,12 @@ spec/<feature-slug>/
 - `hire-to-retire` - HR lifecycle management
 - `ipai-control-center` - Control center UI
 - `odoo-mcp-server` - MCP server integration
+- `adk-control-room` - ADK control room
+- `auto-claude-framework` - Auto Claude framework
+- `ipai-ai-platform` - AI platform core
+- `ipai-ai-platform-odoo18` - Odoo 18 AI platform
+- `kapa-plus` - Kapa+ documentation AI
+- `workos-notion-clone` - WorkOS Notion clone
 - See `spec/` directory for complete list
 
 ---
@@ -308,16 +326,29 @@ Claude Code is restricted to these tools (see `.claude/settings.json`):
 {
   "allowedTools": [
     "Edit", "Read", "Write", "Glob", "Grep",
-    "Bash(git *)", "Bash(gh *)",
-    "Bash(npm run *)", "Bash(pnpm -s *)",
+    "Bash(git status)", "Bash(git diff*)", "Bash(git add*)",
+    "Bash(git commit*)", "Bash(git push*)", "Bash(git log*)",
+    "Bash(git branch*)", "Bash(gh *)",
+    "Bash(npm run lint*)", "Bash(npm run typecheck*)",
+    "Bash(npm run test*)", "Bash(npm run build*)",
+    "Bash(pnpm -s lint*)", "Bash(pnpm -s typecheck*)",
+    "Bash(pnpm -s test*)", "Bash(pnpm -s build*)",
     "Bash(python3 -m py_compile*)",
-    "Bash(black *)", "Bash(isort *)", "Bash(flake8*)",
+    "Bash(black --check*)", "Bash(black *)",
+    "Bash(isort --check*)", "Bash(isort *)", "Bash(flake8*)",
     "Bash(./scripts/repo_health.sh)",
     "Bash(./scripts/spec_validate.sh)",
     "Bash(./scripts/verify.sh)",
     "Bash(./scripts/ci_local.sh*)",
     "Bash(./scripts/ci/*)"
-  ]
+  ],
+  "agentCommands": {
+    "plan": ".claude/commands/plan.md",
+    "implement": ".claude/commands/implement.md",
+    "verify": ".claude/commands/verify.md",
+    "ship": ".claude/commands/ship.md",
+    "fix-github-issue": ".claude/commands/fix-github-issue.md"
+  }
 }
 ```
 
@@ -527,4 +558,4 @@ chmod -R 755 addons/ipai/
 ---
 
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-04*
+*Last updated: 2026-01-08*
