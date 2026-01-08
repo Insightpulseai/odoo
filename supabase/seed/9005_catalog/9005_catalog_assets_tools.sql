@@ -275,7 +275,20 @@ VALUES
      'Export a semantic model definition in Open Semantics Interface (OSI) format',
      '{"type": "object", "properties": {"asset_fqdn": {"type": "string"}, "model_name": {"type": "string"}, "format": {"type": "string", "enum": ["json", "yaml", "both"], "default": "json"}}, "required": ["asset_fqdn", "model_name"]}'::jsonb,
      '{"type": "object", "properties": {"ok": {"type": "boolean"}, "json": {"type": "object"}, "yaml": {"type": "string"}}}'::jsonb,
-     false, ARRAY[]::text[], ARRAY['semantic', 'export', 'query'])
+     false, ARRAY[]::text[], ARRAY['semantic', 'export', 'query']),
+
+    -- Context Resolution Tool
+    ('context.resolve', 'query', 'Resolve Platform Context',
+     'Resolve tenant/account/project context to Odoo entity IDs (db, company, partner, project, analytic account)',
+     '{"type": "object", "properties": {"tenant_id": {"type": "string", "format": "uuid", "description": "Tenant UUID"}, "account_id": {"type": "string", "format": "uuid", "description": "Account UUID (optional)"}, "project_id": {"type": "string", "format": "uuid", "description": "Project UUID (optional)"}, "environment_id": {"type": "string", "format": "uuid", "description": "Environment UUID (optional)"}}, "required": ["tenant_id"]}'::jsonb,
+     '{"type": "object", "properties": {"ok": {"type": "boolean"}, "tenancy_mode": {"type": "string", "enum": ["multi_db", "multi_company"]}, "odoo_db": {"type": "string"}, "odoo_company_id": {"type": "integer"}, "odoo_partner_id": {"type": "integer"}, "odoo_project_id": {"type": "integer"}, "odoo_analytic_account_id": {"type": "integer"}}}'::jsonb,
+     false, ARRAY[]::text[], ARRAY['context', 'odoo', 'resolution']),
+
+    ('context.get_analytic_spine', 'query', 'Get Analytic Cost Spine',
+     'Get analytic account details for cost tracking (bridges accounting ↔ projects ↔ timesheets)',
+     '{"type": "object", "properties": {"tenant_id": {"type": "string", "format": "uuid"}, "odoo_db": {"type": "string"}, "analytic_id": {"type": "integer"}}, "required": ["tenant_id", "odoo_db", "analytic_id"]}'::jsonb,
+     '{"type": "object", "properties": {"name": {"type": "string"}, "code": {"type": "string"}, "balance": {"type": "number"}, "debit": {"type": "number"}, "credit": {"type": "number"}, "plan_name": {"type": "string"}}}'::jsonb,
+     false, ARRAY[]::text[], ARRAY['context', 'analytic', 'cost-spine'])
 
 ON CONFLICT (tool_key) DO UPDATE SET
     name = EXCLUDED.name,
@@ -388,6 +401,25 @@ SELECT
     '{"function_name": "semantic-export-osi", "method": "GET"}'::jsonb,
     0
 FROM catalog.tools t WHERE t.tool_key = 'semantic.export_osi'
+ON CONFLICT DO NOTHING;
+
+-- Context resolution tool bindings
+INSERT INTO catalog.tool_bindings (tool_id, target_type, target_config, priority)
+SELECT
+    t.id,
+    'edge_function',
+    '{"function_name": "context-resolve", "method": "POST"}'::jsonb,
+    0
+FROM catalog.tools t WHERE t.tool_key = 'context.resolve'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.tool_bindings (tool_id, target_type, target_config, priority)
+SELECT
+    t.id,
+    'supabase_table',
+    '{"schema": "ops", "table": "analytic_account_cache", "method": "select"}'::jsonb,
+    0
+FROM catalog.tools t WHERE t.tool_key = 'context.get_analytic_spine'
 ON CONFLICT DO NOTHING;
 
 
