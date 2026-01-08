@@ -1,0 +1,41 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "lint:python (ruff)",
+      "type": "shell",
+      "command": "ruff check .",
+      "problemMatcher": []
+    },
+    {
+      "label": "format:python (ruff)",
+      "type": "shell",
+      "command": "ruff format .",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint:js (eslint)",
+      "type": "shell",
+      "command": "npm run -s lint",
+      "problemMatcher": []
+    },
+    {
+      "label": "aiux:verify:install",
+      "type": "shell",
+      "command": "bash scripts/aiux/verify_install.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "aiux:verify:assets",
+      "type": "shell",
+      "command": "bash scripts/aiux/verify_assets.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "docker:logs (odoo-erp-prod)",
+      "type": "shell",
+      "command": "docker logs odoo-erp-prod --tail 200",
+      "problemMatcher": []
+    }
+  ]
+}
