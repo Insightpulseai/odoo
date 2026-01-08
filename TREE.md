@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 457f738d1382366caefe0afb992a9916f2f37255
+> Commit: e0e3aaa8ca94412a6cd1e06b9e380c9662379c56
 
 ```
 .
@@ -42,6 +42,7 @@
 ├── .github
 │   ├── workflows
 │   │   ├── agent-preflight.yml
+│   │   ├── aiux-ship-gate.yml
 │   │   ├── all-green-gates.yml
 │   │   ├── audit-contract.yml
 │   │   ├── auto-sitemap-tree.yml
@@ -1940,15 +1941,27 @@
 │   │   │   └── index.json
 │   │   ├── ANTIGRAVITY_MCP.md
 │   │   ├── CONVERSATIONS_README.md
+│   │   ├── GO_LIVE_CHECKLIST.md
 │   │   ├── LOCAL_DEV.md
+│   │   ├── PREVENT_502.md
 │   │   ├── RECOVERY.md
-│   │   └── SHIP_VERIFICATION.md
+│   │   ├── SHIP_VERIFICATION.md
+│   │   ├── VERIFICATION_COMMANDS.md
+│   │   ├── WHAT_SHIPPED.template.md
+│   │   └── production_redeploy_runbook.md
 │   ├── ord
 │   │   └── IPAI_AI_PLATFORM_ORD.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
 │   │   └── runbook.md
+│   ├── prd
+│   │   ├── END_STATE_SPEC.json
+│   │   ├── IPAI_SHIP_PRD_ODOO18_AIUX.md
+│   │   ├── ODOO18_DO_FRESH_REDEPLOY.md
+│   │   └── aiux_ship_end_state.v1.1.0.json
+│   ├── proofs
+│   │   └── PROD_DEPLOY_PROOF_SCHEMA.json
 │   ├── releases
 │   │   ├── DEPLOYMENT_PROOFS
 │   │   │   ├── README.md
@@ -2391,6 +2404,11 @@
 │   ├── github
 │   │   ├── apply_labels.sh
 │   │   └── labels.json
+│   ├── runbooks
+│   │   ├── expenses_ocr_runbook.md
+│   │   ├── mailgun_domain_verification.md
+│   │   ├── ocr_service.md
+│   │   └── sinch_setup.md
 │   ├── DISASTER_RECOVERY.md
 │   └── backup-production.sh
 ├── out
@@ -2443,6 +2461,9 @@
 │   │       └── README.md
 │   └── README.md
 ├── scripts
+│   ├── aiux
+│   │   ├── verify_assets.sh
+│   │   └── verify_install.sh
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
 │   │   ├── compare_audit_baseline.py
@@ -2456,6 +2477,8 @@
 │   │   ├── run_odoo_tests.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
+│   ├── deploy
+│   │   └── verify_prod.sh
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
 │   ├── import
@@ -3269,6 +3292,7 @@
 ├── TREE.md
 ├── VERIFY.md
 ├── VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md
+├── aiux_ship_manifest.yml
 ├── bir_deadlines_2026.csv
 ├── branch_protection.json
 ├── constitution.md
@@ -3331,15 +3355,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1080 directories, 2246 files
+1085 directories, 2265 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1244 |
-| Files | 3426 |
+| Directories | 1249 |
+| Files | 3445 |
 | Python files | 937 |
 | XML files | 462 |
-| Markdown files | 648 |
+| Markdown files | 659 |

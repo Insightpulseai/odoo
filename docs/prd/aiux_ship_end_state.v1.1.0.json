@@ -1,0 +1,104 @@
+{
+  "name": "IPAI AIUX Ship Bundle",
+  "version": "1.1.0",
+  "repo": "jgtolentino/odoo-ce",
+  "ship_tag_recommended": "ship-aiux-v1.1.0",
+  "spec_date": "2026-01-08",
+  "modules": [
+    {
+      "name": "ipai_theme_aiux",
+      "type": "ipai",
+      "status": "stub_v0",
+      "required": true,
+      "description": "AIUX Design System Theme - CSS tokens + sidebar hooks + widget mount points"
+    },
+    {
+      "name": "ipai_aiux_chat",
+      "type": "ipai",
+      "status": "stub_v0",
+      "required": true,
+      "modes": ["minimize", "popup", "sidepanel"],
+      "description": "AIUX Chat Interface - OWL service + templates, mode enum enforced"
+    },
+    {
+      "name": "ipai_ask_ai",
+      "type": "ipai",
+      "status": "exists",
+      "required": true,
+      "description": "ERP-aware RAG Engine for Finance and Month-End Close workflows"
+    },
+    {
+      "name": "ipai_document_ai",
+      "type": "ipai",
+      "status": "exists",
+      "required": true,
+      "description": "Document Intelligence Integration"
+    },
+    {
+      "name": "ipai_expense_ocr",
+      "type": "ipai",
+      "status": "exists",
+      "required": true,
+      "description": "Auto-extract expense data from receipt attachments via OCR"
+    }
+  ],
+  "ops_runbooks": [
+    "ops/runbooks/mailgun_domain_verification.md",
+    "ops/runbooks/sinch_setup.md",
+    "ops/runbooks/ocr_service.md",
+    "ops/runbooks/expenses_ocr_runbook.md"
+  ],
+  "ci_gates": [
+    ".github/workflows/aiux-ship-gate.yml"
+  ],
+  "verification_scripts": [
+    "scripts/aiux/verify_install.sh",
+    "scripts/aiux/verify_assets.sh"
+  ],
+  "integrations": {
+    "mailgun": {
+      "scope": "domain-verification-and-sending",
+      "domain_verification_runbook": true,
+      "secrets_in_repo": false
+    },
+    "sinch": {
+      "scope": "sms-otp-provider",
+      "setup_runbook": true,
+      "secrets_in_repo": false
+    },
+    "ocr_service": {
+      "scope": "receipt-document-ocr",
+      "runbook": true,
+      "receipt_pipeline": "ipai_expense_ocr"
+    }
+  },
+  "required_env_vars_placeholders": [
+    "MAILGUN_API_KEY",
+    "MAILGUN_DOMAIN",
+    "SINCH_SERVICE_PLAN_ID",
+    "SINCH_API_TOKEN",
+    "OCR_SERVICE_URL",
+    "OCR_SERVICE_TOKEN"
+  ],
+  "reliability": {
+    "health_gates_required": [
+      "GET /web/login == 200",
+      "GET /web/health/* == 200",
+      "db_connectivity == ok",
+      "odoo_registry == ok",
+      "no_crash_loop == true"
+    ],
+    "proof_artifacts_required": [
+      "module_install_log",
+      "healthcheck_log",
+      "manifest_version",
+      "git_sha"
+    ]
+  },
+  "deployment_contract": {
+    "build_artifact": "ghcr-image-tagged",
+    "deploy_strategy": "rolling",
+    "verify_before_traffic": true,
+    "rollback_on_failure": true
+  }
+}
