@@ -65,6 +65,8 @@ docker-compose.override.yml
 !/.vscode/settings.json
 !/.vscode/tasks.json
 !/.vscode/launch.json
+!/.vscode/ipai_workspace.code-workspace
+!/.vscode/README.md
 .idea/
 *.swp
 *.swo

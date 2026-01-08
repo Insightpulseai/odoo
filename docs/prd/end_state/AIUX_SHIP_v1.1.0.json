@@ -1,0 +1,108 @@
+{
+  "prd_version": "1.1.0",
+  "ship_scope": "aiux",
+  "repo": "jgtolentino/odoo-ce",
+  "modules": {
+    "ipai": [
+      "ipai_theme_aiux",
+      "ipai_aiux_chat",
+      "ipai_ask_ai",
+      "ipai_document_ai",
+      "ipai_expense_ocr"
+    ]
+  },
+  "mode_naming": {
+    "type": "Mode",
+    "allowed": ["minimize", "popup", "sidepanel"],
+    "disallowed": ["fullscreen"]
+  },
+  "integrations": {
+    "email": {
+      "provider": "mailgun",
+      "runbook": "ops/runbooks/mailgun_domain_verification.md"
+    },
+    "sms": {
+      "provider": "sinch",
+      "console_url": "https://my.sinch.com/applications",
+      "runbook": "ops/runbooks/sinch_setup.md"
+    },
+    "ocr": {
+      "provider": "ipai_ocr_service",
+      "runbook": "ops/runbooks/ocr_service.md",
+      "expense_runbook": "ops/runbooks/expenses_ocr_runbook.md"
+    }
+  },
+  "ci_gates": [
+    "aiux-ship-gate",
+    "guardrails",
+    "repo-structure",
+    "spec-kit-enforce"
+  ],
+  "verification": {
+    "http": ["/web/login"],
+    "asset_rebuild": true,
+    "module_manifest_match": true
+  },
+  "rollback": {
+    "strategy": "tag_rollback",
+    "db_restore_point_required": true
+  },
+  "deployment": {
+    "docker_compose_file": "deploy/docker-compose.prod.yml",
+    "container_name": "odoo-ce",
+    "db_container_name": "odoo-db",
+    "db_name": "odoo",
+    "port": 8069,
+    "health_endpoints": [
+      "http://localhost:8069/web/login"
+    ],
+    "asset_rebuild_command": "docker compose -f deploy/docker-compose.prod.yml exec odoo-ce odoo -d odoo -u web,ipai_theme_aiux,ipai_aiux_chat --stop-after-init"
+  },
+  "failure_modes": {
+    "502_bad_gateway": {
+      "causes": [
+        "Odoo container crash-loop or not healthy",
+        "Upstream misrouted (wrong container name/port)",
+        "Proxy timeouts too low during module upgrade/asset build",
+        "WebSocket/longpoll routing misconfiguration",
+        "DB connection saturation"
+      ],
+      "prevention": [
+        "Health + logs proof required before deploy",
+        "Compose path pinned (deploy/docker-compose.prod.yml)",
+        "Post-deploy verify checks (/web/login + logs tail)",
+        "Explicit asset rebuild task after module upgrades"
+      ],
+      "triage_task": "odoo:502 triage (nginx upstream + odoo crash)"
+    },
+    "500_asset_errors": {
+      "causes": [
+        "Odoo web assets not rebuilt after theme/chat changes",
+        "Partial upgrade left web bundles inconsistent",
+        "Cached assets mismatch"
+      ],
+      "prevention": [
+        "Verification includes asset rebuild step executed",
+        "Workspace task canonical and always available"
+      ],
+      "fix_task": "odoo:rebuild assets (fix 500)"
+    }
+  },
+  "workspace": {
+    "name": "ipai_workspace",
+    "description": "InsightPulseAI mono workspace (odoo-ce)",
+    "vscode_workspace_file": ".vscode/ipai_workspace.code-workspace",
+    "tasks": [
+      "odoo:compose up (prod file)",
+      "odoo:compose ps",
+      "odoo:logs (tail)",
+      "odoo:rebuild assets (fix 500)",
+      "odoo:check assets endpoint",
+      "odoo:health (nginx + odoo)",
+      "odoo:502 triage (nginx upstream + odoo crash)",
+      "odoo:db connectivity",
+      "aiux:verify install",
+      "aiux:verify assets"
+    ]
+  }
+}
