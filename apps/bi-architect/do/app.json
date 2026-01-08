@@ -8,7 +8,7 @@
         {
           "name": "bi-architect-api",
           "github": {
-            "repo": "jgtolentino/insightpulse-odoo",
+            "repo": "jgtolentino/odoo-ce",
             "branch": "main",
             "deploy_on_push": true
           },
@@ -91,7 +91,7 @@
           {
             "name": "bi-architect-api",
             "github": {
-              "repo": "jgtolentino/insightpulse-odoo",
+              "repo": "jgtolentino/odoo-ce",
               "branch": "main",
               "deploy_on_push": true
             },
@@ -200,7 +200,7 @@
       "phase_last_updated_at": "2025-12-30T03:38:10Z",
       "created_at": "2025-12-30T03:35:13Z",
       "updated_at": "2025-12-30T03:38:10Z",
-      "cause": "commit 835052b pushed to github.com/jgtolentino/insightpulse-odoo/tree/main",
+      "cause": "commit 835052b pushed to github.com/jgtolentino/odoo-ce/tree/main",
       "progress": {
         "success_steps": 6,
         "total_steps": 6,
@@ -296,7 +296,7 @@
       "cause_details": {
         "git_push": {
           "github": {
-            "repo": "jgtolentino/insightpulse-odoo",
+            "repo": "jgtolentino/odoo-ce",
             "branch": "main"
           },
           "username": "github-actions[bot]",

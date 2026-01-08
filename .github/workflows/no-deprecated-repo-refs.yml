@@ -1,0 +1,16 @@
+name: Block deprecated repo references
+on:
+  pull_request:
+  push:
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if deprecated repo URL appears
+        run: |
+          set -euo pipefail
+          if grep -r "https://github\.com/jgtolentino/insightpulse-odoo" .; then
+            echo "Found deprecated repo reference(s). Replace with https://github.com/jgtolentino/odoo-ce"
+            exit 1
+          fi
