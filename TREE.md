@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8f3885350776f97a7af34e1128c8f7010dc711e8
+> Commit: 5f09e289f1a6ecc55ae563fc0336ba94597fd6c8
 
 ```
 .
@@ -88,6 +88,15 @@
 ├── .insightpulse
 │   ├── sync-config.yaml
 │   └── sync.yaml
+├── .vscode
+│   ├── extensions.json
+│   ├── launch.json
+│   ├── mcp-dev.code-workspace
+│   ├── mcp-prod.code-workspace
+│   ├── mcp.json
+│   ├── settings.json
+│   ├── shortcuts.json
+│   └── tasks.json
 ├── addons
 │   ├── OCA
 │   │   ├── account-financial-reporting
@@ -1902,7 +1911,11 @@
 │   │   │   ├── 002 — 2025-12-31 — Post-commit smoke.md
 │   │   │   ├── INDEX.md
 │   │   │   └── index.json
-│   │   └── CONVERSATIONS_README.md
+│   │   ├── ANTIGRAVITY_MCP.md
+│   │   ├── CONVERSATIONS_README.md
+│   │   ├── LOCAL_DEV.md
+│   │   ├── RECOVERY.md
+│   │   └── SHIP_VERIFICATION.md
 │   ├── ord
 │   │   └── IPAI_AI_PLATFORM_ORD.md
 │   ├── ppm
@@ -3255,15 +3268,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1056 directories, 2194 files
+1057 directories, 2206 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1218 |
-| Files | 3327 |
+| Directories | 1219 |
+| Files | 3339 |
 | Python files | 909 |
 | XML files | 447 |
-| Markdown files | 624 |
+| Markdown files | 628 |
