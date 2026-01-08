@@ -238,7 +238,44 @@ VALUES
      'Navigate to an Odoo menu action',
      '{"type": "object", "properties": {"action_xmlid": {"type": "string"}, "context": {"type": "object"}}, "required": ["action_xmlid"]}'::jsonb,
      '{"type": "object", "properties": {"url": {"type": "string"}}}'::jsonb,
-     false, ARRAY[]::text[], ARRAY['odoo', 'navigate', 'menu'])
+     false, ARRAY[]::text[], ARRAY['odoo', 'navigate', 'menu']),
+
+    -- Semantic Query Tools
+    ('semantic.list_models', 'query', 'List Semantic Models',
+     'List all available semantic models with their dimensions and metrics summary',
+     '{"type": "object", "properties": {"asset_fqdn": {"type": "string", "description": "Optional asset FQDN to filter"}}, "required": []}'::jsonb,
+     '{"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}, "label": {"type": "string"}, "dimension_count": {"type": "integer"}, "metric_count": {"type": "integer"}}}}'::jsonb,
+     false, ARRAY[]::text[], ARRAY['semantic', 'discovery', 'query']),
+
+    ('semantic.get_model_schema', 'query', 'Get Semantic Model Schema',
+     'Get the full schema of a semantic model including all dimensions and metrics',
+     '{"type": "object", "properties": {"asset_fqdn": {"type": "string", "description": "Asset FQDN"}, "model_name": {"type": "string", "description": "Semantic model name"}}, "required": ["asset_fqdn", "model_name"]}'::jsonb,
+     '{"type": "object", "properties": {"model": {"type": "object"}, "dimensions": {"type": "array"}, "metrics": {"type": "array"}}}'::jsonb,
+     false, ARRAY[]::text[], ARRAY['semantic', 'schema', 'query']),
+
+    ('semantic.query', 'query', 'Query Semantic Model',
+     'Run a semantic query with business-friendly dimensions and metrics. Returns SQL plan for execution.',
+     '{"type": "object", "properties": {"asset_fqdn": {"type": "string"}, "model_name": {"type": "string"}, "dimensions": {"type": "array", "items": {"type": "string"}, "description": "Dimension names to group by"}, "metrics": {"type": "array", "items": {"type": "string"}, "description": "Metric names to calculate"}, "filters": {"type": "array", "items": {"type": "object", "properties": {"dimension": {"type": "string"}, "operator": {"type": "string", "enum": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "not_in", "like", "between"]}, "value": {}}}}, "time_grain": {"type": "string", "enum": ["day", "week", "month", "quarter", "year"]}, "time_range": {"type": "object", "properties": {"start": {"type": "string", "format": "date"}, "end": {"type": "string", "format": "date"}}}, "limit": {"type": "integer", "default": 1000}}, "required": ["asset_fqdn", "model_name", "dimensions", "metrics"]}'::jsonb,
+     '{"type": "object", "properties": {"ok": {"type": "boolean"}, "plan": {"type": "object", "properties": {"sql_preview": {"type": "string"}, "dimensions": {"type": "array"}, "metrics": {"type": "array"}}}}}'::jsonb,
+     false, ARRAY[]::text[], ARRAY['semantic', 'analytics', 'query']),
+
+    ('semantic.suggest_metrics', 'query', 'Suggest Metrics',
+     'Given a user question, suggest relevant dimensions and metrics from available semantic models',
+     '{"type": "object", "properties": {"question": {"type": "string", "description": "Natural language question"}, "asset_fqdn": {"type": "string", "description": "Optional asset FQDN to scope suggestions"}}, "required": ["question"]}'::jsonb,
+     '{"type": "object", "properties": {"suggested_model": {"type": "string"}, "suggested_dimensions": {"type": "array"}, "suggested_metrics": {"type": "array"}, "reasoning": {"type": "string"}}}'::jsonb,
+     false, ARRAY[]::text[], ARRAY['semantic', 'ai', 'suggestion']),
+
+    ('semantic.import_osi', 'action', 'Import OSI Definition',
+     'Import a semantic model definition in Open Semantics Interface (OSI) format',
+     '{"type": "object", "properties": {"payload": {"type": "object", "description": "OSI-formatted semantic model definition"}}, "required": ["payload"]}'::jsonb,
+     '{"type": "object", "properties": {"ok": {"type": "boolean"}, "model_id": {"type": "string"}, "stats": {"type": "object", "properties": {"dimensions": {"type": "integer"}, "metrics": {"type": "integer"}}}}}'::jsonb,
+     true, ARRAY['base.group_system'], ARRAY['semantic', 'admin', 'import']),
+
+    ('semantic.export_osi', 'query', 'Export OSI Definition',
+     'Export a semantic model definition in Open Semantics Interface (OSI) format',
+     '{"type": "object", "properties": {"asset_fqdn": {"type": "string"}, "model_name": {"type": "string"}, "format": {"type": "string", "enum": ["json", "yaml", "both"], "default": "json"}}, "required": ["asset_fqdn", "model_name"]}'::jsonb,
+     '{"type": "object", "properties": {"ok": {"type": "boolean"}, "json": {"type": "object"}, "yaml": {"type": "string"}}}'::jsonb,
+     false, ARRAY[]::text[], ARRAY['semantic', 'export', 'query'])
 
 ON CONFLICT (tool_key) DO UPDATE SET
     name = EXCLUDED.name,
@@ -307,6 +344,102 @@ SELECT
 FROM catalog.tools t WHERE t.tool_key = 'scout.query_analytics'
 ON CONFLICT DO NOTHING;
 
+-- Semantic tool bindings
+INSERT INTO catalog.tool_bindings (tool_id, target_type, target_config, priority)
+SELECT
+    t.id,
+    'edge_function',
+    '{"function_name": "semantic-export-osi", "method": "GET"}'::jsonb,
+    0
+FROM catalog.tools t WHERE t.tool_key = 'semantic.list_models'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.tool_bindings (tool_id, target_type, target_config, priority)
+SELECT
+    t.id,
+    'edge_function',
+    '{"function_name": "semantic-export-osi", "method": "GET"}'::jsonb,
+    0
+FROM catalog.tools t WHERE t.tool_key = 'semantic.get_model_schema'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.tool_bindings (tool_id, target_type, target_config, priority)
+SELECT
+    t.id,
+    'edge_function',
+    '{"function_name": "semantic-query", "method": "POST"}'::jsonb,
+    0
+FROM catalog.tools t WHERE t.tool_key = 'semantic.query'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.tool_bindings (tool_id, target_type, target_config, priority)
+SELECT
+    t.id,
+    'edge_function',
+    '{"function_name": "semantic-import-osi", "method": "POST"}'::jsonb,
+    0
+FROM catalog.tools t WHERE t.tool_key = 'semantic.import_osi'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.tool_bindings (tool_id, target_type, target_config, priority)
+SELECT
+    t.id,
+    'edge_function',
+    '{"function_name": "semantic-export-osi", "method": "GET"}'::jsonb,
+    0
+FROM catalog.tools t WHERE t.tool_key = 'semantic.export_osi'
+ON CONFLICT DO NOTHING;
+
+
+-- -----------------------------------------------------------------------------
+-- Semantic Model Assets (model type assets for semantic layer)
+-- -----------------------------------------------------------------------------
+
+INSERT INTO catalog.assets (fqdn, asset_type, system, title, description, owner, tags, uri, metadata)
+VALUES
+    -- Semantic models for Scout gold views
+    ('supabase.ipai.scout_gold.sales_by_store.semantic.store_performance', 'model', 'scout',
+     'Store Performance Model',
+     'Semantic model for store-level KPI analysis with revenue, transactions, and growth metrics',
+     'analytics_team', ARRAY['semantic', 'scout', 'kpi', 'store'],
+     NULL,
+     '{"source_fqdn": "supabase.ipai.scout_gold.sales_by_store", "dimension_count": 5, "metric_count": 6}'::jsonb),
+
+    ('supabase.ipai.scout_gold.sales_by_product.semantic.product_performance', 'model', 'scout',
+     'Product Performance Model',
+     'Semantic model for product-level analysis with sales volume, revenue, and ranking metrics',
+     'analytics_team', ARRAY['semantic', 'scout', 'kpi', 'product'],
+     NULL,
+     '{"source_fqdn": "supabase.ipai.scout_gold.sales_by_product", "dimension_count": 4, "metric_count": 5}'::jsonb),
+
+    ('supabase.ipai.scout_gold.customer_360.semantic.customer_insights', 'model', 'scout',
+     'Customer Insights Model',
+     'Semantic model for customer lifetime value, segmentation, and behavior analysis',
+     'analytics_team', ARRAY['semantic', 'scout', 'crm', 'clv'],
+     NULL,
+     '{"source_fqdn": "supabase.ipai.scout_gold.customer_360", "dimension_count": 4, "metric_count": 7}'::jsonb),
+
+    -- Semantic model for Odoo finance
+    ('odoo.odoo_core.account.move.semantic.invoice_analytics', 'model', 'odoo',
+     'Invoice Analytics Model',
+     'Semantic model for invoice and journal entry analysis with AR/AP aging metrics',
+     'finance_team', ARRAY['semantic', 'odoo', 'finance', 'invoice'],
+     NULL,
+     '{"source_fqdn": "odoo.odoo_core.account.move", "dimension_count": 6, "metric_count": 8}'::jsonb),
+
+    ('odoo.odoo_core.sale.order.semantic.sales_pipeline', 'model', 'odoo',
+     'Sales Pipeline Model',
+     'Semantic model for sales order analysis with conversion and revenue metrics',
+     'sales_team', ARRAY['semantic', 'odoo', 'sales', 'pipeline'],
+     NULL,
+     '{"source_fqdn": "odoo.odoo_core.sale.order", "dimension_count": 5, "metric_count": 6}'::jsonb)
+
+ON CONFLICT (fqdn) DO UPDATE SET
+    title = EXCLUDED.title,
+    description = EXCLUDED.description,
+    metadata = EXCLUDED.metadata,
+    updated_at = now();
+
 
 -- -----------------------------------------------------------------------------
 -- Sample Lineage Edges
@@ -336,6 +469,73 @@ SELECT
 FROM catalog.assets f, catalog.assets t
 WHERE f.fqdn = 'odoo.odoo_core.sale.order'
   AND t.fqdn = 'supabase.ipai.scout_fact.transactions'
+ON CONFLICT DO NOTHING;
+
+
+-- -----------------------------------------------------------------------------
+-- Semantic Model Lineage Edges (Physical → Semantic)
+-- -----------------------------------------------------------------------------
+
+-- Scout gold views → Semantic models (derived_from)
+INSERT INTO catalog.lineage_edges (from_asset_id, to_asset_id, edge_type, job_name, metadata)
+SELECT
+    f.id, t.id, 'derived_from', 'semantic_model_definition',
+    '{"relationship": "physical_to_semantic", "auto_created": true}'::jsonb
+FROM catalog.assets f, catalog.assets t
+WHERE f.fqdn = 'supabase.ipai.scout_gold.sales_by_store'
+  AND t.fqdn = 'supabase.ipai.scout_gold.sales_by_store.semantic.store_performance'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.lineage_edges (from_asset_id, to_asset_id, edge_type, job_name, metadata)
+SELECT
+    f.id, t.id, 'derived_from', 'semantic_model_definition',
+    '{"relationship": "physical_to_semantic", "auto_created": true}'::jsonb
+FROM catalog.assets f, catalog.assets t
+WHERE f.fqdn = 'supabase.ipai.scout_gold.sales_by_product'
+  AND t.fqdn = 'supabase.ipai.scout_gold.sales_by_product.semantic.product_performance'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.lineage_edges (from_asset_id, to_asset_id, edge_type, job_name, metadata)
+SELECT
+    f.id, t.id, 'derived_from', 'semantic_model_definition',
+    '{"relationship": "physical_to_semantic", "auto_created": true}'::jsonb
+FROM catalog.assets f, catalog.assets t
+WHERE f.fqdn = 'supabase.ipai.scout_gold.customer_360'
+  AND t.fqdn = 'supabase.ipai.scout_gold.customer_360.semantic.customer_insights'
+ON CONFLICT DO NOTHING;
+
+-- Odoo models → Semantic models (derived_from)
+INSERT INTO catalog.lineage_edges (from_asset_id, to_asset_id, edge_type, job_name, metadata)
+SELECT
+    f.id, t.id, 'derived_from', 'semantic_model_definition',
+    '{"relationship": "physical_to_semantic", "auto_created": true}'::jsonb
+FROM catalog.assets f, catalog.assets t
+WHERE f.fqdn = 'odoo.odoo_core.account.move'
+  AND t.fqdn = 'odoo.odoo_core.account.move.semantic.invoice_analytics'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO catalog.lineage_edges (from_asset_id, to_asset_id, edge_type, job_name, metadata)
+SELECT
+    f.id, t.id, 'derived_from', 'semantic_model_definition',
+    '{"relationship": "physical_to_semantic", "auto_created": true}'::jsonb
+FROM catalog.assets f, catalog.assets t
+WHERE f.fqdn = 'odoo.odoo_core.sale.order'
+  AND t.fqdn = 'odoo.odoo_core.sale.order.semantic.sales_pipeline'
+ON CONFLICT DO NOTHING;
+
+
+-- -----------------------------------------------------------------------------
+-- Cross-System Lineage (Scout facts feed into Odoo semantic for unified view)
+-- -----------------------------------------------------------------------------
+
+-- Scout transactions influence invoice analytics (for reconciliation)
+INSERT INTO catalog.lineage_edges (from_asset_id, to_asset_id, edge_type, job_name, metadata)
+SELECT
+    f.id, t.id, 'depends_on', 'cross_system_analytics',
+    '{"relationship": "enrichment", "description": "Scout transaction data enriches invoice analytics"}'::jsonb
+FROM catalog.assets f, catalog.assets t
+WHERE f.fqdn = 'supabase.ipai.scout_fact.transactions'
+  AND t.fqdn = 'odoo.odoo_core.account.move.semantic.invoice_analytics'
 ON CONFLICT DO NOTHING;
 
 

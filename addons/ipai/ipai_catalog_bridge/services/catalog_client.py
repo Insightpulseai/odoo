@@ -232,3 +232,175 @@ class CatalogClient:
                 "permission": permission,
             },
         )
+
+    # -------------------------------------------------------------------------
+    # Semantic Model Methods
+    # -------------------------------------------------------------------------
+
+    def _semantic_request(
+        self,
+        endpoint: str,
+        method: str = "POST",
+        data: Optional[Dict] = None,
+        params: Optional[Dict] = None,
+    ) -> Dict[str, Any]:
+        """Make a request to a semantic Edge Function.
+
+        Args:
+            endpoint: Function name (semantic-import-osi, semantic-export-osi, semantic-query)
+            method: HTTP method
+            data: Request body
+            params: Query parameters
+
+        Returns:
+            Response dict
+        """
+        # Build URL for different semantic functions
+        base_url = self.function_url.rsplit("/", 1)[0]  # Remove catalog-sync
+        url = f"{base_url}/{endpoint}"
+
+        try:
+            if method == "GET":
+                response = requests.get(
+                    url,
+                    headers=self._headers(),
+                    params=params,
+                    timeout=self.timeout,
+                )
+            else:
+                response = requests.post(
+                    url,
+                    headers=self._headers(),
+                    json=data or {},
+                    timeout=self.timeout,
+                )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.Timeout:
+            _logger.error(f"Semantic request timeout: {endpoint}")
+            return {"ok": False, "error": "Request timeout"}
+        except requests.exceptions.RequestException as e:
+            _logger.error(f"Semantic request error: {endpoint} - {e}")
+            return {"ok": False, "error": str(e)}
+        except json.JSONDecodeError as e:
+            _logger.error(f"Semantic response parse error: {endpoint} - {e}")
+            return {"ok": False, "error": "Invalid response"}
+
+    def import_semantic_model(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """Import a semantic model via OSI format.
+
+        Args:
+            payload: OSI-formatted payload with model, dimensions, metrics
+
+        Returns:
+            {ok: bool, model_id: str, stats: dict, error: str}
+        """
+        return self._semantic_request("semantic-import-osi", data=payload)
+
+    def export_semantic_model(
+        self,
+        asset_fqdn: str,
+        model_name: str,
+        format: str = "json",
+    ) -> Dict[str, Any]:
+        """Export a semantic model.
+
+        Args:
+            asset_fqdn: Asset FQDN
+            model_name: Semantic model name
+            format: Output format (json, yaml, both)
+
+        Returns:
+            {ok: bool, json: dict, yaml: str, error: str}
+        """
+        return self._semantic_request(
+            "semantic-export-osi",
+            method="GET",
+            params={
+                "asset_fqdn": asset_fqdn,
+                "model_name": model_name,
+                "format": format,
+            },
+        )
+
+    def query_semantic_model(
+        self,
+        asset_fqdn: str,
+        model_name: str,
+        dimensions: List[str],
+        metrics: List[str],
+        filters: Optional[List[Dict]] = None,
+        time_grain: Optional[str] = None,
+        time_range: Optional[Dict[str, str]] = None,
+        limit: int = 1000,
+    ) -> Dict[str, Any]:
+        """Query a semantic model and get resolved SQL plan.
+
+        Args:
+            asset_fqdn: Asset FQDN
+            model_name: Semantic model name
+            dimensions: List of dimension names
+            metrics: List of metric names
+            filters: Optional filter conditions
+            time_grain: Optional time grain override
+            time_range: Optional time range {start, end}
+            limit: Max rows
+
+        Returns:
+            {ok: bool, plan: dict, validation: dict, error: str}
+        """
+        data = {
+            "asset_fqdn": asset_fqdn,
+            "model_name": model_name,
+            "dimensions": dimensions,
+            "metrics": metrics,
+            "limit": limit,
+        }
+        if filters:
+            data["filters"] = filters
+        if time_grain:
+            data["time_grain"] = time_grain
+        if time_range:
+            data["time_range"] = time_range
+
+        return self._semantic_request("semantic-query", data=data)
+
+    def get_semantic_models(
+        self,
+        asset_fqdn: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Get list of semantic models.
+
+        Args:
+            asset_fqdn: Optional asset FQDN to filter
+
+        Returns:
+            {ok: bool, models: list, error: str}
+        """
+        # Use catalog-sync to search for semantic assets
+        search_query = asset_fqdn or "semantic"
+        result = self.search_assets(
+            query=search_query,
+            asset_type="model",
+            limit=100,
+        )
+
+        if not result.get("ok"):
+            return result
+
+        # For each asset, get the semantic model details
+        models = []
+        for asset in result.get("assets", []):
+            # Extract model name from FQDN (e.g., fqdn.semantic.modelname)
+            parts = asset.get("fqdn", "").split(".semantic.")
+            if len(parts) == 2:
+                model_name = parts[1]
+                export_result = self.export_semantic_model(
+                    parts[0], model_name, format="json"
+                )
+                if export_result.get("ok"):
+                    model_data = export_result.get("json", {})
+                    model_data["asset_fqdn"] = parts[0]
+                    models.append(model_data)
+
+        return {"ok": True, "models": models}

@@ -396,3 +396,225 @@ class CatalogSync(models.AbstractModel):
                 existing.write(vals)
             else:
                 CatalogAsset.create(vals)
+
+    # -------------------------------------------------------------------------
+    # Semantic Model Sync Methods
+    # -------------------------------------------------------------------------
+
+    @api.model
+    def import_semantic_model(self, payload):
+        """Import a semantic model from OSI payload.
+
+        Args:
+            payload: OSI-formatted dict with model, dimensions, metrics
+
+        Returns:
+            dict: {ok: bool, model_id: str, stats: dict, error: str}
+        """
+        client = self.get_catalog_client()
+        if not client:
+            return {"ok": False, "error": "Catalog client not configured"}
+
+        # Call semantic-import-osi function
+        result = client.import_semantic_model(payload)
+
+        if result.get("ok"):
+            # Also update local cache
+            self._update_local_semantic_cache(payload)
+
+        return result
+
+    @api.model
+    def export_semantic_model(self, asset_fqdn, model_name, format="json"):
+        """Export a semantic model from catalog.
+
+        Args:
+            asset_fqdn: Asset FQDN
+            model_name: Semantic model name
+            format: Output format (json, yaml, both)
+
+        Returns:
+            dict: {ok: bool, json: dict, yaml: str, error: str}
+        """
+        client = self.get_catalog_client()
+        if not client:
+            return {"ok": False, "error": "Catalog client not configured"}
+
+        return client.export_semantic_model(asset_fqdn, model_name, format)
+
+    @api.model
+    def query_semantic_model(self, asset_fqdn, model_name, dimensions, metrics,
+                              filters=None, time_grain=None, time_range=None, limit=1000):
+        """Query a semantic model and get resolved SQL.
+
+        Args:
+            asset_fqdn: Asset FQDN
+            model_name: Semantic model name
+            dimensions: List of dimension names
+            metrics: List of metric names
+            filters: Optional filter conditions
+            time_grain: Optional time grain override
+            time_range: Optional time range {start, end}
+            limit: Max rows
+
+        Returns:
+            dict: {ok: bool, plan: dict, error: str}
+        """
+        client = self.get_catalog_client()
+        if not client:
+            return {"ok": False, "error": "Catalog client not configured"}
+
+        return client.query_semantic_model(
+            asset_fqdn=asset_fqdn,
+            model_name=model_name,
+            dimensions=dimensions,
+            metrics=metrics,
+            filters=filters,
+            time_grain=time_grain,
+            time_range=time_range,
+            limit=limit,
+        )
+
+    @api.model
+    def pull_semantic_models(self, asset_fqdn=None):
+        """Pull semantic models from Supabase to local cache.
+
+        Args:
+            asset_fqdn: Optional asset FQDN to filter
+
+        Returns:
+            dict: {pulled: int, errors: list}
+        """
+        client = self.get_catalog_client()
+        if not client:
+            return {"pulled": 0, "errors": ["Catalog client not configured"]}
+
+        # Get list of semantic models from catalog
+        result = client.get_semantic_models(asset_fqdn=asset_fqdn)
+
+        if not result.get("ok"):
+            return {"pulled": 0, "errors": [result.get("error", "Unknown error")]}
+
+        models = result.get("models", [])
+        pulled = 0
+        errors = []
+
+        for model_data in models:
+            try:
+                self._update_local_semantic_model(model_data)
+                pulled += 1
+            except Exception as e:
+                errors.append(f"{model_data.get('name')}: {str(e)}")
+                _logger.warning(f"Could not sync semantic model: {e}")
+
+        return {"pulled": pulled, "errors": errors}
+
+    def _update_local_semantic_cache(self, payload):
+        """Update local semantic model cache from OSI payload."""
+        CatalogAsset = self.env["ipai.catalog.asset"]
+        SemanticModel = self.env["ipai.semantic.model"]
+        SemanticDimension = self.env["ipai.semantic.dimension"]
+        SemanticMetric = self.env["ipai.semantic.metric"]
+
+        # Get or create asset
+        asset = CatalogAsset.search([("fqdn", "=", payload["asset_fqdn"])], limit=1)
+        if not asset:
+            asset = CatalogAsset.create({
+                "fqdn": payload["asset_fqdn"],
+                "asset_type": "table",
+                "system": "scout" if "scout" in payload["asset_fqdn"] else "supabase",
+                "title": payload.get("asset_title", payload["model"]["name"]),
+                "description": payload.get("asset_description"),
+                "tags": ",".join(payload.get("asset_tags", [])),
+            })
+
+        # Get or create semantic model
+        model = SemanticModel.search([
+            ("asset_id", "=", asset.id),
+            ("name", "=", payload["model"]["name"]),
+        ], limit=1)
+
+        model_vals = {
+            "asset_id": asset.id,
+            "name": payload["model"]["name"],
+            "label": payload["model"].get("label"),
+            "description": payload["model"].get("description"),
+            "source_type": payload["model"].get("source_type", "table"),
+            "source_ref": payload["model"].get("source_ref"),
+            "primary_key": ",".join(payload["model"].get("primary_key", [])),
+            "time_dimension": payload["model"].get("time_dimension"),
+            "default_time_grain": payload["model"].get("default_time_grain", "day"),
+            "status": "active",
+            "last_sync": fields.Datetime.now(),
+        }
+
+        if model:
+            model.write(model_vals)
+        else:
+            model = SemanticModel.create(model_vals)
+
+        # Sync dimensions
+        for dim_data in payload.get("dimensions", []):
+            dim = SemanticDimension.search([
+                ("model_id", "=", model.id),
+                ("name", "=", dim_data["name"]),
+            ], limit=1)
+
+            dim_vals = {
+                "model_id": model.id,
+                "name": dim_data["name"],
+                "label": dim_data.get("label"),
+                "description": dim_data.get("description"),
+                "expr": dim_data["expr"],
+                "data_type": dim_data.get("data_type", "string"),
+                "is_time_dimension": dim_data.get("is_time_dimension", False),
+                "time_grain": dim_data.get("time_grain"),
+                "hierarchy_level": dim_data.get("hierarchy_level"),
+                "tags": ",".join(dim_data.get("tags", [])),
+                "is_hidden": dim_data.get("is_hidden", False),
+            }
+
+            if dim:
+                dim.write(dim_vals)
+            else:
+                SemanticDimension.create(dim_vals)
+
+        # Sync metrics
+        for met_data in payload.get("metrics", []):
+            met = SemanticMetric.search([
+                ("model_id", "=", model.id),
+                ("name", "=", met_data["name"]),
+            ], limit=1)
+
+            met_vals = {
+                "model_id": model.id,
+                "name": met_data["name"],
+                "label": met_data.get("label"),
+                "description": met_data.get("description"),
+                "metric_type": met_data.get("metric_type", "simple"),
+                "aggregation": met_data.get("aggregation"),
+                "expr": met_data["expr"],
+                "depends_on": ",".join(met_data.get("depends_on", [])),
+                "formula": met_data.get("formula"),
+                "format_string": met_data.get("format_string"),
+                "unit": met_data.get("unit"),
+                "tags": ",".join(met_data.get("tags", [])),
+                "is_hidden": met_data.get("is_hidden", False),
+            }
+
+            if met:
+                met.write(met_vals)
+            else:
+                SemanticMetric.create(met_vals)
+
+    def _update_local_semantic_model(self, model_data):
+        """Update local semantic model from API response."""
+        # Similar to _update_local_semantic_cache but from export format
+        payload = {
+            "asset_fqdn": model_data.get("asset_fqdn"),
+            "model": model_data.get("model", {}),
+            "dimensions": model_data.get("dimensions", []),
+            "metrics": model_data.get("metrics", []),
+        }
+        if payload["asset_fqdn"]:
+            self._update_local_semantic_cache(payload)
