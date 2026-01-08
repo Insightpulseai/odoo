@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2c03528c1ec04727df5c6256242a25cb5bd27d7d
+> Commit: d6ba3372b0966d5eca27173448648baf955e0d3e
 
 ```
 .
@@ -69,6 +69,7 @@
 │   │   ├── infra-validate.yml
 │   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
+│   │   ├── ipai-determinism.yml
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-module-matrix.yml
 │   │   ├── ipai-prod-checks.yml
@@ -83,11 +84,21 @@
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── superset-bump.yml
+│   │   ├── wiki-sync.yml
 │   │   └── workflow-yaml-validate.yml
 │   └── copilot-instructions.md
 ├── .insightpulse
 │   ├── sync-config.yaml
 │   └── sync.yaml
+├── .vscode
+│   ├── extensions.json
+│   ├── launch.json
+│   ├── mcp-dev.code-workspace
+│   ├── mcp-prod.code-workspace
+│   ├── mcp.json
+│   ├── settings.json
+│   ├── shortcuts.json
+│   └── tasks.json
 ├── addons
 │   ├── OCA
 │   │   ├── account-financial-reporting
@@ -119,6 +130,16 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_ai_agents
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_agents_ui
 │   │   │   ├── controllers
 │   │   │   ├── security
@@ -184,6 +205,18 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_aiux_chat
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_approvals
+│   │   │   ├── data
+│   │   │   ├── demo
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── wizard
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ask_ai
@@ -294,6 +327,8 @@
 │   │   ├── ipai_dev_studio_base
 │   │   │   ├── models
 │   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_document_ai
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_equipment
 │   │   │   ├── models
@@ -610,6 +645,8 @@
 │   │   │   ├── models
 │   │   │   ├── tests
 │   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_aiux
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_fluent2
 │   │   │   ├── static
@@ -1783,6 +1820,7 @@
 │   │   │   └── manifest.json
 │   │   ├── mappings
 │   │   │   └── azure_to_do_supabase_odoo.yaml
+│   │   ├── .gitkeep
 │   │   └── ipai_platform_flow.mmd
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
@@ -1896,7 +1934,11 @@
 │   │   │   ├── 002 — 2025-12-31 — Post-commit smoke.md
 │   │   │   ├── INDEX.md
 │   │   │   └── index.json
-│   │   └── CONVERSATIONS_README.md
+│   │   ├── ANTIGRAVITY_MCP.md
+│   │   ├── CONVERSATIONS_README.md
+│   │   ├── LOCAL_DEV.md
+│   │   ├── RECOVERY.md
+│   │   └── SHIP_VERIFICATION.md
 │   ├── ord
 │   │   └── IPAI_AI_PLATFORM_ORD.md
 │   ├── ppm
@@ -1934,6 +1976,14 @@
 │   │       ├── docker
 │   │       ├── scripts
 │   │       └── README.md
+│   ├── wiki
+│   │   ├── Architecture.md
+│   │   ├── Configuration.md
+│   │   ├── Diagrams.md
+│   │   ├── Home.md
+│   │   ├── Installation.md
+│   │   ├── cap-ai-agents.md
+│   │   └── cap-approvals.md
 │   ├── workflows
 │   │   └── hire-to-retire-bpmn.html
 │   ├── 003-odoo-ce-custom-image-spec.md
@@ -2598,6 +2648,7 @@
 │   ├── verify.sh
 │   ├── verify_backup.sh
 │   ├── verify_phase3.py
+│   ├── wiki_sync.sh
 │   └── worktree-setup.sh
 ├── seed_export
 │   ├── projects.csv
@@ -2800,7 +2851,19 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── ipai-odoo18-enterprise-patch
+│   │   └── capability_map.yaml
 │   ├── ipai-tbwa-finance
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── kapa-plus
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── kapa-reverse
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -3047,6 +3110,12 @@
 │   │   ├── README.md
 │   │   └── inventory.py
 │   ├── diagramflow
+│   │   ├── diagramflow
+│   │   │   ├── __init__.py
+│   │   │   ├── bpmn.py
+│   │   │   ├── cli.py
+│   │   │   ├── drawio.py
+│   │   │   └── parser.py
 │   │   ├── src
 │   │   │   ├── cli.ts
 │   │   │   ├── index.ts
@@ -3056,6 +3125,7 @@
 │   │   │   └── toDrawio.ts
 │   │   ├── README.md
 │   │   ├── package.json
+│   │   ├── pyproject.toml
 │   │   └── tsconfig.json
 │   ├── docs-crawler
 │   │   ├── .env.example
@@ -3069,6 +3139,12 @@
 │   │   ├── crawl_docs.py
 │   │   ├── map_to_odoo.py
 │   │   └── odoo_map.yaml
+│   ├── ipai_module_gen
+│   │   ├── ipai_module_gen
+│   │   │   ├── templates
+│   │   │   ├── __init__.py
+│   │   │   └── generate.py
+│   │   └── pyproject.toml
 │   ├── parity
 │   │   ├── parity_audit.py
 │   │   └── validate_spec_kit.py
@@ -3209,6 +3285,7 @@
 ├── finance_monthly_tasks_template.csv
 ├── finance_wbs.csv
 ├── finance_wbs_deadlines.csv
+├── gemini.md
 ├── implementation_plan.md
 ├── implementation_plan_agent.md
 ├── import_finance_data.py
@@ -3235,6 +3312,7 @@
 ├── ppm_dashboard_views.xml
 ├── query_memory.py
 ├── requirements.txt
+├── ship_v1_1_0.sh
 ├── spec.md
 ├── task.md
 ├── tasks.md
@@ -3248,15 +3326,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1053 directories, 2190 files
+1079 directories, 2242 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1215 |
-| Files | 3323 |
-| Python files | 906 |
-| XML files | 447 |
-| Markdown files | 624 |
+| Directories | 1243 |
+| Files | 3422 |
+| Python files | 937 |
+| XML files | 462 |
+| Markdown files | 646 |

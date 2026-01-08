@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Sequence for Approval Requests -->
+        <record id="seq_approval_request" model="ir.sequence">
+            <field name="name">Approval Request</field>
+            <field name="code">ipai.approval.request</field>
+            <field name="prefix">APR/%(year)s/</field>
+            <field name="padding">5</field>
+            <field name="company_id" eval="False"/>
+        </record>
+
+        <!-- Activity Type for Approvals -->
+        <record id="mail_activity_type_approval" model="mail.activity.type">
+            <field name="name">Approval Required</field>
+            <field name="icon">fa-check-circle</field>
+            <field name="res_model">ipai.approval.request</field>
+            <field name="category">default</field>
+            <field name="delay_count">0</field>
+            <field name="delay_unit">days</field>
+        </record>
+    </data>
+</odoo>
