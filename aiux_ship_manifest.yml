@@ -108,6 +108,38 @@ verification:
     - git_sha
 
 # -----------------------------------------------------------------------------
+# OCA Dependencies (recommended for production)
+# -----------------------------------------------------------------------------
+oca_dependencies:
+  - name: queue_job
+    repo: OCA/queue
+    branch: "18.0"
+    purpose: Async job processing for OCR and AI tasks
+    required: false
+
+  - name: base_technical_user
+    repo: OCA/server-backend
+    branch: "18.0"
+    purpose: Technical user management
+    required: false
+
+  - name: base_exception
+    repo: OCA/server-backend
+    branch: "18.0"
+    purpose: Exception handling framework
+    required: false
+
+# -----------------------------------------------------------------------------
+# Odoo Core Dependencies
+# -----------------------------------------------------------------------------
+odoo_core_dependencies:
+  - base
+  - web
+  - mail
+  - hr_expense
+  - project
+
+# -----------------------------------------------------------------------------
 # Operational runbooks
 # -----------------------------------------------------------------------------
 runbooks:
@@ -144,3 +176,29 @@ ci:
     - push to main
     - pull request to main
     - workflow_dispatch
+
+# -----------------------------------------------------------------------------
+# Rollback Configuration
+# -----------------------------------------------------------------------------
+rollback:
+  strategy: tag_rollback
+  requires_db_restore_point: true
+  max_rollback_time_minutes: 30
+  procedure:
+    - "Stop current deployment"
+    - "Restore DB from backup if needed"
+    - "Deploy previous image tag"
+    - "Run verification scripts"
+    - "Update monitoring/alerts"
+
+# -----------------------------------------------------------------------------
+# Documentation References
+# -----------------------------------------------------------------------------
+documentation:
+  prd: docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md
+  redeploy_prd: docs/prd/ODOO18_DO_FRESH_REDEPLOY.md
+  end_state_spec: docs/prd/END_STATE_SPEC.json
+  go_live_checklist: docs/ops/GO_LIVE_CHECKLIST.md
+  prevent_502: docs/ops/PREVENT_502.md
+  verification_commands: docs/ops/VERIFICATION_COMMANDS.md
+  what_shipped_template: docs/ops/WHAT_SHIPPED.template.md

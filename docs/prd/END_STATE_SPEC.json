@@ -1,0 +1,311 @@
+{
+  "prd_version": "1.1.0",
+  "spec_date": "2026-01-08",
+  "release": {
+    "tag": "ship-aiux-v1.1.0",
+    "tag_format": "prod-YYYYMMDD-HHMM",
+    "repo": "jgtolentino/odoo-ce",
+    "environment": "production"
+  },
+  "stack": {
+    "odoo_version": "18.0-ce",
+    "deployment_mode": "docker",
+    "reverse_proxy": "nginx",
+    "workers": {
+      "workers": 4,
+      "max_cron_threads": 2,
+      "limit_time_cpu": 600,
+      "limit_time_real": 1200,
+      "limit_memory_hard": 2684354560,
+      "limit_memory_soft": 2147483648
+    },
+    "services": {
+      "postgres": {
+        "mode": "selfhost_or_managed",
+        "version": "16-alpine",
+        "max_connections": 100,
+        "shared_buffers": "256MB",
+        "effective_cache_size": "1GB"
+      },
+      "redis": {
+        "enabled": true,
+        "purpose": ["sessions", "queue"]
+      },
+      "object_storage": {
+        "enabled": true,
+        "provider": "do-spaces",
+        "purpose": ["db_backups", "filestore_backups", "deploy_artifacts"]
+      }
+    },
+    "networking": {
+      "odoo_port": 8069,
+      "longpolling_port": 8072,
+      "proxy_mode": true,
+      "trusted_proxies": ["127.0.0.1", "10.0.0.0/8"]
+    }
+  },
+  "modules": {
+    "ipai_ship_bundle": [
+      {
+        "name": "ipai_theme_aiux",
+        "version": "18.0.0.1.0",
+        "type": "theme",
+        "status": "stub_v0",
+        "required": true
+      },
+      {
+        "name": "ipai_aiux_chat",
+        "version": "18.0.0.1.0",
+        "type": "widget",
+        "status": "stub_v0",
+        "required": true,
+        "modes": ["minimize", "popup", "sidepanel"]
+      },
+      {
+        "name": "ipai_ask_ai",
+        "version": "18.0.1.0.0",
+        "type": "backend",
+        "status": "exists",
+        "required": true
+      },
+      {
+        "name": "ipai_document_ai",
+        "version": "18.0.1.0.0",
+        "type": "backend",
+        "status": "exists",
+        "required": true
+      },
+      {
+        "name": "ipai_expense_ocr",
+        "version": "18.0.1.0.0",
+        "type": "backend",
+        "status": "exists",
+        "required": true
+      }
+    ],
+    "ipai_core": [
+      "ipai_ce_cleaner",
+      "ipai_ce_branding",
+      "ipai_dev_studio_base",
+      "ipai_workspace_core"
+    ],
+    "oca_required": [
+      {
+        "name": "queue_job",
+        "repo": "queue",
+        "purpose": "async job processing"
+      },
+      {
+        "name": "base_technical_user",
+        "repo": "server-backend",
+        "purpose": "technical user management"
+      },
+      {
+        "name": "base_exception",
+        "repo": "server-backend",
+        "purpose": "exception handling framework"
+      }
+    ],
+    "odoo_core": [
+      "base",
+      "web",
+      "mail",
+      "hr_expense",
+      "project"
+    ]
+  },
+  "integrations": {
+    "email": {
+      "provider": "mailgun",
+      "runbook": "ops/runbooks/mailgun_domain_verification.md",
+      "required_env_vars": [
+        "MAILGUN_API_KEY",
+        "MAILGUN_DOMAIN",
+        "MAILGUN_SMTP_LOGIN",
+        "MAILGUN_SMTP_PASSWORD"
+      ],
+      "verification": {
+        "dns_spf": true,
+        "dns_dkim": true,
+        "smtp_test": true
+      }
+    },
+    "sms": {
+      "provider": "sinch",
+      "runbook": "ops/runbooks/sinch_setup.md",
+      "required_env_vars": [
+        "SINCH_SERVICE_PLAN_ID",
+        "SINCH_API_TOKEN"
+      ],
+      "verification": {
+        "api_connectivity": true,
+        "send_test": true
+      }
+    },
+    "ocr": {
+      "provider": "ipai_ocr_service",
+      "runbook": "ops/runbooks/ocr_service.md",
+      "odoo_module": "ipai_expense_ocr",
+      "required_env_vars": [
+        "OCR_SERVICE_URL",
+        "OCR_SERVICE_TOKEN"
+      ],
+      "verification": {
+        "health_endpoint": true,
+        "test_extraction": true
+      }
+    }
+  },
+  "ci_gates": {
+    "required_workflows": [
+      {
+        "name": "aiux-ship-gate",
+        "file": ".github/workflows/aiux-ship-gate.yml",
+        "purpose": "Ship bundle validation"
+      },
+      {
+        "name": "ci-odoo-ce",
+        "file": ".github/workflows/ci.yml",
+        "purpose": "Core Odoo tests"
+      },
+      {
+        "name": "repo-structure",
+        "file": ".github/workflows/repo-structure.yml",
+        "purpose": "No Enterprise guardrails"
+      },
+      {
+        "name": "seeds-validate",
+        "file": ".github/workflows/seeds-validate.yml",
+        "purpose": "Seed data drift"
+      },
+      {
+        "name": "spec-and-parity",
+        "file": ".github/workflows/spec-and-parity.yml",
+        "purpose": "Data model drift"
+      }
+    ],
+    "required_checks": [
+      "preflight",
+      "validate",
+      "gate-summary"
+    ]
+  },
+  "verification": {
+    "http_checks": [
+      {
+        "endpoint": "/web/login",
+        "expected_status": [200, 303],
+        "timeout_seconds": 30
+      },
+      {
+        "endpoint": "/web/health",
+        "expected_status": [200],
+        "timeout_seconds": 10
+      },
+      {
+        "endpoint": "/longpolling/poll",
+        "expected_status": [200, 400],
+        "timeout_seconds": 10,
+        "note": "400 is acceptable - means endpoint exists"
+      },
+      {
+        "endpoint": "/web/assets/debug/web.assets_backend.js",
+        "expected_status": [200],
+        "timeout_seconds": 30
+      }
+    ],
+    "module_manifest_match": true,
+    "job_queue_ok": true,
+    "db_connectivity": true,
+    "container_health": true,
+    "tests": {
+      "email_send_test": true,
+      "ocr_test_receipt": true,
+      "sms_send_test": "optional"
+    }
+  },
+  "nginx_config": {
+    "file": "deploy/nginx/erp.insightpulseai.net.conf",
+    "required_settings": {
+      "proxy_read_timeout": "720s",
+      "proxy_connect_timeout": "60s",
+      "proxy_send_timeout": "600s",
+      "client_max_body_size": "64m"
+    },
+    "required_routes": [
+      {
+        "location": "/",
+        "upstream": "odoo:8069"
+      },
+      {
+        "location": "/longpolling",
+        "upstream": "odoo:8072"
+      },
+      {
+        "location": "/websocket",
+        "upstream": "odoo:8072",
+        "websocket": true
+      }
+    ]
+  },
+  "backup": {
+    "database": {
+      "method": "pg_dump",
+      "frequency": "daily",
+      "retention_days": 30,
+      "destination": "object_storage"
+    },
+    "filestore": {
+      "method": "rsync_or_sync",
+      "frequency": "daily",
+      "retention_days": 30,
+      "destination": "object_storage"
+    }
+  },
+  "rollback": {
+    "strategy": "tag_rollback",
+    "requires_db_restore_point": true,
+    "max_rollback_time_minutes": 30,
+    "procedure": [
+      "Stop current deployment",
+      "Restore DB from backup if needed",
+      "Deploy previous image tag",
+      "Run verification",
+      "Update DNS/LB if separate"
+    ]
+  },
+  "monitoring": {
+    "health_check_interval_seconds": 30,
+    "alerts": [
+      {
+        "condition": "http_502_count > 5 in 5m",
+        "severity": "critical",
+        "action": "page_oncall"
+      },
+      {
+        "condition": "container_restart_count > 3 in 10m",
+        "severity": "critical",
+        "action": "page_oncall"
+      },
+      {
+        "condition": "db_connection_count > 80",
+        "severity": "warning",
+        "action": "notify_ops"
+      },
+      {
+        "condition": "queue_backlog > 100",
+        "severity": "warning",
+        "action": "notify_ops"
+      }
+    ]
+  },
+  "documentation": {
+    "prd": "docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md",
+    "redeploy_prd": "docs/prd/ODOO18_DO_FRESH_REDEPLOY.md",
+    "go_live_checklist": "docs/ops/GO_LIVE_CHECKLIST.md",
+    "prevent_502": "docs/ops/PREVENT_502.md",
+    "verification_commands": "docs/ops/VERIFICATION_COMMANDS.md",
+    "what_shipped_template": "docs/ops/WHAT_SHIPPED.template.md",
+    "production_runbook": "docs/ops/production_redeploy_runbook.md"
+  }
+}
