@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f8baa7e9b12fd5f03dbeead156c0c75761ab0d54
+> Commit: 4f7373140c993d027898c2e19adf850302fc2652
 
 ```
 .
@@ -2482,6 +2482,7 @@
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
 │   ├── deploy
+│   │   ├── bootstrap_from_tag.sh
 │   │   └── verify_prod.sh
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
@@ -3359,7 +3360,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1086 directories, 2268 files
+1086 directories, 2269 files
 ```
 
 ## 📊 Stats
@@ -3367,7 +3368,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1250 |
-| Files | 3448 |
+| Files | 3449 |
 | Python files | 937 |
 | XML files | 462 |
 | Markdown files | 660 |
