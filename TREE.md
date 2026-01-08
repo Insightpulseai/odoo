@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 595f5a024a485d469368b097bb7e101a0be74102
+> Commit: 05f62f8ee3a7f051053f4846180d30e40acab668
 
 ```
 .
@@ -40,8 +40,13 @@
 ├── .githooks
 │   └── pre-commit
 ├── .github
+│   ├── ISSUE_TEMPLATE
+│   │   └── copilot_task.yml
+│   ├── agents
+│   │   └── odoo-oca-triage.agent.md
 │   ├── workflows
 │   │   ├── agent-preflight.yml
+│   │   ├── ai-naming-gate.yml
 │   │   ├── aiux-ship-gate.yml
 │   │   ├── all-green-gates.yml
 │   │   ├── audit-contract.yml
@@ -2013,6 +2018,7 @@
 │   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
+│   ├── AI_MODULE_NAMING_CONVENTION.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
@@ -2685,6 +2691,7 @@
 │   ├── update_tasks_after_import.py
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
+│   ├── validate_ai_naming.py
 │   ├── validate_m1.sh
 │   ├── validate_manifest.py
 │   ├── validate_manifests.py
@@ -3397,15 +3404,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1103 directories, 2289 files
+1105 directories, 2294 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1267 |
-| Files | 3482 |
-| Python files | 950 |
+| Directories | 1269 |
+| Files | 3487 |
+| Python files | 951 |
 | XML files | 458 |
-| Markdown files | 662 |
+| Markdown files | 664 |
