@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 05f62f8ee3a7f051053f4846180d30e40acab668
+> Commit: 95f6693782daa1bf0db91de3384b9fe2be00ca35
 
 ```
 .
@@ -3388,6 +3388,7 @@
 ├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
 ├── ppm_dashboard_views.xml
+├── pyproject.toml
 ├── query_memory.py
 ├── requirements.txt
 ├── ship_v1_1_0.sh
@@ -3404,7 +3405,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1105 directories, 2294 files
+1105 directories, 2295 files
 ```
 
 ## 📊 Stats
@@ -3412,7 +3413,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1269 |
-| Files | 3487 |
+| Files | 3488 |
 | Python files | 951 |
 | XML files | 458 |
 | Markdown files | 664 |
