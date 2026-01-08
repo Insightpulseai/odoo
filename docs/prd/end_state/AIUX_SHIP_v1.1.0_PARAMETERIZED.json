@@ -1,0 +1,280 @@
+{
+  "spec_version": "1.1.0",
+  "release": {
+    "name": "AIUX_SHIP",
+    "repo": "jgtolentino/odoo-ce",
+    "git_ref": "${GIT_REF}",
+    "default_tag": "ship-aiux-v1.1.0"
+  },
+  "deploy": {
+    "mode": "fresh_bootstrap",
+    "compose_file": "${COMPOSE_FILE}",
+    "compose_file_default": "deploy/docker-compose.prod.yml",
+    "services": {
+      "odoo": "${ODOO_SERVICE}",
+      "odoo_default": "odoo",
+      "db": "${DB_SERVICE}",
+      "db_default": "db",
+      "proxy": "${PROXY_SERVICE}",
+      "proxy_optional": true
+    },
+    "database": {
+      "name": "${ODOO_DB}",
+      "name_default": "odoo",
+      "host": "${DB_HOST}",
+      "host_default": "db",
+      "port": "${DB_PORT}",
+      "port_default": 5432,
+      "user": "${DB_USER}",
+      "user_default": "odoo",
+      "password": "${DB_PASSWORD}",
+      "password_required": true
+    },
+    "public": {
+      "base_url": "${PUBLIC_BASE_URL}",
+      "base_url_required": true,
+      "odoo_port": "${ODOO_PORT}",
+      "odoo_port_default": 8069,
+      "proxy_port": "${PROXY_PORT}",
+      "proxy_port_default": 80
+    },
+    "phases": [
+      "provision",
+      "db_up",
+      "odoo_up",
+      "install_or_upgrade",
+      "assets_rebuild",
+      "proxy_up",
+      "smoke_tests",
+      "publish_proofs"
+    ],
+    "gating": {
+      "fail_fast": true,
+      "no_public_exposure_before_smoke_tests": true
+    },
+    "health_checks": {
+      "db": {
+        "command": "pg_isready -U ${DB_USER} -d ${ODOO_DB}",
+        "interval_seconds": 10,
+        "timeout_seconds": 5,
+        "retries": 5,
+        "start_period_seconds": 30
+      },
+      "odoo": {
+        "command": "curl -fsS http://localhost:8069/web/health || exit 1",
+        "interval_seconds": 30,
+        "timeout_seconds": 10,
+        "retries": 3,
+        "start_period_seconds": 120,
+        "critical_note": "Odoo needs 120s start period - module loading takes time!"
+      }
+    }
+  },
+  "ship_modules": [
+    {
+      "name": "ipai_theme_aiux",
+      "required": true,
+      "maturity": "stub_v0",
+      "manifest_path": "addons/ipai/ipai_theme_aiux/__manifest__.py"
+    },
+    {
+      "name": "ipai_aiux_chat",
+      "required": true,
+      "maturity": "stub_v0",
+      "ui_mode_contract": ["minimize", "popup", "sidepanel"],
+      "ui_mode_forbidden": ["fullscreen"],
+      "manifest_path": "addons/ipai/ipai_aiux_chat/__manifest__.py"
+    },
+    {
+      "name": "ipai_ask_ai",
+      "required": true,
+      "manifest_path": "addons/ipai/ipai_ask_ai/__manifest__.py"
+    },
+    {
+      "name": "ipai_document_ai",
+      "required": true,
+      "manifest_path": "addons/ipai/ipai_document_ai/__manifest__.py"
+    },
+    {
+      "name": "ipai_expense_ocr",
+      "required": true,
+      "features": ["receipt_ocr", "dedupe_hash", "confidence_routing", "cron_queue"],
+      "manifest_path": "addons/ipai/ipai_expense_ocr/__manifest__.py"
+    }
+  ],
+  "integrations": {
+    "mailgun": {
+      "required": true,
+      "runbook_path": "ops/runbooks/mailgun_domain_verification.md",
+      "dns_verification_required": true,
+      "smtp_smoke_test_required": true,
+      "env_contract": [
+        "MAILGUN_DOMAIN",
+        "MAILGUN_SMTP_HOST",
+        "MAILGUN_SMTP_PORT",
+        "MAILGUN_API_KEY"
+      ],
+      "red_state_behavior": "email_disabled_gracefully"
+    },
+    "sinch": {
+      "required": true,
+      "runbook_path": "ops/runbooks/sinch_setup.md",
+      "console_url": "https://my.sinch.com/applications",
+      "sms_smoke_test_required": true,
+      "env_contract": [
+        "SINCH_SERVICE_PLAN_ID",
+        "SINCH_API_TOKEN"
+      ],
+      "red_state_behavior": "sms_disabled_gracefully"
+    },
+    "ocr_service": {
+      "required": true,
+      "runbook_path": "ops/runbooks/ocr_service.md",
+      "expense_runbook_path": "ops/runbooks/expenses_ocr_runbook.md",
+      "api_contract": {
+        "submit": {
+          "method": "POST",
+          "path": "/v1/ocr/receipts"
+        },
+        "status": {
+          "method": "GET",
+          "path": "/v1/ocr/jobs/{job_id}"
+        },
+        "result": {
+          "method": "GET",
+          "path": "/v1/ocr/jobs/{job_id}/result"
+        }
+      },
+      "env_contract": [
+        "OCR_API_BASE_URL",
+        "OCR_API_AUTH_TYPE",
+        "OCR_API_KEY"
+      ],
+      "red_state_behavior": "ocr_queue_paused"
+    }
+  },
+  "required_commands": {
+    "install_new_db": "docker compose -f ${COMPOSE_FILE} exec -T ${ODOO_SERVICE} odoo -d ${ODOO_DB} -i ${SHIP_MODULES} --stop-after-init",
+    "upgrade_existing_db": "docker compose -f ${COMPOSE_FILE} exec -T ${ODOO_SERVICE} odoo -d ${ODOO_DB} -u web,${SHIP_MODULES} --stop-after-init",
+    "restart_odoo": "docker compose -f ${COMPOSE_FILE} restart ${ODOO_SERVICE}",
+    "check_db_health": "docker compose -f ${COMPOSE_FILE} exec -T ${DB_SERVICE} psql -U ${DB_USER} -d ${ODOO_DB} -c 'SELECT 1'",
+    "check_odoo_health": "docker compose -f ${COMPOSE_FILE} exec -T ${ODOO_SERVICE} curl -fsS http://localhost:8069/web/health",
+    "view_odoo_logs": "docker compose -f ${COMPOSE_FILE} logs --tail=200 ${ODOO_SERVICE}",
+    "view_db_logs": "docker compose -f ${COMPOSE_FILE} logs --tail=200 ${DB_SERVICE}"
+  },
+  "smoke_tests": [
+    {
+      "name": "web_login",
+      "method": "GET",
+      "path": "/web/login",
+      "expect_status": 200,
+      "timeout_seconds": 30
+    },
+    {
+      "name": "web_root",
+      "method": "GET",
+      "path": "/web",
+      "expect_status": 200,
+      "timeout_seconds": 30
+    },
+    {
+      "name": "health_endpoint",
+      "method": "GET",
+      "path": "/web/health",
+      "expect_status": 200,
+      "timeout_seconds": 10
+    }
+  ],
+  "proofs": {
+    "dir": "artifacts/deploy_proofs/${RUN_ID}",
+    "dir_default": "artifacts/deploy_proofs/latest",
+    "include": [
+      "compose_config",
+      "env_vars_shape",
+      "service_ps",
+      "odoo_logs_tail",
+      "proxy_logs_tail",
+      "db_logs_tail",
+      "smoke_test_results",
+      "git_ref",
+      "module_list",
+      "health_check_results"
+    ]
+  },
+  "secrets_policy": {
+    "never_echo": true,
+    "never_log_full_values": true,
+    "repo_contains_no_secrets": true,
+    "secrets_sources": [
+      "github_actions_secrets",
+      "digitalocean_app_platform_env_vars",
+      "local_env_file"
+    ],
+    "allowed_in_logs": [
+      "service_names",
+      "db_name",
+      "port_numbers",
+      "compose_file_path"
+    ],
+    "never_in_logs": [
+      "DB_PASSWORD",
+      "ADMIN_PASSWD",
+      "API_KEYS",
+      "TOKENS"
+    ]
+  },
+  "failure_modes": {
+    "502_bad_gateway": {
+      "causes": [
+        "upstream container not reachable (crash loop / wrong target / not ready yet)",
+        "Odoo busy during module upgrade/asset compile while nginx serving traffic",
+        "proxy mismatch: longpoll/websocket routing missing, timeouts too low",
+        "health check not waited for (Odoo needs 120s start_period)"
+      ],
+      "prevention": [
+        "Wait for health checks before exposing to proxy",
+        "Use health check conditions in depends_on",
+        "Respect Odoo's 120s start_period",
+        "Configure proxy timeouts for module upgrades (5min+)"
+      ],
+      "triage_command": "docker compose -f ${COMPOSE_FILE} logs --tail=200 ${ODOO_SERVICE}"
+    },
+    "500_asset_errors": {
+      "causes": [
+        "stale assets after module changes",
+        "missing -u web upgrade step after install/upgrade",
+        "OWL templates changed but bundles not rebuilt"
+      ],
+      "prevention": [
+        "Always run: odoo -d ${ODOO_DB} -u web,${SHIP_MODULES} --stop-after-init",
+        "Restart Odoo after asset rebuild",
+        "Verify /web and /web/assets/ endpoints return 200"
+      ],
+      "fix_command": "docker compose -f ${COMPOSE_FILE} exec -T ${ODOO_SERVICE} odoo -d ${ODOO_DB} -u web,${SHIP_MODULES} --stop-after-init && docker compose -f ${COMPOSE_FILE} restart ${ODOO_SERVICE}"
+    }
+  },
+  "ci_gates": [
+    "aiux-ship-gate",
+    "guardrails",
+    "repo-structure",
+    "spec-kit-enforce"
+  ],
+  "verification_scripts": {
+    "install": "scripts/aiux/verify_install.sh",
+    "assets": "scripts/aiux/verify_assets.sh",
+    "production": "scripts/deploy/verify_prod.sh",
+    "bootstrap": "scripts/deploy/bootstrap_from_tag.sh"
+  },
+  "workspace": {
+    "name": "ipai_workspace",
+    "description": "InsightPulseAI mono workspace (odoo-ce)",
+    "vscode_workspace_file": ".vscode/ipai_workspace.code-workspace",
+    "tasks_resolved_from_compose": true,
+    "note": "All task commands use ${COMPOSE_FILE} and ${ODOO_SERVICE} - no hardcoded names"
+  },
+  "notes": {
+    "parameterization": "All values marked ${VAR_NAME} are runtime inputs, not hardcoded assumptions",
+    "drift_resistance": "By accepting service names/DB names as inputs, scripts work regardless of infrastructure changes",
+    "why_this_matters": "Container names can change (odoo-ce → odoo-app), DB names vary per env (odoo → odoo_prod), compose files move (deploy/ → infra/) - parameterization makes scripts resilient to these changes"
+  }
+}
