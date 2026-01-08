@@ -1,0 +1,15 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach: Odoo (debugpy in Docker)",
+      "type": "python",
+      "request": "attach",
+      "connect": { "host": "127.0.0.1", "port": 5678 },
+      "pathMappings": [
+        { "localRoot": "${workspaceFolder}", "remoteRoot": "/mnt" }
+      ],
+      "justMyCode": false
+    }
+  ]
+}
