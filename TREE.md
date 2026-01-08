@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 55ad8ab6c9e66105e93660c213915cb05f6eb364
+> Commit: bd28f4fac2228e124aa454f699afb958385b66a3
 
 ```
 .
@@ -256,6 +256,16 @@
 │   │   │   ├── security
 │   │   │   ├── wizards
 │   │   │   ├── README.rst
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_catalog_bridge
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ce_branding
@@ -1765,6 +1775,9 @@
 │   │   ├── EXTENDED_PLATFORM_API.md
 │   │   └── openapi.ipai_ai_platform.yaml
 │   ├── architecture
+│   │   ├── catalog
+│   │   │   ├── COPILOT_TOOLS_SCHEMA.md
+│   │   │   └── copilot_tools.openapi.json
 │   │   ├── runtime_snapshot
 │   │   │   └── README.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
@@ -2418,6 +2431,9 @@
 │   │   └── sinch_setup.md
 │   ├── DISASTER_RECOVERY.md
 │   └── backup-production.sh
+├── osi
+│   ├── osi_template.json
+│   └── osi_template.yaml
 ├── out
 │   ├── concur_demo
 │   │   └── catalog.json
@@ -2482,6 +2498,7 @@
 │   │   ├── introspect_feature_inventory.py
 │   │   ├── module_drift_gate.sh
 │   │   ├── run_odoo_tests.sh
+│   │   ├── schema_drift_check.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
 │   ├── deploy
@@ -2612,6 +2629,7 @@
 │   ├── generate_module_health_report.py
 │   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
+│   ├── generate_schema_artifacts.sh
 │   ├── generate_seed_xml.py
 │   ├── healthcheck_odoo.sh
 │   ├── hotfix_icon_crash.sh
@@ -2984,6 +3002,10 @@
 │       └── contracts.py
 ├── supabase
 │   ├── functions
+│   │   ├── catalog-sync
+│   │   │   └── index.ts
+│   │   ├── context-resolve
+│   │   │   └── index.ts
 │   │   ├── cron-processor
 │   │   │   └── index.ts
 │   │   ├── docs-ai-ask
@@ -3001,6 +3023,12 @@
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
 │   │   ├── schema-changed
+│   │   │   └── index.ts
+│   │   ├── semantic-export-osi
+│   │   │   └── index.ts
+│   │   ├── semantic-import-osi
+│   │   │   └── index.ts
+│   │   ├── semantic-query
 │   │   │   └── index.ts
 │   │   ├── sync-kb-to-schema
 │   │   │   └── index.ts
@@ -3070,6 +3098,9 @@
 │   │   ├── 20251227_supabase_queues_setup.sql
 │   │   ├── 202601030001_docs.sql
 │   │   ├── 20260106000001_kg_schema.sql
+│   │   ├── 202601080001_4500_CATALOG_UNITY_SCHEMA.sql
+│   │   ├── 202601080002_4501_CATALOG_SEMANTIC_LAYER.sql
+│   │   ├── 202601080003_4502_OPS_ODOO_BINDINGS.sql
 │   │   ├── AFC_DEPLOYMENT_SUMMARY.md
 │   │   └── RLS_DEPLOYMENT_COMPLETE.md
 │   ├── seed
@@ -3089,6 +3120,10 @@
 │   │   ├── 9004_analytics
 │   │   │   ├── 9004_analytics_kpi_registry_seed.sql
 │   │   │   └── 9004_analytics_superset_dashboard_seed.sql
+│   │   ├── 9005_catalog
+│   │   │   └── 9005_catalog_assets_tools.sql
+│   │   ├── 9006_catalog
+│   │   │   └── 9006_scout_suqi_semantic.sql
 │   │   └── 001_saas_feature_seed.sql
 │   ├── seeds
 │   │   ├── 001_hr_seed.sql
@@ -3181,6 +3216,11 @@
 │   │   │   ├── __init__.py
 │   │   │   └── generate.py
 │   │   └── pyproject.toml
+│   ├── odoo_schema
+│   │   ├── __init__.py
+│   │   ├── export_schema.py
+│   │   ├── schema_to_drawio.py
+│   │   └── schema_to_pydantic.py
 │   ├── parity
 │   │   ├── parity_audit.py
 │   │   └── validate_spec_kit.py
@@ -3364,15 +3404,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1086 directories, 2273 files
+1104 directories, 2295 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1250 |
-| Files | 3453 |
-| Python files | 937 |
-| XML files | 462 |
-| Markdown files | 662 |
+| Directories | 1269 |
+| Files | 3488 |
+| Python files | 951 |
+| XML files | 465 |
+| Markdown files | 663 |
