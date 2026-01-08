@@ -5,14 +5,14 @@
         <field name="name">ipai.approval.type.tree</field>
         <field name="model">ipai.approval.type</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="approval_type"/>
                 <field name="minimum_approvers"/>
                 <field name="request_count"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -95,7 +95,7 @@
     <record id="action_ipai_approval_type" model="ir.actions.act_window">
         <field name="name">Approval Types</field>
         <field name="res_model">ipai.approval.type</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first Approval Type

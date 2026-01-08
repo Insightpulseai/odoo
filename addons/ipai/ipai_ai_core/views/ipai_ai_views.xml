@@ -5,7 +5,7 @@
         <field name="name">ipai.ai.provider.tree</field>
         <field name="model">ipai.ai.provider</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="provider_type"/>
@@ -14,7 +14,7 @@
                 <field name="total_requests"/>
                 <field name="avg_latency_ms" widget="float" digits="[6,0]"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -58,7 +58,7 @@
         <field name="name">ipai.ai.thread.tree</field>
         <field name="model">ipai.ai.thread</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="create_date"/>
                 <field name="name"/>
                 <field name="provider_id"/>
@@ -66,7 +66,7 @@
                 <field name="message_count"/>
                 <field name="state"/>
                 <field name="external_thread_id" optional="hide"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -125,14 +125,14 @@
                     <notebook>
                         <page string="Messages">
                             <field name="message_ids" nolabel="1" readonly="1">
-                                <tree>
+                                <list>
                                     <field name="create_date"/>
                                     <field name="role"/>
                                     <field name="content" widget="text"/>
                                     <field name="citation_count"/>
                                     <field name="provider_latency_ms" optional="hide"/>
                                     <field name="confidence" optional="hide"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -150,7 +150,7 @@
         <field name="name">ipai.ai.message.tree</field>
         <field name="model">ipai.ai.message</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="create_date"/>
                 <field name="thread_id"/>
                 <field name="role"/>
@@ -158,7 +158,7 @@
                 <field name="citation_count"/>
                 <field name="provider_latency_ms"/>
                 <field name="confidence"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -188,13 +188,13 @@
                     <notebook>
                         <page string="Citations">
                             <field name="citation_ids" nolabel="1">
-                                <tree>
+                                <list>
                                     <field name="rank"/>
                                     <field name="title"/>
                                     <field name="url" widget="url"/>
                                     <field name="snippet"/>
                                     <field name="score"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

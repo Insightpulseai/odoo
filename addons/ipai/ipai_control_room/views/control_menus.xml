@@ -13,7 +13,7 @@
     <record id="action_control_room_overview" model="ir.actions.act_window">
         <field name="name">Overview</field>
         <field name="res_model">control.run</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('started_at', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]</field>
         <field name="context">{'search_default_running': 1, 'search_default_failed': 1}</field>
     </record>

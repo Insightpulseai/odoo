@@ -5,14 +5,14 @@
         <field name="name">ipai.kb.export.run.tree</field>
         <field name="model">ipai.kb.export.run</field>
         <field name="arch" type="xml">
-            <tree string="KB Export Runs" decoration-success="state == 'success'" decoration-danger="state == 'failed'" decoration-info="state == 'running'">
+            <list string="KB Export Runs" decoration-success="state == 'success'" decoration-danger="state == 'failed'" decoration-info="state == 'running'">
                 <field name="started_at"/>
                 <field name="state" widget="badge" decoration-success="state == 'success'" decoration-danger="state == 'failed'" decoration-info="state == 'running'"/>
                 <field name="chunks_count"/>
                 <field name="duration_seconds" widget="float_time"/>
                 <field name="completed_at"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -67,7 +67,7 @@
     <record id="action_ipai_kb_export_run" model="ir.actions.act_window">
         <field name="name">KB Export Runs</field>
         <field name="res_model">ipai.kb.export.run</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_ipai_kb_export_run_search"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
