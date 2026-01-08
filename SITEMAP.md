@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d6ba3372b0966d5eca27173448648baf955e0d3e
+> Commit: f79ae0c07fc7cf129dfa76c360884b1ee15ac1a4
 
 ## 📚 Documentation
 
@@ -300,6 +300,7 @@
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
+| [Runtime Snapshots](docs/architecture/runtime_snapshot/README.md) | docs/architecture/runtime_snapshot |
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |

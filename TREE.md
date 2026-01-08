@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d6ba3372b0966d5eca27173448648baf955e0d3e
+> Commit: f79ae0c07fc7cf129dfa76c360884b1ee15ac1a4
 
 ```
 .
@@ -1761,6 +1761,8 @@
 │   │   ├── EXTENDED_PLATFORM_API.md
 │   │   └── openapi.ipai_ai_platform.yaml
 │   ├── architecture
+│   │   ├── runtime_snapshot
+│   │   │   └── README.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
@@ -2604,6 +2606,7 @@
 │   ├── oca-update.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_mattermost_integration.py
+│   ├── odoo_runtime_snapshot.sh
 │   ├── odoo_smoke_close.sh
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
@@ -3326,15 +3329,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1079 directories, 2242 files
+1080 directories, 2244 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1243 |
-| Files | 3422 |
+| Directories | 1244 |
+| Files | 3424 |
 | Python files | 937 |
 | XML files | 462 |
-| Markdown files | 646 |
+| Markdown files | 647 |
