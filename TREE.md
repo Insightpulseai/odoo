@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bd28f4fac2228e124aa454f699afb958385b66a3
+> Commit: 7fb376e8779a3ec5f52e2d68eac9b6ae880f4489
 
 ```
 .
@@ -106,12 +106,14 @@
 ├── addons
 │   ├── OCA
 │   │   ├── account-financial-reporting
+│   │   ├── account-financial-tools -> ../../external-src/account-financial-tools
 │   │   ├── automation
 │   │   ├── dms
 │   │   ├── helpdesk
 │   │   ├── partner-contact
 │   │   ├── queue
 │   │   ├── reporting-engine
+│   │   ├── sale-workflow
 │   │   ├── server-auth
 │   │   ├── server-brand
 │   │   ├── server-tools
@@ -2619,6 +2621,7 @@
 │   ├── fix_oauth_button_odoo_core.sh
 │   ├── fix_odoo18_views.py
 │   ├── full_deploy_sanity.sh
+│   ├── gen_addons_path.py
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
 │   ├── generate_2026_finance_calendar.py
@@ -2639,6 +2642,7 @@
 │   ├── import_month_end_tasks.py
 │   ├── install-git-hooks.sh
 │   ├── install-notion-stack.sh
+│   ├── install-odoo-18-modules.sh
 │   ├── install_all_ipai_modules.sh
 │   ├── install_finance_stack.sh
 │   ├── install_ipai_finance_ppm.sh
@@ -2655,6 +2659,7 @@
 │   ├── oca-bootstrap.sh
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
+│   ├── odoo-18-oca-install.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_mattermost_integration.py
 │   ├── odoo_runtime_snapshot.sh
@@ -2699,6 +2704,7 @@
 │   ├── validate_manifests.py
 │   ├── validate_production.sh
 │   ├── verify-https.sh
+│   ├── verify-odoo-18-oca.sh
 │   ├── verify.sh
 │   ├── verify_backup.sh
 │   ├── verify_phase3.py
@@ -3376,6 +3382,7 @@
 ├── ipai_open_semantics_migrations_and_functions.zip
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
+├── oca-aggregate.yml
 ├── oca.lock.json
 ├── odoo-bin
 ├── odoo-ce-target.zip
@@ -3404,15 +3411,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1104 directories, 2295 files
+1106 directories, 2300 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1269 |
-| Files | 3488 |
-| Python files | 951 |
+| Directories | 1270 |
+| Files | 3493 |
+| Python files | 952 |
 | XML files | 465 |
 | Markdown files | 663 |
