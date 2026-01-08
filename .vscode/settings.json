@@ -1,4 +1,7 @@
 {
+  // Ensure Copilot Chat reads .github/copilot-instructions.md
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+
   "editor.rulers": [100],
   "editor.wordWrap": "on",
   "editor.minimap.enabled": false,
