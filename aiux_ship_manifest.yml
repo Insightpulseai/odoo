@@ -1,0 +1,204 @@
+# =============================================================================
+# AIUX Ship Manifest v1.1.0
+# =============================================================================
+# This manifest defines the modules and configuration for the AIUX ship bundle.
+# Used by CI/CD pipelines and deployment scripts.
+# =============================================================================
+
+version: "1.1.0"
+name: "IPAI AIUX Ship Bundle"
+repo: "jgtolentino/odoo-ce"
+ship_tag: "ship-aiux-v1.1.0"
+
+# -----------------------------------------------------------------------------
+# Modules to install (in dependency order)
+# -----------------------------------------------------------------------------
+modules:
+  # Theme foundation
+  - name: ipai_theme_aiux
+    path: addons/ipai/ipai_theme_aiux
+    type: theme
+    status: stub_v0
+    required: true
+    dependencies:
+      - base
+      - web
+
+  # Chat widget
+  - name: ipai_aiux_chat
+    path: addons/ipai/ipai_aiux_chat
+    type: widget
+    status: stub_v0
+    required: true
+    dependencies:
+      - base
+      - web
+      - mail
+    modes:
+      - minimize
+      - popup
+      - sidepanel
+
+  # Ask AI backend
+  - name: ipai_ask_ai
+    path: addons/ipai/ipai_ask_ai
+    type: backend
+    status: exists
+    required: true
+    dependencies:
+      - base
+      - mail
+      - project
+      - ipai_finance_ppm
+
+  # Document AI
+  - name: ipai_document_ai
+    path: addons/ipai/ipai_document_ai
+    type: backend
+    status: exists
+    required: true
+    dependencies:
+      - base
+
+  # Expense OCR
+  - name: ipai_expense_ocr
+    path: addons/ipai/ipai_expense_ocr
+    type: backend
+    status: exists
+    required: true
+    dependencies:
+      - base
+      - hr_expense
+      - mail
+
+# -----------------------------------------------------------------------------
+# Installation command
+# -----------------------------------------------------------------------------
+install:
+  command: |
+    odoo -d ${DB_NAME:-odoo} \
+      -i ipai_theme_aiux,ipai_aiux_chat,ipai_ask_ai,ipai_document_ai,ipai_expense_ocr \
+      --stop-after-init
+
+  upgrade_command: |
+    odoo -d ${DB_NAME:-odoo} \
+      -u ipai_theme_aiux,ipai_aiux_chat,ipai_ask_ai,ipai_document_ai,ipai_expense_ocr \
+      --stop-after-init
+
+# -----------------------------------------------------------------------------
+# Verification gates
+# -----------------------------------------------------------------------------
+verification:
+  scripts:
+    - scripts/aiux/verify_install.sh
+    - scripts/aiux/verify_assets.sh
+
+  health_gates:
+    - endpoint: /web/login
+      expected: 200
+    - endpoint: /web/health
+      expected: 200
+    - endpoint: /web/assets/debug/web.assets_backend.js
+      expected: 200
+
+  required_artifacts:
+    - module_install_log
+    - healthcheck_log
+    - manifest_version
+    - git_sha
+
+# -----------------------------------------------------------------------------
+# OCA Dependencies (recommended for production)
+# -----------------------------------------------------------------------------
+oca_dependencies:
+  - name: queue_job
+    repo: OCA/queue
+    branch: "18.0"
+    purpose: Async job processing for OCR and AI tasks
+    required: false
+
+  - name: base_technical_user
+    repo: OCA/server-backend
+    branch: "18.0"
+    purpose: Technical user management
+    required: false
+
+  - name: base_exception
+    repo: OCA/server-backend
+    branch: "18.0"
+    purpose: Exception handling framework
+    required: false
+
+# -----------------------------------------------------------------------------
+# Odoo Core Dependencies
+# -----------------------------------------------------------------------------
+odoo_core_dependencies:
+  - base
+  - web
+  - mail
+  - hr_expense
+  - project
+
+# -----------------------------------------------------------------------------
+# Operational runbooks
+# -----------------------------------------------------------------------------
+runbooks:
+  - path: ops/runbooks/mailgun_domain_verification.md
+    scope: email-domain-verification
+  - path: ops/runbooks/sinch_setup.md
+    scope: sms-otp-provider
+  - path: ops/runbooks/ocr_service.md
+    scope: document-ocr
+  - path: ops/runbooks/expenses_ocr_runbook.md
+    scope: expense-ocr-operations
+
+# -----------------------------------------------------------------------------
+# Environment variables (placeholders only - never include values)
+# -----------------------------------------------------------------------------
+env_vars:
+  required:
+    - DB_PASSWORD
+    - ADMIN_PASSWD
+  optional:
+    - MAILGUN_API_KEY
+    - MAILGUN_DOMAIN
+    - SINCH_SERVICE_PLAN_ID
+    - SINCH_API_TOKEN
+    - OCR_SERVICE_URL
+    - OCR_SERVICE_TOKEN
+
+# -----------------------------------------------------------------------------
+# CI/CD integration
+# -----------------------------------------------------------------------------
+ci:
+  workflow: .github/workflows/aiux-ship-gate.yml
+  triggers:
+    - push to main
+    - pull request to main
+    - workflow_dispatch
+
+# -----------------------------------------------------------------------------
+# Rollback Configuration
+# -----------------------------------------------------------------------------
+rollback:
+  strategy: tag_rollback
+  requires_db_restore_point: true
+  max_rollback_time_minutes: 30
+  procedure:
+    - "Stop current deployment"
+    - "Restore DB from backup if needed"
+    - "Deploy previous image tag"
+    - "Run verification scripts"
+    - "Update monitoring/alerts"
+
+# -----------------------------------------------------------------------------
+# Documentation References
+# -----------------------------------------------------------------------------
+documentation:
+  prd: docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md
+  redeploy_prd: docs/prd/ODOO18_DO_FRESH_REDEPLOY.md
+  end_state_spec: docs/prd/END_STATE_SPEC.json
+  go_live_checklist: docs/ops/GO_LIVE_CHECKLIST.md
+  prevent_502: docs/ops/PREVENT_502.md
+  verification_commands: docs/ops/VERIFICATION_COMMANDS.md
+  what_shipped_template: docs/ops/WHAT_SHIPPED.template.md
