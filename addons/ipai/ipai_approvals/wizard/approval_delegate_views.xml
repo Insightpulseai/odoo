@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Delegate Wizard Form View -->
+    <record id="view_ipai_approval_delegate_wizard_form" model="ir.ui.view">
+        <field name="name">ipai.approval.delegate.wizard.form</field>
+        <field name="model">ipai.approval.delegate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Delegate Approval">
+                <group>
+                    <field name="approver_id" invisible="1"/>
+                    <field name="delegate_to_id" options="{'no_create': True}"/>
+                    <field name="reason"/>
+                </group>
+                <footer>
+                    <button name="action_delegate" type="object" string="Delegate" class="oe_highlight"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Delegate Wizard Action -->
+    <record id="action_approval_delegate_wizard" model="ir.actions.act_window">
+        <field name="name">Delegate Approval</field>
+        <field name="res_model">ipai.approval.delegate.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
