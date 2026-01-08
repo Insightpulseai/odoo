@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f79ae0c07fc7cf129dfa76c360884b1ee15ac1a4
+> Commit: 457f738d1382366caefe0afb992a9916f2f37255
 
 ```
 .
@@ -76,6 +76,7 @@
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
+│   │   ├── no-deprecated-repo-refs.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
@@ -1768,6 +1769,7 @@
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
 │   │   ├── IPAI_AI_PLATFORM_ORD.md
 │   │   ├── README.md
+│   │   ├── SOURCE_OF_TRUTH.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
@@ -3329,7 +3331,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1080 directories, 2244 files
+1080 directories, 2246 files
 ```
 
 ## 📊 Stats
@@ -3337,7 +3339,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1244 |
-| Files | 3424 |
+| Files | 3426 |
 | Python files | 937 |
 | XML files | 462 |
-| Markdown files | 647 |
+| Markdown files | 648 |
