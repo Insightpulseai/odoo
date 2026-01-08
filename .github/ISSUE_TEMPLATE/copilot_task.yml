@@ -1,0 +1,136 @@
+name: "Copilot Task (WRAP)"
+description: "Atomic, agent-ready work item using WRAP methodology"
+title: "[AREA] <clear outcome>"
+labels: ["copilot-task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## WRAP Methodology
+        **W**rite effective issue → **R**efine instructions → **A**tomic tasks → **P**air with agent
+
+        Use this template for tasks that can be assigned to GitHub Copilot coding agent.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of the codebase does this affect?
+      options:
+        - odoo-ce (Odoo core)
+        - oca (OCA modules)
+        - ipai-addons (IPAI custom modules)
+        - ci-cd (GitHub Actions/workflows)
+        - docs (Documentation)
+        - infra (Infrastructure/deploy)
+        - scripts (Automation scripts)
+        - spec (Spec bundles)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Change Type
+      options:
+        - feat (new feature)
+        - fix (bug fix)
+        - refactor (code improvement)
+        - docs (documentation)
+        - test (testing)
+        - chore (maintenance)
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context (what/why)
+      description: Assume the assignee is new to the repo. Explain the problem and why it matters.
+      placeholder: |
+        **Problem**: What's not working or missing?
+        **Impact**: Why does this matter?
+        **Current behavior**: What happens now?
+        **Expected behavior**: What should happen?
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope (what to change)
+      description: Be specific about files, directories, and boundaries.
+      placeholder: |
+        **Files/dirs likely involved**:
+        - `addons/ipai/ipai_module_name/`
+        - `scripts/some_script.sh`
+
+        **In-scope**:
+        - Specific behavior to implement/fix
+
+        **Out-of-scope**:
+        - Related but separate concerns (create separate issues)
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria (must be testable)
+      description: Clear, verifiable conditions for completion.
+      placeholder: |
+        - [ ] Expected behavior works as described
+        - [ ] Tests added/updated for new behavior
+        - [ ] `./scripts/repo_health.sh` passes
+        - [ ] `./scripts/ci_local.sh` passes
+        - [ ] No Enterprise/IAP dependencies introduced
+    validations:
+      required: true
+
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints / Patterns to Follow
+      description: Important rules and examples to follow.
+      placeholder: |
+        **Module priority**: CE config → OCA → existing addons → custom
+        **Patterns to follow**: Link to existing similar code
+        **Security**: Respect ACL/record rules, no sudo() unless required
+        **Performance**: Any constraints?
+      value: |
+        - Follow CE → OCA → Add-ons → Custom priority order
+        - Keep changes atomic and reviewable
+        - Update tests alongside code changes
+    validations:
+      required: false
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification Commands
+      description: How to verify the change works.
+      placeholder: |
+        ```bash
+        # Start stack
+        docker compose up -d
+
+        # Run tests
+        ./scripts/ci/run_odoo_tests.sh ipai_module_name
+
+        # Verify specific behavior
+        curl -s http://localhost:8069/web/health | jq
+        ```
+    validations:
+      required: false
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Related docs, issues, or PRs.
+      placeholder: |
+        - Related spec: `spec/feature-name/prd.md`
+        - Similar implementation: `addons/ipai/other_module/`
+        - OCA module to consider: `OCA/module-name`
+    validations:
+      required: false
