@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 55ad8ab6c9e66105e93660c213915cb05f6eb364
+> Commit: bd28f4fac2228e124aa454f699afb958385b66a3
 
 ## 📚 Documentation
 
@@ -303,6 +303,7 @@
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
+| [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
 | [Runtime Snapshots](docs/architecture/runtime_snapshot/README.md) | docs/architecture/runtime_snapshot |
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
@@ -703,6 +704,7 @@
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
 | [ipai_auth_oauth_internal](./addons/ipai/ipai_auth_oauth_internal) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
+| [ipai_catalog_bridge](./addons/ipai/ipai_catalog_bridge) | ✅ |  |
 | [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
