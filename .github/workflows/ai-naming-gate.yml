@@ -1,0 +1,42 @@
+name: AI Module Naming Gate
+
+on:
+  push:
+    paths:
+      - 'addons/ipai/ipai_ai_*/**'
+  pull_request:
+    paths:
+      - 'addons/ipai/ipai_ai_*/**'
+
+jobs:
+  validate-ai-naming:
+    name: Validate AI Module Naming Conventions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run AI naming validator
+        run: |
+          python scripts/validate_ai_naming.py --verbose
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## AI Module Naming Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Validates that all \`ipai_ai_*\` modules follow OCA-aligned naming conventions:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- Module names match folder names" >> $GITHUB_STEP_SUMMARY
+          echo "- Model names start with \`ipai.ai.\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Security groups are named \`group_ipai_ai_*\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Routes start with \`/ipai/ai/\`" >> $GITHUB_STEP_SUMMARY
+          echo "- XML IDs are module-prefixed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "See [AI Module Naming Convention](../docs/AI_MODULE_NAMING_CONVENTION.md) for details." >> $GITHUB_STEP_SUMMARY
