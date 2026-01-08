@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 95f6693782daa1bf0db91de3384b9fe2be00ca35
+> Commit: 5abff2b155f4f1690b4f9e721f5b4ba8208f1913
 
 ```
 .
@@ -2187,6 +2187,8 @@
 │   │   │   ├── dev.parameters.json
 │   │   │   └── prod.parameters.json
 │   │   └── main.bicep
+│   ├── caddy
+│   │   └── Caddyfile
 │   ├── ce
 │   │   └── .gitkeep
 │   ├── ci
@@ -2227,10 +2229,15 @@
 │   │   └── collab-stack.md
 │   ├── mattermost
 │   │   └── channel_setup.json
+│   ├── stack
+│   │   ├── .env.example
+│   │   └── docker-compose.stack.yml
 │   └── superset
 │       ├── README.md
 │       ├── do-app-spec.yaml
+│       ├── entrypoint.sh
 │       ├── manifest.json
+│       ├── superset_config.py
 │       └── virtual_datasets.sql
 ├── inventory
 │   ├── latest -> runs/20251231T020517Z
@@ -2679,6 +2686,7 @@
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
+│   ├── stack_verify.sh
 │   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
 │   ├── sync_current_state.sh
@@ -2758,25 +2766,31 @@
 │   │       └── 90_odoo_mapping.yaml
 │   └── README.md
 ├── services
-│   └── notion-sync
-│       ├── config
-│       │   └── notion_mapping.yaml
-│       ├── notion_sync
-│       │   ├── __init__.py
-│       │   ├── client.py
-│       │   ├── config.py
-│       │   ├── databricks_writer.py
+│   ├── notion-sync
+│   │   ├── config
+│   │   │   └── notion_mapping.yaml
+│   │   ├── notion_sync
+│   │   │   ├── __init__.py
+│   │   │   ├── client.py
+│   │   │   ├── config.py
+│   │   │   ├── databricks_writer.py
+│   │   │   ├── main.py
+│   │   │   ├── models.py
+│   │   │   ├── sync.py
+│   │   │   └── transform.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   ├── conftest.py
+│   │   │   └── test_transform.py
+│   │   ├── .env.example
+│   │   ├── README.md
+│   │   └── pyproject.toml
+│   └── ocr
+│       ├── app
 │       │   ├── main.py
-│       │   ├── models.py
-│       │   ├── sync.py
-│       │   └── transform.py
-│       ├── tests
-│       │   ├── __init__.py
-│       │   ├── conftest.py
-│       │   └── test_transform.py
-│       ├── .env.example
-│       ├── README.md
-│       └── pyproject.toml
+│       │   └── pipeline.py
+│       ├── Dockerfile
+│       └── requirements.txt
 ├── skillpack
 │   └── manifest.json
 ├── skills
@@ -3405,15 +3419,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1105 directories, 2295 files
+1109 directories, 2305 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1269 |
-| Files | 3488 |
-| Python files | 951 |
+| Directories | 1273 |
+| Files | 3498 |
+| Python files | 954 |
 | XML files | 458 |
 | Markdown files | 664 |
