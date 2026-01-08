@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e0e3aaa8ca94412a6cd1e06b9e380c9662379c56
+> Commit: f8baa7e9b12fd5f03dbeead156c0c75761ab0d54
 
 ```
 .
@@ -93,7 +93,9 @@
 │   ├── sync-config.yaml
 │   └── sync.yaml
 ├── .vscode
+│   ├── README.md
 │   ├── extensions.json
+│   ├── ipai_workspace.code-workspace
 │   ├── launch.json
 │   ├── mcp-dev.code-workspace
 │   ├── mcp-prod.code-workspace
@@ -1956,6 +1958,8 @@
 │   │   ├── data-dictionary.md
 │   │   └── runbook.md
 │   ├── prd
+│   │   ├── end_state
+│   │   │   └── AIUX_SHIP_v1.1.0.json
 │   │   ├── END_STATE_SPEC.json
 │   │   ├── IPAI_SHIP_PRD_ODOO18_AIUX.md
 │   │   ├── ODOO18_DO_FRESH_REDEPLOY.md
@@ -3355,15 +3359,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1085 directories, 2265 files
+1086 directories, 2268 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1249 |
-| Files | 3445 |
+| Directories | 1250 |
+| Files | 3448 |
 | Python files | 937 |
 | XML files | 462 |
-| Markdown files | 659 |
+| Markdown files | 660 |
