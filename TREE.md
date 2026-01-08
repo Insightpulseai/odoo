@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ea2a963e9fa348df24d88e4887d0f2cd1223caf9
+> Commit: 55ad8ab6c9e66105e93660c213915cb05f6eb364
 
 ```
 .
@@ -3333,6 +3333,7 @@
 ├── install_ppm_monthly_close.sh
 ├── ipai_ce_branding_patch_v1.2.0.zip
 ├── ipai_finance_ppm_directory.csv
+├── ipai_open_semantics_migrations_and_functions.zip
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
 ├── oca.lock.json
@@ -3363,7 +3364,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1086 directories, 2272 files
+1086 directories, 2273 files
 ```
 
 ## 📊 Stats
@@ -3371,7 +3372,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1250 |
-| Files | 3452 |
+| Files | 3453 |
 | Python files | 937 |
 | XML files | 462 |
 | Markdown files | 662 |
