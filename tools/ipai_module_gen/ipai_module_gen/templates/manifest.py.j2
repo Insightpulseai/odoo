@@ -1,0 +1,32 @@
+# -*- coding: utf-8 -*-
+{
+    "name": "{{ summary }}",
+    "version": "{{ odoo_series }}.1.0.0",
+    "category": "IPAI",
+    "summary": "{{ summary }}",
+    "description": """
+{{ summary }}
+
+SAP Reference: {{ sap_id }}
+{% if sap_doc %}Documentation: {{ sap_doc }}{% endif %}
+
+This module is part of the IPAI platform for Odoo CE {{ odoo_series }}.
+""",
+    "author": "IPAI",
+    "website": "https://github.com/jgtolentino/odoo-ce",
+    "license": "LGPL-3",
+    "depends": [
+        {% for dep in depends %}
+        "{{ dep }}",
+        {% endfor %}
+    ],
+    "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
+        "views/views.xml",
+    ],
+    "demo": [],
+    "installable": True,
+    "application": False,
+    "auto_install": False,
+}
