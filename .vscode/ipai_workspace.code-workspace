@@ -1,0 +1,51 @@
+{
+  "folders": [
+    { "path": ".." }
+  ],
+  "settings": {
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+
+    "search.exclude": {
+      "**/.git": true,
+      "**/.venv": true,
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/artifacts": true,
+      "**/.odoo": true,
+      "**/.pytest_cache": true
+    },
+
+    "files.watcherExclude": {
+      "**/.git/**": true,
+      "**/node_modules/**": true,
+      "**/artifacts/**": true,
+      "**/.odoo/**": true,
+      "**/odoo/filestore/**": true
+    },
+
+    "terminal.integrated.defaultProfile.linux": "bash",
+    "terminal.integrated.defaultProfile.osx": "zsh",
+
+    "python.defaultInterpreterPath": "/usr/bin/python3",
+    "python.analysis.typeCheckingMode": "basic",
+
+    "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+    "prettier.requireConfig": true
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-azuretools.vscode-docker",
+      "ms-python.python",
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+      "redhat.vscode-yaml",
+      "tamasfe.even-better-toml",
+      "ms-vscode.makefile-tools"
+    ]
+  }
+}

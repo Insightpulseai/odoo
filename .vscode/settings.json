@@ -1,4 +1,7 @@
 {
+  "editor.rulers": [100],
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": false,
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "editor.formatOnSave": true,
@@ -23,7 +26,20 @@
     "**/.git": true,
     "**/.venv": true,
     "**/node_modules": true,
+    "**/dist": true,
+    "**/artifacts": true,
+    "**/.odoo": true,
     "**/.odoo-filestore": true,
     "**/.pytest_cache": true
+  },
+  "files.associations": {
+    "*.xml": "xml",
+    "*.mjs": "javascript",
+    "*.yml": "yaml",
+    "*.yaml": "yaml"
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+    "https://json.schemastore.org/github-action.json": ".github/action.yml"
   }
 }
