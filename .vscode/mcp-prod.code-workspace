@@ -1,0 +1,62 @@
+{
+  "folders": [
+    {
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "mcp.servers": {
+      "remote": {
+        "url": "wss://mcp.insightpulseai.net",
+        "enabled": true,
+        "priority": 1,
+        "auth": "${env:MCP_REMOTE_TOKEN}",
+        "description": "Remote Supabase-backed MCP for production"
+      },
+      "local": {
+        "url": "ws://localhost:8765",
+        "enabled": true,
+        "priority": 2,
+        "description": "Local SQLite-backed MCP (fallback)"
+      }
+    },
+    "mcp.preferredServer": "remote",
+    "python.analysis.extraPaths": [
+      "${workspaceFolder}/odoo",
+      "${workspaceFolder}/addons",
+      "${workspaceFolder}/oca"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+      "--load-plugins=pylint_odoo",
+      "--rcfile=${workspaceFolder}/.pylintrc"
+    ],
+    "files.associations": {
+      "*.xml": "xml",
+      "*.csv": "csv",
+      "odoo.conf": "ini",
+      "*.code-workspace": "jsonc"
+    },
+    "search.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true,
+      "**/mcp/local/data": true
+    },
+    "terminal.integrated.env.osx": {
+      "ODOO_INSTANCE": "odoo_erp",
+      "MCP_MODE": "prod",
+      "MCP_REMOTE_TOKEN": "${env:MCP_REMOTE_TOKEN}"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "odoo.odoo",
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "ms-python.debugpy",
+      "redhat.vscode-xml",
+      "ms-vscode-remote.remote-containers"
+    ]
+  }
+}
