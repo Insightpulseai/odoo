@@ -9,7 +9,7 @@
         <field name="name">project.task.phase.tree</field>
         <field name="model">project.task</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="project_id"/>
                 <field name="phase_type"/>
@@ -18,7 +18,7 @@
                 <field name="phase_baseline_finish"/>
                 <field name="phase_progress"/>
                 <field name="has_gate"/>
-            </tree>
+            </list>
         </field>
     </record>
 

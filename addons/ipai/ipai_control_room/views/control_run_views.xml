@@ -7,7 +7,7 @@
         <field name="name">control.run.tree</field>
         <field name="model">control.run</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="state == 'failed'"
+            <list decoration-danger="state == 'failed'"
                   decoration-success="state == 'succeeded'"
                   decoration-warning="state == 'running'"
                   decoration-muted="state == 'canceled'">
@@ -24,7 +24,7 @@
                 <field name="duration_s" widget="float_time"/>
                 <field name="progress_pct" widget="progressbar"/>
                 <field name="artifact_count"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -94,25 +94,25 @@
                     <notebook>
                         <page string="Events" name="events">
                             <field name="event_ids">
-                                <tree decoration-danger="level == 'error'"
+                                <list decoration-danger="level == 'error'"
                                       decoration-warning="level == 'warn'"
                                       decoration-muted="level == 'debug'">
                                     <field name="ts"/>
                                     <field name="level" widget="badge"/>
                                     <field name="message"/>
                                     <field name="step_id"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Artifacts" name="artifacts">
                             <field name="artifact_ids">
-                                <tree>
+                                <list>
                                     <field name="name"/>
                                     <field name="kind"/>
                                     <field name="storage"/>
                                     <field name="size_bytes"/>
                                     <field name="generated_at"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Context" name="context">
@@ -165,7 +165,7 @@
     <record id="action_control_run" model="ir.actions.act_window">
         <field name="name">Pipeline Runs</field>
         <field name="res_model">control.run</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -183,7 +183,7 @@
         <field name="name">control.run.event.tree</field>
         <field name="model">control.run.event</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="level == 'error'"
+            <list decoration-danger="level == 'error'"
                   decoration-warning="level == 'warn'"
                   decoration-muted="level == 'debug'">
                 <field name="ts"/>
@@ -195,7 +195,7 @@
                 <field name="message"/>
                 <field name="step_id"/>
                 <field name="external_ref"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -234,14 +234,14 @@
         <field name="name">control.artifact.tree</field>
         <field name="model">control.artifact</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="kind" widget="badge"/>
                 <field name="storage"/>
                 <field name="run_id"/>
                 <field name="size_bytes"/>
                 <field name="generated_at"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -295,7 +295,7 @@
     <record id="action_control_artifact" model="ir.actions.act_window">
         <field name="name">Artifacts</field>
         <field name="res_model">control.artifact</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- ==================== Schedule Views ==================== -->
@@ -304,7 +304,7 @@
         <field name="name">control.schedule.tree</field>
         <field name="model">control.schedule</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="schedule_type"/>
                 <field name="cron_expr" invisible="schedule_type != 'cron'"/>
@@ -312,7 +312,7 @@
                 <field name="next_run_at"/>
                 <field name="pipeline_count"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -347,11 +347,11 @@
                     <notebook>
                         <page string="Pipelines" name="pipelines">
                             <field name="pipeline_ids">
-                                <tree>
+                                <list>
                                     <field name="name"/>
                                     <field name="code"/>
                                     <field name="last_run_state"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Description" name="description">
@@ -366,6 +366,6 @@
     <record id="action_control_schedule" model="ir.actions.act_window">
         <field name="name">Schedules</field>
         <field name="res_model">control.schedule</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>

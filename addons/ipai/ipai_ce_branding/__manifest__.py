@@ -31,7 +31,12 @@
         "views/ce_branding_views.xml",
         "views/assets.xml",
     ],
-    "assets": {},
+    "assets": {
+        "web.assets_backend": [
+            "ipai_ce_branding/static/src/scss/login.scss",
+            "ipai_ce_branding/static/src/scss/branding.scss",
+        ],
+    },
     "installable": True,
     "application": False,
     "auto_install": False,
