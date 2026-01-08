@@ -1,0 +1,275 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Production Deploy Proof Schema",
+  "description": "Schema for deployment proof artifacts - required for every production deploy",
+  "type": "object",
+  "required": [
+    "deploy_id",
+    "timestamp",
+    "ship_version",
+    "git_sha",
+    "modules",
+    "health_checks",
+    "status"
+  ],
+  "properties": {
+    "deploy_id": {
+      "type": "string",
+      "description": "Unique deployment identifier",
+      "pattern": "^deploy-[0-9]{8}-[0-9]{6}$",
+      "examples": ["deploy-20260108-143022"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of deployment"
+    },
+    "ship_version": {
+      "type": "string",
+      "description": "Ship bundle version",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "examples": ["1.1.0"]
+    },
+    "git_sha": {
+      "type": "string",
+      "description": "Full Git commit SHA",
+      "pattern": "^[a-f0-9]{40}$"
+    },
+    "git_ref": {
+      "type": "string",
+      "description": "Git branch or tag",
+      "examples": ["main", "ship-aiux-v1.1.0"]
+    },
+    "modules": {
+      "type": "object",
+      "description": "Module installation status",
+      "required": ["installed", "install_log"],
+      "properties": {
+        "installed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "version", "state"],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "state": {
+                "type": "string",
+                "enum": ["installed", "to_install", "uninstalled"]
+              }
+            }
+          }
+        },
+        "install_log": {
+          "type": "string",
+          "description": "Path or content of installation log"
+        },
+        "install_duration_seconds": {
+          "type": "number",
+          "description": "Time taken for module installation"
+        }
+      }
+    },
+    "health_checks": {
+      "type": "object",
+      "description": "Results of health verification",
+      "required": ["login_page", "health_endpoint", "db_connectivity", "overall"],
+      "properties": {
+        "login_page": {
+          "type": "object",
+          "required": ["url", "status_code", "passed"],
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "status_code": {
+              "type": "integer"
+            },
+            "passed": {
+              "type": "boolean"
+            },
+            "response_time_ms": {
+              "type": "integer"
+            }
+          }
+        },
+        "health_endpoint": {
+          "type": "object",
+          "required": ["url", "status_code", "passed"],
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "status_code": {
+              "type": "integer"
+            },
+            "passed": {
+              "type": "boolean"
+            }
+          }
+        },
+        "assets_check": {
+          "type": "object",
+          "properties": {
+            "backend_js": {
+              "type": "boolean"
+            },
+            "backend_css": {
+              "type": "boolean"
+            },
+            "qweb_templates": {
+              "type": "boolean"
+            }
+          }
+        },
+        "db_connectivity": {
+          "type": "object",
+          "required": ["passed"],
+          "properties": {
+            "passed": {
+              "type": "boolean"
+            },
+            "database_name": {
+              "type": "string"
+            }
+          }
+        },
+        "longpolling": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "passed": {
+              "type": "boolean"
+            }
+          }
+        },
+        "overall": {
+          "type": "boolean",
+          "description": "True if all health checks passed"
+        },
+        "healthcheck_log": {
+          "type": "string",
+          "description": "Path or content of healthcheck log"
+        }
+      }
+    },
+    "container_status": {
+      "type": "object",
+      "properties": {
+        "odoo": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": ["running", "stopped", "restarting", "dead"]
+            },
+            "uptime": {
+              "type": "string"
+            }
+          }
+        },
+        "db": {
+          "type": "object",
+          "properties": {
+            "state": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "rollback_info": {
+      "type": "object",
+      "description": "Information for potential rollback",
+      "properties": {
+        "previous_sha": {
+          "type": "string"
+        },
+        "previous_tag": {
+          "type": "string"
+        },
+        "rollback_available": {
+          "type": "boolean"
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["success", "failed", "rolled_back"],
+      "description": "Final deployment status"
+    },
+    "error_message": {
+      "type": "string",
+      "description": "Error message if deployment failed"
+    }
+  },
+  "examples": [
+    {
+      "deploy_id": "deploy-20260108-143022",
+      "timestamp": "2026-01-08T14:30:22Z",
+      "ship_version": "1.1.0",
+      "git_sha": "abc123def456789012345678901234567890abcd",
+      "git_ref": "main",
+      "modules": {
+        "installed": [
+          {"name": "ipai_theme_aiux", "version": "18.0.0.1.0", "state": "installed"},
+          {"name": "ipai_aiux_chat", "version": "18.0.0.1.0", "state": "installed"},
+          {"name": "ipai_ask_ai", "version": "18.0.1.0.0", "state": "installed"},
+          {"name": "ipai_document_ai", "version": "18.0.1.0.0", "state": "installed"},
+          {"name": "ipai_expense_ocr", "version": "18.0.1.0.0", "state": "installed"}
+        ],
+        "install_log": "/var/log/odoo/install.log",
+        "install_duration_seconds": 45
+      },
+      "health_checks": {
+        "login_page": {
+          "url": "https://erp.insightpulseai.net/web/login",
+          "status_code": 200,
+          "passed": true,
+          "response_time_ms": 250
+        },
+        "health_endpoint": {
+          "url": "https://erp.insightpulseai.net/web/health",
+          "status_code": 200,
+          "passed": true
+        },
+        "assets_check": {
+          "backend_js": true,
+          "backend_css": true,
+          "qweb_templates": true
+        },
+        "db_connectivity": {
+          "passed": true,
+          "database_name": "odoo"
+        },
+        "longpolling": {
+          "url": "https://erp.insightpulseai.net/longpolling/poll",
+          "passed": true
+        },
+        "overall": true,
+        "healthcheck_log": "/var/log/odoo/healthcheck.log"
+      },
+      "container_status": {
+        "odoo": {
+          "state": "running",
+          "uptime": "5 minutes"
+        },
+        "db": {
+          "state": "running"
+        }
+      },
+      "rollback_info": {
+        "previous_sha": "def456abc789",
+        "previous_tag": "ship-aiux-v1.0.0",
+        "rollback_available": true
+      },
+      "status": "success"
+    }
+  ]
+}
