@@ -9,10 +9,19 @@
   "files.insertFinalNewline": true,
   "editor.formatOnSave": true,
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
-  "python.formatting.provider": "none",
+  "ruff.enable": true,
+  "ruff.format.args": ["--config", "pyproject.toml"],
   "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": [
+    "odoo",
+    "addons",
+    "addons/ipai",
+    "addons/OCA",
+    "addons/oca"
+  ],
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
