@@ -1,0 +1,144 @@
+# Plan — {{ cap.title }}
+
+> **SAP ID**: {{ cap.sap_id }}
+> **Slug**: {{ cap.slug }}
+
+## Architecture
+
+```
+┌──────────────────────────────────────────────────┐
+│                  {{ cap.title | center(40) }}    │
+├──────────────────────────────────────────────────┤
+│                                                  │
+│  ┌─────────────┐     ┌─────────────────────┐    │
+│  │   UI Layer  │────▶│   Business Logic    │    │
+│  └─────────────┘     └─────────────────────┘    │
+│         │                      │                │
+│         ▼                      ▼                │
+│  ┌─────────────┐     ┌─────────────────────┐    │
+│  │    Views    │     │      Models         │    │
+│  └─────────────┘     └─────────────────────┘    │
+│                              │                  │
+│                              ▼                  │
+│                      ┌───────────────┐          │
+│                      │  PostgreSQL   │          │
+│                      └───────────────┘          │
+└──────────────────────────────────────────────────┘
+```
+
+{% if odoo.module %}
+## Module Structure
+
+```
+addons/ipai/{{ odoo.module }}/
+├── __init__.py
+├── __manifest__.py
+├── README.md
+├── models/
+│   ├── __init__.py
+{% for model in odoo.models | default([]) %}
+│   └── {{ model.name.split('.')[-1] }}.py
+{% endfor %}
+├── views/
+│   └── views.xml
+├── security/
+│   ├── security.xml
+│   └── ir.model.access.csv
+└── data/
+```
+{% endif %}
+
+## Data Model
+
+{% for model in odoo.models | default([]) %}
+### {{ model.name }}
+
+{{ model.description | default('') }}
+
+| Field | Type | Description |
+|-------|------|-------------|
+| name | Char | Display name |
+| active | Boolean | Archive flag |
+| company_id | Many2one | Multi-company |
+| state | Selection | Workflow state |
+
+{% endfor %}
+
+## Implementation Phases
+
+### Phase 1: Foundation
+
+1. Create module scaffold
+2. Define data models
+3. Set up security groups and rules
+4. Basic CRUD views
+
+### Phase 2: Business Logic
+
+1. Implement core workflows
+2. Add validation rules
+3. Create computed fields
+4. Set up mail tracking
+
+### Phase 3: Integration
+
+1. Connect to related modules
+2. Add automation rules
+3. Configure notifications
+4. Set up scheduled actions
+
+### Phase 4: Polish
+
+1. Add demo data
+2. Write documentation
+3. Create tests
+4. Performance optimization
+
+## Dependencies
+
+### Required Modules
+
+{% for dep in odoo.depends | default(['base']) %}
+- `{{ dep }}`
+{% endfor %}
+
+### Optional Integrations
+
+- `mail` - Email notifications and activity tracking
+- `web` - Enhanced UI components
+
+## Security Model
+
+| Group | Read | Write | Create | Delete |
+|-------|------|-------|--------|--------|
+| User | Own | Own | Yes | No |
+| Manager | All | All | Yes | Yes |
+
+## API Endpoints
+
+[Define any custom endpoints if needed]
+
+## Testing Strategy
+
+### Unit Tests
+
+- Model validation
+- Security rules
+- Computed fields
+
+### Integration Tests
+
+- Workflow transitions
+- Module interactions
+
+### Manual Tests
+
+- UI functionality
+- Edge cases
+
+## Rollout Plan
+
+1. Development environment
+2. Staging validation
+3. Production deployment
+4. User training
