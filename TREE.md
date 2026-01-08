@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4f7373140c993d027898c2e19adf850302fc2652
+> Commit: 5a344f35231ba58ccbf5516ff53344b964361e52
 
 ```
 .
@@ -1959,7 +1959,9 @@
 │   │   └── runbook.md
 │   ├── prd
 │   │   ├── end_state
-│   │   │   └── AIUX_SHIP_v1.1.0.json
+│   │   │   ├── AIUX_SHIP_v1.1.0.json
+│   │   │   └── AIUX_SHIP_v1.1.0_PARAMETERIZED.json
+│   │   ├── AIUX_SHIP_PRD_v1.1.0.md
 │   │   ├── END_STATE_SPEC.json
 │   │   ├── IPAI_SHIP_PRD_ODOO18_AIUX.md
 │   │   ├── ODOO18_DO_FRESH_REDEPLOY.md
@@ -3360,7 +3362,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1086 directories, 2269 files
+1086 directories, 2271 files
 ```
 
 ## 📊 Stats
@@ -3368,7 +3370,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1250 |
-| Files | 3449 |
+| Files | 3451 |
 | Python files | 937 |
 | XML files | 462 |
-| Markdown files | 660 |
+| Markdown files | 661 |
