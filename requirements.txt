@@ -27,21 +27,45 @@ coverage==7.5.3
 debugpy==1.8.1
 ipython==8.25.0
 
-# ----- Database -----
-psycopg2-binary==2.9.9
-
-# ----- HTTP/API Testing -----
-requests==2.32.3
-httpx==0.27.0
-
 # ----- Documentation -----
 sphinx==7.3.7
 sphinx-rtd-theme==2.0.0
 
-# ----- Utilities -----
-python-dotenv==1.0.1
-pyyaml==6.0.1
-
 # ----- Odoo ORM Stubs (for IDE autocomplete) -----
 # Uncomment if using VS Code with Pylance
 # odoo-stubs==18.0.0
+
+# ===========================================
+# Cloud IDE / CI Runner Tooling
+# ===========================================
+# For Supabase migrations checks, edge-function
+# webhook checks via HTTP, DB introspection,
+# ERD export via DBML, and general ops scripting.
+# NOT Odoo-runtime (Odoo runs in its own container).
+# ===========================================
+
+# ----- Core Scripting -----
+python-dotenv==1.0.1
+pydantic==2.9.2
+pydantic-settings==2.5.2
+requests==2.32.3
+httpx==0.27.2
+tenacity==9.0.0
+rich==13.9.4
+pyyaml==6.0.2
+jinja2==3.1.5
+
+# ----- Postgres / Supabase DB Ops -----
+psycopg[binary]==3.2.3
+sqlalchemy==2.0.36
+
+# ----- Schema / ERD / Docs Generation -----
+dbml-to-sqlalchemy==0.9.0
+sqlalchemy_schemadisplay==1.3
+graphviz==0.20.3
+
+# ----- Schema Validation -----
+jsonschema==4.23.0
+
+# ----- CLI Ergonomics -----
+typer==0.12.5
