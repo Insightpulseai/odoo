@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6bbe81e9413c8036e1a826b80e3864d63c616c73
+> Commit: 32ce14e3fbf0868cf1bfed86465bf3a371208811
 
 ```
 .
@@ -2171,6 +2171,7 @@
 │   ├── MVP_GO_LIVE_CHECKLIST.md
 │   ├── N8N_CREDENTIALS_BOOTSTRAP.md
 │   ├── NAMING_CONVENTION_EQ_APP_TOOLS.md
+│   ├── OCA_CHORE_SCOPE.md
 │   ├── OCA_MIGRATION.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
@@ -3603,7 +3604,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1154 directories, 2444 files
+1154 directories, 2445 files
 ```
 
 ## 📊 Stats
@@ -3611,7 +3612,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1336 |
-| Files | 3699 |
+| Files | 3700 |
 | Python files | 988 |
 | XML files | 473 |
-| Markdown files | 708 |
+| Markdown files | 709 |
