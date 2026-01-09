@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9a0f511612f20eab14d9991e9c257b21c7b7022c
+> Commit: a934a67188618ee7e664e7501d54ffbee50fb387
 
 ```
 .
@@ -602,6 +602,7 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ppm_dashboard_canvas
+│   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ppm_monthly_close
 │   │   │   ├── data
@@ -3585,7 +3586,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1149 directories, 2431 files
+1149 directories, 2432 files
 ```
 
 ## 📊 Stats
@@ -3593,7 +3594,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1331 |
-| Files | 3681 |
-| Python files | 987 |
+| Files | 3682 |
+| Python files | 988 |
 | XML files | 472 |
 | Markdown files | 704 |
