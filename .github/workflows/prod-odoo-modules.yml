@@ -1,0 +1,183 @@
+name: Prod - Install/Upgrade Odoo Modules
+
+on:
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Comma-separated module names (e.g., ipai_workos_core,ipai_finance_ppm)'
+        required: true
+        type: string
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'upgrade'
+        type: choice
+        options:
+          - upgrade
+          - install
+          - verify_only
+      dry_run:
+        description: 'Dry run (verify manifests only, no DB changes)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  PROD_REPO_PATH: /root/odoo-ce
+
+jobs:
+  update_modules:
+    name: Update Odoo Modules
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate module names
+        run: |
+          MODULES="${{ inputs.modules }}"
+          echo "Validating modules: $MODULES"
+
+          # Check for invalid characters
+          if [[ "$MODULES" =~ [^a-zA-Z0-9_,] ]]; then
+            echo "ERROR: Invalid characters in module names"
+            echo "Only alphanumeric, underscore, and comma allowed"
+            exit 1
+          fi
+
+          # Count modules
+          IFS=',' read -ra MODS <<< "$MODULES"
+          echo "Module count: ${#MODS[@]}"
+          for mod in "${MODS[@]}"; do
+            echo "  - $mod"
+          done
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+
+      - name: Add host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Check module manifests (dry run)
+        if: ${{ inputs.dry_run || inputs.action == 'verify_only' }}
+        env:
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+          MODULES: ${{ inputs.modules }}
+        run: |
+          set -euo pipefail
+
+          echo "🔍 Checking module manifests..."
+
+          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << ENDSSH
+            set -euo pipefail
+            cd ${{ env.PROD_REPO_PATH }}
+
+            echo "📥 Pulling latest changes..."
+            git pull origin main || git pull origin master || true
+
+            IFS=',' read -ra MODS <<< "$MODULES"
+            for mod in "\${MODS[@]}"; do
+              manifest=""
+              for path in addons/ipai addons/OCA addons; do
+                if [ -f "\$path/\$mod/__manifest__.py" ]; then
+                  manifest="\$path/\$mod/__manifest__.py"
+                  break
+                fi
+              done
+
+              if [ -n "\$manifest" ]; then
+                echo "✅ \$mod: \$manifest"
+              else
+                echo "❌ \$mod: NOT FOUND"
+              fi
+            done
+          ENDSSH
+
+      - name: Update modules on production (gated)
+        if: ${{ !inputs.dry_run && inputs.action != 'verify_only' }}
+        env:
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          MODULES: ${{ inputs.modules }}
+          ACTION: ${{ inputs.action }}
+        run: |
+          set -euo pipefail
+
+          echo "🚀 Updating modules on production..."
+          echo "   Modules: $MODULES"
+          echo "   Action: $ACTION"
+
+          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << 'ENDSSH'
+            set -euo pipefail
+
+            cd ${{ env.PROD_REPO_PATH }}
+
+            echo "📥 Pulling latest changes..."
+            git pull origin main || git pull origin master || true
+
+            # Sync OCA modules if git-aggregator is used
+            if [ -f oca-aggregate.yml ] && [ -x scripts/sync_oca.sh ]; then
+              echo "🔄 Syncing OCA modules..."
+              ./scripts/sync_oca.sh
+            else
+              git submodule sync --recursive || true
+              git submodule update --init --recursive || true
+            fi
+
+            export ODOO_DB="${ODOO_DB:-odoo}"
+            export ODOO_MODULES="${MODULES}"
+
+            echo "🔒 Running dry-run gate (no DB changes)..."
+            ./scripts/ci_gate/gate_modules.sh
+
+            echo "⚙️ Running module update..."
+            ./scripts/odoo_update_modules.sh
+
+            echo "✅ Module update complete!"
+          ENDSSH
+
+      - name: Verify modules in database
+        if: ${{ !inputs.dry_run }}
+        env:
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          MODULES: ${{ inputs.modules }}
+        run: |
+          set -euo pipefail
+
+          echo "🔍 Verifying modules in database..."
+
+          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << 'ENDSSH'
+            set -euo pipefail
+
+            cd ${{ env.PROD_REPO_PATH }}
+
+            export ODOO_DB="${ODOO_DB:-odoo}"
+            export ODOO_MODULES="${MODULES}"
+
+            ./scripts/run_odoo_shell.sh scripts/odoo_verify_modules.py
+          ENDSSH
+
+      - name: Summary
+        run: |
+          echo "## Odoo Module Update Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Setting | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Modules | \`${{ inputs.modules }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Action | ${{ inputs.action }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dry Run | ${{ inputs.dry_run }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ✅ Complete |" >> $GITHUB_STEP_SUMMARY
