@@ -1,0 +1,140 @@
+name: Generate Release Documentation
+
+on:
+  push:
+    tags:
+      - 'prod-*'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., prod-20260109-1642)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for commit comparison
+
+      - name: Set release tag
+        id: tag
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "tag=${{ inputs.release_tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Generate release documentation
+        env:
+          RELEASE_TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          chmod +x ./scripts/generate_release_docs.sh
+          ./scripts/generate_release_docs.sh "$RELEASE_TAG"
+
+      - name: Collect deployment proofs
+        env:
+          RELEASE_TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          PROOFS_DIR="docs/releases/$RELEASE_TAG/DEPLOYMENT_PROOFS"
+
+          # Save workflow run info
+          cat > "$PROOFS_DIR/workflow_run.json" << EOF
+          {
+            "run_id": "${{ github.run_id }}",
+            "run_number": "${{ github.run_number }}",
+            "workflow": "${{ github.workflow }}",
+            "actor": "${{ github.actor }}",
+            "event_name": "${{ github.event_name }}",
+            "ref": "${{ github.ref }}",
+            "sha": "${{ github.sha }}",
+            "repository": "${{ github.repository }}",
+            "run_url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          }
+          EOF
+
+      - name: Commit and push documentation
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add docs/releases/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs(release): auto-generate docs for ${{ steps.tag.outputs.tag }} [skip ci]"
+            git push origin HEAD:main
+          fi
+
+      - name: Update GitHub Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          body: |
+            ## Release: ${{ steps.tag.outputs.tag }}
+
+            ### Documentation
+            - [What Shipped](https://github.com/${{ github.repository }}/blob/main/docs/releases/${{ steps.tag.outputs.tag }}/WHAT_SHIPPED.md)
+            - [Go-Live Manifest](https://github.com/${{ github.repository }}/blob/main/docs/releases/${{ steps.tag.outputs.tag }}/GO_LIVE_MANIFEST.md)
+            - [Deployment Proofs](https://github.com/${{ github.repository }}/tree/main/docs/releases/${{ steps.tag.outputs.tag }}/DEPLOYMENT_PROOFS)
+
+            ### Quick Links
+            - [Full Changelog](https://github.com/${{ github.repository }}/compare/${{ steps.tag.outputs.tag }}...main)
+            - [All Releases](https://github.com/${{ github.repository }}/releases)
+          append_body: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  collect-live-proofs:
+    runs-on: ubuntu-latest
+    needs: generate-docs
+    if: github.event_name == 'push'
+    continue-on-error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main  # Get latest with generated docs
+
+      - name: Set release tag
+        id: tag
+        run: echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Check production health
+        id: health
+        continue-on-error: true
+        run: |
+          PROOFS_DIR="docs/releases/${{ steps.tag.outputs.tag }}/DEPLOYMENT_PROOFS"
+          mkdir -p "$PROOFS_DIR"
+
+          # Try to get health headers (may fail if not deployed yet)
+          curl -sI https://erp.insightpulseai.net/web 2>&1 | head -15 > "$PROOFS_DIR/curl_health_headers.txt" || echo "HEALTH_CHECK_PENDING" > "$PROOFS_DIR/curl_health_headers.txt"
+
+          echo "Health check completed"
+
+      - name: Commit health proofs
+        if: steps.health.outcome == 'success'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add docs/releases/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "docs(release): add health proofs for ${{ steps.tag.outputs.tag }} [skip ci]"
+            git push origin HEAD:main
+          fi

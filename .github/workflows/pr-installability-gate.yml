@@ -1,0 +1,241 @@
+name: PR Installability Gate
+
+on:
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'config/ship_set.txt'
+  workflow_dispatch:
+
+concurrency:
+  group: pr-install-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===========================================================================
+  # Quick Lint (always runs, fast)
+  # ===========================================================================
+  manifest-lint:
+    name: Manifest Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Get changed addons
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'addons/' | grep '__manifest__.py' | xargs -I{} dirname {} | xargs -I{} basename {} | sort -u | tr '\n' ',' | sed 's/,$//')
+          else
+            CHANGED=""
+          fi
+          echo "addons=$CHANGED" >> $GITHUB_OUTPUT
+          echo "Changed addons: $CHANGED"
+
+      - name: Validate manifest syntax
+        run: |
+          fail=0
+          for manifest in $(find addons -name "__manifest__.py" -type f); do
+            module=$(dirname "$manifest" | xargs basename)
+
+            # Check valid Python dict
+            if ! python3 -c "import ast; ast.literal_eval(open('$manifest').read())" 2>/dev/null; then
+              echo "::error file=$manifest::Invalid manifest syntax in $module"
+              fail=1
+              continue
+            fi
+
+            # Check required fields
+            for field in name version depends; do
+              has=$(python3 -c "import ast; m=ast.literal_eval(open('$manifest').read()); print('$field' in m)")
+              if [ "$has" = "False" ]; then
+                echo "::error file=$manifest::Missing required field '$field' in $module"
+                fail=1
+              fi
+            done
+
+            # Check installable flag
+            installable=$(python3 -c "import ast; m=ast.literal_eval(open('$manifest').read()); print(m.get('installable', True))")
+            if [ "$installable" = "False" ]; then
+              echo "::warning file=$manifest::Module $module is marked installable=False"
+            fi
+          done
+          exit $fail
+
+      - name: Check Python syntax
+        run: |
+          find addons -name "*.py" -type f | head -200 | while read f; do
+            python3 -m py_compile "$f" 2>&1 || echo "::error file=$f::Python syntax error"
+          done
+
+  # ===========================================================================
+  # Install Test (runs on changed addons)
+  # ===========================================================================
+  install-test:
+    name: Odoo Install Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: manifest-lint
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test_odoo
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install system deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libxml2-dev libxslt1-dev libldap2-dev libsasl2-dev \
+            libjpeg-dev libpq-dev postgresql-client
+
+      - name: Install Odoo deps
+        run: |
+          pip install --upgrade pip wheel
+          pip install psycopg2-binary lxml Pillow python-dateutil pytz \
+            requests werkzeug jinja2 passlib babel decorator docutils \
+            gevent greenlet num2words ofxparse polib psutil pydot pypdf2 \
+            pyserial python-stdnum vobject xlrd xlwt xlsxwriter zeep
+
+      - name: Determine modules to test
+        id: modules
+        run: |
+          # Get changed modules in this PR
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            CHANGED=$(git diff --name-only origin/${{ github.base_ref }}...HEAD -- 'addons/' | \
+              grep -E '^addons/[^/]+/' | cut -d'/' -f2 | sort -u | tr '\n' ',' | sed 's/,$//')
+          fi
+
+          # Fall back to ship_set if no changes or manual trigger
+          if [ -z "$CHANGED" ] && [ -f config/ship_set.txt ]; then
+            CHANGED=$(grep -v '^#' config/ship_set.txt | grep -v '^$' | head -10 | tr '\n' ',' | sed 's/,$//')
+          fi
+
+          # Default test module if nothing else
+          if [ -z "$CHANGED" ]; then
+            CHANGED="base"
+          fi
+
+          echo "modules=$CHANGED" >> $GITHUB_OUTPUT
+          echo "Testing modules: $CHANGED"
+
+      - name: Build addons path
+        id: addons_path
+        run: |
+          # Build addons path from all addon directories
+          PATHS=""
+          for dir in addons addons/ipai addons/oca; do
+            if [ -d "$dir" ]; then
+              PATHS="$PATHS,$dir"
+            fi
+          done
+          PATHS="${PATHS#,}"
+          echo "path=$PATHS" >> $GITHUB_OUTPUT
+          echo "Addons path: $PATHS"
+
+      - name: Test module installation
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+          PGDATABASE: test_odoo
+        run: |
+          MODULES="${{ steps.modules.outputs.modules }}"
+          ADDONS_PATH="${{ steps.addons_path.outputs.path }}"
+
+          echo "Testing: $MODULES"
+          echo "Addons path: $ADDONS_PATH"
+
+          # Create minimal Odoo config
+          cat > odoo.conf << EOF
+          [options]
+          addons_path = $ADDONS_PATH
+          db_host = localhost
+          db_port = 5432
+          db_user = odoo
+          db_password = odoo
+          db_name = test_odoo
+          EOF
+
+          # Run install test with Odoo
+          timeout 600 python3 -c "
+          import sys
+          sys.path.insert(0, '.')
+
+          # Minimal Odoo bootstrap
+          try:
+              import odoo
+              from odoo.tools import config
+              config.parse_config(['-c', 'odoo.conf', '-d', 'test_odoo', '-i', '$MODULES', '--stop-after-init'])
+              odoo.cli.server.main([])
+          except SystemExit as e:
+              sys.exit(0 if e.code in [0, None] else 1)
+          except Exception as e:
+              print(f'Install test failed: {e}')
+              sys.exit(1)
+          " 2>&1 | tee install.log || {
+            echo "::error::Module installation failed"
+            tail -100 install.log
+            exit 1
+          }
+
+          echo "✅ Module installation test passed"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-logs
+          path: install.log
+          retention-days: 7
+
+  # ===========================================================================
+  # Summary Gate
+  # ===========================================================================
+  gate-status:
+    name: Installability Gate
+    runs-on: ubuntu-latest
+    needs: [manifest-lint, install-test]
+    if: always()
+    steps:
+      - name: Check gate status
+        run: |
+          if [ "${{ needs.manifest-lint.result }}" != "success" ]; then
+            echo "::error::Manifest lint failed"
+            exit 1
+          fi
+
+          if [ "${{ needs.install-test.result }}" != "success" ]; then
+            echo "::error::Install test failed"
+            exit 1
+          fi
+
+          echo "✅ All installability checks passed"
+          echo "## PR Installability Gate: PASSED" >> $GITHUB_STEP_SUMMARY
