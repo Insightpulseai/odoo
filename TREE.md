@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 52c69e170875e896e30ff0a96b4bac93b461ac2b
+> Commit: 6bbe81e9413c8036e1a826b80e3864d63c616c73
 
 ```
 .
@@ -1579,6 +1579,8 @@
 │   │   ├── 20260105_023833_seed.zip
 │   │   ├── 20260105_023848_seed.zip
 │   │   └── 20260105_023939_seed.zip
+│   ├── supabase_verify
+│   │   └── report.json
 │   ├── ce_oca_equivalents_audit.csv
 │   ├── ce_oca_equivalents_audit.json
 │   ├── ipai_install_upgrade_matrix.csv
@@ -2024,6 +2026,7 @@
 │   │   ├── README.md
 │   │   ├── RECOVERY.md
 │   │   ├── SHIP_VERIFICATION.md
+│   │   ├── SUPABASE_DEPLOYMENT_VERIFICATION.md
 │   │   ├── VERIFICATION_COMMANDS.md
 │   │   ├── WHAT_SHIPPED.template.md
 │   │   ├── drive_sync_runbook.md
@@ -2857,6 +2860,7 @@
 │   ├── verify_email_auth.sh
 │   ├── verify_phase3.py
 │   ├── verify_smtp.py
+│   ├── verify_supabase_deploy.sh
 │   ├── web_sandbox_verify.sh
 │   ├── wiki_sync.sh
 │   └── worktree-setup.sh
@@ -3599,15 +3603,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1153 directories, 2441 files
+1154 directories, 2444 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1335 |
-| Files | 3696 |
+| Directories | 1336 |
+| Files | 3699 |
 | Python files | 988 |
 | XML files | 473 |
-| Markdown files | 707 |
+| Markdown files | 708 |
