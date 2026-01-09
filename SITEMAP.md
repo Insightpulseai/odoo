@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5abff2b155f4f1690b4f9e721f5b4ba8208f1913
+> Commit: 7368e48d42e17a07c7c05662919ed597ab7eb9e8
 
 ## 📚 Documentation
 
@@ -202,6 +202,9 @@
 | [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
+| [Canonical Structure Enforcement Report](docs/CANONICAL_ENFORCEMENT_REPORT.md) | docs |
+| [Canonical Linting Rules](docs/CANONICAL_LINT.md) | docs |
+| [Canonical Structure & Namespace Map](docs/CANONICAL_MAP.md) | docs |
 | [CE/OCA Equivalents Audit Report](docs/CE_OCA_EQUIVALENTS_AUDIT.md) | docs |
 | [CE + OCA Project Stack Mapping (Odoo 18)](docs/CE_OCA_PROJECT_STACK.md) | docs |
 | [Claude Code Setup Guide](docs/CLAUDE_CODE_SETUP.md) | docs |
@@ -210,6 +213,7 @@
 | [DELIVERABLES & RELEASE CONTENTS](docs/DELIVERABLES_MANIFEST.md) | docs |
 | [Odoo CE 18 M1 Deployment Guide](docs/DEPLOYMENT.md) | docs |
 | [Deployment Guide: Finance Stack Health Monitoring & Automation](docs/DEPLOYMENT_GUIDE.md) | docs |
+| [Deployment Invariants & Health Contracts](docs/DEPLOYMENT_INVARIANTS.md) | docs |
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
 | [Odoo Developer Tools (Debug Mode) — IPAI Usage Guide](docs/DEVELOPER_TOOLS.md) | docs |
@@ -241,6 +245,7 @@
 | [Finance Stack Health Check System](docs/HEALTH_CHECK.md) | docs |
 | [Target Image Documentation](docs/IMAGE_GUIDE.md) | docs |
 | [Odoo CE v0.9.1 - Implementation Summary](docs/IMPLEMENTATION_SUMMARY.md) | docs |
+| [Repository Index](docs/INDEX.md) | docs |
 | [Odoo Industry Packs - OCA Dependencies Guide](docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md) | docs |
 | [Odoo CE/OCA 18 vs Enterprise Parity Analysis](docs/INDUSTRY_PARITY_ANALYSIS.md) | docs |
 | [IPAI Modules Index](docs/IPAI_MODULES_INDEX.md) | docs |
@@ -273,6 +278,8 @@
 | [Odoo 18 Programmatic Settings Configuration Guide](docs/ODOO_PROGRAMMATIC_CONFIG.md) | docs |
 | [Offline/Tarball Deployment Path](docs/OFFLINE_TARBALL_DEPLOYMENT.md) | docs |
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
+| [Odoo 18 CE Production Defaults - Canonical Configuration](docs/PRODUCTION_DEFAULTS.md) | docs |
+| [Production Deployment Checklist](docs/PRODUCTION_DEPLOYMENT_CHECKLIST.md) | docs |
 | [Production Hotfix Guide: OwlError & OAuth Loop](docs/PRODUCTION_HOTFIX.md) | docs |
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
 | [Production Snapshot Manifest](docs/PROD_SNAPSHOT_MANIFEST.md) | docs |
@@ -299,15 +306,18 @@
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [Extended Platform API Documentation](docs/api/EXTENDED_PLATFORM_API.md) | docs/api |
+| [Authentication & Authorization Model](docs/architecture/AUTH_MODEL.md) | docs/architecture |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
+| [Prod Runtime Snapshot (20260108_013846)](docs/architecture/runtime_snapshot/20260108_013846/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture/runtime_snapshot/20260108_013846 |
 | [Runtime Snapshots](docs/architecture/runtime_snapshot/README.md) | docs/architecture/runtime_snapshot |
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
+| [Email Authentication Setup Guide](docs/auth/EMAIL_AUTH_SETUP.md) | docs/auth |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
 | [Claude Code Setup Implementation Summary](docs/claude_code/IMPLEMENTATION_SUMMARY.md) | docs/claude_code |
 | [Claude Code Quick Reference Card](docs/claude_code/QUICK_REFERENCE.md) | docs/claude_code |
@@ -333,6 +343,7 @@
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
 | [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
+| [DNS Configuration and Mailgun Setup](docs/email/Mailgun_DNS.md) | docs/email |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
@@ -345,7 +356,11 @@
 | [IPAI Module Suite - System Architecture](docs/ipai/ARCHITECTURE.md) | docs/ipai |
 | [IPAI Module Suite - Changelog](docs/ipai/CHANGELOG.md) | docs/ipai |
 | [IPAI Module Suite - Installation Guide](docs/ipai/INSTALLATION.md) | docs/ipai |
+| [IPAI Module Deprecation Plan](docs/ipai/MODULE_DEPRECATION_PLAN.md) | docs/ipai |
+| [IPAI Module Evaluation Summary](docs/ipai/MODULE_EVALUATION_SUMMARY.md) | docs/ipai |
+| [IPAI Module Name Corrections](docs/ipai/MODULE_NAME_CORRECTIONS.md) | docs/ipai |
 | [IPAI Module Suite - Operations Runbook](docs/ipai/OPERATIONS_RUNBOOK.md) | docs/ipai |
+| [IPAI Install Profiles](docs/ipai/PROFILES.md) | docs/ipai |
 | [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
 | [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
 | [Module Production Readiness Status](docs/module-health/MODULES_PROD_STATUS.md) | docs/module-health |
@@ -428,9 +443,12 @@
 | [Odoo Developer Tools (Debug Mode) — How we use it in IPAI](docs/odoo/DEVELOPER_TOOLS.md) | docs/odoo |
 | [Antigravity MCP Configuration](docs/ops/ANTIGRAVITY_MCP.md) | docs/ops |
 | [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
+| [Execution Board - GitHub Projects Setup](docs/ops/EXECUTION_BOARD.md) | docs/ops |
 | [Kickoff → Go-Live Checklist (CE/OCA/IPAI)](docs/ops/GO_LIVE_CHECKLIST.md) | docs/ops |
 | [Local Dev (Docker Compose)](docs/ops/LOCAL_DEV.md) | docs/ops |
 | [Preventing 502 Bad Gateway Errors in Odoo](docs/ops/PREVENT_502.md) | docs/ops |
+| [Quick Start - Execution Board](docs/ops/QUICK_START.md) | docs/ops |
+| [Ops Control Room Documentation](docs/ops/README.md) | docs/ops |
 | [Production Recovery Runbook](docs/ops/RECOVERY.md) | docs/ops |
 | [Ship Verification Runbook](docs/ops/SHIP_VERIFICATION.md) | docs/ops |
 | [Verification Commands Reference](docs/ops/VERIFICATION_COMMANDS.md) | docs/ops |
@@ -456,6 +474,8 @@
 | [IPAI AIUX Ship PRD v1.1.0 (Complete, Production)](docs/prd/AIUX_SHIP_PRD_v1.1.0.md) | docs/prd |
 | [IPAI AIUX Ship Bundle PRD](docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md) | docs/prd |
 | [Odoo 18 CE Fresh Redeploy PRD](docs/prd/ODOO18_DO_FRESH_REDEPLOY.md) | docs/prd |
+| [Odoo Module Rationalization - Execution Checklist](docs/rationalization/EXECUTION_CHECKLIST.md) | docs/rationalization |
+| [Odoo Module Rationalization System](docs/rationalization/README.md) | docs/rationalization |
 | [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
 | [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
@@ -463,6 +483,7 @@
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
+| [Magic Link 500 Error: Complete Analysis & Fix](docs/troubleshooting/MAGIC_LINK_500_ERROR.md) | docs/troubleshooting |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Architecture](docs/wiki/Architecture.md) | docs/wiki |
 | [Configuration](docs/wiki/Configuration.md) | docs/wiki |
@@ -479,6 +500,7 @@
 | [How to Spend Company Money](handbook/finance/policies/spending.md) | handbook/finance/policies |
 | [Implementation Plan - Cheqroom Parity (Equipment Module)](implementation_plan.md) | . |
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
+| [AI Provider Router](infra/ai/provider_router/README.md) | infra/ai/provider_router |
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
 | [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
@@ -627,6 +649,11 @@
 | [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Implementation Plan](spec/odoo-mcp-server/plan.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Product Requirements](spec/odoo-mcp-server/prd.md) | spec/odoo-mcp-server |
+| [Ops Control Room — Deployment Integration Guide](spec/ops-control-room/DEPLOYMENT_INTEGRATION.md) | spec/ops-control-room |
+| [Ops Control Room — Constitution (Non-Negotiable Rules)](spec/ops-control-room/constitution.md) | spec/ops-control-room |
+| [Ops Control Room — Implementation Plan](spec/ops-control-room/plan.md) | spec/ops-control-room |
+| [Ops Control Room — Product Requirements Document (PRD)](spec/ops-control-room/prd.md) | spec/ops-control-room |
+| [Ops Control Room — Task Checklist](spec/ops-control-room/tasks.md) | spec/ops-control-room |
 | [Constitution — Parallel Control Planes](spec/parallel-control-planes/constitution.md) | spec/parallel-control-planes |
 | [Implementation Plan — Parallel Control Planes](spec/parallel-control-planes/plan.md) | spec/parallel-control-planes |
 | [Product Requirements — Parallel Control Planes](spec/parallel-control-planes/prd.md) | spec/parallel-control-planes |
