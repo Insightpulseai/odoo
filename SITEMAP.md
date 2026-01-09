@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: eeeedccf2004ef7e091852a583a84c03c666538f
+> Commit: 9a0f511612f20eab14d9991e9c257b21c7b7022c
 
 ## 📚 Documentation
 
@@ -786,6 +786,7 @@
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm](./addons/ipai/ipai_ppm) | ✅ |  |
 | [ipai_ppm_a1](./addons/ipai/ipai_ppm_a1) | ✅ |  |
+| [ipai_ppm_dashboard_canvas](./addons/ipai/ipai_ppm_dashboard_canvas) | ✅ | Clarity Canvas-style Project Dashboard with phases, milestones, tasks, to-dos, and OKR views |
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_gantt](./addons/ipai/ipai_project_gantt) | ✅ |  |
 | [ipai_project_profitability_bridge](./addons/ipai/ipai_project_profitability_bridge) | ✅ |  |
