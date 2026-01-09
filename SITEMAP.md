@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f93ad8a97ca32fd6f2ac91ef92c88046bb720456
+> Commit: 05476eee2d8a721ef8e455d5e75c5c589bf5e366
 
 ## 📚 Documentation
 
@@ -634,6 +634,10 @@
 | [Plan — Kapa-Reverse](spec/kapa-reverse/plan.md) | spec/kapa-reverse |
 | [PRD — Kapa-Reverse (Improved Knowledge Support AI)](spec/kapa-reverse/prd.md) | spec/kapa-reverse |
 | [Tasks — Kapa-Reverse](spec/kapa-reverse/tasks.md) | spec/kapa-reverse |
+| [Knowledge Graph — Constitution](spec/knowledge-graph/constitution.md) | spec/knowledge-graph |
+| [Knowledge Graph — Implementation Plan](spec/knowledge-graph/plan.md) | spec/knowledge-graph |
+| [Knowledge Graph — Product Requirements Document](spec/knowledge-graph/prd.md) | spec/knowledge-graph |
+| [Knowledge Graph — Tasks](spec/knowledge-graph/tasks.md) | spec/knowledge-graph |
 | [Constitution: Knowledge Hub](spec/knowledge-hub/constitution.md) | spec/knowledge-hub |
 | [Implementation Plan: Knowledge Hub](spec/knowledge-hub/plan.md) | spec/knowledge-hub |
 | [PRD: Knowledge Hub](spec/knowledge-hub/prd.md) | spec/knowledge-hub |
