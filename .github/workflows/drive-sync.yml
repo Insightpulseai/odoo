@@ -1,0 +1,80 @@
+name: Drive Sync
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: drive-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install deps
+        run: npm install
+
+      - name: Run sync
+        run: node scripts/drive_sync/sync_docs.mjs
+        env:
+          DRIVE_SYNC_MODE: pr
+          GOOGLE_CLIENT_EMAIL: ${{ secrets.GOOGLE_CLIENT_EMAIL }}
+          GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATE_KEY }}
+          GOOGLE_IMPERSONATE_USER: ${{ secrets.GOOGLE_IMPERSONATE_USER }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+
+      - name: Create diff patch (if any)
+        id: diff
+        run: |
+          git add -N .
+          if ! git diff --quiet; then
+            git diff > /tmp/drive-sync.diff
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drive-sync-artifacts
+          path: |
+            scripts/drive_sync/sync.log.json
+            scripts/drive_sync/drive_manifest.yml
+            /tmp/drive-sync.diff
+          if-no-files-found: ignore
+
+      - name: Create or update PR
+        if: steps.diff.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          title: "chore(drive): sync docs"
+          commit-message: "chore(drive): sync docs"
+          body: |
+            Automated sync from Google Drive based on `scripts/drive_sync/drive_manifest.yml`.
+
+            Artifacts attached in workflow run:
+            - sync.log.json
+            - drive-sync.diff (if produced)
+          branch: "automation/drive-sync"
+          delete-branch: false
+          labels: |
+            docs
+            automation

@@ -2,6 +2,7 @@
   "name": "odoo-ce-ipai",
   "version": "18.0.1.0.0",
   "private": true,
+  "type": "module",
   "description": "Odoo CE 18 with InsightPulse AI extensions and Master Control",
   "workspaces": [
     "packages/*",
@@ -17,7 +18,15 @@
     "lint:web": "npm --workspace @ipai/web run lint || true",
     "typecheck": "npm --workspace packages/github-app run typecheck || true",
     "typecheck:web": "npm --workspace @ipai/web run type-check || true",
-    "check-assets:web": "npm --workspace @ipai/web run check-assets"
+    "check-assets:web": "npm --workspace @ipai/web run check-assets",
+    "drive:sync": "node scripts/drive_sync/sync_docs.mjs",
+    "drive:verify": "DRIVE_SYNC_MODE=verify node scripts/drive_sync/sync_docs.mjs"
+  },
+  "dependencies": {
+    "googleapis": "^144.0.0",
+    "yaml": "^2.6.1",
+    "turndown": "^7.2.0",
+    "turndown-plugin-gfm": "^1.0.3"
   },
   "devDependencies": {
     "typescript": "^5.6.3"
