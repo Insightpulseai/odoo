@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6bbe81e9413c8036e1a826b80e3864d63c616c73
+> Commit: 32ce14e3fbf0868cf1bfed86465bf3a371208811
 
 ## 📚 Documentation
 
@@ -267,6 +267,7 @@
 | [Odoo CE MVP Go-Live Checklist](docs/MVP_GO_LIVE_CHECKLIST.md) | docs |
 | [n8n Credentials Bootstrap – Finance Stack](docs/N8N_CREDENTIALS_BOOTSTRAP.md) | docs |
 | [Naming Convention - Equivalent APP TOOLS](docs/NAMING_CONVENTION_EQ_APP_TOOLS.md) | docs |
+| [OCA-style "chore" Scope Conventions](docs/OCA_CHORE_SCOPE.md) | docs |
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
 | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
