@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 32ce14e3fbf0868cf1bfed86465bf3a371208811
+> Commit: 30fa4f05dd705491b2ae0430eda4d55fecb7f975
 
 ```
 .
@@ -2053,6 +2053,7 @@
 │   │   └── README.md
 │   ├── releases
 │   │   ├── DEPLOYMENT_PROOFS
+│   │   │   ├── prod-20260109-2219
 │   │   │   ├── README.md
 │   │   │   ├── deploy_run_166.json
 │   │   │   ├── deploy_run_166_jobs.json
@@ -2063,8 +2064,11 @@
 │   │   │   ├── WHAT_SHIPPED.json
 │   │   │   └── WHAT_SHIPPED.md
 │   │   ├── GO_LIVE_MANIFEST.md
+│   │   ├── GO_LIVE_MANIFEST_prod-20260109-2219.md
 │   │   ├── LATEST.json
 │   │   ├── LATEST.md
+│   │   ├── WHAT_DEPLOYED_prod-20260109-2219.json
+│   │   ├── WHAT_DEPLOYED_prod-20260109-2219.md
 │   │   ├── WHAT_SHIPPED.json
 │   │   └── WHAT_SHIPPED.md
 │   ├── repo
@@ -3604,15 +3608,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1154 directories, 2445 files
+1155 directories, 2448 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1336 |
-| Files | 3700 |
+| Directories | 1337 |
+| Files | 3704 |
 | Python files | 988 |
 | XML files | 473 |
-| Markdown files | 709 |
+| Markdown files | 712 |
