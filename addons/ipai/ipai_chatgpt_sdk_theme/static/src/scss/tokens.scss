@@ -247,3 +247,42 @@
   --ipai-chat-assistant-bg: var(--ipai-bg-subtle);
   --ipai-chat-assistant-fg: var(--ipai-fg);
 }
+
+// =============================================================================
+// TBWA Brand Token Overrides
+// =============================================================================
+// Overrides IPAI tokens with TBWA brand colors while preserving the design system structure
+// =============================================================================
+
+:root {
+  // TBWA Brand Colors
+  --tbwa-yellow: #ffc400;
+  --tbwa-yellow-hover: #e5ae00;
+  --tbwa-black: #0b0b0b;
+
+  // Override primary action colors with TBWA Yellow
+  --ipai-primary: var(--tbwa-yellow);
+  --ipai-primary-hover: var(--tbwa-yellow-hover);
+  --ipai-primary-active: #ccb800;
+  --ipai-primary-fg: var(--tbwa-black);
+
+  // Focus ring uses TBWA Yellow
+  --ipai-focus: rgba(255, 196, 0, 0.45);
+  --ipai-focus-ring: 0 0 0 3px var(--ipai-focus);
+  --ipai-input-border-focus: var(--tbwa-yellow);
+
+  // Background colors (light neutral for readability)
+  --ipai-bg: #f5f5f5;
+  --ipai-bg-subtle: #fafafa;
+  --ipai-bg-muted: #ebebeb;
+  --ipai-card-bg: #ffffff;
+
+  // Borders (light gray for enterprise ERP feel)
+  --ipai-border: #eaeaea;
+  --ipai-border-strong: #e0e0e0;
+
+  // Info state - Blue (not yellow)
+  --ipai-info: #2563EB;
+  --ipai-info-hover: #1D4ED8;
+  --ipai-info-bg: #DBEAFE;
+}

@@ -1,40 +1,26 @@
-# -*- coding: utf-8 -*-
 {
-    "name": "IPAI Theme TBWA (Backend)",
-    "summary": "TBWA brand skin - Black chrome + Yellow accent + Clean surfaces",
+    "name": "TBWA Backend Theme (IPAI)",
+    "summary": "TBWA black chrome + yellow primary accent for Odoo backend",
     "description": """
-IPAI Theme TBWA - Backend Branding
-==================================
-
-Applies TBWA corporate identity to Odoo backend:
-- Black chrome (navbar/topbar)
-- Yellow primary accent (#FFC400) for CTAs and active states
-- Clean white/gray surfaces for ERP readability
-- Consistent focus ring across all interactive elements
-
-This is a standalone theme module with no complex dependencies.
-Install this module to apply TBWA branding platform-wide.
-
-Token Scheme:
-- --tbwa-black: #0B0B0B (chrome)
-- --tbwa-yellow: #FFC400 (primary accent)
-- --bg: #F5F5F5 (background)
-- --surface: #FFFFFF (cards)
-- --border: #EAEAEA (borders)
-    """,
+TBWA backend theme for Odoo CE:
+- Black top chrome (navbar)
+- Yellow primary CTAs (Activate/Primary buttons)
+- White cards + light borders
+- Consistent focus ring
+""",
     "version": "18.0.1.0.0",
     "category": "Themes/Backend",
-    "license": "AGPL-3",
-    "author": "InsightPulse AI / TBWA",
-    "website": "https://insightpulseai.net",
-    "depends": [
-        "web",
-    ],
+    "author": "InsightPulseAI",
+    "website": "https://insightpulseai.com",
+    "license": "LGPL-3",
+    "depends": ["web"],
     "data": [
         "views/assets.xml",
     ],
     "assets": {},
+    "images": [
+        "static/description/banner.png",
+    ],
     "installable": True,
-    "application": False,
-    "auto_install": False,
+    "application": True,
 }

@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 14dba47ac20a4b29b18fa8613b669229099a3086
+> Commit: eeeedccf2004ef7e091852a583a84c03c666538f
 
 ```
 .
@@ -94,6 +94,8 @@
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
+│   │   ├── prod-configure-smtp.yml
+│   │   ├── prod-odoo-modules.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
@@ -696,6 +698,11 @@
 │   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_tbwa
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_tbwa_backend
 │   │   │   ├── static
 │   │   │   ├── __init__.py
@@ -1059,6 +1066,14 @@
 │   │   │   ├── ph_holiday_views.xml
 │   │   │   └── res_partner_views.xml
 │   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_theme_tbwa
+│   │   ├── static
+│   │   │   ├── description
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── assets.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_theme_tbwa_backend
@@ -1698,7 +1713,8 @@
 │   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
 │   │   ├── 202512070002_REORG_COPY_DATA.sql
 │   │   ├── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
-│   │   └── 202601060001_IPAI_KB_CHUNKS.sql
+│   │   ├── 202601060001_IPAI_KB_CHUNKS.sql
+│   │   └── 20260109_KG.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -2125,6 +2141,7 @@
 │   ├── IPAI_MODULE_INSTALLATION_ORDER.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
+│   ├── MAILGUN_DNS_SETUP.md
 │   ├── MATTERMOST_ALERTING_SETUP.md
 │   ├── MATTERMOST_CHATOPS_DEPLOYMENT.md
 │   ├── MCP_IMPLEMENTATION_STATUS.md
@@ -2175,6 +2192,7 @@
 │   ├── SUCCESS_CRITERIA.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
+│   ├── TBWA_THEME_DEPLOYMENT.md
 │   ├── TESTING_ODOO_18.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
@@ -2500,6 +2518,7 @@
 │   │   └── sinch_setup.md
 │   ├── DISASTER_RECOVERY.md
 │   └── backup-production.sh
+├── ops-control
 ├── osi
 │   ├── osi_template.json
 │   └── osi_template.yaml
@@ -2571,6 +2590,10 @@
 │   │   ├── schema_drift_check.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
+│   ├── ci_gate
+│   │   ├── compute_addons_roots.sh
+│   │   ├── gate_modules.sh
+│   │   └── module_gate.py
 │   ├── deploy
 │   │   ├── bootstrap_from_tag.sh
 │   │   ├── deploy-prod-e2e.sh
@@ -2667,6 +2690,7 @@
 │   ├── configure_google_oauth.sh
 │   ├── configure_mailgun_smtp.py
 │   ├── configure_sendgrid_smtp.py
+│   ├── configure_smtp.py
 │   ├── configure_zoho_smtp.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
@@ -2674,11 +2698,13 @@
 │   ├── count_xml_seeds.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
+│   ├── db_verify.sh
 │   ├── delete_user_safe.sh
 │   ├── deploy-bir-compliance.sh
 │   ├── deploy-december-2025-bir-tasks.sh
 │   ├── deploy-n8n-workflows.sh
 │   ├── deploy-odoo-modules.sh
+│   ├── deploy-tbwa-theme-tokens.sh
 │   ├── deploy-to-server.sh
 │   ├── deploy_afc_rag.sh
 │   ├── deploy_complete_fix.sh
@@ -2756,6 +2782,8 @@
 │   ├── odoo_rationalization.sh
 │   ├── odoo_runtime_snapshot.sh
 │   ├── odoo_smoke_close.sh
+│   ├── odoo_update_modules.sh
+│   ├── odoo_verify_modules.py
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
 │   ├── policy-check.sh
@@ -2770,6 +2798,7 @@
 │   ├── report_stale_branches.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
+│   ├── run_odoo_shell.sh
 │   ├── run_project_introspection.sh
 │   ├── scan_ipai_modules.py
 │   ├── seed_finance_close_from_xlsx.py
@@ -2811,6 +2840,8 @@
 │   ├── verify_backup.sh
 │   ├── verify_email_auth.sh
 │   ├── verify_phase3.py
+│   ├── verify_smtp.py
+│   ├── web_sandbox_verify.sh
 │   ├── wiki_sync.sh
 │   └── worktree-setup.sh
 ├── seed_export
@@ -3034,6 +3065,12 @@
 │   │   └── tasks.md
 │   ├── kapa-reverse
 │   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── knowledge-graph
+│   │   ├── constitution.md
+│   │   ├── create-issues.sh
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
@@ -3420,6 +3457,7 @@
 ├── CI_CD_TROUBLESHOOTING_GUIDE.md
 ├── CI_MINIMAL_SET.md
 ├── CLAUDE.md
+├── CLAUDE_CODE_WEB.md
 ├── CLAUDE_NEW.md
 ├── COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
 ├── CONTRIBUTING.md
@@ -3480,6 +3518,7 @@
 ├── aiux_ship_manifest.yml
 ├── bir_deadlines_2026.csv
 ├── branch_protection.json
+├── claude.md
 ├── constitution.md
 ├── custom_module_inventory.md
 ├── deploy_m1.sh.template
@@ -3511,6 +3550,7 @@
 ├── ipai_ce_branding_patch_v1.2.0.zip
 ├── ipai_finance_ppm_directory.csv
 ├── ipai_open_semantics_migrations_and_functions.zip
+├── ipai_theme_tbwa_18.0.1.0.0.zip
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
 ├── oca-aggregate.yml
@@ -3543,15 +3583,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1137 directories, 2401 files
+1148 directories, 2430 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1316 |
-| Files | 3645 |
-| Python files | 978 |
-| XML files | 470 |
-| Markdown files | 696 |
+| Directories | 1330 |
+| Files | 3680 |
+| Python files | 986 |
+| XML files | 472 |
+| Markdown files | 704 |

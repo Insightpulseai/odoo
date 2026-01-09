@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- TBWA Backend Theme Assets -->
     <template id="assets_backend" inherit_id="web.assets_backend" name="TBWA Backend Theme Assets">
         <xpath expr="." position="inside">
             <link rel="stylesheet" type="text/scss" href="/ipai_theme_tbwa/static/src/scss/tbwa_backend.scss"/>

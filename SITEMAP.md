@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 14dba47ac20a4b29b18fa8613b669229099a3086
+> Commit: eeeedccf2004ef7e091852a583a84c03c666538f
 
 ## 📚 Documentation
 
@@ -33,6 +33,7 @@
 | [CI/CD Troubleshooting Guide - GitHub Actions Database Connection](CI_CD_TROUBLESHOOTING_GUIDE.md) | . |
 | [CI Minimal Set - Workflow Reduction Plan](CI_MINIMAL_SET.md) | . |
 | [CLAUDE.md — Odoo CE Project](CLAUDE.md) | . |
+| [Claude Code Web (Cloud Sandbox) Execution Contract](CLAUDE_CODE_WEB.md) | . |
 | [InsightPulse Odoo (Delta Architecture)](CLAUDE_NEW.md) | . |
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
 | [Contributing to Odoo CE](CONTRIBUTING.md) | . |
@@ -175,6 +176,7 @@
 | [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
+| [claude.md (Cloud-Agent Contract for Odoo 18 CE + OCA Repos)](claude.md) | . |
 | [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
 | [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
 | [BIR Compliance & Month-End Closing - Final Deployment Report](claudedocs/FINAL_DEPLOYMENT_REPORT.md) | claudedocs |
@@ -253,6 +255,7 @@
 | [IPAI Module Installation Order](docs/IPAI_MODULE_INSTALLATION_ORDER.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
+| [Mailgun DNS Setup for mg.insightpulseai.net](docs/MAILGUN_DNS_SETUP.md) | docs |
 | [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
 | [Mattermost ChatOps Deployment Guide](docs/MATTERMOST_CHATOPS_DEPLOYMENT.md) | docs |
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |
@@ -302,6 +305,7 @@
 | [Success Criteria - Production Hotfix](docs/SUCCESS_CRITERIA.md) | docs |
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
+| [TBWA Theme Token Alignment - Deployment Guide](docs/TBWA_THEME_DEPLOYMENT.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
@@ -633,6 +637,10 @@
 | [Plan — Kapa-Reverse](spec/kapa-reverse/plan.md) | spec/kapa-reverse |
 | [PRD — Kapa-Reverse (Improved Knowledge Support AI)](spec/kapa-reverse/prd.md) | spec/kapa-reverse |
 | [Tasks — Kapa-Reverse](spec/kapa-reverse/tasks.md) | spec/kapa-reverse |
+| [Knowledge Graph — Constitution](spec/knowledge-graph/constitution.md) | spec/knowledge-graph |
+| [Knowledge Graph — Implementation Plan](spec/knowledge-graph/plan.md) | spec/knowledge-graph |
+| [Knowledge Graph — Product Requirements Document](spec/knowledge-graph/prd.md) | spec/knowledge-graph |
+| [Knowledge Graph — Tasks](spec/knowledge-graph/tasks.md) | spec/knowledge-graph |
 | [Constitution: Knowledge Hub](spec/knowledge-hub/constitution.md) | spec/knowledge-hub |
 | [Implementation Plan: Knowledge Hub](spec/knowledge-hub/plan.md) | spec/knowledge-hub |
 | [PRD: Knowledge Hub](spec/knowledge-hub/prd.md) | spec/knowledge-hub |
@@ -791,6 +799,7 @@
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
+| [ipai_theme_tbwa](./addons/ipai/ipai_theme_tbwa) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |
 | [ipai_v18_compat](./addons/ipai/ipai_v18_compat) | ✅ |  |
@@ -818,6 +827,7 @@
 | [ipai_sms_gateway](./addons/ipai_sms_gateway) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai_superset_connector) | ✅ |  |
 | [ipai_tbwa_finance](./addons/ipai_tbwa_finance) | ✅ |  |
+| [ipai_theme_tbwa](./addons/ipai_theme_tbwa) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_web_theme_chatgpt](./addons/ipai_web_theme_chatgpt) | ✅ |  |
 | [ipai_workos_affine](./addons/ipai_workos_affine) | ✅ |  |

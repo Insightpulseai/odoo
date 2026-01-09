@@ -1,390 +1,87 @@
-// =============================================================================
-// TBWA Backend Theme - Platform Tokens + Component Overrides
-// =============================================================================
-// Single-file theme applying TBWA corporate identity to Odoo backend.
-// Black chrome + Yellow accent + Clean surfaces.
-// =============================================================================
-
-// =============================================================================
-// TBWA PLATFORM TOKENS
-// =============================================================================
+// TBWA Backend Theme for Odoo CE
+// Black chrome + yellow primary accent
 
 :root {
-  // Brand colors
-  --tbwa-black: #0b0b0b;
-  --tbwa-yellow: #ffc400;
-  --tbwa-yellow-hover: #e5ae00;
-  --tbwa-yellow-light: rgba(255, 196, 0, 0.16);
+    --tbwa-black: #0b0b0b;
+    --tbwa-yellow: #ffc400;       /* set to #f8d421 for exact screenshot match */
+    --tbwa-yellow-hover: #e5ae00;
 
-  // Surface colors
-  --bg: #f5f5f5;
-  --surface: #ffffff;
-  --border: #eaeaea;
+    --bg: #f5f5f5;
+    --surface: #ffffff;
+    --border: #eaeaea;
 
-  // Text colors
-  --text: #111111;
-  --muted: #6b6b6b;
+    --text: #111111;
+    --muted: #6b6b6b;
 
-  // Semantic
-  --ring: rgba(255, 196, 0, 0.45);
-  --secondary: #3f96f1;
-
-  // Odoo variable mappings
-  --o-brand-primary: var(--tbwa-yellow);
-  --o-brand-odoo: var(--tbwa-yellow);
+    --ring: rgba(255, 196, 0, 0.45);
 }
 
-// =============================================================================
-// ODOO SCSS VARIABLES (best-effort override)
-// =============================================================================
-
-$o-brand-primary: #0b0b0b !default;
-$o-brand-odoo: #ffc400 !default;
-
-// =============================================================================
-// CORE CHROME - Navbar/Topbar
-// =============================================================================
+/* Odoo vars (best-effort) */
+$o-brand-primary: #0b0b0b !default; /* chrome */
+$o-brand-odoo: #ffc400 !default;    /* accent */
 
 .o_web_client,
 .o_action_manager,
 .o_content {
-  background: var(--bg) !important;
-  color: var(--text);
+    background: var(--bg) !important;
+    color: var(--text);
 }
 
+/* Top chrome */
 .o_main_navbar {
-  background: var(--tbwa-black) !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    background: var(--tbwa-black) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
 .o_main_navbar,
 .o_main_navbar a,
 .o_main_navbar .dropdown-toggle,
 .o_main_navbar .o_menu_brand {
-  color: #fff !important;
+    color: #fff !important;
 }
 
 .o_main_navbar .o_menu_systray .dropdown-toggle:hover,
 .o_main_navbar .o_menu_systray .dropdown-toggle:focus {
-  background: rgba(255, 196, 0, 0.10) !important;
+    background: rgba(255, 196, 0, 0.10) !important;
 }
 
-// App menu hover states
-.o_main_navbar .o_navbar_apps_menu .dropdown-toggle:hover {
-  background: rgba(255, 196, 0, 0.10) !important;
-}
-
-.o_main_navbar .o_menu_sections > .dropdown > .dropdown-toggle:hover,
-.o_main_navbar .o_menu_sections > .dropdown.show > .dropdown-toggle {
-  background: rgba(255, 196, 0, 0.14) !important;
-}
-
-// =============================================================================
-// BUTTONS - Primary CTA
-// =============================================================================
-
+/* Primary CTA */
 .btn-primary,
 .btn-primary:active,
 .btn-primary:focus {
-  background: var(--tbwa-yellow) !important;
-  border-color: var(--tbwa-yellow) !important;
-  color: var(--text) !important;
-  font-weight: 600;
+    background: var(--tbwa-yellow) !important;
+    border-color: var(--tbwa-yellow) !important;
+    color: var(--text) !important;
 }
 
 .btn-primary:hover {
-  background: var(--tbwa-yellow-hover) !important;
-  border-color: var(--tbwa-yellow-hover) !important;
-  color: var(--text) !important;
+    background: var(--tbwa-yellow-hover) !important;
+    border-color: var(--tbwa-yellow-hover) !important;
 }
 
-.btn-primary:disabled,
-.btn-primary.disabled {
-  background: var(--tbwa-yellow) !important;
-  border-color: var(--tbwa-yellow) !important;
-  color: rgba(17, 17, 17, 0.5) !important;
-  opacity: 0.65;
-}
-
-// Outline primary
-.btn-outline-primary {
-  color: var(--text);
-  border-color: var(--tbwa-yellow);
-
-  &:hover {
-    background: var(--tbwa-yellow);
-    border-color: var(--tbwa-yellow);
-    color: var(--text);
-  }
-}
-
-// =============================================================================
-// BADGES & PILLS
-// =============================================================================
-
-.badge-primary,
-.badge.bg-primary {
-  background: var(--tbwa-yellow-light) !important;
-  border: 1px solid rgba(255, 196, 0, 0.35) !important;
-  color: var(--text) !important;
-}
-
-// Status bar pills
-.o_statusbar_status .btn-primary,
-.o_field_statusbar .btn-primary {
-  background: var(--tbwa-yellow-light) !important;
-  border: 1px solid rgba(255, 196, 0, 0.35) !important;
-  color: var(--text) !important;
-}
-
-.o_statusbar_status .o_arrow_button.o_arrow_button_current {
-  background: var(--tbwa-yellow) !important;
-  color: var(--text) !important;
-  font-weight: 600;
-}
-
-.o_statusbar_status .o_arrow_button:hover:not(.o_arrow_button_current):not(.disabled) {
-  background: var(--tbwa-yellow-light) !important;
-}
-
-// Tags
-.o_tag.o_tag_color_0 {
-  background: var(--tbwa-yellow) !important;
-  color: var(--text) !important;
-}
-
-// =============================================================================
-// CARDS / KANBAN / LIST SURFACES
-// =============================================================================
-
+/* Cards / surfaces */
 .o_kanban_record,
 .o_kanban_view .oe_kanban_card,
 .o_form_view,
 .o_list_view,
 .o_control_panel {
-  background: var(--surface) !important;
-  border-color: var(--border) !important;
+    background: var(--surface) !important;
+    border-color: var(--border) !important;
 }
 
 .o_kanban_record,
 .o_kanban_view .oe_kanban_card {
-  border: 1px solid var(--border) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important;
-  }
+    border: 1px solid var(--border) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
 }
 
-// Form sheet
-.o_form_view .o_form_sheet_bg {
-  background: var(--bg) !important;
-}
-
-.o_form_view .o_form_sheet {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
-}
-
-// Control panel
-.o_control_panel {
-  background: var(--surface) !important;
-  border-bottom: 1px solid var(--border) !important;
-}
-
-// =============================================================================
-// LIST VIEW
-// =============================================================================
-
-.o_list_view {
-  .o_list_table {
-    thead th {
-      background: var(--bg) !important;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    tbody tr:hover td {
-      background: rgba(255, 196, 0, 0.05) !important;
-    }
-
-    tbody tr.o_data_row_selected td {
-      background: var(--tbwa-yellow-light) !important;
-    }
-  }
-}
-
-// =============================================================================
-// SEARCH / INPUTS
-// =============================================================================
-
-.o_searchview {
-  border-radius: 10px !important;
-  border: 1px solid var(--border) !important;
-
-  &:focus-within {
-    border-color: var(--tbwa-yellow) !important;
-    box-shadow: 0 0 0 3px var(--ring) !important;
-  }
-}
-
-.o_field_widget .o_input:focus,
-input.o_input:focus,
-textarea.o_input:focus,
-select.o_input:focus {
-  border-color: var(--tbwa-yellow) !important;
-  box-shadow: 0 0 0 3px var(--ring) !important;
-}
-
-// =============================================================================
-// MODALS / DIALOGS
-// =============================================================================
-
-.modal-content {
-  border-radius: 14px !important;
-  border: none !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15) !important;
-}
-
-.modal-header {
-  border-bottom: 1px solid var(--border) !important;
-
-  .modal-title {
-    font-weight: 600;
-    color: var(--text);
-  }
-}
-
-// =============================================================================
-// DROPDOWNS
-// =============================================================================
-
-.dropdown-menu {
-  border-radius: 10px !important;
-  border: 1px solid var(--border) !important;
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12) !important;
-}
-
-.dropdown-item:hover,
-.dropdown-item:focus {
-  background: rgba(255, 196, 0, 0.08) !important;
-}
-
-.dropdown-item.active,
-.dropdown-item:active {
-  background: var(--tbwa-yellow) !important;
-  color: var(--text) !important;
-}
-
-// =============================================================================
-// FOCUS RING - Platform-wide accessibility
-// =============================================================================
-
+/* Focus ring */
 :focus {
-  outline: none !important;
+    outline: none !important;
 }
 
 *:focus-visible {
-  box-shadow: 0 0 0 3px var(--ring) !important;
-  border-radius: 10px;
-}
-
-// Button-specific focus
-.btn:focus-visible {
-  box-shadow: 0 0 0 3px var(--ring) !important;
-}
-
-// =============================================================================
-// LOADING INDICATOR
-// =============================================================================
-
-.o_loading_indicator {
-  background: var(--tbwa-yellow) !important;
-  color: var(--text) !important;
-}
-
-// =============================================================================
-// CHATTER
-// =============================================================================
-
-.o-mail-Chatter {
-  .o-mail-Chatter-top {
-    border-bottom: 1px solid var(--border) !important;
-  }
-
-  .o-mail-Message {
-    border-radius: 12px !important;
-  }
-}
-
-// =============================================================================
-// SCROLLBARS (WebKit)
-// =============================================================================
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg);
-}
-
-::-webkit-scrollbar-thumb {
-  background: #d1d5db;
-  border-radius: 4px;
-
-  &:hover {
-    background: #9ca3af;
-  }
-}
-
-// =============================================================================
-// CALENDAR
-// =============================================================================
-
-.o_calendar_view {
-  .fc-event-main {
-    background: var(--tbwa-yellow) !important;
-    color: var(--text) !important;
-    border: none !important;
-    border-radius: 6px !important;
-  }
-}
-
-// =============================================================================
-// APPS MENU (MuK Theme compatible)
-// =============================================================================
-
-.mk_apps_sidebar_panel {
-  background: var(--tbwa-black) !important;
-
-  .mk_apps_sidebar_menu > li {
-    &.active > a,
-    &:hover > a {
-      background: rgba(255, 196, 0, 0.14) !important;
-      border-left: 3px solid var(--tbwa-yellow) !important;
-    }
-
-    > a {
-      border-left: 3px solid transparent;
-    }
-  }
-}
-
-.mk_app_menu.dropdown-menu {
-  .o_app > a {
-    .o_caption {
-      color: rgba(255, 255, 255, 0.95);
-      font-weight: 500;
-    }
-
-    &:hover .mk_app_icon {
-      box-shadow: 0 4px 12px rgba(255, 196, 0, 0.3) !important;
-    }
-  }
+    box-shadow: 0 0 0 3px var(--ring) !important;
+    border-radius: 10px;
 }

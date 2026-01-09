@@ -1,0 +1,160 @@
+name: Prod - Configure SMTP
+
+on:
+  workflow_dispatch:
+    inputs:
+      smtp_provider:
+        description: 'SMTP Provider'
+        required: true
+        default: 'mailgun'
+        type: choice
+        options:
+          - mailgun
+          - sendgrid
+          - custom
+      dry_run:
+        description: 'Dry run (verify only, no changes)'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  PROD_REPO_PATH: /root/odoo-ce
+
+jobs:
+  configure:
+    name: Configure SMTP on Production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install SSH key
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.PROD_SSH_KEY }}
+
+      - name: Add host to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.PROD_SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Configure SMTP on production
+        if: ${{ !inputs.dry_run }}
+        env:
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          SMTP_NAME: ${{ secrets.SMTP_NAME }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_ENCRYPTION: ${{ secrets.SMTP_ENCRYPTION }}
+          SMTP_FROM_FILTER: ${{ secrets.SMTP_FROM_FILTER }}
+          MAIL_CATCHALL_DOMAIN: ${{ secrets.MAIL_CATCHALL_DOMAIN }}
+          MAIL_FORCE_FROM: ${{ secrets.MAIL_FORCE_FROM }}
+        run: |
+          set -euo pipefail
+
+          echo "🚀 Configuring SMTP on production..."
+          echo "   Provider: ${{ inputs.smtp_provider }}"
+          echo "   Host: ${PROD_SSH_HOST}"
+
+          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << 'ENDSSH'
+            set -euo pipefail
+
+            cd ${{ env.PROD_REPO_PATH }}
+
+            echo "📥 Pulling latest changes..."
+            git pull origin main || git pull origin master || true
+
+            echo "⚙️ Running SMTP configuration..."
+            export ODOO_DB="${ODOO_DB:-odoo}"
+            export SMTP_NAME="${SMTP_NAME:-Mailgun SMTP - InsightPulse}"
+            export SMTP_HOST="${SMTP_HOST}"
+            export SMTP_PORT="${SMTP_PORT:-2525}"
+            export SMTP_USER="${SMTP_USER}"
+            export SMTP_PASSWORD="${SMTP_PASSWORD}"
+            export SMTP_ENCRYPTION="${SMTP_ENCRYPTION:-starttls}"
+            export SMTP_FROM_FILTER="${SMTP_FROM_FILTER:-}"
+            export MAIL_CATCHALL_DOMAIN="${MAIL_CATCHALL_DOMAIN:-}"
+            export MAIL_FORCE_FROM="${MAIL_FORCE_FROM:-}"
+
+            ./scripts/run_odoo_shell.sh scripts/configure_smtp.py
+
+            echo "✅ SMTP configuration complete!"
+          ENDSSH
+
+      - name: Verify SMTP configuration
+        env:
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          SMTP_NAME: ${{ secrets.SMTP_NAME }}
+        run: |
+          set -euo pipefail
+
+          echo "🔍 Verifying SMTP configuration..."
+
+          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << 'ENDSSH'
+            set -euo pipefail
+
+            cd ${{ env.PROD_REPO_PATH }}
+
+            export ODOO_DB="${ODOO_DB:-odoo}"
+            export SMTP_NAME="${SMTP_NAME:-Mailgun SMTP - InsightPulse}"
+
+            ./scripts/run_odoo_shell.sh scripts/verify_smtp.py
+          ENDSSH
+
+      - name: Send test email (optional)
+        if: ${{ !inputs.dry_run }}
+        continue-on-error: true
+        env:
+          PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+          PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          TEST_EMAIL: ${{ secrets.TEST_EMAIL }}
+        run: |
+          if [ -z "${TEST_EMAIL:-}" ]; then
+            echo "⏭️ Skipping test email (TEST_EMAIL secret not set)"
+            exit 0
+          fi
+
+          echo "📧 Sending test email to ${TEST_EMAIL}..."
+
+          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << ENDSSH
+            set -euo pipefail
+
+            cd ${{ env.PROD_REPO_PATH }}
+
+            docker exec -i odoo-ce odoo shell -d ${ODOO_DB:-odoo} << 'ENDPY'
+import os
+TEST_EMAIL = os.environ.get('TEST_EMAIL', '')
+if TEST_EMAIL:
+    mail = env['mail.mail'].create({
+        'email_to': TEST_EMAIL,
+        'subject': 'SMTP Test - GitHub Actions Deploy',
+        'body_html': '<p>SMTP configuration deployed successfully via GitHub Actions!</p>'
+    })
+    mail.send()
+    print(f"Test email sent to {TEST_EMAIL} - State: {mail.state}")
+ENDPY
+          ENDSSH
+
+      - name: Summary
+        run: |
+          echo "## SMTP Configuration Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Setting | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Provider | ${{ inputs.smtp_provider }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dry Run | ${{ inputs.dry_run }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ✅ Complete |" >> $GITHUB_STEP_SUMMARY
