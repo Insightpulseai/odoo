@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+      <data noupdate="0">
+                <!-- Main PPM Menu -->
+                <menuitem id="ipai_ppm_dashboard_canvas.menu_ppm_root" 
+                                    name="PPM Dashboard"
+                                    icon="fa-tasks"
+                                    sequence="1"/>
+
+                <!-- Project Canvas Menu -->
+                <menuitem id="ipai_ppm_dashboard_canvas.menu_project_canvas"
+                                    parent="ipai_ppm_dashboard_canvas.menu_ppm_root"
+                                    name="Project Canvas"
+                                    action="ipai_ppm_dashboard_canvas.action_project_canvas"
+                                    sequence="1"/>
+
+                <!-- PPM Dashboard Menu -->
+                <menuitem id="ipai_ppm_dashboard_canvas.menu_ppm_dashboard"
+                                    parent="ipai_ppm_dashboard_canvas.menu_ppm_root"
+                                    name="Dashboard"
+                                    action="ipai_ppm_dashboard_canvas.action_ppm_dashboard_list"
+                                    sequence="2"/>
+
+                <!-- Tasks Menu -->
+                <menuitem id="ipai_ppm_dashboard_canvas.menu_tasks_canvas"
+                                    parent="ipai_ppm_dashboard_canvas.menu_ppm_root"
+                                    name="Tasks"
+                                    action="ipai_ppm_dashboard_canvas.action_task_canvas_kanban"
+                                    sequence="3"/>
+
+                <!-- Milestones Menu -->
+                <menuitem id="ipai_ppm_dashboard_canvas.menu_milestones_canvas"
+                                    parent="ipai_ppm_dashboard_canvas.menu_ppm_root"
+                                    name="Milestones"
+                                    action="ipai_ppm_dashboard_canvas.action_milestone_canvas_kanban"
+                                    sequence="4"/>
+
+                <!-- OKRs Menu -->
+                <menuitem id="ipai_ppm_dashboard_canvas.menu_okr_canvas"
+                                    parent="ipai_ppm_dashboard_canvas.menu_ppm_root"
+                                    name="OKRs"
+                                    action="ipai_ppm_dashboard_canvas.action_okr_canvas_list"
+                                    sequence="5"/>
+      </data>
+</odoo>
