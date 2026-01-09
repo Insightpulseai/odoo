@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bc722c7e774a4e45d0d4746335efada95090f21d
+> Commit: eeeedccf2004ef7e091852a583a84c03c666538f
 
 ```
 .
@@ -2698,6 +2698,7 @@
 │   ├── count_xml_seeds.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
+│   ├── db_verify.sh
 │   ├── delete_user_safe.sh
 │   ├── deploy-bir-compliance.sh
 │   ├── deploy-december-2025-bir-tasks.sh
@@ -2840,6 +2841,7 @@
 │   ├── verify_email_auth.sh
 │   ├── verify_phase3.py
 │   ├── verify_smtp.py
+│   ├── web_sandbox_verify.sh
 │   ├── wiki_sync.sh
 │   └── worktree-setup.sh
 ├── seed_export
@@ -3455,6 +3457,7 @@
 ├── CI_CD_TROUBLESHOOTING_GUIDE.md
 ├── CI_MINIMAL_SET.md
 ├── CLAUDE.md
+├── CLAUDE_CODE_WEB.md
 ├── CLAUDE_NEW.md
 ├── COMPREHENSIVE_DEPLOYMENT_SUMMARY.md
 ├── CONTRIBUTING.md
@@ -3580,7 +3583,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1148 directories, 2427 files
+1148 directories, 2430 files
 ```
 
 ## 📊 Stats
@@ -3588,7 +3591,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1330 |
-| Files | 3677 |
+| Files | 3680 |
 | Python files | 986 |
 | XML files | 472 |
-| Markdown files | 703 |
+| Markdown files | 704 |

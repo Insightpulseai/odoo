@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bc722c7e774a4e45d0d4746335efada95090f21d
+> Commit: eeeedccf2004ef7e091852a583a84c03c666538f
 
 ## 📚 Documentation
 
@@ -33,6 +33,7 @@
 | [CI/CD Troubleshooting Guide - GitHub Actions Database Connection](CI_CD_TROUBLESHOOTING_GUIDE.md) | . |
 | [CI Minimal Set - Workflow Reduction Plan](CI_MINIMAL_SET.md) | . |
 | [CLAUDE.md — Odoo CE Project](CLAUDE.md) | . |
+| [Claude Code Web (Cloud Sandbox) Execution Contract](CLAUDE_CODE_WEB.md) | . |
 | [InsightPulse Odoo (Delta Architecture)](CLAUDE_NEW.md) | . |
 | [Odoo CE Production Readiness - Complete Deployment Summary](COMPREHENSIVE_DEPLOYMENT_SUMMARY.md) | . |
 | [Contributing to Odoo CE](CONTRIBUTING.md) | . |
