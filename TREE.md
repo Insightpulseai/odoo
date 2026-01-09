@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 30fa4f05dd705491b2ae0430eda4d55fecb7f975
+> Commit: 3332df27f1ddc24c9e2cc2ebfbdadfc4971e69ef
 
 ```
 .
@@ -2055,8 +2055,15 @@
 │   │   ├── DEPLOYMENT_PROOFS
 │   │   │   ├── prod-20260109-2219
 │   │   │   ├── README.md
+│   │   │   ├── api_compare.json
+│   │   │   ├── api_deployments.json
+│   │   │   ├── api_release_latest.json
+│   │   │   ├── api_workflow_run_20867798233.json
+│   │   │   ├── api_workflow_runs.json
+│   │   │   ├── artifacts_index.json
 │   │   │   ├── deploy_run_166.json
 │   │   │   ├── deploy_run_166_jobs.json
+│   │   │   ├── graphql_commits_prs.json
 │   │   │   └── release_tag_prod-20260106-1741.json
 │   │   ├── prod-20260109-1642
 │   │   │   ├── DEPLOYMENT_PROOFS
@@ -2067,6 +2074,8 @@
 │   │   ├── GO_LIVE_MANIFEST_prod-20260109-2219.md
 │   │   ├── LATEST.json
 │   │   ├── LATEST.md
+│   │   ├── WHAT_DEPLOYED.json
+│   │   ├── WHAT_DEPLOYED.md
 │   │   ├── WHAT_DEPLOYED_prod-20260109-2219.json
 │   │   ├── WHAT_DEPLOYED_prod-20260109-2219.md
 │   │   ├── WHAT_SHIPPED.json
@@ -2867,6 +2876,8 @@
 │   ├── verify_smtp.py
 │   ├── verify_supabase_deploy.sh
 │   ├── web_sandbox_verify.sh
+│   ├── whats_deployed.py
+│   ├── whats_deployed.sh
 │   ├── wiki_sync.sh
 │   └── worktree-setup.sh
 ├── seed_export
@@ -3608,7 +3619,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1155 directories, 2448 files
+1155 directories, 2459 files
 ```
 
 ## 📊 Stats
@@ -3616,7 +3627,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1337 |
-| Files | 3704 |
-| Python files | 988 |
+| Files | 3715 |
+| Python files | 989 |
 | XML files | 473 |
-| Markdown files | 712 |
+| Markdown files | 713 |
