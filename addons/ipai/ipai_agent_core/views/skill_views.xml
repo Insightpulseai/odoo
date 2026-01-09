@@ -5,13 +5,13 @@
         <field name="name">ipai.agent.skill.tree</field>
         <field name="model">ipai.agent.skill</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="key"/>
                 <field name="version"/>
                 <field name="run_count"/>
                 <field name="is_active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -60,22 +60,22 @@
                         </page>
                         <page string="Tools" name="tools">
                             <field name="tool_ids">
-                                <tree>
+                                <list>
                                     <field name="name"/>
                                     <field name="key"/>
                                     <field name="target_model"/>
                                     <field name="target_method"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Knowledge" name="knowledge">
                             <field name="knowledge_ids">
-                                <tree>
+                                <list>
                                     <field name="name"/>
                                     <field name="key"/>
                                     <field name="kind"/>
                                     <field name="tags"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>

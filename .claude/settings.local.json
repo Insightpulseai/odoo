@@ -2,9 +2,24 @@
   "permissions": {
     "allow": [
       "Bash(cat:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(docker mcp:*)",
+      "Bash(git push:*)",
+      "Bash(gh api:*)",
+      "Bash(psql:*)",
+      "Bash(chmod:*)",
+      "Bash(/Users/tbwa/odoo-ce/scripts/verify_auth_setup.sh:*)",
+      "Bash(export:*)",
+      "Bash(supabase functions list:*)",
+      "Bash(supabase functions deploy:*)",
+      "Bash(dig:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "MCP_DOCKER"
+  ]
 }

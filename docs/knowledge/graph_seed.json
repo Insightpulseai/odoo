@@ -1,0 +1,5491 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-01-08T16:10:21.455597",
+  "nodes": [
+    {
+      "id": "repo:jgtolentino/odoo-ce",
+      "kind": "Repo",
+      "name": "odoo-ce",
+      "ref": {
+        "github_url": "https://github.com/jgtolentino/odoo-ce"
+      },
+      "props": {
+        "language": "Python",
+        "framework": "Odoo 18 CE"
+      }
+    },
+    {
+      "id": "spec:adk-control-room",
+      "kind": "SpecBundle",
+      "name": "adk-control-room",
+      "ref": {
+        "path": "spec/adk-control-room"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:auto-claude-framework",
+      "kind": "SpecBundle",
+      "name": "auto-claude-framework",
+      "ref": {
+        "path": "spec/auto-claude-framework"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:bir-tax-compliance",
+      "kind": "SpecBundle",
+      "name": "bir-tax-compliance",
+      "ref": {
+        "path": "spec/bir-tax-compliance"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:close-orchestration",
+      "kind": "SpecBundle",
+      "name": "close-orchestration",
+      "ref": {
+        "path": "spec/close-orchestration"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:continue-plus",
+      "kind": "SpecBundle",
+      "name": "continue-plus",
+      "ref": {
+        "path": "spec/continue-plus"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:control-room-api",
+      "kind": "SpecBundle",
+      "name": "control-room-api",
+      "ref": {
+        "path": "spec/control-room-api"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:docs-platform-sapgrade",
+      "kind": "SpecBundle",
+      "name": "docs-platform-sapgrade",
+      "ref": {
+        "path": "spec/docs-platform-sapgrade"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:erp-saas-clone-suite",
+      "kind": "SpecBundle",
+      "name": "erp-saas-clone-suite",
+      "ref": {
+        "path": "spec/erp-saas-clone-suite"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:expense-automation",
+      "kind": "SpecBundle",
+      "name": "expense-automation",
+      "ref": {
+        "path": "spec/expense-automation"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:hire-to-retire",
+      "kind": "SpecBundle",
+      "name": "hire-to-retire",
+      "ref": {
+        "path": "spec/hire-to-retire"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:insightpulse-docs-ai",
+      "kind": "SpecBundle",
+      "name": "insightpulse-docs-ai",
+      "ref": {
+        "path": "spec/insightpulse-docs-ai"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:insightpulse-mobile",
+      "kind": "SpecBundle",
+      "name": "insightpulse-mobile",
+      "ref": {
+        "path": "spec/insightpulse-mobile"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:ipai-ai-platform",
+      "kind": "SpecBundle",
+      "name": "ipai-ai-platform",
+      "ref": {
+        "path": "spec/ipai-ai-platform"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:ipai-ai-platform-odoo18",
+      "kind": "SpecBundle",
+      "name": "ipai-ai-platform-odoo18",
+      "ref": {
+        "path": "spec/ipai-ai-platform-odoo18"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:ipai-control-center",
+      "kind": "SpecBundle",
+      "name": "ipai-control-center",
+      "ref": {
+        "path": "spec/ipai-control-center"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:ipai-copilot",
+      "kind": "SpecBundle",
+      "name": "ipai-copilot",
+      "ref": {
+        "path": "spec/ipai-copilot"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:ipai-month-end",
+      "kind": "SpecBundle",
+      "name": "ipai-month-end",
+      "ref": {
+        "path": "spec/ipai-month-end"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:ipai-tbwa-finance",
+      "kind": "SpecBundle",
+      "name": "ipai-tbwa-finance",
+      "ref": {
+        "path": "spec/ipai-tbwa-finance"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:kapa-plus",
+      "kind": "SpecBundle",
+      "name": "kapa-plus",
+      "ref": {
+        "path": "spec/kapa-plus"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:kapa-reverse",
+      "kind": "SpecBundle",
+      "name": "kapa-reverse",
+      "ref": {
+        "path": "spec/kapa-reverse"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:knowledge-hub",
+      "kind": "SpecBundle",
+      "name": "knowledge-hub",
+      "ref": {
+        "path": "spec/knowledge-hub"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:notion-finance-ppm-control-room",
+      "kind": "SpecBundle",
+      "name": "notion-finance-ppm-control-room",
+      "ref": {
+        "path": "spec/notion-finance-ppm-control-room"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:odoo-apps-inventory",
+      "kind": "SpecBundle",
+      "name": "odoo-apps-inventory",
+      "ref": {
+        "path": "spec/odoo-apps-inventory"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:odoo-ce",
+      "kind": "SpecBundle",
+      "name": "odoo-ce",
+      "ref": {
+        "path": "spec/odoo-ce"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:odoo-mcp-server",
+      "kind": "SpecBundle",
+      "name": "odoo-mcp-server",
+      "ref": {
+        "path": "spec/odoo-mcp-server"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:ops-control-room",
+      "kind": "SpecBundle",
+      "name": "ops-control-room",
+      "ref": {
+        "path": "spec/ops-control-room"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:parallel-control-planes",
+      "kind": "SpecBundle",
+      "name": "parallel-control-planes",
+      "ref": {
+        "path": "spec/parallel-control-planes"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:project-ce",
+      "kind": "SpecBundle",
+      "name": "project-ce",
+      "ref": {
+        "path": "spec/project-ce"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:pulser-master-control",
+      "kind": "SpecBundle",
+      "name": "pulser-master-control",
+      "ref": {
+        "path": "spec/pulser-master-control"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:seed-bundle",
+      "kind": "SpecBundle",
+      "name": "seed-bundle",
+      "ref": {
+        "path": "spec/seed-bundle"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:test-coverage-improvement",
+      "kind": "SpecBundle",
+      "name": "test-coverage-improvement",
+      "ref": {
+        "path": "spec/test-coverage-improvement"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "spec:workos-notion-clone",
+      "kind": "SpecBundle",
+      "name": "workos-notion-clone",
+      "ref": {
+        "path": "spec/workos-notion-clone"
+      },
+      "props": {
+        "files": [
+          "constitution.md",
+          "prd.md",
+          "plan.md",
+          "tasks.md"
+        ]
+      }
+    },
+    {
+      "id": "app:chatgpt_ipai_ai_studio",
+      "kind": "App",
+      "name": "chatgpt_ipai_ai_studio",
+      "ref": {
+        "path": "apps/chatgpt_ipai_ai_studio"
+      },
+      "props": {
+        "version": "1.0.0",
+        "description": "ChatGPT App for IPAI AI Studio - Odoo customization via natural language"
+      }
+    },
+    {
+      "id": "app:control-room",
+      "kind": "App",
+      "name": "control-room",
+      "ref": {
+        "path": "apps/control-room"
+      },
+      "props": {
+        "version": "1.0.0",
+        "description": ""
+      }
+    },
+    {
+      "id": "app:docs-ai-widget",
+      "kind": "App",
+      "name": "docs-ai-widget",
+      "ref": {
+        "path": "apps/docs-ai-widget"
+      },
+      "props": {
+        "version": "0.1.0",
+        "description": "InsightPulse Docs AI - Embeddable documentation assistant widget"
+      }
+    },
+    {
+      "id": "app:ipai-control-center-docs",
+      "kind": "App",
+      "name": "ipai-control-center-docs",
+      "ref": {
+        "path": "apps/ipai-control-center-docs"
+      },
+      "props": {
+        "version": "unknown",
+        "description": ""
+      }
+    },
+    {
+      "id": "app:mobile",
+      "kind": "App",
+      "name": "mobile",
+      "ref": {
+        "path": "apps/mobile"
+      },
+      "props": {
+        "version": "1.0.0",
+        "description": ""
+      }
+    },
+    {
+      "id": "app:pulser-runner",
+      "kind": "App",
+      "name": "pulser-runner",
+      "ref": {
+        "path": "apps/pulser-runner"
+      },
+      "props": {
+        "version": "0.1.0",
+        "description": ""
+      }
+    },
+    {
+      "id": "app:web",
+      "kind": "App",
+      "name": "web",
+      "ref": {
+        "path": "apps/web"
+      },
+      "props": {
+        "version": "0.1.0",
+        "description": ""
+      }
+    },
+    {
+      "id": "module:ipai.ipai_advisor",
+      "kind": "Module",
+      "name": "ipai_advisor",
+      "ref": {
+        "path": "addons/ipai/ipai_advisor"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_agent_core",
+      "kind": "Module",
+      "name": "ipai_agent_core",
+      "ref": {
+        "path": "addons/ipai/ipai_agent_core"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_agents",
+      "kind": "Module",
+      "name": "ipai_ai_agents",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_agents"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_agents_ui",
+      "kind": "Module",
+      "name": "ipai_ai_agents_ui",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_agents_ui"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_audit",
+      "kind": "Module",
+      "name": "ipai_ai_audit",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_audit"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_connectors",
+      "kind": "Module",
+      "name": "ipai_ai_connectors",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_connectors"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_core",
+      "kind": "Module",
+      "name": "ipai_ai_core",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_core"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_prompts",
+      "kind": "Module",
+      "name": "ipai_ai_prompts",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_prompts"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_provider_kapa",
+      "kind": "Module",
+      "name": "ipai_ai_provider_kapa",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_provider_kapa"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_provider_pulser",
+      "kind": "Module",
+      "name": "ipai_ai_provider_pulser",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_provider_pulser"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_sources_odoo",
+      "kind": "Module",
+      "name": "ipai_ai_sources_odoo",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_sources_odoo"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ai_studio",
+      "kind": "Module",
+      "name": "ipai_ai_studio",
+      "ref": {
+        "path": "addons/ipai/ipai_ai_studio"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_aiux_chat",
+      "kind": "Module",
+      "name": "ipai_aiux_chat",
+      "ref": {
+        "path": "addons/ipai/ipai_aiux_chat"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_approvals",
+      "kind": "Module",
+      "name": "ipai_approvals",
+      "ref": {
+        "path": "addons/ipai/ipai_approvals"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ask_ai",
+      "kind": "Module",
+      "name": "ipai_ask_ai",
+      "ref": {
+        "path": "addons/ipai/ipai_ask_ai"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ask_ai_chatter",
+      "kind": "Module",
+      "name": "ipai_ask_ai_chatter",
+      "ref": {
+        "path": "addons/ipai/ipai_ask_ai_chatter"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_assets",
+      "kind": "Module",
+      "name": "ipai_assets",
+      "ref": {
+        "path": "addons/ipai/ipai_assets"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_auth_oauth_internal",
+      "kind": "Module",
+      "name": "ipai_auth_oauth_internal",
+      "ref": {
+        "path": "addons/ipai/ipai_auth_oauth_internal"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_bir_compliance",
+      "kind": "Module",
+      "name": "ipai_bir_compliance",
+      "ref": {
+        "path": "addons/ipai/ipai_bir_compliance"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ce_branding",
+      "kind": "Module",
+      "name": "ipai_ce_branding",
+      "ref": {
+        "path": "addons/ipai/ipai_ce_branding"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ce_cleaner",
+      "kind": "Module",
+      "name": "ipai_ce_cleaner",
+      "ref": {
+        "path": "addons/ipai/ipai_ce_cleaner"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_chatgpt_sdk_theme",
+      "kind": "Module",
+      "name": "ipai_chatgpt_sdk_theme",
+      "ref": {
+        "path": "addons/ipai/ipai_chatgpt_sdk_theme"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_clarity_ppm_parity",
+      "kind": "Module",
+      "name": "ipai_clarity_ppm_parity",
+      "ref": {
+        "path": "addons/ipai/ipai_clarity_ppm_parity"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_close_orchestration",
+      "kind": "Module",
+      "name": "ipai_close_orchestration",
+      "ref": {
+        "path": "addons/ipai/ipai_close_orchestration"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_command_center",
+      "kind": "Module",
+      "name": "ipai_command_center",
+      "ref": {
+        "path": "addons/ipai/ipai_command_center"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_control_room",
+      "kind": "Module",
+      "name": "ipai_control_room",
+      "ref": {
+        "path": "addons/ipai/ipai_control_room"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_custom_routes",
+      "kind": "Module",
+      "name": "ipai_custom_routes",
+      "ref": {
+        "path": "addons/ipai/ipai_custom_routes"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_default_home",
+      "kind": "Module",
+      "name": "ipai_default_home",
+      "ref": {
+        "path": "addons/ipai/ipai_default_home"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_design_system_apps_sdk",
+      "kind": "Module",
+      "name": "ipai_design_system_apps_sdk",
+      "ref": {
+        "path": "addons/ipai/ipai_design_system_apps_sdk"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_dev_studio_base",
+      "kind": "Module",
+      "name": "ipai_dev_studio_base",
+      "ref": {
+        "path": "addons/ipai/ipai_dev_studio_base"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_document_ai",
+      "kind": "Module",
+      "name": "ipai_document_ai",
+      "ref": {
+        "path": "addons/ipai/ipai_document_ai"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_equipment",
+      "kind": "Module",
+      "name": "ipai_equipment",
+      "ref": {
+        "path": "addons/ipai/ipai_equipment"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_expense",
+      "kind": "Module",
+      "name": "ipai_expense",
+      "ref": {
+        "path": "addons/ipai/ipai_expense"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_expense_ocr",
+      "kind": "Module",
+      "name": "ipai_expense_ocr",
+      "ref": {
+        "path": "addons/ipai/ipai_expense_ocr"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_bir_compliance",
+      "kind": "Module",
+      "name": "ipai_finance_bir_compliance",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_bir_compliance"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_close_automation",
+      "kind": "Module",
+      "name": "ipai_finance_close_automation",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_close_automation"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_close_seed",
+      "kind": "Module",
+      "name": "ipai_finance_close_seed",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_close_seed"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_month_end",
+      "kind": "Module",
+      "name": "ipai_finance_month_end",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_month_end"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_monthly_closing",
+      "kind": "Module",
+      "name": "ipai_finance_monthly_closing",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_monthly_closing"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_ppm",
+      "kind": "Module",
+      "name": "ipai_finance_ppm",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_ppm"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_ppm_closing",
+      "kind": "Module",
+      "name": "ipai_finance_ppm_closing",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_ppm_closing"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_ppm_dashboard",
+      "kind": "Module",
+      "name": "ipai_finance_ppm_dashboard",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_ppm_dashboard"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_ppm_tdi",
+      "kind": "Module",
+      "name": "ipai_finance_ppm_tdi",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_ppm_tdi"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_finance_project_hybrid",
+      "kind": "Module",
+      "name": "ipai_finance_project_hybrid",
+      "ref": {
+        "path": "addons/ipai/ipai_finance_project_hybrid"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_focalboard_connector",
+      "kind": "Module",
+      "name": "ipai_focalboard_connector",
+      "ref": {
+        "path": "addons/ipai/ipai_focalboard_connector"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_industry_accounting_firm",
+      "kind": "Module",
+      "name": "ipai_industry_accounting_firm",
+      "ref": {
+        "path": "addons/ipai/ipai_industry_accounting_firm"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_industry_marketing_agency",
+      "kind": "Module",
+      "name": "ipai_industry_marketing_agency",
+      "ref": {
+        "path": "addons/ipai/ipai_industry_marketing_agency"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_integrations",
+      "kind": "Module",
+      "name": "ipai_integrations",
+      "ref": {
+        "path": "addons/ipai/ipai_integrations"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_marketing_ai",
+      "kind": "Module",
+      "name": "ipai_marketing_ai",
+      "ref": {
+        "path": "addons/ipai/ipai_marketing_ai"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_marketing_journey",
+      "kind": "Module",
+      "name": "ipai_marketing_journey",
+      "ref": {
+        "path": "addons/ipai/ipai_marketing_journey"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_master_control",
+      "kind": "Module",
+      "name": "ipai_master_control",
+      "ref": {
+        "path": "addons/ipai/ipai_master_control"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_mattermost_connector",
+      "kind": "Module",
+      "name": "ipai_mattermost_connector",
+      "ref": {
+        "path": "addons/ipai/ipai_mattermost_connector"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_module_gating",
+      "kind": "Module",
+      "name": "ipai_module_gating",
+      "ref": {
+        "path": "addons/ipai/ipai_module_gating"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_n8n_connector",
+      "kind": "Module",
+      "name": "ipai_n8n_connector",
+      "ref": {
+        "path": "addons/ipai/ipai_n8n_connector"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ocr_expense",
+      "kind": "Module",
+      "name": "ipai_ocr_expense",
+      "ref": {
+        "path": "addons/ipai/ipai_ocr_expense"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_platform_theme",
+      "kind": "Module",
+      "name": "ipai_platform_theme",
+      "ref": {
+        "path": "addons/ipai/ipai_platform_theme"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_portal_fix",
+      "kind": "Module",
+      "name": "ipai_portal_fix",
+      "ref": {
+        "path": "addons/ipai/ipai_portal_fix"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ppm",
+      "kind": "Module",
+      "name": "ipai_ppm",
+      "ref": {
+        "path": "addons/ipai/ipai_ppm"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ppm_a1",
+      "kind": "Module",
+      "name": "ipai_ppm_a1",
+      "ref": {
+        "path": "addons/ipai/ipai_ppm_a1"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ppm_monthly_close",
+      "kind": "Module",
+      "name": "ipai_ppm_monthly_close",
+      "ref": {
+        "path": "addons/ipai/ipai_ppm_monthly_close"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_project_gantt",
+      "kind": "Module",
+      "name": "ipai_project_gantt",
+      "ref": {
+        "path": "addons/ipai/ipai_project_gantt"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_project_profitability_bridge",
+      "kind": "Module",
+      "name": "ipai_project_profitability_bridge",
+      "ref": {
+        "path": "addons/ipai/ipai_project_profitability_bridge"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_project_program",
+      "kind": "Module",
+      "name": "ipai_project_program",
+      "ref": {
+        "path": "addons/ipai/ipai_project_program"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_project_suite",
+      "kind": "Module",
+      "name": "ipai_project_suite",
+      "ref": {
+        "path": "addons/ipai/ipai_project_suite"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_settings_dashboard",
+      "kind": "Module",
+      "name": "ipai_settings_dashboard",
+      "ref": {
+        "path": "addons/ipai/ipai_settings_dashboard"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_skill_api",
+      "kind": "Module",
+      "name": "ipai_skill_api",
+      "ref": {
+        "path": "addons/ipai/ipai_skill_api"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_srm",
+      "kind": "Module",
+      "name": "ipai_srm",
+      "ref": {
+        "path": "addons/ipai/ipai_srm"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_studio_ai",
+      "kind": "Module",
+      "name": "ipai_studio_ai",
+      "ref": {
+        "path": "addons/ipai/ipai_studio_ai"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_superset_connector",
+      "kind": "Module",
+      "name": "ipai_superset_connector",
+      "ref": {
+        "path": "addons/ipai/ipai_superset_connector"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_test_fixtures",
+      "kind": "Module",
+      "name": "ipai_test_fixtures",
+      "ref": {
+        "path": "addons/ipai/ipai_test_fixtures"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_theme_aiux",
+      "kind": "Module",
+      "name": "ipai_theme_aiux",
+      "ref": {
+        "path": "addons/ipai/ipai_theme_aiux"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_theme_fluent2",
+      "kind": "Module",
+      "name": "ipai_theme_fluent2",
+      "ref": {
+        "path": "addons/ipai/ipai_theme_fluent2"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_theme_tbwa_backend",
+      "kind": "Module",
+      "name": "ipai_theme_tbwa_backend",
+      "ref": {
+        "path": "addons/ipai/ipai_theme_tbwa_backend"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_ui_brand_tokens",
+      "kind": "Module",
+      "name": "ipai_ui_brand_tokens",
+      "ref": {
+        "path": "addons/ipai/ipai_ui_brand_tokens"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_v18_compat",
+      "kind": "Module",
+      "name": "ipai_v18_compat",
+      "ref": {
+        "path": "addons/ipai/ipai_v18_compat"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_web_fluent2",
+      "kind": "Module",
+      "name": "ipai_web_fluent2",
+      "ref": {
+        "path": "addons/ipai/ipai_web_fluent2"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_web_icons_fluent",
+      "kind": "Module",
+      "name": "ipai_web_icons_fluent",
+      "ref": {
+        "path": "addons/ipai/ipai_web_icons_fluent"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_web_theme_tbwa",
+      "kind": "Module",
+      "name": "ipai_web_theme_tbwa",
+      "ref": {
+        "path": "addons/ipai/ipai_web_theme_tbwa"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "module:ipai.ipai_workspace_core",
+      "kind": "Module",
+      "name": "ipai_workspace_core",
+      "ref": {
+        "path": "addons/ipai/ipai_workspace_core"
+      },
+      "props": {
+        "namespace": "ipai"
+      }
+    },
+    {
+      "id": "workflow:agent-preflight",
+      "kind": "Workflow",
+      "name": "agent-preflight",
+      "ref": {
+        "path": ".github/workflows/agent-preflight.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:aiux-ship-gate",
+      "kind": "Workflow",
+      "name": "aiux-ship-gate",
+      "ref": {
+        "path": ".github/workflows/aiux-ship-gate.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:all-green-gates",
+      "kind": "Workflow",
+      "name": "all-green-gates",
+      "ref": {
+        "path": ".github/workflows/all-green-gates.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:audit-contract",
+      "kind": "Workflow",
+      "name": "audit-contract",
+      "ref": {
+        "path": ".github/workflows/audit-contract.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:auto-sitemap-tree",
+      "kind": "Workflow",
+      "name": "auto-sitemap-tree",
+      "ref": {
+        "path": ".github/workflows/auto-sitemap-tree.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:build-seeded-image",
+      "kind": "Workflow",
+      "name": "build-seeded-image",
+      "ref": {
+        "path": ".github/workflows/build-seeded-image.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:build-unified-image",
+      "kind": "Workflow",
+      "name": "build-unified-image",
+      "ref": {
+        "path": ".github/workflows/build-unified-image.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ci-web",
+      "kind": "Workflow",
+      "name": "ci-web",
+      "ref": {
+        "path": ".github/workflows/ci-web.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ci",
+      "kind": "Workflow",
+      "name": "ci",
+      "ref": {
+        "path": ".github/workflows/ci.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:control-room-ci",
+      "kind": "Workflow",
+      "name": "control-room-ci",
+      "ref": {
+        "path": ".github/workflows/control-room-ci.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:databricks-dab-ci",
+      "kind": "Workflow",
+      "name": "databricks-dab-ci",
+      "ref": {
+        "path": ".github/workflows/databricks-dab-ci.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:deploy-finance-ppm",
+      "kind": "Workflow",
+      "name": "deploy-finance-ppm",
+      "ref": {
+        "path": ".github/workflows/deploy-finance-ppm.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:deploy-ipai-control-center-docs",
+      "kind": "Workflow",
+      "name": "deploy-ipai-control-center-docs",
+      "ref": {
+        "path": ".github/workflows/deploy-ipai-control-center-docs.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:deploy-odoo-prod",
+      "kind": "Workflow",
+      "name": "deploy-odoo-prod",
+      "ref": {
+        "path": ".github/workflows/deploy-odoo-prod.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:deploy-production",
+      "kind": "Workflow",
+      "name": "deploy-production",
+      "ref": {
+        "path": ".github/workflows/deploy-production.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:diagrams-drawio-enforce",
+      "kind": "Workflow",
+      "name": "diagrams-drawio-enforce",
+      "ref": {
+        "path": ".github/workflows/diagrams-drawio-enforce.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:diagrams-qa",
+      "kind": "Workflow",
+      "name": "diagrams-qa",
+      "ref": {
+        "path": ".github/workflows/diagrams-qa.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:diagrams",
+      "kind": "Workflow",
+      "name": "diagrams",
+      "ref": {
+        "path": ".github/workflows/diagrams.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:directional-sync",
+      "kind": "Workflow",
+      "name": "directional-sync",
+      "ref": {
+        "path": ".github/workflows/directional-sync.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:docs-architecture-sync",
+      "kind": "Workflow",
+      "name": "docs-architecture-sync",
+      "ref": {
+        "path": ".github/workflows/docs-architecture-sync.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:docs-crawler-cron",
+      "kind": "Workflow",
+      "name": "docs-crawler-cron",
+      "ref": {
+        "path": ".github/workflows/docs-crawler-cron.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:fin-workspace-weekly-sync",
+      "kind": "Workflow",
+      "name": "fin-workspace-weekly-sync",
+      "ref": {
+        "path": ".github/workflows/fin-workspace-weekly-sync.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:finance-ppm-health",
+      "kind": "Workflow",
+      "name": "finance-ppm-health",
+      "ref": {
+        "path": ".github/workflows/finance-ppm-health.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:go-live-manifest-gate",
+      "kind": "Workflow",
+      "name": "go-live-manifest-gate",
+      "ref": {
+        "path": ".github/workflows/go-live-manifest-gate.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:health-check",
+      "kind": "Workflow",
+      "name": "health-check",
+      "ref": {
+        "path": ".github/workflows/health-check.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:icons-drift",
+      "kind": "Workflow",
+      "name": "icons-drift",
+      "ref": {
+        "path": ".github/workflows/icons-drift.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:infra-validate",
+      "kind": "Workflow",
+      "name": "infra-validate",
+      "ref": {
+        "path": ".github/workflows/infra-validate.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ipai-ai-platform-ci",
+      "kind": "Workflow",
+      "name": "ipai-ai-platform-ci",
+      "ref": {
+        "path": ".github/workflows/ipai-ai-platform-ci.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ipai-ai-studio-smoke",
+      "kind": "Workflow",
+      "name": "ipai-ai-studio-smoke",
+      "ref": {
+        "path": ".github/workflows/ipai-ai-studio-smoke.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ipai-determinism",
+      "kind": "Workflow",
+      "name": "ipai-determinism",
+      "ref": {
+        "path": ".github/workflows/ipai-determinism.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ipai-dynamic-qg",
+      "kind": "Workflow",
+      "name": "ipai-dynamic-qg",
+      "ref": {
+        "path": ".github/workflows/ipai-dynamic-qg.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ipai-module-matrix",
+      "kind": "Workflow",
+      "name": "ipai-module-matrix",
+      "ref": {
+        "path": ".github/workflows/ipai-module-matrix.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:ipai-prod-checks",
+      "kind": "Workflow",
+      "name": "ipai-prod-checks",
+      "ref": {
+        "path": ".github/workflows/ipai-prod-checks.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:lakehouse-smoke",
+      "kind": "Workflow",
+      "name": "lakehouse-smoke",
+      "ref": {
+        "path": ".github/workflows/lakehouse-smoke.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:module-catalog-drift",
+      "kind": "Workflow",
+      "name": "module-catalog-drift",
+      "ref": {
+        "path": ".github/workflows/module-catalog-drift.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:module-gating",
+      "kind": "Workflow",
+      "name": "module-gating",
+      "ref": {
+        "path": ".github/workflows/module-gating.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:no-deprecated-repo-refs",
+      "kind": "Workflow",
+      "name": "no-deprecated-repo-refs",
+      "ref": {
+        "path": ".github/workflows/no-deprecated-repo-refs.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:notion-sync-ci",
+      "kind": "Workflow",
+      "name": "notion-sync-ci",
+      "ref": {
+        "path": ".github/workflows/notion-sync-ci.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:odoo-import-artifacts",
+      "kind": "Workflow",
+      "name": "odoo-import-artifacts",
+      "ref": {
+        "path": ".github/workflows/odoo-import-artifacts.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:odoo-module-install-gate",
+      "kind": "Workflow",
+      "name": "odoo-module-install-gate",
+      "ref": {
+        "path": ".github/workflows/odoo-module-install-gate.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:repo-structure",
+      "kind": "Workflow",
+      "name": "repo-structure",
+      "ref": {
+        "path": ".github/workflows/repo-structure.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:seeds-validate",
+      "kind": "Workflow",
+      "name": "seeds-validate",
+      "ref": {
+        "path": ".github/workflows/seeds-validate.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:spec-and-parity",
+      "kind": "Workflow",
+      "name": "spec-and-parity",
+      "ref": {
+        "path": ".github/workflows/spec-and-parity.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:spec-kit-enforce",
+      "kind": "Workflow",
+      "name": "spec-kit-enforce",
+      "ref": {
+        "path": ".github/workflows/spec-kit-enforce.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:superset-bump",
+      "kind": "Workflow",
+      "name": "superset-bump",
+      "ref": {
+        "path": ".github/workflows/superset-bump.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:wiki-sync",
+      "kind": "Workflow",
+      "name": "wiki-sync",
+      "ref": {
+        "path": ".github/workflows/wiki-sync.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "workflow:workflow-yaml-validate",
+      "kind": "Workflow",
+      "name": "workflow-yaml-validate",
+      "ref": {
+        "path": ".github/workflows/workflow-yaml-validate.yml"
+      },
+      "props": {}
+    },
+    {
+      "id": "script:activate-n8n-workflows",
+      "kind": "Script",
+      "name": "activate-n8n-workflows.sh",
+      "ref": {
+        "path": "scripts/activate-n8n-workflows.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:apply-supabase-schema",
+      "kind": "Script",
+      "name": "apply-supabase-schema.sh",
+      "ref": {
+        "path": "scripts/apply-supabase-schema.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:auto_error_handler",
+      "kind": "Script",
+      "name": "auto_error_handler.sh",
+      "ref": {
+        "path": "scripts/auto_error_handler.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:backup_odoo",
+      "kind": "Script",
+      "name": "backup_odoo.sh",
+      "ref": {
+        "path": "scripts/backup_odoo.sh"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:baseline-validation",
+      "kind": "Script",
+      "name": "baseline-validation.sh",
+      "ref": {
+        "path": "scripts/baseline-validation.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:bootstrap_apps_from_inventory",
+      "kind": "Script",
+      "name": "bootstrap_apps_from_inventory.sh",
+      "ref": {
+        "path": "scripts/bootstrap_apps_from_inventory.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:build_and_push_version",
+      "kind": "Script",
+      "name": "build_and_push_version.sh",
+      "ref": {
+        "path": "scripts/build_and_push_version.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:build_v0.10.0",
+      "kind": "Script",
+      "name": "build_v0.10.0.sh",
+      "ref": {
+        "path": "scripts/build_v0.10.0.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:build_v0.9.1",
+      "kind": "Script",
+      "name": "build_v0.9.1.sh",
+      "ref": {
+        "path": "scripts/build_v0.9.1.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:check-enterprise-modules",
+      "kind": "Script",
+      "name": "check-enterprise-modules.sh",
+      "ref": {
+        "path": "scripts/check-enterprise-modules.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:check_module_status",
+      "kind": "Script",
+      "name": "check_module_status.sh",
+      "ref": {
+        "path": "scripts/check_module_status.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:ci_local",
+      "kind": "Script",
+      "name": "ci_local.sh",
+      "ref": {
+        "path": "scripts/ci_local.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:ci_smoke_test",
+      "kind": "Script",
+      "name": "ci_smoke_test.sh",
+      "ref": {
+        "path": "scripts/ci_smoke_test.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:cleanup-branches",
+      "kind": "Script",
+      "name": "cleanup-branches.sh",
+      "ref": {
+        "path": "scripts/cleanup-branches.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:configure_gmail_smtp",
+      "kind": "Script",
+      "name": "configure_gmail_smtp.sh",
+      "ref": {
+        "path": "scripts/configure_gmail_smtp.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:configure_google_oauth",
+      "kind": "Script",
+      "name": "configure_google_oauth.sh",
+      "ref": {
+        "path": "scripts/configure_google_oauth.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:create-module-readme",
+      "kind": "Script",
+      "name": "create-module-readme.sh",
+      "ref": {
+        "path": "scripts/create-module-readme.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:create-release",
+      "kind": "Script",
+      "name": "create-release.sh",
+      "ref": {
+        "path": "scripts/create-release.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy-bir-compliance",
+      "kind": "Script",
+      "name": "deploy-bir-compliance.sh",
+      "ref": {
+        "path": "scripts/deploy-bir-compliance.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy-december-2025-bir-tasks",
+      "kind": "Script",
+      "name": "deploy-december-2025-bir-tasks.sh",
+      "ref": {
+        "path": "scripts/deploy-december-2025-bir-tasks.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy-n8n-workflows",
+      "kind": "Script",
+      "name": "deploy-n8n-workflows.sh",
+      "ref": {
+        "path": "scripts/deploy-n8n-workflows.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy-odoo-modules",
+      "kind": "Script",
+      "name": "deploy-odoo-modules.sh",
+      "ref": {
+        "path": "scripts/deploy-odoo-modules.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy-to-server",
+      "kind": "Script",
+      "name": "deploy-to-server.sh",
+      "ref": {
+        "path": "scripts/deploy-to-server.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_afc_rag",
+      "kind": "Script",
+      "name": "deploy_afc_rag.sh",
+      "ref": {
+        "path": "scripts/deploy_afc_rag.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_complete_fix",
+      "kind": "Script",
+      "name": "deploy_complete_fix.sh",
+      "ref": {
+        "path": "scripts/deploy_complete_fix.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_custom_image",
+      "kind": "Script",
+      "name": "deploy_custom_image.sh",
+      "ref": {
+        "path": "scripts/deploy_custom_image.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_notion_tasks",
+      "kind": "Script",
+      "name": "deploy_notion_tasks.sh",
+      "ref": {
+        "path": "scripts/deploy_notion_tasks.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_odoo_smart",
+      "kind": "Script",
+      "name": "deploy_odoo_smart.sh",
+      "ref": {
+        "path": "scripts/deploy_odoo_smart.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_odoo_upgrade",
+      "kind": "Script",
+      "name": "deploy_odoo_upgrade.sh",
+      "ref": {
+        "path": "scripts/deploy_odoo_upgrade.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_prod",
+      "kind": "Script",
+      "name": "deploy_prod.sh",
+      "ref": {
+        "path": "scripts/deploy_prod.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_with_credentials",
+      "kind": "Script",
+      "name": "deploy_with_credentials.sh",
+      "ref": {
+        "path": "scripts/deploy_with_credentials.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deploy_workos_prod",
+      "kind": "Script",
+      "name": "deploy_workos_prod.sh",
+      "ref": {
+        "path": "scripts/deploy_workos_prod.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:deployment-checklist",
+      "kind": "Script",
+      "name": "deployment-checklist.sh",
+      "ref": {
+        "path": "scripts/deployment-checklist.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:diagnose_smtp",
+      "kind": "Script",
+      "name": "diagnose_smtp.sh",
+      "ref": {
+        "path": "scripts/diagnose_smtp.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:enhanced_health_check",
+      "kind": "Script",
+      "name": "enhanced_health_check.sh",
+      "ref": {
+        "path": "scripts/enhanced_health_check.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:erp_config_cli",
+      "kind": "Script",
+      "name": "erp_config_cli.sh",
+      "ref": {
+        "path": "scripts/erp_config_cli.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:finance_ppm_health_check",
+      "kind": "Script",
+      "name": "finance_ppm_health_check.sh",
+      "ref": {
+        "path": "scripts/finance_ppm_health_check.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:finance_ppm_restore_golden",
+      "kind": "Script",
+      "name": "finance_ppm_restore_golden.sh",
+      "ref": {
+        "path": "scripts/finance_ppm_restore_golden.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:fix-finance-ppm-schema",
+      "kind": "Script",
+      "name": "fix-finance-ppm-schema.sh",
+      "ref": {
+        "path": "scripts/fix-finance-ppm-schema.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:fix_oauth_button",
+      "kind": "Script",
+      "name": "fix_oauth_button.sh",
+      "ref": {
+        "path": "scripts/fix_oauth_button.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:fix_oauth_button_odoo_core",
+      "kind": "Script",
+      "name": "fix_oauth_button_odoo_core.sh",
+      "ref": {
+        "path": "scripts/fix_oauth_button_odoo_core.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:full_deploy_sanity",
+      "kind": "Script",
+      "name": "full_deploy_sanity.sh",
+      "ref": {
+        "path": "scripts/full_deploy_sanity.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:gen_repo_tree",
+      "kind": "Script",
+      "name": "gen_repo_tree.sh",
+      "ref": {
+        "path": "scripts/gen_repo_tree.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:gen_repo_tree_fallback",
+      "kind": "Script",
+      "name": "gen_repo_tree_fallback.sh",
+      "ref": {
+        "path": "scripts/gen_repo_tree_fallback.sh"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:healthcheck_odoo",
+      "kind": "Script",
+      "name": "healthcheck_odoo.sh",
+      "ref": {
+        "path": "scripts/healthcheck_odoo.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:hotfix_icon_crash",
+      "kind": "Script",
+      "name": "hotfix_icon_crash.sh",
+      "ref": {
+        "path": "scripts/hotfix_icon_crash.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:hotfix_production",
+      "kind": "Script",
+      "name": "hotfix_production.sh",
+      "ref": {
+        "path": "scripts/hotfix_production.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:image-diff-report",
+      "kind": "Script",
+      "name": "image-diff-report.sh",
+      "ref": {
+        "path": "scripts/image-diff-report.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:image_audit",
+      "kind": "Script",
+      "name": "image_audit.sh",
+      "ref": {
+        "path": "scripts/image_audit.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:install-git-hooks",
+      "kind": "Script",
+      "name": "install-git-hooks.sh",
+      "ref": {
+        "path": "scripts/install-git-hooks.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:install-notion-stack",
+      "kind": "Script",
+      "name": "install-notion-stack.sh",
+      "ref": {
+        "path": "scripts/install-notion-stack.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:install_all_ipai_modules",
+      "kind": "Script",
+      "name": "install_all_ipai_modules.sh",
+      "ref": {
+        "path": "scripts/install_all_ipai_modules.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:install_finance_stack",
+      "kind": "Script",
+      "name": "install_finance_stack.sh",
+      "ref": {
+        "path": "scripts/install_finance_stack.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:install_ipai_finance_ppm",
+      "kind": "Script",
+      "name": "install_ipai_finance_ppm.sh",
+      "ref": {
+        "path": "scripts/install_ipai_finance_ppm.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:install_oca_modules",
+      "kind": "Script",
+      "name": "install_oca_modules.sh",
+      "ref": {
+        "path": "scripts/install_oca_modules.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:ipai_install_upgrade_test",
+      "kind": "Script",
+      "name": "ipai_install_upgrade_test.sh",
+      "ref": {
+        "path": "scripts/ipai_install_upgrade_test.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:ipai_quality_gate",
+      "kind": "Script",
+      "name": "ipai_quality_gate.sh",
+      "ref": {
+        "path": "scripts/ipai_quality_gate.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:new_conversation_entry",
+      "kind": "Script",
+      "name": "new_conversation_entry.sh",
+      "ref": {
+        "path": "scripts/new_conversation_entry.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:notify_slack",
+      "kind": "Script",
+      "name": "notify_slack.sh",
+      "ref": {
+        "path": "scripts/notify_slack.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:oca-bootstrap",
+      "kind": "Script",
+      "name": "oca-bootstrap.sh",
+      "ref": {
+        "path": "scripts/oca-bootstrap.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:oca-sync",
+      "kind": "Script",
+      "name": "oca-sync.sh",
+      "ref": {
+        "path": "scripts/oca-sync.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:oca-update",
+      "kind": "Script",
+      "name": "oca-update.sh",
+      "ref": {
+        "path": "scripts/oca-update.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:odoo_runtime_snapshot",
+      "kind": "Script",
+      "name": "odoo_runtime_snapshot.sh",
+      "ref": {
+        "path": "scripts/odoo_runtime_snapshot.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:odoo_smoke_close",
+      "kind": "Script",
+      "name": "odoo_smoke_close.sh",
+      "ref": {
+        "path": "scripts/odoo_smoke_close.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:package_image_tarball",
+      "kind": "Script",
+      "name": "package_image_tarball.sh",
+      "ref": {
+        "path": "scripts/package_image_tarball.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:policy-check",
+      "kind": "Script",
+      "name": "policy-check.sh",
+      "ref": {
+        "path": "scripts/policy-check.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:pre_install_snapshot",
+      "kind": "Script",
+      "name": "pre_install_snapshot.sh",
+      "ref": {
+        "path": "scripts/pre_install_snapshot.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:release_gate",
+      "kind": "Script",
+      "name": "release_gate.sh",
+      "ref": {
+        "path": "scripts/release_gate.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:repo_health",
+      "kind": "Script",
+      "name": "repo_health.sh",
+      "ref": {
+        "path": "scripts/repo_health.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:report_ci_telemetry",
+      "kind": "Script",
+      "name": "report_ci_telemetry.sh",
+      "ref": {
+        "path": "scripts/report_ci_telemetry.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:report_stale_branches",
+      "kind": "Script",
+      "name": "report_stale_branches.sh",
+      "ref": {
+        "path": "scripts/report_stale_branches.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:run_clarity_ppm_reverse",
+      "kind": "Script",
+      "name": "run_clarity_ppm_reverse.sh",
+      "ref": {
+        "path": "scripts/run_clarity_ppm_reverse.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:run_odoo_migrations",
+      "kind": "Script",
+      "name": "run_odoo_migrations.sh",
+      "ref": {
+        "path": "scripts/run_odoo_migrations.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:run_project_introspection",
+      "kind": "Script",
+      "name": "run_project_introspection.sh",
+      "ref": {
+        "path": "scripts/run_project_introspection.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:setup_afc_rag",
+      "kind": "Script",
+      "name": "setup_afc_rag.sh",
+      "ref": {
+        "path": "scripts/setup_afc_rag.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:setup_keycloak_db",
+      "kind": "Script",
+      "name": "setup_keycloak_db.sh",
+      "ref": {
+        "path": "scripts/setup_keycloak_db.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:setup_mattermost_db",
+      "kind": "Script",
+      "name": "setup_mattermost_db.sh",
+      "ref": {
+        "path": "scripts/setup_mattermost_db.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:simple_deploy",
+      "kind": "Script",
+      "name": "simple_deploy.sh",
+      "ref": {
+        "path": "scripts/simple_deploy.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:smoketest",
+      "kind": "Script",
+      "name": "smoketest.sh",
+      "ref": {
+        "path": "scripts/smoketest.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:spec_validate",
+      "kind": "Script",
+      "name": "spec_validate.sh",
+      "ref": {
+        "path": "scripts/spec_validate.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:sync-fluent-tokens",
+      "kind": "Script",
+      "name": "sync-fluent-tokens.sh",
+      "ref": {
+        "path": "scripts/sync-fluent-tokens.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:sync-tokens",
+      "kind": "Script",
+      "name": "sync-tokens.sh",
+      "ref": {
+        "path": "scripts/sync-tokens.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:sync_current_state",
+      "kind": "Script",
+      "name": "sync_current_state.sh",
+      "ref": {
+        "path": "scripts/sync_current_state.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:test_deploy_local",
+      "kind": "Script",
+      "name": "test_deploy_local.sh",
+      "ref": {
+        "path": "scripts/test_deploy_local.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:update_task_phase_tags",
+      "kind": "Script",
+      "name": "update_task_phase_tags.sh",
+      "ref": {
+        "path": "scripts/update_task_phase_tags.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:validate-continue-config",
+      "kind": "Script",
+      "name": "validate-continue-config.sh",
+      "ref": {
+        "path": "scripts/validate-continue-config.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:validate-spec-kit",
+      "kind": "Script",
+      "name": "validate-spec-kit.sh",
+      "ref": {
+        "path": "scripts/validate-spec-kit.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:validate_m1",
+      "kind": "Script",
+      "name": "validate_m1.sh",
+      "ref": {
+        "path": "scripts/validate_m1.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:validate_production",
+      "kind": "Script",
+      "name": "validate_production.sh",
+      "ref": {
+        "path": "scripts/validate_production.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:verify-https",
+      "kind": "Script",
+      "name": "verify-https.sh",
+      "ref": {
+        "path": "scripts/verify-https.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:verify",
+      "kind": "Script",
+      "name": "verify.sh",
+      "ref": {
+        "path": "scripts/verify.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:verify_backup",
+      "kind": "Script",
+      "name": "verify_backup.sh",
+      "ref": {
+        "path": "scripts/verify_backup.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:wiki_sync",
+      "kind": "Script",
+      "name": "wiki_sync.sh",
+      "ref": {
+        "path": "scripts/wiki_sync.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:worktree-setup",
+      "kind": "Script",
+      "name": "worktree-setup.sh",
+      "ref": {
+        "path": "scripts/worktree-setup.sh"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:assign_module_icons",
+      "kind": "Script",
+      "name": "assign_module_icons.py",
+      "ref": {
+        "path": "scripts/assign_module_icons.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:audit_email_config",
+      "kind": "Script",
+      "name": "audit_email_config.py",
+      "ref": {
+        "path": "scripts/audit_email_config.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:audit_ipai_modules",
+      "kind": "Script",
+      "name": "audit_ipai_modules.py",
+      "ref": {
+        "path": "scripts/audit_ipai_modules.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:audit_oca_modules",
+      "kind": "Script",
+      "name": "audit_oca_modules.py",
+      "ref": {
+        "path": "scripts/audit_oca_modules.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:ce_oca_audit",
+      "kind": "Script",
+      "name": "ce_oca_audit.py",
+      "ref": {
+        "path": "scripts/ce_oca_audit.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:check_go_live_manifest",
+      "kind": "Script",
+      "name": "check_go_live_manifest.py",
+      "ref": {
+        "path": "scripts/check_go_live_manifest.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:check_project_tasks",
+      "kind": "Script",
+      "name": "check_project_tasks.py",
+      "ref": {
+        "path": "scripts/check_project_tasks.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:check_undocumented_specs",
+      "kind": "Script",
+      "name": "check_undocumented_specs.py",
+      "ref": {
+        "path": "scripts/check_undocumented_specs.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:configure_base_url",
+      "kind": "Script",
+      "name": "configure_base_url.py",
+      "ref": {
+        "path": "scripts/configure_base_url.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:configure_gmail_smtp",
+      "kind": "Script",
+      "name": "configure_gmail_smtp.py",
+      "ref": {
+        "path": "scripts/configure_gmail_smtp.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:configure_mailgun_smtp",
+      "kind": "Script",
+      "name": "configure_mailgun_smtp.py",
+      "ref": {
+        "path": "scripts/configure_mailgun_smtp.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:configure_sendgrid_smtp",
+      "kind": "Script",
+      "name": "configure_sendgrid_smtp.py",
+      "ref": {
+        "path": "scripts/configure_sendgrid_smtp.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:configure_zoho_smtp",
+      "kind": "Script",
+      "name": "configure_zoho_smtp.py",
+      "ref": {
+        "path": "scripts/configure_zoho_smtp.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:convert_csv_to_xml",
+      "kind": "Script",
+      "name": "convert_csv_to_xml.py",
+      "ref": {
+        "path": "scripts/convert_csv_to_xml.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:convert_seed_to_xml",
+      "kind": "Script",
+      "name": "convert_seed_to_xml.py",
+      "ref": {
+        "path": "scripts/convert_seed_to_xml.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:copilot_ingest",
+      "kind": "Script",
+      "name": "copilot_ingest.py",
+      "ref": {
+        "path": "scripts/copilot_ingest.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:count_xml_seeds",
+      "kind": "Script",
+      "name": "count_xml_seeds.py",
+      "ref": {
+        "path": "scripts/count_xml_seeds.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:export_todo_seed",
+      "kind": "Script",
+      "name": "export_todo_seed.py",
+      "ref": {
+        "path": "scripts/export_todo_seed.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:extract_remote_data",
+      "kind": "Script",
+      "name": "extract_remote_data.py",
+      "ref": {
+        "path": "scripts/extract_remote_data.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:fix-pay-invoices-online-error",
+      "kind": "Script",
+      "name": "fix-pay-invoices-online-error.py",
+      "ref": {
+        "path": "scripts/fix-pay-invoices-online-error.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:fix_odoo18_views",
+      "kind": "Script",
+      "name": "fix_odoo18_views.py",
+      "ref": {
+        "path": "scripts/fix_odoo18_views.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:generate_2026_finance_calendar",
+      "kind": "Script",
+      "name": "generate_2026_finance_calendar.py",
+      "ref": {
+        "path": "scripts/generate_2026_finance_calendar.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_2026_schedule",
+      "kind": "Script",
+      "name": "generate_2026_schedule.py",
+      "ref": {
+        "path": "scripts/generate_2026_schedule.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_finance_dashboard",
+      "kind": "Script",
+      "name": "generate_finance_dashboard.py",
+      "ref": {
+        "path": "scripts/generate_finance_dashboard.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_go_live_checklist",
+      "kind": "Script",
+      "name": "generate_go_live_checklist.py",
+      "ref": {
+        "path": "scripts/generate_go_live_checklist.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_module_docs",
+      "kind": "Script",
+      "name": "generate_module_docs.py",
+      "ref": {
+        "path": "scripts/generate_module_docs.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_module_health_report",
+      "kind": "Script",
+      "name": "generate_module_health_report.py",
+      "ref": {
+        "path": "scripts/generate_module_health_report.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:generate_month_end_imports",
+      "kind": "Script",
+      "name": "generate_month_end_imports.py",
+      "ref": {
+        "path": "scripts/generate_month_end_imports.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_odoo_dbml",
+      "kind": "Script",
+      "name": "generate_odoo_dbml.py",
+      "ref": {
+        "path": "scripts/generate_odoo_dbml.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:generate_repo_index",
+      "kind": "Script",
+      "name": "generate_repo_index.py",
+      "ref": {
+        "path": "scripts/generate_repo_index.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_seed_xml",
+      "kind": "Script",
+      "name": "generate_seed_xml.py",
+      "ref": {
+        "path": "scripts/generate_seed_xml.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:generate_spec_report",
+      "kind": "Script",
+      "name": "generate_spec_report.py",
+      "ref": {
+        "path": "scripts/generate_spec_report.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:import_month_end_tasks",
+      "kind": "Script",
+      "name": "import_month_end_tasks.py",
+      "ref": {
+        "path": "scripts/import_month_end_tasks.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:install_module_xmlrpc",
+      "kind": "Script",
+      "name": "install_module_xmlrpc.py",
+      "ref": {
+        "path": "scripts/install_module_xmlrpc.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:install_oauth_module",
+      "kind": "Script",
+      "name": "install_oauth_module.py",
+      "ref": {
+        "path": "scripts/install_oauth_module.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:introspect_project",
+      "kind": "Script",
+      "name": "introspect_project.py",
+      "ref": {
+        "path": "scripts/introspect_project.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:ipai_full_audit",
+      "kind": "Script",
+      "name": "ipai_full_audit.py",
+      "ref": {
+        "path": "scripts/ipai_full_audit.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:map_logframe",
+      "kind": "Script",
+      "name": "map_logframe.py",
+      "ref": {
+        "path": "scripts/map_logframe.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:module_audit_agent",
+      "kind": "Script",
+      "name": "module_audit_agent.py",
+      "ref": {
+        "path": "scripts/module_audit_agent.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:odoo_import_project_suite",
+      "kind": "Script",
+      "name": "odoo_import_project_suite.py",
+      "ref": {
+        "path": "scripts/odoo_import_project_suite.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:odoo_mattermost_integration",
+      "kind": "Script",
+      "name": "odoo_mattermost_integration.py",
+      "ref": {
+        "path": "scripts/odoo_mattermost_integration.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:parse_notion_tasks",
+      "kind": "Script",
+      "name": "parse_notion_tasks.py",
+      "ref": {
+        "path": "scripts/parse_notion_tasks.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:prod_access_check",
+      "kind": "Script",
+      "name": "prod_access_check.py",
+      "ref": {
+        "path": "scripts/prod_access_check.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:prod_db_guess",
+      "kind": "Script",
+      "name": "prod_db_guess.py",
+      "ref": {
+        "path": "scripts/prod_db_guess.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:promote_oauth_users",
+      "kind": "Script",
+      "name": "promote_oauth_users.py",
+      "ref": {
+        "path": "scripts/promote_oauth_users.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:replace_seed_from_excel",
+      "kind": "Script",
+      "name": "replace_seed_from_excel.py",
+      "ref": {
+        "path": "scripts/replace_seed_from_excel.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:scan_ipai_modules",
+      "kind": "Script",
+      "name": "scan_ipai_modules.py",
+      "ref": {
+        "path": "scripts/scan_ipai_modules.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:seed_finance_close_from_xlsx",
+      "kind": "Script",
+      "name": "seed_finance_close_from_xlsx.py",
+      "ref": {
+        "path": "scripts/seed_finance_close_from_xlsx.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:spec-kit-enforce",
+      "kind": "Script",
+      "name": "spec-kit-enforce.py",
+      "ref": {
+        "path": "scripts/spec-kit-enforce.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:sync_directional",
+      "kind": "Script",
+      "name": "sync_directional.py",
+      "ref": {
+        "path": "scripts/sync_directional.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:test_afc_rag",
+      "kind": "Script",
+      "name": "test_afc_rag.py",
+      "ref": {
+        "path": "scripts/test_afc_rag.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:test_ipai_install_upgrade",
+      "kind": "Script",
+      "name": "test_ipai_install_upgrade.py",
+      "ref": {
+        "path": "scripts/test_ipai_install_upgrade.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:update_diagram_manifest",
+      "kind": "Script",
+      "name": "update_diagram_manifest.py",
+      "ref": {
+        "path": "scripts/update_diagram_manifest.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:update_tasks_after_import",
+      "kind": "Script",
+      "name": "update_tasks_after_import.py",
+      "ref": {
+        "path": "scripts/update_tasks_after_import.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:validate_manifest",
+      "kind": "Script",
+      "name": "validate_manifest.py",
+      "ref": {
+        "path": "scripts/validate_manifest.py"
+      },
+      "props": {
+        "executable": false
+      }
+    },
+    {
+      "id": "script:validate_manifests",
+      "kind": "Script",
+      "name": "validate_manifests.py",
+      "ref": {
+        "path": "scripts/validate_manifests.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:validate_spec_kit",
+      "kind": "Script",
+      "name": "validate_spec_kit.py",
+      "ref": {
+        "path": "scripts/validate_spec_kit.py"
+      },
+      "props": {
+        "executable": true
+      }
+    },
+    {
+      "id": "script:verify_phase3",
+      "kind": "Script",
+      "name": "verify_phase3.py",
+      "ref": {
+        "path": "scripts/verify_phase3.py"
+      },
+      "props": {
+        "executable": false
+      }
+    }
+  ],
+  "edges": [
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:adk-control-room",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:auto-claude-framework",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:bir-tax-compliance",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:close-orchestration",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:continue-plus",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:control-room-api",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:docs-platform-sapgrade",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:erp-saas-clone-suite",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:expense-automation",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:hire-to-retire",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:insightpulse-docs-ai",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:insightpulse-mobile",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:ipai-ai-platform",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:ipai-ai-platform-odoo18",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:ipai-control-center",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:ipai-copilot",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:ipai-month-end",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:ipai-tbwa-finance",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:kapa-plus",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:kapa-reverse",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:knowledge-hub",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:notion-finance-ppm-control-room",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:odoo-apps-inventory",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:odoo-ce",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:odoo-mcp-server",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:ops-control-room",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:parallel-control-planes",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:project-ce",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:pulser-master-control",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:seed-bundle",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:test-coverage-improvement",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SPEC",
+      "dst": "spec:workos-notion-clone",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "app:chatgpt_ipai_ai_studio",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "app:control-room",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "app:docs-ai-widget",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "app:ipai-control-center-docs",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "app:mobile",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "app:pulser-runner",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "app:web",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_advisor",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_agent_core",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_agents",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_agents_ui",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_audit",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_connectors",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_core",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_prompts",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_provider_kapa",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_provider_pulser",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_sources_odoo",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ai_studio",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_aiux_chat",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_approvals",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ask_ai",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ask_ai_chatter",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_assets",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_auth_oauth_internal",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_bir_compliance",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ce_branding",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ce_cleaner",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_chatgpt_sdk_theme",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_clarity_ppm_parity",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_close_orchestration",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_command_center",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_control_room",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_custom_routes",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_default_home",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_design_system_apps_sdk",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_dev_studio_base",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_document_ai",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_equipment",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_expense",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_expense_ocr",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_bir_compliance",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_close_automation",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_close_seed",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_month_end",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_monthly_closing",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_ppm",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_ppm_closing",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_ppm_dashboard",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_ppm_tdi",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_finance_project_hybrid",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_focalboard_connector",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_industry_accounting_firm",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_industry_marketing_agency",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_integrations",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_marketing_ai",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_marketing_journey",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_master_control",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_mattermost_connector",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_module_gating",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_n8n_connector",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ocr_expense",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_platform_theme",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_portal_fix",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ppm",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ppm_a1",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ppm_monthly_close",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_project_gantt",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_project_profitability_bridge",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_project_program",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_project_suite",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_settings_dashboard",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_skill_api",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_srm",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_studio_ai",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_superset_connector",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_test_fixtures",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_theme_aiux",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_theme_fluent2",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_theme_tbwa_backend",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_ui_brand_tokens",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_v18_compat",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_web_fluent2",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_web_icons_fluent",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_web_theme_tbwa",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "CONTAINS",
+      "dst": "module:ipai.ipai_workspace_core",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:agent-preflight",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:aiux-ship-gate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:all-green-gates",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:audit-contract",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:auto-sitemap-tree",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:build-seeded-image",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:build-unified-image",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ci-web",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ci",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:control-room-ci",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:databricks-dab-ci",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:deploy-finance-ppm",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:deploy-ipai-control-center-docs",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:deploy-odoo-prod",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:deploy-production",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:diagrams-drawio-enforce",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:diagrams-qa",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:diagrams",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:directional-sync",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:docs-architecture-sync",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:docs-crawler-cron",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:fin-workspace-weekly-sync",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:finance-ppm-health",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:go-live-manifest-gate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:health-check",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:icons-drift",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:infra-validate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ipai-ai-platform-ci",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ipai-ai-studio-smoke",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ipai-determinism",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ipai-dynamic-qg",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ipai-module-matrix",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:ipai-prod-checks",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:lakehouse-smoke",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:module-catalog-drift",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:module-gating",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:no-deprecated-repo-refs",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:notion-sync-ci",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:odoo-import-artifacts",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:odoo-module-install-gate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:repo-structure",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:seeds-validate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:spec-and-parity",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:spec-kit-enforce",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:superset-bump",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:wiki-sync",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_WORKFLOW",
+      "dst": "workflow:workflow-yaml-validate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:activate-n8n-workflows",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:apply-supabase-schema",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:auto_error_handler",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:backup_odoo",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:baseline-validation",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:bootstrap_apps_from_inventory",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:build_and_push_version",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:build_v0.10.0",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:build_v0.9.1",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:check-enterprise-modules",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:check_module_status",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:ci_local",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:ci_smoke_test",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:cleanup-branches",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:configure_gmail_smtp",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:configure_google_oauth",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:create-module-readme",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:create-release",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy-bir-compliance",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy-december-2025-bir-tasks",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy-n8n-workflows",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy-odoo-modules",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy-to-server",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_afc_rag",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_complete_fix",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_custom_image",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_notion_tasks",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_odoo_smart",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_odoo_upgrade",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_prod",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_with_credentials",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deploy_workos_prod",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:deployment-checklist",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:diagnose_smtp",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:enhanced_health_check",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:erp_config_cli",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:finance_ppm_health_check",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:finance_ppm_restore_golden",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:fix-finance-ppm-schema",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:fix_oauth_button",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:fix_oauth_button_odoo_core",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:full_deploy_sanity",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:gen_repo_tree",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:gen_repo_tree_fallback",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:healthcheck_odoo",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:hotfix_icon_crash",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:hotfix_production",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:image-diff-report",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:image_audit",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install-git-hooks",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install-notion-stack",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install_all_ipai_modules",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install_finance_stack",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install_ipai_finance_ppm",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install_oca_modules",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:ipai_install_upgrade_test",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:ipai_quality_gate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:new_conversation_entry",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:notify_slack",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:oca-bootstrap",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:oca-sync",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:oca-update",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:odoo_runtime_snapshot",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:odoo_smoke_close",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:package_image_tarball",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:policy-check",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:pre_install_snapshot",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:release_gate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:repo_health",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:report_ci_telemetry",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:report_stale_branches",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:run_clarity_ppm_reverse",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:run_odoo_migrations",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:run_project_introspection",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:setup_afc_rag",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:setup_keycloak_db",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:setup_mattermost_db",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:simple_deploy",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:smoketest",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:spec_validate",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:sync-fluent-tokens",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:sync-tokens",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:sync_current_state",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:test_deploy_local",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:update_task_phase_tags",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:validate-continue-config",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:validate-spec-kit",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:validate_m1",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:validate_production",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:verify-https",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:verify",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:verify_backup",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:wiki_sync",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:worktree-setup",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:assign_module_icons",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:audit_email_config",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:audit_ipai_modules",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:audit_oca_modules",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:ce_oca_audit",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:check_go_live_manifest",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:check_project_tasks",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:check_undocumented_specs",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:configure_base_url",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:configure_gmail_smtp",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:configure_mailgun_smtp",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:configure_sendgrid_smtp",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:configure_zoho_smtp",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:convert_csv_to_xml",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:convert_seed_to_xml",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:copilot_ingest",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:count_xml_seeds",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:export_todo_seed",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:extract_remote_data",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:fix-pay-invoices-online-error",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:fix_odoo18_views",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_2026_finance_calendar",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_2026_schedule",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_finance_dashboard",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_go_live_checklist",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_module_docs",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_module_health_report",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_month_end_imports",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_odoo_dbml",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_repo_index",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_seed_xml",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:generate_spec_report",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:import_month_end_tasks",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install_module_xmlrpc",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:install_oauth_module",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:introspect_project",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:ipai_full_audit",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:map_logframe",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:module_audit_agent",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:odoo_import_project_suite",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:odoo_mattermost_integration",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:parse_notion_tasks",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:prod_access_check",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:prod_db_guess",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:promote_oauth_users",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:replace_seed_from_excel",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:scan_ipai_modules",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:seed_finance_close_from_xlsx",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:spec-kit-enforce",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:sync_directional",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:test_afc_rag",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:test_ipai_install_upgrade",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:update_diagram_manifest",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:update_tasks_after_import",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:validate_manifest",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:validate_manifests",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:validate_spec_kit",
+      "props": {}
+    },
+    {
+      "src": "repo:jgtolentino/odoo-ce",
+      "rel": "HAS_SCRIPT",
+      "dst": "script:verify_phase3",
+      "props": {}
+    }
+  ],
+  "stats": {
+    "total_nodes": 318,
+    "total_edges": 317,
+    "spec_bundles": 32,
+    "apps": 7,
+    "modules": 79,
+    "workflows": 47,
+    "scripts": 152
+  }
+}

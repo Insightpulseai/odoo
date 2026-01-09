@@ -1,320 +1,183 @@
-# Sinch SMS/Verification Provider Setup Runbook
+# Sinch SMS/OTP Setup Runbook
 
-**Purpose:** Configure Sinch as the SMS and verification provider for IPAI applications.
+## Overview
 
-**Prerequisites:**
-- Sinch account with API access
-- Production phone numbers (if needed)
-- Odoo instance configured
+This runbook covers the setup of Sinch as an SMS/OTP provider for Odoo.
 
 ---
 
-## 1. Overview
+## Prerequisites
 
-Sinch provides:
-- SMS messaging (transactional, OTP)
-- Voice verification
-- Number verification
-- WhatsApp Business messaging (optional)
-
-**Reference:** [Sinch Developer Documentation](https://developers.sinch.com/)
+- Sinch account with SMS API access
+- Environment variables configured (NOT in repo):
+  - `SINCH_SERVICE_PLAN_ID`
+  - `SINCH_API_TOKEN`
 
 ---
 
-## 2. Account Setup
+## 1. Sinch Account Setup
 
-### Step 1: Create Sinch Account
+### 1.1 Create Account
 
-1. Go to [Sinch Dashboard](https://dashboard.sinch.com/)
-2. Sign up for an account
-3. Verify your email and phone number
+1. Sign up at [Sinch Dashboard](https://dashboard.sinch.com)
+2. Complete phone verification
+3. Select SMS API product
 
-### Step 2: Create an Application
+### 1.2 Get Credentials
 
-1. Navigate to **Apps** in the dashboard
-2. Click **Create App**
-3. Enter app name (e.g., `ipai-production`)
-4. Select capabilities:
-   - SMS
-   - Verification (if needed)
-5. Note the **App Key** and **App Secret**
-
-### Step 3: Configure Phone Numbers
-
-1. Go to **Numbers** → **Your Numbers**
-2. Rent or port phone numbers for your region
-3. Assign numbers to your application
+1. Navigate to **APIs** > **REST Configuration**
+2. Note your:
+   - Service Plan ID
+   - API Token
+   - Region (us/eu)
 
 ---
 
-## 3. API Credentials
+## 2. Configure SMS Sending
 
-### Environment Variables
-
-Set these in the Odoo container:
+### 2.1 Test API Access
 
 ```bash
-SINCH_APP_KEY=your-app-key
-SINCH_APP_SECRET=your-app-secret
-SINCH_PROJECT_ID=your-project-id
-SINCH_REGION=us  # or eu, au
-SINCH_FROM_NUMBER=+1234567890  # Your Sinch number
-```
-
-### Credential Storage
-
-Store credentials securely:
-- Use environment variables (recommended)
-- Or Odoo system parameters with encryption
-- Never hardcode in source
-
----
-
-## 4. API Reference
-
-### Send SMS
-
-```bash
-# Using curl
-curl -X POST "https://sms.api.sinch.com/xms/v1/${PROJECT_ID}/batches" \
-  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+curl -X POST \
+  "https://us.sms.api.sinch.com/xms/v1/${SINCH_SERVICE_PLAN_ID}/batches" \
+  -H "Authorization: Bearer ${SINCH_API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d '{
-    "from": "+1234567890",
-    "to": ["+0987654321"],
-    "body": "Your verification code is: 123456"
+    "from": "YOUR_SINCH_NUMBER",
+    "to": ["+1234567890"],
+    "body": "Test message from Sinch"
   }'
 ```
 
-### Verification
+### 2.2 Response Codes
 
-```bash
-# Start verification
-curl -X POST "https://verification.api.sinch.com/verification/v1/verifications" \
-  -u "${APP_KEY}:${APP_SECRET}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "identity": {
-      "type": "number",
-      "endpoint": "+1234567890"
-    },
-    "method": "sms"
-  }'
-
-# Report verification result
-curl -X PUT "https://verification.api.sinch.com/verification/v1/verifications/number/+1234567890" \
-  -u "${APP_KEY}:${APP_SECRET}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "method": "sms",
-    "sms": {
-      "code": "123456"
-    }
-  }'
-```
+| Code | Meaning |
+|------|---------|
+| 201 | Message queued successfully |
+| 400 | Invalid request (check payload) |
+| 401 | Authentication failed |
+| 403 | Insufficient permissions |
 
 ---
 
-## 5. Odoo Integration
+## 3. Odoo Integration
 
-### Module: `ipai_messaging_gateway`
+### 3.1 System Parameters
 
-Abstract messaging provider with Sinch implementation.
-
-**Configuration (System Parameters):**
+Set in Odoo via Settings > Technical > Parameters > System Parameters:
 
 | Key | Value |
 |-----|-------|
-| `ipai_messaging.sms_provider` | `sinch` |
-| `ipai_messaging.sinch_app_key` | (from env) |
-| `ipai_messaging.sinch_app_secret` | (encrypted) |
-| `ipai_messaging.sinch_project_id` | (from env) |
-| `ipai_messaging.sinch_from_number` | `+1234567890` |
+| `sinch.service_plan_id` | `${SINCH_SERVICE_PLAN_ID}` |
+| `sinch.api_token` | `${SINCH_API_TOKEN}` |
+| `sinch.region` | `us` or `eu` |
+| `sinch.from_number` | Your Sinch phone number |
 
-### Python Integration
+### 3.2 SMS Gateway Module
+
+If using `ipai_sms_gateway`:
+
+1. Install the module: `odoo -d odoo -i ipai_sms_gateway --stop-after-init`
+2. Configure via Settings > SMS > Providers
+3. Select Sinch as provider
+4. Enter credentials
+
+---
+
+## 4. OTP Configuration
+
+### 4.1 Enable Two-Factor Authentication
+
+For Odoo 2FA with SMS:
+
+1. Install `auth_totp_sms` if available
+2. Configure SMS provider in settings
+3. Users enable 2FA in their preferences
+
+### 4.2 Custom OTP Flow
+
+For custom OTP (e.g., password reset):
 
 ```python
-import requests
-import os
+# Example: Send OTP via Sinch
+def send_otp(self, phone_number, otp_code):
+    import requests
 
-class SinchSmsProvider:
-    """Sinch SMS provider implementation."""
+    url = f"https://us.sms.api.sinch.com/xms/v1/{SERVICE_PLAN_ID}/batches"
+    headers = {
+        "Authorization": f"Bearer {API_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "from": FROM_NUMBER,
+        "to": [phone_number],
+        "body": f"Your verification code is: {otp_code}"
+    }
 
-    def __init__(self):
-        self.project_id = os.getenv("SINCH_PROJECT_ID")
-        self.app_key = os.getenv("SINCH_APP_KEY")
-        self.app_secret = os.getenv("SINCH_APP_SECRET")
-        self.from_number = os.getenv("SINCH_FROM_NUMBER")
-        self.base_url = "https://sms.api.sinch.com/xms/v1"
-
-    def send_sms(self, to_number, message):
-        """Send SMS via Sinch."""
-        url = f"{self.base_url}/{self.project_id}/batches"
-
-        response = requests.post(
-            url,
-            auth=(self.app_key, self.app_secret),
-            json={
-                "from": self.from_number,
-                "to": [to_number],
-                "body": message,
-            },
-            timeout=30,
-        )
-        response.raise_for_status()
-        return response.json()
+    response = requests.post(url, json=payload, headers=headers)
+    return response.status_code == 201
 ```
 
 ---
 
-## 6. Webhooks
+## 5. Verification Checklist
 
-### Configure Callback URL
-
-1. In Sinch Dashboard, go to **Apps** → Your App → **Callbacks**
-2. Set callback URL: `https://your-domain.com/ipai/sinch/webhook`
-3. Select events:
-   - Message delivery reports
-   - Inbound messages (if needed)
-   - Verification events
-
-### Webhook Handler
-
-```python
-from odoo import http
-from odoo.http import request
-
-class SinchWebhookController(http.Controller):
-
-    @http.route("/ipai/sinch/webhook", type="json", auth="none", methods=["POST"], csrf=False)
-    def sinch_webhook(self, **kwargs):
-        """Handle Sinch webhook callbacks."""
-        payload = request.jsonrequest
-
-        event_type = payload.get("type")
-
-        if event_type == "delivery_report":
-            # Handle delivery report
-            pass
-        elif event_type == "inbound":
-            # Handle inbound message
-            pass
-        elif event_type == "verification":
-            # Handle verification event
-            pass
-
-        return {"status": "ok"}
-```
-
----
-
-## 7. Testing
-
-### Sandbox Mode
-
-Use Sinch sandbox for testing:
-- No real messages sent
-- Free for development
-- Configure in app settings
-
-### Test Commands
-
-```bash
-# Check credentials
-curl -X GET "https://sms.api.sinch.com/xms/v1/${PROJECT_ID}/inbounds" \
-  -u "${APP_KEY}:${APP_SECRET}"
-
-# Send test SMS (production)
-curl -X POST "https://sms.api.sinch.com/xms/v1/${PROJECT_ID}/batches" \
-  -u "${APP_KEY}:${APP_SECRET}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "from": "${FROM_NUMBER}",
-    "to": ["${TEST_NUMBER}"],
-    "body": "Test message from IPAI"
-  }'
-```
-
-### Verify in Odoo
-
-```python
-# From Odoo shell
-provider = env['ipai.messaging.gateway'].get_provider('sinch')
-result = provider.send_sms('+1234567890', 'Test from Odoo')
-print(result)
-```
-
----
-
-## 8. Monitoring
-
-### Key Metrics
-
-| Metric | Description | Alert |
-|--------|-------------|-------|
-| SMS delivery rate | % delivered | < 95% |
-| SMS latency | Time to deliver | > 30s |
-| API errors | Error count | > 10/hour |
-| Cost | Monthly spend | Budget threshold |
-
-### Dashboard
-
-Access Sinch Dashboard for:
-- Message logs
-- Delivery statistics
-- Cost tracking
-- Error analysis
-
----
-
-## 9. Troubleshooting
-
-### Common Issues
-
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| 401 Unauthorized | Invalid credentials | Verify app key/secret |
-| 403 Forbidden | Missing permissions | Check app capabilities |
-| Number not valid | Invalid format | Use E.164 format (+1234567890) |
-| Message not delivered | Carrier issues | Check delivery reports |
-
-### Debug Commands
-
-```bash
-# Check message status
-curl -X GET "https://sms.api.sinch.com/xms/v1/${PROJECT_ID}/batches/${BATCH_ID}" \
-  -u "${APP_KEY}:${APP_SECRET}"
-
-# List recent messages
-curl -X GET "https://sms.api.sinch.com/xms/v1/${PROJECT_ID}/batches?page_size=10" \
-  -u "${APP_KEY}:${APP_SECRET}"
-```
-
----
-
-## 10. Checklist
-
-### Setup
-
-- [ ] Sinch account created
-- [ ] Application created with SMS capability
-- [ ] Phone number(s) provisioned
-- [ ] Credentials stored securely
-- [ ] Webhook URL configured
-
-### Integration
-
-- [ ] Environment variables set
-- [ ] Odoo messaging gateway configured
+- [ ] Sinch account created and verified
+- [ ] Service Plan ID obtained
+- [ ] API Token obtained
 - [ ] Test SMS sent successfully
-- [ ] Delivery reports received
+- [ ] Odoo system parameters configured
+- [ ] SMS gateway module installed (if applicable)
+- [ ] OTP flow tested end-to-end
 
-### Production
+---
 
-- [ ] Sandbox disabled
-- [ ] Production phone numbers active
-- [ ] Monitoring configured
-- [ ] Cost alerts set
+## 6. Rate Limits & Quotas
+
+### 6.1 Default Limits
+
+| Metric | Limit |
+|--------|-------|
+| Messages per second | 30 |
+| Daily messages (trial) | 100 |
+| Monthly messages (production) | Per plan |
+
+### 6.2 Monitoring
+
+Check usage in Sinch Dashboard:
+- **Analytics** > **SMS** > **Overview**
+
+---
+
+## 7. Troubleshooting
+
+### Messages Not Delivered
+
+1. Check Sinch Dashboard > Logs
+2. Verify phone number format (E.164: +1234567890)
+3. Check carrier filtering (some carriers block shortcodes)
+
+### Authentication Errors
+
+1. Regenerate API token in Sinch Dashboard
+2. Verify Service Plan ID is correct
+3. Check region matches your account
+
+### Rate Limiting
+
+1. Implement exponential backoff
+2. Request limit increase from Sinch support
+3. Queue messages for async sending
+
+---
+
+## 8. Security Notes
+
+- NEVER commit `SINCH_API_TOKEN` to repo
+- Use environment variables or secrets manager
+- Rotate API tokens periodically
+- Implement rate limiting in your application
+- Log all SMS sends for audit
 
 ---
 

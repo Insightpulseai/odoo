@@ -1,365 +1,273 @@
-# OCR Service Operational Runbook
+# OCR Service Operations Runbook
 
-**Purpose:** Operate and maintain the self-hosted OCR service for document intelligence.
+## Overview
 
-**Service Location:** `188.166.237.231:8000` (or `http://ocr:8000` on internal network)
-
----
-
-## 1. Overview
-
-The OCR service provides document extraction capabilities for:
-- Invoices and bills
-- Receipts
-- Purchase orders
-- Contracts
-- General documents
-
-### Capabilities
-
-| Feature | Description |
-|---------|-------------|
-| Text extraction | Full text from PDF/images |
-| Layout analysis | Bounding boxes for text blocks |
-| Field extraction | Structured fields (vendor, date, amounts) |
-| Document classification | Auto-detect document type |
-| Confidence scores | Per-field confidence values |
+This runbook covers the operations of the OCR service used by `ipai_expense_ocr` for receipt/document processing.
 
 ---
 
-## 2. Environment Configuration
+## Prerequisites
 
-### Odoo Environment Variables
-
-Set these in the Odoo container:
-
-```bash
-OCR_BASE_URL=http://ocr:8000          # Internal network
-# OR
-OCR_BASE_URL=http://188.166.237.231:8000  # Direct access
-
-OCR_TIMEOUT_SECONDS=60                # Request timeout
-OCR_MAX_MB=25                         # Max file size
-OCR_RETRY_ATTEMPTS=3                  # Retry on failure
-OCR_RETRY_DELAY_SECONDS=5             # Delay between retries
-```
-
-### Docker Compose (if co-located)
-
-```yaml
-services:
-  ocr:
-    image: your-ocr-image:latest
-    container_name: ocr
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
-    environment:
-      - LOG_LEVEL=info
-      - MAX_WORKERS=4
-      - MAX_FILE_SIZE_MB=25
-    volumes:
-      - ocr_cache:/app/cache
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - odoo_backend
-
-volumes:
-  ocr_cache:
-```
+- OCR service endpoint configured
+- Environment variables set (NOT in repo):
+  - `OCR_SERVICE_URL`
+  - `OCR_SERVICE_TOKEN`
 
 ---
 
-## 3. API Reference
+## 1. Supported OCR Backends
 
-### Health Check
+### 1.1 Backend Options
 
-```bash
-GET /health
+| Backend | Use Case | Configuration |
+|---------|----------|---------------|
+| Custom OCR Service | Self-hosted PaddleOCR-VL | `OCR_SERVICE_URL` |
+| OpenAI GPT-4 Vision | Cloud-based, high accuracy | OpenAI API key |
+| Google Gemini Vision | Cloud-based alternative | Gemini API key |
+| DigitalOcean Model Endpoints | DO-hosted models | DO API token |
 
-Response:
-{
-  "status": "ok",
-  "version": "1.0.0",
-  "uptime_seconds": 3600
-}
-```
+### 1.2 Configuration Priority
 
-### Extract (Sync)
+Odoo checks backends in order:
+1. Custom OCR Service (if `OCR_SERVICE_URL` set)
+2. OpenAI Vision (if `OPENAI_API_KEY` set)
+3. Gemini Vision (if `GEMINI_API_KEY` set)
 
-```bash
-POST /v1/ocr/extract
+---
+
+## 2. Custom OCR Service Setup
+
+### 2.1 Service Requirements
+
+The OCR service endpoint must accept:
+
+**Request:**
+```http
+POST /extract
 Content-Type: multipart/form-data
+Authorization: Bearer ${OCR_SERVICE_TOKEN}
 
-Form fields:
-- file: PDF/JPG/PNG document
-- options: JSON string (optional)
-  {
-    "doc_type_hint": "invoice",  # optional hint
-    "extract_tables": true,       # extract tables
-    "language": "en"              # OCR language
-  }
+file: <binary image/pdf>
+```
 
-Response:
+**Response:**
+```json
 {
-  "doc_type": "invoice",
-  "text": "full extracted text...",
-  "blocks": [
-    { "text": "ACME INC", "bbox": [12, 32, 210, 58], "conf": 0.98 }
+  "vendor": "Starbucks",
+  "date": "2026-01-08",
+  "total": 45.50,
+  "tax": 4.50,
+  "currency": "USD",
+  "line_items": [
+    {"description": "Coffee", "amount": 20.00},
+    {"description": "Sandwich", "amount": 21.00}
   ],
-  "fields": {
-    "vendor_name": { "value": "ACME INC", "conf": 0.93 },
-    "invoice_number": { "value": "INV-10021", "conf": 0.89 },
-    "invoice_date": { "value": "2026-01-08", "conf": 0.91 },
-    "currency": { "value": "PHP", "conf": 0.85 },
-    "subtotal": { "value": 1000.0, "conf": 0.87 },
-    "tax": { "value": 120.0, "conf": 0.84 },
-    "total": { "value": 1120.0, "conf": 0.92 }
-  },
-  "tables": [],
-  "meta": {
-    "pages": 2,
-    "engine": "tesseract+layoutlm",
-    "duration_ms": 1432
-  }
+  "confidence": 0.92,
+  "raw_text": "..."
 }
 ```
 
-### Extract (Async) - Optional
+### 2.2 Health Check
 
 ```bash
-POST /v1/ocr/extract-async
-Content-Type: multipart/form-data
+curl -X GET "${OCR_SERVICE_URL}/health" \
+  -H "Authorization: Bearer ${OCR_SERVICE_TOKEN}"
+```
 
-Response:
-{
-  "job_id": "abc123",
-  "status": "pending",
-  "poll_url": "/v1/ocr/jobs/abc123"
-}
+Expected: `{"status": "ok"}`
 
 ---
 
-GET /v1/ocr/jobs/{job_id}
+## 3. Odoo Configuration
 
-Response (pending):
-{
-  "job_id": "abc123",
-  "status": "processing",
-  "progress": 0.5
-}
+### 3.1 System Parameters
 
-Response (complete):
-{
-  "job_id": "abc123",
-  "status": "complete",
-  "result": { ... extraction result ... }
-}
-```
+Set via Settings > Technical > Parameters > System Parameters:
+
+| Key | Value |
+|-----|-------|
+| `ocr.service_url` | `${OCR_SERVICE_URL}` |
+| `ocr.service_token` | `${OCR_SERVICE_TOKEN}` |
+| `ocr.confidence_threshold` | `0.70` |
+| `ocr.auto_process` | `True` |
+
+### 3.2 Module Settings
+
+Configure via Settings > Expenses > OCR Configuration:
+
+1. Enable OCR auto-processing
+2. Set confidence threshold (default: 0.70)
+3. Configure review queue routing
 
 ---
 
-## 4. Verification Commands
+## 4. Processing Flow
 
-### Health Check
+### 4.1 Receipt Upload Flow
 
-```bash
-# Basic health
-curl -sS http://188.166.237.231:8000/health | jq .
-
-# Expected:
-# { "status": "ok", "version": "1.0.0" }
+```
+1. User uploads receipt to expense
+   ↓
+2. `ipai_expense_ocr` detects attachment
+   ↓
+3. OCR job queued (cron or async)
+   ↓
+4. OCR service extracts data
+   ↓
+5. Confidence check:
+   - >= 0.70: Auto-populate fields
+   - < 0.70: Route to review queue
+   ↓
+6. Duplicate check (hash comparison)
+   ↓
+7. Expense fields updated
 ```
 
-### Smoke Test
+### 4.2 Cron Job
 
-```bash
-# Extract from sample invoice
-curl -sS -X POST \
-  -F "file=@./sample-invoice.pdf" \
-  http://188.166.237.231:8000/v1/ocr/extract | jq .
+The OCR processor runs via cron:
 
-# Check extracted fields
-curl -sS -X POST \
-  -F "file=@./sample-invoice.pdf" \
-  http://188.166.237.231:8000/v1/ocr/extract | jq '.fields'
-```
-
-### From Odoo Container
-
-```bash
-# Test connectivity from Odoo
-docker exec odoo-core curl -sS http://ocr:8000/health
-
-# Or direct IP
-docker exec odoo-core curl -sS http://188.166.237.231:8000/health
+```xml
+<record id="ir_cron_ocr_processor" model="ir.cron">
+    <field name="name">OCR: Process Pending Receipts</field>
+    <field name="model_id" ref="model_hr_expense"/>
+    <field name="state">code</field>
+    <field name="code">model._process_ocr_queue()</field>
+    <field name="interval_number">5</field>
+    <field name="interval_type">minutes</field>
+    <field name="active">True</field>
+</record>
 ```
 
 ---
 
 ## 5. Monitoring
 
-### Metrics to Track
+### 5.1 Queue Status
 
-| Metric | Description | Alert Threshold |
-|--------|-------------|-----------------|
-| Response time | P95 latency | > 30s |
-| Error rate | 5xx responses | > 5% |
-| Queue depth | Pending jobs | > 100 |
-| Memory usage | Container memory | > 80% |
-| CPU usage | Container CPU | > 90% |
+Check pending OCR jobs:
 
-### Log Inspection
-
-```bash
-# View recent logs
-docker logs ocr --tail 100
-
-# Follow logs
-docker logs ocr -f
-
-# Filter errors
-docker logs ocr 2>&1 | grep -i error
+```sql
+SELECT
+  id, name, state, ocr_state, ocr_confidence
+FROM hr_expense
+WHERE ocr_state IN ('pending', 'processing')
+ORDER BY create_date DESC;
 ```
 
-### Prometheus Metrics (if enabled)
+### 5.2 Processing Stats
+
+```sql
+SELECT
+  ocr_state,
+  COUNT(*) as count,
+  AVG(ocr_confidence) as avg_confidence
+FROM hr_expense
+WHERE ocr_state IS NOT NULL
+GROUP BY ocr_state;
+```
+
+### 5.3 Error Logs
 
 ```bash
-curl -sS http://188.166.237.231:8000/metrics
+docker compose logs odoo | grep -E "ocr|OCR|expense" | tail -100
 ```
 
 ---
 
 ## 6. Troubleshooting
 
-### Common Issues
-
-| Symptom | Cause | Solution |
-|---------|-------|----------|
-| Connection refused | Service not running | `docker start ocr` |
-| Timeout | Large file / slow processing | Increase `OCR_TIMEOUT_SECONDS` |
-| Low confidence | Poor image quality | Improve scan quality |
-| Wrong doc type | Ambiguous document | Pass `doc_type_hint` |
-| Out of memory | Large PDF | Increase container memory |
-
-### Debug Mode
+### OCR Service Unreachable
 
 ```bash
-# Run with debug logging
-docker run -e LOG_LEVEL=debug your-ocr-image:latest
+# Test connectivity
+curl -v "${OCR_SERVICE_URL}/health"
 
-# Test single file with verbose output
-curl -v -X POST \
-  -F "file=@./test.pdf" \
-  http://188.166.237.231:8000/v1/ocr/extract
+# Check DNS
+dig +short $(echo ${OCR_SERVICE_URL} | sed 's|https*://||' | cut -d'/' -f1)
 ```
 
-### Restart Service
+### Low Confidence Results
+
+Common causes:
+- Poor image quality
+- Handwritten receipts
+- Non-standard receipt formats
+- Multiple receipts in one image
+
+Solutions:
+1. Request higher resolution images
+2. Train model on specific receipt types
+3. Lower threshold for specific vendors
+
+### Duplicate Detection Issues
+
+Check hash collision:
+
+```sql
+SELECT
+  attachment_hash, COUNT(*)
+FROM hr_expense
+WHERE attachment_hash IS NOT NULL
+GROUP BY attachment_hash
+HAVING COUNT(*) > 1;
+```
+
+### Cron Not Running
 
 ```bash
-# Restart container
-docker restart ocr
-
-# Full redeploy
-docker-compose up -d --force-recreate ocr
+# Check cron status
+docker compose exec odoo odoo shell -d odoo <<EOF
+cron = env['ir.cron'].search([('name', 'ilike', 'ocr')])
+for c in cron:
+    print(f"{c.name}: active={c.active}, lastcall={c.lastcall}")
+EOF
 ```
 
 ---
 
-## 7. Maintenance
+## 7. Performance Tuning
 
-### Cache Cleanup
+### 7.1 Batch Processing
 
-```bash
-# Clear OCR cache (if using file cache)
-docker exec ocr rm -rf /app/cache/*
+For high volume:
+- Process in batches of 10-20
+- Use async job queue (Celery/RQ)
+- Implement retry with exponential backoff
 
-# Or volume cleanup
-docker volume rm ocr_cache
-```
+### 7.2 Caching
 
-### Update Service
-
-```bash
-# Pull new image
-docker pull your-ocr-image:latest
-
-# Restart with new image
-docker-compose up -d ocr
-```
-
-### Backup/Restore
-
-The OCR service is stateless - no backup needed.
-Extracted results are stored in Odoo (`ipai.document` model).
-
----
-
-## 8. Integration with Odoo
-
-### Module: `ipai_document_ai`
-
-The Odoo module handles:
-1. File upload from user
-2. Send to OCR service
-3. Store extraction results
-4. Display review UI
-5. Apply fields to records
-
-### API Call from Odoo
+Cache OCR results by file hash to avoid re-processing:
 
 ```python
-import requests
-import os
-
-OCR_URL = os.getenv('OCR_BASE_URL', 'http://ocr:8000')
-OCR_TIMEOUT = int(os.getenv('OCR_TIMEOUT_SECONDS', 60))
-
-def extract_document(file_content, filename):
-    """Send document to OCR service and return extraction result."""
-    try:
-        response = requests.post(
-            f"{OCR_URL}/v1/ocr/extract",
-            files={'file': (filename, file_content)},
-            timeout=OCR_TIMEOUT
-        )
-        response.raise_for_status()
-        return response.json()
-    except requests.Timeout:
-        raise Exception("OCR service timeout")
-    except requests.RequestException as e:
-        raise Exception(f"OCR service error: {e}")
+# Check cache before calling OCR
+cache_key = f"ocr:{file_hash}"
+cached = redis.get(cache_key)
+if cached:
+    return json.loads(cached)
 ```
 
 ---
 
-## 9. Checklist
+## 8. Security Notes
 
-### Deployment
+- NEVER commit `OCR_SERVICE_TOKEN` to repo
+- Use HTTPS for all OCR service calls
+- Implement request signing if available
+- Log all OCR requests for audit
+- Sanitize extracted text before database storage
 
-- [ ] OCR container running
-- [ ] Health endpoint responding
-- [ ] Network connectivity from Odoo
-- [ ] Environment variables set
-- [ ] Logging configured
+---
 
-### Verification
+## 9. Verification Checklist
 
-- [ ] Smoke test with sample document
-- [ ] Field extraction working
-- [ ] Confidence scores reasonable
-- [ ] Error handling graceful
-
-### Production
-
-- [ ] Monitoring alerts configured
-- [ ] Log rotation enabled
-- [ ] Resource limits set
-- [ ] Backup strategy (Odoo data, not OCR)
+- [ ] OCR service endpoint reachable
+- [ ] Health check returns OK
+- [ ] System parameters configured
+- [ ] Test upload processed successfully
+- [ ] Confidence routing works correctly
+- [ ] Duplicate detection works
+- [ ] Cron job running on schedule
 
 ---
 

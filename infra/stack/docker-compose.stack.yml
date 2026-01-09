@@ -1,0 +1,133 @@
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: ipai-caddy
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [edge]
+
+  # --- Odoo (DO Managed Postgres; no local DB container) ---
+  odoo:
+    image: ${ODOO_IMAGE}
+    container_name: ipai-odoo
+    restart: unless-stopped
+    env_file: .env
+    depends_on: []
+    volumes:
+      - ../../${ODOO_CONF_HOST_PATH}:/etc/odoo/odoo.conf:ro
+      - odoo_filestore:/var/lib/odoo
+    networks: [edge]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  # --- n8n (DO Managed Postgres) ---
+  n8n:
+    image: ${N8N_IMAGE}
+    container_name: ipai-n8n
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - N8N_HOST=${N8N_DOMAIN}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - WEBHOOK_URL=https://${N8N_DOMAIN}/
+      - GENERIC_TIMEZONE=${N8N_TIMEZONE}
+      - TZ=${N8N_TIMEZONE}
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY}
+
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=${DO_PG_HOST}
+      - DB_POSTGRESDB_PORT=${DO_PG_PORT}
+      - DB_POSTGRESDB_DATABASE=${DB_N8N}
+      - DB_POSTGRESDB_USER=${DO_PG_USER}
+      - DB_POSTGRESDB_PASSWORD=${DO_PG_PASSWORD}
+      - DB_POSTGRESDB_SSL_ENABLED=true
+
+      # Optional hardening
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+    networks: [edge]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  # --- Redis (Superset) ---
+  redis:
+    image: ${REDIS_IMAGE}
+    container_name: ipai-redis
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:${REDIS_PORT}:6379"
+    networks: [edge]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 3s
+      retries: 10
+
+  # --- Superset (DO Managed Postgres metadata + Redis) ---
+  superset:
+    image: ${SUPERSET_IMAGE}
+    container_name: ipai-superset
+    restart: unless-stopped
+    env_file: .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - SUPERSET_CONFIG_PATH=/app/pythonpath/superset_config.py
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ../superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+      - ../superset/entrypoint.sh:/entrypoint.sh:ro
+      - superset_home:/app/superset_home
+    entrypoint: ["/entrypoint.sh"]
+    command: ["gunicorn", "-w", "2", "-k", "gthread", "--timeout", "120", "-b", "0.0.0.0:8088", "superset.app:create_app()"]
+    networks: [edge]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8088/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+  # --- OCR API (stateless; stores outputs elsewhere later) ---
+  ocr:
+    build:
+      context: ../../services/ocr
+      dockerfile: Dockerfile
+    image: ${OCR_IMAGE}
+    container_name: ipai-ocr
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - OCR_ENGINE=${OCR_ENGINE}
+    networks: [edge]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 10
+
+networks:
+  edge:
+    name: ipai-edge
+
+volumes:
+  caddy_data:
+  caddy_config:
+  odoo_filestore:
+  superset_home:

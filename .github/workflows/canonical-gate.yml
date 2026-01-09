@@ -1,0 +1,221 @@
+name: Canonical Structure Gate
+
+on:
+  pull_request:
+    branches: [main, 18.0]
+  push:
+    branches: [main, 18.0]
+
+jobs:
+  canonical-lint:
+    name: Canonical Structure Audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Canonical Audit (All Checks)
+        run: |
+          python3 scripts/canonical_audit.py --check all --output human
+          echo ""
+          echo "Checking for critical violations..."
+          python3 scripts/canonical_audit.py --check all --output json > audit_results.json
+
+          # Parse JSON and check for critical/high violations
+          CRITICAL=$(jq -r '.summary.critical' audit_results.json)
+          HIGH=$(jq -r '.summary.high' audit_results.json)
+
+          echo "Critical violations: $CRITICAL"
+          echo "High violations: $HIGH"
+
+          if [ "$CRITICAL" -gt "0" ]; then
+            echo "❌ FAILED: $CRITICAL critical violation(s) found"
+            exit 1
+          fi
+
+          if [ "$HIGH" -gt "0" ]; then
+            echo "⚠️  WARNING: $HIGH high-severity violation(s) found"
+            echo "These should be fixed but won't block the PR"
+          fi
+
+          echo "✅ PASSED: No critical violations"
+
+      - name: Run Module Naming Check
+        run: |
+          python3 scripts/canonical_audit.py --check modules --strict
+
+      - name: Run View Syntax Check
+        run: |
+          python3 scripts/canonical_audit.py --check views --strict
+
+      - name: Run Asset Registration Check
+        run: |
+          python3 scripts/canonical_audit.py --check assets --strict
+
+      - name: Check Deprecated Modules
+        run: |
+          python3 - <<'PY'
+          import glob, re, sys
+
+          # Deprecated modules must have installable=False
+          DEPRECATED = [
+              'ipai_finance_month_end',
+              'ipai_finance_monthly_closing',
+              'ipai_bir_compliance',
+          ]
+
+          errors = []
+          for mod in DEPRECATED:
+              manifest = f"addons/ipai/{mod}/__manifest__.py"
+              try:
+                  with open(manifest) as f:
+                      content = f.read()
+                      if re.search(r"['\"]installable['\"]\s*:\s*True", content):
+                          errors.append(f"{mod}: Deprecated module must have installable=False")
+              except FileNotFoundError:
+                  print(f"ℹ️  {mod}: Module not found (already removed)")
+                  continue
+
+          if errors:
+              print("❌ Deprecated modules must not be installable:")
+              for e in errors:
+                  print(f"  - {e}")
+              print("\nSee docs/ipai/MODULE_DEPRECATION_PLAN.md for details")
+              sys.exit(1)
+
+          print("✅ No deprecated modules are installable")
+          PY
+
+      - name: Upload Audit Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: canonical-audit-report
+          path: audit_results.json
+          retention-days: 30
+
+  odoo-install-test:
+    name: Odoo Module Install Test
+    runs-on: ubuntu-latest
+    needs: canonical-lint
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Odoo dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libpq-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libldap2-dev \
+            libsasl2-dev \
+            libjpeg-dev \
+            zlib1g-dev
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt || echo "No requirements.txt found, skipping"
+
+      - name: Test IPAI Module Installation
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: odoo
+          PGPASSWORD: odoo
+          PGDATABASE: odoo
+        run: |
+          # This would run Odoo module install tests
+          # For now, just validate module manifests
+          echo "Validating module manifests..."
+          python3 -c "
+          import sys
+          from pathlib import Path
+
+          addons_path = Path('addons/ipai')
+          errors = []
+
+          for module_dir in addons_path.iterdir():
+              if not module_dir.is_dir():
+                  continue
+              manifest = module_dir / '__manifest__.py'
+              if manifest.exists():
+                  try:
+                      with open(manifest) as f:
+                          code = compile(f.read(), manifest, 'exec')
+                          print(f'✓ {module_dir.name}')
+                  except SyntaxError as e:
+                      errors.append(f'{module_dir.name}: {e}')
+                      print(f'✗ {module_dir.name}: {e}')
+
+          if errors:
+              print(f'\n❌ {len(errors)} module(s) with invalid manifests')
+              sys.exit(1)
+          else:
+              print(f'\n✅ All module manifests valid')
+          "
+
+  asset-build-test:
+    name: Asset Bundle Build Test
+    runs-on: ubuntu-latest
+    needs: canonical-lint
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate Asset Registrations
+        run: |
+          echo "Checking that all static assets are registered in manifests..."
+          python3 scripts/canonical_audit.py --check assets --strict
+
+          echo "✅ All assets properly registered"
+
+      - name: Check for Unregistered Asset Files
+        run: |
+          # Find all JS/SCSS/XML files in static/src directories
+          find addons/ipai -type f \( -path "*/static/src/js/*.js" -o -path "*/static/src/scss/*.scss" -o -path "*/static/src/xml/*.xml" \) > found_assets.txt
+
+          # Extract registered assets from manifests
+          grep -r "static/src" addons/ipai/*/\__manifest__.py | grep -v "^#" > registered_assets.txt || true
+
+          echo "Asset files found: $(wc -l < found_assets.txt)"
+          echo "Asset registrations found: $(wc -l < registered_assets.txt)"
+
+          if [ $(wc -l < found_assets.txt) -gt $(wc -l < registered_assets.txt) ]; then
+            echo "⚠️  Potential unregistered assets detected"
+            echo "Run: python3 scripts/canonical_audit.py --check assets"
+          else
+            echo "✅ Asset registration counts look reasonable"
+          fi

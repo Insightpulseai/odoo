@@ -12,18 +12,24 @@
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2,
-      "position": [0, 200],
+      "position": [
+        0,
+        200
+      ],
       "webhookId": "git-ops"
     },
     {
       "parameters": {
-        "jsCode": "// Normalize input - handle both direct and nested body from MCP\nconst input = $input.first().json;\n\n// MCP sends data nested in body, direct webhook sends at root\nconst data = input.body || input;\n\nreturn {\n  json: {\n    operation: data.operation || 'list-commits',\n    owner: data.owner || 'jgtolentino',\n    repo: data.repo || 'insightpulse-odoo',\n    branch: data.branch || 'main',\n    title: data.title || '',\n    body: data.body_text || data.description || '',\n    labels: data.labels || [],\n    workflow_id: data.workflow_id || 'deploy.yml',\n    ref: data.ref || 'main'\n  }\n};"
+        "jsCode": "// Normalize input - handle both direct and nested body from MCP\nconst input = $input.first().json;\n\n// MCP sends data nested in body, direct webhook sends at root\nconst data = input.body || input;\n\nreturn {\n  json: {\n    operation: data.operation || 'list-commits',\n    owner: data.owner || 'jgtolentino',\n    repo: data.repo || 'odoo-ce',\n    branch: data.branch || 'main',\n    title: data.title || '',\n    body: data.body_text || data.description || '',\n    labels: data.labels || [],\n    workflow_id: data.workflow_id || 'deploy.yml',\n    ref: data.ref || 'main'\n  }\n};"
       },
       "id": "normalize-input",
       "name": "Normalize Input",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [200, 200]
+      "position": [
+        200,
+        200
+      ]
     },
     {
       "parameters": {
@@ -36,7 +42,10 @@
                   {
                     "leftValue": "={{ $json.operation }}",
                     "rightValue": "list-commits",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ]
               }
@@ -48,7 +57,10 @@
                   {
                     "leftValue": "={{ $json.operation }}",
                     "rightValue": "list-branches",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ]
               }
@@ -60,7 +72,10 @@
                   {
                     "leftValue": "={{ $json.operation }}",
                     "rightValue": "list-pulls",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ]
               }
@@ -72,7 +87,10 @@
                   {
                     "leftValue": "={{ $json.operation }}",
                     "rightValue": "create-issue",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ]
               }
@@ -84,7 +102,10 @@
                   {
                     "leftValue": "={{ $json.operation }}",
                     "rightValue": "trigger-workflow",
-                    "operator": { "type": "string", "operation": "equals" }
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
                   }
                 ]
               }
@@ -99,7 +120,10 @@
       "name": "Route Operation",
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3,
-      "position": [400, 200]
+      "position": [
+        400,
+        200
+      ]
     },
     {
       "parameters": {
@@ -109,8 +133,14 @@
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
-            { "name": "sha", "value": "={{ $json.branch }}" },
-            { "name": "per_page", "value": "10" }
+            {
+              "name": "sha",
+              "value": "={{ $json.branch }}"
+            },
+            {
+              "name": "per_page",
+              "value": "10"
+            }
           ]
         },
         "options": {
@@ -125,7 +155,10 @@
       "name": "Get Commits",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [650, 0],
+      "position": [
+        650,
+        0
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "github-token",
@@ -150,7 +183,10 @@
       "name": "Get Branches",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [650, 150],
+      "position": [
+        650,
+        150
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "github-token",
@@ -166,7 +202,10 @@
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
-            { "name": "state", "value": "open" }
+            {
+              "name": "state",
+              "value": "open"
+            }
           ]
         },
         "options": {
@@ -181,7 +220,10 @@
       "name": "Get Pull Requests",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [650, 300],
+      "position": [
+        650,
+        300
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "github-token",
@@ -204,7 +246,10 @@
       "name": "Create Issue",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [650, 450],
+      "position": [
+        650,
+        450
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "github-token",
@@ -227,7 +272,10 @@
       "name": "Trigger GH Action",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [650, 600],
+      "position": [
+        650,
+        600
+      ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "github-token",
@@ -243,7 +291,10 @@
       "name": "Format Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [900, 300]
+      "position": [
+        900,
+        300
+      ]
     },
     {
       "parameters": {
@@ -265,7 +316,10 @@
       "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1100, 300]
+      "position": [
+        1100,
+        300
+      ]
     },
     {
       "parameters": {
@@ -287,58 +341,145 @@
       "name": "Respond Error",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [650, 750]
+      "position": [
+        650,
+        750
+      ]
     }
   ],
   "connections": {
     "Webhook": {
       "main": [
-        [{ "node": "Normalize Input", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Normalize Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Normalize Input": {
       "main": [
-        [{ "node": "Route Operation", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Route Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Route Operation": {
       "main": [
-        [{ "node": "Get Commits", "type": "main", "index": 0 }],
-        [{ "node": "Get Branches", "type": "main", "index": 0 }],
-        [{ "node": "Get Pull Requests", "type": "main", "index": 0 }],
-        [{ "node": "Create Issue", "type": "main", "index": 0 }],
-        [{ "node": "Trigger GH Action", "type": "main", "index": 0 }],
-        [{ "node": "Respond Error", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Get Commits",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Branches",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Pull Requests",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create Issue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Trigger GH Action",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Get Commits": {
       "main": [
-        [{ "node": "Format Response", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Get Branches": {
       "main": [
-        [{ "node": "Format Response", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Get Pull Requests": {
       "main": [
-        [{ "node": "Format Response", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Create Issue": {
       "main": [
-        [{ "node": "Format Response", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Trigger GH Action": {
       "main": [
-        [{ "node": "Format Response", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Format Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Format Response": {
       "main": [
-        [{ "node": "Respond", "type": "main", "index": 0 }]
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -348,7 +489,11 @@
     "callerPolicy": "workflowsFromSameOwner"
   },
   "tags": [
-    { "name": "github" },
-    { "name": "devops" }
+    {
+      "name": "github"
+    },
+    {
+      "name": "devops"
+    }
   ]
 }

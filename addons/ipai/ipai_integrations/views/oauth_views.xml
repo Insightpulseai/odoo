@@ -5,7 +5,7 @@
         <field name="name">ipai.integration.oauth.tree</field>
         <field name="model">ipai.integration.oauth</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="connector_id"/>
                 <field name="client_id"/>
@@ -13,7 +13,7 @@
                 <field name="state" widget="badge" decoration-success="state == 'active'" decoration-muted="state == 'draft'" decoration-danger="state == 'revoked'"/>
                 <field name="token_count"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -74,7 +74,7 @@
     <record id="action_integration_oauth" model="ir.actions.act_window">
         <field name="name">OAuth Apps</field>
         <field name="res_model">ipai.integration.oauth</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

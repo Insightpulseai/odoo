@@ -5,13 +5,13 @@
         <field name="name">ipai.agent.knowledge_source.tree</field>
         <field name="model">ipai.agent.knowledge_source</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="key"/>
                 <field name="kind"/>
                 <field name="tags"/>
                 <field name="is_active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

@@ -5,7 +5,7 @@
         <field name="name">ipai.ai.event.tree</field>
         <field name="model">ipai.ai.event</field>
         <field name="arch" type="xml">
-            <tree string="Integration Events" decoration-danger="state == 'failed'" decoration-muted="state == 'ignored'" decoration-success="state == 'processed'">
+            <list string="Integration Events" decoration-danger="state == 'failed'" decoration-muted="state == 'ignored'" decoration-success="state == 'processed'">
                 <field name="create_date" string="Received"/>
                 <field name="source"/>
                 <field name="event_type"/>
@@ -13,7 +13,7 @@
                 <field name="state" widget="badge" decoration-success="state == 'processed'" decoration-danger="state == 'failed'" decoration-warning="state == 'processing'" decoration-info="state == 'received'" decoration-muted="state == 'ignored'"/>
                 <field name="processed_date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -95,7 +95,7 @@
     <record id="action_ipai_ai_event" model="ir.actions.act_window">
         <field name="name">Integration Events</field>
         <field name="res_model">ipai.ai.event</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_ipai_ai_event_search"/>
         <field name="context">{'search_default_filter_received': 1}</field>
         <field name="help" type="html">

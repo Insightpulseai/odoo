@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d6ba3372b0966d5eca27173448648baf955e0d3e
+> Commit: 7368e48d42e17a07c7c05662919ed597ab7eb9e8
 
 ```
 .
@@ -40,13 +40,21 @@
 ├── .githooks
 │   └── pre-commit
 ├── .github
+│   ├── ISSUE_TEMPLATE
+│   │   └── copilot_task.yml
+│   ├── agents
+│   │   └── odoo-oca-triage.agent.md
 │   ├── workflows
 │   │   ├── agent-preflight.yml
+│   │   ├── ai-naming-gate.yml
+│   │   ├── aiux-ship-gate.yml
 │   │   ├── all-green-gates.yml
 │   │   ├── audit-contract.yml
+│   │   ├── auth-email-ai-gate.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
+│   │   ├── canonical-gate.yml
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
 │   │   ├── control-room-ci.yml
@@ -70,12 +78,14 @@
 │   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-determinism.yml
+│   │   ├── ipai-doc-drift-gate.yml
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-module-matrix.yml
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
+│   │   ├── no-deprecated-repo-refs.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
@@ -91,7 +101,9 @@
 │   ├── sync-config.yaml
 │   └── sync.yaml
 ├── .vscode
+│   ├── README.md
 │   ├── extensions.json
+│   ├── ipai_workspace.code-workspace
 │   ├── launch.json
 │   ├── mcp-dev.code-workspace
 │   ├── mcp-prod.code-workspace
@@ -102,12 +114,14 @@
 ├── addons
 │   ├── OCA
 │   │   ├── account-financial-reporting
+│   │   ├── account-financial-tools -> ../../external-src/account-financial-tools
 │   │   ├── automation
 │   │   ├── dms
 │   │   ├── helpdesk
 │   │   ├── partner-contact
 │   │   ├── queue
 │   │   ├── reporting-engine
+│   │   ├── sale-workflow
 │   │   ├── server-auth
 │   │   ├── server-brand
 │   │   ├── server-tools
@@ -252,6 +266,16 @@
 │   │   │   ├── security
 │   │   │   ├── wizards
 │   │   │   ├── README.rst
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_catalog_bridge
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── services
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ce_branding
@@ -883,20 +907,6 @@
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
-│   ├── ipai_month_end_closing.backup
-│   │   ├── data
-│   │   │   ├── closing_tasks.xml
-│   │   │   ├── hr_employees.xml
-│   │   │   ├── ipai_bir_tasks.xml
-│   │   │   ├── ipai_closing_tasks.xml
-│   │   │   ├── ipai_users.xml
-│   │   │   ├── project_config.xml
-│   │   │   └── tax_filing_tasks.xml
-│   │   ├── security
-│   │   │   └── ir.model.access.csv
-│   │   ├── README.md
-│   │   ├── __init__.py
-│   │   └── __manifest__.py
 │   ├── ipai_ocr_gateway
 │   │   ├── data
 │   │   │   └── ir_cron.xml
@@ -1206,6 +1216,7 @@
 │   │   │   └── types
 │   │   ├── .env.example
 │   │   ├── FINANCE_LANDING_CHECKLIST.md
+│   │   ├── next-env.d.ts
 │   │   ├── next.config.js
 │   │   ├── package.json
 │   │   ├── postcss.config.js
@@ -1689,6 +1700,7 @@
 │   │   └── erp.insightpulseai.net.conf
 │   ├── .env.production.template
 │   ├── README.md
+│   ├── docker-compose.canonical.yml
 │   ├── docker-compose.prod.v0.10.0.yml
 │   ├── docker-compose.prod.v0.9.1.yml
 │   ├── docker-compose.prod.yml
@@ -1699,6 +1711,7 @@
 │   ├── monitoring_schema.sql
 │   ├── monitoring_views.sql
 │   ├── odoo-auto-heal.service
+│   ├── odoo.canonical.conf
 │   └── odoo.conf
 ├── dev-docker
 │   ├── config
@@ -1761,15 +1774,24 @@
 │   │   ├── EXTENDED_PLATFORM_API.md
 │   │   └── openapi.ipai_ai_platform.yaml
 │   ├── architecture
+│   │   ├── catalog
+│   │   │   ├── COPILOT_TOOLS_SCHEMA.md
+│   │   │   └── copilot_tools.openapi.json
+│   │   ├── runtime_snapshot
+│   │   │   ├── 20260108_013846
+│   │   │   └── README.md
+│   │   ├── AUTH_MODEL.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
 │   │   ├── IPAI_AI_PLATFORM_ORD.md
 │   │   ├── README.md
+│   │   ├── SOURCE_OF_TRUTH.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
-│   │   └── ipai_idp_pdf_processing.drawio
+│   │   ├── ipai_idp_pdf_processing.drawio
+│   │   └── runtime_identifiers.json
 │   ├── audits
 │   │   └── ipai_modules
 │   │       ├── README.md
@@ -1778,6 +1800,8 @@
 │   │       ├── inventory.md
 │   │       ├── oca_modules_vendored.txt
 │   │       └── oca_overlap_map.yaml
+│   ├── auth
+│   │   └── EMAIL_AUTH_SETUP.md
 │   ├── claude_code
 │   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── QUICK_REFERENCE.md
@@ -1822,6 +1846,8 @@
 │   │   │   └── azure_to_do_supabase_odoo.yaml
 │   │   ├── .gitkeep
 │   │   └── ipai_platform_flow.mmd
+│   ├── email
+│   │   └── Mailgun_DNS.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -1837,13 +1863,21 @@
 │   │   ├── OCA_SUBTREE_MIGRATION.md
 │   │   └── OPS_STACK.md
 │   ├── ipai
+│   │   ├── profiles
+│   │   │   └── finance_prod.txt
 │   │   ├── ARCHITECTURE.md
 │   │   ├── CHANGELOG.md
 │   │   ├── INSTALLATION.md
+│   │   ├── MODULE_DEPRECATION_PLAN.md
+│   │   ├── MODULE_EVALUATION_SUMMARY.md
+│   │   ├── MODULE_NAME_CORRECTIONS.md
 │   │   ├── OPERATIONS_RUNBOOK.md
+│   │   ├── PROFILES.md
 │   │   ├── README.md
 │   │   ├── SECURITY_MODEL.md
 │   │   └── module_scan.json
+│   ├── knowledge
+│   │   └── graph_seed.json
 │   ├── module-health
 │   │   ├── MODULES_PROD_STATUS.md
 │   │   └── modules_status.json
@@ -1936,15 +1970,37 @@
 │   │   │   └── index.json
 │   │   ├── ANTIGRAVITY_MCP.md
 │   │   ├── CONVERSATIONS_README.md
+│   │   ├── EXECUTION_BOARD.md
+│   │   ├── GO_LIVE_CHECKLIST.md
 │   │   ├── LOCAL_DEV.md
+│   │   ├── PREVENT_502.md
+│   │   ├── QUICK_START.md
+│   │   ├── README.md
 │   │   ├── RECOVERY.md
-│   │   └── SHIP_VERIFICATION.md
+│   │   ├── SHIP_VERIFICATION.md
+│   │   ├── VERIFICATION_COMMANDS.md
+│   │   ├── WHAT_SHIPPED.template.md
+│   │   └── production_redeploy_runbook.md
 │   ├── ord
 │   │   └── IPAI_AI_PLATFORM_ORD.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
 │   │   └── runbook.md
+│   ├── prd
+│   │   ├── end_state
+│   │   │   ├── AIUX_SHIP_v1.1.0.json
+│   │   │   └── AIUX_SHIP_v1.1.0_PARAMETERIZED.json
+│   │   ├── AIUX_SHIP_PRD_v1.1.0.md
+│   │   ├── END_STATE_SPEC.json
+│   │   ├── IPAI_SHIP_PRD_ODOO18_AIUX.md
+│   │   ├── ODOO18_DO_FRESH_REDEPLOY.md
+│   │   └── aiux_ship_end_state.v1.1.0.json
+│   ├── proofs
+│   │   └── PROD_DEPLOY_PROOF_SCHEMA.json
+│   ├── rationalization
+│   │   ├── EXECUTION_CHECKLIST.md
+│   │   └── README.md
 │   ├── releases
 │   │   ├── DEPLOYMENT_PROOFS
 │   │   │   ├── README.md
@@ -1976,6 +2032,8 @@
 │   │       ├── docker
 │   │       ├── scripts
 │   │       └── README.md
+│   ├── troubleshooting
+│   │   └── MAGIC_LINK_500_ERROR.md
 │   ├── wiki
 │   │   ├── Architecture.md
 │   │   ├── Configuration.md
@@ -1989,8 +2047,12 @@
 │   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
+│   ├── AI_MODULE_NAMING_CONVENTION.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
+│   ├── CANONICAL_ENFORCEMENT_REPORT.md
+│   ├── CANONICAL_LINT.md
+│   ├── CANONICAL_MAP.md
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
 │   ├── CE_OCA_PROJECT_STACK.md
 │   ├── CLAUDE_CODE_SETUP.md
@@ -1999,6 +2061,7 @@
 │   ├── DELIVERABLES_MANIFEST.md
 │   ├── DEPLOYMENT.md
 │   ├── DEPLOYMENT_GUIDE.md
+│   ├── DEPLOYMENT_INVARIANTS.md
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
 │   ├── DEPLOY_NOTION_WORKOS.md
 │   ├── DEVELOPER_TOOLS.md
@@ -2031,6 +2094,7 @@
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── IMPLEMENTATION_SUMMARY.md
+│   ├── INDEX.md
 │   ├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
 │   ├── INDUSTRY_PARITY_ANALYSIS.md
 │   ├── IPAI_MODULES_INDEX.md
@@ -2063,6 +2127,8 @@
 │   ├── ODOO_PROGRAMMATIC_CONFIG.md
 │   ├── OFFLINE_TARBALL_DEPLOYMENT.md
 │   ├── PRD_ipai_ppm_portfolio.md
+│   ├── PRODUCTION_DEFAULTS.md
+│   ├── PRODUCTION_DEPLOYMENT_CHECKLIST.md
 │   ├── PRODUCTION_HOTFIX.md
 │   ├── PROD_READINESS_GAPS.md
 │   ├── PROD_SNAPSHOT_MANIFEST.md
@@ -2077,6 +2143,7 @@
 │   ├── SAAS_PARITY_READINESS.md
 │   ├── SECRETS_NAMING_AND_STORAGE.md
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
+│   ├── SHIP_v1.1.0_SUMMARY.md
 │   ├── SITEMAP.md
 │   ├── SMTP_SETUP_SUMMARY.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
@@ -2146,6 +2213,13 @@
 │   ├── README.md
 │   └── SUMMARY.md
 ├── infra
+│   ├── ai
+│   │   └── provider_router
+│   │       ├── README.md
+│   │       ├── __init__.py
+│   │       ├── requirements.txt
+│   │       ├── router.py
+│   │       └── test_router.py
 │   ├── azure
 │   │   ├── modules
 │   │   │   ├── appservice.bicep
@@ -2156,6 +2230,8 @@
 │   │   │   ├── dev.parameters.json
 │   │   │   └── prod.parameters.json
 │   │   └── main.bicep
+│   ├── caddy
+│   │   └── Caddyfile
 │   ├── ce
 │   │   └── .gitkeep
 │   ├── ci
@@ -2196,10 +2272,15 @@
 │   │   └── collab-stack.md
 │   ├── mattermost
 │   │   └── channel_setup.json
+│   ├── stack
+│   │   ├── .env.example
+│   │   └── docker-compose.stack.yml
 │   └── superset
 │       ├── README.md
 │       ├── do-app-spec.yaml
+│       ├── entrypoint.sh
 │       ├── manifest.json
+│       ├── superset_config.py
 │       └── virtual_datasets.sql
 ├── inventory
 │   ├── latest -> runs/20251231T020517Z
@@ -2387,8 +2468,16 @@
 │   ├── github
 │   │   ├── apply_labels.sh
 │   │   └── labels.json
+│   ├── runbooks
+│   │   ├── expenses_ocr_runbook.md
+│   │   ├── mailgun_domain_verification.md
+│   │   ├── ocr_service.md
+│   │   └── sinch_setup.md
 │   ├── DISASTER_RECOVERY.md
 │   └── backup-production.sh
+├── osi
+│   ├── osi_template.json
+│   └── osi_template.yaml
 ├── out
 │   ├── concur_demo
 │   │   └── catalog.json
@@ -2439,6 +2528,10 @@
 │   │       └── README.md
 │   └── README.md
 ├── scripts
+│   ├── aiux
+│   │   ├── verify_assets.sh
+│   │   ├── verify_install.sh
+│   │   └── verify_prod_health.sh
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
 │   │   ├── compare_audit_baseline.py
@@ -2450,8 +2543,14 @@
 │   │   ├── introspect_feature_inventory.py
 │   │   ├── module_drift_gate.sh
 │   │   ├── run_odoo_tests.sh
+│   │   ├── schema_drift_check.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
+│   ├── deploy
+│   │   ├── bootstrap_from_tag.sh
+│   │   ├── deploy-prod-e2e.sh
+│   │   ├── do-bootstrap-odoo-prod.sh
+│   │   └── verify_prod.sh
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
 │   ├── import
@@ -2514,14 +2613,18 @@
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
 │   ├── bootstrap_apps_from_inventory.sh
+│   ├── bootstrap_execution_board.sh
+│   ├── bootstrap_github_issues.sh
 │   ├── build_and_push_version.sh
 │   ├── build_v0.10.0.sh
 │   ├── build_v0.9.1.sh
+│   ├── canonical_audit.py
 │   ├── ce_oca_audit.py
 │   ├── check-enterprise-modules.sh
 │   ├── check_go_live_manifest.py
 │   ├── check_module_status.sh
 │   ├── check_project_tasks.py
+│   ├── check_undocumented_specs.py
 │   ├── ci_local.sh
 │   ├── ci_smoke_test.sh
 │   ├── cleanup-branches.sh
@@ -2538,6 +2641,7 @@
 │   ├── count_xml_seeds.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
+│   ├── delete_user_safe.sh
 │   ├── deploy-bir-compliance.sh
 │   ├── deploy-december-2025-bir-tasks.sh
 │   ├── deploy-n8n-workflows.sh
@@ -2556,6 +2660,7 @@
 │   ├── diagnose_smtp.sh
 │   ├── enhanced_health_check.sh
 │   ├── erp_config_cli.sh
+│   ├── execute_rationalization.sh
 │   ├── export_todo_seed.py
 │   ├── extract_remote_data.py
 │   ├── finance_ppm_health_check.sh
@@ -2567,6 +2672,7 @@
 │   ├── fix_oauth_button_odoo_core.sh
 │   ├── fix_odoo18_views.py
 │   ├── full_deploy_sanity.sh
+│   ├── gen_addons_path.py
 │   ├── gen_repo_tree.sh
 │   ├── gen_repo_tree_fallback.sh
 │   ├── generate_2026_finance_calendar.py
@@ -2575,21 +2681,29 @@
 │   ├── generate_go_live_checklist.py
 │   ├── generate_module_docs.py
 │   ├── generate_module_health_report.py
+│   ├── generate_module_signatures.py
 │   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
+│   ├── generate_repo_index.py
+│   ├── generate_schema_artifacts.sh
 │   ├── generate_seed_xml.py
+│   ├── generate_spec_report.py
 │   ├── healthcheck_odoo.sh
 │   ├── hotfix_icon_crash.sh
 │   ├── hotfix_production.sh
 │   ├── image-diff-report.sh
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
+│   ├── ingest_knowledge_graph.py
 │   ├── install-git-hooks.sh
 │   ├── install-notion-stack.sh
+│   ├── install-odoo-18-modules.sh
 │   ├── install_all_ipai_modules.sh
+│   ├── install_baseline.sh
 │   ├── install_finance_stack.sh
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
+│   ├── install_oauth_module.py
 │   ├── install_oca_modules.sh
 │   ├── introspect_project.py
 │   ├── ipai_full_audit.py
@@ -2602,8 +2716,11 @@
 │   ├── oca-bootstrap.sh
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
+│   ├── odoo-18-oca-install.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_mattermost_integration.py
+│   ├── odoo_rationalization.sh
+│   ├── odoo_runtime_snapshot.sh
 │   ├── odoo_smoke_close.sh
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
@@ -2611,6 +2728,7 @@
 │   ├── pre_install_snapshot.sh
 │   ├── prod_access_check.py
 │   ├── prod_db_guess.py
+│   ├── promote_oauth_users.py
 │   ├── release_gate.sh
 │   ├── replace_seed_from_excel.py
 │   ├── repo_health.sh
@@ -2628,25 +2746,36 @@
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
+│   ├── stack_verify.sh
+│   ├── supabase_delete_user.sh
 │   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
 │   ├── test_afc_rag.py
+│   ├── test_auth_bootstrap.sh
 │   ├── test_deploy_local.sh
+│   ├── test_email_flow.sh
 │   ├── test_ipai_install_upgrade.py
+│   ├── test_magic_link.sh
 │   ├── update_diagram_manifest.py
 │   ├── update_task_phase_tags.sh
 │   ├── update_tasks_after_import.py
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
+│   ├── validate_ai_naming.py
+│   ├── validate_ipai_doc_module_refs.py
 │   ├── validate_m1.sh
 │   ├── validate_manifest.py
 │   ├── validate_manifests.py
 │   ├── validate_production.sh
+│   ├── validate_spec_kit.py
 │   ├── verify-https.sh
+│   ├── verify-odoo-18-oca.sh
 │   ├── verify.sh
+│   ├── verify_auth_setup.sh
 │   ├── verify_backup.sh
+│   ├── verify_email_auth.sh
 │   ├── verify_phase3.py
 │   ├── wiki_sync.sh
 │   └── worktree-setup.sh
@@ -2705,25 +2834,31 @@
 │   │       └── 90_odoo_mapping.yaml
 │   └── README.md
 ├── services
-│   └── notion-sync
-│       ├── config
-│       │   └── notion_mapping.yaml
-│       ├── notion_sync
-│       │   ├── __init__.py
-│       │   ├── client.py
-│       │   ├── config.py
-│       │   ├── databricks_writer.py
+│   ├── notion-sync
+│   │   ├── config
+│   │   │   └── notion_mapping.yaml
+│   │   ├── notion_sync
+│   │   │   ├── __init__.py
+│   │   │   ├── client.py
+│   │   │   ├── config.py
+│   │   │   ├── databricks_writer.py
+│   │   │   ├── main.py
+│   │   │   ├── models.py
+│   │   │   ├── sync.py
+│   │   │   └── transform.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   ├── conftest.py
+│   │   │   └── test_transform.py
+│   │   ├── .env.example
+│   │   ├── README.md
+│   │   └── pyproject.toml
+│   └── ocr
+│       ├── app
 │       │   ├── main.py
-│       │   ├── models.py
-│       │   ├── sync.py
-│       │   └── transform.py
-│       ├── tests
-│       │   ├── __init__.py
-│       │   ├── conftest.py
-│       │   └── test_transform.py
-│       ├── .env.example
-│       ├── README.md
-│       └── pyproject.toml
+│       │   └── pipeline.py
+│       ├── Dockerfile
+│       └── requirements.txt
 ├── skillpack
 │   └── manifest.json
 ├── skills
@@ -2894,6 +3029,12 @@
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   └── prd.md
+│   ├── ops-control-room
+│   │   ├── DEPLOYMENT_INTEGRATION.md
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── parallel-control-planes
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -2947,7 +3088,22 @@
 │       ├── config.py
 │       └── contracts.py
 ├── supabase
+│   ├── .temp
+│   │   ├── cli-latest
+│   │   ├── gotrue-version
+│   │   ├── pooler-url
+│   │   ├── postgres-version
+│   │   ├── project-ref
+│   │   ├── rest-version
+│   │   ├── storage-migration
+│   │   └── storage-version
 │   ├── functions
+│   │   ├── auth-bootstrap
+│   │   │   └── index.ts
+│   │   ├── catalog-sync
+│   │   │   └── index.ts
+│   │   ├── context-resolve
+│   │   │   └── index.ts
 │   │   ├── cron-processor
 │   │   │   └── index.ts
 │   │   ├── docs-ai-ask
@@ -2966,7 +3122,15 @@
 │   │   │   └── index.ts
 │   │   ├── schema-changed
 │   │   │   └── index.ts
+│   │   ├── semantic-export-osi
+│   │   │   └── index.ts
+│   │   ├── semantic-import-osi
+│   │   │   └── index.ts
+│   │   ├── semantic-query
+│   │   │   └── index.ts
 │   │   ├── sync-kb-to-schema
+│   │   │   └── index.ts
+│   │   ├── tenant-invite
 │   │   │   └── index.ts
 │   │   ├── three-way-match
 │   │   │   └── index.ts
@@ -3034,6 +3198,12 @@
 │   │   ├── 20251227_supabase_queues_setup.sql
 │   │   ├── 202601030001_docs.sql
 │   │   ├── 20260106000001_kg_schema.sql
+│   │   ├── 202601080001_4500_CATALOG_UNITY_SCHEMA.sql
+│   │   ├── 202601080002_4501_CATALOG_SEMANTIC_LAYER.sql
+│   │   ├── 202601080003_4502_OPS_ODOO_BINDINGS.sql
+│   │   ├── 5001_auth_foundation.sql
+│   │   ├── 5002_auth_jwt_claims.sql
+│   │   ├── 5003_rls_policies.sql
 │   │   ├── AFC_DEPLOYMENT_SUMMARY.md
 │   │   └── RLS_DEPLOYMENT_COMPLETE.md
 │   ├── seed
@@ -3053,6 +3223,10 @@
 │   │   ├── 9004_analytics
 │   │   │   ├── 9004_analytics_kpi_registry_seed.sql
 │   │   │   └── 9004_analytics_superset_dashboard_seed.sql
+│   │   ├── 9005_catalog
+│   │   │   └── 9005_catalog_assets_tools.sql
+│   │   ├── 9006_catalog
+│   │   │   └── 9006_scout_suqi_semantic.sql
 │   │   └── 001_saas_feature_seed.sql
 │   ├── seeds
 │   │   ├── 001_hr_seed.sql
@@ -3145,6 +3319,11 @@
 │   │   │   ├── __init__.py
 │   │   │   └── generate.py
 │   │   └── pyproject.toml
+│   ├── odoo_schema
+│   │   ├── __init__.py
+│   │   ├── export_schema.py
+│   │   ├── schema_to_drawio.py
+│   │   └── schema_to_pydantic.py
 │   ├── parity
 │   │   ├── parity_audit.py
 │   │   └── validate_spec_kit.py
@@ -3264,6 +3443,7 @@
 ├── TREE.md
 ├── VERIFY.md
 ├── VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md
+├── aiux_ship_manifest.yml
 ├── bir_deadlines_2026.csv
 ├── branch_protection.json
 ├── constitution.md
@@ -3296,8 +3476,10 @@
 ├── install_ppm_monthly_close.sh
 ├── ipai_ce_branding_patch_v1.2.0.zip
 ├── ipai_finance_ppm_directory.csv
+├── ipai_open_semantics_migrations_and_functions.zip
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
+├── oca-aggregate.yml
 ├── oca.lock.json
 ├── odoo-bin
 ├── odoo-ce-target.zip
@@ -3310,6 +3492,7 @@
 ├── pnpm-lock.yaml
 ├── pnpm-workspace.yaml
 ├── ppm_dashboard_views.xml
+├── pyproject.toml
 ├── query_memory.py
 ├── requirements.txt
 ├── ship_v1_1_0.sh
@@ -3326,15 +3509,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1079 directories, 2242 files
+1122 directories, 2382 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1243 |
-| Files | 3422 |
-| Python files | 937 |
-| XML files | 462 |
-| Markdown files | 646 |
+| Directories | 1288 |
+| Files | 3599 |
+| Python files | 967 |
+| XML files | 458 |
+| Markdown files | 691 |

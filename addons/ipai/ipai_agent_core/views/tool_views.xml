@@ -5,14 +5,14 @@
         <field name="name">ipai.agent.tool.tree</field>
         <field name="model">ipai.agent.tool</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="name"/>
                 <field name="key"/>
                 <field name="target_model"/>
                 <field name="target_method"/>
                 <field name="requires_admin"/>
                 <field name="is_active"/>
-            </tree>
+            </list>
         </field>
     </record>
 

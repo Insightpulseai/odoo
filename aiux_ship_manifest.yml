@@ -1,272 +1,204 @@
-# AIUX Shipping Manifest
-# Deterministic, shippable bundle for Odoo 18 CE + OCA + AIUX + Document AI
-# Generated: 2026-01-08
-# Updated: Added OCR/Document AI integration
+# =============================================================================
+# AIUX Ship Manifest v1.1.0
+# =============================================================================
+# This manifest defines the modules and configuration for the AIUX ship bundle.
+# Used by CI/CD pipelines and deployment scripts.
+# =============================================================================
 
-bundle:
-  name: ipai-aiux-bundle
-  version: 1.1.0
-  target_odoo_major: 18
-  timestamp: "2026-01-08T00:00:00Z"
-  description: |
-    Self-hosted Odoo 18 CE + OCA deployment with:
-    - AIUX theme and Ask AI widget (sidepanel mode, not fullscreen)
-    - Document Intelligence (OCR) for invoice/bill extraction
-    - Expense OCR with receipt scanning and duplicate detection
-    - Sinch SMS/verification integration
-    - Mailgun email integration
+version: "1.1.0"
+name: "IPAI AIUX Ship Bundle"
+repo: "jgtolentino/odoo-ce"
+ship_tag: "ship-aiux-v1.1.0"
 
-odoo:
-  major: 18
-  minor: 0
-  image: odoo:18.0
-  git_ref: "18.0"
-  addons_paths:
-    - /mnt/extra-addons
-    - /mnt/extra-addons/ipai
-    - /mnt/extra-addons/oca
+# -----------------------------------------------------------------------------
+# Modules to install (in dependency order)
+# -----------------------------------------------------------------------------
+modules:
+  # Theme foundation
+  - name: ipai_theme_aiux
+    path: addons/ipai/ipai_theme_aiux
+    type: theme
+    status: stub_v0
+    required: true
+    dependencies:
+      - base
+      - web
 
-database:
-  canonical_db_name: odoo
-  dbfilter_regex: "^(odoo|insightpulse)$"
-  list_db: false
-  db_host_service: db
-  db_user: odoo
-  db_password_env: DB_PASSWORD
-
-oca:
-  branch: "18.0"
-  repos:
-    - server-tools
-    - web
-    - account-financial-tools
-    - account-invoicing
-    - sale-workflow
-    - crm
-    - hr
-    - project
-  modules:
-    base:
-      - base_technical_user
-      - base_view_inheritance_extension
-      - module_auto_update
-    web:
-      - web_responsive
-      - web_refresher
-      - web_no_bubble
-    accounting:
-      - account_financial_report
-      - account_move_line_report_xls
-      - account_journal_lock_date
-    sales:
-      - sale_order_line_sequence
-      - sale_order_archive
-
-ipai_modules:
-  core:
-    - ipai_dev_studio_base
-    - ipai_workspace_core
-    - ipai_ce_branding
-  theme:
-    - ipai_theme_aiux
-  aiux:
-    - ipai_aiux_chat
-  ai:
-    - ipai_ask_ai
-    - ipai_ask_ai_chatter
-    - ipai_ai_core
-  document_ai:
-    - ipai_document_ai
-  expense:
-    - ipai_expense_ocr
-
-# Widget mode types (corrected naming)
-# IMPORTANT: Use 'sidepanel' NOT 'fullscreen'
-widget_modes:
-  types:
-    - minimize   # Collapsed pill state
-    - popup      # Floating chat window
-    - sidepanel  # Full side panel (NOT fullscreen)
-  default: minimize
-
-# OCR Service configuration
-ocr_service:
-  enabled: true
-  base_url_env: OCR_BASE_URL
-  default_url: "http://ocr:8000"
-  endpoints:
-    health: /health
-    extract: /v1/ocr/extract
-    extract_async: /v1/ocr/extract-async
-    job_status: /v1/ocr/jobs/{job_id}
-  settings:
-    timeout_seconds: 60
-    max_file_mb: 25
-    retry_attempts: 3
-    retry_delay_seconds: 5
-  supported_formats:
-    - application/pdf
-    - image/jpeg
-    - image/png
-    - image/tiff
-
-install_order:
-  # Phase 1: Odoo base
-  - stage: odoo_base
-    modules:
+  # Chat widget
+  - name: ipai_aiux_chat
+    path: addons/ipai/ipai_aiux_chat
+    type: widget
+    status: stub_v0
+    required: true
+    dependencies:
       - base
       - web
       - mail
-      - account
+    modes:
+      - minimize
+      - popup
+      - sidepanel
 
-  # Phase 2: OCA base modules
-  - stage: oca_base
-    modules:
-      - base_technical_user
-      - base_view_inheritance_extension
-      - web_responsive
-      - web_refresher
+  # Ask AI backend
+  - name: ipai_ask_ai
+    path: addons/ipai/ipai_ask_ai
+    type: backend
+    status: exists
+    required: true
+    dependencies:
+      - base
+      - mail
+      - project
+      - ipai_finance_ppm
 
-  # Phase 3: OCA accounting
-  - stage: oca_accounting
-    modules:
-      - account_financial_report
-      - account_journal_lock_date
+  # Document AI
+  - name: ipai_document_ai
+    path: addons/ipai/ipai_document_ai
+    type: backend
+    status: exists
+    required: true
+    dependencies:
+      - base
 
-  # Phase 4: OCA sales
-  - stage: oca_sales
-    modules:
-      - sale_order_line_sequence
-      - sale_order_archive
+  # Expense OCR
+  - name: ipai_expense_ocr
+    path: addons/ipai/ipai_expense_ocr
+    type: backend
+    status: exists
+    required: true
+    dependencies:
+      - base
+      - hr_expense
+      - mail
 
-  # Phase 5: IPAI core
-  - stage: ipai_core
-    modules:
-      - ipai_dev_studio_base
-      - ipai_workspace_core
-      - ipai_ce_branding
+# -----------------------------------------------------------------------------
+# Installation command
+# -----------------------------------------------------------------------------
+install:
+  command: |
+    odoo -d ${DB_NAME:-odoo} \
+      -i ipai_theme_aiux,ipai_aiux_chat,ipai_ask_ai,ipai_document_ai,ipai_expense_ocr \
+      --stop-after-init
 
-  # Phase 6: IPAI theme
-  - stage: ipai_theme_aiux
-    modules:
-      - ipai_theme_aiux
+  upgrade_command: |
+    odoo -d ${DB_NAME:-odoo} \
+      -u ipai_theme_aiux,ipai_aiux_chat,ipai_ask_ai,ipai_document_ai,ipai_expense_ocr \
+      --stop-after-init
 
-  # Phase 7: IPAI AIUX chat
-  - stage: ipai_aiux_chat
-    modules:
-      - ipai_aiux_chat
-      - ipai_ask_ai
-      - ipai_ask_ai_chatter
-
-  # Phase 8: IPAI Document AI
-  - stage: ipai_document_ai
-    modules:
-      - ipai_document_ai
-
-  # Phase 9: IPAI Expense OCR
-  - stage: ipai_expense_ocr
-    modules:
-      - ipai_expense_ocr
-
-gates:
-  required:
-    - id: clean_db_install
-      description: Fresh database install completes without errors
-      command: odoo-bin -d $DB_NAME -i base --stop-after-init
-
-    - id: module_upgrade_idempotent
-      description: Module upgrade runs twice without errors
-      command: odoo-bin -d $DB_NAME -u all --stop-after-init
-
-    - id: assets_backend_build_ok
-      description: Backend assets compile without errors
-      command: curl -sf http://localhost:8069/web/assets/backend
-
-    - id: web_login_accessible
-      description: /web/login returns HTTP 200
-      command: curl -sf -o /dev/null -w "%{http_code}" http://localhost:8069/web/login
-
-    - id: assets_accessible
-      description: Asset bundles return HTTP 200
-      command: curl -sf http://localhost:8069/web/assets/
-
-    - id: no_traceback_in_logs
-      description: No Python tracebacks in Odoo logs
-      command: "! docker logs odoo 2>&1 | grep -q 'Traceback'"
-
-  optional:
-    - id: ai_chat_endpoint
-      description: /api/ai/chat endpoint responds
-      command: curl -sf -X POST http://localhost:8069/api/ai/chat -H "Content-Type: application/json"
-
-    - id: ocr_service_health
-      description: OCR service is healthy
-      command: curl -sf http://ocr:8000/health
-
-    - id: document_ai_endpoint
-      description: Document AI upload endpoint responds
-      command: curl -sf http://localhost:8069/ipai/document_ai/health
-
-    - id: expense_ocr_endpoint
-      description: Expense OCR status endpoint responds
-      command: curl -sf http://localhost:8069/ipai/expense_ocr/health
-
-runtime_config:
-  odoo_conf:
-    db_host: db
-    db_port: 5432
-    db_user: odoo
-    db_password: "${DB_PASSWORD}"
-    db_name: odoo
-    dbfilter: "^(odoo|insightpulse)$"
-    list_db: "False"
-    log_level: info
-    workers: 4
-    max_cron_threads: 2
-    limit_memory_hard: 2684354560
-    limit_memory_soft: 2147483648
-    limit_time_cpu: 600
-    limit_time_real: 1200
-
-  environment:
-    - DB_PASSWORD           # Required - database password
-    - ODOO_ADMIN_PASSWORD   # Optional - defaults to admin
-    - OCR_BASE_URL          # Optional - defaults to http://ocr:8000
-    - OCR_TIMEOUT_SECONDS   # Optional - defaults to 60
-    - OCR_MAX_MB            # Optional - defaults to 25
-    # Expense OCR
-    - EXPENSE_OCR_DUPLICATE_DAYS   # Optional - defaults to 90
-    - EXPENSE_OCR_AUTO_APPLY       # Optional - defaults to false
-    - EXPENSE_OCR_REVIEW_THRESHOLD # Optional - defaults to 0.70
-    # Sinch SMS
-    - SINCH_API_KEY         # Optional - Sinch API key
-    - SINCH_API_SECRET      # Optional - Sinch API secret
-    - SINCH_PROJECT_ID      # Optional - Sinch project ID
-    - SINCH_SENDER_ID       # Optional - Sinch sender ID
-
-assets:
-  bundles:
-    - web.assets_backend
-    - web.assets_common
-    - web.assets_frontend
-  endpoints:
-    - /web/assets/backend
-    - /web/assets/common
-    - /web/assets/frontend
-
+# -----------------------------------------------------------------------------
+# Verification gates
+# -----------------------------------------------------------------------------
 verification:
   scripts:
-    install: scripts/aiux/verify_install.sh
-    assets: scripts/aiux/verify_assets.sh
-  artifacts:
-    proof: docs/releases/AIUX_SHIP_PROOF.md
-  runbooks:
-    mailgun: ops/runbooks/mailgun_domain_verification.md
-    ocr: ops/runbooks/ocr_service.md
-    sinch: ops/runbooks/sinch_setup.md
-    expense_ocr: ops/runbooks/expenses_ocr_runbook.md
+    - scripts/aiux/verify_install.sh
+    - scripts/aiux/verify_assets.sh
 
+  health_gates:
+    - endpoint: /web/login
+      expected: 200
+    - endpoint: /web/health
+      expected: 200
+    - endpoint: /web/assets/debug/web.assets_backend.js
+      expected: 200
+
+  required_artifacts:
+    - module_install_log
+    - healthcheck_log
+    - manifest_version
+    - git_sha
+
+# -----------------------------------------------------------------------------
+# OCA Dependencies (recommended for production)
+# -----------------------------------------------------------------------------
+oca_dependencies:
+  - name: queue_job
+    repo: OCA/queue
+    branch: "18.0"
+    purpose: Async job processing for OCR and AI tasks
+    required: false
+
+  - name: base_technical_user
+    repo: OCA/server-backend
+    branch: "18.0"
+    purpose: Technical user management
+    required: false
+
+  - name: base_exception
+    repo: OCA/server-backend
+    branch: "18.0"
+    purpose: Exception handling framework
+    required: false
+
+# -----------------------------------------------------------------------------
+# Odoo Core Dependencies
+# -----------------------------------------------------------------------------
+odoo_core_dependencies:
+  - base
+  - web
+  - mail
+  - hr_expense
+  - project
+
+# -----------------------------------------------------------------------------
+# Operational runbooks
+# -----------------------------------------------------------------------------
+runbooks:
+  - path: ops/runbooks/mailgun_domain_verification.md
+    scope: email-domain-verification
+  - path: ops/runbooks/sinch_setup.md
+    scope: sms-otp-provider
+  - path: ops/runbooks/ocr_service.md
+    scope: document-ocr
+  - path: ops/runbooks/expenses_ocr_runbook.md
+    scope: expense-ocr-operations
+
+# -----------------------------------------------------------------------------
+# Environment variables (placeholders only - never include values)
+# -----------------------------------------------------------------------------
+env_vars:
+  required:
+    - DB_PASSWORD
+    - ADMIN_PASSWD
+  optional:
+    - MAILGUN_API_KEY
+    - MAILGUN_DOMAIN
+    - SINCH_SERVICE_PLAN_ID
+    - SINCH_API_TOKEN
+    - OCR_SERVICE_URL
+    - OCR_SERVICE_TOKEN
+
+# -----------------------------------------------------------------------------
+# CI/CD integration
+# -----------------------------------------------------------------------------
+ci:
+  workflow: .github/workflows/aiux-ship-gate.yml
+  triggers:
+    - push to main
+    - pull request to main
+    - workflow_dispatch
+
+# -----------------------------------------------------------------------------
+# Rollback Configuration
+# -----------------------------------------------------------------------------
+rollback:
+  strategy: tag_rollback
+  requires_db_restore_point: true
+  max_rollback_time_minutes: 30
+  procedure:
+    - "Stop current deployment"
+    - "Restore DB from backup if needed"
+    - "Deploy previous image tag"
+    - "Run verification scripts"
+    - "Update monitoring/alerts"
+
+# -----------------------------------------------------------------------------
+# Documentation References
+# -----------------------------------------------------------------------------
 documentation:
   prd: docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md
-  architecture:
-    ocr: docs/architecture/OCR_PIPELINE.md
+  redeploy_prd: docs/prd/ODOO18_DO_FRESH_REDEPLOY.md
+  end_state_spec: docs/prd/END_STATE_SPEC.json
+  go_live_checklist: docs/ops/GO_LIVE_CHECKLIST.md
+  prevent_502: docs/ops/PREVENT_502.md
+  verification_commands: docs/ops/VERIFICATION_COMMANDS.md
+  what_shipped_template: docs/ops/WHAT_SHIPPED.template.md
