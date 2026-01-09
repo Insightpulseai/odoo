@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a71059b62f9dd8798459b5aaef1fe128790bd965
+> Commit: f93ad8a97ca32fd6f2ac91ef92c88046bb720456
 
 ## 📚 Documentation
 
@@ -302,6 +302,7 @@
 | [Success Criteria - Production Hotfix](docs/SUCCESS_CRITERIA.md) | docs |
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
+| [TBWA Theme Token Alignment - Deployment Guide](docs/TBWA_THEME_DEPLOYMENT.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
@@ -791,6 +792,7 @@
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
+| [ipai_theme_tbwa](./addons/ipai/ipai_theme_tbwa) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |
 | [ipai_v18_compat](./addons/ipai/ipai_v18_compat) | ✅ |  |
