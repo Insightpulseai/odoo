@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a71059b62f9dd8798459b5aaef1fe128790bd965
+> Commit: f93ad8a97ca32fd6f2ac91ef92c88046bb720456
 
 ```
 .
@@ -694,6 +694,11 @@
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_fluent2
 │   │   │   ├── static
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_tbwa
+│   │   │   ├── static
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_tbwa_backend
@@ -2175,6 +2180,7 @@
 │   ├── SUCCESS_CRITERIA.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
+│   ├── TBWA_THEME_DEPLOYMENT.md
 │   ├── TESTING_ODOO_18.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
@@ -2679,6 +2685,7 @@
 │   ├── deploy-december-2025-bir-tasks.sh
 │   ├── deploy-n8n-workflows.sh
 │   ├── deploy-odoo-modules.sh
+│   ├── deploy-tbwa-theme-tokens.sh
 │   ├── deploy-to-server.sh
 │   ├── deploy_afc_rag.sh
 │   ├── deploy_complete_fix.sh
@@ -3543,15 +3550,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1137 directories, 2401 files
+1140 directories, 2405 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1316 |
-| Files | 3645 |
-| Python files | 978 |
-| XML files | 470 |
-| Markdown files | 696 |
+| Directories | 1321 |
+| Files | 3651 |
+| Python files | 980 |
+| XML files | 471 |
+| Markdown files | 697 |
