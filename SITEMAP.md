@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 32ce14e3fbf0868cf1bfed86465bf3a371208811
+> Commit: 30fa4f05dd705491b2ae0430eda4d55fecb7f975
 
 ## 📚 Documentation
 
@@ -487,8 +487,11 @@
 | [Odoo Module Rationalization - Execution Checklist](docs/rationalization/EXECUTION_CHECKLIST.md) | docs/rationalization |
 | [Odoo Module Rationalization System](docs/rationalization/README.md) | docs/rationalization |
 | [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
+| [Deployment Proofs: prod-20260109-2219](docs/releases/DEPLOYMENT_PROOFS/prod-20260109-2219/README.md) | docs/releases/DEPLOYMENT_PROOFS/prod-20260109-2219 |
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
+| [Go-Live Manifest: prod-20260109-2219](docs/releases/GO_LIVE_MANIFEST_prod-20260109-2219.md) | docs/releases |
 | [Latest Release: prod-20260109-1642](docs/releases/LATEST.md) | docs/releases |
+| [What's Deployed: prod-20260109-2219](docs/releases/WHAT_DEPLOYED_prod-20260109-2219.md) | docs/releases |
 | [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
 | [Go-Live Manifest: prod-20260109-1642](docs/releases/prod-20260109-1642/GO_LIVE_MANIFEST.md) | docs/releases/prod-20260109-1642 |
 | [What Shipped: prod-20260109-1642](docs/releases/prod-20260109-1642/WHAT_SHIPPED.md) | docs/releases/prod-20260109-1642 |
