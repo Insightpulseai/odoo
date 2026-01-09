@@ -1,48 +1,60 @@
-# -*- coding: utf-8 -*-
 {
     "name": "IPAI Expense OCR",
     "version": "18.0.1.0.0",
     "category": "Human Resources/Expenses",
-    "summary": "Auto-extract expense data from receipt attachments via OCR",
+    "summary": "OCR-powered receipt scanning for expense management",
     "description": """
-IPAI Expense OCR Integration
-============================
+IPAI Expense OCR
+================
 
-Automatically extracts expense data from uploaded receipt images/PDFs using
-an external OCR service and populates expense fields.
+Self-hosted OCR integration for expense receipt scanning and field extraction.
 
 Features:
-- Automatic OCR on expense attachment upload
-- Extracts: vendor, date, total, tax, currency, line items
-- Supports multiple OCR backends (custom endpoint, OpenAI Vision, Gemini)
-- Stores raw OCR JSON response for audit
-- Manual "Extract from Receipt" button for re-processing
+- Scan receipts from expense forms
+- Auto-extract merchant, date, amount, tax
+- Duplicate receipt detection (SHA256 hash)
+- Confidence scores for extracted fields
+- Queue-based async processing
+- Full-text search on OCR content
+
+No Odoo SA AI modules or IAP required.
+
+Extracted Fields:
+- merchant_name
+- receipt_date
+- total_amount
+- currency
+- tax_amount
+- payment_method (optional)
+- line_items (optional, feature flag)
 
 Configuration:
-1. Go to Settings → Expenses → OCR Configuration
-2. Set your OCR endpoint URL or enable AI provider
-3. Upload receipt → fields auto-populate
-
-Supported OCR Backends:
-- Custom OCR Service (PaddleOCR-VL, etc.)
-- OpenAI GPT-4 Vision
-- Google Gemini Vision
-- DigitalOcean Model Endpoints (via proxy)
+Set environment variables:
+- OCR_BASE_URL: OCR service endpoint
+- OCR_TIMEOUT_SECONDS: Request timeout
+- EXPENSE_OCR_DUPLICATE_DAYS: Days to check for duplicates (default: 90)
     """,
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": [
-        "base",
         "hr_expense",
-        "mail",
+        "ipai_document_ai",
     ],
     "data": [
+        "security/security.xml",
         "security/ir.model.access.csv",
-        "data/ir_config_parameter.xml",
         "views/hr_expense_views.xml",
-        "views/res_config_settings_views.xml",
+        "views/expense_ocr_views.xml",
+        "data/ir_cron.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ipai_expense_ocr/static/src/css/expense_ocr.css",
+            "ipai_expense_ocr/static/src/js/expense_ocr.js",
+            "ipai_expense_ocr/static/src/xml/expense_ocr_templates.xml",
+        ],
+    },
     "installable": True,
     "application": False,
     "auto_install": False,
