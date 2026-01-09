@@ -1,0 +1,52 @@
+name: IPAI Doc-Repo Module Drift Gate
+
+on:
+  pull_request:
+    paths:
+      - 'docs/ipai/**'
+      - 'docs/CANONICAL_MAP.md'
+      - 'addons/ipai/**/__manifest__.py'
+      - 'scripts/validate_ipai_doc_module_refs.py'
+  push:
+    branches: [main, develop]
+    paths:
+      - 'docs/ipai/**'
+      - 'docs/CANONICAL_MAP.md'
+
+jobs:
+  validate-module-references:
+    name: Validate IPAI Module References
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate module references
+        run: |
+          python3 scripts/validate_ipai_doc_module_refs.py
+
+      - name: Post-failure guidance
+        if: failure()
+        run: |
+          echo ""
+          echo "=========================================="
+          echo "MODULE REFERENCE VALIDATION FAILED"
+          echo "=========================================="
+          echo ""
+          echo "Documentation references IPAI modules that don't exist in addons/ipai/."
+          echo ""
+          echo "This prevents the '35 phantom modules' incident from recurring."
+          echo ""
+          echo "To fix:"
+          echo "  1. Review the validation output above"
+          echo "  2. Verify module names against: ls addons/ipai/"
+          echo "  3. Update docs with correct module names"
+          echo "  4. Re-run locally: python3 scripts/validate_ipai_doc_module_refs.py"
+          echo ""
+          exit 1
