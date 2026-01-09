@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 90614c9cb9bbe1a4bec74317b13abf07256c6ab0
+> Commit: 34d14ddf26127037d8dc9599aa7f267bed0ad474
 
 ## 📚 Documentation
 
@@ -175,6 +175,7 @@
 | [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
+| [claude.md (Cloud-Agent Contract for Odoo 18 CE + OCA Repos)](claude.md) | . |
 | [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
 | [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
 | [BIR Compliance & Month-End Closing - Final Deployment Report](claudedocs/FINAL_DEPLOYMENT_REPORT.md) | claudedocs |
@@ -253,6 +254,7 @@
 | [IPAI Module Installation Order](docs/IPAI_MODULE_INSTALLATION_ORDER.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
+| [Mailgun DNS Setup for mg.insightpulseai.net](docs/MAILGUN_DNS_SETUP.md) | docs |
 | [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
 | [Mattermost ChatOps Deployment Guide](docs/MATTERMOST_CHATOPS_DEPLOYMENT.md) | docs |
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |

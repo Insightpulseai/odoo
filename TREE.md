@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 90614c9cb9bbe1a4bec74317b13abf07256c6ab0
+> Commit: 34d14ddf26127037d8dc9599aa7f267bed0ad474
 
 ```
 .
@@ -94,6 +94,8 @@
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
+│   │   ├── prod-configure-smtp.yml
+│   │   ├── prod-odoo-modules.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
@@ -2139,6 +2141,7 @@
 │   ├── IPAI_MODULE_INSTALLATION_ORDER.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
 │   ├── KUBERNETES_MIGRATION_SPECIFICATION.md
+│   ├── MAILGUN_DNS_SETUP.md
 │   ├── MATTERMOST_ALERTING_SETUP.md
 │   ├── MATTERMOST_CHATOPS_DEPLOYMENT.md
 │   ├── MCP_IMPLEMENTATION_STATUS.md
@@ -2586,6 +2589,10 @@
 │   │   ├── schema_drift_check.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
+│   ├── ci_gate
+│   │   ├── compute_addons_roots.sh
+│   │   ├── gate_modules.sh
+│   │   └── module_gate.py
 │   ├── deploy
 │   │   ├── bootstrap_from_tag.sh
 │   │   ├── deploy-prod-e2e.sh
@@ -2682,6 +2689,7 @@
 │   ├── configure_google_oauth.sh
 │   ├── configure_mailgun_smtp.py
 │   ├── configure_sendgrid_smtp.py
+│   ├── configure_smtp.py
 │   ├── configure_zoho_smtp.py
 │   ├── convert_csv_to_xml.py
 │   ├── convert_seed_to_xml.py
@@ -2772,6 +2780,8 @@
 │   ├── odoo_rationalization.sh
 │   ├── odoo_runtime_snapshot.sh
 │   ├── odoo_smoke_close.sh
+│   ├── odoo_update_modules.sh
+│   ├── odoo_verify_modules.py
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
 │   ├── policy-check.sh
@@ -2786,6 +2796,7 @@
 │   ├── report_stale_branches.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
+│   ├── run_odoo_shell.sh
 │   ├── run_project_introspection.sh
 │   ├── scan_ipai_modules.py
 │   ├── seed_finance_close_from_xlsx.py
@@ -2827,6 +2838,7 @@
 │   ├── verify_backup.sh
 │   ├── verify_email_auth.sh
 │   ├── verify_phase3.py
+│   ├── verify_smtp.py
 │   ├── wiki_sync.sh
 │   └── worktree-setup.sh
 ├── seed_export
@@ -3502,6 +3514,7 @@
 ├── aiux_ship_manifest.yml
 ├── bir_deadlines_2026.csv
 ├── branch_protection.json
+├── claude.md
 ├── constitution.md
 ├── custom_module_inventory.md
 ├── deploy_m1.sh.template
@@ -3566,15 +3579,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1146 directories, 2415 files
+1147 directories, 2427 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1328 |
-| Files | 3665 |
-| Python files | 982 |
+| Directories | 1329 |
+| Files | 3677 |
+| Python files | 986 |
 | XML files | 472 |
-| Markdown files | 701 |
+| Markdown files | 703 |
