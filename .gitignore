@@ -44,7 +44,13 @@ addons/*
 !addons/ipai/
 !addons/ipai/**
 !addons/oca/
-!addons/oca/**
+!addons/oca/__init__.py
+!addons/oca/__manifest__.py
+!addons/oca/manifest.yaml
+!addons/oca/requirements.txt
+!addons/oca/.gitkeep
+# OCA repos cloned from GitHub (managed via oca.lock.json)
+addons/oca/*/
 !addons/OCA/
 !addons/OCA/**
 
