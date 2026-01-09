@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 05476eee2d8a721ef8e455d5e75c5c589bf5e366
+> Commit: 90614c9cb9bbe1a4bec74317b13abf07256c6ab0
 
 ```
 .
@@ -1064,6 +1064,14 @@
 │   │   │   ├── ph_holiday_views.xml
 │   │   │   └── res_partner_views.xml
 │   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_theme_tbwa
+│   │   ├── static
+│   │   │   ├── description
+│   │   │   └── src
+│   │   ├── views
+│   │   │   └── assets.xml
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_theme_tbwa_backend
@@ -3525,6 +3533,7 @@
 ├── ipai_ce_branding_patch_v1.2.0.zip
 ├── ipai_finance_ppm_directory.csv
 ├── ipai_open_semantics_migrations_and_functions.zip
+├── ipai_theme_tbwa_18.0.1.0.0.zip
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
 ├── oca-aggregate.yml
@@ -3557,15 +3566,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1141 directories, 2411 files
+1146 directories, 2415 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1322 |
-| Files | 3657 |
-| Python files | 980 |
-| XML files | 471 |
+| Directories | 1328 |
+| Files | 3665 |
+| Python files | 982 |
+| XML files | 472 |
 | Markdown files | 701 |
