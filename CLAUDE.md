@@ -9,6 +9,8 @@
 | **Python** | 3.10+ (Odoo 18 requirement) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
 
+> **Claude Code Web Users**: See [CLAUDE_CODE_WEB.md](./CLAUDE_CODE_WEB.md) for cloud sandbox execution contract.
+
 ### Common Commands
 
 ```bash
@@ -485,6 +487,8 @@ docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
 | `scripts/ce_oca_audit.py` | Comprehensive OCA/CE audit |
 | `scripts/generate_odoo_dbml.py` | Generate data model artifacts |
 | `scripts/gen_repo_tree.sh` | Auto-generate repo structure docs |
+| `scripts/web_sandbox_verify.sh` | Claude Code Web sandbox verification |
+| `scripts/db_verify.sh` | Database health verification script |
 
 ---
 
@@ -558,4 +562,4 @@ chmod -R 755 addons/ipai/
 ---
 
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-08*
+*Last updated: 2026-01-09*
