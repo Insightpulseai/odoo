@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 974b52bdc2b981d17255ebed43413237af006951
+> Commit: d9b34be27c91bebc474ff3f40ec74f0d2b338b81
 
 ```
 .
@@ -1700,6 +1700,8 @@
 │   ├── notion_tasks_with_logframe.json
 │   └── user_map.csv
 ├── db
+│   ├── audit
+│   │   └── supabase_exposure_audit.sql
 │   ├── import-templates
 │   │   └── extended-platform
 │   │       ├── README.md
@@ -3587,15 +3589,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1150 directories, 2432 files
+1151 directories, 2433 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1332 |
-| Files | 3683 |
+| Directories | 1333 |
+| Files | 3684 |
 | Python files | 988 |
 | XML files | 473 |
 | Markdown files | 704 |
