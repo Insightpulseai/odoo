@@ -407,7 +407,19 @@ Types:
 - `perf`: Performance improvement
 - `test`: Adding tests
 - `ci`: CI/CD changes
-- `chore`: Maintenance tasks
+- `chore`: Maintenance tasks (see below for scope conventions)
+
+#### Chore Scope Conventions (OCA-style)
+
+| Scope | When to Use |
+|-------|-------------|
+| `chore(oca):` | OCA layer: submodules, `oca.lock.json`, `oca-aggregate.yml`, pins |
+| `chore(repo):` | Repo-wide maintenance (docs regen, formatting, housekeeping) |
+| `chore(ci):` | Workflows, gating, pre-commit, drift checks |
+| `chore(deps):` | Python/Node deps, devcontainer, toolchain pins |
+| `chore(deploy):` | Docker compose, nginx, env templates, infra docs |
+
+See [docs/OCA_CHORE_SCOPE.md](docs/OCA_CHORE_SCOPE.md) for full conventions including PR templates and verification gates.
 
 Example:
 ```

@@ -530,6 +530,18 @@ Examples:
 - `docs(claude): update CLAUDE.md with architecture`
 - `chore(ci): add spec validation workflow`
 
+### Chore Scope Conventions (OCA-style)
+
+| Scope | When to Use |
+|-------|-------------|
+| `chore(oca):` | OCA layer: submodules, `oca.lock.json`, `oca-aggregate.yml`, pins |
+| `chore(repo):` | Repo-wide maintenance (docs regen, formatting, housekeeping) |
+| `chore(ci):` | Workflows, gating, pre-commit, drift checks |
+| `chore(deps):` | Python/Node deps, devcontainer, toolchain pins |
+| `chore(deploy):` | Docker compose, nginx, env templates, infra docs |
+
+See [docs/OCA_CHORE_SCOPE.md](docs/OCA_CHORE_SCOPE.md) for full conventions.
+
 ### PR Requirements
 
 1. Small, focused commits with descriptive messages
