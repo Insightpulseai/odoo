@@ -9,10 +9,10 @@
   // ---------------------------------------------------------------------------
   // TBWA Brand Color Variables
   // ---------------------------------------------------------------------------
-  --tbwa-yellow: #FEDD00;
-  --tbwa-yellow-dark: #E5C700;
+  --tbwa-yellow: #FFC400;
+  --tbwa-yellow-dark: #E5AE00;
   --tbwa-yellow-light: #FFF4B3;
-  --tbwa-black: #000000;
+  --tbwa-black: #0B0B0B;
   --tbwa-charcoal: #1A1A1A;
   --tbwa-gray-dark: #333333;
   --tbwa-gray: #666666;
@@ -84,11 +84,11 @@
   --ipai-danger-bg: #fee2e2;
   --ipai-danger-fg: #ffffff;
 
-  // Info state - TBWA Yellow
-  --ipai-info: var(--tbwa-yellow);
-  --ipai-info-hover: var(--tbwa-yellow-dark);
-  --ipai-info-bg: var(--tbwa-yellow-light);
-  --ipai-info-fg: var(--tbwa-black);
+  // Info state - Blue (spec-compliant)
+  --ipai-info: #2563EB;
+  --ipai-info-hover: #1D4ED8;
+  --ipai-info-bg: #DBEAFE;
+  --ipai-info-fg: #ffffff;
 
   // ---------------------------------------------------------------------------
   // Input/Form styling - TBWA Yellow focus
