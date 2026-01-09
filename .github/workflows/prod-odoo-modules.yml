@@ -104,7 +104,7 @@ jobs:
             done
           ENDSSH
 
-      - name: Update modules on production
+      - name: Update modules on production (gated)
         if: ${{ !inputs.dry_run && inputs.action != 'verify_only' }}
         env:
           PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
@@ -127,8 +127,20 @@ jobs:
             echo "📥 Pulling latest changes..."
             git pull origin main || git pull origin master || true
 
+            # Sync OCA modules if git-aggregator is used
+            if [ -f oca-aggregate.yml ] && [ -x scripts/sync_oca.sh ]; then
+              echo "🔄 Syncing OCA modules..."
+              ./scripts/sync_oca.sh
+            else
+              git submodule sync --recursive || true
+              git submodule update --init --recursive || true
+            fi
+
             export ODOO_DB="${ODOO_DB:-odoo}"
             export ODOO_MODULES="${MODULES}"
+
+            echo "🔒 Running dry-run gate (no DB changes)..."
+            ./scripts/ci_gate/gate_modules.sh
 
             echo "⚙️ Running module update..."
             ./scripts/odoo_update_modules.sh
