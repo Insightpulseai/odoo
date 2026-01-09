@@ -117,6 +117,7 @@ temp/
 !infra/lakehouse/**/*.sql
 !tools/audit/*.sql
 !scripts/sql/*.sql
+!db/migrations/*.sql
 
 # Parity audit generated files
 parity_report.json
