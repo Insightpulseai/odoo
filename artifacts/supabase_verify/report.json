@@ -1,0 +1,117 @@
+{
+  "timestamp": "pending",
+  "overall_status": "PENDING",
+  "summary": {
+    "total_checks": 0,
+    "passed": 0,
+    "failed": 0,
+    "skipped": 0
+  },
+  "environment": {
+    "supabase_url": "https://spdtwktxdalcfigzeqrz.supabase.co",
+    "project_ref": "spdtwktxdalcfigzeqrz"
+  },
+  "note": "Run ./scripts/verify_supabase_deploy.sh to populate this report with actual verification results",
+  "checks": {
+    "env_check": {
+      "status": "pending",
+      "message": "Environment variables check",
+      "evidence": ""
+    },
+    "migrations_table_exists": {
+      "status": "pending",
+      "message": "supabase_migrations.schema_migrations table exists",
+      "evidence": ""
+    },
+    "migrations_applied": {
+      "status": "pending",
+      "message": "Count and list applied migrations",
+      "evidence": ""
+    },
+    "key_migrations": {
+      "status": "pending",
+      "message": "5001, 5002, 5003 migrations applied",
+      "evidence": ""
+    },
+    "repo_migrations_match": {
+      "status": "pending",
+      "message": "Repo migrations match applied",
+      "evidence": ""
+    },
+    "schemas_exist": {
+      "status": "pending",
+      "message": "app, ops, public schemas exist",
+      "evidence": ""
+    },
+    "jwt_hook_exists": {
+      "status": "pending",
+      "message": "public.custom_access_token_hook function exists",
+      "evidence": ""
+    },
+    "helper_functions": {
+      "status": "pending",
+      "message": "app.current_user_id, current_tenant_id, current_role exist",
+      "evidence": ""
+    },
+    "rls_enabled": {
+      "status": "pending",
+      "message": "RLS enabled on core tables",
+      "evidence": ""
+    },
+    "rls_policies_exist": {
+      "status": "pending",
+      "message": "RLS policies attached to tables",
+      "evidence": ""
+    },
+    "rls_policies_list": {
+      "status": "pending",
+      "message": "List of all RLS policies",
+      "evidence": ""
+    },
+    "edge_functions_deployed": {
+      "status": "pending",
+      "message": "Edge functions in repo",
+      "evidence": ""
+    },
+    "required_functions": {
+      "status": "pending",
+      "message": "auth-bootstrap and tenant-invite exist",
+      "evidence": ""
+    },
+    "auth_bootstrap_cors": {
+      "status": "pending",
+      "message": "auth-bootstrap CORS preflight",
+      "evidence": ""
+    },
+    "auth_bootstrap_validation": {
+      "status": "pending",
+      "message": "auth-bootstrap input validation",
+      "evidence": ""
+    },
+    "tenant_invite_auth": {
+      "status": "pending",
+      "message": "tenant-invite auth requirement",
+      "evidence": ""
+    },
+    "storage_buckets": {
+      "status": "pending",
+      "message": "Storage buckets configuration",
+      "evidence": ""
+    },
+    "api_app_schema": {
+      "status": "pending",
+      "message": "app schema exposed via REST",
+      "evidence": ""
+    },
+    "api_ops_schema": {
+      "status": "pending",
+      "message": "ops schema NOT exposed via REST",
+      "evidence": ""
+    },
+    "seed_tenants": {
+      "status": "pending",
+      "message": "Bootstrap tenant exists",
+      "evidence": ""
+    }
+  }
+}
