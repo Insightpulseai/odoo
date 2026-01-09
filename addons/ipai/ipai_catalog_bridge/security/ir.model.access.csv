@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_catalog_asset_user,ipai.catalog.asset user,model_ipai_catalog_asset,base.group_user,1,0,0,0
+access_ipai_catalog_asset_admin,ipai.catalog.asset admin,model_ipai_catalog_asset,base.group_system,1,1,1,1
+access_ipai_catalog_tool_user,ipai.catalog.tool user,model_ipai_catalog_tool,base.group_user,1,0,0,0
+access_ipai_catalog_tool_admin,ipai.catalog.tool admin,model_ipai_catalog_tool,base.group_system,1,1,1,1
+access_ipai_semantic_model_user,ipai.semantic.model user,model_ipai_semantic_model,base.group_user,1,0,0,0
+access_ipai_semantic_model_admin,ipai.semantic.model admin,model_ipai_semantic_model,base.group_system,1,1,1,1
+access_ipai_semantic_dimension_user,ipai.semantic.dimension user,model_ipai_semantic_dimension,base.group_user,1,0,0,0
+access_ipai_semantic_dimension_admin,ipai.semantic.dimension admin,model_ipai_semantic_dimension,base.group_system,1,1,1,1
+access_ipai_semantic_metric_user,ipai.semantic.metric user,model_ipai_semantic_metric,base.group_user,1,0,0,0
+access_ipai_semantic_metric_admin,ipai.semantic.metric admin,model_ipai_semantic_metric,base.group_system,1,1,1,1

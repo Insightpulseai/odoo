@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Catalog Configuration Parameters -->
+
+    <!-- Supabase URL for catalog Edge Function -->
+    <record id="config_param_supabase_url" model="ir.config_parameter">
+        <field name="key">ipai_catalog.supabase_url</field>
+        <field name="value"></field>
+    </record>
+
+    <!-- Supabase Service Role Key (for server-side calls) -->
+    <record id="config_param_supabase_service_key" model="ir.config_parameter">
+        <field name="key">ipai_catalog.supabase_service_key</field>
+        <field name="value"></field>
+    </record>
+
+    <!-- Override function URL if different from default -->
+    <record id="config_param_function_url" model="ir.config_parameter">
+        <field name="key">ipai_catalog.function_url</field>
+        <field name="value"></field>
+    </record>
+
+    <!-- Scheduled Actions for Catalog Sync -->
+
+    <!-- Daily model sync (disabled by default) -->
+    <record id="ir_cron_catalog_sync_models" model="ir.cron">
+        <field name="name">Catalog: Sync Odoo Models</field>
+        <field name="model_id" ref="model_ipai_catalog_sync"/>
+        <field name="state">code</field>
+        <field name="code">model.sync_odoo_models()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">False</field>
+    </record>
+
+    <!-- Hourly tool sync (disabled by default) -->
+    <record id="ir_cron_catalog_pull_tools" model="ir.cron">
+        <field name="name">Catalog: Pull Tool Definitions</field>
+        <field name="model_id" ref="model_ipai_catalog_sync"/>
+        <field name="state">code</field>
+        <field name="code">model.pull_catalog_tools()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="numbercall">-1</field>
+        <field name="active">False</field>
+    </record>
+
+</odoo>

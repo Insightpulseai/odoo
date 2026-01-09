@@ -1,0 +1,75 @@
+# =============================================================================
+# OCA Git Aggregator Configuration
+# =============================================================================
+# Use OCA's git-aggregator for deterministic dependency management.
+#
+# Install:
+#   pip install git-aggregator
+#
+# Usage:
+#   gitaggregate -c oca-aggregate.yml
+#
+# This clones/pins OCA repos to exact commits without submodule headaches.
+# =============================================================================
+
+./addons/OCA:
+  defaults:
+    depth: 1
+
+  remotes:
+    oca: https://github.com/OCA
+
+  # ==========================================================================
+  # Essential OCA Repos (18.0 branches)
+  # Install order: Foundation → Platform UX → Apps
+  # ==========================================================================
+  merges:
+    # Tier 0: Foundation
+    - oca server-tools 18.0
+    - oca server-ux 18.0
+
+    # Tier 1: Platform UX
+    - oca web 18.0
+
+    # Tier 2: Automation (CE marketing automation alternative)
+    - oca automation 18.0
+
+    # Tier 4: Financial Reporting & Tools
+    - oca account-financial-tools 18.0
+    - oca account-financial-reporting 18.0
+
+    # Tier 9: Workflow Extensions
+    - oca sale-workflow 18.0
+    - oca purchase-workflow 18.0
+
+  # Optional: pin to specific commits for reproducibility
+  # - oca server-tools 18.0 abc1234
+
+# =============================================================================
+# Extended OCA Repos (optional, uncomment as needed)
+# =============================================================================
+
+# ./addons/OCA-extended:
+#   defaults:
+#     depth: 1
+#   remotes:
+#     oca: https://github.com/OCA
+#   merges:
+#     # Background Processing
+#     - oca queue 18.0
+#     # Reporting Engine
+#     - oca reporting-engine 18.0
+#     - oca mis-builder 18.0
+#     # Knowledge & DMS
+#     - oca knowledge 18.0
+#     - oca dms 18.0
+#     # API Layer
+#     - oca rest-framework 18.0
+#     # Social/Mail
+#     - oca social 18.0
+#     # Project & HR
+#     - oca project 18.0
+#     - oca hr-expense 18.0
+#     - oca timesheet 18.0
+#     # Reconciliation
+#     - oca account-reconcile 18.0

@@ -1,0 +1,12 @@
+# AI Provider Router Dependencies
+
+# Core dependencies
+openai>=1.54.0  # OpenAI API client
+google-generativeai>=0.8.0  # Google Gemini API client
+anthropic>=0.40.0  # Anthropic Claude API client
+requests>=2.32.0  # For Ollama HTTP API
+
+# Testing dependencies
+pytest>=8.3.0
+pytest-cov>=6.0.0
+pytest-mock>=3.14.0

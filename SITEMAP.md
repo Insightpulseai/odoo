@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d6ba3372b0966d5eca27173448648baf955e0d3e
+> Commit: 5abff2b155f4f1690b4f9e721f5b4ba8208f1913
 
 ## 📚 Documentation
 
@@ -22,7 +22,9 @@
 | [/ship Command](.continue/prompts/ship.md) | .continue/prompts |
 | [/verify Command](.continue/prompts/verify.md) | .continue/prompts |
 | [Agentic Rules (Continue)](.continue/rules/agentic.md) | .continue/rules |
+| [Mission](.github/agents/odoo-oca-triage.agent.md) | .github/agents |
 | [Copilot Instructions for InsightPulse Odoo CE](.github/copilot-instructions.md) | .github |
+| [VSCode/Cursor/Claude Code Workspace Configuration](.vscode/README.md) | .vscode |
 | [Analytics Activation Sequence](ANALYTICS_ACTIVATION_SEQUENCE.md) | . |
 | [🎯 Odoo CE v0.9.1 - Security Audit Fixes Applied](AUDIT_FIXES_APPLIED.md) | . |
 | [Auto-Healing System Implementation Summary](AUTO_HEALING_SYSTEM_SUMMARY.md) | . |
@@ -121,7 +123,6 @@
 | [IPAI Finance PPM – TBWA Complete Configuration](addons/ipai_finance_ppm_umbrella/README.md) | addons/ipai_finance_ppm_umbrella |
 | [IPAI Grid/List View](addons/ipai_grid_view/README.md) | addons/ipai_grid_view |
 | [IPAI Month-End Closing](addons/ipai_month_end/README.md) | addons/ipai_month_end |
-| [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing.backup/README.md) | addons/ipai_month_end_closing.backup |
 | [IPAI Month-End Closing & BIR Tax Filing](addons/ipai_month_end_closing/README.md) | addons/ipai_month_end_closing |
 | [IPAI Platform - Approvals](addons/ipai_platform_approvals/README.md) | addons/ipai_platform_approvals |
 | [IPAI Platform - Audit Trail](addons/ipai_platform_audit/README.md) | addons/ipai_platform_audit |
@@ -198,6 +199,7 @@
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
 | [Agent Skills Framework - Session Report](docs/AGENT_FRAMEWORK_SESSION_REPORT.md) | docs |
+| [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
 | [CE/OCA Equivalents Audit Report](docs/CE_OCA_EQUIVALENTS_AUDIT.md) | docs |
@@ -284,6 +286,7 @@
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
 | [Secrets Naming and Storage - Canonical Reference](docs/SECRETS_NAMING_AND_STORAGE.md) | docs |
 | [Semantic Versioning Strategy - InsightPulse Odoo CE](docs/SEMANTIC_VERSIONING_STRATEGY.md) | docs |
+| [AIUX Ship v1.1.0 - Production Release Summary](docs/SHIP_v1.1.0_SUMMARY.md) | docs |
 | [Odoo CE 18.0 - InsightPulse AI Module Sitemap](docs/SITEMAP.md) | docs |
 | [SMTP Setup Summary - Complete Status](docs/SMTP_SETUP_SUMMARY.md) | docs |
 | [SSO Configuration Validation Checklist](docs/SSO_VALIDATION_CHECKLIST.md) | docs |
@@ -300,6 +303,9 @@
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
+| [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
+| [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
+| [Runtime Snapshots](docs/architecture/runtime_snapshot/README.md) | docs/architecture/runtime_snapshot |
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
 | [IPAI Module Inventory](docs/audits/ipai_modules/inventory.md) | docs/audits/ipai_modules |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
@@ -422,9 +428,13 @@
 | [Odoo Developer Tools (Debug Mode) — How we use it in IPAI](docs/odoo/DEVELOPER_TOOLS.md) | docs/odoo |
 | [Antigravity MCP Configuration](docs/ops/ANTIGRAVITY_MCP.md) | docs/ops |
 | [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
+| [Kickoff → Go-Live Checklist (CE/OCA/IPAI)](docs/ops/GO_LIVE_CHECKLIST.md) | docs/ops |
 | [Local Dev (Docker Compose)](docs/ops/LOCAL_DEV.md) | docs/ops |
+| [Preventing 502 Bad Gateway Errors in Odoo](docs/ops/PREVENT_502.md) | docs/ops |
 | [Production Recovery Runbook](docs/ops/RECOVERY.md) | docs/ops |
 | [Ship Verification Runbook](docs/ops/SHIP_VERIFICATION.md) | docs/ops |
+| [Verification Commands Reference](docs/ops/VERIFICATION_COMMANDS.md) | docs/ops |
+| [WHAT_SHIPPED - Release [TAG]](docs/ops/WHAT_SHIPPED.template.md) | docs/ops |
 | [001 — 2025-12-31 — Initial setup](docs/ops/conversations/001 — 2025-12-31 — Initial setup.md) | docs/ops/conversations
 .
 .
@@ -438,10 +448,14 @@
 .
 . |
 | [Conversations Index](docs/ops/conversations/INDEX.md) | docs/ops/conversations |
+| [Production Redeploy Runbook](docs/ops/production_redeploy_runbook.md) | docs/ops |
 | [IPAI AI Platform - Object Relationship Document (ORD)](docs/ord/IPAI_AI_PLATFORM_ORD.md) | docs/ord |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
+| [IPAI AIUX Ship PRD v1.1.0 (Complete, Production)](docs/prd/AIUX_SHIP_PRD_v1.1.0.md) | docs/prd |
+| [IPAI AIUX Ship Bundle PRD](docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md) | docs/prd |
+| [Odoo 18 CE Fresh Redeploy PRD](docs/prd/ODOO18_DO_FRESH_REDEPLOY.md) | docs/prd |
 | [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
 | [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
@@ -489,6 +503,10 @@
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
+| [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
+| [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
+| [OCR Service Operations Runbook](ops/runbooks/ocr_service.md) | ops/runbooks |
+| [Sinch SMS/OTP Setup Runbook](ops/runbooks/sinch_setup.md) | ops/runbooks |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
@@ -687,6 +705,7 @@
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
 | [ipai_auth_oauth_internal](./addons/ipai/ipai_auth_oauth_internal) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
+| [ipai_catalog_bridge](./addons/ipai/ipai_catalog_bridge) | ✅ |  |
 | [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
@@ -758,7 +777,6 @@
 | [ipai_grid_view](./addons/ipai_grid_view) | ✅ |  |
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ |  |
-| [ipai_month_end_closing.backup](./addons/ipai_month_end_closing.backup) | ✅ | SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance |
 | [ipai_ocr_gateway](./addons/ipai_ocr_gateway) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |

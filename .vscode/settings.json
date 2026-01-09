@@ -1,12 +1,27 @@
 {
+  // Ensure Copilot Chat reads .github/copilot-instructions.md
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+
+  "editor.rulers": [100],
+  "editor.wordWrap": "on",
+  "editor.minimap.enabled": false,
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "editor.formatOnSave": true,
   "[python]": {
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
-  "python.formatting.provider": "none",
+  "ruff.enable": true,
+  "ruff.format.args": ["--config", "pyproject.toml"],
   "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": [
+    "odoo",
+    "addons",
+    "addons/ipai",
+    "addons/OCA",
+    "addons/oca"
+  ],
   "[yaml]": {
     "editor.defaultFormatter": "redhat.vscode-yaml"
   },
@@ -23,7 +38,20 @@
     "**/.git": true,
     "**/.venv": true,
     "**/node_modules": true,
+    "**/dist": true,
+    "**/artifacts": true,
+    "**/.odoo": true,
     "**/.odoo-filestore": true,
     "**/.pytest_cache": true
+  },
+  "files.associations": {
+    "*.xml": "xml",
+    "*.mjs": "javascript",
+    "*.yml": "yaml",
+    "*.yaml": "yaml"
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+    "https://json.schemastore.org/github-action.json": ".github/action.yml"
   }
 }

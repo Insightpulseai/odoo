@@ -6,14 +6,14 @@
             <field name="name">ipai.equipment.asset.tree</field>
             <field name="model">ipai.equipment.asset</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="name"/>
                     <field name="category_id"/>
                     <field name="serial_number"/>
                     <field name="location_id"/>
                     <field name="condition"/>
                     <field name="status"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -100,7 +100,7 @@
             <field name="name">ipai.equipment.booking.tree</field>
             <field name="model">ipai.equipment.booking</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="name"/>
                     <field name="asset_id"/>
                     <field name="borrower_id"/>
@@ -108,7 +108,7 @@
                     <field name="start_datetime"/>
                     <field name="end_datetime"/>
                     <field name="state"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -212,14 +212,14 @@
             <field name="name">ipai.equipment.incident.tree</field>
             <field name="model">ipai.equipment.incident</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="name"/>
                     <field name="asset_id"/>
                     <field name="booking_id"/>
                     <field name="reported_by"/>
                     <field name="severity"/>
                     <field name="status"/>
-                </tree>
+                </list>
             </field>
         </record>
 

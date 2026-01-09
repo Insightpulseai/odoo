@@ -7,7 +7,7 @@
         <field name="name">control.advice.tree</field>
         <field name="model">control.advice</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="state in ('dismissed', 'done')">
+            <list decoration-muted="state in ('dismissed', 'done')">
                 <field name="title"/>
                 <field name="category" widget="badge"/>
                 <field name="impact" widget="badge"
@@ -21,7 +21,7 @@
                        decoration-success="state in ('accepted', 'done')"
                        decoration-muted="state == 'dismissed'"/>
                 <field name="owner_id" widget="many2one_avatar_user"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -96,12 +96,12 @@
                         </page>
                         <page string="Action History" name="action_history">
                             <field name="action_ids">
-                                <tree>
+                                <list>
                                     <field name="created_at"/>
                                     <field name="action_type"/>
                                     <field name="state" widget="badge"/>
                                     <field name="done_at"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -172,7 +172,7 @@
     <record id="action_control_advice" model="ir.actions.act_window">
         <field name="name">Advisor Recommendations</field>
         <field name="res_model">control.advice</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="context">{'search_default_new': 1, 'search_default_accepted': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -190,7 +190,7 @@
         <field name="name">control.playbook.tree</field>
         <field name="model">control.playbook</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="not active">
+            <list decoration-muted="not active">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="category" widget="badge"/>
@@ -199,7 +199,7 @@
                 <field name="execution_count"/>
                 <field name="last_executed_at"/>
                 <field name="active" column_invisible="True"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -256,12 +256,12 @@
                                 <field name="last_executed_at"/>
                             </group>
                             <field name="action_ids">
-                                <tree>
+                                <list>
                                     <field name="created_at"/>
                                     <field name="state" widget="badge"/>
                                     <field name="done_at"/>
                                     <field name="duration_s"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Description" name="description">
@@ -277,7 +277,7 @@
     <record id="action_control_playbook" model="ir.actions.act_window">
         <field name="name">Playbooks</field>
         <field name="res_model">control.playbook</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_active': 1}</field>
     </record>
 
@@ -287,7 +287,7 @@
         <field name="name">control.action.tree</field>
         <field name="model">control.action</field>
         <field name="arch" type="xml">
-            <tree decoration-success="state == 'completed'"
+            <list decoration-success="state == 'completed'"
                   decoration-danger="state == 'failed'"
                   decoration-warning="state == 'running'"
                   decoration-muted="state == 'canceled'">
@@ -302,7 +302,7 @@
                 <field name="created_at"/>
                 <field name="done_at"/>
                 <field name="duration_s"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -365,6 +365,6 @@
     <record id="action_control_action" model="ir.actions.act_window">
         <field name="name">Actions</field>
         <field name="res_model">control.action</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>

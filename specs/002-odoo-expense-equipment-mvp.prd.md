@@ -2,7 +2,7 @@
 
 **Status:** Draft v0.1 (MVP Scope)
 **Owner:** InsightPulseAI – ERP Platform Team
-**Repo:** `insightpulse-odoo`
+**Repo:** `odoo-ce`
 **Last Updated:** 2025-11-20
 
 ---
