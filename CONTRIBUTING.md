@@ -402,14 +402,46 @@ git checkout <branch-name>
 # Step 3: Merge the base branch into the head branch
 git merge main
 
-# Step 4: Fix any conflicts and commit the result
-# See: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line
+# Step 4: Fix any conflicts and commit the result (see below)
 
 # Step 5: Push the changes
 git push -u origin <branch-name>
 ```
 
 Replace `<branch-name>` with the actual PR branch name (e.g., `feat/my-feature`).
+
+#### Resolving Merge Conflicts
+
+If `git merge main` reports conflicts, follow these steps:
+
+```bash
+# 1. See which files have conflicts
+git status
+
+# 2. Open the conflicted file(s) in your editor
+#    Look for conflict markers:
+#    <<<<<<< HEAD
+#    (your changes)
+#    =======
+#    (changes from main)
+#    >>>>>>> main
+
+# 3. Edit the file to resolve conflicts:
+#    - Remove the conflict markers (<<<<<<, =======, >>>>>>>)
+#    - Keep the code you want (yours, theirs, or a combination)
+
+# 4. After editing, mark the conflict as resolved
+git add <resolved-file>
+
+# 5. Once all conflicts are resolved, complete the merge
+git commit -m "Merge main into <branch-name>"
+```
+
+**Tips for conflict resolution:**
+- Use `git diff` to see what changed
+- Use `git log --oneline main..<branch-name>` to see your commits
+- Use `git log --oneline <branch-name>..main` to see incoming commits
+- If you want to abort the merge: `git merge --abort`
 
 ### Commit Message Format
 
