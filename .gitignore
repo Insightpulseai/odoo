@@ -65,6 +65,8 @@ docker-compose.override.yml
 !/.vscode/settings.json
 !/.vscode/tasks.json
 !/.vscode/launch.json
+!/.vscode/ipai_workspace.code-workspace
+!/.vscode/README.md
 .idea/
 *.swp
 *.swo
@@ -139,3 +141,27 @@ data/source.xlsx
 # Keep templates and sample files
 !templates/odoo/import/*.csv
 !data/user_map.csv
+
+# --- local env / secrets ---
+.env
+.env.*
+config/odoo.conf.local
+.mcp.json
+.claude/settings.local.json
+
+# --- local compose overrides ---
+docker-compose.local.yml
+docker-compose.*.local.yml
+
+# --- node / next build ---
+**/.next/
+**/node_modules/
+.cursor/
+
+# --- python ---
+.venv/
+__pycache__/
+*.pyc
+
+# --- misc ---
+.DS_Store

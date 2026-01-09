@@ -5,14 +5,14 @@
         <field name="name">ipai.mattermost.channel.tree</field>
         <field name="model">ipai.mattermost.channel</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="display_name"/>
                 <field name="name"/>
                 <field name="channel_type"/>
                 <field name="connector_id"/>
                 <field name="last_sync"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -50,7 +50,7 @@
     <record id="action_mattermost_channel" model="ir.actions.act_window">
         <field name="name">Mattermost Channels</field>
         <field name="res_model">ipai.mattermost.channel</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Message Tree View -->
@@ -58,14 +58,14 @@
         <field name="name">ipai.mattermost.message.tree</field>
         <field name="model">ipai.mattermost.message</field>
         <field name="arch" type="xml">
-            <tree default_order="create_date desc">
+            <list default_order="create_date desc">
                 <field name="create_date"/>
                 <field name="direction" widget="badge"/>
                 <field name="mm_channel_id"/>
                 <field name="message" widget="text"/>
                 <field name="state" widget="badge" decoration-success="state == 'sent'" decoration-warning="state == 'pending'" decoration-danger="state == 'failed'"/>
                 <field name="connector_id"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -73,7 +73,7 @@
     <record id="action_mattermost_message" model="ir.actions.act_window">
         <field name="name">Message Log</field>
         <field name="res_model">ipai.mattermost.message</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- Menu items under Integrations -->

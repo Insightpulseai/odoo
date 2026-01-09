@@ -6,7 +6,7 @@
             <field name="name">ipai.travel.request.tree</field>
             <field name="model">ipai.travel.request</field>
             <field name="arch" type="xml">
-                <tree>
+                <list>
                     <field name="name"/>
                     <field name="employee_id"/>
                     <field name="project_id"/>
@@ -15,7 +15,7 @@
                     <field name="end_date"/>
                     <field name="estimated_budget"/>
                     <field name="state"/>
-                </tree>
+                </list>
             </field>
         </record>
 

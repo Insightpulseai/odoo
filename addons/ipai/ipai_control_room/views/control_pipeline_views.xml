@@ -7,7 +7,7 @@
         <field name="name">control.pipeline.tree</field>
         <field name="model">control.pipeline</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="not active"
+            <list decoration-muted="not active"
                   decoration-danger="last_run_state == 'failed'"
                   decoration-success="last_run_state == 'succeeded'">
                 <field name="name"/>
@@ -23,7 +23,7 @@
                 <field name="run_count"/>
                 <field name="success_rate" widget="progressbar"/>
                 <field name="active" column_invisible="True"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -71,11 +71,11 @@
                     <notebook>
                         <page string="Stages &amp; Steps" name="stages">
                             <field name="stage_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="step_count"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Last Run" name="last_run">
@@ -165,7 +165,7 @@
     <record id="action_control_pipeline" model="ir.actions.act_window">
         <field name="name">Pipelines</field>
         <field name="res_model">control.pipeline</field>
-        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -197,13 +197,13 @@
                     <notebook>
                         <page string="Steps" name="steps">
                             <field name="step_ids">
-                                <tree editable="bottom">
+                                <list editable="bottom">
                                     <field name="sequence" widget="handle"/>
                                     <field name="name"/>
                                     <field name="kind"/>
                                     <field name="enabled"/>
                                     <field name="timeout_s"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Description" name="description">
@@ -272,12 +272,12 @@
         <field name="name">control.env.tree</field>
         <field name="model">control.env</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="code"/>
                 <field name="active"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -314,6 +314,6 @@
     <record id="action_control_env" model="ir.actions.act_window">
         <field name="name">Environments</field>
         <field name="res_model">control.env</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>

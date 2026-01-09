@@ -130,3 +130,7 @@
 	path = addons/OCA/account-financial-reporting
 	url = https://github.com/OCA/account-financial-reporting
 	branch = 18.0
+[submodule "addons/OCA/sale-workflow"]
+	path = addons/OCA/sale-workflow
+	url = https://github.com/OCA/sale-workflow.git
+	branch = 18.0

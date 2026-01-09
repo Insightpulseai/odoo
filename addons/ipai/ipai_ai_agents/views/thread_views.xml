@@ -5,14 +5,14 @@
         <field name="name">ipai.ai.thread.tree</field>
         <field name="model">ipai.ai.thread</field>
         <field name="arch" type="xml">
-            <tree>
+            <list>
                 <field name="display_name"/>
                 <field name="agent_id"/>
                 <field name="user_id"/>
                 <field name="message_count"/>
                 <field name="create_date"/>
                 <field name="company_id" groups="base.group_multi_company"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -43,14 +43,14 @@
                     <notebook>
                         <page string="Messages" name="messages">
                             <field name="message_ids" mode="tree">
-                                <tree create="0" edit="0">
+                                <list create="0" edit="0">
                                     <field name="create_date"/>
                                     <field name="role"/>
                                     <field name="content"/>
                                     <field name="confidence"/>
                                     <field name="is_uncertain"/>
                                     <field name="feedback"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -64,7 +64,7 @@
         <field name="name">ipai.ai.message.tree</field>
         <field name="model">ipai.ai.message</field>
         <field name="arch" type="xml">
-            <tree create="0">
+            <list create="0">
                 <field name="create_date"/>
                 <field name="thread_id"/>
                 <field name="role"/>
@@ -72,7 +72,7 @@
                 <field name="confidence" widget="progressbar"/>
                 <field name="is_uncertain"/>
                 <field name="feedback" widget="badge" decoration-success="feedback == 'positive'" decoration-danger="feedback == 'negative'"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -118,7 +118,7 @@
     <record id="action_ipai_ai_thread" model="ir.actions.act_window">
         <field name="name">AI Conversations</field>
         <field name="res_model">ipai.ai.thread</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('user_id', '=', uid)]</field>
     </record>
 
@@ -126,6 +126,6 @@
     <record id="action_ipai_ai_message" model="ir.actions.act_window">
         <field name="name">AI Messages</field>
         <field name="res_model">ipai.ai.message</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 </odoo>
