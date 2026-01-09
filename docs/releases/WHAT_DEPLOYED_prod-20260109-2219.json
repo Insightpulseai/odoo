@@ -1,0 +1,183 @@
+{
+  "release": {
+    "tag": "prod-20260109-2219",
+    "commit": "6bbe81e9413c8036e1a826b80e3864d63c616c73",
+    "previous_tag": "prod-20260109-2217",
+    "previous_commit": "52c69e170875e896e30ff0a96b4bac93b461ac2b",
+    "compare_url": "https://github.com/jgtolentino/odoo-ce/compare/prod-20260109-2217...prod-20260109-2219",
+    "generated_at": "2026-01-09T22:19:00Z"
+  },
+  "executive_summary": {
+    "odoo": {
+      "deployed": false,
+      "evidence": "No changes in addons/ - git diff shows 0 files"
+    },
+    "supabase": {
+      "deployed": false,
+      "evidence": "No changes in supabase/ - git diff shows 0 files"
+    },
+    "infra_deploy": {
+      "deployed": false,
+      "evidence": "No changes in deploy/, docker/, services/"
+    },
+    "ci_workflows": {
+      "deployed": false,
+      "evidence": "No changes in .github/workflows/"
+    },
+    "docs_scripts": {
+      "deployed": true,
+      "evidence": "5 files changed: verification tooling + docs"
+    },
+    "docker_image": {
+      "deployed": "UNVERIFIED",
+      "evidence": "Expected ghcr.io/jgtolentino/odoo-ce:edge-standard per workflow"
+    },
+    "workflow_run": {
+      "deployed": "UNVERIFIED",
+      "evidence": "GitHub API not accessible - cannot confirm run ID"
+    }
+  },
+  "commits_included": [
+    {
+      "hash": "6bbe81e9413c8036e1a826b80e3864d63c616c73",
+      "short_hash": "6bbe81e9",
+      "subject": "chore(ops): verify supabase deploy (migrations, hooks, edge functions)",
+      "author": "jgtolentino",
+      "email": "jgtolentino_rn@yahoo.com",
+      "date": "2026-01-10T06:17:10+08:00",
+      "pr_number": 191,
+      "pr_url": "https://github.com/jgtolentino/odoo-ce/pull/191"
+    },
+    {
+      "hash": "d8bbeb1356b11a4fe805157da2164d404dee86fe",
+      "short_hash": "d8bbeb13",
+      "subject": "docs: auto-update SITEMAP.md and TREE.md [skip ci]",
+      "author": "github-actions[bot]",
+      "email": "github-actions[bot]@users.noreply.github.com",
+      "date": "2026-01-09T22:15:57Z",
+      "pr_number": null,
+      "pr_url": null
+    }
+  ],
+  "commits_excluded": [
+    {
+      "hash": "5b4a06b6",
+      "subject": "docs: auto-update SITEMAP.md and TREE.md [skip ci]",
+      "author": "github-actions[bot]",
+      "status": "EXCLUDED"
+    },
+    {
+      "hash": "32ce14e3",
+      "subject": "chore(oca): add OCA-style chore scope conventions (#192)",
+      "author": null,
+      "status": "EXCLUDED"
+    },
+    {
+      "hash": "98165acf",
+      "subject": "docs: auto-update SITEMAP.md and TREE.md [skip ci]",
+      "author": "github-actions[bot]",
+      "status": "EXCLUDED"
+    }
+  ],
+  "files_changed": [
+    {
+      "status": "M",
+      "path": "SITEMAP.md",
+      "category": "docs"
+    },
+    {
+      "status": "M",
+      "path": "TREE.md",
+      "category": "docs"
+    },
+    {
+      "status": "A",
+      "path": "artifacts/supabase_verify/report.json",
+      "category": "other"
+    },
+    {
+      "status": "A",
+      "path": "docs/ops/SUPABASE_DEPLOYMENT_VERIFICATION.md",
+      "category": "docs"
+    },
+    {
+      "status": "A",
+      "path": "scripts/verify_supabase_deploy.sh",
+      "category": "other"
+    }
+  ],
+  "change_stats": {
+    "total_files": 5,
+    "insertions": 1306,
+    "deletions": 6,
+    "by_category": {
+      "odoo": 0,
+      "supabase": 0,
+      "infra_deploy": 0,
+      "ci_workflows": 0,
+      "docs": 4,
+      "other": 1
+    }
+  },
+  "runtime_evidence": {
+    "docker_image": {
+      "registry": "ghcr.io",
+      "image": "jgtolentino/odoo-ce",
+      "tag": "edge-standard",
+      "digest": null,
+      "status": "UNVERIFIED"
+    },
+    "workflow_run": {
+      "name": "Deploy to Production",
+      "run_url": null,
+      "run_id": null,
+      "environment": "production",
+      "target_url": "https://erp.insightpulseai.net",
+      "conclusion": null,
+      "status": "UNVERIFIED"
+    }
+  },
+  "component_status": {
+    "supabase": {
+      "deployed": false,
+      "migrations_changed": [],
+      "functions_changed": [],
+      "config_changed": false,
+      "proof": "git diff --name-only prod-20260109-2217..prod-20260109-2219 -- supabase/ returns empty"
+    },
+    "odoo": {
+      "deployed": false,
+      "modules_changed": [],
+      "runtime_restart": "UNVERIFIED",
+      "module_upgrade_executed": false,
+      "proof": "git diff --name-only prod-20260109-2217..prod-20260109-2219 -- addons/ returns empty"
+    }
+  },
+  "risks": [
+    {
+      "item": "Workflow run URL",
+      "status": "UNVERIFIED",
+      "missing_evidence": "GitHub API not accessible to retrieve run ID"
+    },
+    {
+      "item": "Docker image digest",
+      "status": "UNVERIFIED",
+      "missing_evidence": "Cannot access container registry to verify sha256"
+    },
+    {
+      "item": "Production health check",
+      "status": "UNVERIFIED",
+      "missing_evidence": "Cannot access erp.insightpulseai.net/web/health"
+    },
+    {
+      "item": "Odoo service restart",
+      "status": "UNVERIFIED",
+      "missing_evidence": "No logs from production deployment"
+    },
+    {
+      "item": "Supabase verification results",
+      "status": "PENDING",
+      "missing_evidence": "verify_supabase_deploy.sh has not been executed"
+    }
+  ]
+}
