@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d9b34be27c91bebc474ff3f40ec74f0d2b338b81
+> Commit: 52c69e170875e896e30ff0a96b4bac93b461ac2b
 
 ## 📚 Documentation
 
@@ -486,7 +486,10 @@
 | [Odoo Module Rationalization System](docs/rationalization/README.md) | docs/rationalization |
 | [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
+| [Latest Release: prod-20260109-1642](docs/releases/LATEST.md) | docs/releases |
 | [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
+| [Go-Live Manifest: prod-20260109-1642](docs/releases/prod-20260109-1642/GO_LIVE_MANIFEST.md) | docs/releases/prod-20260109-1642 |
+| [What Shipped: prod-20260109-1642](docs/releases/prod-20260109-1642/WHAT_SHIPPED.md) | docs/releases/prod-20260109-1642 |
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |

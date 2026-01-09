@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d9b34be27c91bebc474ff3f40ec74f0d2b338b81
+> Commit: 52c69e170875e896e30ff0a96b4bac93b461ac2b
 
 ```
 .
@@ -94,8 +94,10 @@
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
+│   │   ├── pr-installability-gate.yml
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
+│   │   ├── release-docs.yml
 │   │   ├── repo-structure.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
@@ -2052,7 +2054,14 @@
 │   │   │   ├── deploy_run_166.json
 │   │   │   ├── deploy_run_166_jobs.json
 │   │   │   └── release_tag_prod-20260106-1741.json
+│   │   ├── prod-20260109-1642
+│   │   │   ├── DEPLOYMENT_PROOFS
+│   │   │   ├── GO_LIVE_MANIFEST.md
+│   │   │   ├── WHAT_SHIPPED.json
+│   │   │   └── WHAT_SHIPPED.md
 │   │   ├── GO_LIVE_MANIFEST.md
+│   │   ├── LATEST.json
+│   │   ├── LATEST.md
 │   │   ├── WHAT_SHIPPED.json
 │   │   └── WHAT_SHIPPED.md
 │   ├── repo
@@ -2749,6 +2758,7 @@
 │   ├── generate_module_signatures.py
 │   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
+│   ├── generate_release_docs.sh
 │   ├── generate_repo_index.py
 │   ├── generate_schema_artifacts.sh
 │   ├── generate_seed_xml.py
@@ -3589,15 +3599,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1151 directories, 2433 files
+1153 directories, 2441 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1333 |
-| Files | 3684 |
+| Directories | 1335 |
+| Files | 3696 |
 | Python files | 988 |
 | XML files | 473 |
-| Markdown files | 704 |
+| Markdown files | 707 |
