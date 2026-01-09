@@ -386,6 +386,31 @@ Brief description of changes
 4. Address feedback
 5. Squash and merge when approved
 
+### Checkout via Command Line
+
+If you do not want to use the merge button or an automatic merge cannot be performed,
+you can perform a manual merge on the command line. Note: these steps are not applicable
+if the base branch is protected.
+
+```bash
+# Step 1: Clone the repository or update your local repository with the latest changes
+git pull origin main
+
+# Step 2: Switch to the head branch of the pull request
+git checkout <branch-name>
+
+# Step 3: Merge the base branch into the head branch
+git merge main
+
+# Step 4: Fix any conflicts and commit the result
+# See: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line
+
+# Step 5: Push the changes
+git push -u origin <branch-name>
+```
+
+Replace `<branch-name>` with the actual PR branch name (e.g., `feat/my-feature`).
+
 ### Commit Message Format
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):
