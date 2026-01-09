@@ -1,0 +1,93 @@
+version: "3.9"
+
+# Canonical Odoo 18 CE Production Configuration
+# Date: 2026-01-08
+# Target: VPS at 159.223.75.148 (8GB RAM)
+# Domain: erp.insightpulseai.net
+
+services:
+  db:
+    image: postgres:16
+    container_name: db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      POSTGRES_MAX_CONNECTIONS: 100
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    networks:
+      - odoo_backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  odoo:
+    image: ghcr.io/jgtolentino/odoo-ce:v0.10.0
+    container_name: odoo-erp-prod
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    command: -- --config /etc/odoo/odoo.conf
+    volumes:
+      # Config (read-only)
+      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+
+      # Filestore (persistent data)
+      - odoo-web-data:/var/lib/odoo
+
+      # Custom addons (read-only)
+      - ../addons/ipai:/mnt/addons/ipai:ro
+
+      # OCA addons baked into image
+      # - ./oca:/mnt/addons/oca:ro  # Only if needed for local development
+
+      # Logs (optional, for debugging)
+      - odoo-logs:/var/log/odoo
+
+    # Bind only to localhost - nginx handles public traffic
+    ports:
+      - "127.0.0.1:8069:8069"
+
+    networks:
+      - odoo_backend
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 3G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+
+volumes:
+  odoo-web-data:
+    name: odoo-web-data
+  odoo-db-data:
+    name: odoo-db-data
+  odoo-logs:
+    name: odoo-logs
+
+networks:
+  odoo_backend:
+    driver: bridge
