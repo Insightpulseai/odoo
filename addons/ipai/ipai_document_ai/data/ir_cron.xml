@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Cron job for processing async OCR jobs -->
+        <record id="ir_cron_process_ocr_jobs" model="ir.cron">
+            <field name="name">IPAI Document AI: Process OCR Jobs</field>
+            <field name="model_id" ref="model_ipai_document"/>
+            <field name="state">code</field>
+            <field name="code">
+# Process documents stuck in processing state
+processing_docs = env['ipai.document'].search([
+    ('state', '=', 'processing'),
+    ('ocr_job_id', '!=', False),
+])
+for doc in processing_docs:
+    try:
+        ocr_service = env['ipai.ocr.service']
+        status = ocr_service.get_job_status(doc.ocr_job_id)
+        if status.get('status') == 'complete':
+            doc.write({
+                'state': 'ready',
+                'extracted_text': status.get('result', {}).get('text', ''),
+                'extraction_json': json.dumps(status.get('result', {})),
+            })
+        elif status.get('status') == 'failed':
+            doc.write({
+                'state': 'failed',
+                'error_message': status.get('error', 'Unknown error'),
+            })
+    except Exception as e:
+        pass  # Will retry on next cron run
+            </field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>
