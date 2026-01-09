@@ -409,3 +409,29 @@
     }
   }
 }
+
+// =============================================================================
+// TBWA Brand Navbar Overrides
+// =============================================================================
+
+.o_main_navbar {
+  background: var(--tbwa-black) !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+
+  &, a, .dropdown-toggle, .o_menu_brand {
+    color: #fff !important;
+  }
+
+  .o_menu_systray .dropdown-toggle {
+    &:hover, &:focus {
+      background: rgba(255,196,0,0.10) !important;
+    }
+  }
+}
+
+.o_kanban_record,
+.o_kanban_view .oe_kanban_card {
+  border: 1px solid var(--ipai-border) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+}
