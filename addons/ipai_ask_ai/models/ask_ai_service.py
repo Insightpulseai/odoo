@@ -12,12 +12,7 @@ import os
 import re
 from datetime import datetime, timedelta
 
-<<<<<<< HEAD
 import requests
-=======
-import os
-from odoo.exceptions import AccessError, UserError
->>>>>>> be46fb92 (fix: Production hotfix - OwlError, OAuth loop, Gmail SMTP, Google OAuth SSO)
 
 try:
     import google.generativeai as genai
@@ -379,9 +374,8 @@ class IpaiAskAIService(models.TransientModel):
         return {"message": message}
 
     def _generate_generic_response(self, query, context):
-<<<<<<< HEAD
         """Generate a generic response for unrecognized queries using Gemini."""
-        # Try Gemini AI for generic queries
+        # Try Gemini AI for generic queries (using REST API for robustness)
         gemini_response = self._call_gemini(query, context)
 
         if gemini_response.get("success"):
@@ -390,15 +384,12 @@ class IpaiAskAIService(models.TransientModel):
                 "data": {"source": "gemini"},
             }
 
-        # Fallback to default response
-=======
-        """Generate a generic response for unrecognized queries."""
-        # Try Gemini if configured
-        gemini_response = self._query_gemini(query)
-        if gemini_response:
-            return {"message": gemini_response}
+        # Fallback: Try the google-generativeai library approach
+        simple_response = self._query_gemini(query)
+        if simple_response:
+            return {"message": simple_response}
 
->>>>>>> be46fb92 (fix: Production hotfix - OwlError, OAuth loop, Gmail SMTP, Google OAuth SSO)
+        # Final fallback to default response
         return {
             "message": _(
                 "I'm not sure how to answer that question. "

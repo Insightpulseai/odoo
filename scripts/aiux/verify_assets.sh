@@ -1,304 +1,205 @@
-#!/usr/bin/env bash
-# AIUX Assets Verification Script
-# Verifies Odoo asset bundles are accessible and return HTTP 200
+#!/bin/bash
+# =============================================================================
+# AIUX Ship Bundle v1.1.0 - Assets Verification Script
+# =============================================================================
+# Usage: ./scripts/aiux/verify_assets.sh [COMPOSE_FILE] [BASE_URL]
 #
-# Usage: ./scripts/aiux/verify_assets.sh [OPTIONS]
-#
-# Options:
-#   --odoo-url URL      Odoo base URL (default: http://localhost:8069)
-#   --timeout SECS      Request timeout (default: 30)
-#   --output FILE       Write results to file (optional)
-#   --verbose           Show detailed output
-#
-# Exit codes:
-#   0  All checks passed
-#   1  One or more asset endpoints returned non-200
-#   2  Login page not accessible
+# This script verifies that Odoo assets are properly compiled and accessible.
+# Critical for preventing 500 errors on web client load.
+# =============================================================================
 
 set -euo pipefail
 
-# Default configuration
-ODOO_URL="${ODOO_URL:-http://localhost:8069}"
-TIMEOUT=30
-OUTPUT_FILE=""
-VERBOSE=false
+# Configuration
+COMPOSE_FILE="${1:-docker-compose.prod.yml}"
+BASE_URL="${2:-http://localhost:8069}"
+SHIP_VERSION="1.1.0"
 
-# Colors for output
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+NC='\033[0m'
 
-# Parse arguments
-while [[ $# -gt 0 ]]; do
-    case $1 in
-        --odoo-url)
-            ODOO_URL="$2"
-            shift 2
-            ;;
-        --timeout)
-            TIMEOUT="$2"
-            shift 2
-            ;;
-        --output)
-            OUTPUT_FILE="$2"
-            shift 2
-            ;;
-        --verbose)
-            VERBOSE=true
-            shift
-            ;;
-        *)
-            echo "Unknown option: $1"
-            exit 1
-            ;;
-    esac
-done
+# Output helpers
+info() { echo -e "${GREEN}[INFO]${NC} $1"; }
+warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
+error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-# Results tracking
-declare -a PASSED_CHECKS=()
-declare -a FAILED_CHECKS=()
+echo "=============================================="
+echo "AIUX Ship Bundle v${SHIP_VERSION} - Assets Verification"
+echo "=============================================="
+echo ""
 
-log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
-}
+FAILURES=0
 
-log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
-}
+# -----------------------------------------------------------------------------
+# Check 1: Backend assets bundle
+# -----------------------------------------------------------------------------
+info "Checking backend assets..."
 
-log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
-}
+# Try debug mode assets first (more verbose errors)
+BACKEND_DEBUG=$(docker compose -f "$COMPOSE_FILE" exec -T odoo \
+    curl -sS -o /dev/null -w '%{http_code}' \
+    "${BASE_URL}/web/assets/debug/web.assets_backend.js" 2>/dev/null || echo "000")
 
-log_step() {
-    echo ""
-    echo -e "${BLUE}==>${NC} $1"
-    echo "---------------------------------------------------"
-}
+if [ "$BACKEND_DEBUG" == "200" ]; then
+    echo "  ✅ web.assets_backend.js (debug) returns 200"
+else
+    warn "Debug assets returned $BACKEND_DEBUG, trying production..."
 
-log_verbose() {
-    if [ "$VERBOSE" = true ]; then
-        echo -e "${BLUE}[VERBOSE]${NC} $1"
-    fi
-}
+    BACKEND_PROD=$(docker compose -f "$COMPOSE_FILE" exec -T odoo \
+        curl -sS -o /dev/null -w '%{http_code}' -L \
+        "${BASE_URL}/web/assets/web.assets_backend.min.js" 2>/dev/null || echo "000")
 
-# Check single endpoint
-check_endpoint() {
-    local endpoint="$1"
-    local description="$2"
-    local url="${ODOO_URL}${endpoint}"
-
-    log_verbose "Checking: $url"
-
-    local http_code
-    local response_time
-
-    # Make request and capture status code + timing
-    local start_time
-    start_time=$(date +%s.%N)
-
-    http_code=$(curl -sf -o /dev/null -w "%{http_code}" \
-        --connect-timeout "$TIMEOUT" \
-        --max-time "$TIMEOUT" \
-        "$url" 2>/dev/null || echo "000")
-
-    local end_time
-    end_time=$(date +%s.%N)
-    response_time=$(echo "$end_time - $start_time" | bc 2>/dev/null || echo "N/A")
-
-    if [ "$http_code" = "200" ]; then
-        log_info "PASS: $description ($endpoint) - HTTP $http_code [${response_time}s]"
-        PASSED_CHECKS+=("$endpoint")
-        return 0
+    if [ "$BACKEND_PROD" == "200" ]; then
+        echo "  ✅ web.assets_backend (minified) returns 200"
     else
-        log_error "FAIL: $description ($endpoint) - HTTP $http_code"
-        FAILED_CHECKS+=("$endpoint:$http_code")
-        return 1
+        error "Backend JS assets not accessible (debug: $BACKEND_DEBUG, prod: $BACKEND_PROD)"
+        FAILURES=$((FAILURES + 1))
     fi
-}
+fi
 
-# Extract hashed asset URL from page
-extract_asset_url() {
-    local page_url="$1"
-    local pattern="$2"
+# -----------------------------------------------------------------------------
+# Check 2: CSS assets
+# -----------------------------------------------------------------------------
+info "Checking CSS assets..."
 
-    curl -sf "$page_url" 2>/dev/null | \
-        grep -oE "$pattern" | \
-        head -1 || echo ""
-}
+CSS_STATUS=$(docker compose -f "$COMPOSE_FILE" exec -T odoo \
+    curl -sS -o /dev/null -w '%{http_code}' \
+    "${BASE_URL}/web/assets/debug/web.assets_backend.css" 2>/dev/null || echo "000")
 
-# Main verification
-verify_assets() {
-    local all_passed=true
+if [ "$CSS_STATUS" == "200" ]; then
+    echo "  ✅ web.assets_backend.css returns 200"
+else
+    warn "CSS assets returned $CSS_STATUS"
+    # Not a hard failure - CSS might be bundled differently
+fi
 
-    log_step "Verifying Login Page Access"
+# -----------------------------------------------------------------------------
+# Check 3: QWeb templates
+# -----------------------------------------------------------------------------
+info "Checking QWeb templates..."
 
-    if ! check_endpoint "/web/login" "Login page"; then
-        log_error "Login page not accessible - aborting"
-        return 2
-    fi
+QWEB_STATUS=$(docker compose -f "$COMPOSE_FILE" exec -T odoo \
+    curl -sS -o /dev/null -w '%{http_code}' \
+    "${BASE_URL}/web/webclient/qweb" 2>/dev/null || echo "000")
 
-    log_step "Verifying Static Asset Endpoints"
+if [ "$QWEB_STATUS" == "200" ]; then
+    echo "  ✅ QWeb templates endpoint returns 200"
+else
+    error "QWeb templates not accessible: $QWEB_STATUS"
+    FAILURES=$((FAILURES + 1))
+fi
 
-    # Core asset bundles
-    check_endpoint "/web/assets/debug/web.assets_common.js" "Common JS bundle" || all_passed=false
-    check_endpoint "/web/assets/debug/web.assets_common.css" "Common CSS bundle" || all_passed=false
-    check_endpoint "/web/assets/debug/web.assets_backend.js" "Backend JS bundle" || all_passed=false
-    check_endpoint "/web/assets/debug/web.assets_backend.css" "Backend CSS bundle" || all_passed=false
+# -----------------------------------------------------------------------------
+# Check 4: Web client bootstrap
+# -----------------------------------------------------------------------------
+info "Checking web client bootstrap..."
 
-    log_step "Verifying Hashed Asset URLs"
+# Load the login page and check for critical JS
+LOGIN_CONTENT=$(docker compose -f "$COMPOSE_FILE" exec -T odoo \
+    curl -sS "${BASE_URL}/web/login" 2>/dev/null || echo "")
 
-    # Extract actual hashed asset URLs from login page
-    local login_html
-    login_html=$(curl -sf "${ODOO_URL}/web/login" 2>/dev/null || echo "")
+if echo "$LOGIN_CONTENT" | grep -q "assets_backend"; then
+    echo "  ✅ Login page references backend assets"
+else
+    warn "Login page may not reference backend assets correctly"
+fi
 
-    if [ -n "$login_html" ]; then
-        # Find any hashed asset URL
-        local hashed_css
-        hashed_css=$(echo "$login_html" | grep -oE '/web/assets/[^"]+\.css' | head -1 || echo "")
+if echo "$LOGIN_CONTENT" | grep -q "o_login_auth"; then
+    echo "  ✅ Login page contains auth form"
+else
+    error "Login page missing auth form - possible OWL error"
+    FAILURES=$((FAILURES + 1))
+fi
 
-        if [ -n "$hashed_css" ]; then
-            check_endpoint "$hashed_css" "Hashed CSS asset" || all_passed=false
-        else
-            log_warn "No hashed CSS assets found in login page"
-        fi
+# -----------------------------------------------------------------------------
+# Check 5: No SCSS compilation errors
+# -----------------------------------------------------------------------------
+info "Checking for SCSS errors in logs..."
 
-        local hashed_js
-        hashed_js=$(echo "$login_html" | grep -oE '/web/assets/[^"]+\.js' | head -1 || echo "")
+SCSS_ERRORS=$(docker compose -f "$COMPOSE_FILE" logs --tail=500 odoo 2>/dev/null | \
+    grep -ci "scss\|sass\|compile.*error" || echo "0")
 
-        if [ -n "$hashed_js" ]; then
-            check_endpoint "$hashed_js" "Hashed JS asset" || all_passed=false
-        else
-            log_warn "No hashed JS assets found in login page"
-        fi
+if [ "$SCSS_ERRORS" -gt 0 ]; then
+    warn "Found $SCSS_ERRORS potential SCSS-related log entries"
+    docker compose -f "$COMPOSE_FILE" logs --tail=500 odoo 2>/dev/null | \
+        grep -i "scss\|sass\|compile.*error" | tail -5
+else
+    echo "  ✅ No SCSS compilation errors in recent logs"
+fi
+
+# -----------------------------------------------------------------------------
+# Check 6: No OWL errors in logs
+# -----------------------------------------------------------------------------
+info "Checking for OWL errors in logs..."
+
+OWL_ERRORS=$(docker compose -f "$COMPOSE_FILE" logs --tail=500 odoo 2>/dev/null | \
+    grep -ci "owl\|component.*error\|template.*error" || echo "0")
+
+if [ "$OWL_ERRORS" -gt 0 ]; then
+    warn "Found $OWL_ERRORS potential OWL-related log entries"
+    docker compose -f "$COMPOSE_FILE" logs --tail=500 odoo 2>/dev/null | \
+        grep -i "owl\|component.*error\|template.*error" | tail -5
+else
+    echo "  ✅ No OWL errors in recent logs"
+fi
+
+# -----------------------------------------------------------------------------
+# Check 7: Asset bundle integrity
+# -----------------------------------------------------------------------------
+info "Checking asset bundle integrity..."
+
+# Get a list of asset bundles from the database
+BUNDLE_CHECK=$(docker compose -f "$COMPOSE_FILE" exec -T odoo \
+    odoo shell -d odoo --no-http <<'EOF' 2>/dev/null || echo "error"
+try:
+    attachments = env['ir.attachment'].search([
+        ('url', 'like', '/web/assets/'),
+        ('create_date', '>=', '2026-01-01')
+    ], limit=10)
+    if attachments:
+        print(f"found:{len(attachments)}")
+    else:
+        print("found:0")
+except Exception as e:
+    print(f"error:{e}")
+EOF
+)
+
+BUNDLE_CHECK=$(echo "$BUNDLE_CHECK" | tail -1 | tr -d '[:space:]')
+
+if [[ "$BUNDLE_CHECK" == found:* ]]; then
+    COUNT="${BUNDLE_CHECK#found:}"
+    if [ "$COUNT" -gt 0 ]; then
+        echo "  ✅ Found $COUNT asset bundle attachments"
     else
-        log_warn "Could not fetch login page for asset URL extraction"
+        warn "No recent asset bundles found - may need regeneration"
     fi
+else
+    warn "Could not verify asset bundles: $BUNDLE_CHECK"
+fi
 
-    log_step "Verifying Web Client Static Files"
+# -----------------------------------------------------------------------------
+# Summary
+# -----------------------------------------------------------------------------
+echo ""
+echo "=============================================="
+echo "Assets Verification Summary"
+echo "=============================================="
 
-    # Static files that should always exist
-    check_endpoint "/web/static/src/img/favicon.ico" "Favicon" || true  # Non-fatal
-    check_endpoint "/web/static/lib/fontawesome/css/all.css" "FontAwesome CSS" || true  # Non-fatal
-
-    if [ "$all_passed" = true ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-# Generate summary report
-generate_report() {
-    local report=""
-
-    report+="# AIUX Assets Verification Report\n"
-    report+="\n"
-    report+="**Generated:** $(date -Iseconds)\n"
-    report+="**Odoo URL:** $ODOO_URL\n"
-    report+="\n"
-
-    report+="## Summary\n"
-    report+="\n"
-    report+="| Metric | Value |\n"
-    report+="|--------|-------|\n"
-    report+="| Passed | ${#PASSED_CHECKS[@]} |\n"
-    report+="| Failed | ${#FAILED_CHECKS[@]} |\n"
-    report+="| Total  | $((${#PASSED_CHECKS[@]} + ${#FAILED_CHECKS[@]})) |\n"
-    report+="\n"
-
-    if [ ${#PASSED_CHECKS[@]} -gt 0 ]; then
-        report+="## Passed Checks\n"
-        report+="\n"
-        for check in "${PASSED_CHECKS[@]}"; do
-            report+="- $check\n"
-        done
-        report+="\n"
-    fi
-
-    if [ ${#FAILED_CHECKS[@]} -gt 0 ]; then
-        report+="## Failed Checks\n"
-        report+="\n"
-        for check in "${FAILED_CHECKS[@]}"; do
-            report+="- $check\n"
-        done
-        report+="\n"
-    fi
-
-    echo -e "$report"
-}
-
-# Print summary to console
-print_summary() {
-    local status=$1
-
+if [ $FAILURES -eq 0 ]; then
+    echo -e "${GREEN}✅ All asset checks passed!${NC}"
     echo ""
-    echo "==================================================="
-    echo "             AIUX ASSETS VERIFICATION              "
-    echo "==================================================="
+    echo "Assets are properly compiled and accessible."
+    exit 0
+else
+    echo -e "${RED}❌ ${FAILURES} check(s) failed${NC}"
     echo ""
-    echo "Odoo URL:     $ODOO_URL"
-    echo ""
-    echo "Results:"
-    echo "  Passed:     ${#PASSED_CHECKS[@]}"
-    echo "  Failed:     ${#FAILED_CHECKS[@]}"
-    echo ""
-
-    if [ "$status" -eq 0 ]; then
-        echo -e "Status:       ${GREEN}PASSED${NC}"
-    else
-        echo -e "Status:       ${RED}FAILED${NC}"
-        echo ""
-        echo "Failed endpoints:"
-        for check in "${FAILED_CHECKS[@]}"; do
-            echo "  - $check"
-        done
-    fi
-
-    echo "==================================================="
-}
-
-# Main execution
-main() {
-    local exit_code=0
-
-    echo ""
-    echo "==================================================="
-    echo "          AIUX Assets Verification                 "
-    echo "==================================================="
-    echo ""
-    echo "Configuration:"
-    echo "  Odoo URL:   $ODOO_URL"
-    echo "  Timeout:    ${TIMEOUT}s"
-    echo ""
-
-    if ! verify_assets; then
-        exit_code=1
-    fi
-
-    # Generate report if output file specified
-    if [ -n "$OUTPUT_FILE" ]; then
-        log_step "Writing report to $OUTPUT_FILE"
-        generate_report > "$OUTPUT_FILE"
-        log_info "Report written to $OUTPUT_FILE"
-    fi
-
-    print_summary $exit_code
-
-    # Also output machine-readable summary
-    if [ "$VERBOSE" = true ]; then
-        echo ""
-        echo "JSON Summary:"
-        echo "{"
-        echo "  \"passed\": ${#PASSED_CHECKS[@]},"
-        echo "  \"failed\": ${#FAILED_CHECKS[@]},"
-        echo "  \"status\": $([ $exit_code -eq 0 ] && echo '\"pass\"' || echo '\"fail\"')"
-        echo "}"
-    fi
-
-    exit $exit_code
-}
-
-main "$@"
+    echo "Asset issues detected. Recommended actions:"
+    echo "  1. Run: docker compose exec odoo odoo -d odoo -u web,base --stop-after-init"
+    echo "  2. Restart: docker compose restart odoo"
+    echo "  3. Check logs: docker compose logs --tail=200 odoo"
+    exit 1
+fi

@@ -1,157 +1,139 @@
 # Mailgun Domain Verification Runbook
 
-**Purpose:** Configure and verify Mailgun domain for production email delivery from Odoo.
+## Overview
 
-**Prerequisites:**
+This runbook covers the operational steps to verify a domain with Mailgun for email sending from Odoo.
+
+---
+
+## Prerequisites
+
 - Mailgun account with API access
 - DNS management access for your domain
-- Production Odoo instance configured
+- Environment variables configured (NOT in repo):
+  - `MAILGUN_API_KEY`
+  - `MAILGUN_DOMAIN`
 
 ---
 
-## 1. Overview
+## 1. Add Domain in Mailgun
 
-Mailgun requires domain verification to:
-- Send email from your domain
-- Enable open/click tracking
-- Improve deliverability (SPF/DKIM authentication)
+### 1.1 Via Dashboard
 
-**Reference:** [Mailgun Domain Verification Setup Guide](https://help.mailgun.com/hc/en-us/articles/32884702360603-Domain-Verification-Setup-Guide)
-
----
-
-## 2. Step-by-Step Setup
-
-### Step 1: Add Domain in Mailgun
-
-1. Log in to Mailgun Control Panel
-2. Navigate to **Sending** → **Domains**
+1. Log in to [Mailgun Dashboard](https://app.mailgun.com)
+2. Navigate to **Sending** > **Domains**
 3. Click **Add New Domain**
-4. Enter your domain:
-   - **Recommended:** Use a subdomain (e.g., `mail.yourdomain.com`)
-   - Subdomains improve deliverability and isolate sending reputation
-5. Click **Add Domain**
-6. Keep the DNS records page open
+4. Enter your domain (e.g., `mail.insightpulseai.net`)
+5. Select region (US or EU)
 
-### Step 2: Add DNS Records
+### 1.2 Via API
 
-Mailgun will display the required DNS records. Add them at your DNS provider:
+```bash
+curl -s --user "api:${MAILGUN_API_KEY}" \
+  https://api.mailgun.net/v4/domains \
+  -F name="${MAILGUN_DOMAIN}"
+```
 
-#### TXT Records (SPF + DKIM)
+---
 
-**SPF Record:**
+## 2. Configure DNS Records
+
+Mailgun will provide DNS records to add. Required records:
+
+### 2.1 SPF Record
+
 ```
 Type: TXT
-Host: mail (or your subdomain)
+Host: @
 Value: v=spf1 include:mailgun.org ~all
 ```
 
-**Important:** If an SPF record already exists for the root domain:
-- Do NOT add a second SPF record
-- Instead, merge by adding `include:mailgun.org` to the existing record
-- Example: `v=spf1 include:_spf.google.com include:mailgun.org ~all`
+### 2.2 DKIM Records
 
-**DKIM Record:**
 ```
 Type: TXT
-Host: mx._domainkey.mail (Mailgun provides exact host)
-Value: (Mailgun provides the DKIM key value)
+Host: smtp._domainkey
+Value: (provided by Mailgun - long string)
 ```
 
-#### MX Records (2 records)
+### 2.3 MX Records (for receiving)
 
 ```
 Type: MX
-Host: mail (or your subdomain)
+Host: @
 Priority: 10
 Value: mxa.mailgun.org
 
 Type: MX
-Host: mail (or your subdomain)
+Host: @
 Priority: 10
 Value: mxb.mailgun.org
 ```
 
-#### CNAME Record (Tracking)
+### 2.4 CNAME for Tracking (optional)
 
 ```
 Type: CNAME
-Host: email.mail (Mailgun provides exact host)
+Host: email
 Value: mailgun.org
 ```
 
-### Step 3: Verify DNS Propagation
-
-1. Wait for DNS propagation (can take 24-48 hours)
-2. In Mailgun, click **"Check DNS Records Now"**
-3. All records should show green checkmarks
-
 ---
 
-## 3. Verification Commands
+## 3. Verify DNS Propagation
 
-Run these commands to verify DNS configuration:
+### 3.1 Check SPF
 
 ```bash
-#!/usr/bin/env bash
-# Mailgun DNS Verification Script
-
-DOMAIN="${1:-mail.yourdomain.com}"
-
-echo "=== Mailgun DNS Verification for $DOMAIN ==="
-echo ""
-
-echo "--- SPF Record ---"
-dig +short TXT "$DOMAIN" | tr -d '"' | grep -E "v=spf1.*mailgun"
-echo ""
-
-echo "--- DKIM Record ---"
-dig +short TXT "mx._domainkey.$DOMAIN" | tr -d '"'
-echo ""
-
-echo "--- MX Records ---"
-dig +short MX "$DOMAIN"
-echo ""
-
-echo "--- CNAME (Tracking) ---"
-dig +short CNAME "email.$DOMAIN"
-echo ""
-
-echo "=== End Verification ==="
+dig +short TXT ${MAILGUN_DOMAIN} | grep spf
 ```
 
-**Expected Output:**
+### 3.2 Check DKIM
+
+```bash
+dig +short TXT smtp._domainkey.${MAILGUN_DOMAIN}
 ```
---- SPF Record ---
-v=spf1 include:mailgun.org ~all
 
---- DKIM Record ---
-k=rsa; p=MIGfMA0GCSqGSI...
+### 3.3 Check MX
 
---- MX Records ---
-10 mxa.mailgun.org.
-10 mxb.mailgun.org.
-
---- CNAME (Tracking) ---
-mailgun.org.
+```bash
+dig +short MX ${MAILGUN_DOMAIN}
 ```
 
 ---
 
-## 4. Odoo Configuration
+## 4. Verify Domain in Mailgun
 
-### System Parameters
+### 4.1 Via Dashboard
 
-Set these in Odoo (Settings → Technical → System Parameters):
+1. Go to **Sending** > **Domains** > Your Domain
+2. Click **Verify DNS Settings**
+3. All checks should show green
+
+### 4.2 Via API
+
+```bash
+curl -s --user "api:${MAILGUN_API_KEY}" \
+  "https://api.mailgun.net/v4/domains/${MAILGUN_DOMAIN}/verify" \
+  -X PUT
+```
+
+---
+
+## 5. Configure Odoo
+
+### 5.1 System Parameters
+
+Set in Odoo via Settings > Technical > Parameters > System Parameters:
 
 | Key | Value |
 |-----|-------|
-| `mail.catchall.domain` | `mail.yourdomain.com` |
-| `mail.default.from` | `notifications@mail.yourdomain.com` |
+| `mail.catchall.domain` | `insightpulseai.net` |
+| `mail.default.from` | `notifications@insightpulseai.net` |
 
-### Outgoing Mail Server
+### 5.2 Outgoing Mail Server
 
-Configure in Settings → Technical → Outgoing Mail Servers:
+Configure via Settings > Technical > Outgoing Mail Servers:
 
 | Field | Value |
 |-------|-------|
@@ -159,78 +141,71 @@ Configure in Settings → Technical → Outgoing Mail Servers:
 | SMTP Server | `smtp.mailgun.org` |
 | SMTP Port | `587` |
 | Connection Security | TLS (STARTTLS) |
-| Username | `postmaster@mail.yourdomain.com` |
-| Password | (Mailgun SMTP password) |
-
-### Test Email
-
-1. Go to Settings → Technical → Outgoing Mail Servers
-2. Click **Test Connection**
-3. Send a test email from Odoo
+| Username | `postmaster@${MAILGUN_DOMAIN}` |
+| Password | (from Mailgun SMTP credentials) |
 
 ---
 
-## 5. Monitoring
+## 6. Test Email Sending
 
-### Mailgun Dashboard
-
-Monitor these metrics in Mailgun:
-- Delivered rate
-- Bounce rate
-- Spam complaints
-- Opens/clicks (if tracking enabled)
-
-### Log Commands
+### 6.1 Via Mailgun API
 
 ```bash
-# Check Odoo mail queue
-docker exec odoo-core odoo-bin shell -d odoo --no-http <<'EOF'
-failed = env['mail.mail'].search([('state', '=', 'exception')])
-print(f"Failed emails: {len(failed)}")
-for mail in failed[:5]:
-    print(f"  - {mail.id}: {mail.failure_reason}")
-EOF
-
-# Check Mailgun API (requires API key)
-curl -s --user "api:YOUR_API_KEY" \
-  "https://api.mailgun.net/v3/mail.yourdomain.com/events?limit=10" | jq .
+curl -s --user "api:${MAILGUN_API_KEY}" \
+  "https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages" \
+  -F from="Test <postmaster@${MAILGUN_DOMAIN}>" \
+  -F to="test@example.com" \
+  -F subject="Mailgun Test" \
+  -F text="Domain verification successful"
 ```
+
+### 6.2 Via Odoo
+
+1. Go to Settings > Technical > Outgoing Mail Servers
+2. Click **Test Connection** on the Mailgun server
+3. Send a test email from any record with chatter
 
 ---
 
-## 6. Troubleshooting
-
-### Common Issues
-
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| SPF fails | Multiple SPF records | Merge into single record |
-| DKIM fails | Wrong TXT host | Use exact host from Mailgun |
-| MX fails | Missing priority | Ensure priority is set to 10 |
-| Emails in spam | No DKIM/SPF | Verify all DNS records |
-| Tracking not working | Missing CNAME | Add tracking CNAME record |
-
-### DNS Propagation Check
-
-```bash
-# Check if DNS has propagated globally
-dig @8.8.8.8 +short TXT mail.yourdomain.com
-dig @1.1.1.1 +short TXT mail.yourdomain.com
-```
-
----
-
-## 7. Checklist
+## 7. Verification Checklist
 
 - [ ] Domain added in Mailgun
-- [ ] SPF TXT record added (or merged)
-- [ ] DKIM TXT record added
-- [ ] MX records added (both mxa and mxb)
-- [ ] CNAME tracking record added
-- [ ] DNS propagation complete (all green in Mailgun)
+- [ ] SPF record configured and verified
+- [ ] DKIM record configured and verified
+- [ ] MX records configured (if receiving)
+- [ ] Domain status shows "Verified" in Mailgun
 - [ ] Odoo outgoing mail server configured
 - [ ] Test email sent successfully
-- [ ] Production email verified
+
+---
+
+## 8. Troubleshooting
+
+### DNS Not Propagating
+
+- Wait up to 48 hours for propagation
+- Use `dig` to check current DNS state
+- Verify with multiple DNS servers: `dig @8.8.8.8 TXT ${MAILGUN_DOMAIN}`
+
+### DKIM Verification Fails
+
+- Ensure the full DKIM value is copied (often truncated)
+- Some DNS providers have character limits - may need to split record
+
+### Emails Going to Spam
+
+- Ensure SPF and DKIM are both verified
+- Add DMARC record for better reputation
+- Warm up domain gradually (don't send bulk immediately)
+
+---
+
+## 9. Security Notes
+
+- NEVER commit `MAILGUN_API_KEY` to repo
+- Use environment variables or secrets manager
+- Rotate API keys periodically
+- Use domain-level keys instead of account-level when possible
 
 ---
 

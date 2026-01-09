@@ -7,7 +7,7 @@
         <field name="name">control.dq.rule.tree</field>
         <field name="model">control.dq.rule</field>
         <field name="arch" type="xml">
-            <tree decoration-muted="not active">
+            <list decoration-muted="not active">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="scope"/>
@@ -22,7 +22,7 @@
                 <field name="open_issue_count"/>
                 <field name="owner_id" widget="many2one_avatar_user"/>
                 <field name="active" column_invisible="True"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -98,7 +98,7 @@
                         </page>
                         <page string="Check History" name="history">
                             <field name="check_run_ids">
-                                <tree decoration-success="state == 'pass'"
+                                <list decoration-success="state == 'pass'"
                                       decoration-danger="state == 'fail'">
                                     <field name="checked_at"/>
                                     <field name="state" widget="badge"/>
@@ -106,19 +106,19 @@
                                     <field name="failure_count"/>
                                     <field name="failure_rate"/>
                                     <field name="duration_ms"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Issues" name="issues">
                             <field name="issue_ids">
-                                <tree decoration-danger="status == 'open'"
+                                <list decoration-danger="status == 'open'"
                                       decoration-warning="status in ('ack', 'in_progress')">
                                     <field name="opened_at"/>
                                     <field name="summary"/>
                                     <field name="status" widget="badge"/>
                                     <field name="assignee_id"/>
                                     <field name="is_sla_breached"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Remediation" name="remediation">
@@ -164,7 +164,7 @@
     <record id="action_control_dq_rule" model="ir.actions.act_window">
         <field name="name">Data Quality Rules</field>
         <field name="res_model">control.dq.rule</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
@@ -182,7 +182,7 @@
         <field name="name">control.dq.check.run.tree</field>
         <field name="model">control.dq.check.run</field>
         <field name="arch" type="xml">
-            <tree decoration-success="state == 'pass'"
+            <list decoration-success="state == 'pass'"
                   decoration-danger="state == 'fail'"
                   decoration-warning="state == 'error'">
                 <field name="checked_at"/>
@@ -195,7 +195,7 @@
                 <field name="failure_count"/>
                 <field name="failure_rate" widget="progressbar"/>
                 <field name="duration_ms"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -246,7 +246,7 @@
     <record id="action_control_dq_check_run" model="ir.actions.act_window">
         <field name="name">Check Runs</field>
         <field name="res_model">control.dq.check.run</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- ==================== DQ Issue Views ==================== -->
@@ -255,7 +255,7 @@
         <field name="name">control.dq.issue.tree</field>
         <field name="model">control.dq.issue</field>
         <field name="arch" type="xml">
-            <tree decoration-danger="status == 'open'"
+            <list decoration-danger="status == 'open'"
                   decoration-warning="status in ('ack', 'in_progress')"
                   decoration-muted="status in ('resolved', 'wont_fix')">
                 <field name="name"/>
@@ -272,7 +272,7 @@
                 <field name="opened_at"/>
                 <field name="sla_due_at"/>
                 <field name="is_sla_breached" widget="boolean"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -341,11 +341,11 @@
                                 <field name="task_id"/>
                             </group>
                             <field name="check_run_ids">
-                                <tree>
+                                <list>
                                     <field name="checked_at"/>
                                     <field name="state"/>
                                     <field name="failure_count"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -382,7 +382,7 @@
     <record id="action_control_dq_issue" model="ir.actions.act_window">
         <field name="name">Data Quality Issues</field>
         <field name="res_model">control.dq.issue</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="context">{'search_default_open': 1, 'search_default_in_progress': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

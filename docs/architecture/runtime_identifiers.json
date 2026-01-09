@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "title": "InsightPulse AI Production Runtime Identifiers",
+  "description": "Canonical mapping of all production infrastructure components",
+  "version": "1.0.0",
+  "last_updated": "2026-01-08T14:00:00Z",
+  "environments": {
+    "production": {
+      "digitalocean": {
+        "project": {
+          "name": "fin-workspace",
+          "id": "29cde7a1-8280-46ad-9fdf-dea7b21a7825",
+          "region": "sgp1"
+        },
+        "droplets": [
+          {
+            "name": "odoo-prod-01",
+            "purpose": "Odoo 18 CE + Ops Workers (colocated)",
+            "size": "s-4vcpu-8gb",
+            "region": "sgp1",
+            "status": "pending_creation"
+          }
+        ],
+        "databases": [
+          {
+            "name": "odoo-prod-db",
+            "engine": "postgresql",
+            "version": "16",
+            "size": "db-s-1vcpu-1gb",
+            "region": "sgp1",
+            "status": "pending_creation"
+          }
+        ],
+        "spaces": [
+          {
+            "name": "insightpulse-backups",
+            "region": "sgp1",
+            "status": "pending_creation"
+          }
+        ]
+      },
+      "supabase": {
+        "project_ref": "spdtwktxdalcfigzeqrz",
+        "url": "https://spdtwktxdalcfigzeqrz.supabase.co"
+      },
+      "domains": {
+        "erp": "erp.insightpulseai.net"
+      }
+    }
+  },
+  "cost_summary": {
+    "monthly_total_usd": 68,
+    "breakdown": [
+      {"service": "Droplet", "cost": 48},
+      {"service": "Database", "cost": 15},
+      {"service": "Spaces", "cost": 5}
+    ]
+  },
+  "deployment_metadata": {
+    "bootstrap_script": "scripts/deploy/do-bootstrap-odoo-prod.sh",
+    "odoo_version": "18.0",
+    "workers": 7,
+    "deployment_time_minutes": 35
+  }
+}

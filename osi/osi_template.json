@@ -1,0 +1,237 @@
+{
+  "asset_fqdn": "supabase.ipai.scout_gold.sales_by_day",
+  "asset_title": "Scout Daily Sales",
+  "asset_description": "Daily sales aggregates from Scout analytics pipeline",
+  "asset_tags": ["scout", "gold", "sales", "analytics"],
+  "store_export": true,
+  "export_format": "yaml",
+  "model": {
+    "name": "sales",
+    "label": "Sales Analytics",
+    "description": "Daily sales aggregates with store, product, and customer dimensions",
+    "source_type": "view",
+    "source_ref": "scout_gold.sales_by_day",
+    "primary_key": ["date", "store_id", "product_id"],
+    "time_dimension": "date",
+    "default_time_grain": "day"
+  },
+  "dimensions": [
+    {
+      "name": "date",
+      "label": "Date",
+      "description": "Transaction date",
+      "expr": "date",
+      "data_type": "date",
+      "is_time_dimension": true,
+      "time_grain": "day",
+      "tags": ["time", "primary"]
+    },
+    {
+      "name": "week",
+      "label": "Week",
+      "description": "ISO week of year",
+      "expr": "date_trunc('week', date)",
+      "data_type": "date",
+      "is_time_dimension": true,
+      "time_grain": "week"
+    },
+    {
+      "name": "month",
+      "label": "Month",
+      "description": "Calendar month",
+      "expr": "date_trunc('month', date)",
+      "data_type": "date",
+      "is_time_dimension": true,
+      "time_grain": "month"
+    },
+    {
+      "name": "store_id",
+      "label": "Store ID",
+      "description": "Unique store identifier",
+      "expr": "store_id",
+      "data_type": "string",
+      "tags": ["store", "id"]
+    },
+    {
+      "name": "store_name",
+      "label": "Store Name",
+      "description": "Store display name",
+      "expr": "store_name",
+      "data_type": "string",
+      "tags": ["store"]
+    },
+    {
+      "name": "region",
+      "label": "Region",
+      "description": "Geographic region",
+      "expr": "region",
+      "data_type": "string",
+      "tags": ["store", "geo"],
+      "hierarchy_level": 1
+    },
+    {
+      "name": "city",
+      "label": "City",
+      "description": "City location",
+      "expr": "city",
+      "data_type": "string",
+      "tags": ["store", "geo"],
+      "hierarchy_level": 2
+    },
+    {
+      "name": "product_id",
+      "label": "Product ID",
+      "description": "Unique product identifier",
+      "expr": "product_id",
+      "data_type": "string",
+      "tags": ["product", "id"]
+    },
+    {
+      "name": "product_name",
+      "label": "Product Name",
+      "description": "Product display name",
+      "expr": "product_name",
+      "data_type": "string",
+      "tags": ["product"]
+    },
+    {
+      "name": "category",
+      "label": "Category",
+      "description": "Product category",
+      "expr": "category",
+      "data_type": "string",
+      "tags": ["product"],
+      "hierarchy_level": 1
+    },
+    {
+      "name": "customer_segment",
+      "label": "Customer Segment",
+      "description": "Customer segmentation tier",
+      "expr": "customer_segment",
+      "data_type": "string",
+      "tags": ["customer"]
+    }
+  ],
+  "metrics": [
+    {
+      "name": "total_revenue",
+      "label": "Total Revenue",
+      "description": "Sum of all sales revenue",
+      "metric_type": "simple",
+      "aggregation": "sum",
+      "expr": "revenue",
+      "format_string": "$#,##0.00",
+      "unit": "USD",
+      "tags": ["revenue", "primary"]
+    },
+    {
+      "name": "avg_revenue",
+      "label": "Average Revenue",
+      "description": "Average revenue per transaction",
+      "metric_type": "simple",
+      "aggregation": "avg",
+      "expr": "revenue",
+      "format_string": "$#,##0.00",
+      "unit": "USD",
+      "tags": ["revenue"]
+    },
+    {
+      "name": "total_quantity",
+      "label": "Total Quantity",
+      "description": "Sum of items sold",
+      "metric_type": "simple",
+      "aggregation": "sum",
+      "expr": "quantity",
+      "format_string": "#,##0",
+      "unit": "items",
+      "tags": ["volume"]
+    },
+    {
+      "name": "transaction_count",
+      "label": "Transaction Count",
+      "description": "Number of transactions",
+      "metric_type": "simple",
+      "aggregation": "count",
+      "expr": "transaction_id",
+      "format_string": "#,##0",
+      "tags": ["volume"]
+    },
+    {
+      "name": "unique_customers",
+      "label": "Unique Customers",
+      "description": "Distinct customer count",
+      "metric_type": "simple",
+      "aggregation": "count_distinct",
+      "expr": "customer_id",
+      "format_string": "#,##0",
+      "tags": ["customer"]
+    },
+    {
+      "name": "total_cost",
+      "label": "Total Cost",
+      "description": "Sum of cost of goods sold",
+      "metric_type": "simple",
+      "aggregation": "sum",
+      "expr": "cost",
+      "format_string": "$#,##0.00",
+      "unit": "USD",
+      "tags": ["cost"]
+    },
+    {
+      "name": "gross_margin",
+      "label": "Gross Margin",
+      "description": "Revenue minus cost",
+      "metric_type": "derived",
+      "expr": "revenue - cost",
+      "depends_on": ["total_revenue", "total_cost"],
+      "formula": "SUM(revenue) - SUM(cost)",
+      "format_string": "$#,##0.00",
+      "unit": "USD",
+      "tags": ["margin", "derived"]
+    },
+    {
+      "name": "margin_pct",
+      "label": "Margin %",
+      "description": "Gross margin as percentage of revenue",
+      "metric_type": "ratio",
+      "expr": "margin_pct",
+      "depends_on": ["gross_margin", "total_revenue"],
+      "formula": "CASE WHEN SUM(revenue) > 0 THEN (SUM(revenue) - SUM(cost)) / SUM(revenue) * 100 ELSE 0 END",
+      "format_string": "0.0%",
+      "unit": "%",
+      "tags": ["margin", "derived"]
+    },
+    {
+      "name": "avg_basket_size",
+      "label": "Avg Basket Size",
+      "description": "Average revenue per transaction",
+      "metric_type": "ratio",
+      "expr": "avg_basket",
+      "depends_on": ["total_revenue", "transaction_count"],
+      "formula": "CASE WHEN COUNT(transaction_id) > 0 THEN SUM(revenue) / COUNT(transaction_id) ELSE 0 END",
+      "format_string": "$#,##0.00",
+      "unit": "USD",
+      "tags": ["basket"]
+    }
+  ],
+  "relationships": [
+    {
+      "name": "to_stores",
+      "description": "Join to stores dimension table",
+      "to_model": "stores_dim",
+      "join_type": "left",
+      "on_clause": "sales.store_id = stores_dim.store_id",
+      "from_cardinality": "many",
+      "to_cardinality": "one"
+    },
+    {
+      "name": "to_products",
+      "description": "Join to products dimension table",
+      "to_model": "products_dim",
+      "join_type": "left",
+      "on_clause": "sales.product_id = products_dim.product_id",
+      "from_cardinality": "many",
+      "to_cardinality": "one"
+    }
+  ]
+}
