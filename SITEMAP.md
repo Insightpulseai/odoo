@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7676ffd69feb23c2306138adc650eb7b3ac2b9e2
+> Commit: b8b5bdbd8de18e2e97df984518976f79d24def17
 
 ## 📚 Documentation
 
@@ -199,6 +199,7 @@
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
 | [Agent Skills Framework - Session Report](docs/AGENT_FRAMEWORK_SESSION_REPORT.md) | docs |
+| [AIUX Shipping PRD](docs/AIUX_SHIP_PRD.md) | docs |
 | [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
@@ -311,6 +312,7 @@
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
+| [OCR Pipeline Architecture](docs/architecture/OCR_PIPELINE.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
@@ -467,6 +469,7 @@
 .
 . |
 | [Conversations Index](docs/ops/conversations/INDEX.md) | docs/ops/conversations |
+| [Drive → GitHub Sync Runbook](docs/ops/drive_sync_runbook.md) | docs/ops |
 | [Production Redeploy Runbook](docs/ops/production_redeploy_runbook.md) | docs/ops |
 | [IPAI AI Platform - Object Relationship Document (ORD)](docs/ord/IPAI_AI_PLATFORM_ORD.md) | docs/ord |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
@@ -537,6 +540,7 @@
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
+| [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
 | [IPAI Skills](skills/README.md) | skills |
@@ -726,7 +730,7 @@
 | [ipai_ai_provider_pulser](./addons/ipai/ipai_ai_provider_pulser) | ✅ |  |
 | [ipai_ai_sources_odoo](./addons/ipai/ipai_ai_sources_odoo) | ✅ |  |
 | [ipai_ai_studio](./addons/ipai/ipai_ai_studio) | ✅ |  |
-| [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ | AIUX Chat Interface |
+| [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ |  |
 | [ipai_approvals](./addons/ipai/ipai_approvals) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
@@ -745,7 +749,7 @@
 | [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ |  |
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
 | [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
-| [ipai_document_ai](./addons/ipai/ipai_document_ai) | ✅ | Document Intelligence Integration |
+| [ipai_document_ai](./addons/ipai/ipai_document_ai) | ✅ |  |
 | [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
 | [ipai_expense_ocr](./addons/ipai/ipai_expense_ocr) | ✅ |  |
@@ -785,7 +789,7 @@
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
-| [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ | AIUX Design System Theme |
+| [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |

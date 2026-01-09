@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7676ffd69feb23c2306138adc650eb7b3ac2b9e2
+> Commit: b8b5bdbd8de18e2e97df984518976f79d24def17
 
 ```
 .
@@ -72,6 +72,8 @@
 │   │   ├── directional-sync.yml
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
+│   │   ├── drive-sync-verify.yml
+│   │   ├── drive-sync.yml
 │   │   ├── fin-workspace-weekly-sync.yml
 │   │   ├── finance-ppm-health.yml
 │   │   ├── go-live-manifest-gate.yml
@@ -225,6 +227,9 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_aiux_chat
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_approvals
 │   │   │   ├── data
@@ -356,6 +361,13 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_document_ai
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_equipment
 │   │   │   ├── models
@@ -375,9 +387,11 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_expense_ocr
+│   │   │   ├── controllers
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -674,6 +688,9 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_aiux
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_fluent2
 │   │   │   ├── static
@@ -1789,6 +1806,7 @@
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
 │   │   ├── IPAI_AI_PLATFORM_ORD.md
+│   │   ├── OCR_PIPELINE.md
 │   │   ├── README.md
 │   │   ├── SOURCE_OF_TRUTH.md
 │   │   ├── ipai_idp_architecture.drawio
@@ -1984,6 +2002,7 @@
 │   │   ├── SHIP_VERIFICATION.md
 │   │   ├── VERIFICATION_COMMANDS.md
 │   │   ├── WHAT_SHIPPED.template.md
+│   │   ├── drive_sync_runbook.md
 │   │   └── production_redeploy_runbook.md
 │   ├── ord
 │   │   └── IPAI_AI_PLATFORM_ORD.md
@@ -2051,6 +2070,7 @@
 │   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
+│   ├── AIUX_SHIP_PRD.md
 │   ├── AI_MODULE_NAMING_CONVENTION.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
@@ -2556,6 +2576,14 @@
 │   │   ├── deploy-prod-e2e.sh
 │   │   ├── do-bootstrap-odoo-prod.sh
 │   │   └── verify_prod.sh
+│   ├── drive_sync
+│   │   ├── lib
+│   │   │   ├── export_doc_markdown.mjs
+│   │   │   ├── google_auth.mjs
+│   │   │   └── normalize_markdown.mjs
+│   │   ├── README.md
+│   │   ├── drive_manifest.yml
+│   │   └── sync_docs.mjs
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
 │   ├── import
@@ -3515,15 +3543,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1123 directories, 2387 files
+1137 directories, 2401 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1289 |
-| Files | 3604 |
-| Python files | 967 |
-| XML files | 458 |
-| Markdown files | 692 |
+| Directories | 1316 |
+| Files | 3645 |
+| Python files | 978 |
+| XML files | 470 |
+| Markdown files | 696 |
