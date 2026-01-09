@@ -1,0 +1,14 @@
+{
+  "timestamp": "20260108_013846",
+  "host": {
+    "hostname": "odoo-erp-prod",
+    "kernel": "5.15.0-161-generic"
+  },
+  "docker": {
+    "version": "29.0.0",
+    "containers": {
+        "odoo": "odoo-ce",
+        "db": "odoo-db"
+    }
+  }
+}
