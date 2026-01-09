@@ -40,13 +40,21 @@ addons/*
 !addons/tbwa_*/
 !addons/tbwa_*/**
 
-# New layered structure (addons/ipai/ and addons/OCA/)
+# --- IPAI custom modules (tracked) ---
 !addons/ipai/
 !addons/ipai/**
+
+# --- OCA meta layer (tracked) ---
+# Only track manifests + lockfile, NOT cloned repos
 !addons/oca/
-!addons/oca/**
-!addons/OCA/
-!addons/OCA/**
+addons/oca/*/
+!addons/oca/.gitkeep
+!addons/oca/__init__.py
+!addons/oca/__manifest__.py
+!addons/oca/manifest.yaml
+!addons/oca/requirements.txt
+!addons/oca/oca.lock.json
+!addons/oca/README.md
 
 # Common ignores
 addons/**/__pycache__/
