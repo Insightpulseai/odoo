@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f93ad8a97ca32fd6f2ac91ef92c88046bb720456
+> Commit: 05476eee2d8a721ef8e455d5e75c5c589bf5e366
 
 ```
 .
@@ -1703,7 +1703,8 @@
 │   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
 │   │   ├── 202512070002_REORG_COPY_DATA.sql
 │   │   ├── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
-│   │   └── 202601060001_IPAI_KB_CHUNKS.sql
+│   │   ├── 202601060001_IPAI_KB_CHUNKS.sql
+│   │   └── 20260109_KG.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -3044,6 +3045,12 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── knowledge-graph
+│   │   ├── constitution.md
+│   │   ├── create-issues.sh
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── knowledge-hub
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -3550,15 +3557,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1140 directories, 2405 files
+1141 directories, 2411 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1321 |
-| Files | 3651 |
+| Directories | 1322 |
+| Files | 3657 |
 | Python files | 980 |
 | XML files | 471 |
-| Markdown files | 697 |
+| Markdown files | 701 |
