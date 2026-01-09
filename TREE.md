@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c36df688588e98ac2a2cec9cd417c5a1ba772cb2
+> Commit: 7368e48d42e17a07c7c05662919ed597ab7eb9e8
 
 ```
 .
@@ -50,9 +50,11 @@
 │   │   ├── aiux-ship-gate.yml
 │   │   ├── all-green-gates.yml
 │   │   ├── audit-contract.yml
+│   │   ├── auth-email-ai-gate.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
+│   │   ├── canonical-gate.yml
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
 │   │   ├── control-room-ci.yml
@@ -76,6 +78,7 @@
 │   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-determinism.yml
+│   │   ├── ipai-doc-drift-gate.yml
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-module-matrix.yml
 │   │   ├── ipai-prod-checks.yml
@@ -1213,6 +1216,7 @@
 │   │   │   └── types
 │   │   ├── .env.example
 │   │   ├── FINANCE_LANDING_CHECKLIST.md
+│   │   ├── next-env.d.ts
 │   │   ├── next.config.js
 │   │   ├── package.json
 │   │   ├── postcss.config.js
@@ -1696,6 +1700,7 @@
 │   │   └── erp.insightpulseai.net.conf
 │   ├── .env.production.template
 │   ├── README.md
+│   ├── docker-compose.canonical.yml
 │   ├── docker-compose.prod.v0.10.0.yml
 │   ├── docker-compose.prod.v0.9.1.yml
 │   ├── docker-compose.prod.yml
@@ -1706,6 +1711,7 @@
 │   ├── monitoring_schema.sql
 │   ├── monitoring_views.sql
 │   ├── odoo-auto-heal.service
+│   ├── odoo.canonical.conf
 │   └── odoo.conf
 ├── dev-docker
 │   ├── config
@@ -1772,7 +1778,9 @@
 │   │   │   ├── COPILOT_TOOLS_SCHEMA.md
 │   │   │   └── copilot_tools.openapi.json
 │   │   ├── runtime_snapshot
+│   │   │   ├── 20260108_013846
 │   │   │   └── README.md
+│   │   ├── AUTH_MODEL.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
@@ -1782,7 +1790,8 @@
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
-│   │   └── ipai_idp_pdf_processing.drawio
+│   │   ├── ipai_idp_pdf_processing.drawio
+│   │   └── runtime_identifiers.json
 │   ├── audits
 │   │   └── ipai_modules
 │   │       ├── README.md
@@ -1791,6 +1800,8 @@
 │   │       ├── inventory.md
 │   │       ├── oca_modules_vendored.txt
 │   │       └── oca_overlap_map.yaml
+│   ├── auth
+│   │   └── EMAIL_AUTH_SETUP.md
 │   ├── claude_code
 │   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── QUICK_REFERENCE.md
@@ -1835,6 +1846,8 @@
 │   │   │   └── azure_to_do_supabase_odoo.yaml
 │   │   ├── .gitkeep
 │   │   └── ipai_platform_flow.mmd
+│   ├── email
+│   │   └── Mailgun_DNS.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -1850,13 +1863,21 @@
 │   │   ├── OCA_SUBTREE_MIGRATION.md
 │   │   └── OPS_STACK.md
 │   ├── ipai
+│   │   ├── profiles
+│   │   │   └── finance_prod.txt
 │   │   ├── ARCHITECTURE.md
 │   │   ├── CHANGELOG.md
 │   │   ├── INSTALLATION.md
+│   │   ├── MODULE_DEPRECATION_PLAN.md
+│   │   ├── MODULE_EVALUATION_SUMMARY.md
+│   │   ├── MODULE_NAME_CORRECTIONS.md
 │   │   ├── OPERATIONS_RUNBOOK.md
+│   │   ├── PROFILES.md
 │   │   ├── README.md
 │   │   ├── SECURITY_MODEL.md
 │   │   └── module_scan.json
+│   ├── knowledge
+│   │   └── graph_seed.json
 │   ├── module-health
 │   │   ├── MODULES_PROD_STATUS.md
 │   │   └── modules_status.json
@@ -1949,9 +1970,12 @@
 │   │   │   └── index.json
 │   │   ├── ANTIGRAVITY_MCP.md
 │   │   ├── CONVERSATIONS_README.md
+│   │   ├── EXECUTION_BOARD.md
 │   │   ├── GO_LIVE_CHECKLIST.md
 │   │   ├── LOCAL_DEV.md
 │   │   ├── PREVENT_502.md
+│   │   ├── QUICK_START.md
+│   │   ├── README.md
 │   │   ├── RECOVERY.md
 │   │   ├── SHIP_VERIFICATION.md
 │   │   ├── VERIFICATION_COMMANDS.md
@@ -1974,6 +1998,9 @@
 │   │   └── aiux_ship_end_state.v1.1.0.json
 │   ├── proofs
 │   │   └── PROD_DEPLOY_PROOF_SCHEMA.json
+│   ├── rationalization
+│   │   ├── EXECUTION_CHECKLIST.md
+│   │   └── README.md
 │   ├── releases
 │   │   ├── DEPLOYMENT_PROOFS
 │   │   │   ├── README.md
@@ -2005,6 +2032,8 @@
 │   │       ├── docker
 │   │       ├── scripts
 │   │       └── README.md
+│   ├── troubleshooting
+│   │   └── MAGIC_LINK_500_ERROR.md
 │   ├── wiki
 │   │   ├── Architecture.md
 │   │   ├── Configuration.md
@@ -2021,6 +2050,9 @@
 │   ├── AI_MODULE_NAMING_CONVENTION.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
+│   ├── CANONICAL_ENFORCEMENT_REPORT.md
+│   ├── CANONICAL_LINT.md
+│   ├── CANONICAL_MAP.md
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
 │   ├── CE_OCA_PROJECT_STACK.md
 │   ├── CLAUDE_CODE_SETUP.md
@@ -2029,6 +2061,7 @@
 │   ├── DELIVERABLES_MANIFEST.md
 │   ├── DEPLOYMENT.md
 │   ├── DEPLOYMENT_GUIDE.md
+│   ├── DEPLOYMENT_INVARIANTS.md
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
 │   ├── DEPLOY_NOTION_WORKOS.md
 │   ├── DEVELOPER_TOOLS.md
@@ -2061,6 +2094,7 @@
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
 │   ├── IMPLEMENTATION_SUMMARY.md
+│   ├── INDEX.md
 │   ├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
 │   ├── INDUSTRY_PARITY_ANALYSIS.md
 │   ├── IPAI_MODULES_INDEX.md
@@ -2093,6 +2127,8 @@
 │   ├── ODOO_PROGRAMMATIC_CONFIG.md
 │   ├── OFFLINE_TARBALL_DEPLOYMENT.md
 │   ├── PRD_ipai_ppm_portfolio.md
+│   ├── PRODUCTION_DEFAULTS.md
+│   ├── PRODUCTION_DEPLOYMENT_CHECKLIST.md
 │   ├── PRODUCTION_HOTFIX.md
 │   ├── PROD_READINESS_GAPS.md
 │   ├── PROD_SNAPSHOT_MANIFEST.md
@@ -2177,6 +2213,13 @@
 │   ├── README.md
 │   └── SUMMARY.md
 ├── infra
+│   ├── ai
+│   │   └── provider_router
+│   │       ├── README.md
+│   │       ├── __init__.py
+│   │       ├── requirements.txt
+│   │       ├── router.py
+│   │       └── test_router.py
 │   ├── azure
 │   │   ├── modules
 │   │   │   ├── appservice.bicep
@@ -2487,7 +2530,8 @@
 ├── scripts
 │   ├── aiux
 │   │   ├── verify_assets.sh
-│   │   └── verify_install.sh
+│   │   ├── verify_install.sh
+│   │   └── verify_prod_health.sh
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
 │   │   ├── compare_audit_baseline.py
@@ -2504,6 +2548,8 @@
 │   │   └── wait_for_postgres.sh
 │   ├── deploy
 │   │   ├── bootstrap_from_tag.sh
+│   │   ├── deploy-prod-e2e.sh
+│   │   ├── do-bootstrap-odoo-prod.sh
 │   │   └── verify_prod.sh
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
@@ -2567,14 +2613,18 @@
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
 │   ├── bootstrap_apps_from_inventory.sh
+│   ├── bootstrap_execution_board.sh
+│   ├── bootstrap_github_issues.sh
 │   ├── build_and_push_version.sh
 │   ├── build_v0.10.0.sh
 │   ├── build_v0.9.1.sh
+│   ├── canonical_audit.py
 │   ├── ce_oca_audit.py
 │   ├── check-enterprise-modules.sh
 │   ├── check_go_live_manifest.py
 │   ├── check_module_status.sh
 │   ├── check_project_tasks.py
+│   ├── check_undocumented_specs.py
 │   ├── ci_local.sh
 │   ├── ci_smoke_test.sh
 │   ├── cleanup-branches.sh
@@ -2591,6 +2641,7 @@
 │   ├── count_xml_seeds.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
+│   ├── delete_user_safe.sh
 │   ├── deploy-bir-compliance.sh
 │   ├── deploy-december-2025-bir-tasks.sh
 │   ├── deploy-n8n-workflows.sh
@@ -2609,6 +2660,7 @@
 │   ├── diagnose_smtp.sh
 │   ├── enhanced_health_check.sh
 │   ├── erp_config_cli.sh
+│   ├── execute_rationalization.sh
 │   ├── export_todo_seed.py
 │   ├── extract_remote_data.py
 │   ├── finance_ppm_health_check.sh
@@ -2629,23 +2681,29 @@
 │   ├── generate_go_live_checklist.py
 │   ├── generate_module_docs.py
 │   ├── generate_module_health_report.py
+│   ├── generate_module_signatures.py
 │   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
+│   ├── generate_repo_index.py
 │   ├── generate_schema_artifacts.sh
 │   ├── generate_seed_xml.py
+│   ├── generate_spec_report.py
 │   ├── healthcheck_odoo.sh
 │   ├── hotfix_icon_crash.sh
 │   ├── hotfix_production.sh
 │   ├── image-diff-report.sh
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
+│   ├── ingest_knowledge_graph.py
 │   ├── install-git-hooks.sh
 │   ├── install-notion-stack.sh
 │   ├── install-odoo-18-modules.sh
 │   ├── install_all_ipai_modules.sh
+│   ├── install_baseline.sh
 │   ├── install_finance_stack.sh
 │   ├── install_ipai_finance_ppm.sh
 │   ├── install_module_xmlrpc.py
+│   ├── install_oauth_module.py
 │   ├── install_oca_modules.sh
 │   ├── introspect_project.py
 │   ├── ipai_full_audit.py
@@ -2661,6 +2719,7 @@
 │   ├── odoo-18-oca-install.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_mattermost_integration.py
+│   ├── odoo_rationalization.sh
 │   ├── odoo_runtime_snapshot.sh
 │   ├── odoo_smoke_close.sh
 │   ├── package_image_tarball.sh
@@ -2669,6 +2728,7 @@
 │   ├── pre_install_snapshot.sh
 │   ├── prod_access_check.py
 │   ├── prod_db_guess.py
+│   ├── promote_oauth_users.py
 │   ├── release_gate.sh
 │   ├── replace_seed_from_excel.py
 │   ├── repo_health.sh
@@ -2687,27 +2747,35 @@
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
 │   ├── stack_verify.sh
+│   ├── supabase_delete_user.sh
 │   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
 │   ├── test_afc_rag.py
+│   ├── test_auth_bootstrap.sh
 │   ├── test_deploy_local.sh
+│   ├── test_email_flow.sh
 │   ├── test_ipai_install_upgrade.py
+│   ├── test_magic_link.sh
 │   ├── update_diagram_manifest.py
 │   ├── update_task_phase_tags.sh
 │   ├── update_tasks_after_import.py
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
 │   ├── validate_ai_naming.py
+│   ├── validate_ipai_doc_module_refs.py
 │   ├── validate_m1.sh
 │   ├── validate_manifest.py
 │   ├── validate_manifests.py
 │   ├── validate_production.sh
+│   ├── validate_spec_kit.py
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
 │   ├── verify.sh
+│   ├── verify_auth_setup.sh
 │   ├── verify_backup.sh
+│   ├── verify_email_auth.sh
 │   ├── verify_phase3.py
 │   ├── wiki_sync.sh
 │   └── worktree-setup.sh
@@ -2961,6 +3029,12 @@
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   └── prd.md
+│   ├── ops-control-room
+│   │   ├── DEPLOYMENT_INTEGRATION.md
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── parallel-control-planes
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -3014,7 +3088,18 @@
 │       ├── config.py
 │       └── contracts.py
 ├── supabase
+│   ├── .temp
+│   │   ├── cli-latest
+│   │   ├── gotrue-version
+│   │   ├── pooler-url
+│   │   ├── postgres-version
+│   │   ├── project-ref
+│   │   ├── rest-version
+│   │   ├── storage-migration
+│   │   └── storage-version
 │   ├── functions
+│   │   ├── auth-bootstrap
+│   │   │   └── index.ts
 │   │   ├── catalog-sync
 │   │   │   └── index.ts
 │   │   ├── context-resolve
@@ -3044,6 +3129,8 @@
 │   │   ├── semantic-query
 │   │   │   └── index.ts
 │   │   ├── sync-kb-to-schema
+│   │   │   └── index.ts
+│   │   ├── tenant-invite
 │   │   │   └── index.ts
 │   │   ├── three-way-match
 │   │   │   └── index.ts
@@ -3114,6 +3201,9 @@
 │   │   ├── 202601080001_4500_CATALOG_UNITY_SCHEMA.sql
 │   │   ├── 202601080002_4501_CATALOG_SEMANTIC_LAYER.sql
 │   │   ├── 202601080003_4502_OPS_ODOO_BINDINGS.sql
+│   │   ├── 5001_auth_foundation.sql
+│   │   ├── 5002_auth_jwt_claims.sql
+│   │   ├── 5003_rls_policies.sql
 │   │   ├── AFC_DEPLOYMENT_SUMMARY.md
 │   │   └── RLS_DEPLOYMENT_COMPLETE.md
 │   ├── seed
@@ -3419,15 +3509,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1109 directories, 2305 files
+1122 directories, 2382 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1273 |
-| Files | 3498 |
-| Python files | 954 |
+| Directories | 1288 |
+| Files | 3599 |
+| Python files | 967 |
 | XML files | 458 |
-| Markdown files | 664 |
+| Markdown files | 691 |
