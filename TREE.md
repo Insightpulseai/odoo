@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7368e48d42e17a07c7c05662919ed597ab7eb9e8
+> Commit: 7676ffd69feb23c2306138adc650eb7b3ac2b9e2
 
 ```
 .
@@ -37,6 +37,9 @@
 │   │   ├── notion-ppm.yaml
 │   │   └── spec-kit.yaml
 │   └── config.json
+├── .devcontainer
+│   ├── devcontainer.json
+│   └── post-create.sh
 ├── .githooks
 │   └── pre-commit
 ├── .github
@@ -1170,6 +1173,7 @@
 │       ├── __init__.py
 │       ├── __manifest__.py
 │       ├── manifest.yaml
+│       ├── oca.lock.json
 │       └── requirements.txt
 ├── agents
 │   ├── capabilities
@@ -2115,6 +2119,7 @@
 │   ├── OCA_MIGRATION.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
+│   ├── ODOO_18_CE_MODULE_INSTALL_ORDER.md
 │   ├── ODOO_18_EE_TO_CE_OCA_PARITY.md
 │   ├── ODOO_ADDONS_PATH_CONFIGURATION.md
 │   ├── ODOO_APPS_CATALOG.md
@@ -2716,6 +2721,7 @@
 │   ├── oca-bootstrap.sh
 │   ├── oca-sync.sh
 │   ├── oca-update.sh
+│   ├── oca_hydrate.sh
 │   ├── odoo-18-oca-install.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_mattermost_integration.py
@@ -3509,15 +3515,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1122 directories, 2382 files
+1123 directories, 2387 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1288 |
-| Files | 3599 |
+| Directories | 1289 |
+| Files | 3604 |
 | Python files | 967 |
 | XML files | 458 |
-| Markdown files | 691 |
+| Markdown files | 692 |
