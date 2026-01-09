@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 30fa4f05dd705491b2ae0430eda4d55fecb7f975
+> Commit: 3332df27f1ddc24c9e2cc2ebfbdadfc4971e69ef
 
 ## 📚 Documentation
 
@@ -491,6 +491,7 @@
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
 | [Go-Live Manifest: prod-20260109-2219](docs/releases/GO_LIVE_MANIFEST_prod-20260109-2219.md) | docs/releases |
 | [Latest Release: prod-20260109-1642](docs/releases/LATEST.md) | docs/releases |
+| [What's Deployed](docs/releases/WHAT_DEPLOYED.md) | docs/releases |
 | [What's Deployed: prod-20260109-2219](docs/releases/WHAT_DEPLOYED_prod-20260109-2219.md) | docs/releases |
 | [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
 | [Go-Live Manifest: prod-20260109-1642](docs/releases/prod-20260109-1642/GO_LIVE_MANIFEST.md) | docs/releases/prod-20260109-1642 |
