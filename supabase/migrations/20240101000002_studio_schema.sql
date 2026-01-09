@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS studio_fields (
         'relation', 'computed', 'section', 'separator'
     )),
     position INT DEFAULT 0,
-    column INT DEFAULT 1,
+    col_position INT DEFAULT 1,
     required BOOLEAN DEFAULT false,
     readonly BOOLEAN DEFAULT false,
     default_value JSONB,
