@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 52c69e170875e896e30ff0a96b4bac93b461ac2b
+> Commit: 6bbe81e9413c8036e1a826b80e3864d63c616c73
 
 ## 📚 Documentation
 
@@ -458,6 +458,7 @@
 | [Ops Control Room Documentation](docs/ops/README.md) | docs/ops |
 | [Production Recovery Runbook](docs/ops/RECOVERY.md) | docs/ops |
 | [Ship Verification Runbook](docs/ops/SHIP_VERIFICATION.md) | docs/ops |
+| [Supabase Deployment Verification Report](docs/ops/SUPABASE_DEPLOYMENT_VERIFICATION.md) | docs/ops |
 | [Verification Commands Reference](docs/ops/VERIFICATION_COMMANDS.md) | docs/ops |
 | [WHAT_SHIPPED - Release [TAG]](docs/ops/WHAT_SHIPPED.template.md) | docs/ops |
 | [001 — 2025-12-31 — Initial setup](docs/ops/conversations/001 — 2025-12-31 — Initial setup.md) | docs/ops/conversations
