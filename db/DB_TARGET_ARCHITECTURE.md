@@ -247,6 +247,7 @@ CREATE TRIGGER set_updated_at
 - [RLS_ROLES.md](rls/RLS_ROLES.md) — Role definitions
 - [SEEDING_STRATEGY.md](seeds/SEEDING_STRATEGY.md) — Data seeding approach
 - [Migration Files](migrations/) — SQL migration scripts
+- [supabase_exposure_audit.sql](audit/supabase_exposure_audit.sql) — Supabase API exposure audit
 
 ---
 
