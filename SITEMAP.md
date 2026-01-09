@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7368e48d42e17a07c7c05662919ed597ab7eb9e8
+> Commit: 7676ffd69feb23c2306138adc650eb7b3ac2b9e2
 
 ## 📚 Documentation
 
@@ -266,6 +266,7 @@
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
 | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
+| [Odoo 18 CE Module Install Order](docs/ODOO_18_CE_MODULE_INSTALL_ORDER.md) | docs |
 | [Odoo 18 Enterprise → CE/OCA Complete Parity Guide](docs/ODOO_18_EE_TO_CE_OCA_PARITY.md) | docs |
 | [Odoo Addons Path Configuration Guide](docs/ODOO_ADDONS_PATH_CONFIGURATION.md) | docs |
 | [ODOO APPS CATALOG: CE/OCA 18 Substitutes](docs/ODOO_APPS_CATALOG.md) | docs |
