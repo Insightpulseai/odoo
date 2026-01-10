@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: cb6c73dba054bbb5ef40cc705b46583d7a8d8678
+> Commit: 5695792e0804f0a02bdfe853e8b92384eba78197
 
 ```
 .
@@ -2108,6 +2108,10 @@
 │   │       └── README.md
 │   ├── troubleshooting
 │   │   └── MAGIC_LINK_500_ERROR.md
+│   ├── tutorials
+│   │   └── jinja2-basics
+│   │       ├── examples
+│   │       └── README.md
 │   ├── wiki
 │   │   ├── Architecture.md
 │   │   ├── Configuration.md
@@ -3631,15 +3635,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1159 directories, 2467 files
+1162 directories, 2468 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1341 |
-| Files | 3723 |
-| Python files | 989 |
+| Directories | 1344 |
+| Files | 3728 |
+| Python files | 993 |
 | XML files | 473 |
-| Markdown files | 715 |
+| Markdown files | 716 |

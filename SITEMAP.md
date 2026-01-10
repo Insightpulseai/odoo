@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: cb6c73dba054bbb5ef40cc705b46583d7a8d8678
+> Commit: 5695792e0804f0a02bdfe853e8b92384eba78197
 
 ## 📚 Documentation
 
@@ -503,6 +503,7 @@
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Magic Link 500 Error: Complete Analysis & Fix](docs/troubleshooting/MAGIC_LINK_500_ERROR.md) | docs/troubleshooting |
+| [Jinja2 Templating Basics](docs/tutorials/jinja2-basics/README.md) | docs/tutorials/jinja2-basics |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
 | [Architecture](docs/wiki/Architecture.md) | docs/wiki |
 | [Configuration](docs/wiki/Configuration.md) | docs/wiki |
