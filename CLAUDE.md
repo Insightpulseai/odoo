@@ -753,10 +753,20 @@ docker compose ps postgres
 docker compose logs postgres
 ```
 
-**Permission errors**
+**Permission errors (SCSS compilation failures)**
 ```bash
-# Fix addon permissions
-chmod -R 755 addons/ipai/
+# Symptom: "Style compilation failed" errors in Odoo
+# Root cause: Addons owned by wrong user, Odoo container can't read SCSS files
+
+# Auto-fix permissions (recommended)
+./scripts/verify-addon-permissions.sh
+
+# Manual fix on server
+ssh root@178.128.112.214
+cd /opt/odoo-ce/repo/addons
+chown -R 100:101 ipai ipai_theme_tbwa*
+chmod -R 755 ipai ipai_theme_tbwa*
+docker restart odoo-prod
 ```
 
 ---
