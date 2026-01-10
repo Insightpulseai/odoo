@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5695792e0804f0a02bdfe853e8b92384eba78197
+> Commit: 38ff320a8ce0ba9c2d3a135606aa17fc32e0da32
 
 ## 📚 Documentation
 
@@ -353,6 +353,8 @@
 | [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [DNS Configuration and Mailgun Setup](docs/email/Mailgun_DNS.md) | docs/email |
+| [OdooForge Sandbox - Codex Cloud Optimization](docs/evidence/20260110-0927/odooforge-sandbox/codex-optimization.md) | docs/evidence/20260110-0927/odooforge-sandbox |
+| [OdooForge Sandbox - Verification Results](docs/evidence/20260110-0927/odooforge-sandbox/verification-results.md) | docs/evidence/20260110-0927/odooforge-sandbox |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -544,6 +546,9 @@
 | [Receipt OCR Test Harness](ocr-adapter/scripts/README.md) | ocr-adapter/scripts |
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
+| [AGENTS.md - OdooForge Agent Rules](odooforge-sandbox/AGENTS.md) | odooforge-sandbox |
+| [OdooForge Sandbox](odooforge-sandbox/README.md) | odooforge-sandbox |
+| [OdooForge Sandbox - UAT Test Plan](odooforge-sandbox/tests/UAT_TEST_PLAN.md) | odooforge-sandbox/tests |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
 | [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |

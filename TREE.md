@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5695792e0804f0a02bdfe853e8b92384eba78197
+> Commit: 38ff320a8ce0ba9c2d3a135606aa17fc32e0da32
 
 ```
 .
@@ -1896,6 +1896,9 @@
 │   │   └── ipai_platform_flow.mmd
 │   ├── email
 │   │   └── Mailgun_DNS.md
+│   ├── evidence
+│   │   └── 20260110-0927
+│   │       └── odooforge-sandbox
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2548,6 +2551,42 @@
 ├── odoo
 │   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
+├── odooforge-sandbox
+│   ├── .devcontainer
+│   │   └── devcontainer.json
+│   ├── .github
+│   │   └── workflows
+│   │       └── odooforge.yml
+│   ├── addons
+│   │   └── .gitkeep
+│   ├── config
+│   │   └── odoo.conf
+│   ├── kit-cli
+│   │   ├── __init__.py
+│   │   └── kit.py
+│   ├── reports
+│   │   └── .gitkeep
+│   ├── scripts
+│   │   ├── codex_check.sh
+│   │   └── codex_setup.sh
+│   ├── specs
+│   │   └── .gitkeep
+│   ├── templates
+│   │   └── .gitkeep
+│   ├── tests
+│   │   ├── UAT_TEST_PLAN.md
+│   │   ├── __init__.py
+│   │   ├── run-uat.sh
+│   │   └── test_uat.py
+│   ├── .gitignore
+│   ├── .pre-commit-config.yaml
+│   ├── AGENTS.md
+│   ├── Dockerfile.kit
+│   ├── README.md
+│   ├── docker-compose.yml
+│   ├── install-sandbox.sh
+│   ├── requirements-dev.txt
+│   └── requirements.txt
 ├── ops
 │   ├── github
 │   │   ├── apply_labels.sh
@@ -3635,15 +3674,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1162 directories, 2468 files
+1177 directories, 2492 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1344 |
-| Files | 3728 |
-| Python files | 993 |
+| Directories | 1359 |
+| Files | 3755 |
+| Python files | 997 |
 | XML files | 473 |
-| Markdown files | 716 |
+| Markdown files | 721 |
