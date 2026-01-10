@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 44eea1f713fac2dd926a45de058cd49539786415
+> Commit: cb6c73dba054bbb5ef40cc705b46583d7a8d8678
 
 ```
 .
@@ -1901,6 +1901,10 @@
 │   ├── golive
 │   │   ├── TBWA_OMC_PH_GOLIVE_CHECKLIST.csv
 │   │   └── TBWA_OMC_PH_GOLIVE_GUIDE.md
+│   ├── incidents
+│   │   └── templates
+│   │       ├── POST_MORTEM.md
+│   │       └── error_envelope.json
 │   ├── integration
 │   │   ├── INSIGHTPULSE_ROADMAP.md
 │   │   └── SLACK_INTEGRATION_SETUP.md
@@ -2226,6 +2230,7 @@
 │   ├── TAGGING_STRATEGY.md
 │   ├── TBWA_THEME_DEPLOYMENT.md
 │   ├── TESTING_ODOO_18.md
+│   ├── TROUBLESHOOTING.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── ZOHO_DNS_SETUP.md
@@ -2791,6 +2796,7 @@
 │   ├── image-diff-report.sh
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
+│   ├── incident_snapshot.sh
 │   ├── ingest_knowledge_graph.py
 │   ├── install-git-hooks.sh
 │   ├── install-notion-stack.sh
@@ -3625,15 +3631,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1157 directories, 2463 files
+1159 directories, 2467 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1339 |
-| Files | 3719 |
+| Directories | 1341 |
+| Files | 3723 |
 | Python files | 989 |
 | XML files | 473 |
-| Markdown files | 713 |
+| Markdown files | 715 |
