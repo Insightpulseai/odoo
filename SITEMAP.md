@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 44eea1f713fac2dd926a45de058cd49539786415
+> Commit: cb6c73dba054bbb5ef40cc705b46583d7a8d8678
 
 ## 📚 Documentation
 
@@ -308,6 +308,7 @@
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
 | [TBWA Theme Token Alignment - Deployment Guide](docs/TBWA_THEME_DEPLOYMENT.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
+| [Deterministic Troubleshooting Framework for Odoo CE 18.0](docs/TROUBLESHOOTING.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
@@ -354,6 +355,7 @@
 | [DNS Configuration and Mailgun Setup](docs/email/Mailgun_DNS.md) | docs/email |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
+| [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
 | [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
