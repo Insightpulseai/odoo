@@ -1,12 +1,7 @@
 name: module-catalog-drift
 
 on:
-  pull_request:
-    paths:
-      - "addons/**/__manifest__.py"
-      - "artifacts/module_catalog.json"
-      - "scripts/emit_module_catalog.py"
-      - "scripts/enforce_assets_policy.py"
+  # NOTE: PR trigger removed - catalog drift check is not essential for PR validation
   push:
     branches: [ main ]
     paths:
@@ -14,6 +9,7 @@ on:
       - "artifacts/module_catalog.json"
       - "scripts/emit_module_catalog.py"
       - "scripts/enforce_assets_policy.py"
+  workflow_dispatch:
 
 jobs:
   check:

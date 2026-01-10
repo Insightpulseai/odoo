@@ -5,10 +5,7 @@
 export interface HealthResponse {
   status: 'healthy' | 'degraded' | 'unhealthy';
   timestamp: string;
-  services: {
-    databricks: 'connected' | 'disconnected';
-    notion: 'connected' | 'disconnected';
-  };
+  services: Record<string, 'connected' | 'disconnected'>;
 }
 
 export interface KPIsResponse {
@@ -134,8 +131,8 @@ export interface CreateActionRequest {
 
 export interface CreateActionResponse {
   success: boolean;
-  notionPageId?: string;
-  notionUrl?: string;
+  pageId?: string;
+  url?: string;
   error?: string;
 }
 

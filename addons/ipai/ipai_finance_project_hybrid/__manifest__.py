@@ -5,8 +5,8 @@
     "version": "18.0.1.0.0",
     "category": "Project",
     "license": "LGPL-3",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.com",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_project_hybrid",
     "depends": ["project", "mail"],
     "data": [
         "security/security.xml",

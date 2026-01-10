@@ -235,7 +235,7 @@ def render_addon_from_spec(env, spec: dict) -> dict:
             f'  <record id="{action_xml_id}" model="ir.actions.act_window">',
             f'    <field name="name">{app_name}</field>',
             f'    <field name="res_model">{primary_model}</field>',
-            '    <field name="view_mode">tree,form</field>',
+            '    <field name="view_mode">list,form</field>',
             "  </record>",
             f'  <menuitem id="{menu_xml_id}" name="{app_name}" action="{action_xml_id}" sequence="10"/>',
         ]
@@ -253,7 +253,7 @@ def render_addon_from_spec(env, spec: dict) -> dict:
     view_lines = ['<?xml version="1.0" encoding="utf-8"?>', "<odoo>"]
     if primary_model:
         primary_fields_form = views.get("form", [])
-        primary_fields_tree = views.get("tree", [])
+        primary_fields_tree = views.get("list", [])
         primary_fields_search = views.get("search", [])
 
         view_lines += [

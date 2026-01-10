@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit task form to add planning fields -->
+    <record id="view_task_form_inherit_ipai_planning" model="ir.ui.view">
+        <field name="name">project.task.form.ipai.planning</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group" position="inside">
+                <group string="Planning (IPAI Gantt)">
+                    <field name="ipai_planned_start"/>
+                    <field name="ipai_planned_end"/>
+                    <field name="ipai_planned_duration" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit task tree to show planning columns -->
+    <record id="view_task_tree_inherit_ipai_planning" model="ir.ui.view">
+        <field name="name">project.task.tree.ipai.planning</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_tree2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_deadline']" position="after">
+                <field name="ipai_planned_start" optional="hide"/>
+                <field name="ipai_planned_end" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Search filter for tasks with planning dates -->
+    <record id="view_task_search_inherit_ipai_planning" model="ir.ui.view">
+        <field name="name">project.task.search.ipai.planning</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_search_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='message_needaction']" position="after">
+                <separator/>
+                <filter string="Has Planned Dates" name="has_planned_dates"
+                        domain="[('ipai_planned_start', '!=', False), ('ipai_planned_end', '!=', False)]"/>
+                <filter string="Missing Planned Dates" name="missing_planned_dates"
+                        domain="['|', ('ipai_planned_start', '=', False), ('ipai_planned_end', '=', False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Server action for batch setting planned dates -->
+    <record id="action_set_planned_dates" model="ir.actions.server">
+        <field name="name">Set Planned Dates from Deadline</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="binding_model_id" ref="project.model_project_task"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    records.action_set_planned_dates_from_deadline()
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,107 @@
+name: IPAI Determinism Check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'spec/**/capability_map.yaml'
+      - 'tools/ipai_module_gen/**'
+      - 'addons/ipai/**'
+      - 'addons/delta/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'spec/**/capability_map.yaml'
+      - 'tools/ipai_module_gen/**'
+      - 'addons/ipai/**'
+      - 'addons/delta/**'
+
+jobs:
+  check-drift:
+    name: Check Module Generator Drift
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd tools/ipai_module_gen
+          pip install -e .
+
+      - name: Run generator in check mode
+        run: |
+          ipai-gen --check --spec spec/ipai-odoo18-enterprise-patch/capability_map.yaml
+
+      - name: Report status
+        if: failure()
+        run: |
+          echo "::error::Module generator drift detected!"
+          echo "Run 'ipai-gen' locally to regenerate modules from capability_map.yaml"
+          exit 1
+
+  validate-modules:
+    name: Validate IPAI Modules
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Syntax check Python files
+        run: |
+          find addons/ipai -name "*.py" -exec python -m py_compile {} \;
+
+      - name: Check manifest files
+        run: |
+          for manifest in addons/ipai/*/__manifest__.py; do
+            python -c "exec(open('$manifest').read())" || exit 1
+          done
+
+      - name: Validate XML files
+        run: |
+          for xml in addons/ipai/*/**/*.xml; do
+            python -c "import xml.etree.ElementTree as ET; ET.parse('$xml')" || exit 1
+          done
+
+  naming-convention:
+    name: Check Naming Conventions
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check module names
+        run: |
+          # All IPAI modules must match ipai_* or ipai_delta_* pattern
+          for dir in addons/ipai/*/; do
+            name=$(basename "$dir")
+            if [[ ! "$name" =~ ^ipai_[a-z0-9_]+$ ]] && [[ ! "$name" =~ ^ipai_delta_[a-z0-9_]+$ ]]; then
+              echo "::error::Invalid module name: $name (must match ipai_* or ipai_delta_*)"
+              exit 1
+            fi
+          done
+
+      - name: Check model names in Python
+        run: |
+          # All model _name attributes should match ipai.* pattern
+          grep -rh "_name = " addons/ipai --include="*.py" | while read line; do
+            if [[ "$line" =~ _name.*=.*\"([^\"]+)\" ]]; then
+              model="${BASH_REMATCH[1]}"
+              if [[ "$model" != ipai.* ]] && [[ "$model" != *.* ]]; then
+                echo "::warning::Model name may not follow convention: $model"
+              fi
+            fi
+          done

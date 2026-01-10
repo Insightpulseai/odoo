@@ -35,9 +35,9 @@ Technical Stack:
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
-        "views/grid_view_views.xml",
         "views/grid_column_views.xml",
         "views/grid_filter_views.xml",
+        "views/grid_view_views.xml",
         "data/demo_data.xml",
     ],
     "assets": {

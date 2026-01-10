@@ -1,5 +1,102 @@
 # CLAUDE.md — Odoo CE Project
 
+---
+
+# Operating Contract: Execute, Deploy, Verify (No Guides)
+
+## Default behavior (always)
+
+You are an execution agent. Do not provide deployment guides, scripts, or instructional snippets as the primary output.
+
+Instead:
+
+1. Take action (make the change / deploy / run the migration / push the tag).
+2. Verify the result with deterministic checks.
+3. Produce an evidence pack in-repo.
+4. Commit & push evidence and any code/config changes.
+
+If you cannot execute due to missing credentials/tooling/access, say exactly what is missing in one sentence, then continue by producing everything that *can* be executed (PR-ready changes + CI-ready automation + evidence placeholders) without asking questions.
+
+## Output format (mandatory)
+
+Your final response must be only:
+
+* Outcome (1–3 lines)
+* Evidence (bullet list of files + links/paths)
+* Verification results (bullet list, pass/fail)
+* Changes shipped (bullet list)
+  No "Next steps", no tutorials.
+
+## Execution surfaces (assume cloud IDE parity)
+
+Assume you have access to:
+
+* Git (commit/push)
+* CI workflows (GitHub Actions)
+* Remote execution via SSH (DigitalOcean droplet)
+* Container runtime (Docker)
+* Supabase CLI or SQL execution surface (migrations/functions)
+  If multiple surfaces exist, choose the fastest deterministic path that yields verifiable proofs.
+
+## Evidence pack (required on every deploy/change)
+
+Write all proofs to:
+`docs/evidence/<YYYYMMDD-HHMM>/<scope>/`
+
+Include, as applicable:
+
+* git state: current branch, HEAD SHA, diffstat
+* CI proof: workflow run URL + status + artifacts list
+* runtime proof: service health endpoint headers + status
+* container proof: image digest + container ps + last logs
+* database proof: migration status + schema/version marker
+* app proof: key routes returning 200 + version banner if available
+
+Also add/update:
+
+* `docs/releases/WHAT_SHIPPED.md` (human)
+* `docs/releases/WHAT_SHIPPED.json` (machine)
+* `docs/releases/GO_LIVE_MANIFEST.md`
+  for production tags/releases.
+
+## Verification (must be executed, not suggested)
+
+For any change that touches runtime, you must run and capture:
+
+* service health checks (HTTP status + headers)
+* container logs for startup errors
+* DB connectivity check (read + write where safe)
+* Odoo: `--stop-after-init` equivalent verification
+* Supabase: migrations/functions status verification
+
+If verification fails:
+
+* Fix, re-run verification, update evidence, then commit.
+
+## Git rules
+
+* One logical change-set per commit (plus evidence commit if needed).
+* Commit message must include scope + intent (OCA-style).
+* Push to a branch; open PR if not already on main.
+* Never claim "deployed" without evidence files in-repo.
+
+## Banned behaviors
+
+* No "here's a guide"
+* No "run these commands"
+* No "you should…"
+* No asking for confirmation to proceed
+* No time estimates
+* No unstated assumptions
+
+## Naming conventions (OCA-style)
+
+* Modules: `ipai_ai_*` for AI-related addons; avoid generic "assistant/copilot" naming collisions.
+* Docs: `docs/<domain>/...` and `docs/evidence/...` strictly.
+* Workflows: prefer few "golden" workflows; delete redundant ones only with proof that replacements cover the same gates.
+
+---
+
 ## Quick Reference
 
 | Item | Value |
@@ -8,6 +105,8 @@
 | **Node** | >= 18.0.0 (pnpm workspaces) |
 | **Python** | 3.10+ (Odoo 18 requirement) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
+
+> **Claude Code Web Users**: See [CLAUDE_CODE_WEB.md](./CLAUDE_CODE_WEB.md) for cloud sandbox execution contract.
 
 ### Common Commands
 
@@ -113,20 +212,24 @@ Always run before committing:
 ```
 odoo-ce/
 ├── addons/                    # Odoo modules
-│   ├── ipai/                  # IPAI custom modules (37 modules)
+│   ├── ipai/                  # IPAI custom modules (80+ modules)
 │   │   ├── ipai_dev_studio_base/
 │   │   ├── ipai_workspace_core/
 │   │   ├── ipai_finance_ppm/
 │   │   ├── ipai_master_control/
+│   │   ├── ipai_ai_agents/
+│   │   ├── ipai_approvals/
 │   │   └── ...
-│   └── oca/                   # OCA community modules (submodules)
+│   ├── OCA/                   # OCA community modules (12 repos)
+│   └── oca/                   # OCA submodules
 │
-├── apps/                      # Applications (19 apps)
+├── apps/                      # Applications (20 apps)
 │   ├── pulser-runner/         # Automation runner
 │   ├── control-room/          # Control plane UI
 │   ├── control-room-api/      # Control plane API
 │   ├── bi-architect/          # BI analytics
 │   ├── mcp-coordinator/       # MCP coordination
+│   ├── web/                   # Web frontend
 │   └── ...
 │
 ├── packages/                  # Shared packages (3 packages)
@@ -134,13 +237,13 @@ odoo-ce/
 │   ├── github-app/            # GitHub App integration
 │   └── ipai-design-tokens/    # Design system tokens
 │
-├── spec/                      # Spec bundles (24 feature specs)
+├── spec/                      # Spec bundles (32 feature specs)
 │   ├── constitution.md        # Root non-negotiable rules
 │   ├── prd.md                 # Root product requirements
 │   ├── pulser-master-control/ # Example spec bundle
 │   └── ...
 │
-├── scripts/                   # Automation scripts (90+ scripts)
+├── scripts/                   # Automation scripts (160+ scripts)
 │   ├── ci/                    # CI-specific scripts
 │   ├── deploy-odoo-modules.sh
 │   ├── repo_health.sh
@@ -185,7 +288,7 @@ odoo-ce/
 │   ├── settings.json          # Allowed tools config
 │   └── commands/              # Slash commands
 │
-├── .github/workflows/         # CI/CD pipelines (42 workflows)
+├── .github/workflows/         # CI/CD pipelines (47 workflows)
 │
 ├── docker-compose.yml         # Main compose file
 ├── package.json               # Node.js monorepo config
@@ -201,20 +304,28 @@ All custom modules use the `ipai_` prefix organized by domain:
 
 | Domain | Prefix Pattern | Examples |
 |--------|---------------|----------|
-| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance` |
-| Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit` |
+| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_agents`, `ipai_ai_core`, `ipai_agent_core` |
+| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance`, `ipai_finance_month_end` |
+| Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit`, `ipai_platform_approvals` |
 | Workspace | `ipai_workspace_*` | `ipai_workspace_core` |
 | Studio | `ipai_dev_studio_*`, `ipai_studio_*` | `ipai_dev_studio_base`, `ipai_studio_ai` |
-| Industry | `ipai_industry_*` | `ipai_industry_marketing_agency` |
-| WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks` |
-| Theme | `ipai_theme_*`, `ipai_web_theme_*` | `ipai_theme_tbwa_backend` |
+| Industry | `ipai_industry_*` | `ipai_industry_marketing_agency`, `ipai_industry_accounting_firm` |
+| WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks`, `ipai_workos_canvas` |
+| Theme/UI | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*` | `ipai_theme_tbwa_backend`, `ipai_ui_brand_tokens` |
+| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_mattermost_connector`, `ipai_superset_connector` |
+| PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
 
 ### Key Module Hierarchy
 
 ```
-ipai_dev_studio_base       # Base dependencies (install first)
-    └── ipai_workspace_core     # Core workspace functionality
-        └── ipai_ce_branding    # CE branding layer
+ipai_dev_studio_base           # Base dependencies (install first)
+    └── ipai_workspace_core    # Core workspace functionality
+        └── ipai_ce_branding   # CE branding layer
+            ├── ipai_ai_core   # AI core framework
+            │   ├── ipai_ai_agents     # Agent system
+            │   └── ipai_ai_prompts    # Prompt management
+            ├── ipai_finance_ppm       # Finance PPM
+            │   └── ipai_finance_month_end
             └── [other modules]
 ```
 
@@ -232,7 +343,7 @@ spec/<feature-slug>/
 └── tasks.md          # Task checklist with status
 ```
 
-### Current Spec Bundles (24)
+### Current Spec Bundles (32)
 
 - `pulser-master-control` - Master control plane
 - `close-orchestration` - Month-end close workflows
@@ -241,6 +352,12 @@ spec/<feature-slug>/
 - `hire-to-retire` - HR lifecycle management
 - `ipai-control-center` - Control center UI
 - `odoo-mcp-server` - MCP server integration
+- `adk-control-room` - ADK control room
+- `auto-claude-framework` - Auto Claude framework
+- `ipai-ai-platform` - AI platform core
+- `ipai-ai-platform-odoo18` - Odoo 18 AI platform
+- `kapa-plus` - Kapa+ documentation AI
+- `workos-notion-clone` - WorkOS Notion clone
 - See `spec/` directory for complete list
 
 ---
@@ -308,16 +425,29 @@ Claude Code is restricted to these tools (see `.claude/settings.json`):
 {
   "allowedTools": [
     "Edit", "Read", "Write", "Glob", "Grep",
-    "Bash(git *)", "Bash(gh *)",
-    "Bash(npm run *)", "Bash(pnpm -s *)",
+    "Bash(git status)", "Bash(git diff*)", "Bash(git add*)",
+    "Bash(git commit*)", "Bash(git push*)", "Bash(git log*)",
+    "Bash(git branch*)", "Bash(gh *)",
+    "Bash(npm run lint*)", "Bash(npm run typecheck*)",
+    "Bash(npm run test*)", "Bash(npm run build*)",
+    "Bash(pnpm -s lint*)", "Bash(pnpm -s typecheck*)",
+    "Bash(pnpm -s test*)", "Bash(pnpm -s build*)",
     "Bash(python3 -m py_compile*)",
-    "Bash(black *)", "Bash(isort *)", "Bash(flake8*)",
+    "Bash(black --check*)", "Bash(black *)",
+    "Bash(isort --check*)", "Bash(isort *)", "Bash(flake8*)",
     "Bash(./scripts/repo_health.sh)",
     "Bash(./scripts/spec_validate.sh)",
     "Bash(./scripts/verify.sh)",
     "Bash(./scripts/ci_local.sh*)",
     "Bash(./scripts/ci/*)"
-  ]
+  ],
+  "agentCommands": {
+    "plan": ".claude/commands/plan.md",
+    "implement": ".claude/commands/implement.md",
+    "verify": ".claude/commands/verify.md",
+    "ship": ".claude/commands/ship.md",
+    "fix-github-issue": ".claude/commands/fix-github-issue.md"
+  }
 }
 ```
 
@@ -349,6 +479,96 @@ Config → OCA → Delta (ipai_*)
 1. **Config**: Use Odoo's built-in configuration first
 2. **OCA**: Use vetted OCA community modules second
 3. **Delta**: Only create ipai_* modules for truly custom needs
+
+---
+
+## OCA-Style Workflow (Canonical)
+
+### Purpose
+
+Keep this repo aligned with **OCA tooling + conventions** while preserving the existing layered architecture:
+- **Odoo CE runtime**
+- **OCA addons** (managed via `oca.lock.json`, not tracked)
+- **IPAI addons** (tracked, ship-ready)
+
+### Non-Negotiables
+
+- **Do NOT run** `copier` in the repo root (it will overwrite structure).
+- Use `/tmp/oca-template/` to generate templates and **selectively port** only the needed files.
+- New custom modules live under: `addons/ipai/<module_name>/`
+- OCA repos cloned under: `addons/oca/*/` are **NOT tracked** (only keep base marker files per `.gitignore`).
+- Changes must remain deterministic and CI-friendly (no "works on my machine" steps).
+
+### Standard Tooling (Must Stay Green)
+
+#### Pre-commit
+
+Install + run:
+
+```bash
+pip install -r requirements.txt
+pre-commit install
+pre-commit run -a
+```
+
+#### Local verification (mirror CI)
+
+Run:
+
+```bash
+./scripts/verify_local.sh
+```
+
+### Using OCA Template Safely (Selective Port Only)
+
+#### Generate OCA template in a temp directory
+
+```bash
+rm -rf /tmp/oca-template && mkdir -p /tmp/oca-template
+cd /tmp/oca-template
+pipx install copier || true
+copier copy https://github.com/OCA/oca-addons-repo-template.git/ repo --trust
+```
+
+#### Allowed files to port (only if beneficial)
+
+* `.pre-commit-config.yaml` (rules/tools)
+* `pyproject.toml` (lint/format defaults)
+* targeted `.github/workflows/*` patterns (lint/test hygiene)
+
+#### Forbidden
+
+* Overwriting repo layout
+* Introducing a second "root" structure
+* Moving existing directories to match the template
+
+### Fast Module Scaffolding (mrbob)
+
+#### Install
+
+```bash
+pipx install mrbob
+pipx inject mrbob bobtemplates.odoo
+```
+
+#### Create addon (then move under addons/ipai/)
+
+```bash
+mrbob bobtemplates.odoo:addon
+# move generated module into addons/ipai/<module_name>/
+```
+
+#### Create model scaffolding inside addon
+
+```bash
+mrbob bobtemplates.odoo:model
+```
+
+### Commit Rules (OCA-style)
+
+* Use conventional commits: `chore(oca): ...`, `feat(ipai_*): ...`, `fix(ci): ...`
+* One feature = one commit whenever possible.
+* Always include proof commands (logs/status) after changes that affect runtime or CI.
 
 ---
 
@@ -400,6 +620,18 @@ Examples:
 - `docs(claude): update CLAUDE.md with architecture`
 - `chore(ci): add spec validation workflow`
 
+### Chore Scope Conventions (OCA-style)
+
+| Scope | When to Use |
+|-------|-------------|
+| `chore(oca):` | OCA layer: submodules, `oca.lock.json`, `oca-aggregate.yml`, pins |
+| `chore(repo):` | Repo-wide maintenance (docs regen, formatting, housekeeping) |
+| `chore(ci):` | Workflows, gating, pre-commit, drift checks |
+| `chore(deps):` | Python/Node deps, devcontainer, toolchain pins |
+| `chore(deploy):` | Docker compose, nginx, env templates, infra docs |
+
+See [docs/OCA_CHORE_SCOPE.md](docs/OCA_CHORE_SCOPE.md) for full conventions.
+
 ### PR Requirements
 
 1. Small, focused commits with descriptive messages
@@ -449,11 +681,14 @@ docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
 | `scripts/repo_health.sh` | Verify repository structure |
 | `scripts/spec_validate.sh` | Validate spec bundle completeness |
 | `scripts/ci_local.sh` | Run full local CI suite |
+| `scripts/verify_local.sh` | OCA-style local verification (mirrors CI) |
 | `scripts/ci/run_odoo_tests.sh` | Execute Odoo unit tests |
 | `scripts/ci/module_drift_gate.sh` | Check for module drift |
 | `scripts/ce_oca_audit.py` | Comprehensive OCA/CE audit |
 | `scripts/generate_odoo_dbml.py` | Generate data model artifacts |
 | `scripts/gen_repo_tree.sh` | Auto-generate repo structure docs |
+| `scripts/web_sandbox_verify.sh` | Claude Code Web sandbox verification |
+| `scripts/db_verify.sh` | Database health verification script |
 
 ---
 
@@ -537,4 +772,4 @@ docker restart odoo-prod
 ---
 
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-04*
+*Last updated: 2026-01-09*

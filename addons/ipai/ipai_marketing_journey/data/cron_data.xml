@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Scheduled Action: Process Marketing Journeys -->
+        <record id="ir_cron_marketing_journey_runner" model="ir.cron">
+            <field name="name">Marketing Journey: Process Journeys</field>
+            <field name="model_id" ref="model_marketing_journey_runner"/>
+            <field name="state">code</field>
+            <field name="code">model.run_all_journeys()</field>
+            <field name="interval_number">15</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="priority">50</field>
+        </record>
+    </data>
+</odoo>

@@ -23,12 +23,7 @@ on:
       - 'docker/entrypoint.seeded.sh'
       - 'docker/requirements.seeded.txt'
       - '.github/workflows/build-seeded-image.yml'
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'addons/ipai/**'
-      - 'docker/**'
+  # NOTE: pull_request trigger removed - builds are expensive and should only run on main
   workflow_dispatch:
     inputs:
       push_image:

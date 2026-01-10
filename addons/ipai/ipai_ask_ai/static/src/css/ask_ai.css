@@ -1,90 +1,222 @@
-/* Ask AI Chat Styles */
+/* =============================================================================
+   Ask AI Chat Styles
+   =============================================================================
+   Uses CSS custom properties from ipai_chatgpt_sdk_theme for theming.
+   Falls back to sensible defaults if tokens are not defined.
+   ============================================================================= */
 
+/* Fallback tokens in case theme module is not installed */
 .o_ask_ai_chat {
-    max-height: 100vh;
-    background-color: #f8f9fa;
+  --ipai-font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", sans-serif;
+  --ipai-radius: 12px;
+  --ipai-radius-sm: 10px;
+  --ipai-bg: #ffffff;
+  --ipai-bg-subtle: #f8fafc;
+  --ipai-bg-muted: #f1f5f9;
+  --ipai-fg: #0f172a;
+  --ipai-fg-muted: #64748b;
+  --ipai-card-bg: #ffffff;
+  --ipai-border: rgba(15, 23, 42, 0.10);
+  --ipai-border-strong: rgba(15, 23, 42, 0.16);
+  --ipai-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ipai-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --ipai-primary: #111827;
+  --ipai-primary-hover: #1f2937;
+  --ipai-primary-active: #374151;
+  --ipai-primary-fg: #ffffff;
+  --ipai-input-bg: #ffffff;
+  --ipai-input-border: rgba(15, 23, 42, 0.14);
+  --ipai-input-border-hover: rgba(15, 23, 42, 0.24);
+  --ipai-input-border-focus: #0ea5e9;
+  --ipai-input-placeholder: #94a3b8;
+  --ipai-focus: rgba(14, 165, 233, 0.35);
+  --ipai-focus-ring: 0 0 0 3px var(--ipai-focus);
+  --ipai-space-1: 0.25rem;
+  --ipai-space-2: 0.5rem;
+  --ipai-space-3: 0.75rem;
+  --ipai-space-4: 1rem;
+  --ipai-font-weight-medium: 500;
+  --ipai-font-weight-semibold: 600;
+  --ipai-font-size-base: 1rem;
+  --ipai-transition: 150ms ease;
+  --ipai-chat-user-bg: var(--ipai-primary);
+  --ipai-chat-user-fg: var(--ipai-primary-fg);
+  --ipai-chat-assistant-bg: var(--ipai-bg-muted);
+  --ipai-chat-assistant-fg: var(--ipai-fg);
+  --ipai-chat-bubble-radius: var(--ipai-radius);
+  --ipai-chat-input-radius: var(--ipai-radius-sm);
 }
 
+/* Root Container */
+.o_ask_ai_chat {
+  max-height: 100vh;
+  background-color: var(--ipai-bg-subtle);
+  font-family: var(--ipai-font-sans);
+  color: var(--ipai-fg);
+}
+
+/* Header */
 .o_ask_ai_header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+  background: var(--ipai-primary);
+  color: var(--ipai-primary-fg);
+  padding: var(--ipai-space-4);
+  border-bottom: 1px solid var(--ipai-border);
 }
 
 .o_ask_ai_header h4 {
-    color: white;
+  color: var(--ipai-primary-fg);
+  font-weight: var(--ipai-font-weight-semibold);
+  margin: 0;
 }
 
 .o_ask_ai_header .text-muted {
-    color: rgba(255, 255, 255, 0.8) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
 }
 
 .o_ask_ai_header .btn-outline-secondary {
-    color: white;
-    border-color: rgba(255, 255, 255, 0.5);
+  color: var(--ipai-primary-fg);
+  border-color: rgba(255, 255, 255, 0.4);
+  background: transparent;
+  border-radius: var(--ipai-radius-sm);
+  font-weight: var(--ipai-font-weight-medium);
+  transition: all var(--ipai-transition);
 }
 
 .o_ask_ai_header .btn-outline-secondary:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-color: white;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.6);
 }
 
+/* Messages Area */
 .o_ask_ai_messages {
-    background-color: #ffffff;
+  background-color: var(--ipai-bg);
+  padding: var(--ipai-space-4);
 }
 
+/* Message Bubbles */
 .o_ask_ai_message {
-    max-width: 85%;
+  max-width: 85%;
+  margin-bottom: var(--ipai-space-4);
 }
 
 .o_ask_ai_message.text-end {
-    margin-left: auto;
+  margin-left: auto;
 }
 
+/* User message (right-aligned) */
 .o_ask_ai_message .bg-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: var(--ipai-chat-user-bg) !important;
+  color: var(--ipai-chat-user-fg);
+  border-radius: var(--ipai-chat-bubble-radius);
+  box-shadow: var(--ipai-shadow-xs);
 }
 
+/* Assistant message (left-aligned) */
 .o_ask_ai_message .bg-light {
-    background-color: #f1f3f5 !important;
+  background-color: var(--ipai-chat-assistant-bg) !important;
+  color: var(--ipai-chat-assistant-fg);
+  border: 1px solid var(--ipai-border);
+  border-radius: var(--ipai-chat-bubble-radius);
+  box-shadow: var(--ipai-shadow-xs);
 }
 
 .o_ask_ai_message h4 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-top: 0.5rem;
-    margin-bottom: 0.25rem;
-    color: #495057;
+  font-size: var(--ipai-font-size-base);
+  font-weight: var(--ipai-font-weight-semibold);
+  margin-top: var(--ipai-space-2);
+  margin-bottom: var(--ipai-space-1);
+  color: var(--ipai-fg);
 }
 
 .o_ask_ai_message li {
-    margin-left: 1rem;
-    list-style-type: disc;
+  margin-left: var(--ipai-space-4);
+  list-style-type: disc;
 }
 
 .o_ask_ai_message strong {
-    font-weight: 600;
+  font-weight: var(--ipai-font-weight-semibold);
 }
 
+/* Input Area */
 .o_ask_ai_input {
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  background: var(--ipai-bg);
+  border-top: 1px solid var(--ipai-border);
+  padding: var(--ipai-space-4);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.o_ask_ai_input .form-control {
+  background: var(--ipai-input-bg);
+  border: 1px solid var(--ipai-input-border);
+  border-radius: var(--ipai-chat-input-radius);
+  color: var(--ipai-fg);
+  transition: border-color var(--ipai-transition), box-shadow var(--ipai-transition);
+}
+
+.o_ask_ai_input .form-control:hover {
+  border-color: var(--ipai-input-border-hover);
+}
+
+.o_ask_ai_input .form-control:focus {
+  border-color: var(--ipai-input-border-focus);
+  box-shadow: var(--ipai-focus-ring);
+  outline: none;
+}
+
+.o_ask_ai_input .form-control::placeholder {
+  color: var(--ipai-input-placeholder);
 }
 
 .o_ask_ai_input .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
+  background: var(--ipai-primary);
+  border-color: var(--ipai-primary);
+  color: var(--ipai-primary-fg);
+  border-radius: var(--ipai-chat-input-radius);
+  font-weight: var(--ipai-font-weight-medium);
+  transition: all var(--ipai-transition);
 }
 
 .o_ask_ai_input .btn-primary:hover {
-    background: linear-gradient(135deg, #5a6fd6 0%, #6a4190 100%);
+  background: var(--ipai-primary-hover);
+  border-color: var(--ipai-primary-hover);
+}
+
+.o_ask_ai_input .btn-primary:active {
+  background: var(--ipai-primary-active);
+  border-color: var(--ipai-primary-active);
+}
+
+.o_ask_ai_input .btn-primary:focus-visible {
+  box-shadow: var(--ipai-focus-ring);
 }
 
 /* Quick action buttons */
 .o_ask_ai_messages .btn-outline-primary {
-    border-color: #667eea;
-    color: #667eea;
+  border-color: var(--ipai-border-strong);
+  color: var(--ipai-primary);
+  background: var(--ipai-card-bg);
+  border-radius: var(--ipai-radius-sm);
+  font-weight: var(--ipai-font-weight-medium);
+  transition: all var(--ipai-transition);
 }
 
 .o_ask_ai_messages .btn-outline-primary:hover {
-    background-color: #667eea;
-    color: white;
+  background-color: var(--ipai-primary);
+  border-color: var(--ipai-primary);
+  color: var(--ipai-primary-fg);
+}
+
+/* Loading indicator */
+.o_ask_ai_message .bg-light.border {
+  background-color: var(--ipai-chat-assistant-bg) !important;
+  border: 1px solid var(--ipai-border) !important;
+  border-radius: var(--ipai-chat-bubble-radius);
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .o_ask_ai_chat,
+  .o_ask_ai_chat * {
+    transition: none !important;
+  }
 }

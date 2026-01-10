@@ -1,0 +1,165 @@
+// =============================================================================
+// TBWA Design Tokens Override
+// =============================================================================
+// Overrides ipai_chatgpt_sdk_theme tokens with TBWA brand colors.
+// ChatGPT SDK layout patterns (radius, shadows, spacing) are preserved.
+// =============================================================================
+
+:root {
+  // ---------------------------------------------------------------------------
+  // TBWA Brand Color Variables
+  // ---------------------------------------------------------------------------
+  --tbwa-yellow: #FFC400;
+  --tbwa-yellow-dark: #E5AE00;
+  --tbwa-yellow-light: #FFF4B3;
+  --tbwa-black: #0B0B0B;
+  --tbwa-charcoal: #1A1A1A;
+  --tbwa-gray-dark: #333333;
+  --tbwa-gray: #666666;
+  --tbwa-gray-light: #F5F5F5;
+  --tbwa-white: #FFFFFF;
+
+  // ---------------------------------------------------------------------------
+  // Colors - TBWA Light Theme Override
+  // ---------------------------------------------------------------------------
+  // Background and surface colors (kept neutral for readability)
+  --ipai-bg: var(--tbwa-white);
+  --ipai-bg-subtle: var(--tbwa-gray-light);
+  --ipai-bg-muted: #EBEBEB;
+  --ipai-bg-hover: #F0F0F0;
+  --ipai-bg-active: #E5E5E5;
+
+  // Foreground/text colors
+  --ipai-fg: var(--tbwa-charcoal);
+  --ipai-fg-muted: var(--tbwa-gray);
+  --ipai-fg-subtle: #999999;
+  --ipai-fg-inverted: var(--tbwa-white);
+
+  // Card/panel surfaces
+  --ipai-card-bg: var(--tbwa-white);
+  --ipai-card-bg-hover: var(--tbwa-gray-light);
+
+  // Borders
+  --ipai-border: rgba(0, 0, 0, 0.08);
+  --ipai-border-strong: rgba(0, 0, 0, 0.16);
+  --ipai-border-muted: rgba(0, 0, 0, 0.04);
+
+  // ---------------------------------------------------------------------------
+  // Primary Action - TBWA Yellow (Disruption!)
+  // ---------------------------------------------------------------------------
+  --ipai-primary: var(--tbwa-yellow);
+  --ipai-primary-hover: var(--tbwa-yellow-dark);
+  --ipai-primary-active: #CCB800;
+  --ipai-primary-fg: var(--tbwa-black);  // Black text on yellow
+
+  // Secondary action - TBWA Black
+  --ipai-secondary: var(--tbwa-charcoal);
+  --ipai-secondary-hover: var(--tbwa-gray-dark);
+  --ipai-secondary-active: var(--tbwa-black);
+  --ipai-secondary-fg: var(--tbwa-white);
+
+  // Accent - TBWA Yellow for links/highlights
+  --ipai-accent: var(--tbwa-yellow-dark);
+  --ipai-accent-hover: var(--tbwa-yellow);
+  --ipai-accent-fg: var(--tbwa-black);
+
+  // ---------------------------------------------------------------------------
+  // Status Colors (kept standard for UX consistency)
+  // ---------------------------------------------------------------------------
+  // Success state
+  --ipai-success: #16a34a;
+  --ipai-success-hover: #15803d;
+  --ipai-success-bg: #dcfce7;
+  --ipai-success-fg: #ffffff;
+
+  // Warning state - TBWA Yellow variant
+  --ipai-warning: var(--tbwa-yellow);
+  --ipai-warning-hover: var(--tbwa-yellow-dark);
+  --ipai-warning-bg: var(--tbwa-yellow-light);
+  --ipai-warning-fg: var(--tbwa-black);
+
+  // Danger/error state
+  --ipai-danger: #dc2626;
+  --ipai-danger-hover: #b91c1c;
+  --ipai-danger-bg: #fee2e2;
+  --ipai-danger-fg: #ffffff;
+
+  // Info state - Blue (spec-compliant)
+  --ipai-info: #2563EB;
+  --ipai-info-hover: #1D4ED8;
+  --ipai-info-bg: #DBEAFE;
+  --ipai-info-fg: #ffffff;
+
+  // ---------------------------------------------------------------------------
+  // Input/Form styling - TBWA Yellow focus
+  // ---------------------------------------------------------------------------
+  --ipai-input-bg: var(--tbwa-white);
+  --ipai-input-bg-disabled: var(--tbwa-gray-light);
+  --ipai-input-border: rgba(0, 0, 0, 0.14);
+  --ipai-input-border-hover: rgba(0, 0, 0, 0.24);
+  --ipai-input-border-focus: var(--tbwa-yellow);
+  --ipai-input-placeholder: var(--tbwa-gray);
+
+  // Focus ring - TBWA Yellow glow
+  --ipai-focus: rgba(254, 221, 0, 0.35);
+  --ipai-focus-ring: 0 0 0 3px var(--ipai-focus);
+
+  // ---------------------------------------------------------------------------
+  // Chat/AI specific tokens - TBWA branded
+  // ---------------------------------------------------------------------------
+  --ipai-chat-user-bg: var(--tbwa-yellow);
+  --ipai-chat-user-fg: var(--tbwa-black);
+  --ipai-chat-assistant-bg: var(--tbwa-gray-light);
+  --ipai-chat-assistant-fg: var(--tbwa-charcoal);
+  --ipai-chat-bubble-radius: var(--ipai-radius);
+  --ipai-chat-input-radius: var(--ipai-radius-sm);
+}
+
+// ---------------------------------------------------------------------------
+// Dark Theme - TBWA Variant
+// ---------------------------------------------------------------------------
+:root.ipai-theme-dark,
+:root.tbwa-theme-dark {
+  --ipai-bg: var(--tbwa-black);
+  --ipai-bg-subtle: var(--tbwa-charcoal);
+  --ipai-bg-muted: var(--tbwa-gray-dark);
+  --ipai-bg-hover: var(--tbwa-gray-dark);
+  --ipai-bg-active: var(--tbwa-gray);
+
+  --ipai-fg: var(--tbwa-white);
+  --ipai-fg-muted: #CCCCCC;
+  --ipai-fg-subtle: #999999;
+  --ipai-fg-inverted: var(--tbwa-black);
+
+  --ipai-card-bg: var(--tbwa-charcoal);
+  --ipai-card-bg-hover: var(--tbwa-gray-dark);
+
+  --ipai-border: rgba(255, 255, 255, 0.10);
+  --ipai-border-strong: rgba(255, 255, 255, 0.16);
+  --ipai-border-muted: rgba(255, 255, 255, 0.06);
+
+  // Primary stays TBWA Yellow in dark mode too
+  --ipai-primary: var(--tbwa-yellow);
+  --ipai-primary-hover: var(--tbwa-yellow-dark);
+  --ipai-primary-fg: var(--tbwa-black);
+
+  --ipai-input-bg: var(--tbwa-charcoal);
+  --ipai-input-bg-disabled: var(--tbwa-gray-dark);
+  --ipai-input-border: rgba(255, 255, 255, 0.14);
+  --ipai-input-border-hover: rgba(255, 255, 255, 0.24);
+
+  --ipai-chat-user-bg: var(--tbwa-yellow);
+  --ipai-chat-user-fg: var(--tbwa-black);
+  --ipai-chat-assistant-bg: var(--tbwa-gray-dark);
+  --ipai-chat-assistant-fg: var(--tbwa-white);
+}
+
+// Auto dark theme based on system preference
+@media (prefers-color-scheme: dark) {
+  :root.tbwa-theme-auto {
+    --ipai-bg: var(--tbwa-black);
+    --ipai-bg-subtle: var(--tbwa-charcoal);
+    --ipai-fg: var(--tbwa-white);
+    --ipai-card-bg: var(--tbwa-charcoal);
+  }
+}

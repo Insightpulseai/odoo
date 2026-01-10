@@ -43,7 +43,7 @@ License: AGPL-3
 Author: InsightPulse AI
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.com",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_studio_ai",
     "license": "AGPL-3",
     "depends": [
         "base",
@@ -67,7 +67,7 @@ Author: InsightPulse AI
     },
     "installable": True,
     "auto_install": False,
-    "application": True,
+    "application": False,  # Use ipai_ai_studio as main umbrella
     "sequence": 10,
     "images": ["static/description/banner.png"],
 }

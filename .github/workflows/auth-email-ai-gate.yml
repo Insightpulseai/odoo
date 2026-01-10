@@ -1,0 +1,427 @@
+name: Auth Email AI Gate
+
+on:
+  pull_request:
+    paths:
+      - 'infra/env/.env.example'
+      - 'infra/ai/provider_router/**'
+      - 'docs/auth/**'
+      - 'scripts/verify_email_auth.sh'
+      - 'scripts/test_email_flow.sh'
+      - 'supabase/migrations/*auth*'
+      - '.github/workflows/auth-email-ai-gate.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/env/.env.example'
+      - 'infra/ai/provider_router/**'
+      - 'docs/auth/**'
+  workflow_dispatch:
+    inputs:
+      run_e2e:
+        description: 'Run E2E tests with secrets'
+        required: false
+        default: 'false'
+
+env:
+  MAILGUN_DOMAIN: mg.insightpulseai.net
+
+jobs:
+  # Job 1: Validate .env.example completeness
+  validate-env-example:
+    name: Validate .env.example
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required environment variables exist
+        run: |
+          echo "Checking .env.example for required variables..."
+
+          REQUIRED_VARS=(
+            # Email/SMTP
+            "MAIL_HOST"
+            "MAIL_PORT"
+            "MAIL_USER"
+            "MAIL_PASSWORD"
+            "MAIL_DEFAULT_FROM"
+            "MAILGUN_API_KEY"
+            "MAILGUN_DOMAIN"
+
+            # AI Providers
+            "IPAI_AI_PROVIDER"
+            "IPAI_LLM_API_KEY"
+            "IPAI_LLM_MODEL"
+            "AI_PROVIDER_PRIMARY"
+
+            # Supabase
+            "SUPABASE_URL"
+            "SUPABASE_ANON_KEY"
+            "SUPABASE_SERVICE_ROLE_KEY"
+            "POSTGRES_URL"
+            "POSTGRES_URL_NON_POOLING"
+          )
+
+          MISSING=()
+          for var in "${REQUIRED_VARS[@]}"; do
+            if ! grep -q "^${var}=" infra/env/.env.example; then
+              MISSING+=("$var")
+            fi
+          done
+
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            echo "❌ Missing required variables in .env.example:"
+            printf '  - %s\n' "${MISSING[@]}"
+            exit 1
+          fi
+
+          echo "✅ All required variables present in .env.example"
+
+      - name: Validate email configuration format
+        run: |
+          echo "Validating email configuration format..."
+
+          # Check SMTP port is 2525 (DigitalOcean compatible)
+          MAIL_PORT=$(grep "^MAIL_PORT=" infra/env/.env.example | cut -d= -f2)
+          if [ "$MAIL_PORT" != "2525" ]; then
+            echo "❌ MAIL_PORT should be 2525 (DigitalOcean compatible)"
+            echo "   Found: $MAIL_PORT"
+            exit 1
+          fi
+
+          # Check Mailgun domain matches expected
+          MAILGUN_DOMAIN_VAR=$(grep "^MAILGUN_DOMAIN=" infra/env/.env.example | cut -d= -f2)
+          if [ "$MAILGUN_DOMAIN_VAR" != "mg.insightpulseai.net" ]; then
+            echo "⚠️  MAILGUN_DOMAIN mismatch (expected: mg.insightpulseai.net, found: $MAILGUN_DOMAIN_VAR)"
+          fi
+
+          echo "✅ Email configuration format valid"
+
+      - name: Validate AI provider configuration
+        run: |
+          echo "Validating AI provider configuration..."
+
+          # Check primary provider is set
+          AI_PRIMARY=$(grep "^AI_PROVIDER_PRIMARY=" infra/env/.env.example | cut -d= -f2)
+          if [ -z "$AI_PRIMARY" ]; then
+            echo "❌ AI_PROVIDER_PRIMARY not set"
+            exit 1
+          fi
+
+          # Check supported providers
+          SUPPORTED=("openai" "gemini" "anthropic" "ollama")
+          if [[ ! " ${SUPPORTED[@]} " =~ " ${AI_PRIMARY} " ]]; then
+            echo "❌ AI_PROVIDER_PRIMARY must be one of: ${SUPPORTED[*]}"
+            echo "   Found: $AI_PRIMARY"
+            exit 1
+          fi
+
+          # Check retry configuration
+          RETRY_ATTEMPTS=$(grep "^AI_PROVIDER_RETRY_ATTEMPTS=" infra/env/.env.example | cut -d= -f2)
+          if [ -z "$RETRY_ATTEMPTS" ]; then
+            echo "⚠️  AI_PROVIDER_RETRY_ATTEMPTS not set (will use default: 3)"
+          fi
+
+          echo "✅ AI provider configuration valid"
+
+  # Job 2: Test AI Provider Router
+  test-ai-provider-router:
+    name: Test AI Provider Router
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          cd infra/ai/provider_router
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: |
+          cd infra/ai/provider_router
+          pytest test_router.py -v --cov=router --cov-report=term-missing --cov-report=xml
+
+      - name: Check code coverage
+        run: |
+          cd infra/ai/provider_router
+          coverage report --fail-under=100
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v4
+        with:
+          file: infra/ai/provider_router/coverage.xml
+          flags: provider-router
+          name: provider-router-coverage
+        continue-on-error: true
+
+  # Job 3: DNS Verification (Mocked for PRs)
+  verify-dns-config:
+    name: Verify DNS Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check DNS documentation
+        run: |
+          echo "Checking DNS configuration documentation..."
+
+          # Verify EMAIL_AUTH_SETUP.md exists and has required sections
+          if [ ! -f "docs/auth/EMAIL_AUTH_SETUP.md" ]; then
+            echo "❌ docs/auth/EMAIL_AUTH_SETUP.md not found"
+            exit 1
+          fi
+
+          REQUIRED_SECTIONS=(
+            "MX Records"
+            "SPF Record"
+            "DKIM Record"
+            "DMARC Record"
+            "Tracking CNAME"
+          )
+
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if ! grep -q "$section" docs/auth/EMAIL_AUTH_SETUP.md; then
+              echo "❌ Missing section: $section"
+              exit 1
+            fi
+          done
+
+          echo "✅ DNS documentation complete"
+
+      - name: Mock DNS verification (PR only)
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "ℹ️  Skipping actual DNS checks on PR (no secrets)"
+          echo "   DNS records will be verified on workflow_dispatch with secrets"
+          echo ""
+          echo "Expected DNS records for $MAILGUN_DOMAIN:"
+          echo "  MX:        10 mxa.mailgun.org, 10 mxb.mailgun.org"
+          echo "  SPF:       v=spf1 include:mailgun.org ~all"
+          echo "  DKIM:      v=DKIM1; k=rsa; p=..."
+          echo "  Tracking:  email.$MAILGUN_DOMAIN → mailgun.org"
+          echo "  DMARC:     v=DMARC1; p=quarantine; ..."
+
+  # Job 4: E2E Tests (Only on workflow_dispatch or main with secrets)
+  e2e-tests:
+    name: E2E Email & Auth Tests
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: |
+          # Make scripts executable
+          chmod +x scripts/verify_email_auth.sh
+          chmod +x scripts/test_email_flow.sh
+
+      - name: Verify DNS records (live)
+        env:
+          POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
+        run: |
+          echo "Running live DNS verification..."
+          ./scripts/verify_email_auth.sh || true  # Don't fail on DNS issues in CI
+
+      - name: Test email flow (if enabled)
+        if: github.event.inputs.run_e2e == 'true'
+        env:
+          MAIL_HOST: smtp.mailgun.org
+          MAIL_PORT: 2525
+          MAIL_USER: ${{ secrets.MAILGUN_SMTP_USER }}
+          MAIL_PASSWORD: ${{ secrets.MAILGUN_SMTP_PASSWORD }}
+          MAIL_DEFAULT_FROM: noreply@mg.insightpulseai.net
+          TEST_EMAIL_TO: ${{ secrets.TEST_EMAIL_TO }}
+        run: |
+          echo "Sending test email..."
+          ./scripts/test_email_flow.sh
+
+      - name: Test AI provider routing (if API keys available)
+        if: github.event.inputs.run_e2e == 'true'
+        env:
+          IPAI_AI_PROVIDER: openai
+          IPAI_LLM_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IPAI_LLM_MODEL: gpt-4o-mini
+          AI_PROVIDER_PRIMARY: openai
+        run: |
+          echo "Testing AI provider router with live API..."
+          cd infra/ai/provider_router
+          python3 -c "
+          from router import call_ai
+
+          try:
+              response = call_ai('Say hello in exactly 3 words')
+              print(f'✅ AI Provider Test Passed')
+              print(f'   Provider: {response.provider}')
+              print(f'   Model: {response.model}')
+              print(f'   Tokens: {response.tokens_used}')
+              print(f'   Response: {response.content}')
+          except Exception as e:
+              print(f'❌ AI Provider Test Failed: {e}')
+              exit(1)
+          "
+
+  # Job 5: Documentation Validation
+  validate-documentation:
+    name: Validate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check EMAIL_AUTH_SETUP.md
+        run: |
+          echo "Validating EMAIL_AUTH_SETUP.md..."
+
+          # Check file exists
+          if [ ! -f "docs/auth/EMAIL_AUTH_SETUP.md" ]; then
+            echo "❌ docs/auth/EMAIL_AUTH_SETUP.md not found"
+            exit 1
+          fi
+
+          # Check for critical sections
+          CRITICAL_SECTIONS=(
+            "Architecture"
+            "DNS Configuration"
+            "Verification"
+            "Supabase"
+            "Odoo"
+            "Troubleshooting"
+          )
+
+          MISSING=()
+          for section in "${CRITICAL_SECTIONS[@]}"; do
+            if ! grep -i "$section" docs/auth/EMAIL_AUTH_SETUP.md >/dev/null; then
+              MISSING+=("$section")
+            fi
+          done
+
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            echo "❌ Missing critical sections:"
+            printf '  - %s\n' "${MISSING[@]}"
+            exit 1
+          fi
+
+          # Check for actual DNS record values (not placeholders)
+          if grep -q "your_.*_here" docs/auth/EMAIL_AUTH_SETUP.md; then
+            echo "⚠️  Found placeholder values in EMAIL_AUTH_SETUP.md"
+            echo "   Consider replacing with actual example values"
+          fi
+
+          echo "✅ Documentation validation passed"
+
+      - name: Check AI provider router README
+        run: |
+          echo "Validating AI provider router README..."
+
+          if [ ! -f "infra/ai/provider_router/README.md" ]; then
+            echo "❌ infra/ai/provider_router/README.md not found"
+            exit 1
+          fi
+
+          # Check for usage examples
+          if ! grep -q "from provider_router import call_ai" infra/ai/provider_router/README.md; then
+            echo "❌ Missing usage examples in README"
+            exit 1
+          fi
+
+          # Check for configuration documentation
+          if ! grep -q "Environment Variables" infra/ai/provider_router/README.md; then
+            echo "❌ Missing environment variable documentation"
+            exit 1
+          fi
+
+          echo "✅ AI provider router README valid"
+
+  # Job 6: Security Scan
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for exposed secrets
+        run: |
+          echo "Scanning for accidentally committed secrets..."
+
+          # Patterns that should never be committed
+          FORBIDDEN_PATTERNS=(
+            'sk-[a-zA-Z0-9]{48}'  # OpenAI API key
+            'sk-ant-[a-zA-Z0-9-]+'  # Anthropic API key
+            'AIza[a-zA-Z0-9_-]{35}'  # Google API key
+            'key-[a-f0-9]{32}'  # Mailgun API key
+            'sbp_[a-f0-9]{40}'  # Supabase service role key
+          )
+
+          FOUND_SECRETS=()
+          for pattern in "${FORBIDDEN_PATTERNS[@]}"; do
+            if git grep -E "$pattern" -- ':!*.md' ':!.github' >/dev/null 2>&1; then
+              FOUND_SECRETS+=("$pattern")
+            fi
+          done
+
+          if [ ${#FOUND_SECRETS[@]} -gt 0 ]; then
+            echo "❌ SECURITY ALERT: Found patterns matching API keys/secrets!"
+            printf '  Pattern: %s\n' "${FOUND_SECRETS[@]}"
+            echo ""
+            echo "Action required:"
+            echo "  1. Remove secrets from git history"
+            echo "  2. Rotate all exposed API keys immediately"
+            echo "  3. Use environment variables instead"
+            exit 1
+          fi
+
+          echo "✅ No exposed secrets found"
+
+      - name: Validate .env.example has no real secrets
+        run: |
+          echo "Checking .env.example for placeholder values..."
+
+          # All sensitive values should be placeholders
+          if grep -E "=[^_]*[a-f0-9]{32,}" infra/env/.env.example | grep -v "your_.*_here"; then
+            echo "❌ Found potential real secrets in .env.example"
+            echo "   All sensitive values should use placeholder format: your_*_here"
+            exit 1
+          fi
+
+          echo "✅ .env.example contains only placeholders"
+
+  # Summary Job
+  gate-summary:
+    name: Gate Summary
+    runs-on: ubuntu-latest
+    needs:
+      - validate-env-example
+      - test-ai-provider-router
+      - verify-dns-config
+      - validate-documentation
+      - security-scan
+    if: always()
+    steps:
+      - name: Check all gates passed
+        run: |
+          echo "Auth Email AI Gate Summary:"
+          echo ""
+          echo "✅ Environment validation: ${{ needs.validate-env-example.result }}"
+          echo "✅ AI provider tests: ${{ needs.test-ai-provider-router.result }}"
+          echo "✅ DNS configuration: ${{ needs.verify-dns-config.result }}"
+          echo "✅ Documentation: ${{ needs.validate-documentation.result }}"
+          echo "✅ Security scan: ${{ needs.security-scan.result }}"
+          echo ""
+
+          if [ "${{ needs.validate-env-example.result }}" != "success" ] || \
+             [ "${{ needs.test-ai-provider-router.result }}" != "success" ] || \
+             [ "${{ needs.verify-dns-config.result }}" != "success" ] || \
+             [ "${{ needs.validate-documentation.result }}" != "success" ] || \
+             [ "${{ needs.security-scan.result }}" != "success" ]; then
+            echo "❌ One or more gates failed"
+            exit 1
+          fi
+
+          echo "✅ All gates passed"

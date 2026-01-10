@@ -16,7 +16,7 @@
         - Utilities for test data cleanup
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulse.ai",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_test_fixtures",
     "license": "AGPL-3",
     "depends": [
         "base",

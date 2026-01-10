@@ -1,0 +1,593 @@
+// =============================================================================
+// Extended Platform DBML Schema
+// =============================================================================
+// Odoo 18 CE + OCA Extended Platform Data Model
+// For use with dbdiagram.io
+// Generated: 2026-01-06
+// =============================================================================
+
+Project extended_platform {
+  database_type: 'PostgreSQL'
+  Note: 'Odoo 18 CE Extended Platform - OCA Modules Data Model'
+}
+
+// =============================================================================
+// TIER 2: BACKGROUND PROCESSING (queue_job)
+// =============================================================================
+
+Table queue_job {
+  id integer [pk, increment]
+  uuid varchar(36) [unique, note: 'Unique job identifier']
+  name varchar [note: 'Job description']
+  func_string text [note: 'Function path to execute']
+  channel varchar [note: 'Job channel (root, high, medium, low)']
+  state varchar [note: 'pending, enqueued, started, done, failed']
+  priority integer [default: 10, note: 'Lower = higher priority']
+
+  // Timing
+  date_created timestamp [default: `now()`]
+  date_enqueued timestamp
+  date_started timestamp
+  date_done timestamp
+  eta timestamp [note: 'Earliest time to execute']
+
+  // Execution
+  max_retries integer [default: 5]
+  retry integer [default: 0]
+  result text [note: 'JSON result or error']
+  exc_info text [note: 'Exception traceback']
+
+  // Relations
+  model_name varchar [note: 'Related Odoo model']
+  record_ids text [note: 'JSON array of record IDs']
+  company_id integer [ref: > res_company.id]
+  user_id integer [ref: > res_users.id]
+
+  indexes {
+    (state, priority, date_created) [name: 'queue_job_state_priority_idx']
+    uuid [unique]
+    channel
+  }
+}
+
+Table queue_job_channel {
+  id integer [pk, increment]
+  name varchar [unique, note: 'Channel path (e.g., root.high)']
+  parent_id integer [ref: > queue_job_channel.id]
+  complete_name varchar [note: 'Full channel path']
+
+  // Capacity
+  capacity integer [default: 1, note: 'Max concurrent jobs']
+
+  indexes {
+    name [unique]
+  }
+}
+
+// =============================================================================
+// TIER 0: DATE RANGES (server-ux/date_range)
+// =============================================================================
+
+Table date_range_type {
+  id integer [pk, increment]
+  name varchar [not null]
+  allow_overlap boolean [default: false]
+  active boolean [default: true]
+  company_id integer [ref: > res_company.id]
+
+  indexes {
+    (name, company_id) [unique]
+  }
+}
+
+Table date_range {
+  id integer [pk, increment]
+  name varchar [not null, note: 'Period name (e.g., FY2026-Q1)']
+  type_id integer [not null, ref: > date_range_type.id]
+  date_start date [not null]
+  date_end date [not null]
+  active boolean [default: true]
+  company_id integer [ref: > res_company.id]
+
+  indexes {
+    (type_id, date_start, date_end) [name: 'date_range_dates_idx']
+    (type_id, company_id) [name: 'date_range_type_company_idx']
+  }
+}
+
+// =============================================================================
+// TIER 4: MIS BUILDER (Reporting)
+// =============================================================================
+
+Table mis_report {
+  id integer [pk, increment]
+  name varchar [not null, note: 'Report name']
+  description text
+  style_id integer [ref: > mis_report_style.id]
+
+  // Report structure
+  move_lines_source varchar [note: 'Source for accounting data']
+  account_model varchar [default: 'account.account']
+
+  indexes {
+    name
+  }
+}
+
+Table mis_report_kpi {
+  id integer [pk, increment]
+  report_id integer [not null, ref: > mis_report.id]
+  name varchar [not null, note: 'KPI technical name']
+  description varchar [note: 'KPI display name']
+  expression text [not null, note: 'Python expression or AEP formula']
+  type varchar [default: 'num', note: 'num, pct, str']
+  compare_method varchar [note: 'pct, diff, none']
+  sequence integer [default: 10]
+
+  // Formatting
+  divider varchar [note: '1, 1000, 1000000']
+  dp integer [default: 0, note: 'Decimal places']
+  prefix varchar
+  suffix varchar
+  style_id integer [ref: > mis_report_style.id]
+
+  indexes {
+    (report_id, sequence)
+  }
+}
+
+Table mis_report_instance {
+  id integer [pk, increment]
+  name varchar [not null]
+  report_id integer [not null, ref: > mis_report.id]
+  company_id integer [ref: > res_company.id]
+
+  // Display options
+  target_move varchar [default: 'posted', note: 'posted, all']
+  hide_analytic_filters boolean [default: false]
+
+  indexes {
+    name
+    report_id
+  }
+}
+
+Table mis_report_instance_period {
+  id integer [pk, increment]
+  report_instance_id integer [not null, ref: > mis_report_instance.id]
+  name varchar [not null]
+  sequence integer [default: 10]
+
+  // Date configuration
+  mode varchar [default: 'fix', note: 'fix, relative, relative_date_range']
+  date_from date
+  date_to date
+  date_range_type_id integer [ref: > date_range_type.id]
+  date_range_id integer [ref: > date_range.id]
+
+  // Comparison
+  offset integer [default: 0]
+  duration integer [default: 1]
+
+  indexes {
+    (report_instance_id, sequence)
+  }
+}
+
+Table mis_report_style {
+  id integer [pk, increment]
+  name varchar [not null]
+
+  // CSS styling
+  font_style varchar [note: 'normal, italic']
+  font_weight varchar [note: 'normal, bold']
+  font_size varchar [note: 'small, medium, large']
+  color varchar [note: 'CSS color']
+  background_color varchar
+  indent_level integer [default: 0]
+}
+
+// =============================================================================
+// TIER 4: KPI DASHBOARD
+// =============================================================================
+
+Table kpi_dashboard {
+  id integer [pk, increment]
+  name varchar [not null]
+  active boolean [default: true]
+
+  // Layout
+  number_of_columns integer [default: 4]
+
+  // Access
+  group_ids text [note: 'M2M to res.groups']
+  company_id integer [ref: > res_company.id]
+}
+
+Table kpi_dashboard_tile {
+  id integer [pk, increment]
+  dashboard_id integer [not null, ref: > kpi_dashboard.id]
+  name varchar [not null]
+  sequence integer [default: 10]
+
+  // Content
+  widget varchar [default: 'number', note: 'number, graph, count']
+  model_id integer [ref: > ir_model.id]
+  domain text [note: 'JSON domain filter']
+  measure_field_id integer [ref: > ir_model_fields.id]
+
+  // Display
+  color varchar [note: 'CSS color for tile']
+  icon varchar [note: 'FontAwesome icon']
+
+  // KPI settings
+  compare_method varchar [note: 'previous_period, target']
+  goal_value float
+
+  indexes {
+    (dashboard_id, sequence)
+  }
+}
+
+// =============================================================================
+// TIER 5: SPREADSHEET (spreadsheet_oca)
+// =============================================================================
+
+Table spreadsheet_spreadsheet {
+  id integer [pk, increment]
+  name varchar [not null]
+  data jsonb [note: 'Full spreadsheet data in JSON format']
+  thumbnail bytea [note: 'PNG thumbnail']
+
+  // Access
+  active boolean [default: true]
+  group_ids text [note: 'M2M to res.groups']
+  company_id integer [ref: > res_company.id]
+
+  indexes {
+    name
+  }
+}
+
+Table spreadsheet_dashboard {
+  id integer [pk, increment]
+  name varchar [not null]
+  spreadsheet_id integer [ref: > spreadsheet_spreadsheet.id]
+  active boolean [default: true]
+
+  // Dashboard settings
+  publish_dashboard boolean [default: false]
+  group_ids text [note: 'M2M to res.groups']
+
+  indexes {
+    name
+  }
+}
+
+// =============================================================================
+// TIER 6: KNOWLEDGE (document_page)
+// =============================================================================
+
+Table document_page {
+  id integer [pk, increment]
+  name varchar [not null]
+  parent_id integer [ref: > document_page.id]
+  content text [note: 'HTML content']
+
+  // Hierarchy
+  display_name varchar [note: 'Computed full path']
+  sequence integer [default: 10]
+
+  // Metadata
+  type varchar [default: 'content', note: 'content, category']
+  active boolean [default: true]
+
+  // Access
+  group_ids text [note: 'M2M to res.groups']
+  company_id integer [ref: > res_company.id]
+
+  indexes {
+    parent_id
+    (parent_id, sequence)
+  }
+}
+
+Table document_page_history {
+  id integer [pk, increment]
+  page_id integer [not null, ref: > document_page.id]
+  content text
+  summary varchar [note: 'Change summary']
+
+  // Audit
+  create_date timestamp [default: `now()`]
+  create_uid integer [ref: > res_users.id]
+
+  indexes {
+    page_id
+    create_date
+  }
+}
+
+// =============================================================================
+// TIER 6: DMS (Document Management System)
+// =============================================================================
+
+Table dms_directory {
+  id integer [pk, increment]
+  name varchar [not null]
+  parent_id integer [ref: > dms_directory.id]
+  complete_name varchar [note: 'Full path']
+
+  // Storage
+  storage_id integer [ref: > dms_storage.id]
+
+  // Access
+  group_ids text [note: 'M2M to res.groups']
+  company_id integer [ref: > res_company.id]
+
+  indexes {
+    parent_id
+    storage_id
+  }
+}
+
+Table dms_file {
+  id integer [pk, increment]
+  name varchar [not null]
+  directory_id integer [not null, ref: > dms_directory.id]
+
+  // Content
+  content bytea [note: 'File binary content']
+  content_binary bytea [note: 'Alternative content store']
+  mimetype varchar
+  extension varchar
+  size integer [note: 'File size in bytes']
+
+  // Metadata
+  category_id integer [ref: > dms_category.id]
+  tag_ids text [note: 'M2M to dms.tag']
+
+  // Versioning
+  locked_by integer [ref: > res_users.id]
+
+  indexes {
+    directory_id
+    name
+    category_id
+  }
+}
+
+Table dms_storage {
+  id integer [pk, increment]
+  name varchar [not null]
+  save_type varchar [default: 'database', note: 'database, attachment, file']
+
+  // External storage
+  external_root varchar [note: 'Base path for file storage']
+  is_hidden boolean [default: false]
+
+  company_id integer [ref: > res_company.id]
+}
+
+Table dms_category {
+  id integer [pk, increment]
+  name varchar [not null]
+  parent_id integer [ref: > dms_category.id]
+  complete_name varchar
+
+  indexes {
+    parent_id
+  }
+}
+
+Table dms_tag {
+  id integer [pk, increment]
+  name varchar [not null]
+  color integer [note: 'Odoo color index 0-11']
+  category_id integer [ref: > dms_category.id]
+}
+
+// =============================================================================
+// TIER 7: REST API (base_rest)
+// =============================================================================
+
+Table rest_service_registration {
+  id integer [pk, increment]
+  name varchar [not null]
+  root_path varchar [not null, note: 'e.g., /api/v1']
+  collection varchar [note: 'Service collection name']
+  usage varchar [note: 'Service usage identifier']
+
+  // Configuration
+  auth_method varchar [default: 'user', note: 'user, public, api_key']
+  default_content_type varchar [default: 'application/json']
+
+  indexes {
+    root_path [unique]
+  }
+}
+
+// =============================================================================
+// TIER 8: AUDIT LOG
+// =============================================================================
+
+Table auditlog_rule {
+  id integer [pk, increment]
+  name varchar [not null]
+  model_id integer [not null, ref: > ir_model.id]
+
+  // What to log
+  log_read boolean [default: false]
+  log_create boolean [default: true]
+  log_write boolean [default: true]
+  log_unlink boolean [default: true]
+
+  // State
+  state varchar [default: 'draft', note: 'draft, subscribed']
+
+  indexes {
+    model_id [unique]
+  }
+}
+
+Table auditlog_log {
+  id integer [pk, increment]
+  model_id integer [not null, ref: > ir_model.id]
+  res_id integer [not null, note: 'Record ID']
+  method varchar [not null, note: 'create, write, unlink, read']
+
+  // Audit data
+  user_id integer [ref: > res_users.id]
+  http_session_id integer
+  http_request_id integer
+
+  // Timestamp
+  create_date timestamp [default: `now()`]
+
+  indexes {
+    (model_id, res_id)
+    create_date
+    user_id
+  }
+}
+
+Table auditlog_log_line {
+  id integer [pk, increment]
+  log_id integer [not null, ref: > auditlog_log.id]
+  field_id integer [not null, ref: > ir_model_fields.id]
+
+  // Values
+  old_value text
+  old_value_text text
+  new_value text
+  new_value_text text
+
+  indexes {
+    log_id
+    field_id
+  }
+}
+
+// =============================================================================
+// TIER 9: ACCOUNT FINANCIAL TOOLS
+// =============================================================================
+
+Table account_fiscal_year {
+  id integer [pk, increment]
+  name varchar [not null]
+  date_from date [not null]
+  date_to date [not null]
+  company_id integer [ref: > res_company.id]
+
+  indexes {
+    (company_id, date_from, date_to)
+  }
+}
+
+// =============================================================================
+// CORE ODOO TABLES (Referenced)
+// =============================================================================
+
+Table res_company {
+  id integer [pk, increment]
+  name varchar [not null]
+}
+
+Table res_users {
+  id integer [pk, increment]
+  login varchar [not null]
+  partner_id integer
+}
+
+Table ir_model {
+  id integer [pk, increment]
+  name varchar [not null]
+  model varchar [not null, unique]
+}
+
+Table ir_model_fields {
+  id integer [pk, increment]
+  model_id integer [ref: > ir_model.id]
+  name varchar [not null]
+  field_description varchar
+  ttype varchar [note: 'Field type']
+}
+
+// =============================================================================
+// IPAI PLATFORM MODULES
+// =============================================================================
+
+Table ipai_command_center_run {
+  id integer [pk, increment]
+  name varchar [not null]
+  run_type varchar [note: 'ai_query, batch_job, integration, report']
+  state varchar [default: 'pending', note: 'pending, running, done, failed']
+
+  // Timing
+  date_start timestamp
+  date_end timestamp
+  duration float [note: 'Seconds']
+
+  // Execution
+  job_id integer [ref: > queue_job.id]
+  result jsonb
+  error_message text
+
+  // Context
+  user_id integer [ref: > res_users.id]
+  company_id integer [ref: > res_company.id]
+
+  indexes {
+    state
+    date_start
+    run_type
+  }
+}
+
+Table ipai_ai_request {
+  id integer [pk, increment]
+  prompt text [not null]
+  response text
+
+  // Metrics
+  model varchar [note: 'AI model used']
+  tokens_input integer
+  tokens_output integer
+  latency_ms integer
+
+  // Context
+  context_model varchar [note: 'Source Odoo model']
+  context_res_id integer [note: 'Source record ID']
+
+  // Audit
+  user_id integer [ref: > res_users.id]
+  create_date timestamp [default: `now()`]
+
+  indexes {
+    create_date
+    user_id
+  }
+}
+
+// =============================================================================
+// TABLE RELATIONSHIPS (ER Diagram Connections)
+// =============================================================================
+
+// queue_job relationships are defined inline above
+
+// MIS Builder relationships
+Ref: mis_report_kpi.report_id > mis_report.id
+Ref: mis_report_instance.report_id > mis_report.id
+Ref: mis_report_instance_period.report_instance_id > mis_report_instance.id
+
+// Document relationships
+Ref: document_page.parent_id > document_page.id
+Ref: document_page_history.page_id > document_page.id
+
+// DMS relationships
+Ref: dms_directory.parent_id > dms_directory.id
+Ref: dms_file.directory_id > dms_directory.id
+Ref: dms_category.parent_id > dms_category.id
+
+// IPAI relationships
+Ref: ipai_command_center_run.job_id > queue_job.id

@@ -30,6 +30,7 @@
         "base",
         "mail",
         "account",
+        "project",
     ],
     "data": [
         "security/ir.model.access.csv",

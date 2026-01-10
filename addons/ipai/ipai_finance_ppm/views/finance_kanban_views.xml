@@ -20,7 +20,7 @@
                     colors='{"draft": "muted", "active": "warning", "review": "danger", "done": "success"}'/>
 
                 <templates>
-                    <t t-name="kanban-box">
+                    <t t-name="card">
                         <div t-attf-class="oe_kanban_global_click #{record.color.raw_value ? 'oe_kanban_color_' + record.color.raw_value : ''}">
                             <div class="oe_kanban_content">
                                 <!-- Header with badges -->
@@ -75,7 +75,7 @@
     <record id="action_finance_kanban_board" model="ir.actions.act_window">
         <field name="name">Finance Kanban Board</field>
         <field name="res_model">project.task</field>
-        <field name="view_mode">kanban,tree,form,calendar</field>
+        <field name="view_mode">kanban,list,form,calendar</field>
         <field name="view_id" ref="view_finance_task_kanban"/>
         <field name="domain">[('is_finance_ppm', '=', True)]</field>
         <field name="context">{
@@ -98,7 +98,7 @@
     <record id="action_closing_tasks_kanban" model="ir.actions.act_window">
         <field name="name">Month-End Close Tasks</field>
         <field name="res_model">project.task</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="view_id" ref="view_finance_task_kanban"/>
         <field name="domain">[('is_closing_task', '=', True)]</field>
         <field name="context">{
@@ -119,7 +119,7 @@
     <record id="action_compliance_tasks_kanban" model="ir.actions.act_window">
         <field name="name">Tax Compliance Tasks</field>
         <field name="res_model">project.task</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,list,form</field>
         <field name="view_id" ref="view_finance_task_kanban"/>
         <field name="domain">[('is_compliance_task', '=', True)]</field>
         <field name="context">{
@@ -250,7 +250,7 @@
     <record id="action_finance_recurrence_rules" model="ir.actions.act_window">
         <field name="name">Recurrence Rules</field>
         <field name="res_model">finance.recurrence.rule</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Define recurrence rules for automated task generation

@@ -12,6 +12,7 @@ eggs/
 .eggs/
 lib/
 !clients/**/lib/
+!apps/**/lib/
 lib64/
 parts/
 sdist/
@@ -39,22 +40,41 @@ addons/*
 !addons/tbwa_*/
 !addons/tbwa_*/**
 
-# New layered structure (addons/ipai/ and addons/oca/)
+# --- IPAI custom modules (tracked) ---
 !addons/ipai/
 !addons/ipai/**
+
+# --- OCA meta layer (tracked) ---
+# Only track manifests + lockfile, NOT cloned repos
 !addons/oca/
-!addons/oca/**
+addons/oca/*/
+!addons/oca/.gitkeep
+!addons/oca/__init__.py
+!addons/oca/__manifest__.py
+!addons/oca/manifest.yaml
+!addons/oca/requirements.txt
+!addons/oca/oca.lock.json
+!addons/oca/README.md
 
 # Common ignores
 addons/**/__pycache__/
 addons/**/*.pyc
+
+# Node.js
+node_modules/
 
 # Docker
 .env
 docker-compose.override.yml
 
 # IDE
-.vscode/
+# .vscode/
+!/.vscode/extensions.json
+!/.vscode/settings.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/ipai_workspace.code-workspace
+!/.vscode/README.md
 .idea/
 *.swp
 *.swo
@@ -96,6 +116,9 @@ temp/
 !scripts/lakehouse/*.sql
 !infra/lakehouse/**/*.sql
 !tools/audit/*.sql
+!scripts/sql/*.sql
+!db/migrations/*.sql
+!db/audit/*.sql
 
 # Parity audit generated files
 parity_report.json
@@ -109,6 +132,10 @@ parity_report.json
 tools/db-inventory/output/
 .env.smtp
 *.env
+!.env.local
+!docker-compose.local.yml
+!config/odoo.conf.local
+*.code-workspace
 
 # Odoo import exports (generated, may contain sensitive data)
 **/odoo_import_*.csv
@@ -124,3 +151,27 @@ data/source.xlsx
 # Keep templates and sample files
 !templates/odoo/import/*.csv
 !data/user_map.csv
+
+# --- local env / secrets ---
+.env
+.env.*
+config/odoo.conf.local
+.mcp.json
+.claude/settings.local.json
+
+# --- local compose overrides ---
+docker-compose.local.yml
+docker-compose.*.local.yml
+
+# --- node / next build ---
+**/.next/
+**/node_modules/
+.cursor/
+
+# --- python ---
+.venv/
+__pycache__/
+*.pyc
+
+# --- misc ---
+.DS_Store

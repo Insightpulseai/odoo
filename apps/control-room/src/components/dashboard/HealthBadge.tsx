@@ -55,33 +55,23 @@ export function HealthBadge({ status, label, showIcon = true }: HealthBadgeProps
 }
 
 interface ServiceHealthProps {
-  services: {
-    databricks: 'connected' | 'disconnected';
-    notion: 'connected' | 'disconnected';
-  };
+  services: Record<string, 'connected' | 'disconnected'>;
 }
 
 export function ServiceHealth({ services }: ServiceHealthProps) {
   return (
     <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2">
-        <span
-          className={clsx(
-            'h-2 w-2 rounded-full',
-            services.databricks === 'connected' ? 'bg-emerald-400' : 'bg-red-400'
-          )}
-        />
-        <span className="text-sm text-surface-200">Databricks</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <span
-          className={clsx(
-            'h-2 w-2 rounded-full',
-            services.notion === 'connected' ? 'bg-emerald-400' : 'bg-red-400'
-          )}
-        />
-        <span className="text-sm text-surface-200">Notion</span>
-      </div>
+      {Object.entries(services).map(([name, status]) => (
+        <div key={name} className="flex items-center gap-2">
+          <span
+            className={clsx(
+              'h-2 w-2 rounded-full',
+              status === 'connected' ? 'bg-emerald-400' : 'bg-red-400'
+            )}
+          />
+          <span className="text-sm text-surface-200 capitalize">{name}</span>
+        </div>
+      ))}
     </div>
   );
 }

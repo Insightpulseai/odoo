@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend Settings to add OCR configuration -->
+    <record id="res_config_settings_view_form_expense_ocr" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.expense.ocr</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="hr_expense.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@name='hr_expense']" position="inside">
+                <block title="Expense OCR Configuration"
+                       help="Configure automatic receipt data extraction">
+                    <setting string="OCR Provider"
+                             help="Select which service to use for receipt OCR">
+                        <field name="expense_ocr_provider"/>
+                    </setting>
+
+                    <setting string="Auto-extract on Upload"
+                             help="Automatically run OCR when a receipt is attached">
+                        <field name="expense_ocr_auto_extract"/>
+                    </setting>
+
+                    <!-- Custom OCR Endpoint settings -->
+                    <setting string="Custom OCR Endpoint"
+                             invisible="expense_ocr_provider != 'custom'"
+                             help="Your custom OCR service URL">
+                        <field name="expense_ocr_endpoint_url"
+                               placeholder="https://your-ocr-service.com/ocr/expense"/>
+                        <field name="expense_ocr_custom_api_key"
+                               placeholder="API Key (optional)"
+                               password="True"/>
+                    </setting>
+
+                    <!-- OpenAI settings -->
+                    <setting string="OpenAI API Key"
+                             invisible="expense_ocr_provider != 'openai'"
+                             help="API key for OpenAI GPT-4 Vision">
+                        <field name="expense_ocr_openai_api_key"
+                               placeholder="sk-..."
+                               password="True"/>
+                    </setting>
+
+                    <!-- Gemini settings -->
+                    <setting string="Gemini API Key"
+                             invisible="expense_ocr_provider != 'gemini'"
+                             help="API key for Google Gemini Vision">
+                        <field name="expense_ocr_gemini_api_key"
+                               placeholder="AIza..."
+                               password="True"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

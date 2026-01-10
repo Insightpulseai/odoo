@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "odoo:compose up (prod file)",
+      "type": "shell",
+      "command": "docker compose -f deploy/docker-compose.prod.yml up -d",
+      "problemMatcher": []
+    },
+    {
+      "label": "odoo:compose ps",
+      "type": "shell",
+      "command": "docker compose -f deploy/docker-compose.prod.yml ps",
+      "problemMatcher": []
+    },
+    {
+      "label": "odoo:logs (tail)",
+      "type": "shell",
+      "command": "docker compose -f deploy/docker-compose.prod.yml logs --tail=200 odoo-ce",
+      "problemMatcher": []
+    },
+    {
+      "label": "odoo:rebuild assets (fix 500)",
+      "type": "shell",
+      "command": "docker compose -f deploy/docker-compose.prod.yml exec odoo-ce odoo -d odoo -u web,ipai_theme_aiux,ipai_aiux_chat --stop-after-init",
+      "problemMatcher": []
+    },
+    {
+      "label": "odoo:check assets endpoint",
+      "type": "shell",
+      "command": "curl -I http://localhost:8069/web && curl -s http://localhost:8069/web | grep -Eo '/web/assets/[^\"]+' | head -n 1",
+      "problemMatcher": []
+    },
+    {
+      "label": "odoo:health (nginx + odoo)",
+      "type": "shell",
+      "command": "set -euo pipefail; curl -fsS -I http://localhost:8069/web/login | head -n 5; echo '---'; docker compose -f deploy/docker-compose.prod.yml ps; echo '---'; docker compose -f deploy/docker-compose.prod.yml logs --tail=120 odoo-ce | tail -n 120",
+      "problemMatcher": []
+    },
+    {
+      "label": "odoo:502 triage (nginx upstream + odoo crash)",
+      "type": "shell",
+      "command": "set -euo pipefail; docker compose -f deploy/docker-compose.prod.yml logs --tail=200 nginx 2>/dev/null | tail -n 200 || echo 'No nginx service'; echo '---'; docker compose -f deploy/docker-compose.prod.yml logs --tail=300 odoo-ce | tail -n 300",
+      "problemMatcher": []
+    },
+    {
+      "label": "odoo:db connectivity",
+      "type": "shell",
+      "command": "docker compose -f deploy/docker-compose.prod.yml exec -T odoo-db psql -U postgres -d postgres -c 'select 1' || echo 'DB connection failed'",
+      "problemMatcher": []
+    },
+    {
+      "label": "aiux:verify install",
+      "type": "shell",
+      "command": "bash scripts/aiux/verify_install.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "aiux:verify assets",
+      "type": "shell",
+      "command": "bash scripts/aiux/verify_assets.sh",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint:python (ruff)",
+      "type": "shell",
+      "command": "ruff check .",
+      "problemMatcher": []
+    },
+    {
+      "label": "format:python (ruff)",
+      "type": "shell",
+      "command": "ruff format .",
+      "problemMatcher": []
+    },
+    {
+      "label": "lint:js (eslint)",
+      "type": "shell",
+      "command": "npm run -s lint",
+      "problemMatcher": []
+    },
+    {
+      "label": "docker:logs (odoo-erp-prod)",
+      "type": "shell",
+      "command": "docker logs odoo-erp-prod --tail 200 2>/dev/null || echo 'Container odoo-erp-prod not found'",
+      "problemMatcher": []
+    }
+  ]
+}

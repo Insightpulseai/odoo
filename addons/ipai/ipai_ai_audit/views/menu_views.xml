@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_ai_audit_root"
+              name="AI Audit"
+              groups="group_ai_auditor"
+              web_icon="ipai_ai_audit,static/description/icon.png"
+              sequence="200"/>
+
+    <!-- Audit Logs Menu -->
+    <menuitem id="menu_ai_audit_logs"
+              name="Audit Logs"
+              parent="menu_ai_audit_root"
+              action="action_ipai_ai_audit_log"
+              sequence="10"/>
+
+    <!-- Governance Menu -->
+    <menuitem id="menu_ai_audit_governance"
+              name="Governance"
+              parent="menu_ai_audit_root"
+              groups="group_ai_admin"
+              sequence="20"/>
+
+    <menuitem id="menu_ai_governance_rules"
+              name="Governance Rules"
+              parent="menu_ai_audit_governance"
+              action="action_ipai_ai_governance_rule"
+              sequence="10"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_ai_audit_config"
+              name="Configuration"
+              parent="menu_ai_audit_root"
+              groups="group_ai_admin"
+              sequence="50"/>
+</odoo>

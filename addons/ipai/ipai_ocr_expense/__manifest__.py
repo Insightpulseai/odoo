@@ -31,8 +31,8 @@ Usage:
     """,
     "version": "18.0.1.0.0",
     "category": "Human Resources/Expenses",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ocr_expense",
     "license": "AGPL-3",
     "depends": [
         "hr_expense",

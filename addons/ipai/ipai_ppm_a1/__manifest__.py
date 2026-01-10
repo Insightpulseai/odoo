@@ -25,8 +25,8 @@ Key Features:
 - Webhook support for n8n integration
 - Multi-company aware with record rules
     """,
-    "author": "IPAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_ppm_a1",
     "license": "LGPL-3",
     "depends": [
         "base",
@@ -47,5 +47,5 @@ Key Features:
     "demo": [],
     "installable": True,
     "auto_install": False,
-    "application": True,
+    "application": False,  # Supporting module for close orchestration
 }

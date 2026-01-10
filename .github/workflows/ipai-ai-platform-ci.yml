@@ -1,0 +1,229 @@
+name: IPAI AI Platform CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/ipai_ai_core/**'
+      - 'addons/ipai/ipai_ai_agents_ui/**'
+      - 'addons/ipai/ipai_ai_connectors/**'
+      - 'addons/ipai/ipai_ai_sources_odoo/**'
+      - 'addons/ipai/ipai_workspace_core/**'
+      - 'spec/ipai-ai-platform/**'
+      - 'db/migrations/*_IPAI_KB*.sql'
+      - 'docs/architecture/IPAI_AI_PLATFORM*'
+      - 'docs/data-model/IPAI_AI_PLATFORM*'
+      - 'docs/api/openapi.ipai_ai_platform.yaml'
+      - '.github/workflows/ipai-ai-platform-ci.yml'
+  pull_request:
+    paths:
+      - 'addons/ipai/ipai_ai_core/**'
+      - 'addons/ipai/ipai_ai_agents_ui/**'
+      - 'addons/ipai/ipai_ai_connectors/**'
+      - 'addons/ipai/ipai_ai_sources_odoo/**'
+      - 'addons/ipai/ipai_workspace_core/**'
+      - 'spec/ipai-ai-platform/**'
+      - 'db/migrations/*_IPAI_KB*.sql'
+      - 'docs/architecture/IPAI_AI_PLATFORM*'
+      - 'docs/data-model/IPAI_AI_PLATFORM*'
+      - 'docs/api/openapi.ipai_ai_platform.yaml'
+      - '.github/workflows/ipai-ai-platform-ci.yml'
+
+jobs:
+  # ===========================================================================
+  # Python Lint
+  # ===========================================================================
+  python-lint:
+    name: Python Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install linters
+        run: pip install flake8 black isort
+
+      - name: Run flake8
+        run: |
+          flake8 addons/ipai/ipai_ai_core \
+                 addons/ipai/ipai_ai_agents_ui \
+                 addons/ipai/ipai_ai_connectors \
+                 addons/ipai/ipai_ai_sources_odoo \
+                 --max-line-length=120 \
+                 --ignore=E501,W503
+
+      - name: Check black formatting
+        run: |
+          black --check --line-length=120 \
+                addons/ipai/ipai_ai_core \
+                addons/ipai/ipai_ai_agents_ui \
+                addons/ipai/ipai_ai_connectors \
+                addons/ipai/ipai_ai_sources_odoo || echo "Black formatting check failed (non-blocking)"
+
+      - name: Check isort
+        run: |
+          isort --check-only \
+                addons/ipai/ipai_ai_core \
+                addons/ipai/ipai_ai_agents_ui \
+                addons/ipai/ipai_ai_connectors \
+                addons/ipai/ipai_ai_sources_odoo || echo "isort check failed (non-blocking)"
+
+  # ===========================================================================
+  # React UI Build
+  # ===========================================================================
+  build-react-ui:
+    name: Build React UI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: addons/ipai/ipai_ai_agents_ui/ui
+        run: npm ci
+
+      - name: Build IIFE bundle
+        working-directory: addons/ipai/ipai_ai_agents_ui/ui
+        run: npm run build
+
+      - name: Verify bundle exists
+        run: |
+          echo "Checking for built artifacts..."
+          test -f addons/ipai/ipai_ai_agents_ui/static/lib/ipai_ai_ui.iife.js || echo "Warning: IIFE bundle not found"
+          test -f addons/ipai/ipai_ai_agents_ui/static/lib/ipai_ai_ui.css || echo "Warning: CSS bundle not found"
+
+      - name: Upload bundle as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-ui-bundle
+          path: |
+            addons/ipai/ipai_ai_agents_ui/static/lib/ipai_ai_ui.iife.js
+            addons/ipai/ipai_ai_agents_ui/static/lib/ipai_ai_ui.css
+          retention-days: 7
+
+  # ===========================================================================
+  # Spec Kit Validation
+  # ===========================================================================
+  validate-spec:
+    name: Validate Spec Kit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check spec files exist
+        run: |
+          echo "Checking spec kit bundle..."
+          test -f spec/ipai-ai-platform/constitution.md || exit 1
+          test -f spec/ipai-ai-platform/prd.md || exit 1
+          test -f spec/ipai-ai-platform/plan.md || exit 1
+          test -f spec/ipai-ai-platform/tasks.md || exit 1
+          echo "All spec files present"
+
+      - name: Check documentation exists
+        run: |
+          echo "Checking documentation..."
+          test -f docs/architecture/IPAI_AI_PLATFORM_ARCH.md || exit 1
+          test -f docs/data-model/IPAI_AI_PLATFORM_SCHEMA.dbml || exit 1
+          test -f docs/data-model/IPAI_AI_PLATFORM_ERD.mmd || exit 1
+          test -f docs/architecture/IPAI_AI_PLATFORM_ORD.md || exit 1
+          test -f docs/api/openapi.ipai_ai_platform.yaml || exit 1
+          echo "All documentation files present"
+
+  # ===========================================================================
+  # OpenAPI Validation
+  # ===========================================================================
+  validate-openapi:
+    name: Validate OpenAPI
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Spectral
+        run: npm install -g @stoplight/spectral-cli
+
+      - name: Validate OpenAPI spec
+        run: |
+          spectral lint docs/api/openapi.ipai_ai_platform.yaml --ruleset=spectral:oas
+
+  # ===========================================================================
+  # Module Manifest Check
+  # ===========================================================================
+  check-manifests:
+    name: Check Module Manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Check manifests are valid Python
+        run: |
+          python3 -m py_compile addons/ipai/ipai_ai_agents_ui/__manifest__.py
+          python3 -m py_compile addons/ipai/ipai_ai_connectors/__manifest__.py
+          python3 -m py_compile addons/ipai/ipai_ai_sources_odoo/__manifest__.py
+          echo "All manifests are valid Python"
+
+      - name: Check manifest versions
+        run: |
+          for manifest in addons/ipai/ipai_ai_agents_ui/__manifest__.py \
+                          addons/ipai/ipai_ai_connectors/__manifest__.py \
+                          addons/ipai/ipai_ai_sources_odoo/__manifest__.py; do
+            echo "Checking $manifest..."
+            grep -q '"version": "18.0' "$manifest" || exit 1
+          done
+          echo "All manifests have correct version prefix"
+
+  # ===========================================================================
+  # SQL Migration Check
+  # ===========================================================================
+  check-migrations:
+    name: Check SQL Migrations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check migration file exists
+        run: |
+          test -f db/migrations/202601060001_IPAI_KB_CHUNKS.sql || exit 1
+          echo "KB migration file exists"
+
+      - name: Check migration syntax
+        run: |
+          echo "Checking SQL syntax (basic validation)..."
+          grep -q "CREATE TABLE" db/migrations/202601060001_IPAI_KB_CHUNKS.sql || exit 1
+          grep -q "CREATE SCHEMA" db/migrations/202601060001_IPAI_KB_CHUNKS.sql || exit 1
+          grep -q "CREATE.*FUNCTION" db/migrations/202601060001_IPAI_KB_CHUNKS.sql || exit 1
+          echo "Migration appears valid"
+
+  # ===========================================================================
+  # Summary Job
+  # ===========================================================================
+  ci-complete:
+    name: CI Complete
+    needs: [python-lint, build-react-ui, validate-spec, validate-openapi, check-manifests, check-migrations]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Check all jobs passed
+        run: |
+          if [ "${{ needs.python-lint.result }}" != "success" ] || \
+             [ "${{ needs.build-react-ui.result }}" != "success" ] || \
+             [ "${{ needs.validate-spec.result }}" != "success" ] || \
+             [ "${{ needs.validate-openapi.result }}" != "success" ] || \
+             [ "${{ needs.check-manifests.result }}" != "success" ] || \
+             [ "${{ needs.check-migrations.result }}" != "success" ]; then
+            echo "One or more CI jobs failed"
+            exit 1
+          fi
+          echo "All CI jobs passed!"

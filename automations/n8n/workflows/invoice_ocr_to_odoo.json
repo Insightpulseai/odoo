@@ -1,0 +1,275 @@
+{
+  "name": "Invoice OCR to Odoo",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "invoice-upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Invoice Upload",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "invoice-upload-webhook"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ocr.insightpulseai.net/api/ocr/invoice",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "image",
+              "value": "={{ $json.data }}"
+            },
+            {
+              "name": "language",
+              "value": "en"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "paddleocr-extract",
+      "name": "PaddleOCR - Extract Text",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "model": "claude-3-5-sonnet-20241022",
+        "messages": {
+          "values": [
+            {
+              "content": "Extract invoice data from the following OCR text and return as JSON with these fields:\n- vendor_name: string\n- vendor_tin: string (Philippine TIN format XX-XXXXXXX-XXX)\n- invoice_number: string\n- invoice_date: string (YYYY-MM-DD)\n- due_date: string (YYYY-MM-DD)\n- subtotal: number\n- vat_amount: number (12% VAT if applicable)\n- ewt_amount: number (expanded withholding tax if applicable)\n- total_amount: number\n- currency: string (PHP or USD)\n- line_items: array of {description, quantity, unit_price, amount}\n\nOCR Text:\n{{ $json.text }}\n\nReturn ONLY valid JSON, no markdown.",
+              "role": "user"
+            }
+          ]
+        },
+        "options": {
+          "temperature": 0.1,
+          "maxTokens": 2000
+        }
+      },
+      "id": "claude-structure",
+      "name": "Claude - Structure Data",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1,
+      "position": [690, 300],
+      "credentials": {
+        "anthropicApi": {
+          "id": "anthropic-api",
+          "name": "Anthropic API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude response and prepare for Odoo\nconst invoiceData = JSON.parse($input.first().json.text);\n\n// Map to Odoo account.move format\nconst odooInvoice = {\n  move_type: 'in_invoice',\n  partner_id: null, // Will be resolved by partner lookup\n  invoice_date: invoiceData.invoice_date,\n  invoice_date_due: invoiceData.due_date,\n  ref: invoiceData.invoice_number,\n  currency_id: invoiceData.currency === 'USD' ? 2 : 170, // PHP = 170\n  invoice_line_ids: invoiceData.line_items.map(item => ([\n    0, 0, {\n      name: item.description,\n      quantity: item.quantity,\n      price_unit: item.unit_price,\n      // Tax will be auto-calculated based on fiscal position\n    }\n  ])),\n  // BIR compliance fields\n  x_vendor_tin: invoiceData.vendor_tin,\n  x_vat_amount: invoiceData.vat_amount,\n  x_ewt_amount: invoiceData.ewt_amount,\n};\n\n// Vendor lookup data\nconst vendorSearch = {\n  name: invoiceData.vendor_name,\n  vat: invoiceData.vendor_tin,\n};\n\nreturn {\n  json: {\n    invoice: odooInvoice,\n    vendor: vendorSearch,\n    raw: invoiceData,\n  }\n};"
+      },
+      "id": "transform-odoo",
+      "name": "Transform - Odoo Format",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_PASSWORD }}\",\n      \"res.partner\",\n      \"search_read\",\n      [[[\"vat\", \"=\", \"{{ $json.vendor.vat }}\"]]],\n      {\"fields\": [\"id\", \"name\"], \"limit\": 1}\n    ]\n  },\n  \"id\": 1\n}",
+        "options": {}
+      },
+      "id": "odoo-partner-lookup",
+      "name": "Odoo - Partner Lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_PASSWORD }}\",\n      \"account.move\",\n      \"create\",\n      [{{ JSON.stringify($json.invoice) }}]\n    ]\n  },\n  \"id\": 2\n}",
+        "options": {}
+      },
+      "id": "odoo-create-invoice",
+      "name": "Odoo - Create Invoice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1350, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://chat.insightpulseai.net/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"journal-entries\",\n  \"username\": \"Invoice Bot\",\n  \"icon_url\": \"https://odoo.com/favicon.ico\",\n  \"text\": \"#### New Vendor Invoice Created\\n| Field | Value |\\n|:--|:--|\\n| **Vendor** | {{ $json.vendor.name }} |\\n| **Invoice #** | {{ $json.raw.invoice_number }} |\\n| **Amount** | {{ $json.raw.currency }} {{ $json.raw.total_amount }} |\\n| **Due Date** | {{ $json.raw.due_date }} |\\n| **Odoo ID** | {{ $json.result }} |\"\n}",
+        "options": {}
+      },
+      "id": "mattermost-notify",
+      "name": "Mattermost - Notify",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1570, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\"success\": true, \"odoo_invoice_id\": $json.result, \"vendor\": $json.vendor.name} }}"
+      },
+      "id": "webhook-response",
+      "name": "Respond - Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1790, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/staging_invoices",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"source\": \"n8n_ocr\",\n  \"raw_data\": {{ JSON.stringify($json.raw) }},\n  \"ocr_result\": {{ JSON.stringify($node['PaddleOCR - Extract Text'].json) }},\n  \"status\": \"imported\",\n  \"odoo_move_id\": {{ $json.result }}\n}"
+      },
+      "id": "supabase-log",
+      "name": "Supabase - Log Invoice",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1570, 500]
+    }
+  ],
+  "connections": {
+    "Webhook - Invoice Upload": {
+      "main": [
+        [
+          {
+            "node": "PaddleOCR - Extract Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PaddleOCR - Extract Text": {
+      "main": [
+        [
+          {
+            "node": "Claude - Structure Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Claude - Structure Data": {
+      "main": [
+        [
+          {
+            "node": "Transform - Odoo Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform - Odoo Format": {
+      "main": [
+        [
+          {
+            "node": "Odoo - Partner Lookup",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Odoo - Create Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Odoo - Create Invoice": {
+      "main": [
+        [
+          {
+            "node": "Mattermost - Notify",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Supabase - Log Invoice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mattermost - Notify": {
+      "main": [
+        [
+          {
+            "node": "Respond - Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "meta": {
+    "templateId": "insightpulse-invoice-ocr-v1",
+    "templateCredsSetupCompleted": false
+  },
+  "tags": [
+    {
+      "name": "finance",
+      "id": "1"
+    },
+    {
+      "name": "ocr",
+      "id": "2"
+    },
+    {
+      "name": "odoo",
+      "id": "3"
+    }
+  ]
+}

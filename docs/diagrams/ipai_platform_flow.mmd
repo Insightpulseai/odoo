@@ -1,0 +1,46 @@
+%% IPAI AI Platform - Ask AI Flow
+%% This diagram shows the flow from user question to AI response
+
+flowchart LR
+
+subgraph User_Interface[User Interface]
+  S((Start))
+  UI[Open Ask AI Panel]
+  COMPOSE[Compose Question]
+end
+
+subgraph Odoo_Backend[Odoo CE Backend]
+  CTRL[AI Controller]
+  SVC[AI Service Layer]
+  THREAD[Thread Manager]
+end
+
+subgraph RAG_Pipeline[RAG Pipeline]
+  EMBED[Generate Embedding]
+  SEARCH{Vector Search?}
+  KB_QUERY[Query KB Chunks]
+  TEXT_SEARCH[Text Fallback]
+end
+
+subgraph LLM_Provider[LLM Provider]
+  PROMPT[Build Prompt]
+  LLM[Call LLM API]
+  PARSE[Parse Response]
+end
+
+subgraph Response_Flow[Response Flow]
+  CITE[Extract Citations]
+  STORE[Store Message]
+  RENDER[Render Response]
+  E(((End)))
+end
+
+S --> UI --> COMPOSE --> CTRL
+CTRL --> SVC --> THREAD
+THREAD --> EMBED --> SEARCH
+SEARCH --> |Yes| KB_QUERY
+SEARCH --> |No| TEXT_SEARCH
+KB_QUERY --> PROMPT
+TEXT_SEARCH --> PROMPT
+PROMPT --> LLM --> PARSE
+PARSE --> CITE --> STORE --> RENDER --> E

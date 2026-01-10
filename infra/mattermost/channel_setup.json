@@ -1,0 +1,244 @@
+{
+  "workspace": {
+    "name": "TBWA Finance",
+    "description": "Finance SSC Operations Hub",
+    "site_url": "https://chat.insightpulseai.net"
+  },
+  "channels": [
+    {
+      "name": "finance-general",
+      "display_name": "Finance General",
+      "type": "O",
+      "purpose": "General finance team discussions and announcements",
+      "header": "Welcome to Finance SSC! Check #month-end-closing for close status."
+    },
+    {
+      "name": "month-end-closing",
+      "display_name": "Month-End Closing",
+      "type": "O",
+      "purpose": "Coordinate month-end closing activities across all tasks",
+      "header": ":calendar: Current Period: [Auto-updated] | Status: [Auto-updated]"
+    },
+    {
+      "name": "journal-entries",
+      "display_name": "Journal Entries",
+      "type": "O",
+      "purpose": "JE postings, corrections, and approvals",
+      "header": "Tag @finance-lead for approval requests"
+    },
+    {
+      "name": "bank-reconciliation",
+      "display_name": "Bank Reconciliation",
+      "type": "O",
+      "purpose": "Daily bank rec status and discrepancy resolution",
+      "header": "Upload statements to Google Drive/Finance/Bank Statements/"
+    },
+    {
+      "name": "intercompany",
+      "display_name": "Intercompany",
+      "type": "O",
+      "purpose": "Intercompany transaction matching and settlement",
+      "header": "Monthly settlement deadline: 25th"
+    },
+    {
+      "name": "bir-filings",
+      "display_name": "BIR Filings",
+      "type": "O",
+      "purpose": "Tax return preparation and filing coordination",
+      "header": ":bir: eFPS: https://efps.bir.gov.ph | eBIRForms: https://ebirforms.bir.gov.ph"
+    },
+    {
+      "name": "bir-deadlines",
+      "display_name": "BIR Deadlines",
+      "type": "O",
+      "purpose": "Tax calendar and deadline tracking",
+      "header": "Bot posts daily reminders for upcoming deadlines"
+    },
+    {
+      "name": "bir-alerts",
+      "display_name": "BIR Alerts",
+      "type": "O",
+      "purpose": "Urgent BIR notifications and deadline alerts",
+      "header": ":warning: URGENT ALERTS ONLY - Check daily!"
+    },
+    {
+      "name": "n8n-notifications",
+      "display_name": "n8n Notifications",
+      "type": "O",
+      "purpose": "Automated workflow notifications from n8n",
+      "header": "Automation status updates - do not reply to bot messages"
+    },
+    {
+      "name": "odoo-alerts",
+      "display_name": "Odoo Alerts",
+      "type": "O",
+      "purpose": "Odoo ERP system alerts and notifications",
+      "header": "System alerts from https://erp.insightpulseai.net"
+    },
+    {
+      "name": "system-health",
+      "display_name": "System Health",
+      "type": "O",
+      "purpose": "Infrastructure monitoring alerts",
+      "header": "Uptime monitoring for all InsightPulse services"
+    }
+  ],
+  "private_channels": [
+    {
+      "name": "finance-leadership",
+      "display_name": "Finance Leadership",
+      "type": "P",
+      "purpose": "Finance Director and team leads only",
+      "members": ["CKVC"]
+    },
+    {
+      "name": "audit-committee",
+      "display_name": "Audit Committee",
+      "type": "P",
+      "purpose": "Internal audit coordination",
+      "members": ["CKVC"]
+    }
+  ],
+  "webhooks": [
+    {
+      "name": "Invoice Bot",
+      "channel": "journal-entries",
+      "icon_url": "https://odoo.com/favicon.ico",
+      "description": "Posts when invoices are created/approved in Odoo"
+    },
+    {
+      "name": "Expense Bot",
+      "channel": "finance-general",
+      "icon_emoji": ":receipt:",
+      "description": "Posts expense policy violation alerts"
+    },
+    {
+      "name": "BIR Compliance Bot",
+      "channel": "bir-alerts",
+      "icon_emoji": ":bir:",
+      "description": "Daily deadline reminders and urgent alerts"
+    },
+    {
+      "name": "Month-End Bot",
+      "channel": "month-end-closing",
+      "icon_emoji": ":calendar:",
+      "description": "Task completion updates from closing playbook"
+    },
+    {
+      "name": "n8n Status Bot",
+      "channel": "n8n-notifications",
+      "icon_url": "https://n8n.io/favicon.ico",
+      "description": "Workflow execution status updates"
+    },
+    {
+      "name": "Health Check Bot",
+      "channel": "system-health",
+      "icon_emoji": ":heartbeat:",
+      "description": "Infrastructure monitoring alerts"
+    }
+  ],
+  "playbooks": [
+    {
+      "name": "Month-End Closing",
+      "description": "Standardized checklist for monthly close",
+      "checklists": [
+        {
+          "title": "Pre-Close (Day 1-3)",
+          "items": [
+            "Verify all vendor invoices posted",
+            "Complete bank statement download",
+            "Match intercompany transactions",
+            "Review open purchase orders",
+            "Post accruals and prepayments"
+          ]
+        },
+        {
+          "title": "Close Activities (Day 4-5)",
+          "items": [
+            "Run depreciation schedule",
+            "Post payroll journal entries",
+            "Complete bank reconciliation",
+            "Review trial balance",
+            "Investigate variances > 10%"
+          ]
+        },
+        {
+          "title": "Reporting (Day 6-7)",
+          "items": [
+            "Generate financial statements",
+            "Prepare variance analysis",
+            "Draft management report",
+            "Submit to Finance Director",
+            "Archive period documents"
+          ]
+        }
+      ],
+      "status_updates": [
+        {
+          "when": "on_create",
+          "template": ":rocket: Month-end closing initiated for {{ period_name }}"
+        },
+        {
+          "when": "on_status_change",
+          "template": ":chart_with_upwards_trend: Status: {{ status }} | Progress: {{ completion_pct }}%"
+        },
+        {
+          "when": "on_complete",
+          "template": ":white_check_mark: Month-end closing completed for {{ period_name }}"
+        }
+      ]
+    },
+    {
+      "name": "BIR Tax Filing",
+      "description": "Tax return preparation and filing workflow",
+      "checklists": [
+        {
+          "title": "Preparation",
+          "items": [
+            "Export data from Odoo",
+            "Reconcile with source documents",
+            "Calculate tax amounts",
+            "Prepare supporting schedules"
+          ]
+        },
+        {
+          "title": "Review",
+          "items": [
+            "Self-review calculations",
+            "Manager review",
+            "Prepare filing summary"
+          ]
+        },
+        {
+          "title": "Filing",
+          "items": [
+            "Submit via eFPS/eBIRForms",
+            "Save confirmation/reference number",
+            "Upload proof of filing to archive",
+            "Update tracking spreadsheet"
+          ]
+        }
+      ]
+    }
+  ],
+  "slash_commands": [
+    {
+      "trigger": "handbook",
+      "url": "{{ site_url }}/plugins/handbook/lookup",
+      "method": "POST",
+      "description": "Quick access to Finance SSC handbook sections"
+    },
+    {
+      "trigger": "playbook",
+      "url": "{{ site_url }}/plugins/playbooks/start",
+      "method": "POST",
+      "description": "Start a workflow playbook (month-end, bir-filing)"
+    },
+    {
+      "trigger": "bir-status",
+      "url": "{{ site_url }}/plugins/bir/status",
+      "method": "GET",
+      "description": "Check BIR filing status and upcoming deadlines"
+    }
+  ]
+}

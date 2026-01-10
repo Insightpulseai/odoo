@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_ipai_approvals_root"
+              name="Approvals"
+              web_icon="ipai_approvals,static/description/icon.png"
+              sequence="55"/>
+
+    <!-- My Requests -->
+    <menuitem id="menu_ipai_approvals_my_requests"
+              name="My Requests"
+              parent="menu_ipai_approvals_root"
+              action="action_ipai_approval_request"
+              sequence="10"/>
+
+    <!-- To Approve -->
+    <menuitem id="menu_ipai_approvals_to_approve"
+              name="To Approve"
+              parent="menu_ipai_approvals_root"
+              action="action_ipai_approval_request_to_approve"
+              sequence="20"/>
+
+    <!-- All Requests (Manager only) -->
+    <menuitem id="menu_ipai_approvals_all_requests"
+              name="All Requests"
+              parent="menu_ipai_approvals_root"
+              action="action_ipai_approval_request"
+              groups="group_approval_manager"
+              sequence="30"/>
+
+    <!-- Configuration -->
+    <menuitem id="menu_ipai_approvals_config"
+              name="Configuration"
+              parent="menu_ipai_approvals_root"
+              groups="group_approval_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_ipai_approvals_types"
+              name="Approval Types"
+              parent="menu_ipai_approvals_config"
+              action="action_ipai_approval_type"
+              sequence="10"/>
+</odoo>

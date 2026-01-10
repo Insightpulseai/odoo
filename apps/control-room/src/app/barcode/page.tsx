@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import PageContainer from '@/components/layout/PageContainer';
-import Card from '@/components/common/Card';
+import { PageContainer, PageContent } from '@/components/layout/PageContainer';
+import { Header } from '@/components/layout/Header';
+import { Card } from '@/components/common/Card';
 
 type OperationType = 'receive' | 'pick' | 'transfer' | 'inventory';
 
@@ -184,11 +185,13 @@ export default function BarcodePage() {
   const [activeOperation, setActiveOperation] = useState<OperationType | null>(null);
 
   return (
-    <PageContainer
-      title="Barcode Scanner"
-      description="Inventory operations with barcode scanning"
-    >
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+    <PageContainer>
+      <Header
+        title="Barcode Scanner"
+        subtitle="Inventory operations with barcode scanning"
+      />
+      <PageContent>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {operations.map((op) => (
           <OperationCard
             key={op.type}
@@ -209,12 +212,13 @@ export default function BarcodePage() {
         </Card>
       </div>
 
-      {activeOperation && (
-        <ScannerModal
-          operation={activeOperation}
-          onClose={() => setActiveOperation(null)}
-        />
-      )}
+        {activeOperation && (
+          <ScannerModal
+            operation={activeOperation}
+            onClose={() => setActiveOperation(null)}
+          />
+        )}
+      </PageContent>
     </PageContainer>
   );
 }

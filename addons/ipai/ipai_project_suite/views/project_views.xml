@@ -35,11 +35,11 @@
             <xpath expr="//notebook" position="inside">
                 <page string="RACI Matrix" name="ipai_raci" invisible="not ipai_raci_enabled">
                     <field name="ipai_raci_ids" nolabel="1">
-                        <tree editable="bottom">
+                        <list editable="bottom">
                             <field name="user_id"/>
                             <field name="role"/>
                             <field name="notes"/>
-                        </tree>
+                        </list>
                     </field>
                 </page>
             </xpath>
@@ -50,7 +50,7 @@
     <record id="action_ipai_milestone_project" model="ir.actions.act_window">
         <field name="name">Milestones</field>
         <field name="res_model">ipai.project.milestone</field>
-        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_mode">list,form,kanban</field>
         <field name="domain">[('project_id', '=', active_id)]</field>
         <field name="context">{'default_project_id': active_id}</field>
     </record>
@@ -59,7 +59,7 @@
     <record id="action_ipai_budget_project" model="ir.actions.act_window">
         <field name="name">Budgets</field>
         <field name="res_model">ipai.project.budget</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('project_id', '=', active_id)]</field>
         <field name="context">{'default_project_id': active_id}</field>
     </record>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- OAuth Tree View -->
+    <record id="view_integration_oauth_tree" model="ir.ui.view">
+        <field name="name">ipai.integration.oauth.tree</field>
+        <field name="model">ipai.integration.oauth</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="connector_id"/>
+                <field name="client_id"/>
+                <field name="grant_types"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'" decoration-muted="state == 'draft'" decoration-danger="state == 'revoked'"/>
+                <field name="token_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- OAuth Form View -->
+    <record id="view_integration_oauth_form" model="ir.ui.view">
+        <field name="name">ipai.integration.oauth.form</field>
+        <field name="model">ipai.integration.oauth</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_revoke" type="object" string="Revoke" class="btn-danger" invisible="state == 'revoked'" confirm="This will invalidate all tokens. Continue?"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="icon" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="App Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="connector_id"/>
+                            <field name="homepage_url" widget="url"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="client_id" readonly="1"/>
+                            <field name="client_secret" password="True" groups="ipai_integrations.group_integration_admin"/>
+                            <button name="action_regenerate_secret" type="object" string="Regenerate Secret" class="btn-warning" groups="ipai_integrations.group_integration_admin"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Settings" name="settings">
+                            <group>
+                                <group>
+                                    <field name="grant_types"/>
+                                    <field name="token_expiry"/>
+                                    <field name="refresh_token_expiry"/>
+                                </group>
+                                <group string="Scopes">
+                                    <field name="scope_read"/>
+                                    <field name="scope_write"/>
+                                    <field name="scope_admin"/>
+                                </group>
+                            </group>
+                            <group string="Redirect URIs">
+                                <field name="redirect_uris" nolabel="1" placeholder="https://example.com/callback&#10;https://app.example.com/oauth/callback"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- OAuth Action -->
+    <record id="action_integration_oauth" model="ir.actions.act_window">
+        <field name="name">OAuth Apps</field>
+        <field name="res_model">ipai.integration.oauth</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first OAuth application
+            </p>
+            <p>
+                OAuth apps allow third-party applications to access Odoo
+                data on behalf of users.
+            </p>
+        </field>
+    </record>
+</odoo>

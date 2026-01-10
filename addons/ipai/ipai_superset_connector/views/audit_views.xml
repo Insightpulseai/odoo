@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Audit Tree View -->
+        <record id="view_superset_audit_tree" model="ir.ui.view">
+            <field name="name">ipai.superset.audit.tree</field>
+            <field name="model">ipai.superset.audit</field>
+            <field name="arch" type="xml">
+                <list string="Superset Access Audit" create="false" edit="false" delete="false">
+                    <field name="create_date" string="Timestamp"/>
+                    <field name="dashboard_id"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                    <field name="rls_summary"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Audit Form View -->
+        <record id="view_superset_audit_form" model="ir.ui.view">
+            <field name="name">ipai.superset.audit.form</field>
+            <field name="model">ipai.superset.audit</field>
+            <field name="arch" type="xml">
+                <form string="Superset Access Audit" create="false" edit="false" delete="false">
+                    <sheet>
+                        <group>
+                            <group string="Access Details">
+                                <field name="create_date" string="Timestamp"/>
+                                <field name="dashboard_id"/>
+                                <field name="user_id"/>
+                                <field name="company_id"/>
+                            </group>
+                            <group string="Security Context">
+                                <field name="rls_summary"/>
+                                <field name="ip_address"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Audit Search View -->
+        <record id="view_superset_audit_search" model="ir.ui.view">
+            <field name="name">ipai.superset.audit.search</field>
+            <field name="model">ipai.superset.audit</field>
+            <field name="arch" type="xml">
+                <search string="Search Audit Log">
+                    <field name="dashboard_id"/>
+                    <field name="user_id"/>
+                    <field name="company_id"/>
+                    <filter string="Today" name="today"
+                            domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Week" name="this_week"
+                            domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Dashboard" name="group_dashboard" context="{'group_by': 'dashboard_id'}"/>
+                        <filter string="User" name="group_user" context="{'group_by': 'user_id'}"/>
+                        <filter string="Company" name="group_company" context="{'group_by': 'company_id'}"/>
+                        <filter string="Date" name="group_date" context="{'group_by': 'create_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Audit Action -->
+        <record id="action_superset_audit" model="ir.actions.act_window">
+            <field name="name">Access Audit Log</field>
+            <field name="res_model">ipai.superset.audit</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_today': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No access logs yet
+                </p>
+                <p>
+                    Dashboard access logs will appear here when users view embedded dashboards.
+                </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

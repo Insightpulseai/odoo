@@ -2,10 +2,10 @@
 {
     "name": "IPAI Finance PPM",
     "summary": "Finance Project Portfolio Management (Notion Parity).",
-    "version": "18.0.1.0.0",
+    "version": "18.0.1.0.1",
     "category": "Accounting/Finance",
-    "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "author": "InsightPulse AI",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm",
     "license": "AGPL-3",
     "depends": [
         "base",
@@ -28,6 +28,7 @@
     ],
     "assets": {
         "web.assets_backend": [
+            "ipai_finance_ppm/static/src/js/ppm_dashboard.js",
             "ipai_finance_ppm/static/src/js/semantic-search/api.js",
             "ipai_finance_ppm/static/src/js/semantic-search/MonthlyRevenueSearch.js",
             "ipai_finance_ppm/static/src/xml/monthly_revenue_search.xml",

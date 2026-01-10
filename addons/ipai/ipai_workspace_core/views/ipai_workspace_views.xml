@@ -5,7 +5,7 @@
     <field name="name">ipai.workspace.tree</field>
     <field name="model">ipai.workspace</field>
     <field name="arch" type="xml">
-      <tree string="Workspaces">
+      <list string="Workspaces">
         <field name="sequence" widget="handle"/>
         <field name="name"/>
         <field name="workspace_type"/>
@@ -24,7 +24,7 @@
         <field name="engagement_count"/>
         <field name="invoice_count"/>
         <field name="company_id" groups="base.group_multi_company"/>
-      </tree>
+      </list>
     </field>
   </record>
 
@@ -63,7 +63,7 @@
           <notebook>
             <page string="Hierarchy">
               <field name="child_ids">
-                <tree>
+                <list>
                   <field name="sequence" widget="handle"/>
                   <field name="name"/>
                   <field name="workspace_type"/>
@@ -73,17 +73,17 @@
                   <field name="remaining_hours"/>
                   <field name="progress" widget="progressbar"/>
                   <field name="is_critical"/>
-                </tree>
+                </list>
               </field>
             </page>
             <page string="Links">
               <field name="link_ids">
-                <tree editable="bottom">
+                <list editable="bottom">
                   <field name="link_type"/>
                   <field name="res_model"/>
                   <field name="res_id"/>
                   <field name="display_name" readonly="1"/>
-                </tree>
+                </list>
               </field>
             </page>
             <page string="Chatter">
@@ -112,7 +112,7 @@
         <field name="is_critical"/>
         <field name="client_id"/>
         <templates>
-          <t t-name="kanban-box">
+          <t t-name="card">
             <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_global_click">
               <div class="oe_kanban_content">
                 <div class="o_kanban_record_top">
@@ -224,7 +224,7 @@
   <record id="action_ipai_workspace" model="ir.actions.act_window">
     <field name="name">Workspaces</field>
     <field name="res_model">ipai.workspace</field>
-    <field name="view_mode">tree,form,kanban,calendar,pivot,graph</field>
+    <field name="view_mode">list,form,kanban,calendar,pivot,graph</field>
     <field name="context">{}</field>
     <field name="help" type="html">
       <p class="o_view_nocontent_smiling_face">

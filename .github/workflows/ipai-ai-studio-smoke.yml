@@ -1,15 +1,13 @@
 name: IPAI AI Studio Smoke
 
 on:
-  pull_request:
-    paths:
-      - 'addons/ipai/ipai_ai_studio/**'
-      - '.github/workflows/ipai-ai-studio-smoke.yml'
+  # NOTE: PR trigger removed - AI studio smoke test runs on main push only
   push:
     branches: [main]
     paths:
       - 'addons/ipai/ipai_ai_studio/**'
       - '.github/workflows/ipai-ai-studio-smoke.yml'
+  workflow_dispatch:
 
 jobs:
   smoke:

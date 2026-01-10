@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menu Item under existing IPAI AI menu -->
+    <menuitem
+        id="menu_ipai_kb_export"
+        name="KB Export Runs"
+        parent="ipai_ai_core.menu_ipai_ai_root"
+        action="action_ipai_kb_export_run"
+        sequence="40"
+        groups="base.group_system"/>
+</odoo>

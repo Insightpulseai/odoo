@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Run Views ==================== -->
+
+    <!-- Run Tree View -->
+    <record id="control_run_view_tree" model="ir.ui.view">
+        <field name="name">control.run.tree</field>
+        <field name="model">control.run</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="state == 'failed'"
+                  decoration-success="state == 'succeeded'"
+                  decoration-warning="state == 'running'"
+                  decoration-muted="state == 'canceled'">
+                <field name="name"/>
+                <field name="pipeline_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'succeeded'"
+                       decoration-danger="state == 'failed'"
+                       decoration-warning="state == 'running'"
+                       decoration-info="state == 'queued'"/>
+                <field name="trigger_source"/>
+                <field name="requested_by" widget="many2one_avatar_user"/>
+                <field name="started_at"/>
+                <field name="duration_s" widget="float_time"/>
+                <field name="progress_pct" widget="progressbar"/>
+                <field name="artifact_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Run Form View -->
+    <record id="control_run_view_form" model="ir.ui.view">
+        <field name="name">control.run.form</field>
+        <field name="model">control.run</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_start" type="object" string="Start"
+                            invisible="state != 'queued'" class="oe_highlight"/>
+                    <button name="action_complete" type="object" string="Complete"
+                            invisible="state != 'running'" class="oe_highlight"/>
+                    <button name="action_fail" type="object" string="Mark Failed"
+                            invisible="state != 'running'" class="btn-danger"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state not in ('queued', 'running')"/>
+                    <button name="action_retry" type="object" string="Retry"
+                            invisible="state != 'failed'" class="oe_highlight"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="queued,running,succeeded"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_events" icon="fa-list-alt"
+                                invisible="event_count == 0">
+                            <field string="Events" name="event_count" widget="statinfo"/>
+                        </button>
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_artifacts" icon="fa-files-o"
+                                invisible="artifact_count == 0">
+                            <field string="Artifacts" name="artifact_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="pipeline_id"/>
+                            <field name="trigger_source"/>
+                            <field name="requested_by"/>
+                            <field name="env_id"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="project_id"/>
+                            <field name="progress_pct" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Timing">
+                            <field name="queued_at"/>
+                            <field name="started_at"/>
+                            <field name="finished_at"/>
+                            <field name="duration_s" widget="float_time"/>
+                        </group>
+                        <group string="Progress">
+                            <field name="current_stage"/>
+                            <field name="current_step"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Events" name="events">
+                            <field name="event_ids">
+                                <list decoration-danger="level == 'error'"
+                                      decoration-warning="level == 'warn'"
+                                      decoration-muted="level == 'debug'">
+                                    <field name="ts"/>
+                                    <field name="level" widget="badge"/>
+                                    <field name="message"/>
+                                    <field name="step_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Artifacts" name="artifacts">
+                            <field name="artifact_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="kind"/>
+                                    <field name="storage"/>
+                                    <field name="size_bytes"/>
+                                    <field name="generated_at"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Context" name="context">
+                            <field name="run_context_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Result" name="result" invisible="state not in ('succeeded', 'failed')">
+                            <group>
+                                <field name="result_json" widget="ace" options="{'mode': 'json'}"
+                                       invisible="state != 'succeeded'"/>
+                                <field name="error_message" invisible="state != 'failed'"/>
+                                <field name="error_step_id" invisible="state != 'failed'"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Run Search View -->
+    <record id="control_run_view_search" model="ir.ui.view">
+        <field name="name">control.run.search</field>
+        <field name="model">control.run</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="pipeline_id"/>
+                <field name="requested_by"/>
+                <filter string="Queued" name="queued" domain="[('state', '=', 'queued')]"/>
+                <filter string="Running" name="running" domain="[('state', '=', 'running')]"/>
+                <filter string="Succeeded" name="succeeded" domain="[('state', '=', 'succeeded')]"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <separator/>
+                <filter string="Today" name="today"
+                        domain="[('started_at', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="This Week" name="this_week"
+                        domain="[('started_at', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Pipeline" name="group_pipeline" context="{'group_by': 'pipeline_id'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Trigger" name="group_trigger" context="{'group_by': 'trigger_source'}"/>
+                    <filter string="Started" name="group_started" context="{'group_by': 'started_at:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Run Action -->
+    <record id="action_control_run" model="ir.actions.act_window">
+        <field name="name">Pipeline Runs</field>
+        <field name="res_model">control.run</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No runs yet
+            </p>
+            <p>
+                Trigger a pipeline to see execution runs here.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== Run Event Views ==================== -->
+
+    <record id="control_run_event_view_tree" model="ir.ui.view">
+        <field name="name">control.run.event.tree</field>
+        <field name="model">control.run.event</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="level == 'error'"
+                  decoration-warning="level == 'warn'"
+                  decoration-muted="level == 'debug'">
+                <field name="ts"/>
+                <field name="level" widget="badge"
+                       decoration-danger="level == 'error'"
+                       decoration-warning="level == 'warn'"
+                       decoration-info="level == 'info'"
+                       decoration-muted="level == 'debug'"/>
+                <field name="message"/>
+                <field name="step_id"/>
+                <field name="external_ref"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="control_run_event_view_form" model="ir.ui.view">
+        <field name="name">control.run.event.form</field>
+        <field name="model">control.run.event</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="run_id"/>
+                            <field name="step_id"/>
+                            <field name="ts"/>
+                            <field name="level"/>
+                        </group>
+                        <group>
+                            <field name="source"/>
+                            <field name="external_ref"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="message"/>
+                    </group>
+                    <group>
+                        <field name="payload_json" widget="ace" options="{'mode': 'json'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ==================== Artifact Views ==================== -->
+
+    <record id="control_artifact_view_tree" model="ir.ui.view">
+        <field name="name">control.artifact.tree</field>
+        <field name="model">control.artifact</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="kind" widget="badge"/>
+                <field name="storage"/>
+                <field name="run_id"/>
+                <field name="size_bytes"/>
+                <field name="generated_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="control_artifact_view_form" model="ir.ui.view">
+        <field name="name">control.artifact.form</field>
+        <field name="model">control.artifact</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_download" type="object" string="Download"
+                            class="oe_highlight"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="kind"/>
+                            <field name="storage"/>
+                            <field name="mime_type"/>
+                        </group>
+                        <group>
+                            <field name="run_id"/>
+                            <field name="project_id"/>
+                            <field name="size_bytes"/>
+                            <field name="checksum"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="attachment_id" invisible="storage != 'attachment'"/>
+                            <field name="uri" invisible="storage == 'attachment'"/>
+                        </group>
+                        <group>
+                            <field name="generated_at"/>
+                            <field name="expires_at"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Metadata" name="metadata">
+                            <field name="metadata_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_artifact" model="ir.actions.act_window">
+        <field name="name">Artifacts</field>
+        <field name="res_model">control.artifact</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ==================== Schedule Views ==================== -->
+
+    <record id="control_schedule_view_tree" model="ir.ui.view">
+        <field name="name">control.schedule.tree</field>
+        <field name="model">control.schedule</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="schedule_type"/>
+                <field name="cron_expr" invisible="schedule_type != 'cron'"/>
+                <field name="timezone"/>
+                <field name="next_run_at"/>
+                <field name="pipeline_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="control_schedule_view_form" model="ir.ui.view">
+        <field name="name">control.schedule.form</field>
+        <field name="model">control.schedule</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="schedule_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="timezone"/>
+                            <field name="next_run_at"/>
+                            <field name="last_run_at"/>
+                        </group>
+                    </group>
+                    <group invisible="schedule_type != 'cron'">
+                        <field name="cron_expr" placeholder="0 */2 * * * (every 2 hours)"/>
+                    </group>
+                    <group invisible="schedule_type != 'interval'">
+                        <field name="interval_number"/>
+                        <field name="interval_type"/>
+                    </group>
+                    <group invisible="schedule_type != 'ir_cron'">
+                        <field name="ir_cron_id"/>
+                    </group>
+                    <notebook>
+                        <page string="Pipelines" name="pipelines">
+                            <field name="pipeline_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="last_run_state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_schedule" model="ir.actions.act_window">
+        <field name="name">Schedules</field>
+        <field name="res_model">control.schedule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

@@ -1,0 +1,82 @@
+// =============================================================================
+// TBWA Primary Variables Override
+// =============================================================================
+// Overrides Bootstrap primary variables with TBWA brand colors.
+// Loaded AFTER ipai_chatgpt_sdk_theme primary_variables.scss
+// =============================================================================
+
+// ---------------------------------------------------------------------------
+// TBWA Brand Colors
+// ---------------------------------------------------------------------------
+// Official TBWA brand palette
+$tbwa-yellow: #FFC400;           // Primary brand yellow
+$tbwa-yellow-dark: #E5AE00;      // Darker yellow for hover states
+$tbwa-yellow-light: #FFF4B3;     // Light yellow for backgrounds
+$tbwa-black: #0B0B0B;            // Primary black
+$tbwa-charcoal: #1A1A1A;         // Soft black for text
+$tbwa-gray-dark: #333333;        // Dark gray
+$tbwa-gray: #666666;             // Medium gray
+$tbwa-gray-light: #F5F5F5;       // Light gray backgrounds
+$tbwa-white: #FFFFFF;
+
+// ---------------------------------------------------------------------------
+// Theme Colors - TBWA Override
+// ---------------------------------------------------------------------------
+// Primary action - TBWA Yellow with black text
+$primary: $tbwa-yellow;
+$secondary: $tbwa-charcoal;
+$success: #16a34a;
+$danger: #dc2626;
+$warning: #f59e0b;
+$info: #2563EB;
+$light: $tbwa-gray-light;
+$dark: $tbwa-black;
+
+// ---------------------------------------------------------------------------
+// Base Colors
+// ---------------------------------------------------------------------------
+$body-bg: $tbwa-white;
+$body-color: $tbwa-charcoal;
+
+// ---------------------------------------------------------------------------
+// Link styling - TBWA yellow accent
+// ---------------------------------------------------------------------------
+$link-color: $tbwa-charcoal;
+$link-hover-color: $tbwa-yellow-dark;
+$link-decoration: none;
+$link-hover-decoration: underline;
+
+// ---------------------------------------------------------------------------
+// Button styling
+// ---------------------------------------------------------------------------
+$btn-border-radius: 10px;
+$btn-border-radius-sm: 8px;
+$btn-border-radius-lg: 12px;
+$btn-font-weight: 600;
+$btn-focus-box-shadow: 0 0 0 3px rgba($tbwa-yellow, 0.35);
+
+// ---------------------------------------------------------------------------
+// Card styling
+// ---------------------------------------------------------------------------
+$card-bg: $tbwa-white;
+$card-border-color: rgba($tbwa-black, 0.08);
+$card-border-radius: 12px;
+$card-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+$card-cap-bg: $tbwa-gray-light;
+
+// ---------------------------------------------------------------------------
+// Input/Form styling
+// ---------------------------------------------------------------------------
+$input-bg: $tbwa-white;
+$input-border-color: rgba($tbwa-black, 0.14);
+$input-border-radius: 10px;
+$input-focus-border-color: $tbwa-yellow;
+$input-focus-box-shadow: 0 0 0 3px rgba($tbwa-yellow, 0.25);
+$input-placeholder-color: $tbwa-gray;
+
+// ---------------------------------------------------------------------------
+// Navbar styling
+// ---------------------------------------------------------------------------
+$navbar-dark-bg: $tbwa-black;
+$navbar-light-bg: $tbwa-white;
+$navbar-padding-y: 0.75rem;

@@ -33,7 +33,7 @@ Author: InsightPulse AI
 License: LGPL-3
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_agent_core",
     "license": "LGPL-3",
     "depends": [
         "base",
@@ -51,6 +51,6 @@ License: LGPL-3
     ],
     "post_init_hook": "post_init_hook",
     "installable": True,
-    "application": True,
+    "application": False,  # Library/registry module
     "auto_install": False,
 }

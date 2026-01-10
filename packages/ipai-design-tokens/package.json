@@ -1,17 +1,54 @@
 {
   "name": "@ipai/design-tokens",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "private": true,
   "type": "module",
-  "description": "Shared design tokens for IPAI applications (Odoo, ChatGPT Apps SDK)",
+  "description": "Design tokens for IPAI applications: Fluent 2, Material 3 Expressive (Odoo, Next.js, Vite)",
   "files": [
+    "dist/",
+    "src/",
     "tokens.css",
     "tokens.scss",
-    "tailwind.preset.js"
+    "tailwind.preset.js",
+    "tailwind-material3.preset.js",
+    "material3-expressive.css"
   ],
   "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./fluent.css": "./dist/fluent.css",
+    "./tokens.json": "./dist/tokens.json",
+    "./tailwind-preset": "./dist/tailwind-preset.cjs",
     "./tokens.css": "./tokens.css",
     "./tokens.scss": "./tokens.scss",
-    "./tailwind.preset": "./tailwind.preset.js"
+    "./tailwind.preset": "./tailwind.preset.js",
+    "./tailwind-material3.preset": "./tailwind-material3.preset.js",
+    "./material3-expressive.css": "./material3-expressive.css",
+    "./material3Theme": {
+      "import": "./src/material3Theme.ts",
+      "types": "./src/material3Theme.ts"
+    },
+    "./react/Material3Components": {
+      "import": "./src/react/Material3Components.tsx",
+      "types": "./src/react/Material3Components.tsx"
+    },
+    "./odooTokens": {
+      "import": "./src/odooTokens.ts",
+      "types": "./src/odooTokens.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsx src/build.ts",
+    "build:watch": "tsx watch src/build.ts",
+    "sync:odoo": "cp dist/fluent.css ../../addons/ipai/ipai_theme_fluent2/static/src/css/fluent2.css && echo '✓ Synced to ipai_theme_fluent2'"
+  },
+  "dependencies": {
+    "@fluentui/tokens": "^1.0.0-alpha.17"
+  },
+  "devDependencies": {
+    "tsx": "^4.7.0",
+    "typescript": "^5.6.3"
   }
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menu Item under existing IPAI AI menu -->
+    <menuitem
+        id="menu_ipai_ai_connectors"
+        name="Integration Events"
+        parent="ipai_ai_core.menu_ipai_ai_root"
+        action="action_ipai_ai_event"
+        sequence="30"
+        groups="group_ipai_ai_connectors_viewer"/>
+</odoo>

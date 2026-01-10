@@ -1,0 +1,156 @@
+name: Odoo Module Install Gate
+
+on:
+  # NOTE: PR trigger removed - module install gate is heavy (runs Odoo + DB)
+  # Run on main push only to validate merged code
+  push:
+    branches:
+      - main
+    paths:
+      - 'addons/**'
+      - 'config/ship_set.txt'
+  workflow_dispatch:
+
+jobs:
+  module-install-test:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: test_odoo
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-pip \
+            python3-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libldap2-dev \
+            libsasl2-dev \
+            libjpeg-dev \
+            libpq-dev \
+            postgresql-client
+
+      - name: Install Odoo dependencies
+        run: |
+          pip install --upgrade pip
+          pip install wheel
+          pip install -r requirements.txt || echo "No requirements.txt found, using minimal deps"
+          pip install psycopg2-binary
+
+      - name: Read ship set modules
+        id: modules
+        run: |
+          if [ -f config/ship_set.txt ]; then
+            MODULES=$(grep -v '^#' config/ship_set.txt | grep -v '^$' | tr '\n' ',' | sed 's/,$//')
+            echo "modules=$MODULES" >> $GITHUB_OUTPUT
+            echo "Ship set modules: $MODULES"
+          else
+            echo "ERROR: config/ship_set.txt not found"
+            exit 1
+          fi
+
+      - name: Test module installation
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: test_odoo
+        run: |
+          # Create Odoo config
+          cat > odoo.conf <<EOL
+          [options]
+          addons_path = addons
+          db_host = $POSTGRES_HOST
+          db_port = $POSTGRES_PORT
+          db_user = $POSTGRES_USER
+          db_password = $POSTGRES_PASSWORD
+          EOL
+
+          # Test module installation
+          MODULES="${{ steps.modules.outputs.modules }}"
+          echo "Testing installation of modules: $MODULES"
+          
+          python3 -m odoo.cli.server \
+            -c odoo.conf \
+            -d $POSTGRES_DB \
+            -i $MODULES \
+            --stop-after-init \
+            --log-level=info \
+            2>&1 | tee install.log
+
+          # Check for errors
+          if grep -i "error\|traceback\|exception" install.log | grep -v "INFO\|DEBUG"; then
+            echo "❌ Module installation failed with errors"
+            exit 1
+          fi
+
+          echo "✅ All modules installed successfully"
+
+      - name: Verify module dependencies
+        env:
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: test_odoo
+        run: |
+          # Query installed modules
+          psql "postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB" \
+            -c "SELECT name, state FROM ir_module_module WHERE name IN ('ipai_month_end_closing', 'ipai_bir_tax_compliance', 'ipai_close_orchestration', 'ipai_ask_ai');" \
+            -t | tee modules.txt
+
+          # Check all modules are installed
+          INSTALLED_COUNT=$(grep -c "installed" modules.txt || true)
+          if [ "$INSTALLED_COUNT" -ne 4 ]; then
+            echo "❌ Not all modules installed correctly. Expected 4, got $INSTALLED_COUNT"
+            exit 1
+          fi
+
+          echo "✅ All 4 modules verified as installed"
+
+      - name: Check for import errors
+        run: |
+          # Test Python imports for each module
+          for module in ipai_month_end_closing ipai_bir_tax_compliance ipai_close_orchestration ipai_ask_ai; do
+            if [ -d "addons/$module" ]; then
+              echo "Testing imports for $module..."
+              python3 -c "import sys; sys.path.insert(0, 'addons/$module'); import __init__" || {
+                echo "❌ Import failed for $module"
+                exit 1
+              }
+            fi
+          done
+          echo "✅ All module imports successful"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: installation-logs
+          path: |
+            install.log
+            modules.txt

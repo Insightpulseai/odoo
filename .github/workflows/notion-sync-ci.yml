@@ -1,15 +1,13 @@
 name: Notion Sync CI
 
 on:
+  # NOTE: PR trigger removed - notion sync CI runs on main push only
   push:
-    branches: [main, develop]
-    paths:
-      - 'services/notion-sync/**'
-      - '.github/workflows/notion-sync-ci.yml'
-  pull_request:
     branches: [main]
     paths:
       - 'services/notion-sync/**'
+      - '.github/workflows/notion-sync-ci.yml'
+  workflow_dispatch:
 
 defaults:
   run:

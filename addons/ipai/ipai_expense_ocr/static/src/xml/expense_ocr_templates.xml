@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- OCR Status Widget -->
+    <t t-name="ipai_expense_ocr.ExpenseOcrStatus" owl="1">
+        <div class="o_expense_ocr_status">
+            <t t-if="state.loading">
+                <span class="text-muted">
+                    <i class="fa fa-spinner fa-spin"/> Checking status...
+                </span>
+            </t>
+            <t t-elif="state.status and state.status.has_ocr">
+                <div class="o_expense_ocr_badge">
+                    <span t-attf-class="badge #{state.status.state === 'extracted' ? 'bg-success' : state.status.state === 'failed' ? 'bg-danger' : 'bg-info'}">
+                        <t t-esc="state.status.state"/>
+                    </span>
+                    <t t-if="state.status.confidence">
+                        <span class="text-muted ms-2">
+                            <t t-esc="Math.round(state.status.confidence * 100)"/>% confidence
+                        </span>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <span class="text-muted">No OCR data</span>
+            </t>
+        </div>
+    </t>
+
+    <!-- Scan Button Template -->
+    <t t-name="ipai_expense_ocr.ScanButton" owl="1">
+        <button t-attf-class="btn btn-secondary o_expense_scan_btn #{props.processing ? 'processing' : ''}"
+                t-on-click="onScan">
+            <i class="fa fa-magic"/>
+            <span t-if="props.processing">Scanning...</span>
+            <span t-else="">Scan Receipt</span>
+        </button>
+    </t>
+
+    <!-- Extracted Fields Display -->
+    <t t-name="ipai_expense_ocr.ExtractedFields" owl="1">
+        <div class="o_expense_ocr_fields">
+            <t t-foreach="props.fields" t-as="field" t-key="field.name">
+                <div class="o_expense_ocr_field">
+                    <span class="o_expense_ocr_field_label" t-esc="field.label"/>
+                    <span class="o_expense_ocr_field_value" t-esc="field.value"/>
+                    <span class="o_expense_ocr_field_confidence">
+                        <t t-esc="Math.round(field.confidence * 100)"/>% confident
+                    </span>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

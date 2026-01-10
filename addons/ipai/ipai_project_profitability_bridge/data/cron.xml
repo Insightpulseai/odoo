@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled action to recompute profitability daily -->
+    <record id="ir_cron_recompute_profitability" model="ir.cron">
+        <field name="name">IPAI: Recompute Project Profitability</field>
+        <field name="model_id" ref="model_ipai_project_profitability"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_recompute_all()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+        <field name="doall">False</field>
+    </record>
+</odoo>

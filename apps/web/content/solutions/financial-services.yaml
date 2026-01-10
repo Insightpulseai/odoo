@@ -1,0 +1,210 @@
+# Financial Services Solutions Page Content Manifest
+# Single source of truth for the Financial Services landing page
+# Structure mirrors Mattermost Solutions page patterns
+
+slug: financial-services
+title: "Communicate, collaborate & operate with confidence"
+subtitle: "Close the books fast. Stay compliant. Keep teams moving."
+kicker: "Financial Services"
+
+primaryCta:
+  label: "Contact Sales"
+  href: "/contact"
+secondaryCta:
+  label: "Security Overview"
+  href: "/security"
+
+hero:
+  backgroundImage: "/solutions/financial-services/bg/camo-pattern-bg.webp"
+  heroImages:
+    - src: "/solutions/financial-services/hero/desktop-app.webp"
+      alt: "Desktop collaboration interface showing financial workflows"
+      width: 800
+      height: 500
+    - src: "/solutions/financial-services/hero/mobile-app.webp"
+      alt: "Mobile app interface for on-the-go compliance"
+      width: 300
+      height: 600
+
+customerLogos:
+  - name: "AIG"
+    src: "/solutions/financial-services/logos/aig.svg"
+  - name: "BNP Paribas"
+    src: "/solutions/financial-services/logos/bnp-paribas.svg"
+  - name: "Worldline"
+    src: "/solutions/financial-services/logos/worldline.svg"
+  - name: "PNC Bank"
+    src: "/solutions/financial-services/logos/pnc.svg"
+  - name: "Deloitte"
+    src: "/solutions/financial-services/logos/deloitte.svg"
+  - name: "KPMG"
+    src: "/solutions/financial-services/logos/kpmg.svg"
+
+pillars:
+  - id: "self-sovereign"
+    title: "Self-Sovereign Collaboration"
+    description: "Full control over your data and infrastructure"
+    icon: "shield"
+    points:
+      - "Self-hosted deployment options"
+      - "Single-tenant cloud servers"
+      - "Data portability guarantees"
+      - "No multi-tenancy constraints"
+  - id: "security-compliance"
+    title: "Security & Compliance"
+    description: "Built for regulated industries from day one"
+    icon: "lock"
+    points:
+      - "Compliance export functionality"
+      - "Custom data retention policies"
+      - "Legal hold capabilities"
+      - "Audit-ready architecture"
+  - id: "incident-response"
+    title: "Incident Response"
+    description: "Streamlined workflows for critical moments"
+    icon: "activity"
+    points:
+      - "Threading + file sharing"
+      - "Process documentation"
+      - "Task/checkbox workflows"
+      - "Automation hooks"
+  - id: "integrations"
+    title: "Integrations"
+    description: "Connect everything in your tech stack"
+    icon: "settings"
+    points:
+      - "SaaS + legacy connectors"
+      - "APIs + webhooks"
+      - "Custom adapters"
+      - "Governed interoperability"
+
+deploymentOptions:
+  title: "Deployment That Fits Your Security Requirements"
+  items:
+    - id: "self-hosted"
+      title: "Self-Hosted"
+      description: "Full control on your own infrastructure"
+      icon: "server"
+    - id: "single-tenant"
+      title: "Single-Tenant Cloud"
+      description: "Dedicated cloud instance, your data isolated"
+      icon: "cloud"
+    - id: "data-sovereignty"
+      title: "Data Sovereignty"
+      description: "Choose your data residency region"
+      icon: "globe"
+    - id: "portability"
+      title: "Full Portability"
+      description: "Export your data anytime, no lock-in"
+      icon: "download"
+
+useCases:
+  - id: "q4-reporting"
+    title: "Q4 Financial Reporting Process"
+    description: "Structured close + compliance workflow across teams. Coordinate SEC filings, consolidate financial data, and maintain audit trails in real-time."
+    image: "/solutions/financial-services/use-cases/q4-reporting.webp"
+    steps:
+      - "Financial data consolidation"
+      - "SEC regulatory compliance"
+      - "Cross-team coordination"
+      - "Regulatory filings preparation"
+      - "Compliance alerts + task tracking"
+    artifacts:
+      - label: "Regulatory Summary PDF"
+        meta: "Example 120 KB"
+        href: "/resources/regulatory-summary-template.pdf"
+  - id: "fraud-detection"
+    title: "Fraud Detection Integration"
+    description: "Real-time suspicious transaction flagging with dedicated channels for investigation. Threading keeps context while automation routes alerts."
+    image: "/solutions/financial-services/use-cases/fraud-detection.webp"
+    steps:
+      - "Real-time transaction monitoring"
+      - "Automated alert routing"
+      - "Investigation threading"
+      - "Evidence collection"
+      - "Resolution documentation"
+  - id: "incident-response"
+    title: "Incident Response Automation"
+    description: "Automated reporting with MTTR improvements. Built-in audit archives ensure compliance even during high-pressure incidents."
+    image: "/solutions/financial-services/use-cases/incident-response.webp"
+    steps:
+      - "Automated incident detection"
+      - "Response team mobilization"
+      - "Real-time coordination"
+      - "Evidence preservation"
+      - "Post-incident review"
+
+resources:
+  - type: "guide"
+    title: "Balancing the Books: Financial Services Guide"
+    description: "A comprehensive guide to closing the gap between communication and compliance for financial services organizations."
+    href: "/resources/closing-gap-communication-and-compliance-for-financial-services/"
+    thumb: "/solutions/financial-services/resources/balancing-the-books.webp"
+  - type: "blog"
+    title: "Every Minute Matters: Secure Collaboration is Mission-Critical"
+    description: "Why secure collaboration is mission-critical in finance, and how leading institutions are responding."
+    href: "/blog/every-minute-matters-why-secure-collaboration-is-mission-critical-in-finance/"
+    thumb: "/solutions/financial-services/resources/every-minute-matters.webp"
+  - type: "brief"
+    title: "Mission-Critical Security and Compliance-Ready Collaboration"
+    description: "Solution brief for enterprise security and compliance teams evaluating collaboration platforms."
+    href: "/solutions-brief-mission-critical-collaboration/"
+    thumb: "/solutions/financial-services/resources/mission-critical-brief.webp"
+  - type: "case-study"
+    title: "How Leading Banks Transformed Their Compliance Workflows"
+    description: "Real-world case study of financial institutions achieving SOC 2 and regulatory compliance."
+    href: "/case-studies/bank-compliance-transformation/"
+    thumb: "/solutions/financial-services/resources/bank-case-study.webp"
+
+partners:
+  title: "Trusted by Leading Technology Partners"
+  items:
+    - name: "Carahsoft"
+      src: "/solutions/financial-services/partners/carahsoft.svg"
+      href: "https://www.carahsoft.com/"
+    - name: "HashiCorp"
+      src: "/solutions/financial-services/partners/hashicorp.svg"
+      href: "https://www.hashicorp.com/"
+    - name: "Redpill Linpro"
+      src: "/solutions/financial-services/partners/redpill-linpro.svg"
+      href: "https://www.redpill-linpro.com/"
+    - name: "Eficode"
+      src: "/solutions/financial-services/partners/eficode.svg"
+      href: "https://www.eficode.com/"
+
+finalCta:
+  title: "Ready to operate with confidence?"
+  subtitle: "Join thousands of financial services teams who trust InsightPulse AI for secure, compliant collaboration."
+  primaryCta:
+    label: "Contact Sales"
+    href: "/contact"
+  secondaryCta:
+    label: "Security Overview"
+    href: "/security"
+
+# Feature flags for optional adapters
+analytics:
+  enable: true
+  providers:
+    - id: "ga"
+      name: "Google Analytics"
+      trackingIdEnv: "NEXT_PUBLIC_GA_TRACKING_ID"
+    - id: "plausible"
+      name: "Plausible"
+      domainEnv: "NEXT_PUBLIC_PLAUSIBLE_DOMAIN"
+
+chatWidget:
+  enable: true
+  provider: "qualified"
+  widgetKeyEnv: "NEXT_PUBLIC_QUALIFIED_WIDGET_KEY"
+
+seo:
+  title: "Financial Services Solutions | InsightPulse AI"
+  description: "Secure, compliant collaboration for financial services. Self-hosted or single-tenant cloud. Close books faster, stay compliant, keep teams moving."
+  ogImage: "/solutions/financial-services/og-image.webp"
+  keywords:
+    - "financial services collaboration"
+    - "SEC compliance"
+    - "audit-ready collaboration"
+    - "self-hosted collaboration"
+    - "financial data security"

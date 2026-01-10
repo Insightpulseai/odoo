@@ -1,0 +1,370 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ==================== Advice Views ==================== -->
+
+    <!-- Advice Tree View -->
+    <record id="control_advice_view_tree" model="ir.ui.view">
+        <field name="name">control.advice.tree</field>
+        <field name="model">control.advice</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state in ('dismissed', 'done')">
+                <field name="title"/>
+                <field name="category" widget="badge"/>
+                <field name="impact" widget="badge"
+                       decoration-danger="impact == 'critical'"
+                       decoration-warning="impact == 'high'"
+                       decoration-info="impact == 'medium'"/>
+                <field name="confidence" widget="progressbar"/>
+                <field name="effort"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'new'"
+                       decoration-success="state in ('accepted', 'done')"
+                       decoration-muted="state == 'dismissed'"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Advice Form View -->
+    <record id="control_advice_view_form" model="ir.ui.view">
+        <field name="name">control.advice.form</field>
+        <field name="model">control.advice</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_accept" type="object" string="Accept"
+                            invisible="state != 'new'" class="oe_highlight"/>
+                    <button name="action_start" type="object" string="Start"
+                            invisible="state != 'accepted'" class="oe_highlight"/>
+                    <button name="action_complete" type="object" string="Complete"
+                            invisible="state != 'in_progress'" class="oe_highlight"/>
+                    <button name="action_dismiss" type="object" string="Dismiss"
+                            invisible="state not in ('new', 'accepted')"/>
+                    <button name="action_execute_playbook" type="object" string="Run Playbook"
+                            invisible="not playbook_id or state in ('dismissed', 'done')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="new,accepted,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object"
+                                name="action_view_actions" icon="fa-bolt"
+                                invisible="action_count == 0">
+                            <field string="Actions" name="action_count" widget="statinfo"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="title" placeholder="Advice Title"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category"/>
+                            <field name="impact"/>
+                            <field name="effort"/>
+                            <field name="confidence" widget="progressbar"/>
+                        </group>
+                        <group>
+                            <field name="source"/>
+                            <field name="source_ref" invisible="source == 'manual'"/>
+                            <field name="owner_id"/>
+                            <field name="expires_at"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="project_id"/>
+                        </group>
+                        <group>
+                            <field name="playbook_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Summary" name="summary">
+                            <field name="summary" placeholder="What this advice recommends..."/>
+                        </page>
+                        <page string="Recommended Actions" name="actions">
+                            <field name="recommended_actions_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Evidence" name="evidence">
+                            <field name="evidence_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Dismissal" name="dismissal" invisible="state != 'dismissed'">
+                            <field name="dismissed_reason"/>
+                        </page>
+                        <page string="Action History" name="action_history">
+                            <field name="action_ids">
+                                <list>
+                                    <field name="created_at"/>
+                                    <field name="action_type"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="done_at"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Advice Kanban View -->
+    <record id="control_advice_view_kanban" model="ir.ui.view">
+        <field name="name">control.advice.kanban</field>
+        <field name="model">control.advice</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_mobile">
+                <field name="title"/>
+                <field name="category"/>
+                <field name="impact"/>
+                <field name="state"/>
+                <field name="confidence"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_content">
+                            <div class="o_kanban_record_title">
+                                <strong><field name="title"/></strong>
+                            </div>
+                            <div class="o_kanban_record_subtitle">
+                                <field name="category" widget="badge"/>
+                                <field name="impact" widget="badge"/>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <field name="confidence" widget="progressbar"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Advice Search View -->
+    <record id="control_advice_view_search" model="ir.ui.view">
+        <field name="name">control.advice.search</field>
+        <field name="model">control.advice</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="title"/>
+                <field name="owner_id"/>
+                <filter string="New" name="new" domain="[('state', '=', 'new')]"/>
+                <filter string="Accepted" name="accepted" domain="[('state', '=', 'accepted')]"/>
+                <filter string="In Progress" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <separator/>
+                <filter string="High Impact" name="high_impact" domain="[('impact', 'in', ('high', 'critical'))]"/>
+                <filter string="AI Generated" name="ai" domain="[('source', '=', 'ai')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
+                    <filter string="Impact" name="group_impact" context="{'group_by': 'impact'}"/>
+                    <filter string="Owner" name="group_owner" context="{'group_by': 'owner_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Advice Action -->
+    <record id="action_control_advice" model="ir.actions.act_window">
+        <field name="name">Advisor Recommendations</field>
+        <field name="res_model">control.advice</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="context">{'search_default_new': 1, 'search_default_accepted': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No recommendations yet
+            </p>
+            <p>
+                AI-generated recommendations will appear here.
+            </p>
+        </field>
+    </record>
+
+    <!-- ==================== Playbook Views ==================== -->
+
+    <record id="control_playbook_view_tree" model="ir.ui.view">
+        <field name="name">control.playbook.tree</field>
+        <field name="model">control.playbook</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="not active">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category" widget="badge"/>
+                <field name="trigger_type"/>
+                <field name="step_count"/>
+                <field name="execution_count"/>
+                <field name="last_executed_at"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="control_playbook_view_form" model="ir.ui.view">
+        <field name="name">control.playbook.form</field>
+        <field name="model">control.playbook</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_execute" type="object" string="Execute"
+                            class="oe_highlight" invisible="not active"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Playbook Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="category"/>
+                            <field name="trigger_type"/>
+                        </group>
+                        <group>
+                            <field name="owner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group invisible="automation_hook == 'none'">
+                        <group>
+                            <field name="automation_hook"/>
+                            <field name="automation_pipeline_id"
+                                   invisible="automation_hook != 'pipeline'"/>
+                        </group>
+                        <group>
+                            <field name="automation_config_json" widget="ace"
+                                   options="{'mode': 'json'}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Steps" name="steps">
+                            <field name="steps_json" widget="ace" options="{'mode': 'json'}"/>
+                            <group>
+                                <field name="step_count" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Execution History" name="history">
+                            <group>
+                                <field name="execution_count"/>
+                                <field name="last_executed_at"/>
+                            </group>
+                            <field name="action_ids">
+                                <list>
+                                    <field name="created_at"/>
+                                    <field name="state" widget="badge"/>
+                                    <field name="done_at"/>
+                                    <field name="duration_s"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Description" name="description">
+                            <field name="description"/>
+                            <field name="documentation_url" widget="url"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_playbook" model="ir.actions.act_window">
+        <field name="name">Playbooks</field>
+        <field name="res_model">control.playbook</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+
+    <!-- ==================== Action Views ==================== -->
+
+    <record id="control_action_view_tree" model="ir.ui.view">
+        <field name="name">control.action.tree</field>
+        <field name="model">control.action</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'completed'"
+                  decoration-danger="state == 'failed'"
+                  decoration-warning="state == 'running'"
+                  decoration-muted="state == 'canceled'">
+                <field name="name"/>
+                <field name="action_type"/>
+                <field name="playbook_id"/>
+                <field name="advice_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'completed'"
+                       decoration-danger="state == 'failed'"
+                       decoration-warning="state == 'running'"/>
+                <field name="created_at"/>
+                <field name="done_at"/>
+                <field name="duration_s"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="control_action_view_form" model="ir.ui.view">
+        <field name="name">control.action.form</field>
+        <field name="model">control.action</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_execute" type="object" string="Execute"
+                            invisible="state != 'pending'" class="oe_highlight"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state not in ('pending', 'running')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,running,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="action_type"/>
+                            <field name="advice_id"/>
+                            <field name="playbook_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="created_at"/>
+                            <field name="started_at"/>
+                            <field name="done_at"/>
+                            <field name="duration_s"/>
+                        </group>
+                    </group>
+                    <group invisible="state != 'failed'">
+                        <field name="error_message"/>
+                    </group>
+                    <notebook>
+                        <page string="Payload" name="payload">
+                            <field name="payload_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Result" name="result" invisible="state != 'completed'">
+                            <field name="result_json" widget="ace" options="{'mode': 'json'}"/>
+                        </page>
+                        <page string="Related" name="related">
+                            <group>
+                                <field name="run_id"/>
+                                <field name="task_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_control_action" model="ir.actions.act_window">
+        <field name="name">Actions</field>
+        <field name="res_model">control.action</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

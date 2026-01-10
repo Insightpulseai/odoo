@@ -1,15 +1,9 @@
 name: IPAI Production Checks
 
 on:
+  # NOTE: PR trigger removed - IPAI prod checks run on main push only
   push:
-    paths:
-      - 'packages/ipai-design-tokens/**'
-      - 'apps/ipai-chatgpt-app/**'
-      - 'addons/ipai_ask_ai_chatter/**'
-      - 'addons/ipai_web_theme_chatgpt/**'
-      - 'scripts/sync-tokens.sh'
-      - 'scripts/oca-bootstrap.sh'
-  pull_request:
+    branches: [main]
     paths:
       - 'packages/ipai-design-tokens/**'
       - 'apps/ipai-chatgpt-app/**'

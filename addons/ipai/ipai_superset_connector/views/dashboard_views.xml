@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Dashboard Tree View -->
+        <record id="view_superset_dashboard_tree" model="ir.ui.view">
+            <field name="name">ipai.superset.dashboard.tree</field>
+            <field name="model">ipai.superset.dashboard</field>
+            <field name="arch" type="xml">
+                <list string="Superset Dashboards">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="superset_dashboard_id"/>
+                    <field name="allowed_group_ids" widget="many2many_tags"/>
+                    <field name="rls_by_company"/>
+                    <field name="access_count" string="Views"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Dashboard Form View -->
+        <record id="view_superset_dashboard_form" model="ir.ui.view">
+            <field name="name">ipai.superset.dashboard.form</field>
+            <field name="model">ipai.superset.dashboard</field>
+            <field name="arch" type="xml">
+                <form string="Superset Dashboard">
+                    <header>
+                        <button name="action_open_embed"
+                                type="object"
+                                string="Open Dashboard"
+                                class="btn-primary"
+                                icon="fa-external-link"/>
+                        <button name="action_view_audit_log"
+                                type="object"
+                                string="View Access Log"
+                                class="btn-secondary"
+                                icon="fa-history"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_audit_log"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-history">
+                                <field name="access_count" widget="statinfo" string="Accesses"/>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active"/>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="Dashboard Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Superset Configuration">
+                                <field name="superset_dashboard_id"/>
+                                <field name="description"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                            <group string="Access Control">
+                                <field name="allowed_group_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Row-Level Security" name="rls">
+                                <group>
+                                    <group string="Automatic RLS Rules">
+                                        <field name="rls_by_company"/>
+                                        <field name="rls_by_user"/>
+                                    </group>
+                                    <group string="Custom RLS">
+                                        <field name="rls_custom_clause"
+                                               placeholder="e.g., region = '${user_login}'"/>
+                                    </group>
+                                </group>
+                                <div class="alert alert-info" role="alert">
+                                    <strong>RLS Placeholders:</strong>
+                                    <code>${company_id}</code>, <code>${user_id}</code>, <code>${user_login}</code>
+                                </div>
+                            </page>
+                            <page string="Embed Options" name="embed">
+                                <group>
+                                    <field name="hide_title"/>
+                                    <field name="hide_filters"/>
+                                    <field name="hide_charts_controls"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Dashboard Search View -->
+        <record id="view_superset_dashboard_search" model="ir.ui.view">
+            <field name="name">ipai.superset.dashboard.search</field>
+            <field name="model">ipai.superset.dashboard</field>
+            <field name="arch" type="xml">
+                <search string="Search Dashboards">
+                    <field name="name"/>
+                    <field name="superset_dashboard_id"/>
+                    <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="RLS by Company" name="rls_company" domain="[('rls_by_company', '=', True)]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Active" name="group_active" context="{'group_by': 'active'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Dashboard Action -->
+        <record id="action_superset_dashboard" model="ir.actions.act_window">
+            <field name="name">Dashboard Configuration</field>
+            <field name="res_model">ipai.superset.dashboard</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Configure Superset dashboards for embedding
+                </p>
+                <p>
+                    Map Superset dashboard IDs to Odoo access groups and RLS rules.
+                </p>
+            </field>
+        </record>
+
+        <!-- Dashboard List Client Action -->
+        <record id="action_superset_dashboard_list" model="ir.actions.client">
+            <field name="name">Analytics Dashboards</field>
+            <field name="tag">ipai_superset_dashboard_list</field>
+        </record>
+
+    </data>
+</odoo>
