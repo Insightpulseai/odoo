@@ -175,3 +175,7 @@ __pycache__/
 
 # --- misc ---
 .DS_Store
+
+# Incident snapshots (track only templates)
+docs/incidents/*
+!docs/incidents/templates/
