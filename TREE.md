@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 38ff320a8ce0ba9c2d3a135606aa17fc32e0da32
+> Commit: b94e500096f1a643b500a58b1d22b9f39b1035c7
 
 ```
 .
@@ -1833,7 +1833,9 @@
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
 │   │   ├── IPAI_AI_PLATFORM_ORD.md
 │   │   ├── OCR_PIPELINE.md
+│   │   ├── PROD_RUNTIME_SNAPSHOT.md
 │   │   ├── README.md
+│   │   ├── RUNTIME_IDENTIFIERS.md
 │   │   ├── SOURCE_OF_TRUTH.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
@@ -2197,6 +2199,7 @@
 │   ├── NAMING_CONVENTION_EQ_APP_TOOLS.md
 │   ├── OCA_CHORE_SCOPE.md
 │   ├── OCA_MIGRATION.md
+│   ├── OCA_STYLE_CONTRACT.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
 │   ├── ODOO_18_CE_MODULE_INSTALL_ORDER.md
@@ -2920,6 +2923,7 @@
 │   ├── validate_manifests.py
 │   ├── validate_production.sh
 │   ├── validate_spec_kit.py
+│   ├── verify-addon-permissions.sh
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
 │   ├── verify.sh
@@ -3674,7 +3678,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1177 directories, 2492 files
+1177 directories, 2496 files
 ```
 
 ## 📊 Stats
@@ -3682,7 +3686,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1359 |
-| Files | 3755 |
+| Files | 3759 |
 | Python files | 997 |
 | XML files | 473 |
-| Markdown files | 721 |
+| Markdown files | 724 |

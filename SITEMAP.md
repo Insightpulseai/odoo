@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 38ff320a8ce0ba9c2d3a135606aa17fc32e0da32
+> Commit: b94e500096f1a643b500a58b1d22b9f39b1035c7
 
 ## 📚 Documentation
 
@@ -269,6 +269,7 @@
 | [Naming Convention - Equivalent APP TOOLS](docs/NAMING_CONVENTION_EQ_APP_TOOLS.md) | docs |
 | [OCA-style "chore" Scope Conventions](docs/OCA_CHORE_SCOPE.md) | docs |
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
+| [OCA-Style Repository Contract (Canonical)](docs/OCA_STYLE_CONTRACT.md) | docs |
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
 | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
 | [Odoo 18 CE Module Install Order](docs/ODOO_18_CE_MODULE_INSTALL_ORDER.md) | docs |
@@ -319,7 +320,9 @@
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
 | [OCR Pipeline Architecture](docs/architecture/OCR_PIPELINE.md) | docs/architecture |
+| [Production Runtime Snapshot - Odoo CE 18.0](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
+| [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
 | [Prod Runtime Snapshot (20260108_013846)](docs/architecture/runtime_snapshot/20260108_013846/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture/runtime_snapshot/20260108_013846 |
