@@ -1,0 +1,255 @@
+[
+    {
+        "Id": "c1b4f9ec86794ac19df52901e3835921f905952cc4031775602ad390e17998fb",
+        "Created": "2026-01-10T18:53:29.055953745Z",
+        "Path": "/entrypoint.sh",
+        "Args": [
+            "odoo"
+        ],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 489214,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2026-01-10T18:53:29.103384091Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:cbafce4c9a475e748d6033227380d8dbb8452876ec3eb4aa32db65fff6349d9d",
+        "ResolvConfPath": "/var/lib/docker/containers/c1b4f9ec86794ac19df52901e3835921f905952cc4031775602ad390e17998fb/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/c1b4f9ec86794ac19df52901e3835921f905952cc4031775602ad390e17998fb/hostname",
+        "HostsPath": "/var/lib/docker/containers/c1b4f9ec86794ac19df52901e3835921f905952cc4031775602ad390e17998fb/hosts",
+        "LogPath": "/var/lib/docker/containers/c1b4f9ec86794ac19df52901e3835921f905952cc4031775602ad390e17998fb/c1b4f9ec86794ac19df52901e3835921f905952cc4031775602ad390e17998fb-json.log",
+        "Name": "/odoo-prod",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "docker-default",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": [
+                "/opt/odoo-ce/repo/addons:/mnt/extra-addons:rw",
+                "/opt/odoo-ce/repo/deploy/odoo.conf:/etc/odoo/odoo.conf:ro",
+                "deploy_odoo-web-data:/var/lib/odoo"
+            ],
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {}
+            },
+            "NetworkMode": "deploy_default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "unless-stopped",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "CapAdd": null,
+            "CapDrop": null,
+            "CgroupnsMode": "private",
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "private",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": [],
+            "BlkioDeviceWriteBps": [],
+            "BlkioDeviceReadIOps": [],
+            "BlkioDeviceWriteIOps": [],
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DeviceRequests": null,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": null,
+            "PidsLimit": null,
+            "Ulimits": [],
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/interrupts",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware",
+                "/sys/devices/virtual/powercap"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "ID": "c1b4f9ec86794ac19df52901e3835921f905952cc4031775602ad390e17998fb",
+                "LowerDir": "/var/lib/docker/overlay2/2b86f9502a01e79ac324d9967602fd94b25b6f0d21e45f56d36d205b873fd690-init/diff:/var/lib/docker/overlay2/5174446c26f776dd5a2b3d53850181b59abc54ca98c15da07dcb6593b64031cd/diff:/var/lib/docker/overlay2/bfbbb2edda090c019e579214c772b986e9fefb0040c206890640f7a34c0fc72e/diff:/var/lib/docker/overlay2/5cbbc3e03e95465a6f3ab47b6ebf542bce233558a85ff927a69b02e070607a03/diff:/var/lib/docker/overlay2/34275c0609bf2665b8bbe40f53af63997cb2637d4ccd8a613cda425807a57cbb/diff:/var/lib/docker/overlay2/b725e0829ce5afc7c4fca06468d6aaa719c7762c06845e46d919bab5b6c79f9a/diff:/var/lib/docker/overlay2/e880a5988d630bc15ae2a2aac7676851dbe8d7955548b89d634cc76791236aa0/diff:/var/lib/docker/overlay2/0e556a05fcf8fb8f5d046d3ecf04d4a38c6544c4898a9858c5fc5c1501be61d6/diff:/var/lib/docker/overlay2/a6d2a1363aea394d75675063e2c078994c4b5db9a66fd1bec8e43d302391364a/diff:/var/lib/docker/overlay2/50cbe76a2329e4411c3487f25a15bc158d296958035628a6e84c1a3b96397c48/diff",
+                "MergedDir": "/var/lib/docker/overlay2/2b86f9502a01e79ac324d9967602fd94b25b6f0d21e45f56d36d205b873fd690/merged",
+                "UpperDir": "/var/lib/docker/overlay2/2b86f9502a01e79ac324d9967602fd94b25b6f0d21e45f56d36d205b873fd690/diff",
+                "WorkDir": "/var/lib/docker/overlay2/2b86f9502a01e79ac324d9967602fd94b25b6f0d21e45f56d36d205b873fd690/work"
+            },
+            "Name": "overlay2"
+        },
+        "Mounts": [
+            {
+                "Type": "bind",
+                "Source": "/opt/odoo-ce/repo/deploy/odoo.conf",
+                "Destination": "/etc/odoo/odoo.conf",
+                "Mode": "ro",
+                "RW": false,
+                "Propagation": "rprivate"
+            },
+            {
+                "Type": "volume",
+                "Name": "deploy_odoo-web-data",
+                "Source": "/var/lib/docker/volumes/deploy_odoo-web-data/_data",
+                "Destination": "/var/lib/odoo",
+                "Driver": "local",
+                "Mode": "z",
+                "RW": true,
+                "Propagation": ""
+            },
+            {
+                "Type": "bind",
+                "Source": "/opt/odoo-ce/repo/addons",
+                "Destination": "/mnt/extra-addons",
+                "Mode": "rw",
+                "RW": true,
+                "Propagation": "rprivate"
+            }
+        ],
+        "Config": {
+            "Hostname": "c1b4f9ec8679",
+            "Domainname": "",
+            "User": "odoo",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "8069/tcp": {},
+                "8071/tcp": {},
+                "8072/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=en_US.UTF-8",
+                "ODOO_VERSION=18.0",
+                "ODOO_RC=/etc/odoo/odoo.conf"
+            ],
+            "Cmd": [
+                "odoo"
+            ],
+            "Image": "odoo:18.0",
+            "Volumes": {
+                "/mnt/extra-addons": {},
+                "/var/lib/odoo": {}
+            },
+            "WorkingDir": "",
+            "Entrypoint": [
+                "/entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.version": "24.04"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "a1a87d06f785617d176f257b72f0e07eff11e84a79c01c6b2276fcb06555c651",
+            "SandboxKey": "/var/run/docker/netns/a1a87d06f785",
+            "Ports": {
+                "8069/tcp": null,
+                "8071/tcp": null,
+                "8072/tcp": null
+            },
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "deploy_default": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "MacAddress": "42:94:a5:8d:87:5f",
+                    "DriverOpts": null,
+                    "GwPriority": 0,
+                    "NetworkID": "863c470ce744a13949a7a501b8c0007b7d26f2a89d816dfd0fd186ae1bdf1b49",
+                    "EndpointID": "f8f3613b3b3d851c4c7b323019b315b9106ddc1df4d902433cfc0cce3d1b1b8c",
+                    "Gateway": "172.18.0.1",
+                    "IPAddress": "172.18.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "DNSNames": [
+                        "odoo-prod",
+                        "c1b4f9ec8679"
+                    ]
+                }
+            }
+        }
+    }
+]
