@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  odoo:
+    image: odoo@sha256:1ba7ab9783cd2b08a875077dc3c744b0dcbe7eb0f78ac354a1c7a658f5455749
+    container_name: odoo-prod
+    restart: unless-stopped
+    volumes:
+      - /opt/odoo-ce/repo/addons:/mnt/extra-addons:rw
+      - /opt/odoo-ce/repo/deploy/odoo.conf:/etc/odoo/odoo.conf:ro
+      - deploy_odoo-web-data:/var/lib/odoo
+    networks:
+      - deploy_default
+
+volumes:
+  deploy_odoo-web-data:
+    external: true
+
+networks:
+  deploy_default:
+    external: true
