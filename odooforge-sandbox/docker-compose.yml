@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: odooforge-db
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: odoo
+    volumes:
+      - odooforge-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  odoo:
+    container_name: odooforge-odoo
+    image: odoo:18.0
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./addons:/mnt/extra-addons
+      - odooforge-odoo-data:/var/lib/odoo
+    ports:
+      - "8069:8069"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  kit:
+    container_name: odooforge-kit
+    build:
+      context: .
+      dockerfile: Dockerfile.kit
+    depends_on:
+      - odoo
+    environment:
+      ODOO_HOST: odoo
+      ODOO_PORT: 8069
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: odoo
+      DB_PASSWORD: odoo
+      DB_NAME: odoo
+    volumes:
+      - ./addons:/workspace/addons
+      - ./templates:/workspace/templates
+      - ./specs:/workspace/specs
+      - ./reports:/workspace/reports
+      - ./kit-cli:/workspace/kit-cli
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+
+volumes:
+  odooforge-db-data:
+  odooforge-odoo-data:
