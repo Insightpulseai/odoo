@@ -1,0 +1,73 @@
+{
+  "name": "OdooForge Sandbox",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "kit",
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "redhat.vscode-xml",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "GitHub.copilot",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.flake8Enabled": true,
+        "python.formatting.provider": "black",
+        "editor.formatOnSave": true,
+        "editor.rulers": [88, 120],
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true,
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter",
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+          }
+        },
+        "[xml]": {
+          "editor.defaultFormatter": "redhat.vscode-xml"
+        }
+      }
+    },
+    "codespaces": {
+      "openFiles": ["AGENTS.md", "README.md"]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  "postCreateCommand": "bash scripts/codex_setup.sh",
+  "postStartCommand": "kit status || true",
+  "remoteUser": "root",
+  "containerEnv": {
+    "ODOO_HOST": "odoo",
+    "ODOO_PORT": "8069",
+    "DB_HOST": "db",
+    "DB_PORT": "5432",
+    "DB_USER": "odoo",
+    "DB_PASSWORD": "odoo",
+    "DB_NAME": "odoo"
+  },
+  "forwardPorts": [8069, 5432],
+  "portsAttributes": {
+    "8069": {
+      "label": "Odoo",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
+    }
+  }
+}
