@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b94e500096f1a643b500a58b1d22b9f39b1035c7
+> Commit: 2854b844b851e6df7c537a755041e252ed4ae17a
 
 ```
 .
@@ -1745,6 +1745,9 @@
 │   │   └── postgres-statefulset.yaml
 │   ├── nginx
 │   │   └── erp.insightpulseai.net.conf
+│   ├── runtime
+│   │   ├── odoo-prod.docker_inspect.json
+│   │   └── odoo-prod.image_inspect.json
 │   ├── .env.production.template
 │   ├── README.md
 │   ├── docker-compose.canonical.yml
@@ -1757,7 +1760,9 @@
 │   ├── mattermost-integration.yml
 │   ├── monitoring_schema.sql
 │   ├── monitoring_views.sql
+│   ├── nginx_correlation_id.conf
 │   ├── odoo-auto-heal.service
+│   ├── odoo-prod.compose.yml
 │   ├── odoo.canonical.conf
 │   └── odoo.conf
 ├── dev-docker
@@ -2130,6 +2135,7 @@
 │   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
+│   ├── AGENT_TROUBLESHOOTING_PLAYBOOK.md
 │   ├── AIUX_SHIP_PRD.md
 │   ├── AI_MODULE_NAMING_CONVENTION.md
 │   ├── APP_ICONS_README.md
@@ -2881,6 +2887,7 @@
 │   ├── prod_access_check.py
 │   ├── prod_db_guess.py
 │   ├── promote_oauth_users.py
+│   ├── recreate_odoo_prod.sh
 │   ├── release_gate.sh
 │   ├── replace_seed_from_excel.py
 │   ├── repo_health.sh
@@ -2934,6 +2941,7 @@
 │   ├── verify_phase3.py
 │   ├── verify_smtp.py
 │   ├── verify_supabase_deploy.sh
+│   ├── verify_web_assets.sh
 │   ├── web_sandbox_verify.sh
 │   ├── whats_deployed.py
 │   ├── whats_deployed.sh
@@ -3678,15 +3686,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1177 directories, 2496 files
+1178 directories, 2503 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1359 |
-| Files | 3759 |
+| Directories | 1360 |
+| Files | 3766 |
 | Python files | 997 |
 | XML files | 473 |
-| Markdown files | 724 |
+| Markdown files | 725 |
