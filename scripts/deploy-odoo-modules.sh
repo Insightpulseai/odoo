@@ -152,6 +152,13 @@ deploy_module() {
         return 1
     }
 
+    # Fix permissions for Odoo container (UID 100:GID 101)
+    log_step "Setting permissions for ${module}..."
+    ssh "${REMOTE_USER}@${REMOTE_HOST}" \
+        "chown -R 100:101 ${REMOTE_ODOO_DIR}/${module} && chmod -R 755 ${REMOTE_ODOO_DIR}/${module}" || {
+        log_warning "Permission setting failed for ${module}, but continuing..."
+    }
+
     log_success "Module ${module} deployed successfully"
     return 0
 }
