@@ -57,9 +57,10 @@ main() {
     log_info "Scanning for permission issues..."
 
     # Get list of addons with incorrect ownership
+    # Scans: ipai/ namespace + all standalone ipai_* modules (31 total)
     incorrect_addons=$(ssh "${REMOTE_USER}@${REMOTE_HOST}" "
         cd ${ADDON_DIR} && \
-        find ipai ipai_theme_tbwa* -maxdepth 0 -type d 2>/dev/null | while read dir; do
+        find ipai ipai_* -maxdepth 0 -type d 2>/dev/null | while read dir; do
             owner=\$(stat -c '%u:%g' \"\$dir\" 2>/dev/null)
             if [ \"\$owner\" != \"100:101\" ]; then
                 echo \"\$dir (\$owner)\"
@@ -82,10 +83,11 @@ main() {
 
     # Fix permissions
     log_info "Fixing permissions..."
+    # Fix all ipai/ namespace + all standalone ipai_* modules
     ssh "${REMOTE_USER}@${REMOTE_HOST}" "
         cd ${ADDON_DIR} && \
-        chown -R 100:101 ipai ipai_theme_tbwa* && \
-        chmod -R 755 ipai ipai_theme_tbwa*
+        chown -R 100:101 ipai ipai_* && \
+        chmod -R 755 ipai ipai_*
     " || {
         log_error "Failed to fix permissions"
         exit 2
@@ -96,9 +98,10 @@ main() {
 
     # Verify fix
     log_info "Verifying fix..."
+    # Verify all ipai/ namespace + all standalone ipai_* modules
     remaining_issues=$(ssh "${REMOTE_USER}@${REMOTE_HOST}" "
         cd ${ADDON_DIR} && \
-        find ipai ipai_theme_tbwa* -maxdepth 0 -type d 2>/dev/null | while read dir; do
+        find ipai ipai_* -maxdepth 0 -type d 2>/dev/null | while read dir; do
             owner=\$(stat -c '%u:%g' \"\$dir\" 2>/dev/null)
             if [ \"\$owner\" != \"100:101\" ]; then
                 echo \"\$dir\"
