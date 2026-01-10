@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b94e500096f1a643b500a58b1d22b9f39b1035c7
+> Commit: 2854b844b851e6df7c537a755041e252ed4ae17a
 
 ## 📚 Documentation
 
@@ -201,6 +201,7 @@
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
 | [Agent Skills Framework - Session Report](docs/AGENT_FRAMEWORK_SESSION_REPORT.md) | docs |
+| [AI Agent Troubleshooting Playbook - Odoo SCSS/Asset Errors](docs/AGENT_TROUBLESHOOTING_PLAYBOOK.md) | docs |
 | [AIUX Shipping PRD](docs/AIUX_SHIP_PRD.md) | docs |
 | [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
