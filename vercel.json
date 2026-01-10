@@ -1,9 +1,38 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "version": 2,
+  "installCommand": "npm ci",
+  "framework": null,
   "projects": [
     {
       "name": "ipai-control-center-docs",
       "rootDirectory": "apps/ipai-control-center-docs",
-      "framework": "nextjs"
+      "framework": "nextjs",
+      "buildCommand": "npm run build",
+      "outputDirectory": ".next"
+    },
+    {
+      "name": "ipai-web",
+      "rootDirectory": "apps/web",
+      "framework": "nextjs",
+      "buildCommand": "npm run build",
+      "outputDirectory": ".next"
+    },
+    {
+      "name": "ipai-control-room",
+      "rootDirectory": "apps/control-room",
+      "framework": "nextjs",
+      "buildCommand": "npm run build",
+      "outputDirectory": ".next"
+    }
+  ],
+  "builds": [
+    {
+      "src": "apps/ipai-chatgpt-app/web/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "functions": {
@@ -15,6 +44,10 @@
     "SUPABASE_URL": "@supabase-url",
     "SUPABASE_SERVICE_ROLE_KEY": "@supabase-service-role-key",
     "OPENAI_API_KEY": "@openai-api-key",
-    "TENANT_ID": "@tenant-id"
+    "TENANT_ID": "@tenant-id",
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase-url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key",
+    "VITE_PUBLIC_SUPABASE_URL": "@supabase-url",
+    "VITE_PUBLIC_SUPABASE_ANON_KEY": "@supabase-anon-key"
   }
 }
