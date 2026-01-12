@@ -25,6 +25,7 @@
         "data/finance_person_seed.xml",
         "data/bir_schedule_seed.xml",
         "data/finance_okr_seed.xml",
+        "data/finance_bir_2026_seed.xml",
         "data/finance_cron.xml",
     ],
     "assets": {
