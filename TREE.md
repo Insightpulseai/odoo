@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2854b844b851e6df7c537a755041e252ed4ae17a
+> Commit: 9376237ba588c3f349de36f1b9829eff642070c5
 
 ```
 .
@@ -74,6 +74,9 @@
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── drive-sync-verify.yml
 │   │   ├── drive-sync.yml
+│   │   ├── erd-docs.yml
+│   │   ├── erd-graphviz.yml
+│   │   ├── erd-schemaspy.yml
 │   │   ├── fin-workspace-weekly-sync.yml
 │   │   ├── finance-ppm-health.yml
 │   │   ├── go-live-manifest-gate.yml
@@ -1875,7 +1878,8 @@
 │   │   ├── ODOO_MODEL_INDEX.json
 │   │   ├── ODOO_MODULE_DELTAS.md
 │   │   ├── ODOO_ORM_MAP.md
-│   │   └── README.md
+│   │   ├── README.md
+│   │   └── SUPERSET_ERD_INTEGRATION.md
 │   ├── db
 │   │   ├── DB_CONVENTIONS_AND_NAMING.md
 │   │   ├── DB_CURRENT_INVENTORY.md
@@ -1904,8 +1908,10 @@
 │   ├── email
 │   │   └── Mailgun_DNS.md
 │   ├── evidence
-│   │   └── 20260110-0927
-│   │       └── odooforge-sandbox
+│   │   ├── 20260110-0927
+│   │   │   └── odooforge-sandbox
+│   │   └── 20260112-0300
+│   │       └── erd-automation
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2812,6 +2818,7 @@
 │   ├── deployment-checklist.sh
 │   ├── diagnose_smtp.sh
 │   ├── enhanced_health_check.sh
+│   ├── erd_dot.sql
 │   ├── erp_config_cli.sh
 │   ├── execute_rationalization.sh
 │   ├── export_todo_seed.py
@@ -2830,6 +2837,7 @@
 │   ├── gen_repo_tree_fallback.sh
 │   ├── generate_2026_finance_calendar.py
 │   ├── generate_2026_schedule.py
+│   ├── generate_erd_graphviz.py
 │   ├── generate_finance_dashboard.py
 │   ├── generate_go_live_checklist.py
 │   ├── generate_module_docs.py
@@ -3302,6 +3310,8 @@
 │   │   │   └── index.ts
 │   │   ├── semantic-query
 │   │   │   └── index.ts
+│   │   ├── serve-erd
+│   │   │   └── index.ts
 │   │   ├── sync-kb-to-schema
 │   │   │   └── index.ts
 │   │   ├── tenant-invite
@@ -3686,15 +3696,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1178 directories, 2503 files
+1181 directories, 2510 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1360 |
-| Files | 3766 |
-| Python files | 997 |
+| Directories | 1363 |
+| Files | 3774 |
+| Python files | 998 |
 | XML files | 473 |
-| Markdown files | 725 |
+| Markdown files | 727 |
