@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- MCP Menu Root (under Settings/Technical) -->
+    <menuitem id="menu_ipai_mcp_root"
+              name="MCP Hub"
+              parent="base.menu_custom"
+              sequence="60"
+              groups="group_ipai_mcp_user"/>
+
+    <menuitem id="menu_mcp_server"
+              name="Servers"
+              parent="menu_ipai_mcp_root"
+              action="action_mcp_server"
+              sequence="10"/>
+
+    <menuitem id="menu_mcp_tool"
+              name="Tools"
+              parent="menu_ipai_mcp_root"
+              action="action_mcp_tool"
+              sequence="20"/>
+
+    <menuitem id="menu_mcp_binding"
+              name="Bindings"
+              parent="menu_ipai_mcp_root"
+              action="action_mcp_binding"
+              sequence="30"
+              groups="group_ipai_mcp_admin"/>
+</odoo>

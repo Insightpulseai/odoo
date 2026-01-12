@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- BI Menu Root (under Settings/Technical) -->
+    <menuitem id="menu_ipai_bi_root"
+              name="Business Intelligence"
+              parent="base.menu_custom"
+              sequence="50"
+              groups="group_ipai_bi_user"/>
+
+    <!-- Superset Submenu -->
+    <menuitem id="menu_superset"
+              name="Superset"
+              parent="menu_ipai_bi_root"
+              sequence="10"/>
+
+    <menuitem id="menu_superset_dashboard"
+              name="Dashboards"
+              parent="menu_superset"
+              action="action_superset_dashboard"
+              sequence="10"/>
+
+    <menuitem id="menu_superset_dataset"
+              name="Datasets"
+              parent="menu_superset"
+              action="action_superset_dataset"
+              sequence="20"
+              groups="group_ipai_bi_admin"/>
+
+    <menuitem id="menu_superset_instance"
+              name="Instances"
+              parent="menu_superset"
+              action="action_superset_instance"
+              sequence="30"
+              groups="group_ipai_bi_admin"/>
+</odoo>
