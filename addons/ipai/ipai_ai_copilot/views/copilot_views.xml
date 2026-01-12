@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend AI Thread form to show related record -->
+    <record id="view_ai_thread_form_copilot" model="ir.ui.view">
+        <field name="name">ipai.ai.thread.form.copilot</field>
+        <field name="model">ipai.ai.thread</field>
+        <field name="inherit_id" ref="ipai_ai_core.view_ai_thread_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='provider_id']" position="after">
+                <field name="model_id"/>
+                <field name="res_id" invisible="not model_id"/>
+                <field name="res_name" invisible="not model_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend AI Thread list to show related record -->
+    <record id="view_ai_thread_list_copilot" model="ir.ui.view">
+        <field name="name">ipai.ai.thread.list.copilot</field>
+        <field name="model">ipai.ai.thread</field>
+        <field name="inherit_id" ref="ipai_ai_core.view_ai_thread_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='provider_id']" position="after">
+                <field name="model_id" optional="hide"/>
+                <field name="res_name" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Example: Add Ask AI button to Partner form -->
+    <!--
+    <record id="view_partner_form_ask_ai" model="ir.ui.view">
+        <field name="name">res.partner.form.ask_ai</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_open_ai_copilot" type="object"
+                        class="oe_stat_button" icon="fa-robot"
+                        string="Ask AI"
+                        invisible="not context.get('show_ai_button', True)"/>
+            </xpath>
+        </field>
+    </record>
+    -->
+</odoo>
