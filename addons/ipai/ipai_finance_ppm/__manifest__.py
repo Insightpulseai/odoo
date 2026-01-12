@@ -2,7 +2,7 @@
 {
     "name": "IPAI Finance PPM",
     "summary": "Finance Project Portfolio Management (Notion Parity).",
-    "version": "18.0.1.0.1",
+    "version": "18.0.1.1.0",
     "category": "Accounting/Finance",
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce/tree/18.0/addons/ipai/ipai_finance_ppm",
@@ -14,6 +14,7 @@
     ],
     "data": [
         "security/ir.model.access.csv",
+        "security/finance_ppm_groups.xml",
         "views/finance_person_views.xml",
         "views/finance_bir_deadline_views.xml",
         "views/finance_task_views.xml",
