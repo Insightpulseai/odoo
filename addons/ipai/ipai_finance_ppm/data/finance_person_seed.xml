@@ -106,5 +106,13 @@
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_csd"/> -->
         </record>
 
+        <!-- Tech Lead (JT) -->
+        <record id="finance_person_jt" model="ipai.finance.person">
+            <field name="code">JT</field>
+            <field name="name">Jake Tolentino</field>
+            <field name="email">jgtolentino.rn@gmail.com</field>
+            <field name="role">manager</field>
+        </record>
+
     </data>
 </odoo>
