@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 472b3c2e8f6ee385aa97a097028e1821c764b241
+> Commit: 4dab2d5bf26e733b00b3fd85b01fda5a48a66c9e
 
 ```
 .
@@ -2833,6 +2833,9 @@
 │   │   ├── verify-ce-apps.sh
 │   │   ├── verify-full-parity.sh
 │   │   └── verify-oca-modules.sh
+│   ├── odoo-automation
+│   │   ├── README.md
+│   │   └── create_project_alias.py
 │   ├── ppm
 │   │   ├── deploy-databricks.sh
 │   │   ├── run-dq-checks.sh
@@ -3398,6 +3401,8 @@
 │   │   │   └── index.ts
 │   │   ├── context-resolve
 │   │   │   └── index.ts
+│   │   ├── copilot-chat
+│   │   │   └── index.ts
 │   │   ├── cron-processor
 │   │   │   └── index.ts
 │   │   ├── docs-ai-ask
@@ -3810,15 +3815,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1226 directories, 2579 files
+1228 directories, 2582 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1417 |
-| Files | 3908 |
-| Python files | 1031 |
+| Directories | 1424 |
+| Files | 3922 |
+| Python files | 1032 |
 | XML files | 496 |
-| Markdown files | 743 |
+| Markdown files | 744 |
