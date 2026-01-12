@@ -3,63 +3,126 @@
 // ============================================================================
 // Single source of truth for all IPAI/Odoo theming.
 // These CSS custom properties can be overridden by skin modules.
+// All other IPAI modules should reference these tokens, NOT hex codes.
 // ============================================================================
 
 :root {
   // ============================================================================
   // BRAND TOKENS (Override these in skin modules like ipai_theme_tbwa_backend)
   // ============================================================================
+  // These are brand-agnostic slots that skins override with their brand colors.
 
-  // Primary brand color - used for buttons, links, focus states
-  --ipai-brand-primary: #F9C300;     // TBWA Yellow (default)
-  --ipai-brand-primary-hover: #FFDD2D;
+  // Primary brand color - used for buttons, links, focus states, accents
+  --ipai-brand-primary: #FFCC00;        // Default yellow (override in skin)
+  --ipai-brand-primary-hover: #FFD633;
   --ipai-brand-primary-light: #FFF8E3;
-  --ipai-brand-primary-rgb: 249, 195, 0;  // For rgba() usage
+  --ipai-brand-primary-rgb: 255, 204, 0;  // For rgba() usage
 
-  // Ink color - text on primary backgrounds
-  --ipai-brand-ink: #0B0B0B;
+  // Ink color - text on primary backgrounds (ensure contrast)
+  --ipai-brand-ink: #000000;
 
-  // Surface colors
-  --ipai-brand-surface: #FFFFFF;
-  --ipai-brand-surface-alt: #F7F9FC;
-  --ipai-brand-muted: #F5F5F5;
-  --ipai-brand-border: #E5E7EB;
+  // ============================================================================
+  // SURFACE TOKENS (Canvas, Cards, Panels)
+  // ============================================================================
 
-  // Text colors
-  --ipai-text-primary: #111827;
-  --ipai-text-secondary: #6B7280;
-  --ipai-text-muted: #9CA3AF;
-  --ipai-text-inverse: #FFFFFF;
+  --ipai-surface-canvas: #FAFAFA;       // Page background
+  --ipai-surface-card: #FFFFFF;         // Cards and panels
+  --ipai-surface-elevated: #FFFFFF;     // Elevated surfaces (modals, dropdowns)
+  --ipai-surface-muted: #F5F5F5;        // Subtle backgrounds
+  --ipai-surface-warm: #FFF8E3;         // Warm panels (insights, recommendations)
+
+  // Border colors
+  --ipai-border-subtle: #E5E5E5;        // Default borders
+  --ipai-border-strong: #D1D5DB;        // Emphasized borders
+
+  // ============================================================================
+  // NEUTRAL COLOR SCALE
+  // ============================================================================
+  // Full neutral palette for text, backgrounds, and UI elements
+
+  --ipai-neutral-900: #0D0D0D;          // Near black
+  --ipai-neutral-800: #1A1A1A;
+  --ipai-neutral-700: #333333;
+  --ipai-neutral-600: #4D4D4D;
+  --ipai-neutral-500: #666666;          // Mid gray
+  --ipai-neutral-400: #808080;
+  --ipai-neutral-300: #B3B3B3;
+  --ipai-neutral-200: #D9D9D9;
+  --ipai-neutral-100: #EDEDED;
+  --ipai-neutral-050: #FAFAFA;          // Near white
+
+  // ============================================================================
+  // TEXT TOKENS
+  // ============================================================================
+
+  --ipai-text-primary: #111111;         // Primary text (headings, body)
+  --ipai-text-secondary: #444444;       // Secondary text
+  --ipai-text-muted: #6B7280;           // Muted/placeholder text
+  --ipai-text-disabled: #9CA3AF;        // Disabled text
+  --ipai-text-inverse: #FFFFFF;         // Text on dark backgrounds
 
   // ============================================================================
   // SEMANTIC COLORS
   // ============================================================================
+  // Use for status indicators, alerts, badges - NOT for brand accent
 
-  --ipai-success: #10B981;
-  --ipai-success-light: #D1FAE5;
-  --ipai-success-dark: #059669;
+  --ipai-semantic-info: #3B82F6;
+  --ipai-semantic-info-light: #DBEAFE;
+  --ipai-semantic-info-dark: #2563EB;
 
-  --ipai-warning: #F59E0B;
-  --ipai-warning-light: #FEF3C7;
-  --ipai-warning-dark: #D97706;
+  --ipai-semantic-success: #22C55E;
+  --ipai-semantic-success-light: #DCFCE7;
+  --ipai-semantic-success-dark: #16A34A;
 
-  --ipai-error: #EF4444;
-  --ipai-error-light: #FEE2E2;
-  --ipai-error-dark: #DC2626;
+  --ipai-semantic-warn: #F59E0B;
+  --ipai-semantic-warn-light: #FEF3C7;
+  --ipai-semantic-warn-dark: #D97706;
 
-  --ipai-info: #3B82F6;
-  --ipai-info-light: #DBEAFE;
-  --ipai-info-dark: #2563EB;
+  --ipai-semantic-error: #EF4444;
+  --ipai-semantic-error-light: #FEE2E2;
+  --ipai-semantic-error-dark: #DC2626;
+
+  // Legacy aliases (for backward compatibility)
+  --ipai-success: var(--ipai-semantic-success);
+  --ipai-success-light: var(--ipai-semantic-success-light);
+  --ipai-success-dark: var(--ipai-semantic-success-dark);
+  --ipai-warning: var(--ipai-semantic-warn);
+  --ipai-warning-light: var(--ipai-semantic-warn-light);
+  --ipai-warning-dark: var(--ipai-semantic-warn-dark);
+  --ipai-error: var(--ipai-semantic-error);
+  --ipai-error-light: var(--ipai-semantic-error-light);
+  --ipai-error-dark: var(--ipai-semantic-error-dark);
+  --ipai-info: var(--ipai-semantic-info);
+  --ipai-info-light: var(--ipai-semantic-info-light);
+  --ipai-info-dark: var(--ipai-semantic-info-dark);
+
+  // Legacy surface aliases (for backward compatibility)
+  --ipai-brand-surface: var(--ipai-surface-card);
+  --ipai-brand-surface-alt: var(--ipai-surface-canvas);
+  --ipai-brand-muted: var(--ipai-surface-muted);
+  --ipai-brand-border: var(--ipai-border-subtle);
 
   // ============================================================================
-  // ODOO VARIABLE MAPPING
-  // Map IPAI tokens to Odoo's CSS custom properties
+  // ODOO/BOOTSTRAP VARIABLE MAPPING
+  // Map IPAI tokens to Odoo's and Bootstrap's CSS custom properties
   // ============================================================================
 
+  // Odoo brand colors
   --o-brand-primary: var(--ipai-brand-primary);
   --o-brand-odoo: var(--ipai-brand-primary);
   --o-enterprise-color: var(--ipai-brand-primary);
   --o-community-color: var(--ipai-brand-primary);
+
+  // Bootstrap semantic colors
+  --bs-primary: var(--ipai-brand-primary);
+  --bs-success: var(--ipai-semantic-success);
+  --bs-warning: var(--ipai-semantic-warn);
+  --bs-danger: var(--ipai-semantic-error);
+  --bs-info: var(--ipai-semantic-info);
+
+  // Body colors
+  --bs-body-bg: var(--ipai-surface-canvas);
+  --bs-body-color: var(--ipai-text-primary);
 
   // ============================================================================
   // TYPOGRAPHY TOKENS
