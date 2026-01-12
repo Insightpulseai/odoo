@@ -7,22 +7,33 @@
         These parameters configure the connection to your Superset instance.
         For production, use environment variables or secure secrets management.
 
+        Architecture (Production):
+        - Superset: https://superset.insightpulseai.net
+        - Token API: https://superset-embed-api.insightpulseai.net
+        - Odoo: https://erp.insightpulseai.net
+
         Required parameters:
-        - ipai_superset.base_url: Superset instance URL (e.g., https://superset.example.com)
-        - ipai_superset.username: Service account username with embed permissions
-        - ipai_superset.password: Service account password (use env var in production)
+        - ipai_superset.base_url: Superset instance URL
+        - ipai_superset.token_api_url: Guest token API URL (self-signed JWT)
 
         Optional:
+        - ipai_superset.username/password: Legacy Superset API auth (deprecated)
         - ipai_superset.embed_domain: Allowed embedding domain for CORS
         -->
 
-        <!-- Base URL - Must be set before using the connector -->
+        <!-- Superset instance URL (production) -->
         <record id="config_superset_base_url" model="ir.config_parameter">
             <field name="key">ipai_superset.base_url</field>
-            <field name="value"></field>
+            <field name="value">https://superset.insightpulseai.net</field>
         </record>
 
-        <!-- Service account username -->
+        <!-- Guest Token API URL (self-signed JWT service) -->
+        <record id="config_superset_token_api_url" model="ir.config_parameter">
+            <field name="key">ipai_superset.token_api_url</field>
+            <field name="value">https://superset-embed-api.insightpulseai.net/api/superset-token</field>
+        </record>
+
+        <!-- Service account username (legacy - for direct Superset API) -->
         <record id="config_superset_username" model="ir.config_parameter">
             <field name="key">ipai_superset.username</field>
             <field name="value"></field>
@@ -37,7 +48,7 @@
         <!-- Embed domain for CORS -->
         <record id="config_superset_embed_domain" model="ir.config_parameter">
             <field name="key">ipai_superset.embed_domain</field>
-            <field name="value"></field>
+            <field name="value">https://erp.insightpulseai.net</field>
         </record>
 
     </data>

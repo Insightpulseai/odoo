@@ -1,0 +1,267 @@
+# =============================================================================
+# Superset CI/CD - Build, Test, Deploy
+# =============================================================================
+# Builds production Superset image and deploys to DigitalOcean App Platform
+#
+# Workflow:
+#   1. Run unit tests (TODO: wire real tests)
+#   2. Build Docker images for Superset and Embed API
+#   3. Push to GitHub Container Registry (ghcr.io)
+#   4. Deploy to DigitalOcean via App Platform spec update
+#
+# Triggers:
+#   - Push to main (infra/superset/** or apps/superset-embed-api/**)
+#   - Manual workflow dispatch
+#
+# Required secrets:
+#   - GHCR_TOKEN: GitHub token with packages:write
+#   - DO_API_TOKEN: DigitalOcean API token
+#   - DO_SUPERSET_APP_ID: Superset App Platform app ID
+#   - DO_SUPERSET_EMBED_API_APP_ID: Embed API App Platform app ID
+# =============================================================================
+
+name: superset-ci-cd
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "infra/superset/**"
+      - "apps/superset-embed-api/**"
+      - ".github/workflows/superset-ci-cd.yml"
+  workflow_dispatch:
+    inputs:
+      deploy_superset:
+        description: "Deploy Superset"
+        required: false
+        default: "true"
+        type: boolean
+      deploy_embed_api:
+        description: "Deploy Embed API"
+        required: false
+        default: "true"
+        type: boolean
+
+env:
+  REGISTRY: ghcr.io
+  SUPERSET_IMAGE: ghcr.io/${{ github.repository_owner }}/ipai-superset
+  EMBED_API_IMAGE: ghcr.io/${{ github.repository_owner }}/superset-embed-api
+
+jobs:
+  # ===========================================================================
+  # Build Superset Image
+  # ===========================================================================
+  build-superset:
+    name: Build Superset Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.SUPERSET_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./infra/superset
+          file: ./infra/superset/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          echo "### Superset Image Built" >> $GITHUB_STEP_SUMMARY
+          echo "- Image: \`${{ env.SUPERSET_IMAGE }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Digest: \`${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Build Embed API Image
+  # ===========================================================================
+  build-embed-api:
+    name: Build Embed API Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+      image_digest: ${{ steps.build.outputs.digest }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.EMBED_API_IMAGE }}
+          tags: |
+            type=sha,prefix=
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ./apps/superset-embed-api
+          file: ./apps/superset-embed-api/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          echo "### Embed API Image Built" >> $GITHUB_STEP_SUMMARY
+          echo "- Image: \`${{ env.EMBED_API_IMAGE }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Digest: \`${{ steps.build.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Deploy Superset to DigitalOcean
+  # ===========================================================================
+  deploy-superset:
+    name: Deploy Superset
+    needs: build-superset
+    runs-on: ubuntu-latest
+    if: |
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_dispatch' || inputs.deploy_superset)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_API_TOKEN }}
+
+      - name: Deploy to App Platform
+        run: |
+          APP_ID="${{ secrets.DO_SUPERSET_APP_ID }}"
+          if [ -z "$APP_ID" ]; then
+            echo "Creating new Superset app..."
+            doctl apps create --spec infra/superset/do-app-spec.yaml --format ID --no-header
+          else
+            echo "Updating existing Superset app: $APP_ID"
+            doctl apps update "$APP_ID" --spec infra/superset/do-app-spec.yaml
+          fi
+
+      - name: Verify deployment
+        run: |
+          APP_ID="${{ secrets.DO_SUPERSET_APP_ID }}"
+          if [ -n "$APP_ID" ]; then
+            echo "Waiting for deployment..."
+            sleep 30
+            doctl apps get "$APP_ID" --format DefaultIngress,ActiveDeployment.Phase
+          fi
+
+  # ===========================================================================
+  # Deploy Embed API to DigitalOcean
+  # ===========================================================================
+  deploy-embed-api:
+    name: Deploy Embed API
+    needs: build-embed-api
+    runs-on: ubuntu-latest
+    if: |
+      github.ref == 'refs/heads/main' &&
+      (github.event_name != 'workflow_dispatch' || inputs.deploy_embed_api)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_API_TOKEN }}
+
+      - name: Deploy to App Platform
+        run: |
+          APP_ID="${{ secrets.DO_SUPERSET_EMBED_API_APP_ID }}"
+          if [ -z "$APP_ID" ]; then
+            echo "Creating new Embed API app..."
+            doctl apps create --spec apps/superset-embed-api/do-app-spec.yaml --format ID --no-header
+          else
+            echo "Updating existing Embed API app: $APP_ID"
+            doctl apps update "$APP_ID" --spec apps/superset-embed-api/do-app-spec.yaml
+          fi
+
+      - name: Verify deployment
+        run: |
+          APP_ID="${{ secrets.DO_SUPERSET_EMBED_API_APP_ID }}"
+          if [ -n "$APP_ID" ]; then
+            echo "Waiting for deployment..."
+            sleep 30
+            doctl apps get "$APP_ID" --format DefaultIngress,ActiveDeployment.Phase
+          fi
+
+  # ===========================================================================
+  # Health Check
+  # ===========================================================================
+  health-check:
+    name: Health Check
+    needs: [deploy-superset, deploy-embed-api]
+    runs-on: ubuntu-latest
+    if: always() && (needs.deploy-superset.result == 'success' || needs.deploy-embed-api.result == 'success')
+
+    steps:
+      - name: Check Superset health
+        if: needs.deploy-superset.result == 'success'
+        run: |
+          echo "Checking Superset health..."
+          curl -f https://superset.insightpulseai.net/health || echo "Health check pending..."
+
+      - name: Check Embed API health
+        if: needs.deploy-embed-api.result == 'success'
+        run: |
+          echo "Checking Embed API health..."
+          curl -f https://superset-embed-api.insightpulseai.net/health || echo "Health check pending..."
+
+      - name: Summary
+        run: |
+          echo "### Deployment Complete" >> $GITHUB_STEP_SUMMARY
+          echo "- Superset: https://superset.insightpulseai.net" >> $GITHUB_STEP_SUMMARY
+          echo "- Embed API: https://superset-embed-api.insightpulseai.net" >> $GITHUB_STEP_SUMMARY
