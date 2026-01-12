@@ -12,9 +12,12 @@
 # - GitHub Artifacts (for PR review)
 # - Supabase Storage public URLs (for LLM/Superset access)
 #
-# Required secrets:
-# - DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD (read-only DB recommended)
-# - PROJECT_REF, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+# Required secrets (minimal):
+# - SUPABASE_URL: Supabase project URL
+# - SUPABASE_SERVICE_ROLE_KEY: Service role key for Vault access
+#
+# Secrets retrieved from Supabase Vault:
+# - DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 # =============================================================================
 
 name: Generate ERD, DBML, and Schema Docs
@@ -45,15 +48,9 @@ permissions:
   contents: write
 
 env:
-  # Database connection (from secrets)
-  PGHOST: ${{ secrets.DB_HOST }}
-  PGPORT: ${{ secrets.DB_PORT || '5432' }}
-  PGDATABASE: ${{ secrets.DB_NAME }}
-  PGUSER: ${{ secrets.DB_USER }}
-  PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-  # Supabase project
-  PROJECT_REF: ${{ secrets.PROJECT_REF || 'spdtwktxdalcfigzeqrz' }}
-  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  # Supabase project (only these need to be GitHub secrets)
+  PROJECT_REF: spdtwktxdalcfigzeqrz
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://spdtwktxdalcfigzeqrz.supabase.co' }}
   SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
   # Schemas to include (comprehensive list)
   SCHEMAS: ${{ github.event.inputs.schemas || 'public,app,bi,scout,scout_dim,scout_fact,scout_meta,analytics,finance,expense,inventory,maintenance,projects,rates,ai,crm,agent,agents,gold,odoo,oca,core,afc,rag,llm,mcp,notion,scout_bronze,scout_silver,scout_gold,opex' }}
@@ -105,12 +102,12 @@ jobs:
           retention-days: 90
 
   # ===========================================================================
-  # Generate from database (requires DB connection)
+  # Generate from database (secrets from Supabase Vault)
   # ===========================================================================
   generate-from-db:
     name: Generate ERD from Database
     runs-on: ubuntu-latest
-    if: ${{ secrets.DB_HOST != '' }}
+    if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
 
     steps:
       - name: Checkout repository
@@ -122,7 +119,59 @@ jobs:
           sudo apt-get install -y graphviz postgresql-client jq
           npm i -g @dbml/cli@3.7.2
 
+      - name: Fetch secrets from Supabase Vault
+        id: vault
+        run: |
+          # Fetch DB credentials from Supabase Vault
+          # Vault stores secrets as key-value pairs accessible via SQL
+
+          VAULT_RESPONSE=$(curl -s -X POST \
+            "${SUPABASE_URL}/rest/v1/rpc/get_secrets" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"secret_names": ["db_host", "db_port", "db_name", "db_user", "db_password"]}' \
+            2>/dev/null || echo '{}')
+
+          # Parse response - fallback to direct Vault table query if RPC not available
+          if [ "$VAULT_RESPONSE" = "{}" ] || [ -z "$VAULT_RESPONSE" ]; then
+            # Try direct vault.secrets query
+            VAULT_RESPONSE=$(curl -s -X GET \
+              "${SUPABASE_URL}/rest/v1/vault.decrypted_secrets?select=name,decrypted_secret&name=in.(db_host,db_port,db_name,db_user,db_password)" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+              2>/dev/null || echo '[]')
+          fi
+
+          # Extract values (handle both response formats)
+          DB_HOST=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_host") | .decrypted_secret // .value // empty' | head -1)
+          DB_PORT=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_port") | .decrypted_secret // .value // empty' | head -1)
+          DB_NAME=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_name") | .decrypted_secret // .value // empty' | head -1)
+          DB_USER=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_user") | .decrypted_secret // .value // empty' | head -1)
+          DB_PASSWORD=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_password") | .decrypted_secret // .value // empty' | head -1)
+
+          # Set defaults if not found
+          DB_PORT=${DB_PORT:-5432}
+
+          # Validate we got credentials
+          if [ -z "$DB_HOST" ] || [ -z "$DB_NAME" ] || [ -z "$DB_USER" ]; then
+            echo "::warning::Could not fetch DB credentials from Vault. Skipping DB-based generation."
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Export to environment file (masked)
+          echo "::add-mask::$DB_PASSWORD"
+          echo "PGHOST=$DB_HOST" >> $GITHUB_ENV
+          echo "PGPORT=$DB_PORT" >> $GITHUB_ENV
+          echo "PGDATABASE=$DB_NAME" >> $GITHUB_ENV
+          echo "PGUSER=$DB_USER" >> $GITHUB_ENV
+          echo "PGPASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
+          echo "skip=false" >> $GITHUB_OUTPUT
+          echo "DB credentials loaded from Vault"
+
       - name: Generate schema.sql (schema-only dump)
+        if: steps.vault.outputs.skip != 'true'
         run: |
           # Build schema list for pg_dump
           SCHEMA_ARGS=""
@@ -136,6 +185,7 @@ jobs:
             --file=schema.sql 2>/dev/null || echo "-- Schema dump not available" > schema.sql
 
       - name: Generate DBML from schema
+        if: steps.vault.outputs.skip != 'true'
         run: |
           if [ -s schema.sql ] && [ "$(wc -l < schema.sql)" -gt 1 ]; then
             npx @dbml/cli@3.7.2 sql2dbml schema.sql -o schema.dbml --postgres 2>/dev/null || \
@@ -145,15 +195,18 @@ jobs:
           fi
 
       - name: Generate ERD DOT from pg_catalog
+        if: steps.vault.outputs.skip != 'true'
         run: |
           psql -v ON_ERROR_STOP=1 -f scripts/erd_dot.sql -t -A > erd_db.dot 2>/dev/null || \
             echo "digraph ERD { label=\"No database connection\" }" > erd_db.dot
 
       - name: Render SVG from database
+        if: steps.vault.outputs.skip != 'true'
         run: |
           dot -Tsvg erd_db.dot -o erd_db.svg
 
       - name: Generate per-table JSON summary
+        if: steps.vault.outputs.skip != 'true'
         run: |
           cat > table_meta.sql <<'SQL'
           WITH cols AS (
@@ -222,6 +275,7 @@ jobs:
             echo "[]" > tables.json
 
       - name: Upload database artifacts
+        if: steps.vault.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: erd-from-db
@@ -256,12 +310,7 @@ jobs:
           path: db-artifacts/
         continue-on-error: true
 
-      - name: Install Supabase CLI
-        run: npm i -g supabase@latest
-
       - name: Upload to Supabase Storage
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           # Upload code-based artifacts
           for file in code-artifacts/*.svg code-artifacts/*.dbml code-artifacts/*.json; do

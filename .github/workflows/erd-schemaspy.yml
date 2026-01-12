@@ -4,9 +4,12 @@
 # Generates comprehensive ERD documentation from PostgreSQL database
 # Outputs: HTML site + PNG/SVG diagrams
 #
-# Prerequisites:
-# - Secrets: DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
-# - Optional: DB_SCHEMAS (default: public)
+# Required secrets (minimal):
+# - SUPABASE_URL: Supabase project URL
+# - SUPABASE_SERVICE_ROLE_KEY: Service role key for Vault access
+#
+# Secrets retrieved from Supabase Vault:
+# - db_host, db_port, db_name, db_user, db_password
 # =============================================================================
 
 name: Generate ERD (SchemaSpy)
@@ -36,19 +39,16 @@ permissions:
   contents: write
 
 env:
-  DB_HOST: ${{ secrets.DB_HOST }}
-  DB_PORT: ${{ secrets.DB_PORT || '5432' }}
-  DB_NAME: ${{ secrets.DB_NAME }}
-  DB_USER: ${{ secrets.DB_USER }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  DB_SCHEMAS: ${{ github.event.inputs.schemas || secrets.DB_SCHEMAS || 'public' }}
+  PROJECT_REF: spdtwktxdalcfigzeqrz
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://spdtwktxdalcfigzeqrz.supabase.co' }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  DB_SCHEMAS: ${{ github.event.inputs.schemas || 'public' }}
 
 jobs:
   generate-erd:
     name: Generate ERD with SchemaSpy
     runs-on: ubuntu-latest
-    # Only run if DB credentials are configured
-    if: ${{ secrets.DB_HOST != '' }}
+    if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
 
     steps:
       - name: Checkout repository
@@ -56,10 +56,60 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Install jq
+        run: sudo apt-get install -y jq
+
+      - name: Fetch secrets from Supabase Vault
+        id: vault
+        run: |
+          # Fetch DB credentials from Supabase Vault
+          VAULT_RESPONSE=$(curl -s -X POST \
+            "${SUPABASE_URL}/rest/v1/rpc/get_secrets" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"secret_names": ["db_host", "db_port", "db_name", "db_user", "db_password"]}' \
+            2>/dev/null || echo '{}')
+
+          # Fallback to direct vault.decrypted_secrets query
+          if [ "$VAULT_RESPONSE" = "{}" ] || [ -z "$VAULT_RESPONSE" ]; then
+            VAULT_RESPONSE=$(curl -s -X GET \
+              "${SUPABASE_URL}/rest/v1/vault.decrypted_secrets?select=name,decrypted_secret&name=in.(db_host,db_port,db_name,db_user,db_password)" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+              2>/dev/null || echo '[]')
+          fi
+
+          # Extract values
+          DB_HOST=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_host") | .decrypted_secret // .value // empty' | head -1)
+          DB_PORT=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_port") | .decrypted_secret // .value // empty' | head -1)
+          DB_NAME=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_name") | .decrypted_secret // .value // empty' | head -1)
+          DB_USER=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_user") | .decrypted_secret // .value // empty' | head -1)
+          DB_PASSWORD=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_password") | .decrypted_secret // .value // empty' | head -1)
+
+          DB_PORT=${DB_PORT:-5432}
+
+          if [ -z "$DB_HOST" ] || [ -z "$DB_NAME" ] || [ -z "$DB_USER" ]; then
+            echo "::warning::Could not fetch DB credentials from Vault. Skipping SchemaSpy generation."
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "::add-mask::$DB_PASSWORD"
+          echo "DB_HOST=$DB_HOST" >> $GITHUB_ENV
+          echo "DB_PORT=$DB_PORT" >> $GITHUB_ENV
+          echo "DB_NAME=$DB_NAME" >> $GITHUB_ENV
+          echo "DB_USER=$DB_USER" >> $GITHUB_ENV
+          echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
+          echo "skip=false" >> $GITHUB_OUTPUT
+          echo "DB credentials loaded from Vault"
+
       - name: Create output directory
+        if: steps.vault.outputs.skip != 'true'
         run: mkdir -p erd_out
 
       - name: Generate ERD with SchemaSpy
+        if: steps.vault.outputs.skip != 'true'
         run: |
           docker run --rm \
             -v "$PWD/erd_out:/output" \
@@ -77,19 +127,18 @@ jobs:
         continue-on-error: true
 
       - name: Copy key diagrams to docs
+        if: steps.vault.outputs.skip != 'true'
         run: |
           mkdir -p docs/data-model/schemaspy
-          # Copy summary diagrams if generated
           cp erd_out/diagrams/summary/*.png docs/data-model/schemaspy/ 2>/dev/null || true
           cp erd_out/diagrams/summary/*.svg docs/data-model/schemaspy/ 2>/dev/null || true
-          # Copy relationships diagram
           cp erd_out/diagrams/orphans/*.png docs/data-model/schemaspy/ 2>/dev/null || true
           cp erd_out/diagrams/relationships.real.large.png docs/data-model/schemaspy/erd-full.png 2>/dev/null || true
-          # Create timestamp file
           echo "Generated: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" > docs/data-model/schemaspy/GENERATED.txt
           echo "Schemas: $DB_SCHEMAS" >> docs/data-model/schemaspy/GENERATED.txt
 
       - name: Upload ERD artifacts
+        if: steps.vault.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: erd-schemaspy
@@ -97,6 +146,7 @@ jobs:
           retention-days: 30
 
       - name: Upload diagram artifacts
+        if: steps.vault.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: erd-diagrams
@@ -132,7 +182,7 @@ jobs:
   generate-from-code:
     name: Generate ERD from Codebase
     runs-on: ubuntu-latest
-    if: ${{ secrets.DB_HOST == '' }}
+    if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY == '' }}
 
     steps:
       - name: Checkout repository
