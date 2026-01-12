@@ -167,6 +167,7 @@ docker-compose.*.local.yml
 # --- node / next build ---
 **/.next/
 **/node_modules/
+*.tsbuildinfo
 .cursor/
 
 # --- python ---
