@@ -1,0 +1,651 @@
+// =============================================================================
+// SCOUT & CES Analytics Canonical Schema
+// Purpose: Data model for Scout (Retail Intelligence) and CES (Campaign Analytics)
+// Platform: Supabase + Odoo 18 CE + Superset
+// Version: 1.0.0
+// Last Updated: 2026-01-12
+// =============================================================================
+
+Project scout_ces_analytics {
+  database_type: 'PostgreSQL'
+  Note: '''
+    # Scout & CES Analytics Schema
+
+    This schema defines the canonical data model for:
+    - **Scout**: Retail intelligence / sari-sari store analytics
+    - **CES**: Creative Effectiveness Score campaign analytics
+
+    ## Deployment Targets
+    - Supabase (gold layer tables + views)
+    - Odoo 18 CE (ipai_* modules)
+    - Superset (BI dashboards)
+
+    ## Schema Organization
+    - `scout.*` - Scout retail analytics
+    - `public.ces_*` - CES campaign analytics
+    - `ipai_*` - Odoo model mappings
+  '''
+}
+
+// =============================================================================
+// SCOUT SCHEMA - Retail Intelligence
+// =============================================================================
+
+TableGroup scout_retail {
+  scout.gold_transactions
+  scout.v_tx_trends
+  scout.v_brand_performance_tx_date
+  scout.v_product_mix_tx_date
+  scout.v_geo_regions_tx_date
+}
+
+// Gold Transactions - Main fact table
+Table scout.gold_transactions {
+  id uuid [pk, default: `gen_random_uuid()`]
+  store_id text
+
+  // Time dimensions
+  timestamp timestamptz [not null, default: `now()`]
+  time_of_day text [note: 'morning | afternoon | evening | night']
+
+  // Location hierarchy (Philippine geo)
+  location_barangay text
+  location_city text
+  location_province text
+  location_region text
+
+  // Product dimensions
+  product_category text
+  brand_name text
+  sku text
+
+  // Transaction metrics
+  units_per_transaction int [default: 1]
+  peso_value decimal(15,2) [default: 0]
+  basket_size int [default: 1]
+  duration_seconds int
+
+  // Behavioral (enriched via IoT/AI)
+  request_mode text [note: 'verbal | pointing | indirect']
+  request_type text [note: 'branded | unbranded | point | indirect']
+  suggestion_accepted boolean [default: false]
+
+  // Demographics (enriched)
+  gender text [note: 'male | female | unknown']
+  age_bracket text [note: '18-24 | 25-34 | 35-44 | 45-54 | 55+ | unknown']
+
+  // Metadata
+  created_at timestamptz [default: `now()`]
+  updated_at timestamptz [default: `now()`]
+
+  indexes {
+    timestamp [name: 'idx_scout_gold_tx_timestamp']
+    brand_name [name: 'idx_scout_gold_tx_brand']
+    product_category [name: 'idx_scout_gold_tx_category']
+    location_region [name: 'idx_scout_gold_tx_region']
+  }
+
+  Note: '''
+    Scout gold layer - enriched transaction facts for dashboard analytics.
+    Source: POS/sales transactions enriched with behavioral + demographic data.
+    Grain: One row per transaction line item.
+  '''
+}
+
+// Transaction Trends View
+Table scout.v_tx_trends [note: 'View - Transaction trends with date aliases'] {
+  id uuid [pk]
+  tx_date date [note: 'Canonical date column']
+  date date [note: 'Legacy alias for backward compatibility']
+  brand_name text
+  product_category text
+  peso_value decimal(15,2)
+  basket_size int
+  location_region text
+  location_province text
+  location_city text
+
+  Note: '''
+    View over scout.gold_transactions with:
+    - tx_date: canonical date (Asia/Manila timezone)
+    - date: backward-compatible alias for existing dashboards
+  '''
+}
+
+// Brand Performance View
+Table scout.v_brand_performance_tx_date [note: 'View - Brand performance aggregated by date'] {
+  tx_date date [pk]
+  date date [note: 'Legacy alias']
+  brand_name text [pk]
+  tx_count int
+  revenue decimal(15,2)
+  avg_basket_size decimal(10,2)
+
+  Note: 'Aggregated brand metrics by date for performance analysis'
+}
+
+// Product Mix View
+Table scout.v_product_mix_tx_date [note: 'View - Product mix aggregated by date'] {
+  tx_date date [pk]
+  date date [note: 'Legacy alias']
+  product_category text [pk]
+  brand_name text [pk]
+  tx_count int
+  revenue decimal(15,2)
+
+  Note: 'Product category and brand mix metrics by date'
+}
+
+// Geo Regions View
+Table scout.v_geo_regions_tx_date [note: 'View - Geographic metrics by date'] {
+  tx_date date [pk]
+  date date [note: 'Legacy alias']
+  location_region text [pk]
+  location_province text [pk]
+  location_city text
+  tx_count int
+  revenue decimal(15,2)
+
+  Note: 'Geographic intelligence - aggregated by PH region/province/city'
+}
+
+// =============================================================================
+// CES SCHEMA - Campaign Analytics
+// =============================================================================
+
+TableGroup ces_analytics {
+  public.ces_campaigns
+  public.ces_kpi_snapshots
+  public.ces_industry_benchmarks
+  public.ces_video_assets
+  public.ces_video_scenes
+  public.ces_insights
+}
+
+// Campaign Master
+Table public.ces_campaigns {
+  id uuid [pk, default: `gen_random_uuid()`]
+  odoo_campaign_id int [note: 'Link to Odoo ipai.ces.campaign']
+  name text [not null]
+  brand_name text
+  industry text [not null, note: 'technology | retail | finance | healthcare | automotive | other']
+  campaign_type text [not null, note: 'brand | performance | csr']
+  start_date date [not null]
+  end_date date
+  total_budget decimal(15,2)
+  currency_code text [default: 'PHP']
+  avg_ces_score decimal(5,2)
+  avg_roi decimal(5,2)
+  status text [not null, default: 'draft', note: 'draft | active | completed | needs_attention']
+  created_at timestamptz [not null, default: `now()`]
+  updated_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    industry [name: 'idx_ces_campaigns_industry']
+    status [name: 'idx_ces_campaigns_status']
+    (start_date, end_date) [name: 'idx_ces_campaigns_dates']
+  }
+
+  Note: '''
+    CES Campaign master table.
+    Stores campaign metadata, scores, and links to Odoo.
+    Used by: Overview, Campaigns, Performance tabs.
+  '''
+}
+
+// KPI Snapshots - Time series metrics
+Table public.ces_kpi_snapshots {
+  id uuid [pk, default: `gen_random_uuid()`]
+  campaign_id uuid [not null, ref: > public.ces_campaigns.id]
+  snapshot_date date [not null]
+
+  // Aggregate metrics
+  total_campaigns int
+  avg_ces_score decimal(5,2)
+  total_budget decimal(15,2)
+  currency_code text [default: 'PHP']
+  avg_roi decimal(5,2)
+  top_performers int
+  need_attention int
+
+  // Feature scores (0-100 scale)
+  visual_quality decimal(5,2)
+  brand_consistency decimal(5,2)
+  message_clarity decimal(5,2)
+  emotional_impact decimal(5,2)
+  target_precision decimal(5,2)
+  channel_mix decimal(5,2)
+
+  // Distribution bins
+  bin_0_20 int
+  bin_21_40 int
+  bin_41_60 int
+  bin_61_80 int
+  bin_81_100 int
+
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (campaign_id, snapshot_date) [name: 'idx_ces_kpi_snapshots_campaign_date']
+  }
+
+  Note: '''
+    Time-series KPI snapshots per campaign.
+    Used by: Performance Trends, CES Distribution, Radar chart.
+    Grain: One row per campaign per snapshot date.
+  '''
+}
+
+// Industry Benchmarks
+Table public.ces_industry_benchmarks {
+  id uuid [pk, default: `gen_random_uuid()`]
+  industry text [not null, unique]
+  avg_ces_score decimal(5,2)
+  top_quartile_ces decimal(5,2)
+  avg_roi decimal(5,2)
+  top_quartile_roi decimal(5,2)
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    industry [unique, name: 'uniq_ces_industry_benchmarks_industry']
+  }
+
+  Note: '''
+    Industry benchmark reference data.
+    Used by: Benchmarks tab comparison charts.
+  '''
+}
+
+// Video Assets
+Table public.ces_video_assets {
+  id uuid [pk, default: `gen_random_uuid()`]
+  odoo_video_id int [note: 'Link to Odoo ipai.ces.video.asset']
+  campaign_id uuid [ref: > public.ces_campaigns.id]
+  name text
+  video_url text
+  storage_backend text [note: 'youtube | vimeo | s3 | supabase_storage | other']
+  duration_seconds int
+  language text
+  main_ces_score decimal(5,2)
+  main_roi_estimate decimal(5,2)
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: '''
+    Video creative assets for campaign analysis.
+    Used by: Video Campaign Analysis page.
+  '''
+}
+
+// Video Scenes - Frame-level analysis
+Table public.ces_video_scenes {
+  id uuid [pk, default: `gen_random_uuid()`]
+  video_id uuid [not null, ref: > public.ces_video_assets.id]
+  scene_index int [not null]
+  start_second int
+  end_second int
+  objects_detected jsonb
+  brands_detected jsonb
+  visual_quality_score decimal(5,2)
+  attention_heatmap_url text
+  emotion_label text
+  created_at timestamptz [not null, default: `now()`]
+
+  indexes {
+    (video_id, scene_index) [name: 'idx_ces_video_scenes_video_idx']
+  }
+
+  Note: '''
+    Scene-level video analysis results.
+    Populated by AI/ML pipeline (Claude Vision, etc.)
+  '''
+}
+
+// AI Insights
+Table public.ces_insights {
+  id uuid [pk, default: `gen_random_uuid()`]
+  campaign_id uuid [ref: > public.ces_campaigns.id]
+  title text [not null]
+  category text [note: 'performance | audience | creative | research']
+  summary text
+  detailed_markdown text
+  source_agent text [note: 'Ask Ces | CESAI | Claude']
+  status text [default: 'draft', note: 'draft | published | archived']
+  visible_in_hub boolean [default: true]
+  generated_at timestamptz [default: `now()`]
+  created_at timestamptz [not null, default: `now()`]
+
+  Note: '''
+    AI-generated insights from Ask Ces and other agents.
+    Used by: Insights Hub, Ask Ces chat history.
+  '''
+}
+
+// =============================================================================
+// ODOO MODELS - ipai_* Module Mappings
+// =============================================================================
+
+TableGroup odoo_ipai_ces {
+  odoo.ipai_ces_campaign
+  odoo.ipai_ces_kpi_snapshot
+  odoo.ipai_ces_benchmark_industry
+  odoo.ipai_ces_video_asset
+  odoo.ipai_ces_insight
+}
+
+TableGroup odoo_ipai_retail {
+  odoo.ipai_retail_store
+  odoo.ipai_retail_tx
+  odoo.ipai_retail_tx_line
+}
+
+// Odoo CES Campaign
+Table odoo.ipai_ces_campaign {
+  id int [pk]
+  name varchar [not null]
+  active boolean [default: true]
+  brand_id int [ref: > odoo.res_partner.id]
+  industry varchar [not null]
+  campaign_type varchar [not null]
+  start_date date [not null]
+  end_date date
+  total_budget decimal(15,2)
+  currency_id int [ref: > odoo.res_currency.id]
+  avg_ces_score float
+  avg_roi float
+  status varchar [not null, default: 'draft']
+  project_id int [ref: > odoo.project_project.id]
+  supabase_row_id varchar [note: 'UUID link to ces_campaigns.id']
+  create_date datetime
+  write_date datetime
+  create_uid int
+  write_uid int
+
+  Note: '''
+    Odoo model: ipai.ces.campaign
+    Module: ipai_ces_core
+    Syncs to: public.ces_campaigns
+  '''
+}
+
+// Odoo CES KPI Snapshot
+Table odoo.ipai_ces_kpi_snapshot {
+  id int [pk]
+  campaign_id int [not null, ref: > odoo.ipai_ces_campaign.id]
+  snapshot_date date [not null]
+  total_campaigns int
+  avg_ces_score float
+  total_budget decimal(15,2)
+  currency_id int
+  avg_roi float
+  top_performers int
+  need_attention int
+  visual_quality float
+  brand_consistency float
+  message_clarity float
+  emotional_impact float
+  target_precision float
+  channel_mix float
+  bin_0_20 int
+  bin_21_40 int
+  bin_41_60 int
+  bin_61_80 int
+  bin_81_100 int
+  supabase_row_id varchar
+  create_date datetime
+  write_date datetime
+
+  Note: '''
+    Odoo model: ipai.ces.kpi.snapshot
+    Module: ipai_ces_core
+    Syncs to: public.ces_kpi_snapshots
+  '''
+}
+
+// Odoo CES Industry Benchmark
+Table odoo.ipai_ces_benchmark_industry {
+  id int [pk]
+  industry varchar [not null]
+  avg_ces_score float
+  top_quartile_ces float
+  avg_roi float
+  top_quartile_roi float
+  supabase_row_id varchar
+  create_date datetime
+  write_date datetime
+
+  Note: '''
+    Odoo model: ipai.ces.benchmark.industry
+    Module: ipai_ces_core
+    Syncs to: public.ces_industry_benchmarks
+  '''
+}
+
+// Odoo CES Video Asset
+Table odoo.ipai_ces_video_asset {
+  id int [pk]
+  name varchar
+  campaign_id int [ref: > odoo.ipai_ces_campaign.id]
+  video_url varchar
+  storage_backend varchar
+  duration_seconds int
+  language varchar
+  supabase_row_id varchar
+  create_date datetime
+  write_date datetime
+
+  Note: '''
+    Odoo model: ipai.ces.video.asset
+    Module: ipai_ces_video
+    Syncs to: public.ces_video_assets
+  '''
+}
+
+// Odoo CES Insight
+Table odoo.ipai_ces_insight {
+  id int [pk]
+  title varchar [not null]
+  category varchar
+  summary text
+  detailed_markdown text
+  campaign_id int [ref: > odoo.ipai_ces_campaign.id]
+  source_agent varchar
+  status varchar [default: 'draft']
+  visible_in_intelligence_hub boolean [default: true]
+  generated_at datetime
+  create_date datetime
+  write_date datetime
+
+  Note: '''
+    Odoo model: ipai.ces.insight
+    Module: ipai_ces_insights
+    Syncs to: public.ces_insights
+  '''
+}
+
+// Odoo Retail Store
+Table odoo.ipai_retail_store {
+  id int [pk]
+  name varchar [not null]
+  partner_id int [not null, ref: > odoo.res_partner.id]
+  code varchar [unique, note: 'Store code e.g. ST000284']
+  store_type varchar [note: 'urban_high | urban_medium | residential | rural | transport | other']
+  economic_class varchar [note: 'A | B | C | D | E | unknown']
+  is_tbwa_client boolean
+  region varchar
+  province varchar
+  city varchar
+  barangay varchar
+  create_date datetime
+  write_date datetime
+
+  Note: '''
+    Odoo model: ipai.retail.store
+    Module: ipai_retail_scout
+    Master data for retail store locations.
+  '''
+}
+
+// Odoo Retail Transaction Header
+Table odoo.ipai_retail_tx {
+  id int [pk]
+  name varchar [unique, note: 'Transaction UID e.g. TXW00000001']
+  tx_datetime datetime [not null]
+  company_id int [ref: > odoo.res_company.id]
+  store_id int [not null, ref: > odoo.ipai_retail_store.id]
+  pos_order_id int [ref: > odoo.pos_order.id]
+  time_of_day varchar
+  age_bracket varchar
+  gender varchar
+  duration_seconds int
+  handshake_score float
+  payment_method varchar
+  store_type varchar
+  campaign_influenced boolean
+  is_tbwa_client boolean
+  customer_type varchar
+  economic_class varchar
+  request_mode varchar
+  request_type varchar
+  suggestion_accepted boolean
+  substitution_event jsonb
+  create_date datetime
+  write_date datetime
+
+  Note: '''
+    Odoo model: ipai.retail.tx
+    Module: ipai_retail_scout
+    Grain: One row per retail visit/transaction.
+  '''
+}
+
+// Odoo Retail Transaction Line
+Table odoo.ipai_retail_tx_line {
+  id int [pk]
+  tx_id int [not null, ref: > odoo.ipai_retail_tx.id]
+  store_id int [ref: > odoo.ipai_retail_store.id]
+  product_id int [not null, ref: > odoo.product_product.id]
+  category_id int [ref: > odoo.product_category.id]
+  brand_id int [ref: > odoo.product_brand.id]
+  quantity int
+  peso_value decimal(15,2)
+  basket_size int [note: 'Computed: distinct products in parent tx']
+  combo_sku_codes text [note: 'JSON array of SKUs in tx']
+  create_date datetime
+  write_date datetime
+
+  Note: '''
+    Odoo model: ipai.retail.tx.line
+    Module: ipai_retail_scout
+    Grain: One row per (transaction, SKU).
+    Exports to: scout.gold_transactions
+  '''
+}
+
+// =============================================================================
+// ODOO CORE REFERENCES
+// =============================================================================
+
+TableGroup odoo_core {
+  odoo.res_partner
+  odoo.res_company
+  odoo.res_currency
+  odoo.product_product
+  odoo.product_category
+  odoo.product_brand
+  odoo.pos_order
+  odoo.project_project
+}
+
+Table odoo.res_partner {
+  id int [pk]
+  name varchar
+  is_company boolean
+  Note: 'Odoo core: Partners (customers, vendors, stores, brands)'
+}
+
+Table odoo.res_company {
+  id int [pk]
+  name varchar
+  Note: 'Odoo core: Companies / legal entities'
+}
+
+Table odoo.res_currency {
+  id int [pk]
+  name varchar
+  Note: 'Odoo core: Currencies (PHP, USD, etc.)'
+}
+
+Table odoo.product_product {
+  id int [pk]
+  name varchar
+  default_code varchar [note: 'SKU code']
+  Note: 'Odoo core: Product variants'
+}
+
+Table odoo.product_category {
+  id int [pk]
+  name varchar
+  Note: 'Odoo core: Product categories'
+}
+
+Table odoo.product_brand {
+  id int [pk]
+  name varchar
+  is_tbwa_client boolean
+  Note: 'OCA product_brand: Brand master'
+}
+
+Table odoo.pos_order {
+  id int [pk]
+  name varchar
+  date_order datetime
+  partner_id int
+  Note: 'Odoo POS: Point of Sale orders'
+}
+
+Table odoo.project_project {
+  id int [pk]
+  name varchar
+  Note: 'Odoo core: Projects'
+}
+
+// =============================================================================
+// RELATIONSHIPS
+// =============================================================================
+
+// Scout relationships are implicit via views
+
+// CES Supabase relationships
+Ref: public.ces_kpi_snapshots.campaign_id > public.ces_campaigns.id [delete: cascade]
+Ref: public.ces_video_assets.campaign_id > public.ces_campaigns.id
+Ref: public.ces_video_scenes.video_id > public.ces_video_assets.id [delete: cascade]
+Ref: public.ces_insights.campaign_id > public.ces_campaigns.id
+
+// Odoo CES relationships
+Ref: odoo.ipai_ces_kpi_snapshot.campaign_id > odoo.ipai_ces_campaign.id [delete: cascade]
+Ref: odoo.ipai_ces_video_asset.campaign_id > odoo.ipai_ces_campaign.id
+Ref: odoo.ipai_ces_insight.campaign_id > odoo.ipai_ces_campaign.id
+
+// Odoo Retail relationships
+Ref: odoo.ipai_retail_tx.store_id > odoo.ipai_retail_store.id
+Ref: odoo.ipai_retail_tx_line.tx_id > odoo.ipai_retail_tx.id [delete: cascade]
+Ref: odoo.ipai_retail_tx_line.store_id > odoo.ipai_retail_store.id
+
+// =============================================================================
+// DATA FLOW DOCUMENTATION
+// =============================================================================
+
+// Scout Data Flow:
+// 1. POS transactions captured in pos.order / pos.order.line
+// 2. ETL job enriches with IoT/behavioral data -> ipai.retail.tx + ipai.retail.tx.line
+// 3. SQL view exports to scout.gold_transactions
+// 4. Superset dashboards query scout.v_* views
+// 5. Vercel Scout dashboard calls Supabase RPCs
+
+// CES Data Flow:
+// 1. Campaigns created in Odoo (ipai.ces.campaign)
+// 2. KPI snapshots recorded over time (ipai.ces.kpi.snapshot)
+// 3. Sync job pushes to Supabase (ces_campaigns, ces_kpi_snapshots)
+// 4. Video assets uploaded + AI analysis -> ces_video_assets, ces_video_scenes
+// 5. Superset dashboards + Vercel CES dashboard consume data
+// 6. Ask Ces generates insights -> ces_insights
