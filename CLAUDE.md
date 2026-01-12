@@ -277,8 +277,14 @@ odoo-ce/
 │   └── ...
 │
 ├── mcp/                       # Model Context Protocol
-│   ├── coordinator/
-│   └── servers/odoo-erp-server/
+│   ├── coordinator/           # MCP routing & aggregation
+│   └── servers/               # MCP server implementations
+│       ├── odoo-erp-server/   # Odoo ERP integration
+│       ├── digitalocean-mcp-server/  # DO infrastructure
+│       ├── superset-mcp-server/      # BI platform
+│       ├── vercel-mcp-server/        # Deployments
+│       ├── pulser-mcp-server/        # Agent orchestration
+│       └── speckit-mcp-server/       # Spec enforcement
 │
 ├── n8n/                       # n8n workflow templates
 │
@@ -286,6 +292,7 @@ odoo-ce/
 │   ├── project_memory.db      # SQLite config database
 │   ├── query_memory.py        # Memory query script
 │   ├── settings.json          # Allowed tools config
+│   ├── mcp-servers.json       # MCP server configuration
 │   └── commands/              # Slash commands
 │
 ├── .github/workflows/         # CI/CD pipelines (47 workflows)
@@ -727,9 +734,92 @@ python scripts/generate_odoo_dbml.py
 
 ### MCP Servers
 
-- Coordinator in `mcp/coordinator/`
-- Odoo ERP server in `mcp/servers/odoo-erp-server/`
-- Configuration in `mcp/agentic-cloud.yaml`
+**Architecture:**
+```
+Claude Desktop / VS Code / Agents
+        ↓
+MCP Coordinator (port 8766)
+    ↓                    ↓
+External MCPs       Custom MCPs
+(Supabase, GitHub)  (Odoo, DO, Superset)
+```
+
+**Configuration:** `.claude/mcp-servers.json`
+
+**External MCP Servers (install via npx):**
+
+| Server | Purpose | Required Env |
+|--------|---------|--------------|
+| `@supabase/mcp-server` | Schema, SQL, functions | `SUPABASE_ACCESS_TOKEN` |
+| `@modelcontextprotocol/server-github` | Repos, PRs, workflows | `GITHUB_TOKEN` |
+| `dbhub-mcp-server` | Direct Postgres access | `POSTGRES_URL` |
+| `@anthropic/figma-mcp-server` | Design tokens, components | `FIGMA_ACCESS_TOKEN` |
+| `@notionhq/notion-mcp-server` | Workspace docs, PRDs | `NOTION_API_KEY` |
+| `@anthropic/firecrawl-mcp-server` | Web scraping, ETL | `FIRECRAWL_API_KEY` |
+| `@huggingface/mcp-server` | Models, datasets | `HF_TOKEN` |
+| `@anthropic/playwright-mcp-server` | Browser automation | (none) |
+
+**Custom MCP Servers (in `mcp/servers/`):**
+
+| Server | Purpose | Location |
+|--------|---------|----------|
+| `odoo-erp-server` | Odoo CE accounting, BIR compliance | `mcp/servers/odoo-erp-server/` |
+| `digitalocean-mcp-server` | Droplets, apps, deployments | `mcp/servers/digitalocean-mcp-server/` |
+| `superset-mcp-server` | Dashboards, charts, datasets | `mcp/servers/superset-mcp-server/` |
+| `vercel-mcp-server` | Projects, deployments, logs | `mcp/servers/vercel-mcp-server/` |
+| `pulser-mcp-server` | Agent orchestration | `mcp/servers/pulser-mcp-server/` |
+| `speckit-mcp-server` | Spec bundle enforcement | `mcp/servers/speckit-mcp-server/` |
+
+**Server Groups:**
+- `core`: supabase, github, dbhub, odoo-erp
+- `design`: figma, notion
+- `infra`: digitalocean, vercel
+- `automation`: pulser, speckit
+
+**Building Custom Servers:**
+```bash
+cd mcp/servers/<server-name>
+npm install
+npm run build
+```
+
+---
+
+## GitHub Projects v2 – API Limits
+
+### Iteration Fields (Quarter/Sprint)
+
+Iteration **values** (Quarter/Sprint) **CANNOT** be created via GitHub API as of 2026.
+
+**Behavior when asked to configure iterations:**
+1. Mark the step as: `PHASE_REQUIRES_UI(GitHub iterations API missing)`
+2. Output a one-paragraph checklist only (no screen-by-screen guide)
+3. Continue automating everything else (fields, statuses, syncing, labels)
+
+**Manual UI Setup Required:**
+
+For **Roadmap** (`Quarter` field):
+- Length: 3 months
+- Start date: 2026-01-01
+- Generate: 4 cycles (Q1–Q4)
+
+For **Execution Board** (`Sprint` field):
+- Length: 14 days
+- Start date: Next Monday
+- Generate: 12–26 cycles
+
+**What CAN be automated:**
+- Project creation (`gh project create`)
+- Field creation (`gh project field-create --data-type ITERATION`)
+- Single select fields with options
+- Status fields
+- Labels and milestones
+- Issue/PR linking
+
+**What CANNOT be automated:**
+- Iteration values/cycles
+- Iteration start dates
+- Iteration lengths
 
 ---
 
@@ -772,4 +862,4 @@ docker restart odoo-prod
 ---
 
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-09*
+*Last updated: 2026-01-12*
