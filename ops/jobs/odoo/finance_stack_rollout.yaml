@@ -1,0 +1,55 @@
+# ops/jobs/odoo/finance_stack_rollout.yaml
+job_id: odoo-finance-stack-rollout
+description: >
+  Full Finance module stack rollout including:
+  - ipai_finance_ppm (core Finance PPM with OKR/BIR/Month-End)
+  - ipai_finance_closing (SAP AFC-style closing)
+  - ipai_finance_ppm_golive (go-live checklist)
+  - ipai_finance_ppm_umbrella (complete config)
+target: odoo-prod-droplet
+created: 2026-01-12
+author: claude/finance-governance-model-sTSMj
+
+steps:
+  - name: Pull latest code
+    run: |
+      cd /opt/odoo/repo
+      git fetch origin
+      git pull origin main || git pull origin 18.0
+
+  - name: Update apps list
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -u base --stop-after-init
+
+  - name: Install/upgrade ipai_finance_ppm
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -i ipai_finance_ppm --stop-after-init
+
+  - name: Install/upgrade ipai_finance_closing
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -i ipai_finance_closing --stop-after-init
+
+  - name: Install/upgrade ipai_finance_ppm_golive
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -i ipai_finance_ppm_golive --stop-after-init
+
+  - name: Install/upgrade ipai_finance_ppm_umbrella
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -i ipai_finance_ppm_umbrella --stop-after-init
+
+  - name: Restart Odoo service
+    run: docker compose -f /opt/odoo/docker-compose.yml restart odoo-core
+
+  - name: Verify all modules installed
+    run: |
+      sleep 15
+      docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo shell -d odoo_core --no-http <<'PYEOF'
+      modules = ['ipai_finance_ppm', 'ipai_finance_closing', 'ipai_finance_ppm_golive', 'ipai_finance_ppm_umbrella']
+      for name in modules:
+          mod = env['ir.module.module'].search([('name', '=', name)])
+          if mod:
+              print(f"✓ {name}: {mod.state} (v{mod.installed_version})")
+          else:
+              print(f"✗ {name}: NOT FOUND")
+      PYEOF
+
+expected_results:
+  - All 4 Finance modules installed and running
+  - Finance menu visible in Odoo
+  - BIR reminder crons active
+  - Month-end close templates seeded
