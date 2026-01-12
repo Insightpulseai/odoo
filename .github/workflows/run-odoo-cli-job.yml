@@ -1,0 +1,117 @@
+name: Run Odoo CLI Job
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_file:
+        description: 'Path to CLI job spec YAML'
+        required: true
+        default: 'ops/jobs/odoo/ipai_finance_ppm_install.yaml'
+        type: string
+
+jobs:
+  run-cli-job:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Parse and validate job file
+        id: parse
+        run: |
+          JOB_FILE="${{ github.event.inputs.job_file }}"
+
+          if [ ! -f "$JOB_FILE" ]; then
+            echo "::error::Job file not found: $JOB_FILE"
+            exit 1
+          fi
+
+          echo "job_file=$JOB_FILE" >> "$GITHUB_OUTPUT"
+          echo "job_id=$(yq '.job_id' -r $JOB_FILE)" >> "$GITHUB_OUTPUT"
+          echo "description=$(yq '.description' -r $JOB_FILE)" >> "$GITHUB_OUTPUT"
+
+          echo "## Job Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Job ID:** $(yq '.job_id' -r $JOB_FILE)" >> $GITHUB_STEP_SUMMARY
+          echo "- **File:** $JOB_FILE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Description:** $(yq '.description' -r $JOB_FILE)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Steps to execute:" >> $GITHUB_STEP_SUMMARY
+          yq '.steps[].name' -r $JOB_FILE | while read -r name; do
+            echo "- $name" >> $GITHUB_STEP_SUMMARY
+          done
+
+      - name: Run job on Odoo droplet
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.DO_ODOO_HOST }}
+          username: ${{ secrets.DO_SSH_USER }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          port: ${{ secrets.DO_SSH_PORT || 22 }}
+          command_timeout: 10m
+          script: |
+            set -euo pipefail
+
+            echo "========================================"
+            echo "Job: ${{ steps.parse.outputs.job_id }}"
+            echo "========================================"
+
+            # Create temp job file
+            cat << 'JOBEOF' > /tmp/job.yaml
+            ${{ steps.parse.outputs.job_file }}
+            JOBEOF
+
+            # Actually fetch the job file content
+            cd /opt/odoo/repo || cd /opt/odoo
+            git fetch origin
+            git checkout origin/${{ github.ref_name }} -- "${{ github.event.inputs.job_file }}" 2>/dev/null || true
+
+            JOB_FILE="${{ github.event.inputs.job_file }}"
+
+            if [ ! -f "$JOB_FILE" ]; then
+              echo "Job file not found on droplet, using inline"
+              JOB_FILE="/tmp/job.yaml"
+            fi
+
+            echo "Executing steps from: $JOB_FILE"
+            echo ""
+
+            STEP_NUM=0
+            yq '.steps[].run' -r "$JOB_FILE" | while IFS= read -r CMD; do
+              [ -z "$CMD" ] && continue
+              STEP_NUM=$((STEP_NUM + 1))
+              STEP_NAME=$(yq ".steps[$((STEP_NUM-1))].name // \"Step $STEP_NUM\"" -r "$JOB_FILE")
+
+              echo "──────────────────────────────────────"
+              echo "[$STEP_NUM] $STEP_NAME"
+              echo "──────────────────────────────────────"
+              echo "Command: $CMD"
+              echo ""
+
+              eval "$CMD"
+
+              echo ""
+              echo "✓ Step $STEP_NUM completed"
+              echo ""
+            done
+
+            echo "========================================"
+            echo "Job completed successfully"
+            echo "========================================"
+
+      - name: Update job summary
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Result" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "✅ Job completed successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Job failed" >> $GITHUB_STEP_SUMMARY
+          fi

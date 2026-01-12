@@ -1,0 +1,33 @@
+# ops/jobs/odoo/ipai_finance_ppm_install.yaml
+job_id: odoo-ipai-finance-ppm-install
+description: >
+  Update Odoo base apps list and install the IPAI Finance PPM module.
+  This installs the complete Finance Governance Model with OKR tracking,
+  BIR tax filing, and month-end close workflows.
+target: odoo-prod-droplet
+created: 2026-01-12
+author: claude/finance-governance-model-sTSMj
+
+steps:
+  - name: Update apps list
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -u base --stop-after-init
+
+  - name: Install ipai_finance_ppm module
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -i ipai_finance_ppm --stop-after-init
+
+  - name: Verify installation
+    run: |
+      docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo shell -d odoo_core --no-http <<'PYEOF'
+      module = env['ir.module.module'].search([('name', '=', 'ipai_finance_ppm')])
+      print(f"Module: {module.name}")
+      print(f"State: {module.state}")
+      print(f"Version: {module.installed_version}")
+      PYEOF
+
+expected_results:
+  - "IPAI Finance PPM" visible in Apps
+  - 1 Program project created (Finance Month-End Close & Tax Filing - 2026)
+  - 2 Child projects (BIR Tax Filing 2026, Month-End Close Template)
+  - 12 Finance team members seeded
+  - BIR reminder crons active (9AM, 5PM, Overdue)
+  - Mailgun SMTP configured (password must be set manually)
