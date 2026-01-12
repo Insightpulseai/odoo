@@ -10,6 +10,7 @@ https://github.com/jgtolentino/odoo-ce/wiki
 | `Home.md` | Home |
 | `Releases-and-Changelog.md` | Releases & Changelog |
 | `Modules-and-Features.md` | Modules & Features |
+| `Infrastructure.md` | Infrastructure |
 
 ## Syncing to Wiki
 

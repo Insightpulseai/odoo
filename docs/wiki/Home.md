@@ -2,8 +2,9 @@
 
 This wiki is the human-readable front door for the `odoo-ce` monorepo.
 
-- **Releases & Changelog** – what shipped, when, and how it was verified
-- **Modules & Features** – IPAI + OCA module catalog and status
+- **[Releases & Changelog](Releases-and-Changelog)** – what shipped, when, and how it was verified
+- **[Modules & Features](Modules-and-Features)** – IPAI + OCA module catalog and status
+- **[Infrastructure](Infrastructure)** – DNS, email, secrets, and server configuration
 - **Architecture** – runtime topology, DB layout, and integration map
 - **Developer Workflow** – how to develop, test, and deploy safely
 - **Troubleshooting** – deterministic diagnostics + known fixes
