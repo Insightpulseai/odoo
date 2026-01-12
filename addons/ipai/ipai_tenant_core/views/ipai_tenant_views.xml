@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="view_ipai_tenant_tree" model="ir.ui.view">
+        <field name="name">ipai.tenant.tree</field>
+        <field name="model">ipai.tenant</field>
+        <field name="arch" type="xml">
+            <tree string="Platform Tenants">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="db_name"/>
+                <field name="supabase_schema"/>
+                <field name="industry"/>
+                <field name="country_id"/>
+                <field name="active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_ipai_tenant_form" model="ir.ui.view">
+        <field name="name">ipai.tenant.form</field>
+        <field name="model">ipai.tenant</field>
+        <field name="arch" type="xml">
+            <form string="Tenant">
+                <header>
+                    <button name="action_provision_supabase_schema"
+                            type="object"
+                            string="Provision Supabase Schema"
+                            class="btn-primary"/>
+                    <button name="action_open_superset_workspace"
+                            type="object"
+                            string="Open Superset"
+                            class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <field name="active" widget="boolean_button"
+                               options="{'terminology': 'active'}"/>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                            attrs="{'invisible': [('active', '=', True)]}"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Tenant Name"/>
+                        </h1>
+                        <field name="code" placeholder="tenant_code" />
+                    </div>
+                    <group>
+                        <group name="technical" string="Technical Configuration">
+                            <field name="db_name"/>
+                            <field name="supabase_schema"/>
+                            <field name="primary_domain"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group name="superset" string="Superset Integration">
+                            <field name="superset_base_url"/>
+                            <field name="superset_workspace"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="business" string="Business Information">
+                            <field name="company_name"/>
+                            <field name="industry"/>
+                            <field name="country_id"/>
+                            <field name="onboarded_date"/>
+                        </group>
+                        <group name="contact" string="Contact Information">
+                            <field name="admin_email"/>
+                            <field name="admin_phone"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="notes" string="Notes">
+                            <field name="notes" placeholder="Internal notes about this tenant..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_ipai_tenant_search" model="ir.ui.view">
+        <field name="name">ipai.tenant.search</field>
+        <field name="model">ipai.tenant</field>
+        <field name="arch" type="xml">
+            <search string="Tenants">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="db_name"/>
+                <field name="supabase_schema"/>
+                <separator/>
+                <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                <filter name="inactive" string="Archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_industry" string="Industry" context="{'group_by': 'industry'}"/>
+                    <filter name="group_country" string="Country" context="{'group_by': 'country_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ipai_tenant" model="ir.actions.act_window">
+        <field name="name">Platform Tenants</field>
+        <field name="res_model">ipai.tenant</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first tenant
+            </p>
+            <p>
+                Tenants represent clients or organizational units that use the platform.
+                Each tenant has isolated data in Supabase and its own Odoo database.
+            </p>
+        </field>
+    </record>
+</odoo>

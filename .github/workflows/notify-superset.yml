@@ -1,0 +1,42 @@
+---
+name: notify-superset-on-schema-change
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    paths:
+      - "supabase/migrations/**"
+      - "db/**"
+      - "sql/**"
+      - "packages/db/**"
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract changed files
+        id: changes
+        run: |
+          echo "files=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep -E 'supabase/migrations/|db/|sql/|packages/db/' | tr '\n' ',' | sed 's/,$//')" >> $GITHUB_OUTPUT
+
+      - name: Trigger Superset pipeline
+        if: steps.changes.outputs.files != ''
+        run: |
+          echo "Schema changes detected in: ${{ steps.changes.outputs.files }}"
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GH_PAT_SUPERSET }}" \
+            https://api.github.com/repos/jgtolentino/superset/dispatches \
+            -d '{"event_type":"schema_changed","client_payload":{"changed_files":"${{ steps.changes.outputs.files }}","commit":"${{ github.sha }}","branch":"${{ github.ref_name }}"}}'
+
+      - name: Log notification
+        if: steps.changes.outputs.files != ''
+        run: |
+          echo "✅ Superset rebuild triggered for schema changes"
+          echo "Changed files: ${{ steps.changes.outputs.files }}"
