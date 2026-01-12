@@ -1,0 +1,382 @@
+# =============================================================================
+# Generate ERD, DBML, and Schema Docs
+# =============================================================================
+# Generates all ERD artifacts for LLM consumption and Superset display:
+# - schema.sql: Schema-only Postgres dump
+# - schema.dbml: DBML for dbdiagram.io and LLM grounding
+# - erd.dot: Graphviz DOT (text format for LLMs)
+# - erd.svg: SVG for Superset embedding
+# - tables.json: Per-table JSON summary (LLM-friendly)
+#
+# Artifacts are uploaded to:
+# - GitHub Artifacts (for PR review)
+# - Supabase Storage public URLs (for LLM/Superset access)
+#
+# Required secrets (minimal):
+# - SUPABASE_URL: Supabase project URL
+# - SUPABASE_SERVICE_ROLE_KEY: Service role key for Vault access
+#
+# Secrets retrieved from Supabase Vault:
+# - DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
+# =============================================================================
+
+name: Generate ERD, DBML, and Schema Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'db/migrations/**'
+      - 'db/schema/**'
+      - 'supabase/migrations/**'
+      - 'addons/ipai/**/models/**'
+      - '.github/workflows/erd-docs.yml'
+  pull_request:
+    paths:
+      - 'db/migrations/**'
+      - 'db/schema/**'
+      - 'supabase/migrations/**'
+      - 'addons/ipai/**/models/**'
+  workflow_dispatch:
+    inputs:
+      schemas:
+        description: 'Comma-separated schemas to include'
+        required: false
+        default: 'public'
+
+permissions:
+  contents: write
+
+env:
+  # Supabase project (only these need to be GitHub secrets)
+  PROJECT_REF: spdtwktxdalcfigzeqrz
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://spdtwktxdalcfigzeqrz.supabase.co' }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  # Schemas to include (comprehensive list)
+  SCHEMAS: ${{ github.event.inputs.schemas || 'public,app,bi,scout,scout_dim,scout_fact,scout_meta,analytics,finance,expense,inventory,maintenance,projects,rates,ai,crm,agent,agents,gold,odoo,oca,core,afc,rag,llm,mcp,notion,scout_bronze,scout_silver,scout_gold,opex' }}
+
+jobs:
+  # ===========================================================================
+  # Generate from codebase (no DB required)
+  # ===========================================================================
+  generate-from-code:
+    name: Generate ERD from Codebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+
+      - name: Generate DBML and diagrams from code
+        run: |
+          python scripts/generate_odoo_dbml.py
+
+      - name: Generate Graphviz ERD from code
+        run: |
+          python scripts/generate_erd_graphviz.py --format all
+
+      - name: Upload code-based artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: erd-from-code
+          path: |
+            docs/data-model/*.dbml
+            docs/data-model/*.mmd
+            docs/data-model/*.puml
+            docs/data-model/*.dot
+            docs/data-model/*.svg
+            docs/data-model/*.png
+            docs/data-model/*.json
+          retention-days: 90
+
+  # ===========================================================================
+  # Generate from database (secrets from Supabase Vault)
+  # ===========================================================================
+  generate-from-db:
+    name: Generate ERD from Database
+    runs-on: ubuntu-latest
+    if: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY != '' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz postgresql-client jq
+          npm i -g @dbml/cli@3.7.2
+
+      - name: Fetch secrets from Supabase Vault
+        id: vault
+        run: |
+          # Fetch DB credentials from Supabase Vault
+          # Vault stores secrets as key-value pairs accessible via SQL
+
+          VAULT_RESPONSE=$(curl -s -X POST \
+            "${SUPABASE_URL}/rest/v1/rpc/get_secrets" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            -d '{"secret_names": ["db_host", "db_port", "db_name", "db_user", "db_password"]}' \
+            2>/dev/null || echo '{}')
+
+          # Parse response - fallback to direct Vault table query if RPC not available
+          if [ "$VAULT_RESPONSE" = "{}" ] || [ -z "$VAULT_RESPONSE" ]; then
+            # Try direct vault.secrets query
+            VAULT_RESPONSE=$(curl -s -X GET \
+              "${SUPABASE_URL}/rest/v1/vault.decrypted_secrets?select=name,decrypted_secret&name=in.(db_host,db_port,db_name,db_user,db_password)" \
+              -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+              2>/dev/null || echo '[]')
+          fi
+
+          # Extract values (handle both response formats)
+          DB_HOST=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_host") | .decrypted_secret // .value // empty' | head -1)
+          DB_PORT=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_port") | .decrypted_secret // .value // empty' | head -1)
+          DB_NAME=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_name") | .decrypted_secret // .value // empty' | head -1)
+          DB_USER=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_user") | .decrypted_secret // .value // empty' | head -1)
+          DB_PASSWORD=$(echo "$VAULT_RESPONSE" | jq -r '.[] | select(.name=="db_password") | .decrypted_secret // .value // empty' | head -1)
+
+          # Set defaults if not found
+          DB_PORT=${DB_PORT:-5432}
+
+          # Validate we got credentials
+          if [ -z "$DB_HOST" ] || [ -z "$DB_NAME" ] || [ -z "$DB_USER" ]; then
+            echo "::warning::Could not fetch DB credentials from Vault. Skipping DB-based generation."
+            echo "skip=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Export to environment file (masked)
+          echo "::add-mask::$DB_PASSWORD"
+          echo "PGHOST=$DB_HOST" >> $GITHUB_ENV
+          echo "PGPORT=$DB_PORT" >> $GITHUB_ENV
+          echo "PGDATABASE=$DB_NAME" >> $GITHUB_ENV
+          echo "PGUSER=$DB_USER" >> $GITHUB_ENV
+          echo "PGPASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
+          echo "skip=false" >> $GITHUB_OUTPUT
+          echo "DB credentials loaded from Vault"
+
+      - name: Generate schema.sql (schema-only dump)
+        if: steps.vault.outputs.skip != 'true'
+        run: |
+          # Build schema list for pg_dump
+          SCHEMA_ARGS=""
+          IFS=',' read -ra SCHEMA_ARRAY <<< "$SCHEMAS"
+          for schema in "${SCHEMA_ARRAY[@]}"; do
+            SCHEMA_ARGS="$SCHEMA_ARGS --schema=$schema"
+          done
+
+          pg_dump --schema-only --no-owner --no-privileges \
+            $SCHEMA_ARGS \
+            --file=schema.sql 2>/dev/null || echo "-- Schema dump not available" > schema.sql
+
+      - name: Generate DBML from schema
+        if: steps.vault.outputs.skip != 'true'
+        run: |
+          if [ -s schema.sql ] && [ "$(wc -l < schema.sql)" -gt 1 ]; then
+            npx @dbml/cli@3.7.2 sql2dbml schema.sql -o schema.dbml --postgres 2>/dev/null || \
+              echo "// DBML generation failed" > schema.dbml
+          else
+            echo "// No schema available" > schema.dbml
+          fi
+
+      - name: Generate ERD DOT from pg_catalog
+        if: steps.vault.outputs.skip != 'true'
+        run: |
+          psql -v ON_ERROR_STOP=1 -f scripts/erd_dot.sql -t -A > erd_db.dot 2>/dev/null || \
+            echo "digraph ERD { label=\"No database connection\" }" > erd_db.dot
+
+      - name: Render SVG from database
+        if: steps.vault.outputs.skip != 'true'
+        run: |
+          dot -Tsvg erd_db.dot -o erd_db.svg
+
+      - name: Generate per-table JSON summary
+        if: steps.vault.outputs.skip != 'true'
+        run: |
+          cat > table_meta.sql <<'SQL'
+          WITH cols AS (
+            SELECT
+              n.nspname AS schema,
+              c.relname AS "table",
+              a.attname AS "column",
+              pg_catalog.format_type(a.atttypid, a.atttypmod) AS data_type,
+              NOT a.attnotnull AS nullable,
+              pg_get_expr(ad.adbin, ad.adrelid) AS "default"
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            JOIN pg_attribute a ON a.attrelid = c.oid
+            LEFT JOIN pg_attrdef ad ON ad.adrelid = c.oid AND ad.adnum = a.attnum
+            WHERE a.attnum > 0 AND NOT a.attisdropped
+              AND c.relkind = 'r'
+              AND n.nspname = ANY(string_to_array(:'schemas', ','))
+          ),
+          pks AS (
+            SELECT n.nspname AS schema, c.relname AS "table",
+                   string_agg(a.attname, ', ' ORDER BY a.attnum) AS pk_columns
+            FROM pg_index i
+            JOIN pg_class c ON c.oid = i.indrelid
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            JOIN pg_attribute a ON a.attrelid = c.oid AND a.attnum = ANY(i.indkey)
+            WHERE i.indisprimary
+              AND n.nspname = ANY(string_to_array(:'schemas', ','))
+            GROUP BY 1,2
+          ),
+          fks AS (
+            SELECT
+              ns_src.nspname AS src_schema, rel_src.relname AS src_table,
+              ns_tgt.nspname AS tgt_schema, rel_tgt.relname AS tgt_table, con.conname
+            FROM pg_constraint con
+            JOIN pg_class rel_src ON rel_src.oid = con.conrelid
+            JOIN pg_namespace ns_src ON ns_src.oid = rel_src.relnamespace
+            JOIN pg_class rel_tgt ON rel_tgt.oid = con.confrelid
+            JOIN pg_namespace ns_tgt ON ns_tgt.oid = rel_tgt.relnamespace
+            WHERE con.contype = 'f'
+              AND ns_src.nspname = ANY(string_to_array(:'schemas', ','))
+              AND ns_tgt.nspname = ANY(string_to_array(:'schemas', ','))
+          )
+          SELECT COALESCE(jsonb_pretty(jsonb_agg(obj)), '[]'::jsonb) FROM (
+            SELECT jsonb_build_object(
+              'schema', c.schema,
+              'table', c."table",
+              'columns', (SELECT COALESCE(jsonb_agg(jsonb_build_object(
+                'name', cc."column",
+                'type', cc.data_type,
+                'nullable', cc.nullable,
+                'default', cc."default"
+              ) ORDER BY cc."column"), '[]'::jsonb)
+               FROM cols cc WHERE cc.schema = c.schema AND cc."table" = c."table"),
+              'primary_key', (SELECT pk_columns FROM pks p WHERE p.schema = c.schema AND p."table" = c."table"),
+              'foreign_keys', (SELECT COALESCE(jsonb_agg(jsonb_build_object(
+                'references', f.tgt_schema || '.' || f.tgt_table,
+                'name', f.conname
+              ) ORDER BY f.conname), '[]'::jsonb)
+               FROM fks f WHERE f.src_schema = c.schema AND f.src_table = c."table")
+            ) AS obj
+            FROM (SELECT DISTINCT schema, "table" FROM cols) c
+            ORDER BY c.schema, c."table"
+          ) t;
+          SQL
+          psql -v ON_ERROR_STOP=1 -v schemas="$SCHEMAS" -f table_meta.sql -t -A > tables.json 2>/dev/null || \
+            echo "[]" > tables.json
+
+      - name: Upload database artifacts
+        if: steps.vault.outputs.skip != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: erd-from-db
+          path: |
+            schema.sql
+            schema.dbml
+            erd_db.dot
+            erd_db.svg
+            tables.json
+          retention-days: 90
+
+  # ===========================================================================
+  # Upload to Supabase Storage (on main only)
+  # ===========================================================================
+  upload-to-storage:
+    name: Upload to Supabase Storage
+    if: github.ref == 'refs/heads/main' && secrets.SUPABASE_SERVICE_ROLE_KEY != ''
+    needs: [generate-from-code, generate-from-db]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download code artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: erd-from-code
+          path: code-artifacts/
+
+      - name: Download DB artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: erd-from-db
+          path: db-artifacts/
+        continue-on-error: true
+
+      - name: Upload to Supabase Storage
+        run: |
+          # Upload code-based artifacts
+          for file in code-artifacts/*.svg code-artifacts/*.dbml code-artifacts/*.json; do
+            [ -f "$file" ] || continue
+            filename=$(basename "$file")
+            echo "Uploading $filename..."
+            curl -X PUT \
+              "${SUPABASE_URL}/storage/v1/object/docs/erd/${filename}" \
+              -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+              -H "Content-Type: $(file -b --mime-type $file)" \
+              --data-binary @"$file" || true
+          done
+
+          # Upload DB-based artifacts if available
+          if [ -d "db-artifacts" ]; then
+            for file in db-artifacts/*; do
+              [ -f "$file" ] || continue
+              filename=$(basename "$file")
+              echo "Uploading $filename..."
+              curl -X PUT \
+                "${SUPABASE_URL}/storage/v1/object/docs/schema/${filename}" \
+                -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+                -H "Content-Type: $(file -b --mime-type $file)" \
+                --data-binary @"$file" || true
+            done
+          fi
+
+      - name: Print artifact URLs
+        run: |
+          echo "=== Artifact URLs ==="
+          echo "ERD SVG: ${SUPABASE_URL}/storage/v1/object/public/docs/erd/ODOO_ERD.svg"
+          echo "ERD IPAI: ${SUPABASE_URL}/storage/v1/object/public/docs/erd/ODOO_ERD_ipai.svg"
+          echo "Schema DBML: ${SUPABASE_URL}/storage/v1/object/public/docs/schema/schema.dbml"
+          echo "Schema SQL: ${SUPABASE_URL}/storage/v1/object/public/docs/schema/schema.sql"
+          echo "Tables JSON: ${SUPABASE_URL}/storage/v1/object/public/docs/schema/tables.json"
+
+  # ===========================================================================
+  # Auto-commit on main
+  # ===========================================================================
+  commit-artifacts:
+    name: Commit ERD Artifacts
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [generate-from-code]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: erd-from-code
+          path: docs/data-model/
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          if git diff --quiet docs/data-model/ 2>/dev/null; then
+            echo "No changes to commit"
+          else
+            git add docs/data-model/
+            git commit -m "docs(data-model): auto-update ERD and schema artifacts [skip ci]" || true
+            git push || true
+          fi
