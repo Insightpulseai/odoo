@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 472b3c2e8f6ee385aa97a097028e1821c764b241
+> Commit: 4dab2d5bf26e733b00b3fd85b01fda5a48a66c9e
 
 ## 📚 Documentation
 
@@ -584,6 +584,7 @@
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
+| [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
 | [IPAI Skills](skills/README.md) | skills |
