@@ -119,6 +119,7 @@ temp/
 !scripts/sql/*.sql
 !db/migrations/*.sql
 !db/audit/*.sql
+!scripts/erd_dot.sql
 
 # Parity audit generated files
 parity_report.json

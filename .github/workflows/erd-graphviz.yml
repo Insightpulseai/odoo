@@ -1,0 +1,183 @@
+# =============================================================================
+# Auto ERD Generation with Graphviz
+# =============================================================================
+# Generates ERD from Odoo model definitions (no database required)
+# Outputs: DOT, SVG, PNG diagrams
+#
+# This workflow parses Python AST to extract model definitions and generates
+# ERDs that can be embedded in documentation or Superset dashboards.
+# =============================================================================
+
+name: Generate ERD (Graphviz)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'addons/ipai/**/models/**'
+      - 'scripts/generate_odoo_dbml.py'
+      - 'scripts/generate_erd_graphviz.py'
+      - '.github/workflows/erd-graphviz.yml'
+  pull_request:
+    paths:
+      - 'addons/ipai/**/models/**'
+      - 'scripts/generate_odoo_dbml.py'
+      - 'scripts/generate_erd_graphviz.py'
+      - '.github/workflows/erd-graphviz.yml'
+  workflow_dispatch:
+    inputs:
+      filter:
+        description: 'Filter tables by prefix (e.g., ipai_)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  generate-erd:
+    name: Generate ERD from Codebase
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+
+      - name: Verify Graphviz installation
+        run: dot -V
+
+      - name: Generate DBML and base artifacts
+        run: python scripts/generate_odoo_dbml.py
+
+      - name: Generate Graphviz ERD (full)
+        run: |
+          python scripts/generate_erd_graphviz.py --format all
+
+      - name: Generate Graphviz ERD (IPAI only)
+        run: |
+          python scripts/generate_erd_graphviz.py --format all --filter ipai_
+
+      - name: Generate Graphviz ERD (filtered)
+        if: ${{ github.event.inputs.filter != '' }}
+        run: |
+          python scripts/generate_erd_graphviz.py --format all --filter "${{ github.event.inputs.filter }}"
+
+      - name: List generated artifacts
+        run: |
+          echo "Generated ERD artifacts:"
+          ls -la docs/data-model/*.svg docs/data-model/*.png docs/data-model/*.dot 2>/dev/null || true
+
+      - name: Upload ERD artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: erd-graphviz
+          path: |
+            docs/data-model/*.dot
+            docs/data-model/*.svg
+            docs/data-model/*.png
+          retention-days: 90
+
+      - name: Check for drift
+        run: |
+          if [ -n "$(git status --porcelain docs/data-model/)" ]; then
+            echo "::warning::ERD artifacts changed - consider updating"
+            git status --porcelain docs/data-model/
+          else
+            echo "ERD artifacts up-to-date"
+          fi
+
+  # Auto-commit on main branch
+  commit-artifacts:
+    name: Commit ERD Artifacts
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    needs: [generate-erd]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+
+      - name: Regenerate all ERD artifacts
+        run: |
+          python scripts/generate_odoo_dbml.py
+          python scripts/generate_erd_graphviz.py --format all
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Check if there are changes
+          if git diff --quiet docs/data-model/ 2>/dev/null; then
+            echo "No changes to commit"
+          else
+            git add docs/data-model/
+            git commit -m "docs(data-model): auto-update ERD artifacts [skip ci]" || true
+            git push || true
+          fi
+
+  # Database-based ERD (if credentials available)
+  generate-from-db:
+    name: Generate ERD from Database
+    runs-on: ubuntu-latest
+    if: ${{ secrets.DB_HOST != '' }}
+
+    env:
+      PGHOST: ${{ secrets.DB_HOST }}
+      PGPORT: ${{ secrets.DB_PORT || '5432' }}
+      PGDATABASE: ${{ secrets.DB_NAME }}
+      PGUSER: ${{ secrets.DB_USER }}
+      PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz postgresql-client
+
+      - name: Generate DOT from database
+        run: |
+          psql -v ON_ERROR_STOP=1 -f scripts/erd_dot.sql -t -A > erd_db.dot
+
+      - name: Render PNG and SVG
+        run: |
+          dot -Tpng erd_db.dot -o docs/data-model/ODOO_ERD_db.png
+          dot -Tsvg erd_db.dot -o docs/data-model/ODOO_ERD_db.svg
+
+      - name: Upload database ERD
+        uses: actions/upload-artifact@v4
+        with:
+          name: erd-database
+          path: |
+            erd_db.dot
+            docs/data-model/ODOO_ERD_db.png
+            docs/data-model/ODOO_ERD_db.svg
+          retention-days: 90
