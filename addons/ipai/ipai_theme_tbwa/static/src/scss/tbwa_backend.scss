@@ -1,114 +1,317 @@
-/* =========================
-   TBWA Platform Tokens
-   ========================= */
-:root{
-  --tbwa-black: #0b0b0b;
-  --tbwa-yellow: #ffc400;      /* swap to #f8d421 if you want exact screenshot match */
-  --tbwa-yellow-hover: #e5ae00;
+/**
+ * TBWA Backend Theme
+ * ==================
+ * TBWA brand skin that overrides ipai_platform_theme token values.
+ * Does NOT define new tokens - only customizes brand slots.
+ *
+ * Architecture:
+ * - Token overrides (brand slots only)
+ * - Component-level styling using platform tokens
+ */
 
-  --bg: #f5f5f5;
-  --surface: #ffffff;
-  --border: #eaeaea;
+/* =================================================================
+ * TBWA BRAND TOKEN OVERRIDES
+ * Only override brand slots from ipai_platform_theme
+ * ================================================================= */
 
-  --text: #111111;
-  --muted: #6b6b6b;
+:root {
+    /* Brand slots - TBWA values */
+    --ipai-brand-primary: #FFD800;          /* TBWA Yellow per brand guide */
+    --ipai-brand-primary-hover: #E5C200;
+    --ipai-brand-primary-active: #CCB800;
+    --ipai-brand-ink: #000000;              /* TBWA Black */
 
-  --ring: rgba(255,196,0,0.45);
+    /* Surface overrides (optional - TBWA-specific if needed) */
+    --ipai-surface-canvas: #F5F5F5;
+    --ipai-surface-card: #FFFFFF;
 
-  /* optional: keep Odoo "upgrade" blue as system secondary */
-  --secondary: #3f96f1;
+    /* Focus ring using TBWA Yellow */
+    --ipai-focus-ring-color: rgba(255, 216, 0, 0.45);
+    --ipai-focus-ring: 0 0 0 3px var(--ipai-focus-ring-color);
 }
 
-/* =========================
-   Odoo SCSS Vars (best-effort)
-   ========================= */
-$o-brand-primary: #0b0b0b !default; /* chrome */
-$o-brand-odoo: #ffc400 !default;    /* accent */
+/* =================================================================
+ * CORE CHROME (Navbar/Sidebar)
+ * ================================================================= */
 
-/* =========================
-   Core Chrome
-   ========================= */
 .o_web_client,
 .o_action_manager,
 .o_content {
-  background: var(--bg) !important;
-  color: var(--text);
+    background: var(--ipai-surface-canvas) !important;
+    color: var(--ipai-text-primary);
 }
 
 .o_main_navbar {
-  background: var(--tbwa-black) !important;
-  border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+    background: var(--ipai-brand-ink) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
 }
 
 .o_main_navbar,
 .o_main_navbar a,
 .o_main_navbar .dropdown-toggle,
 .o_main_navbar .o_menu_brand {
-  color: #fff !important;
+    color: var(--ipai-text-inverse) !important;
+}
+
+.o_main_navbar .o_menu_brand {
+    font-weight: 700;
 }
 
 .o_main_navbar .o_menu_systray .dropdown-toggle:hover,
 .o_main_navbar .o_menu_systray .dropdown-toggle:focus {
-  background: rgba(255,196,0,0.10) !important;
+    background: rgba(255, 216, 0, 0.10) !important;
 }
 
-/* =========================
-   Buttons + Pills
-   ========================= */
+/* Apps sidebar (if used) */
+.o_apps_sidebar {
+    background-color: var(--ipai-brand-ink);
+    color: var(--ipai-text-inverse);
+
+    .o_nav_entry {
+        color: var(--ipai-text-inverse);
+
+        &:hover {
+            background: rgba(255, 216, 0, 0.15);
+            color: var(--ipai-brand-primary);
+        }
+
+        &.active {
+            background: var(--ipai-brand-primary);
+            color: var(--ipai-brand-ink);
+        }
+    }
+}
+
+/* =================================================================
+ * BUTTONS
+ * ================================================================= */
+
 .btn-primary,
 .btn-primary:active,
 .btn-primary:focus {
-  background: var(--tbwa-yellow) !important;
-  border-color: var(--tbwa-yellow) !important;
-  color: var(--text) !important;
+    background: var(--ipai-brand-primary) !important;
+    border-color: var(--ipai-brand-primary) !important;
+    color: var(--ipai-brand-ink) !important;
+    font-weight: 600;
 }
 
 .btn-primary:hover {
-  background: var(--tbwa-yellow-hover) !important;
-  border-color: var(--tbwa-yellow-hover) !important;
+    background: var(--ipai-brand-primary-hover) !important;
+    border-color: var(--ipai-brand-primary-hover) !important;
+    color: var(--ipai-brand-ink) !important;
 }
 
+.btn-primary:focus-visible {
+    box-shadow: var(--ipai-focus-ring) !important;
+}
+
+.btn-secondary {
+    background: var(--ipai-neutral-700) !important;
+    border-color: var(--ipai-neutral-700) !important;
+    color: var(--ipai-text-inverse) !important;
+
+    &:hover {
+        background: var(--ipai-brand-ink) !important;
+        border-color: var(--ipai-brand-ink) !important;
+    }
+}
+
+.btn-outline-primary {
+    color: var(--ipai-text-primary) !important;
+    border-color: var(--ipai-brand-primary) !important;
+    background: transparent !important;
+
+    &:hover {
+        background: var(--ipai-brand-primary) !important;
+        color: var(--ipai-brand-ink) !important;
+    }
+}
+
+/* Status bar buttons - subtle yellow accent */
 .badge-primary,
 .o_statusbar_status .btn-primary,
 .o_field_statusbar .btn-primary {
-  background: rgba(255,196,0,0.16) !important;
-  border: 1px solid rgba(255,196,0,0.35) !important;
-  color: var(--text) !important;
+    background: rgba(255, 216, 0, 0.16) !important;
+    border: 1px solid rgba(255, 216, 0, 0.35) !important;
+    color: var(--ipai-text-primary) !important;
 }
 
-/* Optional: keep system secondary (e.g., Upgrade) */
-.btn-secondary.btn-primary,
-.btn.btn-info {
-  /* leave as-is unless you want hard TBWA-only */
-}
+/* =================================================================
+ * CARDS / KANBAN / LIST SURFACES
+ * ================================================================= */
 
-/* =========================
-   Cards / Kanban / List surfaces
-   ========================= */
 .o_kanban_record,
 .o_kanban_view .oe_kanban_card,
 .o_form_view,
 .o_list_view,
 .o_control_panel {
-  background: var(--surface) !important;
-  border-color: var(--border) !important;
+    background: var(--ipai-surface-card) !important;
+    border-color: var(--ipai-border-subtle) !important;
 }
 
+/* Apps grid cards (match Scout dashboard) */
+.o_apps .o_kanban_record.o_app,
 .o_kanban_record,
 .o_kanban_view .oe_kanban_card {
-  border: 1px solid var(--border) !important;
-  border-radius: 14px !important;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+    border: 1px solid var(--ipai-border-subtle) !important;
+    border-radius: var(--ipai-radius-xl) !important;
+    box-shadow: var(--ipai-shadow-card) !important;
 }
 
-/* =========================
-   Focus Ring (platform-wide)
-   ========================= */
+.o_kanban_record:hover,
+.o_kanban_view .oe_kanban_card:hover {
+    border-color: var(--ipai-brand-primary) !important;
+    box-shadow: 0 4px 12px rgba(255, 216, 0, 0.15) !important;
+}
+
+/* =================================================================
+ * STATUS BAR
+ * ================================================================= */
+
+.o_statusbar_status {
+    .o_arrow_button {
+        &.o_arrow_button_current {
+            background: var(--ipai-brand-primary) !important;
+            color: var(--ipai-brand-ink) !important;
+            font-weight: 600;
+        }
+    }
+}
+
+/* =================================================================
+ * FORM SHEET
+ * ================================================================= */
+
+.o_form_sheet_bg {
+    .o_form_sheet {
+        border-top: 3px solid var(--ipai-brand-primary);
+    }
+}
+
+/* =================================================================
+ * BADGES
+ * Uses semantic tokens for status, NOT brand yellow
+ * ================================================================= */
+
+.badge.bg-primary,
+.badge.text-bg-primary {
+    background: var(--ipai-brand-primary) !important;
+    color: var(--ipai-brand-ink) !important;
+}
+
+/* Status badges should use semantic colors */
+.badge.bg-success,
+.badge.text-bg-success {
+    background: var(--ipai-semantic-success-bg) !important;
+    color: var(--ipai-semantic-success) !important;
+}
+
+.badge.bg-warning,
+.badge.text-bg-warning {
+    background: var(--ipai-semantic-warn-bg) !important;
+    color: #92400E !important;
+}
+
+.badge.bg-danger,
+.badge.text-bg-danger {
+    background: var(--ipai-semantic-error-bg) !important;
+    color: var(--ipai-semantic-error) !important;
+}
+
+.badge.bg-info,
+.badge.text-bg-info {
+    background: var(--ipai-semantic-info-bg) !important;
+    color: var(--ipai-semantic-info) !important;
+}
+
+/* =================================================================
+ * APP SWITCHER
+ * ================================================================= */
+
+.o_apps {
+    .o_app {
+        &:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(255, 216, 0, 0.2);
+        }
+
+        .o_caption {
+            font-weight: 600;
+        }
+    }
+
+    /* Highlight IPAI apps with yellow accent */
+    .o_app[data-menu-xmlid*="ipai"] {
+        border: 2px solid transparent;
+
+        &:hover {
+            border-color: var(--ipai-brand-primary);
+        }
+    }
+}
+
+/* =================================================================
+ * KANBAN VIEW
+ * ================================================================= */
+
+.o_kanban_view {
+    .o_kanban_group {
+        .o_kanban_header {
+            .o_kanban_header_title {
+                font-weight: 700;
+                color: var(--ipai-text-primary);
+            }
+        }
+    }
+}
+
+/* =================================================================
+ * LOADING / PROGRESS INDICATORS
+ * ================================================================= */
+
+.o_loading {
+    border-top-color: var(--ipai-brand-primary) !important;
+}
+
+.progress-bar {
+    background: var(--ipai-brand-primary) !important;
+}
+
+/* =================================================================
+ * SELECTION / FOCUS STATES
+ * ================================================================= */
+
+::selection {
+    background: var(--ipai-brand-primary);
+    color: var(--ipai-brand-ink);
+}
+
 :focus {
-  outline: none !important;
+    outline: none !important;
 }
 
 *:focus-visible {
-  box-shadow: 0 0 0 3px var(--ring) !important;
-  border-radius: 10px;
+    box-shadow: var(--ipai-focus-ring) !important;
+    border-radius: var(--ipai-radius-md);
+}
+
+/* =================================================================
+ * PRINT STYLES
+ * ================================================================= */
+
+@media print {
+    .o_main_navbar {
+        background: var(--ipai-surface-card) !important;
+        border-bottom: 2px solid var(--ipai-brand-ink);
+
+        .o_menu_brand {
+            color: var(--ipai-brand-ink);
+        }
+    }
+
+    .btn-primary {
+        background: var(--ipai-neutral-100) !important;
+        color: var(--ipai-brand-ink) !important;
+        border: 1px solid var(--ipai-brand-ink) !important;
+    }
 }
