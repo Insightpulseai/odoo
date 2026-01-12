@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- ========================================== -->
+    <!-- Month-End Close Tasks - CE Native -->
+    <!-- Template for Finance SSC Monthly Close -->
+    <!-- ========================================== -->
+
+    <!-- ========================================== -->
+    <!-- Project: Month-End Close Template -->
+    <!-- ========================================== -->
+    <record id="project_month_end_close" model="project.project">
+        <field name="name">Template / Month-End Close</field>
+        <field name="description">Finance SSC Month-End Close workflow template. Contains all recurring close activities organized by category: Initial &amp; Compliance, Accruals &amp; Amortization, WIP Reconciliation, and Final Adjustments.</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="privacy_visibility">employees</field>
+        <field name="allow_milestones" eval="True"/>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- I. INITIAL &amp; COMPLIANCE -->
+    <!-- ========================================== -->
+
+    <!-- === Payroll Processing &amp; Tax Provision === -->
+
+    <record id="close_task_01_payroll" model="project.task">
+        <field name="name">I.1 - Process Payroll, Final Pay, SL Conversions, Early Retirement Accrual</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Process and record Payroll, Final Pay, SL Conversions, and early retirement accrual.
+
+Category: Payroll Processing &amp; Tax Provision
+
+Workflow:
+- Preparation: RIM (Day -6)
+- Review: RIM/SFM (Day -3)
+- Approval: CKVC/FD (Day -3)</field>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_02_tax_provision" model="project.task">
+        <field name="name">I.2 - Calculate Tax Provision and PPB Provision</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Calculate and record the monthly Tax Provision and PPB Provision (performance bonuses).
+
+Category: Payroll Processing &amp; Tax Provision
+
+Workflow:
+- Preparation: RIM (Day -3)
+- Review: RIM/SFM (Day -2)
+- Approval: CKVC/FD (Day -2)</field>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <!-- === VAT Data/Filing === -->
+
+    <record id="close_task_03_vat_report" model="project.task">
+        <field name="name">I.3 - Compile Monthly VAT Report (Initial and Additional Entries)</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Compile, review, and record the monthly VAT Report (Initial and additional entries).
+
+Category: VAT Data/Filing
+
+Workflow:
+- Preparation: JAP (Day -3)
+- Review: JPAL (Day -2)
+- Approval: RIM/SFM (Day -2)</field>
+        <field name="finance_person_id" ref="finance_person_jap"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">vat_tax</field>
+    </record>
+
+    <record id="close_task_04_input_vat" model="project.task">
+        <field name="name">I.4 - Compile Monthly Input VAT Entries</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Compile and record monthly Input VAT entries (VAT paid on purchases) and the monthly VAT Report (cumulative summary of VAT activity).
+
+Category: VAT Data/Filing
+
+Workflow:
+- Preparation: JLI (Day -3)
+- Review: JPAL (Day -2)
+- Approval: RIM/SFM (Day -2)</field>
+        <field name="finance_person_id" ref="finance_person_jli"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">vat_tax</field>
+    </record>
+
+    <!-- === CA Liquidations === -->
+
+    <record id="close_task_05_ca_project" model="project.task">
+        <field name="name">I.5 - Process CA Liquidations (Project-Related)</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Process and record Cash Advance (CA) Liquidations for specific project-related expenses.
+
+Category: CA Liquidations (All)
+
+Workflow:
+- Preparation: LAS (Day -3)
+- Review: RIM/SFM (Day -2)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+    </record>
+
+    <record id="close_task_06_ca_employee" model="project.task">
+        <field name="name">I.6 - Process CA Liquidations (Employee Submitted)</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Process and record Cash Advance (CA) Liquidations submitted by employees.
+
+Category: CA Liquidations (All)
+
+Workflow:
+- Preparation: RMQB (Day -3)
+- Review: RIM/SFM (Day -2)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_rmqb"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- II. ACCRUALS &amp; AMORTIZATION -->
+    <!-- ========================================== -->
+
+    <!-- === Accruals (Revenue/Fees) === -->
+
+    <record id="close_task_07_consultancy_accruals" model="project.task">
+        <field name="name">II.1 - Record Accruals for Consultancy Fees and General Expenses</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Record accruals for Consultancy Fees and various routine General Expense Accruals. Estimated expense for which a vendor invoice has not yet been received.
+
+Category: Accruals (Revenue/Fees)
+
+Workflow:
+- Preparation: RIM (Day -2)
+- Review: CKVC/FD (Day -2)
+- Approval: CKVC/FD (Day -2)</field>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_08_mgmt_royalty" model="project.task">
+        <field name="name">II.2 - Accrue Management/Royalty Fees and Innovation Funds</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Accrue monthly expenses for Management and Royalty fees, consulting fees, and funds for Innovations/Initiatives. Brief Detail: Recognizing an expense for internal projects or strategic corporate investments not yet formally invoiced.
+
+Category: Accruals (Revenue/Fees)
+
+Workflow:
+- Preparation: BOM (Day -3)
+- Review: RIM (Day -2)
+- Approval: CKVC/FD (Day -2)</field>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_09_revenue_recognition" model="project.task">
+        <field name="name">II.3 - Recognize Revenue and Billable Costs</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Recognizing revenue and billable costs based on client contracts and project status. Accrue estimated Production, Retainer Fees, Media Commission, Creative Fees, and OOPC. Recording estimated Out-of-Pocket Costs that will eventually be billed to a client.
+
+Category: Accruals (Revenue/Fees)
+
+Workflow:
+- Preparation: JPAL (Day -3)
+- Review: BOM (Day -2)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+    </record>
+
+    <record id="close_task_10_recurring_expenses" model="project.task">
+        <field name="name">II.4 - Record Recurring Monthly Costs (Non-Fixed Assets)</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Recording estimated expenses for recurring monthly costs and recognizing non-fixed asset costs. Accrue recurring Expenses (estimated expense for regularly occurring services).
+
+Category: Accruals (Revenue/Fees)
+
+Workflow:
+- Preparation: LAS (Day -2)
+- Review: RIM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_11_computer_costs" model="project.task">
+        <field name="name">II.5 - Record Other Computer Related Costs</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Record the monthly recognition/capitalization of Other Computer Related Costs.
+
+Category: Accruals (Revenue/Fees)
+
+Workflow:
+- Preparation: LAS (Day -2)
+- Review: RIM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_12_cellphone_allowance" model="project.task">
+        <field name="name">II.6 - Accrue Employee Cellphone Allowance</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Accrue monthly expense for Employee Cellphone Allowance.
+
+Category: Accruals (Revenue/Fees)
+
+Workflow:
+- Preparation: RMQB (Day -3)
+- Review: RIM (Day -2)
+- Approval: CKVC/FD (Day -2)</field>
+        <field name="finance_person_id" ref="finance_person_rmqb"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_13_revenue_docs" model="project.task">
+        <field name="name">II.7 - Compile Documents for Revenue Accruals</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Compile documents for the attachment of the revenue accruals.
+
+Category: Accruals (Revenue/Fees)
+
+Workflow:
+- Preparation: JRMO (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_jrmo"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+    </record>
+
+    <!-- === Amortizations (IT/Fixed Assets) === -->
+
+    <record id="close_task_14_rental_hospitalization" model="project.task">
+        <field name="name">II.8 - Record Rental Income/Expense and Hospitalization Amortization</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Record recurring monthly Rental Income/Expense and monthly amortization expense for employee hospitalization plans.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: RIM (Day -2)
+- Review: RIM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_15_prepaid_depreciation" model="project.task">
+        <field name="name">II.9 - Allocate Prepaid Expenses, Depreciation, Amortization</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Depreciation, Amortization for vehicles/purchases/LOA, and Amortization for all technology licenses and shared service costs.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: BOM (Day -2)
+- Review: RIM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_16_insurance_accruals" model="project.task">
+        <field name="name">II.10 - Record Corporate Insurance Premiums</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Monthly tracking and recording of premiums for various corporate insurance policies. Record monthly accrual for various Corporate Insurance types and amortize prepaid Health Insurance.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: BOM (Day -1)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_17_business_permit_loa" model="project.task">
+        <field name="name">II.11 - Amortize Business Permit and LOA</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Allocating prepaid expenses and capital costs over time to reflect true monthly resource consumption. Record monthly Amortization of the Business Permit and Amortization of LOA.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: JPAL (Day -2)
+- Review: BOM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_18_audit_fees" model="project.task">
+        <field name="name">II.12 - Accrue Estimated Monthly Audit Fees</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Accrue estimated monthly Audit Fees.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: JPAL (Day -2)
+- Review: BOM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_19_intercompany_rental" model="project.task">
+        <field name="name">II.13 - Record Intercompany Rental Expense/Income</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Record monthly Rental Expense/Income related to intercompany transactions.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: JPAL (Day -2)
+- Review: BOM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_20_intercompany_reval" model="project.task">
+        <field name="name">II.14 - Revalue Intercompany Balances</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Perform month-end Revaluation of Intercompany Balances. Adjusting intercompany balances to reflect the correct value at the month-end exchange rate.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: RIM (Day -2)
+- Review: BOM (Day -1)
+- Approval: CKVC/FD (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <record id="close_task_21_financed_assets" model="project.task">
+        <field name="name">II.15 - Record Financed Assets and Long-Term Commitments</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Recording transactions for financed assets and long-term commitments. Record monthly interest expense on leased assets and process amortization/reclassifications for prepaid corporate fees.
+
+Category: Amortizations (IT/Fixed Assets)
+
+Workflow:
+- Preparation: LAS (Day -1)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- III. WIP/OOP RECONCILIATION -->
+    <!-- ========================================== -->
+
+    <record id="close_task_22_wip_oop_reclass" model="project.task">
+        <field name="name">III.1 - Reconcile and Reclassify WIP/OOP Costs</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Reconciling and reclassifying costs to ensure they are correctly categorized as billable (WIP) or internal (OOP). Perform month-end Reclassifications of OOP to WIP (moves client-related expenses to an active project account) and necessary Reclass WIP to OOP (moves costs back if non-billable).
+
+Category: WIP/OOP Reconciliation
+
+Workflow:
+- Preparation: JPAL (Day -1)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+    </record>
+
+    <record id="close_task_23_wip_schedule" model="project.task">
+        <field name="name">III.2 - Prepare WIP Schedule Summary per Job#</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Prepare WIP schedule summary per Job#.
+
+Category: WIP/OOP Reconciliation
+
+Workflow:
+- Preparation: JRMO (Day -2)
+- Review: JPAL (Day -1)
+- Approval: BOM (Day -1)</field>
+        <field name="finance_person_id" ref="finance_person_jrmo"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- IV. FINAL ADJUSTMENTS &amp; CLOSE -->
+    <!-- ========================================== -->
+
+    <record id="close_task_24_je_reversals" model="project.task">
+        <field name="name">IV.1 - Reverse/Adjust Temporary Journal Entries</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">The necessary reversal or adjustment of temporary journal entries created in a previous month. Process reversal entries for the prior month's accruals and reclassifications.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: RIM (Day -1)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_25_prior_accrual_reversal" model="project.task">
+        <field name="name">IV.2 - Reverse Prior Month Accruals</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Process reversal entries for all prior month Accruals (e.g., trainings, production/retainers).
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: BOM (Day -1)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_26_flash_wins_losses" model="project.task">
+        <field name="name">IV.3 - Prepare Flash, Wins &amp; Losses, Revenue Reports</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Prepare reports for Flash, Wins &amp; Losses and Revenue.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: BOM (Day 0)
+- Review: RIM/SFM (Day +3)
+- Approval: CKVC/FD (Day +3)</field>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_27_working_capital_ar" model="project.task">
+        <field name="name">IV.4 - Prepare Working Capital Report (AR)</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Prepare reports for Working Capital related to AR.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: JPAL (Day 0)
+- Review: BOM (Day +3)
+- Approval: CKVC/FD (Day +3)</field>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+    </record>
+
+    <record id="close_task_28_ap_aging_working" model="project.task">
+        <field name="name">IV.5 - Prepare AP Aging Report (Working Capital)</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Prepare AP Aging report for working capital submission.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: LAS (Day 0)
+- Review: RIM (Day +3)
+- Approval: CKVC/FD (Day +3)</field>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+    </record>
+
+    <record id="close_task_29_how_summary" model="project.task">
+        <field name="name">IV.6 - Prepare HOW's Summary Report</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Prepare HOW's summary report.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: LAS (Day -1)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_30_gl_corrections" model="project.task">
+        <field name="name">IV.7 - Correct GL Entries and Reclassifications</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Correcting entries across the general ledger (GL). Process required reclassifications between specific GL accounts and between Marketing Expense categories.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: LAS (Day 0)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_31_ap_aging_detail" model="project.task">
+        <field name="name">IV.8 - Prepare AP Aging Report (Detailed per Invoice)</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Prepare AP Aging report with detailed status per invoice.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: JLI (Day -1)
+- Review: LAS (Day 0)
+- Approval: RIM (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_jli"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+    </record>
+
+    <record id="close_task_32_expense_reclass" model="project.task">
+        <field name="name">IV.9 - Reclassify Expense Accounts</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Adjusting a recorded expense from one GL account to another to ensure correct reporting. Process reclassifications to correct expense categories (e.g., General Expense to Wireless and Meals).
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: RMQB (Day 0)
+- Review: RIM (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_rmqb"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_33_job_transfers" model="project.task">
+        <field name="name">IV.10 - Transfer Costs Between Project Codes</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Adjusting costs or revenues between different internal project codes or job numbers. Process and record Transfers of Job Codes for consultancy fees and corporate projects.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Preparation: JAP (Day 0)
+- Review: JPAL (Day 0)
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_jap"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_34_final_tb_review" model="project.task">
+        <field name="name">IV.11 - Final TB Review</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Final Trial Balance Review by Senior Finance Manager.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Review: RIM/SFM (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <record id="close_task_35_final_signoff" model="project.task">
+        <field name="name">IV.12 - Final TB Sign-off &amp; Filing</field>
+        <field name="project_id" ref="project_month_end_close"/>
+        <field name="description">Final Trial Balance Sign-off and Filing by Finance Director.
+
+Category: Final Adjustments &amp; Close
+
+Workflow:
+- Approval: CKVC/FD (Day 0)</field>
+        <field name="finance_person_id" ref="finance_person_ckvc"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- Milestones -->
+    <!-- ========================================== -->
+
+    <record id="milestone_close_day_minus_3" model="project.milestone">
+        <field name="name">Close Day -3: Initial &amp; Compliance Complete</field>
+        <field name="project_id" ref="project_month_end_close"/>
+    </record>
+
+    <record id="milestone_close_day_minus_1" model="project.milestone">
+        <field name="name">Close Day -1: Accruals &amp; WIP Complete</field>
+        <field name="project_id" ref="project_month_end_close"/>
+    </record>
+
+    <record id="milestone_close_day_0" model="project.milestone">
+        <field name="name">Close Day 0: Final Adjustments &amp; TB Sign-off</field>
+        <field name="project_id" ref="project_month_end_close"/>
+    </record>
+
+    <record id="milestone_close_day_plus_3" model="project.milestone">
+        <field name="name">Close Day +3: Reports Submitted</field>
+        <field name="project_id" ref="project_month_end_close"/>
+    </record>
+
+</odoo>
