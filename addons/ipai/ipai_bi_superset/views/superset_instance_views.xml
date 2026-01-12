@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Superset Instance: Form View -->
+    <record id="view_superset_instance_form" model="ir.ui.view">
+        <field name="name">ipai.bi.superset.instance.form</field>
+        <field name="model">ipai.bi.superset.instance</field>
+        <field name="arch" type="xml">
+            <form string="Superset Instance">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_superset_dashboard)d" type="action"
+                                class="oe_stat_button" icon="fa-bar-chart"
+                                context="{'default_instance_id': active_id}">
+                            <field name="dashboard_count" widget="statinfo" string="Dashboards"/>
+                        </button>
+                        <button name="%(action_superset_dataset)d" type="action"
+                                class="oe_stat_button" icon="fa-database"
+                                context="{'default_instance_id': active_id}">
+                            <field name="dataset_count" widget="statinfo" string="Datasets"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Default" invisible="not is_default"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., Production Superset"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Connection">
+                            <field name="code"/>
+                            <field name="base_url" widget="url"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="JWT Configuration">
+                            <field name="jwt_audience"/>
+                            <field name="jwt_user"/>
+                            <field name="jwt_role"/>
+                            <field name="env_key_name"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Settings">
+                            <field name="sequence"/>
+                            <field name="is_default"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Superset Instance: List View -->
+    <record id="view_superset_instance_list" model="ir.ui.view">
+        <field name="name">ipai.bi.superset.instance.list</field>
+        <field name="model">ipai.bi.superset.instance</field>
+        <field name="arch" type="xml">
+            <list string="Superset Instances">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="base_url"/>
+                <field name="is_default"/>
+                <field name="dashboard_count"/>
+                <field name="dataset_count"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Superset Instance: Action -->
+    <record id="action_superset_instance" model="ir.actions.act_window">
+        <field name="name">Superset Instances</field>
+        <field name="res_model">ipai.bi.superset.instance</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your first Superset instance
+            </p>
+            <p>
+                Add your Superset server URL and JWT credentials to enable dashboard embedding.
+            </p>
+        </field>
+    </record>
+</odoo>
