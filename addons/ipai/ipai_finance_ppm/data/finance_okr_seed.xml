@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- ========================================== -->
+    <!-- Finance OKR Governance - CE Native -->
+    <!-- Uses project.project + project.task -->
+    <!-- ========================================== -->
+
+    <!-- ========================================== -->
+    <!-- OKR Objective: Finance Month-End Close -->
+    <!-- ========================================== -->
+    <record id="okr_project_finance_close_2026" model="project.project">
+        <field name="name">Program: Finance Month-End Close &amp; Tax Filing - 2026</field>
+        <field name="description">Achieve fully compliant, predictable month-end close and tax filing process. Reduce close cycle time to Day-3, ensure 100% on-time tax compliance, and minimize accrual variance.
+
+This Program contains:
+- 3 Key Results (KRs) with quarterly milestones
+- BIR Tax Filing 2026 (22 statutory filing tasks)
+- Month-End Close Template (35 recurring close tasks)</field>
+        <field name="x_is_program" eval="True"/>
+        <field name="x_is_okr" eval="True"/>
+        <field name="x_period_start" eval="'2026-01-01'"/>
+        <field name="x_period_end" eval="'2026-12-31'"/>
+        <field name="x_okr_state">draft</field>
+        <field name="x_confidence">50</field>
+        <field name="x_scope_notes">Finance SSC month-end close activities, tax compliance, and financial reporting for all Philippine entities.</field>
+        <field name="x_schedule_notes">Monthly close cycle target: Day-3. Tax filing per BIR calendar. Quarterly variance reviews.</field>
+        <field name="x_cost_notes">Process improvement budget allocated. No additional headcount required.</field>
+        <field name="x_quality_notes">Zero audit findings. Variance within acceptable thresholds. Clean reconciliations.</field>
+        <field name="x_stakeholder_notes">CFO (CKVC), Finance Manager (RIM), Supervisor (BOM), Finance Team, External Auditors</field>
+        <field name="x_communication_cadence">Weekly dashboard review, Monthly close retrospective</field>
+        <field name="privacy_visibility">employees</field>
+        <field name="allow_milestones" eval="True"/>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- KR1: Close by Day-3 -->
+    <!-- ========================================== -->
+    <record id="okr_task_kr1_close_day3" model="project.task">
+        <field name="name">KR1: ≥95% Close Tasks by Day-3</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="description">Percentage of month-end close tasks completed by Working Day 3 of the following month. Target is to have at least 95% of all close activities finished by Day-3.</field>
+        <field name="x_is_kr" eval="True"/>
+        <field name="x_kr_metric">% of month-end close tasks finished by Day-3 each month</field>
+        <field name="x_kr_baseline">0</field>
+        <field name="x_kr_target">95</field>
+        <field name="x_kr_current">0</field>
+        <field name="x_kr_unit">%</field>
+        <field name="x_kr_direction">increase</field>
+        <field name="x_kr_confidence">50</field>
+        <field name="x_kr_score">0.0</field>
+        <field name="date_deadline" eval="'2026-03-31'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+    </record>
+
+    <!-- KR1 Milestones -->
+    <record id="okr_milestone_kr1_jan" model="project.milestone">
+        <field name="name">January Close - Day-3 Target</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="deadline" eval="'2026-02-03'"/>
+    </record>
+
+    <record id="okr_milestone_kr1_feb" model="project.milestone">
+        <field name="name">February Close - Day-3 Target</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="deadline" eval="'2026-03-03'"/>
+    </record>
+
+    <record id="okr_milestone_kr1_mar" model="project.milestone">
+        <field name="name">March Close - Day-3 Target</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="deadline" eval="'2026-04-03'"/>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- KR2: 100% On-Time Tax Filing -->
+    <!-- ========================================== -->
+    <record id="okr_task_kr2_tax_filing" model="project.task">
+        <field name="name">KR2: 100% On-Time Tax Filing (6/6 per Quarter)</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="description">Number of statutory tax filings (2550M, 2550Q, 1601C, 1601EQ, 1701Q, 1702Q) submitted before BIR deadlines. Target: 6 out of 6 filings on time per quarter.</field>
+        <field name="x_is_kr" eval="True"/>
+        <field name="x_kr_metric">Count of tax filings submitted before BIR deadline (6 forms per quarter)</field>
+        <field name="x_kr_baseline">0</field>
+        <field name="x_kr_target">6</field>
+        <field name="x_kr_current">0</field>
+        <field name="x_kr_unit">filings</field>
+        <field name="x_kr_direction">increase</field>
+        <field name="x_kr_confidence">50</field>
+        <field name="x_kr_score">0.0</field>
+        <field name="date_deadline" eval="'2026-03-31'"/>
+        <field name="finance_person_id" ref="finance_person_jli"/>
+    </record>
+
+    <!-- KR2 Milestones -->
+    <record id="okr_milestone_kr2_q1" model="project.milestone">
+        <field name="name">Q1 2026 - All Statutory Filings Complete</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="deadline" eval="'2026-04-15'"/>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- KR3: Accrual Variance Below PHP 50k -->
+    <!-- ========================================== -->
+    <record id="okr_task_kr3_accrual_variance" model="project.task">
+        <field name="name">KR3: Accrual Variance &lt; PHP 50k</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="description">Variance between monthly accrual estimates and actual amounts recognized. Measures accuracy of expense forecasting and accrual process maturity. Starting from PHP 580k baseline.</field>
+        <field name="x_is_kr" eval="True"/>
+        <field name="x_kr_metric">Monthly variance between accrual estimates and actuals (PHP)</field>
+        <field name="x_kr_baseline">580000</field>
+        <field name="x_kr_target">50000</field>
+        <field name="x_kr_current">580000</field>
+        <field name="x_kr_unit">PHP</field>
+        <field name="x_kr_direction">decrease</field>
+        <field name="x_kr_confidence">40</field>
+        <field name="x_kr_score">0.0</field>
+        <field name="date_deadline" eval="'2026-03-31'"/>
+        <field name="finance_person_id" ref="finance_person_las"/>
+    </record>
+
+    <!-- KR3 Milestones -->
+    <record id="okr_milestone_kr3_q1_review" model="project.milestone">
+        <field name="name">Q1 Accrual Variance Review</field>
+        <field name="project_id" ref="okr_project_finance_close_2026"/>
+        <field name="deadline" eval="'2026-04-10'"/>
+    </record>
+
+</odoo>

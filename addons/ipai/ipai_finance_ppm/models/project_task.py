@@ -156,6 +156,128 @@ class ProjectTask(models.Model):
         help="Marked obsolete by generator (template removed from seed)",
     )
 
+    # ===============================
+    # OKR Key Result Fields (CE-native)
+    # ===============================
+    x_is_kr = fields.Boolean(
+        string="Is Key Result",
+        default=False,
+        tracking=True,
+        help="Mark this task as an OKR Key Result",
+    )
+
+    x_kr_metric = fields.Text(
+        string="Metric Description",
+        help="SMART metric definition for this Key Result",
+    )
+
+    x_kr_baseline = fields.Float(
+        string="Baseline",
+        digits=(12, 2),
+        help="Starting value at period start",
+    )
+
+    x_kr_target = fields.Float(
+        string="Target",
+        digits=(12, 2),
+        help="Target value to achieve",
+    )
+
+    x_kr_current = fields.Float(
+        string="Current Value",
+        digits=(12, 2),
+        tracking=True,
+        help="Current measured value",
+    )
+
+    x_kr_unit = fields.Char(
+        string="Unit",
+        default="%",
+        help="Unit of measurement (%, count, PHP, etc.)",
+    )
+
+    x_kr_score = fields.Float(
+        string="Score (0-1.0)",
+        digits=(3, 2),
+        default=0.0,
+        tracking=True,
+        help="Achievement score: 0.0=not started, 0.7=good, 1.0=fully achieved",
+    )
+
+    x_kr_confidence = fields.Integer(
+        string="Confidence (0-100)",
+        default=50,
+        tracking=True,
+        help="Confidence level. <40% triggers risk flag.",
+    )
+
+    x_kr_risk_level = fields.Selection(
+        [
+            ("low", "Low"),
+            ("medium", "Medium"),
+            ("high", "High"),
+            ("critical", "Critical"),
+        ],
+        string="Risk Level",
+        compute="_compute_kr_risk_level",
+        store=True,
+        help="Auto-computed from confidence level",
+    )
+
+    x_kr_direction = fields.Selection(
+        [
+            ("increase", "Increase"),
+            ("decrease", "Decrease"),
+            ("maintain", "Maintain"),
+        ],
+        string="Direction",
+        default="increase",
+        help="Target direction for the metric",
+    )
+
+    x_kr_progress = fields.Float(
+        string="Progress %",
+        compute="_compute_kr_progress",
+        help="Progress percentage toward target",
+    )
+
+    @api.depends("x_kr_confidence")
+    def _compute_kr_risk_level(self):
+        """Auto-compute risk level from confidence."""
+        for task in self:
+            if not task.x_is_kr:
+                task.x_kr_risk_level = False
+                continue
+            conf = task.x_kr_confidence or 50
+            if conf < 25:
+                task.x_kr_risk_level = "critical"
+            elif conf < 40:
+                task.x_kr_risk_level = "high"
+            elif conf < 70:
+                task.x_kr_risk_level = "medium"
+            else:
+                task.x_kr_risk_level = "low"
+
+    @api.depends("x_kr_baseline", "x_kr_target", "x_kr_current", "x_kr_direction")
+    def _compute_kr_progress(self):
+        """Calculate progress toward target."""
+        for task in self:
+            if not task.x_is_kr or task.x_kr_target == task.x_kr_baseline:
+                task.x_kr_progress = 0.0
+                continue
+
+            delta_target = task.x_kr_target - task.x_kr_baseline
+            delta_current = task.x_kr_current - task.x_kr_baseline
+
+            if task.x_kr_direction == "decrease":
+                delta_target = task.x_kr_baseline - task.x_kr_target
+                delta_current = task.x_kr_baseline - task.x_kr_current
+
+            if delta_target != 0:
+                task.x_kr_progress = min(100.0, max(0.0, (delta_current / delta_target) * 100))
+            else:
+                task.x_kr_progress = 0.0
+
     # Computed fields for dashboard visibility
     is_finance_ppm = fields.Boolean(
         compute="_compute_is_finance_ppm", store=True, string="Is Finance PPM Task"
