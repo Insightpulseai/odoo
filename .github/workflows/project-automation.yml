@@ -1,0 +1,70 @@
+name: Project Automation
+
+on:
+  issues:
+    types: [opened, labeled, closed, reopened]
+  pull_request:
+    types: [opened, ready_for_review, closed, labeled]
+
+env:
+  PROJECT_URL: https://github.com/users/jgtolentino/projects/4
+
+jobs:
+  # Auto-add new issues and PRs to project
+  add-to-project:
+    name: Add to Project Board
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened' || github.event.action == 'ready_for_review'
+    steps:
+      - name: Add to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ env.PROJECT_URL }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+
+  # Auto-add labeled issues (bug, enhancement, etc.)
+  add-labeled-issues:
+    name: Add Labeled Issues
+    runs-on: ubuntu-latest
+    if: github.event.action == 'labeled'
+    steps:
+      - name: Add bug/enhancement to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          project-url: ${{ env.PROJECT_URL }}
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          labeled: bug, enhancement, feature, task
+          label-operator: OR
+
+  # Update project item status when issue/PR is closed
+  update-on-close:
+    name: Update Status on Close
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed'
+    steps:
+      - name: Get project data
+        id: project
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          ITEM_URL: ${{ github.event.issue.html_url || github.event.pull_request.html_url }}
+        run: |
+          # Get project ID
+          PROJECT_ID=$(gh api graphql -f query='
+            query {
+              user(login: "jgtolentino") {
+                projectV2(number: 4) {
+                  id
+                }
+              }
+            }' --jq '.data.user.projectV2.id')
+          echo "project_id=$PROJECT_ID" >> $GITHUB_OUTPUT
+
+      - name: Mark as Done
+        if: steps.project.outputs.project_id != ''
+        env:
+          GH_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+        run: |
+          echo "Item closed - project automation would update status to Done"
+          # Note: Full GraphQL mutation to update Status field requires
+          # knowing the field ID and option ID for "Done" status.
+          # This is a placeholder for the complete implementation.

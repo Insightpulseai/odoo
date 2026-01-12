@@ -1,11 +1,11 @@
-name: Wiki Sync
+name: Sync docs/wiki to GitHub Wiki
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
     paths:
       - 'docs/wiki/**'
-      - 'docs/diagrams/**'
   workflow_dispatch:
     inputs:
       force:
@@ -16,102 +16,43 @@ on:
 
 jobs:
   sync-wiki:
-    name: Sync Wiki to GitHub Wiki
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: write
-
     steps:
-      - name: Checkout main repository
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          path: main
+          persist-credentials: false
 
-      - name: Checkout wiki repository
-        uses: actions/checkout@v4
-        with:
-          repository: ${{ github.repository }}.wiki
-          path: wiki
-          token: ${{ secrets.GITHUB_TOKEN }}
-        continue-on-error: true
-
-      - name: Initialize wiki if needed
+      - name: Configure Git
         run: |
-          if [ ! -d "wiki/.git" ]; then
-            mkdir -p wiki
-            cd wiki
-            git init
-            git remote add origin https://github.com/${{ github.repository }}.wiki.git
-          fi
+          git config --global user.name "GitHub Wiki Sync"
+          git config --global user.email "jgtolentino.rn@gmail.com"
 
-      - name: Sync wiki content
+      - name: Clone wiki repo
+        env:
+          GH_REPO: ${{ github.repository }}
+          WIKI_SYNC_TOKEN: ${{ secrets.WIKI_SYNC_TOKEN }}
         run: |
-          # Copy wiki pages
-          cp -r main/docs/wiki/* wiki/
+          git clone https://x-access-token:${WIKI_SYNC_TOKEN}@github.com/${GH_REPO}.wiki.git wiki
 
-          # Fix relative links for GitHub Wiki
+      - name: Sync content from docs/wiki -> wiki root
+        run: |
+          rsync -av --delete docs/wiki/ wiki/
           cd wiki
-          for file in *.md; do
-            # Convert relative spec links
-            sed -i 's|\.\./spec/|../blob/main/spec/|g' "$file"
-            # Convert diagram links
-            sed -i 's|\.\./docs/diagrams/|https://raw.githubusercontent.com/${{ github.repository }}/main/docs/diagrams/|g' "$file"
-          done
-
-      - name: Commit and push wiki
-        run: |
-          cd wiki
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-
-          if git diff --staged --quiet; then
+          if git status --porcelain | grep .; then
+            git add .
+            git commit -m "chore(wiki): sync from docs/wiki at ${GITHUB_SHA}"
+          else
             echo "No wiki changes to commit"
-          else
-            git commit -m "Sync wiki from main repository"
-            git push origin HEAD:master || git push origin HEAD:main
           fi
 
-  update-diagrams:
-    name: Update Diagram References
-    runs-on: ubuntu-latest
-    needs: sync-wiki
-    if: always()
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
+      - name: Push wiki changes
+        env:
+          GH_REPO: ${{ github.repository }}
+          WIKI_SYNC_TOKEN: ${{ secrets.WIKI_SYNC_TOKEN }}
         run: |
-          pip install pyyaml jinja2
-
-      - name: Regenerate wiki diagram index
-        run: |
-          cd tools/ipai_module_gen
-          pip install -e .
-          ipai-gen --spec ../../spec/ipai-odoo18-enterprise-patch/capability_map.yaml
-
-      - name: Check for changes
-        id: check
-        run: |
-          if git diff --quiet docs/wiki/; then
-            echo "changed=false" >> $GITHUB_OUTPUT
-          else
-            echo "changed=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Commit diagram updates
-        if: steps.check.outputs.changed == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/wiki/
-          git commit -m "docs: update wiki diagram references [skip ci]"
-          git push
+          cd wiki
+          git remote set-url origin https://x-access-token:${WIKI_SYNC_TOKEN}@github.com/${GH_REPO}.wiki.git
+          # GitHub Wikis usually use 'master' as default
+          git push origin HEAD:master
