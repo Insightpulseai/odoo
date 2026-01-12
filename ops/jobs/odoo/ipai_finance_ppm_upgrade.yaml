@@ -1,0 +1,31 @@
+# ops/jobs/odoo/ipai_finance_ppm_upgrade.yaml
+job_id: odoo-ipai-finance-ppm-upgrade
+description: >
+  Upgrade the IPAI Finance PPM module after code changes.
+  Use this after merging PRs that modify ipai_finance_ppm.
+target: odoo-prod-droplet
+created: 2026-01-12
+author: claude/finance-governance-model-sTSMj
+
+steps:
+  - name: Pull latest code
+    run: |
+      cd /opt/odoo/repo
+      git fetch origin
+      git pull origin main || git pull origin 18.0
+
+  - name: Upgrade ipai_finance_ppm module
+    run: docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo -d odoo_core -u ipai_finance_ppm --stop-after-init
+
+  - name: Restart Odoo service
+    run: docker compose -f /opt/odoo/docker-compose.yml restart odoo-core
+
+  - name: Verify upgrade
+    run: |
+      sleep 10
+      docker compose -f /opt/odoo/docker-compose.yml exec -T odoo-core odoo shell -d odoo_core --no-http <<'PYEOF'
+      module = env['ir.module.module'].search([('name', '=', 'ipai_finance_ppm')])
+      print(f"Module: {module.name}")
+      print(f"State: {module.state}")
+      print(f"Version: {module.installed_version}")
+      PYEOF
