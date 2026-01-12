@@ -89,6 +89,71 @@ If verification fails:
 * No time estimates
 * No unstated assumptions
 
+### Banned phrases (never say)
+
+* "Docker/CLI is not available in this environment"
+* "I can't run commands here"
+* "Follow these UI steps…" (clickpaths, screenshots, wizard instructions)
+* "Go to the dashboard and click…"
+* "Open Settings → …"
+
+### Output format for actionable steps
+
+All actionable steps must be in **fenced code blocks only**:
+
+```bash
+# CLI / shell steps - always generate these
+git checkout -b feat/some-change
+./scripts/apply_migration.sh
+```
+
+```yaml
+# CI / deployment workflow
+name: deploy-odoo
+on: { push: { branches: [main] } }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/deploy_odoo.sh
+```
+
+If something is environment-specific, **generate a script with TODO comments**, not prose.
+
+---
+
+## Odoo / Odoo.sh Rules
+
+### Prefer
+
+* `addons/` modules + migrations
+* `scripts/odoo_*.sh` wrappers
+* `odoo.sh` / CI YAML for deploy
+* `--stop-after-init` verification commands
+
+### Avoid
+
+* Explaining how to click through Odoo UI for installs or upgrades
+* Manual Odoo.sh dashboard instructions
+* "Go to Settings → Technical → …" guides
+
+### Task completion for Odoo
+
+Whenever an Odoo task is requested, generate:
+
+1. The module / config changes
+2. The CLI/CI script to install/update modules:
+   ```bash
+   docker compose exec odoo-core odoo -d odoo_core -u module_name --stop-after-init
+   ```
+3. A verification command:
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}" http://localhost:8069/web/health
+   ```
+
+---
+
 ## Naming conventions (OCA-style)
 
 * Modules: `ipai_ai_*` for AI-related addons; avoid generic "assistant/copilot" naming collisions.
