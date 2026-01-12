@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1552e6ed00161cb754daa8e905a50fef775402b6
+> Commit: e82cd109fa92eb8bca82da8c182ba53a26fa408e
 
 ```
 .
@@ -343,6 +343,11 @@
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_copilot_ui
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
@@ -3734,15 +3739,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1192 directories, 2537 files
+1195 directories, 2539 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1374 |
-| Files | 3809 |
-| Python files | 1008 |
-| XML files | 477 |
+| Directories | 1382 |
+| Files | 3816 |
+| Python files | 1010 |
+| XML files | 479 |
 | Markdown files | 732 |
