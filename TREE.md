@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7a9b3973ef0a7a50316aa0a74ade48ea58f9a5a1
+> Commit: 4b1e70dd839559d61877f5f06e6b3e1ead5f920a
 
 ```
 .
@@ -1900,6 +1900,7 @@
 │   │   ├── ODOO_MODULE_DELTAS.md
 │   │   ├── ODOO_ORM_MAP.md
 │   │   ├── README.md
+│   │   ├── SCOUT_CES_ANALYTICS_SCHEMA.dbml
 │   │   └── SUPERSET_ERD_INTEGRATION.md
 │   ├── db
 │   │   ├── DB_CONVENTIONS_AND_NAMING.md
@@ -3428,6 +3429,7 @@
 │   │   ├── 202601080001_4500_CATALOG_UNITY_SCHEMA.sql
 │   │   ├── 202601080002_4501_CATALOG_SEMANTIC_LAYER.sql
 │   │   ├── 202601080003_4502_OPS_ODOO_BINDINGS.sql
+│   │   ├── 20260112_fix_trend_views_date_alias.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3739,7 +3741,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1195 directories, 2539 files
+1195 directories, 2541 files
 ```
 
 ## 📊 Stats
@@ -3747,7 +3749,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1382 |
-| Files | 3816 |
+| Files | 3818 |
 | Python files | 1010 |
 | XML files | 479 |
 | Markdown files | 732 |
