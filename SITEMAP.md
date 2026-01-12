@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c9589b3e69e264895cc831b37fbb696493e92631
+> Commit: d9e9771b947e8dd91fe113d5121b85f1f3791504
 
 ## 📚 Documentation
 
@@ -362,6 +362,7 @@
 | [OdooForge Sandbox - Verification Results](docs/evidence/20260110-0927/odooforge-sandbox/verification-results.md) | docs/evidence/20260110-0927/odooforge-sandbox |
 | [ERD Automation Evidence Pack](docs/evidence/20260112-0300/erd-automation/EVIDENCE.md) | docs/evidence/20260112-0300/erd-automation |
 | [IPAI Finance OKR Governance - Verification Report](docs/evidence/20260112-0358/ipai_finance_okr/verification_report.md) | docs/evidence/20260112-0358/ipai_finance_okr |
+| [GitHub Setup Verification Report](docs/evidence/20260112-0649/github-setup/verification-report.md) | docs/evidence/20260112-0649/github-setup |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -503,6 +504,8 @@
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
 | [Go-Live Manifest: prod-20260109-2219](docs/releases/GO_LIVE_MANIFEST_prod-20260109-2219.md) | docs/releases |
 | [Latest Release: prod-20260109-1642](docs/releases/LATEST.md) | docs/releases |
+| [TBWA Finance Ops Pilot – Invitation Email Template](docs/releases/TBWA_FINOPS_INVITE_EMAIL.md) | docs/releases |
+| [TBWA Finance Ops Pilot – Go-Live Runbook v1](docs/releases/TBWA_FINOPS_V1_RUNBOOK.md) | docs/releases |
 | [What's Deployed](docs/releases/WHAT_DEPLOYED.md) | docs/releases |
 | [What's Deployed: prod-20260109-2219](docs/releases/WHAT_DEPLOYED_prod-20260109-2219.md) | docs/releases |
 | [What Shipped - Production Release Inventory](docs/releases/WHAT_SHIPPED.md) | docs/releases |
