@@ -16,6 +16,40 @@ class ProjectProject(models.Model):
     _inherit = "project.project"
 
     # ===============================
+    # Program/Portfolio Hierarchy
+    # ===============================
+    x_is_program = fields.Boolean(
+        string="Is Program",
+        default=False,
+        tracking=True,
+        help="Mark this project as a Program (container for sub-projects)",
+    )
+
+    x_program_id = fields.Many2one(
+        "project.project",
+        string="Program",
+        domain="[('x_is_program', '=', True)]",
+        tracking=True,
+        help="Parent program this project belongs to",
+    )
+
+    x_child_project_ids = fields.One2many(
+        "project.project",
+        "x_program_id",
+        string="Sub-Projects",
+    )
+
+    x_child_project_count = fields.Integer(
+        string="Sub-Projects",
+        compute="_compute_child_project_count",
+    )
+
+    @api.depends("x_child_project_ids")
+    def _compute_child_project_count(self):
+        for project in self:
+            project.x_child_project_count = len(project.x_child_project_ids)
+
+    # ===============================
     # OKR Objective Fields
     # ===============================
     x_is_okr = fields.Boolean(

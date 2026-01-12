@@ -10,7 +10,10 @@
     <!-- ========================================== -->
     <record id="project_month_end_close" model="project.project">
         <field name="name">Template / Month-End Close</field>
-        <field name="description">Finance SSC Month-End Close workflow template. Contains all recurring close activities organized by category: Initial &amp; Compliance, Accruals &amp; Amortization, WIP Reconciliation, and Final Adjustments.</field>
+        <field name="description">Finance SSC Month-End Close workflow template. Contains all recurring close activities organized by category: Initial &amp; Compliance, Accruals &amp; Amortization, WIP Reconciliation, and Final Adjustments.
+
+Child project of: Program: Finance Month-End Close &amp; Tax Filing - 2026</field>
+        <field name="x_program_id" ref="finance_okr_seed.okr_project_finance_close_2026"/>
         <field name="user_id" ref="base.user_admin"/>
         <field name="privacy_visibility">employees</field>
         <field name="allow_milestones" eval="True"/>

@@ -9,8 +9,14 @@
     <!-- OKR Objective: Finance Month-End Close -->
     <!-- ========================================== -->
     <record id="okr_project_finance_close_2026" model="project.project">
-        <field name="name">OKR: Finance Month-End Close &amp; Tax Filing - 2026</field>
-        <field name="description">Achieve fully compliant, predictable month-end close and tax filing process. Reduce close cycle time to Day-3, ensure 100% on-time tax compliance, and minimize accrual variance.</field>
+        <field name="name">Program: Finance Month-End Close &amp; Tax Filing - 2026</field>
+        <field name="description">Achieve fully compliant, predictable month-end close and tax filing process. Reduce close cycle time to Day-3, ensure 100% on-time tax compliance, and minimize accrual variance.
+
+This Program contains:
+- 3 Key Results (KRs) with quarterly milestones
+- BIR Tax Filing 2026 (22 statutory filing tasks)
+- Month-End Close Template (35 recurring close tasks)</field>
+        <field name="x_is_program" eval="True"/>
         <field name="x_is_okr" eval="True"/>
         <field name="x_period_start" eval="'2026-01-01'"/>
         <field name="x_period_end" eval="'2026-12-31'"/>

@@ -10,7 +10,10 @@
     <!-- ========================================== -->
     <record id="project_bir_filing_2026" model="project.project">
         <field name="name">Template / BIR Tax Filing 2026</field>
-        <field name="description">BIR statutory tax filing schedule for 2026. Includes all monthly withholding taxes (1601-C, 0619-E), quarterly VAT (2550Q), quarterly EWT (1601-EQ), and annual income tax (1702-RT/EX).</field>
+        <field name="description">BIR statutory tax filing schedule for 2026. Includes all monthly withholding taxes (1601-C, 0619-E), quarterly VAT (2550Q), quarterly EWT (1601-EQ), and annual income tax (1702-RT/EX).
+
+Child project of: Program: Finance Month-End Close &amp; Tax Filing - 2026</field>
+        <field name="x_program_id" ref="finance_okr_seed.okr_project_finance_close_2026"/>
         <field name="user_id" ref="base.user_admin"/>
         <field name="privacy_visibility">employees</field>
         <field name="allow_milestones" eval="True"/>
