@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1096b2ecab717ef4ecd77e5d5939a73abe97817c
+> Commit: abf64a0745cf0f12d01c5071bc3f28962e65572e
 
 ```
 .
@@ -48,6 +48,7 @@
 │   ├── agents
 │   │   └── odoo-oca-triage.agent.md
 │   ├── workflows
+│   │   ├── add-to-project.yml
 │   │   ├── agent-preflight.yml
 │   │   ├── ai-naming-gate.yml
 │   │   ├── aiux-ship-gate.yml
@@ -101,6 +102,7 @@
 │   │   ├── pr-installability-gate.yml
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
+│   │   ├── project-automation.yml
 │   │   ├── release-docs.yml
 │   │   ├── repo-structure.yml
 │   │   ├── run-odoo-cli-job.yml
@@ -2173,7 +2175,11 @@
 │   │   ├── Configuration.md
 │   │   ├── Diagrams.md
 │   │   ├── Home.md
+│   │   ├── Infrastructure.md
 │   │   ├── Installation.md
+│   │   ├── Modules-and-Features.md
+│   │   ├── README.md
+│   │   ├── Releases-and-Changelog.md
 │   │   ├── cap-ai-agents.md
 │   │   └── cap-approvals.md
 │   ├── workflows
@@ -3759,7 +3765,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1201 directories, 2553 files
+1201 directories, 2559 files
 ```
 
 ## 📊 Stats
@@ -3767,7 +3773,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1388 |
-| Files | 3840 |
+| Files | 3846 |
 | Python files | 1015 |
 | XML files | 482 |
-| Markdown files | 737 |
+| Markdown files | 741 |

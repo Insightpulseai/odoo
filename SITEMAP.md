@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1096b2ecab717ef4ecd77e5d5939a73abe97817c
+> Commit: abf64a0745cf0f12d01c5071bc3f28962e65572e
 
 ## 📚 Documentation
 
@@ -526,8 +526,12 @@
 | [Architecture](docs/wiki/Architecture.md) | docs/wiki |
 | [Configuration](docs/wiki/Configuration.md) | docs/wiki |
 | [Diagrams](docs/wiki/Diagrams.md) | docs/wiki |
-| [IPAI Platform Wiki](docs/wiki/Home.md) | docs/wiki |
+| [Odoo CE – Production Runbook](docs/wiki/Home.md) | docs/wiki |
+| [Infrastructure](docs/wiki/Infrastructure.md) | docs/wiki |
 | [Installation Guide](docs/wiki/Installation.md) | docs/wiki |
+| [Modules & Features](docs/wiki/Modules-and-Features.md) | docs/wiki |
+| [Wiki Pages Source](docs/wiki/README.md) | docs/wiki |
+| [Releases & Changelog](docs/wiki/Releases-and-Changelog.md) | docs/wiki |
 | [AI Agents & RAG](docs/wiki/cap-ai-agents.md) | docs/wiki |
 | [Approval Workflows](docs/wiki/cap-approvals.md) | docs/wiki |
 | [Gemini Agent Operating Contract (ipai_workspace / odoo-ce)](gemini.md) | . |
