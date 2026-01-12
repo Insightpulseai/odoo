@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: abf64a0745cf0f12d01c5071bc3f28962e65572e
+> Commit: e3786d4cbba2311f8d0a8a45d0e71c8a3b4bb7d5
 
 ## 📚 Documentation
 
@@ -325,6 +325,8 @@
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
+| [IPAI Module Reduction Plan](docs/architecture/IPAI_MODULE_REDUCTION_PLAN.md) | docs/architecture |
+| [IPAI Target Module Architecture](docs/architecture/IPAI_TARGET_ARCHITECTURE.md) | docs/architecture |
 | [OCR Pipeline Architecture](docs/architecture/OCR_PIPELINE.md) | docs/architecture |
 | [Production Runtime Snapshot - Odoo CE 18.0](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
@@ -769,6 +771,7 @@
 | [ipai_ai_agents_ui](./addons/ipai/ipai_ai_agents_ui) | ✅ |  |
 | [ipai_ai_audit](./addons/ipai/ipai_ai_audit) | ✅ |  |
 | [ipai_ai_connectors](./addons/ipai/ipai_ai_connectors) | ✅ |  |
+| [ipai_ai_copilot](./addons/ipai/ipai_ai_copilot) | ✅ |  |
 | [ipai_ai_core](./addons/ipai/ipai_ai_core) | ✅ |  |
 | [ipai_ai_prompts](./addons/ipai/ipai_ai_prompts) | ✅ |  |
 | [ipai_ai_provider_kapa](./addons/ipai/ipai_ai_provider_kapa) | ✅ |  |
@@ -781,6 +784,7 @@
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
 | [ipai_auth_oauth_internal](./addons/ipai/ipai_auth_oauth_internal) | ✅ |  |
+| [ipai_bi_superset](./addons/ipai/ipai_bi_superset) | ✅ |  |
 | [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
 | [ipai_catalog_bridge](./addons/ipai/ipai_catalog_bridge) | ✅ |  |
 | [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ |  |
@@ -817,6 +821,7 @@
 | [ipai_marketing_journey](./addons/ipai/ipai_marketing_journey) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
 | [ipai_mattermost_connector](./addons/ipai/ipai_mattermost_connector) | ✅ |  |
+| [ipai_mcp_hub](./addons/ipai/ipai_mcp_hub) | ✅ |  |
 | [ipai_module_gating](./addons/ipai/ipai_module_gating) | ✅ |  |
 | [ipai_n8n_connector](./addons/ipai/ipai_n8n_connector) | ✅ |  |
 | [ipai_ocr_expense](./addons/ipai/ipai_ocr_expense) | ✅ |  |
