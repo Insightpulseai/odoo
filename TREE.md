@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e3786d4cbba2311f8d0a8a45d0e71c8a3b4bb7d5
+> Commit: 472b3c2e8f6ee385aa97a097028e1821c764b241
 
 ```
 .
@@ -2883,6 +2883,7 @@
 │   ├── check_undocumented_specs.py
 │   ├── ci_local.sh
 │   ├── ci_smoke_test.sh
+│   ├── clean-branches.sh
 │   ├── cleanup-branches.sh
 │   ├── configure_base_url.py
 │   ├── configure_gmail_smtp.py
@@ -3809,7 +3810,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1226 directories, 2578 files
+1226 directories, 2579 files
 ```
 
 ## 📊 Stats
@@ -3817,7 +3818,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1417 |
-| Files | 3907 |
+| Files | 3908 |
 | Python files | 1031 |
 | XML files | 496 |
 | Markdown files | 743 |
