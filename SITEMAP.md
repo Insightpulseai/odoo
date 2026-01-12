@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1552e6ed00161cb754daa8e905a50fef775402b6
+> Commit: e82cd109fa92eb8bca82da8c182ba53a26fa408e
 
 ## 📚 Documentation
 
@@ -781,6 +781,7 @@
 | [ipai_close_orchestration](./addons/ipai/ipai_close_orchestration) | ✅ |  |
 | [ipai_command_center](./addons/ipai/ipai_command_center) | ✅ |  |
 | [ipai_control_room](./addons/ipai/ipai_control_room) | ✅ |  |
+| [ipai_copilot_ui](./addons/ipai/ipai_copilot_ui) | ✅ |  |
 | [ipai_custom_routes](./addons/ipai/ipai_custom_routes) | ✅ |  |
 | [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ |  |
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
