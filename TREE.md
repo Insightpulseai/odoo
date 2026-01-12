@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 37d7708fe37831409b426723352fcbee5cf0b3a7
+> Commit: a3417d15d2295897a8dad2a51ab079994bdd9851
 
 ```
 .
@@ -102,6 +102,7 @@
 │   │   ├── prod-odoo-modules.yml
 │   │   ├── release-docs.yml
 │   │   ├── repo-structure.yml
+│   │   ├── run-odoo-cli-job.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
@@ -2609,6 +2610,11 @@
 │   ├── github
 │   │   ├── apply_labels.sh
 │   │   └── labels.json
+│   ├── jobs
+│   │   └── odoo
+│   │       ├── finance_stack_rollout.yaml
+│   │       ├── ipai_finance_ppm_install.yaml
+│   │       └── ipai_finance_ppm_upgrade.yaml
 │   ├── runbooks
 │   │   ├── expenses_ocr_runbook.md
 │   │   ├── mailgun_domain_verification.md
@@ -3699,15 +3705,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1183 directories, 2511 files
+1185 directories, 2515 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1365 |
-| Files | 3779 |
+| Directories | 1367 |
+| Files | 3783 |
 | Python files | 999 |
 | XML files | 474 |
 | Markdown files | 728 |
