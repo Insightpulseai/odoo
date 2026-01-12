@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- OKR Objective Form View -->
+    <record id="okr_objective_view_form" model="ir.ui.view">
+        <field name="name">okr.objective.form</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <form string="OKR Objective">
+                <header>
+                    <button name="action_activate" string="Activate" type="object"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_close" string="Close" type="object"
+                            invisible="state != 'active'"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('closed', 'cancelled')"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            invisible="state not in ('closed', 'cancelled')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,active,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., Month-End Close &amp; Tax Filing Excellence"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Objective Details">
+                            <field name="owner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                            <field name="portfolio_id"/>
+                        </group>
+                        <group string="Scoring">
+                            <field name="overall_score" widget="progressbar"/>
+                            <field name="confidence" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Qualitative objective statement..."/>
+                    </group>
+                    <notebook>
+                        <page string="Key Results" name="key_results">
+                            <field name="key_result_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="owner_id"/>
+                                    <field name="target_value"/>
+                                    <field name="unit"/>
+                                    <field name="status_score" widget="progressbar"/>
+                                    <field name="confidence"/>
+                                    <field name="risk_level" widget="badge"
+                                           decoration-danger="risk_level == 'critical'"
+                                           decoration-warning="risk_level == 'high'"
+                                           decoration-info="risk_level == 'medium'"
+                                           decoration-success="risk_level == 'low'"/>
+                                    <field name="deadline"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="PMBOK Alignment" name="pmbok">
+                            <group>
+                                <group>
+                                    <field name="scope_notes"/>
+                                    <field name="schedule_notes"/>
+                                    <field name="cost_notes"/>
+                                </group>
+                                <group>
+                                    <field name="quality_notes"/>
+                                    <field name="stakeholder_notes"/>
+                                    <field name="communication_cadence"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- OKR Objective List View -->
+    <record id="okr_objective_view_list" model="ir.ui.view">
+        <field name="name">okr.objective.list</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <list string="OKR Objectives" decoration-muted="state == 'cancelled'"
+                  decoration-success="state == 'closed'">
+                <field name="name"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="period_start"/>
+                <field name="period_end"/>
+                <field name="overall_score" widget="progressbar"/>
+                <field name="confidence"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'active'"
+                       decoration-muted="state == 'closed'"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- OKR Objective Kanban View -->
+    <record id="okr_objective_view_kanban" model="ir.ui.view">
+        <field name="name">okr.objective.kanban</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" class="o_kanban_small_column">
+                <field name="name"/>
+                <field name="owner_id"/>
+                <field name="overall_score"/>
+                <field name="confidence"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <strong class="o_kanban_record_title">
+                                <field name="name"/>
+                            </strong>
+                            <div class="text-muted">
+                                <field name="owner_id" widget="many2one_avatar_user"/>
+                            </div>
+                            <div class="mt-2">
+                                <span class="badge bg-primary">
+                                    Score: <field name="overall_score"/>
+                                </span>
+                                <span class="badge bg-secondary ms-1">
+                                    Conf: <field name="confidence"/>%
+                                </span>
+                            </div>
+                            <field name="period_start"/> - <field name="period_end"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- OKR Objective Search View -->
+    <record id="okr_objective_view_search" model="ir.ui.view">
+        <field name="name">okr.objective.search</field>
+        <field name="model">okr.objective</field>
+        <field name="arch" type="xml">
+            <search string="Search OKR Objectives">
+                <field name="name"/>
+                <field name="owner_id"/>
+                <field name="portfolio_id"/>
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Active" name="filter_active" domain="[('state', '=', 'active')]"/>
+                <filter string="Closed" name="filter_closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
+                <filter string="Low Confidence (&lt;40%)" name="filter_low_confidence"
+                        domain="[('confidence', '&lt;', 40)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Owner" name="group_owner" context="{'group_by': 'owner_id'}"/>
+                    <filter string="Period Start" name="group_period" context="{'group_by': 'period_start:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- OKR Objective Action -->
+    <record id="okr_objective_action" model="ir.actions.act_window">
+        <field name="name">OKR Objectives</field>
+        <field name="res_model">okr.objective</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="okr_objective_view_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first OKR Objective
+            </p>
+            <p>
+                Define strategic objectives with 3-5 measurable Key Results.
+                Track progress, confidence, and risks throughout the period.
+            </p>
+        </field>
+    </record>
+</odoo>

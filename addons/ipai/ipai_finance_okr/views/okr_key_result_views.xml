@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- OKR Key Result Form View -->
+    <record id="okr_key_result_view_form" model="ir.ui.view">
+        <field name="name">okr.key.result.form</field>
+        <field name="model">okr.key.result</field>
+        <field name="arch" type="xml">
+            <form string="Key Result">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_record_score" type="object"
+                                class="oe_stat_button" icon="fa-line-chart">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Record Score</span>
+                            </div>
+                        </button>
+                        <button name="action_create_risk" type="object"
+                                class="oe_stat_button" icon="fa-exclamation-triangle"
+                                invisible="risk_level in ('low', 'medium')">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Create Risk</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., KR1 - Close by Day-3"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Key Result Details">
+                            <field name="objective_id"/>
+                            <field name="owner_id"/>
+                            <field name="deadline"/>
+                            <field name="direction"/>
+                        </group>
+                        <group string="Metrics">
+                            <field name="baseline_value"/>
+                            <field name="target_value"/>
+                            <field name="current_value"/>
+                            <field name="unit"/>
+                            <field name="progress_pct" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Scoring">
+                            <field name="status_score"/>
+                            <field name="confidence"/>
+                            <field name="risk_level" widget="badge"
+                                   decoration-danger="risk_level == 'critical'"
+                                   decoration-warning="risk_level == 'high'"
+                                   decoration-info="risk_level == 'medium'"
+                                   decoration-success="risk_level == 'low'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="metric_description" placeholder="SMART metric definition..."/>
+                    </group>
+                    <notebook>
+                        <page string="Score History" name="score_history">
+                            <field name="score_snapshot_ids">
+                                <list editable="bottom">
+                                    <field name="date"/>
+                                    <field name="score"/>
+                                    <field name="confidence"/>
+                                    <field name="current_value"/>
+                                    <field name="comment"/>
+                                    <field name="recorded_by_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Milestones" name="milestones">
+                            <field name="milestone_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                    <field name="date_planned"/>
+                                    <field name="date_reached"/>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status == 'reached'"
+                                           decoration-warning="status == 'late'"
+                                           decoration-muted="status == 'not_reached'"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Linked Tasks" name="tasks">
+                            <field name="task_link_ids">
+                                <list editable="bottom">
+                                    <field name="task_model"/>
+                                    <field name="task_id"/>
+                                    <field name="task_name" readonly="1"/>
+                                    <field name="task_state" readonly="1"/>
+                                    <field name="role"/>
+                                    <button name="action_open_task" type="object"
+                                            icon="fa-external-link" title="Open Task"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Risks" name="risks" badge="risk_ids">
+                            <field name="risk_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="probability"/>
+                                    <field name="impact"/>
+                                    <field name="response_strategy"/>
+                                    <field name="status" widget="badge"
+                                           decoration-danger="status == 'open'"
+                                           decoration-warning="status == 'in_progress'"
+                                           decoration-success="status in ('mitigated', 'closed')"/>
+                                    <field name="owner_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- OKR Key Result List View -->
+    <record id="okr_key_result_view_list" model="ir.ui.view">
+        <field name="name">okr.key.result.list</field>
+        <field name="model">okr.key.result</field>
+        <field name="arch" type="xml">
+            <list string="Key Results" decoration-danger="risk_level == 'critical'"
+                  decoration-warning="risk_level == 'high'">
+                <field name="sequence" widget="handle"/>
+                <field name="objective_id"/>
+                <field name="name"/>
+                <field name="owner_id" widget="many2one_avatar_user"/>
+                <field name="baseline_value"/>
+                <field name="current_value"/>
+                <field name="target_value"/>
+                <field name="unit"/>
+                <field name="status_score" widget="progressbar"/>
+                <field name="confidence"/>
+                <field name="risk_level" widget="badge"
+                       decoration-danger="risk_level == 'critical'"
+                       decoration-warning="risk_level == 'high'"
+                       decoration-info="risk_level == 'medium'"
+                       decoration-success="risk_level == 'low'"/>
+                <field name="deadline"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- OKR Key Result Search View -->
+    <record id="okr_key_result_view_search" model="ir.ui.view">
+        <field name="name">okr.key.result.search</field>
+        <field name="model">okr.key.result</field>
+        <field name="arch" type="xml">
+            <search string="Search Key Results">
+                <field name="name"/>
+                <field name="objective_id"/>
+                <field name="owner_id"/>
+                <filter string="Critical Risk" name="filter_critical"
+                        domain="[('risk_level', '=', 'critical')]"/>
+                <filter string="High Risk" name="filter_high_risk"
+                        domain="[('risk_level', '=', 'high')]"/>
+                <filter string="Low Confidence (&lt;40%)" name="filter_low_confidence"
+                        domain="[('confidence', '&lt;', 40)]"/>
+                <separator/>
+                <filter string="Overdue" name="filter_overdue"
+                        domain="[('deadline', '&lt;', context_today().strftime('%Y-%m-%d')), ('status_score', '&lt;', 1.0)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Objective" name="group_objective"
+                            context="{'group_by': 'objective_id'}"/>
+                    <filter string="Owner" name="group_owner"
+                            context="{'group_by': 'owner_id'}"/>
+                    <filter string="Risk Level" name="group_risk"
+                            context="{'group_by': 'risk_level'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- OKR Key Result Action -->
+    <record id="okr_key_result_action" model="ir.actions.act_window">
+        <field name="name">Key Results</field>
+        <field name="res_model">okr.key.result</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="okr_key_result_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define Key Results for your Objectives
+            </p>
+            <p>
+                Each Objective should have 3-5 measurable Key Results.
+                Track progress, record scores, and manage risks here.
+            </p>
+        </field>
+    </record>
+</odoo>
