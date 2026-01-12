@@ -28,6 +28,7 @@
         "data/finance_bir_2026_seed.xml",
         "data/finance_month_end_seed.xml",
         "data/mail_server_seed.xml",
+        "data/reminder_system_cron.xml",
         "data/finance_cron.xml",
     ],
     "assets": {
