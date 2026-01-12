@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4b1e70dd839559d61877f5f06e6b3e1ead5f920a
+> Commit: 1096b2ecab717ef4ecd77e5d5939a73abe97817c
 
 ```
 .
@@ -94,6 +94,7 @@
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
 │   │   ├── no-deprecated-repo-refs.yml
+│   │   ├── notify-superset.yml
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
@@ -698,6 +699,16 @@
 │   │   │   ├── services
 │   │   │   ├── static
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_tenant_core
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── readme
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.rst
+│   │   │   ├── TECHNICAL_GUIDE.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_test_fixtures
@@ -2188,6 +2199,7 @@
 │   ├── DEPLOYMENT_GUIDE.md
 │   ├── DEPLOYMENT_INVARIANTS.md
 │   ├── DEPLOYMENT_NAMING_MATRIX.md
+│   ├── DEPLOYMENT_SUMMARY.md
 │   ├── DEPLOY_NOTION_WORKOS.md
 │   ├── DEVELOPER_TOOLS.md
 │   ├── DIGITALOCEAN_EMAIL_SETUP.md
@@ -2262,6 +2274,7 @@
 │   ├── PROD_READINESS_GAPS.md
 │   ├── PROD_SNAPSHOT_MANIFEST.md
 │   ├── QUICK_REFERENCE_SSO_SETUP.md
+│   ├── QUICK_START.md
 │   ├── RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
 │   ├── README.md
 │   ├── README_MCP_STACK.md
@@ -2277,9 +2290,11 @@
 │   ├── SMTP_SETUP_SUMMARY.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
 │   ├── SUCCESS_CRITERIA.md
+│   ├── SUPERSET_INTEGRATION.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
 │   ├── TBWA_THEME_DEPLOYMENT.md
+│   ├── TENANT_ARCHITECTURE.md
 │   ├── TESTING_ODOO_18.md
 │   ├── TROUBLESHOOTING.md
 │   ├── WBS_LOGFRAME_MAPPING.md
@@ -2930,6 +2945,7 @@
 │   ├── prod_access_check.py
 │   ├── prod_db_guess.py
 │   ├── promote_oauth_users.py
+│   ├── provision_tenant.sh
 │   ├── recreate_odoo_prod.sh
 │   ├── release_gate.sh
 │   ├── replace_seed_from_excel.py
@@ -2989,7 +3005,8 @@
 │   ├── whats_deployed.py
 │   ├── whats_deployed.sh
 │   ├── wiki_sync.sh
-│   └── worktree-setup.sh
+│   ├── worktree-setup.sh
+│   └── xmlrpc_set_admin_password.py
 ├── seed_export
 │   ├── projects.csv
 │   ├── stages.csv
@@ -3647,6 +3664,7 @@
 ├── KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
 ├── MATTERMOST_OPEX_INTEGRATION.md
 ├── MCP_QUICK_START.md
+├── Makefile
 ├── Month-end Closing Task and Tax Filing ext.xlsx
 ├── NOVEMBER_2025_CLOSE_TIMELINE.md
 ├── NOVEMBER_2025_PPM_GO_LIVE_SUMMARY.md
@@ -3741,15 +3759,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1195 directories, 2541 files
+1201 directories, 2553 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1382 |
-| Files | 3818 |
-| Python files | 1010 |
-| XML files | 479 |
-| Markdown files | 732 |
+| Directories | 1388 |
+| Files | 3840 |
+| Python files | 1015 |
+| XML files | 482 |
+| Markdown files | 737 |
