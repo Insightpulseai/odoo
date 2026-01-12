@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: abf64a0745cf0f12d01c5071bc3f28962e65572e
+> Commit: e3786d4cbba2311f8d0a8a45d0e71c8a3b4bb7d5
 
 ```
 .
@@ -21,6 +21,7 @@
 │   ├── superclaude
 │   │   └── skills
 │   │       └── finance
+│   ├── mcp-servers.json
 │   ├── project_memory.db
 │   ├── query_memory.py
 │   ├── settings.json
@@ -197,6 +198,14 @@
 │   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_copilot
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_core
 │   │   │   ├── models
 │   │   │   ├── security
@@ -278,6 +287,12 @@
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_auth_oauth_internal
 │   │   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_bi_superset
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_bir_compliance
@@ -559,6 +574,13 @@
 │   │   │   ├── security
 │   │   │   ├── services
 │   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_mcp_hub
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -1873,6 +1895,8 @@
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
 │   │   ├── IPAI_AI_PLATFORM_ORD.md
+│   │   ├── IPAI_MODULE_REDUCTION_PLAN.md
+│   │   ├── IPAI_TARGET_ARCHITECTURE.md
 │   │   ├── OCR_PIPELINE.md
 │   │   ├── PROD_RUNTIME_SNAPSHOT.md
 │   │   ├── README.md
@@ -2546,10 +2570,30 @@
 │   │   ├── config.yaml
 │   │   └── server.py
 │   ├── servers
+│   │   ├── digitalocean-mcp-server
+│   │   │   ├── src
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
 │   │   ├── odoo-erp-server
 │   │   │   ├── src
 │   │   │   ├── .env.example
 │   │   │   ├── README.md
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
+│   │   ├── pulser-mcp-server
+│   │   │   ├── src
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
+│   │   ├── speckit-mcp-server
+│   │   │   ├── src
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
+│   │   ├── superset-mcp-server
+│   │   │   ├── src
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
+│   │   ├── vercel-mcp-server
+│   │   │   ├── src
 │   │   │   ├── package.json
 │   │   │   └── tsconfig.json
 │   │   ├── odoo-erp.yaml
@@ -3765,15 +3809,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1201 directories, 2559 files
+1226 directories, 2578 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1388 |
-| Files | 3846 |
-| Python files | 1015 |
-| XML files | 482 |
-| Markdown files | 741 |
+| Directories | 1417 |
+| Files | 3907 |
+| Python files | 1031 |
+| XML files | 496 |
+| Markdown files | 743 |
