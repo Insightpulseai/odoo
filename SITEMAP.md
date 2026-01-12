@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4b1e70dd839559d61877f5f06e6b3e1ead5f920a
+> Commit: 1096b2ecab717ef4ecd77e5d5939a73abe97817c
 
 ## 📚 Documentation
 
@@ -110,6 +110,7 @@
 | [IPAI PPM A1 Control Center](addons/ipai/ipai_ppm_a1/README.md) | addons/ipai/ipai_ppm_a1 |
 | [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
 | [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
+| [ipai_tenant_core - Technical Implementation Guide](addons/ipai/ipai_tenant_core/TECHNICAL_GUIDE.md) | addons/ipai/ipai_tenant_core |
 | [AFC RAG Integration - Change Summary](addons/ipai_ask_ai/CHANGES.md) | addons/ipai_ask_ai |
 | [AFC RAG Deployment Checklist](addons/ipai_ask_ai/DEPLOYMENT_CHECKLIST.md) | addons/ipai_ask_ai |
 | [AFC RAG Integration - Deployment Complete ✅](addons/ipai_ask_ai/DEPLOYMENT_COMPLETE.md) | addons/ipai_ask_ai |
@@ -176,7 +177,7 @@
 | [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
-| [claude.md (Cloud-Agent Contract for Odoo 18 CE + OCA Repos)](claude.md) | . |
+| [CLAUDE.md — Odoo CE Project](claude.md) | . |
 | [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
 | [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
 | [BIR Compliance & Month-End Closing - Final Deployment Report](claudedocs/FINAL_DEPLOYMENT_REPORT.md) | claudedocs |
@@ -219,6 +220,7 @@
 | [Deployment Guide: Finance Stack Health Monitoring & Automation](docs/DEPLOYMENT_GUIDE.md) | docs |
 | [Deployment Invariants & Health Contracts](docs/DEPLOYMENT_INVARIANTS.md) | docs |
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
+| [Multi-Tenant Platform Deployment Summary](docs/DEPLOYMENT_SUMMARY.md) | docs |
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
 | [Odoo Developer Tools (Debug Mode) — IPAI Usage Guide](docs/DEVELOPER_TOOLS.md) | docs |
 | [DigitalOcean Email Setup for Odoo CE 18](docs/DIGITALOCEAN_EMAIL_SETUP.md) | docs |
@@ -292,6 +294,7 @@
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
 | [Production Snapshot Manifest](docs/PROD_SNAPSHOT_MANIFEST.md) | docs |
 | [Quick Reference: SSO & Permissions Setup](docs/QUICK_REFERENCE_SSO_SETUP.md) | docs |
+| [Quick Start: Multi-Tenant Platform Setup](docs/QUICK_START.md) | docs |
 | [RAG Architecture Implementation Plan](docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md) | docs |
 | [InsightPulseAI Documentation](docs/README.md) | docs |
 | [MCP Stack – Odoo + n8n + Mattermost + Superset + DO Agents](docs/README_MCP_STACK.md) | docs |
@@ -306,9 +309,11 @@
 | [SMTP Setup Summary - Complete Status](docs/SMTP_SETUP_SUMMARY.md) | docs |
 | [SSO Configuration Validation Checklist](docs/SSO_VALIDATION_CHECKLIST.md) | docs |
 | [Success Criteria - Production Hotfix](docs/SUCCESS_CRITERIA.md) | docs |
+| [Superset Integration Architecture](docs/SUPERSET_INTEGRATION.md) | docs |
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
 | [TBWA Theme Token Alignment - Deployment Guide](docs/TBWA_THEME_DEPLOYMENT.md) | docs |
+| [Multi-Tenant Platform Architecture](docs/TENANT_ARCHITECTURE.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [Deterministic Troubleshooting Framework for Odoo CE 18.0](docs/TROUBLESHOOTING.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
@@ -826,6 +831,7 @@
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
+| [ipai_tenant_core](./addons/ipai/ipai_tenant_core) | ✅ | Multi-tenant platform core for InsightPulse AI |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
