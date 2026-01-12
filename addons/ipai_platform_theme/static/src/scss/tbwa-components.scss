@@ -46,7 +46,92 @@ html, body {
 }
 
 // ============================================================================
-// SIDEBAR (Left Navigation - Black Theme)
+// HOME MENU / SIDEBAR NAVIGATION (Odoo 18 - Fix Teal Color)
+// ============================================================================
+
+// Home menu sidebar (app launcher)
+.o_home_menu,
+.o_apps {
+  background-color: var(--tbwa-bg) !important;
+
+  .o_app {
+    color: var(--tbwa-text) !important;
+    border-radius: var(--tbwa-radius-base) !important;
+    transition: all var(--tbwa-duration-fast) var(--tbwa-ease-out);
+
+    &:hover {
+      background-color: var(--tbwa-surface-warm) !important;
+      transform: translateY(-2px);
+      box-shadow: var(--tbwa-shadow-1);
+    }
+
+    .o_app_name {
+      color: var(--tbwa-text) !important;
+      font-weight: var(--tbwa-font-medium);
+    }
+
+    .o_app_icon {
+      color: var(--tbwa-ink) !important;
+    }
+  }
+}
+
+// Vertical navigation (left sidebar menu items - Discuss, To-do, etc.)
+.o_web_client {
+  // Main navigation sidebar
+  .o_navbar_apps_menu,
+  .o_main_navbar .dropdown-menu,
+  .o_sidebar,
+  [class*="sidebar"],
+  [class*="Sidebar"] {
+    background-color: var(--tbwa-surface) !important;
+
+    a, .nav-link, .dropdown-item {
+      color: var(--tbwa-text) !important;
+      transition: all var(--tbwa-duration-fast) var(--tbwa-ease-out);
+
+      &:hover {
+        color: var(--tbwa-ink) !important;
+        background-color: var(--tbwa-surface-warm) !important;
+      }
+
+      &.active {
+        color: var(--tbwa-ink) !important;
+        background-color: var(--tbwa-surface-warm) !important;
+        border-left: 3px solid var(--tbwa-primary) !important;
+        font-weight: var(--tbwa-font-semibold);
+      }
+    }
+  }
+
+  // Fix all nav links to use TBWA colors (not teal)
+  .nav-link,
+  .o_nav_entry {
+    color: var(--tbwa-text) !important;
+
+    &:hover {
+      color: var(--tbwa-ink) !important;
+      background-color: var(--tbwa-surface-warm) !important;
+    }
+
+    &.active {
+      color: var(--tbwa-primary) !important;
+      font-weight: var(--tbwa-font-semibold);
+    }
+  }
+}
+
+// Override any teal/cyan colors globally
+a {
+  color: var(--tbwa-ink) !important;
+
+  &:hover {
+    color: var(--tbwa-primary) !important;
+  }
+}
+
+// ============================================================================
+// SIDEBAR (Control Panel Sidebar - Black Theme)
 // ============================================================================
 
 .o_action_manager .o_action {

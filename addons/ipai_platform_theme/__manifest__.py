@@ -1,6 +1,6 @@
 {
     "name": "IPAI Platform Theme",
-    "version": "18.0.1.1.0",
+    "version": "18.0.1.2.0",
     "category": "Theme",
     "summary": "Single source of truth for IPAI design tokens and branding",
     "description": """
@@ -38,15 +38,25 @@ Odoo Integration:
     "license": "LGPL-3",
     "depends": ["web"],
     "assets": {
-        # Backend assets - tokens + normalize
+        # Backend assets - full TBWA theme stack
         "web.assets_backend": [
+            # 1. Core design tokens (foundation)
             "ipai_platform_theme/static/src/scss/tokens.scss",
+            # 2. TBWA brand tokens (overrides core with TBWA colors)
+            "ipai_platform_theme/static/src/scss/tbwa-tokens.scss",
+            # 3. Normalize (applies tokens to Odoo components)
             "ipai_platform_theme/static/src/scss/normalize.scss",
+            # 4. TBWA component styling (full TBWA look)
+            "ipai_platform_theme/static/src/scss/tbwa-components.scss",
+            # 5. IPAI component extensions
+            "ipai_platform_theme/static/src/scss/components.scss",
         ],
-        # Frontend assets - same tokens for website consistency
+        # Frontend assets - same stack for website consistency
         "web.assets_frontend": [
             "ipai_platform_theme/static/src/scss/tokens.scss",
+            "ipai_platform_theme/static/src/scss/tbwa-tokens.scss",
             "ipai_platform_theme/static/src/scss/normalize.scss",
+            "ipai_platform_theme/static/src/scss/tbwa-components.scss",
         ],
     },
     "data": [],
