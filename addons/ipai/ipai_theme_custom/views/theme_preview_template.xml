@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Template for injecting custom CSS variables from database -->
+    <template id="theme_custom_css_variables" name="Custom Theme CSS Variables" inherit_id="web.assets_common" priority="100">
+        <xpath expr="." position="inside">
+            <style t-if="request.env.company">
+                :root {
+                    <t t-if="request.env.company.theme_color_primary">
+                        --ipai-color-primary: <t t-esc="request.env.company.theme_color_primary"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_primary_hover">
+                        --ipai-color-primary-hover: <t t-esc="request.env.company.theme_color_primary_hover"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_accent">
+                        --ipai-color-accent: <t t-esc="request.env.company.theme_color_accent"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_accent_hover">
+                        --ipai-color-accent-hover: <t t-esc="request.env.company.theme_color_accent_hover"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_success">
+                        --ipai-color-success: <t t-esc="request.env.company.theme_color_success"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_warning">
+                        --ipai-color-warning: <t t-esc="request.env.company.theme_color_warning"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_danger">
+                        --ipai-color-danger: <t t-esc="request.env.company.theme_color_danger"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_info">
+                        --ipai-color-info: <t t-esc="request.env.company.theme_color_info"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_bg">
+                        --ipai-color-bg: <t t-esc="request.env.company.theme_color_bg"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_surface">
+                        --ipai-color-surface: <t t-esc="request.env.company.theme_color_surface"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_surface_elevated">
+                        --ipai-color-surface-elevated: <t t-esc="request.env.company.theme_color_surface_elevated"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_border">
+                        --ipai-color-border: <t t-esc="request.env.company.theme_color_border"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_text_primary">
+                        --ipai-color-text-primary: <t t-esc="request.env.company.theme_color_text_primary"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_text_secondary">
+                        --ipai-color-text-secondary: <t t-esc="request.env.company.theme_color_text_secondary"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_text_on_primary">
+                        --ipai-color-text-on-primary: <t t-esc="request.env.company.theme_color_text_on_primary"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_color_text_on_accent">
+                        --ipai-color-text-on-accent: <t t-esc="request.env.company.theme_color_text_on_accent"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_radius_sm">
+                        --ipai-radius-sm: <t t-esc="request.env.company.theme_radius_sm"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_radius_md">
+                        --ipai-radius-md: <t t-esc="request.env.company.theme_radius_md"/>;
+                    </t>
+                    <t t-if="request.env.company.theme_radius_lg">
+                        --ipai-radius-lg: <t t-esc="request.env.company.theme_radius_lg"/>;
+                    </t>
+                }
+            </style>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,245 @@
+/**
+ * IPAI Custom Theme - Base Theme Styles
+ *
+ * Applies CSS custom properties to Odoo UI elements.
+ * No hardcoded colors - all values reference CSS variables.
+ */
+
+/* ==========================================================================
+   GLOBAL STYLES
+   ========================================================================== */
+
+body {
+  background-color: var(--ipai-color-bg);
+  color: var(--ipai-color-text-primary);
+  font-family: var(--ipai-font-family);
+}
+
+/* ==========================================================================
+   LINKS
+   ========================================================================== */
+
+a {
+  color: var(--ipai-color-primary);
+  transition: color var(--ipai-transition-fast);
+
+  &:hover,
+  &:focus {
+    color: var(--ipai-color-primary-hover);
+  }
+}
+
+/* ==========================================================================
+   HEADINGS
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  color: var(--ipai-color-text-primary);
+}
+
+/* ==========================================================================
+   CARDS & PANELS
+   ========================================================================== */
+
+.card,
+.o_kanban_record,
+.o_form_sheet {
+  background-color: var(--ipai-color-surface);
+  border-color: var(--ipai-color-border);
+  border-radius: var(--ipai-radius-md);
+}
+
+.card-header {
+  background-color: var(--ipai-color-surface);
+  border-bottom-color: var(--ipai-color-border);
+}
+
+/* ==========================================================================
+   FORMS
+   ========================================================================== */
+
+.form-control,
+.o_input,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+  background-color: var(--ipai-color-surface);
+  border-color: var(--ipai-color-border);
+  color: var(--ipai-color-text-primary);
+  border-radius: var(--ipai-radius-sm);
+  transition: border-color var(--ipai-transition-fast),
+              box-shadow var(--ipai-transition-fast);
+
+  &:focus {
+    border-color: var(--ipai-color-primary);
+    box-shadow: 0 0 0 2px var(--ipai-color-primary);
+  }
+
+  &::placeholder {
+    color: var(--ipai-color-text-secondary);
+  }
+}
+
+/* ==========================================================================
+   TABLES
+   ========================================================================== */
+
+.table,
+.o_list_table {
+  color: var(--ipai-color-text-primary);
+
+  th {
+    color: var(--ipai-color-text-primary);
+    background-color: var(--ipai-color-surface);
+    border-color: var(--ipai-color-border);
+  }
+
+  td {
+    border-color: var(--ipai-color-border);
+  }
+
+  tbody tr:hover {
+    background-color: var(--ipai-color-surface);
+  }
+}
+
+/* ==========================================================================
+   MODALS & DIALOGS
+   ========================================================================== */
+
+.modal-content,
+.o_dialog {
+  background-color: var(--ipai-color-surface-elevated);
+  border-color: var(--ipai-color-border);
+  border-radius: var(--ipai-radius-lg);
+  box-shadow: var(--ipai-shadow-lg);
+}
+
+.modal-header {
+  border-bottom-color: var(--ipai-color-border);
+}
+
+.modal-footer {
+  border-top-color: var(--ipai-color-border);
+}
+
+/* ==========================================================================
+   DROPDOWNS
+   ========================================================================== */
+
+.dropdown-menu,
+.o_dropdown_menu {
+  background-color: var(--ipai-color-surface-elevated);
+  border-color: var(--ipai-color-border);
+  border-radius: var(--ipai-radius-md);
+  box-shadow: var(--ipai-shadow-md);
+}
+
+.dropdown-item {
+  color: var(--ipai-color-text-primary);
+  transition: background-color var(--ipai-transition-fast);
+
+  &:hover,
+  &:focus {
+    background-color: var(--ipai-color-surface);
+    color: var(--ipai-color-text-primary);
+  }
+}
+
+/* ==========================================================================
+   ALERTS & BADGES
+   ========================================================================== */
+
+.alert-success,
+.badge-success,
+.bg-success {
+  background-color: var(--ipai-color-success);
+  color: var(--ipai-color-text-on-primary);
+}
+
+.alert-warning,
+.badge-warning,
+.bg-warning {
+  background-color: var(--ipai-color-warning);
+  color: var(--ipai-color-text-on-primary);
+}
+
+.alert-danger,
+.badge-danger,
+.bg-danger {
+  background-color: var(--ipai-color-danger);
+  color: var(--ipai-color-text-on-primary);
+}
+
+.alert-info,
+.badge-info,
+.bg-info {
+  background-color: var(--ipai-color-info);
+  color: var(--ipai-color-text-on-primary);
+}
+
+/* ==========================================================================
+   TEXT UTILITIES
+   ========================================================================== */
+
+.text-primary {
+  color: var(--ipai-color-primary) !important;
+}
+
+.text-success {
+  color: var(--ipai-color-success) !important;
+}
+
+.text-warning {
+  color: var(--ipai-color-warning) !important;
+}
+
+.text-danger {
+  color: var(--ipai-color-danger) !important;
+}
+
+.text-info {
+  color: var(--ipai-color-info) !important;
+}
+
+.text-muted {
+  color: var(--ipai-color-text-secondary) !important;
+}
+
+/* ==========================================================================
+   BORDERS
+   ========================================================================== */
+
+.border {
+  border-color: var(--ipai-color-border) !important;
+}
+
+.border-primary {
+  border-color: var(--ipai-color-primary) !important;
+}
+
+/* ==========================================================================
+   SCROLLBARS (WebKit)
+   ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ipai-color-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ipai-color-border);
+  border-radius: var(--ipai-radius-sm);
+
+  &:hover {
+    background: var(--ipai-color-text-secondary);
+  }
+}

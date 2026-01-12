@@ -1,0 +1,184 @@
+/**
+ * IPAI Custom Theme - CSS Variables
+ *
+ * This file overrides TBWA-specific colors with configurable CSS custom properties.
+ * Configure colors via Odoo Settings > Theme Colors.
+ *
+ * NO HARDCODED COLORS - all values use var() references.
+ */
+
+:root {
+  /* ==========================================================================
+     CUSTOM COLOR TOKENS - Override TBWA Yellow defaults
+     These can be set via database (res.company fields) or child themes
+     ========================================================================== */
+
+  /* Primary Brand Colors - Replace TBWA Yellow */
+  --custom-primary: var(--ipai-color-primary);
+  --custom-primary-hover: var(--ipai-color-primary-hover);
+  --custom-accent: var(--ipai-color-accent);
+  --custom-accent-hover: var(--ipai-color-accent-hover);
+
+  /* Semantic Colors */
+  --custom-success: var(--ipai-color-success);
+  --custom-warning: var(--ipai-color-warning);
+  --custom-danger: var(--ipai-color-danger);
+  --custom-info: var(--ipai-color-info);
+
+  /* Surface Colors */
+  --custom-bg: var(--ipai-color-bg);
+  --custom-surface: var(--ipai-color-surface);
+  --custom-surface-elevated: var(--ipai-color-surface-elevated);
+  --custom-border: var(--ipai-color-border);
+
+  /* Text Colors */
+  --custom-text-primary: var(--ipai-color-text-primary);
+  --custom-text-secondary: var(--ipai-color-text-secondary);
+  --custom-text-on-primary: var(--ipai-color-text-on-primary);
+  --custom-text-on-accent: var(--ipai-color-text-on-accent);
+
+  /* Shape */
+  --custom-radius-sm: var(--ipai-radius-sm);
+  --custom-radius-md: var(--ipai-radius-md);
+  --custom-radius-lg: var(--ipai-radius-lg);
+
+  /* ==========================================================================
+     TBWA TOKEN OVERRIDES - Map to custom variables (replaces yellow)
+     ========================================================================== */
+
+  /* Override TBWA Yellow tokens */
+  --tbwa-yellow-500: var(--ipai-color-primary);
+  --tbwa-yellow-400: var(--ipai-color-primary-hover);
+  --tbwa-yellow-200: var(--ipai-color-surface);
+
+  /* Override TBWA semantic/brand tokens */
+  --tbwa-primary: var(--ipai-color-primary);
+  --tbwa-primary-hover: var(--ipai-color-primary-hover);
+  --tbwa-focus: var(--ipai-color-primary);
+
+  /* Override surface warm (was yellow-tinted) */
+  --tbwa-surface-warm: var(--ipai-color-surface);
+
+  /* Override sidebar active border (was yellow) */
+  --tbwa-sidebar-active-border: var(--ipai-color-primary);
+
+  /* Override chart emphasis (was yellow) */
+  --tbwa-chart-emphasis: var(--ipai-color-primary);
+
+  /* Override button tokens */
+  --tbwa-btn-primary-bg: var(--ipai-color-primary);
+  --tbwa-btn-primary-hover: var(--ipai-color-primary-hover);
+  --tbwa-btn-secondary-border: var(--ipai-color-primary);
+
+  /* Override input focus */
+  --tbwa-input-focus-border: var(--ipai-color-primary);
+  --tbwa-shadow-focus: 0 0 0 3px var(--ipai-color-primary);
+
+  /* ==========================================================================
+     IPAI PLATFORM TOKEN OVERRIDES - Map to custom variables
+     ========================================================================== */
+
+  /* Override IPAI brand primary (was TBWA Yellow) */
+  --ipai-brand-primary: var(--ipai-color-primary);
+  --ipai-brand-primary-hover: var(--ipai-color-primary-hover);
+  --ipai-brand-primary-light: var(--ipai-color-surface);
+
+  /* ==========================================================================
+     ODOO NATIVE VARIABLE OVERRIDES
+     ========================================================================== */
+
+  /* Override Odoo brand colors */
+  --o-brand-primary: var(--ipai-color-primary);
+  --o-brand-odoo: var(--ipai-color-primary);
+  --o-enterprise-color: var(--ipai-color-primary);
+  --o-community-color: var(--ipai-color-primary);
+  --o-color-primary: var(--ipai-color-primary);
+  --o-color-primary-light: var(--ipai-color-primary-hover);
+
+  /* Override Odoo semantic colors */
+  --o-color-success: var(--ipai-color-success);
+  --o-color-warning: var(--ipai-color-warning);
+  --o-color-danger: var(--ipai-color-danger);
+
+  /* ==========================================================================
+     SPACING TOKENS (Neutral - no color)
+     ========================================================================== */
+
+  --ipai-space-xs: 0.25rem;
+  --ipai-space-sm: 0.5rem;
+  --ipai-space-md: 1rem;
+  --ipai-space-lg: 1.5rem;
+  --ipai-space-xl: 2rem;
+
+  /* ==========================================================================
+     TYPOGRAPHY TOKENS (Neutral - no color)
+     ========================================================================== */
+
+  --ipai-font-family: inherit;
+  --ipai-font-size-xs: 0.75rem;
+  --ipai-font-size-sm: 0.875rem;
+  --ipai-font-size-md: 1rem;
+  --ipai-font-size-lg: 1.125rem;
+  --ipai-font-size-xl: 1.25rem;
+
+  --ipai-font-weight-normal: 400;
+  --ipai-font-weight-medium: 500;
+  --ipai-font-weight-semibold: 600;
+  --ipai-font-weight-bold: 700;
+
+  --ipai-line-height-tight: 1.25;
+  --ipai-line-height-normal: 1.5;
+  --ipai-line-height-relaxed: 1.75;
+
+  /* ==========================================================================
+     TRANSITION TOKENS (Neutral)
+     ========================================================================== */
+
+  --ipai-transition-fast: 150ms ease;
+  --ipai-transition-normal: 250ms ease;
+  --ipai-transition-slow: 350ms ease;
+
+  /* ==========================================================================
+     Z-INDEX LAYERS (Neutral)
+     ========================================================================== */
+
+  --ipai-z-dropdown: 1000;
+  --ipai-z-sticky: 1020;
+  --ipai-z-fixed: 1030;
+  --ipai-z-modal-backdrop: 1040;
+  --ipai-z-modal: 1050;
+  --ipai-z-popover: 1060;
+  --ipai-z-tooltip: 1070;
+
+  /* ==========================================================================
+     SHADOW TOKENS (use primary color for focus rings)
+     ========================================================================== */
+
+  --ipai-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --ipai-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --ipai-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* ==========================================================================
+   DARK MODE SUPPORT
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+  :root.ipai-theme-auto {
+    --ipai-color-bg: var(--custom-dark-bg, var(--ipai-color-bg));
+    --ipai-color-surface: var(--custom-dark-surface, var(--ipai-color-surface));
+    --ipai-color-surface-elevated: var(--custom-dark-surface-elevated, var(--ipai-color-surface-elevated));
+    --ipai-color-border: var(--custom-dark-border, var(--ipai-color-border));
+    --ipai-color-text-primary: var(--custom-dark-text-primary, var(--ipai-color-text-primary));
+    --ipai-color-text-secondary: var(--custom-dark-text-secondary, var(--ipai-color-text-secondary));
+  }
+}
+
+:root.ipai-theme-dark {
+  --ipai-color-bg: var(--custom-dark-bg, var(--ipai-color-bg));
+  --ipai-color-surface: var(--custom-dark-surface, var(--ipai-color-surface));
+  --ipai-color-surface-elevated: var(--custom-dark-surface-elevated, var(--ipai-color-surface-elevated));
+  --ipai-color-border: var(--custom-dark-border, var(--ipai-color-border));
+  --ipai-color-text-primary: var(--custom-dark-text-primary, var(--ipai-color-text-primary));
+  --ipai-color-text-secondary: var(--custom-dark-text-secondary, var(--ipai-color-text-secondary));
+}

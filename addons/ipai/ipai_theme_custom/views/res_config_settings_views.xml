@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit General Settings to add Theme Colors section -->
+    <record id="res_config_settings_view_form_theme" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.theme</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//app[@string='General Settings']" position="inside">
+                <block title="Theme Colors" name="theme_colors_settings">
+                    <setting string="Custom Theme Colors" help="Configure your brand colors (replaces TBWA yellow defaults)">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="theme_color_primary" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_primary" placeholder="#3B82F6"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_primary_hover" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_primary_hover" placeholder="#2563EB"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_accent" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_accent" placeholder="#8B5CF6"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_accent_hover" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_accent_hover" placeholder="#7C3AED"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <setting string="Semantic Colors" help="Colors for success, warning, danger, and info states">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="theme_color_success" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_success" placeholder="#10B981"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_warning" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_warning" placeholder="#F59E0B"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_danger" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_danger" placeholder="#EF4444"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_info" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_info" placeholder="#3B82F6"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <setting string="Surface Colors" help="Background and surface colors">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="theme_color_bg" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_bg" placeholder="#FFFFFF"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_surface" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_surface" placeholder="#F9FAFB"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_surface_elevated" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_surface_elevated" placeholder="#FFFFFF"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_border" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_border" placeholder="#E5E7EB"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <setting string="Text Colors" help="Text colors for various contexts">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="theme_color_text_primary" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_text_primary" placeholder="#111827"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_text_secondary" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_text_secondary" placeholder="#6B7280"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_text_on_primary" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_text_on_primary" placeholder="#FFFFFF"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_color_text_on_accent" class="col-lg-3 o_light_label"/>
+                                <field name="theme_color_text_on_accent" placeholder="#FFFFFF"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <setting string="Border Radius" help="Corner radius for UI elements">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <label for="theme_radius_sm" class="col-lg-3 o_light_label"/>
+                                <field name="theme_radius_sm" placeholder="4px"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_radius_md" class="col-lg-3 o_light_label"/>
+                                <field name="theme_radius_md" placeholder="8px"/>
+                            </div>
+                            <div class="row">
+                                <label for="theme_radius_lg" class="col-lg-3 o_light_label"/>
+                                <field name="theme_radius_lg" placeholder="12px"/>
+                            </div>
+                        </div>
+                    </setting>
+
+                    <setting string="Dark Mode">
+                        <div class="content-group">
+                            <div class="row mt16">
+                                <field name="theme_dark_mode_enabled"/>
+                                <label for="theme_dark_mode_enabled"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
