@@ -9,6 +9,7 @@ from . import (
     finance_recurrence,
     finance_task,
     ppm_dashboard,
+    project_project,
     project_task,
     res_users,
 )

@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_okr_objective_user,okr.objective.user,model_okr_objective,base.group_user,1,1,1,1
-access_okr_key_result_user,okr.key.result.user,model_okr_key_result,base.group_user,1,1,1,1
-access_okr_kr_score_snapshot_user,okr.kr.score.snapshot.user,model_okr_kr_score_snapshot,base.group_user,1,1,1,1
-access_okr_risk_user,okr.risk.user,model_okr_risk,base.group_user,1,1,1,1
-access_okr_kr_task_link_user,okr.kr.task.link.user,model_okr_kr_task_link,base.group_user,1,1,1,1
-access_okr_kr_milestone_user,okr.kr.milestone.user,model_okr_kr_milestone,base.group_user,1,1,1,1
