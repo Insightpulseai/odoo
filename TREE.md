@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c9589b3e69e264895cc831b37fbb696493e92631
+> Commit: d9e9771b947e8dd91fe113d5121b85f1f3791504
 
 ```
 .
@@ -1922,8 +1922,10 @@
 │   │   │   └── odooforge-sandbox
 │   │   ├── 20260112-0300
 │   │   │   └── erd-automation
-│   │   └── 20260112-0358
-│   │       └── ipai_finance_okr
+│   │   ├── 20260112-0358
+│   │   │   └── ipai_finance_okr
+│   │   └── 20260112-0649
+│   │       └── github-setup
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2107,6 +2109,8 @@
 │   │   ├── GO_LIVE_MANIFEST_prod-20260109-2219.md
 │   │   ├── LATEST.json
 │   │   ├── LATEST.md
+│   │   ├── TBWA_FINOPS_INVITE_EMAIL.md
+│   │   ├── TBWA_FINOPS_V1_RUNBOOK.md
 │   │   ├── WHAT_DEPLOYED.json
 │   │   ├── WHAT_DEPLOYED.md
 │   │   ├── WHAT_DEPLOYED_prod-20260109-2219.json
@@ -3724,15 +3728,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1189 directories, 2530 files
+1191 directories, 2532 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1371 |
-| Files | 3798 |
+| Directories | 1373 |
+| Files | 3802 |
 | Python files | 1005 |
-| XML files | 474 |
-| Markdown files | 729 |
+| XML files | 475 |
+| Markdown files | 732 |
