@@ -1,0 +1,82 @@
+# =============================================================================
+# SUPERSET EMBED API - DigitalOcean App Platform Spec
+# =============================================================================
+# Self-signed JWT guest token service for Superset dashboard embedding
+#
+# Usage:
+#   doctl apps create --spec apps/superset-embed-api/do-app-spec.yaml
+#   doctl apps update <app-id> --spec apps/superset-embed-api/do-app-spec.yaml
+# =============================================================================
+
+name: superset-embed-api
+region: sgp1
+
+services:
+  - name: api
+    # Build from source or use pre-built image
+    dockerfile_path: Dockerfile
+
+    # Or use pre-built GHCR image:
+    # image:
+    #   registry_type: GHCR
+    #   registry: jgtolentino
+    #   repository: superset-embed-api
+    #   tag: latest
+
+    instance_size_slug: basic-xxs
+    instance_count: 1
+
+    http_port: 3001
+
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 30
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 3
+
+    envs:
+      # JWT secret (must match Superset's SUPERSET_GUEST_TOKEN_SECRET)
+      - key: SUPERSET_GUEST_TOKEN_SECRET
+        scope: RUN_TIME
+        type: SECRET
+
+      - key: SUPERSET_GUEST_TOKEN_AUDIENCE
+        scope: RUN_TIME
+        value: "superset"
+
+      - key: SUPERSET_DOMAIN
+        scope: RUN_TIME
+        value: "https://superset.insightpulseai.net"
+
+      - key: TOKEN_EXPIRY_SECONDS
+        scope: RUN_TIME
+        value: "3600"
+
+      - key: ALLOWED_ORIGINS
+        scope: RUN_TIME
+        value: "https://erp.insightpulseai.net,https://scout-mvp.vercel.app"
+
+      - key: NODE_ENV
+        scope: RUN_TIME
+        value: "production"
+
+      - key: PORT
+        scope: RUN_TIME
+        value: "3001"
+
+    routes:
+      - path: /
+
+ingress:
+  rules:
+    - component:
+        name: api
+      match:
+        path:
+          prefix: /
+
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DEPLOYMENT_LIVE

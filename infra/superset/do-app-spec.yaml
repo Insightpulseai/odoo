@@ -55,6 +55,24 @@ services:
         scope: RUN_TIME
         type: SECRET
 
+      # Guest token JWT configuration (must match token API)
+      - key: SUPERSET_GUEST_TOKEN_SECRET
+        scope: RUN_TIME
+        type: SECRET
+
+      - key: SUPERSET_GUEST_TOKEN_AUDIENCE
+        scope: RUN_TIME
+        value: "superset"
+
+      - key: SUPERSET_GUEST_ROLE_NAME
+        scope: RUN_TIME
+        value: "Public"
+
+      # Allowed domains for embedding (comma-separated)
+      - key: SUPERSET_ALLOWED_EMBEDDED_DOMAINS
+        scope: RUN_TIME
+        value: "https://erp.insightpulseai.net,https://scout-mvp.vercel.app"
+
       - key: SUPERSET_WEBSERVER_TIMEOUT
         scope: RUN_TIME
         value: "300"
