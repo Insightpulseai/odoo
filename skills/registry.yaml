@@ -1,0 +1,99 @@
+# =============================================================================
+# Agent Skills Registry
+# =============================================================================
+# Centralized registry of all available agent skills for SAP Joule-style
+# Copilot capabilities.
+#
+# Skill Categories:
+# - superset: BI analytics and dashboard embedding
+# - odoo: ERP operations and configuration
+# - knowledge: RAG and semantic search (planned)
+# - automation: Workflow and task execution (planned)
+# =============================================================================
+
+version: "1.0"
+
+skills:
+  # ===========================================================================
+  # Superset BI Skills
+  # ===========================================================================
+
+  - name: get_superset_guest_token
+    intent: Generate a Superset guest JWT for a specific dashboard
+    handler: python://skills/superset/get_superset_guest_token.py
+    backend: token_api
+    inputs:
+      dashboard_id: string
+    outputs:
+      token: string
+      audience: string
+      embed_domain: string
+      expires_at: integer
+    error_conditions:
+      - Token API returned non-2xx status
+      - Token API response missing required "token" field
+      - Token API URL not configured
+
+  - name: get_superset_embed_url
+    intent: Build a complete Superset embedded URL with guest token for a dashboard
+    handler: python://skills/superset/get_superset_embed_url.py
+    backend: token_api
+    inputs:
+      dashboard_id: string
+    outputs:
+      embed_url: string
+      token: string
+      iframe_src: string
+    error_conditions:
+      - Token API returned non-2xx status
+      - Token API response missing required "token" field
+      - Superset domain not configured
+
+  - name: validate_superset_health
+    intent: Check the health of Superset and the Guest Token API
+    handler: python://skills/superset/validate_superset_health.py
+    backend: http
+    inputs:
+      check_token_api: boolean
+      check_superset: boolean
+    outputs:
+      status: string
+      superset_ok: boolean
+      token_api_ok: boolean
+      details: object
+    error_conditions:
+      - Both Superset and Token API endpoints unreachable
+      - Health endpoints returned non-2xx responses
+
+  # ===========================================================================
+  # Odoo ERP Skills
+  # ===========================================================================
+
+  - name: fetch_odoo_config_params
+    intent: Read Superset-related configuration parameters from Odoo
+    handler: python://skills/odoo/fetch_odoo_config_params.py
+    backend: odoo
+    inputs:
+      keys:
+        type: array
+    outputs:
+      params: object
+    error_conditions:
+      - Odoo JSON-RPC endpoint unreachable
+      - Authentication failed
+      - Invalid response from Odoo
+
+# ===========================================================================
+# Environment Variables Required
+# ===========================================================================
+# Superset skills:
+#   - SUPERSET_TOKEN_API_URL: Guest token API endpoint
+#   - SUPERSET_DOMAIN: Superset base URL
+#   - SUPERSET_GUEST_TOKEN_AUDIENCE: JWT audience (default: superset)
+#
+# Odoo skills:
+#   - ODOO_URL: Odoo base URL
+#   - ODOO_DB: Database name
+#   - ODOO_USER: Service account username
+#   - ODOO_PASSWORD: Service account password
+# ===========================================================================
