@@ -27,6 +27,7 @@
         "data/finance_okr_seed.xml",
         "data/finance_bir_2026_seed.xml",
         "data/finance_month_end_seed.xml",
+        "data/finance_close_oct2026_seed.xml",
         "data/finance_cron.xml",
     ],
     "assets": {

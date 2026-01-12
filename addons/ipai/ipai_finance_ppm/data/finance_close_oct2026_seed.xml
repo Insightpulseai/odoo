@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- ========================================== -->
+    <!-- Month-End Close Cycle: October 2026 -->
+    <!-- Gantt-ready with task IDs and date ranges -->
+    <!-- ========================================== -->
+
+    <record id="project_close_oct2026" model="project.project">
+        <field name="name">Month-End Close / October 2026</field>
+        <field name="description">Finance SSC Month-End Close cycle for October 2026. Close period: Oct 24-30, Reports due: Nov 3.</field>
+        <field name="user_id" ref="base.user_admin"/>
+        <field name="privacy_visibility">employees</field>
+        <field name="allow_milestones" eval="True"/>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- PAYROLL PROCESSING &amp; TAX PROVISION -->
+    <!-- ========================================== -->
+
+    <record id="task_acct_001" model="project.task">
+        <field name="name">ACCT-001: Process Payroll, Final Pay, SL Conversions, Early Retirement</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Process and record Payroll, Final Pay, SL Conversions, early retirement accrual.
+
+Task ID: ACCT-001
+Category: Payroll Processing &amp; Tax Provision
+Subtask: 1</field>
+        <field name="date_deadline" eval="'2026-10-28'"/>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">5.0</field>
+    </record>
+
+    <record id="task_acct_002" model="project.task">
+        <field name="name">ACCT-002: Calculate Tax Provision and PPB Provision</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Calculate and record monthly Tax Provision and PPB Provision.
+
+Task ID: ACCT-002
+Category: Payroll Processing &amp; Tax Provision
+Subtask: 2</field>
+        <field name="date_deadline" eval="'2026-10-28'"/>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- VAT DATA FILING -->
+    <!-- ========================================== -->
+
+    <record id="task_vat_001" model="project.task">
+        <field name="name">VAT-001: Compile Monthly VAT Report (Initial + Additional)</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Compile, review, record monthly VAT Report (Initial+Additional).
+
+Task ID: VAT-001
+Category: VAT Data Filing
+Subtask: 1</field>
+        <field name="date_deadline" eval="'2026-10-28'"/>
+        <field name="finance_person_id" ref="finance_person_jap"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">vat_tax</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_vat_002" model="project.task">
+        <field name="name">VAT-002: Compile Input VAT and VAT Report Summary</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Compile+Record monthly Input VAT and VAT Report summary.
+
+Task ID: VAT-002
+Category: VAT Data Filing
+Subtask: 2</field>
+        <field name="date_deadline" eval="'2026-10-28'"/>
+        <field name="finance_person_id" ref="finance_person_jli"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">vat_tax</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- CA LIQUIDATIONS -->
+    <!-- ========================================== -->
+
+    <record id="task_ca_001" model="project.task">
+        <field name="name">CA-001: Process CA Liquidations (Project-Related)</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Process+Record CA Liquidations project-related.
+
+Task ID: CA-001
+Category: CA Liquidations
+Subtask: 1</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_ca_002" model="project.task">
+        <field name="name">CA-002: Process CA Liquidations (Employees)</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Process+Record CA Liquidations employees.
+
+Task ID: CA-002
+Category: CA Liquidations
+Subtask: 2</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_rmqb"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- ACCRUALS (REVENUE/FEES) -->
+    <!-- ========================================== -->
+
+    <record id="task_acc_001" model="project.task">
+        <field name="name">ACC-001: Record Accruals Consultancy + General Expenses</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Record accruals Consultancy+General Exp Accruals.
+
+Task ID: ACC-001
+Category: Accruals (Revenue/Fees)
+Subtask: 1</field>
+        <field name="date_deadline" eval="'2026-10-28'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_acc_002" model="project.task">
+        <field name="name">ACC-002: Accrue Mgt + Royalty Fees + Consulting</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Accrue monthly expenses Mgt+Royalty Fees+Consulting.
+
+Task ID: ACC-002
+Category: Accruals (Revenue/Fees)
+Subtask: 2</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_acc_003" model="project.task">
+        <field name="name">ACC-003: Recognize Revenue + Billable Costs WIP</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Recognizing revenue+billable costs WIP/Billings.
+
+Task ID: ACC-003
+Category: Accruals (Revenue/Fees)
+Subtask: 3</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_acc_004" model="project.task">
+        <field name="name">ACC-004: Record Recurring Service Expenses</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Record estimated expenses recurring services.
+
+Task ID: ACC-004
+Category: Accruals (Revenue/Fees)
+Subtask: 4</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_acc_005" model="project.task">
+        <field name="name">ACC-005: Capitalize Computer Related Costs</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Capitalize Other Computer Related Costs.
+
+Task ID: ACC-005
+Category: Accruals (Revenue/Fees)
+Subtask: 5</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_acc_006" model="project.task">
+        <field name="name">ACC-006: Accrue Employee Cellphone Allowance</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Accrue monthly expense Employee Cellphone Allowance.
+
+Task ID: ACC-006
+Category: Accruals (Revenue/Fees)
+Subtask: 6</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_rmqb"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_acc_007" model="project.task">
+        <field name="name">ACC-007: Compile Docs for Revenue Accruals</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Compile docs for revenue accruals.
+
+Task ID: ACC-007
+Category: Accruals (Revenue/Fees)
+Subtask: 7</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_csd"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+        <field name="prep_duration">1.0</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- AMORTIZATIONS (IT/FIXED) -->
+    <!-- ========================================== -->
+
+    <record id="task_amrt_001" model="project.task">
+        <field name="name">AMRT-001: Record Rental + Employee Health Amortization</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Record Rental Income/Expense+Amort employee health.
+
+Task ID: AMRT-001
+Category: Amortizations (IT/Fixed)
+Subtask: 1</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_amrt_002" model="project.task">
+        <field name="name">AMRT-002: Allocate Prepaid + Depreciation + LOA Tech</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Allocate prepaid expenses Depreciation+LOA tech.
+
+Task ID: AMRT-002
+Category: Amortizations (IT/Fixed)
+Subtask: 2</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_amrt_003" model="project.task">
+        <field name="name">AMRT-003: Accrue Mgmt + Royalty Fees + BOMS</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Accrue monthly Mgmt+Royalty Fees+BOMS.
+
+Task ID: AMRT-003
+Category: Amortizations (IT/Fixed)
+Subtask: 3</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_amrt_004" model="project.task">
+        <field name="name">AMRT-004: Record Insurance Premium + Health Insurance</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Record Insurance premium+Health Insurance.
+
+Task ID: AMRT-004
+Category: Amortizations (IT/Fixed)
+Subtask: 4</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_amrt_005" model="project.task">
+        <field name="name">AMRT-005: Allocate Business Permit + LOA</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Allocate prepaid Business Permit+LOA.
+
+Task ID: AMRT-005
+Category: Amortizations (IT/Fixed)
+Subtask: 5</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_amrt_006" model="project.task">
+        <field name="name">AMRT-006: Accrue Monthly Audit Fees</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Accrue monthly Audit Fees.
+
+Task ID: AMRT-006
+Category: Amortizations (IT/Fixed)
+Subtask: 6</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_amrt_007" model="project.task">
+        <field name="name">AMRT-007: Record Intercompany Rental Expense/Income</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Record intercompany Rental Expense/Income.
+
+Task ID: AMRT-007
+Category: Amortizations (IT/Fixed)
+Subtask: 7</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_amrt_008" model="project.task">
+        <field name="name">AMRT-008: Perform Intercompany Revaluation</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Perform end-month Intercompany Revaluation.
+
+Task ID: AMRT-008
+Category: Amortizations (IT/Fixed)
+Subtask: 8</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">3.0</field>
+    </record>
+
+    <record id="task_amrt_009" model="project.task">
+        <field name="name">AMRT-009: Record Financed Assets + Lease Transactions</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Record transactions for financed assets+lease.
+
+Task ID: AMRT-009
+Category: Amortizations (IT/Fixed)
+Subtask: 9</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">foundation_corp</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- WIP/OOP MANAGEMENT -->
+    <!-- ========================================== -->
+
+    <record id="task_wip_001" model="project.task">
+        <field name="name">WIP-001: WIP/OOP Reconciliation</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">WIP/OOP Reconciliation.
+
+Task ID: WIP-001
+Category: WIP/OOP Management
+Subtask: 1</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_wip_002" model="project.task">
+        <field name="name">WIP-002: Prepare WIP Schedule per Job#</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Prepare WIP schedule per Job#.
+
+Task ID: WIP-002
+Category: WIP/OOP Management
+Subtask: 2</field>
+        <field name="date_deadline" eval="'2026-10-29'"/>
+        <field name="finance_person_id" ref="finance_person_jrmo"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">revenue_wip</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- FINAL CLOSE -->
+    <!-- ========================================== -->
+
+    <record id="task_fcl_001" model="project.task">
+        <field name="name">FCL-001: Reversal of Temporary Journals</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Reversal of temporary journals.
+
+Task ID: FCL-001
+Category: Final Close
+Subtask: 1</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_fcl_002" model="project.task">
+        <field name="name">FCL-002: Reversal of Prior Month Accruals</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Reversal of all prior month accruals.
+
+Task ID: FCL-002
+Category: Final Close
+Subtask: 2</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_fcl_003" model="project.task">
+        <field name="name">FCL-003: Prepare Flash, Wins, Losses, Revenue</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Prepare Flash, Wins, Losses, Revenue.
+
+Task ID: FCL-003
+Category: Final Close
+Subtask: 3</field>
+        <field name="date_deadline" eval="'2026-11-03'"/>
+        <field name="finance_person_id" ref="finance_person_bom"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">5.0</field>
+    </record>
+
+    <record id="task_fcl_004" model="project.task">
+        <field name="name">FCL-004: Prepare Working Capital (AR)</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Prepare Working Capital related to AR.
+
+Task ID: FCL-004
+Category: Final Close
+Subtask: 4</field>
+        <field name="date_deadline" eval="'2026-11-03'"/>
+        <field name="finance_person_id" ref="finance_person_jpal"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+        <field name="prep_duration">5.0</field>
+    </record>
+
+    <record id="task_fcl_005" model="project.task">
+        <field name="name">FCL-005: Prepare AP Aging for WC Submission</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Prepare AP Aging for WC submission.
+
+Task ID: FCL-005
+Category: Final Close
+Subtask: 5</field>
+        <field name="date_deadline" eval="'2026-11-03'"/>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+        <field name="prep_duration">5.0</field>
+    </record>
+
+    <record id="task_fcl_006" model="project.task">
+        <field name="name">FCL-006: Prepare HOW's Summary Report</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Prepare HOW's summary report.
+
+Task ID: FCL-006
+Category: Final Close
+Subtask: 6</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_fcl_007" model="project.task">
+        <field name="name">FCL-007: Correct GL Entries &amp; Reclassifications</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Correcting GL entries &amp; reclassifications.
+
+Task ID: FCL-007
+Category: Final Close
+Subtask: 7</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_las"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">1.0</field>
+    </record>
+
+    <record id="task_fcl_008" model="project.task">
+        <field name="name">FCL-008: Prepare AP Aging (Detailed by Invoice)</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Prepare AP Aging detailed by invoice.
+
+Task ID: FCL-008
+Category: Final Close
+Subtask: 8</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_jli"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">working_capital</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_fcl_009" model="project.task">
+        <field name="name">FCL-009: Adjust Expense Across GL Categories</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Adjust expense across GL categories.
+
+Task ID: FCL-009
+Category: Final Close
+Subtask: 9</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_rmqb"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">1.0</field>
+    </record>
+
+    <record id="task_fcl_010" model="project.task">
+        <field name="name">FCL-010: Adjust Cost/Revenue Between Projects</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Adjust cost/revenue between projects.
+
+Task ID: FCL-010
+Category: Final Close
+Subtask: 10</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_jap"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_fcl_011" model="project.task">
+        <field name="name">FCL-011: Final TB Review</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Final TB Review.
+
+Task ID: FCL-011
+Category: Final Close
+Subtask: 11</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">2.0</field>
+    </record>
+
+    <record id="task_fcl_012" model="project.task">
+        <field name="name">FCL-012: Final TB Sign-off &amp; Filing</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="description">Final TB Sign-off &amp; Filing.
+
+Task ID: FCL-012
+Category: Final Close
+Subtask: 12</field>
+        <field name="date_deadline" eval="'2026-10-30'"/>
+        <field name="finance_person_id" ref="finance_person_rim"/>
+        <field name="reviewer_id" ref="base.user_admin"/>
+        <field name="approver_id" ref="base.user_admin"/>
+        <field name="is_closing_task" eval="True"/>
+        <field name="finance_category">administrative</field>
+        <field name="prep_duration">1.0</field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- MILESTONES -->
+    <!-- ========================================== -->
+
+    <record id="milestone_oct2026_day_28" model="project.milestone">
+        <field name="name">Oct 28: Initial &amp; Compliance Complete</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="deadline" eval="'2026-10-28'"/>
+    </record>
+
+    <record id="milestone_oct2026_day_29" model="project.milestone">
+        <field name="name">Oct 29: Accruals &amp; WIP Complete</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="deadline" eval="'2026-10-29'"/>
+    </record>
+
+    <record id="milestone_oct2026_day_30" model="project.milestone">
+        <field name="name">Oct 30: Final TB Sign-off</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="deadline" eval="'2026-10-30'"/>
+    </record>
+
+    <record id="milestone_oct2026_nov_03" model="project.milestone">
+        <field name="name">Nov 03: Reports Submitted</field>
+        <field name="project_id" ref="project_close_oct2026"/>
+        <field name="deadline" eval="'2026-11-03'"/>
+    </record>
+
+</odoo>
