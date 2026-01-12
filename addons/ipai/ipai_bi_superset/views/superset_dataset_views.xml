@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Superset Dataset: Form View -->
+    <record id="view_superset_dataset_form" model="ir.ui.view">
+        <field name="name">ipai.bi.superset.dataset.form</field>
+        <field name="model">ipai.bi.superset.dataset</field>
+        <field name="arch" type="xml">
+            <form string="Superset Dataset">
+                <sheet>
+                    <widget name="web_ribbon" title="Materialized" bg_color="text-bg-info" invisible="not is_materialized"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="e.g., Sales by Region"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Table Configuration">
+                            <field name="technical_name"/>
+                            <field name="database_name"/>
+                            <field name="superset_id"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                        <group string="Instance">
+                            <field name="instance_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Odoo Mapping">
+                            <field name="odoo_model_id"/>
+                        </group>
+                        <group string="Metadata">
+                            <field name="is_materialized"/>
+                            <field name="refresh_schedule" invisible="not is_materialized"/>
+                            <field name="row_count"/>
+                            <field name="last_synced"/>
+                        </group>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    <notebook>
+                        <page string="Dashboards" name="dashboards">
+                            <field name="dashboard_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="slug"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Superset Dataset: List View -->
+    <record id="view_superset_dataset_list" model="ir.ui.view">
+        <field name="name">ipai.bi.superset.dataset.list</field>
+        <field name="model">ipai.bi.superset.dataset</field>
+        <field name="arch" type="xml">
+            <list string="Superset Datasets">
+                <field name="name"/>
+                <field name="technical_name"/>
+                <field name="database_name"/>
+                <field name="instance_id"/>
+                <field name="odoo_model_id"/>
+                <field name="is_materialized"/>
+                <field name="row_count"/>
+                <field name="last_synced"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Superset Dataset: Action -->
+    <record id="action_superset_dataset" model="ir.actions.act_window">
+        <field name="name">Superset Datasets</field>
+        <field name="res_model">ipai.bi.superset.dataset</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first Superset dataset
+            </p>
+            <p>
+                Map Supabase tables and views that are available in Superset for BI dashboards.
+            </p>
+        </field>
+    </record>
+</odoo>

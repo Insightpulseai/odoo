@@ -1,0 +1,169 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/mcp-servers.json",
+  "version": "1.0.0",
+  "description": "MCP server configuration for InsightPulse AI / TBWA stack",
+
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server"],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "${SUPABASE_ACCESS_TOKEN}",
+        "SUPABASE_PROJECT_REF": "${SUPABASE_PROJECT_REF:-spdtwktxdalcfigzeqrz}"
+      },
+      "description": "Supabase MCP - schema introspection, SQL execution, functions management"
+    },
+
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub MCP - repos, issues, PRs, workflows"
+    },
+
+    "dbhub": {
+      "command": "npx",
+      "args": ["-y", "dbhub-mcp-server"],
+      "env": {
+        "POSTGRES_URL": "${POSTGRES_URL}",
+        "ODOO_POSTGRES_URL": "${ODOO_POSTGRES_URL:-postgresql://odoo:odoo@localhost:5432/odoo_core}"
+      },
+      "description": "DBHub MCP - direct PostgreSQL access for Odoo DB, Superset metadata"
+    },
+
+    "figma": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/figma-mcp-server"],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
+      },
+      "description": "Figma MCP - design context, tokens sync, component generation"
+    },
+
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_API_KEY": "${NOTION_API_KEY}"
+      },
+      "description": "Notion MCP - workspace docs, PRDs, roadmaps"
+    },
+
+    "firecrawl": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/firecrawl-mcp-server"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      },
+      "description": "Firecrawl MCP - web scraping, ETL agent data extraction"
+    },
+
+    "huggingface": {
+      "command": "npx",
+      "args": ["-y", "@huggingface/mcp-server"],
+      "env": {
+        "HF_TOKEN": "${HF_TOKEN}"
+      },
+      "description": "Hugging Face MCP - models, datasets, Spaces"
+    },
+
+    "microsoft-learn": {
+      "command": "npx",
+      "args": ["-y", "@microsoft/learn-mcp-server"],
+      "description": "Microsoft Learn MCP - Azure/DevOps docs, KQL patterns"
+    },
+
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/playwright-mcp-server"],
+      "description": "Playwright MCP - browser automation, UI testing"
+    },
+
+    "zapier": {
+      "command": "npx",
+      "args": ["-y", "@zapier/mcp-server"],
+      "env": {
+        "ZAPIER_NLA_KEY": "${ZAPIER_NLA_KEY}"
+      },
+      "description": "Zapier MCP - 8,000+ app integrations"
+    },
+
+    "odoo-erp": {
+      "command": "node",
+      "args": ["mcp/servers/odoo-erp-server/dist/index.js"],
+      "env": {
+        "ODOO_URL": "${ODOO_URL:-https://erp.insightpulseai.net}",
+        "ODOO_DB": "${ODOO_DB:-production}",
+        "ODOO_USERNAME": "${ODOO_USERNAME}",
+        "ODOO_PASSWORD": "${ODOO_PASSWORD}"
+      },
+      "description": "Custom Odoo ERP MCP - accounting, BIR compliance, HR"
+    },
+
+    "digitalocean": {
+      "command": "node",
+      "args": ["mcp/servers/digitalocean-mcp-server/dist/index.js"],
+      "env": {
+        "DIGITALOCEAN_TOKEN": "${DIGITALOCEAN_TOKEN}"
+      },
+      "description": "Custom DigitalOcean MCP - droplets, apps, deployments"
+    },
+
+    "superset": {
+      "command": "node",
+      "args": ["mcp/servers/superset-mcp-server/dist/index.js"],
+      "env": {
+        "SUPERSET_URL": "${SUPERSET_URL:-https://superset.insightpulseai.net}",
+        "SUPERSET_USERNAME": "${SUPERSET_USERNAME}",
+        "SUPERSET_PASSWORD": "${SUPERSET_PASSWORD}"
+      },
+      "description": "Custom Superset MCP - dashboards, datasets, charts"
+    },
+
+    "vercel": {
+      "command": "node",
+      "args": ["mcp/servers/vercel-mcp-server/dist/index.js"],
+      "env": {
+        "VERCEL_TOKEN": "${VERCEL_TOKEN}"
+      },
+      "description": "Custom Vercel MCP - projects, deployments, logs"
+    },
+
+    "pulser": {
+      "command": "node",
+      "args": ["mcp/servers/pulser-mcp-server/dist/index.js"],
+      "env": {
+        "PULSER_API_URL": "${PULSER_API_URL:-http://localhost:3000}"
+      },
+      "description": "Custom Pulser MCP - agent orchestration, run management"
+    },
+
+    "speckit": {
+      "command": "node",
+      "args": ["mcp/servers/speckit-mcp-server/dist/index.js"],
+      "description": "Custom SpecKit MCP - spec bundle enforcement, validation"
+    }
+  },
+
+  "serverGroups": {
+    "core": ["supabase", "github", "dbhub", "odoo-erp"],
+    "design": ["figma", "notion"],
+    "data": ["firecrawl", "huggingface"],
+    "infra": ["digitalocean", "vercel"],
+    "automation": ["pulser", "speckit", "zapier", "playwright"],
+    "docs": ["microsoft-learn"]
+  },
+
+  "defaultEnabled": ["supabase", "github", "odoo-erp"],
+
+  "notes": {
+    "supabase_project": "spdtwktxdalcfigzeqrz is the active project",
+    "deprecated_projects": [
+      "xkxyvboeubffxxbebsll",
+      "ublqmilcjtpnflofprkr"
+    ],
+    "custom_servers": "digitalocean, superset, vercel, pulser, speckit require build before use"
+  }
+}
