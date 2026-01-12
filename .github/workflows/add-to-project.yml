@@ -1,0 +1,22 @@
+name: Add to Project
+
+on:
+  issues:
+    types: [opened, transferred]
+  pull_request:
+    types: [opened, ready_for_review]
+
+jobs:
+  add-to-project:
+    name: Add issue or PR to project
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add to project
+        uses: actions/add-to-project@v1.0.2
+        with:
+          # User project: https://github.com/users/jgtolentino/projects/4
+          project-url: https://github.com/users/jgtolentino/projects/4
+          github-token: ${{ secrets.PROJECT_TOKEN }}
+          # Optional: only add issues/PRs with specific labels
+          # labeled: bug, enhancement, priority
+          # label-operator: OR
