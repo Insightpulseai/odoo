@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9376237ba588c3f349de36f1b9829eff642070c5
+> Commit: 37d7708fe37831409b426723352fcbee5cf0b3a7
 
 ```
 .
@@ -1872,6 +1872,7 @@
 │   │   ├── EXTENDED_PLATFORM_SCHEMA.dbml
 │   │   ├── IPAI_AI_PLATFORM_ERD.mmd
 │   │   ├── IPAI_AI_PLATFORM_SCHEMA.dbml
+│   │   ├── IPAI_FINANCE_OKR_SCHEMA.dbml
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
 │   │   ├── ODOO_ERD.puml
@@ -1910,8 +1911,10 @@
 │   ├── evidence
 │   │   ├── 20260110-0927
 │   │   │   └── odooforge-sandbox
-│   │   └── 20260112-0300
-│   │       └── erd-automation
+│   │   ├── 20260112-0300
+│   │   │   └── erd-automation
+│   │   └── 20260112-0358
+│   │       └── ipai_finance_okr
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -3696,15 +3699,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1181 directories, 2510 files
+1183 directories, 2511 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1363 |
-| Files | 3774 |
-| Python files | 998 |
-| XML files | 473 |
-| Markdown files | 727 |
+| Directories | 1365 |
+| Files | 3779 |
+| Python files | 999 |
+| XML files | 474 |
+| Markdown files | 728 |

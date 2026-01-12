@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9376237ba588c3f349de36f1b9829eff642070c5
+> Commit: 37d7708fe37831409b426723352fcbee5cf0b3a7
 
 ## 📚 Documentation
 
@@ -361,6 +361,7 @@
 | [OdooForge Sandbox - Codex Cloud Optimization](docs/evidence/20260110-0927/odooforge-sandbox/codex-optimization.md) | docs/evidence/20260110-0927/odooforge-sandbox |
 | [OdooForge Sandbox - Verification Results](docs/evidence/20260110-0927/odooforge-sandbox/verification-results.md) | docs/evidence/20260110-0927/odooforge-sandbox |
 | [ERD Automation Evidence Pack](docs/evidence/20260112-0300/erd-automation/EVIDENCE.md) | docs/evidence/20260112-0300/erd-automation |
+| [IPAI Finance OKR Governance - Verification Report](docs/evidence/20260112-0358/ipai_finance_okr/verification_report.md) | docs/evidence/20260112-0358/ipai_finance_okr |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -874,6 +875,7 @@
 | [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
 | [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
+| [ipai_finance_okr](./docs/evidence/20260112-0358/ipai_finance_okr) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen/ipai_module_gen) | ⚠️ | Missing manifest |
 
