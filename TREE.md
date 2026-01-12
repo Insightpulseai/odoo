@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a3417d15d2295897a8dad2a51ab079994bdd9851
+> Commit: c9589b3e69e264895cc831b37fbb696493e92631
 
 ```
 .
@@ -107,6 +107,7 @@
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── superset-bump.yml
+│   │   ├── superset-ci-cd.yml
 │   │   ├── wiki-sync.yml
 │   │   └── workflow-yaml-validate.yml
 │   └── copilot-instructions.md
@@ -1387,6 +1388,13 @@
 │   │   │   └── app.json
 │   │   ├── APP.md
 │   │   └── spec.yaml
+│   ├── superset-embed-api
+│   │   ├── src
+│   │   │   └── index.js
+│   │   ├── .env.example
+│   │   ├── Dockerfile
+│   │   ├── do-app-spec.yaml
+│   │   └── package.json
 │   └── web
 │       ├── content
 │       │   └── solutions
@@ -2007,6 +2015,7 @@
 │   │   ├── ipai_srm.md
 │   │   ├── ipai_studio_ai.md
 │   │   ├── ipai_superset_connector.md
+│   │   ├── ipai_superset_connector_technical_guide.md
 │   │   ├── ipai_tbwa_finance.md
 │   │   ├── ipai_theme_tbwa_backend.md
 │   │   ├── ipai_web_theme_chatgpt.md
@@ -2382,6 +2391,7 @@
 │   │   ├── .env.example
 │   │   └── docker-compose.stack.yml
 │   └── superset
+│       ├── Dockerfile
 │       ├── README.md
 │       ├── do-app-spec.yaml
 │       ├── entrypoint.sh
@@ -3059,10 +3069,18 @@
 │   │   └── skill.yaml
 │   ├── kg-entity-expand
 │   │   └── skill.yaml
+│   ├── odoo
+│   │   ├── __init__.py
+│   │   └── fetch_odoo_config_params.py
 │   ├── odoo-module-audit
 │   │   └── skill.yaml
 │   ├── odoo-module-scaffold
 │   │   └── skill.yaml
+│   ├── superset
+│   │   ├── __init__.py
+│   │   ├── get_superset_embed_url.py
+│   │   ├── get_superset_guest_token.py
+│   │   └── validate_superset_health.py
 │   ├── visio-drawio-export
 │   │   ├── docker
 │   │   │   ├── Dockerfile
@@ -3079,6 +3097,7 @@
 │   │   └── skill.yaml
 │   ├── README.md
 │   ├── architecture_diagrams.skill.json
+│   ├── registry.yaml
 │   ├── superset_mcp.skill.json
 │   └── visio_drawio_export.skill.json
 ├── spec
@@ -3705,15 +3724,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1185 directories, 2515 files
+1189 directories, 2530 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1367 |
-| Files | 3783 |
-| Python files | 999 |
+| Directories | 1371 |
+| Files | 3798 |
+| Python files | 1005 |
 | XML files | 474 |
-| Markdown files | 728 |
+| Markdown files | 729 |

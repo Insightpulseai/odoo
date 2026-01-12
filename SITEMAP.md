@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a3417d15d2295897a8dad2a51ab079994bdd9851
+> Commit: c9589b3e69e264895cc831b37fbb696493e92631
 
 ## 📚 Documentation
 
@@ -435,6 +435,7 @@
 | [ipai_srm](docs/modules/ipai_srm.md) | docs/modules |
 | [ipai_studio_ai](docs/modules/ipai_studio_ai.md) | docs/modules |
 | [ipai_superset_connector](docs/modules/ipai_superset_connector.md) | docs/modules |
+| [IPAI Superset Connector - Technical Guide](docs/modules/ipai_superset_connector_technical_guide.md) | docs/modules |
 | [ipai_tbwa_finance](docs/modules/ipai_tbwa_finance.md) | docs/modules |
 | [ipai_theme_tbwa_backend](docs/modules/ipai_theme_tbwa_backend.md) | docs/modules |
 | [ipai_web_theme_chatgpt](docs/modules/ipai_web_theme_chatgpt.md) | docs/modules |
