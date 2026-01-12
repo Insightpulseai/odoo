@@ -142,9 +142,9 @@ class BirFormSchedule(models.Model):
         """Send reminder to n8n webhook"""
         # Get responsible person email
         if form.responsible_prep_id:
-            responsible_email = form.responsible_prep_id.email or "finance-team@omc.com"
+            responsible_email = form.responsible_prep_id.email or "finance-team@tbwa-smp.com"
         else:
-            responsible_email = "finance-team@omc.com"
+            responsible_email = "finance-team@tbwa-smp.com"
 
         payload = {
             "reminder_type": reminder_type,
@@ -174,9 +174,9 @@ class BirFormSchedule(models.Model):
         """Send overdue nudge to n8n webhook"""
         # Get responsible person email
         if form.responsible_prep_id:
-            responsible_email = form.responsible_prep_id.email or "finance-team@omc.com"
+            responsible_email = form.responsible_prep_id.email or "finance-team@tbwa-smp.com"
         else:
-            responsible_email = "finance-team@omc.com"
+            responsible_email = "finance-team@tbwa-smp.com"
 
         payload = {
             "reminder_type": "overdue_daily",

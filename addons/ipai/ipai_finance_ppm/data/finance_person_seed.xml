@@ -11,7 +11,7 @@
         <record id="finance_person_ckvc" model="ipai.finance.person">
             <field name="code">CKVC</field>
             <field name="name">Khalil Veracruz</field>
-            <field name="email">khalil.veracruz@omc.com</field>
+            <field name="email">khalil.veracruz@tbwa-smp.com</field>
             <field name="role">director</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_director_ckvc"/> -->
         </record>
@@ -20,7 +20,7 @@
         <record id="finance_person_rim" model="ipai.finance.person">
             <field name="code">RIM</field>
             <field name="name">Rey Meran</field>
-            <field name="email">rey.meran@omc.com</field>
+            <field name="email">rey.meran@tbwa-smp.com</field>
             <field name="role">manager</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_senior_finance_manager_rim"/> -->
         </record>
@@ -29,7 +29,7 @@
         <record id="finance_person_bom" model="ipai.finance.person">
             <field name="code">BOM</field>
             <field name="name">Beng Manalo</field>
-            <field name="email">beng.manalo@omc.com</field>
+            <field name="email">beng.manalo@tbwa-smp.com</field>
             <field name="role">supervisor</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_supervisor_bom"/> -->
         </record>
@@ -38,7 +38,7 @@
         <record id="finance_person_las" model="ipai.finance.person">
             <field name="code">LAS</field>
             <field name="name">Amor Lasaga</field>
-            <field name="email">amor.lasaga@omc.com</field>
+            <field name="email">amor.lasaga@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_financial_analyst_las"/> -->
         </record>
@@ -47,7 +47,7 @@
         <record id="finance_person_rmqb" model="ipai.finance.person">
             <field name="code">RMQB</field>
             <field name="name">Sally Brillantes</field>
-            <field name="email">sally.brillantes@omc.com</field>
+            <field name="email">sally.brillantes@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_clerk_rmqb"/> -->
         </record>
@@ -56,7 +56,7 @@
         <record id="finance_person_jmsm" model="ipai.finance.person">
             <field name="code">JMSM</field>
             <field name="name">Joana Maravillas</field>
-            <field name="email">joana.maravillas@omc.com</field>
+            <field name="email">joana.maravillas@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_jm"/> -->
         </record>
@@ -65,7 +65,7 @@
         <record id="finance_person_jap" model="ipai.finance.person">
             <field name="code">JAP</field>
             <field name="name">Jinky Paladin</field>
-            <field name="email">jinky.paladin@omc.com</field>
+            <field name="email">jinky.paladin@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_gl_accountant_jpal"/> -->
         </record>
@@ -74,7 +74,7 @@
         <record id="finance_person_jpal" model="ipai.finance.person">
             <field name="code">JPAL</field>
             <field name="name">Jerald Loterte</field>
-            <field name="email">jerald.loterte@omc.com</field>
+            <field name="email">jerald.loterte@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_apar_specialist_jpl"/> -->
         </record>
@@ -83,7 +83,7 @@
         <record id="finance_person_jli" model="ipai.finance.person">
             <field name="code">JLI</field>
             <field name="name">Jasmin Ignacio</field>
-            <field name="email">jasmin.ignacio@omc.com</field>
+            <field name="email">jasmin.ignacio@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_tax_compliance_ji"/> -->
         </record>
@@ -92,7 +92,7 @@
         <record id="finance_person_jrmo" model="ipai.finance.person">
             <field name="code">JRMO</field>
             <field name="name">Jhoee Oliva</field>
-            <field name="email">jhoee.oliva@omc.com</field>
+            <field name="email">jhoee.oliva@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_assistant_jo"/> -->
         </record>
@@ -101,7 +101,7 @@
         <record id="finance_person_csd" model="ipai.finance.person">
             <field name="code">CSD</field>
             <field name="name">Cliff Dejecacion</field>
-            <field name="email">cliff.dejecacion@omc.com</field>
+            <field name="email">cliff.dejecacion@tbwa-smp.com</field>
             <field name="role">staff</field>
             <!-- <field name="user_id" ref="ipai_clarity_ppm_parity.user_finance_staff_csd"/> -->
         </record>
