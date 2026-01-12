@@ -1,0 +1,224 @@
+// IPAI Dark Mode Theme Tokens
+// Dark surfaces with light text
+// Use: body.ipai-theme-dark
+
+body.ipai-theme-dark {
+  // ============================================================================
+  // PRIMARY COLORS (Keep TBWA Yellow for accent)
+  // ============================================================================
+
+  --tbwa-yellow-500: #FFD800;     // TBWA Yellow (accent)
+  --tbwa-yellow-400: #FFDD2D;
+  --tbwa-yellow-200: #2D2A1A;     // Dark yellow-tinted surface
+  --tbwa-black: #000000;
+  --tbwa-ink: #F9FAFB;            // Light text on dark
+
+  // ============================================================================
+  // SURFACE COLORS (Dark)
+  // ============================================================================
+
+  --tbwa-bg: #0F0F0F;             // Near black background
+  --tbwa-surface: #1A1A1A;        // Dark card surface
+  --tbwa-surface-warm: #1F1D15;   // Dark with warm yellow tint
+  --tbwa-surface-soft: #262626;   // Slightly lighter dark
+
+  // ============================================================================
+  // BORDER COLORS (Dark)
+  // ============================================================================
+
+  --tbwa-border: #333333;
+  --tbwa-border-strong: #404040;
+
+  // ============================================================================
+  // TEXT COLORS (Light on dark)
+  // ============================================================================
+
+  --tbwa-text: #E5E7EB;           // Light gray text
+  --tbwa-text-muted: #9CA3AF;     // Muted gray
+  --tbwa-text-inverse: #111827;   // Dark text on light bg
+
+  // ============================================================================
+  // SIDEBAR (Full Black)
+  // ============================================================================
+
+  --tbwa-sidebar-bg: #000000;
+  --tbwa-sidebar-surface: #0A0A0A;
+  --tbwa-sidebar-text: #FFFFFF;
+  --tbwa-sidebar-muted: #A1A1AA;
+  --tbwa-sidebar-active-bg: #FFD800;  // Yellow active
+  --tbwa-sidebar-active-border: #FFD800;
+
+  // ============================================================================
+  // SEMANTIC COLORS
+  // ============================================================================
+
+  --tbwa-primary: #FFD800;        // Yellow accent
+  --tbwa-primary-hover: #FFDD2D;
+  --tbwa-primary-ink: #000000;    // Black text on yellow
+  --tbwa-focus: #FFD800;
+
+  --tbwa-success: #22C55E;        // Brighter green for dark mode
+  --tbwa-warning: #FBBF24;        // Brighter amber
+  --tbwa-danger: #F87171;         // Brighter red
+
+  // ============================================================================
+  // ODOO OVERRIDES
+  // ============================================================================
+
+  --o-color-primary: var(--tbwa-primary);
+  --o-color-primary-light: var(--tbwa-yellow-400);
+  --o-brand-primary: var(--tbwa-primary);
+  --o-brand-odoo: var(--tbwa-primary);
+
+  --o-color-success: var(--tbwa-success);
+  --o-color-warning: var(--tbwa-warning);
+  --o-color-danger: var(--tbwa-danger);
+
+  --o-color-text-primary: var(--tbwa-text);
+  --o-color-text-secondary: var(--tbwa-text-muted);
+
+  --o-color-bg-primary: var(--tbwa-surface);
+  --o-color-bg-secondary: var(--tbwa-bg);
+
+  // ============================================================================
+  // BUTTON TOKENS
+  // ============================================================================
+
+  --tbwa-btn-primary-bg: var(--tbwa-primary);
+  --tbwa-btn-primary-text: var(--tbwa-primary-ink);
+  --tbwa-btn-primary-hover: var(--tbwa-primary-hover);
+
+  --tbwa-btn-secondary-bg: var(--tbwa-surface);
+  --tbwa-btn-secondary-text: var(--tbwa-text);
+  --tbwa-btn-secondary-border: var(--tbwa-border-strong);
+  --tbwa-btn-secondary-hover-bg: var(--tbwa-surface-soft);
+
+  // ============================================================================
+  // CARD TOKENS
+  // ============================================================================
+
+  --tbwa-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --tbwa-card-hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+
+  // ============================================================================
+  // CHART COLORS (Brighter for dark mode)
+  // ============================================================================
+
+  --tbwa-chart-emphasis: var(--tbwa-primary);
+  --tbwa-chart-fill-soft: rgba(255, 216, 0, 0.25);
+
+  --tbwa-chart-category-1: #F9FAFB;
+  --tbwa-chart-category-2: #9CA3AF;
+  --tbwa-chart-category-3: #22C55E;
+  --tbwa-chart-category-4: #F87171;
+  --tbwa-chart-category-5: #FFD800;
+
+  // ============================================================================
+  // NAV ITEM TOKENS
+  // ============================================================================
+
+  --tbwa-nav-item-hover: rgba(255, 255, 255, 0.1);
+  --tbwa-nav-item-active-bg: var(--tbwa-primary);
+  --tbwa-nav-item-active-border: var(--tbwa-primary);
+
+  // ============================================================================
+  // SHADOW (Yellow focus ring)
+  // ============================================================================
+
+  --tbwa-shadow-focus: 0 0 0 3px rgba(255, 216, 0, 0.30);
+  --tbwa-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --tbwa-shadow-2: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --tbwa-shadow-3: 0 16px 32px rgba(0, 0, 0, 0.5);
+
+  // ============================================================================
+  // INPUT TOKENS
+  // ============================================================================
+
+  --tbwa-input-border: var(--tbwa-border);
+  --tbwa-input-focus-border: var(--tbwa-primary);
+  --tbwa-input-focus-shadow: var(--tbwa-shadow-focus);
+}
+
+// ============================================================================
+// DARK MODE COMPONENT OVERRIDES
+// ============================================================================
+
+body.ipai-theme-dark {
+  background-color: var(--tbwa-bg) !important;
+  color: var(--tbwa-text) !important;
+
+  // Navbar stays black
+  .o_main_navbar {
+    background-color: var(--tbwa-black) !important;
+  }
+
+  // Cards and panels
+  .card,
+  .o_kanban_record,
+  .o_form_sheet,
+  .modal-content {
+    background-color: var(--tbwa-surface) !important;
+    border-color: var(--tbwa-border) !important;
+  }
+
+  // Form inputs
+  input, textarea, select, .o_input {
+    background-color: var(--tbwa-surface) !important;
+    border-color: var(--tbwa-border) !important;
+    color: var(--tbwa-text) !important;
+
+    &::placeholder {
+      color: var(--tbwa-text-muted) !important;
+    }
+  }
+
+  // Tables
+  .o_list_view thead {
+    background-color: var(--tbwa-surface-soft) !important;
+
+    th {
+      color: var(--tbwa-text) !important;
+    }
+  }
+
+  .o_list_view tbody tr {
+    border-color: var(--tbwa-border) !important;
+
+    &:hover {
+      background-color: var(--tbwa-surface-soft) !important;
+    }
+
+    td {
+      color: var(--tbwa-text) !important;
+    }
+  }
+
+  // Dropdowns
+  .dropdown-menu {
+    background-color: var(--tbwa-surface) !important;
+    border-color: var(--tbwa-border) !important;
+
+    .dropdown-item {
+      color: var(--tbwa-text) !important;
+
+      &:hover {
+        background-color: var(--tbwa-surface-soft) !important;
+      }
+    }
+  }
+
+  // Control panel
+  .o_control_panel {
+    background-color: var(--tbwa-surface) !important;
+    border-color: var(--tbwa-border) !important;
+  }
+
+  // Scrollbars (WebKit)
+  ::-webkit-scrollbar-track {
+    background: var(--tbwa-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--tbwa-border-strong);
+  }
+}

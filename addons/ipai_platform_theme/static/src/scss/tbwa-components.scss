@@ -1,5 +1,6 @@
 // TBWA Component Styles for Odoo 18.0 CE
 // Apply TBWA brand tokens to Odoo UI components
+// Reference: Scout Analytics / TBWA\SMP Design System
 
 @import 'tbwa-tokens';
 
@@ -14,84 +15,287 @@ html, body {
 }
 
 // ============================================================================
-// ODOO NAVBAR (Top Bar)
+// ODOO NAVBAR (Top Bar - Black Chrome)
 // ============================================================================
 
 .o_main_navbar {
-  background-color: var(--tbwa-surface) !important;
-  border-bottom: 1px solid var(--tbwa-border) !important;
-  box-shadow: var(--tbwa-shadow-1) !important;
+  background-color: var(--tbwa-black) !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
 
   .o_menu_brand {
-    color: var(--tbwa-black) !important;
+    color: var(--tbwa-text-inverse) !important;
     font-weight: var(--tbwa-font-bold);
   }
 
+  // All navbar text should be white
+  a, .dropdown-toggle, .o_menu_toggle {
+    color: var(--tbwa-text-inverse) !important;
+  }
+
   .o_menu_sections {
-    .dropdown-toggle {
-      color: var(--tbwa-text) !important;
+    .dropdown-toggle,
+    .o_nav_entry {
+      color: var(--tbwa-text-inverse) !important;
       border-radius: var(--tbwa-radius-base) !important;
 
       &:hover {
-        background-color: var(--tbwa-surface-soft) !important;
-        color: var(--tbwa-ink) !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: var(--tbwa-text-inverse) !important;
       }
 
       &.active, &.show {
-        background-color: var(--tbwa-surface-warm) !important;
-        border-left: 3px solid var(--tbwa-primary) !important;
+        background-color: var(--tbwa-primary) !important;
+        color: var(--tbwa-black) !important;
+        font-weight: var(--tbwa-font-semibold);
+      }
+    }
+  }
+
+  .o_menu_systray {
+    .dropdown-toggle, a {
+      color: var(--tbwa-text-inverse) !important;
+
+      &:hover {
+        color: var(--tbwa-primary) !important;
       }
     }
   }
 }
 
 // ============================================================================
-// SIDEBAR (Left Navigation - Black Theme)
+// SIDEBAR NAVIGATION (Scout Analytics Style - Black + Yellow)
+// ============================================================================
+
+// Left sidebar (app menu / navigation)
+.o_home_menu,
+.o_apps,
+.o_navbar_apps_menu .dropdown-menu {
+  background-color: var(--tbwa-black) !important;
+  color: var(--tbwa-text-inverse) !important;
+
+  .o_app {
+    color: var(--tbwa-text-inverse) !important;
+    border-radius: var(--tbwa-radius-base) !important;
+    padding: var(--tbwa-space-3) !important;
+    margin: var(--tbwa-space-1) !important;
+    transition: all var(--tbwa-duration-fast) var(--tbwa-ease-out);
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.1) !important;
+    }
+
+    // Active state: Yellow background with black text (Scout style)
+    &.active,
+    &[aria-current="page"],
+    &.o_menuitem.active {
+      background-color: var(--tbwa-primary) !important;
+      color: var(--tbwa-black) !important;
+      border-radius: var(--tbwa-radius-base) !important;
+
+      .o_app_name {
+        color: var(--tbwa-black) !important;
+        font-weight: var(--tbwa-font-semibold);
+      }
+
+      .o_app_icon {
+        color: var(--tbwa-black) !important;
+      }
+    }
+
+    .o_app_name {
+      color: var(--tbwa-text-inverse) !important;
+      font-weight: var(--tbwa-font-medium);
+    }
+
+    .o_app_icon {
+      color: var(--tbwa-text-inverse) !important;
+    }
+
+    // Subtitle text in yellow (like "Retail Intelligence")
+    small, .text-muted, .o_app_subtitle {
+      color: var(--tbwa-primary) !important;
+      font-size: var(--tbwa-text-xs);
+    }
+  }
+}
+
+// Vertical navigation (left sidebar menu items)
+.o_web_client {
+  .o_navbar_apps_menu,
+  .o_main_navbar .dropdown-menu,
+  .o_sidebar,
+  [class*="sidebar"],
+  [class*="Sidebar"] {
+    background-color: var(--tbwa-black) !important;
+
+    a, .nav-link, .dropdown-item {
+      color: var(--tbwa-text-inverse) !important;
+      transition: all var(--tbwa-duration-fast) var(--tbwa-ease-out);
+      border-radius: var(--tbwa-radius-base) !important;
+      margin: var(--tbwa-space-1) var(--tbwa-space-2) !important;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        color: var(--tbwa-text-inverse) !important;
+      }
+
+      // Active: Yellow background with black text
+      &.active {
+        background-color: var(--tbwa-primary) !important;
+        color: var(--tbwa-black) !important;
+        font-weight: var(--tbwa-font-semibold);
+        border-left: none !important;
+      }
+
+      // Subtitle/description text in yellow
+      small, .text-muted {
+        color: var(--tbwa-primary) !important;
+      }
+    }
+  }
+
+  // Nav links in light areas (not sidebar)
+  .o_content .nav-link,
+  .o_form_view .nav-link {
+    color: var(--tbwa-text) !important;
+
+    &:hover {
+      color: var(--tbwa-ink) !important;
+      background-color: var(--tbwa-surface-soft) !important;
+    }
+
+    &.active {
+      color: var(--tbwa-primary) !important;
+      border-bottom: 2px solid var(--tbwa-primary) !important;
+      background-color: transparent !important;
+      font-weight: var(--tbwa-font-semibold);
+    }
+  }
+}
+
+// Override link colors based on context
+.o_web_client a {
+  color: var(--tbwa-ink);
+
+  &:hover {
+    color: var(--tbwa-primary);
+  }
+}
+
+// Links inside dark areas (navbar, sidebar) should be white
+.o_main_navbar a,
+.o_sidebar a,
+[class*="sidebar"] a {
+  color: var(--tbwa-text-inverse) !important;
+
+  &:hover {
+    color: var(--tbwa-primary) !important;
+  }
+}
+
+// ============================================================================
+// SIDEBAR (Control Panel Sidebar - Scout Analytics Style)
 // ============================================================================
 
 .o_action_manager .o_action {
   .o_cp_sidebar {
-    background-color: var(--tbwa-sidebar-bg) !important;
-    border-right: 1px solid var(--tbwa-sidebar-surface) !important;
+    background-color: var(--tbwa-black) !important;
+    border-right: none !important;
 
     .o_cp_sidebar_content {
-      background-color: var(--tbwa-sidebar-bg) !important;
+      background-color: var(--tbwa-black) !important;
     }
 
     .o_cp_sidebar_menu {
       .o_cp_sidebar_menu_item {
-        color: var(--tbwa-sidebar-text) !important;
+        color: var(--tbwa-text-inverse) !important;
         padding: var(--tbwa-nav-item-padding) !important;
         border-radius: var(--tbwa-nav-item-radius) !important;
         margin: var(--tbwa-space-1) var(--tbwa-space-2) !important;
         transition: all var(--tbwa-duration-fast) var(--tbwa-ease-out);
 
         &:hover {
-          background-color: var(--tbwa-nav-item-hover) !important;
+          background-color: rgba(255, 255, 255, 0.1) !important;
         }
 
+        // Active: Yellow background with black text (Scout Analytics style)
         &.active {
-          background-color: var(--tbwa-nav-item-active-bg) !important;
-          border-left: 4px solid var(--tbwa-nav-item-active-border) !important;
-          padding-left: calc(var(--tbwa-nav-item-padding) - 4px) !important;
+          background-color: var(--tbwa-primary) !important;
+          color: var(--tbwa-black) !important;
+          border-left: none !important;
+          font-weight: var(--tbwa-font-semibold);
         }
 
         i, .fa {
-          color: var(--tbwa-sidebar-muted) !important;
+          color: var(--tbwa-text-inverse) !important;
         }
 
         &.active i,
         &.active .fa {
+          color: var(--tbwa-black) !important;
+        }
+
+        // Subtitle text in yellow
+        small, .text-muted {
           color: var(--tbwa-primary) !important;
+        }
+
+        &.active small,
+        &.active .text-muted {
+          color: var(--tbwa-black) !important;
         }
       }
     }
 
     .o_cp_sidebar_footer {
-      background-color: var(--tbwa-sidebar-surface) !important;
-      border-top: 1px solid var(--tbwa-sidebar-active-bg) !important;
+      background-color: var(--tbwa-black) !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+      color: var(--tbwa-text-inverse) !important;
     }
   }
+}
+
+// ============================================================================
+// TABS (Scout Analytics Style - Yellow Underline)
+// ============================================================================
+
+.nav-tabs,
+.o_notebook .nav-tabs {
+  border-bottom: 1px solid var(--tbwa-border) !important;
+
+  .nav-link,
+  .nav-item .nav-link {
+    color: var(--tbwa-text-muted) !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    padding: var(--tbwa-space-3) var(--tbwa-space-4) !important;
+    margin-bottom: -1px;
+    background-color: transparent !important;
+    font-weight: var(--tbwa-font-medium);
+    transition: all var(--tbwa-duration-fast) var(--tbwa-ease-out);
+
+    &:hover {
+      color: var(--tbwa-ink) !important;
+      border-bottom-color: var(--tbwa-border-strong) !important;
+      background-color: transparent !important;
+    }
+
+    // Active tab: Yellow underline
+    &.active {
+      color: var(--tbwa-primary) !important;
+      border-bottom: 2px solid var(--tbwa-primary) !important;
+      background-color: transparent !important;
+      font-weight: var(--tbwa-font-semibold);
+    }
+  }
+}
+
+// Tab content
+.tab-content,
+.o_notebook .tab-content {
+  background-color: var(--tbwa-surface) !important;
+  padding: var(--tbwa-space-4) !important;
 }
 
 // ============================================================================
@@ -581,4 +785,204 @@ html, body {
   border-radius: var(--tbwa-radius-base) !important;
   box-shadow: var(--tbwa-shadow-2) !important;
   color: var(--tbwa-text) !important;
+}
+
+// ============================================================================
+// KPI CARDS (Scout Analytics Style)
+// ============================================================================
+
+.ipai-kpi-card,
+.o_dashboard_card,
+.o_stat_card {
+  background-color: var(--tbwa-surface) !important;
+  border: 1px solid var(--tbwa-border) !important;
+  border-radius: var(--tbwa-card-radius) !important;
+  padding: var(--tbwa-space-4) !important;
+  transition: all var(--tbwa-duration-base) var(--tbwa-ease-out);
+
+  &:hover {
+    box-shadow: var(--tbwa-shadow-2) !important;
+  }
+
+  // KPI value (large number)
+  .ipai-kpi-value,
+  .o_stat_value {
+    font-size: var(--tbwa-text-3xl) !important;
+    font-weight: var(--tbwa-font-bold) !important;
+    color: var(--tbwa-ink) !important;
+    line-height: var(--tbwa-leading-tight);
+  }
+
+  // KPI label
+  .ipai-kpi-label,
+  .o_stat_label {
+    font-size: var(--tbwa-text-sm) !important;
+    color: var(--tbwa-text-muted) !important;
+    font-weight: var(--tbwa-font-medium);
+  }
+
+  // Change indicators
+  .ipai-kpi-change,
+  .o_stat_change {
+    font-size: var(--tbwa-text-sm) !important;
+    font-weight: var(--tbwa-font-medium);
+
+    &.positive,
+    &.up {
+      color: var(--tbwa-success) !important;
+
+      &::before {
+        content: "↑";
+        margin-right: var(--tbwa-space-1);
+      }
+    }
+
+    &.negative,
+    &.down {
+      color: var(--tbwa-danger) !important;
+
+      &::before {
+        content: "↓";
+        margin-right: var(--tbwa-space-1);
+      }
+    }
+  }
+}
+
+// ============================================================================
+// AI RECOMMENDATIONS PANEL (Scout Analytics Style)
+// ============================================================================
+
+.ipai-insights-panel,
+.ipai-recommendations,
+.o_ai_recommendations {
+  background-color: var(--tbwa-surface) !important;
+  border-radius: var(--tbwa-card-radius) !important;
+  padding: var(--tbwa-space-4) !important;
+
+  // Section header
+  .ipai-insights-header,
+  .o_ai_header {
+    display: flex;
+    align-items: center;
+    gap: var(--tbwa-space-2);
+    margin-bottom: var(--tbwa-space-4);
+    padding-bottom: var(--tbwa-space-3);
+    border-bottom: 1px solid var(--tbwa-border);
+
+    .ipai-insights-icon {
+      color: var(--tbwa-primary) !important;
+    }
+
+    h3, .title {
+      font-size: var(--tbwa-text-lg) !important;
+      font-weight: var(--tbwa-font-semibold) !important;
+      color: var(--tbwa-ink) !important;
+      margin: 0;
+    }
+  }
+
+  // Recommendation item
+  .ipai-recommendation-item,
+  .o_ai_recommendation {
+    background-color: var(--tbwa-surface) !important;
+    border-left: 3px solid var(--tbwa-primary) !important;
+    padding: var(--tbwa-space-3) !important;
+    margin-bottom: var(--tbwa-space-2) !important;
+    border-radius: 0 var(--tbwa-radius-base) var(--tbwa-radius-base) 0 !important;
+    font-size: var(--tbwa-text-sm) !important;
+    color: var(--tbwa-text) !important;
+    transition: all var(--tbwa-duration-fast) var(--tbwa-ease-out);
+
+    &:hover {
+      background-color: var(--tbwa-surface-warm) !important;
+    }
+  }
+
+  // Key insights list
+  .ipai-key-insights {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--tbwa-space-2);
+      padding: var(--tbwa-space-2) 0;
+      font-size: var(--tbwa-text-sm);
+      color: var(--tbwa-text);
+
+      &::before {
+        content: "•";
+        color: var(--tbwa-primary);
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+// ============================================================================
+// ASK AI BUTTON (Scout Analytics Style)
+// ============================================================================
+
+.ipai-ask-ai-btn,
+.btn-ask-suqi {
+  background-color: var(--tbwa-primary) !important;
+  color: var(--tbwa-black) !important;
+  border: none !important;
+  border-radius: var(--tbwa-btn-radius) !important;
+  padding: var(--tbwa-space-2) var(--tbwa-space-4) !important;
+  font-weight: var(--tbwa-font-semibold) !important;
+  transition: all var(--tbwa-duration-base) var(--tbwa-ease-out);
+
+  &:hover {
+    background-color: var(--tbwa-primary-hover) !important;
+    transform: translateY(-1px);
+    box-shadow: var(--tbwa-shadow-2);
+  }
+}
+
+// ============================================================================
+// EXPORT BUTTON (Scout Analytics Style)
+// ============================================================================
+
+.btn-export,
+.ipai-btn-export {
+  background-color: var(--tbwa-primary) !important;
+  color: var(--tbwa-black) !important;
+  border: none !important;
+  border-radius: var(--tbwa-btn-radius) !important;
+  padding: var(--tbwa-space-2) var(--tbwa-space-4) !important;
+  font-weight: var(--tbwa-font-medium) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tbwa-space-2);
+
+  &:hover {
+    background-color: var(--tbwa-primary-hover) !important;
+  }
+
+  .fa, .oi {
+    color: var(--tbwa-black) !important;
+  }
+}
+
+// Refresh button (outline style)
+.btn-refresh,
+.ipai-btn-refresh {
+  background-color: var(--tbwa-surface) !important;
+  color: var(--tbwa-ink) !important;
+  border: 1px solid var(--tbwa-border) !important;
+  border-radius: var(--tbwa-btn-radius) !important;
+  padding: var(--tbwa-space-2) var(--tbwa-space-4) !important;
+  font-weight: var(--tbwa-font-medium) !important;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tbwa-space-2);
+
+  &:hover {
+    background-color: var(--tbwa-surface-soft) !important;
+    border-color: var(--tbwa-border-strong) !important;
+  }
 }
