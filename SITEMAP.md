@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2854b844b851e6df7c537a755041e252ed4ae17a
+> Commit: 9376237ba588c3f349de36f1b9829eff642070c5
 
 ## 📚 Documentation
 
@@ -340,6 +340,7 @@
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
 | [Odoo ORM Map](docs/data-model/ODOO_ORM_MAP.md) | docs/data-model |
 | [Odoo Data Model Artifacts](docs/data-model/README.md) | docs/data-model |
+| [Superset ERD Integration Guide](docs/data-model/SUPERSET_ERD_INTEGRATION.md) | docs/data-model |
 | [InsightPulse Supabase DB – Conventions & House Style](docs/db/DB_CONVENTIONS_AND_NAMING.md) | docs/db |
 | [DB Current Inventory (Summary)](docs/db/DB_CURRENT_INVENTORY.md) | docs/db |
 | [Domain Table Specs (Conceptual)](docs/db/DB_DOMAIN_TABLE_SPECS.md) | docs/db |
@@ -359,6 +360,7 @@
 | [DNS Configuration and Mailgun Setup](docs/email/Mailgun_DNS.md) | docs/email |
 | [OdooForge Sandbox - Codex Cloud Optimization](docs/evidence/20260110-0927/odooforge-sandbox/codex-optimization.md) | docs/evidence/20260110-0927/odooforge-sandbox |
 | [OdooForge Sandbox - Verification Results](docs/evidence/20260110-0927/odooforge-sandbox/verification-results.md) | docs/evidence/20260110-0927/odooforge-sandbox |
+| [ERD Automation Evidence Pack](docs/evidence/20260112-0300/erd-automation/EVIDENCE.md) | docs/evidence/20260112-0300/erd-automation |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
