@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4dab2d5bf26e733b00b3fd85b01fda5a48a66c9e
+> Commit: e4e844c4e44fe253a828c1cd7d78d191268b0f6d
 
 ## 📚 Documentation
 
@@ -836,6 +836,7 @@
 | [ipai_project_profitability_bridge](./addons/ipai/ipai_project_profitability_bridge) | ✅ |  |
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
+| [ipai_saas_tenant](./addons/ipai/ipai_saas_tenant) | ✅ |  |
 | [ipai_settings_dashboard](./addons/ipai/ipai_settings_dashboard) | ✅ |  |
 | [ipai_skill_api](./addons/ipai/ipai_skill_api) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
