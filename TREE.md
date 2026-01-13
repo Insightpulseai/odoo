@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ceedd7f5952f1842e9941f9cd9b63cf89d66ef3e
+> Commit: 1d48397657cf6bc01148ba36bd7c6a15b0cbc024
 
 ```
 .
@@ -265,6 +265,13 @@
 │   │   ├── ipai_ask_ai
 │   │   │   ├── controllers
 │   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ask_ai_bridge
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── static
@@ -768,6 +775,11 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_aiux
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_theme_copilot
 │   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
@@ -1923,6 +1935,8 @@
 │   │   ├── runtime_snapshot
 │   │   │   ├── 20260108_013846
 │   │   │   └── README.md
+│   │   ├── AI_MODULE_DEPRECATION_MANIFEST.md
+│   │   ├── ASK_AI_CONTRACT.md
 │   │   ├── AUTH_MODEL.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
@@ -3859,15 +3873,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1253 directories, 2601 files
+1261 directories, 2607 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1456 |
-| Files | 3984 |
-| Python files | 1053 |
-| XML files | 509 |
-| Markdown files | 746 |
+| Directories | 1469 |
+| Files | 3999 |
+| Python files | 1059 |
+| XML files | 512 |
+| Markdown files | 748 |
