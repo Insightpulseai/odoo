@@ -1,0 +1,209 @@
+/**
+ * IPAI Copilot Theme - Backend Styles
+ *
+ * Fluent-style dark theme with TBWA accent colors.
+ * Minimal, Copilot/Gemini-inspired aesthetic.
+ */
+
+:root {
+  /* Neutral mode (minimal, Gemini/Claude/Copilot-style) */
+  --ipai-bg-root: #0b0b0f;
+  --ipai-bg-surface: #111317;
+  --ipai-bg-elevated: #1a1d24;
+  --ipai-fg-primary: #ffffff;
+  --ipai-fg-secondary: #e5e7eb;
+  --ipai-fg-muted: #9ca3af;
+  --ipai-fg-subtle: #6b7280;
+
+  /* TBWA accent */
+  --ipai-accent: #ffcc00;
+  --ipai-accent-hover: #e6b800;
+  --ipai-accent-soft: rgba(255, 204, 0, 0.14);
+  --ipai-accent-text: #111827;
+
+  /* Borders */
+  --ipai-border: rgba(255, 255, 255, 0.06);
+  --ipai-border-hover: rgba(255, 255, 255, 0.12);
+
+  /* Fluent-style rounded corners & density */
+  --ipai-radius-sm: 4px;
+  --ipai-radius-md: 8px;
+  --ipai-radius-lg: 12px;
+  --ipai-radius-xl: 16px;
+  --ipai-radius-pill: 999px;
+
+  /* Shadows */
+  --ipai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ipai-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --ipai-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Top navigation bar */
+.o_main_navbar {
+  background: linear-gradient(90deg, #050509, var(--ipai-bg-surface));
+  border-bottom: 1px solid var(--ipai-border);
+}
+
+.o_main_navbar .o_menu_brand {
+  color: var(--ipai-fg-primary);
+}
+
+/* App launcher tiles */
+.o_app,
+.o_menu_apps .o_app {
+  border-radius: var(--ipai-radius-lg);
+  background: var(--ipai-bg-surface);
+  box-shadow: 0 0 0 1px var(--ipai-border);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--ipai-bg-elevated);
+    box-shadow: 0 0 0 1px var(--ipai-border-hover), var(--ipai-shadow-md);
+    transform: translateY(-2px);
+  }
+}
+
+.o_app .o_caption {
+  color: var(--ipai-fg-secondary);
+}
+
+/* Primary buttons (TBWA accent) */
+.btn-primary,
+.o_form_button_save {
+  border-radius: var(--ipai-radius-pill);
+  background-color: var(--ipai-accent) !important;
+  border-color: var(--ipai-accent) !important;
+  color: var(--ipai-accent-text) !important;
+  font-weight: 500;
+  transition: all 0.15s ease;
+
+  &:hover,
+  &:focus {
+    background-color: var(--ipai-accent-hover) !important;
+    border-color: var(--ipai-accent-hover) !important;
+    box-shadow: 0 0 0 3px var(--ipai-accent-soft);
+  }
+}
+
+/* Secondary buttons */
+.btn-secondary {
+  border-radius: var(--ipai-radius-pill);
+  background: var(--ipai-bg-surface);
+  border-color: var(--ipai-border);
+  color: var(--ipai-fg-primary);
+
+  &:hover {
+    background: var(--ipai-bg-elevated);
+    border-color: var(--ipai-border-hover);
+  }
+}
+
+/* Form views */
+.o_form_view {
+  .o_form_sheet {
+    border-radius: var(--ipai-radius-lg);
+    box-shadow: var(--ipai-shadow-sm);
+  }
+}
+
+/* List/Tree views */
+.o_list_view {
+  .o_data_row {
+    transition: background 0.1s ease;
+
+    &:hover {
+      background: var(--ipai-accent-soft);
+    }
+
+    &.o_data_row_selected {
+      background: var(--ipai-accent-soft);
+    }
+  }
+}
+
+/* Kanban cards */
+.o_kanban_view {
+  .o_kanban_record {
+    border-radius: var(--ipai-radius-md);
+    box-shadow: var(--ipai-shadow-sm);
+    transition: all 0.2s ease;
+
+    &:hover {
+      box-shadow: var(--ipai-shadow-md);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+/* Sidebar / Control Panel */
+.o_control_panel {
+  background: transparent;
+}
+
+/* Search bar */
+.o_searchview {
+  border-radius: var(--ipai-radius-pill);
+  background: var(--ipai-bg-surface);
+  border: 1px solid var(--ipai-border);
+
+  &:focus-within {
+    border-color: var(--ipai-accent);
+    box-shadow: 0 0 0 3px var(--ipai-accent-soft);
+  }
+}
+
+/* Chatter */
+.o_chatter {
+  .o_chatter_button_new_message,
+  .o_chatter_button_schedule_activity {
+    border-radius: var(--ipai-radius-pill);
+  }
+}
+
+/* Modals/Dialogs */
+.modal-content {
+  border-radius: var(--ipai-radius-xl);
+  box-shadow: var(--ipai-shadow-lg);
+}
+
+/* Dropdowns */
+.dropdown-menu {
+  border-radius: var(--ipai-radius-md);
+  box-shadow: var(--ipai-shadow-md);
+  border: 1px solid var(--ipai-border);
+}
+
+/* Tags/Pills */
+.o_tag {
+  border-radius: var(--ipai-radius-pill);
+}
+
+/* Status badges */
+.badge {
+  border-radius: var(--ipai-radius-pill);
+}
+
+/* Focus states (accessibility) */
+*:focus-visible {
+  outline: 2px solid var(--ipai-accent);
+  outline-offset: 2px;
+}
+
+/* Scrollbars (Webkit) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ipai-bg-root);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ipai-bg-elevated);
+  border-radius: var(--ipai-radius-pill);
+
+  &:hover {
+    background: var(--ipai-fg-subtle);
+  }
+}
