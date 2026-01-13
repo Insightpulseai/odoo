@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f937d028f652f4a692736771d8f0c4e8c8f60c2d
+> Commit: a5b7008a47356f7f15cb258da4e3916b85b5d3fa
 
 ## 📚 Documentation
 
@@ -147,6 +147,7 @@
 | [InsightPulse AI - Agent Orchestrator](agents/ORCHESTRATOR.md) | agents |
 | [InsightPulse AI - Prioritized Execution Roadmap](agents/PRIORITIZED_ROADMAP.md) | agents |
 | [InsightPulse AI - Agent Skills Architecture](agents/README.md) | agents |
+| [Agent: Odoo 18 Custom Module Auditor (Minimal 2-Module Policy)](agents/custom_module_auditor.md) | agents |
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
 | [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
 | [IPAI AI Studio - ChatGPT App](apps/chatgpt_ipai_ai_studio/README.md) | apps/chatgpt_ipai_ai_studio |
@@ -313,6 +314,7 @@
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
 | [Docker Image Tagging Strategy](docs/TAGGING_STRATEGY.md) | docs |
 | [TBWA Theme Token Alignment - Deployment Guide](docs/TBWA_THEME_DEPLOYMENT.md) | docs |
+| [Supabase Integration – IPAI Sample Metrics](docs/TECHNICAL_GUIDE_SUPABASE_INTEGRATION.md) | docs |
 | [Multi-Tenant Platform Architecture](docs/TENANT_ARCHITECTURE.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [Deterministic Troubleshooting Framework for Odoo CE 18.0](docs/TROUBLESHOOTING.md) | docs |
@@ -838,6 +840,7 @@
 | [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
 | [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
 | [ipai_saas_tenant](./addons/ipai/ipai_saas_tenant) | ✅ |  |
+| [ipai_sample_metrics](./addons/ipai/ipai_sample_metrics) | ✅ |  |
 | [ipai_settings_dashboard](./addons/ipai/ipai_settings_dashboard) | ✅ |  |
 | [ipai_skill_api](./addons/ipai/ipai_skill_api) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
