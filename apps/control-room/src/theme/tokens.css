@@ -1,0 +1,248 @@
+/**
+ * IPAI Unified Theme Tokens
+ *
+ * CSS custom properties that sync across:
+ * - Fluent UI 2 components
+ * - Tailwind CSS utilities
+ * - Odoo backend theme
+ *
+ * Three theme families:
+ * - suqi: TBWA yellow brand (default light)
+ * - system: Copilot blue (enterprise neutral)
+ * - tbwa-dark: TBWA yellow + cyan on dark
+ */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SUQI Theme (Default - TBWA Yellow Light)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root,
+[data-theme="suqi"] {
+  /* Brand Colors */
+  --ipai-accent-primary: #ffcc00;
+  --ipai-accent-hover: #e6b800;
+  --ipai-accent-active: #cca300;
+  --ipai-accent-subtle: rgba(255, 204, 0, 0.12);
+  --ipai-accent-on-accent: #000000;
+
+  /* Backgrounds */
+  --ipai-bg: #ffffff;
+  --ipai-surface: #fafafa;
+  --ipai-surface-muted: #f5f5f5;
+  --ipai-surface-elevated: #ffffff;
+  --ipai-overlay: rgba(0, 0, 0, 0.4);
+
+  /* Text */
+  --ipai-text-primary: #0f172a;
+  --ipai-text-muted: #64748b;
+  --ipai-text-subtle: #94a3b8;
+  --ipai-text-disabled: #cbd5e1;
+  --ipai-text-on-accent: #000000;
+
+  /* Borders */
+  --ipai-border: #e2e8f0;
+  --ipai-border-muted: #f1f5f9;
+  --ipai-border-accent: #ffcc00;
+
+  /* Navigation */
+  --ipai-nav-bg: #1e1e1e;
+  --ipai-nav-text: #ffffff;
+  --ipai-nav-text-muted: rgba(255, 255, 255, 0.7);
+  --ipai-nav-hover-bg: rgba(255, 255, 255, 0.08);
+  --ipai-nav-active-bg: #ffcc00;
+  --ipai-nav-active-text: #000000;
+
+  /* Status Colors */
+  --ipai-success: #22c55e;
+  --ipai-success-subtle: rgba(34, 197, 94, 0.12);
+  --ipai-warning: #f59e0b;
+  --ipai-warning-subtle: rgba(245, 158, 11, 0.12);
+  --ipai-error: #ef4444;
+  --ipai-error-subtle: rgba(239, 68, 68, 0.12);
+  --ipai-info: #3b82f6;
+  --ipai-info-subtle: rgba(59, 130, 246, 0.12);
+
+  /* Shadows */
+  --ipai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --ipai-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --ipai-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+  /* Spacing (reference only) */
+  --ipai-space-xs: 4px;
+  --ipai-space-sm: 8px;
+  --ipai-space-md: 16px;
+  --ipai-space-lg: 24px;
+  --ipai-space-xl: 32px;
+
+  /* Border Radius */
+  --ipai-radius-sm: 4px;
+  --ipai-radius-md: 8px;
+  --ipai-radius-lg: 12px;
+  --ipai-radius-full: 9999px;
+
+  /* Typography Scale */
+  --ipai-font-xs: 0.75rem;
+  --ipai-font-sm: 0.875rem;
+  --ipai-font-base: 1rem;
+  --ipai-font-lg: 1.125rem;
+  --ipai-font-xl: 1.25rem;
+  --ipai-font-2xl: 1.5rem;
+  --ipai-font-3xl: 1.875rem;
+}
+
+/* Suqi Light Scheme (explicit) */
+[data-theme="suqi"][data-scheme="light"] {
+  --ipai-bg: #ffffff;
+  --ipai-surface: #fafafa;
+  --ipai-text-primary: #0f172a;
+}
+
+/* Suqi Dark Scheme */
+[data-theme="suqi"][data-scheme="dark"] {
+  --ipai-bg: #0f172a;
+  --ipai-surface: #1e293b;
+  --ipai-surface-muted: #334155;
+  --ipai-surface-elevated: #1e293b;
+  --ipai-text-primary: #f8fafc;
+  --ipai-text-muted: #94a3b8;
+  --ipai-text-subtle: #64748b;
+  --ipai-border: #334155;
+  --ipai-border-muted: #1e293b;
+  --ipai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ipai-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --ipai-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SYSTEM Theme (Copilot Blue)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="system"] {
+  --ipai-accent-primary: #2563eb;
+  --ipai-accent-hover: #1d4ed8;
+  --ipai-accent-active: #1e40af;
+  --ipai-accent-subtle: rgba(37, 99, 235, 0.12);
+  --ipai-accent-on-accent: #ffffff;
+  --ipai-text-on-accent: #ffffff;
+  --ipai-border-accent: #2563eb;
+  --ipai-nav-active-bg: #2563eb;
+  --ipai-nav-active-text: #ffffff;
+}
+
+[data-theme="system"][data-scheme="light"] {
+  --ipai-bg: #ffffff;
+  --ipai-surface: #f8fafc;
+  --ipai-surface-muted: #f1f5f9;
+  --ipai-text-primary: #0f172a;
+  --ipai-text-muted: #64748b;
+  --ipai-border: #e2e8f0;
+}
+
+[data-theme="system"][data-scheme="dark"] {
+  --ipai-bg: #0f172a;
+  --ipai-surface: #1e293b;
+  --ipai-surface-muted: #334155;
+  --ipai-surface-elevated: #1e293b;
+  --ipai-text-primary: #f8fafc;
+  --ipai-text-muted: #94a3b8;
+  --ipai-text-subtle: #64748b;
+  --ipai-border: #334155;
+  --ipai-border-muted: #1e293b;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TBWA-DARK Theme (Yellow + Cyan on Dark)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+[data-theme="tbwa-dark"] {
+  /* Primary: TBWA Yellow */
+  --ipai-accent-primary: #ffcc00;
+  --ipai-accent-hover: #ffd633;
+  --ipai-accent-active: #e6b800;
+  --ipai-accent-subtle: rgba(255, 204, 0, 0.15);
+  --ipai-accent-on-accent: #000000;
+  --ipai-text-on-accent: #000000;
+
+  /* Secondary: Cyan accent */
+  --ipai-accent-secondary: #22d3ee;
+  --ipai-accent-secondary-subtle: rgba(34, 211, 238, 0.15);
+
+  /* Dark backgrounds */
+  --ipai-bg: #0a0a0a;
+  --ipai-surface: #141414;
+  --ipai-surface-muted: #1f1f1f;
+  --ipai-surface-elevated: #1a1a1a;
+  --ipai-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Light text on dark */
+  --ipai-text-primary: #fafafa;
+  --ipai-text-muted: #a1a1aa;
+  --ipai-text-subtle: #71717a;
+  --ipai-text-disabled: #52525b;
+
+  /* Dark borders */
+  --ipai-border: #27272a;
+  --ipai-border-muted: #1f1f1f;
+  --ipai-border-accent: #ffcc00;
+
+  /* Navigation (dark sidebar) */
+  --ipai-nav-bg: #000000;
+  --ipai-nav-text: #fafafa;
+  --ipai-nav-text-muted: rgba(250, 250, 250, 0.6);
+  --ipai-nav-hover-bg: rgba(255, 255, 255, 0.05);
+  --ipai-nav-active-bg: #ffcc00;
+  --ipai-nav-active-text: #000000;
+
+  /* Deeper shadows for dark mode */
+  --ipai-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --ipai-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6);
+  --ipai-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
+}
+
+/* TBWA-Dark always uses dark scheme */
+[data-theme="tbwa-dark"][data-scheme="light"],
+[data-theme="tbwa-dark"][data-scheme="dark"] {
+  /* Same as base tbwa-dark */
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Utility Classes
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Smooth transitions for theme switching */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Disable transitions during theme switch to prevent flash */
+.theme-switching * {
+  transition: none !important;
+}
+
+/* Focus ring using brand color */
+.ipai-focus-ring:focus-visible {
+  outline: 2px solid var(--ipai-accent-primary);
+  outline-offset: 2px;
+}
+
+/* Brand gradient backgrounds */
+.ipai-gradient-brand {
+  background: linear-gradient(
+    135deg,
+    var(--ipai-accent-primary) 0%,
+    var(--ipai-accent-hover) 100%
+  );
+}
+
+/* Glass effect for overlays */
+.ipai-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="tbwa-dark"] .ipai-glass {
+  background: rgba(0, 0, 0, 0.3);
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPAI Copilot Hub</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 { color: #0078d4; border-bottom: 2px solid #0078d4; padding-bottom: 10px; }
+        h2 { color: #106ebe; margin-top: 30px; }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid #0078d4;
+        }
+        .feature-card h3 { margin-top: 0; color: #0078d4; }
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+        }
+        .screenshot {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>IPAI Copilot Hub</h1>
+
+    <p>
+        <strong>Ops Control Room / AI Runbook Hub</strong> - A centralized operations
+        dashboard that embeds an external Fluent UI application for managing AI runbooks,
+        pipelines, and operational workflows.
+    </p>
+
+    <h2>Features</h2>
+
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>External Fluent UI Shell</h3>
+            <p>Embeds a Microsoft Fluent UI React application in a seamless iframe integration.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Configurable URL</h3>
+            <p>Hub URL is managed via system parameter <code>ipai.copilot.hub_url</code>.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Full-Screen Experience</h3>
+            <p>Client action provides an immersive, full-screen control room interface.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Bidirectional Communication</h3>
+            <p>PostMessage API enables Odoo ↔ Hub data exchange.</p>
+        </div>
+    </div>
+
+    <h2>Menu Structure</h2>
+    <ul>
+        <li><strong>Ops Control Room</strong> (root menu - App tile)
+            <ul>
+                <li>Dashboard - Main embedded view</li>
+                <li>AI Runbooks - Runbook management</li>
+                <li>Configuration
+                    <ul>
+                        <li>Settings - Hub URL and display options</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>Configuration</h2>
+    <p>Set the system parameter to configure the external hub URL:</p>
+    <ul>
+        <li><code>ipai.copilot.hub_url</code> - External Fluent UI app URL</li>
+        <li><code>ipai.copilot.hub_embed_mode</code> - Embed mode (iframe/popup/redirect)</li>
+        <li><code>ipai.copilot.hub_show_toolbar</code> - Show Odoo toolbar above hub</li>
+    </ul>
+
+    <h2>Architecture</h2>
+    <p>
+        This module acts as a bridge between Odoo and an external Ops Control Room
+        application built with Microsoft Fluent UI React components. The external app
+        is deployed separately (e.g., on Vercel) and loaded within Odoo's backend interface.
+    </p>
+
+    <h2>Author</h2>
+    <p>
+        <strong>InsightPulse AI</strong><br>
+        Website: <a href="https://insightpulseai.net">insightpulseai.net</a><br>
+        GitHub: <a href="https://github.com/jgtolentino/odoo-ce">jgtolentino/odoo-ce</a>
+    </p>
+</body>
+</html>

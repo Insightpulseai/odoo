@@ -1,44 +1,57 @@
+@import "../theme/tokens.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 15, 23, 42;
-  --background-end-rgb: 2, 6, 23;
+/* ═══════════════════════════════════════════════════════════════════════════
+   Base Styles - Theme-aware
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+html {
+  color-scheme: light dark;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--ipai-bg);
+  color: var(--ipai-text-primary);
   min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
-/* Custom scrollbar */
+/* Dark mode body background */
+[data-scheme="dark"] body,
+.dark body {
+  background-color: var(--ipai-bg);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Custom Scrollbar - Theme-aware
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--ipai-surface-muted);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(51, 65, 85, 0.8);
-  border-radius: 4px;
+  background: var(--ipai-border);
+  border-radius: var(--ipai-radius-sm);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(71, 85, 105, 0.9);
+  background: var(--ipai-text-subtle);
 }
 
-/* Animated pulse for status indicators */
+/* ═══════════════════════════════════════════════════════════════════════════
+   Animations
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 @keyframes pulse-ring {
   0% {
     transform: scale(0.8);
@@ -58,12 +71,122 @@ body {
   animation: pulse-ring 2s ease-in-out infinite;
 }
 
-/* Chart tooltips */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 200ms ease-out;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 200ms ease-out;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Chart & Table Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
+
 .recharts-tooltip-wrapper {
   z-index: 1000;
 }
 
-/* Table row hover effect */
 .table-row-hover:hover {
-  background-color: rgba(51, 65, 85, 0.3);
+  background-color: var(--ipai-surface-muted);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Fluent UI Overrides - Theme Integration
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Ensure Fluent components respect our theme tokens */
+.fui-FluentProvider {
+  background-color: var(--ipai-bg);
+  color: var(--ipai-text-primary);
+}
+
+/* Card surfaces */
+.fui-Card {
+  background-color: var(--ipai-surface);
+  border-color: var(--ipai-border);
+}
+
+/* Button brand color alignment */
+.fui-Button--primary {
+  background-color: var(--ipai-accent-primary);
+  color: var(--ipai-text-on-accent);
+}
+
+.fui-Button--primary:hover {
+  background-color: var(--ipai-accent-hover);
+}
+
+/* Menu and dropdown surfaces */
+.fui-Menu,
+.fui-Dropdown__listbox {
+  background-color: var(--ipai-surface-elevated);
+  border-color: var(--ipai-border);
+}
+
+/* Input fields */
+.fui-Input,
+.fui-Textarea {
+  background-color: var(--ipai-surface);
+  border-color: var(--ipai-border);
+  color: var(--ipai-text-primary);
+}
+
+.fui-Input:focus-within,
+.fui-Textarea:focus-within {
+  border-color: var(--ipai-accent-primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Tailwind Dark Mode Utilities
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer utilities {
+  .bg-surface {
+    background-color: var(--ipai-surface);
+  }
+
+  .bg-surface-muted {
+    background-color: var(--ipai-surface-muted);
+  }
+
+  .text-primary {
+    color: var(--ipai-text-primary);
+  }
+
+  .text-muted {
+    color: var(--ipai-text-muted);
+  }
+
+  .border-default {
+    border-color: var(--ipai-border);
+  }
+
+  .accent-primary {
+    color: var(--ipai-accent-primary);
+  }
+
+  .bg-accent {
+    background-color: var(--ipai-accent-primary);
+  }
 }

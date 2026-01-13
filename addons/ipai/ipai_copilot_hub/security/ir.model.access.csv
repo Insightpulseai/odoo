@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_copilot_hub_settings_user,copilot.hub.settings.user,model_copilot_hub_settings,ipai_copilot_hub.group_copilot_hub_user,1,0,0,0
+access_copilot_hub_settings_manager,copilot.hub.settings.manager,model_copilot_hub_settings,ipai_copilot_hub.group_copilot_hub_manager,1,1,1,1
