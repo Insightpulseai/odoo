@@ -1,0 +1,388 @@
+/**
+ * Microsoft Fluent 2 Web Design Tokens
+ * Source: Fluent 2 Web (Figma Community)
+ * Target: Odoo 18 CE Finance PPM
+ * Extraction Date: 2025-01-14
+ * Total Variables: 751+
+ */
+
+/* ========================================
+   LIGHT THEME (Default)
+   ======================================== */
+
+:root {
+  /* === Brand Colors === */
+  --ipai-color-brand-primary: #0F548C;
+  --ipai-color-brand-primary-hover: #0E4775;
+  --ipai-color-brand-primary-pressed: #0C3B5E;
+  --ipai-color-brand-secondary: #115EA3;
+  --ipai-color-brand-tertiary: #0F6CBD;
+
+  /* === Neutral Colors === */
+  --ipai-color-neutral-background: #FFFFFF;
+  --ipai-color-neutral-background-secondary: #F5F5F5;
+  --ipai-color-neutral-background-tertiary: #EBEBEB;
+  --ipai-color-neutral-foreground: #242424;
+  --ipai-color-neutral-foreground-secondary: #616161;
+  --ipai-color-neutral-foreground-tertiary: #8A8A8A;
+
+  --ipai-color-neutral-stroke: #D1D1D1;
+  --ipai-color-neutral-stroke-hover: #C7C7C7;
+  --ipai-color-neutral-stroke-pressed: #B3B3B3;
+
+  /* === Semantic Colors === */
+  /* Success */
+  --ipai-color-success-background: #DFF6DD;
+  --ipai-color-success-foreground: #0E700E;
+  --ipai-color-success-border: #9FD89F;
+
+  /* Warning */
+  --ipai-color-warning-background: #FFF4CE;
+  --ipai-color-warning-foreground: #8A5D00;
+  --ipai-color-warning-border: #F7D37F;
+
+  /* Error */
+  --ipai-color-error-background: #FDE7E9;
+  --ipai-color-error-foreground: #C50F1F;
+  --ipai-color-error-border: #F3B3B9;
+
+  /* Info */
+  --ipai-color-info-background: #E6F2FF;
+  --ipai-color-info-foreground: #004578;
+  --ipai-color-info-border: #99C7FB;
+
+  /* === Typography === */
+  --ipai-typography-font-family-base: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue', sans-serif;
+  --ipai-typography-font-family-monospace: 'Cascadia Code', 'Consolas', 'Courier New', monospace;
+
+  /* Font Sizes */
+  --ipai-typography-font-size-100: 0.625rem;   /* 10px */
+  --ipai-typography-font-size-200: 0.75rem;    /* 12px */
+  --ipai-typography-font-size-300: 0.875rem;   /* 14px */
+  --ipai-typography-font-size-400: 1rem;       /* 16px */
+  --ipai-typography-font-size-500: 1.125rem;   /* 18px */
+  --ipai-typography-font-size-600: 1.25rem;    /* 20px */
+  --ipai-typography-font-size-700: 1.75rem;    /* 28px */
+  --ipai-typography-font-size-800: 2rem;       /* 32px */
+  --ipai-typography-font-size-900: 2.5rem;     /* 40px */
+  --ipai-typography-font-size-1000: 4.25rem;   /* 68px */
+
+  /* Line Heights */
+  --ipai-typography-line-height-100: 1rem;     /* 16px */
+  --ipai-typography-line-height-200: 1.25rem;  /* 20px */
+  --ipai-typography-line-height-300: 1.5rem;   /* 24px */
+  --ipai-typography-line-height-400: 1.75rem;  /* 28px */
+  --ipai-typography-line-height-500: 2rem;     /* 32px */
+  --ipai-typography-line-height-600: 2.5rem;   /* 40px */
+  --ipai-typography-line-height-700: 3rem;     /* 48px */
+  --ipai-typography-line-height-800: 5.5rem;   /* 88px */
+
+  /* Font Weights */
+  --ipai-typography-font-weight-regular: 400;
+  --ipai-typography-font-weight-medium: 500;
+  --ipai-typography-font-weight-semibold: 600;
+  --ipai-typography-font-weight-bold: 700;
+
+  /* === Spacing === */
+  --ipai-spacing-none: 0;
+  --ipai-spacing-xxs: 0.125rem;    /* 2px */
+  --ipai-spacing-xs: 0.25rem;      /* 4px */
+  --ipai-spacing-s-nudge: 0.375rem; /* 6px */
+  --ipai-spacing-s: 0.5rem;        /* 8px */
+  --ipai-spacing-m-nudge: 0.625rem; /* 10px */
+  --ipai-spacing-m: 0.75rem;       /* 12px */
+  --ipai-spacing-l: 1rem;          /* 16px */
+  --ipai-spacing-xl: 1.25rem;      /* 20px */
+  --ipai-spacing-xxl: 1.5rem;      /* 24px */
+  --ipai-spacing-xxxl: 2rem;       /* 32px */
+  --ipai-spacing-huge: 2.5rem;     /* 40px */
+
+  /* === Border Radius === */
+  --ipai-radius-none: 0;
+  --ipai-radius-small: 0.125rem;    /* 2px */
+  --ipai-radius-medium: 0.25rem;    /* 4px */
+  --ipai-radius-large: 0.5rem;      /* 8px */
+  --ipai-radius-xlarge: 0.75rem;    /* 12px */
+  --ipai-radius-circular: 9999px;
+
+  /* === Shadows === */
+  --ipai-shadow-2: 0 0 2px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.14);
+  --ipai-shadow-4: 0 1.2px 3.6px rgba(0,0,0,0.11), 0 6.4px 14.4px rgba(0,0,0,0.13);
+  --ipai-shadow-8: 0 3.2px 7.2px rgba(0,0,0,0.13), 0 0.6px 1.8px rgba(0,0,0,0.11);
+  --ipai-shadow-16: 0 6.4px 14.4px rgba(0,0,0,0.13), 0 1.2px 3.6px rgba(0,0,0,0.11);
+  --ipai-shadow-28: 0 14.4px 28.8px rgba(0,0,0,0.13), 0 4.8px 9.6px rgba(0,0,0,0.11);
+  --ipai-shadow-64: 0 25.6px 57.6px rgba(0,0,0,0.22), 0 4.8px 14.4px rgba(0,0,0,0.18);
+
+  /* === Borders === */
+  --ipai-border-width-thin: 1px;
+  --ipai-border-width-thick: 2px;
+  --ipai-border-width-thicker: 3px;
+  --ipai-border-width-thickest: 4px;
+
+  /* === Component: Buttons === */
+  --ipai-component-button-primary-bg: var(--ipai-color-brand-primary);
+  --ipai-component-button-primary-bg-hover: var(--ipai-color-brand-primary-hover);
+  --ipai-component-button-primary-bg-pressed: var(--ipai-color-brand-primary-pressed);
+  --ipai-component-button-primary-fg: #FFFFFF;
+  --ipai-component-button-primary-border: transparent;
+
+  --ipai-component-button-secondary-bg: transparent;
+  --ipai-component-button-secondary-bg-hover: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-button-secondary-bg-pressed: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-button-secondary-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-button-secondary-border: var(--ipai-color-neutral-stroke);
+
+  --ipai-component-button-padding-horizontal: var(--ipai-spacing-l);
+  --ipai-component-button-padding-vertical: var(--ipai-spacing-s);
+  --ipai-component-button-border-radius: var(--ipai-radius-medium);
+  --ipai-component-button-font-size: var(--ipai-typography-font-size-300);
+  --ipai-component-button-font-weight: var(--ipai-typography-font-weight-semibold);
+  --ipai-component-button-line-height: var(--ipai-typography-line-height-200);
+
+  /* === Component: Cards === */
+  --ipai-component-card-bg: var(--ipai-color-neutral-background);
+  --ipai-component-card-border: var(--ipai-color-neutral-stroke);
+  --ipai-component-card-border-radius: var(--ipai-radius-large);
+  --ipai-component-card-shadow: var(--ipai-shadow-4);
+  --ipai-component-card-padding: var(--ipai-spacing-l);
+
+  /* === Component: Inputs === */
+  --ipai-component-input-bg: var(--ipai-color-neutral-background);
+  --ipai-component-input-bg-hover: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-input-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-input-border: var(--ipai-color-neutral-stroke);
+  --ipai-component-input-border-hover: var(--ipai-color-neutral-stroke-hover);
+  --ipai-component-input-border-focused: var(--ipai-color-brand-primary);
+  --ipai-component-input-border-radius: var(--ipai-radius-medium);
+  --ipai-component-input-padding-horizontal: var(--ipai-spacing-m);
+  --ipai-component-input-padding-vertical: var(--ipai-spacing-s);
+  --ipai-component-input-font-size: var(--ipai-typography-font-size-300);
+  --ipai-component-input-line-height: var(--ipai-typography-line-height-200);
+
+  /* === Component: Navigation === */
+  --ipai-component-nav-bg: var(--ipai-color-neutral-background);
+  --ipai-component-nav-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-nav-item-bg-hover: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-nav-item-bg-selected: var(--ipai-color-brand-primary);
+  --ipai-component-nav-item-fg-selected: #FFFFFF;
+
+  /* === Component: Tables === */
+  --ipai-component-table-header-bg: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-table-header-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-table-row-bg: var(--ipai-color-neutral-background);
+  --ipai-component-table-row-bg-hover: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-table-row-bg-selected: #E6F2FF;
+  --ipai-component-table-border: var(--ipai-color-neutral-stroke);
+
+  /* === Component: Status Badges === */
+  --ipai-component-badge-success-bg: var(--ipai-color-success-background);
+  --ipai-component-badge-success-fg: var(--ipai-color-success-foreground);
+  --ipai-component-badge-success-border: var(--ipai-color-success-border);
+
+  --ipai-component-badge-warning-bg: var(--ipai-color-warning-background);
+  --ipai-component-badge-warning-fg: var(--ipai-color-warning-foreground);
+  --ipai-component-badge-warning-border: var(--ipai-color-warning-border);
+
+  --ipai-component-badge-error-bg: var(--ipai-color-error-background);
+  --ipai-component-badge-error-fg: var(--ipai-color-error-foreground);
+  --ipai-component-badge-error-border: var(--ipai-color-error-border);
+
+  --ipai-component-badge-info-bg: var(--ipai-color-info-background);
+  --ipai-component-badge-info-fg: var(--ipai-color-info-foreground);
+  --ipai-component-badge-info-border: var(--ipai-color-info-border);
+
+  --ipai-component-badge-border-radius: var(--ipai-radius-medium);
+  --ipai-component-badge-padding-horizontal: var(--ipai-spacing-s);
+  --ipai-component-badge-padding-vertical: var(--ipai-spacing-xxs);
+  --ipai-component-badge-font-size: var(--ipai-typography-font-size-200);
+  --ipai-component-badge-font-weight: var(--ipai-typography-font-weight-semibold);
+}
+
+/* ========================================
+   DARK THEME
+   ======================================== */
+
+.o_web_client.dark,
+[data-theme="dark"] {
+  /* === Brand Colors (Dark) === */
+  --ipai-color-brand-primary: #479EF5;
+  --ipai-color-brand-primary-hover: #62ABF5;
+  --ipai-color-brand-primary-pressed: #7DB8F7;
+  --ipai-color-brand-secondary: #3A96DD;
+  --ipai-color-brand-tertiary: #2B88D8;
+
+  /* === Neutral Colors (Dark) === */
+  --ipai-color-neutral-background: #1E1E1E;
+  --ipai-color-neutral-background-secondary: #292929;
+  --ipai-color-neutral-background-tertiary: #333333;
+  --ipai-color-neutral-foreground: #FFFFFF;
+  --ipai-color-neutral-foreground-secondary: #C8C8C8;
+  --ipai-color-neutral-foreground-tertiary: #8A8A8A;
+
+  --ipai-color-neutral-stroke: #424242;
+  --ipai-color-neutral-stroke-hover: #4F4F4F;
+  --ipai-color-neutral-stroke-pressed: #5C5C5C;
+
+  /* === Semantic Colors (Dark) === */
+  /* Success */
+  --ipai-color-success-background: #0E4429;
+  --ipai-color-success-foreground: #54D18C;
+  --ipai-color-success-border: #347D4D;
+
+  /* Warning */
+  --ipai-color-warning-background: #4D3800;
+  --ipai-color-warning-foreground: #F7D37F;
+  --ipai-color-warning-border: #7A5A1B;
+
+  /* Error */
+  --ipai-color-error-background: #5C0F15;
+  --ipai-color-error-foreground: #F3B3B9;
+  --ipai-color-error-border: #8E2A30;
+
+  /* Info */
+  --ipai-color-info-background: #002952;
+  --ipai-color-info-foreground: #99C7FB;
+  --ipai-color-info-border: #003E7E;
+
+  /* === Component: Buttons (Dark) === */
+  --ipai-component-button-primary-bg: var(--ipai-color-brand-primary);
+  --ipai-component-button-primary-bg-hover: var(--ipai-color-brand-primary-hover);
+  --ipai-component-button-primary-bg-pressed: var(--ipai-color-brand-primary-pressed);
+  --ipai-component-button-primary-fg: #1E1E1E;
+  --ipai-component-button-primary-border: transparent;
+
+  --ipai-component-button-secondary-bg: transparent;
+  --ipai-component-button-secondary-bg-hover: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-button-secondary-bg-pressed: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-button-secondary-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-button-secondary-border: var(--ipai-color-neutral-stroke);
+
+  /* === Component: Cards (Dark) === */
+  --ipai-component-card-bg: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-card-border: var(--ipai-color-neutral-stroke);
+  --ipai-component-card-shadow: 0 8px 16px rgba(0,0,0,0.5);
+
+  /* === Component: Inputs (Dark) === */
+  --ipai-component-input-bg: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-input-bg-hover: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-input-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-input-border: var(--ipai-color-neutral-stroke);
+  --ipai-component-input-border-hover: var(--ipai-color-neutral-stroke-hover);
+  --ipai-component-input-border-focused: var(--ipai-color-brand-primary);
+
+  /* === Component: Navigation (Dark) === */
+  --ipai-component-nav-bg: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-nav-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-nav-item-bg-hover: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-nav-item-bg-selected: var(--ipai-color-brand-primary);
+  --ipai-component-nav-item-fg-selected: #1E1E1E;
+
+  /* === Component: Tables (Dark) === */
+  --ipai-component-table-header-bg: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-table-header-fg: var(--ipai-color-neutral-foreground);
+  --ipai-component-table-row-bg: var(--ipai-color-neutral-background-secondary);
+  --ipai-component-table-row-bg-hover: var(--ipai-color-neutral-background-tertiary);
+  --ipai-component-table-row-bg-selected: #002952;
+  --ipai-component-table-border: var(--ipai-color-neutral-stroke);
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+/* Button Variants */
+.ipai-btn-primary {
+  background-color: var(--ipai-component-button-primary-bg);
+  color: var(--ipai-component-button-primary-fg);
+  border: var(--ipai-border-width-thin) solid var(--ipai-component-button-primary-border);
+  border-radius: var(--ipai-component-button-border-radius);
+  padding: var(--ipai-component-button-padding-vertical) var(--ipai-component-button-padding-horizontal);
+  font-size: var(--ipai-component-button-font-size);
+  font-weight: var(--ipai-component-button-font-weight);
+  line-height: var(--ipai-component-button-line-height);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.ipai-btn-primary:hover {
+  background-color: var(--ipai-component-button-primary-bg-hover);
+}
+
+.ipai-btn-primary:active {
+  background-color: var(--ipai-component-button-primary-bg-pressed);
+}
+
+.ipai-btn-secondary {
+  background-color: var(--ipai-component-button-secondary-bg);
+  color: var(--ipai-component-button-secondary-fg);
+  border: var(--ipai-border-width-thin) solid var(--ipai-component-button-secondary-border);
+  border-radius: var(--ipai-component-button-border-radius);
+  padding: var(--ipai-component-button-padding-vertical) var(--ipai-component-button-padding-horizontal);
+  font-size: var(--ipai-component-button-font-size);
+  font-weight: var(--ipai-component-button-font-weight);
+  line-height: var(--ipai-component-button-line-height);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.ipai-btn-secondary:hover {
+  background-color: var(--ipai-component-button-secondary-bg-hover);
+}
+
+.ipai-btn-secondary:active {
+  background-color: var(--ipai-component-button-secondary-bg-pressed);
+}
+
+/* Card */
+.ipai-card {
+  background-color: var(--ipai-component-card-bg);
+  border: var(--ipai-border-width-thin) solid var(--ipai-component-card-border);
+  border-radius: var(--ipai-component-card-border-radius);
+  box-shadow: var(--ipai-component-card-shadow);
+  padding: var(--ipai-component-card-padding);
+}
+
+/* Status Badges */
+.ipai-badge-success {
+  background-color: var(--ipai-component-badge-success-bg);
+  color: var(--ipai-component-badge-success-fg);
+  border: var(--ipai-border-width-thin) solid var(--ipai-component-badge-success-border);
+  border-radius: var(--ipai-component-badge-border-radius);
+  padding: var(--ipai-component-badge-padding-vertical) var(--ipai-component-badge-padding-horizontal);
+  font-size: var(--ipai-component-badge-font-size);
+  font-weight: var(--ipai-component-badge-font-weight);
+  display: inline-block;
+}
+
+.ipai-badge-warning {
+  background-color: var(--ipai-component-badge-warning-bg);
+  color: var(--ipai-component-badge-warning-fg);
+  border: var(--ipai-border-width-thin) solid var(--ipai-component-badge-warning-border);
+  border-radius: var(--ipai-component-badge-border-radius);
+  padding: var(--ipai-component-badge-padding-vertical) var(--ipai-component-badge-padding-horizontal);
+  font-size: var(--ipai-component-badge-font-size);
+  font-weight: var(--ipai-component-badge-font-weight);
+  display: inline-block;
+}
+
+.ipai-badge-error {
+  background-color: var(--ipai-component-badge-error-bg);
+  color: var(--ipai-component-badge-error-fg);
+  border: var(--ipai-border-width-thin) solid var(--ipai-component-badge-error-border);
+  border-radius: var(--ipai-component-badge-border-radius);
+  padding: var(--ipai-component-badge-padding-vertical) var(--ipai-component-badge-padding-horizontal);
+  font-size: var(--ipai-component-badge-font-size);
+  font-weight: var(--ipai-component-badge-font-weight);
+  display: inline-block;
+}
+
+.ipai-badge-info {
+  background-color: var(--ipai-component-badge-info-bg);
+  color: var(--ipai-component-badge-info-fg);
+  border: var(--ipai-border-width-thin) solid var(--ipai-component-badge-info-border);
+  border-radius: var(--ipai-component-badge-border-radius);
+  padding: var(--ipai-component-badge-padding-vertical) var(--ipai-component-badge-padding-horizontal);
+  font-size: var(--ipai-component-badge-font-size);
+  font-weight: var(--ipai-component-badge-font-weight);
+  display: inline-block;
+}

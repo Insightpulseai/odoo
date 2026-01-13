@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Fluent 2 Finance Theme Assets -->
+    <template id="assets_backend" name="Fluent 2 Finance Theme Assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <!-- Load Fluent 2 tokens first -->
+            <link rel="stylesheet" type="text/scss" href="/ipai_theme_fluent_finance/static/src/css/tokens.css"/>
+
+            <!-- Then load Finance landing page theme -->
+            <link rel="stylesheet" type="text/scss" href="/ipai_theme_fluent_finance/static/src/css/finance_landing.css"/>
+        </xpath>
+    </template>
+</odoo>
