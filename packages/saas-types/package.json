@@ -1,0 +1,37 @@
+{
+  "name": "@ipai/saas-types",
+  "version": "1.0.0",
+  "description": "Multi-tenant provider model types for InsightPulseAI SaaS platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "prisma"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prisma:generate": "prisma generate",
+    "prisma:format": "prisma format",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "multi-tenant",
+    "saas",
+    "prisma",
+    "typescript",
+    "insightpulseai"
+  ],
+  "author": "InsightPulse AI",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "prisma": "^5.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@prisma/client": "^5.0.0"
+  }
+}

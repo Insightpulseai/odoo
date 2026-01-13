@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- SaaS Account Form View -->
+    <record id="view_saas_account_form" model="ir.ui.view">
+        <field name="name">saas.account.form</field>
+        <field name="model">saas.account</field>
+        <field name="arch" type="xml">
+            <form string="SaaS Account">
+                <header>
+                    <button name="action_add_tenant_role" type="object"
+                            string="Add Tenant Role" class="btn-secondary"
+                            invisible="is_tenant"/>
+                    <button name="action_add_provider_role" type="object"
+                            string="Add Provider Role" class="btn-secondary"
+                            invisible="is_provider"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_saas_subscription)d" type="action"
+                                class="oe_stat_button" icon="fa-handshake-o"
+                                invisible="not is_tenant">
+                            <field name="active_subscription_count" widget="statinfo"
+                                   string="Subscriptions"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-cogs"
+                                invisible="not is_provider">
+                            <field name="provided_service_count" widget="statinfo"
+                                   string="Services"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Inactive" bg_color="bg-danger"
+                            invisible="is_active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Account Name"/>
+                        </h1>
+                        <field name="slug" placeholder="account-slug"/>
+                    </div>
+                    <group>
+                        <group string="Account Info">
+                            <field name="legal_name"/>
+                            <field name="country_id"/>
+                            <field name="timezone"/>
+                            <field name="default_locale"/>
+                            <field name="billing_email"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Roles">
+                            <field name="is_tenant" readonly="1"/>
+                            <field name="is_provider" readonly="1"/>
+                            <field name="is_internal" readonly="1"/>
+                        </group>
+                    </group>
+                    <group string="Odoo Integration">
+                        <group>
+                            <field name="company_id"/>
+                            <field name="partner_id"/>
+                        </group>
+                        <group>
+                            <field name="supabase_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Roles" name="roles">
+                            <field name="role_ids">
+                                <list editable="bottom">
+                                    <field name="role"/>
+                                    <field name="is_primary"/>
+                                    <field name="granted_at"/>
+                                    <field name="granted_by_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Users" name="users">
+                            <field name="user_ids">
+                                <list editable="bottom">
+                                    <field name="email"/>
+                                    <field name="full_name"/>
+                                    <field name="is_admin"/>
+                                    <field name="is_active"/>
+                                    <field name="odoo_user_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Environments" name="environments">
+                            <field name="environment_ids">
+                                <list>
+                                    <field name="env_type"/>
+                                    <field name="supabase_project_ref"/>
+                                    <field name="odoo_db_name"/>
+                                    <field name="vercel_project_id"/>
+                                    <field name="is_active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Subscriptions" name="subscriptions"
+                              invisible="not is_tenant">
+                            <field name="tenant_subscription_ids">
+                                <list>
+                                    <field name="service_id"/>
+                                    <field name="plan_id"/>
+                                    <field name="status"/>
+                                    <field name="started_at"/>
+                                    <field name="next_billing_at"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Provided Services" name="services"
+                              invisible="not is_provider">
+                            <field name="service_ids">
+                                <list>
+                                    <field name="key"/>
+                                    <field name="name"/>
+                                    <field name="category"/>
+                                    <field name="is_public"/>
+                                    <field name="is_enabled"/>
+                                    <field name="active_subscription_count"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- SaaS Account List View -->
+    <record id="view_saas_account_list" model="ir.ui.view">
+        <field name="name">saas.account.list</field>
+        <field name="model">saas.account</field>
+        <field name="arch" type="xml">
+            <list string="SaaS Accounts" decoration-muted="not is_active">
+                <field name="slug"/>
+                <field name="name"/>
+                <field name="is_tenant"/>
+                <field name="is_provider"/>
+                <field name="country_id"/>
+                <field name="company_id"/>
+                <field name="active_subscription_count" string="Subscriptions"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- SaaS Account Search View -->
+    <record id="view_saas_account_search" model="ir.ui.view">
+        <field name="name">saas.account.search</field>
+        <field name="model">saas.account</field>
+        <field name="arch" type="xml">
+            <search string="Search Accounts">
+                <field name="name"/>
+                <field name="slug"/>
+                <field name="billing_email"/>
+                <field name="company_id"/>
+                <separator/>
+                <filter name="filter_tenant" string="Tenants"
+                        domain="[('is_tenant', '=', True)]"/>
+                <filter name="filter_provider" string="Providers"
+                        domain="[('is_provider', '=', True)]"/>
+                <filter name="filter_active" string="Active"
+                        domain="[('is_active', '=', True)]"/>
+                <filter name="filter_inactive" string="Inactive"
+                        domain="[('is_active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_country" string="Country"
+                            context="{'group_by': 'country_id'}"/>
+                    <filter name="group_company" string="Odoo Company"
+                            context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- SaaS Account Action -->
+    <record id="action_saas_account" model="ir.actions.act_window">
+        <field name="name">SaaS Accounts</field>
+        <field name="res_model">saas.account</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_saas_account_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first SaaS Account
+            </p>
+            <p>
+                SaaS Accounts represent organizations that can be tenants (consuming services),
+                providers (offering services), or both.
+            </p>
+        </field>
+    </record>
+
+</odoo>
