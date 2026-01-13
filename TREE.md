@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f937d028f652f4a692736771d8f0c4e8c8f60c2d
+> Commit: a5b7008a47356f7f15cb258da4e3916b85b5d3fa
 
 ```
 .
@@ -704,6 +704,15 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_sample_metrics
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_settings_dashboard
 │   │   │   ├── models
 │   │   │   ├── static
@@ -1299,6 +1308,7 @@
 │   ├── ORCHESTRATOR.md
 │   ├── PRIORITIZED_ROADMAP.md
 │   ├── README.md
+│   ├── custom_module_auditor.md
 │   ├── odoo_oca_ci_fixer.yaml
 │   ├── odoo_reverse_mapper.yaml
 │   └── smart_delta_oca.yaml
@@ -2346,6 +2356,7 @@
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
 │   ├── TAGGING_STRATEGY.md
 │   ├── TBWA_THEME_DEPLOYMENT.md
+│   ├── TECHNICAL_GUIDE_SUPABASE_INTEGRATION.md
 │   ├── TENANT_ARCHITECTURE.md
 │   ├── TESTING_ODOO_18.md
 │   ├── TROUBLESHOOTING.md
@@ -3054,6 +3065,7 @@
 │   ├── sync-tokens.sh
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
+│   ├── sync_ipai_sample_metrics_to_supabase.py
 │   ├── test_afc_rag.py
 │   ├── test_auth_bootstrap.sh
 │   ├── test_deploy_local.sh
@@ -3532,6 +3544,7 @@
 │   │   ├── 202601080002_4501_CATALOG_SEMANTIC_LAYER.sql
 │   │   ├── 202601080003_4502_OPS_ODOO_BINDINGS.sql
 │   │   ├── 20260112_fix_trend_views_date_alias.sql
+│   │   ├── 202601130001_IPAI_SAMPLE_METRICS.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3844,15 +3857,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1246 directories, 2593 files
+1253 directories, 2599 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1448 |
-| Files | 3968 |
-| Python files | 1046 |
-| XML files | 507 |
-| Markdown files | 744 |
+| Directories | 1456 |
+| Files | 3982 |
+| Python files | 1053 |
+| XML files | 509 |
+| Markdown files | 746 |
