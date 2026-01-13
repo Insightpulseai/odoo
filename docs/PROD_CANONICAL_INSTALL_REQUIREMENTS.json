@@ -1,0 +1,3169 @@
+{
+  "generated_at": "2026-01-13T23:28:26.794910Z",
+  "docker": {
+    "present": true,
+    "path": "docker-compose.yml",
+    "raw_excerpt": "# Smart Delta 3-Edition Odoo CE Deployment\n# Core, Marketing, Accounting editions share Postgres but have different module sets\n#\n# Extended Platform Configuration:\n# - OCA modules mounted from ./addons/oca/\n# - IPAI modules mounted from ./addons/ipai/\n# - Use profiles for tiered initialization\n\nversion: '3.8'\n\nservices:\n  # ===== SHARED POSTGRES =====\n  postgres:\n    image: postgres:15-alpine\n    container_name: odoo-postgres\n    environment:\n      POSTGRES_USER: odoo\n      POSTGRES_PASSWORD: odoo\n      POSTGRES_DB: postgres\n    volumes:\n      - odoo-postgres-data:/var/lib/postgresql/data\n    networks:\n      - odoo-network\n    restart: unless-stopped\n\n  # ===== CORE EDITION (Port 8069) =====\n  # Init service - CE Core Modules (one-time installation of all CE modules)\n  odoo-core-ce-init:\n    image: odoo:18.0\n    container_name: odoo-core-ce-init\n    depends_on:\n      - postgres\n    environment:\n      - HOST=postgres\n      - USER=odoo\n      - PASSWORD=odoo\n      - DB_NAME=odoo_core\n    volumes:\n      - ./addons/ipai:/mnt/extra-addons/ipai:ro\n      - ./addons/oca:/mnt/extra-addons/oca:ro\n      - odoo-core-web-data:/var/lib/odoo\n    # Install all CE core modules in dependency order\n    command: >\n      odoo -d odoo_core -i\n      base,web,base_setup,base_import,bus,mail,digest,iap,web_tour,web_editor,portal,resource,calendar,\n      contacts,sales_team,crm,sale,sale_management,sale_crm,\n      analytic,account,account_payment,\n      purchase,purchase_requisition,\n      stock,stock_account,stock_landed_costs,stock_picking_batch,\n      sale_stock,sale_purchase,purchase_stock,\n      mrp,maintenance,\n      project,project_todo,hr_timesheet,sale_timesheet,\n      hr,hr_contract,hr_holidays,hr_attendance,hr_expense,hr_recruitment,hr_skills,\n      website,website_sale,website_crm,website_blog,website_forum,website_slides,website_event,\n      mass_mailing,im_livechat,\n      point_of_sale,\n      survey,lunch,fleet,repair\n      --stop-after-init\n    networks:\n      - odoo-network\n    restart: \"no\"\n    profiles: [\"ce-init\"]\n\n  # Init service - IPAI custom modules (after CE modules are installed)\n  odoo-core-init:\n    image: odoo:18.0\n    container_name: odoo-core-init\n    depends_on:\n      - postgres\n    environment:\n      - HOST=postgres\n      - USER=odoo\n      - PASSWORD=odoo\n      - DB_NAME=odoo_core\n    volumes:\n      - ./addons/ipai:/mnt/extra-addons/ipai:ro\n      - ./addons/oca:/mnt/extra-addons/oca:ro\n      - odoo-core-web-data:/var/lib/odoo\n    command: [\"odoo\", \"-d\", \"odoo_core\", \"-i\", \"ipai_dev_studio_base,ipai_workspace_core,ipai_ce_branding\", \"--stop-after-init\"]\n    networks:\n      - odoo-network\n    restart: \"no\"\n    profiles: [\"init\"]\n\n  # Init service - Extended Platform OCA modules\n  odoo-core-extended-init:\n    image: odoo:18.0\n    container_name: odoo-core-extended-init\n    depends_on:\n      - postgres\n    environment:\n      - HOST=postgres\n      - USER=odoo\n      - PASSWORD=odoo\n      - DB_NAME=odoo_core\n    volumes:\n      - ./addons/ipai:/mnt/extra-addons/ipai:ro\n      - ./addons/oca:/mnt/extra-addons/oca:ro\n      - odoo-core-web-data:/var/lib/odoo\n    # Phase 1-4: Foundation + UX + Queue + Reporting\n    command: >\n      odoo -d odoo_core -i\n      base_view_inheritance_extension,auditlog,date_range,\n      web_responsive,web_dialog_size,\n      queue_job,\n      report_xlsx,mis_builder,account_financial_report,\n      spreadsheet_oca,spreadsheet_dashboard_oca,\n      base_rest,\n      mail_activity_board,mail_debrand,\n      ipai_design_system_apps_sdk,ipai_ask_ai,ipai_command_center\n      --stop-after-init\n    networks:\n      - odoo-network\n    restart: \"no\"\n    profiles: [\"extended-init\"]\n\n  # Runtime service (normal operation)\n  odoo-core:\n    image: odoo:18.0\n    container_name: odoo-core\n    depends_on:\n      - postgres\n    ports:\n      - \"8069:8069\"\n    environment:\n      - HOST=postgres\n      - USER=odoo\n      - PASSWORD=odoo\n      - DB_NAME=odoo_core\n    volumes:\n      - ./addons/ipai:/mnt/extra-addons/ipai:ro\n      - ./a"
+  },
+  "odoo": {
+    "custom_addons": [
+      {
+        "path": "addons/ipai_workos_canvas/__manifest__.py",
+        "module": "IPAI WorkOS - Canvas (Edgeless)",
+        "technical": "ipai_workos_canvas",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_search/__manifest__.py",
+        "module": "IPAI Work OS Search",
+        "technical": "ipai_workos_search",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core",
+          "ipai_workos_blocks",
+          "ipai_workos_db"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_affine/__manifest__.py",
+        "module": "IPAI WorkOS - AFFiNE Clone (Umbrella)",
+        "technical": "ipai_workos_affine",
+        "depends": [
+          "ipai_workos_core",
+          "ipai_workos_blocks",
+          "ipai_workos_db",
+          "ipai_workos_views",
+          "ipai_workos_collab",
+          "ipai_workos_search",
+          "ipai_workos_templates",
+          "ipai_workos_canvas",
+          "ipai_platform_permissions",
+          "ipai_platform_audit"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_collab/__manifest__.py",
+        "module": "IPAI Work OS Collaboration",
+        "technical": "ipai_workos_collab",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_permissions/__manifest__.py",
+        "module": "IPAI Platform Permissions",
+        "technical": "ipai_platform_permissions",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_sms_gateway/__manifest__.py",
+        "module": "IPAI SMS Gateway",
+        "technical": "ipai_sms_gateway",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_month_end/__manifest__.py",
+        "module": "IPAI Month-End Closing",
+        "technical": "ipai_month_end",
+        "depends": [
+          "base",
+          "mail",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai_finance_closing/__manifest__.py",
+        "module": "SAP AFC-Style Month-End Closing Template",
+        "technical": "ipai_finance_closing",
+        "depends": [
+          "project",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/__manifest__.py",
+        "module": "IPAI Module Namespace",
+        "technical": "ipai",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_dashboard_canvas/__manifest__.py",
+        "module": "IPAI PPM Dashboard Canvas",
+        "technical": "ipai_ppm_dashboard_canvas",
+        "depends": [
+          "project",
+          "mail",
+          "web",
+          "hr_timesheet"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_skill_api/__manifest__.py",
+        "module": "IPAI Skill API",
+        "technical": "ipai_skill_api",
+        "depends": [
+          "base",
+          "web",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_test_fixtures/__manifest__.py",
+        "module": "IPAI Test Fixtures",
+        "technical": "ipai_test_fixtures",
+        "depends": [
+          "base",
+          "hr",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_custom_routes/__manifest__.py",
+        "module": "InsightPulse Custom Routes",
+        "technical": "ipai_custom_routes",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "calendar",
+          "project",
+          "hr_expense"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_module_gating/__manifest__.py",
+        "module": "IPAI Module Production Gating",
+        "technical": "ipai_module_gating",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_integrations/__manifest__.py",
+        "module": "IPAI Integrations",
+        "technical": "ipai_integrations",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_fluent_finance/__manifest__.py",
+        "module": "IPAI Fluent 2 Finance Theme",
+        "technical": "ipai_theme_fluent_finance",
+        "depends": [
+          "web",
+          "ipai_finance_ppm"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_industry_marketing_agency/__manifest__.py",
+        "module": "InsightPulse Industry - Marketing Agency",
+        "technical": "ipai_industry_marketing_agency",
+        "depends": [
+          "ipai_workspace_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_assets/__manifest__.py",
+        "module": "IPAI Asset Checkout",
+        "technical": "ipai_assets",
+        "depends": [
+          "base",
+          "mail",
+          "hr",
+          "stock"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_profitability_bridge/__manifest__.py",
+        "module": "IPAI Project Profitability Bridge",
+        "technical": "ipai_project_profitability_bridge",
+        "depends": [
+          "project",
+          "analytic",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_marketing_journey/__manifest__.py",
+        "module": "IPAI Marketing Journey Builder",
+        "technical": "ipai_marketing_journey",
+        "depends": [
+          "base",
+          "mail",
+          "mass_mailing",
+          "utm",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm/__manifest__.py",
+        "module": "IPAI Finance PPM",
+        "technical": "ipai_finance_ppm",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_n8n_connector/__manifest__.py",
+        "module": "IPAI n8n Connector",
+        "technical": "ipai_n8n_connector",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_catalog_bridge/__manifest__.py",
+        "module": "IPAI Catalog Bridge",
+        "technical": "ipai_catalog_bridge",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_dev_studio_base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_audit/__manifest__.py",
+        "module": "IPAI AI Audit & Governance",
+        "technical": "ipai_ai_audit",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_ai_provider_pulser"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_agent_core/__manifest__.py",
+        "module": "IPAI Agent Core",
+        "technical": "ipai_agent_core",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_connectors/__manifest__.py",
+        "module": "IPAI AI Connectors",
+        "technical": "ipai_ai_connectors",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_mattermost_connector/__manifest__.py",
+        "module": "IPAI Mattermost Connector",
+        "technical": "ipai_mattermost_connector",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_closing/__manifest__.py",
+        "module": "IPAI Finance PPM Closing Generator",
+        "technical": "ipai_finance_ppm_closing",
+        "depends": [
+          "project",
+          "ipai_finance_ppm",
+          "ipai_ppm_monthly_close"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_command_center/__manifest__.py",
+        "module": "IPAI Command Center",
+        "technical": "ipai_command_center",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_design_system_apps_sdk"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_monthly_closing/__manifest__.py",
+        "module": "IPAI Finance Monthly Closing",
+        "technical": "ipai_finance_monthly_closing",
+        "depends": [
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_gantt/__manifest__.py",
+        "module": "IPAI Project Gantt (CE)",
+        "technical": "ipai_project_gantt",
+        "depends": [
+          "project",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_fluent2/__manifest__.py",
+        "module": "IPAI Web Fluent 2 Theme Layer",
+        "technical": "ipai_web_fluent2",
+        "depends": [
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_portal_fix/__manifest__.py",
+        "module": "IPAI Portal Fix",
+        "technical": "ipai_portal_fix",
+        "depends": [
+          "portal"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_icons_fluent/__manifest__.py",
+        "module": "IPAI Web Icons - Fluent",
+        "technical": "ipai_web_icons_fluent",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_core/__manifest__.py",
+        "module": "IPAI AI Core",
+        "technical": "ipai_ai_core",
+        "depends": [
+          "base",
+          "mail",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_master_control/__manifest__.py",
+        "module": "Master Control - Work Intake",
+        "technical": "ipai_master_control",
+        "depends": [
+          "base",
+          "hr",
+          "hr_expense",
+          "purchase"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ui_brand_tokens/__manifest__.py",
+        "module": "IPAI UI Brand Tokens",
+        "technical": "ipai_ui_brand_tokens",
+        "depends": [
+          "web",
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_workspace_core/__manifest__.py",
+        "module": "InsightPulse Workspace Core",
+        "technical": "ipai_workspace_core",
+        "depends": [
+          "ipai_dev_studio_base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_theme_tbwa/__manifest__.py",
+        "module": "IPAI Web Theme - TBWA",
+        "technical": "ipai_web_theme_tbwa",
+        "depends": [
+          "web",
+          "mail",
+          "ipai_ui_brand_tokens"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_industry_accounting_firm/__manifest__.py",
+        "module": "InsightPulse Industry - Accounting Firm",
+        "technical": "ipai_industry_accounting_firm",
+        "depends": [
+          "ipai_workspace_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_dashboard/__manifest__.py",
+        "module": "IPAI Finance PPM Dashboard",
+        "technical": "ipai_finance_ppm_dashboard",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_bir_compliance/__manifest__.py",
+        "module": "IPAI Tax Shield (Philippines)",
+        "technical": "ipai_bir_compliance",
+        "depends": [
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_aiux/__manifest__.py",
+        "module": "IPAI AIUX Theme",
+        "technical": "ipai_theme_aiux",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_tbwa/__manifest__.py",
+        "module": "IPAI Theme TBWA (Backend)",
+        "technical": "ipai_theme_tbwa",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_srm/__manifest__.py",
+        "module": "IPAI Supplier Relationship Management",
+        "technical": "ipai_srm",
+        "depends": [
+          "base",
+          "mail",
+          "purchase",
+          "contacts"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_program/__manifest__.py",
+        "module": "IPAI Project Program (Program + IM Projects)",
+        "technical": "ipai_project_program",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ce_branding/__manifest__.py",
+        "module": "InsightPulse AI - CE Branding",
+        "technical": "ipai_ce_branding",
+        "depends": [
+          "web",
+          "base",
+          "remove_odoo_enterprise",
+          "disable_odoo_online"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ask_ai_chatter/__manifest__.py",
+        "module": "IPAI Ask AI Chatter",
+        "technical": "ipai_ask_ai_chatter",
+        "depends": [
+          "mail",
+          "ipai_ask_ai"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_tdi/__manifest__.py",
+        "module": "Finance PPM Transaction Data Ingestion (TDI)",
+        "technical": "ipai_finance_ppm_tdi",
+        "depends": [
+          "base",
+          "project",
+          "hr",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_design_system_apps_sdk/__manifest__.py",
+        "module": "IPAI Design System - Apps SDK UI",
+        "technical": "ipai_design_system_apps_sdk",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_auth_oauth_internal/__manifest__.py",
+        "module": "IPAI OAuth Internal User",
+        "technical": "ipai_auth_oauth_internal",
+        "depends": [
+          "auth_oauth"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_dev_studio_base/__manifest__.py",
+        "module": "InsightPulse Dev Studio Base",
+        "technical": "ipai_dev_studio_base",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "contacts",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_studio_ai/__manifest__.py",
+        "module": "IPAI Studio AI",
+        "technical": "ipai_studio_ai",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_settings_dashboard/__manifest__.py",
+        "module": "IPAI Settings Dashboard",
+        "technical": "ipai_settings_dashboard",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_close_orchestration/__manifest__.py",
+        "module": "IPAI Close Cycle Orchestration",
+        "technical": "ipai_close_orchestration",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_suite/__manifest__.py",
+        "module": "IPAI Project Suite (CE)",
+        "technical": "ipai_project_suite",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_approvals/__manifest__.py",
+        "module": "IPAI Approvals (Enterprise Parity)",
+        "technical": "ipai_approvals",
+        "depends": [
+          "base",
+          "mail",
+          "hr"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_control_room/__manifest__.py",
+        "module": "IPAI Control Room",
+        "technical": "ipai_control_room",
+        "depends": [
+          "base",
+          "mail",
+          "project",
+          "web",
+          "ipai_theme_fluent2"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ocr_expense/__manifest__.py",
+        "module": "IPAI OCR Expense Digitization",
+        "technical": "ipai_ocr_expense",
+        "depends": [
+          "hr_expense",
+          "ipai_expense"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_document_ai/__manifest__.py",
+        "module": "IPAI Document AI",
+        "technical": "ipai_document_ai",
+        "depends": [
+          "base",
+          "mail",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_sources_odoo/__manifest__.py",
+        "module": "IPAI AI Sources (Odoo Export)",
+        "technical": "ipai_ai_sources_odoo",
+        "depends": [
+          "base",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_chatgpt_sdk_theme/__manifest__.py",
+        "module": "IPAI ChatGPT App SDK Theme",
+        "technical": "ipai_chatgpt_sdk_theme",
+        "depends": [
+          "web",
+          "website"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_prompts/__manifest__.py",
+        "module": "IPAI AI Prompts Library",
+        "technical": "ipai_ai_prompts",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_agent_core",
+          "ipai_ai_provider_pulser"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_expense/__manifest__.py",
+        "module": "IPAI Expense & Travel (PH)",
+        "technical": "ipai_expense",
+        "depends": [
+          "hr",
+          "hr_expense",
+          "account",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ce_cleaner/__manifest__.py",
+        "module": "IPAI CE Cleaner (No Enterprise/IAP)",
+        "technical": "ipai_ce_cleaner",
+        "depends": [
+          "base",
+          "web",
+          "remove_odoo_enterprise",
+          "disable_odoo_online"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_focalboard_connector/__manifest__.py",
+        "module": "IPAI Focalboard Connector",
+        "technical": "ipai_focalboard_connector",
+        "depends": [
+          "base",
+          "project",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_marketing_ai/__manifest__.py",
+        "module": "IPAI Marketing AI (Content + Social Hygiene)",
+        "technical": "ipai_marketing_ai",
+        "depends": [
+          "base",
+          "mail",
+          "mass_mailing",
+          "ipai_ask_ai",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_advisor/__manifest__.py",
+        "module": "IPAI Ops Advisor",
+        "technical": "ipai_advisor",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_fluent2/__manifest__.py",
+        "module": "IPAI Fluent 2 Theme Tokens",
+        "technical": "ipai_theme_fluent2",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_expense_ocr/__manifest__.py",
+        "module": "IPAI Expense OCR",
+        "technical": "ipai_expense_ocr",
+        "depends": [
+          "hr_expense",
+          "ipai_document_ai"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_provider_pulser/__manifest__.py",
+        "module": "IPAI AI Provider - Pulser Gateway",
+        "technical": "ipai_ai_provider_pulser",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_close_automation/__manifest__.py",
+        "module": "IPAI Finance Close Automation",
+        "technical": "ipai_finance_close_automation",
+        "depends": [
+          "project",
+          "resource",
+          "ipai_finance_close_seed"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_platform_theme/__manifest__.py",
+        "module": "IPAI Platform Theme Tokens",
+        "technical": "ipai_platform_theme",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_default_home/__manifest__.py",
+        "module": "InsightPulse Custom Home Page",
+        "technical": "ipai_default_home",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ask_ai/__manifest__.py",
+        "module": "IPAI Ask AI",
+        "technical": "ipai_ask_ai",
+        "depends": [
+          "base",
+          "mail",
+          "project",
+          "ipai_finance_ppm"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_agents/__manifest__.py",
+        "module": "IPAI AI Agents (CE/OCA 18)",
+        "technical": "ipai_ai_agents",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_equipment/__manifest__.py",
+        "module": "IPAI Equipment Management",
+        "technical": "ipai_equipment",
+        "depends": [
+          "stock",
+          "maintenance",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_v18_compat/__manifest__.py",
+        "module": "IPAI Odoo 18 Compatibility Fixes",
+        "technical": "ipai_v18_compat",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_superset_connector/__manifest__.py",
+        "module": "IPAI Superset Connector",
+        "technical": "ipai_superset_connector",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_agents_ui/__manifest__.py",
+        "module": "IPAI AI Agents UI (React + Fluent)",
+        "technical": "ipai_ai_agents_ui",
+        "depends": [
+          "web",
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_studio/__manifest__.py",
+        "module": "IPAI AI Studio (CE) - AI-driven Module Builder",
+        "technical": "ipai_ai_studio",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_month_end/__manifest__.py",
+        "module": "IPAI Finance Month-End (Templates + Generator)",
+        "technical": "ipai_finance_month_end",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_tenant_core/__manifest__.py",
+        "module": "InsightPulse AI - Tenant Core",
+        "technical": "ipai_tenant_core",
+        "depends": [
+          "base",
+          "mail",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_provider_kapa/__manifest__.py",
+        "module": "IPAI AI Provider: Kapa",
+        "technical": "ipai_ai_provider_kapa",
+        "depends": [
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_close_seed/__manifest__.py",
+        "module": "IPAI Finance Close Seed",
+        "technical": "ipai_finance_close_seed",
+        "depends": [
+          "project",
+          "resource"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_tbwa_backend/__manifest__.py",
+        "module": "IPAI TBWA Backend Theme (DEPRECATED)",
+        "technical": "ipai_theme_tbwa_backend",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_aiux_chat/__manifest__.py",
+        "module": "IPAI AIUX Chat",
+        "technical": "ipai_aiux_chat",
+        "depends": [
+          "web",
+          "ipai_theme_aiux"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_mailgun_api/__manifest__.py",
+        "module": "IPAI Mailgun API",
+        "technical": "ipai_mailgun_api",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_bir_compliance/__manifest__.py",
+        "module": "IPAI Finance BIR Compliance (Schedule + Generator)",
+        "technical": "ipai_finance_bir_compliance",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "module": "InsightPulse Clarity PPM Parity",
+        "technical": "ipai_clarity_ppm_parity",
+        "depends": [
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_a1/__manifest__.py",
+        "module": "IPAI PPM A1 Control Center",
+        "technical": "ipai_ppm_a1",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_project_hybrid/__manifest__.py",
+        "module": "IPAI Finance Project Hybrid (IM1/IM2 + BIR + Month-End Generators)",
+        "technical": "ipai_finance_project_hybrid",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm/__manifest__.py",
+        "module": "IPAI Portfolio & Program Management",
+        "technical": "ipai_ppm",
+        "depends": [
+          "project",
+          "hr",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_monthly_close/__manifest__.py",
+        "module": "PPM Monthly Close Scheduler",
+        "technical": "ipai_ppm_monthly_close",
+        "depends": [
+          "base",
+          "project",
+          "mail",
+          "resource"
+        ]
+      },
+      {
+        "path": "addons/ipai_finance_ppm_golive/__manifest__.py",
+        "module": "Finance PPM Go-Live Checklist",
+        "technical": "ipai_finance_ppm_golive",
+        "depends": [
+          "base",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai_theme_tbwa/__manifest__.py",
+        "module": "TBWA Backend Theme (IPAI)",
+        "technical": "ipai_theme_tbwa",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_core/__manifest__.py",
+        "module": "IPAI Work OS Core",
+        "technical": "ipai_workos_core",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "ipai_platform_permissions",
+          "ipai_platform_audit"
+        ]
+      },
+      {
+        "path": "addons/ipai_ask_ai_chatter/__manifest__.py",
+        "module": "IPAI Ask AI Chatter (Headless)",
+        "technical": "ipai_ask_ai_chatter",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_ocr_gateway/__manifest__.py",
+        "module": "IPAI OCR Gateway",
+        "technical": "ipai_ocr_gateway",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/oca/__manifest__.py",
+        "module": "OCA Module Namespace",
+        "technical": "oca",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai_bir_tax_compliance/__manifest__.py",
+        "module": "IPAI BIR Tax Compliance",
+        "technical": "ipai_bir_tax_compliance",
+        "depends": [
+          "base",
+          "mail",
+          "account",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_blocks/__manifest__.py",
+        "module": "IPAI Work OS Blocks",
+        "technical": "ipai_workos_blocks",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_grid_view/__manifest__.py",
+        "module": "IPAI Grid/List View",
+        "technical": "ipai_grid_view",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_approvals/__manifest__.py",
+        "module": "IPAI Platform - Approvals",
+        "technical": "ipai_platform_approvals",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_platform_workflow"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_db/__manifest__.py",
+        "module": "IPAI Work OS Database",
+        "technical": "ipai_workos_db",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_theme/__manifest__.py",
+        "module": "IPAI Platform Theme",
+        "technical": "ipai_platform_theme",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_ask_ai/__manifest__.py",
+        "module": "IPAI Ask AI",
+        "technical": "ipai_ask_ai",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_audit/__manifest__.py",
+        "module": "IPAI Platform - Audit Trail",
+        "technical": "ipai_platform_audit",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_workflow/__manifest__.py",
+        "module": "IPAI Platform - Workflow Engine",
+        "technical": "ipai_platform_workflow",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_superset_connector/__manifest__.py",
+        "module": "IPAI Superset Connector",
+        "technical": "ipai_superset_connector",
+        "depends": [
+          "base",
+          "mail",
+          "sale",
+          "account",
+          "stock",
+          "hr",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai_tbwa_finance/__manifest__.py",
+        "module": "IPAI TBWA Finance",
+        "technical": "ipai_tbwa_finance",
+        "depends": [
+          "base",
+          "mail",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_templates/__manifest__.py",
+        "module": "IPAI Work OS Templates",
+        "technical": "ipai_workos_templates",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core",
+          "ipai_workos_blocks",
+          "ipai_workos_db"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_views/__manifest__.py",
+        "module": "IPAI Work OS Views",
+        "technical": "ipai_workos_views",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core",
+          "ipai_workos_db"
+        ]
+      },
+      {
+        "path": "addons/ipai_web_theme_chatgpt/__manifest__.py",
+        "module": "IPAI Web Theme (ChatGPT-style)",
+        "technical": "ipai_web_theme_chatgpt",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_theme_tbwa_backend/__manifest__.py",
+        "module": "TBWA Backend Theme (DEPRECATED)",
+        "technical": "ipai_theme_tbwa_backend",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_crm_pipeline/__manifest__.py",
+        "module": "IPAI CRM - Pipeline Clone",
+        "technical": "ipai_crm_pipeline",
+        "depends": [
+          "crm",
+          "mail",
+          "ipai_platform_workflow",
+          "ipai_platform_theme"
+        ]
+      },
+      {
+        "path": "addons/ipai_month_end_closing/__manifest__.py",
+        "module": "IPAI Month-End Closing & BIR Tax Filing",
+        "technical": "ipai_month_end_closing",
+        "depends": [
+          "project",
+          "hr"
+        ]
+      },
+      {
+        "path": "addons/ipai_finance_ppm_umbrella/__manifest__.py",
+        "module": "IPAI Finance PPM \u2013 TBWA Complete Configuration",
+        "technical": "ipai_finance_ppm_umbrella",
+        "depends": [
+          "ipai_finance_ppm",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_canvas/__manifest__.py",
+        "module": "IPAI WorkOS - Canvas (Edgeless)",
+        "technical": "ipai_workos_canvas",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_search/__manifest__.py",
+        "module": "IPAI Work OS Search",
+        "technical": "ipai_workos_search",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core",
+          "ipai_workos_blocks",
+          "ipai_workos_db"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_affine/__manifest__.py",
+        "module": "IPAI WorkOS - AFFiNE Clone (Umbrella)",
+        "technical": "ipai_workos_affine",
+        "depends": [
+          "ipai_workos_core",
+          "ipai_workos_blocks",
+          "ipai_workos_db",
+          "ipai_workos_views",
+          "ipai_workos_collab",
+          "ipai_workos_search",
+          "ipai_workos_templates",
+          "ipai_workos_canvas",
+          "ipai_platform_permissions",
+          "ipai_platform_audit"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_collab/__manifest__.py",
+        "module": "IPAI Work OS Collaboration",
+        "technical": "ipai_workos_collab",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_permissions/__manifest__.py",
+        "module": "IPAI Platform Permissions",
+        "technical": "ipai_platform_permissions",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_sms_gateway/__manifest__.py",
+        "module": "IPAI SMS Gateway",
+        "technical": "ipai_sms_gateway",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_month_end/__manifest__.py",
+        "module": "IPAI Month-End Closing",
+        "technical": "ipai_month_end",
+        "depends": [
+          "base",
+          "mail",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai_finance_closing/__manifest__.py",
+        "module": "SAP AFC-Style Month-End Closing Template",
+        "technical": "ipai_finance_closing",
+        "depends": [
+          "project",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/__manifest__.py",
+        "module": "IPAI Module Namespace",
+        "technical": "ipai",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_dashboard_canvas/__manifest__.py",
+        "module": "IPAI PPM Dashboard Canvas",
+        "technical": "ipai_ppm_dashboard_canvas",
+        "depends": [
+          "project",
+          "mail",
+          "web",
+          "hr_timesheet"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_skill_api/__manifest__.py",
+        "module": "IPAI Skill API",
+        "technical": "ipai_skill_api",
+        "depends": [
+          "base",
+          "web",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_test_fixtures/__manifest__.py",
+        "module": "IPAI Test Fixtures",
+        "technical": "ipai_test_fixtures",
+        "depends": [
+          "base",
+          "hr",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_custom_routes/__manifest__.py",
+        "module": "InsightPulse Custom Routes",
+        "technical": "ipai_custom_routes",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "calendar",
+          "project",
+          "hr_expense"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_module_gating/__manifest__.py",
+        "module": "IPAI Module Production Gating",
+        "technical": "ipai_module_gating",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_integrations/__manifest__.py",
+        "module": "IPAI Integrations",
+        "technical": "ipai_integrations",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_fluent_finance/__manifest__.py",
+        "module": "IPAI Fluent 2 Finance Theme",
+        "technical": "ipai_theme_fluent_finance",
+        "depends": [
+          "web",
+          "ipai_finance_ppm"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_industry_marketing_agency/__manifest__.py",
+        "module": "InsightPulse Industry - Marketing Agency",
+        "technical": "ipai_industry_marketing_agency",
+        "depends": [
+          "ipai_workspace_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_assets/__manifest__.py",
+        "module": "IPAI Asset Checkout",
+        "technical": "ipai_assets",
+        "depends": [
+          "base",
+          "mail",
+          "hr",
+          "stock"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_profitability_bridge/__manifest__.py",
+        "module": "IPAI Project Profitability Bridge",
+        "technical": "ipai_project_profitability_bridge",
+        "depends": [
+          "project",
+          "analytic",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_marketing_journey/__manifest__.py",
+        "module": "IPAI Marketing Journey Builder",
+        "technical": "ipai_marketing_journey",
+        "depends": [
+          "base",
+          "mail",
+          "mass_mailing",
+          "utm",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm/__manifest__.py",
+        "module": "IPAI Finance PPM",
+        "technical": "ipai_finance_ppm",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_n8n_connector/__manifest__.py",
+        "module": "IPAI n8n Connector",
+        "technical": "ipai_n8n_connector",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_catalog_bridge/__manifest__.py",
+        "module": "IPAI Catalog Bridge",
+        "technical": "ipai_catalog_bridge",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_dev_studio_base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_audit/__manifest__.py",
+        "module": "IPAI AI Audit & Governance",
+        "technical": "ipai_ai_audit",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_ai_provider_pulser"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_agent_core/__manifest__.py",
+        "module": "IPAI Agent Core",
+        "technical": "ipai_agent_core",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_connectors/__manifest__.py",
+        "module": "IPAI AI Connectors",
+        "technical": "ipai_ai_connectors",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_mattermost_connector/__manifest__.py",
+        "module": "IPAI Mattermost Connector",
+        "technical": "ipai_mattermost_connector",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_closing/__manifest__.py",
+        "module": "IPAI Finance PPM Closing Generator",
+        "technical": "ipai_finance_ppm_closing",
+        "depends": [
+          "project",
+          "ipai_finance_ppm",
+          "ipai_ppm_monthly_close"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_command_center/__manifest__.py",
+        "module": "IPAI Command Center",
+        "technical": "ipai_command_center",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_design_system_apps_sdk"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_monthly_closing/__manifest__.py",
+        "module": "IPAI Finance Monthly Closing",
+        "technical": "ipai_finance_monthly_closing",
+        "depends": [
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_gantt/__manifest__.py",
+        "module": "IPAI Project Gantt (CE)",
+        "technical": "ipai_project_gantt",
+        "depends": [
+          "project",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_fluent2/__manifest__.py",
+        "module": "IPAI Web Fluent 2 Theme Layer",
+        "technical": "ipai_web_fluent2",
+        "depends": [
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_portal_fix/__manifest__.py",
+        "module": "IPAI Portal Fix",
+        "technical": "ipai_portal_fix",
+        "depends": [
+          "portal"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_icons_fluent/__manifest__.py",
+        "module": "IPAI Web Icons - Fluent",
+        "technical": "ipai_web_icons_fluent",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_core/__manifest__.py",
+        "module": "IPAI AI Core",
+        "technical": "ipai_ai_core",
+        "depends": [
+          "base",
+          "mail",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_master_control/__manifest__.py",
+        "module": "Master Control - Work Intake",
+        "technical": "ipai_master_control",
+        "depends": [
+          "base",
+          "hr",
+          "hr_expense",
+          "purchase"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ui_brand_tokens/__manifest__.py",
+        "module": "IPAI UI Brand Tokens",
+        "technical": "ipai_ui_brand_tokens",
+        "depends": [
+          "web",
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_workspace_core/__manifest__.py",
+        "module": "InsightPulse Workspace Core",
+        "technical": "ipai_workspace_core",
+        "depends": [
+          "ipai_dev_studio_base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_theme_tbwa/__manifest__.py",
+        "module": "IPAI Web Theme - TBWA",
+        "technical": "ipai_web_theme_tbwa",
+        "depends": [
+          "web",
+          "mail",
+          "ipai_ui_brand_tokens"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_industry_accounting_firm/__manifest__.py",
+        "module": "InsightPulse Industry - Accounting Firm",
+        "technical": "ipai_industry_accounting_firm",
+        "depends": [
+          "ipai_workspace_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_dashboard/__manifest__.py",
+        "module": "IPAI Finance PPM Dashboard",
+        "technical": "ipai_finance_ppm_dashboard",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_bir_compliance/__manifest__.py",
+        "module": "IPAI Tax Shield (Philippines)",
+        "technical": "ipai_bir_compliance",
+        "depends": [
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_aiux/__manifest__.py",
+        "module": "IPAI AIUX Theme",
+        "technical": "ipai_theme_aiux",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_tbwa/__manifest__.py",
+        "module": "IPAI Theme TBWA (Backend)",
+        "technical": "ipai_theme_tbwa",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_srm/__manifest__.py",
+        "module": "IPAI Supplier Relationship Management",
+        "technical": "ipai_srm",
+        "depends": [
+          "base",
+          "mail",
+          "purchase",
+          "contacts"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_program/__manifest__.py",
+        "module": "IPAI Project Program (Program + IM Projects)",
+        "technical": "ipai_project_program",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ce_branding/__manifest__.py",
+        "module": "InsightPulse AI - CE Branding",
+        "technical": "ipai_ce_branding",
+        "depends": [
+          "web",
+          "base",
+          "remove_odoo_enterprise",
+          "disable_odoo_online"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ask_ai_chatter/__manifest__.py",
+        "module": "IPAI Ask AI Chatter",
+        "technical": "ipai_ask_ai_chatter",
+        "depends": [
+          "mail",
+          "ipai_ask_ai"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_tdi/__manifest__.py",
+        "module": "Finance PPM Transaction Data Ingestion (TDI)",
+        "technical": "ipai_finance_ppm_tdi",
+        "depends": [
+          "base",
+          "project",
+          "hr",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_design_system_apps_sdk/__manifest__.py",
+        "module": "IPAI Design System - Apps SDK UI",
+        "technical": "ipai_design_system_apps_sdk",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_auth_oauth_internal/__manifest__.py",
+        "module": "IPAI OAuth Internal User",
+        "technical": "ipai_auth_oauth_internal",
+        "depends": [
+          "auth_oauth"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_dev_studio_base/__manifest__.py",
+        "module": "InsightPulse Dev Studio Base",
+        "technical": "ipai_dev_studio_base",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "contacts",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_studio_ai/__manifest__.py",
+        "module": "IPAI Studio AI",
+        "technical": "ipai_studio_ai",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_settings_dashboard/__manifest__.py",
+        "module": "IPAI Settings Dashboard",
+        "technical": "ipai_settings_dashboard",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_close_orchestration/__manifest__.py",
+        "module": "IPAI Close Cycle Orchestration",
+        "technical": "ipai_close_orchestration",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_suite/__manifest__.py",
+        "module": "IPAI Project Suite (CE)",
+        "technical": "ipai_project_suite",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_approvals/__manifest__.py",
+        "module": "IPAI Approvals (Enterprise Parity)",
+        "technical": "ipai_approvals",
+        "depends": [
+          "base",
+          "mail",
+          "hr"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_control_room/__manifest__.py",
+        "module": "IPAI Control Room",
+        "technical": "ipai_control_room",
+        "depends": [
+          "base",
+          "mail",
+          "project",
+          "web",
+          "ipai_theme_fluent2"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ocr_expense/__manifest__.py",
+        "module": "IPAI OCR Expense Digitization",
+        "technical": "ipai_ocr_expense",
+        "depends": [
+          "hr_expense",
+          "ipai_expense"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_document_ai/__manifest__.py",
+        "module": "IPAI Document AI",
+        "technical": "ipai_document_ai",
+        "depends": [
+          "base",
+          "mail",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_sources_odoo/__manifest__.py",
+        "module": "IPAI AI Sources (Odoo Export)",
+        "technical": "ipai_ai_sources_odoo",
+        "depends": [
+          "base",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_chatgpt_sdk_theme/__manifest__.py",
+        "module": "IPAI ChatGPT App SDK Theme",
+        "technical": "ipai_chatgpt_sdk_theme",
+        "depends": [
+          "web",
+          "website"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_prompts/__manifest__.py",
+        "module": "IPAI AI Prompts Library",
+        "technical": "ipai_ai_prompts",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_agent_core",
+          "ipai_ai_provider_pulser"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_expense/__manifest__.py",
+        "module": "IPAI Expense & Travel (PH)",
+        "technical": "ipai_expense",
+        "depends": [
+          "hr",
+          "hr_expense",
+          "account",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ce_cleaner/__manifest__.py",
+        "module": "IPAI CE Cleaner (No Enterprise/IAP)",
+        "technical": "ipai_ce_cleaner",
+        "depends": [
+          "base",
+          "web",
+          "remove_odoo_enterprise",
+          "disable_odoo_online"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_focalboard_connector/__manifest__.py",
+        "module": "IPAI Focalboard Connector",
+        "technical": "ipai_focalboard_connector",
+        "depends": [
+          "base",
+          "project",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_marketing_ai/__manifest__.py",
+        "module": "IPAI Marketing AI (Content + Social Hygiene)",
+        "technical": "ipai_marketing_ai",
+        "depends": [
+          "base",
+          "mail",
+          "mass_mailing",
+          "ipai_ask_ai",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_advisor/__manifest__.py",
+        "module": "IPAI Ops Advisor",
+        "technical": "ipai_advisor",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_fluent2/__manifest__.py",
+        "module": "IPAI Fluent 2 Theme Tokens",
+        "technical": "ipai_theme_fluent2",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_expense_ocr/__manifest__.py",
+        "module": "IPAI Expense OCR",
+        "technical": "ipai_expense_ocr",
+        "depends": [
+          "hr_expense",
+          "ipai_document_ai"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_provider_pulser/__manifest__.py",
+        "module": "IPAI AI Provider - Pulser Gateway",
+        "technical": "ipai_ai_provider_pulser",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_close_automation/__manifest__.py",
+        "module": "IPAI Finance Close Automation",
+        "technical": "ipai_finance_close_automation",
+        "depends": [
+          "project",
+          "resource",
+          "ipai_finance_close_seed"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_platform_theme/__manifest__.py",
+        "module": "IPAI Platform Theme Tokens",
+        "technical": "ipai_platform_theme",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_default_home/__manifest__.py",
+        "module": "InsightPulse Custom Home Page",
+        "technical": "ipai_default_home",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ask_ai/__manifest__.py",
+        "module": "IPAI Ask AI",
+        "technical": "ipai_ask_ai",
+        "depends": [
+          "base",
+          "mail",
+          "project",
+          "ipai_finance_ppm"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_agents/__manifest__.py",
+        "module": "IPAI AI Agents (CE/OCA 18)",
+        "technical": "ipai_ai_agents",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_equipment/__manifest__.py",
+        "module": "IPAI Equipment Management",
+        "technical": "ipai_equipment",
+        "depends": [
+          "stock",
+          "maintenance",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_v18_compat/__manifest__.py",
+        "module": "IPAI Odoo 18 Compatibility Fixes",
+        "technical": "ipai_v18_compat",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_superset_connector/__manifest__.py",
+        "module": "IPAI Superset Connector",
+        "technical": "ipai_superset_connector",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_agents_ui/__manifest__.py",
+        "module": "IPAI AI Agents UI (React + Fluent)",
+        "technical": "ipai_ai_agents_ui",
+        "depends": [
+          "web",
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_studio/__manifest__.py",
+        "module": "IPAI AI Studio (CE) - AI-driven Module Builder",
+        "technical": "ipai_ai_studio",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_month_end/__manifest__.py",
+        "module": "IPAI Finance Month-End (Templates + Generator)",
+        "technical": "ipai_finance_month_end",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_tenant_core/__manifest__.py",
+        "module": "InsightPulse AI - Tenant Core",
+        "technical": "ipai_tenant_core",
+        "depends": [
+          "base",
+          "mail",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_provider_kapa/__manifest__.py",
+        "module": "IPAI AI Provider: Kapa",
+        "technical": "ipai_ai_provider_kapa",
+        "depends": [
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_close_seed/__manifest__.py",
+        "module": "IPAI Finance Close Seed",
+        "technical": "ipai_finance_close_seed",
+        "depends": [
+          "project",
+          "resource"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_tbwa_backend/__manifest__.py",
+        "module": "IPAI TBWA Backend Theme (DEPRECATED)",
+        "technical": "ipai_theme_tbwa_backend",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_aiux_chat/__manifest__.py",
+        "module": "IPAI AIUX Chat",
+        "technical": "ipai_aiux_chat",
+        "depends": [
+          "web",
+          "ipai_theme_aiux"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_mailgun_api/__manifest__.py",
+        "module": "IPAI Mailgun API",
+        "technical": "ipai_mailgun_api",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_bir_compliance/__manifest__.py",
+        "module": "IPAI Finance BIR Compliance (Schedule + Generator)",
+        "technical": "ipai_finance_bir_compliance",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "module": "InsightPulse Clarity PPM Parity",
+        "technical": "ipai_clarity_ppm_parity",
+        "depends": [
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_a1/__manifest__.py",
+        "module": "IPAI PPM A1 Control Center",
+        "technical": "ipai_ppm_a1",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_project_hybrid/__manifest__.py",
+        "module": "IPAI Finance Project Hybrid (IM1/IM2 + BIR + Month-End Generators)",
+        "technical": "ipai_finance_project_hybrid",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm/__manifest__.py",
+        "module": "IPAI Portfolio & Program Management",
+        "technical": "ipai_ppm",
+        "depends": [
+          "project",
+          "hr",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_monthly_close/__manifest__.py",
+        "module": "PPM Monthly Close Scheduler",
+        "technical": "ipai_ppm_monthly_close",
+        "depends": [
+          "base",
+          "project",
+          "mail",
+          "resource"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_dashboard_canvas/__manifest__.py",
+        "module": "IPAI PPM Dashboard Canvas",
+        "technical": "ipai_ppm_dashboard_canvas",
+        "depends": [
+          "project",
+          "mail",
+          "web",
+          "hr_timesheet"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_skill_api/__manifest__.py",
+        "module": "IPAI Skill API",
+        "technical": "ipai_skill_api",
+        "depends": [
+          "base",
+          "web",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_test_fixtures/__manifest__.py",
+        "module": "IPAI Test Fixtures",
+        "technical": "ipai_test_fixtures",
+        "depends": [
+          "base",
+          "hr",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_custom_routes/__manifest__.py",
+        "module": "InsightPulse Custom Routes",
+        "technical": "ipai_custom_routes",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "calendar",
+          "project",
+          "hr_expense"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_module_gating/__manifest__.py",
+        "module": "IPAI Module Production Gating",
+        "technical": "ipai_module_gating",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_integrations/__manifest__.py",
+        "module": "IPAI Integrations",
+        "technical": "ipai_integrations",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_fluent_finance/__manifest__.py",
+        "module": "IPAI Fluent 2 Finance Theme",
+        "technical": "ipai_theme_fluent_finance",
+        "depends": [
+          "web",
+          "ipai_finance_ppm"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_industry_marketing_agency/__manifest__.py",
+        "module": "InsightPulse Industry - Marketing Agency",
+        "technical": "ipai_industry_marketing_agency",
+        "depends": [
+          "ipai_workspace_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_assets/__manifest__.py",
+        "module": "IPAI Asset Checkout",
+        "technical": "ipai_assets",
+        "depends": [
+          "base",
+          "mail",
+          "hr",
+          "stock"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_profitability_bridge/__manifest__.py",
+        "module": "IPAI Project Profitability Bridge",
+        "technical": "ipai_project_profitability_bridge",
+        "depends": [
+          "project",
+          "analytic",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_marketing_journey/__manifest__.py",
+        "module": "IPAI Marketing Journey Builder",
+        "technical": "ipai_marketing_journey",
+        "depends": [
+          "base",
+          "mail",
+          "mass_mailing",
+          "utm",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm/__manifest__.py",
+        "module": "IPAI Finance PPM",
+        "technical": "ipai_finance_ppm",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_n8n_connector/__manifest__.py",
+        "module": "IPAI n8n Connector",
+        "technical": "ipai_n8n_connector",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_catalog_bridge/__manifest__.py",
+        "module": "IPAI Catalog Bridge",
+        "technical": "ipai_catalog_bridge",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_dev_studio_base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_audit/__manifest__.py",
+        "module": "IPAI AI Audit & Governance",
+        "technical": "ipai_ai_audit",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_ai_provider_pulser"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_agent_core/__manifest__.py",
+        "module": "IPAI Agent Core",
+        "technical": "ipai_agent_core",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_connectors/__manifest__.py",
+        "module": "IPAI AI Connectors",
+        "technical": "ipai_ai_connectors",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_mattermost_connector/__manifest__.py",
+        "module": "IPAI Mattermost Connector",
+        "technical": "ipai_mattermost_connector",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_closing/__manifest__.py",
+        "module": "IPAI Finance PPM Closing Generator",
+        "technical": "ipai_finance_ppm_closing",
+        "depends": [
+          "project",
+          "ipai_finance_ppm",
+          "ipai_ppm_monthly_close"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_command_center/__manifest__.py",
+        "module": "IPAI Command Center",
+        "technical": "ipai_command_center",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_design_system_apps_sdk"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_monthly_closing/__manifest__.py",
+        "module": "IPAI Finance Monthly Closing",
+        "technical": "ipai_finance_monthly_closing",
+        "depends": [
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_gantt/__manifest__.py",
+        "module": "IPAI Project Gantt (CE)",
+        "technical": "ipai_project_gantt",
+        "depends": [
+          "project",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_fluent2/__manifest__.py",
+        "module": "IPAI Web Fluent 2 Theme Layer",
+        "technical": "ipai_web_fluent2",
+        "depends": [
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_portal_fix/__manifest__.py",
+        "module": "IPAI Portal Fix",
+        "technical": "ipai_portal_fix",
+        "depends": [
+          "portal"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_icons_fluent/__manifest__.py",
+        "module": "IPAI Web Icons - Fluent",
+        "technical": "ipai_web_icons_fluent",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_core/__manifest__.py",
+        "module": "IPAI AI Core",
+        "technical": "ipai_ai_core",
+        "depends": [
+          "base",
+          "mail",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_master_control/__manifest__.py",
+        "module": "Master Control - Work Intake",
+        "technical": "ipai_master_control",
+        "depends": [
+          "base",
+          "hr",
+          "hr_expense",
+          "purchase"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ui_brand_tokens/__manifest__.py",
+        "module": "IPAI UI Brand Tokens",
+        "technical": "ipai_ui_brand_tokens",
+        "depends": [
+          "web",
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_workspace_core/__manifest__.py",
+        "module": "InsightPulse Workspace Core",
+        "technical": "ipai_workspace_core",
+        "depends": [
+          "ipai_dev_studio_base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_web_theme_tbwa/__manifest__.py",
+        "module": "IPAI Web Theme - TBWA",
+        "technical": "ipai_web_theme_tbwa",
+        "depends": [
+          "web",
+          "mail",
+          "ipai_ui_brand_tokens"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_industry_accounting_firm/__manifest__.py",
+        "module": "InsightPulse Industry - Accounting Firm",
+        "technical": "ipai_industry_accounting_firm",
+        "depends": [
+          "ipai_workspace_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_dashboard/__manifest__.py",
+        "module": "IPAI Finance PPM Dashboard",
+        "technical": "ipai_finance_ppm_dashboard",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_bir_compliance/__manifest__.py",
+        "module": "IPAI Tax Shield (Philippines)",
+        "technical": "ipai_bir_compliance",
+        "depends": [
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_aiux/__manifest__.py",
+        "module": "IPAI AIUX Theme",
+        "technical": "ipai_theme_aiux",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_tbwa/__manifest__.py",
+        "module": "IPAI Theme TBWA (Backend)",
+        "technical": "ipai_theme_tbwa",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_srm/__manifest__.py",
+        "module": "IPAI Supplier Relationship Management",
+        "technical": "ipai_srm",
+        "depends": [
+          "base",
+          "mail",
+          "purchase",
+          "contacts"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_program/__manifest__.py",
+        "module": "IPAI Project Program (Program + IM Projects)",
+        "technical": "ipai_project_program",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ce_branding/__manifest__.py",
+        "module": "InsightPulse AI - CE Branding",
+        "technical": "ipai_ce_branding",
+        "depends": [
+          "web",
+          "base",
+          "remove_odoo_enterprise",
+          "disable_odoo_online"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ask_ai_chatter/__manifest__.py",
+        "module": "IPAI Ask AI Chatter",
+        "technical": "ipai_ask_ai_chatter",
+        "depends": [
+          "mail",
+          "ipai_ask_ai"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_ppm_tdi/__manifest__.py",
+        "module": "Finance PPM Transaction Data Ingestion (TDI)",
+        "technical": "ipai_finance_ppm_tdi",
+        "depends": [
+          "base",
+          "project",
+          "hr",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_design_system_apps_sdk/__manifest__.py",
+        "module": "IPAI Design System - Apps SDK UI",
+        "technical": "ipai_design_system_apps_sdk",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_auth_oauth_internal/__manifest__.py",
+        "module": "IPAI OAuth Internal User",
+        "technical": "ipai_auth_oauth_internal",
+        "depends": [
+          "auth_oauth"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_dev_studio_base/__manifest__.py",
+        "module": "InsightPulse Dev Studio Base",
+        "technical": "ipai_dev_studio_base",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "contacts",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_studio_ai/__manifest__.py",
+        "module": "IPAI Studio AI",
+        "technical": "ipai_studio_ai",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_settings_dashboard/__manifest__.py",
+        "module": "IPAI Settings Dashboard",
+        "technical": "ipai_settings_dashboard",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_close_orchestration/__manifest__.py",
+        "module": "IPAI Close Cycle Orchestration",
+        "technical": "ipai_close_orchestration",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_project_suite/__manifest__.py",
+        "module": "IPAI Project Suite (CE)",
+        "technical": "ipai_project_suite",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_approvals/__manifest__.py",
+        "module": "IPAI Approvals (Enterprise Parity)",
+        "technical": "ipai_approvals",
+        "depends": [
+          "base",
+          "mail",
+          "hr"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_control_room/__manifest__.py",
+        "module": "IPAI Control Room",
+        "technical": "ipai_control_room",
+        "depends": [
+          "base",
+          "mail",
+          "project",
+          "web",
+          "ipai_theme_fluent2"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ocr_expense/__manifest__.py",
+        "module": "IPAI OCR Expense Digitization",
+        "technical": "ipai_ocr_expense",
+        "depends": [
+          "hr_expense",
+          "ipai_expense"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_document_ai/__manifest__.py",
+        "module": "IPAI Document AI",
+        "technical": "ipai_document_ai",
+        "depends": [
+          "base",
+          "mail",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_sources_odoo/__manifest__.py",
+        "module": "IPAI AI Sources (Odoo Export)",
+        "technical": "ipai_ai_sources_odoo",
+        "depends": [
+          "base",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_chatgpt_sdk_theme/__manifest__.py",
+        "module": "IPAI ChatGPT App SDK Theme",
+        "technical": "ipai_chatgpt_sdk_theme",
+        "depends": [
+          "web",
+          "website"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_prompts/__manifest__.py",
+        "module": "IPAI AI Prompts Library",
+        "technical": "ipai_ai_prompts",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_agent_core",
+          "ipai_ai_provider_pulser"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_expense/__manifest__.py",
+        "module": "IPAI Expense & Travel (PH)",
+        "technical": "ipai_expense",
+        "depends": [
+          "hr",
+          "hr_expense",
+          "account",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ce_cleaner/__manifest__.py",
+        "module": "IPAI CE Cleaner (No Enterprise/IAP)",
+        "technical": "ipai_ce_cleaner",
+        "depends": [
+          "base",
+          "web",
+          "remove_odoo_enterprise",
+          "disable_odoo_online"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_focalboard_connector/__manifest__.py",
+        "module": "IPAI Focalboard Connector",
+        "technical": "ipai_focalboard_connector",
+        "depends": [
+          "base",
+          "project",
+          "ipai_integrations"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_marketing_ai/__manifest__.py",
+        "module": "IPAI Marketing AI (Content + Social Hygiene)",
+        "technical": "ipai_marketing_ai",
+        "depends": [
+          "base",
+          "mail",
+          "mass_mailing",
+          "ipai_ask_ai",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_advisor/__manifest__.py",
+        "module": "IPAI Ops Advisor",
+        "technical": "ipai_advisor",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_fluent2/__manifest__.py",
+        "module": "IPAI Fluent 2 Theme Tokens",
+        "technical": "ipai_theme_fluent2",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_expense_ocr/__manifest__.py",
+        "module": "IPAI Expense OCR",
+        "technical": "ipai_expense_ocr",
+        "depends": [
+          "hr_expense",
+          "ipai_document_ai"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_provider_pulser/__manifest__.py",
+        "module": "IPAI AI Provider - Pulser Gateway",
+        "technical": "ipai_ai_provider_pulser",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_agent_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_close_automation/__manifest__.py",
+        "module": "IPAI Finance Close Automation",
+        "technical": "ipai_finance_close_automation",
+        "depends": [
+          "project",
+          "resource",
+          "ipai_finance_close_seed"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_platform_theme/__manifest__.py",
+        "module": "IPAI Platform Theme Tokens",
+        "technical": "ipai_platform_theme",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_default_home/__manifest__.py",
+        "module": "InsightPulse Custom Home Page",
+        "technical": "ipai_default_home",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ask_ai/__manifest__.py",
+        "module": "IPAI Ask AI",
+        "technical": "ipai_ask_ai",
+        "depends": [
+          "base",
+          "mail",
+          "project",
+          "ipai_finance_ppm"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_agents/__manifest__.py",
+        "module": "IPAI AI Agents (CE/OCA 18)",
+        "technical": "ipai_ai_agents",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_equipment/__manifest__.py",
+        "module": "IPAI Equipment Management",
+        "technical": "ipai_equipment",
+        "depends": [
+          "stock",
+          "maintenance",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_v18_compat/__manifest__.py",
+        "module": "IPAI Odoo 18 Compatibility Fixes",
+        "technical": "ipai_v18_compat",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_superset_connector/__manifest__.py",
+        "module": "IPAI Superset Connector",
+        "technical": "ipai_superset_connector",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_agents_ui/__manifest__.py",
+        "module": "IPAI AI Agents UI (React + Fluent)",
+        "technical": "ipai_ai_agents_ui",
+        "depends": [
+          "web",
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_studio/__manifest__.py",
+        "module": "IPAI AI Studio (CE) - AI-driven Module Builder",
+        "technical": "ipai_ai_studio",
+        "depends": [
+          "base",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_month_end/__manifest__.py",
+        "module": "IPAI Finance Month-End (Templates + Generator)",
+        "technical": "ipai_finance_month_end",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_tenant_core/__manifest__.py",
+        "module": "InsightPulse AI - Tenant Core",
+        "technical": "ipai_tenant_core",
+        "depends": [
+          "base",
+          "mail",
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ai_provider_kapa/__manifest__.py",
+        "module": "IPAI AI Provider: Kapa",
+        "technical": "ipai_ai_provider_kapa",
+        "depends": [
+          "ipai_ai_core"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_close_seed/__manifest__.py",
+        "module": "IPAI Finance Close Seed",
+        "technical": "ipai_finance_close_seed",
+        "depends": [
+          "project",
+          "resource"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_theme_tbwa_backend/__manifest__.py",
+        "module": "IPAI TBWA Backend Theme (DEPRECATED)",
+        "technical": "ipai_theme_tbwa_backend",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_aiux_chat/__manifest__.py",
+        "module": "IPAI AIUX Chat",
+        "technical": "ipai_aiux_chat",
+        "depends": [
+          "web",
+          "ipai_theme_aiux"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_mailgun_api/__manifest__.py",
+        "module": "IPAI Mailgun API",
+        "technical": "ipai_mailgun_api",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_bir_compliance/__manifest__.py",
+        "module": "IPAI Finance BIR Compliance (Schedule + Generator)",
+        "technical": "ipai_finance_bir_compliance",
+        "depends": [
+          "project",
+          "mail",
+          "ipai_project_program"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_clarity_ppm_parity/__manifest__.py",
+        "module": "InsightPulse Clarity PPM Parity",
+        "technical": "ipai_clarity_ppm_parity",
+        "depends": [
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_a1/__manifest__.py",
+        "module": "IPAI PPM A1 Control Center",
+        "technical": "ipai_ppm_a1",
+        "depends": [
+          "base",
+          "mail",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_finance_project_hybrid/__manifest__.py",
+        "module": "IPAI Finance Project Hybrid (IM1/IM2 + BIR + Month-End Generators)",
+        "technical": "ipai_finance_project_hybrid",
+        "depends": [
+          "project",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm/__manifest__.py",
+        "module": "IPAI Portfolio & Program Management",
+        "technical": "ipai_ppm",
+        "depends": [
+          "project",
+          "hr",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai/ipai_ppm_monthly_close/__manifest__.py",
+        "module": "PPM Monthly Close Scheduler",
+        "technical": "ipai_ppm_monthly_close",
+        "depends": [
+          "base",
+          "project",
+          "mail",
+          "resource"
+        ]
+      },
+      {
+        "path": "addons/ipai_finance_ppm_golive/__manifest__.py",
+        "module": "Finance PPM Go-Live Checklist",
+        "technical": "ipai_finance_ppm_golive",
+        "depends": [
+          "base",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai_theme_tbwa/__manifest__.py",
+        "module": "TBWA Backend Theme (IPAI)",
+        "technical": "ipai_theme_tbwa",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_core/__manifest__.py",
+        "module": "IPAI Work OS Core",
+        "technical": "ipai_workos_core",
+        "depends": [
+          "base",
+          "web",
+          "mail",
+          "ipai_platform_permissions",
+          "ipai_platform_audit"
+        ]
+      },
+      {
+        "path": "addons/ipai_ask_ai_chatter/__manifest__.py",
+        "module": "IPAI Ask AI Chatter (Headless)",
+        "technical": "ipai_ask_ai_chatter",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_ocr_gateway/__manifest__.py",
+        "module": "IPAI OCR Gateway",
+        "technical": "ipai_ocr_gateway",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/oca/__manifest__.py",
+        "module": "OCA Module Namespace",
+        "technical": "oca",
+        "depends": [
+          "base"
+        ]
+      },
+      {
+        "path": "addons/ipai_bir_tax_compliance/__manifest__.py",
+        "module": "IPAI BIR Tax Compliance",
+        "technical": "ipai_bir_tax_compliance",
+        "depends": [
+          "base",
+          "mail",
+          "account",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_blocks/__manifest__.py",
+        "module": "IPAI Work OS Blocks",
+        "technical": "ipai_workos_blocks",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_grid_view/__manifest__.py",
+        "module": "IPAI Grid/List View",
+        "technical": "ipai_grid_view",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_approvals/__manifest__.py",
+        "module": "IPAI Platform - Approvals",
+        "technical": "ipai_platform_approvals",
+        "depends": [
+          "base",
+          "mail",
+          "ipai_platform_workflow"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_db/__manifest__.py",
+        "module": "IPAI Work OS Database",
+        "technical": "ipai_workos_db",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_theme/__manifest__.py",
+        "module": "IPAI Platform Theme",
+        "technical": "ipai_platform_theme",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_ask_ai/__manifest__.py",
+        "module": "IPAI Ask AI",
+        "technical": "ipai_ask_ai",
+        "depends": [
+          "base",
+          "web",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_audit/__manifest__.py",
+        "module": "IPAI Platform - Audit Trail",
+        "technical": "ipai_platform_audit",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_platform_workflow/__manifest__.py",
+        "module": "IPAI Platform - Workflow Engine",
+        "technical": "ipai_platform_workflow",
+        "depends": [
+          "base",
+          "mail"
+        ]
+      },
+      {
+        "path": "addons/ipai_superset_connector/__manifest__.py",
+        "module": "IPAI Superset Connector",
+        "technical": "ipai_superset_connector",
+        "depends": [
+          "base",
+          "mail",
+          "sale",
+          "account",
+          "stock",
+          "hr",
+          "project"
+        ]
+      },
+      {
+        "path": "addons/ipai_tbwa_finance/__manifest__.py",
+        "module": "IPAI TBWA Finance",
+        "technical": "ipai_tbwa_finance",
+        "depends": [
+          "base",
+          "mail",
+          "account"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_templates/__manifest__.py",
+        "module": "IPAI Work OS Templates",
+        "technical": "ipai_workos_templates",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core",
+          "ipai_workos_blocks",
+          "ipai_workos_db"
+        ]
+      },
+      {
+        "path": "addons/ipai_workos_views/__manifest__.py",
+        "module": "IPAI Work OS Views",
+        "technical": "ipai_workos_views",
+        "depends": [
+          "base",
+          "web",
+          "ipai_workos_core",
+          "ipai_workos_db"
+        ]
+      },
+      {
+        "path": "addons/ipai_web_theme_chatgpt/__manifest__.py",
+        "module": "IPAI Web Theme (ChatGPT-style)",
+        "technical": "ipai_web_theme_chatgpt",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_theme_tbwa_backend/__manifest__.py",
+        "module": "TBWA Backend Theme (DEPRECATED)",
+        "technical": "ipai_theme_tbwa_backend",
+        "depends": [
+          "web"
+        ]
+      },
+      {
+        "path": "addons/ipai_crm_pipeline/__manifest__.py",
+        "module": "IPAI CRM - Pipeline Clone",
+        "technical": "ipai_crm_pipeline",
+        "depends": [
+          "crm",
+          "mail",
+          "ipai_platform_workflow",
+          "ipai_platform_theme"
+        ]
+      },
+      {
+        "path": "addons/ipai_month_end_closing/__manifest__.py",
+        "module": "IPAI Month-End Closing & BIR Tax Filing",
+        "technical": "ipai_month_end_closing",
+        "depends": [
+          "project",
+          "hr"
+        ]
+      },
+      {
+        "path": "addons/ipai_finance_ppm_umbrella/__manifest__.py",
+        "module": "IPAI Finance PPM \u2013 TBWA Complete Configuration",
+        "technical": "ipai_finance_ppm_umbrella",
+        "depends": [
+          "ipai_finance_ppm",
+          "project"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "seed_scripts": [
+      {
+        "file": "data/finance_seed/import_all.py",
+        "models": [],
+        "mentions_base_automation": false
+      },
+      {
+        "file": "data/finance_seed/update_tasks_after_import.py",
+        "models": [],
+        "mentions_base_automation": false
+      }
+    ]
+  },
+  "enterprise_smells": [
+    {
+      "token": "documents",
+      "file": "addons/ipai/ipai_agent_core/__manifest__.py"
+    },
+    {
+      "token": "documents",
+      "file": "addons/ipai/ipai_ask_ai_chatter/__manifest__.py"
+    },
+    {
+      "token": "studio",
+      "file": "addons/ipai/ipai_dev_studio_base/__manifest__.py"
+    },
+    {
+      "token": "documents",
+      "file": "addons/ipai/ipai_dev_studio_base/__manifest__.py"
+    },
+    {
+      "token": "studio",
+      "file": "addons/ipai/ipai_studio_ai/__manifest__.py"
+    },
+    {
+      "token": "documents",
+      "file": "addons/ipai/ipai_document_ai/__manifest__.py"
+    },
+    {
+      "token": "studio",
+      "file": "addons/ipai/ipai_ai_studio/__manifest__.py"
+    },
+    {
+      "token": "sign",
+      "file": "addons/ipai_finance_ppm_golive/__manifest__.py"
+    },
+    {
+      "token": "documents",
+      "file": "addons/ipai_ocr_gateway/__manifest__.py"
+    },
+    {
+      "token": "web_enterprise",
+      "file": "addons/ipai_theme_tbwa_backend/__manifest__.py"
+    }
+  ],
+  "assumptions": [
+    "This document reflects repo scan only (no external Odoo source introspection).",
+    "Enterprise-only scan is heuristic; finalize with explicit mapping table later."
+  ]
+}
