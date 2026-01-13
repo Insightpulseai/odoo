@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4dab2d5bf26e733b00b3fd85b01fda5a48a66c9e
+> Commit: e4e844c4e44fe253a828c1cd7d78d191268b0f6d
 
 ```
 .
@@ -683,6 +683,14 @@
 │   │   ├── ipai_project_suite
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_saas_tenant
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -1782,7 +1790,8 @@
 │   │   ├── 202512070002_REORG_COPY_DATA.sql
 │   │   ├── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
 │   │   ├── 202601060001_IPAI_KB_CHUNKS.sql
-│   │   └── 20260109_KG.sql
+│   │   ├── 20260109_KG.sql
+│   │   └── 202601120001_MULTI_TENANT_PROVIDER_MODEL.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -1930,6 +1939,7 @@
 │   │   ├── IPAI_AI_PLATFORM_ERD.mmd
 │   │   ├── IPAI_AI_PLATFORM_SCHEMA.dbml
 │   │   ├── IPAI_FINANCE_OKR_SCHEMA.dbml
+│   │   ├── MULTI_TENANT_PROVIDER_SCHEMA.dbml
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
 │   │   ├── ODOO_ERD.puml
@@ -2741,18 +2751,25 @@
 │   │   ├── .env.example
 │   │   ├── package.json
 │   │   └── tsconfig.json
-│   └── ipai-design-tokens
+│   ├── ipai-design-tokens
+│   │   ├── src
+│   │   │   ├── react
+│   │   │   ├── build.ts
+│   │   │   ├── material3Theme.ts
+│   │   │   └── odooTokens.ts
+│   │   ├── material3-expressive.css
+│   │   ├── package.json
+│   │   ├── tailwind-material3.preset.js
+│   │   ├── tailwind.preset.js
+│   │   ├── tokens.css
+│   │   └── tokens.scss
+│   └── saas-types
+│       ├── prisma
+│       │   └── schema.prisma
 │       ├── src
-│       │   ├── react
-│       │   ├── build.ts
-│       │   ├── material3Theme.ts
-│       │   └── odooTokens.ts
-│       ├── material3-expressive.css
+│       │   └── index.ts
 │       ├── package.json
-│       ├── tailwind-material3.preset.js
-│       ├── tailwind.preset.js
-│       ├── tokens.css
-│       └── tokens.scss
+│       └── tsconfig.json
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
 ├── releasekit
@@ -3815,15 +3832,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1228 directories, 2582 files
+1237 directories, 2590 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1424 |
-| Files | 3922 |
-| Python files | 1032 |
-| XML files | 496 |
+| Directories | 1434 |
+| Files | 3944 |
+| Python files | 1040 |
+| XML files | 502 |
 | Markdown files | 744 |
