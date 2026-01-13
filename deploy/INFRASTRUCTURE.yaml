@@ -1,0 +1,303 @@
+# INFRASTRUCTURE.yaml
+# Canonical reference - Single source of truth for all agents
+# DO NOT duplicate this information elsewhere
+
+droplet:
+  name: odoo-erp-prod
+  ip: 178.128.112.214
+  region: SGP1
+  specs: 8 GB RAM / 240 GB Disk
+  provider: DigitalOcean
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SERVICES - Container → Port → URL → Database mapping
+# ═══════════════════════════════════════════════════════════════════════════════
+
+services:
+  odoo:
+    container: odoo-prod
+    image: odoo:18.0
+    internal_port: 8069
+    websocket_port: 8072
+    external_url: https://erp.insightpulseai.net
+    status: ✅ healthy
+    database:
+      host: private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com
+      port: 25060
+      name: odoo
+      user: doadmin
+      ssl: required
+    volumes:
+      - deploy_odoo-web-data:/var/lib/odoo    # CRITICAL - filestore
+      - ../addons:/mnt/extra-addons            # ipai_* modules
+    config: /opt/odoo-ce/repo/deploy/odoo.conf
+
+  n8n:
+    container: c95d05274029_n8n-prod          # Note: hash prefix from compose
+    image: n8nio/n8n:latest
+    internal_port: 5678
+    external_url: https://n8n.insightpulseai.net
+    status: ✅ healthy
+    database:
+      host: private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com
+      port: 25060
+      name: n8n
+      user: doadmin
+      ssl: required
+    volumes:
+      - deploy_n8n-data:/home/node/.n8n       # CRITICAL - workflows + creds
+
+  superset:
+    container: 8ce7c585a4e2_superset-prod     # Note: hash prefix from compose
+    image: apache/superset:latest
+    internal_port: 8088
+    external_url: https://superset.insightpulseai.net
+    status: ✅ healthy
+    database:
+      host: private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com
+      port: 25060
+      name: superset
+      user: doadmin
+      ssl: required
+    volumes:
+      - deploy_superset-data:/app/superset_home
+    connections:                               # BI data sources
+      - name: odoo_prod
+        host: private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com
+        port: 25060
+
+  ocr:
+    container: ocr-prod
+    image: ocr-service:latest
+    internal_port: 8001
+    external_url: https://ocr.insightpulseai.net
+    status: ⚠️ 503 - nginx not proxying (container running)
+    volumes:
+      - deploy_ocr-models:/models              # PaddleOCR cache
+    supabase_integration: true
+
+  mcp:
+    container: mcp-prod
+    image: node:20-alpine
+    internal_port: 3000
+    external_url: https://mcp.insightpulseai.net
+    status: ⚠️ 503 - nginx not proxying (container running)
+    volumes:
+      - deploy_mcp-node-modules:/app/node_modules
+    supabase_integration: true
+
+  auth:
+    container: auth-prod
+    image: node:20-alpine
+    internal_port: 8080
+    external_url: https://auth.insightpulseai.net
+    status: ⚠️ 503 - nginx not proxying (container running)
+    volumes:
+      - deploy_auth-node-modules:/app/node_modules
+    supabase_integration: true
+
+  nginx:
+    container: nginx-prod-v2
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    config: /opt/odoo-ce/repo/deploy/nginx.conf
+    ssl:
+      provider: Let's Encrypt
+      cert: /etc/letsencrypt/live/www.insightpulseai.net/fullchain.pem
+      key: /etc/letsencrypt/live/www.insightpulseai.net/privkey.pem
+      protocols: TLSv1.2, TLSv1.3
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VOLUMES - What matters vs what's legacy
+# ═══════════════════════════════════════════════════════════════════════════════
+
+volumes:
+  critical:
+    deploy_odoo-web-data:
+      description: Odoo filestore (attachments, sessions)
+      backup: DAILY
+      growth: Growing
+      priority: CRITICAL
+
+    deploy_n8n-data:
+      description: n8n workflows and credentials
+      backup: DAILY
+      growth: Growing
+      priority: CRITICAL
+
+    deploy_superset-data:
+      description: Superset dashboards and saved queries
+      backup: DAILY
+      growth: Growing
+      priority: IMPORTANT
+
+  cache:
+    deploy_ocr-models:
+      description: PaddleOCR-VL 900M model files
+      backup: NO (recreatable from download)
+      growth: Static
+      priority: CACHE
+
+    deploy_mcp-node-modules:
+      description: MCP coordinator node_modules
+      backup: NO (recreatable from npm install)
+      growth: Static
+      priority: CACHE
+
+    deploy_auth-node-modules:
+      description: Auth service node_modules
+      backup: NO (recreatable from npm install)
+      growth: Static
+      priority: CACHE
+
+  deprecated:
+    deploy_postgres-data:
+      description: Local PostgreSQL (unused - external DB)
+      backup: NO
+      growth: Static
+      priority: DEPRECATED
+      action: Remove after verification period
+
+    deploy_odoo-db-data:
+      description: Local database (unused - external DB)
+      backup: NO
+      growth: Static
+      priority: DEPRECATED
+      action: Remove after verification period
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# EXTERNAL DEPENDENCIES
+# ═══════════════════════════════════════════════════════════════════════════════
+
+external:
+  postgresql:
+    provider: DigitalOcean Managed Database
+    cluster: private-odoo-db-sgp1-do-user-27714628-0
+    host: private-odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com
+    port: 25060
+    ssl: required
+    region: SGP1
+    databases:
+      - name: odoo
+        description: Main Odoo ERP database
+        owner: doadmin
+      - name: n8n
+        description: n8n workflow engine database
+        owner: doadmin
+      - name: superset
+        description: Apache Superset BI database
+        owner: doadmin
+      - name: postgres
+        description: Default admin database
+        owner: doadmin
+
+  supabase:
+    project: spdtwktxdalcfigzeqrz
+    url: https://spdtwktxdalcfigzeqrz.supabase.co
+    region: Southeast Asia (Singapore)
+    usage: Task queue, analytics warehouse, n8n triggers (NOT primary Odoo DB)
+    databases:
+      - scout (transaction data)
+      - task_queue (OCR job processing)
+      - etl (medallion architecture: Bronze/Silver/Gold)
+
+  dns:
+    provider: Google Domains (Namecheap DNS)
+    domain: insightpulseai.net
+    mailgun_subdomain: mg.insightpulseai.net
+    nameservers:
+      - ns1.namecheap.com
+      - ns2.namecheap.com
+    records: See docs/DNS_SETTINGS.md
+
+  mailgun:
+    domain: mg.insightpulseai.net
+    smtp_host: smtp.mailgun.org
+    smtp_port: 587
+    smtp_user: postmaster@mg.insightpulseai.net
+    from_email: noreply@mg.insightpulseai.net
+    api_key_env: MAILGUN_API_KEY
+    webhook_signing_key_env: MAILGUN_WEBHOOK_SIGNING_KEY
+    status: ⚠️ DNS verified, SMTP blocked by DigitalOcean port 587
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# NETWORK ROUTING - nginx.conf reference
+# ═══════════════════════════════════════════════════════════════════════════════
+
+routing:
+  erp.insightpulseai.net:      → odoo-prod:8069      ✅ Active
+  erp.insightpulseai.net/websocket: → odoo-prod:8072 ✅ Active
+  n8n.insightpulseai.net:      → c95d05274029_n8n-prod:5678       ✅ Active
+  superset.insightpulseai.net: → 8ce7c585a4e2_superset-prod:8088  ✅ Active
+  www.insightpulseai.net:      → /var/www/html (static)            ✅ Active
+  ocr.insightpulseai.net:      → ocr-prod:8001       ⚠️ FIX NEEDED (503 placeholder)
+  mcp.insightpulseai.net:      → mcp-prod:3000       ⚠️ FIX NEEDED (503 placeholder)
+  auth.insightpulseai.net:     → auth-prod:8080      ⚠️ FIX NEEDED (503 placeholder)
+  chat.insightpulseai.net:     → 127.0.0.1:3001      ⏳ PLANNED (Mattermost)
+  affine.insightpulseai.net:   → 127.0.0.1:3002      ⏳ PLANNED (Affine)
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# COMPOSE CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════════
+
+compose:
+  file: /opt/odoo-ce/repo/deploy/docker-compose.yml
+  network: deploy_default (external bridge)
+  project: deploy
+  working_dir: /opt/odoo-ce/repo/deploy
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# KNOWN ISSUES & RESOLUTIONS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+issues:
+  1_nginx_503_services:
+    services:
+      - ocr.insightpulseai.net
+      - mcp.insightpulseai.net
+      - auth.insightpulseai.net
+    problem: "Containers running but nginx returns 503"
+    cause: "Nginx config has placeholder upstreams, not proxying to actual containers"
+    resolution: "Update /opt/odoo-ce/repo/deploy/nginx.conf with proper upstream blocks"
+    priority: HIGH
+    fix_script: scripts/fix-nginx-503-services.sh
+
+  2_mailgun_smtp_blocked:
+    service: mailgun
+    problem: "SMTP connection timeout on port 587"
+    cause: "DigitalOcean blocks outbound port 25/587 by default (anti-spam)"
+    resolution: "Use Mailgun API instead of SMTP, or request port unblock from DO support"
+    priority: HIGH
+    workarounds:
+      - Use Mailgun HTTP API for sending (recommended)
+      - Use alternative port 2525 (if Mailgun supports)
+      - Request port 587 unblock from DigitalOcean support
+    status: DNS verified, SMTP blocked, API alternative needed
+
+  3_deprecated_volumes:
+    volumes:
+      - deploy_postgres-data
+      - deploy_odoo-db-data
+    problem: "Unused volumes consuming disk space"
+    cause: "Migration from local to managed PostgreSQL complete"
+    resolution: "Safe to remove after 30-day verification period"
+    priority: LOW
+    verification_date: 2026-01-13
+    safe_delete_after: 2026-02-12
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# QUICK REFERENCE COMMANDS
+# ═══════════════════════════════════════════════════════════════════════════════
+
+commands:
+  ssh: ssh root@178.128.112.214
+  compose_dir: cd /opt/odoo-ce/repo/deploy
+  view_logs: docker logs -f <container-name>
+  restart_service: docker restart <container-name>
+  nginx_reload: docker exec nginx-prod-v2 nginx -s reload
+  nginx_test: docker exec nginx-prod-v2 nginx -t
+  list_containers: docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+  list_volumes: docker volume ls
+  check_health: curl -I https://<subdomain>.insightpulseai.net
