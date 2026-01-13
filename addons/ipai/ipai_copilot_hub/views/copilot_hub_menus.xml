@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root Menu for Copilot Hub (App Tile) -->
+    <menuitem
+        id="menu_copilot_hub_root"
+        name="Ops Control Room"
+        sequence="15"
+        action="action_copilot_hub_main"
+        groups="ipai_copilot_hub.group_copilot_hub_user"
+        web_icon="ipai_copilot_hub,static/description/icon.png"/>
+
+    <!-- Sub-menus -->
+    <menuitem
+        id="menu_copilot_hub_main"
+        name="Dashboard"
+        parent="menu_copilot_hub_root"
+        action="action_copilot_hub_main"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_copilot_hub_runbooks"
+        name="AI Runbooks"
+        parent="menu_copilot_hub_root"
+        action="action_copilot_hub_runbooks"
+        sequence="20"/>
+
+    <!-- Configuration Menu -->
+    <menuitem
+        id="menu_copilot_hub_config"
+        name="Configuration"
+        parent="menu_copilot_hub_root"
+        sequence="100"
+        groups="ipai_copilot_hub.group_copilot_hub_manager"/>
+
+    <menuitem
+        id="menu_copilot_hub_settings"
+        name="Settings"
+        parent="menu_copilot_hub_config"
+        action="action_copilot_hub_settings"
+        sequence="10"/>
+
+</odoo>
