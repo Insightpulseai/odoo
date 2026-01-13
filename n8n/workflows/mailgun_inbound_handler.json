@@ -1,0 +1,210 @@
+{
+  "name": "Mailgun Inbound Email Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "mailgun-inbound",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-mailgun",
+      "name": "Mailgun Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {"name": "from", "value": "={{$json.sender}}"},
+            {"name": "to", "value": "={{$json.recipient}}"},
+            {"name": "subject", "value": "={{$json.subject}}"},
+            {"name": "body_text", "value": "={{$json['stripped-text']}}"},
+            {"name": "body_html", "value": "={{$json['stripped-html']}}"},
+            {"name": "attachments", "value": "={{$json.attachments}}"},
+            {"name": "timestamp", "value": "={{$json.timestamp}}"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "parse-email",
+      "name": "Parse Email Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{$json.to}}",
+                    "operation": "contains",
+                    "value2": "support@mg.insightpulseai.net"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "support"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{$json.to}}",
+                    "operation": "contains",
+                    "value2": "helpdesk@mg.insightpulseai.net"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "helpdesk"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{$json.to}}",
+                    "operation": "contains",
+                    "value2": "finance@mg.insightpulseai.net"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "finance"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "route-by-recipient",
+      "name": "Route by Recipient",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.net/mailgun/inbound/support",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "from", "value": "={{$json.from}}"},
+            {"name": "subject", "value": "={{$json.subject}}"},
+            {"name": "body", "value": "={{$json.body_text}}"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "forward-support",
+      "name": "Forward to Support",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [850, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.net/mailgun/inbound/helpdesk",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "from", "value": "={{$json.from}}"},
+            {"name": "subject", "value": "={{$json.subject}}"},
+            {"name": "body", "value": "={{$json.body_text}}"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "forward-helpdesk",
+      "name": "Forward to Helpdesk",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://erp.insightpulseai.net/mailgun/inbound/finance",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBasicAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {"name": "from", "value": "={{$json.from}}"},
+            {"name": "subject", "value": "={{$json.subject}}"},
+            {"name": "body", "value": "={{$json.body_text}}"}
+          ]
+        },
+        "options": {}
+      },
+      "id": "forward-finance",
+      "name": "Forward to Finance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [850, 400]
+    },
+    {
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "@finance_alerts",
+        "text": "📧 Unrouted email received:\n\nFrom: {{$json.from}}\nTo: {{$json.to}}\nSubject: {{$json.subject}}\n\nBody:\n{{$json.body_text}}"
+      },
+      "id": "alert-unrouted",
+      "name": "Alert Unrouted Email",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [850, 500]
+    }
+  ],
+  "connections": {
+    "Mailgun Webhook": {
+      "main": [
+        [
+          {"node": "Parse Email Data", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Parse Email Data": {
+      "main": [
+        [
+          {"node": "Route by Recipient", "type": "main", "index": 0}
+        ]
+      ]
+    },
+    "Route by Recipient": {
+      "main": [
+        [
+          {"node": "Forward to Support", "type": "main", "index": 0}
+        ],
+        [
+          {"node": "Forward to Helpdesk", "type": "main", "index": 0}
+        ],
+        [
+          {"node": "Forward to Finance", "type": "main", "index": 0}
+        ],
+        [
+          {"node": "Alert Unrouted Email", "type": "main", "index": 0}
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["mailgun", "inbound", "email"],
+  "pinData": {},
+  "versionId": "1"
+}
