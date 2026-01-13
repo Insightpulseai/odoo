@@ -1,0 +1,48 @@
+name: Prod Canonical Guard
+
+on:
+  push:
+    paths:
+      - 'addons/**'
+      - 'data/seed/**'
+      - 'docker-compose.yml'
+      - 'compose.yaml'
+      - 'tools/generate_prod_canonical_requirements.py'
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'data/seed/**'
+      - 'docker-compose.yml'
+      - 'compose.yaml'
+      - 'tools/generate_prod_canonical_requirements.py'
+
+jobs:
+  regen-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Regenerate canonical requirements
+        run: python tools/generate_prod_canonical_requirements.py
+
+      - name: Check for drift
+        run: |
+          if ! git diff --exit-code docs/PROD_CANONICAL_INSTALL_REQUIREMENTS.*; then
+            echo "❌ ERROR: Canonical requirements are out of sync!"
+            echo ""
+            echo "The following files have changed:"
+            git diff --name-only docs/PROD_CANONICAL_INSTALL_REQUIREMENTS.*
+            echo ""
+            echo "To fix, run locally:"
+            echo "  python tools/generate_prod_canonical_requirements.py"
+            echo "  git add docs/PROD_CANONICAL_INSTALL_REQUIREMENTS.*"
+            echo "  git commit -m 'chore(repo): update canonical requirements'"
+            exit 1
+          fi
+          echo "✅ Canonical requirements are in sync"
