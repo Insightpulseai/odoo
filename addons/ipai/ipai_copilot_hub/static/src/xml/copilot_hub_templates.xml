@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Main Copilot Hub Template -->
+    <t t-name="ipai_copilot_hub.Main">
+        <div class="o_ipai_copilot_hub" t-att-class="{'o_ipai_copilot_hub--loading': state.loading}">
+
+            <!-- Loading State -->
+            <t t-if="state.loading">
+                <div class="o_ipai_copilot_hub_loading">
+                    <div class="o_ipai_copilot_hub_spinner"/>
+                    <span class="o_ipai_copilot_hub_loading_text">Loading Ops Control Room...</span>
+                </div>
+            </t>
+
+            <!-- Error State -->
+            <t t-elif="state.error">
+                <div class="o_ipai_copilot_hub_error">
+                    <svg class="o_ipai_copilot_hub_error_icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    <h2 class="o_ipai_copilot_hub_error_title">Unable to Load</h2>
+                    <p class="o_ipai_copilot_hub_error_message" t-esc="state.error"/>
+                    <button class="o_ipai_copilot_hub_toolbar_btn o_ipai_copilot_hub_toolbar_btn--primary"
+                            t-on-click="loadHubConfig">
+                        Retry
+                    </button>
+                </div>
+            </t>
+
+            <!-- Empty State (no URL configured) -->
+            <t t-elif="!state.hubUrl">
+                <div class="o_ipai_copilot_hub_empty">
+                    <svg class="o_ipai_copilot_hub_empty_icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                    </svg>
+                    <h2 class="o_ipai_copilot_hub_empty_title">Copilot Hub Not Configured</h2>
+                    <p class="o_ipai_copilot_hub_empty_message">
+                        The Ops Control Room URL is not configured.
+                        Please set the system parameter to enable this feature.
+                    </p>
+                    <code class="o_ipai_copilot_hub_empty_hint">ipai.copilot.hub_url</code>
+                    <button class="o_ipai_copilot_hub_toolbar_btn" t-on-click="openSettings">
+                        Open Settings
+                    </button>
+                </div>
+            </t>
+
+            <!-- Hub Content -->
+            <t t-else="">
+                <!-- Optional Toolbar -->
+                <t t-if="state.showToolbar">
+                    <div class="o_ipai_copilot_hub_toolbar">
+                        <div class="o_ipai_copilot_hub_toolbar_title">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                            Ops Control Room
+                        </div>
+                        <div class="o_ipai_copilot_hub_toolbar_actions">
+                            <button class="o_ipai_copilot_hub_toolbar_btn" t-on-click="refresh"
+                                    title="Refresh">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                                </svg>
+                            </button>
+                            <button class="o_ipai_copilot_hub_toolbar_btn" t-on-click="openInNewWindow"
+                                    title="Open in new window">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                                </svg>
+                            </button>
+                            <button class="o_ipai_copilot_hub_toolbar_btn" t-on-click="openSettings"
+                                    title="Settings">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </t>
+
+                <!-- Iframe Container -->
+                <div class="o_ipai_copilot_hub_iframe_container">
+                    <iframe
+                        t-ref="iframe"
+                        class="o_ipai_copilot_hub_iframe"
+                        t-att-src="state.hubUrl"
+                        t-on-load="onIframeLoad"
+                        t-on-error="onIframeError"
+                        title="Ops Control Room"
+                        allow="clipboard-read; clipboard-write"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+                    />
+                </div>
+            </t>
+
+        </div>
+    </t>
+
+</templates>

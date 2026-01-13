@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!--
+        Copilot Hub Configuration
+
+        These parameters configure the external Fluent UI Ops Control Room.
+
+        Parameters:
+        - ipai.copilot.hub_url: External Fluent UI app URL
+        - ipai.copilot.hub_embed_mode: How to embed (iframe/popup/redirect)
+        - ipai.copilot.hub_show_toolbar: Whether to show Odoo toolbar
+        -->
+
+        <!-- Default Copilot Hub URL (change to your deployed Fluent UI app) -->
+        <record id="param_copilot_hub_url" model="ir.config_parameter">
+            <field name="key">ipai.copilot.hub_url</field>
+            <field name="value">https://buildopscontrolroom.vercel.app/</field>
+        </record>
+
+        <!-- Embed mode: iframe (default), popup, redirect -->
+        <record id="param_copilot_hub_embed_mode" model="ir.config_parameter">
+            <field name="key">ipai.copilot.hub_embed_mode</field>
+            <field name="value">iframe</field>
+        </record>
+
+        <!-- Show Odoo toolbar above embedded hub -->
+        <record id="param_copilot_hub_show_toolbar" model="ir.config_parameter">
+            <field name="key">ipai.copilot.hub_show_toolbar</field>
+            <field name="value">True</field>
+        </record>
+
+    </data>
+</odoo>
