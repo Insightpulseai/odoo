@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1d48397657cf6bc01148ba36bd7c6a15b0cbc024
+> Commit: 123d4baefd616a7c3c17f7739684022f15d45fc5
 
 ```
 .
@@ -2284,6 +2284,7 @@
 │   ├── DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md
 │   ├── DIGITALOCEAN_VALIDATION_FRAMEWORK.md
 │   ├── DIRECTIONAL_SYNC.md
+│   ├── DNS_SETTINGS.md
 │   ├── DOCKERFILE_COMPARISON.md
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
@@ -3068,6 +3069,7 @@
 │   ├── run_project_introspection.sh
 │   ├── scan_ipai_modules.py
 │   ├── seed_finance_close_from_xlsx.py
+│   ├── setup-mailgun-secrets.sh
 │   ├── setup_afc_rag.sh
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
@@ -3082,6 +3084,8 @@
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
 │   ├── sync_ipai_sample_metrics_to_supabase.py
+│   ├── test-mailgun.py
+│   ├── test-mailgun.sh
 │   ├── test_afc_rag.py
 │   ├── test_auth_bootstrap.sh
 │   ├── test_deploy_local.sh
@@ -3873,7 +3877,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1261 directories, 2607 files
+1261 directories, 2611 files
 ```
 
 ## 📊 Stats
@@ -3881,7 +3885,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1469 |
-| Files | 3999 |
-| Python files | 1059 |
+| Files | 4003 |
+| Python files | 1060 |
 | XML files | 512 |
-| Markdown files | 748 |
+| Markdown files | 749 |
