@@ -1,0 +1,84 @@
+# Mailgun DNS Records for mg.insightpulseai.net
+# Add these records to your DNS provider (Cloudflare, DigitalOcean, etc.)
+
+# ============================================
+# 1. SPF Record (Sending Authorization)
+# ============================================
+Type: TXT
+Name: mg.insightpulseai.net
+Value: v=spf1 include:mailgun.org ~all
+TTL: 3600
+
+# ============================================
+# 2. DKIM Record (Email Authentication)
+# ============================================
+Type: TXT
+Name: pic._domainkey.mg.insightpulseai.net
+Value: k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB
+TTL: 3600
+
+# ============================================
+# 3. MX Records (Incoming Mail)
+# ============================================
+Type: MX
+Name: mg.insightpulseai.net
+Value: mxa.mailgun.org
+Priority: 10
+TTL: 3600
+
+Type: MX
+Name: mg.insightpulseai.net
+Value: mxb.mailgun.org
+Priority: 10
+TTL: 3600
+
+# ============================================
+# 4. CNAME Record (Tracking)
+# ============================================
+Type: CNAME
+Name: email.mg.insightpulseai.net
+Value: mailgun.org
+TTL: 3600
+
+# ============================================
+# 5. DMARC Record (Authentication Policy)
+# ============================================
+Type: TXT
+Name: _dmarc.mg.insightpulseai.net
+Value: v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;
+TTL: 3600
+
+# ============================================
+# Verification Commands (run after adding)
+# ============================================
+
+# Check SPF:
+dig TXT mg.insightpulseai.net +short
+
+# Check DKIM:
+dig TXT pic._domainkey.mg.insightpulseai.net +short
+
+# Check MX:
+dig MX mg.insightpulseai.net +short
+
+# Check CNAME:
+dig CNAME email.mg.insightpulseai.net +short
+
+# Check DMARC:
+dig TXT _dmarc.mg.insightpulseai.net +short
+
+# ============================================
+# Quick Copy-Paste Format
+# ============================================
+
+TXT | mg.insightpulseai.net | v=spf1 include:mailgun.org ~all
+
+TXT | pic._domainkey.mg.insightpulseai.net | k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB
+
+MX | mg.insightpulseai.net | mxa.mailgun.org | Priority: 10
+
+MX | mg.insightpulseai.net | mxb.mailgun.org | Priority: 10
+
+CNAME | email.mg.insightpulseai.net | mailgun.org
+
+TXT | _dmarc.mg.insightpulseai.net | v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;

@@ -1,0 +1,7 @@
+Type,Name,Value,Priority,TTL
+TXT,mg.insightpulseai.net,v=spf1 include:mailgun.org ~all,,3600
+TXT,pic._domainkey.mg.insightpulseai.net,"k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB",,3600
+MX,mg.insightpulseai.net,mxa.mailgun.org,10,3600
+MX,mg.insightpulseai.net,mxb.mailgun.org,10,3600
+CNAME,email.mg.insightpulseai.net,mailgun.org,,3600
+TXT,_dmarc.mg.insightpulseai.net,"v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;",,3600
