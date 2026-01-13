@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e4e844c4e44fe253a828c1cd7d78d191268b0f6d
+> Commit: f937d028f652f4a692736771d8f0c4e8c8f60c2d
 
 ```
 .
@@ -363,6 +363,16 @@
 │   │   │   ├── security
 │   │   │   ├── static
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_copilot_hub
+│   │   │   ├── controllers
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── static
+│   │   │   ├── views
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_copilot_ui
@@ -1314,6 +1324,8 @@
 │   │   │   ├── app
 │   │   │   ├── assets
 │   │   │   ├── components
+│   │   │   ├── hooks
+│   │   │   ├── theme
 │   │   │   └── types
 │   │   ├── .env.example
 │   │   ├── FINANCE_LANDING_CHECKLIST.md
@@ -3832,15 +3844,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1237 directories, 2590 files
+1246 directories, 2593 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1434 |
-| Files | 3944 |
-| Python files | 1040 |
-| XML files | 502 |
+| Directories | 1448 |
+| Files | 3968 |
+| Python files | 1046 |
+| XML files | 507 |
 | Markdown files | 744 |
