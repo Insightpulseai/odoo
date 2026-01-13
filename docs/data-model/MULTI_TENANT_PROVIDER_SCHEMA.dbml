@@ -1,0 +1,405 @@
+// =============================================================================
+// Multi-Tenant Provider DBML Schema
+// =============================================================================
+// Ideal multi-tenant model where:
+// - Tenant = organization using the platform
+// - Provider = organization offering services/agents to other tenants
+// - Same org can be BOTH tenant and provider
+//
+// For use with dbdiagram.io
+// Generated: 2026-01-12
+// =============================================================================
+
+Project multi_tenant_provider {
+  database_type: 'PostgreSQL'
+  Note: 'InsightPulseAI Multi-Tenant Provider Model - Row-Based Multi-Tenancy with Provider Services'
+}
+
+// =============================================================================
+// ENUMS
+// =============================================================================
+
+Enum account_role_type {
+  TENANT     [note: 'Organization consuming services']
+  PROVIDER   [note: 'Organization offering services']
+  INTERNAL   [note: 'Platform internal organization']
+}
+
+Enum subscription_status {
+  DRAFT      [note: 'Subscription created but not active']
+  ACTIVE     [note: 'Subscription is active and billable']
+  SUSPENDED  [note: 'Temporarily suspended']
+  CANCELLED  [note: 'Permanently cancelled']
+}
+
+Enum environment_type {
+  DEV        [note: 'Development environment']
+  STAGING    [note: 'Staging/QA environment']
+  PROD       [note: 'Production environment']
+}
+
+Enum account_link_type {
+  PROVIDER_OF   [note: 'from_account is provider for to_account']
+  RESELLER_OF   [note: 'from_account resells to_account']
+  PARTNER_OF    [note: 'Symmetric partner relationship']
+}
+
+// =============================================================================
+// CORE ENTITIES: ACCOUNTS & USERS
+// =============================================================================
+
+Table saas.accounts {
+  id               uuid [pk, default: `gen_random_uuid()`, note: 'Unique account identifier']
+  slug             text [not null, unique, note: 'Human-readable handle (e.g., tbwa-ph, insightpulse)']
+  name             text [not null, note: 'Display name']
+  legal_name       text [note: 'Legal entity name for contracts']
+  country          text [note: 'ISO 3166-1 alpha-2 country code']
+  timezone         text [note: 'IANA timezone (e.g., Asia/Manila)']
+  is_active        boolean [not null, default: true]
+
+  // Multi-tenancy hints
+  default_locale   text [note: 'Default locale (e.g., en_PH)']
+  billing_email    text [note: 'Primary billing contact email']
+
+  // Odoo mapping
+  odoo_company_id  integer [note: 'res.company.id in Odoo']
+  odoo_partner_id  integer [note: 'res.partner.id in Odoo']
+
+  created_at       timestamptz [not null, default: `now()`]
+  updated_at       timestamptz [not null, default: `now()`]
+  deleted_at       timestamptz [note: 'Soft delete timestamp']
+
+  indexes {
+    slug [unique, note: 'Fast lookup by slug']
+    odoo_company_id [note: 'Odoo company mapping']
+  }
+
+  Note: 'Accounts represent organizations. Can be tenant, provider, or both. Maps to Odoo res.company/res.partner.'
+}
+
+Table saas.account_roles {
+  id               uuid [pk, default: `gen_random_uuid()`]
+  account_id       uuid [not null, ref: > saas.accounts.id]
+  role             account_role_type [not null]
+  is_primary       boolean [not null, default: false, note: 'Primary role for this account']
+  granted_at       timestamptz [not null, default: `now()`]
+  granted_by       uuid [note: 'User who granted this role']
+
+  indexes {
+    (account_id, role) [unique, name: 'uq_account_role', note: 'One role per type per account']
+  }
+
+  Note: 'Accounts can have multiple roles (TENANT + PROVIDER simultaneously).'
+}
+
+Table saas.users {
+  id               uuid [pk, default: `gen_random_uuid()`]
+  account_id       uuid [not null, ref: > saas.accounts.id]
+  email            text [not null, unique]
+  full_name        text
+  is_admin         boolean [not null, default: false, note: 'Account admin privileges']
+  is_active        boolean [not null, default: true]
+
+  // External IDs for SSO/sync
+  auth_user_id     uuid [note: 'Supabase auth.users.id']
+  odoo_user_id     integer [note: 'res.users.id in Odoo']
+  keycloak_id      uuid [note: 'Keycloak user ID for SSO']
+
+  created_at       timestamptz [not null, default: `now()`]
+  updated_at       timestamptz [not null, default: `now()`]
+  deleted_at       timestamptz
+
+  indexes {
+    email [unique, note: 'Fast lookup by email']
+    account_id [note: 'List users by account']
+    auth_user_id [note: 'Supabase auth lookup']
+  }
+
+  Note: 'Users belong to one primary account. Maps to Odoo res.users.'
+}
+
+// =============================================================================
+// PROVIDER SIDE: SERVICES & PLANS
+// =============================================================================
+
+Table saas.services {
+  id                        uuid [pk, default: `gen_random_uuid()`]
+  provider_account_id       uuid [not null, ref: > saas.accounts.id, note: 'Provider offering this service']
+  key                       text [not null, unique, note: 'Unique key (e.g., scout-dashboard, ask-copilot)']
+  name                      text [not null]
+  description               text
+
+  // Visibility
+  is_public                 boolean [not null, default: false, note: 'Listed in marketplace']
+  is_enabled                boolean [not null, default: true, note: 'Service can be subscribed to']
+
+  // Classification
+  category                  text [note: 'AI_AGENT, DASHBOARD, ERP_INTEGRATION, WORKFLOW']
+  default_environment_type  environment_type [note: 'Default env for new subscriptions']
+
+  // Technical hints
+  mcp_server_name           text [note: 'MCP server providing this service']
+  n8n_workflow_id           text [note: 'n8n workflow ID if workflow-based']
+
+  created_at                timestamptz [not null, default: `now()`]
+  updated_at                timestamptz [not null, default: `now()`]
+  deleted_at                timestamptz
+
+  indexes {
+    key [unique]
+    provider_account_id [note: 'Services by provider']
+    category [note: 'Filter by category']
+  }
+
+  Note: 'Services offered by providers. E.g., Scout Dashboard, Ask Copilot, BIR Compliance Engine.'
+}
+
+Table saas.service_plans {
+  id                 uuid [pk, default: `gen_random_uuid()`]
+  service_id         uuid [not null, ref: > saas.services.id]
+  key                text [not null, note: 'Plan key (free, pro, enterprise)']
+  name               text [not null]
+  description        text
+
+  // Pricing
+  monthly_price_cents integer [note: '0 for free tier']
+  annual_price_cents  integer [note: 'Annual pricing (discount)']
+  currency            text [default: 'USD']
+
+  // Limits
+  max_seats          integer [note: 'Max users, null = unlimited']
+  max_requests_month integer [note: 'API/usage limits per month']
+  feature_flags      jsonb [default: '{}', note: 'Feature toggles for this plan']
+
+  is_active          boolean [not null, default: true]
+  created_at         timestamptz [not null, default: `now()`]
+  updated_at         timestamptz [not null, default: `now()`]
+
+  indexes {
+    (service_id, key) [unique, name: 'uq_service_plan_key']
+    service_id [note: 'Plans by service']
+  }
+
+  Note: 'Pricing plans for services. Multiple tiers per service.'
+}
+
+// =============================================================================
+// TENANT SIDE: SUBSCRIPTIONS & RELATIONSHIPS
+// =============================================================================
+
+Table saas.subscriptions {
+  id                    uuid [pk, default: `gen_random_uuid()`]
+  tenant_account_id     uuid [not null, ref: > saas.accounts.id, note: 'Consuming tenant']
+  provider_account_id   uuid [not null, ref: > saas.accounts.id, note: 'Providing organization']
+  service_id            uuid [not null, ref: > saas.services.id]
+  service_plan_id       uuid [ref: > saas.service_plans.id]
+
+  status                subscription_status [not null, default: 'DRAFT']
+
+  // Lifecycle
+  started_at            timestamptz [note: 'Subscription activation date']
+  ended_at              timestamptz [note: 'Subscription end date']
+  trial_ends_at         timestamptz [note: 'Trial period end']
+  next_billing_at       timestamptz [note: 'Next billing date']
+
+  // Billing reference
+  external_ref          text [note: 'Stripe/Invoice ID for billing']
+  billing_metadata      jsonb [default: '{}']
+
+  created_at            timestamptz [not null, default: `now()`]
+  updated_at            timestamptz [not null, default: `now()`]
+  cancelled_at          timestamptz [note: 'When subscription was cancelled']
+
+  indexes {
+    (tenant_account_id, service_id) [name: 'idx_subscription_tenant_service', note: 'Fast lookup']
+    tenant_account_id [note: 'Subscriptions by tenant']
+    provider_account_id [note: 'Subscriptions by provider']
+    status [note: 'Filter by status']
+  }
+
+  Note: 'Links tenants to provider services. The core billing relationship.'
+}
+
+Table saas.account_links {
+  id                  uuid [pk, default: `gen_random_uuid()`]
+  from_account_id     uuid [not null, ref: > saas.accounts.id]
+  to_account_id       uuid [not null, ref: > saas.accounts.id]
+  link_type           account_link_type [not null]
+
+  metadata            jsonb [default: '{}', note: 'Extra relationship data']
+  is_active           boolean [not null, default: true]
+
+  created_at          timestamptz [not null, default: `now()`]
+  updated_at          timestamptz [not null, default: `now()`]
+
+  indexes {
+    (from_account_id, to_account_id, link_type) [unique, name: 'uq_account_link']
+    from_account_id [note: 'Links from this account']
+    to_account_id [note: 'Links to this account']
+  }
+
+  Note: 'Explicit relationships between accounts. PROVIDER_OF = from is provider for to.'
+}
+
+// =============================================================================
+// ENVIRONMENTS: INFRASTRUCTURE BINDINGS
+// =============================================================================
+
+Table saas.environments {
+  id                     uuid [pk, default: `gen_random_uuid()`]
+  account_id             uuid [not null, ref: > saas.accounts.id]
+  env_type               environment_type [not null]
+
+  // Supabase binding
+  supabase_project_ref   text [note: 'Supabase project ref (e.g., cxzllzyxwpyptfretryc)']
+  supabase_service_role  text [note: 'Encrypted service role key']
+
+  // Vercel binding
+  vercel_project_id      text
+  vercel_team_id         text
+
+  // DigitalOcean binding
+  digitalocean_app_id    text
+  digitalocean_cluster   text
+
+  // Odoo binding
+  odoo_db_name           text [note: 'Odoo database name for this tenant']
+  odoo_base_url          text [note: 'Odoo instance URL']
+
+  // Superset binding
+  superset_database_key  text [note: 'Logical DB name in Superset']
+  superset_dashboard_ids text[] [note: 'Dashboard IDs accessible to this env']
+
+  is_active              boolean [not null, default: true]
+  created_at             timestamptz [not null, default: `now()`]
+  updated_at             timestamptz [not null, default: `now()`]
+
+  indexes {
+    (account_id, env_type) [unique, name: 'uq_account_env']
+    supabase_project_ref [note: 'Lookup by Supabase project']
+    odoo_db_name [note: 'Lookup by Odoo DB']
+  }
+
+  Note: 'Maps accounts to infrastructure. Each account can have dev/staging/prod environments.'
+}
+
+// =============================================================================
+// EXAMPLE APP-SCOPED TABLE: ROW-BASED MULTI-TENANCY
+// =============================================================================
+
+Table projects.projects {
+  id                 uuid [pk, default: `gen_random_uuid()`]
+  tenant_account_id  uuid [not null, ref: > saas.accounts.id]
+  name               text [not null]
+  key                text [not null, note: 'Short project code']
+  status             text [not null, default: 'active']
+
+  created_by_user_id uuid [not null, ref: > saas.users.id]
+
+  // Odoo mapping
+  odoo_project_id    integer [note: 'project.project.id in Odoo']
+
+  created_at         timestamptz [not null, default: `now()`]
+  updated_at         timestamptz [not null, default: `now()`]
+  deleted_at         timestamptz
+
+  indexes {
+    (tenant_account_id, key) [unique, name: 'uq_project_key']
+    tenant_account_id [note: 'Projects by tenant - RLS key']
+    odoo_project_id [note: 'Odoo project lookup']
+  }
+
+  Note: 'Example domain table showing row-based multi-tenancy pattern. All domain tables use tenant_account_id.'
+}
+
+// =============================================================================
+// USAGE TRACKING (FOR BILLING & LIMITS)
+// =============================================================================
+
+Table saas.usage_records {
+  id                   uuid [pk, default: `gen_random_uuid()`]
+  subscription_id      uuid [not null, ref: > saas.subscriptions.id]
+  tenant_account_id    uuid [not null, ref: > saas.accounts.id]
+  service_id           uuid [not null, ref: > saas.services.id]
+
+  period_start         date [not null, note: 'Billing period start']
+  period_end           date [not null, note: 'Billing period end']
+
+  // Metrics
+  request_count        integer [not null, default: 0]
+  token_count          integer [not null, default: 0, note: 'AI token usage']
+  storage_bytes        bigint [not null, default: 0]
+  compute_seconds      integer [not null, default: 0]
+
+  // Status
+  is_billed            boolean [not null, default: false]
+  billed_at            timestamptz
+
+  created_at           timestamptz [not null, default: `now()`]
+  updated_at           timestamptz [not null, default: `now()`]
+
+  indexes {
+    (subscription_id, period_start) [unique, name: 'uq_usage_period']
+    tenant_account_id [note: 'Usage by tenant']
+    (period_start, is_billed) [note: 'Billing queries']
+  }
+
+  Note: 'Tracks service usage for billing and limit enforcement.'
+}
+
+// =============================================================================
+// AUDIT LOG FOR ACCOUNT CHANGES
+// =============================================================================
+
+Table logs.account_audit {
+  id                   uuid [pk, default: `gen_random_uuid()`]
+  account_id           uuid [not null, ref: > saas.accounts.id]
+  actor_user_id        uuid [ref: > saas.users.id]
+  action               text [not null, note: 'CREATE, UPDATE, DELETE, ROLE_GRANTED, etc.']
+  entity_type          text [not null, note: 'account, subscription, service, etc.']
+  entity_id            uuid [not null]
+  changes              jsonb [note: 'Before/after diff']
+  ip_address           inet
+  user_agent           text
+  created_at           timestamptz [not null, default: `now()`]
+
+  indexes {
+    account_id [note: 'Audit by account']
+    (entity_type, entity_id) [note: 'Audit by entity']
+    created_at [note: 'Time-based queries']
+  }
+
+  Note: 'Audit trail for all account-related changes. Required for compliance.'
+}
+
+// =============================================================================
+// RELATIONSHIPS (ER DIAGRAM CONNECTIONS)
+// =============================================================================
+
+// Account relationships
+Ref: saas.account_roles.account_id > saas.accounts.id [delete: cascade]
+Ref: saas.users.account_id > saas.accounts.id [delete: cascade]
+Ref: saas.services.provider_account_id > saas.accounts.id
+Ref: saas.subscriptions.tenant_account_id > saas.accounts.id
+Ref: saas.subscriptions.provider_account_id > saas.accounts.id
+Ref: saas.subscriptions.service_id > saas.services.id
+Ref: saas.subscriptions.service_plan_id > saas.service_plans.id
+Ref: saas.account_links.from_account_id > saas.accounts.id
+Ref: saas.account_links.to_account_id > saas.accounts.id
+Ref: saas.environments.account_id > saas.accounts.id [delete: cascade]
+
+// Service relationships
+Ref: saas.service_plans.service_id > saas.services.id [delete: cascade]
+
+// Usage relationships
+Ref: saas.usage_records.subscription_id > saas.subscriptions.id
+Ref: saas.usage_records.tenant_account_id > saas.accounts.id
+Ref: saas.usage_records.service_id > saas.services.id
+
+// Audit relationships
+Ref: logs.account_audit.account_id > saas.accounts.id
+Ref: logs.account_audit.actor_user_id > saas.users.id
+
+// Domain table relationships
+Ref: projects.projects.tenant_account_id > saas.accounts.id
+Ref: projects.projects.created_by_user_id > saas.users.id
