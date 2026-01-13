@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 123d4baefd616a7c3c17f7739684022f15d45fc5
+> Commit: fee55d72879bd55574c033463e9df78bbe636c6f
 
 ## 📚 Documentation
 
@@ -284,6 +284,7 @@
 | [Odoo 18 CE & OCA Architect Persona](docs/ODOO_ARCHITECT_PERSONA.md) | docs |
 | [Odoo CE Comprehensive Deployment Summary](docs/ODOO_CE_DEPLOYMENT_SUMMARY.md) | docs |
 | [Odoo CE v0.9.0 Image Security & Compliance Audit Report](docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md) | docs |
+| [Odoo 18 CE + Fluent 2 Web Design System Token Mapping](docs/ODOO_COPILOT_THEME_TOKEN_MAP.md) | docs |
 | [Odoo HTTPS OAuth Troubleshooting Guide](docs/ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md) | docs |
 | [IPAI Odoo 18 Custom Image Specification](docs/ODOO_IMAGE_SPEC.md) | docs |
 | [Odoo Module Deployment Guide](docs/ODOO_MODULE_DEPLOYMENT.md) | docs |
