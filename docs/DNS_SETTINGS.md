@@ -118,6 +118,33 @@ pubkey-5b792f9cc31ca46f66ed27884143e219
 
 > Only for deprecated v3 validations endpoint. Use v4 validations with API keys instead.
 
+### Webhooks
+
+Mailgun can send webhook events for email tracking. Configure via API or dashboard.
+
+**Webhook Event Types:**
+
+| Event | Description |
+|-------|-------------|
+| `accepted` | Message accepted by Mailgun |
+| `delivered` | Message delivered to recipient |
+| `opened` | Recipient opened the message |
+| `clicked` | Recipient clicked a link |
+| `unsubscribed` | Recipient unsubscribed |
+| `complained` | Recipient marked as spam |
+| `permanent_fail` | Hard bounce (invalid address) |
+| `temporary_fail` | Soft bounce (temporary issue) |
+
+**Webhook URL (n8n):**
+
+```
+https://n8n.insightpulseai.net/webhook/mailgun
+```
+
+**Verifying Webhook Signatures:**
+
+Use the HTTP Webhook Signing Key to verify payload authenticity. See [Mailgun Webhooks API](https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/webhooks).
+
 ---
 
 ## DNS Record Verification
@@ -215,8 +242,17 @@ MAILGUN_SMTP_PASSWORD=<smtp-password>
 
 ## References
 
+### Mailgun
+
 - [Mailgun Documentation](https://documentation.mailgun.com/)
 - [Mailgun API Reference](https://documentation.mailgun.com/docs/mailgun/api-reference/openapi-final/tag/Domains/)
+- [Webhooks API](https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/webhooks)
+- [Webhook Signing Key API](https://documentation.mailgun.com/docs/mailgun/api-reference/send/mailgun/account-management/post-v5-accounts-http_signing_key)
+- [Webhooks Help Center](https://help.mailgun.com/hc/en-us/articles/202236504-Webhooks)
+- [Webhooks Guide](https://www.mailgun.com/blog/product/a-guide-to-using-mailguns-webhooks/)
+
+### DNS & SSL
+
 - [Namecheap DNS Management](https://www.namecheap.com/support/knowledgebase/article.aspx/767/10/how-to-change-dns-for-a-domain/)
 - [Let's Encrypt Documentation](https://letsencrypt.org/docs/)
 
