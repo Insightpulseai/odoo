@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 123d4baefd616a7c3c17f7739684022f15d45fc5
+> Commit: fee55d72879bd55574c033463e9df78bbe636c6f
 
 ```
 .
@@ -785,6 +785,7 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_fluent2
+│   │   │   ├── data
 │   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -2341,6 +2342,7 @@
 │   ├── ODOO_ARCHITECT_PERSONA.md
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
 │   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
+│   ├── ODOO_COPILOT_THEME_TOKEN_MAP.md
 │   ├── ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
 │   ├── ODOO_IMAGE_SPEC.md
 │   ├── ODOO_MODULE_DEPLOYMENT.md
@@ -3877,15 +3879,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1261 directories, 2611 files
+1262 directories, 2612 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1469 |
-| Files | 4003 |
+| Directories | 1471 |
+| Files | 4008 |
 | Python files | 1060 |
 | XML files | 512 |
-| Markdown files | 749 |
+| Markdown files | 750 |
