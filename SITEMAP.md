@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ceedd7f5952f1842e9941f9cd9b63cf89d66ef3e
+> Commit: 1d48397657cf6bc01148ba36bd7c6a15b0cbc024
 
 ## 📚 Documentation
 
@@ -323,6 +323,8 @@
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [Extended Platform API Documentation](docs/api/EXTENDED_PLATFORM_API.md) | docs/api |
+| [AI Module Deprecation Manifest](docs/architecture/AI_MODULE_DEPRECATION_MANIFEST.md) | docs/architecture |
+| [Ask AI Contract](docs/architecture/ASK_AI_CONTRACT.md) | docs/architecture |
 | [Authentication & Authorization Model](docs/architecture/AUTH_MODEL.md) | docs/architecture |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
@@ -784,6 +786,7 @@
 | [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ |  |
 | [ipai_approvals](./addons/ipai/ipai_approvals) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
+| [ipai_ask_ai_bridge](./addons/ipai/ipai_ask_ai_bridge) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
 | [ipai_auth_oauth_internal](./addons/ipai/ipai_auth_oauth_internal) | ✅ |  |
@@ -849,6 +852,7 @@
 | [ipai_tenant_core](./addons/ipai/ipai_tenant_core) | ✅ | Multi-tenant platform core for InsightPulse AI |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
+| [ipai_theme_copilot](./addons/ipai/ipai_theme_copilot) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
 | [ipai_theme_tbwa](./addons/ipai/ipai_theme_tbwa) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
