@@ -753,6 +753,39 @@ Standard workflow for any Claude/Codex agent:
 
 ---
 
+## Open Local Odoo Sandbox
+
+Canonical local sandbox:
+
+- Repo root: `~/Documents/GitHub/odoo-ce`
+- Sandbox dir: `~/Documents/GitHub/odoo-ce/sandbox/dev`
+- URL: `http://localhost:8069/web/login`
+
+When I say **"open local sandbox"** or **"open local sandboxed"**, do this, without asking:
+
+```bash
+cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+docker compose up -d
+open http://localhost:8069/web/login
+```
+
+If containers are already running, skip recreate and just ensure:
+
+```bash
+docker ps
+open http://localhost:8069/web/login
+```
+
+Never change the port, DB name, or URL unless I explicitly ask.
+
+**Shell alias** (already added to `~/.zshrc`):
+
+```bash
+alias odoo-sandbox='cd ~/Documents/GitHub/odoo-ce/sandbox/dev && docker compose up -d && open http://localhost:8069/web/login'
+```
+
+---
+
 ## Key Scripts Reference
 
 | Script | Purpose |
