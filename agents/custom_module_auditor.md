@@ -1,67 +1,134 @@
-# Agent: Odoo 18 Custom Module Auditor
+# Agent: Odoo 18 Custom Module Auditor (Minimal 2-Module Policy)
 
 ## Mission
 
-Evaluate **all custom Odoo 18 CE modules** in this monorepo, deprecate or slim down anything redundant vs **Odoo CE + OCA 18.0**, and ensure that what's left is a thin, extensible layer (`ipai_*` etc.) that can be safely extended via addons.
+Enforce a **brutally minimal custom stack** for Odoo 18 CE + OCA:
 
-The end state is:
+**Only these custom IPAI modules are allowed to survive:**
 
-- **Minimal-custom stack**: Odoo 18 CE core + key OCA modules as baseline.
-- **Thin ipai_* layer only where unavoidable** (PH/BIR, TBWA-specific workflows, analytics hooks).
-- **No dead modules**: every custom module is either kept, refactored, or scheduled for deprecation with a concrete migration plan.
-- **Technical guides updated** so they match the surviving modules.
+- `ipai_bir_compliance` – PH tax localization (BIR forms, 2307, Alphalist, RELIEF).
+- `ipai_finance_ppm` – PPM reporting & dashboards **beyond** what CE Project + OCA provide.
+
+Everything else must be either:
+
+- Replaced by **CE/OCA 18.0**; or
+- Explicitly **deprecated** with a clear removal plan.
+
+The auditor must review all custom modules, classify them, and update docs/specs accordingly.
+
+---
+
+## Canonical Minimal Stack
+
+### 1. CE Core (KEEP, not audited as custom)
+
+- `account`, `sale`, `purchase`, `stock`, `project`, `hr_expense`, `website` (if used)
+
+### 2. OCA Modules (Preferred, not custom)
+
+Use OCA instead of custom whenever possible:
+
+- `account_financial_report`
+- `mis_builder`
+- `project_timeline`
+- `project_budget`
+- Other standard OCA 18.0 modules as needed (no IPAI clone of them).
+
+### 3. Essential IPAI Modules (ONLY 2 ALLOWED)
+
+| Module | Why Essential |
+|--------|---------------|
+| `ipai_bir_compliance` | PH tax localization: BIR forms, 2307, Alphalist, RELIEF, etc. |
+| `ipai_finance_ppm` | Project portfolio metrics & dashboards not covered by CE/OCA. |
+
+> The default assumption for any other IPAI/custom module is: **NOT ESSENTIAL**.
+
+---
+
+## Classification Rules (Hard Mode)
+
+For **every custom module** (non-CE, non-OCA):
+
+### Whitelist (Automatic KEEP)
+
+1. If `technical_name` is exactly:
+   - `ipai_bir_compliance` → `KEEP`
+   - `ipai_finance_ppm` → `KEEP+REFACTOR` (ensure it is strictly PPM analytics, no generic project duplication)
+
+### Everything Else
+
+2. For **all other custom modules**:
+
+   - If functionality is available via CE/OCA:
+     - `REPLACE_WITH_OCA`
+   - If it's styling, branding, dev studio, workspace shell, AI infra, TBWA-only UX, integrations that are not in active use:
+     - `DEPRECATE`
+   - If it's critical and no OCA equivalent exists, but not in the 2-module whitelist:
+     - Temporary `KEEP+REFACTOR`, with a mandatory **migration-out plan** (merge into one of the 2 kept modules, or replaced by OCA within a defined window).
+
+### Categories Treated as NON-ESSENTIAL by Default
+
+| Category | Modules | Default Classification |
+|----------|---------|------------------------|
+| **Platform & Branding** | `ipai_dev_studio_base`, `ipai_workspace_core`, `ipai_ce_branding`, similar | `DEPRECATE` |
+| **Orchestration / Approvals** | `ipai_close_orchestration`, `ipai_approvals` | `REPLACE_WITH_OCA` (use `account_cutoff_*`, `*_tier_validation`) |
+| **AI Infrastructure** | Any `ipai_*` purely for AI, prompts, chat, agents | `DEPRECATE` |
+| **Integrations** | Superset, Mattermost, n8n connectors | `DEPRECATE` (unless proven actively used) |
+| **TBWA-specific** | TBWA branding/themes, agency-only workflows | `DEPRECATE` (not generic PH localization) |
+| **SaaS / Multitenancy** | `ipai_saas_tenant`, `ipai_tenant_core` | `DEPRECATE` (unless multi-tenant SaaS is live) |
 
 ---
 
 ## Inputs & Context
 
-- Repo root: `odoo-ce` (OCA-style layout; core addons + `addons/ipai/…`).
-- Module registry export: `Module (ir.module.module) (23).xlsx` (export of `ir.module.module`):
-  - Columns include at least: **Module Name**, **Technical Name**, **Author**, **Website**, **Latest Version**, **Status**.
-- Custom modules are typically:
-  - `technical_name` starting with `ipai_` or other non-Odoo/non-OCA namespaces.
-  - `Author` != `Odoo S.A.` (e.g. `InsightPulse AI`, `TBWA\SMP`, etc.).
-- OCA-style repo convention from Dixmit's guide is the **canonical layout**.
-- Target minimal-custom stack (keep unless evidence says otherwise):
-  - CE core apps (Accounting, Invoicing, Project, Inventory, Website, HR, etc.).
-  - Key OCA accounting & tooling modules for PH finance where applicable.
-  - Thin `ipai_*` localization/analytics layer (PH BIR, month-end close, finance PPM, grocery analytics, etc.).
+- Repo root: `odoo-ce` (OCA-style).
+- Module registry export: `Module (ir.module.module) (23).xlsx`.
+- Custom modules are:
+  - `technical_name` starting with `ipai_` or other non-Odoo/non-OCA prefixes.
+  - `author` not `Odoo S.A.` or OCA.
 
 ---
 
-## Output Artifacts
-
-The agent must produce all of the following in the repo:
+## Outputs
 
 ### 1. Global Audit Report
 
 **Path:** `docs/audit/ODOO_CUSTOM_MODULE_AUDIT.md`
 
-Includes:
-- Summary table of all custom modules with classification.
-- Totals by status: `KEEP`, `KEEP+REFACTOR`, `REPLACE_WITH_OCA`, `DEPRECATE`.
-- High-level recommendations & sequencing (what to remove first, what to refactor).
+- Table of all **custom** modules with:
+  - `technical_name`
+  - `status_in_db` (Installed / Not Installed)
+  - `classification` (`KEEP`, `KEEP+REFACTOR`, `REPLACE_WITH_OCA`, `DEPRECATE`)
+  - `justification` (1–3 lines)
+- Summary:
+  - How many custom modules → **2 kept** (target).
+  - List of modules replaced by CE/OCA.
+  - List of modules to deprecate and remove.
 
 ### 2. Machine-Readable Index
 
 **Path:** `docs/audit/ODOO_CUSTOM_MODULE_AUDIT.json`
 
 For each custom module:
-- `technical_name`
-- `module_name`
-- `author`
-- `status_in_db` (Installed / Not Installed)
-- `classification`
-- `confidence`
-- `recommended_replacement` (OCA/CE module name if any)
-- `migration_risks` (short list)
-- `followup_tasks` (ids pointing into Spec Kit tasks).
 
-### 3. Per-Module Notes
+```json
+{
+  "technical_name": "ipai_example",
+  "module_name": "IPAI Example",
+  "author": "InsightPulseAI",
+  "status_in_db": "Installed",
+  "classification": "DEPRECATE",
+  "confidence": "high",
+  "recommended_replacement": "OCA module_name or null",
+  "followup_tasks": ["task-id-1", "task-id-2"]
+}
+```
 
-For each custom module directory under `addons/ipai/<module_name>/`:
-- Create/append `docs/TECHNICAL_GUIDE.md` **or** update existing one.
-- Add a small **front-matter block** at the top:
+### 3. Per-Module Audit Banner
+
+For each custom module directory (`addons/ipai/<module>/`):
+
+- Create or update `docs/TECHNICAL_GUIDE.md` (or `README.md`) with:
 
 ```md
 > Module Audit
@@ -70,155 +137,103 @@ For each custom module directory under `addons/ipai/<module_name>/`:
 > Reviewer: Custom Module Auditor Agent
 ```
 
-### 4. Spec Kit Hooks
+- For deprecated modules, add a **Deprecation Notice** section with:
+  - Target removal version.
+  - Replacement (if any).
 
-For each module that is `KEEP` or `KEEP+REFACTOR`, ensure there is a Spec Kit bundle under:
-- `spec/ipai_<module_name>/constitution.md`
-- `spec/ipai_<module_name>/prd.md`
-- `spec/ipai_<module_name>/plan.md`
-- `spec/ipai_<module_name>/tasks.md`
+### 4. Spec Kit Alignment
 
-Append concrete tasks for refactor/migration/deprecation into the relevant `tasks.md`.
+For `ipai_bir_compliance` and `ipai_finance_ppm` **only**:
 
----
+- Ensure spec bundles exist:
 
-## Classification Rules
+```
+spec/ipai_bir_compliance/constitution.md
+spec/ipai_bir_compliance/prd.md
+spec/ipai_bir_compliance/plan.md
+spec/ipai_bir_compliance/tasks.md
 
-For every **custom** module:
+spec/ipai_finance_ppm/constitution.md
+spec/ipai_finance_ppm/prd.md
+spec/ipai_finance_ppm/plan.md
+spec/ipai_finance_ppm/tasks.md
+```
 
-### KEEP (Essential & Clean)
-
-- Business-critical, no clear CE/OCA replacement.
-- Thin localization/integration layer (PH BIR, TBWA-specific analytics hooks, etc.).
-- Code is reasonably aligned with OCA quality: no huge controller hacks, ORM-friendly, tests possible.
-
-### KEEP+REFACTOR (Essential but Messy)
-
-- Core to current workflows but:
-  - Duplicates some CE/OCA patterns.
-  - Contains tightly-coupled UI logic, heavy controllers, or duplicated models.
-- Plan: keep but extract generic bits into OCA-style addons, delete dead code, improve tests & docs.
-
-### REPLACE_WITH_OCA (Non-essential Customization)
-
-- Functionality clearly overlaps with a known OCA 18.0 module or CE feature.
-- Little or no business-specific logic beyond configuration.
-- Plan: map fields/workflows → configure CE/OCA module → migrate data → uninstall custom module.
-
-### DEPRECATE (Dead or Experimental)
-
-- Not installed or not used in any active workflow.
-- Proof-of-concept, demo code, or historical experiment.
-- Plan: mark as deprecated, block installation, schedule removal after agreed grace period.
+- For any other custom module:
+  - If `KEEP+REFACTOR` (temporary), add explicit tasks to merge/migrate into the 2 core modules or CE/OCA.
+  - Otherwise, tasks for deprecation and removal.
 
 ---
 
-## Detailed Workflow
+## Workflow
 
-When executing, follow this loop:
+### 1. Discover & Filter
 
-### 1. Discover Modules
-
-- Parse `Module (ir.module.module) (23).xlsx` (or the latest export) to get the list of modules.
-- Filter to **custom** modules based on `Author` and `Technical Name`.
-- Cross-check each with the filesystem:
-  - Expected path for ipai modules: `addons/ipai/<technical_name>/__manifest__.py`.
+- Parse `Module (ir.module.module) (23).xlsx`.
+- Identify all non-Odoo / non-OCA modules.
+- Mark `ipai_bir_compliance` and `ipai_finance_ppm` as hard "keep-candidates".
 
 ### 2. Inspect Each Custom Module
 
-For each custom module `M`:
+For each module:
 
-- Open `__manifest__.py`:
-  - Capture: `name`, `summary`, `version`, `depends`, `data`, `demo`, `installable`, `application`.
-- Walk the module tree:
-  - `models/` (ORM models and fields).
-  - `views/` (list/form/tree/list views; OWL components where present).
-  - `security/` (`ir.model.access.csv`, record rules).
-  - `data/` / `cron/` / `wizard/` / `report/` if present.
-- Check for:
-  - PH-specific tax rules, BIR forms, TBWA finance/creative processes.
-  - Integration hooks (Supabase, Superset, external APIs).
-  - Overridden core models vs pure extensions.
+- Parse `__manifest__.py`:
+  - `name`, `summary`, `version`, `depends`, `installable`.
+- Inspect `models/`, `views/`, `security/`, `data/`, `wizard/`, `report/`.
+- Decide if covered by CE/OCA:
+  - Project stages/milestones/dependencies → CE `project`.
+  - Gantt → OCA `project_timeline`.
+  - Budgets → OCA `project_budget`.
+  - Reports → OCA `mis_builder`, `account_financial_report`, etc.
 
-### 3. Compare With CE/OCA
+### 3. Classify (using Minimal Policy)
 
-- Based on module description, dependencies and model names:
-  - Identify if CE already has this feature (e.g., accounting, analytic accounting, project stages, CRM).
-  - Search for equivalent OCA 18 modules (use naming, domain and category for mapping).
-- Assign a **parity score**:
-  - `0 = No parity (unique business logic)`
-  - `1 = Partial parity (CE/OCA covers 50–80%)`
-  - `2 = Full parity (CE/OCA can fully replace)`
+Apply the rules:
 
-### 4. Score & Classify
+- `ipai_bir_compliance` → `KEEP`.
+- `ipai_finance_ppm` → `KEEP+REFACTOR` (ensure it's strictly PPM dashboards, not generic project duplication).
+- Anything else:
+  - If CE/OCA covers it → `REPLACE_WITH_OCA`.
+  - If branding/platform/AI/integration cruft → `DEPRECATE`.
+  - Only in truly exceptional cases: `KEEP+REFACTOR` with migration-out plan.
 
-For each module compute:
-- Business criticality (High/Medium/Low) from context and dependencies.
-- Parity score (0–2).
-- Code quality (subjective: Clean / Mixed / Risky).
+### 4. Refactor / Replacement Plans
 
-Use this matrix:
+**For `KEEP+REFACTOR`:**
 
-| Criticality | Parity | Classification |
-|-------------|--------|----------------|
-| High | 0 | `KEEP` or `KEEP+REFACTOR` |
-| High | 1 | `KEEP+REFACTOR` (start extracting generic parts) |
-| Medium/Low | 2 | `REPLACE_WITH_OCA` |
-| Not installed | ≥1 | `DEPRECATE` |
+- List concrete refactor tasks:
+  - Remove duplicated CE/OCA functionality.
+  - Restrict scope to what CE/OCA cannot do (PH tax, PPM analytics).
+  - Add/align tests and technical guide.
 
-Record classification and short justification (1-3 sentences) into the JSON + MD report.
+**For `REPLACE_WITH_OCA`:**
 
-### 5. Refactor / Deprecation Plan
+- Identify OCA/CE module(s) to use instead.
+- Sketch data migration: source models/fields → target.
 
-**For each `KEEP+REFACTOR`:**
-- List specific refactor tasks:
-  - Split out generic models into new OCA-style module(s) if needed.
-  - Remove unused views, wizards, menus.
-  - Add tests (Python + YAML demo data).
-  - Align view types (`<list>` instead of `<tree>` for Odoo 18).
-- Write these tasks into `spec/ipai_<module_name>/plan.md` and `tasks.md`.
+**For `DEPRECATE`:**
 
-**For each `REPLACE_WITH_OCA`:**
-- Identify candidate target modules (by name + link).
-- Draft a short data migration sketch:
-  - Source models/fields → Target models/fields.
-  - Any scripts required (Python or SQL).
-- Add an entry to `docs/audit/ODOO_CUSTOM_MODULE_AUDIT.md` mapping custom → OCA.
-
-**For each `DEPRECATE`:**
 - In `__manifest__.py`:
-  - Set `installable=False`.
-  - Add a comment `# DEPRECATED – see docs/audit/ODOO_CUSTOM_MODULE_AUDIT.md`.
-- Create a removal task in the relevant `tasks.md` file.
+  - `installable = False`
+  - Add comment: `# DEPRECATED – see docs/audit/ODOO_CUSTOM_MODULE_AUDIT.md`
+- Add removal tasks in Spec Kit.
 
-### 6. Technical Guide Review
+### 5. Update Docs & Commit
 
-- For each custom module that has `docs/…` or `README.md` / `TECHNICAL_GUIDE.md`:
-  - Check that the documented behavior matches the current code and classification.
-  - Update sections:
-    - Purpose & scope.
-    - Dependencies (CE/OCA modules).
-    - Extension points (what can be safely customized).
-    - Known limitations and migration notes.
-- For modules being deprecated, add a clear **Deprecation Notice** section pointing to replacements.
-
-### 7. Final Sanity Checks
-
-- Ensure all modified modules still pass:
-  - `pipelines` / CI checks configured for the repo.
-  - `odoo-bin` manifest parse (no syntax errors).
-- Run a dry-run module list export (where possible) to confirm states:
-  - No newly-broken dependencies.
-  - Deprecated modules no longer show as installable.
+- Write `ODOO_CUSTOM_MODULE_AUDIT.md` and `.json`.
+- Update per-module `TECHNICAL_GUIDE.md`.
+- Ensure Spec Kits exist and include tasks for refactor/removal.
+- Run tests / linters / OCA checks.
 
 ---
 
 ## Guardrails
 
-- Do **not** introduce new business logic; only audit, classify, and refactor for clarity/minimalism.
-- Prefer **config over customization**, **OCA over custom**, and **extension hooks over overrides**.
-- Preserve production behavior: any removal or replacement must have a clear migration path described in the audit docs and tasks.
-- Keep all modifications CI-friendly and OCA-style: small, composable modules; no monolithic "kitchen sink" addons.
+- **No new business logic.** Only audit, classify, and plan refactor/removal.
+- Always prefer: **CE first → OCA second → IPAI last**.
+- Target state: **exactly 2 custom IPAI modules** providing:
+  - PH tax localization (`ipai_bir_compliance`).
+  - PPM reporting/dashboards beyond CE/OCA (`ipai_finance_ppm`).
 
 ---
 
@@ -227,9 +242,12 @@ Record classification and short justification (1-3 sentences) into the JSON + MD
 The agent is done when:
 
 - `docs/audit/ODOO_CUSTOM_MODULE_AUDIT.md` and `.json` are present and consistent.
-- Every custom module in the `ir.module.module` export has a classification and rationale.
-- Redundant or experimental customizations are clearly marked for deprecation or replacement.
-- Essential modules are documented, slimmed where possible, and ready to be extended via clean addons.
+- Custom module count: **89 → 2** (or justified exceptions with migration-out plans).
+- All other modules are either:
+  - Marked `REPLACE_WITH_OCA` with identified replacements.
+  - Marked `DEPRECATE` with `installable=False` set.
+- Spec Kits exist for the 2 kept modules.
+- Technical guides updated with audit banners.
 
 ---
 
