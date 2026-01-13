@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a5b7008a47356f7f15cb258da4e3916b85b5d3fa
+> Commit: ceedd7f5952f1842e9941f9cd9b63cf89d66ef3e
 
 ```
 .
@@ -1813,7 +1813,9 @@
 │   │   ├── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
 │   │   ├── 202601060001_IPAI_KB_CHUNKS.sql
 │   │   ├── 20260109_KG.sql
-│   │   └── 202601120001_MULTI_TENANT_PROVIDER_MODEL.sql
+│   │   ├── 202601120001_MULTI_TENANT_PROVIDER_MODEL.sql
+│   │   ├── 202601130001_SCOUT_API_SCHEMA.sql
+│   │   └── 202601130002_SCOUT_MEDALLION_TABLES.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -3857,7 +3859,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1253 directories, 2599 files
+1253 directories, 2601 files
 ```
 
 ## 📊 Stats
@@ -3865,7 +3867,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1456 |
-| Files | 3982 |
+| Files | 3984 |
 | Python files | 1053 |
 | XML files | 509 |
 | Markdown files | 746 |
