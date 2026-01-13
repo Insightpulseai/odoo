@@ -124,3 +124,54 @@ class SampleMetric(models.Model):
             }
             for r in records
         ]
+
+    # --- Supabase sync helpers ---
+
+    @api.model
+    def export_to_supabase_payload(self, limit=5000, since_date=None):
+        """Export metrics as payload for Supabase upsert.
+
+        Designed to be called via XML-RPC from external sync scripts.
+        Returns data in format matching ipai.ipai_sample_metrics table.
+
+        Args:
+            limit: max records to export (default 5000)
+            since_date: optional ISO date string to filter recent changes
+
+        Returns:
+            list: List of dicts ready for Supabase upsert
+        """
+        domain = [("active", "=", True)]
+        if since_date:
+            domain.append(("write_date", ">=", since_date))
+
+        records = self.search(domain, limit=limit, order="write_date desc")
+        payload = []
+        for r in records:
+            payload.append({
+                "odoo_id": r.id,
+                "name": r.name,
+                "code": r.code,
+                "date": r.date.isoformat() if r.date else None,
+                "brand_id": r.brand_id.id if r.brand_id else None,
+                "store_id": r.store_id.id if r.store_id else None,
+                "value": r.value,
+                "unit": r.unit,
+                "is_alert": r.is_alert,
+                "notes": r.notes or "",
+                "active": r.active,
+            })
+        return payload
+
+    @api.model
+    def get_sync_stats(self):
+        """Get sync statistics for monitoring.
+
+        Returns:
+            dict: Count of total, active, and alert metrics
+        """
+        return {
+            "total": self.search_count([]),
+            "active": self.search_count([("active", "=", True)]),
+            "alerts": self.search_count([("is_alert", "=", True)]),
+        }
