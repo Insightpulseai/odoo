@@ -5,16 +5,27 @@
  * Embeds an external Fluent UI Ops Control Room application in an iframe.
  * The hub URL is fetched from Odoo system parameters via a JSON-RPC call.
  *
+ * Features:
+ * - Dynamic theme synchronization (suqi/system/tbwa-dark)
+ * - PostMessage communication with embedded app
+ * - Bidirectional theme toggle sync
+ *
  * Architecture:
  * 1. Component mounts and shows loading state
  * 2. Fetches hub config from /ipai/copilot/hub/config
  * 3. Sets iframe src to the external Fluent UI app URL
- * 4. Handles errors gracefully with user-friendly messages
+ * 4. Syncs theme state between Odoo and embedded app
  */
 
 import { Component, useState, onMounted, onWillUnmount, useRef } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
+
+// Theme constants matching React app
+const UI_THEMES = ["suqi", "system", "tbwa-dark"];
+const SCHEMES = ["light", "dark"];
+const STORAGE_KEY = "ipai-ui-theme";
+const SCHEME_KEY = "ipai-color-scheme";
 
 export class CopilotHubMain extends Component {
     static template = "ipai_copilot_hub.Main";
@@ -36,16 +47,135 @@ export class CopilotHubMain extends Component {
             hubUrl: null,
             showToolbar: true,
             iframeLoaded: false,
+            // Theme state
+            theme: this._getStoredTheme(),
+            scheme: this._getStoredScheme(),
         });
 
         onMounted(() => {
             this.loadHubConfig();
             this.setupMessageListener();
+            this._applyThemeToDOM();
         });
 
         onWillUnmount(() => {
             this.removeMessageListener();
         });
+    }
+
+    /**
+     * Get stored theme from localStorage or default.
+     */
+    _getStoredTheme() {
+        try {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored && UI_THEMES.includes(stored)) {
+                return stored;
+            }
+        } catch {}
+        return "suqi"; // Default theme
+    }
+
+    /**
+     * Get stored scheme from localStorage or system preference.
+     */
+    _getStoredScheme() {
+        try {
+            const stored = localStorage.getItem(SCHEME_KEY);
+            if (stored && SCHEMES.includes(stored)) {
+                return stored;
+            }
+            // Check system preference
+            if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                return "dark";
+            }
+        } catch {}
+        return "light"; // Default scheme
+    }
+
+    /**
+     * Apply current theme to DOM attributes.
+     */
+    _applyThemeToDOM() {
+        const root = document.documentElement;
+        root.setAttribute("data-theme", this.state.theme);
+        root.setAttribute("data-scheme", this.state.scheme);
+
+        if (this.state.scheme === "dark") {
+            root.classList.add("dark");
+        } else {
+            root.classList.remove("dark");
+        }
+    }
+
+    /**
+     * Set theme and sync with iframe.
+     */
+    setTheme(theme) {
+        if (!UI_THEMES.includes(theme)) return;
+
+        this.state.theme = theme;
+        localStorage.setItem(STORAGE_KEY, theme);
+
+        // Auto-set scheme for tbwa-dark
+        if (theme === "tbwa-dark") {
+            this.setScheme("dark");
+        }
+
+        this._applyThemeToDOM();
+        this._sendThemeToHub();
+    }
+
+    /**
+     * Set color scheme and sync with iframe.
+     */
+    setScheme(scheme) {
+        if (!SCHEMES.includes(scheme)) return;
+
+        this.state.scheme = scheme;
+        localStorage.setItem(SCHEME_KEY, scheme);
+
+        this._applyThemeToDOM();
+        this._sendThemeToHub();
+    }
+
+    /**
+     * Toggle between light and dark scheme.
+     */
+    toggleScheme() {
+        this.setScheme(this.state.scheme === "light" ? "dark" : "light");
+    }
+
+    /**
+     * Cycle through available themes.
+     */
+    cycleTheme() {
+        const currentIndex = UI_THEMES.indexOf(this.state.theme);
+        const nextIndex = (currentIndex + 1) % UI_THEMES.length;
+        this.setTheme(UI_THEMES[nextIndex]);
+    }
+
+    /**
+     * Send current theme to the hub via postMessage.
+     */
+    _sendThemeToHub() {
+        if (!this.iframeRef.el || !this.state.hubUrl) {
+            return;
+        }
+
+        try {
+            const hubOrigin = new URL(this.state.hubUrl).origin;
+            this.iframeRef.el.contentWindow.postMessage(
+                {
+                    type: "IPAI_THEME_CHANGE",
+                    theme: this.state.theme,
+                    scheme: this.state.scheme,
+                },
+                hubOrigin
+            );
+        } catch (error) {
+            console.error("Failed to send theme to hub:", error);
+        }
     }
 
     /**
@@ -65,12 +195,15 @@ export class CopilotHubMain extends Component {
             this.state.hubUrl = config.url;
             this.state.showToolbar = config.show_toolbar !== false;
 
-            // Append view context if provided
+            // Append view context and theme params if provided
+            const url = new URL(config.url);
             if (this.props.view) {
-                const url = new URL(config.url);
                 url.searchParams.set("view", this.props.view);
-                this.state.hubUrl = url.toString();
             }
+            // Pass initial theme via URL params
+            url.searchParams.set("theme", this.state.theme);
+            url.searchParams.set("scheme", this.state.scheme);
+            this.state.hubUrl = url.toString();
 
             this.state.loading = false;
 
@@ -86,6 +219,8 @@ export class CopilotHubMain extends Component {
      */
     onIframeLoad() {
         this.state.iframeLoaded = true;
+        // Send theme after iframe loads
+        this._sendThemeToHub();
     }
 
     /**
@@ -170,6 +305,16 @@ export class CopilotHubMain extends Component {
      */
     handleHubMessage(message) {
         switch (message.type) {
+            case "IPAI_THEME_SYNC":
+                // Hub sends theme sync request
+                if (message.theme && UI_THEMES.includes(message.theme)) {
+                    this.setTheme(message.theme);
+                }
+                if (message.scheme && SCHEMES.includes(message.scheme)) {
+                    this.setScheme(message.scheme);
+                }
+                break;
+
             case "hub:navigate":
                 // Hub requests navigation to an Odoo action
                 if (message.action) {
@@ -187,6 +332,7 @@ export class CopilotHubMain extends Component {
             case "hub:ready":
                 // Hub signals it's ready
                 this.sendContextToHub();
+                this._sendThemeToHub();
                 break;
 
             default:
