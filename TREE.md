@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d66d1cc1cafb9c6378e5a3eaf3d25e354e88bcb5
+> Commit: 5b80388bc078c67fe9d9bbd53bbdf6197a5d17c5
 
 ```
 .
@@ -1950,6 +1950,7 @@
 │   │   ├── IPAI_MODULE_REDUCTION_PLAN.md
 │   │   ├── IPAI_TARGET_ARCHITECTURE.md
 │   │   ├── OCR_PIPELINE.md
+│   │   ├── ODOO_OFFICIAL_TO_TBWA_CANONICAL.md
 │   │   ├── PROD_RUNTIME_SNAPSHOT.md
 │   │   ├── README.md
 │   │   ├── RUNTIME_IDENTIFIERS.md
@@ -2226,6 +2227,8 @@
 │   │   ├── REPO_SNAPSHOT.prod.json
 │   │   ├── REPO_TREE.prod.md
 │   │   └── WORKOS_REPO_TREE.prod.md
+│   ├── runbooks
+│   │   └── PROD_RUNBOOK_ODOO.md
 │   ├── runtime
 │   │   ├── ADDONS_PATH.prod.txt
 │   │   ├── CONTAINER_PATH_CHECK.prod.txt
@@ -2309,7 +2312,9 @@
 │   ├── DIRECTIONAL_SYNC.md
 │   ├── DNS_SETTINGS.md
 │   ├── DOCKERFILE_COMPARISON.md
+│   ├── DOCKER_CANONICAL_DIFF.md
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
+│   ├── DOCKER_SIMPLE_EXPLANATION.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
 │   ├── ECOSYSTEM_GUIDE.md
@@ -2369,6 +2374,8 @@
 │   ├── ODOO_IMAGE_SPEC.md
 │   ├── ODOO_MODULE_DEPLOYMENT.md
 │   ├── ODOO_PROGRAMMATIC_CONFIG.md
+│   ├── OFFICIAL_ALIGNMENT.md
+│   ├── OFFICIAL_TYPOLOGY.md
 │   ├── OFFLINE_TARBALL_DEPLOYMENT.md
 │   ├── PRD_ipai_ppm_portfolio.md
 │   ├── PRODUCTION_DEFAULTS.md
@@ -2525,14 +2532,16 @@
 │   ├── stack
 │   │   ├── .env.example
 │   │   └── docker-compose.stack.yml
-│   └── superset
-│       ├── Dockerfile
-│       ├── README.md
-│       ├── do-app-spec.yaml
-│       ├── entrypoint.sh
-│       ├── manifest.json
-│       ├── superset_config.py
-│       └── virtual_datasets.sql
+│   ├── superset
+│   │   ├── Dockerfile
+│   │   ├── README.md
+│   │   ├── do-app-spec.yaml
+│   │   ├── entrypoint.sh
+│   │   ├── manifest.json
+│   │   ├── superset_config.py
+│   │   └── virtual_datasets.sql
+│   ├── docker-compose.prod.yaml
+│   └── odoo.conf
 ├── inventory
 │   ├── latest -> runs/20251231T020517Z
 │   └── runs
@@ -2853,6 +2862,11 @@
 │   │   └── ios
 │   │       └── README.md
 │   └── README.md
+├── sandbox
+│   └── dev
+│       ├── config
+│       │   └── odoo.conf
+│       └── docker-compose.yml
 ├── scripts
 │   ├── aiux
 │   │   ├── verify_assets.sh
@@ -3903,15 +3917,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1267 directories, 2631 files
+1271 directories, 2641 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1476 |
-| Files | 4027 |
+| Directories | 1480 |
+| Files | 4037 |
 | Python files | 1061 |
 | XML files | 512 |
-| Markdown files | 764 |
+| Markdown files | 770 |
