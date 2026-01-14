@@ -1,0 +1,34 @@
+name: Production Health Check
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/healthcheck_odoo_login.sh'
+      - '.github/workflows/production-health-check.yml'
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run HTTP health check
+        run: |
+          chmod +x scripts/healthcheck_odoo_login.sh
+          ./scripts/healthcheck_odoo_login.sh
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Production login health check failed"
+          echo "Asset system may be broken - check https://erp.insightpulseai.net/web/login"
+          echo "To fix, run on production droplet:"
+          echo "  cd /opt/odoo-ce/repo"
+          echo "  ./scripts/fix_odoo_assets_after_filestore_wipe.sh"
