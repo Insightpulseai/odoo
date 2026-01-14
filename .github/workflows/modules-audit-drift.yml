@@ -1,0 +1,83 @@
+name: modules-audit-drift
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check if audit file exists
+        run: |
+          if [ ! -f docs/deployment/MODULES_AUDIT.md ]; then
+            echo "❌ docs/deployment/MODULES_AUDIT.md missing"
+            echo "Run: python3 scripts/audit_installed_modules.py"
+            exit 1
+          fi
+
+      - name: Validate audit format
+        run: |
+          grep -q "^# Production Installed Modules (Authoritative)" docs/deployment/MODULES_AUDIT.md
+          grep -q "Source of Truth.*ir.module.module" docs/deployment/MODULES_AUDIT.md
+          grep -q "## Installed modules (all)" docs/deployment/MODULES_AUDIT.md
+          grep -q "## Policy: CE-Only with Optional IAP" docs/deployment/MODULES_AUDIT.md
+
+      - name: Check for manual edits (requires regeneration)
+        run: |
+          if grep -q "REPLACE_WITH" docs/deployment/MODULES_AUDIT.md; then
+            echo "❌ Audit contains placeholders - run audit script"
+            exit 1
+          fi
+
+      - name: Validate JSON formatting
+        run: |
+          # Extract JSON blocks and validate
+          python3 -c "
+          import json
+          import re
+
+          with open('docs/deployment/MODULES_AUDIT.md', 'r') as f:
+              content = f.read()
+
+          # Find all JSON code blocks
+          json_blocks = re.findall(r'\`\`\`json\n(.*?)\n\`\`\`', content, re.DOTALL)
+
+          if len(json_blocks) < 3:
+              print('❌ Expected at least 3 JSON blocks (installed, top-level, suspects)')
+              exit(1)
+
+          for i, block in enumerate(json_blocks):
+              try:
+                  data = json.loads(block)
+                  print(f'✅ JSON block {i+1} valid ({len(data)} items)')
+              except json.JSONDecodeError as e:
+                  print(f'❌ JSON block {i+1} invalid: {e}')
+                  exit(1)
+          "
+
+      - name: Check for Enterprise dependencies
+        run: |
+          if grep -iE "web_enterprise|\"enterprise\"" docs/deployment/MODULES_AUDIT.md | grep -v "enterprise_" | grep -v "Policy" | grep -v "Disallowed"; then
+            echo "❌ Enterprise dependencies detected in audit"
+            exit 1
+          fi
+          echo "✅ No Enterprise dependencies found"
+
+      - name: Summary
+        run: |
+          echo "## Audit Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ File exists and is properly formatted" >> $GITHUB_STEP_SUMMARY
+          echo "✅ JSON blocks are valid" >> $GITHUB_STEP_SUMMARY
+          echo "✅ No Enterprise dependencies detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note**: This gate validates format only." >> $GITHUB_STEP_SUMMARY
+          echo "For full regeneration against live DB, run:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "python3 scripts/audit_installed_modules.py" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

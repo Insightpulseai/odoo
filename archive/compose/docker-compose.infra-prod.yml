@@ -1,0 +1,53 @@
+# TBWA\SMP Production Odoo Stack
+# Managed PostgreSQL: odoo-db-sgp1 (DigitalOcean)
+# Droplet: 178.128.112.214 (odoo-erp-prod)
+# Domains: erp.insightpulseai.net, superset.insightpulseai.net, mcp.insightpulseai.net
+
+services:
+  odoo:
+    container_name: odoo-prod
+    image: odoo:18
+    restart: unless-stopped
+
+    ports:
+      - "8069:8069"
+
+    environment:
+      # Managed PostgreSQL connection (override official "db" default)
+      HOST: ${ODOO_DB_HOST:-odoo-db-sgp1-do-user-XXXXX-0.g.db.ondigitalocean.com}
+      PORT: ${ODOO_DB_PORT:-25060}
+      USER: ${ODOO_DB_USER:-doadmin}
+      PASSWORD: ${ODOO_DB_PASSWORD}
+
+      # Optional: Override default admin password for database manager
+      # ADMIN_PASSWORD: ${ODOO_ADMIN_PASSWORD:-admin}
+
+    volumes:
+      # Filestore persistence (attachments, sessions)
+      - odoo-data:/var/lib/odoo
+
+      # Production configuration (read-only)
+      - ./odoo.conf:/etc/odoo/odoo.conf:ro
+
+      # Custom IPAI addons (assumes repo at /opt/odoo-ce)
+      - /opt/odoo-ce/repo/addons:/mnt/extra-addons:ro
+
+    # Health check (optional but recommended)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/login"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+    # Logging configuration
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  odoo-data:
+    # Named volume for filestore persistence
+    # Located at: /var/lib/docker/volumes/odoo-data/_data

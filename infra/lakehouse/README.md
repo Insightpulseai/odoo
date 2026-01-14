@@ -1,6 +1,11 @@
 # OSS Lakehouse Stack
 
+**Special-Purpose Environment** - Not part of canonical Odoo deployment.
+
 Self-hosted "Databricks-like" execution layer using open-source components.
+
+> **Note**: This is a standalone subsystem. Do not use for Odoo application deployment.
+> See `../../SANDBOX.md` for canonical Odoo environments.
 
 ## Why Not Databricks CE?
 
@@ -53,8 +58,8 @@ cd infra/lakehouse
 cp .env.example .env
 # Edit .env with your passwords
 
-# 2. Start the stack
-docker compose up -d
+# 2. Start the stack (non-canonical compose file)
+docker compose -f compose.lakehouse.yml up -d
 
 # 3. Verify health
 curl -fsS http://localhost:5678/healthz  # n8n
