@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5b80388bc078c67fe9d9bbd53bbdf6197a5d17c5
+> Commit: b0a1b84e104ba91a4ab9b0aca2762f8b0ade42fe
 
 ## 📚 Documentation
 
@@ -58,6 +58,7 @@
 | [Production Hotfix Summary](HOTFIX_SUMMARY.md) | . |
 | [Identity & ChatOps Deployment Summary](IDENTITY_CHATOPS_DEPLOYMENT_SUMMARY.md) | . |
 | [Infrastructure Improvement Plan](INFRASTRUCTURE_PLAN.md) | . |
+| [Infrastructure Summary - Odoo 18 CE + DO Managed PostgreSQL](INFRASTRUCTURE_SUMMARY.md) | . |
 | [InsightPulse ERP Configuration Guide](INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md) | . |
 | [Kapa.ai-style Self-Hosted Documentation Assistant](KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md) | . |
 | [Mattermost ↔ n8n ↔ Odoo/Supabase Integration Guide](MATTERMOST_OPEX_INTEGRATION.md) | . |
@@ -78,6 +79,7 @@
 | [CI Pipeline Fix Report](REPORT.md) | . |
 | [Odoo CE Repository Restructure Plan](REPO_RESTRUCTURE_PLAN.md) | . |
 | [Finance PPM Safety Mechanisms](SAFETY_MECHANISMS.md) | . |
+| [Canonical Sandbox](SANDBOX.md) | . |
 | [Security Policy](SECURITY.md) | . |
 | [🗺️ Sitemap - InsightPulse ERP](SITEMAP.md) | . |
 | [Strategic PPM & Analytics Stack - Activation Summary](STRATEGIC_PPM_ANALYTICS_SUMMARY.md) | . |
@@ -176,6 +178,11 @@
 | [omc_finance_ppm Deployment Strategy](archive/addons/omc_finance_ppm/DEPLOYMENT_STRATEGY.md) | archive/addons/omc_finance_ppm |
 | [Finance PPM Seed Data Documentation](archive/addons/omc_finance_ppm/data/README.md) | archive/addons/omc_finance_ppm/data |
 | [TBWA Spectra Integration Module](archive/addons/tbwa_spectra_integration/README.md) | archive/addons/tbwa_spectra_integration |
+| [Odoo 18 CE Docker Development Environment](archive/compose/dev-docker/README.md) | archive/compose/dev-docker |
+| [SSL Certificates](archive/compose/docker/nginx/ssl/README.md) | archive/compose/docker/nginx/ssl |
+| [AGENTS.md - OdooForge Agent Rules](archive/compose/odooforge-sandbox/AGENTS.md) | archive/compose/odooforge-sandbox |
+| [OdooForge Sandbox](archive/compose/odooforge-sandbox/README.md) | archive/compose/odooforge-sandbox |
+| [OdooForge Sandbox - UAT Test Plan](archive/compose/odooforge-sandbox/tests/UAT_TEST_PLAN.md) | archive/compose/odooforge-sandbox/tests |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [CLAUDE.md — Odoo CE Project](claude.md) | . |
@@ -195,10 +202,10 @@
 | [Extended Platform Import Templates](db/import-templates/extended-platform/README.md) | db/import-templates/extended-platform |
 | [RLS Roles and Permissions](db/rls/RLS_ROLES.md) | db/rls |
 | [Database Seeding Strategy](db/seeds/SEEDING_STRATEGY.md) | db/seeds |
+| [Droplet Deployment Guide](deploy/DROPLET_DEPLOYMENT.md) | deploy |
+| [Production Droplet Setup - Complete Runbook](deploy/PRODUCTION_SETUP.md) | deploy |
 | [Deployment Guide](deploy/README.md) | deploy |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
-| [Odoo 18 CE Docker Development Environment](dev-docker/README.md) | dev-docker |
-| [SSL Certificates](docker/nginx/ssl/README.md) | docker/nginx/ssl |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
@@ -372,6 +379,7 @@
 | [Claude Code CLI Deployment Prompt](docs/deployment/CLAUDE_CODE_CLI_PROMPT.md) | docs/deployment |
 | [WorkOS Production Deployment - Execution Guide](docs/deployment/DEPLOYMENT_EXECUTION_GUIDE.md) | docs/deployment |
 | [WorkOS Deployment Verification Matrix](docs/deployment/DEPLOYMENT_VERIFICATION_MATRIX.md) | docs/deployment |
+| [Production Installed Modules (Authoritative)](docs/deployment/MODULES_AUDIT.md) | docs/deployment |
 | [Odoo CE/OCA CI Guardian](docs/deployment/OCA_CI_GUARDIAN.md) | docs/deployment |
 | [WorkOS Production Deployment - Pre-Flight Checklist](docs/deployment/PRE_FLIGHT_CHECKLIST.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
@@ -403,6 +411,10 @@
 | [IPAI Install Profiles](docs/ipai/PROFILES.md) | docs/ipai |
 | [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
 | [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
+| [Mailgun Inbound Email Routes](docs/mailgun/INBOUND_EMAIL_ROUTES.md) | docs/mailgun |
+| [Odoo CE 18.0 SMTP Setup with Mailgun](docs/mailgun/ODOO_SMTP_SETUP.md) | docs/mailgun |
+| [TBWA\SMP Mailgun Canonical Configuration](docs/mailgun/TBWA_MAILGUN_CANONICAL.md) | docs/mailgun |
+| [Mailgun Webhooks and Events](docs/mailgun/WEBHOOKS_AND_EVENTS.md) | docs/mailgun |
 | [Module Production Readiness Status](docs/module-health/MODULES_PROD_STATUS.md) | docs/module-health |
 | [IPAI Module Index](docs/modules/INDEX.md) | docs/modules |
 | [ipai_advisor](docs/modules/ipai_advisor.md) | docs/modules |
@@ -548,6 +560,7 @@
 | [Guest Token Acquisition FSM](docs/state_machines/superset/embed_guest_token.md) | docs/state_machines/superset |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
+| [Database Selector Issue - Troubleshooting Guide](docs/troubleshooting/DBFILTER_FIX.md) | docs/troubleshooting |
 | [Magic Link 500 Error: Complete Analysis & Fix](docs/troubleshooting/MAGIC_LINK_500_ERROR.md) | docs/troubleshooting |
 | [Jinja2 Templating Basics](docs/tutorials/jinja2-basics/README.md) | docs/tutorials/jinja2-basics |
 | [Odoo CE v0.9.1 - Quick Deployment Guide](docs/v0.9.1_DEPLOYMENT_GUIDE.md) | docs |
@@ -594,9 +607,6 @@
 | [Receipt OCR Test Harness](ocr-adapter/scripts/README.md) | ocr-adapter/scripts |
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
-| [AGENTS.md - OdooForge Agent Rules](odooforge-sandbox/AGENTS.md) | odooforge-sandbox |
-| [OdooForge Sandbox](odooforge-sandbox/README.md) | odooforge-sandbox |
-| [OdooForge Sandbox - UAT Test Plan](odooforge-sandbox/tests/UAT_TEST_PLAN.md) | odooforge-sandbox/tests |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
 | [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
@@ -607,10 +617,14 @@
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
+| [Canonical Database Naming Conventions](sandbox/dev/CANONICAL_NAMING.md) | sandbox/dev |
+| [Hot-Reload Development Guide](sandbox/dev/HOT_RELOAD_GUIDE.md) | sandbox/dev |
+| [Odoo 18 CE Local Sandbox](sandbox/dev/README.md) | sandbox/dev |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
 | [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |
+| [Odoo Company Bootstrap Scripts](scripts/odoo/README_BOOTSTRAP.md) | scripts/odoo |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
 | [IPAI Skills](skills/README.md) | skills |
@@ -925,7 +939,7 @@
 | [ipai_marketing_agency_pack](./archive/addons/ipai_marketing_agency_pack) | ✅ |  |
 | [ipai_ocr_expense](./archive/addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
-| [ipai_finance_ppm](./dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
+| [ipai_finance_ppm](./archive/compose/dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 | [ipai_finance_okr](./docs/evidence/20260112-0358/ipai_finance_okr) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
@@ -935,8 +949,6 @@
 
 | File | Purpose |
 |------|---------|
-| [docker-compose.yml](docker-compose.yml) | Docker orchestration |
-| [docker-compose.prod.yml](docker-compose.prod.yml) | Production Docker |
 | [Dockerfile](Dockerfile) | Container build |
 | [requirements.txt](requirements.txt) | Python dependencies |
 | [.github/workflows/ci.yml](.github/workflows/ci.yml) | CI/CD pipeline |
