@@ -417,5 +417,55 @@ feat|fix|refactor|docs|test|chore(scope): description
 
 ---
 
+## VS Code Environments vs Claude Code Capabilities
+
+This section maps the main VS Code–style environments to the actual capabilities Claude Code can use in each one. Use this as the routing matrix when deciding where to run agentic work.
+
+### Comparison Matrix
+
+| Environment | Claude Surface | Execution Surface | Terminal Access | Docker Control | MCP Servers | Best For |
+|-------------|----------------|-------------------|-----------------|----------------|-------------|----------|
+| **VS Code Desktop + CLI** | CLI + extension | Local machine | **Full** | **Full** | **Full** | Heavy refactors, Docker orchestration, MCP debugging |
+| **VS Code Web + Claude Web** | Browser panel | Browser sandbox | **None** | **None** | Indirect (HTTP only) | Light edits, docs, planning |
+| **GitHub Codespaces + CLI** | CLI inside container | Remote container | **Full inside** | **Full inside** | **Full inside** | Full power, cloud hosted |
+| **Remote Tunnels + CLI** | CLI + extension | Remote host | **Full on remote** | **Full on remote** | **Full on remote** | Hybrid local UX, remote compute |
+
+### Environment Selection Guidelines
+
+| Need | Recommended Environment |
+|------|------------------------|
+| Full agentic power (Docker, MCP, DevContainers) | VS Code Desktop + CLI inside DevContainer |
+| Cloud-hosted full power | GitHub Codespaces + Claude Code |
+| Quick edits from browser-only device | VS Code Web + Claude Code Web |
+| Persistent cloud server with local UX | Remote Tunnels + Claude Code |
+
+### Recommended Default for Agentic ERP/Analytics Work
+
+For the Odoo + Supabase + Superset + Next.js stack:
+
+1. **Primary**: VS Code Desktop + DevContainer + Claude Code CLI
+   - Maximum control over Docker, MCP servers, local "data center in a box"
+   - Host OS protected by container boundary
+
+2. **Cloud variant**: GitHub Codespaces with same `.devcontainer/devcontainer.json`
+   - Mirrors local DevContainer model
+   - Offloads CPU/RAM to GitHub infra
+
+3. **Browser-only fallback**: VS Code Web + Claude Code Web
+   - Documentation, reviews, small patches, planning only
+   - Route stack-level operations to DevContainer/Codespace
+
+### Key Limitations by Environment
+
+| Environment | Cannot Do |
+|-------------|-----------|
+| **VS Code Web** | No terminal, no Docker, no local shell, MCP only if proxied via HTTPS |
+| **Codespaces** | Needs quota, Docker-in-Docker must be enabled, network egress policies apply |
+| **Remote Tunnels** | Requires tunnel daemon running, security hardening on remote host |
+
+> **See also**: [docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md](./docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md) for the full architectural convergence document.
+
+---
+
 *For full project documentation, see [CLAUDE.md](./CLAUDE.md)*
 *For external memory queries, use: `python .claude/query_memory.py <category>`*
