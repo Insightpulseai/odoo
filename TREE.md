@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ad61bf80a52bcd08c1c1c8f4cfa7a4aa7d8c556c
+> Commit: d66d1cc1cafb9c6378e5a3eaf3d25e354e88bcb5
 
 ```
 .
@@ -1939,6 +1939,7 @@
 │   │   ├── runtime_snapshot
 │   │   │   ├── 20260108_013846
 │   │   │   └── README.md
+│   │   ├── AGENTIC_AI_ERP_ANALYTICS.md
 │   │   ├── AI_MODULE_DEPRECATION_MANIFEST.md
 │   │   ├── ASK_AI_CONTRACT.md
 │   │   ├── AUTH_MODEL.md
@@ -3902,7 +3903,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1267 directories, 2630 files
+1267 directories, 2631 files
 ```
 
 ## 📊 Stats
@@ -3910,7 +3911,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1476 |
-| Files | 4026 |
+| Files | 4027 |
 | Python files | 1061 |
 | XML files | 512 |
-| Markdown files | 763 |
+| Markdown files | 764 |
