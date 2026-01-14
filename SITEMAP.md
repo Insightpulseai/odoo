@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fee55d72879bd55574c033463e9df78bbe636c6f
+> Commit: 76f995b619cddf3af0318b9c21ae70d79fd59140
 
 ## 📚 Documentation
 
@@ -526,6 +526,18 @@
 | [What Shipped: prod-20260109-1642](docs/releases/prod-20260109-1642/WHAT_SHIPPED.md) | docs/releases/prod-20260109-1642 |
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
+| [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
+| [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
+| [Document Upload/OCR FSM](docs/state_machines/odoo/document_upload.md) | docs/state_machines/odoo |
+| [Grid View Controller FSM](docs/state_machines/odoo/grid_view_controller.md) | docs/state_machines/odoo |
+| [Superset Dashboard Embed FSM (Odoo Side)](docs/state_machines/odoo/superset_embed.md) | docs/state_machines/odoo |
+| [Auth Session FSM](docs/state_machines/scout/auth_session.md) | docs/state_machines/scout |
+| [Copilot Session FSM](docs/state_machines/scout/copilot_session.md) | docs/state_machines/scout |
+| [Offline Queue FSM](docs/state_machines/scout/offline_queue.md) | docs/state_machines/scout |
+| [Realtime Subscription FSM](docs/state_machines/scout/realtime_subscription.md) | docs/state_machines/scout |
+| [Chart Query Lifecycle FSM](docs/state_machines/superset/chart_query_lifecycle.md) | docs/state_machines/superset |
+| [Dashboard Filtering FSM](docs/state_machines/superset/dashboard_filtering.md) | docs/state_machines/superset |
+| [Guest Token Acquisition FSM](docs/state_machines/superset/embed_guest_token.md) | docs/state_machines/superset |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Magic Link 500 Error: Complete Analysis & Fix](docs/troubleshooting/MAGIC_LINK_500_ERROR.md) | docs/troubleshooting |
