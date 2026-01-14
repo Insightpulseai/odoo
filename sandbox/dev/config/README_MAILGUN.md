@@ -14,11 +14,24 @@ Quick setup guide for Mailgun SMTP in local Odoo sandbox.
 
 ## Setup Steps
 
-### 1. Add SMTP Password to Environment
+### 1. Add Mailgun Configuration to Environment
+
+**⚠️ IMPORTANT**: Use **`.net`** domain exclusively. No `.com` references.
 
 ```bash
-# Add to ~/.zshrc
-echo 'export MAILGUN_SMTP_PASSWORD="your-mailgun-smtp-password-here"' >> ~/.zshrc
+# Add to ~/.zshrc (canonical .net configuration)
+cat >> ~/.zshrc <<'EOF'
+
+# Mailgun Configuration (mg.insightpulseai.net)
+export MAILGUN_DOMAIN="mg.insightpulseai.net"
+export MAILGUN_SMTP_HOST="smtp.mailgun.org"
+export MAILGUN_SMTP_PORT="587"
+export MAILGUN_SMTP_LOGIN="postmaster@mg.insightpulseai.net"
+export MAILGUN_SMTP_PASSWORD="your-mailgun-smtp-password-here"
+export MAIL_FROM_DEFAULT="no-reply@mg.insightpulseai.net"
+export MAIL_FROM_NAME="InsightPulseAI"
+EOF
+
 source ~/.zshrc
 ```
 

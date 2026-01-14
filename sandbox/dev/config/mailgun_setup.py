@@ -2,6 +2,12 @@
 """
 Mailgun SMTP Configuration for Odoo
 Configure outgoing mail server for mg.insightpulseai.net
+
+Canonical Configuration (.net domain only):
+- Domain: mg.insightpulseai.net
+- SMTP: smtp.mailgun.org:587
+- From: no-reply@mg.insightpulseai.net
+- Auth: postmaster@mg.insightpulseai.net
 """
 
 import os
@@ -14,7 +20,17 @@ import sys
 smtp_password = os.getenv('MAILGUN_SMTP_PASSWORD')
 if not smtp_password:
     print("❌ ERROR: MAILGUN_SMTP_PASSWORD not set in environment")
-    print("Add to ~/.zshrc: export MAILGUN_SMTP_PASSWORD='your-mailgun-smtp-password'")
+    print("")
+    print("Add to ~/.zshrc:")
+    print('  export MAILGUN_DOMAIN="mg.insightpulseai.net"')
+    print('  export MAILGUN_SMTP_HOST="smtp.mailgun.org"')
+    print('  export MAILGUN_SMTP_PORT="587"')
+    print('  export MAILGUN_SMTP_LOGIN="postmaster@mg.insightpulseai.net"')
+    print('  export MAILGUN_SMTP_PASSWORD="your-mailgun-smtp-password"')
+    print('  export MAIL_FROM_DEFAULT="no-reply@mg.insightpulseai.net"')
+    print('  export MAIL_FROM_NAME="InsightPulseAI"')
+    print("")
+    print("Then: source ~/.zshrc")
     sys.exit(1)
 
 # Check if mail server already exists

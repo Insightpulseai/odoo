@@ -80,25 +80,31 @@ For sending from `user@insightpulseai.net` (not `mg.*`), additional SPF/DKIM nee
 
 ## SMTP Credentials (Outbound Email)
 
-**For Odoo, n8n, Superset, etc.**:
+**Canonical Configuration** (all services use `.net` domain):
 
-```yaml
-SMTP Host: smtp.mailgun.org
-Port: 587
-Security: STARTTLS
-Username: postmaster@mg.insightpulseai.net
-Password: <MAILGUN_SMTP_PASSWORD>
-From Address: no-reply@mg.insightpulseai.net
+```bash
+MAILGUN_DOMAIN=mg.insightpulseai.net
+MAILGUN_SMTP_HOST=smtp.mailgun.org
+MAILGUN_SMTP_PORT=587
+MAILGUN_SMTP_LOGIN=postmaster@mg.insightpulseai.net
+MAILGUN_SMTP_PASSWORD=***REDACTED***
+
+MAIL_FROM_DEFAULT=no-reply@mg.insightpulseai.net
+MAIL_FROM_NAME="InsightPulseAI"
 ```
 
 **Environment Variables** (add to `~/.zshrc`):
 ```bash
+export MAILGUN_DOMAIN="mg.insightpulseai.net"
 export MAILGUN_SMTP_HOST="smtp.mailgun.org"
 export MAILGUN_SMTP_PORT="587"
-export MAILGUN_SMTP_USER="postmaster@mg.insightpulseai.net"
+export MAILGUN_SMTP_LOGIN="postmaster@mg.insightpulseai.net"
 export MAILGUN_SMTP_PASSWORD="<your-mailgun-smtp-password>"
-export MAILGUN_FROM_EMAIL="no-reply@mg.insightpulseai.net"
+export MAIL_FROM_DEFAULT="no-reply@mg.insightpulseai.net"
+export MAIL_FROM_NAME="InsightPulseAI"
 ```
+
+**⚠️ IMPORTANT**: Use **`.net`** exclusively. No `.com` references anywhere.
 
 ## Inbound Email Routing (Webhooks)
 
@@ -137,7 +143,9 @@ Actions:
 Description: Catch-all for unmatched recipients
 ```
 
-## Odoo Configuration (Outgoing Mail Server)
+## Service-Specific Configurations
+
+### Odoo Configuration
 
 **Settings → Technical → Outgoing Mail Servers → Create**:
 
@@ -153,6 +161,98 @@ Description: Catch-all for unmatched recipients
     'sequence': 10,
 }
 ```
+
+**Or via environment** (`docker-compose.yml`):
+
+```yaml
+environment:
+  EMAIL_HOST: smtp.mailgun.org
+  EMAIL_PORT: 587
+  EMAIL_HOST_USER: postmaster@mg.insightpulseai.net
+  EMAIL_HOST_PASSWORD: ${MAILGUN_SMTP_PASSWORD}
+  EMAIL_FROM: no-reply@mg.insightpulseai.net
+  EMAIL_USE_TLS: "True"
+```
+
+### Apache Superset Configuration
+
+**`superset_config.py` or environment**:
+
+```python
+SMTP_HOST = 'smtp.mailgun.org'
+SMTP_PORT = 587
+SMTP_USER = 'postmaster@mg.insightpulseai.net'
+SMTP_PASSWORD = os.getenv('MAILGUN_SMTP_PASSWORD')
+SMTP_STARTTLS = True
+SMTP_SSL = False
+SMTP_MAIL_FROM = 'no-reply@mg.insightpulseai.net'
+```
+
+**Or via environment** (`docker-compose.yml`):
+
+```yaml
+environment:
+  SMTP_HOST: smtp.mailgun.org
+  SMTP_PORT: 587
+  SMTP_USER: postmaster@mg.insightpulseai.net
+  SMTP_PASSWORD: ${MAILGUN_SMTP_PASSWORD}
+  SMTP_STARTTLS: "True"
+  SMTP_SSL: "False"
+  SMTP_MAIL_FROM: no-reply@mg.insightpulseai.net
+```
+
+### n8n Configuration
+
+**Environment variables** (`.env` or `docker-compose.yml`):
+
+```yaml
+environment:
+  N8N_EMAIL_MODE: "smtp"
+  N8N_SMTP_HOST: smtp.mailgun.org
+  N8N_SMTP_PORT: 587
+  N8N_SMTP_USER: postmaster@mg.insightpulseai.net
+  N8N_SMTP_PASS: ${MAILGUN_SMTP_PASSWORD}
+  N8N_SMTP_SENDER: no-reply@mg.insightpulseai.net
+  N8N_SMTP_SSL: "false"
+```
+
+### MCP / Next.js / Vercel Apps
+
+**TypeScript configuration** (`lib/mail.ts`):
+
+```typescript
+export const MAIL_CONFIG = {
+  host: process.env.MAILGUN_SMTP_HOST ?? 'smtp.mailgun.org',
+  port: Number(process.env.MAILGUN_SMTP_PORT ?? 587),
+  auth: {
+    user: process.env.MAILGUN_SMTP_LOGIN!,
+    pass: process.env.MAILGUN_SMTP_PASSWORD!,
+  },
+  from: `${process.env.MAIL_FROM_NAME} <${process.env.MAIL_FROM_DEFAULT}>`,
+};
+```
+
+**Environment variables** (`.env.local`):
+
+```bash
+MAILGUN_SMTP_HOST=smtp.mailgun.org
+MAILGUN_SMTP_PORT=587
+MAILGUN_SMTP_LOGIN=postmaster@mg.insightpulseai.net
+MAILGUN_SMTP_PASSWORD=<your-mailgun-smtp-password>
+MAIL_FROM_DEFAULT=no-reply@mg.insightpulseai.net
+MAIL_FROM_NAME=InsightPulseAI
+```
+
+**Vercel Environment Variables**:
+
+1. Go to: **Project → Settings → Environment Variables**
+2. Add:
+   - `MAILGUN_SMTP_HOST` = `smtp.mailgun.org`
+   - `MAILGUN_SMTP_PORT` = `587`
+   - `MAILGUN_SMTP_LOGIN` = `postmaster@mg.insightpulseai.net`
+   - `MAILGUN_SMTP_PASSWORD` = `<your-password>` (encrypted)
+   - `MAIL_FROM_DEFAULT` = `no-reply@mg.insightpulseai.net`
+   - `MAIL_FROM_NAME` = `InsightPulseAI`
 
 **Test Command**:
 ```bash
