@@ -21,7 +21,9 @@ open http://localhost:8069
 - Master password: (leave empty for first-time setup)
 - Login: `admin` / `admin` (after database initialization)
 
-**Documentation**: See `sandbox/dev/README.md`
+**Documentation**:
+- **Quick Start**: `sandbox/dev/README_CANONICAL.md` (hot reload, module updates)
+- **Full Setup**: `sandbox/dev/README.md`
 
 ---
 
