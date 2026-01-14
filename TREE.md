@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 76f995b619cddf3af0318b9c21ae70d79fd59140
+> Commit: ad61bf80a52bcd08c1c1c8f4cfa7a4aa7d8c556c
 
 ```
 .
@@ -1429,6 +1429,9 @@
 │   │   ├── next.config.mjs
 │   │   ├── package.json
 │   │   └── theme.config.jsx
+│   ├── local-schema-server
+│   │   ├── package.json
+│   │   └── server.js
 │   ├── mattermost-rag
 │   │   ├── do
 │   │   │   └── app.json
@@ -1954,6 +1957,7 @@
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
 │   │   ├── ipai_idp_pdf_processing.drawio
+│   │   ├── multi_tenant_architecture.md
 │   │   └── runtime_identifiers.json
 │   ├── audits
 │   │   └── ipai_modules
@@ -1987,7 +1991,8 @@
 │   │   ├── ODOO_ORM_MAP.md
 │   │   ├── README.md
 │   │   ├── SCOUT_CES_ANALYTICS_SCHEMA.dbml
-│   │   └── SUPERSET_ERD_INTEGRATION.md
+│   │   ├── SUPERSET_ERD_INTEGRATION.md
+│   │   └── insightpulse_canonical.dbml
 │   ├── db
 │   │   ├── DB_CONVENTIONS_AND_NAMING.md
 │   │   ├── DB_CURRENT_INVENTORY.md
@@ -2668,8 +2673,9 @@
 │   │   └── odoo-lab.yaml
 │   └── agentic-cloud.yaml
 ├── n8n
-│   └── workflows
-│       └── .gitkeep
+│   ├── workflows
+│   │   └── .gitkeep
+│   └── n8n_tenant_provisioning.json
 ├── notion-n8n-monthly-close
 │   ├── scripts
 │   │   ├── deduplicate_closing_tasks.py
@@ -3102,6 +3108,7 @@
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
 │   ├── sync_ipai_sample_metrics_to_supabase.py
+│   ├── tenant_automation.py
 │   ├── test-mailgun.py
 │   ├── test-mailgun.sh
 │   ├── test_afc_rag.py
@@ -3895,15 +3902,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1266 directories, 2624 files
+1267 directories, 2630 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1475 |
-| Files | 4020 |
-| Python files | 1060 |
+| Directories | 1476 |
+| Files | 4026 |
+| Python files | 1061 |
 | XML files | 512 |
-| Markdown files | 762 |
+| Markdown files | 763 |
