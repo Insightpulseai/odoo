@@ -1,19 +1,28 @@
 # Production Installed Modules (Authoritative)
 
-**Date**: 2026-01-14 09:27 UTC
-**Server**: erp.insightpulseai.net (178.128.112.214)
-**Database**: odoo (PostgreSQL 16)
-**Odoo Version**: 18.0-20251222
+**Generated**: 2026-01-14 09:35 UTC
+**Database**: odoo
 **Source of Truth**: `ir.module.module` where `state = 'installed'`
 
 ## Summary
+- Installed modules: **106**
+- Top-level modules (auto_install=false): **41**
 
-- **Total installed modules**: 106
-- **Top-level installed modules** (auto_install = false): 41
-- **Enterprise dependencies**: 0 (verified via manifest scan)
+## Policy: CE-Only with Optional IAP
+
+**Allowed**:
+- `iap_*` modules installed but unused (no paid endpoints configured)
+- `sms`, `*_sms` modules with external SMS provider (optional)
+- `google_*`, `microsoft_account` OAuth integrations (optional)
+- `mail_plugin`, `*_mail_plugin` external mail client integrations (optional)
+
+**Disallowed**:
+- Any module requiring paid endpoints for core operations
+- Any module with `web_enterprise` or `enterprise` dependencies
+
+**Enforcement**: CI drift gate fails if Enterprise dependencies detected.
 
 ## Installed modules (all)
-
 ```json
 [
   "account",
@@ -125,8 +134,7 @@
 ]
 ```
 
-## Top-level installed modules (auto_install = false)
-
+## Top-level modules
 ```json
 [
   "account",
@@ -173,9 +181,9 @@
 ]
 ```
 
-## Suspects list (requires review)
+## Suspects (review list)
 
-These modules may indicate IAP/integrations/plugins and should be reviewed for CE-only policy:
+Modules requiring review for CE-only policy compliance:
 
 ```json
 [
@@ -192,98 +200,17 @@ These modules may indicate IAP/integrations/plugins and should be reviewed for C
   "iap_crm",
   "iap_mail",
   "mail_plugin",
+  "payment",
   "project_mail_plugin",
   "project_sms",
   "sms",
   "stock_sms",
   "website_crm_sms",
+  "website_payment",
   "website_sms"
 ]
 ```
 
-### Analysis of Suspects
-
-**IAP Modules** (In-App Purchases - CE compatible but optional):
-- `iap` - IAP infrastructure (CE-compatible, free tier available)
-- `iap_crm` - CRM data enrichment (optional IAP service)
-- `iap_mail` - Mail enrichment (optional IAP service)
-- `crm_iap_enrich` - Lead enrichment (optional IAP service)
-- `crm_iap_mine` - Lead generation (optional IAP service)
-
-**Mail Plugin Modules** (CE-compatible, external integrations):
-- `mail_plugin` - Mail client integration base
-- `crm_mail_plugin` - Turn emails into leads
-- `project_mail_plugin` - Project inbox integration
-
-**Google Integrations** (CE-compatible, external OAuth):
-- `google_account` - Google OAuth base
-- `google_calendar` - Calendar sync
-- `google_gmail` - Gmail integration
-- `google_recaptcha` - Anti-spam protection
-
-**SMS Modules** (CE-compatible, external SMS provider required):
-- `sms` - SMS infrastructure
-- `calendar_sms`, `crm_sms`, `project_sms`, `stock_sms`, `website_crm_sms`, `website_sms` - SMS feature integrations
-
-**Recommendation**: All suspects are CE-compatible. IAP modules provide optional paid services but do NOT require Enterprise license.
-
-## Not Installable Modules (Warnings)
-
-- `ipai_superset_connector` - Custom module, not installable (manifest issue)
-- `oca` - Marker module, not installable (expected)
-
-## Enterprise Dependencies Check
-
-```bash
-# Scanned all manifest files in /usr/lib/python3/dist-packages/odoo/addons
-# Searched for: "web_enterprise", "\"enterprise\""
-# Result: 0 Enterprise dependencies found
-```
-
-✅ **No Enterprise modules or dependencies detected**
-
-## Verification Commands
-
-```bash
-# Count installed modules
-docker exec odoo-prod odoo shell -d odoo --no-http <<'PY'
-count = env['ir.module.module'].sudo().search_count([('state','=','installed')])
-print(f"Installed: {count}")
-PY
-
-# Check for Enterprise dependencies
-docker exec odoo-prod bash -c 'grep -r "web_enterprise\|\"enterprise\"" /usr/lib/python3/dist-packages/odoo/addons/*/\__manifest__.py | wc -l'
-```
-
-## Critical Modules Inventory
-
-### Core Business (11 modules)
-- `account`, `account_payment` - Accounting
-- `sale`, `sale_management`, `sale_crm`, `sale_project` - Sales
-- `crm` - Customer relationship management
-- `project`, `project_hr_expense` - Project management
-- `hr`, `hr_expense` - Human resources
-
-### Infrastructure (8 modules)
-- `base`, `web`, `web_editor` - Platform core
-- `mail`, `mail_bot` - Communication
-- `portal` - External access
-- `bus` - Real-time messaging
-- `http_routing` - HTTP routing
-
-### Integrations (6 modules)
-- `google_account`, `google_calendar`, `google_gmail` - Google
-- `microsoft_account` - Microsoft
-- `payment`, `website_payment` - Payments
-
-### Data & Analytics (5 modules)
-- `spreadsheet`, `spreadsheet_dashboard` - Dashboards
-- `analytic` - Analytics
-- `ipai_superset_connector` - Superset BI
-- `digest` - Digest emails
-
 ---
 
-**Generated**: 2026-01-14 09:27 UTC
-**Method**: Direct query of `ir.module.module` table
-**Verified**: No Enterprise dependencies in manifest files
+**Regenerate**: `python3 scripts/audit_installed_modules.py`
