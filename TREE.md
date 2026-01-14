@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fee55d72879bd55574c033463e9df78bbe636c6f
+> Commit: 76f995b619cddf3af0318b9c21ae70d79fd59140
 
 ```
 .
@@ -2231,6 +2231,22 @@
 │   │   ├── ODOO_MODEL_SNAPSHOT.prod.json
 │   │   ├── WORKOS_MODELS.prod.json
 │   │   └── WORKOS_MODULES.prod.csv
+│   ├── state_machines
+│   │   ├── odoo
+│   │   │   ├── ask_ai_chat.md
+│   │   │   ├── document_upload.md
+│   │   │   ├── grid_view_controller.md
+│   │   │   └── superset_embed.md
+│   │   ├── scout
+│   │   │   ├── auth_session.md
+│   │   │   ├── copilot_session.md
+│   │   │   ├── offline_queue.md
+│   │   │   └── realtime_subscription.md
+│   │   ├── superset
+│   │   │   ├── chart_query_lifecycle.md
+│   │   │   ├── dashboard_filtering.md
+│   │   │   └── embed_guest_token.md
+│   │   └── README.md
 │   ├── templates
 │   │   └── ipai-ops-stack
 │   │       ├── caddy
@@ -3879,15 +3895,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1262 directories, 2612 files
+1266 directories, 2624 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1471 |
-| Files | 4008 |
+| Directories | 1475 |
+| Files | 4020 |
 | Python files | 1060 |
 | XML files | 512 |
-| Markdown files | 750 |
+| Markdown files | 762 |
