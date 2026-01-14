@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 76f995b619cddf3af0318b9c21ae70d79fd59140
+> Commit: ad61bf80a52bcd08c1c1c8f4cfa7a4aa7d8c556c
 
 ## 📚 Documentation
 
@@ -339,6 +339,7 @@
 | [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
+| [InsightPulse AI - Multi-Tenant ERP SaaS Architecture](docs/architecture/multi_tenant_architecture.md) | docs/architecture |
 | [Prod Runtime Snapshot (20260108_013846)](docs/architecture/runtime_snapshot/20260108_013846/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture/runtime_snapshot/20260108_013846 |
 | [Runtime Snapshots](docs/architecture/runtime_snapshot/README.md) | docs/architecture/runtime_snapshot |
 | [IPAI Module Audit Report](docs/audits/ipai_modules/README.md) | docs/audits/ipai_modules |
