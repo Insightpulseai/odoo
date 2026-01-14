@@ -1,0 +1,79 @@
+version: '3.8'
+
+# Droplet deployment configuration for 178.128.112.214
+# Connects to DigitalOcean Managed PostgreSQL via stunnel
+
+services:
+  dbssl:
+    image: alpine:3.20
+    container_name: odoo-dbssl
+    command: >
+      sh -c "
+      apk add --no-cache stunnel ca-certificates netcat-openbsd &&
+      cat >/etc/stunnel/stunnel.conf <<'CONF'
+      client = yes
+      foreground = yes
+      syslog = no
+      debug = 4
+      [postgres]
+      accept = 0.0.0.0:5432
+      connect = $$DB_HOST:$$DB_PORT
+      CONF
+      exec stunnel /etc/stunnel/stunnel.conf
+      "
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT:-25060}
+    restart: unless-stopped
+    networks:
+      - odoo-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  odoo:
+    image: odoo:18.0
+    container_name: odoo-prod
+    depends_on:
+      dbssl:
+        condition: service_healthy
+    ports:
+      - "8069:8069"
+    environment:
+      DB_HOST: dbssl
+      DB_PORT: 5432
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      ADMIN_PASSWD: ${ADMIN_PASSWD}
+      PROXY_MODE: "True"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./odoo.conf.droplet:/etc/odoo/odoo.conf:ro
+      - ../addons/oca:/mnt/addons/oca:ro
+      - ../addons/ipai:/mnt/addons/ipai:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    networks:
+      - odoo-network
+    command: ["odoo", "-c", "/etc/odoo/odoo.conf"]
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  odoo-web-data:
+    driver: local
+
+networks:
+  odoo-network:
+    driver: bridge

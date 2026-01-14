@@ -14,7 +14,11 @@
       "Bash(supabase functions deploy:*)",
       "Bash(dig:*)",
       "Bash(git commit:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(git mv:*)"
     ],
     "deny": [],
     "ask": []

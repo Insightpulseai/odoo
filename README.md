@@ -12,6 +12,23 @@ Production URL: https://erp.insightpulseai.net
 
 ---
 
+## Quick Start
+
+**Three canonical environments. See [SANDBOX.md](./SANDBOX.md) for complete documentation.**
+
+```bash
+# Local dev sandbox (default)
+cd sandbox/dev && docker compose up -d
+
+# Prod-connection sandbox (DO Managed Postgres)
+cd sandbox/dev && docker compose -f docker-compose.production.yml --env-file .env.production up -d
+
+# Production deploy (droplet only)
+cd deploy && docker compose -f docker-compose.prod.yml up -d
+```
+
+---
+
 ## Key Constraints (Non-negotiable)
 
 - ✅ **CE + OCA only** (no Enterprise modules, no IAP dependencies)
