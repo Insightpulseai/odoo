@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d66d1cc1cafb9c6378e5a3eaf3d25e354e88bcb5
+> Commit: 5b80388bc078c67fe9d9bbd53bbdf6197a5d17c5
 
 ## 📚 Documentation
 
@@ -230,7 +230,9 @@
 | [Directional Sync System](docs/DIRECTIONAL_SYNC.md) | docs |
 | [DNS Settings Reference — insightpulseai.net](docs/DNS_SETTINGS.md) | docs |
 | [Dockerfile Changes: v0.9.0 → v0.9.1](docs/DOCKERFILE_COMPARISON.md) | docs |
+| [Docker Canonical Setup - Official vs Current](docs/DOCKER_CANONICAL_DIFF.md) | docs |
 | [Docker Image-Based CD Migration Guide](docs/DOCKER_CD_MIGRATION_GUIDE.md) | docs |
+| [Docker Setup - Simple Explanation](docs/DOCKER_SIMPLE_EXPLANATION.md) | docs |
 | [Docker Validation Guide](docs/DOCKER_VALIDATION_GUIDE.md) | docs |
 | [DOKS Deployment Success Criteria – Infra + Custom Features](docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE Ecosystem Guide for AI Agents](docs/ECOSYSTEM_GUIDE.md) | docs |
@@ -289,6 +291,8 @@
 | [IPAI Odoo 18 Custom Image Specification](docs/ODOO_IMAGE_SPEC.md) | docs |
 | [Odoo Module Deployment Guide](docs/ODOO_MODULE_DEPLOYMENT.md) | docs |
 | [Odoo 18 Programmatic Settings Configuration Guide](docs/ODOO_PROGRAMMATIC_CONFIG.md) | docs |
+| [Official Odoo Docker Image - Complete Alignment](docs/OFFICIAL_ALIGNMENT.md) | docs |
+| [Official Odoo Docker Typology - Canonical Reference](docs/OFFICIAL_TYPOLOGY.md) | docs |
 | [Offline/Tarball Deployment Path](docs/OFFLINE_TARBALL_DEPLOYMENT.md) | docs |
 | [Product Requirements Document: ipai_ppm_portfolio](docs/PRD_ipai_ppm_portfolio.md) | docs |
 | [Odoo 18 CE Production Defaults - Canonical Configuration](docs/PRODUCTION_DEFAULTS.md) | docs |
@@ -335,6 +339,7 @@
 | [IPAI Module Reduction Plan](docs/architecture/IPAI_MODULE_REDUCTION_PLAN.md) | docs/architecture |
 | [IPAI Target Module Architecture](docs/architecture/IPAI_TARGET_ARCHITECTURE.md) | docs/architecture |
 | [OCR Pipeline Architecture](docs/architecture/OCR_PIPELINE.md) | docs/architecture |
+| [Odoo Official Docker Image → TBWA\SMP Production Canonical Mapping](docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md) | docs/architecture |
 | [Production Runtime Snapshot - Odoo CE 18.0](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
@@ -528,6 +533,7 @@
 | [What Shipped: prod-20260109-1642](docs/releases/prod-20260109-1642/WHAT_SHIPPED.md) | docs/releases/prod-20260109-1642 |
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
+| [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
 | [Document Upload/OCR FSM](docs/state_machines/odoo/document_upload.md) | docs/state_machines/odoo |
