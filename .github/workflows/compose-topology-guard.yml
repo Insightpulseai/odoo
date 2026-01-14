@@ -1,0 +1,52 @@
+name: compose-topology-guard
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce canonical compose locations
+        run: |
+          set -euo pipefail
+
+          # Allowed compose files (canonical set)
+          allowed=(
+            "sandbox/dev/docker-compose.yml"
+            "sandbox/dev/docker-compose.production.yml"
+            "deploy/docker-compose.prod.yml"
+          )
+
+          # Find all docker-compose files in repo (excluding archive/)
+          mapfile -t found < <(git ls-files | grep -E '(^|/)(docker-compose[^/]*\.ya?ml)$' | grep -v '^archive/' || true)
+
+          # Report unknown compose files
+          bad=0
+          for f in "${found[@]}"; do
+            ok=0
+            for a in "${allowed[@]}"; do
+              if [ "$f" = "$a" ]; then ok=1; break; fi
+            done
+            if [ "$ok" -eq 0 ]; then
+              echo "❌ Non-canonical compose file tracked: $f"
+              bad=1
+            fi
+          done
+
+          if [ "$bad" -eq 1 ]; then
+            echo ""
+            echo "Allowed compose files are ONLY:"
+            printf ' - %s\n' "${allowed[@]}"
+            echo ""
+            echo "Move/rename others under archive/ or document them as special-purpose and remove from git tracking."
+            echo "See SANDBOX.md for canonical typology."
+            exit 1
+          fi
+
+          echo "✅ Compose topology OK - all compose files are canonical"
