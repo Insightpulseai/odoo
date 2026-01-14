@@ -1,0 +1,23 @@
+# Environment files
+.env
+.env.local
+
+# ETL data
+data/
+logs/
+
+# Build artifacts
+supabase-etl/target/
+supabase-etl/.cargo/
+
+# Docker volumes
+prometheus-data/
+etl-data/
+
+# Metrics and monitoring
+*.rrd
+*.db
+
+# Temporary files
+*.tmp
+*.log
