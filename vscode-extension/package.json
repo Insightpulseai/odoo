@@ -1,0 +1,107 @@
+{
+  "name": "odoo-live-sandbox",
+  "displayName": "Odoo Live Sandbox",
+  "description": "Agent dev cockpit for Odoo CE development - auto-detect, one-click commands, hot-reload aware",
+  "version": "0.1.0",
+  "publisher": "insightpulseai",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "odoo-live-sandbox.showStatus",
+        "title": "Odoo Live Sandbox: Show Status"
+      },
+      {
+        "command": "odoo-live-sandbox.sandboxUp",
+        "title": "Odoo Live Sandbox: Up"
+      },
+      {
+        "command": "odoo-live-sandbox.sandboxDown",
+        "title": "Odoo Live Sandbox: Down"
+      },
+      {
+        "command": "odoo-live-sandbox.sandboxRestart",
+        "title": "Odoo Live Sandbox: Restart Odoo"
+      },
+      {
+        "command": "odoo-live-sandbox.showLogs",
+        "title": "Odoo Live Sandbox: Tail Odoo Logs"
+      },
+      {
+        "command": "odoo-live-sandbox.dbShell",
+        "title": "Odoo Live Sandbox: DB Shell"
+      },
+      {
+        "command": "odoo-live-sandbox.odooShell",
+        "title": "Odoo Live Sandbox: Odoo Shell"
+      },
+      {
+        "command": "odoo-live-sandbox.updateAppsList",
+        "title": "Odoo Live Sandbox: Update Apps List"
+      },
+      {
+        "command": "odoo-live-sandbox.installModule",
+        "title": "Odoo Live Sandbox: Install/Upgrade Module"
+      },
+      {
+        "command": "odoo-live-sandbox.rebuildAssets",
+        "title": "Odoo Live Sandbox: Rebuild Assets"
+      },
+      {
+        "command": "odoo-live-sandbox.runHealthCheck",
+        "title": "Odoo Live Sandbox: Run Health Check"
+      },
+      {
+        "command": "odoo-live-sandbox.exportState",
+        "title": "Odoo Live Sandbox: Export Runtime State (JSON)"
+      }
+    ],
+    "configuration": {
+      "title": "Odoo Live Sandbox",
+      "properties": {
+        "odooLiveSandbox.sandboxPath": {
+          "type": "string",
+          "default": "sandbox/dev",
+          "description": "Canonical sandbox directory relative to repo root"
+        },
+        "odooLiveSandbox.autoDetect": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-detect sandbox on workspace open"
+        },
+        "odooLiveSandbox.showBanner": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show canonical status banner on activation"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "lint": "eslint src --ext ts",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.x",
+    "@types/vscode": "^1.90.0",
+    "@typescript-eslint/eslint-plugin": "^7.x",
+    "@typescript-eslint/parser": "^7.x",
+    "eslint": "^8.x",
+    "typescript": "^5.x",
+    "@vscode/vsce": "^2.x"
+  },
+  "dependencies": {}
+}
