@@ -20,7 +20,9 @@
     "typecheck:web": "npm --workspace @ipai/web run type-check || true",
     "check-assets:web": "npm --workspace @ipai/web run check-assets",
     "drive:sync": "node scripts/drive_sync/sync_docs.mjs",
-    "drive:verify": "DRIVE_SYNC_MODE=verify node scripts/drive_sync/sync_docs.mjs"
+    "drive:verify": "DRIVE_SYNC_MODE=verify node scripts/drive_sync/sync_docs.mjs",
+    "dev:schema": "npm --workspace apps/local-schema-server run dev",
+    "start:schema": "npm --workspace apps/local-schema-server run start"
   },
   "dependencies": {
     "googleapis": "^144.0.0",
