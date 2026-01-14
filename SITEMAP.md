@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ad61bf80a52bcd08c1c1c8f4cfa7a4aa7d8c556c
+> Commit: d66d1cc1cafb9c6378e5a3eaf3d25e354e88bcb5
 
 ## 📚 Documentation
 
@@ -325,6 +325,7 @@
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
 | [Extended Platform API Documentation](docs/api/EXTENDED_PLATFORM_API.md) | docs/api |
+| [Architectural Convergence: Agentic AI, Headless ERP, and Cloud-Native Analytics](docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md) | docs/architecture |
 | [AI Module Deprecation Manifest](docs/architecture/AI_MODULE_DEPRECATION_MANIFEST.md) | docs/architecture |
 | [Ask AI Contract](docs/architecture/ASK_AI_CONTRACT.md) | docs/architecture |
 | [Authentication & Authorization Model](docs/architecture/AUTH_MODEL.md) | docs/architecture |
