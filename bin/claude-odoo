@@ -1,0 +1,37 @@
+#!/bin/bash
+# claude-odoo - Launch Claude Code in canonical sandbox directory
+# Falls back to printing instructions if 'claude' command not available
+
+set -euo pipefail
+
+REPO_ROOT="$HOME/Documents/GitHub/odoo-ce"
+CANONICAL_SANDBOX="$REPO_ROOT/sandbox/dev"
+
+# Verify sandbox exists
+if [ ! -d "$CANONICAL_SANDBOX" ]; then
+    echo "ERROR: Canonical sandbox not found: $CANONICAL_SANDBOX" >&2
+    exit 1
+fi
+
+# Check if 'claude' command is available
+if command -v claude &>/dev/null; then
+    echo "Launching Claude Code in: $CANONICAL_SANDBOX"
+    cd "$CANONICAL_SANDBOX"
+    exec claude "$@"
+else
+    echo "Claude Code CLI not found in PATH"
+    echo ""
+    echo "To launch Claude Code manually:"
+    echo "  1. Open Claude Code app"
+    echo "  2. File → Open Folder"
+    echo "  3. Navigate to: $CANONICAL_SANDBOX"
+    echo ""
+    echo "Or install Claude Code CLI:"
+    echo "  - Open Claude Code"
+    echo "  - Cmd+Shift+P → 'Shell Command: Install claude command in PATH'"
+    echo ""
+    echo "Current working directory has been set to:"
+    echo "  $CANONICAL_SANDBOX"
+    cd "$CANONICAL_SANDBOX"
+    exec "$SHELL"
+fi

@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# odoo-ce - Canonical entrypoint for Odoo CE sandbox operations
+# Usage: odoo-ce [cwd|ps|up|down|logs|sh|restart]
+
+set -euo pipefail
+
+# Resolve repo root reliably
+if git rev-parse --show-toplevel >/dev/null 2>&1; then
+  ROOT="$(git rev-parse --show-toplevel)"
+else
+  ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+fi
+
+SANDBOX="$ROOT/sandbox/dev"
+COMPOSE="$SANDBOX/docker-compose.yml"
+
+banner() {
+  echo "== ODOO-CE CANONICAL =="
+  echo "repo_root: $ROOT"
+  echo "sandbox:   $SANDBOX"
+  echo "compose:   $COMPOSE"
+  echo
+}
+
+cd_sandbox() { cd "$SANDBOX"; }
+
+cmd="${1:-}"
+shift || true
+
+case "$cmd" in
+  ""|"cwd")
+    banner
+    pwd
+    ;;
+  "ps")
+    cd_sandbox
+    docker compose ps "$@"
+    ;;
+  "up")
+    cd_sandbox
+    docker compose up -d "$@"
+    ;;
+  "down")
+    cd_sandbox
+    docker compose down "$@"
+    ;;
+  "logs")
+    cd_sandbox
+    docker compose logs -f --tail=200 "${@:-odoo}"
+    ;;
+  "sh")
+    cd_sandbox
+    docker compose exec "${1:-odoo}" bash
+    ;;
+  "restart")
+    cd_sandbox
+    docker compose restart "${@:-odoo}"
+    ;;
+  *)
+    banner
+    echo "Usage: odoo-ce [cwd|ps|up|down|logs|sh|restart]"
+    exit 2
+    ;;
+esac

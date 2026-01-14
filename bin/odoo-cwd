@@ -1,0 +1,16 @@
+#!/bin/bash
+# odoo-cwd - Print canonical sandbox path and verify it exists
+# Exit non-zero if sandbox directory is missing
+
+set -euo pipefail
+
+CANONICAL_SANDBOX="$HOME/Documents/GitHub/odoo-ce/sandbox/dev"
+
+if [ ! -d "$CANONICAL_SANDBOX" ]; then
+    echo "ERROR: Canonical sandbox directory not found: $CANONICAL_SANDBOX" >&2
+    echo "Hint: Run 'mkdir -p $CANONICAL_SANDBOX' to create it" >&2
+    exit 1
+fi
+
+echo "$CANONICAL_SANDBOX"
+exit 0
