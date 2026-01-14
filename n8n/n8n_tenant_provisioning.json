@@ -1,0 +1,547 @@
+{
+  "name": "InsightPulse - Tenant Provisioning Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tenant/create",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Create Tenant",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "tenant-create-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate tenant creation request\nconst body = $input.first().json.body;\n\nconst required = ['code', 'name', 'email'];\nconst missing = required.filter(f => !body[f]);\n\nif (missing.length > 0) {\n  throw new Error(`Missing required fields: ${missing.join(', ')}`);\n}\n\n// Validate tenant code format\nif (!/^[a-z][a-z0-9\\-]{2,49}$/.test(body.code)) {\n  throw new Error('Invalid tenant code. Must be lowercase, start with letter, 3-50 chars.');\n}\n\n// Generate database credentials\nconst crypto = require('crypto');\nconst dbPassword = crypto.randomBytes(24).toString('base64url');\nconst dbUser = `tenant_${body.code.replace(/-/g, '_')}`;\nconst dbName = `insightpulse_${body.code.replace(/-/g, '_')}`;\n\nreturn [{\n  json: {\n    tenant: {\n      code: body.code,\n      name: body.name,\n      email: body.email,\n      tenant_type: body.tenant_type || 'client',\n      parent_tenant_id: body.parent_tenant_id || null,\n      plan_code: body.plan_code || 'starter',\n      clone_from: body.clone_from || null\n    },\n    database: {\n      db_name: dbName,\n      db_user: dbUser,\n      db_password: dbPassword,\n      db_host: $env.DB_HOST || 'localhost',\n      db_port: parseInt($env.DB_PORT || '5432')\n    },\n    timestamp: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "validate-request",
+      "name": "Validate & Prepare",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Check if tenant code already exists\nSELECT id, code, status FROM tenants WHERE code = '{{ $json.tenant.code }}' LIMIT 1;",
+        "options": {}
+      },
+      "id": "check-existing",
+      "name": "Check Existing Tenant",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [680, 300],
+      "credentials": {
+        "postgres": {
+          "id": "master-db",
+          "name": "InsightPulse Master DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "exists-check",
+              "leftValue": "={{ $json.length }}",
+              "rightValue": "0",
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-not-exists",
+      "name": "If Not Exists",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Insert tenant record\nINSERT INTO tenants (\n  code, name, tenant_type, parent_tenant_id,\n  db_host, db_port, db_name, db_user, db_password_encrypted,\n  status, plan_id, subscription_status, trial_ends_at,\n  features, created_at\n) VALUES (\n  '{{ $('Validate & Prepare').item.json.tenant.code }}',\n  '{{ $('Validate & Prepare').item.json.tenant.name }}',\n  '{{ $('Validate & Prepare').item.json.tenant.tenant_type }}',\n  {{ $('Validate & Prepare').item.json.tenant.parent_tenant_id ? \"'\" + $('Validate & Prepare').item.json.tenant.parent_tenant_id + \"'\" : 'NULL' }},\n  '{{ $('Validate & Prepare').item.json.database.db_host }}',\n  {{ $('Validate & Prepare').item.json.database.db_port }},\n  '{{ $('Validate & Prepare').item.json.database.db_name }}',\n  '{{ $('Validate & Prepare').item.json.database.db_user }}',\n  pgp_sym_encrypt('{{ $('Validate & Prepare').item.json.database.db_password }}', '{{ $env.ENCRYPTION_KEY }}'),\n  'provisioning',\n  (SELECT id FROM subscription_plans WHERE code = '{{ $('Validate & Prepare').item.json.tenant.plan_code }}'),\n  'trial',\n  NOW() + INTERVAL '14 days',\n  '{}'::jsonb,\n  NOW()\n)\nRETURNING id, code, name, status;",
+        "options": {}
+      },
+      "id": "insert-tenant",
+      "name": "Insert Tenant Record",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1120, 200],
+      "credentials": {
+        "postgres": {
+          "id": "master-db",
+          "name": "InsightPulse Master DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Create database user\nDO $$\nBEGIN\n  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '{{ $('Validate & Prepare').item.json.database.db_user }}') THEN\n    CREATE ROLE {{ $('Validate & Prepare').item.json.database.db_user }} WITH LOGIN PASSWORD '{{ $('Validate & Prepare').item.json.database.db_password }}';\n  END IF;\nEND\n$$;",
+        "options": {}
+      },
+      "id": "create-db-user",
+      "name": "Create DB User",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1340, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-admin",
+          "name": "PostgreSQL Admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Create database from template\nCREATE DATABASE {{ $('Validate & Prepare').item.json.database.db_name }}\nWITH TEMPLATE insightpulse_template\nOWNER {{ $('Validate & Prepare').item.json.database.db_user }};",
+        "options": {}
+      },
+      "id": "create-database",
+      "name": "Create Database",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1560, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-admin",
+          "name": "PostgreSQL Admin"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Grant permissions\nGRANT ALL PRIVILEGES ON DATABASE {{ $('Validate & Prepare').item.json.database.db_name }} TO {{ $('Validate & Prepare').item.json.database.db_user }};",
+        "options": {}
+      },
+      "id": "grant-permissions",
+      "name": "Grant Permissions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1780, 200],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-admin",
+          "name": "PostgreSQL Admin"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Update tenant status to active\nUPDATE tenants \nSET status = 'active', \n    provisioned_at = NOW(),\n    updated_at = NOW()\nWHERE code = '{{ $('Validate & Prepare').item.json.tenant.code }}'\nRETURNING id, code, name, status, db_name, provisioned_at;",
+        "options": {}
+      },
+      "id": "activate-tenant",
+      "name": "Activate Tenant",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2000, 200],
+      "credentials": {
+        "postgres": {
+          "id": "master-db",
+          "name": "InsightPulse Master DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPERSET_URL }}/api/v1/security/login",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"username\": \"{{ $env.SUPERSET_USERNAME }}\",\n  \"password\": \"{{ $env.SUPERSET_PASSWORD }}\",\n  \"provider\": \"db\"\n}",
+        "options": {}
+      },
+      "id": "superset-login",
+      "name": "Superset Login",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.SUPERSET_URL }}/api/v1/database/",
+        "method": "POST",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $json.access_token }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"database_name\": \"Tenant: {{ $('Validate & Prepare').item.json.tenant.name }}\",\n  \"engine\": \"postgresql\",\n  \"sqlalchemy_uri\": \"postgresql://{{ $('Validate & Prepare').item.json.database.db_user }}:{{ $('Validate & Prepare').item.json.database.db_password }}@{{ $('Validate & Prepare').item.json.database.db_host }}:{{ $('Validate & Prepare').item.json.database.db_port }}/{{ $('Validate & Prepare').item.json.database.db_name }}\",\n  \"expose_in_sqllab\": true,\n  \"allow_run_async\": true\n}",
+        "options": {}
+      },
+      "id": "create-superset-db",
+      "name": "Create Superset Database",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2440, 200],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Record Superset workspace\nINSERT INTO superset_workspaces (tenant_id, superset_url, database_id, status, provisioned_at)\nSELECT \n  t.id,\n  '{{ $env.SUPERSET_URL }}',\n  {{ $json.id || 'NULL' }},\n  'active',\n  NOW()\nFROM tenants t\nWHERE t.code = '{{ $('Validate & Prepare').item.json.tenant.code }}'\nON CONFLICT (tenant_id) DO UPDATE\nSET database_id = EXCLUDED.database_id,\n    status = EXCLUDED.status,\n    provisioned_at = EXCLUDED.provisioned_at;",
+        "options": {}
+      },
+      "id": "record-superset",
+      "name": "Record Superset Workspace",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [2660, 200],
+      "credentials": {
+        "postgres": {
+          "id": "master-db",
+          "name": "InsightPulse Master DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MAILGUN_API_URL }}/v3/{{ $env.MAILGUN_DOMAIN }}/messages",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "from",
+              "value": "InsightPulse AI <noreply@insightpulseai.net>"
+            },
+            {
+              "name": "to",
+              "value": "={{ $('Validate & Prepare').item.json.tenant.email }}"
+            },
+            {
+              "name": "subject",
+              "value": "Welcome to InsightPulse AI - Your Tenant is Ready!"
+            },
+            {
+              "name": "html",
+              "value": "=<html>\n<body style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n<h1 style=\"color: #1A56DB;\">Welcome to InsightPulse AI!</h1>\n<p>Hi there,</p>\n<p>Great news! Your tenant <strong>{{ $('Validate & Prepare').item.json.tenant.name }}</strong> has been successfully provisioned.</p>\n\n<h2>Your Tenant Details</h2>\n<ul>\n<li><strong>Tenant Code:</strong> {{ $('Validate & Prepare').item.json.tenant.code }}</li>\n<li><strong>Database:</strong> {{ $('Validate & Prepare').item.json.database.db_name }}</li>\n<li><strong>Plan:</strong> {{ $('Validate & Prepare').item.json.tenant.plan_code }}</li>\n<li><strong>Trial Ends:</strong> 14 days from now</li>\n</ul>\n\n<h2>Access Your Platforms</h2>\n<ul>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.odoo.insightpulseai.net\">Odoo ERP</a></li>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.superset.insightpulseai.net\">Superset Analytics</a></li>\n<li><a href=\"https://{{ $('Validate & Prepare').item.json.tenant.code }}.dashboard.insightpulseai.net\">Dashboard</a></li>\n</ul>\n\n<p>Need help getting started? Check out our <a href=\"https://docs.insightpulseai.net\">documentation</a> or reply to this email.</p>\n\n<p>Best regards,<br>The InsightPulse AI Team</p>\n</body>\n</html>"
+            },
+            {
+              "name": "o:tag",
+              "value": "tenant-welcome"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "send-welcome-email",
+      "name": "Send Welcome Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2880, 200],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "mailgun-auth",
+          "name": "Mailgun API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Create provisioning job record\nINSERT INTO provisioning_jobs (tenant_id, job_type, status, config, completed_at, result)\nSELECT \n  t.id,\n  'create_database',\n  'completed',\n  '{{ JSON.stringify({db_name: $('Validate & Prepare').item.json.database.db_name, db_user: $('Validate & Prepare').item.json.database.db_user}) }}'::jsonb,\n  NOW(),\n  '{{ JSON.stringify({superset_db_id: $('Create Superset Database').item.json.id, email_sent: true}) }}'::jsonb\nFROM tenants t\nWHERE t.code = '{{ $('Validate & Prepare').item.json.tenant.code }}';",
+        "options": {}
+      },
+      "id": "record-job",
+      "name": "Record Job Completion",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [3100, 200],
+      "credentials": {
+        "postgres": {
+          "id": "master-db",
+          "name": "InsightPulse Master DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build success response\nconst tenant = $('Validate & Prepare').item.json.tenant;\nconst database = $('Validate & Prepare').item.json.database;\nconst activated = $('Activate Tenant').item.json;\n\nreturn [{\n  json: {\n    success: true,\n    message: 'Tenant provisioned successfully',\n    tenant: {\n      id: activated[0]?.id,\n      code: tenant.code,\n      name: tenant.name,\n      status: 'active',\n      database: database.db_name,\n      provisioned_at: activated[0]?.provisioned_at\n    },\n    access: {\n      odoo: `https://${tenant.code}.odoo.insightpulseai.net`,\n      superset: `https://${tenant.code}.superset.insightpulseai.net`,\n      dashboard: `https://${tenant.code}.dashboard.insightpulseai.net`\n    },\n    trial_ends: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()\n  }\n}];"
+      },
+      "id": "build-response",
+      "name": "Build Success Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [3320, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 201
+        }
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [3540, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": false,\n  \"error\": \"Tenant with code '{{ $('Validate & Prepare').item.json.tenant.code }}' already exists\",\n  \"existing\": {{ JSON.stringify($json) }}\n}",
+        "options": {
+          "responseCode": 409
+        }
+      },
+      "id": "respond-conflict",
+      "name": "Respond Conflict",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1120, 400]
+    },
+    {
+      "parameters": {
+        "channel": "#provisioning",
+        "text": "=:white_check_mark: *New Tenant Provisioned*\n\n*Tenant:* {{ $('Validate & Prepare').item.json.tenant.name }} (`{{ $('Validate & Prepare').item.json.tenant.code }}`)\n*Type:* {{ $('Validate & Prepare').item.json.tenant.tenant_type }}\n*Database:* {{ $('Validate & Prepare').item.json.database.db_name }}\n*Plan:* {{ $('Validate & Prepare').item.json.tenant.plan_code }}\n*Email:* {{ $('Validate & Prepare').item.json.tenant.email }}",
+        "otherOptions": {}
+      },
+      "id": "notify-slack",
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [3320, 400],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "InsightPulse Slack Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook - Create Tenant": {
+      "main": [
+        [
+          {
+            "node": "Validate & Prepare",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Prepare": {
+      "main": [
+        [
+          {
+            "node": "Check Existing Tenant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Existing Tenant": {
+      "main": [
+        [
+          {
+            "node": "If Not Exists",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Not Exists": {
+      "main": [
+        [
+          {
+            "node": "Insert Tenant Record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Conflict",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Tenant Record": {
+      "main": [
+        [
+          {
+            "node": "Create DB User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create DB User": {
+      "main": [
+        [
+          {
+            "node": "Create Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Database": {
+      "main": [
+        [
+          {
+            "node": "Grant Permissions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Grant Permissions": {
+      "main": [
+        [
+          {
+            "node": "Activate Tenant",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Activate Tenant": {
+      "main": [
+        [
+          {
+            "node": "Superset Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Superset Login": {
+      "main": [
+        [
+          {
+            "node": "Create Superset Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Superset Database": {
+      "main": [
+        [
+          {
+            "node": "Record Superset Workspace",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Superset Workspace": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Record Job Completion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Job Completion": {
+      "main": [
+        [
+          {
+            "node": "Build Success Response",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Success Response": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "1",
+      "name": "provisioning"
+    },
+    {
+      "id": "2",
+      "name": "tenant-management"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-13T00:00:00.000Z",
+  "versionId": "1"
+}
