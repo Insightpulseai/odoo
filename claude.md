@@ -806,6 +806,43 @@ alias odoo-sandbox='cd ~/Documents/GitHub/odoo-ce/sandbox/dev && docker compose 
 
 ---
 
+## Odoo → Supabase Mirror (Canonical Architecture)
+
+**Source of record:**
+- Odoo Postgres (prod) is the only write-master for ERP data
+
+**Mirror:**
+- Supabase Postgres is an analytics + AI mirror via logical replication
+
+**Code & schema:**
+- GitHub stores **only**:
+  - `db/migrations/odoo_mirror_schema.sql`
+  - `etl/odoo_to_supabase/*` (supabase/etl config, README, env templates)
+- No live data in Git
+
+**ETL pipeline:**
+- Framework: `supabase/etl`
+- Direction: `Odoo PG → Supabase PG`
+- Publication: `odoo_pub_scout` on Odoo with 6 core tables
+- Mirror schema: `odoo_mirror.*` in Supabase
+- Enhancements in `db/migrations/odoo_mirror_schema.sql`:
+  - 15 indexes for analytics (partner/date/state/etc.)
+  - 5 Superset-ready views (invoices, expenses, tasks, revenue, employee expenses)
+  - 3 RPC functions (pending expenses, overdue tasks, revenue trends)
+  - Trigger to auto-add invoice signals into `ipai_memory` (AI memory)
+  - Grants for `superset_readonly`, `n8n_service` roles
+
+**Execution rules for agents:**
+- Never write directly to `odoo_mirror.*` from app code; ETL owns the mirror
+- For analytics, use the **views** defined in `odoo_mirror_schema.sql`, not raw base tables
+- For AI, treat `ipai_memory` as the canonical structured memory store; use the mirror views for context
+- Any changes to the mirror schema or ETL must go through:
+  - SQL in `db/migrations/odoo_mirror_schema.sql`
+  - Config/docs in `etl/odoo_to_supabase/README.md` + `.env.example`
+- Architecture must remain **one-way**: Odoo → Supabase. No implicit Supabase → Odoo sync
+
+---
+
 ## Key Scripts Reference
 
 | Script | Purpose |
