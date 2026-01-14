@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_workos_workspace_user,access_ipai_workos_workspace_user,model_ipai_workos_workspace,base.group_user,1,1,1,0
-access_ipai_workos_workspace_manager,access_ipai_workos_workspace_manager,model_ipai_workos_workspace,base.group_system,1,1,1,1
-access_ipai_workos_space_user,access_ipai_workos_space_user,model_ipai_workos_space,base.group_user,1,1,1,0
-access_ipai_workos_space_manager,access_ipai_workos_space_manager,model_ipai_workos_space,base.group_system,1,1,1,1
-access_ipai_workos_page_user,access_ipai_workos_page_user,model_ipai_workos_page,base.group_user,1,1,1,1
-access_ipai_workos_page_manager,access_ipai_workos_page_manager,model_ipai_workos_page,base.group_system,1,1,1,1

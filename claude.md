@@ -786,6 +786,26 @@ alias odoo-sandbox='cd ~/Documents/GitHub/odoo-ce/sandbox/dev && docker compose 
 
 ---
 
+## IPAI Modules Canonical Rule
+
+**Canonical minimal custom module:** `ipai_hello` only
+
+**Sandbox baseline:** Exactly ONE custom IPAI module (`ipai_hello`)
+
+**Rules for any refactor/cleanup:**
+- If asked "which IPAI module to keep?" → Answer: **keep `ipai_hello` only**
+- Do NOT delete or rename `ipai_hello` without explicit instruction
+- Treat all other `ipai_*` modules as experimental/deprecated unless explicitly reintroduced
+- When restoring or rebuilding sandbox, ensure `ipai_hello` is installed and nothing else from `ipai_*` is required
+
+**Sandbox expectation:**
+- Local URL: `http://localhost:8069/web/login`
+- Database: `odoo_dev_sandbox`
+- Minimal modules: Odoo CE 18 core + `ipai_hello`
+- Login: admin/admin
+
+---
+
 ## Key Scripts Reference
 
 | Script | Purpose |

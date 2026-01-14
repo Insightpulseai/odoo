@@ -1,107 +1,175 @@
 {
-  "$schema": "https://continue.dev/schemas/config.json",
-  "rules": [
+  "models": [
     {
-      "path": ".continue/rules/agentic.md",
-      "enabled": true
+      "title": "Claude Sonnet 4.5",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-20250929",
+      "apiKey": "$ANTHROPIC_API_KEY"
     },
     {
-      "path": ".continue/rules/notion-ppm.yaml",
-      "enabled": true
+      "title": "Claude Opus 4.5",
+      "provider": "anthropic",
+      "model": "claude-opus-4-5-20251101",
+      "apiKey": "$ANTHROPIC_API_KEY"
     },
     {
-      "path": ".continue/rules/medallion-architecture.yaml",
-      "enabled": true
+      "title": "Gemini 2.5 Flash",
+      "provider": "gemini",
+      "model": "gemini-2.5-flash-latest",
+      "apiKey": "$GEMINI_API_KEY"
     },
     {
-      "path": ".continue/rules/spec-kit.yaml",
-      "enabled": true
+      "title": "Gemini 2.5 Pro",
+      "provider": "gemini",
+      "model": "gemini-2.5-pro-latest",
+      "apiKey": "$GEMINI_API_KEY"
+    },
+    {
+      "title": "Gemini 3.0",
+      "provider": "gemini",
+      "model": "gemini-3.0-latest",
+      "apiKey": "$GEMINI_API_KEY"
     }
   ],
-  "experimental": {
-    "modelRoles": {
-      "planner": "claude-3-5-sonnet-20241022",
-      "implementer": "claude-3-5-sonnet-20241022",
-      "verifier": "claude-3-5-sonnet-20241022"
-    }
+  "tabAutocompleteModel": {
+    "title": "Claude Sonnet 4.5",
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-5-20250929",
+    "apiKey": "$ANTHROPIC_API_KEY"
+  },
+  "embeddingsProvider": {
+    "provider": "openai",
+    "model": "text-embedding-3-small",
+    "apiKey": "$OPENAI_API_KEY"
   },
   "contextProviders": [
     {
-      "name": "codebase",
+      "name": "code",
       "params": {
-        "nRetrieve": 25,
-        "nFinal": 10
+        "includePatterns": [
+          "**/*.py",
+          "**/*.xml",
+          "**/*.js",
+          "**/*.ts",
+          "**/*.sql",
+          "**/*.yaml",
+          "**/*.yml"
+        ],
+        "excludePatterns": [
+          "**/node_modules/**",
+          "**/__pycache__/**",
+          "**/venv/**",
+          "**/dist/**",
+          "**/build/**",
+          "**/.git/**"
+        ]
       }
     },
     {
       "name": "docs",
-      "params": {}
+      "params": {
+        "sites": [
+          {
+            "title": "Odoo 18 Documentation",
+            "startUrl": "https://www.odoo.com/documentation/18.0/"
+          },
+          {
+            "title": "OCA Guidelines",
+            "startUrl": "https://github.com/OCA/maintainer-tools"
+          },
+          {
+            "title": "Supabase Documentation",
+            "startUrl": "https://supabase.com/docs"
+          }
+        ]
+      }
+    },
+    {
+      "name": "folder",
+      "params": {
+        "folders": [
+          "docs/",
+          "addons/ipai/ipai_tenant_core/"
+        ]
+      }
     },
     {
       "name": "terminal",
       "params": {}
+    },
+    {
+      "name": "problems",
+      "params": {}
+    },
+    {
+      "name": "diff",
+      "params": {}
+    },
+    {
+      "name": "open",
+      "params": {}
+    },
+    {
+      "name": "codebase",
+      "params": {
+        "nRetrieve": 25,
+        "useReranking": true
+      }
     }
   ],
   "slashCommands": [
     {
-      "name": "plan",
-      "description": "Create implementation plan without making edits"
+      "name": "edit",
+      "description": "Edit selected code"
     },
     {
-      "name": "implement",
-      "description": "Execute plan with minimal diffs"
+      "name": "comment",
+      "description": "Write comments for selected code"
     },
     {
-      "name": "verify",
-      "description": "Run checks and fix failures until green"
+      "name": "share",
+      "description": "Export conversation to markdown"
     },
     {
-      "name": "ship",
-      "description": "Generate PR-ready package with evidence"
+      "name": "cmd",
+      "description": "Generate shell command"
     },
     {
-      "name": "ppm-sync",
-      "description": "Generate Notion sync code following PPM patterns"
-    },
-    {
-      "name": "ppm-transform",
-      "description": "Generate medallion layer transformation code"
-    },
-    {
-      "name": "ppm-api",
-      "description": "Generate Control Room API endpoint"
+      "name": "commit",
+      "description": "Generate git commit message"
     }
   ],
   "customCommands": [
     {
-      "name": "ppm-sync",
-      "prompt": "Generate Python code for syncing data from Notion to Databricks bronze layer. Follow these patterns:\n1. Use Pydantic models for data validation\n2. Include retry logic with tenacity\n3. Use watermark-based incremental sync\n4. Add _extracted_at and _source metadata columns\n5. Use Delta MERGE for upserts\n\nContext: {{{ input }}}"
+      "name": "tenant",
+      "prompt": "You are an Odoo 18 multi-tenant architecture expert. Review the code in context and provide insights on:\n1. Tenant isolation (database-level and schema-level)\n2. OCA compliance\n3. Integration with Supabase and Superset\n\nRefer to docs/TENANT_ARCHITECTURE.md and addons/ipai/ipai_tenant_core/TECHNICAL_GUIDE.md for context.",
+      "description": "Tenant architecture review"
     },
     {
-      "name": "ppm-transform",
-      "prompt": "Generate PySpark transformation code for the medallion architecture. Follow these patterns:\n1. Bronze: Raw data with metadata columns only\n2. Silver: Cleaned, typed, deduplicated data\n3. Gold: Business aggregations and metrics\n4. Use explicit column selection (no SELECT *)\n5. Include data quality checks\n\nContext: {{{ input }}}"
+      "name": "oca",
+      "prompt": "You are an OCA compliance expert. Review the selected code for:\n1. OCA module structure standards\n2. Proper field validation and constraints\n3. Security access control patterns\n4. reStructuredText documentation completeness\n\nRefer to OCA maintainer-tools guidelines.",
+      "description": "OCA compliance check"
     },
     {
-      "name": "ppm-api",
-      "prompt": "Generate a Next.js API route for the Control Room app. Follow these patterns:\n1. Use TypeScript with proper types\n2. Validate responses with Zod schemas\n3. Include try-catch error handling\n4. Use the Databricks SQL client from lib/databricks.ts\n5. Return proper HTTP status codes\n\nContext: {{{ input }}}"
+      "name": "provision",
+      "prompt": "You are a DevOps automation expert. Review the provisioning workflow for:\n1. Tenant setup automation\n2. Supabase schema creation\n3. Odoo database initialization\n4. Error handling and rollback procedures\n\nRefer to scripts/provision_tenant.sh and Makefile.",
+      "description": "Provisioning workflow review"
+    },
+    {
+      "name": "superset",
+      "prompt": "You are a BI integration expert. Review the Superset integration for:\n1. Cross-repo CI coordination\n2. Guest token generation\n3. Embedded dashboard patterns\n4. Dataset schema synchronization\n\nRefer to docs/SUPERSET_INTEGRATION.md.",
+      "description": "Superset integration review"
     }
   ],
-  "docs": [
-    {
-      "name": "Notion API",
-      "startUrl": "https://developers.notion.com/reference"
-    },
-    {
-      "name": "Databricks SDK",
-      "startUrl": "https://docs.databricks.com/dev-tools/sdk-python.html"
-    },
-    {
-      "name": "Next.js",
-      "startUrl": "https://nextjs.org/docs"
-    },
-    {
-      "name": "Delta Lake",
-      "startUrl": "https://docs.delta.io/latest/index.html"
+  "allowAnonymousTelemetry": false,
+  "experimental": {
+    "modelRoles": {
+      "inlineEdit": "Claude Sonnet 4.5",
+      "applyCodeBlock": "Claude Sonnet 4.5",
+      "repoMapFileSelection": "Claude Sonnet 4.5"
     }
-  ]
+  },
+  "github": {
+    "token": "$GITHUB_TOKEN"
+  }
 }

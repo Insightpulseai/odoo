@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_sms_provider_user,ipai.sms.provider.user,model_ipai_sms_provider,base.group_user,1,0,0,0
-access_ipai_sms_provider_manager,ipai.sms.provider.manager,model_ipai_sms_provider,base.group_system,1,1,1,1
-access_ipai_sms_message_user,ipai.sms.message.user,model_ipai_sms_message,base.group_user,1,1,1,0
-access_ipai_sms_message_manager,ipai.sms.message.manager,model_ipai_sms_message,base.group_system,1,1,1,1

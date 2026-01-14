@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_permission_user,access_ipai_permission_user,model_ipai_permission,base.group_user,1,0,0,0
-access_ipai_permission_manager,access_ipai_permission_manager,model_ipai_permission,base.group_system,1,1,1,1
-access_ipai_share_token_user,access_ipai_share_token_user,model_ipai_share_token,base.group_user,1,0,0,0
-access_ipai_share_token_manager,access_ipai_share_token_manager,model_ipai_share_token,base.group_system,1,1,1,1

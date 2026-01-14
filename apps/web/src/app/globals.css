@@ -11,12 +11,12 @@
   }
 
   body {
-    @apply bg-ipai-bg text-ipai-text font-ipai antialiased;
+    @apply bg-white text-gray-900 font-sans antialiased;
   }
 
   /* Better focus styles */
   :focus-visible {
-    @apply outline-none ring-2 ring-ipai-primary ring-offset-2 ring-offset-ipai-bg;
+    @apply outline-none ring-2 ring-purple-600 ring-offset-2 ring-offset-white;
   }
 }
 
@@ -35,17 +35,17 @@
   }
 
   .solution-subheading {
-    @apply text-lg md:text-xl text-ipai-muted max-w-3xl;
+    @apply text-lg md:text-xl text-gray-600 max-w-3xl;
   }
 
   /* Glass morphism card */
   .glass-card {
-    @apply bg-ipai-surface/50 backdrop-blur-xl border border-ipai-border rounded-ipai-lg shadow-ipai;
+    @apply bg-white/50 backdrop-blur-xl border border-gray-200 rounded-lg shadow-lg;
   }
 
   /* Gradient text */
   .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-ipai-primary to-ipai-primary2;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600;
   }
 
   /* Logo grid grayscale effect */

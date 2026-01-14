@@ -673,6 +673,139 @@ docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
 
 ---
 
+## Sandbox → Prod Canonical Baseline (Odoo 18 CE + OCA)
+
+Working dir: `/Users/tbwa/Downloads/extracted_files/odoo-dev-sandbox`
+
+Goal: determine EXACTLY what must be installed/enabled to reproduce the current working Odoo 18 CE sandbox state (and later apply to prod) with minimal custom modules.
+
+Rules:
+- Odoo 18 CE + OCA-first.
+- Treat ipai_* as data/import/config where possible (seed scripts, XML inheritance).
+- No UI/manual steps; CLI-only & verifiable.
+- Truth source is the repo (manifests, seeds, compose), not narrative.
+- Do NOT ask the user questions. Infer defaults, mark assumptions.
+
+Standard workflow for any Claude/Codex agent:
+
+1. **Repo existence + structure check**
+
+   ```bash
+   cd /Users/tbwa/Downloads/extracted_files/odoo-dev-sandbox
+
+   ls -la
+   find . -maxdepth 3 -type f \( \
+     -name "EXECUTE_WHEN_DOCKER_STARTS.md" -o \
+     -name "README_PROD_CANONICAL.md" -o \
+     -name "PROD_CANONICAL_INSTALL_REQUIREMENTS.md" -o \
+     -name "PROD_CANONICAL_INSTALL_REQUIREMENTS.json" -o \
+     -name "docker-compose.yml" -o -name "compose.yaml" -o \
+     -path "./scripts/*" -o -path "./data/seed/*" -o \
+     -path "./addons/*/*/__manifest__.py" \
+   \) | sort
+   ```
+
+2. **Scan manifests for dependencies**
+
+   ```bash
+   python3 - <<'PY'
+   import glob, ast, os, json
+   mods = []
+   for mf in glob.glob("addons/**/**/__manifest__.py", recursive=True):
+       try:
+           d = ast.literal_eval(open(mf, "r", encoding="utf-8").read())
+           mods.append({"path": mf, "name": d.get("name"), "depends": d.get("depends", [])})
+       except Exception as e:
+           mods.append({"path": mf, "error": str(e)})
+   print(json.dumps(mods, indent=2))
+   PY
+   ```
+
+3. **Scan seed scripts for models touched (implied module deps)**
+
+   ```bash
+   python3 - <<'PY'
+   import glob, re, json
+   hits = []
+   for f in sorted(glob.glob("data/seed/*.py")):
+       s = open(f,"r",encoding="utf-8").read()
+       models = sorted(set(re.findall(r"env\\[['\\\"]([a-z0-9_.]+)['\\\"]\\]", s)))
+       ircfg  = "ir.config_parameter" in s
+       hits.append({"file": f, "models": models, "touches_ir_config_parameter": ircfg})
+   print(json.dumps(hits, indent=2))
+   PY
+   ```
+
+4. **Generate / refresh canonical requirements (MD + JSON)**
+
+   ```bash
+   python3 tools/generate_prod_canonical_requirements.py
+   ```
+
+5. **Never trust narrative summaries**
+   Only "bless" a sandbox → prod baseline if:
+
+   * `docs/PROD_CANONICAL_INSTALL_REQUIREMENTS.{md,json}` exist
+   * The generator script has just been re-run
+   * The content matches the current repo (no uncommitted changes)
+
+**Full runbook**: See `docs/PROD_SANDBOX_SCAN_RUNBOOK.md` for detailed instructions.
+
+---
+
+## Open Local Odoo Sandbox
+
+Canonical local sandbox:
+
+- Repo root: `~/Documents/GitHub/odoo-ce`
+- Sandbox dir: `~/Documents/GitHub/odoo-ce/sandbox/dev`
+- URL: `http://localhost:8069/web/login`
+
+When I say **"open local sandbox"** or **"open local sandboxed"**, do this, without asking:
+
+```bash
+cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+docker compose up -d
+open http://localhost:8069/web/login
+```
+
+If containers are already running, skip recreate and just ensure:
+
+```bash
+docker ps
+open http://localhost:8069/web/login
+```
+
+Never change the port, DB name, or URL unless I explicitly ask.
+
+**Shell alias** (already added to `~/.zshrc`):
+
+```bash
+alias odoo-sandbox='cd ~/Documents/GitHub/odoo-ce/sandbox/dev && docker compose up -d && open http://localhost:8069/web/login'
+```
+
+---
+
+## IPAI Modules Canonical Rule
+
+**Canonical minimal custom module:** `ipai_hello` only
+
+**Sandbox baseline:** Exactly ONE custom IPAI module (`ipai_hello`)
+
+**Rules for any refactor/cleanup:**
+- If asked "which IPAI module to keep?" → Answer: **keep `ipai_hello` only**
+- Do NOT delete or rename `ipai_hello` without explicit instruction
+- Treat all other `ipai_*` modules as experimental/deprecated unless explicitly reintroduced
+- When restoring or rebuilding sandbox, ensure `ipai_hello` is installed and nothing else from `ipai_*` is required
+
+**Sandbox expectation:**
+- Local URL: `http://localhost:8069/web/login`
+- Database: `odoo_dev_sandbox`
+- Minimal modules: Odoo CE 18 core + `ipai_hello`
+- Login: admin/admin
+
+---
+
 ## Key Scripts Reference
 
 | Script | Purpose |
