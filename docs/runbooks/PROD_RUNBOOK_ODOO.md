@@ -1,6 +1,6 @@
 # Production Runbook: Odoo on TBWA\SMP Infrastructure
 
-**Droplet**: `178.128.112.214` (odoo-erp-prod, 4GB RAM, SGP1)
+**Droplet**: `178.128.112.214` (odoo-erp-prod, 8GB RAM, SGP1)
 **Managed DB**: `odoo-db-sgp1` (DigitalOcean PostgreSQL 16, 1GB RAM)
 **Canonical Database**: `odoo` (enforced via `dbfilter = ^odoo$`)
 **Domains**: `erp.insightpulseai.net`, `superset.insightpulseai.net`, `mcp.insightpulseai.net`

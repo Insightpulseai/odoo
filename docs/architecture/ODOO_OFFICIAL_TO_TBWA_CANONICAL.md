@@ -49,8 +49,8 @@ db_password = ${ODOO_DB_PASSWORD}  # From ~/.zshrc or secrets manager
 # Behind nginx reverse proxy (required)
 proxy_mode = True
 
-# Workers (production tuning for 4GB RAM droplet)
-workers = 4
+# Workers (production tuning for 8GB RAM droplet)
+workers = 5
 max_cron_threads = 2
 
 # Memory limits (production)
@@ -274,7 +274,22 @@ services:
 **Official**: No worker configuration (single-threaded for development)
 **TBWA\SMP**: Multi-worker mode with memory limits
 
-**Rationale**: 4GB droplet requires worker tuning to handle concurrent users without OOM kills
+**Rationale**: 8GB droplet requires worker tuning to handle concurrent users without OOM kills
+
+---
+
+
+### Official `db` alias vs TBWA\SMP production
+
+Official examples assume Postgres runs as a Docker service reachable as `db`.
+In TBWA\SMP production, Postgres is DO Managed DB, so there is no `db` container.
+We preserve `db` as a conceptual dependency name in diagrams, but `db_host` points to the managed hostname.
+
+**Key distinction:**
+- **Official**: `HOST=db` (Docker container alias via Compose networking)
+- **TBWA\SMP**: `HOST=odoo-db-sgp1-do-user-XXXXX-0.g.db.ondigitalocean.com` (managed cluster hostname)
+
+The "db must be named db" constraint only applies to Docker container networking. With managed databases, you simply override `db_host` to point to the external hostname.
 
 ---
 
