@@ -1,0 +1,122 @@
+# infra/docker/DOCKER_STAGING_SSOT.yaml
+# Single Source of Truth for DigitalOcean staging droplet Docker state
+
+docker_staging_ssot:
+  env: "staging"
+  host: "178.128.112.214"
+  owner: "Jake Tolentino"
+  purpose: "Odoo 18 CE staging environment for pre-prod validation"
+
+  odoo_staging:
+    repo_root: "/opt/odoo-ce"
+    working_directory: "/opt/odoo-ce"
+    source_of_truth: "sandbox/staging/docker-compose.yml"
+    http_url: "https://staging.insightpulseai.net"
+
+  # Containers that are allowed to exist (running or stopped)
+  allowed_containers:
+    # Core staging stack
+    - name: "odoo-staging"
+      role: "odoo_app"
+      description: "Odoo 18 CE application server (staging)"
+
+    - name: "odoo-staging-db"
+      role: "postgres"
+      description: "PostgreSQL database for Odoo staging"
+
+    # Future services (commented placeholders)
+    # - name: "superset-staging"
+    #   role: "bi_tool"
+    #   description: "Apache Superset for analytics (staging)"
+
+    # - name: "n8n-staging"
+    #   role: "workflow_automation"
+    #   description: "n8n workflow automation (staging)"
+
+    # - name: "mailpit-staging"
+    #   role: "mail_debug"
+    #   description: "Mailpit for email testing (staging only)"
+
+  # Images that are allowed to be present on disk
+  allowed_images:
+    # Odoo app image
+    - repo: "odoo"
+      tag: "18.0-*"
+      description: "Odoo Community Edition 18.0"
+
+    # Postgres for staging
+    - repo: "postgres"
+      tag: "16-alpine"
+      description: "PostgreSQL 16 Alpine for staging database"
+
+    # Future images (commented placeholders)
+    # - repo: "apache/superset"
+    #   tag: "latest-*"
+    #   description: "Apache Superset for BI (staging)"
+
+    # - repo: "n8nio/n8n"
+    #   tag: "latest"
+    #   description: "n8n workflow automation (staging)"
+
+  # Volumes that are expected to exist
+  allowed_volumes:
+    - "odoo-staging-db-data"
+    - "odoo-staging-filestore"
+    # - "superset-staging-data"  # future
+    # - "n8n-staging-data"        # future
+
+  # Network configuration
+  networks:
+    - "odoo-staging-network"
+
+  # Protection and cleanup policies
+  protection_rules:
+    # Never touch these prefixes
+    keep_named_prefixes:
+      - "prod-"
+      - "stable-"
+      - "ipai-"
+      - "odoo-erp-prod"
+      - "odoo-db-sgp1"
+
+    # Safe to delete if older than threshold
+    delete_unnamed_older_than_days: 14
+
+    # Explicitly safe to clean (old experiments, extensions)
+    safe_to_delete_patterns:
+      - "*/docker-extension*"
+      - "docker/*extension*"
+      - "mcp/*"
+      - "test-*"
+      - "tmp-*"
+      - "experiment-*"
+
+  cleanup_policy:
+    max_unused_image_age_days: 14
+    max_unused_volume_age_days: 30
+
+    # Always protect production
+    protect_containers_matching:
+      - "odoo-erp-prod"
+      - "*-prod"
+      - "ipai-*"
+
+    protect_images_matching:
+      - "prod-*"
+      - "stable-*"
+      - "ipai-*"
+
+  logging:
+    audit_log: "/var/log/ipai/docker-staging-audit.jsonl"
+    local_fallback: "logs/docker_staging_audit_log.jsonl"
+    retention_days: 90
+
+  healthchecks:
+    odoo_staging:
+      url: "https://staging.insightpulseai.net/web/health"
+      expected_status: 200
+      timeout_seconds: 30
+
+    postgres:
+      command: "pg_isready -U odoo"
+      expected_exit_code: 0
