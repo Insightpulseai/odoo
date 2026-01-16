@@ -1,0 +1,68 @@
+# infra/docker/DOCKER_DESKTOP_SSOT.yaml
+# Single Source of Truth for Jake's local Docker Desktop state
+
+docker_desktop_ssot:
+  host: "MacBook-Pro"
+  owner: "Jake Tolentino"
+  purpose: "Odoo 18 CE dev sandbox only"
+
+  odoo_sandbox:
+    repo_root: "~/Documents/GitHub/odoo-ce"
+    sandbox_path: "~/Documents/GitHub/odoo-ce/sandbox/dev"
+    source_of_truth: "docker-compose.yml"
+    http_url: "http://localhost:8069"
+
+  # Containers that are allowed to exist (running or stopped)
+  allowed_containers:
+    - "odoo-dev"
+    - "odoo-dev-db"
+    - "odoo-mailpit"
+    - "odoo-pgadmin"
+
+  # Images that are allowed to be present on disk
+  allowed_images:
+    # Odoo app image
+    - "odoo:*"
+
+    # Postgres for local dev
+    - "postgres:16*"
+
+    # Optional tools profile
+    - "axllent/mailpit:*"
+    - "dpage/pgadmin4:*"
+
+  # Volumes that are expected to exist
+  allowed_volumes:
+    - "odoo-dev-db-data"
+    - "odoo-dev-filestore"
+
+  kubernetes:
+    enabled: false
+    note: "Local K8s handled remotely on DigitalOcean; Docker Desktop K8s should be OFF."
+
+  cleanup_policy:
+    max_unused_image_age_days: 14
+    max_unused_volume_age_days: 30
+
+    delete_images_matching:
+      # Old Docker extensions, experiments, MCP helpers
+      - "*/docker-extension*"
+      - "docker/*extension*"
+      - "artifision/*"
+      - "mochoa/*"
+      - "pgmystery/*"
+      - "mcp/*"
+
+    protect_tags:
+      - "prod-*"
+      - "stable-*"
+      - "ipai-*"
+
+  logging:
+    local_file: "logs/docker_audit_log.jsonl"
+    # Optional: if wired up later
+    supabase:
+      enabled: false
+      project: "insightpulseai"
+      schema: "ops"
+      table: "docker_audit_log"
