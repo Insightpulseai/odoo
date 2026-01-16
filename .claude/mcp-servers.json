@@ -144,11 +144,21 @@
       "command": "node",
       "args": ["mcp/servers/speckit-mcp-server/dist/index.js"],
       "description": "Custom SpecKit MCP - spec bundle enforcement, validation"
+    },
+
+    "memory": {
+      "command": "node",
+      "args": ["mcp/servers/memory-mcp-server/dist/index.js"],
+      "env": {
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_SERVICE_KEY": "${SUPABASE_SERVICE_KEY}"
+      },
+      "description": "Verified memory system - repository-scoped, cross-agent learning with citation verification"
     }
   },
 
   "serverGroups": {
-    "core": ["supabase", "github", "dbhub", "odoo-erp"],
+    "core": ["supabase", "github", "dbhub", "odoo-erp", "memory"],
     "design": ["figma", "notion"],
     "data": ["firecrawl", "huggingface"],
     "infra": ["digitalocean", "vercel"],
@@ -164,6 +174,7 @@
       "xkxyvboeubffxxbebsll",
       "ublqmilcjtpnflofprkr"
     ],
-    "custom_servers": "digitalocean, superset, vercel, pulser, speckit require build before use"
+    "custom_servers": "digitalocean, superset, vercel, pulser, speckit, memory require build before use",
+    "memory_docs": "See docs/VERIFIED_MEMORY.md for memory system usage"
   }
 }
