@@ -1,29 +1,128 @@
-services:
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_DB: postgres
-      POSTGRES_USER: odoo
-      POSTGRES_PASSWORD: odoo
-    volumes:
-      - odoo-db-data:/var/lib/postgresql/data
+# ═══════════════════════════════════════════════════════════════════════════════
+# ODOO 18 CE - DEV SANDBOX (odoo-dev-sandbox)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Purpose: Isolated development environment for ipai_* custom modules
+# Usage:   docker compose up -d
+# Access:  http://localhost:8069
+# Docs:    docs/runbooks/DEV_SANDBOX.md
+#
+# ═══════════════════════════════════════════════════════════════════════════════
 
-  web:
-    image: odoo:18
+services:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # PostgreSQL 16 - Dev Database
+  # ─────────────────────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: odoo-dev-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo_dev_password}
+      POSTGRES_DB: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-dev-db-data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - odoo-dev-net
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Odoo 18 CE - Dev Instance with Hot Reload
+  # ─────────────────────────────────────────────────────────────────────────────
+  odoo:
+    image: odoo:18.0
+    container_name: odoo-dev
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - HOST=db
+      - PORT=5432
+      - USER=${POSTGRES_USER:-odoo}
+      - PASSWORD=${POSTGRES_PASSWORD:-odoo_dev_password}
+    volumes:
+      # Custom addons (ipai_* modules with hot-reload)
+      - ./addons:/mnt/extra-addons:ro
+
+      # OCA modules (symlink or clone to oca-addons/)
+      - ./oca-addons:/mnt/oca:ro
+
+      # Odoo filestore (attachments, images)
+      - odoo-dev-filestore:/var/lib/odoo
+
+      # Custom config
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
+    ports:
+      - "${ODOO_PORT:-8069}:8069"
+      - "${ODOO_LONGPOLLING_PORT:-8072}:8072"
+    command: >
+      --dev=reload,qweb,werkzeug,xml
+      --limit-time-real=9999
+      --limit-time-cpu=9999
+    networks:
+      - odoo-dev-net
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # pgAdmin - Database Management UI (optional, profile: tools)
+  # ─────────────────────────────────────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: odoo-dev-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@localhost.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - odoo-dev-pgadmin:/var/lib/pgadmin
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
     depends_on:
       - db
-    ports:
-      - "8069:8069"
-    environment:
-      HOST: db
-      PORT: 5432
-      USER: odoo
-      PASSWORD: odoo
-    volumes:
-      - odoo-web-data:/var/lib/odoo
-      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
-      - ../../addons:/mnt/extra-addons
+    networks:
+      - odoo-dev-net
+    profiles:
+      - tools
 
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Mailpit - Email Testing (optional, profile: tools)
+  # ─────────────────────────────────────────────────────────────────────────────
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: odoo-dev-mailpit
+    restart: unless-stopped
+    ports:
+      - "${MAILPIT_WEB_PORT:-8025}:8025"
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+    networks:
+      - odoo-dev-net
+    profiles:
+      - tools
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VOLUMES - Persistent data
+# ═══════════════════════════════════════════════════════════════════════════════
 volumes:
-  odoo-db-data:
-  odoo-web-data:
+  odoo-dev-db-data:
+    name: odoo-dev-db-data
+  odoo-dev-filestore:
+    name: odoo-dev-filestore
+  odoo-dev-pgadmin:
+    name: odoo-dev-pgadmin
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# NETWORK - Isolated dev network
+# ═══════════════════════════════════════════════════════════════════════════════
+networks:
+  odoo-dev-net:
+    name: odoo-dev-net
+    driver: bridge

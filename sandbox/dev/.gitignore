@@ -1,0 +1,49 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Odoo Dev Sandbox - Git Ignore Rules
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# Environment & Secrets
+.env
+.env.local
+*.secret
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Odoo
+*.pyc
+filestore/
+sessions/
+*.log
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Docker
+docker-compose.override.yml
+
+# Node (if using any JS tooling)
+node_modules/
+package-lock.json
+yarn.lock
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
