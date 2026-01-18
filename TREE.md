@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7c83b20d39a4a4a215d2d1f8661d9aa911c867d6
+> Commit: 1662a1f8ed9adaee84501affa98ea417176fd035
 
 ```
 .
@@ -2254,6 +2254,8 @@
 │   │   ├── REPO_TREE.prod.md
 │   │   └── WORKOS_REPO_TREE.prod.md
 │   ├── runbooks
+│   │   ├── DOCKER_DESKTOP_CLEANUP.md
+│   │   ├── DOCKER_STAGING_CLEANUP.md
 │   │   └── PROD_RUNBOOK_ODOO.md
 │   ├── runtime
 │   │   ├── ADDONS_PATH.prod.txt
@@ -2342,6 +2344,7 @@
 │   ├── DOCKER_CANONICAL_DIFF.md
 │   ├── DOCKER_CD_MIGRATION_GUIDE.md
 │   ├── DOCKER_SIMPLE_EXPLANATION.md
+│   ├── DOCKER_SSOT_ARCHITECTURE.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
 │   ├── ECOSYSTEM_GUIDE.md
@@ -2538,6 +2541,8 @@
 │   ├── dns
 │   │   └── mailgun_dns_records.md
 │   ├── docker
+│   │   ├── DOCKER_DESKTOP_SSOT.yaml
+│   │   ├── DOCKER_STAGING_SSOT.yaml
 │   │   └── odoo.conf
 │   ├── doctl
 │   │   └── export_state.sh
@@ -3023,6 +3028,8 @@
 │   ├── deploy_workos_prod.sh
 │   ├── deployment-checklist.sh
 │   ├── diagnose_smtp.sh
+│   ├── docker-desktop-audit.sh
+│   ├── docker-staging-audit.sh
 │   ├── enhanced_health_check.sh
 │   ├── erd_dot.sql
 │   ├── erp_config_cli.sh
@@ -3922,7 +3929,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1271 directories, 2646 files
+1271 directories, 2653 files
 ```
 
 ## 📊 Stats
@@ -3930,7 +3937,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1491 |
-| Files | 4093 |
+| Files | 4100 |
 | Python files | 1082 |
 | XML files | 520 |
-| Markdown files | 784 |
+| Markdown files | 787 |
