@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1662a1f8ed9adaee84501affa98ea417176fd035
+> Commit: 0337c20df74e2d17e09c5989f4f77e64d1a437de
 
 ## 📚 Documentation
 
@@ -621,8 +621,13 @@
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
 | [Canonical Database Naming Conventions](sandbox/dev/CANONICAL_NAMING.md) | sandbox/dev |
+| [CLAUDE.md — odoo-dev-sandbox Project Instructions](sandbox/dev/CLAUDE.md) | sandbox/dev |
 | [Hot-Reload Development Guide](sandbox/dev/HOT_RELOAD_GUIDE.md) | sandbox/dev |
-| [Odoo 18 CE Local Sandbox](sandbox/dev/README.md) | sandbox/dev |
+| [Implementation Summary - Odoo Dev Sandbox Normalization](sandbox/dev/IMPLEMENTATION_SUMMARY.md) | sandbox/dev |
+| [Odoo 18 CE Dev Sandbox](sandbox/dev/README.md) | sandbox/dev |
+| [Odoo Dev Sandbox - Repository Audit Report](sandbox/dev/REPORT.md) | sandbox/dev |
+| [Odoo 18 CE Dev Sandbox - Developer Runbook](sandbox/dev/docs/runbooks/DEV_SANDBOX.md) | sandbox/dev/docs/runbooks |
+| [Runbook: Docker Desktop Cleanup & SSOT Alignment](sandbox/dev/docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | sandbox/dev/docs/runbooks |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
