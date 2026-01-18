@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- IPAI Policy Tree View -->
+    <record id="ipai_policy_view_tree" model="ir.ui.view">
+        <field name="name">ipai.policy.view.tree</field>
+        <field name="model">ipai.policy</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="min_approval_amount"/>
+                <field name="max_approval_amount"/>
+                <field name="require_attachment_for_bills"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- IPAI Policy Form View -->
+    <record id="ipai_policy_view_form" model="ir.ui.view">
+        <field name="name">ipai.policy.view.form</field>
+        <field name="model">ipai.policy</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Policy Name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Approval Policies" name="approvals">
+                            <group>
+                                <group string="Bill Approvals">
+                                    <field name="require_attachment_for_bills"/>
+                                    <field name="min_approval_amount"/>
+                                    <field name="max_approval_amount"/>
+                                </group>
+                                <group string="Document Policies">
+                                    <field name="enforce_dms_linking"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="ipai_policy_action" model="ir.actions.act_window">
+        <field name="name">IPAI Policies</field>
+        <field name="res_model">ipai.policy</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ipai_bridge_root"
+              name="IPAI Bridge"
+              sequence="100"/>
+
+    <menuitem id="menu_ipai_bridge_config"
+              name="Configuration"
+              parent="menu_ipai_bridge_root"
+              sequence="10"/>
+
+    <menuitem id="menu_ipai_policy"
+              name="Policies"
+              parent="menu_ipai_bridge_config"
+              action="ipai_policy_action"
+              sequence="10"/>
+</odoo>

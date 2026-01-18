@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ipai_bridge" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.ipai.bridge</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="IPAI Bridge" string="IPAI Bridge" name="ipai_enterprise_bridge">
+                    <block title="Supabase Integration" name="supabase_settings">
+                        <setting string="Supabase URL" help="Configure Supabase project URL for external integrations">
+                            <field name="ipai_supabase_url"/>
+                        </setting>
+                        <setting string="Supabase Anon Key" help="Anonymous key for public API access">
+                            <field name="ipai_supabase_anon_key" password="True"/>
+                        </setting>
+                    </block>
+                    <block title="AI Integration" name="ai_settings">
+                        <setting string="AI Endpoint URL" help="URL for AI inference endpoint (n8n/Edge Functions)">
+                            <field name="ipai_ai_endpoint_url"/>
+                        </setting>
+                    </block>
+                    <block title="Vertical Features" name="vertical_settings">
+                        <setting string="Enable Scout (Retail)" help="Enable retail intelligence features for POS and inventory">
+                            <field name="ipai_enable_scout"/>
+                        </setting>
+                        <setting string="Enable CES (Creative Ops)" help="Enable creative effectiveness features for projects and timesheets">
+                            <field name="ipai_enable_ces"/>
+                        </setting>
+                    </block>
+                    <block title="Sync Settings" name="sync_settings">
+                        <setting string="Enable Retail Sync" help="Sync POS orders and inventory events to Supabase">
+                            <field name="ipai_enable_retail_sync"/>
+                        </setting>
+                        <setting string="Enable Project Sync" help="Sync project tasks and timesheets to Supabase">
+                            <field name="ipai_enable_project_sync"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
