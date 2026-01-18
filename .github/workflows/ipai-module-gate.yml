@@ -1,0 +1,30 @@
+name: IPAI Module Gate
+
+on:
+  pull_request:
+    paths:
+      - 'addons/ipai_*/**'
+  push:
+    branches:
+      - main
+      - 'feat/**'
+    paths:
+      - 'addons/ipai_*/**'
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    name: Deny Legacy IPAI Modules
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Run IPAI module gate
+        run: bash scripts/ci/deny_legacy_ipai_modules.sh
+        
+      - name: Summary
+        if: success()
+        run: |
+          echo "✅ All ipai_* modules comply with new architecture"
+          echo "Allowed: ipai_enterprise_bridge, ipai_scout_bundle, ipai_ces_bundle"
