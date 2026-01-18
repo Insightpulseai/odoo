@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b0a1b84e104ba91a4ab9b0aca2762f8b0ade42fe
+> Commit: 284b107dc4fff5e4aa6c8ef556bad3af311e5284
 
 ## 📚 Documentation
 
@@ -831,6 +831,7 @@
 | [ipai_catalog_bridge](./addons/ipai/ipai_catalog_bridge) | ✅ |  |
 | [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ |  |
 | [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
+| [ipai_ces_bundle](./addons/ipai/ipai_ces_bundle) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
 | [ipai_clarity_ppm_parity](./addons/ipai/ipai_clarity_ppm_parity) | ✅ |  |
 | [ipai_close_orchestration](./addons/ipai/ipai_close_orchestration) | ✅ |  |
@@ -843,6 +844,7 @@
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
 | [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
 | [ipai_document_ai](./addons/ipai/ipai_document_ai) | ✅ |  |
+| [ipai_enterprise_bridge](./addons/ipai/ipai_enterprise_bridge) | ✅ |  |
 | [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
 | [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
 | [ipai_expense_ocr](./addons/ipai/ipai_expense_ocr) | ✅ |  |
@@ -880,6 +882,7 @@
 | [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
 | [ipai_saas_tenant](./addons/ipai/ipai_saas_tenant) | ✅ |  |
 | [ipai_sample_metrics](./addons/ipai/ipai_sample_metrics) | ✅ |  |
+| [ipai_scout_bundle](./addons/ipai/ipai_scout_bundle) | ✅ |  |
 | [ipai_settings_dashboard](./addons/ipai/ipai_settings_dashboard) | ✅ |  |
 | [ipai_skill_api](./addons/ipai/ipai_skill_api) | ✅ |  |
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |

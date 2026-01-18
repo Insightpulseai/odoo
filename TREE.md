@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b0a1b84e104ba91a4ab9b0aca2762f8b0ade42fe
+> Commit: 284b107dc4fff5e4aa6c8ef556bad3af311e5284
 
 ```
 .
@@ -333,6 +333,9 @@
 │   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_ces_bundle
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_chatgpt_sdk_theme
 │   │   │   ├── static
 │   │   │   ├── __init__.py
@@ -420,6 +423,14 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_enterprise_bridge
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   ├── __manifest__.py
+│   │   │   └── hooks.py
 │   │   ├── ipai_equipment
 │   │   │   ├── models
 │   │   │   ├── security
@@ -720,6 +731,9 @@
 │   │   │   ├── static
 │   │   │   ├── tests
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_scout_bundle
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_settings_dashboard
@@ -3905,15 +3919,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1263 directories, 2637 files
+1270 directories, 2644 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1483 |
-| Files | 4066 |
-| Python files | 1065 |
-| XML files | 512 |
+| Directories | 1490 |
+| Files | 4091 |
+| Python files | 1081 |
+| XML files | 520 |
 | Markdown files | 784 |
