@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7c83b20d39a4a4a215d2d1f8661d9aa911c867d6
+> Commit: 1662a1f8ed9adaee84501affa98ea417176fd035
 
 ## 📚 Documentation
 
@@ -240,6 +240,7 @@
 | [Docker Canonical Setup - Official vs Current](docs/DOCKER_CANONICAL_DIFF.md) | docs |
 | [Docker Image-Based CD Migration Guide](docs/DOCKER_CD_MIGRATION_GUIDE.md) | docs |
 | [Docker Setup - Simple Explanation](docs/DOCKER_SIMPLE_EXPLANATION.md) | docs |
+| [Docker SSOT Architecture](docs/DOCKER_SSOT_ARCHITECTURE.md) | docs |
 | [Docker Validation Guide](docs/DOCKER_VALIDATION_GUIDE.md) | docs |
 | [DOKS Deployment Success Criteria – Infra + Custom Features](docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE Ecosystem Guide for AI Agents](docs/ECOSYSTEM_GUIDE.md) | docs |
@@ -545,6 +546,8 @@
 | [What Shipped: prod-20260109-1642](docs/releases/prod-20260109-1642/WHAT_SHIPPED.md) | docs/releases/prod-20260109-1642 |
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
+| [Runbook: Docker Desktop Cleanup & SSOT Alignment](docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | docs/runbooks |
+| [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
