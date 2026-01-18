@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1662a1f8ed9adaee84501affa98ea417176fd035
+> Commit: 0337c20df74e2d17e09c5989f4f77e64d1a437de
 
 ```
 .
@@ -2858,12 +2858,24 @@
 │   └── README.md
 ├── sandbox
 │   └── dev
+│       ├── .github
+│       │   └── workflows
 │       ├── config
 │       │   └── odoo.conf
+│       ├── docs
+│       │   └── runbooks
+│       ├── scripts
+│       │   ├── dev
+│       │   └── verify.sh
+│       ├── .env.example
+│       ├── .gitignore
 │       ├── CANONICAL_NAMING.md
+│       ├── CLAUDE.md
 │       ├── HOT_RELOAD_GUIDE.md
+│       ├── IMPLEMENTATION_SUMMARY.md
 │       ├── Makefile
 │       ├── README.md
+│       ├── REPORT.md
 │       ├── docker-compose.production.yml
 │       ├── docker-compose.yml
 │       └── odoo.conf.production
@@ -3929,15 +3941,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1271 directories, 2653 files
+1277 directories, 2659 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1491 |
-| Files | 4100 |
+| Directories | 1497 |
+| Files | 4114 |
 | Python files | 1082 |
 | XML files | 520 |
-| Markdown files | 787 |
+| Markdown files | 792 |
