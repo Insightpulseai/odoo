@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 284b107dc4fff5e4aa6c8ef556bad3af311e5284
+> Commit: 7c83b20d39a4a4a215d2d1f8661d9aa911c867d6
 
 ```
 .
@@ -75,6 +75,7 @@
 │   │   ├── directional-sync.yml
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
+│   │   ├── docs-current-state-gate.yml
 │   │   ├── drive-sync-verify.yml
 │   │   ├── drive-sync.yml
 │   │   ├── erd-docs.yml
@@ -2889,6 +2890,8 @@
 │   │   ├── deploy-prod-e2e.sh
 │   │   ├── do-bootstrap-odoo-prod.sh
 │   │   └── verify_prod.sh
+│   ├── docs
+│   │   └── sync_readme_current_state.py
 │   ├── drive_sync
 │   │   ├── lib
 │   │   │   ├── export_doc_markdown.mjs
@@ -3919,15 +3922,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1270 directories, 2644 files
+1271 directories, 2646 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1490 |
-| Files | 4091 |
-| Python files | 1081 |
+| Directories | 1491 |
+| Files | 4093 |
+| Python files | 1082 |
 | XML files | 520 |
 | Markdown files | 784 |
