@@ -1,0 +1,30 @@
+name: docs-current-state-gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Sync README current state
+        run: python3 scripts/docs/sync_readme_current_state.py
+
+      - name: Fail on drift
+        run: |
+          if ! git diff --quiet README.md; then
+            echo "::error::README.md current state block is out of sync"
+            echo "Run: python3 scripts/docs/sync_readme_current_state.py"
+            git diff README.md
+            exit 1
+          fi
+          echo "README current state is in sync"

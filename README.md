@@ -38,6 +38,38 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 
 ---
 
+<!-- CURRENT_STATE:BEGIN -->
+
+## Current State (Authoritative)
+
+**Canonical IPAI strategy (single-bridge + vertical bundles):**
+
+| Module | Role | Description |
+|--------|------|-------------|
+| `ipai_enterprise_bridge` | Bridge | Thin cross-cutting layer: config, approvals, AI/infra integration, shared mixins |
+| `ipai_scout_bundle` | Vertical | Meta-bundle for Scout retail ops + analytics (depends-only, no business logic) |
+| `ipai_ces_bundle` | Vertical | Meta-bundle for CES creative effectiveness ops (depends-only, no business logic) |
+
+**Detected in repo:**
+
+- Canonical modules present: `ipai_ces_bundle, ipai_enterprise_bridge, ipai_scout_bundle`
+- Other IPAI modules (feature/legacy): 117
+- Non-IPAI modules at addons root: 1
+
+**Policy:**
+- Only canonical modules define the platform surface area
+- Feature modules must be explicitly referenced by a bundle dependency
+- Deprecated modules should be moved to `addons/_deprecated/` and blocked by CI
+
+**Install canonical stack:**
+```bash
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_enterprise_bridge --stop-after-init
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_scout_bundle --stop-after-init
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-init
+```
+
+<!-- CURRENT_STATE:END -->
+
 ## Repository Layout
 
 ```
@@ -70,34 +102,52 @@ odoo-ce/
 
 ---
 
-## Modules (IPAI)
+## Module Architecture
 
-### Expense & Travel (PH)
-- **Module**: `ipai_expense` (in `addons/ipai/`)
-- Replaces Concur-style flows: requests → approvals → finance posting
+### Canonical Stack (Install These)
 
-### Equipment Booking
-- **Module**: `ipai_equipment` (in `addons/ipai/`)
-- Cheqroom parity MVP: catalog, bookings, check-in/out, incidents
+The platform surface is defined by **three canonical modules** only:
 
-### Finance Close Seed Data
-- **Module**: `ipai_finance_close_seed` (in `addons/`)
-- Seeds:
-  - Projects: `BIR Tax Filing`, `Month-End Close Template`, etc.
-  - Task category tags
-  - PH holidays (calendar leaves) for working-day computations
-  - Month-end close template tasks + BIR filing tasks
+```
+ipai_enterprise_bridge     # Base layer: config, approvals, AI/infra glue
+    ├── ipai_scout_bundle  # Retail vertical (POS, inventory, sales)
+    └── ipai_ces_bundle    # Creative services vertical (projects, timesheets)
+```
 
-### Finance PPM & Month-End
-- **Modules**: `ipai_finance_ppm`, `ipai_finance_month_end`, `ipai_ppm_monthly_close`
-- Project Portfolio Management for finance teams
-- Month-end close orchestration and task tracking
+Installing a bundle installs all its dependencies transitively.
 
-### CE Cleaner & Branding
-- **Modules**: `ipai_ce_cleaner`, `ipai_ce_branding`
-- Hides "Upgrade to Enterprise" banners
-- Removes IAP credit/SMS/email upsell menus
-- Rewires help links to InsightPulse docs or OCA
+### Bridge Module
+
+**`ipai_enterprise_bridge`** — Thin glue layer for CE+OCA parity:
+- Configuration policies and settings
+- Approval tier validation mixins
+- AI/infrastructure connector stubs
+- Shared security groups
+
+### Vertical Bundles
+
+| Bundle | Focus | CE Modules Included |
+|--------|-------|---------------------|
+| `ipai_scout_bundle` | Retail ops | `sale_management`, `purchase`, `stock`, `point_of_sale`, `account` |
+| `ipai_ces_bundle` | Creative ops | `project`, `hr`, `hr_timesheet`, `mail`, `portal` |
+
+### Feature Modules (Optional)
+
+Feature modules are **not part of the canonical surface**. They must be:
+1. Explicitly depended on by a bundle, OR
+2. Installed manually for specific use cases
+
+| Category | Examples | Purpose |
+|----------|----------|---------|
+| Finance | `ipai_finance_ppm`, `ipai_finance_month_end`, `ipai_bir_compliance` | PH tax, month-end close |
+| Expense | `ipai_expense`, `ipai_expense_ocr` | PH expense workflows |
+| Equipment | `ipai_equipment` | Cheqroom-style booking |
+| AI | `ipai_ai_core`, `ipai_ai_agents` | AI platform integrations |
+| Branding | `ipai_ce_cleaner`, `ipai_ce_branding` | Remove Enterprise upsells |
+
+### Deprecated Modules
+
+Modules that are no longer maintained should be moved to `addons/_deprecated/` and blocked by CI.
 
 ---
 
@@ -134,23 +184,37 @@ docker compose logs -f odoo
 
 ---
 
-## Install IPAI Finance Close Module
+## Install IPAI Modules
 
-### Install seed
+### Install canonical stack (recommended)
 
 ```bash
-./odoo-bin -d <db> -i ipai_finance_close_seed --stop-after-init
+# Install bridge first (required by all bundles)
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_enterprise_bridge --stop-after-init
+
+# Install verticals as needed
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_scout_bundle --stop-after-init    # Retail
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-init      # Creative
 ```
 
-### Verify seed counts
+### Install optional feature modules
 
 ```bash
-./odoo-bin shell -d <db> <<'PY'
-P=env['project.project'].sudo()
-T=env['project.task'].sudo()
-print("Projects:", P.search_count([]))
-print("Tasks:", T.search_count([]))
-PY
+# Finance close seed data
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_finance_close_seed --stop-after-init
+
+# Other feature modules as needed
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_expense --stop-after-init
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_equipment --stop-after-init
+```
+
+### Verify installation
+
+```bash
+docker compose exec -T db psql -U odoo -d odoo_dev -c "
+SELECT name, state FROM ir_module_module
+WHERE name IN ('ipai_enterprise_bridge','ipai_scout_bundle','ipai_ces_bundle')
+ORDER BY name;"
 ```
 
 ---
