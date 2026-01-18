@@ -1,0 +1,87 @@
+name: Dev Sandbox Verification
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    name: Verify Dev Sandbox Structure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate docker-compose.yml syntax
+        run: |
+          docker compose config > /dev/null
+          echo "✅ docker-compose.yml is valid"
+
+      - name: Check required files exist
+        run: |
+          echo "Checking required files..."
+          test -f config/odoo.conf && echo "✅ config/odoo.conf exists" || exit 1
+          test -f .env.example && echo "✅ .env.example exists" || exit 1
+          test -f .gitignore && echo "✅ .gitignore exists" || exit 1
+          test -f REPORT.md && echo "✅ REPORT.md exists" || exit 1
+
+      - name: Check scripts are executable
+        run: |
+          echo "Checking script permissions..."
+          test -x scripts/dev/up.sh && echo "✅ up.sh is executable" || exit 1
+          test -x scripts/dev/down.sh && echo "✅ down.sh is executable" || exit 1
+          test -x scripts/dev/reset-db.sh && echo "✅ reset-db.sh is executable" || exit 1
+          test -x scripts/dev/health.sh && echo "✅ health.sh is executable" || exit 1
+          test -x scripts/dev/logs.sh && echo "✅ logs.sh is executable" || exit 1
+
+      - name: Validate Odoo config file
+        run: |
+          echo "Validating config/odoo.conf..."
+          test -f config/odoo.conf || exit 1
+          grep -q '\[options\]' config/odoo.conf && echo "✅ Config has [options] section" || exit 1
+          grep -q 'addons_path' config/odoo.conf && echo "✅ Config has addons_path" || exit 1
+
+      - name: Check for deprecated tree in view_mode
+        run: |
+          echo "Checking for deprecated 'tree' in view_mode..."
+          if grep -r 'view_mode.*tree' addons/*/views/*.xml | grep -v '<tree'; then
+            echo "❌ Found deprecated 'tree' in view_mode declarations"
+            exit 1
+          else
+            echo "✅ No deprecated 'tree' in view_mode"
+          fi
+
+      - name: Validate addon manifest files
+        run: |
+          echo "Checking addon manifests..."
+          for manifest in addons/*/__manifest__.py; do
+            if [ -f "$manifest" ]; then
+              echo "Validating $manifest"
+              python3 -c "exec(open('$manifest').read())" && echo "  ✅ Valid Python syntax" || exit 1
+            fi
+          done
+
+      - name: Install shellcheck
+        run: sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Lint shell scripts
+        run: |
+          echo "Linting shell scripts..."
+          shellcheck scripts/dev/*.sh || echo "⚠️ Shellcheck warnings (non-blocking)"
+
+      - name: Summary
+        if: success()
+        run: |
+          echo ""
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "✅ All verification checks passed"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo ""
+          echo "Repository is ready for:"
+          echo "  - docker compose up -d"
+          echo "  - Odoo 18 CE development"
+          echo "  - OCA module integration"
