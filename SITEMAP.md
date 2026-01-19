@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 57c646faa23a6e9c6ffd089ff33e2c47178f5010
+> Commit: 39f8446a56ef2a30149bee99b15302cc5922023f
 
 ## 📚 Documentation
 
@@ -101,6 +101,7 @@
 | [IPAI Close Cycle Orchestration](addons/ipai/ipai_close_orchestration/README.md) | addons/ipai/ipai_close_orchestration |
 | [InsightPulse Custom Routes](addons/ipai/ipai_custom_routes/README.md) | addons/ipai/ipai_custom_routes |
 | [InsightPulse Default Home Page](addons/ipai/ipai_default_home/README.md) | addons/ipai/ipai_default_home |
+| [IPAI Enterprise Bridge Policy](addons/ipai/ipai_enterprise_bridge/POLICY.md) | addons/ipai/ipai_enterprise_bridge |
 | [IPAI Equipment Management](addons/ipai/ipai_equipment/README.md) | addons/ipai/ipai_equipment |
 | [IPAI Expense & Travel (PH)](addons/ipai/ipai_expense/README.md) | addons/ipai/ipai_expense |
 | [IPAI Finance Monthly Closing](addons/ipai/ipai_finance_monthly_closing/README.md) | addons/ipai/ipai_finance_monthly_closing |
@@ -193,6 +194,8 @@
 | [BIR Tax Filing Schedule Validation Report](claudedocs/bir-filing-validation-report.md) | claudedocs |
 | [Flutter Receipt OCR Module - Deployment Guide](clients/flutter_receipt_ocr/DEPLOYMENT_GUIDE.md) | clients/flutter_receipt_ocr |
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
+| [Mailgun → Odoo Integration - Complete Implementation](config/MAILGUN_INTEGRATION_COMPLETE.md) | config |
+| [Mailgun Integration Deployment Guide](config/MAILGUN_INTEGRATION_DEPLOYMENT.md) | config |
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
 | [Month-End Closing Tasks Import Guide](data/IMPORT_GUIDE.md) | data |
@@ -323,6 +326,7 @@
 | [Odoo CE 18.0 - InsightPulse AI Module Sitemap](docs/SITEMAP.md) | docs |
 | [SMTP Setup Summary - Complete Status](docs/SMTP_SETUP_SUMMARY.md) | docs |
 | [SSO Configuration Validation Checklist](docs/SSO_VALIDATION_CHECKLIST.md) | docs |
+| [Staging Environment Guide](docs/STAGING.md) | docs |
 | [Success Criteria - Production Hotfix](docs/SUCCESS_CRITERIA.md) | docs |
 | [Superset Integration Architecture](docs/SUPERSET_INTEGRATION.md) | docs |
 | [Superset PPM Analytics Guide](docs/SUPERSET_PPM_ANALYTICS_GUIDE.md) | docs |
@@ -954,6 +958,7 @@
 | [ipai_finance_ppm](./archive/compose/dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 | [ipai_finance_okr](./docs/evidence/20260112-0358/ipai_finance_okr) | ⚠️ | Missing manifest |
+| [ipai_enterprise_bridge](./spec/ipai_enterprise_bridge) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen/ipai_module_gen) | ⚠️ | Missing manifest |
 
