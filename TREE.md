@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 39f8446a56ef2a30149bee99b15302cc5922023f
+> Commit: 6f99cae54b8508fa1f4d095fef353055ced5b494
 
 ```
 .
@@ -1916,7 +1916,8 @@
 │   │   ├── 20260109_KG.sql
 │   │   ├── 202601120001_MULTI_TENANT_PROVIDER_MODEL.sql
 │   │   ├── 202601130001_SCOUT_API_SCHEMA.sql
-│   │   └── 202601130002_SCOUT_MEDALLION_TABLES.sql
+│   │   ├── 202601130002_SCOUT_MEDALLION_TABLES.sql
+│   │   └── 20260119_agent_memory_schema.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -2322,6 +2323,7 @@
 │   ├── 003-odoo-ce-custom-image-spec.md
 │   ├── AGENTIC_CLOUD_PRD.md
 │   ├── AGENT_FRAMEWORK_SESSION_REPORT.md
+│   ├── AGENT_MEMORY_DEPLOYMENT.md
 │   ├── AGENT_TROUBLESHOOTING_PLAYBOOK.md
 │   ├── AIUX_SHIP_PRD.md
 │   ├── AI_MODULE_NAMING_CONVENTION.md
@@ -3161,6 +3163,7 @@
 │   ├── supabase_delete_user.sh
 │   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
+│   ├── sync_agent_memory.py
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
 │   ├── sync_ipai_sample_metrics_to_supabase.py
@@ -3898,7 +3901,6 @@
 ├── aiux_ship_manifest.yml
 ├── bir_deadlines_2026.csv
 ├── branch_protection.json
-├── claude.md
 ├── constitution.md
 ├── custom_module_inventory.md
 ├── deploy_m1.sh.template
@@ -3960,7 +3962,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1281 directories, 2674 files
+1281 directories, 2676 files
 ```
 
 ## 📊 Stats
@@ -3968,7 +3970,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1501 |
-| Files | 4133 |
-| Python files | 1086 |
+| Files | 4135 |
+| Python files | 1087 |
 | XML files | 520 |
 | Markdown files | 797 |
