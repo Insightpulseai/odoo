@@ -1,0 +1,17 @@
+Git State Evidence
+==================
+Timestamp: 2026-01-19T08:40:00Z
+Branch: claude/deploy-odoo-enterprise-bridge-RbvGm
+
+Files Changed:
+- addons/ipai/ipai_enterprise_bridge/__init__.py (modified)
+- addons/ipai/ipai_enterprise_bridge/controllers/__init__.py (created)
+- addons/ipai/ipai_enterprise_bridge/controllers/mailgun_mailgate.py (created)
+
+Purpose:
+Implements Mailgun Mailgate Controller for Odoo 18 CE as part of ipai_enterprise_bridge module.
+This provides Enterprise-equivalent mail gateway functionality using Mailgun webhooks.
+
+Endpoint: /mailgate/mailgun
+Methods: GET (health check), POST (webhook handler)
+Auth: public (csrf=False for webhook)
