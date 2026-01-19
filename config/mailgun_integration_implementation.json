@@ -1,0 +1,162 @@
+{
+  "implementation_date": "2026-01-19T08:30:00Z",
+  "module": "ipai_enterprise_bridge",
+  "feature": "Mailgun inbound mailgate endpoint",
+  "version": "18.0.1.1.0",
+  "status": "CODE_COMPLETE_DEPLOYMENT_REQUIRED",
+
+  "root_cause_resolved": {
+    "issue": "ODOO_MAILGATE_ENDPOINT_MISSING",
+    "description": "Odoo was returning HTTP 404 for /mailgate/mailgun - no controller existed",
+    "resolution": "Created HTTP controller in ipai_enterprise_bridge module"
+  },
+
+  "files_created": [
+    {
+      "path": "addons/ipai/ipai_enterprise_bridge/controllers/__init__.py",
+      "purpose": "Initialize controllers package",
+      "status": "created"
+    },
+    {
+      "path": "addons/ipai/ipai_enterprise_bridge/controllers/mailgun_mailgate.py",
+      "purpose": "Implements /mailgate/mailgun HTTP endpoint",
+      "status": "created",
+      "features": [
+        "HTTP route: POST /mailgate/mailgun (public, form-encoded)",
+        "Parses Mailgun payload (sender, recipient, subject, body-plain)",
+        "Creates mail.message records in Odoo",
+        "Returns HTTP 200 OK on success",
+        "Includes signature verification placeholder (TODO)"
+      ]
+    }
+  ],
+
+  "files_modified": [
+    {
+      "path": "addons/ipai/ipai_enterprise_bridge/__init__.py",
+      "change": "Added 'from . import controllers' import",
+      "status": "modified"
+    }
+  ],
+
+  "deployment_requirements": {
+    "server": "erp.insightpulseai.net (159.223.75.148)",
+    "module_upgrade": "odoo -d production -u ipai_enterprise_bridge --stop-after-init",
+    "service_restart": "Required after module upgrade",
+    "verification": "curl POST to https://erp.insightpulseai.net/mailgate/mailgun"
+  },
+
+  "mailgun_configuration": {
+    "domain": "mg.insightpulseai.net",
+    "api_key": "key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxx-xxxxxxxx",
+    "routes": [
+      {
+        "expression": "match_recipient(\"deploy@insightpulseai.net\")",
+        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "priority": 0,
+        "status": "CONFIGURED"
+      },
+      {
+        "expression": "match_recipient(\"support@insightpulseai.net\")",
+        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "priority": 1,
+        "status": "CONFIGURED"
+      },
+      {
+        "expression": "match_recipient(\"invoices@insightpulseai.net\")",
+        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "priority": 2,
+        "status": "CONFIGURED"
+      },
+      {
+        "expression": "match_recipient(\".*@mg.insightpulseai.net\")",
+        "forward_url": "https://erp.insightpulseai.net/mailgate/mailgun",
+        "priority": 10,
+        "status": "CONFIGURED"
+      }
+    ],
+    "dns_status": "VERIFIED_OK"
+  },
+
+  "acceptance_criteria": [
+    {
+      "criterion": "Mailgate endpoint returns HTTP 200",
+      "status": "PENDING_DEPLOYMENT",
+      "test": "curl POST to /mailgate/mailgun"
+    },
+    {
+      "criterion": "Direct curl test creates mail.message record",
+      "status": "PENDING_DEPLOYMENT",
+      "test": "Database query after curl test"
+    },
+    {
+      "criterion": "Odoo logs show inbound message entries",
+      "status": "PENDING_DEPLOYMENT",
+      "test": "grep 'Mailgun inbound received' in Odoo logs"
+    },
+    {
+      "criterion": "All 4 Mailgun routes deliver successfully",
+      "status": "PENDING_DEPLOYMENT",
+      "test": "Send test messages via Mailgun API, check events"
+    },
+    {
+      "criterion": "Mailgun events show delivered with HTTP 200",
+      "status": "PENDING_DEPLOYMENT",
+      "test": "Query Mailgun events API after test sends"
+    },
+    {
+      "criterion": "Database contains mail.message for all tests",
+      "status": "PENDING_DEPLOYMENT",
+      "test": "SELECT from mail_message WHERE subject ILIKE '%Test%'"
+    }
+  ],
+
+  "security_notes": {
+    "current_implementation": [
+      "Public endpoint (auth='public', no authentication required)",
+      "CSRF protection disabled (required for webhook POST)",
+      "No signature verification (TODO placeholder exists)",
+      "All inbound mail metadata logged for debugging"
+    ],
+    "future_enhancements": [
+      "Implement Mailgun signature verification (HMAC-SHA256)",
+      "Add IP allowlist for Mailgun servers",
+      "Implement rate limiting per sender",
+      "Add spam detection layer"
+    ]
+  },
+
+  "rollback_strategy": {
+    "quick_rollback": "Comment out @http.route decorator and restart Odoo",
+    "full_rollback": "Remove controller files, remove imports, restart Odoo",
+    "mailgun_impact": "Will return to 404 state (safe, emails queued by Mailgun)"
+  },
+
+  "documentation": {
+    "deployment_guide": "config/MAILGUN_INTEGRATION_DEPLOYMENT.md",
+    "diagnosis_report": "config/MAILGUN_ODOO_DIAGNOSIS.md",
+    "route_validation": "config/mailgun_route_validation.json",
+    "dns_verification": "config/mailgun_dns_verification.json",
+    "sdk_usage": "config/MAILGUN_SDK_USAGE.md"
+  },
+
+  "next_steps": [
+    "Deploy code to production server (erp.insightpulseai.net)",
+    "Run module upgrade: odoo -d production -u ipai_enterprise_bridge --stop-after-init",
+    "Restart Odoo service",
+    "Execute direct curl test to verify HTTP 200 response",
+    "Check Odoo logs for 'Mailgun inbound received' entries",
+    "Verify mail.message record created in database",
+    "Send test messages via Mailgun API to all 4 routes",
+    "Check Mailgun events API for delivery status",
+    "Verify all test messages in Odoo database",
+    "Create final validation report with evidence"
+  ],
+
+  "architectural_decision": {
+    "module_choice": "ipai_enterprise_bridge",
+    "rationale": "Consolidate all external integrations in single module per user directive",
+    "quote": "Yes — you've got enough information to fix it end-to-end. Consolidate into ipai_enterprise_bridge",
+    "future_integrations": "All new integrations (n8n, Supabase, BI, agents) must use ipai_enterprise_bridge"
+  }
+}
