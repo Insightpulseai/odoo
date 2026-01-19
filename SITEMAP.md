@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0337c20df74e2d17e09c5989f4f77e64d1a437de
+> Commit: 57c646faa23a6e9c6ffd089ff33e2c47178f5010
 
 ## 📚 Documentation
 
@@ -392,6 +392,7 @@
 | [ERD Automation Evidence Pack](docs/evidence/20260112-0300/erd-automation/EVIDENCE.md) | docs/evidence/20260112-0300/erd-automation |
 | [IPAI Finance OKR Governance - Verification Report](docs/evidence/20260112-0358/ipai_finance_okr/verification_report.md) | docs/evidence/20260112-0358/ipai_finance_okr |
 | [GitHub Setup Verification Report](docs/evidence/20260112-0649/github-setup/verification-report.md) | docs/evidence/20260112-0649/github-setup |
+| [Mailgun Mailgate Deployment Runbook](docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md) | docs/evidence/20260119-0840/mailgun-mailgate |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
