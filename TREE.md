@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0337c20df74e2d17e09c5989f4f77e64d1a437de
+> Commit: 57c646faa23a6e9c6ffd089ff33e2c47178f5010
 
 ```
 .
@@ -425,6 +425,7 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_enterprise_bridge
+│   │   │   ├── controllers
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
@@ -2050,8 +2051,10 @@
 │   │   │   └── erd-automation
 │   │   ├── 20260112-0358
 │   │   │   └── ipai_finance_okr
-│   │   └── 20260112-0649
-│   │       └── github-setup
+│   │   ├── 20260112-0649
+│   │   │   └── github-setup
+│   │   └── 20260119-0840
+│   │       └── mailgun-mailgate
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -3025,6 +3028,7 @@
 │   ├── delete_user_safe.sh
 │   ├── deploy-bir-compliance.sh
 │   ├── deploy-december-2025-bir-tasks.sh
+│   ├── deploy-mailgun-mailgate.sh
 │   ├── deploy-n8n-workflows.sh
 │   ├── deploy-odoo-modules.sh
 │   ├── deploy-tbwa-theme-tokens.sh
@@ -3941,15 +3945,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1277 directories, 2659 files
+1280 directories, 2660 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1497 |
-| Files | 4114 |
-| Python files | 1082 |
+| Directories | 1500 |
+| Files | 4119 |
+| Python files | 1084 |
 | XML files | 520 |
-| Markdown files | 792 |
+| Markdown files | 793 |
