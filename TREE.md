@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 57c646faa23a6e9c6ffd089ff33e2c47178f5010
+> Commit: 39f8446a56ef2a30149bee99b15302cc5922023f
 
 ```
 .
@@ -430,6 +430,7 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── POLICY.md
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
@@ -1842,8 +1843,12 @@
 │   │   ├── oca_repos.yaml
 │   │   ├── odoo_docs.yaml
 │   │   └── sap_help.yaml
+│   ├── MAILGUN_INTEGRATION_COMPLETE.md
+│   ├── MAILGUN_INTEGRATION_DEPLOYMENT.md
+│   ├── PRODUCTION_DEPLOYMENT_SCRIPT.sh
 │   ├── capability_map.yaml
 │   ├── extended-platform-install-order.yaml
+│   ├── mailgun_integration_implementation.json
 │   ├── oca-repos.yaml
 │   ├── odoo-core.conf
 │   ├── odoo.conf.template
@@ -2432,6 +2437,7 @@
 │   ├── SITEMAP.md
 │   ├── SMTP_SETUP_SUMMARY.md
 │   ├── SSO_VALIDATION_CHECKLIST.md
+│   ├── STAGING.md
 │   ├── SUCCESS_CRITERIA.md
 │   ├── SUPERSET_INTEGRATION.md
 │   ├── SUPERSET_PPM_ANALYTICS_GUIDE.md
@@ -3002,6 +3008,7 @@
 │   ├── canonical_audit.py
 │   ├── ce_oca_audit.py
 │   ├── check-enterprise-modules.sh
+│   ├── check_addon_allowlist.py
 │   ├── check_go_live_manifest.py
 │   ├── check_module_status.sh
 │   ├── check_project_tasks.py
@@ -3046,6 +3053,7 @@
 │   ├── diagnose_smtp.sh
 │   ├── docker-desktop-audit.sh
 │   ├── docker-staging-audit.sh
+│   ├── ee_replace_request.sh
 │   ├── enhanced_health_check.sh
 │   ├── erd_dot.sql
 │   ├── erp_config_cli.sh
@@ -3122,6 +3130,7 @@
 │   ├── policy-check.sh
 │   ├── pre_install_snapshot.sh
 │   ├── prod_access_check.py
+│   ├── prod_backup_dump.sh
 │   ├── prod_db_guess.py
 │   ├── promote_oauth_users.py
 │   ├── provision_tenant.sh
@@ -3146,6 +3155,9 @@
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
 │   ├── stack_verify.sh
+│   ├── staging_down.sh
+│   ├── staging_restore_and_sanitize.sh
+│   ├── staging_up.sh
 │   ├── supabase_delete_user.sh
 │   ├── sync-fluent-tokens.sh
 │   ├── sync-tokens.sh
@@ -3167,6 +3179,7 @@
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
 │   ├── validate_ai_naming.py
+│   ├── validate_ee_replacements.py
 │   ├── validate_ipai_doc_module_refs.py
 │   ├── validate_m1.sh
 │   ├── validate_manifest.py
@@ -3414,6 +3427,8 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── ipai_enterprise_bridge
+│   │   └── ee-replacement-matrix.yaml
 │   ├── kapa-plus
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -3945,15 +3960,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1280 directories, 2660 files
+1281 directories, 2674 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1500 |
-| Files | 4119 |
-| Python files | 1084 |
+| Directories | 1501 |
+| Files | 4133 |
+| Python files | 1086 |
 | XML files | 520 |
-| Markdown files | 793 |
+| Markdown files | 797 |
