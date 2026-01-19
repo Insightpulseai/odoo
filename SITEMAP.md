@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 39f8446a56ef2a30149bee99b15302cc5922023f
+> Commit: 6f99cae54b8508fa1f4d095fef353055ced5b494
 
 ## 📚 Documentation
 
@@ -186,7 +186,6 @@
 | [OdooForge Sandbox - UAT Test Plan](archive/compose/odooforge-sandbox/tests/UAT_TEST_PLAN.md) | archive/compose/odooforge-sandbox/tests |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
-| [CLAUDE.md — Odoo CE Project](claude.md) | . |
 | [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
 | [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
 | [BIR Compliance & Month-End Closing - Final Deployment Report](claudedocs/FINAL_DEPLOYMENT_REPORT.md) | claudedocs |
@@ -213,6 +212,7 @@
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
 | [Agent Skills Framework - Session Report](docs/AGENT_FRAMEWORK_SESSION_REPORT.md) | docs |
+| [Agent Memory System Deployment](docs/AGENT_MEMORY_DEPLOYMENT.md) | docs |
 | [AI Agent Troubleshooting Playbook - Odoo SCSS/Asset Errors](docs/AGENT_TROUBLESHOOTING_PLAYBOOK.md) | docs |
 | [AIUX Shipping PRD](docs/AIUX_SHIP_PRD.md) | docs |
 | [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
