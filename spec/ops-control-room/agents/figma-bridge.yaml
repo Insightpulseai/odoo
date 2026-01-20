@@ -1,0 +1,217 @@
+---
+# Figma Bridge Agent - Ops Control Room Skills Registry
+agent_id: figma_bridge
+version: 1.0.0
+description: |
+  Figma design system integration agent responsible for syncing design tokens
+  from extracted sources to Figma via plugin generation or API push.
+
+  Ensures git repository synchronization before any token operations to maintain
+  consistency between design source and Figma implementation.
+
+owner: InsightPulse AI
+maintainer: Jake Tolentino (@jgtolentino)
+repository: github.com/jgtolentino/design-system-cli
+package: packages/figma-bridge
+
+dependencies:
+  - name: design-system-cli
+    type: monorepo
+    location: /Users/tbwa/Documents/GitHub/design-system-cli
+  - name: @ds-cli/core
+    type: workspace
+    purpose: Normalized design tokens types
+  - name: chalk
+    type: npm
+    purpose: Terminal output formatting
+  - name: axios
+    type: npm
+    purpose: Figma API communication
+
+skills:
+  - id: git_preflight
+    name: Git Pre-Flight Checks
+    description: |
+      Run git status/pull/conflict checks before any design-token or Figma operation.
+      Ensures the local repository is synchronized with the remote before proceeding
+      with token sync operations.
+
+      Prevents token desync issues by enforcing repository consistency.
+
+    implementation:
+      module: packages/figma-bridge/src/git-operations.ts
+      entrypoint: runGitWorkflow
+      type: pre-operation-gate
+
+    default_options:
+      checkStatus: true
+      pull: true
+      requireClean: false
+
+    inputs:
+      - name: cwd
+        type: string
+        required: false
+        description: Working directory (defaults to process.cwd())
+
+      - name: checkStatus
+        type: boolean
+        required: false
+        default: true
+        description: Display formatted git status
+
+      - name: pull
+        type: boolean
+        required: false
+        default: true
+        description: Automatically pull from remote if behind
+
+      - name: requireClean
+        type: boolean
+        required: false
+        default: false
+        description: Fail if working directory has uncommitted changes
+
+    outputs:
+      - name: proceed
+        type: boolean
+        description: Whether to proceed with subsequent operations
+
+      - name: message
+        type: string
+        description: Human-readable status message
+
+    failure_behavior:
+      - type: hard_fail
+        condition: proceed === false
+        message: |
+          Git pre-flight checks failed (conflicts or fetch/pull error).
+          Resolve git issues and rerun the operation.
+
+    telemetry:
+      events:
+        - name: git_preflight.start
+          payload:
+            cwd: string
+            options: object
+
+        - name: git_preflight.status
+          payload:
+            branch: string
+            ahead: number
+            behind: number
+            is_clean: boolean
+
+        - name: git_preflight.conflict
+          payload:
+            conflict_files: string[]
+            error_message: string
+
+        - name: git_preflight.complete
+          payload:
+            proceed: boolean
+            message: string
+            duration_ms: number
+
+    tests:
+      location: packages/figma-bridge/src/git-operations.test.ts
+      framework: vitest
+      coverage_target: 80
+      scenarios:
+        - name: non-git repository
+          expected: proceed=true, message="Not a git repository"
+
+        - name: clean and up-to-date
+          expected: proceed=true, message="Git checks passed"
+
+        - name: behind remote with successful pull
+          expected: proceed=true, pulled=true
+
+        - name: pull results in conflicts
+          expected: proceed=false, message contains "conflicts"
+
+        - name: requireClean=true with uncommitted changes
+          expected: proceed=false, message contains "uncommitted changes"
+
+  - id: figma_sync_tokens
+    name: Sync Design Tokens to Figma
+    description: |
+      Generate Figma plugin files or push tokens directly via API.
+      Must run after git_preflight to ensure token synchronization.
+
+    implementation:
+      module: packages/figma-bridge/src/figma.ts
+      entrypoint: figma
+      type: operation
+
+    inputs:
+      - name: mode
+        type: enum
+        required: true
+        values: [plugin, push]
+        description: Operation mode (plugin generation or API push)
+
+      - name: input
+        type: string
+        required: true
+        description: Path to normalized design tokens JSON file
+
+      - name: out
+        type: string
+        required: true
+        description: Output directory for plugin files (plugin mode)
+
+      - name: fileId
+        type: string
+        required: false
+        description: Figma file ID (push mode only)
+
+      - name: token
+        type: string
+        required: false
+        description: Figma access token (push mode only)
+
+    outputs:
+      - name: plugin_files
+        type: string[]
+        description: Generated plugin file paths (plugin mode)
+
+      - name: api_response
+        type: object
+        description: Figma API response (push mode)
+
+    telemetry:
+      events:
+        - name: figma_sync.start
+        - name: figma_sync.plugin_generated
+        - name: figma_sync.api_push_complete
+        - name: figma_sync.error
+
+integration:
+  ops_control_room:
+    enabled: true
+    webhook_url: https://buildopscontrolroom.vercel.app/api/webhooks/figma
+
+  telemetry:
+    backend: mcp-jobs
+    supabase_project: spdtwktxdalcfigzeqrz
+    tables:
+      - telemetry_events
+      - job_runs
+      - job_events
+
+  runbooks:
+    - id: figma_sync_design_tokens
+      description: Complete design token sync workflow with git pre-flight
+      path: spec/ops-control-room/runbooks/figma_sync_design_tokens.yaml
+
+metadata:
+  created: 2026-01-20
+  last_updated: 2026-01-20
+  version: 1.0.0
+  status: active
+  tags:
+    - figma
+    - design-system
+    - git-operations
+    - ops-control-room
