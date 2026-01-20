@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6f99cae54b8508fa1f4d095fef353055ced5b494
+> Commit: 53c5723ff77363835c633e893e45193e16df4a31
 
 ```
 .
@@ -87,6 +87,7 @@
 │   │   ├── health-check.yml
 │   │   ├── icons-drift.yml
 │   │   ├── infra-validate.yml
+│   │   ├── infra_memory_job.yml
 │   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-determinism.yml
@@ -1997,7 +1998,8 @@
 │   │       ├── oca_modules_vendored.txt
 │   │       └── oca_overlap_map.yaml
 │   ├── auth
-│   │   └── EMAIL_AUTH_SETUP.md
+│   │   ├── EMAIL_AUTH_SETUP.md
+│   │   └── EMAIL_OTP_IMPLEMENTATION.md
 │   ├── claude_code
 │   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── QUICK_REFERENCE.md
@@ -2070,6 +2072,10 @@
 │   │   └── templates
 │   │       ├── POST_MORTEM.md
 │   │       └── error_envelope.json
+│   ├── infra
+│   │   ├── IMPLEMENTATION_COMPLETE.md
+│   │   ├── MCP_JOBS_SYSTEM.md
+│   │   └── MEMORY_INGESTION.md
 │   ├── integration
 │   │   ├── INSIGHTPULSE_ROADMAP.md
 │   │   └── SLACK_INTEGRATION_SETUP.md
@@ -2381,6 +2387,7 @@
 │   ├── INDEX.md
 │   ├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
 │   ├── INDUSTRY_PARITY_ANALYSIS.md
+│   ├── INFRASTRUCTURE_CHECKLIST.md
 │   ├── IPAI_MODULES_INDEX.md
 │   ├── IPAI_MODULE_INSTALLATION_ORDER.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
@@ -2699,6 +2706,7 @@
 │   │   │   ├── src
 │   │   │   ├── package.json
 │   │   │   └── tsconfig.json
+│   │   ├── mcp-jobs
 │   │   ├── odoo-erp-server
 │   │   │   ├── src
 │   │   │   ├── .env.example
@@ -2842,13 +2850,17 @@
 │   │   ├── tailwind.preset.js
 │   │   ├── tokens.css
 │   │   └── tokens.scss
-│   └── saas-types
-│       ├── prisma
-│       │   └── schema.prisma
-│       ├── src
-│       │   └── index.ts
-│       ├── package.json
-│       └── tsconfig.json
+│   ├── saas-types
+│   │   ├── prisma
+│   │   │   └── schema.prisma
+│   │   ├── src
+│   │   │   └── index.ts
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   └── supabase
+│       └── functions
+│           ├── auth-otp-request
+│           └── auth-otp-verify
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
 ├── releasekit
@@ -3040,6 +3052,7 @@
 │   ├── deploy-mailgun-mailgate.sh
 │   ├── deploy-n8n-workflows.sh
 │   ├── deploy-odoo-modules.sh
+│   ├── deploy-otp-auth.sh
 │   ├── deploy-tbwa-theme-tokens.sh
 │   ├── deploy-to-server.sh
 │   ├── deploy_afc_rag.sh
@@ -3053,6 +3066,10 @@
 │   ├── deploy_workos_prod.sh
 │   ├── deployment-checklist.sh
 │   ├── diagnose_smtp.sh
+│   ├── discover_digitalocean_infra.sh
+│   ├── discover_docker_infra.sh
+│   ├── discover_odoo_infra.py
+│   ├── discover_supabase_infra.py
 │   ├── docker-desktop-audit.sh
 │   ├── docker-staging-audit.sh
 │   ├── ee_replace_request.sh
@@ -3545,6 +3562,10 @@
 │   ├── functions
 │   │   ├── auth-bootstrap
 │   │   │   └── index.ts
+│   │   ├── auth-otp-request
+│   │   │   └── index.ts
+│   │   ├── auth-otp-verify
+│   │   │   └── index.ts
 │   │   ├── catalog-sync
 │   │   │   └── index.ts
 │   │   ├── context-resolve
@@ -3564,6 +3585,8 @@
 │   │   ├── ipai-copilot
 │   │   │   └── index.ts
 │   │   ├── mcp-gateway
+│   │   │   └── index.ts
+│   │   ├── memory-ingest
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
@@ -3652,6 +3675,9 @@
 │   │   ├── 202601080003_4502_OPS_ODOO_BINDINGS.sql
 │   │   ├── 20260112_fix_trend_views_date_alias.sql
 │   │   ├── 202601130001_IPAI_SAMPLE_METRICS.sql
+│   │   ├── 20260120_email_otp_auth.sql
+│   │   ├── 20260120_infra_schema.sql
+│   │   ├── 20260120_mcp_jobs_schema.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3962,15 +3988,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1281 directories, 2676 files
+1290 directories, 2693 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1501 |
-| Files | 4135 |
-| Python files | 1087 |
+| Directories | 1510 |
+| Files | 4154 |
+| Python files | 1089 |
 | XML files | 520 |
-| Markdown files | 797 |
+| Markdown files | 802 |
