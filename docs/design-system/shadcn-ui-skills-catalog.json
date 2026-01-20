@@ -1,0 +1,788 @@
+{
+  "shadcn_ui_skills_catalog": {
+    "version": "1.0.0",
+    "system": "shadcn/ui Design Language Certification",
+    "source": "https://ui.shadcn.com/",
+    "github": "https://github.com/shadcn-ui/ui",
+    "generated_at": "2026-01-20T00:00:00Z",
+    "integration": {
+      "supabase": {
+        "enabled": true,
+        "schema": "public",
+        "tables": [
+          "shadcn_skills",
+          "shadcn_certification_levels",
+          "shadcn_assessment_tasks",
+          "shadcn_user_certifications",
+          "shadcn_design_tokens",
+          "shadcn_components"
+        ]
+      },
+      "odoo": {
+        "enabled": true,
+        "modules": ["hr_skills", "hr_training"],
+        "model_mappings": {
+          "shadcn_skills": "hr.skill",
+          "shadcn_user_certifications": "hr.certificate"
+        }
+      },
+      "buildops": {
+        "enabled": true,
+        "runbooks": [
+          "runbook_shadcn_skill_assessment",
+          "runbook_shadcn_certification_verification",
+          "runbook_shadcn_badge_generation"
+        ]
+      }
+    },
+    "skills": [
+      {
+        "id": "skill_shadcn_principles_001",
+        "skill_key": "shadcn_design_philosophy",
+        "name": "shadcn/ui Design Philosophy",
+        "category": "Foundations",
+        "track": "both",
+        "description": "Understand the copy-paste architecture philosophy, component ownership model, and foundational concepts",
+        "hours_estimated": 8,
+        "proficiency_levels": 5,
+        "prerequisites": [],
+        "real_world_applications": [
+          "Building component libraries",
+          "Design system architecture decisions",
+          "Enterprise React applications"
+        ],
+        "tools_used": ["React", "Radix UI", "Tailwind CSS"],
+        "key_concepts": [
+          "Copy-paste vs package dependency",
+          "Component ownership model",
+          "Radix primitives foundation",
+          "Tailwind utility-first styling",
+          "CSS variables theming"
+        ],
+        "subskills": [
+          "skill_radix_basics_001",
+          "skill_tailwind_basics_001"
+        ]
+      },
+      {
+        "id": "skill_design_tokens_shadcn_001",
+        "skill_key": "hsl_color_theming",
+        "name": "HSL Color System & Theming",
+        "category": "Tokens & Theming",
+        "track": "both",
+        "description": "Master HSL-based color tokens, semantic naming, and CSS variable theming",
+        "hours_estimated": 12,
+        "proficiency_levels": 5,
+        "prerequisites": ["skill_shadcn_principles_001"],
+        "real_world_applications": [
+          "Creating custom themes",
+          "Multi-brand design systems",
+          "Dark mode implementation",
+          "Accessibility compliance"
+        ],
+        "tools_used": ["CSS", "Tailwind CSS", "Figma Tokens"],
+        "key_concepts": [
+          "HSL color format (hue, saturation, lightness)",
+          "Semantic color naming (primary, secondary, muted, etc.)",
+          "Light/dark mode token pairs",
+          "CSS custom properties syntax",
+          "Theme switching patterns"
+        ],
+        "subskills": [
+          "skill_hsl_colors_001",
+          "skill_css_variables_001",
+          "skill_dark_mode_001"
+        ]
+      },
+      {
+        "id": "skill_shadcn_setup_001",
+        "skill_key": "project_setup_cli",
+        "name": "shadcn/ui Project Setup & CLI",
+        "category": "Setup",
+        "track": "developer",
+        "description": "Set up shadcn/ui in React projects using CLI, configure paths, and TypeScript",
+        "hours_estimated": 6,
+        "proficiency_levels": 3,
+        "prerequisites": [],
+        "real_world_applications": [
+          "New project initialization",
+          "Existing project integration",
+          "Monorepo configuration"
+        ],
+        "tools_used": ["Node.js", "npm/pnpm", "TypeScript", "Tailwind CSS"],
+        "key_concepts": [
+          "npx shadcn@latest init command",
+          "components.json configuration",
+          "Tailwind CSS integration",
+          "Path aliases (@/components)",
+          "TypeScript configuration"
+        ],
+        "subskills": []
+      },
+      {
+        "id": "skill_component_usage_001",
+        "skill_key": "component_usage_composition",
+        "name": "Component Usage & Composition",
+        "category": "Components",
+        "track": "developer",
+        "description": "Master adding, using, and composing shadcn/ui components",
+        "hours_estimated": 16,
+        "proficiency_levels": 5,
+        "prerequisites": ["skill_shadcn_setup_001"],
+        "real_world_applications": [
+          "Building user interfaces",
+          "Form creation",
+          "Navigation systems",
+          "Modal/dialog workflows"
+        ],
+        "tools_used": ["React", "Radix UI", "TypeScript"],
+        "key_concepts": [
+          "Adding components (npx shadcn@latest add)",
+          "Component anatomy (Root, Trigger, Content, etc.)",
+          "Props and variants",
+          "Compound component pattern",
+          "asChild polymorphic pattern",
+          "Controlled vs uncontrolled components"
+        ],
+        "subskills": [
+          "skill_form_components_001",
+          "skill_overlay_components_001",
+          "skill_navigation_components_001"
+        ]
+      },
+      {
+        "id": "skill_styling_customization_001",
+        "skill_key": "styling_customization",
+        "name": "Styling & Customization",
+        "category": "Styling",
+        "track": "developer",
+        "description": "Customize components using Tailwind, cva variants, and CSS variables",
+        "hours_estimated": 14,
+        "proficiency_levels": 5,
+        "prerequisites": ["skill_component_usage_001"],
+        "real_world_applications": [
+          "Brand customization",
+          "Custom variant creation",
+          "Style overrides",
+          "Design system extension"
+        ],
+        "tools_used": ["Tailwind CSS", "class-variance-authority", "clsx", "tailwind-merge"],
+        "key_concepts": [
+          "cn() utility (clsx + tailwind-merge)",
+          "cva (class-variance-authority) patterns",
+          "CSS variable overrides",
+          "Component extension via composition",
+          "Style composition and inheritance"
+        ],
+        "subskills": [
+          "skill_cva_variants_001",
+          "skill_tailwind_merge_001"
+        ]
+      },
+      {
+        "id": "skill_radix_integration_001",
+        "skill_key": "radix_primitives_deep_dive",
+        "name": "Radix UI Primitives Deep Dive",
+        "category": "Primitives",
+        "track": "developer",
+        "description": "Understand Radix UI primitives, data attributes, and accessibility features",
+        "hours_estimated": 12,
+        "proficiency_levels": 4,
+        "prerequisites": ["skill_component_usage_001"],
+        "real_world_applications": [
+          "Custom component creation",
+          "Accessibility implementation",
+          "Animation integration",
+          "State management"
+        ],
+        "tools_used": ["Radix UI", "React", "CSS"],
+        "key_concepts": [
+          "Radix component APIs",
+          "Data attributes (data-state, data-side, etc.)",
+          "State management patterns",
+          "Built-in accessibility features",
+          "Animation with data-state selectors"
+        ],
+        "subskills": [
+          "skill_radix_select_001",
+          "skill_radix_dialog_001",
+          "skill_radix_popover_001"
+        ]
+      },
+      {
+        "id": "skill_forms_validation_001",
+        "skill_key": "forms_validation_rhf",
+        "name": "Forms, Validation & React Hook Form",
+        "category": "Forms",
+        "track": "developer",
+        "description": "Build accessible forms with React Hook Form, Zod validation, and shadcn/ui components",
+        "hours_estimated": 14,
+        "proficiency_levels": 5,
+        "prerequisites": ["skill_component_usage_001"],
+        "real_world_applications": [
+          "User registration forms",
+          "Settings pages",
+          "Data entry interfaces",
+          "Multi-step wizards"
+        ],
+        "tools_used": ["React Hook Form", "Zod", "shadcn/ui Form"],
+        "key_concepts": [
+          "Form component wrapper",
+          "useForm hook integration",
+          "Zod schema validation",
+          "Error message handling",
+          "Form submission patterns",
+          "Accessible form markup"
+        ],
+        "subskills": [
+          "skill_zod_schemas_001",
+          "skill_form_errors_001"
+        ]
+      },
+      {
+        "id": "skill_data_tables_001",
+        "skill_key": "data_tables_tanstack",
+        "name": "Data Tables & TanStack Table",
+        "category": "Data",
+        "track": "developer",
+        "description": "Build advanced data tables with sorting, filtering, pagination using TanStack Table",
+        "hours_estimated": 12,
+        "proficiency_levels": 4,
+        "prerequisites": ["skill_component_usage_001"],
+        "real_world_applications": [
+          "Admin dashboards",
+          "Data management interfaces",
+          "Reporting systems",
+          "CRUD applications"
+        ],
+        "tools_used": ["TanStack Table", "React", "shadcn/ui Table"],
+        "key_concepts": [
+          "useReactTable hook",
+          "Column definitions (columnHelper)",
+          "Sorting (getSortedRowModel)",
+          "Filtering (getFilteredRowModel)",
+          "Pagination (getPaginationRowModel)",
+          "Row selection (getRowSelectionModel)"
+        ],
+        "subskills": [
+          "skill_table_sorting_001",
+          "skill_table_filtering_001",
+          "skill_table_pagination_001"
+        ]
+      },
+      {
+        "id": "skill_theming_implementation_001",
+        "skill_key": "theme_implementation",
+        "name": "Theme Implementation & Dark Mode",
+        "category": "Theming",
+        "track": "developer",
+        "description": "Implement theming with CSS variables, next-themes, and system preference detection",
+        "hours_estimated": 10,
+        "proficiency_levels": 4,
+        "prerequisites": ["skill_design_tokens_shadcn_001", "skill_styling_customization_001"],
+        "real_world_applications": [
+          "Dark mode implementation",
+          "Multi-brand applications",
+          "User preference persistence",
+          "Accessibility (high contrast)"
+        ],
+        "tools_used": ["next-themes", "CSS Variables", "localStorage"],
+        "key_concepts": [
+          "CSS variable theming strategy",
+          "next-themes ThemeProvider",
+          "Theme toggle component",
+          "System preference detection (prefers-color-scheme)",
+          "Theme persistence (localStorage/cookies)"
+        ],
+        "subskills": [
+          "skill_next_themes_001",
+          "skill_theme_persistence_001"
+        ]
+      },
+      {
+        "id": "skill_accessibility_impl_001",
+        "skill_key": "accessibility_implementation",
+        "name": "Accessibility Implementation",
+        "category": "Accessibility",
+        "track": "developer",
+        "description": "Implement accessible interfaces with keyboard navigation, ARIA, and screen reader support",
+        "hours_estimated": 10,
+        "proficiency_levels": 5,
+        "prerequisites": ["skill_radix_integration_001"],
+        "real_world_applications": [
+          "WCAG 2.1 compliance",
+          "Government/enterprise requirements",
+          "Inclusive design",
+          "Legal compliance"
+        ],
+        "tools_used": ["Radix UI", "axe DevTools", "NVDA", "VoiceOver"],
+        "key_concepts": [
+          "Keyboard navigation patterns",
+          "Focus management (focus trap, restore)",
+          "ARIA attributes (role, aria-label, aria-expanded)",
+          "Screen reader testing",
+          "Automated a11y testing (jest-axe, axe-core)"
+        ],
+        "subskills": [
+          "skill_keyboard_nav_001",
+          "skill_aria_attributes_001",
+          "skill_a11y_testing_001"
+        ]
+      },
+      {
+        "id": "skill_advanced_patterns_001",
+        "skill_key": "advanced_patterns",
+        "name": "Advanced Patterns & Customization",
+        "category": "Advanced",
+        "track": "developer",
+        "description": "Implement advanced patterns: command palette, custom components, animations",
+        "hours_estimated": 14,
+        "proficiency_levels": 4,
+        "prerequisites": ["skill_radix_integration_001", "skill_styling_customization_001"],
+        "real_world_applications": [
+          "Power user interfaces",
+          "VS Code-style command palettes",
+          "Animation-rich interfaces",
+          "Custom component libraries"
+        ],
+        "tools_used": ["cmdk", "Framer Motion", "React", "Radix UI"],
+        "key_concepts": [
+          "Custom component creation",
+          "Slot-based composition",
+          "Animation with Framer Motion",
+          "Command palette (cmdk) implementation",
+          "Toast/notification patterns (sonner)"
+        ],
+        "subskills": [
+          "skill_cmdk_001",
+          "skill_framer_motion_001",
+          "skill_custom_components_001"
+        ]
+      },
+      {
+        "id": "skill_figma_shadcn_001",
+        "skill_key": "figma_design_kit",
+        "name": "Figma Design Kit for shadcn/ui",
+        "category": "Tools",
+        "track": "designer",
+        "description": "Use and extend Figma design kits for shadcn/ui, token sync, and handoff",
+        "hours_estimated": 10,
+        "proficiency_levels": 4,
+        "prerequisites": ["skill_design_tokens_shadcn_001"],
+        "real_world_applications": [
+          "Design system documentation",
+          "Developer handoff",
+          "Component exploration",
+          "Team collaboration"
+        ],
+        "tools_used": ["Figma", "Figma Tokens", "Figma Dev Mode"],
+        "key_concepts": [
+          "Component variants in Figma",
+          "Token sync (Figma Tokens plugin)",
+          "Auto-layout patterns",
+          "Dev Mode handoff",
+          "Style inheritance"
+        ],
+        "subskills": [
+          "skill_figma_variants_001",
+          "skill_figma_tokens_001"
+        ]
+      },
+      {
+        "id": "skill_component_ux_shadcn_001",
+        "skill_key": "component_ux_patterns",
+        "name": "Component UX Patterns & States",
+        "category": "Interaction Design",
+        "track": "designer",
+        "description": "Design component states, interactions, and animation specifications",
+        "hours_estimated": 14,
+        "proficiency_levels": 5,
+        "prerequisites": ["skill_shadcn_principles_001"],
+        "real_world_applications": [
+          "Interaction design",
+          "Micro-animation specification",
+          "State documentation",
+          "Developer handoff"
+        ],
+        "tools_used": ["Figma", "ProtoPie", "Principle"],
+        "key_concepts": [
+          "State design (default, hover, focus, active, disabled)",
+          "Loading state patterns",
+          "Error state communication",
+          "Animation timing specifications",
+          "Keyboard interaction specs"
+        ],
+        "subskills": [
+          "skill_state_design_001",
+          "skill_animation_spec_001"
+        ]
+      },
+      {
+        "id": "skill_accessibility_design_shadcn_001",
+        "skill_key": "accessibility_first_design",
+        "name": "Accessibility-First Design (Radix Foundation)",
+        "category": "Accessibility",
+        "track": "designer",
+        "description": "Design accessible interfaces leveraging Radix's built-in accessibility",
+        "hours_estimated": 10,
+        "proficiency_levels": 4,
+        "prerequisites": ["skill_component_ux_shadcn_001"],
+        "real_world_applications": [
+          "WCAG compliance",
+          "Inclusive design",
+          "Enterprise requirements",
+          "Government projects"
+        ],
+        "tools_used": ["Figma", "Figma A11y plugins", "Contrast checkers"],
+        "key_concepts": [
+          "WCAG 2.1 AA compliance requirements",
+          "Color contrast ratios (4.5:1, 3:1)",
+          "Focus indicator design",
+          "ARIA integration understanding",
+          "Reduced motion considerations"
+        ],
+        "subskills": [
+          "skill_contrast_design_001",
+          "skill_focus_design_001"
+        ]
+      },
+      {
+        "id": "skill_responsive_shadcn_001",
+        "skill_key": "responsive_adaptive_design",
+        "name": "Responsive & Adaptive Design",
+        "category": "Layout",
+        "track": "designer",
+        "description": "Design responsive layouts using Tailwind breakpoints and mobile-first principles",
+        "hours_estimated": 10,
+        "proficiency_levels": 4,
+        "prerequisites": ["skill_shadcn_principles_001"],
+        "real_world_applications": [
+          "Mobile applications",
+          "Responsive web apps",
+          "Cross-device experiences",
+          "Progressive enhancement"
+        ],
+        "tools_used": ["Figma", "Tailwind CSS", "Browser DevTools"],
+        "key_concepts": [
+          "Tailwind breakpoints (sm, md, lg, xl, 2xl)",
+          "Mobile-first design approach",
+          "Container queries",
+          "Fluid typography",
+          "Touch-friendly target sizes (44px)"
+        ],
+        "subskills": [
+          "skill_breakpoint_design_001",
+          "skill_mobile_first_001"
+        ]
+      },
+      {
+        "id": "skill_theming_design_001",
+        "skill_key": "theme_brand_customization",
+        "name": "Theme Design & Brand Customization",
+        "category": "Theming",
+        "track": "designer",
+        "description": "Design custom themes, brand integrations, and multi-theme systems",
+        "hours_estimated": 12,
+        "proficiency_levels": 5,
+        "prerequisites": ["skill_design_tokens_shadcn_001"],
+        "real_world_applications": [
+          "White-label products",
+          "Multi-brand applications",
+          "Client customization",
+          "Accessibility themes"
+        ],
+        "tools_used": ["Figma", "Figma Tokens", "HSL color tools"],
+        "key_concepts": [
+          "Custom color scheme creation",
+          "Brand color integration",
+          "Dark mode design considerations",
+          "High contrast theme design",
+          "Theme documentation"
+        ],
+        "subskills": [
+          "skill_color_palette_design_001",
+          "skill_dark_theme_design_001"
+        ]
+      }
+    ],
+    "certification_levels": [
+      {
+        "level": 1,
+        "title": "shadcn/ui Novice",
+        "subtitle": "Awareness & Basic Usage",
+        "hours_required": 20,
+        "description": "Understands shadcn/ui philosophy and can use basic components",
+        "required_competencies": [
+          "Explain copy-paste architecture",
+          "Set up shadcn/ui in a project",
+          "Add and use basic components",
+          "Apply basic theming",
+          "Implement light/dark mode"
+        ],
+        "tasks_required": 2,
+        "passing_score": 80,
+        "portfolio_requirements": [
+          "Simple form with validation",
+          "Theme implementation (light/dark)"
+        ]
+      },
+      {
+        "level": 2,
+        "title": "shadcn/ui Practitioner",
+        "subtitle": "Task-Capable Implementation",
+        "hours_required": 40,
+        "description": "Can build production interfaces with shadcn/ui components",
+        "required_competencies": [
+          "Master all core components",
+          "Implement forms with React Hook Form + Zod",
+          "Build data tables with sorting/filtering",
+          "Customize variants using cva",
+          "Ensure WCAG AA accessibility"
+        ],
+        "tasks_required": 4,
+        "passing_score": 80,
+        "portfolio_requirements": [
+          "Complex form with validation",
+          "Data table with full features",
+          "Custom variant components",
+          "Accessible modal implementation"
+        ]
+      },
+      {
+        "level": 3,
+        "title": "shadcn/ui Specialist",
+        "subtitle": "System-Capable Architecture",
+        "hours_required": 60,
+        "description": "Can design and architect component systems with shadcn/ui",
+        "required_competencies": [
+          "Design custom component libraries",
+          "Implement advanced patterns (Command, Sheet)",
+          "Create comprehensive theming systems",
+          "Optimize for performance",
+          "Lead accessibility audits"
+        ],
+        "tasks_required": 4,
+        "passing_score": 83,
+        "portfolio_requirements": [
+          "Component library (10+ components)",
+          "Command palette implementation",
+          "Multi-theme system",
+          "Performance optimization case study"
+        ]
+      },
+      {
+        "level": 4,
+        "title": "shadcn/ui Expert",
+        "subtitle": "Architecture & Leadership",
+        "hours_required": 80,
+        "description": "Can architect enterprise design systems and lead teams",
+        "required_competencies": [
+          "Architect enterprise design systems",
+          "Create Figma ↔ code sync workflows",
+          "Implement design token pipelines",
+          "Contribute to open source",
+          "Train and mentor teams"
+        ],
+        "tasks_required": 4,
+        "passing_score": 87,
+        "portfolio_requirements": [
+          "Enterprise component library with token pipeline",
+          "Figma design kit with dev handoff workflow",
+          "Automated accessibility testing",
+          "Comprehensive documentation (50+ pages)"
+        ]
+      },
+      {
+        "level": 5,
+        "title": "shadcn/ui Instructor",
+        "subtitle": "Teaching & Community Leadership",
+        "hours_required": 100,
+        "description": "Can teach, certify, and lead community initiatives",
+        "required_competencies": [
+          "All Expert competencies",
+          "Adult learning principles",
+          "Assessment design",
+          "Community building",
+          "Industry thought leadership"
+        ],
+        "tasks_required": 2,
+        "passing_score": 90,
+        "portfolio_requirements": [
+          "Training curriculum (40+ hours)",
+          "5+ students certified",
+          "Community contribution (blog/video/OSS)"
+        ]
+      }
+    ],
+    "components": [
+      {
+        "id": "comp_button_001",
+        "component_key": "button",
+        "name": "Button",
+        "category": "Form Input",
+        "radix_base": null,
+        "description": "Displays a button or a component that looks like a button",
+        "variants": {
+          "variant": ["default", "destructive", "outline", "secondary", "ghost", "link"],
+          "size": ["default", "sm", "lg", "icon"]
+        },
+        "states": ["default", "hover", "active", "focus", "disabled", "loading"],
+        "accessibility": {
+          "keyboard": ["Enter", "Space"],
+          "aria": ["aria-disabled", "aria-pressed", "aria-busy"]
+        }
+      },
+      {
+        "id": "comp_input_001",
+        "component_key": "input",
+        "name": "Input",
+        "category": "Form Input",
+        "radix_base": null,
+        "description": "Displays a form input field or a component that looks like an input field",
+        "variants": {
+          "type": ["text", "email", "password", "number", "search"]
+        },
+        "states": ["default", "focus", "error", "disabled"],
+        "accessibility": {
+          "keyboard": ["Tab"],
+          "aria": ["aria-invalid", "aria-describedby"]
+        }
+      },
+      {
+        "id": "comp_select_001",
+        "component_key": "select",
+        "name": "Select",
+        "category": "Form Input",
+        "radix_base": "@radix-ui/react-select",
+        "description": "Displays a list of options for the user to pick from",
+        "variants": {},
+        "states": ["open", "closed", "disabled"],
+        "accessibility": {
+          "keyboard": ["Enter", "Space", "ArrowUp", "ArrowDown", "Escape"],
+          "aria": ["aria-expanded", "aria-haspopup", "aria-activedescendant"]
+        }
+      },
+      {
+        "id": "comp_dialog_001",
+        "component_key": "dialog",
+        "name": "Dialog",
+        "category": "Overlay",
+        "radix_base": "@radix-ui/react-dialog",
+        "description": "A window overlaid on either the primary window or another dialog window",
+        "variants": {},
+        "states": ["open", "closed"],
+        "accessibility": {
+          "keyboard": ["Escape", "Tab"],
+          "aria": ["role=\"dialog\"", "aria-modal", "aria-labelledby", "aria-describedby"]
+        }
+      },
+      {
+        "id": "comp_card_001",
+        "component_key": "card",
+        "name": "Card",
+        "category": "Display",
+        "radix_base": null,
+        "description": "Displays a card with header, content, and footer",
+        "variants": {},
+        "states": ["default", "hover"],
+        "accessibility": {
+          "keyboard": [],
+          "aria": []
+        }
+      },
+      {
+        "id": "comp_table_001",
+        "component_key": "table",
+        "name": "Table",
+        "category": "Data",
+        "radix_base": null,
+        "description": "A responsive table component",
+        "variants": {},
+        "states": ["default", "loading", "empty"],
+        "accessibility": {
+          "keyboard": [],
+          "aria": ["role=\"table\"", "scope"]
+        }
+      },
+      {
+        "id": "comp_tabs_001",
+        "component_key": "tabs",
+        "name": "Tabs",
+        "category": "Navigation",
+        "radix_base": "@radix-ui/react-tabs",
+        "description": "A set of layered sections of content",
+        "variants": {},
+        "states": ["active", "inactive", "disabled"],
+        "accessibility": {
+          "keyboard": ["ArrowLeft", "ArrowRight", "Tab"],
+          "aria": ["role=\"tablist\"", "role=\"tab\"", "role=\"tabpanel\"", "aria-selected"]
+        }
+      },
+      {
+        "id": "comp_toast_001",
+        "component_key": "toast",
+        "name": "Toast",
+        "category": "Utility",
+        "radix_base": "@radix-ui/react-toast",
+        "description": "A succinct message that is displayed temporarily",
+        "variants": {
+          "variant": ["default", "destructive"]
+        },
+        "states": ["open", "closed"],
+        "accessibility": {
+          "keyboard": ["Escape"],
+          "aria": ["role=\"status\"", "aria-live=\"polite\""]
+        }
+      },
+      {
+        "id": "comp_command_001",
+        "component_key": "command",
+        "name": "Command",
+        "category": "Utility",
+        "radix_base": "cmdk",
+        "description": "Fast, composable, unstyled command menu for React",
+        "variants": {},
+        "states": ["open", "closed"],
+        "accessibility": {
+          "keyboard": ["Cmd+K", "Escape", "ArrowUp", "ArrowDown", "Enter"],
+          "aria": ["role=\"listbox\"", "aria-expanded", "aria-activedescendant"]
+        }
+      }
+    ],
+    "design_tokens": {
+      "colors": {
+        "background": { "light": "0 0% 100%", "dark": "222.2 84% 4.9%" },
+        "foreground": { "light": "222.2 84% 4.9%", "dark": "210 40% 98%" },
+        "card": { "light": "0 0% 100%", "dark": "222.2 84% 4.9%" },
+        "card-foreground": { "light": "222.2 84% 4.9%", "dark": "210 40% 98%" },
+        "popover": { "light": "0 0% 100%", "dark": "222.2 84% 4.9%" },
+        "popover-foreground": { "light": "222.2 84% 4.9%", "dark": "210 40% 98%" },
+        "primary": { "light": "222.2 47.4% 11.2%", "dark": "210 40% 98%" },
+        "primary-foreground": { "light": "210 40% 98%", "dark": "222.2 47.4% 11.2%" },
+        "secondary": { "light": "210 40% 96.1%", "dark": "217.2 32.6% 17.5%" },
+        "secondary-foreground": { "light": "222.2 47.4% 11.2%", "dark": "210 40% 98%" },
+        "muted": { "light": "210 40% 96.1%", "dark": "217.2 32.6% 17.5%" },
+        "muted-foreground": { "light": "215.4 16.3% 46.9%", "dark": "215 20.2% 65.1%" },
+        "accent": { "light": "210 40% 96.1%", "dark": "217.2 32.6% 17.5%" },
+        "accent-foreground": { "light": "222.2 47.4% 11.2%", "dark": "210 40% 98%" },
+        "destructive": { "light": "0 84.2% 60.2%", "dark": "0 62.8% 30.6%" },
+        "destructive-foreground": { "light": "210 40% 98%", "dark": "210 40% 98%" },
+        "border": { "light": "214.3 31.8% 91.4%", "dark": "217.2 32.6% 17.5%" },
+        "input": { "light": "214.3 31.8% 91.4%", "dark": "217.2 32.6% 17.5%" },
+        "ring": { "light": "222.2 84% 4.9%", "dark": "212.7 26.8% 83.9%" }
+      },
+      "radius": {
+        "default": "0.5rem",
+        "lg": "var(--radius)",
+        "md": "calc(var(--radius) - 2px)",
+        "sm": "calc(var(--radius) - 4px)"
+      }
+    },
+    "badges": {
+      "issuer": "shadcn-ui-certification",
+      "formats": ["png", "svg", "json-ld"],
+      "expiration_years": 2,
+      "verification_service": "opensignals"
+    }
+  }
+}
