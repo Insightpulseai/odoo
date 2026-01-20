@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f7e4975cea58ecbef021d6edc267c284d8049cee
+> Commit: 9712788b46b68957301bc58cd96568614e1328dc
 
 ```
 .
@@ -3176,6 +3176,7 @@
 │   ├── fix_oauth_button.sh
 │   ├── fix_oauth_button_odoo_core.sh
 │   ├── fix_odoo18_views.py
+│   ├── fix_pos_enterprise_error.sh
 │   ├── full_deploy_sanity.sh
 │   ├── gen_addons_path.py
 │   ├── gen_repo_tree.sh
@@ -4111,7 +4112,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1315 directories, 2791 files
+1315 directories, 2792 files
 ```
 
 ## 📊 Stats
@@ -4119,7 +4120,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1535 |
-| Files | 4258 |
+| Files | 4259 |
 | Python files | 1110 |
 | XML files | 520 |
 | Markdown files | 842 |
