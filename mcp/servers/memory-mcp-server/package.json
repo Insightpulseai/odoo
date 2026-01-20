@@ -1,0 +1,38 @@
+{
+  "name": "@tbwa/memory-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for repository-scoped verified agent memory with citation verification",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "memory-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write \"src/**/*.ts\""
+  },
+  "keywords": [
+    "mcp",
+    "memory",
+    "agents",
+    "verified-memory",
+    "citations"
+  ],
+  "author": "TBWA InsightPulse AI <dev@insightpulseai.net>",
+  "license": "AGPL-3.0",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.5.0",
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
