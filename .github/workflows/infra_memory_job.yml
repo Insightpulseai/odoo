@@ -1,0 +1,172 @@
+name: Infra Memory Job
+
+on:
+  schedule:
+    # Run daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      force_discovery:
+        description: 'Force re-discovery of all stacks'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  discover-and-document:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install supabase
+
+      - name: Verify directory structure
+        run: |
+          mkdir -p infra/infra_graph/sources
+          mkdir -p docs/llm
+          echo "✅ Directory structure verified"
+
+      - name: Run Vercel discovery
+        env:
+          VERCEL_API_TOKEN: ${{ secrets.VERCEL_API_TOKEN }}
+        run: |
+          echo "🔍 Discovering Vercel infrastructure..."
+          python3 scripts/discover_vercel_infra.py
+          echo "✅ Vercel discovery complete"
+
+      - name: Run Supabase discovery
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          echo "🔍 Discovering Supabase infrastructure..."
+          python3 scripts/discover_supabase_infra.py
+          echo "✅ Supabase discovery complete"
+
+      - name: Run Odoo discovery
+        env:
+          ODOO_DB_DSN: ${{ secrets.POSTGRES_URL }}
+        run: |
+          echo "🔍 Discovering Odoo infrastructure..."
+          python3 scripts/discover_odoo_infra.py
+          echo "✅ Odoo discovery complete"
+
+      - name: Run DigitalOcean discovery
+        env:
+          DO_API_TOKEN: ${{ secrets.DO_API_TOKEN }}
+        run: |
+          echo "🔍 Discovering DigitalOcean infrastructure..."
+          bash scripts/discover_digitalocean_infra.sh
+          echo "✅ DigitalOcean discovery complete"
+
+      - name: Run Docker discovery
+        run: |
+          echo "🔍 Discovering Docker infrastructure..."
+          bash scripts/discover_docker_infra.sh
+          echo "✅ Docker discovery complete"
+
+      - name: Build unified knowledge graph
+        run: |
+          echo "📊 Building unified knowledge graph..."
+          python3 scripts/build_infra_graph.py
+          echo "✅ Knowledge graph built"
+
+      - name: Generate LLM documentation
+        run: |
+          echo "📝 Generating LLM-friendly documentation..."
+          python3 scripts/generate_llm_docs.py
+          echo "✅ LLM documentation generated"
+
+      - name: Validate generated documentation
+        run: |
+          echo "✅ Validating generated documentation..."
+          python3 scripts/validate_llm_docs.py
+
+      - name: Sync knowledge graph to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "📤 Syncing knowledge graph to Supabase..."
+          python3 scripts/sync_graph_to_supabase.py
+          echo "✅ Sync complete"
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          git add -N infra/infra_graph/ docs/llm/
+          if git diff --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️  No changes detected"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Changes detected"
+          fi
+
+      - name: Commit and push changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add infra/infra_graph/ docs/llm/
+
+          timestamp=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          git commit -m "docs(infra): update infrastructure knowledge graph and LLM docs
+
+Generated: ${timestamp}
+Workflow: infra_memory_job
+Run ID: ${{ github.run_id }}
+
+Updates:
+- Knowledge graph nodes and edges
+- LLM-friendly documentation
+- Stack relationships and glossary"
+
+          git push
+          echo "✅ Changes committed and pushed"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📊 Infra Memory Job Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow Run**: [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "infra/infra_graph/graph_metadata.json" ]; then
+            echo "### Knowledge Graph Statistics" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo '```json' >> $GITHUB_STEP_SUMMARY
+            cat infra/infra_graph/graph_metadata.json >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "### Generated Files" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          ls -lh docs/llm/ >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.check_changes.outputs.has_changes }}" = "true" ]; then
+            echo "✅ **Status**: Documentation updated and committed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️  **Status**: No changes detected" >> $GITHUB_STEP_SUMMARY
+          fi
