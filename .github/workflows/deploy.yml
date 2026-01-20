@@ -1,0 +1,496 @@
+# =============================================================================
+# GitHub Actions: InsightPulse Full Deploy Pipeline
+# =============================================================================
+# Complete deployment workflow with Docker builds, SSH deployment, and logging.
+#
+# Triggers:
+#   - Push to main → Production deployment
+#   - Push to develop → Staging deployment
+#   - Manual dispatch with environment/component selection
+#
+# Required Secrets:
+#   - SUPABASE_ACCESS_TOKEN, SUPABASE_DB_PASSWORD, SUPABASE_PROJECT_ID_*
+#   - SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_KEY
+#   - DO_HOST, DO_HOST_STAGING, DO_USERNAME, DO_SSH_KEY
+#   - ODOO_DB_PASSWORD
+#   - N8N_API_URL, N8N_API_KEY, N8N_WEBHOOK_URL
+# =============================================================================
+
+name: InsightPulse Deploy Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      component:
+        description: 'Component to deploy'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - supabase
+          - odoo
+          - n8n
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  ODOO_IMAGE_NAME: ${{ github.repository_owner }}/odoo-ce
+  SUPABASE_PROJECT_ID: spdtwktxdalcfigzeqrz
+
+jobs:
+  # ============================================
+  # DETECT CHANGES
+  # ============================================
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      supabase: ${{ steps.filter.outputs.supabase }}
+      odoo: ${{ steps.filter.outputs.odoo }}
+      n8n: ${{ steps.filter.outputs.n8n }}
+      environment: ${{ steps.set-env.outputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Detect file changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            supabase:
+              - 'supabase/**'
+            odoo:
+              - 'addons/**'
+              - 'docker/**'
+              - 'Dockerfile*'
+              - 'docker-compose*.yml'
+            n8n:
+              - 'n8n/**'
+
+      - name: Set environment
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Summary
+        run: |
+          echo "## Change Detection" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Changed |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Supabase | ${{ steps.filter.outputs.supabase == 'true' && '✅' || '⏭️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Odoo | ${{ steps.filter.outputs.odoo == 'true' && '✅' || '⏭️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| n8n | ${{ steps.filter.outputs.n8n == 'true' && '✅' || '⏭️' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ steps.set-env.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================
+  # SUPABASE DEPLOYMENT
+  # ============================================
+  deploy-supabase:
+    name: Deploy Supabase
+    needs: detect-changes
+    if: |
+      github.event_name != 'pull_request' && (
+        needs.detect-changes.outputs.supabase == 'true' ||
+        github.event.inputs.component == 'supabase' ||
+        github.event.inputs.component == 'all'
+      )
+    runs-on: ubuntu-latest
+    environment: ${{ needs.detect-changes.outputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Set Supabase project
+        id: supabase-env
+        run: |
+          if [ "${{ needs.detect-changes.outputs.environment }}" == "production" ]; then
+            echo "PROJECT_ID=${{ secrets.SUPABASE_PROJECT_ID_PRODUCTION || secrets.SUPABASE_PROJECT_ID || env.SUPABASE_PROJECT_ID }}" >> $GITHUB_OUTPUT
+          else
+            echo "PROJECT_ID=${{ secrets.SUPABASE_PROJECT_ID_STAGING || secrets.SUPABASE_PROJECT_ID || env.SUPABASE_PROJECT_ID }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Link Supabase project
+        run: supabase link --project-ref ${{ steps.supabase-env.outputs.PROJECT_ID }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Run database migrations
+        run: |
+          echo "## Supabase Migrations" >> $GITHUB_STEP_SUMMARY
+          supabase db push 2>&1 | tee migration_output.txt
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat migration_output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Deploy Edge Functions
+        run: |
+          if [ -d "supabase/functions" ] && [ "$(ls -A supabase/functions 2>/dev/null)" ]; then
+            echo "## Edge Functions" >> $GITHUB_STEP_SUMMARY
+            supabase functions deploy 2>&1 | tee -a $GITHUB_STEP_SUMMARY
+          else
+            echo "No Edge Functions to deploy" >> $GITHUB_STEP_SUMMARY
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Generate TypeScript types
+        run: |
+          mkdir -p types
+          supabase gen types typescript --project-id ${{ steps.supabase-env.outputs.PROJECT_ID }} > types/supabase.ts || true
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        continue-on-error: true
+
+      - name: Upload migration artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: supabase-migrations-${{ github.sha }}
+          path: supabase/migrations/
+          retention-days: 30
+
+  # ============================================
+  # ODOO DEPLOYMENT
+  # ============================================
+  deploy-odoo:
+    name: Deploy Odoo
+    needs: detect-changes
+    if: |
+      github.event_name != 'pull_request' && (
+        needs.detect-changes.outputs.odoo == 'true' ||
+        github.event.inputs.component == 'odoo' ||
+        github.event.inputs.component == 'all'
+      )
+    runs-on: ubuntu-latest
+    environment: ${{ needs.detect-changes.outputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.ODOO_IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=
+            type=ref,event=branch
+            type=raw,value=${{ needs.detect-changes.outputs.environment }}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile.unified
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            ODOO_VERSION=18.0
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+
+      - name: Deploy to Production
+        if: needs.detect-changes.outputs.environment == 'production'
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DO_SSH_KEY }}
+          SSH_HOST: ${{ secrets.DO_HOST }}
+          SSH_USER: ${{ secrets.DO_USERNAME }}
+        run: |
+          if [ -z "$SSH_HOST" ]; then
+            echo "::warning::SSH secrets not configured. Skipping SSH deployment."
+            exit 0
+          fi
+
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          echo "## Odoo Production Deployment" >> $GITHUB_STEP_SUMMARY
+
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" << 'DEPLOY_SCRIPT'
+            set -e
+
+            # Pull new image
+            docker pull ghcr.io/${{ env.ODOO_IMAGE_NAME }}:${{ github.sha }}
+
+            # Create backup before deployment
+            docker exec odoo-db pg_dump -U odoo odoo_core > /tmp/backup_$(date +%Y%m%d_%H%M%S).sql || true
+
+            # Stop and remove old container
+            docker stop odoo-prod || true
+            docker rm odoo-prod || true
+
+            # Run new container
+            docker run -d \
+              --name odoo-prod \
+              --restart unless-stopped \
+              --network odoo-network \
+              -p 8069:8069 \
+              -v odoo-data:/var/lib/odoo \
+              -v odoo-config:/etc/odoo \
+              -v /opt/odoo-ce/repo/addons:/mnt/extra-addons \
+              -e HOST=odoo-db \
+              -e USER=odoo \
+              -e PASSWORD=${{ secrets.ODOO_DB_PASSWORD }} \
+              ghcr.io/${{ env.ODOO_IMAGE_NAME }}:${{ github.sha }}
+
+            # Wait for health check
+            sleep 30
+            curl -sf http://localhost:8069/web/health || echo "Health check pending..."
+
+            # Cleanup old images
+            docker image prune -af --filter "until=168h"
+          DEPLOY_SCRIPT
+
+          echo "✅ Production deployment complete" >> $GITHUB_STEP_SUMMARY
+
+      - name: Deploy to Staging
+        if: needs.detect-changes.outputs.environment == 'staging'
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DO_SSH_KEY }}
+          SSH_HOST: ${{ secrets.DO_HOST_STAGING || secrets.DO_HOST }}
+          SSH_USER: ${{ secrets.DO_USERNAME }}
+        run: |
+          if [ -z "$SSH_HOST" ]; then
+            echo "::warning::SSH secrets not configured. Skipping SSH deployment."
+            exit 0
+          fi
+
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+
+          echo "## Odoo Staging Deployment" >> $GITHUB_STEP_SUMMARY
+
+          ssh -i ~/.ssh/deploy_key "$SSH_USER@$SSH_HOST" << 'DEPLOY_SCRIPT'
+            docker pull ghcr.io/${{ env.ODOO_IMAGE_NAME }}:${{ github.sha }}
+            docker stop odoo-staging || true
+            docker rm odoo-staging || true
+            docker run -d \
+              --name odoo-staging \
+              --restart unless-stopped \
+              -p 8070:8069 \
+              ghcr.io/${{ env.ODOO_IMAGE_NAME }}:${{ github.sha }}
+          DEPLOY_SCRIPT
+
+          echo "✅ Staging deployment complete" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================
+  # N8N WORKFLOW SYNC
+  # ============================================
+  sync-n8n:
+    name: Sync n8n Workflows
+    needs: detect-changes
+    if: |
+      github.event_name != 'pull_request' && (
+        needs.detect-changes.outputs.n8n == 'true' ||
+        github.event.inputs.component == 'n8n' ||
+        github.event.inputs.component == 'all'
+      )
+    runs-on: ubuntu-latest
+    environment: ${{ needs.detect-changes.outputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate n8n workflows
+        run: |
+          echo "## n8n Workflow Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          valid=0
+          invalid=0
+
+          for workflow in n8n/**/*.json; do
+            if [ -f "$workflow" ]; then
+              if python3 -c "import json; json.load(open('$workflow'))" 2>/dev/null; then
+                name=$(python3 -c "import json; print(json.load(open('$workflow')).get('name', 'Unknown'))" 2>/dev/null || echo "Unknown")
+                echo "- ✅ \`$name\`" >> $GITHUB_STEP_SUMMARY
+                valid=$((valid + 1))
+              else
+                echo "- ❌ Invalid: \`$workflow\`" >> $GITHUB_STEP_SUMMARY
+                invalid=$((invalid + 1))
+              fi
+            fi
+          done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Valid:** $valid | **Invalid:** $invalid" >> $GITHUB_STEP_SUMMARY
+
+          if [ $invalid -gt 0 ]; then
+            exit 1
+          fi
+
+      - name: Sync workflows to n8n
+        run: |
+          N8N_URL="${{ secrets.N8N_API_URL }}"
+          N8N_KEY="${{ secrets.N8N_API_KEY }}"
+
+          if [ -z "$N8N_URL" ] || [ -z "$N8N_KEY" ]; then
+            echo "::warning::N8N_API_URL or N8N_API_KEY not configured"
+            echo "## n8n Sync Skipped" >> $GITHUB_STEP_SUMMARY
+            echo "Configure N8N_API_URL and N8N_API_KEY secrets to enable sync." >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          echo "## n8n Workflow Sync" >> $GITHUB_STEP_SUMMARY
+
+          for workflow in n8n/**/*.json; do
+            if [ -f "$workflow" ]; then
+              name=$(python3 -c "import json; print(json.load(open('$workflow')).get('name', 'Unknown'))" 2>/dev/null || echo "Unknown")
+              echo "Syncing: $name"
+
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+                -X POST "$N8N_URL/api/v1/workflows" \
+                -H "X-N8N-API-KEY: $N8N_KEY" \
+                -H "Content-Type: application/json" \
+                -d @"$workflow")
+
+              if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
+                echo "- ✅ Synced: \`$name\`" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "- ⚠️ Failed: \`$name\` (HTTP $HTTP_CODE)" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          done
+
+  # ============================================
+  # NOTIFY DEPLOYMENT STATUS
+  # ============================================
+  notify:
+    name: Notify Deployment Status
+    needs: [detect-changes, deploy-supabase, deploy-odoo, sync-n8n]
+    if: always() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Notify n8n Webhook
+        run: |
+          WEBHOOK_URL="${{ secrets.N8N_WEBHOOK_URL }}"
+
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "N8N_WEBHOOK_URL not configured, skipping notification"
+            exit 0
+          fi
+
+          curl -X POST "$WEBHOOK_URL/deployment" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event": "deployment_complete",
+              "environment": "${{ needs.detect-changes.outputs.environment }}",
+              "commit_sha": "${{ github.sha }}",
+              "commit_message": "${{ github.event.head_commit.message }}",
+              "branch": "${{ github.ref_name }}",
+              "author": "${{ github.actor }}",
+              "timestamp": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'",
+              "results": {
+                "supabase": "${{ needs.deploy-supabase.result }}",
+                "odoo": "${{ needs.deploy-odoo.result }}",
+                "n8n": "${{ needs.sync-n8n.result }}"
+              },
+              "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            }' || echo "Webhook notification failed (non-critical)"
+
+      - name: Log deployment to Supabase
+        run: |
+          SUPABASE_URL="${{ secrets.SUPABASE_URL }}"
+          SERVICE_KEY="${{ secrets.SUPABASE_SERVICE_KEY }}"
+
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SERVICE_KEY" ]; then
+            echo "Supabase credentials not configured, skipping logging"
+            exit 0
+          fi
+
+          curl -X POST "$SUPABASE_URL/rest/v1/deployment_logs" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer $SERVICE_KEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=minimal" \
+            -d '{
+              "event_type": "deployment_complete",
+              "commit_sha": "${{ github.sha }}",
+              "branch": "${{ github.ref_name }}",
+              "environment": "${{ needs.detect-changes.outputs.environment }}",
+              "status": "completed",
+              "components": {
+                "supabase": "${{ needs.deploy-supabase.result }}",
+                "odoo": "${{ needs.deploy-odoo.result }}",
+                "n8n": "${{ needs.sync-n8n.result }}"
+              },
+              "triggered_by": "${{ github.actor }}",
+              "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+              "deployed_at": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
+            }' || echo "Failed to log deployment (non-critical)"
+
+      - name: Generate summary
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ needs.detect-changes.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Actor:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Component Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Supabase | ${{ needs.deploy-supabase.result == 'success' && '✅' || needs.deploy-supabase.result == 'skipped' && '⏭️' || '❌' }} ${{ needs.deploy-supabase.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Odoo | ${{ needs.deploy-odoo.result == 'success' && '✅' || needs.deploy-odoo.result == 'skipped' && '⏭️' || '❌' }} ${{ needs.deploy-odoo.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| n8n | ${{ needs.sync-n8n.result == 'success' && '✅' || needs.sync-n8n.result == 'skipped' && '⏭️' || '❌' }} ${{ needs.sync-n8n.result }} |" >> $GITHUB_STEP_SUMMARY

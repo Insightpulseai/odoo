@@ -1,0 +1,325 @@
+# =============================================================================
+# GitHub Actions: n8n CI/CD Orchestrator
+# =============================================================================
+# Manages n8n workflow deployments and integrations:
+#   - Validates n8n workflow JSON files
+#   - Syncs workflows to n8n instance via API
+#   - Triggers n8n workflows from GitHub events
+#
+# Required Secrets:
+#   - N8N_API_URL: n8n instance URL (e.g., https://n8n.insightpulseai.net)
+#   - N8N_API_KEY: n8n API key for authentication
+#   - N8N_WEBHOOK_URL: Webhook URL for deployment notifications
+# =============================================================================
+
+name: n8n CI/CD Orchestrator
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'n8n/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'n8n/**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'validate'
+        type: choice
+        options:
+          - validate
+          - sync
+          - trigger-deployment
+      workflow_name:
+        description: 'Specific workflow to sync (optional)'
+        required: false
+        type: string
+      trigger_payload:
+        description: 'JSON payload for trigger action'
+        required: false
+        type: string
+
+concurrency:
+  group: n8n-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===========================================================================
+  # Validate n8n Workflows
+  # ===========================================================================
+  validate-workflows:
+    name: Validate n8n Workflows
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate JSON syntax
+        run: |
+          echo "## n8n Workflow Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          valid_count=0
+          invalid_count=0
+
+          for file in n8n/**/*.json; do
+            if [ -f "$file" ]; then
+              if python3 -c "import json; json.load(open('$file'))" 2>/dev/null; then
+                echo "✅ Valid: $file"
+                valid_count=$((valid_count + 1))
+              else
+                echo "❌ Invalid: $file"
+                echo "::error file=$file::Invalid JSON syntax"
+                invalid_count=$((invalid_count + 1))
+              fi
+            fi
+          done
+
+          echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| ✅ Valid | $valid_count |" >> $GITHUB_STEP_SUMMARY
+          echo "| ❌ Invalid | $invalid_count |" >> $GITHUB_STEP_SUMMARY
+
+          if [ $invalid_count -gt 0 ]; then
+            exit 1
+          fi
+
+      - name: Validate n8n workflow structure
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Workflow Structure Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          for file in n8n/**/*.json; do
+            if [ -f "$file" ]; then
+              # Check for required n8n workflow fields
+              has_name=$(python3 -c "import json; d=json.load(open('$file')); print('name' in d)" 2>/dev/null || echo "False")
+              has_nodes=$(python3 -c "import json; d=json.load(open('$file')); print('nodes' in d)" 2>/dev/null || echo "False")
+              has_connections=$(python3 -c "import json; d=json.load(open('$file')); print('connections' in d)" 2>/dev/null || echo "False")
+
+              if [ "$has_name" = "True" ] && [ "$has_nodes" = "True" ] && [ "$has_connections" = "True" ]; then
+                workflow_name=$(python3 -c "import json; print(json.load(open('$file')).get('name', 'Unknown'))")
+                echo "- ✅ \`$workflow_name\` (\`$file\`)" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "- ⚠️ \`$file\` - Missing required fields" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          done
+
+  # ===========================================================================
+  # Sync Workflows to n8n
+  # ===========================================================================
+  sync-workflows:
+    name: Sync to n8n
+    runs-on: ubuntu-latest
+    needs: validate-workflows
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.action == 'sync')
+
+    environment:
+      name: production
+      url: ${{ secrets.N8N_API_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check n8n API availability
+        id: check-api
+        run: |
+          N8N_URL="${{ secrets.N8N_API_URL }}"
+          N8N_KEY="${{ secrets.N8N_API_KEY }}"
+
+          if [ -z "$N8N_URL" ] || [ -z "$N8N_KEY" ]; then
+            echo "::warning::N8N_API_URL or N8N_API_KEY not configured"
+            echo "available=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Test API connectivity
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "X-N8N-API-KEY: $N8N_KEY" \
+            "$N8N_URL/api/v1/workflows" 2>/dev/null || echo "000")
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "available=true" >> $GITHUB_OUTPUT
+          else
+            echo "::warning::n8n API returned HTTP $HTTP_CODE"
+            echo "available=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Sync workflows to n8n
+        if: steps.check-api.outputs.available == 'true'
+        run: |
+          N8N_URL="${{ secrets.N8N_API_URL }}"
+          N8N_KEY="${{ secrets.N8N_API_KEY }}"
+          SPECIFIC_WORKFLOW="${{ github.event.inputs.workflow_name }}"
+
+          echo "## n8n Workflow Sync" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          sync_workflow() {
+            local file="$1"
+            local workflow_name=$(python3 -c "import json; print(json.load(open('$file')).get('name', 'Unknown'))")
+
+            echo "Syncing: $workflow_name"
+
+            # Check if workflow exists (by name)
+            existing=$(curl -s -H "X-N8N-API-KEY: $N8N_KEY" \
+              "$N8N_URL/api/v1/workflows" | \
+              python3 -c "import json,sys; data=json.load(sys.stdin); print(next((w['id'] for w in data.get('data',[]) if w.get('name')=='$workflow_name'), ''))" 2>/dev/null || echo "")
+
+            if [ -n "$existing" ]; then
+              # Update existing workflow
+              HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" \
+                -X PATCH \
+                -H "X-N8N-API-KEY: $N8N_KEY" \
+                -H "Content-Type: application/json" \
+                -d @"$file" \
+                "$N8N_URL/api/v1/workflows/$existing")
+
+              if [ "$HTTP_CODE" = "200" ]; then
+                echo "- ✅ Updated: \`$workflow_name\` (ID: $existing)" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "- ⚠️ Failed to update: \`$workflow_name\` (HTTP $HTTP_CODE)" >> $GITHUB_STEP_SUMMARY
+              fi
+            else
+              # Create new workflow
+              HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" \
+                -X POST \
+                -H "X-N8N-API-KEY: $N8N_KEY" \
+                -H "Content-Type: application/json" \
+                -d @"$file" \
+                "$N8N_URL/api/v1/workflows")
+
+              if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
+                new_id=$(python3 -c "import json; print(json.load(open('response.json')).get('id', 'unknown'))" 2>/dev/null || echo "unknown")
+                echo "- ✅ Created: \`$workflow_name\` (ID: $new_id)" >> $GITHUB_STEP_SUMMARY
+              else
+                echo "- ⚠️ Failed to create: \`$workflow_name\` (HTTP $HTTP_CODE)" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          }
+
+          # Sync specific workflow or all workflows
+          if [ -n "$SPECIFIC_WORKFLOW" ]; then
+            if [ -f "n8n/$SPECIFIC_WORKFLOW" ]; then
+              sync_workflow "n8n/$SPECIFIC_WORKFLOW"
+            elif [ -f "n8n/workflows/$SPECIFIC_WORKFLOW" ]; then
+              sync_workflow "n8n/workflows/$SPECIFIC_WORKFLOW"
+            else
+              echo "::error::Workflow not found: $SPECIFIC_WORKFLOW"
+              exit 1
+            fi
+          else
+            for file in n8n/*.json n8n/workflows/*.json; do
+              if [ -f "$file" ]; then
+                sync_workflow "$file"
+              fi
+            done
+          fi
+
+      - name: Skip sync notification
+        if: steps.check-api.outputs.available != 'true'
+        run: |
+          echo "## n8n Workflow Sync Skipped" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "n8n API credentials not configured. Configure these secrets:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`N8N_API_URL\`: Your n8n instance URL" >> $GITHUB_STEP_SUMMARY
+          echo "- \`N8N_API_KEY\`: API key from n8n settings" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Trigger n8n Workflow (Manual)
+  # ===========================================================================
+  trigger-workflow:
+    name: Trigger n8n Workflow
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.action == 'trigger-deployment'
+
+    steps:
+      - name: Trigger n8n webhook
+        run: |
+          WEBHOOK_URL="${{ secrets.N8N_WEBHOOK_URL }}"
+          PAYLOAD='${{ github.event.inputs.trigger_payload }}'
+
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "::error::N8N_WEBHOOK_URL not configured"
+            exit 1
+          fi
+
+          # Use default payload if not provided
+          if [ -z "$PAYLOAD" ] || [ "$PAYLOAD" = "null" ]; then
+            PAYLOAD='{"event": "manual_trigger", "actor": "${{ github.actor }}", "timestamp": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"}'
+          fi
+
+          echo "Triggering n8n workflow..."
+          echo "Payload: $PAYLOAD"
+
+          HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" \
+            -X POST \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD" \
+            "$WEBHOOK_URL")
+
+          echo "## n8n Workflow Trigger" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "201" ]; then
+            echo "✅ Workflow triggered successfully (HTTP $HTTP_CODE)" >> $GITHUB_STEP_SUMMARY
+            cat response.json >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Failed to trigger workflow (HTTP $HTTP_CODE)" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+  # ===========================================================================
+  # Notify Deployment Status
+  # ===========================================================================
+  notify-status:
+    name: Notify Status
+    runs-on: ubuntu-latest
+    needs: [validate-workflows, sync-workflows]
+    if: always() && github.event_name == 'push'
+
+    steps:
+      - name: Send status to n8n
+        run: |
+          WEBHOOK_URL="${{ secrets.N8N_WEBHOOK_URL }}"
+
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "N8N_WEBHOOK_URL not configured, skipping"
+            exit 0
+          fi
+
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event": "n8n_workflow_sync",
+              "validation_result": "${{ needs.validate-workflows.result }}",
+              "sync_result": "${{ needs.sync-workflows.result }}",
+              "commit": "${{ github.sha }}",
+              "branch": "${{ github.ref_name }}",
+              "actor": "${{ github.actor }}",
+              "timestamp": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
+            }' || echo "Notification failed (non-critical)"

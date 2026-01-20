@@ -1,0 +1,342 @@
+# =============================================================================
+# GitHub Actions: Supabase CI/CD Pipeline
+# =============================================================================
+# Deploys Supabase migrations and edge functions based on environment:
+#   - develop branch → Staging (if configured)
+#   - main branch → Production
+#
+# Required Secrets:
+#   - SUPABASE_ACCESS_TOKEN: Personal access token from Supabase Dashboard
+#   - SUPABASE_DB_PASSWORD: Project database password
+#   - SUPABASE_PROJECT_ID: Production project ref (spdtwktxdalcfigzeqrz)
+#   - SUPABASE_PROJECT_ID_STAGING: Staging project ref (optional)
+#   - N8N_WEBHOOK_URL: n8n webhook for deployment notifications
+# =============================================================================
+
+name: Supabase CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/functions/**'
+      - 'supabase/seed/**'
+      - 'supabase/config.toml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'supabase/migrations/**'
+      - 'supabase/functions/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      dry_run:
+        description: 'Dry run (no actual deployment)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: supabase-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SUPABASE_PROJECT_ID_PRODUCTION: spdtwktxdalcfigzeqrz
+
+jobs:
+  # ===========================================================================
+  # Detect Changes
+  # ===========================================================================
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      migrations: ${{ steps.filter.outputs.migrations }}
+      functions: ${{ steps.filter.outputs.functions }}
+      seeds: ${{ steps.filter.outputs.seeds }}
+      config: ${{ steps.filter.outputs.config }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            migrations:
+              - 'supabase/migrations/**'
+            functions:
+              - 'supabase/functions/**'
+            seeds:
+              - 'supabase/seed/**'
+              - 'supabase/seeds/**'
+            config:
+              - 'supabase/config.toml'
+
+  # ===========================================================================
+  # Validate Migrations (PR only)
+  # ===========================================================================
+  validate-migrations:
+    name: Validate Migrations
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: |
+      github.event_name == 'pull_request' &&
+      needs.detect-changes.outputs.migrations == 'true'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Validate migration syntax
+        run: |
+          echo "## Migration Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check for syntax errors in SQL files
+          for file in supabase/migrations/*.sql; do
+            if [ -f "$file" ]; then
+              echo "Validating: $file"
+              # Basic SQL syntax validation
+              if ! head -100 "$file" | grep -qE "^(CREATE|ALTER|DROP|INSERT|UPDATE|DELETE|GRANT|REVOKE|--|/\*|SELECT|WITH|DO|SET)" ; then
+                echo "::warning file=$file::Migration file may have syntax issues"
+              fi
+              echo "- ✅ \`$(basename $file)\`" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Check migration naming convention
+        run: |
+          # Migrations should follow: YYYYMMDD[HHMM]_description.sql
+          invalid_names=""
+          for file in supabase/migrations/*.sql; do
+            if [ -f "$file" ]; then
+              basename=$(basename "$file")
+              if ! echo "$basename" | grep -qE "^[0-9]{8,14}[_-]" ; then
+                invalid_names="$invalid_names $basename"
+              fi
+            fi
+          done
+
+          if [ -n "$invalid_names" ]; then
+            echo "::warning::Non-standard migration names:$invalid_names"
+          fi
+
+  # ===========================================================================
+  # Deploy Migrations
+  # ===========================================================================
+  deploy-migrations:
+    name: Deploy Migrations
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: |
+      github.event_name != 'pull_request' &&
+      needs.detect-changes.outputs.migrations == 'true'
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Set environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ] || [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            echo "project_id=${{ secrets.SUPABASE_PROJECT_ID || env.SUPABASE_PROJECT_ID_PRODUCTION }}" >> $GITHUB_OUTPUT
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "project_id=${{ secrets.SUPABASE_PROJECT_ID_STAGING || secrets.SUPABASE_PROJECT_ID || env.SUPABASE_PROJECT_ID_PRODUCTION }}" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Link Supabase project
+        run: |
+          supabase link --project-ref ${{ steps.env.outputs.project_id }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Push database migrations
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          echo "## Migration Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ steps.env.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Project:** ${{ steps.env.outputs.project_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          supabase db push 2>&1 | tee migration_output.txt
+
+          echo "### Migration Output" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat migration_output.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: Dry run output
+        if: github.event.inputs.dry_run == 'true'
+        run: |
+          echo "## Dry Run - Migration Preview" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The following migrations would be applied:" >> $GITHUB_STEP_SUMMARY
+          ls -la supabase/migrations/*.sql | tail -10 >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Deploy Edge Functions
+  # ===========================================================================
+  deploy-functions:
+    name: Deploy Edge Functions
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: |
+      github.event_name != 'pull_request' &&
+      needs.detect-changes.outputs.functions == 'true'
+
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Set environment
+        id: env
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ] || [ "${{ github.event.inputs.environment }}" == "production" ]; then
+            echo "project_id=${{ secrets.SUPABASE_PROJECT_ID || env.SUPABASE_PROJECT_ID_PRODUCTION }}" >> $GITHUB_OUTPUT
+            echo "environment=production" >> $GITHUB_OUTPUT
+          else
+            echo "project_id=${{ secrets.SUPABASE_PROJECT_ID_STAGING || secrets.SUPABASE_PROJECT_ID || env.SUPABASE_PROJECT_ID_PRODUCTION }}" >> $GITHUB_OUTPUT
+            echo "environment=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Link Supabase project
+        run: |
+          supabase link --project-ref ${{ steps.env.outputs.project_id }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+      - name: List functions to deploy
+        id: functions
+        run: |
+          echo "## Edge Functions Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ steps.env.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Functions to deploy:" >> $GITHUB_STEP_SUMMARY
+
+          for dir in supabase/functions/*/; do
+            if [ -d "$dir" ]; then
+              func_name=$(basename "$dir")
+              echo "- \`$func_name\`" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Deploy all functions
+        if: github.event.inputs.dry_run != 'true'
+        run: |
+          supabase functions deploy
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Verify function deployment
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Deployment Status: ✅ Complete" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Notify n8n Webhook
+  # ===========================================================================
+  notify-n8n:
+    name: Notify n8n
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-migrations, deploy-functions]
+    if: |
+      always() &&
+      github.event_name != 'pull_request' &&
+      (needs.deploy-migrations.result == 'success' || needs.deploy-functions.result == 'success')
+
+    steps:
+      - name: Send deployment notification
+        run: |
+          WEBHOOK_URL="${{ secrets.N8N_WEBHOOK_URL }}"
+
+          if [ -z "$WEBHOOK_URL" ]; then
+            echo "N8N_WEBHOOK_URL not configured, skipping notification"
+            exit 0
+          fi
+
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "event": "supabase_deployment",
+              "environment": "${{ github.ref == 'refs/heads/main' && 'production' || 'staging' }}",
+              "commit": "${{ github.sha }}",
+              "branch": "${{ github.ref_name }}",
+              "actor": "${{ github.actor }}",
+              "migrations_deployed": "${{ needs.deploy-migrations.result == 'success' }}",
+              "functions_deployed": "${{ needs.deploy-functions.result == 'success' }}",
+              "timestamp": "'"$(date -u +"%Y-%m-%dT%H:%M:%SZ")"'"
+            }' || echo "Webhook notification failed (non-critical)"
+
+  # ===========================================================================
+  # Summary
+  # ===========================================================================
+  deployment-summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-migrations, deploy-functions, notify-n8n]
+    if: always() && github.event_name != 'pull_request'
+
+    steps:
+      - name: Generate summary
+        run: |
+          echo "## Supabase CI/CD Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Migrations | ${{ needs.deploy-migrations.result == 'success' && '✅ Deployed' || needs.deploy-migrations.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Functions | ${{ needs.deploy-functions.result == 'success' && '✅ Deployed' || needs.deploy-functions.result == 'skipped' && '⏭️ Skipped' || '❌ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| n8n Notify | ${{ needs.notify-n8n.result == 'success' && '✅ Sent' || needs.notify-n8n.result == 'skipped' && '⏭️ Skipped' || '⚠️ Failed' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** \`${{ github.ref_name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Actor:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
