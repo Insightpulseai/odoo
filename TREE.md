@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e87e0236356b86a39db22f1790dfa8cfe3009fde
+> Commit: 236d9eca3bf0a602fde89869617ee4761d8b9a1b
 
 ```
 .
@@ -1927,6 +1927,7 @@
 │   │   ├── 202601120001_MULTI_TENANT_PROVIDER_MODEL.sql
 │   │   ├── 202601130001_SCOUT_API_SCHEMA.sql
 │   │   ├── 202601130002_SCOUT_MEDALLION_TABLES.sql
+│   │   ├── 202601160001_VERIFIED_MEMORY.sql
 │   │   └── 20260119_agent_memory_schema.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
@@ -2055,6 +2056,9 @@
 │   │   ├── PRE_FLIGHT_CHECKLIST.md
 │   │   ├── README.md
 │   │   └── WORKOS_DEPLOYMENT_PACKAGE.md
+│   ├── design-system
+│   │   ├── SHADCN_UI_DESIGN_SYSTEM_ANALYSIS.md
+│   │   └── shadcn-ui-skills-catalog.json
 │   ├── diagrams
 │   │   ├── architecture
 │   │   │   ├── README.md
@@ -2488,6 +2492,7 @@
 │   ├── TENANT_ARCHITECTURE.md
 │   ├── TESTING_ODOO_18.md
 │   ├── TROUBLESHOOTING.md
+│   ├── VERIFIED_MEMORY.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── ZOHO_DNS_SETUP.md
@@ -2739,6 +2744,10 @@
 │   │   │   ├── package.json
 │   │   │   └── tsconfig.json
 │   │   ├── mcp-jobs
+│   │   ├── memory-mcp-server
+│   │   │   ├── src
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
 │   │   ├── odoo-erp-server
 │   │   │   ├── src
 │   │   │   ├── .env.example
@@ -4083,15 +4092,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1309 directories, 2769 files
+1312 directories, 2775 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1529 |
-| Files | 4234 |
+| Directories | 1532 |
+| Files | 4242 |
 | Python files | 1110 |
 | XML files | 520 |
-| Markdown files | 828 |
+| Markdown files | 830 |
