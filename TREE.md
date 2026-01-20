@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1502db3c5d332b801dfd25f600c31088ae3978bb
+> Commit: e87e0236356b86a39db22f1790dfa8cfe3009fde
 
 ```
 .
@@ -3179,6 +3179,7 @@
 │   ├── image_audit.sh
 │   ├── import_month_end_tasks.py
 │   ├── incident_snapshot.sh
+│   ├── ingest_docs_to_supabase.py
 │   ├── ingest_knowledge_graph.py
 │   ├── install-git-hooks.sh
 │   ├── install-notion-stack.sh
@@ -3680,6 +3681,8 @@
 │   │   │   └── index.ts
 │   │   ├── serve-erd
 │   │   │   └── index.ts
+│   │   ├── skill-eval
+│   │   │   └── index.ts
 │   │   ├── sync-kb-to-schema
 │   │   │   └── index.ts
 │   │   ├── tenant-invite
@@ -3762,6 +3765,7 @@
 │   │   ├── 20260120_email_otp_auth.sql
 │   │   ├── 20260120_infra_schema.sql
 │   │   ├── 20260120_mcp_jobs_schema.sql
+│   │   ├── 20260120_skill_creator_certification.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3788,6 +3792,11 @@
 │   │   │   └── 9005_catalog_assets_tools.sql
 │   │   ├── 9006_catalog
 │   │   │   └── 9006_scout_suqi_semantic.sql
+│   │   ├── 9007_skills
+│   │   │   └── 9007_skills_certification_seed.sql
+│   │   ├── 9008_drawio_skills
+│   │   │   ├── 9008_drawio_assessment_tasks.sql
+│   │   │   └── 9008_drawio_certification_seed.sql
 │   │   └── 001_saas_feature_seed.sql
 │   ├── seeds
 │   │   ├── 001_hr_seed.sql
@@ -4074,15 +4083,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1306 directories, 2763 files
+1309 directories, 2769 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1526 |
-| Files | 4228 |
-| Python files | 1109 |
+| Directories | 1529 |
+| Files | 4234 |
+| Python files | 1110 |
 | XML files | 520 |
 | Markdown files | 828 |
