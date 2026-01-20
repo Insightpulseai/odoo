@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5647896bfdfc785609767098720bb2081fcead7e
+> Commit: 15f63c4957ffea8241b327fe559941770b718549
 
 ## 📚 Documentation
 
@@ -403,6 +403,7 @@
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
+| [Git Pre-Flight Integration - Deployment Report](docs/infra/GIT_PREFLIGHT_DEPLOYMENT_REPORT.md) | docs/infra |
 | [Git Pre-Flight Integration - Cross-Repository Pattern](docs/infra/GIT_PREFLIGHT_INTEGRATION.md) | docs/infra |
 | [Git Pre-Flight Integration - Implementation Summary](docs/infra/GIT_PREFLIGHT_SUMMARY.md) | docs/infra |
 | [Infra Memory Job - Implementation Complete ✅](docs/infra/IMPLEMENTATION_COMPLETE.md) | docs/infra |
