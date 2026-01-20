@@ -154,11 +154,21 @@
         "SUPABASE_SERVICE_KEY": "${SUPABASE_SERVICE_KEY}"
       },
       "description": "Verified memory system - repository-scoped, cross-agent learning with citation verification"
+    },
+
+    "agent-coordination": {
+      "command": "node",
+      "args": ["mcp/servers/agent-coordination-server/dist/index.js"],
+      "env": {
+        "SUPABASE_URL": "${SUPABASE_URL}",
+        "SUPABASE_SERVICE_ROLE_KEY": "${SUPABASE_SERVICE_ROLE_KEY}"
+      },
+      "description": "A2A coordination - agent registry, discovery, inter-agent invocation following Microsoft's MCP pattern"
     }
   },
 
   "serverGroups": {
-    "core": ["supabase", "github", "dbhub", "odoo-erp", "memory"],
+    "core": ["supabase", "github", "dbhub", "odoo-erp", "memory", "agent-coordination"],
     "design": ["figma", "notion"],
     "data": ["firecrawl", "huggingface"],
     "infra": ["digitalocean", "vercel"],
