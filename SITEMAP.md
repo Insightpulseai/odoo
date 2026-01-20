@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 83c042a3b9adfdec1c48786dd8b91cd239718885
+> Commit: 01873a51cc4a929a51d66b7f6171fd2642d120ed
 
 ## 📚 Documentation
 
@@ -405,6 +405,7 @@
 | [Infra Memory Job - Implementation Complete ✅](docs/infra/IMPLEMENTATION_COMPLETE.md) | docs/infra |
 | [MCP Jobs System](docs/infra/MCP_JOBS_SYSTEM.md) | docs/infra |
 | [Memory Ingestion Edge Function](docs/infra/MEMORY_INGESTION.md) | docs/infra |
+| [Vercel AI Gateway Integration Strategy](docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md) | docs/infra |
 | [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |

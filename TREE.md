@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 83c042a3b9adfdec1c48786dd8b91cd239718885
+> Commit: 01873a51cc4a929a51d66b7f6171fd2642d120ed
 
 ```
 .
@@ -2075,7 +2075,8 @@
 │   ├── infra
 │   │   ├── IMPLEMENTATION_COMPLETE.md
 │   │   ├── MCP_JOBS_SYSTEM.md
-│   │   └── MEMORY_INGESTION.md
+│   │   ├── MEMORY_INGESTION.md
+│   │   └── VERCEL_AI_GATEWAY_INTEGRATION.md
 │   ├── integration
 │   │   ├── INSIGHTPULSE_ROADMAP.md
 │   │   └── SLACK_INTEGRATION_SETUP.md
@@ -3988,7 +3989,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1290 directories, 2693 files
+1290 directories, 2694 files
 ```
 
 ## 📊 Stats
@@ -3996,7 +3997,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1510 |
-| Files | 4154 |
+| Files | 4155 |
 | Python files | 1089 |
 | XML files | 520 |
-| Markdown files | 802 |
+| Markdown files | 803 |
