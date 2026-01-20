@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 32790d77234b61317490c62ebb92b13926e89179
+> Commit: aa3af147a8303b336be24dcc4999c17aa5619f18
 
 ```
 .
@@ -86,6 +86,7 @@
 │   │   ├── go-live-manifest-gate.yml
 │   │   ├── health-check.yml
 │   │   ├── icons-drift.yml
+│   │   ├── infra-memory-job.yml
 │   │   ├── infra-validate.yml
 │   │   ├── infra_memory_job.yml
 │   │   ├── ipai-ai-platform-ci.yml
@@ -2107,6 +2108,16 @@
 │   │   └── module_scan.json
 │   ├── knowledge
 │   │   └── graph_seed.json
+│   ├── llm
+│   │   ├── DIGITALOCEAN_DOCKER_STACK.md
+│   │   ├── GLOSSARY.md
+│   │   ├── LLM_QUERY_PLAYBOOK.md
+│   │   ├── MCP_INTEGRATION.md
+│   │   ├── ODOO_PLATFORM.md
+│   │   ├── STACK_OVERVIEW.md
+│   │   ├── STACK_RELATIONSHIPS.md
+│   │   ├── SUPABASE_STACK.md
+│   │   └── VERCEL_STACK.md
 │   ├── mailgun
 │   │   ├── INBOUND_EMAIL_ROUTES.md
 │   │   ├── ODOO_SMTP_SETUP.md
@@ -2913,6 +2924,9 @@
 │   │   ├── verify_assets.sh
 │   │   ├── verify_install.sh
 │   │   └── verify_prod_health.sh
+│   ├── auth
+│   │   ├── confirm_user.py
+│   │   └── set_password.ts
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
 │   │   ├── compare_audit_baseline.py
@@ -2954,6 +2968,15 @@
 │   │   ├── validate_headers.py
 │   │   ├── verify_import.py
 │   │   └── verify_import.sh
+│   ├── infra-discovery
+│   │   ├── __init__.py
+│   │   ├── discover_all.py
+│   │   ├── discover_digitalocean.py
+│   │   ├── discover_docker.py
+│   │   ├── discover_github.py
+│   │   ├── discover_odoo.py
+│   │   ├── discover_supabase.py
+│   │   └── discover_vercel.py
 │   ├── kb
 │   │   ├── seed_oca_catalog.sql
 │   │   ├── seed_odoo_catalog.sql
@@ -3102,6 +3125,7 @@
 │   ├── generate_erd_graphviz.py
 │   ├── generate_finance_dashboard.py
 │   ├── generate_go_live_checklist.py
+│   ├── generate_llm_docs.py
 │   ├── generate_module_docs.py
 │   ├── generate_module_health_report.py
 │   ├── generate_module_signatures.py
@@ -3589,11 +3613,15 @@
 │   │   │   └── index.ts
 │   │   ├── github-mattermost-bridge
 │   │   │   └── index.ts
+│   │   ├── infra-memory-ingest
+│   │   │   └── index.ts
 │   │   ├── ipai-copilot
 │   │   │   └── index.ts
 │   │   ├── mcp-gateway
 │   │   │   └── index.ts
 │   │   ├── memory-ingest
+│   │   │   └── index.ts
+│   │   ├── ops-job-worker
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
@@ -3682,6 +3710,8 @@
 │   │   ├── 202601080003_4502_OPS_ODOO_BINDINGS.sql
 │   │   ├── 20260112_fix_trend_views_date_alias.sql
 │   │   ├── 202601130001_IPAI_SAMPLE_METRICS.sql
+│   │   ├── 20260120000001_ops_kg_infrastructure_graph.sql
+│   │   ├── 20260120000002_ops_mcp_jobs_observability.sql
 │   │   ├── 20260120_email_otp_auth.sql
 │   │   ├── 20260120_infra_schema.sql
 │   │   ├── 20260120_mcp_jobs_schema.sql
@@ -3995,15 +4025,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1291 directories, 2699 files
+1296 directories, 2724 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1511 |
-| Files | 4160 |
-| Python files | 1090 |
+| Directories | 1516 |
+| Files | 4185 |
+| Python files | 1100 |
 | XML files | 520 |
-| Markdown files | 804 |
+| Markdown files | 813 |
