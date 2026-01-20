@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Sale Order Form View Extension for CES Fields -->
+    <record id="view_sale_order_form_ces" model="ir.ui.view">
+        <field name="name">sale.order.form.ces</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="ces_project_id"/>
+                <field name="ces_campaign_id"/>
+                <field name="ces_budget_bucket"/>
+            </xpath>
+            <xpath expr="//field[@name='client_order_ref']" position="after">
+                <field name="ces_po_number"/>
+                <field name="ces_is_rebillable"/>
+                <field name="ces_supplier_type"/>
+                <field name="ces_margin_percent"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Sale Order List View Extension -->
+    <record id="view_sale_order_tree_ces" model="ir.ui.view">
+        <field name="name">sale.order.tree.ces</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="ces_campaign_id" optional="hide"/>
+                <field name="ces_brand" optional="hide"/>
+                <field name="ces_budget_bucket" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Sale Order Search View Extension -->
+    <record id="view_sale_order_search_ces" model="ir.ui.view">
+        <field name="name">sale.order.search.ces</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                <separator/>
+                <filter string="CES Orders" name="ces_orders"
+                        domain="[('ces_campaign_id', '!=', False)]"/>
+                <filter string="Production" name="production"
+                        domain="[('ces_budget_bucket', '=', 'production')]"/>
+                <filter string="Media" name="media"
+                        domain="[('ces_budget_bucket', '=', 'media')]"/>
+                <filter string="Agency Fees" name="fees"
+                        domain="[('ces_budget_bucket', '=', 'fees')]"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Budget Bucket" name="group_bucket"
+                        context="{'group_by': 'ces_budget_bucket'}"/>
+                <filter string="Brand" name="group_brand"
+                        context="{'group_by': 'ces_brand'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Sale Order Line Form Extension -->
+    <record id="view_sale_order_line_form_ces" model="ir.ui.view">
+        <field name="name">sale.order.line.form.ces</field>
+        <field name="model">sale.order.line</field>
+        <field name="inherit_id" ref="sale.view_order_line_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='product_id']" position="after">
+                <field name="ces_deliverable_type"/>
+                <field name="ces_cost_center"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- CES Orders Action -->
+    <record id="action_ces_orders" model="ir.actions.act_window">
+        <field name="name">CES Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,kanban,form,pivot,graph</field>
+        <field name="domain">[('ces_campaign_id', '!=', False)]</field>
+        <field name="context">{'search_default_ces_orders': 1}</field>
+    </record>
+
+    <!-- Menu Item for CES Orders -->
+    <menuitem id="menu_ces_orders"
+              name="Campaign Orders"
+              parent="menu_ces_root"
+              action="action_ces_orders"
+              sequence="20"/>
+</odoo>
