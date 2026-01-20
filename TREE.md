@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: aa3af147a8303b336be24dcc4999c17aa5619f18
+> Commit: 5647896bfdfc785609767098720bb2081fcead7e
 
 ```
 .
@@ -2079,6 +2079,8 @@
 │   │       ├── POST_MORTEM.md
 │   │       └── error_envelope.json
 │   ├── infra
+│   │   ├── GIT_PREFLIGHT_INTEGRATION.md
+│   │   ├── GIT_PREFLIGHT_SUMMARY.md
 │   │   ├── IMPLEMENTATION_COMPLETE.md
 │   │   ├── MCP_JOBS_SYSTEM.md
 │   │   ├── MEMORY_INGESTION.md
@@ -3523,6 +3525,10 @@
 │   │   ├── plan.md
 │   │   └── prd.md
 │   ├── ops-control-room
+│   │   ├── agents
+│   │   │   └── figma-bridge.yaml
+│   │   ├── runbooks
+│   │   │   └── figma_sync_design_tokens.yaml
 │   │   ├── DEPLOYMENT_INTEGRATION.md
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -4025,15 +4031,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1296 directories, 2724 files
+1298 directories, 2728 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1516 |
-| Files | 4185 |
+| Directories | 1518 |
+| Files | 4189 |
 | Python files | 1100 |
 | XML files | 520 |
-| Markdown files | 813 |
+| Markdown files | 815 |
