@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f47f78f45c534c78503b5fad82d68de49017e059
+> Commit: 32790d77234b61317490c62ebb92b13926e89179
 
 ```
 .
@@ -1910,6 +1910,9 @@
 │   │       ├── kpi_dashboard.csv
 │   │       └── queue_job_channel.csv
 │   ├── migrations
+│   │   ├── shadow
+│   │   │   ├── 001_shadow_schema_base.sql
+│   │   │   └── 002_shadow_tables_generated.sql
 │   │   ├── 202512070001_REORG_CREATE_DOMAIN_TABLES.sql
 │   │   ├── 202512070002_REORG_COPY_DATA.sql
 │   │   ├── 202512070003_REORG_CREATE_COMPAT_VIEWS.sql
@@ -2020,8 +2023,10 @@
 │   │   ├── ODOO_MODEL_INDEX.json
 │   │   ├── ODOO_MODULE_DELTAS.md
 │   │   ├── ODOO_ORM_MAP.md
+│   │   ├── ODOO_SHADOW_SCHEMA.sql
 │   │   ├── README.md
 │   │   ├── SCOUT_CES_ANALYTICS_SCHEMA.dbml
+│   │   ├── SHADOW_SCHEMA_FEASIBILITY.md
 │   │   ├── SUPERSET_ERD_INTEGRATION.md
 │   │   └── insightpulse_canonical.dbml
 │   ├── db
@@ -3106,6 +3111,7 @@
 │   ├── generate_repo_index.py
 │   ├── generate_schema_artifacts.sh
 │   ├── generate_seed_xml.py
+│   ├── generate_shadow_ddl.py
 │   ├── generate_spec_report.py
 │   ├── healthcheck_odoo.sh
 │   ├── hotfix_icon_crash.sh
@@ -3989,15 +3995,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1290 directories, 2694 files
+1291 directories, 2699 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1510 |
-| Files | 4155 |
-| Python files | 1089 |
+| Directories | 1511 |
+| Files | 4160 |
+| Python files | 1090 |
 | XML files | 520 |
-| Markdown files | 803 |
+| Markdown files | 804 |
