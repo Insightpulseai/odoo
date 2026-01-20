@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e8a1548c42ee1b51372784ff2dc8969ad96efbe3
+> Commit: cf4d41dcb38679dff6fa4065cf625a9e65475bc5
 
 ## 📚 Documentation
 
@@ -400,6 +400,7 @@
 | [IPAI Finance OKR Governance - Verification Report](docs/evidence/20260112-0358/ipai_finance_okr/verification_report.md) | docs/evidence/20260112-0358/ipai_finance_okr |
 | [GitHub Setup Verification Report](docs/evidence/20260112-0649/github-setup/verification-report.md) | docs/evidence/20260112-0649/github-setup |
 | [Mailgun Mailgate Deployment Runbook](docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md) | docs/evidence/20260119-0840/mailgun-mailgate |
+| [Mailgun DNS Verification Checklist](docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md) | docs/evidence/20260120-mailgun |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -655,6 +656,7 @@
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
+| [Mailgun Scripts](scripts/mailgun/README.md) | scripts/mailgun |
 | [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |
 | [Odoo Company Bootstrap Scripts](scripts/odoo/README_BOOTSTRAP.md) | scripts/odoo |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
