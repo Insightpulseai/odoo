@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e8a1548c42ee1b51372784ff2dc8969ad96efbe3
+> Commit: cf4d41dcb38679dff6fa4065cf625a9e65475bc5
 
 ```
 .
@@ -2067,8 +2067,10 @@
 │   │   │   └── ipai_finance_okr
 │   │   ├── 20260112-0649
 │   │   │   └── github-setup
-│   │   └── 20260119-0840
-│   │       └── mailgun-mailgate
+│   │   ├── 20260119-0840
+│   │   │   └── mailgun-mailgate
+│   │   └── 20260120-mailgun
+│   │       └── VERIFICATION_CHECKLIST.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2990,6 +2992,12 @@
 │   │   ├── mirror_gold_to_supabase.py
 │   │   └── validate_contracts.py
 │   ├── mailgun
+│   │   ├── README.md
+│   │   ├── send_test_email.sh
+│   │   ├── setup_webhooks.sh
+│   │   ├── test_smtp.sh
+│   │   ├── verify_all.sh
+│   │   ├── verify_dns.sh
 │   │   └── verify_domain.sh
 │   ├── odoo
 │   │   ├── README_BOOTSTRAP.md
@@ -4032,15 +4040,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1298 directories, 2729 files
+1299 directories, 2736 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1518 |
-| Files | 4190 |
+| Directories | 1519 |
+| Files | 4197 |
 | Python files | 1100 |
 | XML files | 520 |
-| Markdown files | 816 |
+| Markdown files | 818 |
