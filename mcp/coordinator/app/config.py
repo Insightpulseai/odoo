@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     # MCP Server endpoints
     odoo_prod_mcp_url: str = "http://odoo-prod-mcp:8767"
     odoo_lab_mcp_url: str = "http://localhost:8765"
+    agent_coordination_url: str = "http://localhost:8768"
 
     # Supabase connection
     supabase_url: str
