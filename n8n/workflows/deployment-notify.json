@@ -1,0 +1,313 @@
+{
+  "name": "InsightPulse - Deployment Notifications",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deployment",
+        "authentication": "none",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Deployment Event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "deployment-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse and enrich deployment event\nconst body = $input.first().json.body;\n\n// Determine status emoji and color\nconst getStatusInfo = (result) => {\n  switch(result) {\n    case 'success': return { emoji: '✅', color: '#28a745', label: 'Success' };\n    case 'failure': return { emoji: '❌', color: '#dc3545', label: 'Failed' };\n    case 'skipped': return { emoji: '⏭️', color: '#6c757d', label: 'Skipped' };\n    default: return { emoji: '⚠️', color: '#ffc107', label: result || 'Unknown' };\n  }\n};\n\n// Build component status summary\nconst components = body.components || {};\nconst componentStatus = Object.entries(components)\n  .map(([name, status]) => {\n    const info = getStatusInfo(status);\n    return `${info.emoji} ${name.charAt(0).toUpperCase() + name.slice(1)}: ${info.label}`;\n  })\n  .join('\\n');\n\n// Determine overall status\nconst statuses = Object.values(components);\nconst hasFailure = statuses.includes('failure');\nconst hasSuccess = statuses.some(s => s === 'success');\nconst overallStatus = hasFailure ? 'failure' : (hasSuccess ? 'success' : 'skipped');\nconst overallInfo = getStatusInfo(overallStatus);\n\nreturn [{\n  json: {\n    event: body.event || 'deployment',\n    environment: body.environment || 'unknown',\n    commit: body.commit || 'unknown',\n    commitShort: (body.commit || 'unknown').substring(0, 7),\n    branch: body.branch || 'unknown',\n    actor: body.actor || 'unknown',\n    runUrl: body.run_url || '',\n    timestamp: body.timestamp || new Date().toISOString(),\n    components: components,\n    componentStatus: componentStatus,\n    overallStatus: overallStatus,\n    overallEmoji: overallInfo.emoji,\n    overallColor: overallInfo.color,\n    overallLabel: overallInfo.label\n  }\n}];"
+      },
+      "id": "parse-event",
+      "name": "Parse Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "env-check",
+              "leftValue": "={{ $json.environment }}",
+              "rightValue": "production",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-production",
+      "name": "Is Production?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "tableId": "deployment_logs",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldName": "event_type", "fieldValue": "={{ $('Parse Event').item.json.event }}" },
+            { "fieldName": "environment", "fieldValue": "={{ $('Parse Event').item.json.environment }}" },
+            { "fieldName": "commit_sha", "fieldValue": "={{ $('Parse Event').item.json.commit }}" },
+            { "fieldName": "branch", "fieldValue": "={{ $('Parse Event').item.json.branch }}" },
+            { "fieldName": "triggered_by", "fieldValue": "={{ $('Parse Event').item.json.actor }}" },
+            { "fieldName": "status", "fieldValue": "={{ $('Parse Event').item.json.overallStatus }}" },
+            { "fieldName": "components", "fieldValue": "={{ JSON.stringify($('Parse Event').item.json.components) }}" },
+            { "fieldName": "run_url", "fieldValue": "={{ $('Parse Event').item.json.runUrl }}" },
+            { "fieldName": "deployed_at", "fieldValue": "={{ $('Parse Event').item.json.timestamp }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-to-supabase",
+      "name": "Log to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [900, 200],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase-api",
+          "name": "InsightPulse Supabase"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "channel": "#deployments",
+        "text": "={{ $('Parse Event').item.json.overallEmoji }} *{{ $('Parse Event').item.json.environment.toUpperCase() }} Deployment {{ $('Parse Event').item.json.overallLabel }}*\n\n*Components:*\n{{ $('Parse Event').item.json.componentStatus }}\n\n*Details:*\n• Branch: `{{ $('Parse Event').item.json.branch }}`\n• Commit: `{{ $('Parse Event').item.json.commitShort }}`\n• Actor: @{{ $('Parse Event').item.json.actor }}\n• Time: {{ $('Parse Event').item.json.timestamp }}\n\n<{{ $('Parse Event').item.json.runUrl }}|View Workflow Run>",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "notify-slack-prod",
+      "name": "Notify Slack (Production)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1120, 200],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "InsightPulse Slack Bot"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "channel": "#deployments-staging",
+        "text": "={{ $('Parse Event').item.json.overallEmoji }} *{{ $('Parse Event').item.json.environment.toUpperCase() }} Deployment {{ $('Parse Event').item.json.overallLabel }}*\n\n*Components:*\n{{ $('Parse Event').item.json.componentStatus }}\n\n*Details:*\n• Branch: `{{ $('Parse Event').item.json.branch }}`\n• Commit: `{{ $('Parse Event').item.json.commitShort }}`\n• Actor: @{{ $('Parse Event').item.json.actor }}",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "notify-slack-staging",
+      "name": "Notify Slack (Staging)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1120, 400],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "InsightPulse Slack Bot"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "failure-check",
+              "leftValue": "={{ $('Parse Event').item.json.overallStatus }}",
+              "rightValue": "failure",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-failure",
+      "name": "Has Failures?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1340, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"alerts\",\n  \"username\": \"Deployment Bot\",\n  \"icon_emoji\": \":warning:\",\n  \"text\": \"### :x: Deployment Failed\\n\\n**Environment:** {{ $('Parse Event').item.json.environment }}\\n**Branch:** `{{ $('Parse Event').item.json.branch }}`\\n**Commit:** `{{ $('Parse Event').item.json.commitShort }}`\\n\\n**Failed Components:**\\n{{ $('Parse Event').item.json.componentStatus }}\\n\\n[View Workflow Run]({{ $('Parse Event').item.json.runUrl }})\"\n}",
+        "options": {}
+      },
+      "id": "alert-mattermost",
+      "name": "Alert Mattermost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 100],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Deployment notification processed\",\n  \"environment\": \"{{ $('Parse Event').item.json.environment }}\",\n  \"status\": \"{{ $('Parse Event').item.json.overallStatus }}\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "respond-webhook",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Deployment Event": {
+      "main": [
+        [
+          {
+            "node": "Parse Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Event": {
+      "main": [
+        [
+          {
+            "node": "Is Production?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Production?": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Slack (Staging)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack (Production)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Slack (Production)": {
+      "main": [
+        [
+          {
+            "node": "Has Failures?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Slack (Staging)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Failures?": {
+      "main": [
+        [
+          {
+            "node": "Alert Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Mattermost": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "1",
+      "name": "ci-cd"
+    },
+    {
+      "id": "2",
+      "name": "notifications"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-20T00:00:00.000Z",
+  "versionId": "1"
+}
