@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c0042917db534da38b591f20fe1bcf8669924156
+> Commit: 1502db3c5d332b801dfd25f600c31088ae3978bb
 
 ```
 .
@@ -69,6 +69,7 @@
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-odoo-prod.yml
 │   │   ├── deploy-production.yml
+│   │   ├── deploy.yml
 │   │   ├── diagrams-drawio-enforce.yml
 │   │   ├── diagrams-qa.yml
 │   │   ├── diagrams.yml
@@ -89,6 +90,7 @@
 │   │   ├── infra-memory-job.yml
 │   │   ├── infra-validate.yml
 │   │   ├── infra_memory_job.yml
+│   │   ├── insightpulse-cicd.yml
 │   │   ├── ipai-ai-platform-ci.yml
 │   │   ├── ipai-ai-studio-smoke.yml
 │   │   ├── ipai-determinism.yml
@@ -100,6 +102,7 @@
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
 │   │   ├── modules-audit-drift.yml
+│   │   ├── n8n-orchestrator.yml
 │   │   ├── no-deprecated-repo-refs.yml
 │   │   ├── notify-superset.yml
 │   │   ├── notion-sync-ci.yml
@@ -116,6 +119,7 @@
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
+│   │   ├── supabase-deploy.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
 │   │   ├── wiki-sync.yml
@@ -2005,6 +2009,8 @@
 │   ├── auth
 │   │   ├── EMAIL_AUTH_SETUP.md
 │   │   └── EMAIL_OTP_IMPLEMENTATION.md
+│   ├── cicd
+│   │   └── README.md
 │   ├── claude_code
 │   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── QUICK_REFERENCE.md
@@ -2760,7 +2766,9 @@
 │   └── agentic-cloud.yaml
 ├── n8n
 │   ├── workflows
-│   │   └── .gitkeep
+│   │   ├── .gitkeep
+│   │   ├── deployment-notify.json
+│   │   └── github-deploy-trigger.json
 │   └── n8n_tenant_provisioning.json
 ├── notion-n8n-monthly-close
 │   ├── scripts
@@ -3425,6 +3433,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── cicd-supabase-n8n
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── close-orchestration
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -4061,15 +4074,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1304 directories, 2752 files
+1306 directories, 2763 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1524 |
-| Files | 4217 |
+| Directories | 1526 |
+| Files | 4228 |
 | Python files | 1109 |
 | XML files | 520 |
-| Markdown files | 823 |
+| Markdown files | 828 |
