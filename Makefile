@@ -123,3 +123,138 @@ ci-notify-superset:
 		https://api.github.com/repos/jgtolentino/superset/dispatches \
 		-d '{"event_type":"schema_changed","client_payload":{"manual_trigger":true}}'
 	@echo "✅ Superset rebuild triggered"
+
+# =============================================================================
+# Odoo Schema Mirror Pipeline
+# =============================================================================
+.PHONY: odoo-schema-export odoo-supabase-sync odoo-dbml-generate odoo-erd-generate
+.PHONY: odoo-schema-pipeline odoo-schema-validate test-odoo-schema-pipeline
+
+# Export Odoo schema to JSON artifact
+odoo-schema-export:
+	@echo "📤 Exporting Odoo schema..."
+	@if [ -z "$$ODOO_DB_HOST" ]; then \
+		echo "❌ ODOO_DB_HOST not set. See odoo-schema-mirror/.env.example"; \
+		exit 1; \
+	fi
+	@python3 odoo-schema-mirror/export_odoo_schema.py
+	@echo "✅ Schema exported to odoo-schema-mirror/artifacts/odoo_schema.json"
+
+# Generate Supabase migration from Odoo schema
+odoo-supabase-sync:
+	@echo "🔄 Syncing schema to Supabase..."
+	@if [ -z "$$SUPABASE_DB_URL" ]; then \
+		echo "❌ SUPABASE_DB_URL not set. See odoo-schema-mirror/.env.example"; \
+		exit 1; \
+	fi
+	@if [ ! -f "odoo-schema-mirror/artifacts/odoo_schema.json" ]; then \
+		echo "❌ No schema artifact found. Run 'make odoo-schema-export' first"; \
+		exit 1; \
+	fi
+	@python3 odoo-schema-mirror/sync_to_supabase.py
+	@echo "✅ Migration generated in supabase/migrations/odoo_mirror/"
+	@echo ""
+	@echo "To apply migration:"
+	@echo "  supabase db push"
+	@echo "  OR: psql \$$SUPABASE_DB_URL -f <migration_file>"
+
+# Apply generated migrations to Supabase
+odoo-supabase-apply:
+	@echo "📥 Applying shadow schema migrations to Supabase..."
+	@if [ -z "$$SUPABASE_DB_URL" ]; then \
+		echo "❌ SUPABASE_DB_URL not set"; \
+		exit 1; \
+	fi
+	@for file in supabase/migrations/odoo_mirror/*.sql; do \
+		if [ -f "$$file" ]; then \
+			echo "Applying $$file..."; \
+			psql "$$SUPABASE_DB_URL" -f "$$file" || exit 1; \
+		fi; \
+	done
+	@echo "✅ Shadow schema migrations applied"
+
+# Generate DBML from Supabase schema
+odoo-dbml-generate:
+	@echo "📊 Generating DBML..."
+	@if [ -z "$$SUPABASE_DB_URL" ]; then \
+		echo "❌ SUPABASE_DB_URL not set"; \
+		exit 1; \
+	fi
+	@python3 odoo-schema-mirror/generate_dbml.py
+	@echo "✅ DBML generated at docs/dbml/odoo_supabase_schema.dbml"
+
+# Install DBML tools (Node.js required)
+odoo-erd-install:
+	@echo "📦 Installing DBML/ERD tools..."
+	@cd tools/dbml && npm install
+	@echo "✅ DBML tools installed"
+
+# Generate ERD from DBML (requires Node.js and installed tools)
+odoo-erd-generate:
+	@echo "🖼️  Generating ERD diagrams..."
+	@if [ ! -f "docs/dbml/odoo_supabase_schema.dbml" ]; then \
+		echo "❌ No DBML file found. Run 'make odoo-dbml-generate' first"; \
+		exit 1; \
+	fi
+	@if [ ! -d "tools/dbml/node_modules" ]; then \
+		echo "⚠️  DBML tools not installed. Running 'make odoo-erd-install' first..."; \
+		$(MAKE) odoo-erd-install; \
+	fi
+	@cd tools/dbml && npm run erd:all
+	@echo "✅ ERD diagrams generated:"
+	@echo "   - docs/erd/odoo_supabase_schema.svg"
+	@echo "   - docs/erd/odoo_supabase_schema.png"
+
+# Validate DBML syntax
+odoo-dbml-validate:
+	@echo "✔️  Validating DBML..."
+	@if [ ! -f "docs/dbml/odoo_supabase_schema.dbml" ]; then \
+		echo "❌ No DBML file found"; \
+		exit 1; \
+	fi
+	@cd tools/dbml && npm run dbml:validate
+	@echo "✅ DBML is valid"
+
+# Validate schema parity between Odoo and Supabase
+odoo-schema-validate:
+	@echo "🔍 Validating schema parity..."
+	@python3 odoo-schema-mirror/validate_parity.py
+
+# Full pipeline: export → sync → dbml → erd
+odoo-schema-pipeline:
+	@echo "🚀 Running full Odoo schema pipeline..."
+	@echo ""
+	$(MAKE) odoo-schema-export
+	@echo ""
+	$(MAKE) odoo-supabase-sync
+	@echo ""
+	$(MAKE) odoo-supabase-apply
+	@echo ""
+	$(MAKE) odoo-dbml-generate
+	@echo ""
+	$(MAKE) odoo-erd-generate
+	@echo ""
+	@echo "🎉 Pipeline complete!"
+	@echo ""
+	@echo "Artifacts:"
+	@echo "  - odoo-schema-mirror/artifacts/odoo_schema.json"
+	@echo "  - supabase/migrations/odoo_mirror/*.sql"
+	@echo "  - docs/dbml/odoo_supabase_schema.dbml"
+	@echo "  - docs/erd/odoo_supabase_schema.svg"
+	@echo "  - docs/erd/odoo_supabase_schema.png"
+
+# Run tests for the schema pipeline
+test-odoo-schema-pipeline:
+	@echo "🧪 Running schema pipeline tests..."
+	@python3 -m pytest odoo-schema-mirror/tests/ -v --tb=short
+	@echo "✅ All tests passed"
+
+# CI-friendly pipeline (for GitHub Actions)
+odoo-schema-pipeline-ci:
+	@echo "🤖 Running CI schema pipeline..."
+	@if [ "$$ODOO_SCHEMA_PIPELINE_ENABLED" = "false" ]; then \
+		echo "⏭️  Pipeline disabled via ODOO_SCHEMA_PIPELINE_ENABLED"; \
+		exit 0; \
+	fi
+	$(MAKE) odoo-schema-pipeline
+	$(MAKE) odoo-schema-validate || true

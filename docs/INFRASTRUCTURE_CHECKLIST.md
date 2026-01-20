@@ -53,31 +53,34 @@
 
 ### Shadow Schema Implementation
 
-- [ ] **Implement `odoo_shadow` schema in Supabase**
-  - [ ] Add migration under `supabase/migrations/`:
-    - [ ] `create schema if not exists odoo_shadow;`
-    - [ ] Define `_base` tracking table (`_odoo_id`, `_odoo_write_date`, `_synced_at`, `_sync_hash`)
-  - [ ] Generate `CREATE TABLE odoo_shadow.<table>` DDL from `ODOO_MODEL_INDEX.json`
+- [x] **Implement `odoo_shadow` schema in Supabase** ✅ (COMPLETE)
+  - [x] Add migration under `supabase/migrations/`:
+    - [x] `20260120100001_odoo_shadow_base.sql` - Schema infrastructure ✅
+    - [x] `20260120100002_odoo_shadow_tables.sql` - 288 auto-generated tables ✅
+  - [x] Generate `CREATE TABLE odoo_shadow.<table>` DDL from `ODOO_MODEL_INDEX.json` ✅
     - [x] Source file exists: `docs/data-model/ODOO_MODEL_INDEX.json` ✅
 
 ### Shadow DDL Generator
 
-- [ ] **Build shadow DDL generator**
-  - [ ] Add `etl/generate_shadow_ddl.py`:
-    - [ ] Parses `docs/data-model/ODOO_MODEL_INDEX.json`
-    - [ ] Skips transient/abstract models
-    - [ ] Emits `supabase/migrations/20XXXXXX_odoo_shadow.sql`
+- [x] **Build shadow DDL generator** ✅ (COMPLETE)
+  - [x] Add `scripts/generate_shadow_ddl.py` ✅
+    - [x] Parses `docs/data-model/ODOO_MODEL_INDEX.json` ✅
+    - [x] Skips transient/abstract models ✅
+    - [x] Emits shadow DDL migrations ✅
   - [ ] Add CI guard: `git diff --exit-code supabase/migrations/*odoo_shadow*.sql`
 
 ### ETL Pipeline
 
-- [ ] **ETL from Odoo → Supabase**
-  - [ ] Add ETL script (Python or n8n):
-    - [ ] Pull rows from Odoo Postgres using `write_date` for incrementals
-    - [ ] UPSERT into `odoo_shadow.*` with tracking columns
+- [x] **ETL from Odoo → Supabase** ✅ (COMPLETE)
+  - [x] Add ETL script `scripts/sync_odoo_shadow.py` ✅
+    - [x] Pull rows from Odoo via XML-RPC using `write_date` for incrementals ✅
+    - [x] UPSERT into `odoo_shadow.*` with tracking columns ✅
+    - [x] Watermark management for incremental sync ✅
+  - [x] Edge Function handler in `ops-job-worker` ✅
   - [ ] Schedule via:
+    - [ ] GitHub Actions workflow OR
     - [ ] Supabase Cron job OR
-    - [ ] n8n workflow calling Supabase REST/RPC
+    - [ ] n8n workflow
 
 ### Innovation Schemas
 

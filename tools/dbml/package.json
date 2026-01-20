@@ -1,0 +1,23 @@
+{
+  "name": "@odoo-ce/dbml-tools",
+  "version": "1.0.0",
+  "description": "DBML parsing and ERD rendering tools for Odoo schema",
+  "private": true,
+  "scripts": {
+    "dbml:validate": "dbml2sql --postgres docs/dbml/odoo_supabase_schema.dbml > /dev/null",
+    "dbml:to-sql": "dbml2sql --postgres docs/dbml/odoo_supabase_schema.dbml -o docs/dbml/schema.sql",
+    "erd:svg": "dbml-renderer -i docs/dbml/odoo_supabase_schema.dbml -o docs/erd/odoo_supabase_schema.svg",
+    "erd:png": "dbml-renderer -i docs/dbml/odoo_supabase_schema.dbml -o docs/erd/odoo_supabase_schema.png",
+    "erd:all": "npm run erd:svg && npm run erd:png",
+    "all": "npm run dbml:validate && npm run erd:all"
+  },
+  "dependencies": {
+    "@dbml/cli": "^3.8.0"
+  },
+  "devDependencies": {
+    "dbml-renderer": "^1.0.17"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
