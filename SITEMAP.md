@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e87e0236356b86a39db22f1790dfa8cfe3009fde
+> Commit: 236d9eca3bf0a602fde89869617ee4761d8b9a1b
 
 ## 📚 Documentation
 
@@ -337,6 +337,7 @@
 | [Multi-Tenant Platform Architecture](docs/TENANT_ARCHITECTURE.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [Deterministic Troubleshooting Framework for Odoo CE 18.0](docs/TROUBLESHOOTING.md) | docs |
+| [Verified Memory System](docs/VERIFIED_MEMORY.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
@@ -393,6 +394,7 @@
 | [WorkOS Production Deployment - Pre-Flight Checklist](docs/deployment/PRE_FLIGHT_CHECKLIST.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
 | [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
+| [shadcn/ui Design System - Complete Analysis & Certification Framework](docs/design-system/SHADCN_UI_DESIGN_SYSTEM_ANALYSIS.md) | docs/design-system |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [DNS Configuration and Mailgun Setup](docs/email/Mailgun_DNS.md) | docs/email |
 | [OdooForge Sandbox - Codex Cloud Optimization](docs/evidence/20260110-0927/odooforge-sandbox/codex-optimization.md) | docs/evidence/20260110-0927/odooforge-sandbox |
