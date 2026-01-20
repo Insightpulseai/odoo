@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: cf4d41dcb38679dff6fa4065cf625a9e65475bc5
+> Commit: d8903e50afd0ac9abc94701b3c3fc279a6722d6e
 
 ## 📚 Documentation
 
@@ -400,6 +400,10 @@
 | [IPAI Finance OKR Governance - Verification Report](docs/evidence/20260112-0358/ipai_finance_okr/verification_report.md) | docs/evidence/20260112-0358/ipai_finance_okr |
 | [GitHub Setup Verification Report](docs/evidence/20260112-0649/github-setup/verification-report.md) | docs/evidence/20260112-0649/github-setup |
 | [Mailgun Mailgate Deployment Runbook](docs/evidence/20260119-0840/mailgun-mailgate/deployment_runbook.md) | docs/evidence/20260119-0840/mailgun-mailgate |
+| [Git State](docs/evidence/20260119-1121/digitalocean-postgresql/GIT_STATE.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
+| [PostgreSQL 16 Release Features](docs/evidence/20260119-1121/digitalocean-postgresql/POSTGRESQL_16_FEATURES.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
+| [DigitalOcean Managed PostgreSQL - Documentation Review](docs/evidence/20260119-1121/digitalocean-postgresql/REVIEW_SUMMARY.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
+| [Supabase Features Overview](docs/evidence/20260119-1121/digitalocean-postgresql/SUPABASE_FEATURES.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
 | [Mailgun DNS Verification Checklist](docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md) | docs/evidence/20260120-mailgun |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
