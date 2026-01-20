@@ -1,0 +1,323 @@
+{
+  "name": "InsightPulse - GitHub Deploy Trigger",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deploy/trigger",
+        "authentication": "headerAuth",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Deploy Request",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "deploy-trigger-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate and parse deploy request\nconst body = $input.first().json.body;\nconst headers = $input.first().json.headers;\n\n// Supported environments\nconst validEnvironments = ['staging', 'production'];\nconst validComponents = ['all', 'supabase', 'odoo', 'n8n'];\n\n// Default values\nconst environment = body.environment || 'staging';\nconst component = body.component || 'all';\nconst ref = body.ref || body.branch || 'main';\nconst requestedBy = body.requested_by || headers['x-user-id'] || 'n8n-automation';\n\n// Validation\nif (!validEnvironments.includes(environment)) {\n  throw new Error(`Invalid environment: ${environment}. Valid: ${validEnvironments.join(', ')}`);\n}\n\nif (!validComponents.includes(component)) {\n  throw new Error(`Invalid component: ${component}. Valid: ${validComponents.join(', ')}`);\n}\n\n// Production deployment requires explicit confirmation\nif (environment === 'production' && !body.confirm_production) {\n  throw new Error('Production deployment requires confirm_production: true');\n}\n\nreturn [{\n  json: {\n    owner: 'jgtolentino',\n    repo: 'odoo-ce',\n    workflow_id: 'insightpulse-cicd.yml',\n    ref: ref,\n    inputs: {\n      component: component,\n      environment: environment\n    },\n    requestedBy: requestedBy,\n    timestamp: new Date().toISOString(),\n    confirmProduction: body.confirm_production || false\n  }\n}];"
+      },
+      "id": "validate-request",
+      "name": "Validate Request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "prod-check",
+              "leftValue": "={{ $json.inputs.environment }}",
+              "rightValue": "production",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-production",
+      "name": "Is Production?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "tableId": "deployment_requests",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldName": "environment", "fieldValue": "={{ $('Validate Request').item.json.inputs.environment }}" },
+            { "fieldName": "component", "fieldValue": "={{ $('Validate Request').item.json.inputs.component }}" },
+            { "fieldName": "ref", "fieldValue": "={{ $('Validate Request').item.json.ref }}" },
+            { "fieldName": "requested_by", "fieldValue": "={{ $('Validate Request').item.json.requestedBy }}" },
+            { "fieldName": "status", "fieldValue": "pending_approval" },
+            { "fieldName": "requested_at", "fieldValue": "={{ $('Validate Request').item.json.timestamp }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-prod-request",
+      "name": "Log Production Request",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [900, 200],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase-api",
+          "name": "InsightPulse Supabase"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "channel": "#approvals",
+        "text": ":warning: *Production Deployment Request*\n\n*Requested by:* {{ $('Validate Request').item.json.requestedBy }}\n*Component:* {{ $('Validate Request').item.json.inputs.component }}\n*Branch:* `{{ $('Validate Request').item.json.ref }}`\n*Time:* {{ $('Validate Request').item.json.timestamp }}\n\n:point_right: React with :white_check_mark: to approve or :x: to reject",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "request-approval",
+      "name": "Request Approval",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1120, 100],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "InsightPulse Slack Bot"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $('Validate Request').item.json.owner }}/{{ $('Validate Request').item.json.repo }}/actions/workflows/{{ $('Validate Request').item.json.workflow_id }}/dispatches",
+        "method": "POST",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ref\": \"{{ $('Validate Request').item.json.ref }}\",\n  \"inputs\": {\n    \"component\": \"{{ $('Validate Request').item.json.inputs.component }}\",\n    \"environment\": \"{{ $('Validate Request').item.json.inputs.environment }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "trigger-workflow",
+      "name": "Trigger GitHub Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 400],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-token",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "tableId": "deployment_requests",
+        "fieldsUi": {
+          "fieldValues": [
+            { "fieldName": "environment", "fieldValue": "={{ $('Validate Request').item.json.inputs.environment }}" },
+            { "fieldName": "component", "fieldValue": "={{ $('Validate Request').item.json.inputs.component }}" },
+            { "fieldName": "ref", "fieldValue": "={{ $('Validate Request').item.json.ref }}" },
+            { "fieldName": "requested_by", "fieldValue": "={{ $('Validate Request').item.json.requestedBy }}" },
+            { "fieldName": "status", "fieldValue": "triggered" },
+            { "fieldName": "requested_at", "fieldValue": "={{ $('Validate Request').item.json.timestamp }}" },
+            { "fieldName": "triggered_at", "fieldValue": "={{ $now }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "log-staging-deploy",
+      "name": "Log Staging Deploy",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1120, 400],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase-api",
+          "name": "InsightPulse Supabase"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "channel": "#deployments-staging",
+        "text": ":rocket: *Staging Deployment Triggered*\n\n*Component:* {{ $('Validate Request').item.json.inputs.component }}\n*Branch:* `{{ $('Validate Request').item.json.ref }}`\n*Requested by:* {{ $('Validate Request').item.json.requestedBy }}",
+        "otherOptions": {}
+      },
+      "id": "notify-staging",
+      "name": "Notify Staging Deploy",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1340, 400],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "InsightPulse Slack Bot"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Deployment triggered\",\n  \"environment\": \"{{ $('Validate Request').item.json.inputs.environment }}\",\n  \"component\": \"{{ $('Validate Request').item.json.inputs.component }}\",\n  \"ref\": \"{{ $('Validate Request').item.json.ref }}\",\n  \"workflow_url\": \"https://github.com/{{ $('Validate Request').item.json.owner }}/{{ $('Validate Request').item.json.repo }}/actions/workflows/{{ $('Validate Request').item.json.workflow_id }}\"\n}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1560, 400]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"message\": \"Production deployment requires approval\",\n  \"environment\": \"production\",\n  \"component\": \"{{ $('Validate Request').item.json.inputs.component }}\",\n  \"status\": \"pending_approval\",\n  \"approval_channel\": \"#approvals\"\n}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "id": "respond-pending",
+      "name": "Respond Pending Approval",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1340, 100]
+    }
+  ],
+  "connections": {
+    "Webhook - Deploy Request": {
+      "main": [
+        [
+          {
+            "node": "Validate Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Request": {
+      "main": [
+        [
+          {
+            "node": "Is Production?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Production?": {
+      "main": [
+        [
+          {
+            "node": "Log Production Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Trigger GitHub Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Production Request": {
+      "main": [
+        [
+          {
+            "node": "Request Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Request Approval": {
+      "main": [
+        [
+          {
+            "node": "Respond Pending Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger GitHub Workflow": {
+      "main": [
+        [
+          {
+            "node": "Log Staging Deploy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Staging Deploy": {
+      "main": [
+        [
+          {
+            "node": "Notify Staging Deploy",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Staging Deploy": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "id": "1",
+      "name": "ci-cd"
+    },
+    {
+      "id": "3",
+      "name": "github"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-20T00:00:00.000Z",
+  "versionId": "1"
+}
