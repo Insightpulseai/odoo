@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c0042917db534da38b591f20fe1bcf8669924156
+> Commit: 1502db3c5d332b801dfd25f600c31088ae3978bb
 
 ## 📚 Documentation
 
@@ -366,6 +366,7 @@
 | [Email Authentication Setup Guide](docs/auth/EMAIL_AUTH_SETUP.md) | docs/auth |
 | [Email OTP Authentication Implementation](docs/auth/EMAIL_OTP_IMPLEMENTATION.md) | docs/auth |
 | [Branch Cleanup Analysis](docs/branch-cleanup-analysis.md) | docs |
+| [InsightPulse CI/CD Pipeline](docs/cicd/README.md) | docs/cicd |
 | [Claude Code Setup Implementation Summary](docs/claude_code/IMPLEMENTATION_SUMMARY.md) | docs/claude_code |
 | [Claude Code Quick Reference Card](docs/claude_code/QUICK_REFERENCE.md) | docs/claude_code |
 | [Claude Code Project Index](docs/claude_code/README.md) | docs/claude_code |
@@ -684,6 +685,10 @@
 | [BIR Tax Compliance - Implementation Plan](spec/bir-tax-compliance/plan.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Product Requirements](spec/bir-tax-compliance/prd.md) | spec/bir-tax-compliance |
 | [BIR Tax Compliance - Task Checklist](spec/bir-tax-compliance/tasks.md) | spec/bir-tax-compliance |
+| [CI/CD with Supabase + n8n — Constitution](spec/cicd-supabase-n8n/constitution.md) | spec/cicd-supabase-n8n |
+| [CI/CD with Supabase + n8n — Implementation Plan](spec/cicd-supabase-n8n/plan.md) | spec/cicd-supabase-n8n |
+| [CI/CD with Supabase + n8n — Product Requirements](spec/cicd-supabase-n8n/prd.md) | spec/cicd-supabase-n8n |
+| [CI/CD with Supabase + n8n — Tasks](spec/cicd-supabase-n8n/tasks.md) | spec/cicd-supabase-n8n |
 | [Close Orchestration Module - Constitution](spec/close-orchestration/constitution.md) | spec/close-orchestration |
 | [Close Orchestration Module - Implementation Plan](spec/close-orchestration/plan.md) | spec/close-orchestration |
 | [Close Orchestration Module - Product Requirements Document](spec/close-orchestration/prd.md) | spec/close-orchestration |
