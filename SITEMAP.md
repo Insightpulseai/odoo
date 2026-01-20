@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f47f78f45c534c78503b5fad82d68de49017e059
+> Commit: 32790d77234b61317490c62ebb92b13926e89179
 
 ## 📚 Documentation
 
@@ -374,6 +374,7 @@
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
 | [Odoo ORM Map](docs/data-model/ODOO_ORM_MAP.md) | docs/data-model |
 | [Odoo Data Model Artifacts](docs/data-model/README.md) | docs/data-model |
+| [Odoo Shadow Schema Feasibility Assessment](docs/data-model/SHADOW_SCHEMA_FEASIBILITY.md) | docs/data-model |
 | [Superset ERD Integration Guide](docs/data-model/SUPERSET_ERD_INTEGRATION.md) | docs/data-model |
 | [InsightPulse Supabase DB – Conventions & House Style](docs/db/DB_CONVENTIONS_AND_NAMING.md) | docs/db |
 | [DB Current Inventory (Summary)](docs/db/DB_CURRENT_INVENTORY.md) | docs/db |
