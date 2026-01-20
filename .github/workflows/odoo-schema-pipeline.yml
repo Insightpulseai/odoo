@@ -1,0 +1,374 @@
+# =============================================================================
+# Odoo Schema Mirror Pipeline - CI/CD Workflow
+# =============================================================================
+# Mirrors Odoo schema to Supabase and generates DBML/ERD artifacts.
+#
+# Triggers:
+#   - Push to main affecting schema pipeline files
+#   - Scheduled nightly run
+#   - Manual dispatch
+#
+# Required Secrets:
+#   - ODOO_DB_HOST, ODOO_DB_PORT, ODOO_DB_NAME, ODOO_DB_USER, ODOO_DB_PASSWORD
+#   - SUPABASE_DB_URL
+# =============================================================================
+
+name: Odoo Schema Pipeline
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'odoo-schema-mirror/**'
+      - 'supabase/migrations/odoo_mirror/**'
+      - 'tools/dbml/**'
+      - '.github/workflows/odoo-schema-pipeline.yml'
+      - 'Makefile'
+
+  schedule:
+    # Run nightly at 2 AM UTC
+    - cron: '0 2 * * *'
+
+  workflow_dispatch:
+    inputs:
+      full_sync:
+        description: 'Force full schema sync (ignore cache)'
+        required: false
+        default: 'false'
+        type: boolean
+      skip_apply:
+        description: 'Skip applying migrations to Supabase'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '20'
+  ODOO_SCHEMA_PIPELINE_ENABLED: 'true'
+
+jobs:
+  # ===========================================================================
+  # Schema Export (from Odoo)
+  # ===========================================================================
+  export-schema:
+    name: Export Odoo Schema
+    runs-on: ubuntu-latest
+    if: ${{ vars.ODOO_SCHEMA_PIPELINE_ENABLED != 'false' }}
+
+    outputs:
+      schema_hash: ${{ steps.export.outputs.schema_hash }}
+      table_count: ${{ steps.export.outputs.table_count }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary
+
+      - name: Export schema
+        id: export
+        env:
+          ODOO_DB_HOST: ${{ secrets.ODOO_DB_HOST }}
+          ODOO_DB_PORT: ${{ secrets.ODOO_DB_PORT }}
+          ODOO_DB_NAME: ${{ secrets.ODOO_DB_NAME }}
+          ODOO_DB_USER: ${{ secrets.ODOO_DB_USER }}
+          ODOO_DB_PASSWORD: ${{ secrets.ODOO_DB_PASSWORD }}
+          SCHEMA_ARTIFACT_DIR: ./odoo-schema-mirror/artifacts
+        run: |
+          if [ -z "$ODOO_DB_HOST" ]; then
+            echo "::warning::ODOO_DB_HOST not set, using cached schema if available"
+            if [ -f "odoo-schema-mirror/artifacts/odoo_schema.json" ]; then
+              echo "Using cached schema"
+            else
+              echo "::error::No cached schema and no DB credentials"
+              exit 1
+            fi
+          else
+            python odoo-schema-mirror/export_odoo_schema.py
+          fi
+
+          # Calculate schema hash for change detection
+          if [ -f "odoo-schema-mirror/artifacts/odoo_schema.json" ]; then
+            HASH=$(sha256sum odoo-schema-mirror/artifacts/odoo_schema.json | cut -d' ' -f1)
+            COUNT=$(jq '.metadata.table_count // 0' odoo-schema-mirror/artifacts/odoo_schema.json)
+            echo "schema_hash=$HASH" >> $GITHUB_OUTPUT
+            echo "table_count=$COUNT" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload schema artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: odoo-schema
+          path: odoo-schema-mirror/artifacts/odoo_schema.json
+          retention-days: 7
+
+  # ===========================================================================
+  # Generate Supabase Migration
+  # ===========================================================================
+  generate-migration:
+    name: Generate Migration
+    runs-on: ubuntu-latest
+    needs: export-schema
+
+    outputs:
+      migration_file: ${{ steps.sync.outputs.migration_file }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary
+
+      - name: Download schema artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: odoo-schema
+          path: odoo-schema-mirror/artifacts/
+
+      - name: Generate migration
+        id: sync
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_SCHEMA: odoo_shadow
+          SCHEMA_ARTIFACT_DIR: ./odoo-schema-mirror/artifacts
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "::warning::SUPABASE_DB_URL not set, generating offline migration"
+            # Create a simple offline migration
+            TIMESTAMP=$(date +%Y%m%d%H%M%S)
+            MIGRATION_FILE="supabase/migrations/odoo_mirror/${TIMESTAMP}_odoo_schema_sync.sql"
+            mkdir -p supabase/migrations/odoo_mirror
+            echo "-- Offline migration (no DB connection)" > "$MIGRATION_FILE"
+            echo "-- Run with DB credentials to generate actual migration" >> "$MIGRATION_FILE"
+            echo "migration_file=$MIGRATION_FILE" >> $GITHUB_OUTPUT
+          else
+            python odoo-schema-mirror/sync_to_supabase.py
+            MIGRATION_FILE=$(ls -t supabase/migrations/odoo_mirror/*.sql | head -1)
+            echo "migration_file=$MIGRATION_FILE" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload migration artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: supabase-migration
+          path: supabase/migrations/odoo_mirror/
+          retention-days: 7
+
+  # ===========================================================================
+  # Apply Migration (optional)
+  # ===========================================================================
+  apply-migration:
+    name: Apply Migration
+    runs-on: ubuntu-latest
+    needs: generate-migration
+    if: ${{ github.event.inputs.skip_apply != 'true' && secrets.SUPABASE_DB_URL != '' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download migration artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: supabase-migration
+          path: supabase/migrations/odoo_mirror/
+
+      - name: Apply migration
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          for file in supabase/migrations/odoo_mirror/*.sql; do
+            if [ -f "$file" ]; then
+              echo "Applying $file..."
+              psql "$SUPABASE_DB_URL" -f "$file" || echo "::warning::Failed to apply $file"
+            fi
+          done
+
+  # ===========================================================================
+  # Generate DBML
+  # ===========================================================================
+  generate-dbml:
+    name: Generate DBML
+    runs-on: ubuntu-latest
+    needs: [generate-migration, apply-migration]
+    if: ${{ always() && needs.generate-migration.result == 'success' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary
+
+      - name: Generate DBML
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_SCHEMA: odoo_shadow
+          DBML_OUTPUT_DIR: ./docs/dbml
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ]; then
+            echo "::warning::SUPABASE_DB_URL not set, skipping DBML generation"
+            exit 0
+          fi
+          python odoo-schema-mirror/generate_dbml.py
+
+      - name: Upload DBML artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbml-output
+          path: docs/dbml/
+          retention-days: 30
+
+  # ===========================================================================
+  # Generate ERD
+  # ===========================================================================
+  generate-erd:
+    name: Generate ERD
+    runs-on: ubuntu-latest
+    needs: generate-dbml
+    if: ${{ needs.generate-dbml.result == 'success' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: tools/dbml/package-lock.json
+
+      - name: Download DBML artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dbml-output
+          path: docs/dbml/
+
+      - name: Install DBML tools
+        working-directory: tools/dbml
+        run: npm install
+
+      - name: Generate ERD diagrams
+        working-directory: tools/dbml
+        run: |
+          npm run dbml:validate || echo "::warning::DBML validation failed"
+          npm run erd:all || echo "::warning::ERD generation failed"
+
+      - name: Upload ERD artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: erd-output
+          path: docs/erd/
+          retention-days: 30
+
+  # ===========================================================================
+  # Validate Parity (optional)
+  # ===========================================================================
+  validate-parity:
+    name: Validate Parity
+    runs-on: ubuntu-latest
+    needs: [apply-migration]
+    if: ${{ always() && secrets.ODOO_DB_HOST != '' && secrets.SUPABASE_DB_URL != '' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary
+
+      - name: Validate parity
+        env:
+          ODOO_DB_HOST: ${{ secrets.ODOO_DB_HOST }}
+          ODOO_DB_PORT: ${{ secrets.ODOO_DB_PORT }}
+          ODOO_DB_NAME: ${{ secrets.ODOO_DB_NAME }}
+          ODOO_DB_USER: ${{ secrets.ODOO_DB_USER }}
+          ODOO_DB_PASSWORD: ${{ secrets.ODOO_DB_PASSWORD }}
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_DB_SCHEMA: odoo_shadow
+        run: |
+          python odoo-schema-mirror/validate_parity.py || echo "::warning::Parity validation found drift"
+
+      - name: Upload parity report
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-report
+          path: odoo-schema-mirror/artifacts/parity_report.json
+          retention-days: 7
+
+  # ===========================================================================
+  # Commit Artifacts (optional)
+  # ===========================================================================
+  commit-artifacts:
+    name: Commit Artifacts
+    runs-on: ubuntu-latest
+    needs: [generate-erd]
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Copy artifacts to repo
+        run: |
+          mkdir -p docs/dbml docs/erd
+          if [ -d "artifacts/dbml-output" ]; then
+            cp -r artifacts/dbml-output/* docs/dbml/ || true
+          fi
+          if [ -d "artifacts/erd-output" ]; then
+            cp -r artifacts/erd-output/* docs/erd/ || true
+          fi
+
+      - name: Check for changes
+        id: check
+        run: |
+          git add docs/dbml docs/erd
+          if git diff --staged --quiet; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit -m "docs(erd): update schema artifacts [skip ci]"
+          git push
