@@ -1,0 +1,74 @@
+site_name: odoo-ce Documentation
+site_url: https://jgtolentino.github.io/odoo-ce
+site_description: Documentation for the odoo-ce monorepo — InsightPulse AI platform built on Odoo 18 CE
+site_author: InsightPulse AI Team
+
+repo_name: jgtolentino/odoo-ce
+repo_url: https://github.com/jgtolentino/odoo-ce
+edit_uri: edit/main/docs/pages/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - Architecture: architecture.md
+  - Developer Guide: developer-guide.md
+  - Modules: modules.md
+  - Runbooks: runbooks.md
+
+docs_dir: docs/pages
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search
+  - offline
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/jgtolentino/odoo-ce
+  generator: false
+
+copyright: Copyright &copy; 2024-2026 InsightPulse AI
