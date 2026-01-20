@@ -41,8 +41,8 @@ REMOTE_HOST="erp.insightpulseai.net"
 REMOTE_USER="root"
 REMOTE_ODOO_DIR="/opt/odoo/custom-addons"
 LOCAL_ADDONS_DIR="addons"
-ODOO_CONTAINER="odoo-odoo-1"
-ODOO_DB="odoo"
+ODOO_CONTAINER="odoo-erp-prod"
+ODOO_DB="production"
 
 # Available IPAI modules
 AVAILABLE_MODULES=(
