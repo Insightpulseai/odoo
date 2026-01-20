@@ -47,3 +47,52 @@ class ResConfigSettings(models.TransientModel):
         config_parameter="ipai_bridge.enable_project_sync",
         help="Enable project/task event sync to Supabase",
     )
+
+    # ==========================================================================
+    # Enterprise Feature Stubs (CE → 19/EE Parity)
+    # ==========================================================================
+    # These fields exist in Odoo Enterprise but not CE 18.0
+    # Stubbed here to prevent view inheritance errors
+    # ==========================================================================
+
+    # POS Self-Ordering (Enterprise only)
+    pos_self_ordering_mode = fields.Selection(
+        [
+            ('nothing', 'Disabled'),
+            ('mobile', 'QR Code (Mobile)'),
+            ('kiosk', 'Self-Ordering Kiosk'),
+        ],
+        string="Self-Ordering Mode",
+        default='nothing',
+        config_parameter="ipai_bridge.pos_self_ordering_mode",
+        help="[Enterprise Feature Stub] Enable POS self-ordering. "
+             "Install OCA alternative: pos_order_mgmt or use IPAI Scout vertical.",
+    )
+    pos_self_ordering_service_mode = fields.Selection(
+        [
+            ('counter', 'Order at Counter'),
+            ('table', 'Order at Table'),
+        ],
+        string="Self-Ordering Service Mode",
+        default='counter',
+        config_parameter="ipai_bridge.pos_self_ordering_service_mode",
+        help="[Enterprise Feature Stub] Service mode for self-ordering.",
+    )
+    pos_self_ordering_pay_after = fields.Selection(
+        [
+            ('each', 'After Each Order'),
+            ('meal', 'After Meal'),
+        ],
+        string="Self-Ordering Payment",
+        default='each',
+        config_parameter="ipai_bridge.pos_self_ordering_pay_after",
+        help="[Enterprise Feature Stub] When customers pay in self-ordering flow.",
+    )
+    pos_self_ordering_image_home_ids = fields.Many2many(
+        'ir.attachment',
+        'pos_self_ordering_image_home_rel',
+        'config_id',
+        'image_id',
+        string="Self-Ordering Home Images",
+        help="[Enterprise Feature Stub] Images displayed on self-ordering home screen.",
+    )
