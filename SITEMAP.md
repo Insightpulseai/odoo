@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d8903e50afd0ac9abc94701b3c3fc279a6722d6e
+> Commit: c0042917db534da38b591f20fe1bcf8669924156
 
 ## 📚 Documentation
 
@@ -414,6 +414,7 @@
 | [Infra Memory Job - Implementation Complete ✅](docs/infra/IMPLEMENTATION_COMPLETE.md) | docs/infra |
 | [MCP Jobs System](docs/infra/MCP_JOBS_SYSTEM.md) | docs/infra |
 | [Memory Ingestion Edge Function](docs/infra/MEMORY_INGESTION.md) | docs/infra |
+| [Odoo Shadow Schema - Deployment Guide](docs/infra/ODOO_SHADOW_SCHEMA.md) | docs/infra |
 | [Vercel AI Gateway Integration Strategy](docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md) | docs/infra |
 | [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
