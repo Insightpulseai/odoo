@@ -52,6 +52,7 @@ This module serves as the foundation for:
         "data/finance_task_stages.xml",
         "data/finance_projects.xml",
         "data/finance_team.xml",
+        "data/finance_ppm_tasks.xml",
         "views/finance_role_views.xml",
         "views/menus.xml",
     ],
