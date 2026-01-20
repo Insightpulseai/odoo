@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 32790d77234b61317490c62ebb92b13926e89179
+> Commit: aa3af147a8303b336be24dcc4999c17aa5619f18
 
 ## 📚 Documentation
 
@@ -424,6 +424,15 @@
 | [IPAI Install Profiles](docs/ipai/PROFILES.md) | docs/ipai |
 | [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
 | [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
+| [DigitalOcean & Docker Stack](docs/llm/DIGITALOCEAN_DOCKER_STACK.md) | docs/llm |
+| [Glossary](docs/llm/GLOSSARY.md) | docs/llm |
+| [LLM Query Playbook](docs/llm/LLM_QUERY_PLAYBOOK.md) | docs/llm |
+| [MCP Integration Guide](docs/llm/MCP_INTEGRATION.md) | docs/llm |
+| [Odoo Platform Details](docs/llm/ODOO_PLATFORM.md) | docs/llm |
+| [InsightPulse AI Stack Overview](docs/llm/STACK_OVERVIEW.md) | docs/llm |
+| [Stack Relationships](docs/llm/STACK_RELATIONSHIPS.md) | docs/llm |
+| [Supabase Stack Details](docs/llm/SUPABASE_STACK.md) | docs/llm |
+| [Vercel Stack Details](docs/llm/VERCEL_STACK.md) | docs/llm |
 | [Mailgun Inbound Email Routes](docs/mailgun/INBOUND_EMAIL_ROUTES.md) | docs/mailgun |
 | [Odoo CE 18.0 SMTP Setup with Mailgun](docs/mailgun/ODOO_SMTP_SETUP.md) | docs/mailgun |
 | [TBWA\SMP Mailgun Canonical Configuration](docs/mailgun/TBWA_MAILGUN_CANONICAL.md) | docs/mailgun |
