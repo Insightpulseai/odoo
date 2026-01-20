@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 943364ec9b393667026441f3bfc17a54e10a70ff
+> Commit: 936a486b4f217ce927e61b76079e0f1c300fd530
 
 ```
 .
@@ -1929,7 +1929,8 @@
 │   │   ├── 202601130001_SCOUT_API_SCHEMA.sql
 │   │   ├── 202601130002_SCOUT_MEDALLION_TABLES.sql
 │   │   ├── 202601160001_VERIFIED_MEMORY.sql
-│   │   └── 20260119_agent_memory_schema.sql
+│   │   ├── 20260119_agent_memory_schema.sql
+│   │   └── 20260120_agent_coordination_schema.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -2083,6 +2084,8 @@
 │   │   │   └── mailgun-mailgate
 │   │   ├── 20260119-1121
 │   │   │   └── digitalocean-postgresql
+│   │   ├── 20260120-agent-communication
+│   │   │   └── IMPLEMENTATION.md
 │   │   └── 20260120-mailgun
 │   │       └── VERIFICATION_CHECKLIST.md
 │   ├── finance-ppm
@@ -2755,6 +2758,11 @@
 │   │   ├── config.yaml
 │   │   └── server.py
 │   ├── servers
+│   │   ├── agent-coordination-server
+│   │   │   ├── src
+│   │   │   ├── README.md
+│   │   │   ├── package.json
+│   │   │   └── tsconfig.json
 │   │   ├── digitalocean-mcp-server
 │   │   │   ├── src
 │   │   │   ├── package.json
@@ -4112,15 +4120,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1315 directories, 2792 files
+1318 directories, 2797 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1535 |
-| Files | 4259 |
+| Directories | 1538 |
+| Files | 4268 |
 | Python files | 1110 |
 | XML files | 520 |
-| Markdown files | 842 |
+| Markdown files | 844 |

@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 943364ec9b393667026441f3bfc17a54e10a70ff
+> Commit: 936a486b4f217ce927e61b76079e0f1c300fd530
 
 ## 📚 Documentation
 
@@ -408,6 +408,7 @@
 | [PostgreSQL 16 Release Features](docs/evidence/20260119-1121/digitalocean-postgresql/POSTGRESQL_16_FEATURES.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
 | [DigitalOcean Managed PostgreSQL - Documentation Review](docs/evidence/20260119-1121/digitalocean-postgresql/REVIEW_SUMMARY.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
 | [Supabase Features Overview](docs/evidence/20260119-1121/digitalocean-postgresql/SUPABASE_FEATURES.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
+| [A2A Communication Implementation Evidence](docs/evidence/20260120-agent-communication/IMPLEMENTATION.md) | docs/evidence/20260120-agent-communication |
 | [Mailgun DNS Verification Checklist](docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md) | docs/evidence/20260120-mailgun |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
@@ -642,6 +643,7 @@
 | [MCP Coordinator Deployment Guide](mcp/coordinator/DEPLOYMENT.md) | mcp/coordinator |
 | [MCP Coordinator](mcp/coordinator/README.md) | mcp/coordinator |
 | [Local MCP Server](mcp/local/README.md) | mcp/local |
+| [Agent Coordination MCP Server](mcp/servers/agent-coordination-server/README.md) | mcp/servers/agent-coordination-server |
 | [Odoo ERP MCP Server](mcp/servers/odoo-erp-server/README.md) | mcp/servers/odoo-erp-server |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
 | [n8n Finance Automation - Deployment Status](notion-n8n-monthly-close/DEPLOYMENT_STATUS.md) | notion-n8n-monthly-close |
