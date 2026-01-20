@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7094c0fb5367f55561a23a962413a65bcb90989d
+> Commit: f7e4975cea58ecbef021d6edc267c284d8049cee
 
 ## 📚 Documentation
 
@@ -48,6 +48,7 @@
 | [Deployment Validation Report](DEPLOYMENT_VALIDATION_REPORT.md) | . |
 | [Deployment Verification - Strategic Portfolio Command Center](DEPLOYMENT_VERIFICATION.md) | . |
 | [Odoo CE v0.9.1 - Production Deployment Workflow](DEPLOYMENT_WORKFLOW.md) | . |
+| [Deploy Enterprise Bridge Fix - POS Self-Ordering Fields](DEPLOY_ENTERPRISE_BRIDGE_FIX.md) | . |
 | [Deploy Now - Quick Start Guide](DEPLOY_NOW.md) | . |
 | [InsightPulse ERP Configuration - Complete Summary](ERP_CONFIGURATION_SUMMARY.md) | . |
 | [EXECUTE NOW - DEPLOY v0.9.0 TO FIX 502 ERROR](EXECUTE_NOW.md) | . |

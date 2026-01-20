@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7094c0fb5367f55561a23a962413a65bcb90989d
+> Commit: f7e4975cea58ecbef021d6edc267c284d8049cee
 
 ```
 .
@@ -3998,6 +3998,7 @@
 ├── DEPLOYMENT_VALIDATION_REPORT.md
 ├── DEPLOYMENT_VERIFICATION.md
 ├── DEPLOYMENT_WORKFLOW.md
+├── DEPLOY_ENTERPRISE_BRIDGE_FIX.md
 ├── DEPLOY_NOW.md
 ├── Dockerfile
 ├── Dockerfile.v0.10.0
@@ -4110,7 +4111,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1315 directories, 2790 files
+1315 directories, 2791 files
 ```
 
 ## 📊 Stats
@@ -4118,7 +4119,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1535 |
-| Files | 4257 |
+| Files | 4258 |
 | Python files | 1110 |
 | XML files | 520 |
-| Markdown files | 841 |
+| Markdown files | 842 |
