@@ -163,11 +163,14 @@
 
 ### Memory Ingestion Edge Function
 
-- [ ] **Implement memory ingestion Edge Function**
-  - [ ] `supabase/functions/memory/index.ts`:
-    - [ ] Accepts JSON: `{ document, chunks, nodes, edges }`
-    - [ ] Inserts/upserts into `kb_documents`, `kb_chunks`, `ops_kg_nodes`, `ops_kg_edges`
-  - [ ] Deploy via `supabase functions deploy memory`
+- [x] **Implement memory ingestion Edge Function** ✅
+  - [x] `supabase/functions/memory-ingest/index.ts` ✅ (created)
+    - [x] Accepts JSON: `{ source, nodes, edges, caller, metadata }` ✅
+    - [x] Batch upserts into `infra.nodes` and `infra.edges` ✅
+    - [x] Updates source metadata and creates snapshots ✅
+    - [x] Caller provenance tracking ✅
+  - [x] Documentation: `docs/infra/MEMORY_INGESTION.md` ✅
+  - [ ] Deploy via `supabase functions deploy memory-ingest`
 
 ### Agent Integration
 
