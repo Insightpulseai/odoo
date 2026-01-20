@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 236d9eca3bf0a602fde89869617ee4761d8b9a1b
+> Commit: 7094c0fb5367f55561a23a962413a65bcb90989d
 
 ```
 .
@@ -77,6 +77,7 @@
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── docs-current-state-gate.yml
+│   │   ├── docs-pages.yml
 │   │   ├── drive-sync-verify.yml
 │   │   ├── drive-sync.yml
 │   │   ├── erd-docs.yml
@@ -2250,6 +2251,13 @@
 │   │   └── production_redeploy_runbook.md
 │   ├── ord
 │   │   └── IPAI_AI_PLATFORM_ORD.md
+│   ├── pages
+│   │   ├── architecture.md
+│   │   ├── developer-guide.md
+│   │   ├── getting-started.md
+│   │   ├── index.md
+│   │   ├── modules.md
+│   │   └── runbooks.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
@@ -2304,6 +2312,14 @@
 │   │   ├── REPO_SNAPSHOT.prod.json
 │   │   ├── REPO_TREE.prod.md
 │   │   └── WORKOS_REPO_TREE.prod.md
+│   ├── research
+│   │   └── figma-design-automation
+│   │       ├── automation_blueprint.md
+│   │       ├── deep_report.md
+│   │       ├── integration_stack.md
+│   │       ├── lifecycle_map.md
+│   │       ├── research_sources.md
+│   │       └── skills_matrix.json
 │   ├── runbooks
 │   │   ├── DOCKER_DESKTOP_CLEANUP.md
 │   │   ├── DOCKER_STAGING_CLEANUP.md
@@ -4060,6 +4076,7 @@
 ├── ipai_finance_ppm_directory.csv
 ├── ipai_open_semantics_migrations_and_functions.zip
 ├── ipai_theme_tbwa_18.0.1.0.0.zip
+├── mkdocs.yml
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
 ├── oca-aggregate.yml
@@ -4077,6 +4094,7 @@
 ├── ppm_dashboard_views.xml
 ├── pyproject.toml
 ├── query_memory.py
+├── requirements-docs.txt
 ├── requirements.txt
 ├── ship_v1_1_0.sh
 ├── spec.md
@@ -4092,15 +4110,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1312 directories, 2775 files
+1315 directories, 2790 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1532 |
-| Files | 4242 |
+| Directories | 1535 |
+| Files | 4257 |
 | Python files | 1110 |
 | XML files | 520 |
-| Markdown files | 830 |
+| Markdown files | 841 |

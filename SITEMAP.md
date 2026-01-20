@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 236d9eca3bf0a602fde89869617ee4761d8b9a1b
+> Commit: 7094c0fb5367f55561a23a962413a65bcb90989d
 
 ## 📚 Documentation
 
@@ -557,6 +557,12 @@
 | [Drive → GitHub Sync Runbook](docs/ops/drive_sync_runbook.md) | docs/ops |
 | [Production Redeploy Runbook](docs/ops/production_redeploy_runbook.md) | docs/ops |
 | [IPAI AI Platform - Object Relationship Document (ORD)](docs/ord/IPAI_AI_PLATFORM_ORD.md) | docs/ord |
+| [Architecture](docs/pages/architecture.md) | docs/pages |
+| [Developer Guide](docs/pages/developer-guide.md) | docs/pages |
+| [Getting Started](docs/pages/getting-started.md) | docs/pages |
+| [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
+| [Modules](docs/pages/modules.md) | docs/pages |
+| [Runbooks](docs/pages/runbooks.md) | docs/pages |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
@@ -579,6 +585,11 @@
 | [What Shipped: prod-20260109-1642](docs/releases/prod-20260109-1642/WHAT_SHIPPED.md) | docs/releases/prod-20260109-1642 |
 | [Production Repo Tree](docs/repo/REPO_TREE.prod.md) | docs/repo |
 | [WorkOS Production Repository Tree](docs/repo/WORKOS_REPO_TREE.prod.md) | docs/repo |
+| [Automation Blueprint: AI-First Design-to-Deployment Pipeline](docs/research/figma-design-automation/automation_blueprint.md) | docs/research/figma-design-automation |
+| [Deep Report: Figma Design Automation Pipeline](docs/research/figma-design-automation/deep_report.md) | docs/research/figma-design-automation |
+| [Integration Stack: AI-First Figma Design Automation](docs/research/figma-design-automation/integration_stack.md) | docs/research/figma-design-automation |
+| [App Design Lifecycle Map](docs/research/figma-design-automation/lifecycle_map.md) | docs/research/figma-design-automation |
+| [Research Sources: Figma Design Automation](docs/research/figma-design-automation/research_sources.md) | docs/research/figma-design-automation |
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | docs/runbooks |
 | [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
