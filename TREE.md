@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d8903e50afd0ac9abc94701b3c3fc279a6722d6e
+> Commit: c0042917db534da38b591f20fe1bcf8669924156
 
 ```
 .
@@ -105,6 +105,7 @@
 │   │   ├── notion-sync-ci.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
+│   │   ├── odoo-schema-pipeline.yml
 │   │   ├── pr-installability-gate.yml
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
@@ -2089,6 +2090,7 @@
 │   │   ├── IMPLEMENTATION_COMPLETE.md
 │   │   ├── MCP_JOBS_SYSTEM.md
 │   │   ├── MEMORY_INGESTION.md
+│   │   ├── ODOO_SHADOW_SCHEMA.md
 │   │   └── VERCEL_AI_GATEWAY_INTEGRATION.md
 │   ├── integration
 │   │   ├── INSIGHTPULSE_ROADMAP.md
@@ -2818,6 +2820,18 @@
 ├── odoo
 │   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
+├── odoo-schema-mirror
+│   ├── tests
+│   │   ├── __init__.py
+│   │   ├── test_export_odoo_schema.py
+│   │   ├── test_generate_dbml.py
+│   │   └── test_sync_to_supabase.py
+│   ├── .env.example
+│   ├── export_odoo_schema.py
+│   ├── generate_dbml.py
+│   ├── requirements.txt
+│   ├── sync_to_supabase.py
+│   └── validate_parity.py
 ├── ops
 │   ├── github
 │   │   ├── apply_labels.sh
@@ -3228,6 +3242,7 @@
 │   ├── sync_current_state.sh
 │   ├── sync_directional.py
 │   ├── sync_ipai_sample_metrics_to_supabase.py
+│   ├── sync_odoo_shadow.py
 │   ├── tenant_automation.py
 │   ├── test-mailgun.py
 │   ├── test-mailgun.sh
@@ -3729,6 +3744,8 @@
 │   │   ├── 202601130001_IPAI_SAMPLE_METRICS.sql
 │   │   ├── 20260120000001_ops_kg_infrastructure_graph.sql
 │   │   ├── 20260120000002_ops_mcp_jobs_observability.sql
+│   │   ├── 20260120100001_odoo_shadow_base.sql
+│   │   ├── 20260120100002_odoo_shadow_tables.sql
 │   │   ├── 20260120_email_otp_auth.sql
 │   │   ├── 20260120_infra_schema.sql
 │   │   ├── 20260120_mcp_jobs_schema.sql
@@ -3814,6 +3831,8 @@
 │   ├── db-inventory
 │   │   ├── README.md
 │   │   └── inventory.py
+│   ├── dbml
+│   │   └── package.json
 │   ├── diagramflow
 │   │   ├── diagramflow
 │   │   │   ├── __init__.py
@@ -4042,15 +4061,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1301 directories, 2736 files
+1304 directories, 2752 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1521 |
-| Files | 4201 |
-| Python files | 1100 |
+| Directories | 1524 |
+| Files | 4217 |
+| Python files | 1109 |
 | XML files | 520 |
-| Markdown files | 822 |
+| Markdown files | 823 |
