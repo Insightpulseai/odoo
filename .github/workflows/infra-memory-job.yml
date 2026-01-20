@@ -1,0 +1,196 @@
+name: Infrastructure Memory Job
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      sources:
+        description: 'Comma-separated sources (vercel,supabase,digitalocean,docker,odoo,github)'
+        required: false
+        default: 'all'
+      dry_run:
+        description: 'Dry run mode (no writes to Supabase)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+env:
+  SYSTEM_TENANT_ID: '00000000-0000-0000-0000-000000000001'
+
+jobs:
+  discover-infrastructure:
+    name: Discover Infrastructure
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install requests supabase-py
+
+      - name: Parse source inputs
+        id: sources
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            SOURCES="${{ github.event.inputs.sources }}"
+            DRY_RUN="${{ github.event.inputs.dry_run }}"
+          else
+            SOURCES="all"
+            DRY_RUN="false"
+          fi
+          echo "sources=${SOURCES}" >> $GITHUB_OUTPUT
+          echo "dry_run=${DRY_RUN}" >> $GITHUB_OUTPUT
+
+      - name: Run infrastructure discovery
+        id: discovery
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ODOO_URL: ${{ secrets.ODOO_URL }}
+          ODOO_DB: ${{ secrets.ODOO_DB }}
+          ODOO_USER: ${{ secrets.ODOO_USER }}
+          ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
+          ODOO_ADDONS_PATHS: 'addons/ipai,addons/oca'
+          GITHUB_REPOS: 'jgtolentino/odoo-ce'
+        run: |
+          SOURCES="${{ steps.sources.outputs.sources }}"
+          DRY_RUN="${{ steps.sources.outputs.dry_run }}"
+
+          CMD="python scripts/infra-discovery/discover_all.py"
+          CMD="$CMD --output /tmp/discovery_results.json"
+
+          if [ "$DRY_RUN" = "true" ]; then
+            CMD="$CMD --dry-run"
+          fi
+
+          if [ "$SOURCES" != "all" ]; then
+            IFS=',' read -ra SOURCE_ARRAY <<< "$SOURCES"
+            for src in "${SOURCE_ARRAY[@]}"; do
+              CMD="$CMD --source $src"
+            done
+          fi
+
+          echo "Running: $CMD"
+          $CMD
+
+          # Output summary
+          cat /tmp/discovery_results.json | jq -r '.total_nodes, .total_edges' | xargs -I {} echo "::notice::Discovered {} resources"
+
+      - name: Upload discovery results
+        uses: actions/upload-artifact@v4
+        with:
+          name: discovery-results-${{ github.run_id }}
+          path: /tmp/discovery_results.json
+          retention-days: 30
+
+      - name: Generate LLM docs
+        if: steps.sources.outputs.dry_run != 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python scripts/generate_llm_docs.py --output-dir docs/llm
+
+      - name: Commit updated docs
+        if: steps.sources.outputs.dry_run != 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Check if there are changes
+          if git diff --quiet docs/llm/; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git add docs/llm/
+          git commit -m "docs: auto-update LLM docs from infra discovery [skip ci]"
+          git push
+
+  deploy-edge-function:
+    name: Deploy Edge Function
+    runs-on: ubuntu-latest
+    needs: discover-infrastructure
+    if: github.ref == 'refs/heads/main' && github.event.inputs.dry_run != 'true'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy infra-memory-ingest function
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          supabase functions deploy infra-memory-ingest \
+            --project-ref spdtwktxdalcfigzeqrz
+
+  notify-completion:
+    name: Notify Completion
+    runs-on: ubuntu-latest
+    needs: [discover-infrastructure, deploy-edge-function]
+    if: always()
+
+    steps:
+      - name: Download discovery results
+        uses: actions/download-artifact@v4
+        with:
+          name: discovery-results-${{ github.run_id }}
+          path: /tmp
+
+      - name: Parse results
+        id: results
+        run: |
+          if [ -f /tmp/discovery_results.json ]; then
+            NODES=$(jq -r '.total_nodes // 0' /tmp/discovery_results.json)
+            EDGES=$(jq -r '.total_edges // 0' /tmp/discovery_results.json)
+            DRY_RUN=$(jq -r '.dry_run // false' /tmp/discovery_results.json)
+            echo "nodes=${NODES}" >> $GITHUB_OUTPUT
+            echo "edges=${EDGES}" >> $GITHUB_OUTPUT
+            echo "dry_run=${DRY_RUN}" >> $GITHUB_OUTPUT
+          else
+            echo "nodes=0" >> $GITHUB_OUTPUT
+            echo "edges=0" >> $GITHUB_OUTPUT
+            echo "dry_run=unknown" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create summary
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## Infrastructure Memory Job Summary
+
+          | Metric | Value |
+          |--------|-------|
+          | Nodes Discovered | ${{ steps.results.outputs.nodes }} |
+          | Edges Discovered | ${{ steps.results.outputs.edges }} |
+          | Dry Run | ${{ steps.results.outputs.dry_run }} |
+          | Run ID | ${{ github.run_id }} |
+
+          ### Sources Processed
+          ${{ github.event.inputs.sources || 'all' }}
+
+          ### Artifacts
+          - [Discovery Results](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          EOF
