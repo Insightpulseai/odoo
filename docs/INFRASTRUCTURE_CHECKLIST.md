@@ -267,9 +267,42 @@
 
 ---
 
-## F. MCP + Jobs + Observability UI (Supabase Platform Kit)
+## F. MCP + Jobs + Observability UI
 
-### UI Project Setup
+### MCP Jobs Backend (Central Orchestration)
+
+- [x] **Implement MCP Jobs system** ✅ (COMPLETE)
+  - [x] Database schema: `supabase/migrations/20260120_mcp_jobs_schema.sql` ✅
+    - [x] `jobs` table (queue with state machine)
+    - [x] `job_runs` table (execution history)
+    - [x] `job_events` table (detailed logs)
+    - [x] `dead_letter_queue` table (failed jobs after max retries)
+    - [x] `metrics` table (aggregated stats)
+  - [x] Functions: `enqueue_job()`, `claim_next_job()`, `complete_job()`, `fail_job()` ✅
+  - [x] Worker claim system with atomic job locking (FOR UPDATE SKIP LOCKED) ✅
+  - [x] Automatic retry logic with exponential backoff ✅
+  - [x] Documentation: `docs/infra/MCP_JOBS_SYSTEM.md` ✅
+  - [ ] Deploy schema to Supabase (`psql` or `supabase db push`)
+
+### MCP Jobs v0 App (Job Visualization UI)
+
+- [x] **Setup v0 Next.js app as git submodule** ✅ (COMPLETE)
+  - [x] Added `mcp-jobs` as submodule at `mcp/servers/mcp-jobs/` ✅
+  - [x] Repository: https://github.com/jgtolentino/mcp-jobs.git ✅
+  - [x] Deployed: https://v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app/ ✅
+  - [x] Client library: `lib/supabaseJobsClient.ts` ✅
+    - [x] TypeScript interfaces (Job, JobRun, JobEvent, DeadLetterQueueItem) ✅
+    - [x] Helper functions (enqueueJob, listJobs, getJob, getJobRuns, cancelJob) ✅
+  - [x] API routes: ✅
+    - [x] POST `/api/jobs/enqueue` (submit jobs) ✅
+    - [x] GET `/api/jobs/list` (filter by source/jobType/status) ✅
+    - [x] GET `/api/jobs/[id]` (job details with runs and events) ✅
+    - [x] DELETE `/api/jobs/[id]` (cancel queued jobs) ✅
+  - [x] Submodule commit pushed to GitHub ✅
+  - [ ] Configure Vercel environment variables (SUPABASE_SERVICE_ROLE_KEY)
+  - [ ] Test API endpoints end-to-end
+
+### UI Project Setup (Ops Console)
 
 - [ ] **Create UI project using Supabase Platform Kit**
   - [ ] Scaffold UI from `https://supabase.com/ui/docs/platform/platform-kit`
@@ -389,18 +422,23 @@
 2. Test OTP flow end-to-end with real email
 3. ✅ ~~Implement memory ingestion Edge Function~~ (DONE - ready for deployment)
 4. Deploy memory-ingest Edge Function (`supabase functions deploy memory-ingest`)
-5. Create `kb` schema migration for document chunks
+5. ✅ ~~Implement MCP Jobs orchestration system~~ (COMPLETE - ready for deployment)
+6. Deploy mcp_jobs schema to Supabase (`psql` or `supabase db push`)
+7. Configure v0 app environment variables in Vercel (SUPABASE_SERVICE_ROLE_KEY)
+8. Test MCP Jobs API endpoints end-to-end
+9. Create `kb` schema migration for document chunks
 
 **Priority 2 (Infrastructure):**
-6. Update discovery scripts to POST to memory-ingest function
-7. Verify Supabase ↔ Vercel integration in Dashboard
-8. Enable pgvector extension in Supabase
-9. Build shadow DDL generator for Odoo sync
+10. Update discovery scripts to POST to memory-ingest function
+11. Verify Supabase ↔ Vercel integration in Dashboard
+12. Enable pgvector extension in Supabase
+13. Build shadow DDL generator for Odoo sync
 
 **Priority 3 (Observability):**
-10. Scaffold ops-console UI using Platform Kit
-11. Create monitoring dashboards
-12. Test end-to-end memory ingestion with all 5 discovery sources
+14. Scaffold ops-console UI using Platform Kit
+15. Create monitoring dashboards
+16. Test end-to-end memory ingestion with all 5 discovery sources
+17. Implement MCP Jobs worker service (separate repo)
 
 ---
 
@@ -412,4 +450,6 @@
 - ✅ Email OTP authentication system (database schema, Edge Functions, docs, deployment script)
 - ✅ Memory Ingestion Edge Function (infra knowledge graph upsert API)
 - ✅ Infra schema migration (moved to supabase/migrations/)
-- ✅ Comprehensive documentation (EMAIL_OTP_IMPLEMENTATION.md, MEMORY_INGESTION.md)
+- ✅ MCP Jobs orchestration system (schema, client library, API routes, documentation)
+- ✅ v0 Next.js app integrated as git submodule with complete API implementation
+- ✅ Comprehensive documentation (EMAIL_OTP_IMPLEMENTATION.md, MEMORY_INGESTION.md, MCP_JOBS_SYSTEM.md)
