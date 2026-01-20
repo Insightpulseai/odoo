@@ -1,0 +1,534 @@
+{
+  "skills_matrix": {
+    "version": "1.0.0",
+    "generated": "2026-01-20",
+    "scope": "Figma Design Automation Pipeline",
+    "roles": [
+      {
+        "role_id": "design_system_lead",
+        "title": "Design System Lead",
+        "track": "design",
+        "level": "senior",
+        "skills": [
+          {
+            "skill_id": "figma_variables",
+            "name": "Figma Variables & Tokens",
+            "proficiency_required": 5,
+            "training_path": [
+              "Figma Variables fundamentals",
+              "Semantic token naming",
+              "Multi-mode token management",
+              "Token API and REST extraction"
+            ],
+            "certifications": ["Figma Professional", "Design Systems"]
+          },
+          {
+            "skill_id": "design_system_architecture",
+            "name": "Design System Architecture",
+            "proficiency_required": 5,
+            "training_path": [
+              "Atomic design principles",
+              "Component hierarchy design",
+              "Token-driven systems",
+              "Governance processes"
+            ],
+            "certifications": ["Design System Governance"]
+          },
+          {
+            "skill_id": "code_connect_setup",
+            "name": "Code Connect Configuration",
+            "proficiency_required": 4,
+            "training_path": [
+              "Code Connect basics",
+              "Property mapping",
+              "Multi-framework support",
+              "MCP server integration"
+            ],
+            "certifications": ["Figma Dev Mode Advanced"]
+          },
+          {
+            "skill_id": "accessibility_design",
+            "name": "Accessibility-First Design",
+            "proficiency_required": 4,
+            "training_path": [
+              "WCAG 2.1 AA/AAA",
+              "Contrast requirements",
+              "Focus indicators",
+              "High contrast themes"
+            ],
+            "certifications": ["IAAP WAS", "WCAG Specialist"]
+          }
+        ]
+      },
+      {
+        "role_id": "design_technologist",
+        "title": "Design Technologist",
+        "track": "hybrid",
+        "level": "mid-senior",
+        "skills": [
+          {
+            "skill_id": "figma_plugin_development",
+            "name": "Figma Plugin Development",
+            "proficiency_required": 4,
+            "training_path": [
+              "Plugin API fundamentals",
+              "UI development (HTML/JS)",
+              "REST API integration",
+              "Token extraction plugins"
+            ],
+            "certifications": ["Figma Plugin Developer"]
+          },
+          {
+            "skill_id": "token_pipelines",
+            "name": "Design Token Pipelines",
+            "proficiency_required": 5,
+            "training_path": [
+              "Tokens Studio for Figma",
+              "Style Dictionary",
+              "W3C token format",
+              "CI/CD integration"
+            ],
+            "certifications": ["Design Tokens Expert"]
+          },
+          {
+            "skill_id": "mcp_integration",
+            "name": "MCP Server Integration",
+            "proficiency_required": 4,
+            "training_path": [
+              "Model Context Protocol basics",
+              "Figma MCP server setup",
+              "AI agent configuration",
+              "Context aggregation"
+            ],
+            "certifications": ["MCP Developer"]
+          },
+          {
+            "skill_id": "react_component_development",
+            "name": "React Component Development",
+            "proficiency_required": 4,
+            "training_path": [
+              "React fundamentals",
+              "TypeScript",
+              "Styled components / CSS-in-JS",
+              "Storybook documentation"
+            ],
+            "certifications": ["React Developer"]
+          }
+        ]
+      },
+      {
+        "role_id": "frontend_engineer",
+        "title": "Frontend Engineer",
+        "track": "engineering",
+        "level": "mid",
+        "skills": [
+          {
+            "skill_id": "figma_dev_mode",
+            "name": "Figma Dev Mode Usage",
+            "proficiency_required": 3,
+            "training_path": [
+              "Dev Mode navigation",
+              "Inspection tools",
+              "Code snippet extraction",
+              "Asset export"
+            ],
+            "certifications": ["Figma Dev Mode"]
+          },
+          {
+            "skill_id": "ai_code_generation",
+            "name": "AI-Assisted Code Generation",
+            "proficiency_required": 4,
+            "training_path": [
+              "Cursor IDE basics",
+              "GitHub Copilot",
+              "MCP server usage",
+              "Prompt engineering for code"
+            ],
+            "certifications": ["AI-Assisted Development"]
+          },
+          {
+            "skill_id": "component_testing",
+            "name": "Component Testing",
+            "proficiency_required": 4,
+            "training_path": [
+              "Jest / Vitest",
+              "React Testing Library",
+              "Visual regression (Chromatic)",
+              "Accessibility testing (axe)"
+            ],
+            "certifications": ["Frontend Testing"]
+          },
+          {
+            "skill_id": "ci_cd_pipelines",
+            "name": "CI/CD Pipeline Management",
+            "proficiency_required": 3,
+            "training_path": [
+              "GitHub Actions",
+              "Vercel deployments",
+              "Preview environments",
+              "Token sync automation"
+            ],
+            "certifications": ["DevOps Fundamentals"]
+          }
+        ]
+      },
+      {
+        "role_id": "product_designer",
+        "title": "Product Designer",
+        "track": "design",
+        "level": "mid",
+        "skills": [
+          {
+            "skill_id": "figma_design_mode",
+            "name": "Figma Design Mode",
+            "proficiency_required": 5,
+            "training_path": [
+              "Auto-layout mastery",
+              "Component variants",
+              "Variables usage",
+              "Prototyping"
+            ],
+            "certifications": ["Figma Professional"]
+          },
+          {
+            "skill_id": "figma_make",
+            "name": "Figma Make Prototyping",
+            "proficiency_required": 3,
+            "training_path": [
+              "Prompt-to-prototype basics",
+              "Design input modes",
+              "Iteration techniques",
+              "Backend integration"
+            ],
+            "certifications": ["Figma Make User"]
+          },
+          {
+            "skill_id": "design_handoff",
+            "name": "Design Handoff",
+            "proficiency_required": 4,
+            "training_path": [
+              "Dev Mode preparation",
+              "Component documentation",
+              "Token annotation",
+              "Accessibility specs"
+            ],
+            "certifications": ["Design Handoff Specialist"]
+          },
+          {
+            "skill_id": "motion_design",
+            "name": "Motion & Animation Design",
+            "proficiency_required": 3,
+            "training_path": [
+              "Motion principles",
+              "Easing curves",
+              "Figma prototyping",
+              "Motion specification"
+            ],
+            "certifications": ["Motion Design"]
+          }
+        ]
+      },
+      {
+        "role_id": "backend_engineer",
+        "title": "Backend Engineer",
+        "track": "engineering",
+        "level": "mid",
+        "skills": [
+          {
+            "skill_id": "supabase_integration",
+            "name": "Supabase Integration",
+            "proficiency_required": 4,
+            "training_path": [
+              "Supabase fundamentals",
+              "PostgreSQL basics",
+              "Edge Functions",
+              "Realtime subscriptions"
+            ],
+            "certifications": ["Supabase Developer"]
+          },
+          {
+            "skill_id": "api_design",
+            "name": "API Design",
+            "proficiency_required": 4,
+            "training_path": [
+              "REST API design",
+              "GraphQL basics",
+              "OpenAPI specification",
+              "Authentication patterns"
+            ],
+            "certifications": ["API Design"]
+          },
+          {
+            "skill_id": "schema_automation",
+            "name": "Schema Automation",
+            "proficiency_required": 3,
+            "training_path": [
+              "UI-driven schema inference",
+              "Migration automation",
+              "Data modeling",
+              "RLS policies"
+            ],
+            "certifications": ["Database Engineering"]
+          }
+        ]
+      },
+      {
+        "role_id": "design_ops_manager",
+        "title": "Design Ops Manager",
+        "track": "operations",
+        "level": "senior",
+        "skills": [
+          {
+            "skill_id": "governance_processes",
+            "name": "Design System Governance",
+            "proficiency_required": 5,
+            "training_path": [
+              "Token governance",
+              "Component lifecycle",
+              "Versioning strategy",
+              "Deprecation policies"
+            ],
+            "certifications": ["Design Ops Certification"]
+          },
+          {
+            "skill_id": "workflow_automation",
+            "name": "Workflow Automation",
+            "proficiency_required": 4,
+            "training_path": [
+              "GitHub Actions",
+              "Figma webhooks",
+              "Token pipelines",
+              "Automated testing"
+            ],
+            "certifications": ["Automation Specialist"]
+          },
+          {
+            "skill_id": "team_coordination",
+            "name": "Cross-Team Coordination",
+            "proficiency_required": 4,
+            "training_path": [
+              "Design-dev alignment",
+              "Handoff processes",
+              "Review workflows",
+              "Communication patterns"
+            ],
+            "certifications": ["Project Management"]
+          },
+          {
+            "skill_id": "metrics_analytics",
+            "name": "Design System Metrics",
+            "proficiency_required": 3,
+            "training_path": [
+              "Adoption metrics",
+              "Component usage tracking",
+              "Quality metrics",
+              "Performance benchmarks"
+            ],
+            "certifications": ["Analytics"]
+          }
+        ]
+      }
+    ],
+    "proficiency_scale": {
+      "1": {
+        "level": "Awareness",
+        "description": "Basic understanding of concepts, can use with guidance"
+      },
+      "2": {
+        "level": "Beginner",
+        "description": "Can perform basic tasks independently with documentation"
+      },
+      "3": {
+        "level": "Intermediate",
+        "description": "Can work independently on most tasks, understands best practices"
+      },
+      "4": {
+        "level": "Advanced",
+        "description": "Can handle complex scenarios, guides others, contributes to standards"
+      },
+      "5": {
+        "level": "Expert",
+        "description": "Deep expertise, defines best practices, leads strategic initiatives"
+      }
+    },
+    "training_resources": {
+      "figma_official": [
+        {
+          "name": "Figma Learn - Variables",
+          "url": "https://help.figma.com/hc/en-us/articles/15145852043927",
+          "type": "documentation"
+        },
+        {
+          "name": "Figma Learn - Dev Mode",
+          "url": "https://help.figma.com/hc/en-us/articles/15023124644247",
+          "type": "documentation"
+        },
+        {
+          "name": "Figma MCP Server Guide",
+          "url": "https://developers.figma.com/docs/figma-mcp-server/",
+          "type": "documentation"
+        },
+        {
+          "name": "Code Connect Documentation",
+          "url": "https://developers.figma.com/docs/code-connect/",
+          "type": "documentation"
+        }
+      ],
+      "community": [
+        {
+          "name": "Tokens Studio for Figma",
+          "url": "https://tokens.studio/",
+          "type": "tool"
+        },
+        {
+          "name": "Style Dictionary",
+          "url": "https://amzn.github.io/style-dictionary/",
+          "type": "tool"
+        },
+        {
+          "name": "Builder.io Figma to Code",
+          "url": "https://www.builder.io/figma-to-code",
+          "type": "tool"
+        }
+      ],
+      "certifications": [
+        {
+          "name": "Figma Professional Certificate",
+          "provider": "Figma",
+          "url": "https://www.figma.com/",
+          "hours": 40
+        },
+        {
+          "name": "IAAP Web Accessibility Specialist",
+          "provider": "IAAP",
+          "url": "https://www.accessibilityassociation.org/",
+          "hours": 60
+        }
+      ]
+    },
+    "skill_dependencies": {
+      "figma_variables": [],
+      "design_system_architecture": ["figma_variables"],
+      "code_connect_setup": ["figma_variables", "figma_dev_mode"],
+      "token_pipelines": ["figma_variables"],
+      "mcp_integration": ["figma_dev_mode", "code_connect_setup"],
+      "ai_code_generation": ["mcp_integration"],
+      "figma_make": ["figma_design_mode"],
+      "supabase_integration": ["figma_make"]
+    },
+    "automation_capabilities": {
+      "human_required": [
+        {
+          "task": "Design system strategy",
+          "reason": "Requires business context and creative vision"
+        },
+        {
+          "task": "Accessibility final review",
+          "reason": "Requires human judgment for edge cases"
+        },
+        {
+          "task": "Complex interaction design",
+          "reason": "Requires creative problem solving"
+        },
+        {
+          "task": "Brand application decisions",
+          "reason": "Requires brand expertise"
+        }
+      ],
+      "ai_augmented": [
+        {
+          "task": "Token extraction",
+          "automation_level": 90,
+          "tools": ["Figma REST API", "Tokens Studio"]
+        },
+        {
+          "task": "Component code generation",
+          "automation_level": 80,
+          "tools": ["Figma MCP", "Cursor", "GitHub Copilot"]
+        },
+        {
+          "task": "Responsive variant generation",
+          "automation_level": 70,
+          "tools": ["Figma Make", "AI plugins"]
+        },
+        {
+          "task": "Accessibility pre-checks",
+          "automation_level": 85,
+          "tools": ["axe", "Figma plugins", "AI validators"]
+        },
+        {
+          "task": "Documentation generation",
+          "automation_level": 75,
+          "tools": ["Storybook", "AI doc generators"]
+        },
+        {
+          "task": "Test generation",
+          "automation_level": 70,
+          "tools": ["AI code generators", "Playwright codegen"]
+        }
+      ],
+      "fully_automated": [
+        {
+          "task": "Style Dictionary transformation",
+          "automation_level": 100,
+          "tools": ["Style Dictionary CLI"]
+        },
+        {
+          "task": "CI/CD pipeline execution",
+          "automation_level": 100,
+          "tools": ["GitHub Actions"]
+        },
+        {
+          "task": "Preview deployment",
+          "automation_level": 100,
+          "tools": ["Vercel", "Netlify"]
+        },
+        {
+          "task": "Lint and format",
+          "automation_level": 100,
+          "tools": ["ESLint", "Prettier"]
+        },
+        {
+          "task": "Type checking",
+          "automation_level": 100,
+          "tools": ["TypeScript"]
+        }
+      ]
+    },
+    "team_compositions": {
+      "small_team": {
+        "size": "3-5",
+        "roles": [
+          "Product Designer (with token knowledge)",
+          "Design Technologist",
+          "Frontend Engineer"
+        ],
+        "notes": "Design Technologist bridges design and engineering"
+      },
+      "medium_team": {
+        "size": "6-10",
+        "roles": [
+          "Design System Lead",
+          "Product Designers (2)",
+          "Design Technologist",
+          "Frontend Engineers (2-3)",
+          "Backend Engineer"
+        ],
+        "notes": "Dedicated Design System Lead for governance"
+      },
+      "enterprise_team": {
+        "size": "10+",
+        "roles": [
+          "Design Ops Manager",
+          "Design System Lead",
+          "Product Designers (3+)",
+          "Design Technologists (2)",
+          "Frontend Engineers (3+)",
+          "Backend Engineers (2)",
+          "QA Engineer (accessibility focus)"
+        ],
+        "notes": "Design Ops Manager for process and metrics"
+      }
+    }
+  }
+}
