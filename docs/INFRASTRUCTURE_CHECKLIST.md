@@ -385,23 +385,31 @@
 ## Next Immediate Actions
 
 **Priority 1 (High Impact):**
-1. Deploy Email OTP Edge Functions to Supabase
+1. ✅ ~~Deploy Email OTP Edge Functions to Supabase~~ (READY - run `./scripts/deploy-otp-auth.sh`)
 2. Test OTP flow end-to-end with real email
-3. Create `kb` schema migration for document chunks
-4. Implement memory ingestion Edge Function
+3. ✅ ~~Implement memory ingestion Edge Function~~ (DONE - ready for deployment)
+4. Deploy memory-ingest Edge Function (`supabase functions deploy memory-ingest`)
+5. Create `kb` schema migration for document chunks
 
 **Priority 2 (Infrastructure):**
-5. Verify Supabase ↔ Vercel integration in Dashboard
-6. Enable pgvector extension in Supabase
-7. Build shadow DDL generator for Odoo sync
+6. Update discovery scripts to POST to memory-ingest function
+7. Verify Supabase ↔ Vercel integration in Dashboard
+8. Enable pgvector extension in Supabase
+9. Build shadow DDL generator for Odoo sync
 
 **Priority 3 (Observability):**
-8. Scaffold ops-console UI using Platform Kit
-9. Extend discovery jobs to POST to memory function
-10. Create monitoring dashboards
+10. Scaffold ops-console UI using Platform Kit
+11. Create monitoring dashboards
+12. Test end-to-end memory ingestion with all 5 discovery sources
 
 ---
 
-**Last Review**: 2026-01-20
+**Last Review**: 2026-01-20 15:30
 **Reviewer**: Claude Sonnet 4.5
-**Status**: Active development, 35% complete across all sections
+**Status**: Active development, 40% complete across all sections
+
+**Recent Completion**:
+- ✅ Email OTP authentication system (database schema, Edge Functions, docs, deployment script)
+- ✅ Memory Ingestion Edge Function (infra knowledge graph upsert API)
+- ✅ Infra schema migration (moved to supabase/migrations/)
+- ✅ Comprehensive documentation (EMAIL_OTP_IMPLEMENTATION.md, MEMORY_INGESTION.md)
