@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d266cc4533a399e3343b918ac212846bcd5ffed5
+> Commit: b1ee8eb4b167450447f4f56fcbd42701827d16ce
 
 ```
 .
@@ -438,8 +438,10 @@
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── tests
 │   │   │   ├── views
 │   │   │   ├── POLICY.md
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
@@ -590,6 +592,24 @@
 │   │   │   ├── security
 │   │   │   ├── static
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_iot_bridge
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── README.rst
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_mail_integration
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_marketing_ai
@@ -2470,6 +2490,7 @@
 │   ├── OCA_CHORE_SCOPE.md
 │   ├── OCA_MIGRATION.md
 │   ├── OCA_STYLE_CONTRACT.md
+│   ├── OCA_TEMPLATE_INTEGRATION.md
 │   ├── ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md
 │   ├── ODOO_18_CE_CHEATSHEET.md
 │   ├── ODOO_18_CE_MODULE_INSTALL_ORDER.md
@@ -3245,6 +3266,7 @@
 │   ├── notify_slack.sh
 │   ├── oca-bootstrap.sh
 │   ├── oca-sync.sh
+│   ├── oca-template-bootstrap.sh
 │   ├── oca-update.sh
 │   ├── oca_hydrate.sh
 │   ├── odoo-18-oca-install.sh
@@ -4151,15 +4173,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1326 directories, 2820 files
+1339 directories, 2829 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1546 |
-| Files | 4291 |
-| Python files | 1113 |
-| XML files | 520 |
-| Markdown files | 853 |
+| Directories | 1559 |
+| Files | 4322 |
+| Python files | 1130 |
+| XML files | 527 |
+| Markdown files | 854 |
