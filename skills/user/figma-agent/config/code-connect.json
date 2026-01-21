@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Figma Code Connect configuration for component mapping",
+  "codeConnect": {
+    "parser": "react",
+    "include": [
+      "src/components/**/*",
+      "packages/*/src/components/**/*"
+    ],
+    "exclude": [
+      "test/**",
+      "tests/**",
+      "__tests__/**",
+      "docs/**",
+      "build/**",
+      "dist/**",
+      "node_modules/**"
+    ],
+    "importPaths": {
+      "src/components/*": "@/components",
+      "packages/ui/src/components/*": "@ui/components"
+    }
+  },
+  "componentMappings": {
+    "Button": {
+      "figmaUrl": "https://figma.com/design/.../node-id=button",
+      "props": {
+        "variant": {
+          "type": "enum",
+          "figmaProperty": "Variant",
+          "mapping": {
+            "Primary": "default",
+            "Secondary": "secondary",
+            "Danger": "destructive",
+            "Outline": "outline",
+            "Ghost": "ghost"
+          }
+        },
+        "size": {
+          "type": "enum",
+          "figmaProperty": "Size",
+          "mapping": {
+            "Small": "sm",
+            "Medium": "default",
+            "Large": "lg"
+          }
+        },
+        "disabled": {
+          "type": "boolean",
+          "figmaProperty": "Disabled"
+        },
+        "label": {
+          "type": "string",
+          "figmaProperty": "Label"
+        }
+      }
+    },
+    "Card": {
+      "figmaUrl": "https://figma.com/design/.../node-id=card",
+      "subcomponents": ["CardHeader", "CardContent", "CardFooter"]
+    },
+    "Input": {
+      "figmaUrl": "https://figma.com/design/.../node-id=input",
+      "props": {
+        "type": {
+          "type": "enum",
+          "figmaProperty": "Type",
+          "mapping": {
+            "Text": "text",
+            "Email": "email",
+            "Password": "password",
+            "Number": "number"
+          }
+        },
+        "placeholder": {
+          "type": "string",
+          "figmaProperty": "Placeholder"
+        },
+        "disabled": {
+          "type": "boolean",
+          "figmaProperty": "Disabled"
+        }
+      }
+    }
+  }
+}
