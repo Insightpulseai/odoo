@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 36112708d5215733e6e1eb4b8150039580e17bdb
+> Commit: 19147a42aa268ab2dbac293e14b75efa4175c89a
 
 ```
 .
@@ -48,7 +48,8 @@
 │   └── pre-commit
 ├── .github
 │   ├── ISSUE_TEMPLATE
-│   │   └── copilot_task.yml
+│   │   ├── copilot_task.yml
+│   │   └── enterprise_replacement.yml
 │   ├── agents
 │   │   └── odoo-oca-triage.agent.md
 │   ├── workflows
@@ -447,11 +448,13 @@
 │   │   ├── ipai_enterprise_bridge
 │   │   │   ├── controllers
 │   │   │   ├── data
+│   │   │   ├── demo
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── tests
 │   │   │   ├── views
 │   │   │   ├── POLICY.md
+│   │   │   ├── README.md
 │   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
@@ -2188,6 +2191,10 @@
 │   │   ├── ODOO_SMTP_SETUP.md
 │   │   ├── TBWA_MAILGUN_CANONICAL.md
 │   │   └── WEBHOOKS_AND_EVENTS.md
+│   ├── memory
+│   │   ├── CANONICAL_CONTEXT.md
+│   │   ├── MEMORY_DISTILLATION.json
+│   │   └── MEMORY_WRITE_INSTRUCTIONS.md
 │   ├── module-health
 │   │   ├── MODULES_PROD_STATUS.md
 │   │   └── modules_status.json
@@ -3129,6 +3136,8 @@
 │   │   └── sync_docs.mjs
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
+│   ├── github
+│   │   └── create_ee_replacement_issues.sh
 │   ├── import
 │   │   ├── import_activities.py
 │   │   ├── run_import_sequence.sh
@@ -3720,6 +3729,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── odoo-ce-enterprise-replacement
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── odoo-copilot-process-mining
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -4270,15 +4284,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1357 directories, 2908 files
+1361 directories, 2918 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1591 |
-| Files | 4440 |
-| Python files | 1138 |
-| XML files | 534 |
-| Markdown files | 923 |
+| Directories | 1595 |
+| Files | 4456 |
+| Python files | 1140 |
+| XML files | 538 |
+| Markdown files | 930 |

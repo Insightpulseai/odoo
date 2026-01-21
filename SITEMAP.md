@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 36112708d5215733e6e1eb4b8150039580e17bdb
+> Commit: 19147a42aa268ab2dbac293e14b75efa4175c89a
 
 ## 📚 Documentation
 
@@ -105,6 +105,7 @@
 | [InsightPulse Custom Routes](addons/ipai/ipai_custom_routes/README.md) | addons/ipai/ipai_custom_routes |
 | [InsightPulse Default Home Page](addons/ipai/ipai_default_home/README.md) | addons/ipai/ipai_default_home |
 | [IPAI Enterprise Bridge Policy](addons/ipai/ipai_enterprise_bridge/POLICY.md) | addons/ipai/ipai_enterprise_bridge |
+| [IPAI Enterprise Bridge](addons/ipai/ipai_enterprise_bridge/README.md) | addons/ipai/ipai_enterprise_bridge |
 | [IPAI Equipment Management](addons/ipai/ipai_equipment/README.md) | addons/ipai/ipai_equipment |
 | [IPAI Expense & Travel (PH)](addons/ipai/ipai_expense/README.md) | addons/ipai/ipai_expense |
 | [IPAI Finance Monthly Closing](addons/ipai/ipai_finance_monthly_closing/README.md) | addons/ipai/ipai_finance_monthly_closing |
@@ -457,6 +458,8 @@
 | [Odoo CE 18.0 SMTP Setup with Mailgun](docs/mailgun/ODOO_SMTP_SETUP.md) | docs/mailgun |
 | [TBWA\SMP Mailgun Canonical Configuration](docs/mailgun/TBWA_MAILGUN_CANONICAL.md) | docs/mailgun |
 | [Mailgun Webhooks and Events](docs/mailgun/WEBHOOKS_AND_EVENTS.md) | docs/mailgun |
+| [CANONICAL_CONTEXT.md — jgtolentino/odoo-ce](docs/memory/CANONICAL_CONTEXT.md) | docs/memory |
+| [MEMORY_WRITE_INSTRUCTIONS.md](docs/memory/MEMORY_WRITE_INSTRUCTIONS.md) | docs/memory |
 | [Module Production Readiness Status](docs/module-health/MODULES_PROD_STATUS.md) | docs/module-health |
 | [IPAI Module Index](docs/modules/INDEX.md) | docs/modules |
 | [ipai_advisor](docs/modules/ipai_advisor.md) | docs/modules |
@@ -864,6 +867,10 @@
 | [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Task Checklist](spec/odoo-apps-inventory/tasks.md) | spec/odoo-apps-inventory |
+| [Constitution: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/constitution.md) | spec/odoo-ce-enterprise-replacement |
+| [Plan: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/plan.md) | spec/odoo-ce-enterprise-replacement |
+| [PRD: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/prd.md) | spec/odoo-ce-enterprise-replacement |
+| [Tasks: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/tasks.md) | spec/odoo-ce-enterprise-replacement |
 | [Odoo CE Platform Constitution](spec/odoo-ce/constitution.md) | spec/odoo-ce |
 | [Plan](spec/odoo-ce/plan.md) | spec/odoo-ce |
 | [PRD — Odoo CE (CE + OCA + IPAI)](spec/odoo-ce/prd.md) | spec/odoo-ce |
