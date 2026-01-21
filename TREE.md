@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6133c6e54a99a92fb72ee8bc6ef8b22769f8bd09
+> Commit: d266cc4533a399e3343b918ac212846bcd5ffed5
 
 ```
 .
@@ -2344,6 +2344,8 @@
 │   │   ├── ODOO_MODEL_SNAPSHOT.prod.json
 │   │   ├── WORKOS_MODELS.prod.json
 │   │   └── WORKOS_MODULES.prod.csv
+│   ├── seed-data
+│   │   └── EXPORT_TEMPLATES.md
 │   ├── state_machines
 │   │   ├── odoo
 │   │   │   ├── ask_ai_chat.md
@@ -3207,6 +3209,7 @@
 │   ├── generate_module_signatures.py
 │   ├── generate_month_end_imports.py
 │   ├── generate_odoo_dbml.py
+│   ├── generate_odoo_template.py
 │   ├── generate_release_docs.sh
 │   ├── generate_repo_index.py
 │   ├── generate_schema_artifacts.sh
@@ -3719,6 +3722,8 @@
 │   │   │   └── index.ts
 │   │   ├── memory-ingest
 │   │   │   └── index.ts
+│   │   ├── odoo-template-export
+│   │   │   └── index.ts
 │   │   ├── ops-job-worker
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
@@ -3823,6 +3828,7 @@
 │   │   ├── 20260120_infra_schema.sql
 │   │   ├── 20260120_mcp_jobs_schema.sql
 │   │   ├── 20260120_skill_creator_certification.sql
+│   │   ├── 20260121100001_odoo_data_dictionary.sql
 │   │   ├── 20260121_odoo_seed_schema.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
@@ -3858,7 +3864,8 @@
 │   │   └── 001_saas_feature_seed.sql
 │   ├── seeds
 │   │   ├── 001_hr_seed.sql
-│   │   └── 002_finance_seed.sql
+│   │   ├── 002_finance_seed.sql
+│   │   └── 003_odoo_dict_seed.sql
 │   ├── SECURITY_LINTER_REMEDIATION.md
 │   └── config.toml
 ├── tasks
@@ -4144,15 +4151,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1324 directories, 2815 files
+1326 directories, 2820 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1544 |
-| Files | 4286 |
-| Python files | 1112 |
+| Directories | 1546 |
+| Files | 4291 |
+| Python files | 1113 |
 | XML files | 520 |
-| Markdown files | 852 |
+| Markdown files | 853 |
