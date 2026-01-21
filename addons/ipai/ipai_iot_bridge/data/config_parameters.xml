@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- Default config parameters -->
+    <record id="param_iot_enabled" model="ir.config_parameter">
+        <field name="key">ipai_iot.enabled</field>
+        <field name="value">False</field>
+    </record>
+
+    <record id="param_iot_cups_server" model="ir.config_parameter">
+        <field name="key">ipai_iot.cups_server</field>
+        <field name="value">localhost:631</field>
+    </record>
+
+    <record id="param_iot_printnode_enabled" model="ir.config_parameter">
+        <field name="key">ipai_iot.printnode_enabled</field>
+        <field name="value">False</field>
+    </record>
+
+    <record id="param_iot_auto_discover" model="ir.config_parameter">
+        <field name="key">ipai_iot.auto_discover</field>
+        <field name="value">True</field>
+    </record>
+</odoo>

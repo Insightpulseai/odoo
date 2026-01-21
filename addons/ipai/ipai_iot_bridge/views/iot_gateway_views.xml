@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="ipai_iot_gateway_tree" model="ir.ui.view">
+        <field name="name">ipai.iot.gateway.tree</field>
+        <field name="model">ipai.iot.gateway</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="gateway_type"/>
+                <field name="ip_address"/>
+                <field name="device_count"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'connected'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="last_seen"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="ipai_iot_gateway_form" model="ir.ui.view">
+        <field name="name">ipai.iot.gateway.form</field>
+        <field name="model">ipai.iot.gateway</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection"
+                            string="Test Connection"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_discover_devices"
+                            string="Discover Devices"
+                            type="object"
+                            class="btn-secondary"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-print"
+                                name="%(action_ipai_iot_device)d" type="action"
+                                context="{'search_default_gateway_id': active_id}">
+                            <field name="device_count" widget="statinfo" string="Devices"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Gateway Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="gateway_type"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="last_seen"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Network Configuration"
+                              invisible="gateway_type not in ('self_hosted', 'escpos_network')">
+                            <group>
+                                <field name="ip_address"/>
+                                <field name="port"/>
+                                <field name="use_ssl"/>
+                            </group>
+                        </page>
+                        <page string="Authentication"
+                              invisible="gateway_type == 'escpos_network'">
+                            <group invisible="gateway_type != 'self_hosted'">
+                                <field name="api_key"/>
+                                <field name="username"/>
+                                <field name="password" password="True"/>
+                            </group>
+                            <group invisible="gateway_type != 'cups'">
+                                <field name="cups_server"/>
+                            </group>
+                            <group invisible="gateway_type != 'printnode'">
+                                <field name="printnode_api_key" password="True"/>
+                            </group>
+                        </page>
+                        <page string="Devices">
+                            <field name="device_ids" mode="tree">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="device_type"/>
+                                    <field name="connection_type"/>
+                                    <field name="state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group string="Error Details" invisible="not error_message">
+                        <field name="error_message" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ipai_iot_gateway" model="ir.actions.act_window">
+        <field name="name">IoT Gateways</field>
+        <field name="res_model">ipai.iot.gateway</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure IoT gateways
+            </p>
+            <p>
+                Add gateways to manage printers, scales, scanners, and other
+                IoT devices. Supports CUPS, PrintNode, and self-hosted gateways.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ipai_iot_root"
+              name="IoT"
+              parent="base.menu_administration"
+              sequence="100"/>
+
+    <menuitem id="menu_ipai_iot_gateway"
+              name="Gateways"
+              parent="menu_ipai_iot_root"
+              action="action_ipai_iot_gateway"
+              sequence="10"/>
+</odoo>
