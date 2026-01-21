@@ -12,8 +12,7 @@ class IntegrationConnector(models.Model):
 
     # n8n-specific fields
     n8n_webhook_url = fields.Char(
-        string="Webhook Base URL",
-        help="Base URL for n8n webhooks"
+        string="Webhook Base URL", help="Base URL for n8n webhooks"
     )
 
     def action_test_connection(self):
@@ -28,20 +27,24 @@ class IntegrationConnector(models.Model):
             client = N8nClient(self)
             result = client.health_check()
             if result:
-                self.write({
-                    "state": "testing",
-                    "last_ping": fields.Datetime.now(),
-                    "last_error": False,
-                })
+                self.write(
+                    {
+                        "state": "testing",
+                        "last_ping": fields.Datetime.now(),
+                        "last_error": False,
+                    }
+                )
                 self._log_audit("test_connection", "Connection successful")
             else:
                 raise Exception("Health check returned unsuccessful status")
         except Exception as e:
             _logger.warning("n8n connection test failed: %s", e)
-            self.write({
-                "state": "error",
-                "last_error": str(e),
-            })
+            self.write(
+                {
+                    "state": "error",
+                    "last_error": str(e),
+                }
+            )
             self._log_audit("test_connection", f"Connection failed: {e}", level="error")
 
         return True

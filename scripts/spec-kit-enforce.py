@@ -303,7 +303,9 @@ def main():
         warnings = sum(len(r.warnings) for r in results)
 
         print(f"\n{'='*60}")
-        print(f"Total: {total} | Passed: {passed} | Failed: {total - passed} | Warnings: {warnings}")
+        print(
+            f"Total: {total} | Passed: {passed} | Failed: {total - passed} | Warnings: {warnings}"
+        )
 
     # Exit code
     has_errors = any(not r.valid for r in results)

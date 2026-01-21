@@ -45,7 +45,8 @@ class CopilotHubController(http.Controller):
             "show_toolbar": ICP.get_param(
                 "ipai.copilot.hub_show_toolbar",
                 default="True",
-            ) == "True",
+            )
+            == "True",
             "user": {
                 "id": user.id,
                 "name": user.name,

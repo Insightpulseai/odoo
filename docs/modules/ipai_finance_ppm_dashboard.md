@@ -2,7 +2,7 @@
 
 **Status**: ⚠️ WARN
 **Version**: 18.0.1.0.0
-**Author**: InsightPulseAI
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -48,4 +48,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_finance_ppm_dashboard --stop-afte
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.468996_
+_Audited: 2026-01-21T22:42:53.548004_

@@ -80,12 +80,14 @@ class MarketingJourneyExecutionLog(models.Model):
             marketing.journey.execution.log record
         """
         env = participant.env
-        return env["marketing.journey.execution.log"].create({
-            "journey_id": participant.journey_id.id,
-            "participant_id": participant.id,
-            "node_id": node.id,
-            "node_type": node.node_type,
-            "state": "success" if result.get("success") else "error",
-            "message": result.get("message", ""),
-            "error_details": result.get("error", ""),
-        })
+        return env["marketing.journey.execution.log"].create(
+            {
+                "journey_id": participant.journey_id.id,
+                "participant_id": participant.id,
+                "node_id": node.id,
+                "node_type": node.node_type,
+                "state": "success" if result.get("success") else "error",
+                "message": result.get("message", ""),
+                "error_details": result.get("error", ""),
+            }
+        )

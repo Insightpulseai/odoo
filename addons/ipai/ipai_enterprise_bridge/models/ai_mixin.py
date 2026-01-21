@@ -43,10 +43,12 @@ class IpaiAiMixin(models.AbstractModel):
         """
         IpaiJob = self.env["ipai.job"]
         for record in self:
-            IpaiJob.create({
-                "name": f"AI Analysis: {record.display_name}",
-                "job_type": "ai_analysis",
-                "model_name": record._name,
-                "record_id": record.id,
-                "state": "pending",
-            })
+            IpaiJob.create(
+                {
+                    "name": f"AI Analysis: {record.display_name}",
+                    "job_type": "ai_analysis",
+                    "model_name": record._name,
+                    "record_id": record.id,
+                    "state": "pending",
+                }
+            )

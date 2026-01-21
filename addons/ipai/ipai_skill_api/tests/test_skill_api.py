@@ -16,26 +16,30 @@ class TestSkillAPI(TransactionCase):
         super().setUpClass()
 
         # Create test skill
-        cls.test_skill = cls.env["ipai.agent.skill"].create({
-            "name": "Test Skill",
-            "key": "test.skill.api",
-            "version": "1.0.0",
-            "description": "A test skill for API testing",
-            "intents": "test something\nvalidate api",
-            "guardrails": "do not fail\nbe deterministic",
-            "workflow_json": '["tool.one", "tool.two"]',
-            "is_active": True,
-        })
+        cls.test_skill = cls.env["ipai.agent.skill"].create(
+            {
+                "name": "Test Skill",
+                "key": "test.skill.api",
+                "version": "1.0.0",
+                "description": "A test skill for API testing",
+                "intents": "test something\nvalidate api",
+                "guardrails": "do not fail\nbe deterministic",
+                "workflow_json": '["tool.one", "tool.two"]',
+                "is_active": True,
+            }
+        )
 
         # Create test tool
-        cls.test_tool = cls.env["ipai.agent.tool"].create({
-            "name": "Test Tool One",
-            "key": "tool.one",
-            "description": "First test tool",
-            "target_model": "res.partner",
-            "target_method": "name_get",
-            "is_active": True,
-        })
+        cls.test_tool = cls.env["ipai.agent.tool"].create(
+            {
+                "name": "Test Tool One",
+                "key": "tool.one",
+                "description": "First test tool",
+                "target_model": "res.partner",
+                "target_method": "name_get",
+                "is_active": True,
+            }
+        )
 
         cls.test_skill.tool_ids = [(4, cls.test_tool.id)]
 
@@ -73,11 +77,13 @@ class TestSkillAPI(TransactionCase):
         """Test run creation via model (simulating API)."""
         Run = self.env["ipai.agent.run"]
 
-        run = Run.create({
-            "skill_id": self.test_skill.id,
-            "input_text": "Test input",
-            "input_json": json.dumps({"test": True}),
-        })
+        run = Run.create(
+            {
+                "skill_id": self.test_skill.id,
+                "input_text": "Test input",
+                "input_json": json.dumps({"test": True}),
+            }
+        )
 
         self.assertEqual(run.state, "draft")
         self.assertEqual(run.skill_key, "test.skill.api")
@@ -91,10 +97,12 @@ class TestSkillAPI(TransactionCase):
         """Test run state machine."""
         Run = self.env["ipai.agent.run"]
 
-        run = Run.create({
-            "skill_id": self.test_skill.id,
-            "input_text": "State test",
-        })
+        run = Run.create(
+            {
+                "skill_id": self.test_skill.id,
+                "input_text": "State test",
+            }
+        )
 
         self.assertEqual(run.state, "draft")
 
@@ -128,11 +136,13 @@ class TestSkillAPI(TransactionCase):
         Skill = self.env["ipai.agent.skill"]
 
         # Create inactive skill
-        inactive_skill = Skill.create({
-            "name": "Inactive Skill",
-            "key": "test.skill.inactive",
-            "is_active": False,
-        })
+        inactive_skill = Skill.create(
+            {
+                "name": "Inactive Skill",
+                "key": "test.skill.inactive",
+                "is_active": False,
+            }
+        )
 
         # Search should not return inactive
         active_skills = Skill.search([("is_active", "=", True)])

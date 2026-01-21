@@ -9,27 +9,27 @@ class ProjectTask(models.Model):
     ipai_dependencies_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether dependencies feature is enabled system-wide."
+        help="Whether dependencies feature is enabled system-wide.",
     )
     ipai_milestones_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether milestones feature is enabled system-wide."
+        help="Whether milestones feature is enabled system-wide.",
     )
     ipai_budgeting_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether budgeting feature is enabled system-wide."
+        help="Whether budgeting feature is enabled system-wide.",
     )
     ipai_raci_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether RACI roles feature is enabled system-wide."
+        help="Whether RACI roles feature is enabled system-wide.",
     )
     ipai_stage_gates_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether stage gates feature is enabled system-wide."
+        help="Whether stage gates feature is enabled system-wide.",
     )
 
     # Feature-specific relational fields
@@ -37,33 +37,32 @@ class ProjectTask(models.Model):
         "ipai.project.task.dependency",
         "task_id",
         string="Dependencies",
-        help="Tasks that this task depends on."
+        help="Tasks that this task depends on.",
     )
     ipai_dependent_ids = fields.One2many(
         "ipai.project.task.dependency",
         "depends_on_task_id",
         string="Dependents",
-        help="Tasks that depend on this task."
+        help="Tasks that depend on this task.",
     )
     ipai_milestone_id = fields.Many2one(
         "ipai.project.milestone",
         string="Milestone",
-        help="Milestone this task contributes to."
+        help="Milestone this task contributes to.",
     )
     ipai_raci_ids = fields.One2many(
         "ipai.project.raci",
         "task_id",
         string="RACI Assignments",
-        help="RACI role assignments for this task."
+        help="RACI role assignments for this task.",
     )
 
     # Computed fields
     ipai_dependency_count = fields.Integer(
-        compute="_compute_ipai_dependency_count",
-        string="Dependency Count"
+        compute="_compute_ipai_dependency_count", string="Dependency Count"
     )
 
-    @api.depends_context('uid')
+    @api.depends_context("uid")
     def _compute_ipai_flags(self):
         """Compute feature flags from system parameters."""
         ICP = self.env["ir.config_parameter"].sudo()

@@ -14,7 +14,7 @@ class ProjectTaskDependency(models.Model):
         required=True,
         ondelete="cascade",
         index=True,
-        help="The task that has the dependency."
+        help="The task that has the dependency.",
     )
     depends_on_task_id = fields.Many2one(
         "project.task",
@@ -22,7 +22,7 @@ class ProjectTaskDependency(models.Model):
         required=True,
         ondelete="restrict",
         index=True,
-        help="The task that must be completed first."
+        help="The task that must be completed first.",
     )
     dependency_type = fields.Selection(
         [
@@ -39,24 +39,22 @@ class ProjectTaskDependency(models.Model):
         - Start-to-Start (SS): Task cannot start until dependency starts
         - Finish-to-Finish (FF): Task cannot finish until dependency finishes
         - Start-to-Finish (SF): Task cannot finish until dependency starts
-        """
+        """,
     )
     lag_days = fields.Integer(
         string="Lag (days)",
         default=0,
-        help="Number of days between dependency completion and task start. Negative values indicate lead time."
+        help="Number of days between dependency completion and task start. Negative values indicate lead time.",
     )
     project_id = fields.Many2one(
-        related="task_id.project_id",
-        store=True,
-        readonly=True
+        related="task_id.project_id", store=True, readonly=True
     )
 
     _sql_constraints = [
         (
             "unique_dependency",
             "UNIQUE(task_id, depends_on_task_id)",
-            "This dependency already exists!"
+            "This dependency already exists!",
         ),
     ]
 

@@ -51,10 +51,12 @@ class IpaiCloseChecklist(models.Model):
 
     def action_complete(self):
         """Mark checklist as complete."""
-        self.write({
-            "state": "completed",
-            "completion_date": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "completed",
+                "completion_date": fields.Datetime.now(),
+            }
+        )
 
 
 class IpaiCloseChecklistItem(models.Model):
@@ -82,14 +84,18 @@ class IpaiCloseChecklistItem(models.Model):
         """Toggle completion status."""
         for item in self:
             if item.is_completed:
-                item.write({
-                    "is_completed": False,
-                    "completed_by": False,
-                    "completed_date": False,
-                })
+                item.write(
+                    {
+                        "is_completed": False,
+                        "completed_by": False,
+                        "completed_date": False,
+                    }
+                )
             else:
-                item.write({
-                    "is_completed": True,
-                    "completed_by": self.env.user.id,
-                    "completed_date": fields.Datetime.now(),
-                })
+                item.write(
+                    {
+                        "is_completed": True,
+                        "completed_by": self.env.user.id,
+                        "completed_date": fields.Datetime.now(),
+                    }
+                )

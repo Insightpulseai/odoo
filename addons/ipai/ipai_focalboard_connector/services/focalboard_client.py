@@ -39,8 +39,7 @@ class FocalboardClient:
         if self._token is None:
             ICP = self.connector.env["ir.config_parameter"].sudo()
             self._token = ICP.get_param(
-                f"ipai_focalboard.token_{self.connector.id}",
-                default=""
+                f"ipai_focalboard.token_{self.connector.id}", default=""
             )
         return self._token
 
@@ -91,7 +90,10 @@ class FocalboardClient:
                     pass
                 _logger.warning(
                     "Focalboard API error: %s %s -> %s: %s",
-                    method, endpoint, response.status_code, error_msg
+                    method,
+                    endpoint,
+                    response.status_code,
+                    error_msg,
                 )
                 raise UserError(f"Focalboard API error: {error_msg}")
 
@@ -115,8 +117,7 @@ class FocalboardClient:
             # Fallback: try base URL
             try:
                 response = requests.get(
-                    f"{self.base_url}/api/v2/ping",
-                    timeout=DEFAULT_TIMEOUT
+                    f"{self.base_url}/api/v2/ping", timeout=DEFAULT_TIMEOUT
                 )
                 return response.status_code < 400
             except requests.RequestException:
@@ -142,9 +143,9 @@ class FocalboardClient:
 
     def get_cards(self, board_id):
         """Get all cards in a board."""
-        return self._request("GET", f"/boards/{board_id}/blocks", params={
-            "type": "card"
-        })
+        return self._request(
+            "GET", f"/boards/{board_id}/blocks", params={"type": "card"}
+        )
 
     def get_card(self, card_id):
         """Get a specific card."""
@@ -184,6 +185,6 @@ class FocalboardClient:
 
     def get_views(self, board_id):
         """Get all views for a board."""
-        return self._request("GET", f"/boards/{board_id}/blocks", params={
-            "type": "view"
-        })
+        return self._request(
+            "GET", f"/boards/{board_id}/blocks", params={"type": "view"}
+        )

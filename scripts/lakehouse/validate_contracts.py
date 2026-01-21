@@ -59,8 +59,10 @@ def main() -> int:
                 print(f"  ERROR: {err}")
             total_errors += len(errors)
         else:
-            print(f"  OK: {len(contract.columns)} columns, "
-                  f"partition_by={list(contract.partition_by)}")
+            print(
+                f"  OK: {len(contract.columns)} columns, "
+                f"partition_by={list(contract.partition_by)}"
+            )
 
         # Additional warnings
         if not contract.primary_key:

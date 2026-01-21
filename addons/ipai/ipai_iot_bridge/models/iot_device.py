@@ -1,275 +1,293 @@
 # -*- coding: utf-8 -*-
 """
-IPAI IoT Device
+IoT Device - Direct Device Communication
 
-CE-safe replacement for EE iot.device model.
-This model does NOT inherit from any EE models.
+Provides device management without Enterprise IoT box.
 """
-
 import logging
-import requests
+
 from odoo import api, fields, models
-from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
 
 class IpaiIotDevice(models.Model):
-    """IoT Device (replaces EE iot.device)."""
+    """IoT Device Registry."""
 
     _name = "ipai.iot.device"
-    _description = "IPAI IoT Device"
-    _order = "sequence, name"
+    _description = "IoT Device"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    name = fields.Char(required=True, string="Device Name")
-    identifier = fields.Char(string="Device Identifier", index=True)
-    sequence = fields.Integer(default=10)
-
+    name = fields.Char(
+        string="Device Name",
+        required=True,
+        tracking=True,
+    )
+    device_code = fields.Char(
+        string="Device Code",
+        required=True,
+        copy=False,
+        index=True,
+    )
     device_type = fields.Selection(
         [
+            ("sensor", "Sensor"),
+            ("actuator", "Actuator"),
+            ("gateway", "Gateway"),
+            ("controller", "Controller"),
+            ("display", "Display"),
             ("printer", "Printer"),
-            ("scale", "Scale"),
-            ("scanner", "Barcode Scanner"),
-            ("display", "Customer Display"),
-            ("payment", "Payment Terminal"),
-            ("camera", "Camera"),
+            ("scanner", "Scanner"),
             ("other", "Other"),
         ],
-        required=True,
-        default="printer",
         string="Device Type",
-    )
-
-    connection_type = fields.Selection(
-        [
-            ("usb", "USB"),
-            ("network", "Network/TCP"),
-            ("serial", "Serial Port"),
-            ("cups", "CUPS"),
-            ("printnode", "PrintNode Cloud"),
-            ("escpos", "ESC/POS Direct"),
-        ],
         required=True,
-        default="network",
-        string="Connection Type",
+        default="sensor",
+        tracking=True,
     )
-
-    # Gateway
-    gateway_id = fields.Many2one(
-        "ipai.iot.gateway",
-        string="Gateway",
-        ondelete="cascade",
-    )
-
-    # Network settings
-    ip_address = fields.Char(string="IP Address")
-    port = fields.Integer(string="Port", default=9100)
-
-    # USB settings
-    usb_vendor_id = fields.Char(string="USB Vendor ID")
-    usb_product_id = fields.Char(string="USB Product ID")
-
-    # Serial settings
-    serial_port = fields.Char(string="Serial Port", help="e.g., /dev/ttyUSB0")
-    serial_baudrate = fields.Integer(string="Baud Rate", default=9600)
-
-    # CUPS settings
-    cups_printer_name = fields.Char(string="CUPS Printer Name")
-
-    # PrintNode settings
-    printnode_printer_id = fields.Integer(string="PrintNode Printer ID")
-
-    # Printer-specific
-    printer_type = fields.Selection(
+    protocol = fields.Selection(
         [
-            ("escpos", "ESC/POS (Receipt)"),
-            ("star", "Star Micronics"),
-            ("zpl", "Zebra ZPL (Label)"),
-            ("pdf", "PDF/IPP"),
+            ("mqtt", "MQTT"),
+            ("http", "HTTP/REST"),
+            ("modbus", "Modbus"),
+            ("opcua", "OPC UA"),
+            ("websocket", "WebSocket"),
+            ("serial", "Serial"),
         ],
-        string="Printer Type",
-        default="escpos",
+        string="Protocol",
+        required=True,
+        default="http",
     )
-    paper_width = fields.Integer(string="Paper Width (mm)", default=80)
-
-    # State
     state = fields.Selection(
         [
-            ("draft", "Not Connected"),
-            ("connected", "Connected"),
+            ("draft", "Draft"),
+            ("active", "Active"),
             ("error", "Error"),
+            ("maintenance", "Maintenance"),
+            ("archived", "Archived"),
         ],
+        string="State",
         default="draft",
-        string="Status",
+        tracking=True,
     )
-    last_used = fields.Datetime(string="Last Used")
-    error_message = fields.Text(string="Error Message")
 
-    active = fields.Boolean(default=True)
+    # Connection Configuration
+    host = fields.Char(
+        string="Host/IP",
+        help="Device IP address or hostname",
+    )
+    port = fields.Integer(
+        string="Port",
+        default=80,
+    )
+    endpoint = fields.Char(
+        string="API Endpoint",
+        help="REST API endpoint path",
+    )
+    api_key = fields.Char(
+        string="API Key",
+    )
+    username = fields.Char(
+        string="Username",
+    )
+    password = fields.Char(
+        string="Password",
+    )
+
+    # MQTT Configuration
+    mqtt_topic_subscribe = fields.Char(
+        string="Subscribe Topic",
+        help="MQTT topic to subscribe for incoming data",
+    )
+    mqtt_topic_publish = fields.Char(
+        string="Publish Topic",
+        help="MQTT topic to publish commands",
+    )
+    mqtt_qos = fields.Selection(
+        [
+            ("0", "At most once (0)"),
+            ("1", "At least once (1)"),
+            ("2", "Exactly once (2)"),
+        ],
+        string="QoS Level",
+        default="1",
+    )
+
+    # Status
+    last_seen = fields.Datetime(
+        string="Last Seen",
+        readonly=True,
+    )
+    last_error = fields.Text(
+        string="Last Error",
+        readonly=True,
+    )
+    reading_count = fields.Integer(
+        string="Reading Count",
+        compute="_compute_reading_count",
+    )
+
+    # Location
+    location = fields.Char(
+        string="Location",
+    )
+    latitude = fields.Float(
+        string="Latitude",
+        digits=(10, 7),
+    )
+    longitude = fields.Float(
+        string="Longitude",
+        digits=(10, 7),
+    )
+
+    # Metadata
+    manufacturer = fields.Char(
+        string="Manufacturer",
+    )
+    model = fields.Char(
+        string="Model",
+    )
+    serial_number = fields.Char(
+        string="Serial Number",
+    )
+    firmware_version = fields.Char(
+        string="Firmware Version",
+    )
 
     _sql_constraints = [
-        ("identifier_gateway_unique", "unique(identifier, gateway_id)",
-         "Device identifier must be unique per gateway"),
+        (
+            "device_code_unique",
+            "UNIQUE(device_code)",
+            "Device code must be unique.",
+        ),
     ]
+
+    def _compute_reading_count(self):
+        """Compute number of readings for this device."""
+        Reading = self.env["ipai.iot.reading"]
+        for device in self:
+            device.reading_count = Reading.search_count([("device_id", "=", device.id)])
+
+    def action_activate(self):
+        """Activate device."""
+        self.write({"state": "active"})
+
+    def action_deactivate(self):
+        """Set device to draft."""
+        self.write({"state": "draft"})
+
+    def action_set_maintenance(self):
+        """Set device to maintenance mode."""
+        self.write({"state": "maintenance"})
 
     def action_test_connection(self):
         """Test device connection."""
         self.ensure_one()
-
         try:
-            if self.connection_type == "network":
-                import socket
-
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(5)
-                sock.connect((self.ip_address, self.port or 9100))
-                sock.close()
-
-            elif self.connection_type == "cups":
-                import subprocess
-
-                cups_server = self.gateway_id.cups_server if self.gateway_id else "localhost"
-                result = subprocess.run(
-                    ["lpstat", "-h", cups_server, "-p", self.cups_printer_name],
-                    capture_output=True,
-                    timeout=5,
-                )
-                if result.returncode != 0:
-                    raise Exception(result.stderr.decode())
-
-            elif self.connection_type == "printnode":
-                if not self.gateway_id or not self.gateway_id.printnode_api_key:
-                    raise UserError("PrintNode API key required on gateway")
-
-                response = requests.get(
-                    f"https://api.printnode.com/printers/{self.printnode_printer_id}",
-                    auth=(self.gateway_id.printnode_api_key, ""),
-                    timeout=5,
-                )
-                response.raise_for_status()
-
-            self.write({
-                "state": "connected",
-                "last_used": fields.Datetime.now(),
-                "error_message": False,
-            })
-
+            if self.protocol == "http":
+                return self._test_http_connection()
+            elif self.protocol == "mqtt":
+                return self._test_mqtt_connection()
+            else:
+                return {
+                    "type": "ir.actions.client",
+                    "tag": "display_notification",
+                    "params": {
+                        "title": "Connection Test",
+                        "message": f"Test not implemented for {self.protocol}",
+                        "type": "warning",
+                    },
+                }
+        except Exception as e:
+            self.write({"state": "error", "last_error": str(e)})
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
                 "params": {
-                    "title": "Connection Test",
-                    "message": f"Successfully connected to {self.name}",
-                    "type": "success",
+                    "title": "Connection Failed",
+                    "message": str(e),
+                    "type": "danger",
                 },
             }
 
-        except Exception as e:
-            self.write({"state": "error", "error_message": str(e)})
-            raise UserError(f"Connection failed: {e}")
+    def _test_http_connection(self):
+        """Test HTTP/REST connection."""
+        import requests
 
-    def action_print_test_page(self):
-        """Print a test page."""
-        self.ensure_one()
+        url = f"http://{self.host}:{self.port}"
+        if self.endpoint:
+            url = f"{url}/{self.endpoint.lstrip('/')}"
 
-        if self.device_type != "printer":
-            raise UserError("Not a printer device")
+        headers = {}
+        if self.api_key:
+            headers["Authorization"] = f"Bearer {self.api_key}"
 
-        test_content = f"""
-================================
-IPAI IoT Bridge - Test Print
-================================
-Device: {self.name}
-Type: {self.printer_type}
-Date: {fields.Datetime.now()}
-================================
-If you can read this, the
-printer is working correctly!
-================================
-"""
-
-        try:
-            self._send_to_printer(test_content.encode())
-
-            self.write({
-                "state": "connected",
-                "last_used": fields.Datetime.now(),
-            })
-
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            self.write({"state": "active", "last_seen": fields.Datetime.now()})
             return {
                 "type": "ir.actions.client",
                 "tag": "display_notification",
                 "params": {
-                    "title": "Test Print",
-                    "message": "Test page sent successfully",
+                    "title": "Connection Successful",
+                    "message": "Device is reachable",
                     "type": "success",
                 },
             }
-
-        except Exception as e:
-            raise UserError(f"Print failed: {e}")
-
-    def _send_to_printer(self, data):
-        """Send data to printer based on connection type."""
-        self.ensure_one()
-
-        if self.connection_type == "network":
-            import socket
-
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(10)
-            sock.connect((self.ip_address, self.port or 9100))
-            sock.sendall(data)
-            sock.close()
-
-        elif self.connection_type == "cups":
-            import subprocess
-            import tempfile
-
-            with tempfile.NamedTemporaryFile(delete=False) as f:
-                f.write(data)
-                f.flush()
-
-                cups_server = self.gateway_id.cups_server if self.gateway_id else "localhost"
-                subprocess.run(
-                    ["lp", "-h", cups_server, "-d", self.cups_printer_name, f.name],
-                    check=True,
-                    timeout=30,
-                )
-
-        elif self.connection_type == "printnode":
-            import base64
-
-            if not self.gateway_id or not self.gateway_id.printnode_api_key:
-                raise UserError("PrintNode API key required")
-
-            requests.post(
-                "https://api.printnode.com/printjobs",
-                auth=(self.gateway_id.printnode_api_key, ""),
-                json={
-                    "printerId": self.printnode_printer_id,
-                    "title": "IPAI Print Job",
-                    "contentType": "raw_base64",
-                    "content": base64.b64encode(data).decode(),
-                },
-                timeout=30,
-            )
-
         else:
-            raise UserError(f"Unsupported connection type: {self.connection_type}")
+            raise Exception(f"HTTP {response.status_code}: {response.text}")
 
-    def print_receipt(self, content):
-        """Print receipt content (ESC/POS formatted)."""
+    def _test_mqtt_connection(self):
+        """Test MQTT connection (placeholder)."""
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": "MQTT Test",
+                "message": "MQTT connection test requires broker configuration",
+                "type": "info",
+            },
+        }
+
+    def action_view_readings(self):
+        """View readings for this device."""
         self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": f"Readings - {self.name}",
+            "res_model": "ipai.iot.reading",
+            "view_mode": "tree,form",
+            "domain": [("device_id", "=", self.id)],
+            "context": {"default_device_id": self.id},
+        }
 
-        if self.printer_type == "escpos":
-            # Add ESC/POS commands
-            data = b"\x1b\x40"  # Initialize
-            data += content.encode() if isinstance(content, str) else content
-            data += b"\x1d\x56\x00"  # Cut paper
 
-        else:
-            data = content.encode() if isinstance(content, str) else content
+class IpaiIotDeviceType(models.Model):
+    """Device type configuration."""
 
-        self._send_to_printer(data)
-        self.write({"last_used": fields.Datetime.now()})
+    _name = "ipai.iot.device.type"
+    _description = "IoT Device Type"
+
+    name = fields.Char(
+        string="Type Name",
+        required=True,
+    )
+    code = fields.Char(
+        string="Code",
+        required=True,
+    )
+    description = fields.Text(
+        string="Description",
+    )
+    default_protocol = fields.Selection(
+        [
+            ("mqtt", "MQTT"),
+            ("http", "HTTP/REST"),
+            ("modbus", "Modbus"),
+            ("opcua", "OPC UA"),
+            ("websocket", "WebSocket"),
+            ("serial", "Serial"),
+        ],
+        string="Default Protocol",
+        default="http",
+    )

@@ -7,33 +7,25 @@ class IPAIAIMessage(models.Model):
     _description = "AI Message"
     _order = "create_date asc"
 
-    thread_id = fields.Many2one(
-        "ipai.ai.thread",
-        required=True,
-        ondelete="cascade"
-    )
+    thread_id = fields.Many2one("ipai.ai.thread", required=True, ondelete="cascade")
     role = fields.Selection(
         [
             ("user", "User"),
             ("assistant", "Assistant"),
             ("system", "System"),
         ],
-        required=True
+        required=True,
     )
     content = fields.Text(required=True)
 
     # Citations and confidence
     citations_json = fields.Json(
-        default=list,
-        help="Array of {index, title, url, score} citation objects"
+        default=list, help="Array of {index, title, url, score} citation objects"
     )
-    confidence = fields.Float(
-        default=0.0,
-        help="Confidence score (0.0 to 1.0)"
-    )
+    confidence = fields.Float(default=0.0, help="Confidence score (0.0 to 1.0)")
     is_uncertain = fields.Boolean(
         default=False,
-        help="Flag indicating the response is uncertain and may need escalation"
+        help="Flag indicating the response is uncertain and may need escalation",
     )
 
     # Metadata
@@ -47,7 +39,7 @@ class IPAIAIMessage(models.Model):
             ("positive", "Helpful"),
             ("negative", "Not Helpful"),
         ],
-        help="User feedback on this response"
+        help="User feedback on this response",
     )
     feedback_reason = fields.Text(help="Reason for feedback")
 

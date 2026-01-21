@@ -52,4 +52,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_custom_routes --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.278276_
+_Audited: 2026-01-21T22:42:53.121232_

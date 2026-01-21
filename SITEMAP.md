@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6133c6e54a99a92fb72ee8bc6ef8b22769f8bd09
+> Commit: 36112708d5215733e6e1eb4b8150039580e17bdb
 
 ## 📚 Documentation
 
@@ -11,9 +11,11 @@
 | [](.agent/workflows/deploy.md) | .agent/workflows |
 | [This step is manual or handled by the agent writing to the file](.agent/workflows/scaffold.md) | .agent/workflows |
 | [](.agent/workflows/test.md) | .agent/workflows |
+| [Command: Start Dev Server](.claude/commands/dev-server.md) | .claude/commands |
 | [Workflow](.claude/commands/fix-github-issue.md) | .claude/commands |
 | [Rules](.claude/commands/implement.md) | .claude/commands |
 | [Rules](.claude/commands/plan.md) | .claude/commands |
+| [Command: Generate OCA-Style Prototype Module](.claude/commands/prototype-module.md) | .claude/commands |
 | [Shipping Workflow](.claude/commands/ship.md) | .claude/commands |
 | [Primary Responsibility](.claude/commands/verify.md) | .claude/commands |
 | [BIR Compliance Automation Skill](.claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md) | .claude/superclaude/skills/finance/bir-compliance-automation |
@@ -290,6 +292,7 @@
 | [OCA-style "chore" Scope Conventions](docs/OCA_CHORE_SCOPE.md) | docs |
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
 | [OCA-Style Repository Contract (Canonical)](docs/OCA_STYLE_CONTRACT.md) | docs |
+| [OCA Template Integration Contract](docs/OCA_TEMPLATE_INTEGRATION.md) | docs |
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
 | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
 | [Odoo 18 CE Module Install Order](docs/ODOO_18_CE_MODULE_INSTALL_ORDER.md) | docs |
@@ -374,6 +377,7 @@
 | [Claude Code Project Index](docs/claude_code/README.md) | docs/claude_code |
 | [Claude Connector Configuration Guide](docs/connectors/CLAUDE_CONNECTORS.md) | docs/connectors |
 | [Extended Platform ORM Mapping](docs/data-model/EXTENDED_PLATFORM_ORM_MAP.md) | docs/data-model |
+| [OCA Project Data Model - Odoo CE 18.0](docs/data-model/OCA_PROJECT_DATA_MODEL.md) | docs/data-model |
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
 | [Odoo ORM Map](docs/data-model/ODOO_ORM_MAP.md) | docs/data-model |
 | [Odoo Data Model Artifacts](docs/data-model/README.md) | docs/data-model |
@@ -457,21 +461,48 @@
 | [IPAI Module Index](docs/modules/INDEX.md) | docs/modules |
 | [ipai_advisor](docs/modules/ipai_advisor.md) | docs/modules |
 | [ipai_agent_core](docs/modules/ipai_agent_core.md) | docs/modules |
+| [ipai_ai_agents](docs/modules/ipai_ai_agents.md) | docs/modules |
+| [ipai_ai_agents_ui](docs/modules/ipai_ai_agents_ui.md) | docs/modules |
+| [ipai_ai_audit](docs/modules/ipai_ai_audit.md) | docs/modules |
+| [ipai_ai_connectors](docs/modules/ipai_ai_connectors.md) | docs/modules |
+| [ipai_ai_copilot](docs/modules/ipai_ai_copilot.md) | docs/modules |
+| [ipai_ai_core](docs/modules/ipai_ai_core.md) | docs/modules |
+| [ipai_ai_prompts](docs/modules/ipai_ai_prompts.md) | docs/modules |
+| [ipai_ai_provider_kapa](docs/modules/ipai_ai_provider_kapa.md) | docs/modules |
+| [ipai_ai_provider_pulser](docs/modules/ipai_ai_provider_pulser.md) | docs/modules |
+| [ipai_ai_sources_odoo](docs/modules/ipai_ai_sources_odoo.md) | docs/modules |
+| [ipai_ai_studio](docs/modules/ipai_ai_studio.md) | docs/modules |
+| [ipai_aiux_chat](docs/modules/ipai_aiux_chat.md) | docs/modules |
+| [ipai_approvals](docs/modules/ipai_approvals.md) | docs/modules |
 | [ipai_ask_ai](docs/modules/ipai_ask_ai.md) | docs/modules |
+| [ipai_ask_ai_bridge](docs/modules/ipai_ask_ai_bridge.md) | docs/modules |
 | [ipai_ask_ai_chatter](docs/modules/ipai_ask_ai_chatter.md) | docs/modules |
 | [ipai_assets](docs/modules/ipai_assets.md) | docs/modules |
+| [ipai_auth_oauth_internal](docs/modules/ipai_auth_oauth_internal.md) | docs/modules |
+| [ipai_bi_superset](docs/modules/ipai_bi_superset.md) | docs/modules |
 | [ipai_bir_compliance](docs/modules/ipai_bir_compliance.md) | docs/modules |
 | [ipai_bir_tax_compliance](docs/modules/ipai_bir_tax_compliance.md) | docs/modules |
+| [ipai_catalog_bridge](docs/modules/ipai_catalog_bridge.md) | docs/modules |
 | [ipai_ce_branding](docs/modules/ipai_ce_branding.md) | docs/modules |
 | [ipai_ce_cleaner](docs/modules/ipai_ce_cleaner.md) | docs/modules |
+| [ipai_ces_bundle](docs/modules/ipai_ces_bundle.md) | docs/modules |
+| [ipai_chatgpt_sdk_theme](docs/modules/ipai_chatgpt_sdk_theme.md) | docs/modules |
 | [ipai_clarity_ppm_parity](docs/modules/ipai_clarity_ppm_parity.md) | docs/modules |
 | [ipai_close_orchestration](docs/modules/ipai_close_orchestration.md) | docs/modules |
+| [ipai_command_center](docs/modules/ipai_command_center.md) | docs/modules |
+| [ipai_control_room](docs/modules/ipai_control_room.md) | docs/modules |
+| [ipai_copilot_hub](docs/modules/ipai_copilot_hub.md) | docs/modules |
+| [ipai_copilot_ui](docs/modules/ipai_copilot_ui.md) | docs/modules |
 | [ipai_crm_pipeline](docs/modules/ipai_crm_pipeline.md) | docs/modules |
 | [ipai_custom_routes](docs/modules/ipai_custom_routes.md) | docs/modules |
 | [ipai_default_home](docs/modules/ipai_default_home.md) | docs/modules |
+| [ipai_design_system_apps_sdk](docs/modules/ipai_design_system_apps_sdk.md) | docs/modules |
 | [ipai_dev_studio_base](docs/modules/ipai_dev_studio_base.md) | docs/modules |
+| [ipai_document_ai](docs/modules/ipai_document_ai.md) | docs/modules |
+| [ipai_enterprise_bridge](docs/modules/ipai_enterprise_bridge.md) | docs/modules |
 | [ipai_equipment](docs/modules/ipai_equipment.md) | docs/modules |
 | [ipai_expense](docs/modules/ipai_expense.md) | docs/modules |
+| [ipai_expense_ocr](docs/modules/ipai_expense_ocr.md) | docs/modules |
 | [ipai_finance_bir_compliance](docs/modules/ipai_finance_bir_compliance.md) | docs/modules |
 | [ipai_finance_close_automation](docs/modules/ipai_finance_close_automation.md) | docs/modules |
 | [ipai_finance_close_seed](docs/modules/ipai_finance_close_seed.md) | docs/modules |
@@ -485,12 +516,23 @@
 | [ipai_finance_ppm_tdi](docs/modules/ipai_finance_ppm_tdi.md) | docs/modules |
 | [ipai_finance_ppm_umbrella](docs/modules/ipai_finance_ppm_umbrella.md) | docs/modules |
 | [ipai_finance_project_hybrid](docs/modules/ipai_finance_project_hybrid.md) | docs/modules |
+| [ipai_focalboard_connector](docs/modules/ipai_focalboard_connector.md) | docs/modules |
 | [ipai_grid_view](docs/modules/ipai_grid_view.md) | docs/modules |
 | [ipai_industry_accounting_firm](docs/modules/ipai_industry_accounting_firm.md) | docs/modules |
 | [ipai_industry_marketing_agency](docs/modules/ipai_industry_marketing_agency.md) | docs/modules |
+| [ipai_integrations](docs/modules/ipai_integrations.md) | docs/modules |
+| [ipai_iot_bridge](docs/modules/ipai_iot_bridge.md) | docs/modules |
+| [ipai_mail_integration](docs/modules/ipai_mail_integration.md) | docs/modules |
+| [ipai_marketing_ai](docs/modules/ipai_marketing_ai.md) | docs/modules |
+| [ipai_marketing_journey](docs/modules/ipai_marketing_journey.md) | docs/modules |
 | [ipai_master_control](docs/modules/ipai_master_control.md) | docs/modules |
+| [ipai_mattermost_connector](docs/modules/ipai_mattermost_connector.md) | docs/modules |
+| [ipai_mcp_hub](docs/modules/ipai_mcp_hub.md) | docs/modules |
+| [ipai_module_gating](docs/modules/ipai_module_gating.md) | docs/modules |
 | [ipai_month_end](docs/modules/ipai_month_end.md) | docs/modules |
 | [ipai_month_end_closing](docs/modules/ipai_month_end_closing.md) | docs/modules |
+| [ipai_n8n_connector](docs/modules/ipai_n8n_connector.md) | docs/modules |
+| [ipai_ocr_expense](docs/modules/ipai_ocr_expense.md) | docs/modules |
 | [ipai_ocr_gateway](docs/modules/ipai_ocr_gateway.md) | docs/modules |
 | [ipai_platform_approvals](docs/modules/ipai_platform_approvals.md) | docs/modules |
 | [ipai_platform_audit](docs/modules/ipai_platform_audit.md) | docs/modules |
@@ -500,16 +542,36 @@
 | [ipai_portal_fix](docs/modules/ipai_portal_fix.md) | docs/modules |
 | [ipai_ppm](docs/modules/ipai_ppm.md) | docs/modules |
 | [ipai_ppm_a1](docs/modules/ipai_ppm_a1.md) | docs/modules |
+| [ipai_ppm_dashboard_canvas](docs/modules/ipai_ppm_dashboard_canvas.md) | docs/modules |
 | [ipai_ppm_monthly_close](docs/modules/ipai_ppm_monthly_close.md) | docs/modules |
+| [ipai_project_gantt](docs/modules/ipai_project_gantt.md) | docs/modules |
+| [ipai_project_profitability_bridge](docs/modules/ipai_project_profitability_bridge.md) | docs/modules |
 | [ipai_project_program](docs/modules/ipai_project_program.md) | docs/modules |
+| [ipai_project_suite](docs/modules/ipai_project_suite.md) | docs/modules |
+| [ipai_saas_tenant](docs/modules/ipai_saas_tenant.md) | docs/modules |
+| [ipai_sample_metrics](docs/modules/ipai_sample_metrics.md) | docs/modules |
+| [ipai_scout_bundle](docs/modules/ipai_scout_bundle.md) | docs/modules |
+| [ipai_settings_dashboard](docs/modules/ipai_settings_dashboard.md) | docs/modules |
+| [ipai_skill_api](docs/modules/ipai_skill_api.md) | docs/modules |
 | [ipai_sms_gateway](docs/modules/ipai_sms_gateway.md) | docs/modules |
 | [ipai_srm](docs/modules/ipai_srm.md) | docs/modules |
 | [ipai_studio_ai](docs/modules/ipai_studio_ai.md) | docs/modules |
 | [ipai_superset_connector](docs/modules/ipai_superset_connector.md) | docs/modules |
 | [IPAI Superset Connector - Technical Guide](docs/modules/ipai_superset_connector_technical_guide.md) | docs/modules |
 | [ipai_tbwa_finance](docs/modules/ipai_tbwa_finance.md) | docs/modules |
+| [ipai_tenant_core](docs/modules/ipai_tenant_core.md) | docs/modules |
+| [ipai_test_fixtures](docs/modules/ipai_test_fixtures.md) | docs/modules |
+| [ipai_theme_aiux](docs/modules/ipai_theme_aiux.md) | docs/modules |
+| [ipai_theme_copilot](docs/modules/ipai_theme_copilot.md) | docs/modules |
+| [ipai_theme_fluent2](docs/modules/ipai_theme_fluent2.md) | docs/modules |
+| [ipai_theme_tbwa](docs/modules/ipai_theme_tbwa.md) | docs/modules |
 | [ipai_theme_tbwa_backend](docs/modules/ipai_theme_tbwa_backend.md) | docs/modules |
+| [ipai_ui_brand_tokens](docs/modules/ipai_ui_brand_tokens.md) | docs/modules |
+| [ipai_v18_compat](docs/modules/ipai_v18_compat.md) | docs/modules |
+| [ipai_web_fluent2](docs/modules/ipai_web_fluent2.md) | docs/modules |
+| [ipai_web_icons_fluent](docs/modules/ipai_web_icons_fluent.md) | docs/modules |
 | [ipai_web_theme_chatgpt](docs/modules/ipai_web_theme_chatgpt.md) | docs/modules |
+| [ipai_web_theme_tbwa](docs/modules/ipai_web_theme_tbwa.md) | docs/modules |
 | [ipai_workos_affine](docs/modules/ipai_workos_affine.md) | docs/modules |
 | [ipai_workos_blocks](docs/modules/ipai_workos_blocks.md) | docs/modules |
 | [ipai_workos_canvas](docs/modules/ipai_workos_canvas.md) | docs/modules |
@@ -597,6 +659,7 @@
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | docs/runbooks |
 | [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
+| [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
 | [Document Upload/OCR FSM](docs/state_machines/odoo/document_upload.md) | docs/state_machines/odoo |
@@ -691,6 +754,9 @@
 | [BIR Tax Filing Skill](skills/bir-tax-filing/SKILL.md) | skills/bir-tax-filing |
 | [Expense Processing Skill](skills/expense-processing/SKILL.md) | skills/expense-processing |
 | [Finance SSC Month-End Closing](skills/finance-month-end/SKILL.md) | skills/finance-month-end |
+| [Comprehensive Figma Agent Skill for Claude](skills/user/figma-agent/SKILL.md) | skills/user/figma-agent |
+| [Claude Agent Personality: Sandbox-Aware Dev Agent](skills/user/supabase-schema-catalog/AGENT_PERSONALITY.md) | skills/user/supabase-schema-catalog |
+| [Skill: Supabase Schema Catalog](skills/user/supabase-schema-catalog/SKILL.md) | skills/user/supabase-schema-catalog |
 | [Visio-DrawIO Export Skill](skills/visio-drawio-export/README.md) | skills/visio-drawio-export |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
 | [ADK Control Room — Constitution](spec/adk-control-room/constitution.md) | spec/adk-control-room |
@@ -737,6 +803,7 @@
 | [Expense Automation Plan](spec/expense-automation/plan.md) | spec/expense-automation |
 | [Expense Automation PRD](spec/expense-automation/prd.md) | spec/expense-automation |
 | [Expense Automation — Task Checklist](spec/expense-automation/tasks.md) | spec/expense-automation |
+| [Figma Software Development Plugins – Capability Matrix (Reverse Spec)](spec/figma-dev-plugins-reverse/capabilities.md) | spec/figma-dev-plugins-reverse |
 | [Hire-to-Retire Process Constitution](spec/hire-to-retire/constitution.md) | spec/hire-to-retire |
 | [Hire-to-Retire Implementation Plan](spec/hire-to-retire/plan.md) | spec/hire-to-retire |
 | [Hire-to-Retire Process - Product Requirements](spec/hire-to-retire/prd.md) | spec/hire-to-retire |
@@ -833,6 +900,10 @@
 | [Plan — Seed Bundle](spec/seed-bundle/plan.md) | spec/seed-bundle |
 | [PRD — Seed Bundle](spec/seed-bundle/prd.md) | spec/seed-bundle |
 | [Tasks — Seed Bundle](spec/seed-bundle/tasks.md) | spec/seed-bundle |
+| [Constitution: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/constitution.md) | spec/supabase-platform-kit-observability |
+| [Plan: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/plan.md) | spec/supabase-platform-kit-observability |
+| [PRD: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/prd.md) | spec/supabase-platform-kit-observability |
+| [Tasks: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/tasks.md) | spec/supabase-platform-kit-observability |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
 | [Test Coverage Improvement — Constitution](spec/test-coverage-improvement/constitution.md) | spec/test-coverage-improvement |
 | [Test Coverage Improvement — Implementation Plan](spec/test-coverage-improvement/plan.md) | spec/test-coverage-improvement |
@@ -930,6 +1001,8 @@
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
 | [ipai_integrations](./addons/ipai/ipai_integrations) | ✅ |  |
+| [ipai_iot_bridge](./addons/ipai/ipai_iot_bridge) | ✅ |  |
+| [ipai_mail_integration](./addons/ipai/ipai_mail_integration) | ✅ |  |
 | [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
 | [ipai_marketing_journey](./addons/ipai/ipai_marketing_journey) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
@@ -942,7 +1015,7 @@
 | [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
 | [ipai_ppm](./addons/ipai/ipai_ppm) | ✅ |  |
 | [ipai_ppm_a1](./addons/ipai/ipai_ppm_a1) | ✅ |  |
-| [ipai_ppm_dashboard_canvas](./addons/ipai/ipai_ppm_dashboard_canvas) | ✅ | Clarity Canvas-style Project Dashboard with phases, milestones, tasks, to-dos, and OKR views |
+| [ipai_ppm_dashboard_canvas](./addons/ipai/ipai_ppm_dashboard_canvas) | ✅ |  |
 | [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
 | [ipai_project_gantt](./addons/ipai/ipai_project_gantt) | ✅ |  |
 | [ipai_project_profitability_bridge](./addons/ipai/ipai_project_profitability_bridge) | ✅ |  |
@@ -956,7 +1029,7 @@
 | [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
 | [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
 | [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
-| [ipai_tenant_core](./addons/ipai/ipai_tenant_core) | ✅ | Multi-tenant platform core for InsightPulse AI |
+| [ipai_tenant_core](./addons/ipai/ipai_tenant_core) | ✅ |  |
 | [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_copilot](./addons/ipai/ipai_theme_copilot) | ✅ |  |
@@ -969,7 +1042,7 @@
 | [ipai_web_icons_fluent](./addons/ipai/ipai_web_icons_fluent) | ✅ |  |
 | [ipai_web_theme_tbwa](./addons/ipai/ipai_web_theme_tbwa) | ✅ |  |
 | [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
-| [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ | AI chat agents with ChatGPT/Gemini provider toggles |
+| [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
 | [ipai_crm_pipeline](./addons/ipai_crm_pipeline) | ✅ |  |

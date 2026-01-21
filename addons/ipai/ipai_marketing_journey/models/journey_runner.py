@@ -39,12 +39,16 @@ class MarketingJourneyRunner(models.AbstractModel):
         # 1. Enroll new participants
         enrolled = self.enroll_participants(journey)
         if enrolled:
-            _logger.info("Journey %s: enrolled %d new participants", journey.name, enrolled)
+            _logger.info(
+                "Journey %s: enrolled %d new participants", journey.name, enrolled
+            )
 
         # 2. Process participants ready for next step
         processed = self.process_ready_participants(journey)
         if processed:
-            _logger.info("Journey %s: processed %d participants", journey.name, processed)
+            _logger.info(
+                "Journey %s: processed %d participants", journey.name, processed
+            )
 
         # Update last run timestamp
         journey.write({"last_run": fields.Datetime.now()})
@@ -94,15 +98,16 @@ class MarketingJourneyRunner(models.AbstractModel):
             try:
                 participant = Participant.create_from_record(journey, record)
                 # Set to entry node and mark as in_progress
-                participant.write({
-                    "current_node_id": entry_node.id,
-                    "state": "in_progress",
-                })
+                participant.write(
+                    {
+                        "current_node_id": entry_node.id,
+                        "state": "in_progress",
+                    }
+                )
                 count += 1
             except Exception as e:
                 _logger.error(
-                    "Failed to enroll record %s/%s: %s",
-                    record._name, record.id, str(e)
+                    "Failed to enroll record %s/%s: %s", record._name, record.id, str(e)
                 )
 
         return count
@@ -135,13 +140,14 @@ class MarketingJourneyRunner(models.AbstractModel):
                     count += 1
             except Exception as e:
                 _logger.error(
-                    "Error processing participant %s: %s",
-                    participant.id, str(e)
+                    "Error processing participant %s: %s", participant.id, str(e)
                 )
-                participant.write({
-                    "state": "error",
-                    "error_message": str(e),
-                })
+                participant.write(
+                    {
+                        "state": "error",
+                        "error_message": str(e),
+                    }
+                )
 
         return count
 
@@ -164,10 +170,12 @@ class MarketingJourneyRunner(models.AbstractModel):
             # No current node - find entry
             node = participant.journey_id.get_entry_node()
             if not node:
-                participant.write({
-                    "state": "error",
-                    "error_message": "No entry node found",
-                })
+                participant.write(
+                    {
+                        "state": "error",
+                        "error_message": "No entry node found",
+                    }
+                )
                 return False
             participant.write({"current_node_id": node.id})
 
@@ -180,10 +188,12 @@ class MarketingJourneyRunner(models.AbstractModel):
         )
 
         if not result.get("success"):
-            participant.write({
-                "state": "error",
-                "error_message": result.get("error", "Unknown error"),
-            })
+            participant.write(
+                {
+                    "state": "error",
+                    "error_message": result.get("error", "Unknown error"),
+                }
+            )
             return False
 
         # If waiting (delay node), stop here
@@ -199,19 +209,23 @@ class MarketingJourneyRunner(models.AbstractModel):
         next_nodes = node.get_next_nodes(participant)
         if next_nodes:
             next_node = next_nodes[0]  # Take first (for branching, already filtered)
-            participant.write({
-                "current_node_id": next_node.id,
-                "last_action_date": fields.Datetime.now(),
-                "state": "in_progress",
-            })
+            participant.write(
+                {
+                    "current_node_id": next_node.id,
+                    "last_action_date": fields.Datetime.now(),
+                    "state": "in_progress",
+                }
+            )
             # Recursively process next node immediately (unless it's a delay)
             if next_node.node_type != "delay":
                 return self.process_participant(participant)
         else:
             # No next node - journey complete
-            participant.write({
-                "state": "completed",
-                "completed_date": fields.Datetime.now(),
-            })
+            participant.write(
+                {
+                    "state": "completed",
+                    "completed_date": fields.Datetime.now(),
+                }
+            )
 
         return True

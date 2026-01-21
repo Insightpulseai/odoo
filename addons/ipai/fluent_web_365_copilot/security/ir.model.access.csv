@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_fluent_copilot_intent_user,fluent.copilot.intent.user,model_fluent_copilot_intent,base.group_user,1,0,0,0
+access_fluent_copilot_intent_admin,fluent.copilot.intent.admin,model_fluent_copilot_intent,base.group_system,1,1,1,1
+access_fluent_copilot_session_user,fluent.copilot.session.user,model_fluent_copilot_session,base.group_user,1,1,1,0
+access_fluent_copilot_session_admin,fluent.copilot.session.admin,model_fluent_copilot_session,base.group_system,1,1,1,1
+access_fluent_copilot_message_user,fluent.copilot.message.user,model_fluent_copilot_message,base.group_user,1,1,1,0
+access_fluent_copilot_message_admin,fluent.copilot.message.admin,model_fluent_copilot_message,base.group_system,1,1,1,1

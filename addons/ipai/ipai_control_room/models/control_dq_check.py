@@ -112,12 +112,14 @@ class ControlDQCheckRun(models.Model):
             return False
 
         Issue = self.env["control.dq.issue"]
-        issue = Issue.create({
-            "rule_id": self.rule_id.id,
-            "related_run_id": self.run_id.id if self.run_id else False,
-            "summary": f"DQ Check Failed: {self.rule_id.name}",
-            "evidence_json": self.metrics_json,
-        })
+        issue = Issue.create(
+            {
+                "rule_id": self.rule_id.id,
+                "related_run_id": self.run_id.id if self.run_id else False,
+                "summary": f"DQ Check Failed: {self.rule_id.name}",
+                "evidence_json": self.metrics_json,
+            }
+        )
         self.issue_id = issue.id
         return {
             "type": "ir.actions.act_window",

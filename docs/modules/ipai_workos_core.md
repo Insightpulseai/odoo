@@ -47,4 +47,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_workos_core --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.902402_
+_Audited: 2026-01-21T22:42:54.869189_

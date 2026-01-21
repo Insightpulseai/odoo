@@ -182,13 +182,15 @@ class ControlPipeline(models.Model):
         """Create a new run for this pipeline"""
         self.ensure_one()
         Run = self.env["control.run"]
-        run = Run.create({
-            "pipeline_id": self.id,
-            "company_id": self.company_id.id,
-            "project_id": self.project_id.id if self.project_id else False,
-            "requested_by": self.env.user.id,
-            "state": "queued",
-        })
+        run = Run.create(
+            {
+                "pipeline_id": self.id,
+                "company_id": self.company_id.id,
+                "project_id": self.project_id.id if self.project_id else False,
+                "requested_by": self.env.user.id,
+                "state": "queued",
+            }
+        )
         self.last_run_id = run.id
         return {
             "type": "ir.actions.act_window",

@@ -1,27 +1,27 @@
 # ipai_ask_ai_chatter
 
 **Status**: ✅ PASS
-**Version**: 18.0.1.1.0
+**Version**: 18.0.1.0.0
 **Author**: InsightPulse AI
 
 ## Summary
 
-Copilot-style @askai in chatter with async jobs + external executor
+Integrate Ask AI into Odoo Chatter for contextual AI assistance
 
 ## Dependencies
 
-- `base`
 - `mail`
+- `ipai_ask_ai`
 
 ## Module Contents
 
 | Type | Count |
 |------|-------|
-| Models | 2 |
-| Views | 0 |
-| Menus | 0 |
-| Actions | 0 |
-| Data Files | 1 |
+| Models | 1 |
+| Views | 3 |
+| Menus | 1 |
+| Actions | 1 |
+| Data Files | 2 |
 
 ## Validation Results
 
@@ -44,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_ask_ai_chatter --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.161929_
+_Audited: 2026-01-21T22:42:52.745554_

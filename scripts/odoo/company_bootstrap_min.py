@@ -47,4 +47,11 @@ user.company_id = old.id  # default = InsightPulseAI
 print("OK")
 print("Renamed:", old.id, old.name)
 print("TBWA:", tbwa.id, tbwa.name)
-print("User:", user.login, "default=", user.company_id.name, "allowed=", [c.name for c in user.company_ids])
+print(
+    "User:",
+    user.login,
+    "default=",
+    user.company_id.name,
+    "allowed=",
+    [c.name for c in user.company_ids],
+)

@@ -36,7 +36,7 @@ def send_test_email(recipient: str) -> bool:
         return False
 
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
-    hostname = os.uname().nodename if hasattr(os, 'uname') else "unknown"
+    hostname = os.uname().nodename if hasattr(os, "uname") else "unknown"
 
     print("=== Mailgun Email Test ===")
     print(f"Domain: {domain}")
@@ -60,18 +60,13 @@ If you received this email, your Mailgun configuration is working correctly.
 
 --
 InsightPulse AI Platform
-https://insightpulseai.net"""
+https://insightpulseai.net""",
     }
 
     print("Sending test email...")
 
     try:
-        response = requests.post(
-            url,
-            auth=("api", api_key),
-            data=data,
-            timeout=30
-        )
+        response = requests.post(url, auth=("api", api_key), data=data, timeout=30)
 
         print()
         print("Response:")

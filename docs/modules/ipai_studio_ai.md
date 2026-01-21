@@ -44,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_studio_ai --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.793494_
+_Audited: 2026-01-21T22:42:54.503756_

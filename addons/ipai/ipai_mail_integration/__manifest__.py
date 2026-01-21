@@ -1,46 +1,43 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Mail Integration",
-    "summary": "Direct mail integration with Gmail/Outlook OAuth (EE mail_plugin replacement)",
+    "version": "18.0.1.0.0",
+    "category": "InsightPulse/Communication",
+    "summary": "Mailgun/SMTP/OAuth mail integration without IAP dependencies",
     "description": """
 IPAI Mail Integration
 =====================
 
-This module provides direct integration with Gmail and Outlook 365
-without requiring Odoo Enterprise mail_plugin modules.
+Direct email integration for IPAI CE+OCA stack without IAP dependencies.
 
 Features:
-- OAuth configuration for Google and Microsoft
-- Direct API integration via MS Graph and Gmail API
-- Mail tracking and sync capabilities
-- No IAP or EE dependencies
+- Direct SMTP gateway integration
+- Mailgun API support
+- OAuth2 authentication for SMTP
+- Email tracking and analytics
+- Template management
+- Bounce handling
 
-Replaces:
-- mail_plugin (EE)
-- mail_plugin_gmail (EE)
-- mail_plugin_outlook (EE)
+This module replaces IAP-based mail services with direct integrations.
     """,
-    "version": "18.0.1.0.0",
-    "category": "InsightPulse/Communication",
     "author": "InsightPulse AI",
-    "website": "https://github.com/jgtolentino/odoo-ce",
+    "website": "https://insightpulseai.net",
     "license": "AGPL-3",
     "depends": [
-        # CE core only - NO EE dependencies
         "base",
         "mail",
-        "auth_oauth",
-        "fetchmail",
-        # OCA (if available)
-        # "mail_tracking",
+        "ipai_enterprise_bridge",
     ],
+    "external_dependencies": {
+        "python": ["requests"],
+    },
     "data": [
-        "security/security.xml",
         "security/ir.model.access.csv",
-        "views/mail_oauth_provider_views.xml",
+        "data/mail_integration_data.xml",
+        "views/mail_integration_views.xml",
         "views/res_config_settings_views.xml",
-        "data/config_parameters.xml",
     ],
+    "demo": [],
     "installable": True,
     "application": False,
     "auto_install": False,

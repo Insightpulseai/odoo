@@ -120,7 +120,11 @@ class IpaiOcrGatewayService(models.AbstractModel):
             "transaction_id": transaction_id,
             "amount": mock_amount,
             "vendor": mock_vendor,
-            "date": mock_date.isoformat() if hasattr(mock_date, "isoformat") else str(mock_date),
+            "date": (
+                mock_date.isoformat()
+                if hasattr(mock_date, "isoformat")
+                else str(mock_date)
+            ),
             "confidence": 87.5,
             "raw_text": f"""
 SAMPLE RECEIPT
@@ -181,7 +185,11 @@ Thank you for your business!
                 # For now, return pending status
                 return {
                     "success": True,
-                    "transaction_id": operation_url.split("/")[-1] if operation_url else "AZURE-PENDING",
+                    "transaction_id": (
+                        operation_url.split("/")[-1]
+                        if operation_url
+                        else "AZURE-PENDING"
+                    ),
                     "amount": 0.0,
                     "vendor": "",
                     "date": None,
@@ -226,7 +234,13 @@ Thank you for your business!
             request_body = {
                 "requests": [
                     {
-                        "image": {"content": expense.receipt_image.decode() if isinstance(expense.receipt_image, bytes) else expense.receipt_image},
+                        "image": {
+                            "content": (
+                                expense.receipt_image.decode()
+                                if isinstance(expense.receipt_image, bytes)
+                                else expense.receipt_image
+                            )
+                        },
                         "features": [{"type": "DOCUMENT_TEXT_DETECTION"}],
                     }
                 ]

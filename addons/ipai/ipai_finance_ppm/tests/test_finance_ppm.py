@@ -106,7 +106,9 @@ class TestFinanceLogframe(TransactionCase):
         )
 
         self.assertEqual(logframe.indicators, "Number of compliance filings")
-        self.assertEqual(logframe.means_of_verification, "BIR receipts and confirmations")
+        self.assertEqual(
+            logframe.means_of_verification, "BIR receipts and confirmations"
+        )
         self.assertEqual(logframe.assumptions, "Stable tax regulations")
 
 
@@ -333,7 +335,9 @@ class TestBIRCronSync(TransactionCase):
 
         # Verify no tasks were created
         schedule.invalidate_recordset()
-        self.assertFalse(schedule.prep_task_id, "No tasks should be created for filed schedules")
+        self.assertFalse(
+            schedule.prep_task_id, "No tasks should be created for filed schedules"
+        )
 
     def test_04_cron_updates_existing_tasks(self):
         """Test cron updates existing tasks instead of creating duplicates."""
@@ -369,4 +373,6 @@ class TestBIRCronSync(TransactionCase):
 
         # Verify same task was updated
         self.assertEqual(schedule.prep_task_id.id, first_task_id)
-        self.assertEqual(schedule.prep_task_id.date_deadline, new_deadline - timedelta(days=4))
+        self.assertEqual(
+            schedule.prep_task_id.date_deadline, new_deadline - timedelta(days=4)
+        )

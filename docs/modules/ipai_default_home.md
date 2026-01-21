@@ -49,4 +49,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_default_home --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.283494_
+_Audited: 2026-01-21T22:42:53.132145_

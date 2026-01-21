@@ -400,10 +400,12 @@ class IpaiAskAIService(models.TransientModel):
 
     def _query_gemini(self, prompt):
         """Query Google Gemini API."""
-        api_key = self.env['ir.config_parameter'].sudo().get_param('ipai_gemini.api_key')
+        api_key = (
+            self.env["ir.config_parameter"].sudo().get_param("ipai_gemini.api_key")
+        )
         if not api_key:
-            api_key = os.environ.get('GEMINI_API_KEY')
-        
+            api_key = os.environ.get("GEMINI_API_KEY")
+
         if not api_key:
             return None
 
@@ -413,7 +415,11 @@ class IpaiAskAIService(models.TransientModel):
 
         try:
             genai.configure(api_key=api_key)
-            model_name = self.env['ir.config_parameter'].sudo().get_param('ipai_gemini.model', 'gemini-pro')
+            model_name = (
+                self.env["ir.config_parameter"]
+                .sudo()
+                .get_param("ipai_gemini.model", "gemini-pro")
+            )
             model = genai.GenerativeModel(model_name)
             response = model.generate_content(prompt)
             return response.text
@@ -440,7 +446,9 @@ class IpaiAskAIService(models.TransientModel):
         """
         # Get API key from config parameter or environment
         IrConfig = self.env["ir.config_parameter"].sudo()
-        api_key = IrConfig.get_param("ipai_gemini.api_key") or os.getenv("GEMINI_API_KEY")
+        api_key = IrConfig.get_param("ipai_gemini.api_key") or os.getenv(
+            "GEMINI_API_KEY"
+        )
 
         if not api_key:
             _logger.warning("Gemini API key not configured")
@@ -465,24 +473,18 @@ class IpaiAskAIService(models.TransientModel):
         }
 
         payload = {
-            "contents": [{
-                "parts": [{
-                    "text": f"{system_context}\n\nUser question: {query}"
-                }]
-            }],
+            "contents": [
+                {"parts": [{"text": f"{system_context}\n\nUser question: {query}"}]}
+            ],
             "generationConfig": {
                 "temperature": 0.7,
                 "maxOutputTokens": 500,
-            }
+            },
         }
 
         try:
             response = requests.post(
-                url,
-                headers=headers,
-                params={"key": api_key},
-                json=payload,
-                timeout=10
+                url, headers=headers, params={"key": api_key}, json=payload, timeout=10
             )
 
             if response.status_code == 200:
@@ -497,8 +499,13 @@ class IpaiAskAIService(models.TransientModel):
                     _logger.warning("Gemini returned no candidates")
                     return {"success": False, "message": "No response from Gemini"}
             else:
-                _logger.error("Gemini API error: %s - %s", response.status_code, response.text)
-                return {"success": False, "message": f"Gemini API error: {response.status_code}"}
+                _logger.error(
+                    "Gemini API error: %s - %s", response.status_code, response.text
+                )
+                return {
+                    "success": False,
+                    "message": f"Gemini API error: {response.status_code}",
+                }
 
         except requests.Timeout:
             _logger.error("Gemini API timeout")

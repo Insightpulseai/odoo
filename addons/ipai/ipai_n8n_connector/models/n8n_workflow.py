@@ -13,7 +13,7 @@ class N8nWorkflow(models.Model):
         "ipai.integration.connector",
         required=True,
         ondelete="cascade",
-        domain="[('connector_type', '=', 'n8n')]"
+        domain="[('connector_type', '=', 'n8n')]",
     )
 
     # n8n IDs
@@ -22,30 +22,27 @@ class N8nWorkflow(models.Model):
     # Workflow info
     name = fields.Char(required=True)
     active_in_n8n = fields.Boolean(
-        string="Active in n8n",
-        help="Whether the workflow is active in n8n"
+        string="Active in n8n", help="Whether the workflow is active in n8n"
     )
     tags = fields.Char(help="Comma-separated tags")
 
     # Trigger info
-    trigger_type = fields.Selection([
-        ("webhook", "Webhook"),
-        ("schedule", "Schedule/Cron"),
-        ("manual", "Manual"),
-        ("event", "Event"),
-    ])
-    webhook_path = fields.Char(
-        help="Webhook path for triggering this workflow"
+    trigger_type = fields.Selection(
+        [
+            ("webhook", "Webhook"),
+            ("schedule", "Schedule/Cron"),
+            ("manual", "Manual"),
+            ("event", "Event"),
+        ]
     )
+    webhook_path = fields.Char(help="Webhook path for triggering this workflow")
 
     # Execution tracking
     execution_ids = fields.One2many(
         "ipai.n8n.execution", "workflow_id", string="Executions"
     )
     last_execution_id = fields.Many2one(
-        "ipai.n8n.execution",
-        compute="_compute_last_execution",
-        string="Last Execution"
+        "ipai.n8n.execution", compute="_compute_last_execution", string="Last Execution"
     )
     execution_count = fields.Integer(compute="_compute_execution_count")
 
@@ -54,8 +51,11 @@ class N8nWorkflow(models.Model):
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
-        ("workflow_uniq", "unique(connector_id, n8n_workflow_id)",
-         "Workflow already exists for this connector!"),
+        (
+            "workflow_uniq",
+            "unique(connector_id, n8n_workflow_id)",
+            "Workflow already exists for this connector!",
+        ),
     ]
 
     def _compute_last_execution(self):
@@ -75,10 +75,13 @@ class N8nWorkflow(models.Model):
         workflows = client.get_workflows()
 
         for wf in workflows:
-            existing = self.search([
-                ("connector_id", "=", connector.id),
-                ("n8n_workflow_id", "=", str(wf["id"])),
-            ], limit=1)
+            existing = self.search(
+                [
+                    ("connector_id", "=", connector.id),
+                    ("n8n_workflow_id", "=", str(wf["id"])),
+                ],
+                limit=1,
+            )
 
             # Determine trigger type
             trigger_type = "manual"
@@ -124,22 +127,28 @@ class N8nWorkflow(models.Model):
                     "title": "Cannot Trigger",
                     "message": "This workflow does not have a webhook trigger.",
                     "type": "warning",
-                }
+                },
             }
 
         from ..services.n8n_client import N8nClient
+
         client = N8nClient(self.connector_id)
-        result = client.trigger_webhook(self.webhook_path, {
-            "triggered_from": "odoo",
-            "workflow_id": self.n8n_workflow_id,
-        })
+        result = client.trigger_webhook(
+            self.webhook_path,
+            {
+                "triggered_from": "odoo",
+                "workflow_id": self.n8n_workflow_id,
+            },
+        )
 
         # Log execution
-        self.env["ipai.n8n.execution"].create({
-            "workflow_id": self.id,
-            "trigger_source": "odoo_manual",
-            "status": "running" if result else "error",
-        })
+        self.env["ipai.n8n.execution"].create(
+            {
+                "workflow_id": self.id,
+                "trigger_source": "odoo_manual",
+                "status": "running" if result else "error",
+            }
+        )
 
         return {
             "type": "ir.actions.client",
@@ -148,5 +157,5 @@ class N8nWorkflow(models.Model):
                 "title": "Workflow Triggered",
                 "message": f"Workflow '{self.name}' has been triggered.",
                 "type": "success",
-            }
+            },
         }

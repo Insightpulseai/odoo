@@ -32,10 +32,12 @@ class IpaiCopilotMixin(models.AbstractModel):
 
         for rec in self:
             if model and rec.id:
-                sessions = Thread.search([
-                    ("model_id", "=", model.id),
-                    ("res_id", "=", rec.id),
-                ])
+                sessions = Thread.search(
+                    [
+                        ("model_id", "=", model.id),
+                        ("res_id", "=", rec.id),
+                    ]
+                )
                 rec.ai_session_ids = sessions
                 rec.ai_session_count = len(sessions)
             else:
@@ -62,19 +64,24 @@ class IpaiCopilotMixin(models.AbstractModel):
             }
 
         # Find existing active session or create new
-        session = self.env["ipai.ai.thread"].search([
-            ("model_id", "=", model.id),
-            ("res_id", "=", self.id),
-            ("state", "=", "active"),
-            ("user_id", "=", self.env.user.id),
-        ], limit=1)
+        session = self.env["ipai.ai.thread"].search(
+            [
+                ("model_id", "=", model.id),
+                ("res_id", "=", self.id),
+                ("state", "=", "active"),
+                ("user_id", "=", self.env.user.id),
+            ],
+            limit=1,
+        )
 
         if not session:
-            session = self.env["ipai.ai.thread"].create({
-                "provider_id": provider.id,
-                "model_id": model.id,
-                "res_id": self.id,
-            })
+            session = self.env["ipai.ai.thread"].create(
+                {
+                    "provider_id": provider.id,
+                    "model_id": model.id,
+                    "res_id": self.id,
+                }
+            )
 
         return {
             "name": "Ask AI",

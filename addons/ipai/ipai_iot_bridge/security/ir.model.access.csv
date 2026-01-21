@@ -1,5 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_iot_gateway_admin,ipai.iot.gateway admin,model_ipai_iot_gateway,group_ipai_iot_admin,1,1,1,1
-access_ipai_iot_gateway_user,ipai.iot.gateway user,model_ipai_iot_gateway,group_ipai_iot_user,1,0,0,0
-access_ipai_iot_device_admin,ipai.iot.device admin,model_ipai_iot_device,group_ipai_iot_admin,1,1,1,1
-access_ipai_iot_device_user,ipai.iot.device user,model_ipai_iot_device,group_ipai_iot_user,1,0,0,0
+access_ipai_iot_device_user,ipai.iot.device.user,model_ipai_iot_device,base.group_user,1,0,0,0
+access_ipai_iot_device_admin,ipai.iot.device.admin,model_ipai_iot_device,base.group_system,1,1,1,1
+access_ipai_iot_device_type_user,ipai.iot.device.type.user,model_ipai_iot_device_type,base.group_user,1,0,0,0
+access_ipai_iot_device_type_admin,ipai.iot.device.type.admin,model_ipai_iot_device_type,base.group_system,1,1,1,1
+access_ipai_iot_reading_user,ipai.iot.reading.user,model_ipai_iot_reading,base.group_user,1,0,0,0
+access_ipai_iot_reading_admin,ipai.iot.reading.admin,model_ipai_iot_reading,base.group_system,1,1,1,1
+access_ipai_iot_alert_user,ipai.iot.alert.user,model_ipai_iot_alert,base.group_user,1,0,0,0
+access_ipai_iot_alert_admin,ipai.iot.alert.admin,model_ipai_iot_alert,base.group_system,1,1,1,1

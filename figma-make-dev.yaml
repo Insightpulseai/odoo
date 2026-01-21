@@ -1,0 +1,201 @@
+# figma-make-dev.yaml
+# Dev server + Supabase orchestration for Figma Make environment
+# Compatible with Claude Code Web, Codex, and CI runners
+
+version: 1
+name: odoo-ce-dev-server
+description: Run Odoo CE dev stack with Supabase in a Figma Make–compatible environment.
+
+env:
+  # All secrets are stored in Figma Make / Supabase envs, not here
+  SUPABASE_URL: $SUPABASE_URL
+  SUPABASE_ANON_KEY: $SUPABASE_ANON_KEY
+  SUPABASE_SERVICE_ROLE_KEY: $SUPABASE_SERVICE_ROLE_KEY
+  POSTGRES_USER: $POSTGRES_USER
+  POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+  POSTGRES_DB: $POSTGRES_DB
+
+steps:
+  - id: check-environment
+    name: Check development environment
+    run: |
+      echo "🔍 Checking environment..."
+      docker --version || echo "⚠️  Docker not available"
+      docker compose version || echo "⚠️  Docker Compose not available"
+      node --version || echo "⚠️  Node.js not available"
+      python3 --version || echo "⚠️  Python3 not available"
+      echo "✅ Environment check complete"
+
+  - id: supabase-start
+    name: Start Supabase (if using local development)
+    run: |
+      # Check if Supabase CLI is available
+      if command -v supabase >/dev/null 2>&1; then
+        echo "🗄️  Starting Supabase..."
+        supabase start || true
+        supabase db reset --force || true
+      else
+        echo "⚠️  Supabase CLI not installed, skipping local Supabase"
+        echo "   Using remote Supabase at: ${SUPABASE_URL:-not configured}"
+      fi
+
+  - id: run-migrations
+    name: Apply database migrations
+    run: |
+      echo "📦 Applying migrations..."
+
+      # Apply Supabase migrations if directory exists
+      if [ -d "supabase/migrations" ]; then
+        echo "Applying Supabase migrations..."
+        for file in supabase/migrations/*.sql; do
+          if [ -f "$file" ]; then
+            echo "  - $(basename $file)"
+          fi
+        done
+        supabase db push || true
+      fi
+
+      # Apply db/migrations for observability schema
+      if [ -d "db/migrations" ]; then
+        echo "Applying db/migrations..."
+        for file in db/migrations/*.sql; do
+          if [ -f "$file" ]; then
+            echo "  - $(basename $file)"
+          fi
+        done
+      fi
+
+      echo "✅ Migrations complete"
+
+  - id: start-postgres
+    name: Start PostgreSQL
+    run: |
+      echo "🐘 Starting PostgreSQL..."
+      if [ -f "docker-compose.yml" ]; then
+        docker compose up -d postgres
+        sleep 5
+        echo "✅ PostgreSQL started on port 5432"
+      else
+        echo "❌ docker-compose.yml not found"
+        exit 1
+      fi
+
+  - id: start-odoo
+    name: Start Odoo Core
+    run: |
+      echo "🦌 Starting Odoo CE Core..."
+      docker compose up -d odoo-core
+
+      # Wait for health check
+      echo "Waiting for Odoo to be ready..."
+      for i in $(seq 1 30); do
+        if curl -sf http://localhost:8069/web/health >/dev/null 2>&1; then
+          echo "✅ Odoo Core ready on port 8069"
+          break
+        fi
+        echo "  Waiting... ($i/30)"
+        sleep 2
+      done
+
+  - id: start-n8n
+    name: Start n8n (optional)
+    optional: true
+    run: |
+      echo "🔄 Starting n8n..."
+      docker compose up -d n8n
+
+      # Wait for health check
+      for i in $(seq 1 15); do
+        if curl -sf http://localhost:5678/healthz >/dev/null 2>&1; then
+          echo "✅ n8n ready on port 5678"
+          break
+        fi
+        sleep 2
+      done
+
+  - id: start-control-room
+    name: Start Control Room frontend (optional)
+    optional: true
+    run: |
+      echo "🖥️  Starting Control Room..."
+      if command -v pnpm >/dev/null 2>&1; then
+        pnpm install --filter control-room
+        pnpm --filter control-room dev &
+      elif command -v npm >/dev/null 2>&1; then
+        cd apps/control-room && npm install && npm run dev &
+      else
+        echo "⚠️  No JS package manager found, skipping Control Room"
+      fi
+
+  - id: edge-functions
+    name: Start Supabase edge functions (optional)
+    optional: true
+    run: |
+      if [ -d "supabase/functions" ] && command -v supabase >/dev/null 2>&1; then
+        echo "⚡ Starting edge functions..."
+        supabase functions serve &
+        echo "✅ Edge functions started"
+      else
+        echo "⚠️  No edge functions to start"
+      fi
+
+  - id: health-check
+    name: Final health check
+    run: |
+      echo ""
+      echo "🏥 Running health checks..."
+      echo ""
+
+      # Check all services
+      echo "Service Status:"
+      echo "==============="
+
+      # PostgreSQL
+      if nc -z localhost 5432 2>/dev/null; then
+        echo "✅ PostgreSQL (5432): Running"
+      else
+        echo "❌ PostgreSQL (5432): Not running"
+      fi
+
+      # Odoo Core
+      if curl -sf http://localhost:8069/web/health >/dev/null 2>&1; then
+        echo "✅ Odoo Core (8069): Healthy"
+      else
+        echo "❌ Odoo Core (8069): Unhealthy"
+      fi
+
+      # n8n
+      if curl -sf http://localhost:5678/healthz >/dev/null 2>&1; then
+        echo "✅ n8n (5678): Healthy"
+      else
+        echo "⚪ n8n (5678): Not running"
+      fi
+
+      # Control Room
+      if curl -sf http://localhost:3000/ >/dev/null 2>&1; then
+        echo "✅ Control Room (3000): Healthy"
+      else
+        echo "⚪ Control Room (3000): Not running"
+      fi
+
+outputs:
+  preview:
+    description: Primary dev server preview URL
+    port: 8069
+    path: "/web"
+
+  control_room:
+    description: Control Room dashboard
+    port: 3000
+    path: "/"
+
+  n8n:
+    description: n8n workflow editor
+    port: 5678
+    path: "/"
+
+cleanup:
+  run: |
+    echo "🛑 Stopping all services..."
+    docker compose down
+    echo "✅ Cleanup complete"

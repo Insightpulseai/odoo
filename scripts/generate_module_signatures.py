@@ -296,7 +296,9 @@ def main():
         print()
         print("Next steps:")
         print("  1. Run validation: SELECT * FROM oca.validate_all_custom_modules();")
-        print("  2. Review results: SELECT * FROM oca.validation_results ORDER BY match_confidence DESC;")
+        print(
+            "  2. Review results: SELECT * FROM oca.validation_results ORDER BY match_confidence DESC;"
+        )
         print("  3. Execute retirements based on recommendations")
         print()
 

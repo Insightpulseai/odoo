@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_mail_oauth_provider_admin,ipai.mail.oauth.provider admin,model_ipai_mail_oauth_provider,group_ipai_mail_admin,1,1,1,1
-access_ipai_mail_oauth_provider_user,ipai.mail.oauth.provider user,model_ipai_mail_oauth_provider,group_ipai_mail_user,1,0,0,0
+access_ipai_mail_gateway_user,ipai.mail.gateway.user,model_ipai_mail_gateway,base.group_user,1,0,0,0
+access_ipai_mail_gateway_admin,ipai.mail.gateway.admin,model_ipai_mail_gateway,base.group_system,1,1,1,1
+access_ipai_mail_log_user,ipai.mail.log.user,model_ipai_mail_log,base.group_user,1,0,0,0
+access_ipai_mail_log_admin,ipai.mail.log.admin,model_ipai_mail_log,base.group_system,1,1,1,1

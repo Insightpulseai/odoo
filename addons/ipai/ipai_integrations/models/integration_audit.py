@@ -11,24 +11,23 @@ class IntegrationAudit(models.Model):
     _log_access = True
 
     connector_id = fields.Many2one(
-        "ipai.integration.connector",
-        ondelete="set null",
-        index=True
+        "ipai.integration.connector", ondelete="set null", index=True
     )
-    connector_type = fields.Selection(
-        related="connector_id.connector_type",
-        store=True
-    )
+    connector_type = fields.Selection(related="connector_id.connector_type", store=True)
 
     action = fields.Char(required=True, index=True)
     message = fields.Text()
 
-    level = fields.Selection([
-        ("debug", "Debug"),
-        ("info", "Info"),
-        ("warning", "Warning"),
-        ("error", "Error"),
-    ], default="info", index=True)
+    level = fields.Selection(
+        [
+            ("debug", "Debug"),
+            ("info", "Info"),
+            ("warning", "Warning"),
+            ("error", "Error"),
+        ],
+        default="info",
+        index=True,
+    )
 
     # Request/response details
     request_method = fields.Char()
@@ -42,9 +41,7 @@ class IntegrationAudit(models.Model):
 
     # User context
     user_id = fields.Many2one(
-        "res.users",
-        default=lambda self: self.env.user,
-        index=True
+        "res.users", default=lambda self: self.env.user, index=True
     )
     ip_address = fields.Char()
 
@@ -63,12 +60,11 @@ class IntegrationAudit(models.Model):
     @api.autovacuum
     def _gc_old_logs(self):
         """Clean up old audit logs (keep 90 days)."""
-        limit_date = fields.Datetime.subtract(
-            fields.Datetime.now(),
-            days=90
+        limit_date = fields.Datetime.subtract(fields.Datetime.now(), days=90)
+        old_logs = self.search(
+            [
+                ("create_date", "<", limit_date),
+                ("level", "in", ["debug", "info"]),
+            ]
         )
-        old_logs = self.search([
-            ("create_date", "<", limit_date),
-            ("level", "in", ["debug", "info"]),
-        ])
         old_logs.unlink()
