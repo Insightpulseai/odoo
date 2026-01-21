@@ -12,24 +12,30 @@ if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
 fi
 
 echo "Building Supabase schema catalog..."
-echo "  DB: (hidden)"
 echo "  SQL: $SQL_FILE"
 echo "  OUT: $OUT_FILE"
 
-# Optional comma-separated schema list: e.g. 'public,realm,scout'
+# Optional: comma-separated schema list, e.g. 'public,realm,scout'
 SCHEMA_FILTER="${SCHEMA_FILTER:-}"
 
-# Create catalog directory if missing
 mkdir -p "$SKILL_DIR/catalog"
 
-# Run query and write JSON
 if [[ -n "$SCHEMA_FILTER" ]]; then
   echo "  SCHEMA_FILTER: $SCHEMA_FILTER"
+  # Pass SCHEMA_FILTER as a custom GUC to Postgres via PSQLRC
+  PSQLRC_TMP="$(mktemp)"
+  echo "\\set SCHEMA_FILTER '$SCHEMA_FILTER'" > "$PSQLRC_TMP"
+  PSQLRC_OLD="${PSQLRC:-}"
+  export PSQLRC="$PSQLRC_TMP"
+
   psql "$SUPABASE_DB_URL" \
     -v ON_ERROR_STOP=1 \
-    -v SCHEMA_FILTER="$SCHEMA_FILTER" \
     -f "$SQL_FILE" \
     -t -A > "$OUT_FILE"
+
+  # Cleanup
+  rm -f "$PSQLRC_TMP"
+  export PSQLRC="$PSQLRC_OLD"
 else
   psql "$SUPABASE_DB_URL" \
     -v ON_ERROR_STOP=1 \

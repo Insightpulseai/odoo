@@ -135,9 +135,74 @@ If schema changes:
 
 ---
 
+## Integration with InsightPulse Stack
+
+### Superset Integration
+
+* Use catalog to auto-generate Superset dataset definitions
+* Map Supabase tables to virtual datasets
+* Generate SQLAlchemy URI configs
+
+### Odoo Bridge
+
+* Map Supabase tables to external Odoo models
+* Generate `ipai_*` module stubs for Supabase-backed models
+* Cross-reference authentication (Supabase Auth ↔ Odoo users)
+
+### n8n Workflows
+
+* Schema-aware data transformations
+* Auto-generate Supabase node configurations
+* Validate data shapes before insert/update
+
+---
+
 ## Safety & Constraints
 
 * The skill **never** exposes credentials in the catalog file.
 * Use a **read-only** DB user for `SUPABASE_DB_URL` wherever possible.
 * This catalog is a **snapshot**; it will drift if the schema changes and you don't regenerate it.
 * Do not store secrets or PII in the catalog; it only contains structural metadata (schemas/tables/columns).
+
+---
+
+## CI/CD Integration
+
+Add to your GitHub Actions workflow:
+
+```yaml
+- name: Refresh Supabase Schema Catalog
+  env:
+    SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+    SCHEMA_FILTER: public,auth,storage
+  run: |
+    cd skills/user/supabase-schema-catalog
+    ./scripts/build_schema_catalog.sh
+
+- name: Commit updated catalog
+  run: |
+    git config user.name "github-actions"
+    git config user.email "actions@github.com"
+    git add skills/user/supabase-schema-catalog/catalog/schema_catalog.json
+    git diff --staged --quiet || git commit -m "chore: refresh supabase schema catalog"
+```
+
+---
+
+## Troubleshooting
+
+| Issue                        | Solution                                          |
+| ---------------------------- | ------------------------------------------------- |
+| `SUPABASE_DB_URL is not set` | Export the connection string before running       |
+| Empty JSON output            | Check `SCHEMA_FILTER` isn't excluding all schemas |
+| Connection timeout           | Verify network access and SSL settings            |
+| Permission denied            | Ensure DB user has SELECT on `information_schema` |
+
+---
+
+## Version History
+
+* **1.0.0** (2025-01): Initial skill implementation
+  * SQL-based schema extraction
+  * Shell wrapper with filtering support
+  * Pretty-printed JSON output

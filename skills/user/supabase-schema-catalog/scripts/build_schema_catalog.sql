@@ -1,43 +1,43 @@
 -- Build a JSON schema catalog of all non-system tables and columns.
 -- Optional: filter by SCHEMA_FILTER (comma-separated list of schemas).
-with params as (
-  select
-    nullif(current_setting('SCHEMA_FILTER', true), '') as schema_filter_raw
+WITH params AS (
+  SELECT
+    nullif(current_setting('SCHEMA_FILTER', true), '') AS schema_filter_raw
 ),
-schema_list as (
-  select
-    case
-      when p.schema_filter_raw is null then null
-      else regexp_split_to_array(p.schema_filter_raw, '\s*,\s*')
-    end as schemas
-  from params p
+schema_list AS (
+  SELECT
+    CASE
+      WHEN p.schema_filter_raw IS NULL THEN NULL
+      ELSE regexp_split_to_array(p.schema_filter_raw, '\s*,\s*')
+    END AS schemas
+  FROM params p
 )
-select jsonb_pretty(
+SELECT jsonb_pretty(
   jsonb_agg(
     jsonb_build_object(
       'schema', t.table_schema,
       'table', t.table_name,
       'columns', (
-        select jsonb_agg(
+        SELECT jsonb_agg(
           jsonb_build_object(
             'name', c.column_name,
             'data_type', c.data_type,
             'is_nullable', c.is_nullable,
             'column_default', c.column_default
-          ) order by c.ordinal_position
+          ) ORDER BY c.ordinal_position
         )
-        from information_schema.columns c
-        where c.table_schema = t.table_schema
-          and c.table_name = t.table_name
+        FROM information_schema.columns c
+        WHERE c.table_schema = t.table_schema
+          AND c.table_name = t.table_name
       )
-    ) order by t.table_schema, t.table_name
+    ) ORDER BY t.table_schema, t.table_name
   )
 )
-from information_schema.tables t
-cross join schema_list s
-where t.table_type = 'BASE TABLE'
-  and t.table_schema not in ('pg_catalog', 'information_schema')
-  and (
-    s.schemas is null
-    or t.table_schema = any (s.schemas)
+FROM information_schema.tables t
+CROSS JOIN schema_list s
+WHERE t.table_type = 'BASE TABLE'
+  AND t.table_schema NOT IN ('pg_catalog', 'information_schema')
+  AND (
+    s.schemas IS NULL
+    OR t.table_schema = ANY (s.schemas)
   );
