@@ -1,0 +1,182 @@
+name: Seed Odoo Finance from Supabase
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'seed'
+        type: choice
+        options:
+          - seed
+          - shadow
+          - both
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/20260121_odoo_seed_schema.sql'
+      - 'supabase/seed/odoo/**'
+      - 'db/seeds/odoo/**'
+
+concurrency:
+  group: odoo-seed-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  SUPABASE_EDGE_URL: ${{ secrets.SUPABASE_URL }}
+
+jobs:
+  seed:
+    name: Seed Odoo Projects/Tasks
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && (github.event.inputs.action == 'seed' || github.event.inputs.action == 'both') || github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Trigger seed-odoo-finance Edge Function
+        id: seed
+        run: |
+          set -e
+          echo "Triggering seed-odoo-finance..."
+
+          RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.SEED_RUN_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "${SUPABASE_EDGE_URL}/functions/v1/seed-odoo-finance")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "HTTP Code: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "::error::Seed function failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+
+          # Extract results
+          PROJECTS=$(echo "$BODY" | jq -r '.projects_synced // 0')
+          TASKS=$(echo "$BODY" | jq -r '.tasks_synced // 0')
+          STATUS=$(echo "$BODY" | jq -r '.status // "unknown"')
+
+          echo "projects_synced=$PROJECTS" >> $GITHUB_OUTPUT
+          echo "tasks_synced=$TASKS" >> $GITHUB_OUTPUT
+          echo "status=$STATUS" >> $GITHUB_OUTPUT
+
+      - name: Seed Summary
+        run: |
+          echo "## Seed Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ${{ steps.seed.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Projects Synced | ${{ steps.seed.outputs.projects_synced }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tasks Synced | ${{ steps.seed.outputs.tasks_synced }} |" >> $GITHUB_STEP_SUMMARY
+
+  shadow:
+    name: Shadow Odoo State
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && (github.event.inputs.action == 'shadow' || github.event.inputs.action == 'both')
+    needs: [seed]
+    # Run shadow even if seed is skipped (when action == 'shadow')
+    if: always() && (github.event.inputs.action == 'shadow' || github.event.inputs.action == 'both')
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Wait for Odoo to process
+        if: github.event.inputs.action == 'both'
+        run: sleep 30
+
+      - name: Trigger shadow-odoo-finance Edge Function
+        id: shadow
+        run: |
+          set -e
+          echo "Triggering shadow-odoo-finance..."
+
+          RESPONSE=$(curl -sS -w "\n%{http_code}" -X POST \
+            -H "Authorization: Bearer ${{ secrets.SEED_RUN_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "${SUPABASE_EDGE_URL}/functions/v1/shadow-odoo-finance")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "HTTP Code: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ge 400 ]; then
+            echo "::error::Shadow function failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+
+          # Extract verification results
+          MISSING=$(echo "$BODY" | jq -r '.verification.missing_in_odoo // 0')
+          ORPHAN=$(echo "$BODY" | jq -r '.verification.orphan_in_odoo // 0')
+          DRIFT=$(echo "$BODY" | jq -r '.verification.name_drift // 0')
+
+          echo "missing_in_odoo=$MISSING" >> $GITHUB_OUTPUT
+          echo "orphan_in_odoo=$ORPHAN" >> $GITHUB_OUTPUT
+          echo "name_drift=$DRIFT" >> $GITHUB_OUTPUT
+
+          # Warn on drift
+          if [ "$MISSING" -gt 0 ] || [ "$DRIFT" -gt 0 ]; then
+            echo "::warning::Verification issues detected: $MISSING missing, $DRIFT drifted"
+          fi
+
+      - name: Shadow Summary
+        run: |
+          echo "## Shadow & Verification Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Missing in Odoo | ${{ steps.shadow.outputs.missing_in_odoo }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Orphan in Odoo | ${{ steps.shadow.outputs.orphan_in_odoo }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Name Drift | ${{ steps.shadow.outputs.name_drift }} |" >> $GITHUB_STEP_SUMMARY
+
+  verify:
+    name: Verify Odoo DB State
+    runs-on: ubuntu-latest
+    needs: [seed]
+    if: success() && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Query Odoo via SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
+          DROPLET_IP: ${{ secrets.DROPLET_IP }}
+        run: |
+          echo "Verifying Odoo DB state..."
+
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "$DROPLET_IP" >> ~/.ssh/known_hosts 2>/dev/null
+
+          # Query project count
+          PROJECT_COUNT=$(ssh -o StrictHostKeyChecking=no root@$DROPLET_IP \
+            "docker exec odoo-erp-prod psql -U odoo -d production -t -c \"SELECT COUNT(*) FROM project_project WHERE x_external_ref IS NOT NULL;\"" | tr -d ' ')
+
+          echo "Projects with x_external_ref: $PROJECT_COUNT"
+
+          # Query task count
+          TASK_COUNT=$(ssh -o StrictHostKeyChecking=no root@$DROPLET_IP \
+            "docker exec odoo-erp-prod psql -U odoo -d production -t -c \"SELECT COUNT(*) FROM project_task WHERE x_external_ref IS NOT NULL;\"" | tr -d ' ')
+
+          echo "Tasks with x_external_ref: $TASK_COUNT"
+
+          echo "## Odoo DB Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Entity | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Projects (seeded) | $PROJECT_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tasks (seeded) | $TASK_COUNT |" >> $GITHUB_STEP_SUMMARY
