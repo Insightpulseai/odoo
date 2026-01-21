@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e2c3ee623d2d93fea27554d69fc29f0b0a6b4c0e
+> Commit: e1310c095e97dd8064a0ca66ca6a48561e15d3b1
 
 ## 📚 Documentation
 
@@ -695,6 +695,9 @@
 | [BIR Tax Filing Skill](skills/bir-tax-filing/SKILL.md) | skills/bir-tax-filing |
 | [Expense Processing Skill](skills/expense-processing/SKILL.md) | skills/expense-processing |
 | [Finance SSC Month-End Closing](skills/finance-month-end/SKILL.md) | skills/finance-month-end |
+| [Comprehensive Figma Agent Skill for Claude](skills/user/figma-agent/SKILL.md) | skills/user/figma-agent |
+| [Claude Agent Personality: Sandbox-Aware Dev Agent](skills/user/supabase-schema-catalog/AGENT_PERSONALITY.md) | skills/user/supabase-schema-catalog |
+| [Skill: Supabase Schema Catalog](skills/user/supabase-schema-catalog/SKILL.md) | skills/user/supabase-schema-catalog |
 | [Visio-DrawIO Export Skill](skills/visio-drawio-export/README.md) | skills/visio-drawio-export |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
 | [ADK Control Room — Constitution](spec/adk-control-room/constitution.md) | spec/adk-control-room |
@@ -741,6 +744,7 @@
 | [Expense Automation Plan](spec/expense-automation/plan.md) | spec/expense-automation |
 | [Expense Automation PRD](spec/expense-automation/prd.md) | spec/expense-automation |
 | [Expense Automation — Task Checklist](spec/expense-automation/tasks.md) | spec/expense-automation |
+| [Figma Software Development Plugins – Capability Matrix (Reverse Spec)](spec/figma-dev-plugins-reverse/capabilities.md) | spec/figma-dev-plugins-reverse |
 | [Hire-to-Retire Process Constitution](spec/hire-to-retire/constitution.md) | spec/hire-to-retire |
 | [Hire-to-Retire Implementation Plan](spec/hire-to-retire/plan.md) | spec/hire-to-retire |
 | [Hire-to-Retire Process - Product Requirements](spec/hire-to-retire/prd.md) | spec/hire-to-retire |
