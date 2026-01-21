@@ -189,39 +189,47 @@ class ControlRun(models.Model):
     def action_start(self):
         """Mark run as started"""
         self.ensure_one()
-        self.write({
-            "state": "running",
-            "started_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "running",
+                "started_at": fields.Datetime.now(),
+            }
+        )
         self._log_event("info", "Run started")
 
     def action_complete(self):
         """Mark run as succeeded"""
         self.ensure_one()
-        self.write({
-            "state": "succeeded",
-            "finished_at": fields.Datetime.now(),
-            "progress_pct": 100.0,
-        })
+        self.write(
+            {
+                "state": "succeeded",
+                "finished_at": fields.Datetime.now(),
+                "progress_pct": 100.0,
+            }
+        )
         self._log_event("info", "Run completed successfully")
 
     def action_fail(self, error_message=None):
         """Mark run as failed"""
         self.ensure_one()
-        self.write({
-            "state": "failed",
-            "finished_at": fields.Datetime.now(),
-            "error_message": error_message,
-        })
+        self.write(
+            {
+                "state": "failed",
+                "finished_at": fields.Datetime.now(),
+                "error_message": error_message,
+            }
+        )
         self._log_event("error", f"Run failed: {error_message or 'Unknown error'}")
 
     def action_cancel(self):
         """Cancel the run"""
         self.ensure_one()
-        self.write({
-            "state": "canceled",
-            "finished_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "canceled",
+                "finished_at": fields.Datetime.now(),
+            }
+        )
         self._log_event("warn", "Run canceled by user")
 
     def action_retry(self):
@@ -231,13 +239,15 @@ class ControlRun(models.Model):
 
     def _log_event(self, level, message, step_id=None, payload=None):
         """Helper to create a run event"""
-        self.env["control.run.event"].create({
-            "run_id": self.id,
-            "level": level,
-            "message": message,
-            "step_id": step_id,
-            "payload_json": payload,
-        })
+        self.env["control.run.event"].create(
+            {
+                "run_id": self.id,
+                "level": level,
+                "message": message,
+                "step_id": step_id,
+                "payload_json": payload,
+            }
+        )
 
 
 class ControlRunEvent(models.Model):

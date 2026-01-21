@@ -166,9 +166,7 @@ class IpaiIotDevice(models.Model):
         """Compute number of readings for this device."""
         Reading = self.env["ipai.iot.reading"]
         for device in self:
-            device.reading_count = Reading.search_count(
-                [("device_id", "=", device.id)]
-            )
+            device.reading_count = Reading.search_count([("device_id", "=", device.id)])
 
     def action_activate(self):
         """Activate device."""

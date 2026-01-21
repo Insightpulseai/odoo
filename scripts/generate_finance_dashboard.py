@@ -2,34 +2,37 @@ import json
 import datetime
 
 # Configuration
-INPUT_FILE = 'finance_events_2026.json'
-OUTPUT_FILE = 'finance_calendar_2026.html'
+INPUT_FILE = "finance_events_2026.json"
+OUTPUT_FILE = "finance_calendar_2026.html"
 
 # Role Mapping
 ROLES = {
     "Prep": {"role": "Finance Supervisor", "person": "BOM/JPAL"},
     "Review": {"role": "Senior Finance Manager", "person": "RIM"},
     "Approval": {"role": "Finance Director", "person": "CKVC"},
-    "Filing": {"role": "Finance Team", "person": "ALL"}
+    "Filing": {"role": "Finance Team", "person": "ALL"},
 }
 
+
 def generate_html():
-    with open(INPUT_FILE, 'r') as f:
+    with open(INPUT_FILE, "r") as f:
         data = json.load(f)
 
     nodes = []
 
     for i, record in enumerate(data):
         # New format is flat: { "date": ..., "label": ..., "role": ..., "person": ..., "status": ... }
-        nodes.append({
-            "name": f"{record['date']}-{i}",
-            "value": [record['date'], record['value']],
-            "label": record['label'],
-            "role": record['role'],
-            "person": record['person'],
-            "status": record['status'],
-            "objective": record['objective']
-        })
+        nodes.append(
+            {
+                "name": f"{record['date']}-{i}",
+                "value": [record["date"], record["value"]],
+                "label": record["label"],
+                "role": record["role"],
+                "person": record["person"],
+                "status": record["status"],
+                "objective": record["objective"],
+            }
+        )
 
     # Convert to JSON string for embedding
     nodes_json = json.dumps(nodes, indent=2)
@@ -139,9 +142,10 @@ def generate_html():
 </html>
     """
 
-    with open(OUTPUT_FILE, 'w') as f:
+    with open(OUTPUT_FILE, "w") as f:
         f.write(html_content)
     print(f"Generated {OUTPUT_FILE}")
+
 
 if __name__ == "__main__":
     generate_html()

@@ -157,9 +157,12 @@ class ControlDQIssue(models.Model):
     @api.depends("opened_at", "rule_id.sla_minutes")
     def _compute_sla_due(self):
         from datetime import timedelta
+
         for record in self:
             if record.opened_at and record.rule_id and record.rule_id.sla_minutes:
-                record.sla_due_at = record.opened_at + timedelta(minutes=record.rule_id.sla_minutes)
+                record.sla_due_at = record.opened_at + timedelta(
+                    minutes=record.rule_id.sla_minutes
+                )
             else:
                 record.sla_due_at = False
 
@@ -170,16 +173,20 @@ class ControlDQIssue(models.Model):
             if not record.sla_due_at:
                 record.is_sla_breached = False
             elif record.status in ("resolved", "wont_fix"):
-                record.is_sla_breached = record.closed_at and record.closed_at > record.sla_due_at
+                record.is_sla_breached = (
+                    record.closed_at and record.closed_at > record.sla_due_at
+                )
             else:
                 record.is_sla_breached = now > record.sla_due_at
 
     def action_acknowledge(self):
         """Acknowledge the issue"""
-        self.write({
-            "status": "ack",
-            "acknowledged_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "status": "ack",
+                "acknowledged_at": fields.Datetime.now(),
+            }
+        )
 
     def action_start_progress(self):
         """Mark issue as in progress"""
@@ -187,24 +194,30 @@ class ControlDQIssue(models.Model):
 
     def action_resolve(self):
         """Resolve the issue"""
-        self.write({
-            "status": "resolved",
-            "closed_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "status": "resolved",
+                "closed_at": fields.Datetime.now(),
+            }
+        )
 
     def action_wont_fix(self):
         """Mark as won't fix"""
-        self.write({
-            "status": "wont_fix",
-            "closed_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "status": "wont_fix",
+                "closed_at": fields.Datetime.now(),
+            }
+        )
 
     def action_reopen(self):
         """Reopen a closed issue"""
-        self.write({
-            "status": "open",
-            "closed_at": False,
-        })
+        self.write(
+            {
+                "status": "open",
+                "closed_at": False,
+            }
+        )
 
     def action_create_task(self):
         """Create a project task for remediation"""
@@ -219,9 +232,10 @@ class ControlDQIssue(models.Model):
             }
 
         Task = self.env["project.task"]
-        task = Task.create({
-            "name": f"DQ Issue: {self.summary}",
-            "description": f"""
+        task = Task.create(
+            {
+                "name": f"DQ Issue: {self.summary}",
+                "description": f"""
 Data Quality Issue Remediation
 
 Rule: {self.rule_id.name}
@@ -233,8 +247,11 @@ Opened: {self.opened_at}
 Remediation Steps:
 {self.rule_id.remediation or 'N/A'}
             """.strip(),
-            "user_ids": [(6, 0, [self.assignee_id.id])] if self.assignee_id else False,
-        })
+                "user_ids": (
+                    [(6, 0, [self.assignee_id.id])] if self.assignee_id else False
+                ),
+            }
+        )
         self.task_id = task.id
         return {
             "type": "ir.actions.act_window",

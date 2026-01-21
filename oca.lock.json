@@ -255,7 +255,7 @@
       "branch": "18.0",
       "commit": null,
       "tier": 9,
-      "description": "Project management extensions",
+      "description": "Project management extensions - WBS, templates, stages, timeline, dependencies",
       "modules": [
         "project_wbs",
         "project_template",
@@ -263,9 +263,14 @@
         "project_task_dependency",
         "project_task_recurring",
         "project_stage_closed",
+        "project_stage_state",
+        "project_task_stage_mgmt",
         "project_timeline",
+        "project_timeline_hr_timesheet",
         "project_task_default_stage",
-        "project_task_code"
+        "project_task_code",
+        "project_type",
+        "project_version"
       ]
     },
     "contract": {

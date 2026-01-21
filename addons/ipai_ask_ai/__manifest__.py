@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 {
-    'name': 'IPAI Ask AI',
-    'version': '1.0.0',
-    'category': 'Productivity/AI',
-    'summary': 'AI chat agents with ChatGPT/Gemini provider toggles',
-    'description': """
+    "name": "IPAI Ask AI",
+    "version": "1.0.0",
+    "category": "Productivity/AI",
+    "summary": "AI chat agents with ChatGPT/Gemini provider toggles",
+    "description": """
 IPAI Ask AI
 ===========
 AI chat agent integration with provider toggles for ChatGPT and Google Gemini.
@@ -15,15 +15,15 @@ Features:
 * Secure API key storage (admin-only access)
 * Settings UI integration
     """,
-    'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
-    'license': 'AGPL-3',
-    'depends': ['base', 'web', 'mail'],
-    'data': [
-        'security/ir.model.access.csv',
-        'views/ai_settings_view.xml',
+    "author": "InsightPulse AI",
+    "website": "https://insightpulseai.net",
+    "license": "AGPL-3",
+    "depends": ["base", "web", "mail"],
+    "data": [
+        "security/ir.model.access.csv",
+        "views/ai_settings_view.xml",
     ],
-    'installable': True,
-    'application': False,
-    'auto_install': False,
+    "installable": True,
+    "application": False,
+    "auto_install": False,
 }

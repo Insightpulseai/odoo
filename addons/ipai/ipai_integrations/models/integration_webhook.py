@@ -14,16 +14,18 @@ class IntegrationWebhook(models.Model):
 
     name = fields.Char(required=True)
     connector_id = fields.Many2one(
-        "ipai.integration.connector",
-        required=True,
-        ondelete="cascade"
+        "ipai.integration.connector", required=True, ondelete="cascade"
     )
     active = fields.Boolean(default=True)
 
-    direction = fields.Selection([
-        ("incoming", "Incoming (receive from external)"),
-        ("outgoing", "Outgoing (send to external)"),
-    ], required=True, default="incoming")
+    direction = fields.Selection(
+        [
+            ("incoming", "Incoming (receive from external)"),
+            ("outgoing", "Outgoing (send to external)"),
+        ],
+        required=True,
+        default="incoming",
+    )
 
     # Incoming webhook settings
     endpoint_path = fields.Char(
@@ -34,32 +36,33 @@ class IntegrationWebhook(models.Model):
     )
 
     # Outgoing webhook settings
-    target_url = fields.Char(
-        help="External URL to send webhooks to"
+    target_url = fields.Char(help="External URL to send webhooks to")
+    trigger_model = fields.Char(help="Odoo model that triggers this webhook")
+    trigger_events = fields.Selection(
+        [
+            ("create", "On Create"),
+            ("write", "On Update"),
+            ("unlink", "On Delete"),
+            ("all", "All Events"),
+        ],
+        default="all",
     )
-    trigger_model = fields.Char(
-        help="Odoo model that triggers this webhook"
-    )
-    trigger_events = fields.Selection([
-        ("create", "On Create"),
-        ("write", "On Update"),
-        ("unlink", "On Delete"),
-        ("all", "All Events"),
-    ], default="all")
 
     # Payload settings
     payload_template = fields.Text(
         help="JSON template for webhook payload (Jinja2 syntax)"
     )
-    content_type = fields.Selection([
-        ("application/json", "JSON"),
-        ("application/x-www-form-urlencoded", "Form URL Encoded"),
-    ], default="application/json")
+    content_type = fields.Selection(
+        [
+            ("application/json", "JSON"),
+            ("application/x-www-form-urlencoded", "Form URL Encoded"),
+        ],
+        default="application/json",
+    )
 
     # Security
     include_signature = fields.Boolean(
-        default=True,
-        help="Include HMAC signature in outgoing webhooks"
+        default=True, help="Include HMAC signature in outgoing webhooks"
     )
 
     # Stats
@@ -86,9 +89,7 @@ class IntegrationWebhook(models.Model):
         if not self.signing_secret:
             return False
         expected = hmac.new(
-            self.signing_secret.encode(),
-            payload.encode(),
-            hashlib.sha256
+            self.signing_secret.encode(), payload.encode(), hashlib.sha256
         ).hexdigest()
         return hmac.compare_digest(expected, signature)
 
@@ -98,7 +99,5 @@ class IntegrationWebhook(models.Model):
         if not self.signing_secret:
             return None
         return hmac.new(
-            self.signing_secret.encode(),
-            payload.encode(),
-            hashlib.sha256
+            self.signing_secret.encode(), payload.encode(), hashlib.sha256
         ).hexdigest()

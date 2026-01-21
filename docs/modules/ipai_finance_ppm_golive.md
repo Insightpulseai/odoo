@@ -48,4 +48,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_finance_ppm_golive --stop-after-i
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.478606_
+_Audited: 2026-01-21T22:42:53.562779_

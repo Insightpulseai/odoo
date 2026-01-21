@@ -131,7 +131,11 @@ class IpaiAiGovernanceRule(models.Model):
                 continue
 
             # Check filters
-            if rule.provider_filter and provider and rule.provider_filter not in provider:
+            if (
+                rule.provider_filter
+                and provider
+                and rule.provider_filter not in provider
+            ):
                 continue
             if rule.model_filter and model and rule.model_filter not in model:
                 continue
@@ -157,6 +161,7 @@ class IpaiAiGovernanceRule(models.Model):
             # Check content patterns
             if content and rule.block_patterns:
                 import re
+
                 for pattern in rule.block_patterns.split("\n"):
                     pattern = pattern.strip()
                     if pattern and re.search(pattern, content, re.IGNORECASE):
@@ -203,11 +208,13 @@ class IpaiAiGovernanceRule(models.Model):
 
         # Count recent requests
         AuditLog = self.env["ipai.ai.audit.log"]
-        count = AuditLog.search_count([
-            ("user_id", "=", user.id),
-            ("request_time", ">=", cutoff),
-            ("state", "in", ["success", "error"]),  # Don't count blocked
-        ])
+        count = AuditLog.search_count(
+            [
+                ("user_id", "=", user.id),
+                ("request_time", ">=", cutoff),
+                ("state", "in", ["success", "error"]),  # Don't count blocked
+            ]
+        )
 
         return count < self.rate_limit_count
 

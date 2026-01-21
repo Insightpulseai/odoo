@@ -219,16 +219,16 @@ def validate_no_mixed_naming(module_path: Path) -> list[ValidationError]:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Validate AI module naming conventions")
+    parser = argparse.ArgumentParser(
+        description="Validate AI module naming conventions"
+    )
     parser.add_argument(
         "--addons-path",
         type=Path,
         default=Path("addons"),
         help="Path to addons directory (default: addons)",
     )
-    parser.add_argument(
-        "--verbose", "-v", action="store_true", help="Verbose output"
-    )
+    parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     args = parser.parse_args()
 
     # Find all AI modules

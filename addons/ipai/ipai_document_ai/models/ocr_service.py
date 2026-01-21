@@ -117,12 +117,10 @@ class IpaiOcrService(models.AbstractModel):
                 return result
 
             except requests.Timeout:
-                last_error = _("OCR service timeout after %d seconds") % config[
-                    "timeout"
-                ]
-                _logger.warning(
-                    f"OCR timeout on attempt {attempt + 1}: {last_error}"
+                last_error = (
+                    _("OCR service timeout after %d seconds") % config["timeout"]
                 )
+                _logger.warning(f"OCR timeout on attempt {attempt + 1}: {last_error}")
 
             except requests.ConnectionError as e:
                 last_error = _("Cannot connect to OCR service: %s") % str(e)
@@ -133,9 +131,7 @@ class IpaiOcrService(models.AbstractModel):
             except requests.HTTPError as e:
                 # Don't retry on client errors (4xx)
                 if e.response is not None and 400 <= e.response.status_code < 500:
-                    raise UserError(
-                        _("OCR service rejected the request: %s") % str(e)
-                    )
+                    raise UserError(_("OCR service rejected the request: %s") % str(e))
                 last_error = _("OCR service error: %s") % str(e)
                 _logger.warning(
                     f"OCR HTTP error on attempt {attempt + 1}: {last_error}"

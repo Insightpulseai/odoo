@@ -12,39 +12,32 @@ class IntegrationOAuth(models.Model):
 
     name = fields.Char(required=True)
     connector_id = fields.Many2one(
-        "ipai.integration.connector",
-        required=True,
-        ondelete="cascade"
+        "ipai.integration.connector", required=True, ondelete="cascade"
     )
     active = fields.Boolean(default=True)
 
     # OAuth credentials
     client_id = fields.Char(readonly=True)
-    client_secret = fields.Char(
-        groups="ipai_integrations.group_integration_admin"
-    )
+    client_secret = fields.Char(groups="ipai_integrations.group_integration_admin")
 
     # URLs
-    redirect_uris = fields.Text(
-        help="Allowed redirect URIs (one per line)"
-    )
+    redirect_uris = fields.Text(help="Allowed redirect URIs (one per line)")
     homepage_url = fields.Char()
     icon = fields.Binary(attachment=True)
 
     # OAuth settings
-    grant_types = fields.Selection([
-        ("authorization_code", "Authorization Code"),
-        ("client_credentials", "Client Credentials"),
-        ("both", "Both"),
-    ], default="authorization_code")
-
-    token_expiry = fields.Integer(
-        default=3600,
-        help="Access token expiry in seconds"
+    grant_types = fields.Selection(
+        [
+            ("authorization_code", "Authorization Code"),
+            ("client_credentials", "Client Credentials"),
+            ("both", "Both"),
+        ],
+        default="authorization_code",
     )
+
+    token_expiry = fields.Integer(default=3600, help="Access token expiry in seconds")
     refresh_token_expiry = fields.Integer(
-        default=86400 * 30,
-        help="Refresh token expiry in seconds"
+        default=86400 * 30, help="Refresh token expiry in seconds"
     )
 
     # Scopes
@@ -53,17 +46,17 @@ class IntegrationOAuth(models.Model):
     scope_admin = fields.Boolean(default=False)
 
     # Status
-    state = fields.Selection([
-        ("draft", "Draft"),
-        ("active", "Active"),
-        ("revoked", "Revoked"),
-    ], default="draft")
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("active", "Active"),
+            ("revoked", "Revoked"),
+        ],
+        default="draft",
+    )
 
     # Stats
-    token_count = fields.Integer(
-        compute="_compute_token_count",
-        string="Active Tokens"
-    )
+    token_count = fields.Integer(compute="_compute_token_count", string="Active Tokens")
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -89,7 +82,7 @@ class IntegrationOAuth(models.Model):
                 "title": "Secret Regenerated",
                 "message": "Client secret has been regenerated. Update your application.",
                 "type": "warning",
-            }
+            },
         }
 
     def action_revoke(self):

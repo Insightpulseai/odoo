@@ -51,18 +51,23 @@ def load_seed_bundle(env, module_name: str):
     """
     _logger.info("Loading seed bundle for %s", module_name)
 
-    # 1) Task stages
+    # 1) Task stages (OCA-compatible: supports fold, description fields)
     stages = _read_json(module_name, "data/seed/stages.json").get("task_stages", [])
     for s in stages:
         name = s["name"]
-        seq = s.get("sequence", 10)
+        vals = {
+            "name": name,
+            "sequence": s.get("sequence", 10),
+            "fold": s.get("fold", False),
+        }
+        # Add description if present (Odoo 18 native field)
+        if "description" in s:
+            vals["description"] = s["description"]
         rec = env["project.task.type"].sudo().search([("name", "=", name)], limit=1)
         if rec:
-            rec.write({"sequence": seq})
+            rec.write(vals)
         else:
-            rec = (
-                env["project.task.type"].sudo().create({"name": name, "sequence": seq})
-            )
+            rec = env["project.task.type"].sudo().create(vals)
         # Store xmlid if provided
         xml_id = s.get("xml_id")
         if xml_id:

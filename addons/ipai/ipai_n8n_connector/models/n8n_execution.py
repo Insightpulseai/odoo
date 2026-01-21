@@ -10,34 +10,34 @@ class N8nExecution(models.Model):
     _order = "create_date desc"
 
     workflow_id = fields.Many2one(
-        "ipai.n8n.workflow",
-        required=True,
-        ondelete="cascade"
+        "ipai.n8n.workflow", required=True, ondelete="cascade"
     )
-    connector_id = fields.Many2one(
-        related="workflow_id.connector_id",
-        store=True
-    )
+    connector_id = fields.Many2one(related="workflow_id.connector_id", store=True)
 
     # n8n execution ID
     n8n_execution_id = fields.Char(index=True)
 
     # Execution details
-    trigger_source = fields.Selection([
-        ("webhook", "Webhook"),
-        ("schedule", "Schedule"),
-        ("manual", "Manual (n8n UI)"),
-        ("odoo_manual", "Manual (Odoo)"),
-        ("odoo_webhook", "Odoo Webhook"),
-    ])
+    trigger_source = fields.Selection(
+        [
+            ("webhook", "Webhook"),
+            ("schedule", "Schedule"),
+            ("manual", "Manual (n8n UI)"),
+            ("odoo_manual", "Manual (Odoo)"),
+            ("odoo_webhook", "Odoo Webhook"),
+        ]
+    )
 
-    status = fields.Selection([
-        ("waiting", "Waiting"),
-        ("running", "Running"),
-        ("success", "Success"),
-        ("error", "Error"),
-        ("canceled", "Canceled"),
-    ], default="waiting")
+    status = fields.Selection(
+        [
+            ("waiting", "Waiting"),
+            ("running", "Running"),
+            ("success", "Success"),
+            ("error", "Error"),
+            ("canceled", "Canceled"),
+        ],
+        default="waiting",
+    )
 
     # Timing
     started_at = fields.Datetime()
@@ -64,13 +64,15 @@ class N8nExecution(models.Model):
     @api.model
     def log_webhook_trigger(self, workflow, payload, result=None, error=None):
         """Log a webhook-triggered execution."""
-        return self.create({
-            "workflow_id": workflow.id,
-            "trigger_source": "odoo_webhook",
-            "status": "success" if result else "error",
-            "input_data": str(payload),
-            "output_data": str(result) if result else None,
-            "error_message": error,
-            "started_at": fields.Datetime.now(),
-            "finished_at": fields.Datetime.now(),
-        })
+        return self.create(
+            {
+                "workflow_id": workflow.id,
+                "trigger_source": "odoo_webhook",
+                "status": "success" if result else "error",
+                "input_data": str(payload),
+                "output_data": str(result) if result else None,
+                "error_message": error,
+                "started_at": fields.Datetime.now(),
+                "finished_at": fields.Datetime.now(),
+            }
+        )

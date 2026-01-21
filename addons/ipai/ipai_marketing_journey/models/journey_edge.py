@@ -63,9 +63,7 @@ class MarketingJourneyEdge(models.Model):
         """Prevent edges from pointing to themselves."""
         for edge in self:
             if edge.source_node_id == edge.target_node_id:
-                raise models.ValidationError(
-                    "An edge cannot connect a node to itself."
-                )
+                raise models.ValidationError("An edge cannot connect a node to itself.")
 
     @api.constrains("source_node_id", "target_node_id", "journey_id")
     def _check_same_journey(self):

@@ -13,11 +13,11 @@ from .discover_odoo import discover_odoo
 from .discover_github import discover_github
 
 __all__ = [
-    'InfraDiscoveryOrchestrator',
-    'discover_vercel',
-    'discover_supabase',
-    'discover_digitalocean',
-    'discover_docker',
-    'discover_odoo',
-    'discover_github',
+    "InfraDiscoveryOrchestrator",
+    "discover_vercel",
+    "discover_supabase",
+    "discover_digitalocean",
+    "discover_docker",
+    "discover_odoo",
+    "discover_github",
 ]

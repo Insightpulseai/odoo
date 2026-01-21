@@ -36,9 +36,7 @@ class TestMasterControlConfig(TransactionCase):
         config = self.Mixin._get_master_control_config()
 
         self.assertEqual(config["webhook_url"], "")
-        self.assertEqual(
-            config["tenant_id"], "00000000-0000-0000-0000-000000000001"
-        )
+        self.assertEqual(config["tenant_id"], "00000000-0000-0000-0000-000000000001")
         self.assertTrue(config["enabled"])
 
     def test_02_config_from_parameters(self):

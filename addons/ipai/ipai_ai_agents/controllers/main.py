@@ -27,14 +27,18 @@ class IPAIAIAgentsController(http.Controller):
         Called when the AI panel loads.
         """
         Agent = request.env["ipai.ai.agent"].sudo()
-        agents = Agent.search([
-            ("enabled", "=", True),
-            "|",
-            ("company_id", "=", request.env.company.id),
-            ("company_id", "=", False),
-        ])
+        agents = Agent.search(
+            [
+                ("enabled", "=", True),
+                "|",
+                ("company_id", "=", request.env.company.id),
+                ("company_id", "=", False),
+            ]
+        )
         return {
-            "agents": agents.read(["name", "system_prompt", "model", "provider", "read_only"]),
+            "agents": agents.read(
+                ["name", "system_prompt", "model", "provider", "read_only"]
+            ),
             "user": {
                 "id": request.env.user.id,
                 "name": request.env.user.name,
@@ -91,11 +95,13 @@ class IPAIAIAgentsController(http.Controller):
             thread = Thread.create(thread_vals)
 
         # Store user message
-        Message.create({
-            "thread_id": thread.id,
-            "role": "user",
-            "content": str(message).strip(),
-        })
+        Message.create(
+            {
+                "thread_id": thread.id,
+                "role": "user",
+                "content": str(message).strip(),
+            }
+        )
 
         try:
             # Retrieval (citations)
@@ -120,37 +126,55 @@ class IPAIAIAgentsController(http.Controller):
         except Exception as e:
             _logger.error("LLM call failed: %s", e)
             # Store error response
-            Message.create({
-                "thread_id": thread.id,
-                "role": "assistant",
-                "content": f"I apologize, but I encountered an error processing your request. Please try again or contact support.\n\nError: {str(e)[:200]}",
-                "is_uncertain": True,
-                "confidence": 0.0,
-            })
+            Message.create(
+                {
+                    "thread_id": thread.id,
+                    "role": "assistant",
+                    "content": f"I apologize, but I encountered an error processing your request. Please try again or contact support.\n\nError: {str(e)[:200]}",
+                    "is_uncertain": True,
+                    "confidence": 0.0,
+                }
+            )
             return {
                 "ok": True,
                 "thread_id": thread.id,
-                "messages": thread.message_ids.read([
-                    "role", "content", "citations_json", "confidence", "is_uncertain", "create_date"
-                ]),
+                "messages": thread.message_ids.read(
+                    [
+                        "role",
+                        "content",
+                        "citations_json",
+                        "confidence",
+                        "is_uncertain",
+                        "create_date",
+                    ]
+                ),
             }
 
         # Store assistant message
-        Message.create({
-            "thread_id": thread.id,
-            "role": "assistant",
-            "content": answer.get("answer_markdown", ""),
-            "citations_json": answer.get("citations", []),
-            "confidence": answer.get("confidence", 0.0),
-            "is_uncertain": bool(answer.get("is_uncertain", False)),
-        })
+        Message.create(
+            {
+                "thread_id": thread.id,
+                "role": "assistant",
+                "content": answer.get("answer_markdown", ""),
+                "citations_json": answer.get("citations", []),
+                "confidence": answer.get("confidence", 0.0),
+                "is_uncertain": bool(answer.get("is_uncertain", False)),
+            }
+        )
 
         return {
             "ok": True,
             "thread_id": thread.id,
-            "messages": thread.message_ids.read([
-                "role", "content", "citations_json", "confidence", "is_uncertain", "create_date"
-            ]),
+            "messages": thread.message_ids.read(
+                [
+                    "role",
+                    "content",
+                    "citations_json",
+                    "confidence",
+                    "is_uncertain",
+                    "create_date",
+                ]
+            ),
         }
 
     @http.route("/ipai_ai_agents/feedback", type="json", auth="user")
@@ -177,12 +201,17 @@ class IPAIAIAgentsController(http.Controller):
 
         # Verify user owns the thread
         if msg.thread_id.user_id.id != request.env.user.id:
-            return {"ok": False, "error": "Not authorized to provide feedback on this message."}
+            return {
+                "ok": False,
+                "error": "Not authorized to provide feedback on this message.",
+            }
 
-        msg.write({
-            "feedback": feedback,
-            "feedback_reason": reason,
-        })
+        msg.write(
+            {
+                "feedback": feedback,
+                "feedback_reason": reason,
+            }
+        )
 
         return {"ok": True}
 
@@ -209,7 +238,9 @@ class IPAIAIAgentsController(http.Controller):
 
         return {
             "ok": True,
-            "threads": threads.read(["display_name", "agent_id", "message_count", "create_date"]),
+            "threads": threads.read(
+                ["display_name", "agent_id", "message_count", "create_date"]
+            ),
             "total": total,
         }
 

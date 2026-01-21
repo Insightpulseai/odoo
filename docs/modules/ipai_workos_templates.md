@@ -47,4 +47,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_workos_templates --stop-after-ini
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.935066_
+_Audited: 2026-01-21T22:42:54.924692_

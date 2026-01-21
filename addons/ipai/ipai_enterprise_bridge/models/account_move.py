@@ -36,7 +36,9 @@ class AccountMove(models.Model):
 
     def action_mark_exported(self):
         """Mark invoice as exported to external system."""
-        self.write({
-            "ipai_exported": True,
-            "ipai_export_date": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "ipai_exported": True,
+                "ipai_export_date": fields.Datetime.now(),
+            }
+        )

@@ -64,9 +64,7 @@ def validate_spec_bundle(spec_dir: Path) -> Tuple[bool, List[str]]:
         # Check for placeholder patterns (warning level)
         for pattern in PLACEHOLDER_PATTERNS:
             if pattern in content.upper():
-                print(
-                    f"  WARNING: {file_path} contains placeholder text: {pattern}"
-                )
+                print(f"  WARNING: {file_path} contains placeholder text: {pattern}")
 
     # Validate constitution.md specific requirements
     constitution_path = spec_dir / "constitution.md"
@@ -82,9 +80,7 @@ def validate_spec_bundle(spec_dir: Path) -> Tuple[bool, List[str]]:
     if tasks_path.exists():
         content = tasks_path.read_text(encoding="utf-8")
         if "[ ]" not in content and "[x]" not in content:
-            print(
-                f"  WARNING: {tasks_path} has no task checkboxes ([ ] or [x])"
-            )
+            print(f"  WARNING: {tasks_path} has no task checkboxes ([ ] or [x])")
 
     return len(errors) == 0, errors
 
@@ -100,9 +96,7 @@ def main():
 
     # Find all spec bundles (directories with constitution.md)
     spec_bundles = [
-        d
-        for d in spec_dir.iterdir()
-        if d.is_dir() and (d / "constitution.md").exists()
+        d for d in spec_dir.iterdir() if d.is_dir() and (d / "constitution.md").exists()
     ]
 
     if not spec_bundles:

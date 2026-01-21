@@ -31,9 +31,7 @@ def main():
 
     # Find all spec bundles
     spec_bundles = [
-        d
-        for d in spec_dir.iterdir()
-        if d.is_dir() and (d / "constitution.md").exists()
+        d for d in spec_dir.iterdir() if d.is_dir() and (d / "constitution.md").exists()
     ]
 
     if not spec_bundles:
@@ -68,7 +66,9 @@ def main():
         additional = [
             f.name
             for f in bundle.iterdir()
-            if f.is_file() and f.name not in required_files and not f.name.startswith(".")
+            if f.is_file()
+            and f.name not in required_files
+            and not f.name.startswith(".")
         ]
         if additional:
             print(f"  Additional files: {', '.join(additional)}")

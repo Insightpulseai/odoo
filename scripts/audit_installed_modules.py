@@ -11,8 +11,10 @@ from datetime import datetime, timezone
 DB = os.environ.get("ODOO_DB", "odoo")
 OUT = os.environ.get("OUT", "docs/deployment/MODULES_AUDIT.md")
 
+
 def sh(cmd: str) -> str:
     return subprocess.check_output(cmd, shell=True, text=True)
+
 
 def main():
     # Run inside odoo container or host where `odoo` binary is available.
@@ -46,7 +48,9 @@ print(json.dumps({
     md.append("")
     md.append("## Summary")
     md.append(f"- Installed modules: **{data['installed_count']}**")
-    md.append(f"- Top-level modules (auto_install=false): **{data['top_level_count']}**")
+    md.append(
+        f"- Top-level modules (auto_install=false): **{data['top_level_count']}**"
+    )
     md.append("")
     md.append("## Policy: CE-Only with Optional IAP")
     md.append("")
@@ -54,13 +58,17 @@ print(json.dumps({
     md.append("- `iap_*` modules installed but unused (no paid endpoints configured)")
     md.append("- `sms`, `*_sms` modules with external SMS provider (optional)")
     md.append("- `google_*`, `microsoft_account` OAuth integrations (optional)")
-    md.append("- `mail_plugin`, `*_mail_plugin` external mail client integrations (optional)")
+    md.append(
+        "- `mail_plugin`, `*_mail_plugin` external mail client integrations (optional)"
+    )
     md.append("")
     md.append("**Disallowed**:")
     md.append("- Any module requiring paid endpoints for core operations")
     md.append("- Any module with `web_enterprise` or `enterprise` dependencies")
     md.append("")
-    md.append("**Enforcement**: CI drift gate fails if Enterprise dependencies detected.")
+    md.append(
+        "**Enforcement**: CI drift gate fails if Enterprise dependencies detected."
+    )
     md.append("")
     md.append("## Installed modules (all)")
     md.append("```json")
@@ -93,6 +101,7 @@ print(json.dumps({
     print(f"   Installed: {data['installed_count']}")
     print(f"   Top-level: {data['top_level_count']}")
     print(f"   Suspects: {len(data['suspects'])}")
+
 
 if __name__ == "__main__":
     main()

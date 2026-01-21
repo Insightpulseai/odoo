@@ -96,7 +96,9 @@ class MarketingJourneyParticipant(models.Model):
             elif participant.email:
                 participant.display_name = participant.email
             else:
-                participant.display_name = f"{participant.res_model}/{participant.res_id}"
+                participant.display_name = (
+                    f"{participant.res_model}/{participant.res_id}"
+                )
 
     def get_record(self):
         """Return the actual record this participant represents."""
@@ -113,11 +115,13 @@ class MarketingJourneyParticipant(models.Model):
         """Retry a failed participant."""
         for participant in self:
             if participant.state == "error":
-                participant.write({
-                    "state": "in_progress",
-                    "error_message": False,
-                    "retry_count": participant.retry_count + 1,
-                })
+                participant.write(
+                    {
+                        "state": "in_progress",
+                        "error_message": False,
+                        "retry_count": participant.retry_count + 1,
+                    }
+                )
 
     def action_move_to_next(self):
         """Process this participant and move to next node."""
@@ -140,14 +144,16 @@ class MarketingJourneyParticipant(models.Model):
         email = getattr(record, "email", None)
         name = getattr(record, "name", None) or getattr(record, "display_name", None)
 
-        return self.create({
-            "journey_id": journey.id,
-            "res_model": record._name,
-            "res_id": record.id,
-            "email": email,
-            "name": name,
-            "state": "enrolled",
-        })
+        return self.create(
+            {
+                "journey_id": journey.id,
+                "res_model": record._name,
+                "res_id": record.id,
+                "email": email,
+                "name": name,
+                "state": "enrolled",
+            }
+        )
 
     def is_ready_to_process(self):
         """Check if participant is ready for next step."""

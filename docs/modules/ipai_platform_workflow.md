@@ -44,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_platform_workflow --stop-after-in
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.668972_
+_Audited: 2026-01-21T22:42:54.137234_

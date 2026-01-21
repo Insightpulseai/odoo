@@ -117,7 +117,9 @@ def find_broken_kanban(env):
         if 't-name="card"' not in arch and "t-name='card'" not in arch:
             broken.append(view)
 
-    _logger.info("Found %s kanban views missing 't-name=\"card\"' template", len(broken))
+    _logger.info(
+        "Found %s kanban views missing 't-name=\"card\"' template", len(broken)
+    )
 
     # Log details of broken views (limit to 200 to avoid log spam)
     for view in broken[:200]:
@@ -269,8 +271,12 @@ def main():
                 len(broken_kanban),
             )
             _logger.warning("Options:")
-            _logger.warning("  1. Patch the source modules to add t-name=\"card\" templates")
-            _logger.warning("  2. Re-run with DEACTIVATE_BROKEN_KANBAN=1 to auto-deactivate")
+            _logger.warning(
+                '  1. Patch the source modules to add t-name="card" templates'
+            )
+            _logger.warning(
+                "  2. Re-run with DEACTIVATE_BROKEN_KANBAN=1 to auto-deactivate"
+            )
 
     _logger.info("")
     _logger.info("Done! Restart Odoo to apply changes.")

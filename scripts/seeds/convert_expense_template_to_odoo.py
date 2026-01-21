@@ -134,9 +134,11 @@ def extract_rows_from_extra_sheet(ws) -> list[dict]:
     col_date = header_map.get("Dates") or header_map.get("Date")
     col_part = header_map.get("Particulars") or header_map.get("Description")
     col_client = header_map.get("Client")
-    col_ce = (header_map.get("CE Number, if chargeable") or
-              header_map.get("CE Number") or
-              header_map.get("CE#"))
+    col_ce = (
+        header_map.get("CE Number, if chargeable")
+        or header_map.get("CE Number")
+        or header_map.get("CE#")
+    )
     col_meals = header_map.get("Meals")
     col_transpo = header_map.get("Transpo") or header_map.get("Transportation")
     col_misc = header_map.get("Misc") or header_map.get("Miscellaneous")
@@ -153,11 +155,7 @@ def extract_rows_from_extra_sheet(ws) -> list[dict]:
             continue
 
         # Process each amount bucket (one expense per non-zero amount)
-        buckets = [
-            ("Meals", col_meals),
-            ("Transpo", col_transpo),
-            ("Misc", col_misc)
-        ]
+        buckets = [("Meals", col_meals), ("Transpo", col_transpo), ("Misc", col_misc)]
 
         for bucket, col in buckets:
             if not col:
@@ -185,15 +183,17 @@ def extract_rows_from_extra_sheet(ws) -> list[dict]:
                 suffix = " | ".join(suffix_parts)
                 desc = f"{desc} ({suffix})" if desc else suffix
 
-            out.append({
-                "Expense Date": d.isoformat() if d else "",
-                "Description": desc,
-                "Product": CATEGORY_PRODUCT.get(bucket, f"{bucket} (Expense)"),
-                "Total": round(amt_f, 2),
-                "Client": client,
-                "CE Number": ce,
-                "Bucket": bucket,
-            })
+            out.append(
+                {
+                    "Expense Date": d.isoformat() if d else "",
+                    "Description": desc,
+                    "Product": CATEGORY_PRODUCT.get(bucket, f"{bucket} (Expense)"),
+                    "Total": round(amt_f, 2),
+                    "Client": client,
+                    "CE Number": ce,
+                    "Bucket": bucket,
+                }
+            )
 
     return out
 
@@ -219,8 +219,11 @@ def convert_template(input_path: Path, output_path: Path) -> int:
 
     # Extract expense rows from EXTRA PAGES sheets
     rows = []
-    extra_sheets = [name for name in wb.sheetnames
-                    if re.fullmatch(r"EXTRA PAGES(\s*\(\d+\))?", name, re.IGNORECASE)]
+    extra_sheets = [
+        name
+        for name in wb.sheetnames
+        if re.fullmatch(r"EXTRA PAGES(\s*\(\d+\))?", name, re.IGNORECASE)
+    ]
 
     if not extra_sheets:
         # Fallback: try any sheet that might have expense data
@@ -239,10 +242,19 @@ def convert_template(input_path: Path, output_path: Path) -> int:
     if not rows:
         print("Warning: No expense line items found. Check template structure.")
         # Create empty CSV with headers
-        df = pd.DataFrame([], columns=[
-            "Expense Date", "Description", "Product", "Total",
-            "Employee", "Paid By", "Company", "Currency"
-        ])
+        df = pd.DataFrame(
+            [],
+            columns=[
+                "Expense Date",
+                "Description",
+                "Product",
+                "Total",
+                "Employee",
+                "Paid By",
+                "Company",
+                "Currency",
+            ],
+        )
         df.to_csv(output_path, index=False)
         print(f"Wrote empty CSV: {output_path}")
         return 0
@@ -293,22 +305,23 @@ def main():
     )
     parser.add_argument("input", type=str, help="Input Excel file (.xlsx)")
     parser.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         type=str,
         default=None,
-        help="Output CSV file (default: input_odoo_import.csv)"
+        help="Output CSV file (default: input_odoo_import.csv)",
     )
     parser.add_argument(
         "--company",
         type=str,
         default=DEFAULT_COMPANY,
-        help=f"Company name for import (default: {DEFAULT_COMPANY})"
+        help=f"Company name for import (default: {DEFAULT_COMPANY})",
     )
     parser.add_argument(
         "--currency",
         type=str,
         default=DEFAULT_CURRENCY,
-        help=f"Currency code (default: {DEFAULT_CURRENCY})"
+        help=f"Currency code (default: {DEFAULT_CURRENCY})",
     )
 
     args = parser.parse_args()

@@ -44,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_advisor --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.107292_
+_Audited: 2026-01-21T22:42:52.321685_

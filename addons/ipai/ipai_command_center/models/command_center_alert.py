@@ -57,37 +57,45 @@ class CommandCenterAlert(models.Model):
 
     def action_acknowledge(self):
         """Acknowledge the alert."""
-        self.write({
-            "state": "acknowledged",
-            "acknowledged_date": fields.Datetime.now(),
-            "acknowledged_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "acknowledged",
+                "acknowledged_date": fields.Datetime.now(),
+                "acknowledged_by": self.env.user.id,
+            }
+        )
 
     def action_resolve(self):
         """Mark alert as resolved."""
-        self.write({
-            "state": "resolved",
-            "resolved_date": fields.Datetime.now(),
-            "resolved_by": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "resolved",
+                "resolved_date": fields.Datetime.now(),
+                "resolved_by": self.env.user.id,
+            }
+        )
 
     @api.model
     def create_alert(self, name, alert_type="warning", message=None, run_id=None):
         """Utility method to create alerts from code."""
-        return self.create({
-            "name": name,
-            "alert_type": alert_type,
-            "message": message,
-            "run_id": run_id,
-        })
+        return self.create(
+            {
+                "name": name,
+                "alert_type": alert_type,
+                "message": message,
+                "run_id": run_id,
+            }
+        )
 
     @api.model
     def get_active_alerts_count(self):
         """Get count of active alerts by type."""
         result = {}
         for alert_type, _ in self._fields["alert_type"].selection:
-            result[alert_type] = self.search_count([
-                ("state", "=", "active"),
-                ("alert_type", "=", alert_type),
-            ])
+            result[alert_type] = self.search_count(
+                [
+                    ("state", "=", "active"),
+                    ("alert_type", "=", alert_type),
+                ]
+            )
         return result

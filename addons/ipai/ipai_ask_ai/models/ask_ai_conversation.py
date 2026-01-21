@@ -67,7 +67,11 @@ class AskAiConversation(models.Model):
         for conv in self:
             first_msg = conv.message_ids.filtered(lambda m: m.role == "user")[:1]
             if first_msg:
-                conv.name = first_msg.content[:50] + "..." if len(first_msg.content) > 50 else first_msg.content
+                conv.name = (
+                    first_msg.content[:50] + "..."
+                    if len(first_msg.content) > 50
+                    else first_msg.content
+                )
             else:
                 conv.name = f"Conversation {conv.id}"
 

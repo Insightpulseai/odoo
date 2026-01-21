@@ -13,7 +13,7 @@ class FocalboardBoard(models.Model):
         "ipai.integration.connector",
         required=True,
         ondelete="cascade",
-        domain="[('connector_type', '=', 'focalboard')]"
+        domain="[('connector_type', '=', 'focalboard')]",
     )
 
     # Focalboard IDs
@@ -23,41 +23,48 @@ class FocalboardBoard(models.Model):
     # Board info
     title = fields.Char(required=True)
     description = fields.Text()
-    board_type = fields.Selection([
-        ("board", "Board"),
-        ("table", "Table"),
-        ("gallery", "Gallery"),
-        ("calendar", "Calendar"),
-    ], default="board")
+    board_type = fields.Selection(
+        [
+            ("board", "Board"),
+            ("table", "Table"),
+            ("gallery", "Gallery"),
+            ("calendar", "Calendar"),
+        ],
+        default="board",
+    )
     icon = fields.Char()
 
     # Linked Odoo project
     project_id = fields.Many2one(
         "project.project",
         string="Linked Project",
-        help="Odoo project to sync cards with"
+        help="Odoo project to sync cards with",
     )
 
     # Sync settings
     sync_enabled = fields.Boolean(default=False)
-    sync_direction = fields.Selection([
-        ("fb_to_odoo", "Focalboard -> Odoo"),
-        ("odoo_to_fb", "Odoo -> Focalboard"),
-        ("bidirectional", "Bidirectional"),
-    ], default="bidirectional")
+    sync_direction = fields.Selection(
+        [
+            ("fb_to_odoo", "Focalboard -> Odoo"),
+            ("odoo_to_fb", "Odoo -> Focalboard"),
+            ("bidirectional", "Bidirectional"),
+        ],
+        default="bidirectional",
+    )
     last_sync = fields.Datetime()
 
     # Cards
-    card_ids = fields.One2many(
-        "ipai.focalboard.card", "board_id", string="Cards"
-    )
+    card_ids = fields.One2many("ipai.focalboard.card", "board_id", string="Cards")
     card_count = fields.Integer(compute="_compute_card_count")
 
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
-        ("board_uniq", "unique(connector_id, fb_board_id)",
-         "Board already exists for this connector!"),
+        (
+            "board_uniq",
+            "unique(connector_id, fb_board_id)",
+            "Board already exists for this connector!",
+        ),
     ]
 
     def _compute_card_count(self):
@@ -73,10 +80,13 @@ class FocalboardBoard(models.Model):
         boards = client.get_boards(connector.fb_workspace_id)
 
         for board in boards:
-            existing = self.search([
-                ("connector_id", "=", connector.id),
-                ("fb_board_id", "=", board["id"]),
-            ], limit=1)
+            existing = self.search(
+                [
+                    ("connector_id", "=", connector.id),
+                    ("fb_board_id", "=", board["id"]),
+                ],
+                limit=1,
+            )
 
             vals = {
                 "connector_id": connector.id,

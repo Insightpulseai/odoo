@@ -39,27 +39,26 @@ def query_odoo_modules() -> List[Dict]:
 
     try:
         result = subprocess.run(
-            ["psql", dsn, "-t", "-c", sql],
-            capture_output=True,
-            text=True,
-            check=True
+            ["psql", dsn, "-t", "-c", sql], capture_output=True, text=True, check=True
         )
 
         modules = []
-        for line in result.stdout.strip().split('\n'):
-            if not line.strip() or line.strip() == '(0 rows)':
+        for line in result.stdout.strip().split("\n"):
+            if not line.strip() or line.strip() == "(0 rows)":
                 continue
 
-            parts = [p.strip() for p in line.split('|')]
+            parts = [p.strip() for p in line.split("|")]
             if len(parts) >= 4:
-                modules.append({
-                    "name": parts[0],
-                    "state": parts[1],
-                    "version": parts[2] if len(parts) > 2 else None,
-                    "author": parts[3] if len(parts) > 3 else None,
-                    "summary": parts[4] if len(parts) > 4 else None,
-                    "website": parts[5] if len(parts) > 5 else None
-                })
+                modules.append(
+                    {
+                        "name": parts[0],
+                        "state": parts[1],
+                        "version": parts[2] if len(parts) > 2 else None,
+                        "author": parts[3] if len(parts) > 3 else None,
+                        "summary": parts[4] if len(parts) > 4 else None,
+                        "website": parts[5] if len(parts) > 5 else None,
+                    }
+                )
 
         return modules
 
@@ -86,25 +85,24 @@ def query_odoo_models() -> List[Dict]:
 
     try:
         result = subprocess.run(
-            ["psql", dsn, "-t", "-c", sql],
-            capture_output=True,
-            text=True,
-            check=True
+            ["psql", dsn, "-t", "-c", sql], capture_output=True, text=True, check=True
         )
 
         models = []
-        for line in result.stdout.strip().split('\n'):
-            if not line.strip() or line.strip() == '(0 rows)':
+        for line in result.stdout.strip().split("\n"):
+            if not line.strip() or line.strip() == "(0 rows)":
                 continue
 
-            parts = [p.strip() for p in line.split('|')]
+            parts = [p.strip() for p in line.split("|")]
             if len(parts) >= 2:
-                models.append({
-                    "model": parts[0],
-                    "name": parts[1],
-                    "info": parts[2] if len(parts) > 2 else None,
-                    "state": parts[3] if len(parts) > 3 else "base"
-                })
+                models.append(
+                    {
+                        "model": parts[0],
+                        "name": parts[1],
+                        "info": parts[2] if len(parts) > 2 else None,
+                        "state": parts[3] if len(parts) > 3 else "base",
+                    }
+                )
 
         return models
 
@@ -120,55 +118,57 @@ def discover_modules(modules: List[Dict]) -> tuple[List[Dict], List[Dict]]:
 
     # Create Odoo instance node
     odoo_id = "odoo:instance:production"
-    nodes.append({
-        "id": odoo_id,
-        "source": "odoo",
-        "kind": "instance",
-        "key": "production",
-        "name": "Odoo Production (CE 18.0)",
-        "props": {
-            "version": "18.0",
-            "edition": "CE",
-            "database": "production"
+    nodes.append(
+        {
+            "id": odoo_id,
+            "source": "odoo",
+            "kind": "instance",
+            "key": "production",
+            "name": "Odoo Production (CE 18.0)",
+            "props": {"version": "18.0", "edition": "CE", "database": "production"},
         }
-    })
+    )
 
     # Create module nodes
     for module in modules:
         module_name = module["name"]
         module_id = f"odoo:module:{module_name}"
 
-        nodes.append({
-            "id": module_id,
-            "source": "odoo",
-            "kind": "module",
-            "key": module_name,
-            "name": module_name,
-            "props": {
-                "state": module["state"],
-                "version": module.get("version"),
-                "author": module.get("author"),
-                "summary": module.get("summary"),
-                "website": module.get("website")
+        nodes.append(
+            {
+                "id": module_id,
+                "source": "odoo",
+                "kind": "module",
+                "key": module_name,
+                "name": module_name,
+                "props": {
+                    "state": module["state"],
+                    "version": module.get("version"),
+                    "author": module.get("author"),
+                    "summary": module.get("summary"),
+                    "website": module.get("website"),
+                },
             }
-        })
+        )
 
         # Edge: instance HAS_MODULE module
-        edges.append({
-            "id": f"{odoo_id}→{module_id}",
-            "source": "odoo",
-            "from_id": odoo_id,
-            "to_id": module_id,
-            "type": "HAS_MODULE",
-            "props": {
-                "state": module["state"]
+        edges.append(
+            {
+                "id": f"{odoo_id}→{module_id}",
+                "source": "odoo",
+                "from_id": odoo_id,
+                "to_id": module_id,
+                "type": "HAS_MODULE",
+                "props": {"state": module["state"]},
             }
-        })
+        )
 
     return nodes, edges
 
 
-def discover_models(models: List[Dict], modules: List[Dict]) -> tuple[List[Dict], List[Dict]]:
+def discover_models(
+    models: List[Dict], modules: List[Dict]
+) -> tuple[List[Dict], List[Dict]]:
     """Convert models to nodes and edges"""
     nodes = []
     edges = []
@@ -182,49 +182,53 @@ def discover_models(models: List[Dict], modules: List[Dict]) -> tuple[List[Dict]
         model_name = model["model"]
         model_id = f"odoo:model:{model_name}"
 
-        nodes.append({
-            "id": model_id,
-            "source": "odoo",
-            "kind": "model",
-            "key": model_name,
-            "name": model["name"],
-            "props": {
-                "model": model_name,
-                "technical_name": model_name,
-                "info": model.get("info"),
-                "state": model.get("state", "base")
+        nodes.append(
+            {
+                "id": model_id,
+                "source": "odoo",
+                "kind": "model",
+                "key": model_name,
+                "name": model["name"],
+                "props": {
+                    "model": model_name,
+                    "technical_name": model_name,
+                    "info": model.get("info"),
+                    "state": model.get("state", "base"),
+                },
             }
-        })
+        )
 
         # Try to link model to module (heuristic: model prefix matches module name)
         # e.g., "account.move" → "account" module
-        model_prefix = model_name.split('.')[0]
+        model_prefix = model_name.split(".")[0]
         parent_module_id = module_map.get(model_prefix)
 
         if parent_module_id:
             # Edge: module DEFINES_MODEL model
-            edges.append({
-                "id": f"{parent_module_id}→{model_id}",
-                "source": "odoo",
-                "from_id": parent_module_id,
-                "to_id": model_id,
-                "type": "DEFINES_MODEL",
-                "props": {}
-            })
+            edges.append(
+                {
+                    "id": f"{parent_module_id}→{model_id}",
+                    "source": "odoo",
+                    "from_id": parent_module_id,
+                    "to_id": model_id,
+                    "type": "DEFINES_MODEL",
+                    "props": {},
+                }
+            )
         else:
             # Fallback: link to base module
             base_module_id = "odoo:module:base"
             if base_module_id in [e["from_id"] for e in edges]:  # Only if base exists
-                edges.append({
-                    "id": f"{base_module_id}→{model_id}",
-                    "source": "odoo",
-                    "from_id": base_module_id,
-                    "to_id": model_id,
-                    "type": "DEFINES_MODEL",
-                    "props": {
-                        "inferred": True
+                edges.append(
+                    {
+                        "id": f"{base_module_id}→{model_id}",
+                        "source": "odoo",
+                        "from_id": base_module_id,
+                        "to_id": model_id,
+                        "type": "DEFINES_MODEL",
+                        "props": {"inferred": True},
                     }
-                })
+                )
 
     return nodes, edges
 
@@ -276,10 +280,10 @@ def main():
     nodes_path = output_dir / "odoo_nodes.json"
     edges_path = output_dir / "odoo_edges.json"
 
-    with open(nodes_path, 'w') as f:
+    with open(nodes_path, "w") as f:
         json.dump(all_nodes, f, indent=2)
 
-    with open(edges_path, 'w') as f:
+    with open(edges_path, "w") as f:
         json.dump(all_edges, f, indent=2)
 
     print("=" * 60)

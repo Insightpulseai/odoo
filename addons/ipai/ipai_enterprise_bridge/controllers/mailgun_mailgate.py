@@ -55,10 +55,10 @@ class MailgunMailgateController(http.Controller):
     """
 
     @http.route(
-        '/mailgate/mailgun',
-        type='http',
-        auth='public',
-        methods=['POST', 'GET'],
+        "/mailgate/mailgun",
+        type="http",
+        auth="public",
+        methods=["POST", "GET"],
         csrf=False,
     )
     def mailgun_mailgate(self, **kwargs):
@@ -74,11 +74,11 @@ class MailgunMailgateController(http.Controller):
             - 401 Unauthorized: Invalid signature (if verification enabled)
             - 500 Internal Error: Processing failure
         """
-        if request.httprequest.method == 'GET':
+        if request.httprequest.method == "GET":
             # Health check endpoint
             return request.make_response(
-                'OK - Mailgun Mailgate Active',
-                headers=[('Content-Type', 'text/plain')],
+                "OK - Mailgun Mailgate Active",
+                headers=[("Content-Type", "text/plain")],
             )
 
         try:
@@ -86,8 +86,8 @@ class MailgunMailgateController(http.Controller):
         except Exception as e:
             _logger.exception("Mailgun mailgate error: %s", str(e))
             return request.make_response(
-                json.dumps({'status': 'error', 'message': str(e)}),
-                headers=[('Content-Type', 'application/json')],
+                json.dumps({"status": "error", "message": str(e)}),
+                headers=[("Content-Type", "application/json")],
                 status=500,
             )
 
@@ -102,26 +102,28 @@ class MailgunMailgateController(http.Controller):
             HTTP Response with processing result
         """
         # Extract fields from Mailgun payload
-        sender = data.get('sender', data.get('from', ''))
-        recipient = data.get('recipient', data.get('To', ''))
-        subject = data.get('subject', '(No Subject)')
-        body_plain = data.get('body-plain', data.get('stripped-text', ''))
-        body_html = data.get('body-html', '')
-        message_id = data.get('Message-Id', '')
-        timestamp = data.get('timestamp', '')
-        token = data.get('token', '')
-        signature = data.get('signature', '')
+        sender = data.get("sender", data.get("from", ""))
+        recipient = data.get("recipient", data.get("To", ""))
+        subject = data.get("subject", "(No Subject)")
+        body_plain = data.get("body-plain", data.get("stripped-text", ""))
+        body_html = data.get("body-html", "")
+        message_id = data.get("Message-Id", "")
+        timestamp = data.get("timestamp", "")
+        token = data.get("token", "")
+        signature = data.get("signature", "")
 
         _logger.info(
             "Mailgun webhook received: from=%s, to=%s, subject=%s",
-            sender, recipient, subject
+            sender,
+            recipient,
+            subject,
         )
 
         # Validate required fields
         if not sender:
             return request.make_response(
-                json.dumps({'status': 'error', 'message': 'Missing sender'}),
-                headers=[('Content-Type', 'application/json')],
+                json.dumps({"status": "error", "message": "Missing sender"}),
+                headers=[("Content-Type", "application/json")],
                 status=400,
             )
 
@@ -144,36 +146,40 @@ class MailgunMailgateController(http.Controller):
         # Create mail.message record
         try:
             message_vals = {
-                'message_type': 'email',
-                'subtype_id': request.env.ref('mail.mt_comment').id,
-                'email_from': sender,
-                'author_id': self._find_or_create_partner(sender),
-                'subject': subject,
-                'body': body,
-                'message_id': message_id,
-                'date': datetime.now(),
+                "message_type": "email",
+                "subtype_id": request.env.ref("mail.mt_comment").id,
+                "email_from": sender,
+                "author_id": self._find_or_create_partner(sender),
+                "subject": subject,
+                "body": body,
+                "message_id": message_id,
+                "date": datetime.now(),
             }
 
             # Try to route to appropriate record
             model, res_id = self._route_message(recipient, subject)
             if model and res_id:
-                message_vals['model'] = model
-                message_vals['res_id'] = res_id
+                message_vals["model"] = model
+                message_vals["res_id"] = res_id
 
-            message = request.env['mail.message'].sudo().create(message_vals)
+            message = request.env["mail.message"].sudo().create(message_vals)
 
             _logger.info(
                 "Created mail.message id=%s from %s, subject=%s",
-                message.id, sender, subject
+                message.id,
+                sender,
+                subject,
             )
 
             return request.make_response(
-                json.dumps({
-                    'status': 'ok',
-                    'message_id': message.id,
-                    'message': 'Email processed successfully',
-                }),
-                headers=[('Content-Type', 'application/json')],
+                json.dumps(
+                    {
+                        "status": "ok",
+                        "message_id": message.id,
+                        "message": "Email processed successfully",
+                    }
+                ),
+                headers=[("Content-Type", "application/json")],
                 status=200,
             )
 
@@ -191,13 +197,13 @@ class MailgunMailgateController(http.Controller):
         if not email:
             return False
 
-        Partner = request.env['res.partner'].sudo()
+        Partner = request.env["res.partner"].sudo()
 
         # Extract email if it contains name <email> format
-        if '<' in email and '>' in email:
-            email = email.split('<')[1].split('>')[0]
+        if "<" in email and ">" in email:
+            email = email.split("<")[1].split(">")[0]
 
-        partner = Partner.search([('email', '=ilike', email)], limit=1)
+        partner = Partner.search([("email", "=ilike", email)], limit=1)
         return partner.id if partner else False
 
     def _route_message(self, recipient, subject):
@@ -219,7 +225,7 @@ class MailgunMailgateController(http.Controller):
         recipient_lower = recipient.lower()
 
         # Invoice routing: try to find invoice by reference in subject
-        if 'invoice' in recipient_lower or 'invoices' in recipient_lower:
+        if "invoice" in recipient_lower or "invoices" in recipient_lower:
             return self._route_to_invoice(subject)
 
         # Add more routing rules as needed
@@ -237,17 +243,20 @@ class MailgunMailgateController(http.Controller):
         if not subject:
             return None, None
 
-        Move = request.env['account.move'].sudo()
+        Move = request.env["account.move"].sudo()
 
         # Try to find invoice by name/reference in subject
         # Common patterns: INV/2026/0001, BILL/2026/0001, etc.
-        invoice = Move.search([
-            ('name', 'ilike', subject),
-            ('move_type', 'in', ['out_invoice', 'in_invoice']),
-        ], limit=1)
+        invoice = Move.search(
+            [
+                ("name", "ilike", subject),
+                ("move_type", "in", ["out_invoice", "in_invoice"]),
+            ],
+            limit=1,
+        )
 
         if invoice:
-            return 'account.move', invoice.id
+            return "account.move", invoice.id
 
         return None, None
 
@@ -273,26 +282,28 @@ class MailgunMailgateController(http.Controller):
         try:
             ts = int(timestamp)
             if abs(time.time() - ts) > SIGNATURE_TOLERANCE:
-                _logger.warning("Mailgun signature verification failed: timestamp expired")
+                _logger.warning(
+                    "Mailgun signature verification failed: timestamp expired"
+                )
                 return False
         except (ValueError, TypeError):
             return False
 
         # Get API key from config
-        api_key = request.env['ir.config_parameter'].sudo().get_param(
-            'ipai_enterprise_bridge.mailgun_api_key', ''
+        api_key = (
+            request.env["ir.config_parameter"]
+            .sudo()
+            .get_param("ipai_enterprise_bridge.mailgun_api_key", "")
         )
 
         if not api_key:
-            _logger.warning("Mailgun API key not configured, skipping signature verification")
+            _logger.warning(
+                "Mailgun API key not configured, skipping signature verification"
+            )
             return True  # Allow without verification if not configured
 
         # Compute expected signature
-        data = f"{timestamp}{token}".encode('utf-8')
-        expected = hmac.new(
-            api_key.encode('utf-8'),
-            data,
-            hashlib.sha256
-        ).hexdigest()
+        data = f"{timestamp}{token}".encode("utf-8")
+        expected = hmac.new(api_key.encode("utf-8"), data, hashlib.sha256).hexdigest()
 
         return hmac.compare_digest(expected, signature)

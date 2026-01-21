@@ -52,9 +52,7 @@ If you don't have enough information, ask clarifying questions."""
     def get_api_key(self):
         """Get LLM API key"""
         return (
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("ipai_ask_ai.api_key", "")
+            self.env["ir.config_parameter"].sudo().get_param("ipai_ask_ai.api_key", "")
         )
 
     @api.model
@@ -70,9 +68,7 @@ If you don't have enough information, ask clarifying questions."""
     def get_endpoint(self):
         """Get API endpoint (for Azure)"""
         return (
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param("ipai_ask_ai.endpoint", "")
+            self.env["ir.config_parameter"].sudo().get_param("ipai_ask_ai.endpoint", "")
         )
 
     @api.model
@@ -142,12 +138,18 @@ If you don't have enough information, ask clarifying questions."""
                 if total == 0:
                     response = "Good news! There are no blocking tasks at the moment. All month-end close tasks are on track."
                 else:
-                    parts = [f"There are **{total} blocking tasks** that need attention:\n"]
+                    parts = [
+                        f"There are **{total} blocking tasks** that need attention:\n"
+                    ]
                     for owner, tasks in by_owner.items():
                         parts.append(f"\n**{owner}** has {len(tasks)} overdue task(s):")
                         for t in tasks:
-                            parts.append(f"  - {t['name']} ({t['days_overdue']} days overdue)")
-                    parts.append("\n\nRecommendation: Prioritize the oldest overdue items first.")
+                            parts.append(
+                                f"  - {t['name']} ({t['days_overdue']} days overdue)"
+                            )
+                    parts.append(
+                        "\n\nRecommendation: Prioritize the oldest overdue items first."
+                    )
                     response = "\n".join(parts)
             else:
                 response = "I don't have current blocking task data. Please ensure the Finance PPM module is properly configured."
@@ -159,7 +161,9 @@ If you don't have enough information, ask clarifying questions."""
                 if deadlines:
                     parts = ["Here are the upcoming deadlines:\n"]
                     for d in deadlines:
-                        parts.append(f"- **{d['name']}**: Due {d['deadline']} ({d['days_until']} days) - Assigned to {d['owner']}")
+                        parts.append(
+                            f"- **{d['name']}**: Due {d['deadline']} ({d['days_until']} days) - Assigned to {d['owner']}"
+                        )
                     response = "\n".join(parts)
                 else:
                     response = "No upcoming deadlines found in the next 7 days."
@@ -167,13 +171,21 @@ If you don't have enough information, ask clarifying questions."""
                 response = "I couldn't retrieve deadline information. Please check the task configuration."
 
         # Summary/priorities query
-        elif "summary" in query_lower or "priorities" in query_lower or "today" in query_lower:
+        elif (
+            "summary" in query_lower
+            or "priorities" in query_lower
+            or "today" in query_lower
+        ):
             parts = ["## Today's Finance Summary\n"]
 
             if context and context.get("finance_kpis"):
                 kpi = context["finance_kpis"]
-                parts.append(f"**Overall Progress:** {kpi.get('completion_rate', 0)}% complete")
-                parts.append(f"- Tasks completed: {kpi.get('completed', 0)}/{kpi.get('total_tasks', 0)}")
+                parts.append(
+                    f"**Overall Progress:** {kpi.get('completion_rate', 0)}% complete"
+                )
+                parts.append(
+                    f"- Tasks completed: {kpi.get('completed', 0)}/{kpi.get('total_tasks', 0)}"
+                )
                 parts.append(f"- Overdue: {kpi.get('overdue', 0)}")
                 parts.append(f"- In progress: {kpi.get('in_progress', 0)}")
                 parts.append("")
@@ -181,7 +193,9 @@ If you don't have enough information, ask clarifying questions."""
             if context and context.get("blocking_tasks"):
                 bt = context["blocking_tasks"]
                 if bt.get("total", 0) > 0:
-                    parts.append(f"**Priority Items:** {bt['total']} blocking tasks need attention")
+                    parts.append(
+                        f"**Priority Items:** {bt['total']} blocking tasks need attention"
+                    )
 
             if context and context.get("upcoming_deadlines"):
                 deadlines = context["upcoming_deadlines"]
@@ -219,7 +233,9 @@ If you don't have enough information, ask clarifying questions."""
                 if es.get("needs_ocr_review"):
                     response += f"\n- **Needs OCR Review:** {es['needs_ocr_review']}"
             else:
-                response = "I couldn't retrieve expense data. Please check the Expense module."
+                response = (
+                    "I couldn't retrieve expense data. Please check the Expense module."
+                )
 
         # Generic response
         else:

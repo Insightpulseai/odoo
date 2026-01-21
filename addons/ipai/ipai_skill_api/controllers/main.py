@@ -83,7 +83,9 @@ class SkillAPIController(http.Controller):
             Skill object with full details including workflow and tools
         """
         Skill = request.env["ipai.agent.skill"].sudo()
-        skill = Skill.search([("key", "=", skill_key), ("is_active", "=", True)], limit=1)
+        skill = Skill.search(
+            [("key", "=", skill_key), ("is_active", "=", True)], limit=1
+        )
 
         if not skill:
             return self._json_error("Skill not found", 404)
@@ -128,7 +130,9 @@ class SkillAPIController(http.Controller):
             return self._json_error("skill_key is required", 400)
 
         Skill = request.env["ipai.agent.skill"].sudo()
-        skill = Skill.search([("key", "=", skill_key), ("is_active", "=", True)], limit=1)
+        skill = Skill.search(
+            [("key", "=", skill_key), ("is_active", "=", True)], limit=1
+        )
         if not skill:
             return self._json_error(f"Skill not found: {skill_key}", 404)
 
@@ -234,11 +238,13 @@ class SkillAPIController(http.Controller):
 
         Health check endpoint (no auth required).
         """
-        return self._json_response({
-            "status": "ok",
-            "service": "ipai_skill_api",
-            "version": "1.0.0",
-        })
+        return self._json_response(
+            {
+                "status": "ok",
+                "service": "ipai_skill_api",
+                "version": "1.0.0",
+            }
+        )
 
     # -------------------------------------------------------------------------
     # Helper Methods
@@ -257,19 +263,20 @@ class SkillAPIController(http.Controller):
         }
 
         if full:
-            result.update({
-                "intents": skill.get_intents_list(),
-                "guardrails": skill.get_guardrails_list(),
-                "workflow": skill.get_workflow_tools(),
-                "tools": [
-                    {"id": t.id, "key": t.key, "name": t.name}
-                    for t in skill.tool_ids
-                ],
-                "knowledge_sources": [
-                    {"id": k.id, "name": k.name}
-                    for k in skill.knowledge_ids
-                ],
-            })
+            result.update(
+                {
+                    "intents": skill.get_intents_list(),
+                    "guardrails": skill.get_guardrails_list(),
+                    "workflow": skill.get_workflow_tools(),
+                    "tools": [
+                        {"id": t.id, "key": t.key, "name": t.name}
+                        for t in skill.tool_ids
+                    ],
+                    "knowledge_sources": [
+                        {"id": k.id, "name": k.name} for k in skill.knowledge_ids
+                    ],
+                }
+            )
 
         return result
 
@@ -284,17 +291,23 @@ class SkillAPIController(http.Controller):
         }
 
         if full:
-            result.update({
-                "input_text": run.input_text or "",
-                "input_json": run.get_input_dict(),
-                "output_text": run.output_text or "",
-                "output_json": run.get_output_dict(),
-                "error_text": run.error_text or "",
-                "trace": run.get_trace_list(),
-                "started_at": run.started_at.isoformat() if run.started_at else None,
-                "completed_at": run.completed_at.isoformat() if run.completed_at else None,
-                "duration_seconds": run.duration_seconds,
-            })
+            result.update(
+                {
+                    "input_text": run.input_text or "",
+                    "input_json": run.get_input_dict(),
+                    "output_text": run.output_text or "",
+                    "output_json": run.get_output_dict(),
+                    "error_text": run.error_text or "",
+                    "trace": run.get_trace_list(),
+                    "started_at": (
+                        run.started_at.isoformat() if run.started_at else None
+                    ),
+                    "completed_at": (
+                        run.completed_at.isoformat() if run.completed_at else None
+                    ),
+                    "duration_seconds": run.duration_seconds,
+                }
+            )
 
         return result
 
