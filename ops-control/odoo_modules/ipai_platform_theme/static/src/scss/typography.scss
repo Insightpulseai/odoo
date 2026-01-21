@@ -1,0 +1,318 @@
+// ============================================================================
+// IPAI Platform Theme - Typography
+// Clean, high-contrast typography inspired by Claude/OpenAI UIs
+// ============================================================================
+
+// Import tokens
+@import 'tokens';
+
+// ==========================================================================
+// BASE TYPOGRAPHY
+// ==========================================================================
+
+.ipai-text {
+  font-family: var(--ipai-font-sans);
+  color: var(--ipai-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Headings
+.ipai-heading-1 {
+  font-size: var(--ipai-text-4xl);
+  font-weight: var(--ipai-font-bold);
+  line-height: var(--ipai-leading-tight);
+  letter-spacing: var(--ipai-tracking-tight);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-heading-2 {
+  font-size: var(--ipai-text-3xl);
+  font-weight: var(--ipai-font-bold);
+  line-height: var(--ipai-leading-tight);
+  letter-spacing: var(--ipai-tracking-tight);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-heading-3 {
+  font-size: var(--ipai-text-2xl);
+  font-weight: var(--ipai-font-semibold);
+  line-height: var(--ipai-leading-snug);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-heading-4 {
+  font-size: var(--ipai-text-xl);
+  font-weight: var(--ipai-font-semibold);
+  line-height: var(--ipai-leading-snug);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-heading-5 {
+  font-size: var(--ipai-text-lg);
+  font-weight: var(--ipai-font-medium);
+  line-height: var(--ipai-leading-normal);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-heading-6 {
+  font-size: var(--ipai-text-base);
+  font-weight: var(--ipai-font-medium);
+  line-height: var(--ipai-leading-normal);
+  color: var(--ipai-on-surface);
+}
+
+// Body text
+.ipai-body {
+  font-size: var(--ipai-text-base);
+  font-weight: var(--ipai-font-normal);
+  line-height: var(--ipai-leading-relaxed);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-body-sm {
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-normal);
+  line-height: var(--ipai-leading-relaxed);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-body-lg {
+  font-size: var(--ipai-text-md);
+  font-weight: var(--ipai-font-normal);
+  line-height: var(--ipai-leading-relaxed);
+  color: var(--ipai-on-surface);
+}
+
+// Labels and captions
+.ipai-label {
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-medium);
+  line-height: var(--ipai-leading-none);
+  letter-spacing: var(--ipai-tracking-wide);
+  color: var(--ipai-on-surface-variant);
+}
+
+.ipai-caption {
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-normal);
+  line-height: var(--ipai-leading-normal);
+  color: var(--ipai-on-surface-muted);
+}
+
+.ipai-overline {
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-semibold);
+  line-height: var(--ipai-leading-none);
+  letter-spacing: var(--ipai-tracking-wider);
+  text-transform: uppercase;
+  color: var(--ipai-on-surface-muted);
+}
+
+// Monospace / code
+.ipai-code {
+  font-family: var(--ipai-font-mono);
+  font-size: 0.9em;
+  background: var(--ipai-surface-container);
+  padding: 0.125em 0.375em;
+  border-radius: var(--ipai-radius-sm);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-code-block {
+  font-family: var(--ipai-font-mono);
+  font-size: var(--ipai-text-sm);
+  line-height: var(--ipai-leading-relaxed);
+  background: var(--ipai-surface-container-high);
+  padding: var(--ipai-space-4);
+  border-radius: var(--ipai-radius-lg);
+  overflow-x: auto;
+  color: var(--ipai-on-surface);
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--ipai-surface-container);
+    border-radius: var(--ipai-radius-full);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ipai-outline);
+    border-radius: var(--ipai-radius-full);
+
+    &:hover {
+      background: var(--ipai-on-surface-muted);
+    }
+  }
+}
+
+// ==========================================================================
+// COPILOT-SPECIFIC TYPOGRAPHY
+// ==========================================================================
+
+// Message content (markdown rendered)
+.ipai-message-content {
+  font-size: var(--ipai-text-base);
+  line-height: var(--ipai-leading-relaxed);
+  color: var(--ipai-assistant-text);
+
+  // Paragraphs
+  p {
+    margin: 0 0 var(--ipai-space-3);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // Lists
+  ul, ol {
+    margin: var(--ipai-space-2) 0;
+    padding-left: var(--ipai-space-6);
+
+    li {
+      margin: var(--ipai-space-1) 0;
+    }
+  }
+
+  // Headings in content
+  h1, h2, h3, h4, h5, h6 {
+    margin: var(--ipai-space-4) 0 var(--ipai-space-2);
+    font-weight: var(--ipai-font-semibold);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  h1 { font-size: var(--ipai-text-xl); }
+  h2 { font-size: var(--ipai-text-lg); }
+  h3 { font-size: var(--ipai-text-md); }
+  h4, h5, h6 { font-size: var(--ipai-text-base); }
+
+  // Code in content
+  code {
+    font-family: var(--ipai-font-mono);
+    font-size: 0.875em;
+    background: var(--ipai-surface-container);
+    padding: 0.125em 0.375em;
+    border-radius: var(--ipai-radius-sm);
+  }
+
+  pre {
+    margin: var(--ipai-space-3) 0;
+    padding: var(--ipai-space-3);
+    background: var(--ipai-surface-container-high);
+    border-radius: var(--ipai-radius-md);
+    overflow-x: auto;
+
+    code {
+      background: none;
+      padding: 0;
+      font-size: var(--ipai-text-sm);
+    }
+  }
+
+  // Links
+  a {
+    color: var(--ipai-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  // Blockquotes
+  blockquote {
+    margin: var(--ipai-space-3) 0;
+    padding: var(--ipai-space-2) var(--ipai-space-4);
+    border-left: 3px solid var(--ipai-primary);
+    background: var(--ipai-surface-container-low);
+    border-radius: 0 var(--ipai-radius-md) var(--ipai-radius-md) 0;
+    color: var(--ipai-on-surface-variant);
+  }
+
+  // Tables
+  table {
+    width: 100%;
+    margin: var(--ipai-space-3) 0;
+    border-collapse: collapse;
+    font-size: var(--ipai-text-sm);
+
+    th, td {
+      padding: var(--ipai-space-2) var(--ipai-space-3);
+      border: 1px solid var(--ipai-outline);
+      text-align: left;
+    }
+
+    th {
+      background: var(--ipai-surface-container);
+      font-weight: var(--ipai-font-semibold);
+    }
+
+    tr:nth-child(even) td {
+      background: var(--ipai-surface-container-low);
+    }
+  }
+
+  // Horizontal rule
+  hr {
+    margin: var(--ipai-space-4) 0;
+    border: none;
+    border-top: 1px solid var(--ipai-outline-variant);
+  }
+}
+
+// Timestamp
+.ipai-timestamp {
+  font-size: var(--ipai-text-xs);
+  color: var(--ipai-on-surface-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+// ==========================================================================
+// UTILITY CLASSES
+// ==========================================================================
+
+.ipai-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ipai-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ipai-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Text colors
+.ipai-text-primary { color: var(--ipai-primary); }
+.ipai-text-secondary { color: var(--ipai-secondary); }
+.ipai-text-success { color: var(--ipai-tertiary); }
+.ipai-text-error { color: var(--ipai-error); }
+.ipai-text-warning { color: var(--ipai-warning); }
+.ipai-text-muted { color: var(--ipai-on-surface-muted); }
+.ipai-text-disabled { color: var(--ipai-on-surface-disabled); }
+
+// Font weights
+.ipai-font-normal { font-weight: var(--ipai-font-normal); }
+.ipai-font-medium { font-weight: var(--ipai-font-medium); }
+.ipai-font-semibold { font-weight: var(--ipai-font-semibold); }
+.ipai-font-bold { font-weight: var(--ipai-font-bold); }
+
+// Text alignment
+.ipai-text-left { text-align: left; }
+.ipai-text-center { text-align: center; }
+.ipai-text-right { text-align: right; }

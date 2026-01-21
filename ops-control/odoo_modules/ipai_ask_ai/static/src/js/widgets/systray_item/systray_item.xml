@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.SystrayItem">
+        <div class="o_nav_entry ipai-systray-item"
+             t-att-class="{ 'ipai-systray-item--disabled': !isEnabled }">
+            <button t-att-class="buttonClass"
+                    t-att-title="'AI Copilot (Ctrl+Shift+A)'"
+                    t-att-disabled="!isEnabled"
+                    t-on-click="onClick">
+                <div class="ipai-systray-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- AI/Copilot sparkle icon -->
+                        <path d="M12 2L14.4 7.2L20 8L15.6 12.8L16.8 18.4L12 15.6L7.2 18.4L8.4 12.8L4 8L9.6 7.2L12 2Z"
+                              fill="currentColor" opacity="0.3"/>
+                        <path d="M12 5L13.5 8.5L17 9L14.5 12L15 15.5L12 14L9 15.5L9.5 12L7 9L10.5 8.5L12 5Z"
+                              fill="currentColor"/>
+                        <circle cx="12" cy="12" r="2" fill="currentColor"/>
+                    </svg>
+                </div>
+                <span class="ipai-systray-label d-none d-lg-inline">Ask AI</span>
+
+                <!-- Pulse indicator when active -->
+                <span class="ipai-systray-pulse" t-if="isOpen"/>
+            </button>
+        </div>
+    </t>
+
+</templates>

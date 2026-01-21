@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.DiffPreview">
+        <div class="ipai-diff ipai-animate-fade-in">
+            <div class="ipai-diff-header">
+                <i class="fa fa-code-fork"/>
+                <span>Preview Changes</span>
+            </div>
+
+            <div class="ipai-diff-content">
+                <t t-foreach="fields" t-as="field" t-key="field.field">
+                    <div class="ipai-diff-field">
+                        <div class="ipai-diff-field-name" t-esc="field.field"/>
+
+                        <!-- Old value (if not add) -->
+                        <div t-attf-class="ipai-diff-line {{ field.isRemove ? 'ipai-diff-line--remove' : 'ipai-diff-line--change' }}"
+                             t-if="!field.isAdd">
+                            <span class="ipai-diff-line-prefix">-</span>
+                            <span class="ipai-diff-line-content" t-esc="formatValue(field.old)"/>
+                        </div>
+
+                        <!-- New value (if not remove) -->
+                        <div t-attf-class="ipai-diff-line {{ field.isAdd ? 'ipai-diff-line--add' : 'ipai-diff-line--change' }}"
+                             t-if="!field.isRemove">
+                            <span class="ipai-diff-line-prefix">+</span>
+                            <span class="ipai-diff-line-content" t-esc="formatValue(field.new)"/>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <div class="ipai-diff-actions">
+                <button class="ipai-btn ipai-btn--outlined ipai-btn--sm"
+                        t-on-click="onCancel">
+                    Cancel
+                </button>
+                <button class="ipai-btn ipai-btn--filled ipai-btn--success ipai-btn--sm"
+                        t-on-click="onApply">
+                    <i class="fa fa-check"/>
+                    Apply Changes
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>

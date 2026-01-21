@@ -1,0 +1,45 @@
+name: spec-kit-enforce
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  validate-spec-kit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Validate Spec Kit bundle(s)
+        run: |
+          python3 scripts/validate_spec_kit.py
+      
+      - name: Check Spec Kit structure
+        run: |
+          echo "Checking Spec Kit structure..."
+          if [ ! -d "spec" ]; then
+            echo "❌ Missing spec/ directory"
+            exit 1
+          fi
+          
+          # Count bundles
+          BUNDLES=$(find spec -mindepth 1 -maxdepth 1 -type d | wc -l)
+          echo "Found $BUNDLES Spec Kit bundle(s)"
+          
+          if [ $BUNDLES -eq 0 ]; then
+            echo "❌ No Spec Kit bundles found"
+            exit 1
+          fi
+          
+          echo "✅ Spec Kit structure valid"
+      
+      - name: List Spec Kit files
+        run: |
+          echo "📁 Spec Kit bundle structure:"
+          tree spec/ || find spec/ -type f

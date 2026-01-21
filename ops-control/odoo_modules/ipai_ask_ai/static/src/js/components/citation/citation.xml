@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.Citation">
+        <a class="ipai-citation"
+           href="#"
+           t-att-title="model + ' #' + resId"
+           t-on-click.prevent="onClick">
+            <i t-attf-class="fa {{ icon }} ipai-citation-icon"/>
+            <span class="ipai-citation-label" t-esc="label"/>
+            <span class="ipai-citation-field" t-if="field">
+                (<t t-esc="field"/>)
+            </span>
+        </a>
+    </t>
+
+</templates>
