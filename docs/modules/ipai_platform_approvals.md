@@ -45,4 +45,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_platform_approvals --stop-after-i
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.642768_
+_Audited: 2026-01-21T22:42:54.070989_

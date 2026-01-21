@@ -1,8 +1,8 @@
 # ipai_finance_ppm_tdi
 
 **Status**: ✅ PASS
-**Version**: 1.0.0
-**Author**: InsightPulse AI - Jake Tolentino
+**Version**: 18.0.1.0.0
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -46,4 +46,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_finance_ppm_tdi --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.493467_
+_Audited: 2026-01-21T22:42:53.589472_

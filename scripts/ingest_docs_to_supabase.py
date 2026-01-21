@@ -44,6 +44,7 @@ except ImportError as e:
 # Optional OpenAI for embeddings
 try:
     import openai
+
     HAS_OPENAI = True
 except ImportError:
     HAS_OPENAI = False
@@ -94,6 +95,7 @@ KNOWN_SOURCES = {
 # Database Functions
 # -----------------------------------------------------------------------------
 
+
 def get_db_connection() -> "psycopg2.connection":
     """Get PostgreSQL connection from environment."""
     db_url = os.environ.get("SUPABASE_DB_URL")
@@ -107,12 +109,13 @@ def upsert_source(
     slug: str,
     kind: str,
     base_url: Optional[str] = None,
-    meta: Optional[Dict] = None
+    meta: Optional[Dict] = None,
 ) -> str:
     """Upsert a knowledge source and return its ID."""
     meta = meta or {}
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             INSERT INTO knowledge.sources (slug, kind, base_url, meta)
             VALUES (%s, %s, %s, %s)
             ON CONFLICT (slug) DO UPDATE SET
@@ -121,7 +124,9 @@ def upsert_source(
                 meta = EXCLUDED.meta,
                 updated_at = NOW()
             RETURNING id;
-        """, (slug, kind, base_url, json.dumps(meta)))
+        """,
+            (slug, kind, base_url, json.dumps(meta)),
+        )
         row = cur.fetchone()
         conn.commit()
         return str(row[0])
@@ -130,10 +135,13 @@ def upsert_source(
 def get_existing_chunks(conn: "psycopg2.connection", source_id: str) -> set:
     """Get existing external_ids for a source."""
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             SELECT external_id FROM knowledge.chunks
             WHERE source_id = %s AND external_id IS NOT NULL;
-        """, (source_id,))
+        """,
+            (source_id,),
+        )
         return {row[0] for row in cur.fetchall()}
 
 
@@ -143,43 +151,56 @@ def insert_chunk(
     external_id: str,
     content: str,
     metadata: Dict,
-    embedding: Optional[List[float]] = None
+    embedding: Optional[List[float]] = None,
 ) -> str:
     """Insert a chunk and return its ID."""
     with conn.cursor() as cur:
         if embedding:
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO knowledge.chunks (source_id, external_id, content, metadata, embedding)
                 VALUES (%s, %s, %s, %s, %s)
                 RETURNING id;
-            """, (source_id, external_id, content, json.dumps(metadata), embedding))
+            """,
+                (source_id, external_id, content, json.dumps(metadata), embedding),
+            )
         else:
-            cur.execute("""
+            cur.execute(
+                """
                 INSERT INTO knowledge.chunks (source_id, external_id, content, metadata)
                 VALUES (%s, %s, %s, %s)
                 RETURNING id;
-            """, (source_id, external_id, content, json.dumps(metadata)))
+            """,
+                (source_id, external_id, content, json.dumps(metadata)),
+            )
         row = cur.fetchone()
         conn.commit()
         return str(row[0])
 
 
-def delete_chunks_by_external_id(conn: "psycopg2.connection", source_id: str, external_ids: List[str]) -> int:
+def delete_chunks_by_external_id(
+    conn: "psycopg2.connection", source_id: str, external_ids: List[str]
+) -> int:
     """Delete chunks by external_id."""
     if not external_ids:
         return 0
     with conn.cursor() as cur:
-        cur.execute("""
+        cur.execute(
+            """
             DELETE FROM knowledge.chunks
             WHERE source_id = %s AND external_id = ANY(%s);
-        """, (source_id, external_ids))
+        """,
+            (source_id, external_ids),
+        )
         deleted = cur.rowcount
         conn.commit()
         return deleted
 
+
 # -----------------------------------------------------------------------------
 # Chunking Functions
 # -----------------------------------------------------------------------------
+
 
 def get_tokenizer():
     """Get tiktoken tokenizer for chunk sizing."""
@@ -189,7 +210,7 @@ def get_tokenizer():
 def chunk_text(
     text: str,
     max_tokens: int = DEFAULT_CHUNK_SIZE,
-    overlap_tokens: int = DEFAULT_CHUNK_OVERLAP
+    overlap_tokens: int = DEFAULT_CHUNK_OVERLAP,
 ) -> List[str]:
     """
     Chunk text into smaller pieces with overlap.
@@ -228,9 +249,11 @@ def compute_file_hash(path: Path) -> str:
     content = path.read_text(encoding="utf-8")
     return hashlib.md5(content.encode()).hexdigest()
 
+
 # -----------------------------------------------------------------------------
 # Embedding Functions
 # -----------------------------------------------------------------------------
+
 
 def get_openai_client():
     """Get OpenAI client if available."""
@@ -268,9 +291,11 @@ def embed_batch(client, texts: List[str], model: str) -> List[List[float]]:
         print(f"Embedding error: {e}")
         return [[] for _ in texts]
 
+
 # -----------------------------------------------------------------------------
 # File Discovery
 # -----------------------------------------------------------------------------
+
 
 def discover_markdown_files(paths: List[str], base_dir: Path) -> List[Path]:
     """
@@ -295,9 +320,11 @@ def discover_markdown_files(paths: List[str], base_dir: Path) -> List[Path]:
 
     return sorted(set(files))
 
+
 # -----------------------------------------------------------------------------
 # Main Ingestion
 # -----------------------------------------------------------------------------
+
 
 def ingest_source(
     conn: "psycopg2.connection",
@@ -307,7 +334,7 @@ def ingest_source(
     openai_client,
     embed_model: str,
     dry_run: bool = False,
-    verbose: bool = False
+    verbose: bool = False,
 ) -> Dict[str, int]:
     """
     Ingest a single source into the knowledge schema.
@@ -372,7 +399,11 @@ def ingest_source(
             chunks = chunk_text(content)
 
             # Generate embeddings if client available
-            embeddings = embed_batch(openai_client, chunks, embed_model) if openai_client else None
+            embeddings = (
+                embed_batch(openai_client, chunks, embed_model)
+                if openai_client
+                else None
+            )
 
             # Insert chunks
             for i, chunk_content in enumerate(chunks):
@@ -392,7 +423,9 @@ def ingest_source(
                     "file_hash": file_hash,
                 }
 
-                insert_chunk(conn, source_id, external_id, chunk_content, metadata, embedding)
+                insert_chunk(
+                    conn, source_id, external_id, chunk_content, metadata, embedding
+                )
                 stats["chunks"] += 1
 
             if verbose:
@@ -413,10 +446,14 @@ def ingest_source(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Ingest documentation into Supabase knowledge schema")
+    parser = argparse.ArgumentParser(
+        description="Ingest documentation into Supabase knowledge schema"
+    )
     parser.add_argument("--source", "-s", help="Specific source slug to ingest")
     parser.add_argument("--path", "-p", help="Custom path for source")
-    parser.add_argument("--dry-run", "-n", action="store_true", help="Show what would be done")
+    parser.add_argument(
+        "--dry-run", "-n", action="store_true", help="Show what would be done"
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
     parser.add_argument("--model", default=DEFAULT_EMBED_MODEL, help="Embedding model")
     args = parser.parse_args()

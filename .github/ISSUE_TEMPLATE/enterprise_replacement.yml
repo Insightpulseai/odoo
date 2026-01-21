@@ -1,0 +1,80 @@
+name: Enterprise Replacement Task
+description: Task for replacing Odoo EE/IAP features with CE+OCA+IPAI
+title: "[EE-Replace] "
+labels: ["enterprise-replacement", "ipai"]
+projects: ["jgtolentino/5"]
+body:
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      description: Which area does this task belong to?
+      options:
+        - "Email/SMTP"
+        - "OAuth/Authentication"
+        - "IoT Bridge"
+        - "Multi-Company"
+        - "IAP Replacement"
+        - "Configuration"
+        - "Documentation"
+        - "CI/CD"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - "P0 - Foundation"
+        - "P1 - Email"
+        - "P2 - Auth"
+        - "P3 - Multi-Company"
+        - "P4 - IoT"
+        - "P5 - AI/OCR"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What needs to be done?
+    validations:
+      required: true
+
+  - type: textarea
+    id: ee_feature
+    attributes:
+      label: EE/IAP Feature Being Replaced
+      description: What Enterprise or IAP feature is this replacing?
+      placeholder: "e.g., Odoo IAP Email Credits"
+
+  - type: textarea
+    id: replacement
+    attributes:
+      label: CE+OCA+IPAI Replacement
+      description: What module/approach will replace the EE feature?
+      placeholder: "e.g., Mailgun SMTP + ipai_enterprise_bridge"
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: How do we know this is done?
+      placeholder: |
+        - [ ] Module installed successfully
+        - [ ] Feature works without EE dependency
+        - [ ] Tests pass
+    validations:
+      required: true
+
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification Commands
+      description: CLI commands to verify completion
+      placeholder: |
+        ```bash
+        docker compose exec -T odoo odoo shell -d odoo_prod -c "..."
+        ```

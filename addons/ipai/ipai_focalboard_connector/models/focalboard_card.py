@@ -10,14 +10,9 @@ class FocalboardCard(models.Model):
     _order = "create_date desc"
 
     board_id = fields.Many2one(
-        "ipai.focalboard.board",
-        required=True,
-        ondelete="cascade"
+        "ipai.focalboard.board", required=True, ondelete="cascade"
     )
-    connector_id = fields.Many2one(
-        related="board_id.connector_id",
-        store=True
-    )
+    connector_id = fields.Many2one(related="board_id.connector_id", store=True)
 
     # Focalboard IDs
     fb_card_id = fields.Char(required=True, index=True)
@@ -32,26 +27,30 @@ class FocalboardCard(models.Model):
 
     # Linked Odoo task
     task_id = fields.Many2one(
-        "project.task",
-        string="Linked Task",
-        help="Corresponding Odoo task"
+        "project.task", string="Linked Task", help="Corresponding Odoo task"
     )
 
     # Sync status
     last_sync = fields.Datetime()
-    sync_status = fields.Selection([
-        ("synced", "Synced"),
-        ("pending", "Pending Sync"),
-        ("conflict", "Conflict"),
-        ("error", "Error"),
-    ], default="pending")
+    sync_status = fields.Selection(
+        [
+            ("synced", "Synced"),
+            ("pending", "Pending Sync"),
+            ("conflict", "Conflict"),
+            ("error", "Error"),
+        ],
+        default="pending",
+    )
     sync_error = fields.Text()
 
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
-        ("card_uniq", "unique(board_id, fb_card_id)",
-         "Card already exists for this board!"),
+        (
+            "card_uniq",
+            "unique(board_id, fb_card_id)",
+            "Card already exists for this board!",
+        ),
     ]
 
     @api.model
@@ -63,10 +62,13 @@ class FocalboardCard(models.Model):
         cards = client.get_cards(board.fb_board_id)
 
         for card in cards:
-            existing = self.search([
-                ("board_id", "=", board.id),
-                ("fb_card_id", "=", card["id"]),
-            ], limit=1)
+            existing = self.search(
+                [
+                    ("board_id", "=", board.id),
+                    ("fb_card_id", "=", card["id"]),
+                ],
+                limit=1,
+            )
 
             vals = {
                 "board_id": board.id,
@@ -102,11 +104,13 @@ class FocalboardCard(models.Model):
         if not project:
             project = self.env["project.project"].search([], limit=1)
 
-        task = self.env["project.task"].create({
-            "name": self.title,
-            "project_id": project.id if project else False,
-            "fb_card_id": self.fb_card_id,
-        })
+        task = self.env["project.task"].create(
+            {
+                "name": self.title,
+                "project_id": project.id if project else False,
+                "fb_card_id": self.fb_card_id,
+            }
+        )
         self.task_id = task.id
 
         return {

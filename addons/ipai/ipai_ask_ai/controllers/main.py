@@ -77,7 +77,9 @@ class IpaiAskAiController(http.Controller):
                         "id": m.id,
                         "role": m.role,
                         "content": m.content,
-                        "timestamp": m.create_date.isoformat() if m.create_date else None,
+                        "timestamp": (
+                            m.create_date.isoformat() if m.create_date else None
+                        ),
                         "rating": m.rating,
                     }
                     for m in conversation.message_ids

@@ -24,33 +24,40 @@ HOLIDAYS_2026 = {
 # Forms Configuration (Base Deadlines)
 # Rule: "Day X of following month"
 FORMS = [
-    {"code": "1601-C", "day_offset": 10, "jan_exception": 15}, # Jan deadline is 15th
+    {"code": "1601-C", "day_offset": 10, "jan_exception": 15},  # Jan deadline is 15th
     {"code": "0619-E", "day_offset": 10, "jan_exception": 15},
-    {"code": "1601-EQ", "day_offset": 30, "quarterly": True}, # End of month following quarter? Usually last day.
+    {
+        "code": "1601-EQ",
+        "day_offset": 30,
+        "quarterly": True,
+    },  # End of month following quarter? Usually last day.
     {"code": "2550Q", "day_offset": 25, "quarterly": True},
-    {"code": "SSS", "day_offset": 30}, # Example
-    {"code": "PhilHealth", "day_offset": 15}, # Example
-    {"code": "Pag-IBIG", "day_offset": 15}, # Example
+    {"code": "SSS", "day_offset": 30},  # Example
+    {"code": "PhilHealth", "day_offset": 15},  # Example
+    {"code": "Pag-IBIG", "day_offset": 15},  # Example
 ]
 
 # Roles Mapping (Placeholder based on prompt)
 ROLES = {
     "Prep": "Finance Supervisor",
     "Review": "Senior Finance Manager",
-    "Approval": "Finance Director"
+    "Approval": "Finance Director",
 }
 
+
 def is_business_day(date):
-    if date.weekday() >= 5: # Sat=5, Sun=6
+    if date.weekday() >= 5:  # Sat=5, Sun=6
         return False
     if date in HOLIDAYS_2026:
         return False
     return True
 
+
 def get_next_business_day(date):
     while not is_business_day(date):
         date += datetime.timedelta(days=1)
     return date
+
 
 def subtract_business_days(date, days):
     current = date
@@ -60,6 +67,7 @@ def subtract_business_days(date, days):
         if is_business_day(current):
             count += 1
     return current
+
 
 def generate_schedule():
     schedule = []
@@ -91,8 +99,8 @@ def generate_schedule():
 
             day = form["day_offset"]
             if month == 12 and form.get("jan_exception") and deadline_month == 1:
-                 # Special case for Jan deadline (covering Dec)
-                 day = form["jan_exception"]
+                # Special case for Jan deadline (covering Dec)
+                day = form["jan_exception"]
 
             # Construct naive deadline
             try:
@@ -121,48 +129,60 @@ def generate_schedule():
             date_review = subtract_business_days(final_deadline, 2)
             date_approval = subtract_business_days(final_deadline, 1)
 
-            period_name = datetime.date(YEAR, month, 1).strftime("%b %Y") # e.g. Jan 2026 covering Dec?
+            period_name = datetime.date(YEAR, month, 1).strftime(
+                "%b %Y"
+            )  # e.g. Jan 2026 covering Dec?
             # Wait, if deadline is Jan 15 2026, it covers Dec 2025.
             # Prompt says "January 2026 (Example form: 1601-C)".
             # Let's assume the "Period" label aligns with the deadline month for simplicity or the prompt's convention.
             # Actually prompt says "Period Covered (Dec 2025)" for Jan deadline.
             # Let's use Deadline Month as the grouper for the schedule.
 
-            schedule.append({
-                "Form": form["code"],
-                "Deadline": final_deadline,
-                "Prep": date_prep,
-                "Review": date_review,
-                "Approval": date_approval,
-                "Period": f"Month {month}" # Simplified
-            })
+            schedule.append(
+                {
+                    "Form": form["code"],
+                    "Deadline": final_deadline,
+                    "Prep": date_prep,
+                    "Review": date_review,
+                    "Approval": date_approval,
+                    "Period": f"Month {month}",  # Simplified
+                }
+            )
 
     return schedule
 
+
 def write_csv(schedule):
-    with open('calendar/2026_FinanceClosing_Master.csv', 'w', newline='') as f:
+    with open("calendar/2026_FinanceClosing_Master.csv", "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(['Form', 'Period', 'Deadline', 'Prep Date', 'Review Date', 'Approval Date'])
+        writer.writerow(
+            ["Form", "Period", "Deadline", "Prep Date", "Review Date", "Approval Date"]
+        )
         for item in schedule:
-            writer.writerow([
-                item['Form'],
-                item['Period'],
-                item['Deadline'].isoformat(),
-                item['Prep'].isoformat(),
-                item['Review'].isoformat(),
-                item['Approval'].isoformat()
-            ])
+            writer.writerow(
+                [
+                    item["Form"],
+                    item["Period"],
+                    item["Deadline"].isoformat(),
+                    item["Prep"].isoformat(),
+                    item["Review"].isoformat(),
+                    item["Approval"].isoformat(),
+                ]
+            )
+
 
 def write_ics(schedule):
-    with open('calendar/FinanceClosing_RecurringTasks.ics', 'w') as f:
-        f.write("BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//InsightPulse//Finance Schedule//EN\n")
+    with open("calendar/FinanceClosing_RecurringTasks.ics", "w") as f:
+        f.write(
+            "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//InsightPulse//Finance Schedule//EN\n"
+        )
         for item in schedule:
             # Create events for each stage
             stages = [
-                ("Prep", item['Prep'], "Finance Supervisor"),
-                ("Review", item['Review'], "Senior Finance Manager"),
-                ("Approval", item['Approval'], "Finance Director"),
-                ("Filing", item['Deadline'], "Finance Team")
+                ("Prep", item["Prep"], "Finance Supervisor"),
+                ("Review", item["Review"], "Senior Finance Manager"),
+                ("Approval", item["Approval"], "Finance Director"),
+                ("Filing", item["Deadline"], "Finance Team"),
             ]
             for stage, date, role in stages:
                 dt_str = date.strftime("%Y%m%d")
@@ -174,25 +194,29 @@ def write_ics(schedule):
                 f.write("END:VEVENT\n")
         f.write("END:VCALENDAR\n")
 
+
 def write_odoo_seed(schedule):
     data = []
     for item in schedule:
         # Create a record for ipai.bir.form.schedule
-        data.append({
-            "id": f"schedule_{item['Form']}_{item['Deadline'].strftime('%Y%m%d')}",
-            "model": "ipai.bir.form.schedule",
-            "fields": {
-                "form_code": item['Form'],
-                "period": item['Period'],
-                "bir_deadline": item['Deadline'].isoformat(),
-                "prep_date": item['Prep'].isoformat(),
-                "review_date": item['Review'].isoformat(),
-                "approval_date": item['Approval'].isoformat(),
+        data.append(
+            {
+                "id": f"schedule_{item['Form']}_{item['Deadline'].strftime('%Y%m%d')}",
+                "model": "ipai.bir.form.schedule",
+                "fields": {
+                    "form_code": item["Form"],
+                    "period": item["Period"],
+                    "bir_deadline": item["Deadline"].isoformat(),
+                    "prep_date": item["Prep"].isoformat(),
+                    "review_date": item["Review"].isoformat(),
+                    "approval_date": item["Approval"].isoformat(),
+                },
             }
-        })
+        )
 
-    with open('odoo/ipai_finance_closing_seed.json', 'w') as f:
+    with open("odoo/ipai_finance_closing_seed.json", "w") as f:
         json.dump(data, f, indent=4)
+
 
 if __name__ == "__main__":
     sched = generate_schedule()

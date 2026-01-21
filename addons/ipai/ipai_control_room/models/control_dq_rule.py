@@ -201,21 +201,27 @@ class ControlDQRule(models.Model):
     def _compute_open_issue_count(self):
         for record in self:
             record.open_issue_count = len(
-                record.issue_ids.filtered(lambda i: i.status in ("open", "ack", "in_progress"))
+                record.issue_ids.filtered(
+                    lambda i: i.status in ("open", "ack", "in_progress")
+                )
             )
 
     def action_run_check(self):
         """Trigger a check run for this rule"""
         self.ensure_one()
         CheckRun = self.env["control.dq.check.run"]
-        check = CheckRun.create({
-            "rule_id": self.id,
-            "state": "pass",  # Placeholder - actual check logic would determine
-        })
-        self.write({
-            "last_check_at": fields.Datetime.now(),
-            "last_check_status": check.state,
-        })
+        check = CheckRun.create(
+            {
+                "rule_id": self.id,
+                "state": "pass",  # Placeholder - actual check logic would determine
+            }
+        )
+        self.write(
+            {
+                "last_check_at": fields.Datetime.now(),
+                "last_check_status": check.state,
+            }
+        )
         return {
             "type": "ir.actions.act_window",
             "res_model": "control.dq.check.run",

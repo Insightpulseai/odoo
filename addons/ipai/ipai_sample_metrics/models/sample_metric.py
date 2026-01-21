@@ -148,19 +148,21 @@ class SampleMetric(models.Model):
         records = self.search(domain, limit=limit, order="write_date desc")
         payload = []
         for r in records:
-            payload.append({
-                "odoo_id": r.id,
-                "name": r.name,
-                "code": r.code,
-                "date": r.date.isoformat() if r.date else None,
-                "brand_id": r.brand_id.id if r.brand_id else None,
-                "store_id": r.store_id.id if r.store_id else None,
-                "value": r.value,
-                "unit": r.unit,
-                "is_alert": r.is_alert,
-                "notes": r.notes or "",
-                "active": r.active,
-            })
+            payload.append(
+                {
+                    "odoo_id": r.id,
+                    "name": r.name,
+                    "code": r.code,
+                    "date": r.date.isoformat() if r.date else None,
+                    "brand_id": r.brand_id.id if r.brand_id else None,
+                    "store_id": r.store_id.id if r.store_id else None,
+                    "value": r.value,
+                    "unit": r.unit,
+                    "is_alert": r.is_alert,
+                    "notes": r.notes or "",
+                    "active": r.active,
+                }
+            )
         return payload
 
     @api.model

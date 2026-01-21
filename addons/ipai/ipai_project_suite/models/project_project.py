@@ -9,32 +9,32 @@ class ProjectProject(models.Model):
     ipai_dependencies_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether dependencies feature is enabled system-wide."
+        help="Whether dependencies feature is enabled system-wide.",
     )
     ipai_milestones_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether milestones feature is enabled system-wide."
+        help="Whether milestones feature is enabled system-wide.",
     )
     ipai_budgeting_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether budgeting feature is enabled system-wide."
+        help="Whether budgeting feature is enabled system-wide.",
     )
     ipai_raci_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether RACI roles feature is enabled system-wide."
+        help="Whether RACI roles feature is enabled system-wide.",
     )
     ipai_stage_gates_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether stage gates feature is enabled system-wide."
+        help="Whether stage gates feature is enabled system-wide.",
     )
     ipai_templates_enabled = fields.Boolean(
         compute="_compute_ipai_flags",
         store=False,
-        help="Whether templates feature is enabled system-wide."
+        help="Whether templates feature is enabled system-wide.",
     )
 
     # Feature-specific relational fields
@@ -42,32 +42,30 @@ class ProjectProject(models.Model):
         "ipai.project.milestone",
         "project_id",
         string="Milestones",
-        help="Milestones associated with this project."
+        help="Milestones associated with this project.",
     )
     ipai_budget_ids = fields.One2many(
         "ipai.project.budget",
         "project_id",
         string="Budgets",
-        help="Budget records for this project."
+        help="Budget records for this project.",
     )
     ipai_raci_ids = fields.One2many(
         "ipai.project.raci",
         "project_id",
         string="RACI Assignments",
-        help="RACI role assignments for this project."
+        help="RACI role assignments for this project.",
     )
 
     # Computed counts for smart buttons
     ipai_milestone_count = fields.Integer(
-        compute="_compute_ipai_counts",
-        string="Milestone Count"
+        compute="_compute_ipai_counts", string="Milestone Count"
     )
     ipai_budget_count = fields.Integer(
-        compute="_compute_ipai_counts",
-        string="Budget Count"
+        compute="_compute_ipai_counts", string="Budget Count"
     )
 
-    @api.depends_context('uid')
+    @api.depends_context("uid")
     def _compute_ipai_flags(self):
         """Compute feature flags from system parameters."""
         ICP = self.env["ir.config_parameter"].sudo()

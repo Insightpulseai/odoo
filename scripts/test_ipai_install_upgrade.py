@@ -122,10 +122,20 @@ def create_test_database(db_name: str) -> tuple:
     try:
         # Drop if exists
         subprocess.run(
-            ["dropdb", "-h", DB_HOST, "-p", DB_PORT, "-U", DB_USER, "--if-exists", db_name],
+            [
+                "dropdb",
+                "-h",
+                DB_HOST,
+                "-p",
+                DB_PORT,
+                "-U",
+                DB_USER,
+                "--if-exists",
+                db_name,
+            ],
             env={**os.environ, "PGPASSWORD": DB_PASSWORD},
             capture_output=True,
-            timeout=30
+            timeout=30,
         )
 
         # Create new database
@@ -133,7 +143,7 @@ def create_test_database(db_name: str) -> tuple:
             ["createdb", "-h", DB_HOST, "-p", DB_PORT, "-U", DB_USER, db_name],
             env={**os.environ, "PGPASSWORD": DB_PASSWORD},
             capture_output=True,
-            timeout=30
+            timeout=30,
         )
 
         if result.returncode != 0:
@@ -150,16 +160,28 @@ def drop_test_database(db_name: str):
     """Drop a test database."""
     try:
         subprocess.run(
-            ["dropdb", "-h", DB_HOST, "-p", DB_PORT, "-U", DB_USER, "--if-exists", db_name],
+            [
+                "dropdb",
+                "-h",
+                DB_HOST,
+                "-p",
+                DB_PORT,
+                "-U",
+                DB_USER,
+                "--if-exists",
+                db_name,
+            ],
             env={**os.environ, "PGPASSWORD": DB_PASSWORD},
             capture_output=True,
-            timeout=30
+            timeout=30,
         )
     except Exception:
         pass  # Ignore errors during cleanup
 
 
-def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INSTALL_TIMEOUT) -> dict:
+def run_odoo_command(
+    db_name: str, command: str, module: str, timeout: int = INSTALL_TIMEOUT
+) -> dict:
     """
     Run an Odoo command (install or upgrade).
 
@@ -175,7 +197,8 @@ def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INS
     # Build command
     cmd = [
         ODOO_BIN,
-        "-d", db_name,
+        "-d",
+        db_name,
         f"--{command}={module}",
         "--stop-after-init",
         "--log-level=warning",
@@ -194,7 +217,7 @@ def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INS
             cmd,
             capture_output=True,
             timeout=timeout,
-            env={**os.environ, "PGPASSWORD": DB_PASSWORD}
+            env={**os.environ, "PGPASSWORD": DB_PASSWORD},
         )
 
         duration = time.time() - start_time
@@ -203,10 +226,10 @@ def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INS
 
         # Check for errors in output
         has_error = (
-            result.returncode != 0 or
-            "Traceback" in stderr or
-            "Error" in stderr or
-            "CRITICAL" in stderr
+            result.returncode != 0
+            or "Traceback" in stderr
+            or "Error" in stderr
+            or "CRITICAL" in stderr
         )
 
         return {
@@ -215,7 +238,7 @@ def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INS
             "stdout": stdout[-2000:] if len(stdout) > 2000 else stdout,  # Truncate
             "stderr": stderr[-2000:] if len(stderr) > 2000 else stderr,  # Truncate
             "error": extract_error(stderr) if has_error else None,
-            "return_code": result.returncode
+            "return_code": result.returncode,
         }
 
     except subprocess.TimeoutExpired:
@@ -226,7 +249,7 @@ def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INS
             "stdout": "",
             "stderr": "",
             "error": f"Command timed out after {timeout} seconds",
-            "return_code": -1
+            "return_code": -1,
         }
     except FileNotFoundError:
         return {
@@ -235,7 +258,7 @@ def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INS
             "stdout": "",
             "stderr": "",
             "error": f"Odoo binary not found: {ODOO_BIN}",
-            "return_code": -1
+            "return_code": -1,
         }
     except Exception as e:
         duration = time.time() - start_time
@@ -245,7 +268,7 @@ def run_odoo_command(db_name: str, command: str, module: str, timeout: int = INS
             "stdout": "",
             "stderr": "",
             "error": str(e),
-            "return_code": -1
+            "return_code": -1,
         }
 
 
@@ -257,7 +280,7 @@ def extract_error(stderr: str) -> str:
     for i, line in enumerate(lines):
         if "Traceback" in line:
             # Return traceback and a few lines after
-            return "\n".join(lines[i:min(i+10, len(lines))])
+            return "\n".join(lines[i : min(i + 10, len(lines))])
 
     # Look for Error/CRITICAL
     for line in reversed(lines):
@@ -282,7 +305,7 @@ def test_module(module_name: str, test_id: int) -> dict:
         "install": {"tested": False},
         "upgrade": {"tested": False},
         "overall_success": False,
-        "tested_at": datetime.now().isoformat()
+        "tested_at": datetime.now().isoformat(),
     }
 
     if not result["installable"]:
@@ -306,7 +329,7 @@ def test_module(module_name: str, test_id: int) -> dict:
             "tested": True,
             "success": install_result["success"],
             "duration": install_result["duration"],
-            "error": install_result.get("error")
+            "error": install_result.get("error"),
         }
 
         if install_result["success"]:
@@ -314,12 +337,14 @@ def test_module(module_name: str, test_id: int) -> dict:
 
             # Test upgrade
             print(f"    Upgrading {module_name}...", end=" ", flush=True)
-            upgrade_result = run_odoo_command(db_name, "update", module_name, UPGRADE_TIMEOUT)
+            upgrade_result = run_odoo_command(
+                db_name, "update", module_name, UPGRADE_TIMEOUT
+            )
             result["upgrade"] = {
                 "tested": True,
                 "success": upgrade_result["success"],
                 "duration": upgrade_result["duration"],
-                "error": upgrade_result.get("error")
+                "error": upgrade_result.get("error"),
             }
 
             if upgrade_result["success"]:
@@ -331,10 +356,9 @@ def test_module(module_name: str, test_id: int) -> dict:
             result["upgrade"]["skipped"] = "Install failed"
 
         # Overall success
-        result["overall_success"] = (
-            result["install"].get("success", False) and
-            result["upgrade"].get("success", False)
-        )
+        result["overall_success"] = result["install"].get("success", False) and result[
+            "upgrade"
+        ].get("success", False)
 
     finally:
         # Cleanup
@@ -352,10 +376,18 @@ def generate_reports(results: list, output_dir: Path):
     # Summary stats
     total = len(results)
     install_pass = sum(1 for r in results if r["install"].get("success"))
-    install_fail = sum(1 for r in results if r["install"].get("tested") and not r["install"].get("success"))
+    install_fail = sum(
+        1
+        for r in results
+        if r["install"].get("tested") and not r["install"].get("success")
+    )
     install_skip = sum(1 for r in results if r["install"].get("skipped"))
     upgrade_pass = sum(1 for r in results if r["upgrade"].get("success"))
-    upgrade_fail = sum(1 for r in results if r["upgrade"].get("tested") and not r["upgrade"].get("success"))
+    upgrade_fail = sum(
+        1
+        for r in results
+        if r["upgrade"].get("tested") and not r["upgrade"].get("success")
+    )
     upgrade_skip = sum(1 for r in results if r["upgrade"].get("skipped"))
 
     report_data = {
@@ -365,16 +397,16 @@ def generate_reports(results: list, output_dir: Path):
             "install": {
                 "pass": install_pass,
                 "fail": install_fail,
-                "skip": install_skip
+                "skip": install_skip,
             },
             "upgrade": {
                 "pass": upgrade_pass,
                 "fail": upgrade_fail,
-                "skip": upgrade_skip
+                "skip": upgrade_skip,
             },
-            "overall_pass": sum(1 for r in results if r["overall_success"])
+            "overall_pass": sum(1 for r in results if r["overall_success"]),
         },
-        "results": results
+        "results": results,
     }
 
     # JSON report
@@ -387,23 +419,33 @@ def generate_reports(results: list, output_dir: Path):
     csv_path = output_dir / "install_test_results.csv"
     with open(csv_path, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow([
-            "module", "installable", "install_success", "install_duration",
-            "install_error", "upgrade_success", "upgrade_duration", "upgrade_error",
-            "overall_success"
-        ])
+        writer.writerow(
+            [
+                "module",
+                "installable",
+                "install_success",
+                "install_duration",
+                "install_error",
+                "upgrade_success",
+                "upgrade_duration",
+                "upgrade_error",
+                "overall_success",
+            ]
+        )
         for r in results:
-            writer.writerow([
-                r["module"],
-                r["installable"],
-                r["install"].get("success", ""),
-                r["install"].get("duration", ""),
-                r["install"].get("error", r["install"].get("skipped", "")),
-                r["upgrade"].get("success", ""),
-                r["upgrade"].get("duration", ""),
-                r["upgrade"].get("error", r["upgrade"].get("skipped", "")),
-                r["overall_success"]
-            ])
+            writer.writerow(
+                [
+                    r["module"],
+                    r["installable"],
+                    r["install"].get("success", ""),
+                    r["install"].get("duration", ""),
+                    r["install"].get("error", r["install"].get("skipped", "")),
+                    r["upgrade"].get("success", ""),
+                    r["upgrade"].get("duration", ""),
+                    r["upgrade"].get("error", r["upgrade"].get("skipped", "")),
+                    r["overall_success"],
+                ]
+            )
     print(f"CSV report: {csv_path}")
 
     # Markdown report
@@ -417,29 +459,51 @@ def generate_reports(results: list, output_dir: Path):
         f.write(f"|--------|------|------|------|\n")
         f.write(f"| Install | {install_pass} | {install_fail} | {install_skip} |\n")
         f.write(f"| Upgrade | {upgrade_pass} | {upgrade_fail} | {upgrade_skip} |\n")
-        f.write(f"\n**Overall Pass Rate**: {report_data['summary']['overall_pass']}/{total} ")
-        f.write(f"({100*report_data['summary']['overall_pass']//total if total else 0}%)\n\n")
+        f.write(
+            f"\n**Overall Pass Rate**: {report_data['summary']['overall_pass']}/{total} "
+        )
+        f.write(
+            f"({100*report_data['summary']['overall_pass']//total if total else 0}%)\n\n"
+        )
 
         f.write("## Results by Module\n\n")
         f.write("| Module | Install | Upgrade | Overall |\n")
         f.write("|--------|---------|---------|----------|\n")
 
         for r in results:
-            install_status = "PASS" if r["install"].get("success") else ("SKIP" if r["install"].get("skipped") else "FAIL")
-            upgrade_status = "PASS" if r["upgrade"].get("success") else ("SKIP" if r["upgrade"].get("skipped") else "FAIL")
+            install_status = (
+                "PASS"
+                if r["install"].get("success")
+                else ("SKIP" if r["install"].get("skipped") else "FAIL")
+            )
+            upgrade_status = (
+                "PASS"
+                if r["upgrade"].get("success")
+                else ("SKIP" if r["upgrade"].get("skipped") else "FAIL")
+            )
             overall_status = "PASS" if r["overall_success"] else "FAIL"
-            f.write(f"| {r['module']} | {install_status} | {upgrade_status} | {overall_status} |\n")
+            f.write(
+                f"| {r['module']} | {install_status} | {upgrade_status} | {overall_status} |\n"
+            )
 
         # Failed modules details
-        failed = [r for r in results if not r["overall_success"] and not r["install"].get("skipped")]
+        failed = [
+            r
+            for r in results
+            if not r["overall_success"] and not r["install"].get("skipped")
+        ]
         if failed:
             f.write("\n## Failed Module Details\n\n")
             for r in failed:
                 f.write(f"### {r['module']}\n\n")
                 if r["install"].get("error"):
-                    f.write(f"**Install Error:**\n```\n{r['install']['error']}\n```\n\n")
+                    f.write(
+                        f"**Install Error:**\n```\n{r['install']['error']}\n```\n\n"
+                    )
                 if r["upgrade"].get("error"):
-                    f.write(f"**Upgrade Error:**\n```\n{r['upgrade']['error']}\n```\n\n")
+                    f.write(
+                        f"**Upgrade Error:**\n```\n{r['upgrade']['error']}\n```\n\n"
+                    )
 
     print(f"Markdown report: {md_path}")
 

@@ -165,7 +165,9 @@ class ProjectProject(models.Model):
             kr_tasks = project.task_ids.filtered(lambda t: t.x_is_kr)
             project.x_kr_count = len(kr_tasks)
             project.x_kr_at_risk = len(
-                kr_tasks.filtered(lambda t: t.x_kr_confidence and t.x_kr_confidence < 40)
+                kr_tasks.filtered(
+                    lambda t: t.x_kr_confidence and t.x_kr_confidence < 40
+                )
             )
 
     def action_activate_okr(self):

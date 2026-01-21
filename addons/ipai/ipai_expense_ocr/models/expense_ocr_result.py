@@ -122,7 +122,9 @@ class ExpenseOcrResult(models.Model):
             )
 
         except Exception as e:
-            _logger.error(f"OCR extraction failed for expense {self.expense_id.id}: {e}")
+            _logger.error(
+                f"OCR extraction failed for expense {self.expense_id.id}: {e}"
+            )
             self.state = "failed"
             self.error_message = str(e)
 
@@ -131,13 +133,17 @@ class ExpenseOcrResult(models.Model):
         fields_data = result.get("fields", {})
 
         # Merchant
-        merchant = fields_data.get("merchant_name", {}) or fields_data.get("vendor_name", {})
+        merchant = fields_data.get("merchant_name", {}) or fields_data.get(
+            "vendor_name", {}
+        )
         if isinstance(merchant, dict):
             self.merchant_name = merchant.get("value")
             self.merchant_confidence = merchant.get("conf", 0.0)
 
         # Date
-        date_field = fields_data.get("receipt_date", {}) or fields_data.get("invoice_date", {})
+        date_field = fields_data.get("receipt_date", {}) or fields_data.get(
+            "invoice_date", {}
+        )
         if isinstance(date_field, dict) and date_field.get("value"):
             try:
                 self.receipt_date = fields.Date.from_string(date_field["value"])

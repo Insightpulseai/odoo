@@ -101,7 +101,9 @@ class IpaiAiAuditLog(models.Model):
     def _compute_display_name(self):
         for log in self:
             user = log.user_id.name or "Unknown"
-            time = log.request_time.strftime("%Y-%m-%d %H:%M") if log.request_time else ""
+            time = (
+                log.request_time.strftime("%Y-%m-%d %H:%M") if log.request_time else ""
+            )
             log.display_name = f"{user} - {time}"
 
     @api.depends("request_time", "response_time")
@@ -129,14 +131,20 @@ class IpaiAiAuditLog(models.Model):
         # Prepare content (may need redaction)
         redaction_service = self.env["ipai.ai.redaction.service"]
 
-        request_content = json.dumps(request_data.get("messages", []), ensure_ascii=False)
+        request_content = json.dumps(
+            request_data.get("messages", []), ensure_ascii=False
+        )
         response_content = response_data.get("response", "")
 
         # Check if redaction is needed
         is_redacted = False
         if self._should_redact():
-            request_content, redacted_req = redaction_service.redact_text(request_content)
-            response_content, redacted_resp = redaction_service.redact_text(response_content)
+            request_content, redacted_req = redaction_service.redact_text(
+                request_content
+            )
+            response_content, redacted_resp = redaction_service.redact_text(
+                response_content
+            )
             is_redacted = redacted_req or redacted_resp
 
         # Generate hashes

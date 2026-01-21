@@ -7,31 +7,19 @@ class ProjectTemplate(models.Model):
     _description = "Project Template"
     _order = "sequence, name"
 
-    name = fields.Char(
-        string="Template Name",
-        required=True
-    )
-    description = fields.Text(
-        string="Description"
-    )
-    sequence = fields.Integer(
-        string="Sequence",
-        default=10
-    )
+    name = fields.Char(string="Template Name", required=True)
+    description = fields.Text(string="Description")
+    sequence = fields.Integer(string="Sequence", default=10)
     stage_ids = fields.Many2many(
         "project.task.type",
         string="Stages",
-        help="Stages to create for projects using this template."
+        help="Stages to create for projects using this template.",
     )
     task_template_ids = fields.One2many(
-        "ipai.project.template.task",
-        "template_id",
-        string="Task Templates"
+        "ipai.project.template.task", "template_id", string="Task Templates"
     )
     tag_ids = fields.Many2many(
-        "project.tags",
-        string="Tags",
-        help="Default tags for the project."
+        "project.tags", string="Tags", help="Default tags for the project."
     )
     privacy_visibility = fields.Selection(
         [
@@ -40,20 +28,12 @@ class ProjectTemplate(models.Model):
             ("portal", "Invited Portal Users and Internal Users"),
         ],
         string="Visibility",
-        default="employees"
+        default="employees",
     )
-    allow_timesheets = fields.Boolean(
-        string="Allow Timesheets",
-        default=True
-    )
-    active = fields.Boolean(
-        string="Active",
-        default=True
-    )
+    allow_timesheets = fields.Boolean(string="Allow Timesheets", default=True)
+    active = fields.Boolean(string="Active", default=True)
     company_id = fields.Many2one(
-        "res.company",
-        string="Company",
-        default=lambda self: self.env.company
+        "res.company", string="Company", default=lambda self: self.env.company
     )
 
     def action_apply_to_project(self, project):
@@ -72,9 +52,9 @@ class ProjectTemplate(models.Model):
         # Apply default settings
         vals = {}
         if self.privacy_visibility:
-            vals['privacy_visibility'] = self.privacy_visibility
-        if 'allow_timesheets' in self.env['project.project']._fields:
-            vals['allow_timesheets'] = self.allow_timesheets
+            vals["privacy_visibility"] = self.privacy_visibility
+        if "allow_timesheets" in self.env["project.project"]._fields:
+            vals["allow_timesheets"] = self.allow_timesheets
         if vals:
             project.write(vals)
 
@@ -91,47 +71,31 @@ class ProjectTemplateTask(models.Model):
     _order = "sequence, id"
 
     template_id = fields.Many2one(
-        "ipai.project.template",
-        string="Template",
-        required=True,
-        ondelete="cascade"
+        "ipai.project.template", string="Template", required=True, ondelete="cascade"
     )
-    name = fields.Char(
-        string="Task Name",
-        required=True
-    )
-    description = fields.Html(
-        string="Description"
-    )
-    sequence = fields.Integer(
-        string="Sequence",
-        default=10
-    )
+    name = fields.Char(string="Task Name", required=True)
+    description = fields.Html(string="Description")
+    sequence = fields.Integer(string="Sequence", default=10)
     stage_id = fields.Many2one(
         "project.task.type",
         string="Stage",
-        help="Initial stage for the task. Must be one of the template's stages."
+        help="Initial stage for the task. Must be one of the template's stages.",
     )
-    tag_ids = fields.Many2many(
-        "project.tags",
-        string="Tags"
-    )
-    planned_hours = fields.Float(
-        string="Planned Hours"
-    )
+    tag_ids = fields.Many2many("project.tags", string="Tags")
+    planned_hours = fields.Float(string="Planned Hours")
     priority = fields.Selection(
         [
             ("0", "Normal"),
             ("1", "Important"),
         ],
         string="Priority",
-        default="0"
+        default="0",
     )
     parent_task_template_id = fields.Many2one(
         "ipai.project.template.task",
         string="Parent Task Template",
         domain="[('template_id', '=', template_id)]",
-        help="If set, the created task will be a subtask of the task created from this template."
+        help="If set, the created task will be a subtask of the task created from this template.",
     )
 
     def _create_task(self, project, parent_task=None):

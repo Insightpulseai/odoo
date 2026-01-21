@@ -50,4 +50,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_ppm_monthly_close --stop-after-in
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.723365_
+_Audited: 2026-01-21T22:42:54.230094_

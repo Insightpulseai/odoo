@@ -114,26 +114,34 @@ class IpaiAiEvent(models.Model):
 
     def action_mark_processed(self):
         """Mark event as processed."""
-        self.write({
-            "state": "processed",
-            "processed_date": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "processed",
+                "processed_date": fields.Datetime.now(),
+            }
+        )
 
     def action_mark_ignored(self):
         """Mark event as ignored (won't be processed)."""
-        self.write({
-            "state": "ignored",
-        })
+        self.write(
+            {
+                "state": "ignored",
+            }
+        )
 
     def action_retry(self):
         """Reset event to received state for reprocessing."""
-        self.write({
-            "state": "received",
-            "error_message": False,
-        })
+        self.write(
+            {
+                "state": "received",
+                "error_message": False,
+            }
+        )
 
     @api.model
-    def create_from_webhook(self, source, event_type, ref=None, payload=None, company_id=None):
+    def create_from_webhook(
+        self, source, event_type, ref=None, payload=None, company_id=None
+    ):
         """
         Create an event from webhook data.
 
@@ -162,13 +170,15 @@ class IpaiAiEvent(models.Model):
             company = self.env.company
 
         # Create event
-        event = self.sudo().create({
-            "source": normalized_source,
-            "event_type": str(event_type) if event_type else "unknown",
-            "ref": str(ref) if ref else False,
-            "payload_json": payload or {},
-            "company_id": company.id,
-        })
+        event = self.sudo().create(
+            {
+                "source": normalized_source,
+                "event_type": str(event_type) if event_type else "unknown",
+                "ref": str(ref) if ref else False,
+                "payload_json": payload or {},
+                "company_id": company.id,
+            }
+        )
 
         _logger.info(
             "Created integration event: source=%s, type=%s, ref=%s, id=%d",

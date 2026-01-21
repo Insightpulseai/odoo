@@ -232,7 +232,8 @@ class ResCompany(models.Model):
                 "lg": self.brand_shadow_lg or "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
             },
             "typography": {
-                "fontFamily": self.brand_font_family or '"Segoe UI", system-ui, sans-serif',
+                "fontFamily": self.brand_font_family
+                or '"Segoe UI", system-ui, sans-serif',
             },
             "meta": {
                 "preset": self.brand_preset or "tbwa",
@@ -292,31 +293,33 @@ class ResCompany(models.Model):
     def action_reset_to_tbwa_defaults(self):
         """Reset brand tokens to TBWA defaults."""
         for company in self:
-            company.write({
-                "brand_preset": "tbwa",
-                "brand_primary": "#000000",
-                "brand_primary_hover": "#1A1A1A",
-                "brand_accent": "#FBBF24",
-                "brand_accent_hover": "#F59E0B",
-                "brand_bg": "#FFFFFF",
-                "brand_surface": "#F9FAFB",
-                "brand_surface_elevated": "#FFFFFF",
-                "brand_border": "#E5E7EB",
-                "brand_text_primary": "#111827",
-                "brand_text_secondary": "#6B7280",
-                "brand_text_on_primary": "#FFFFFF",
-                "brand_text_on_accent": "#000000",
-                "brand_success": "#10B981",
-                "brand_warning": "#F59E0B",
-                "brand_danger": "#EF4444",
-                "brand_info": "#3B82F6",
-                "brand_radius_sm": "4px",
-                "brand_radius_md": "8px",
-                "brand_radius_lg": "12px",
-                "brand_shadow_sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
-                "brand_shadow_md": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-                "brand_shadow_lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-                "brand_font_family": '"Segoe UI", system-ui, -apple-system, sans-serif',
-                "brand_icon_pack": "fluent",
-            })
+            company.write(
+                {
+                    "brand_preset": "tbwa",
+                    "brand_primary": "#000000",
+                    "brand_primary_hover": "#1A1A1A",
+                    "brand_accent": "#FBBF24",
+                    "brand_accent_hover": "#F59E0B",
+                    "brand_bg": "#FFFFFF",
+                    "brand_surface": "#F9FAFB",
+                    "brand_surface_elevated": "#FFFFFF",
+                    "brand_border": "#E5E7EB",
+                    "brand_text_primary": "#111827",
+                    "brand_text_secondary": "#6B7280",
+                    "brand_text_on_primary": "#FFFFFF",
+                    "brand_text_on_accent": "#000000",
+                    "brand_success": "#10B981",
+                    "brand_warning": "#F59E0B",
+                    "brand_danger": "#EF4444",
+                    "brand_info": "#3B82F6",
+                    "brand_radius_sm": "4px",
+                    "brand_radius_md": "8px",
+                    "brand_radius_lg": "12px",
+                    "brand_shadow_sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+                    "brand_shadow_md": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                    "brand_shadow_lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+                    "brand_font_family": '"Segoe UI", system-ui, -apple-system, sans-serif',
+                    "brand_icon_pack": "fluent",
+                }
+            )
         return True

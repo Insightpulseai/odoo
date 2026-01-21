@@ -8,8 +8,9 @@ from odoo import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
+
 class PurchaseOrderMattermostIntegration(models.Model):
-    _inherit = 'purchase.order'
+    _inherit = "purchase.order"
 
     def send_mattermost_approval_notification(self):
         """
@@ -42,8 +43,8 @@ class PurchaseOrderMattermostIntegration(models.Model):
             response = requests.post(
                 webhook_url,
                 data=json.dumps(message),
-                headers={'Content-Type': 'application/json'},
-                timeout=10
+                headers={"Content-Type": "application/json"},
+                timeout=10,
             )
             if response.status_code == 200:
                 _logger.info(f"✅ Mattermost notification sent for PO {self.name}")
@@ -52,8 +53,9 @@ class PurchaseOrderMattermostIntegration(models.Model):
         except Exception as e:
             _logger.error(f"❌ Failed to send Mattermost notification: {str(e)}")
 
+
 class ExpenseMattermostIntegration(models.Model):
-    _inherit = 'hr.expense'
+    _inherit = "hr.expense"
 
     def send_mattermost_expense_notification(self):
         """
@@ -78,13 +80,16 @@ class ExpenseMattermostIntegration(models.Model):
             response = requests.post(
                 webhook_url,
                 data=json.dumps(message),
-                headers={'Content-Type': 'application/json'},
-                timeout=10
+                headers={"Content-Type": "application/json"},
+                timeout=10,
             )
             if response.status_code == 200:
                 _logger.info(f"✅ Mattermost expense notification sent for {self.name}")
         except Exception as e:
-            _logger.error(f"❌ Failed to send Mattermost expense notification: {str(e)}")
+            _logger.error(
+                f"❌ Failed to send Mattermost expense notification: {str(e)}"
+            )
+
 
 # Automated Action Configuration Instructions:
 """

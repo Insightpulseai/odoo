@@ -2,7 +2,7 @@
 
 **Status**: ⚠️ WARN
 **Version**: 18.0.1.0.0
-**Author**: InsightPulseAI
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -12,6 +12,8 @@ Hides Enterprise/IAP upsells and rewires links away from odoo.com.
 
 - `base`
 - `web`
+- `remove_odoo_enterprise`
+- `disable_odoo_online`
 
 ## Module Contents
 
@@ -48,4 +50,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_ce_cleaner --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.220333_
+_Audited: 2026-01-21T22:42:52.895083_

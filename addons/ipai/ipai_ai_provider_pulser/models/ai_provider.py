@@ -38,7 +38,11 @@ class IpaiAiProvider(models.AbstractModel):
         "anthropic": {
             "name": "Anthropic",
             "endpoint": "https://api.anthropic.com/v1/messages",
-            "models": ["claude-3-opus-20240229", "claude-3-sonnet-20240229", "claude-3-haiku-20240307"],
+            "models": [
+                "claude-3-opus-20240229",
+                "claude-3-sonnet-20240229",
+                "claude-3-haiku-20240307",
+            ],
             "auth_header": "x-api-key",
             "auth_prefix": "",
         },
@@ -62,9 +66,7 @@ class IpaiAiProvider(models.AbstractModel):
     def get_config(self, key, default=""):
         """Get configuration value from system parameters."""
         return (
-            self.env["ir.config_parameter"]
-            .sudo()
-            .get_param(f"ipai_ai.{key}", default)
+            self.env["ir.config_parameter"].sudo().get_param(f"ipai_ai.{key}", default)
         )
 
     @api.model
@@ -143,7 +145,9 @@ class IpaiAiProvider(models.AbstractModel):
             elif provider == "openai":
                 result = self._generate_openai(messages, model, temperature, max_tokens)
             elif provider == "anthropic":
-                result = self._generate_anthropic(messages, model, temperature, max_tokens)
+                result = self._generate_anthropic(
+                    messages, model, temperature, max_tokens
+                )
             elif provider == "azure":
                 result = self._generate_azure(messages, model, temperature, max_tokens)
             else:
@@ -209,7 +213,8 @@ class IpaiAiProvider(models.AbstractModel):
             data = response.json()
             return {
                 "success": True,
-                "response": data.get("content") or data.get("choices", [{}])[0].get("message", {}).get("content", ""),
+                "response": data.get("content")
+                or data.get("choices", [{}])[0].get("message", {}).get("content", ""),
                 "tokens_used": data.get("usage", {}).get("total_tokens", 0),
                 "model": data.get("model", model),
             }
@@ -264,7 +269,9 @@ class IpaiAiProvider(models.AbstractModel):
         """Generate via Anthropic API."""
         import requests
 
-        endpoint = self.get_endpoint("anthropic") or self.PROVIDERS["anthropic"]["endpoint"]
+        endpoint = (
+            self.get_endpoint("anthropic") or self.PROVIDERS["anthropic"]["endpoint"]
+        )
         api_key = self.get_api_key("anthropic")
 
         if not api_key:
@@ -277,10 +284,12 @@ class IpaiAiProvider(models.AbstractModel):
             if msg["role"] == "system":
                 system_message = msg["content"]
             else:
-                anthropic_messages.append({
-                    "role": msg["role"],
-                    "content": msg["content"],
-                })
+                anthropic_messages.append(
+                    {
+                        "role": msg["role"],
+                        "content": msg["content"],
+                    }
+                )
 
         payload = {
             "model": model,
@@ -308,7 +317,8 @@ class IpaiAiProvider(models.AbstractModel):
             return {
                 "success": True,
                 "response": text,
-                "tokens_used": data.get("usage", {}).get("input_tokens", 0) + data.get("usage", {}).get("output_tokens", 0),
+                "tokens_used": data.get("usage", {}).get("input_tokens", 0)
+                + data.get("usage", {}).get("output_tokens", 0),
                 "model": model,
             }
         else:
@@ -373,10 +383,7 @@ class IpaiAiProvider(models.AbstractModel):
         Returns:
             str: Generated text or empty string on error
         """
-        result = self.generate(
-            messages=[{"role": "user", "content": prompt}],
-            **kwargs
-        )
+        result = self.generate(messages=[{"role": "user", "content": prompt}], **kwargs)
         return result.get("response", "") if result.get("success") else ""
 
     @api.model

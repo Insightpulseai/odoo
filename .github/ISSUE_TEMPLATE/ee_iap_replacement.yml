@@ -1,0 +1,102 @@
+name: EE/IAP Replacement Task
+description: Track replacement of an Enterprise or IAP feature with CE+OCA+IPAI
+title: "[EE/IAP] "
+labels: ["ee-replacement", "odoo-golive"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to track the replacement of Odoo Enterprise or IAP features
+        with CE + OCA + IPAI alternatives.
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of Odoo feature is being replaced?
+      options:
+        - EE Module
+        - IAP Service
+        - EE Setting
+        - EE-only View/Action
+    validations:
+      required: true
+
+  - type: input
+    id: original-module
+    attributes:
+      label: Original EE/IAP Module
+      description: The technical name of the EE or IAP module being replaced
+      placeholder: e.g., iot, mail_plugin, web_studio
+    validations:
+      required: true
+
+  - type: textarea
+    id: original-capability
+    attributes:
+      label: Original Capability
+      description: Describe what the EE/IAP feature does
+      placeholder: |
+        - Feature 1
+        - Feature 2
+        - Feature 3
+    validations:
+      required: true
+
+  - type: textarea
+    id: replacement-stack
+    attributes:
+      label: Replacement Stack
+      description: List the CE, OCA, and IPAI modules that replace this feature
+      placeholder: |
+        - CE: base_report_to_printer
+        - OCA: pos_printer_network
+        - IPAI: ipai_iot_bridge
+    validations:
+      required: true
+
+  - type: dropdown
+    id: parity-level
+    attributes:
+      label: Parity Level
+      description: How complete is the replacement?
+      options:
+        - 100% - Full parity
+        - 90% - Minor gaps
+        - 75% - Some features missing
+        - 50% - Basic functionality only
+        - 25% - Minimal coverage
+    validations:
+      required: true
+
+  - type: textarea
+    id: gaps
+    attributes:
+      label: Known Gaps
+      description: What features are NOT covered by the replacement?
+      placeholder: |
+        - Missing feature 1
+        - Missing feature 2
+
+  - type: textarea
+    id: migration-notes
+    attributes:
+      label: Migration Notes
+      description: Steps needed to migrate from EE to the replacement
+      placeholder: |
+        1. Install OCA module X
+        2. Run migration script Y
+        3. Configure settings Z
+
+  - type: checkboxes
+    id: validation
+    attributes:
+      label: Validation Checklist
+      description: Confirm these checks have been performed
+      options:
+        - label: No EE modules in ipai_* depends
+        - label: No EE model inheritance in Python code
+        - label: No EE view inheritance in XML
+        - label: CI validation passes
+        - label: Manual testing completed

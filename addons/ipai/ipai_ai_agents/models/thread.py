@@ -12,27 +12,14 @@ class IPAIAIThread(models.Model):
     display_name = fields.Char(compute="_compute_display_name", store=True)
 
     company_id = fields.Many2one(
-        "res.company",
-        required=True,
-        default=lambda self: self.env.company
+        "res.company", required=True, default=lambda self: self.env.company
     )
     user_id = fields.Many2one(
-        "res.users",
-        required=True,
-        default=lambda self: self.env.user,
-        string="User"
+        "res.users", required=True, default=lambda self: self.env.user, string="User"
     )
-    agent_id = fields.Many2one(
-        "ipai.ai.agent",
-        required=True,
-        string="Agent"
-    )
+    agent_id = fields.Many2one("ipai.ai.agent", required=True, string="Agent")
 
-    message_ids = fields.One2many(
-        "ipai.ai.message",
-        "thread_id",
-        string="Messages"
-    )
+    message_ids = fields.One2many("ipai.ai.message", "thread_id", string="Messages")
     message_count = fields.Integer(compute="_compute_message_count", string="Messages")
 
     # Context reference (optional: link thread to a specific record)
@@ -43,7 +30,9 @@ class IPAIAIThread(models.Model):
     def _compute_display_name(self):
         for rec in self:
             agent_name = rec.agent_id.name if rec.agent_id else "AI"
-            date_str = rec.create_date.strftime("%Y-%m-%d %H:%M") if rec.create_date else ""
+            date_str = (
+                rec.create_date.strftime("%Y-%m-%d %H:%M") if rec.create_date else ""
+            )
             rec.display_name = f"{agent_name} - {date_str}"
 
     @api.depends("message_ids")

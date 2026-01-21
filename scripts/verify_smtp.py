@@ -17,14 +17,14 @@ print("=" * 60)
 print("SMTP Configuration Verification")
 print("=" * 60)
 
-MailServer = env['ir.mail_server'].sudo()
+MailServer = env["ir.mail_server"].sudo()
 
 # Search by name first
-server = MailServer.search([('name', '=', SMTP_NAME)], limit=1)
+server = MailServer.search([("name", "=", SMTP_NAME)], limit=1)
 
 if not server:
     # Fallback: search for any Mailgun server
-    server = MailServer.search([('smtp_host', 'ilike', 'mailgun')], limit=1)
+    server = MailServer.search([("smtp_host", "ilike", "mailgun")], limit=1)
 
 if server:
     print(f"\nSTATUS: FOUND")
@@ -47,7 +47,9 @@ else:
     if all_servers:
         print(f"\nExisting servers ({len(all_servers)}):")
         for s in all_servers:
-            print(f"  - {s.name} ({s.smtp_host}:{s.smtp_port}) [{'active' if s.active else 'inactive'}]")
+            print(
+                f"  - {s.name} ({s.smtp_host}:{s.smtp_port}) [{'active' if s.active else 'inactive'}]"
+            )
     else:
         print("\nNo SMTP servers configured")
 
@@ -56,17 +58,17 @@ print("\n" + "=" * 60)
 print("System Parameters")
 print("=" * 60)
 
-ICP = env['ir.config_parameter'].sudo()
+ICP = env["ir.config_parameter"].sudo()
 params = [
-    'mail.catchall.domain',
-    'mail.default.from',
-    'mail.catchall.alias',
-    'mail.bounce.alias',
-    'mail.force.smtp.from',
+    "mail.catchall.domain",
+    "mail.default.from",
+    "mail.catchall.alias",
+    "mail.bounce.alias",
+    "mail.force.smtp.from",
 ]
 
 for param in params:
-    value = ICP.get_param(param, default='(not set)')
+    value = ICP.get_param(param, default="(not set)")
     print(f"  {param} = {value}")
 
 print("\n" + "=" * 60)

@@ -13,7 +13,9 @@ if not ODOO_PASS:
 OLD_COMPANY_NAME = os.getenv("ODOO_OLD_COMPANY_NAME", "YourCompany")
 NEW_COMPANY_NAME = os.getenv("ODOO_NEW_COMPANY_NAME", "InsightPulseAI")
 NEW_COMPANY_EMAIL = os.getenv("ODOO_NEW_COMPANY_EMAIL", "business@insightpulseai.com")
-NEW_COMPANY_WEBSITE = os.getenv("ODOO_NEW_COMPANY_WEBSITE", "https://insightpulseai.net")
+NEW_COMPANY_WEBSITE = os.getenv(
+    "ODOO_NEW_COMPANY_WEBSITE", "https://insightpulseai.net"
+)
 TBWA_COMPANY_NAME = os.getenv("ODOO_TBWA_COMPANY_NAME", r"TBWA\SMP")
 TBWA_COMPANY_EMAIL = os.getenv("ODOO_TBWA_COMPANY_EMAIL", "business@insightpulseai.com")
 TARGET_USER_LOGIN = os.getenv("ODOO_TARGET_USER_LOGIN", "admin")
@@ -25,37 +27,62 @@ if not uid:
 
 models = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/object")
 
+
 def search(model, domain, limit=0):
-    return models.execute_kw(ODOO_DB, uid, ODOO_PASS, model, "search", [domain], {"limit": limit} if limit else {})
+    return models.execute_kw(
+        ODOO_DB,
+        uid,
+        ODOO_PASS,
+        model,
+        "search",
+        [domain],
+        {"limit": limit} if limit else {},
+    )
+
 
 def read(model, ids, fields):
-    return models.execute_kw(ODOO_DB, uid, ODOO_PASS, model, "read", [ids], {"fields": fields})
+    return models.execute_kw(
+        ODOO_DB, uid, ODOO_PASS, model, "read", [ids], {"fields": fields}
+    )
+
 
 def write(model, ids, vals):
     return models.execute_kw(ODOO_DB, uid, ODOO_PASS, model, "write", [ids, vals])
 
+
 def create(model, vals):
     return models.execute_kw(ODOO_DB, uid, ODOO_PASS, model, "create", [vals])
 
+
 # find company to rename
-cid = search("res.company", [["name","=",OLD_COMPANY_NAME]], limit=1)
+cid = search("res.company", [["name", "=", OLD_COMPANY_NAME]], limit=1)
 if not cid:
     cid = search("res.company", [], limit=1)
 if not cid:
     raise RuntimeError("No company found")
 cid = cid[0]
 
-write("res.company", [cid], {"name": NEW_COMPANY_NAME, "email": NEW_COMPANY_EMAIL, "website": NEW_COMPANY_WEBSITE})
+write(
+    "res.company",
+    [cid],
+    {
+        "name": NEW_COMPANY_NAME,
+        "email": NEW_COMPANY_EMAIL,
+        "website": NEW_COMPANY_WEBSITE,
+    },
+)
 
 # create TBWA if missing
-tbwa = search("res.company", [["name","=",TBWA_COMPANY_NAME]], limit=1)
+tbwa = search("res.company", [["name", "=", TBWA_COMPANY_NAME]], limit=1)
 if not tbwa:
-    tbwa_id = create("res.company", {"name": TBWA_COMPANY_NAME, "email": TBWA_COMPANY_EMAIL})
+    tbwa_id = create(
+        "res.company", {"name": TBWA_COMPANY_NAME, "email": TBWA_COMPANY_EMAIL}
+    )
 else:
     tbwa_id = tbwa[0]
 
 # update user allowed companies + default
-u = search("res.users", [["login","=",TARGET_USER_LOGIN]], limit=1)
+u = search("res.users", [["login", "=", TARGET_USER_LOGIN]], limit=1)
 if not u:
     raise RuntimeError("Target user not found")
 u = u[0]
@@ -64,7 +91,7 @@ allowed = set(uinfo.get("company_ids", []))
 allowed.update([cid, tbwa_id])
 
 # (6,0,ids) sets allowed companies; company_id sets default company
-write("res.users", [u], {"company_ids": [(6,0,list(allowed))], "company_id": cid})
+write("res.users", [u], {"company_ids": [(6, 0, list(allowed))], "company_id": cid})
 
 print("OK")
 print("renamed_company_id", cid)

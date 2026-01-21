@@ -186,6 +186,7 @@ class SaasAccount(models.Model):
     def _tz_get(self):
         """Get timezone selection from pytz."""
         import pytz
+
         return [(tz, tz) for tz in sorted(pytz.all_timezones)]
 
     @api.depends("role_ids.role")
@@ -199,9 +200,7 @@ class SaasAccount(models.Model):
     def _compute_subscription_stats(self):
         for record in self:
             record.active_subscription_count = len(
-                record.tenant_subscription_ids.filtered(
-                    lambda s: s.status == "active"
-                )
+                record.tenant_subscription_ids.filtered(lambda s: s.status == "active")
             )
 
     def _compute_service_stats(self):
@@ -214,20 +213,24 @@ class SaasAccount(models.Model):
         """Add tenant role to account."""
         for record in self:
             if not record.role_ids.filtered(lambda r: r.role == "tenant"):
-                self.env["saas.account.role"].create({
-                    "account_id": record.id,
-                    "role": "tenant",
-                })
+                self.env["saas.account.role"].create(
+                    {
+                        "account_id": record.id,
+                        "role": "tenant",
+                    }
+                )
         return True
 
     def action_add_provider_role(self):
         """Add provider role to account."""
         for record in self:
             if not record.role_ids.filtered(lambda r: r.role == "provider"):
-                self.env["saas.account.role"].create({
-                    "account_id": record.id,
-                    "role": "provider",
-                })
+                self.env["saas.account.role"].create(
+                    {
+                        "account_id": record.id,
+                        "role": "provider",
+                    }
+                )
         return True
 
 

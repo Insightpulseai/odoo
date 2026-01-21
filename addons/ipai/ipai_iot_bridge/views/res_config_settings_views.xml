@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ipai_iot" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.iot</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="IPAI IoT Bridge"
+                     string="IPAI IoT"
+                     name="ipai_iot_bridge"
+                     groups="ipai_iot_bridge.group_ipai_iot_admin">
+                    <block title="IoT Bridge" name="iot_general">
+                        <setting string="Enable IoT Bridge"
+                                 help="Enable IoT device integration (replaces EE iot module)">
+                            <field name="ipai_iot_enabled"/>
+                        </setting>
+                        <setting string="Auto-Discover Devices"
+                                 help="Automatically discover devices on gateway startup">
+                            <field name="ipai_iot_auto_discover"/>
+                        </setting>
+                    </block>
+                    <block title="Self-Hosted Gateway" name="self_hosted_settings">
+                        <setting string="Gateway URL"
+                                 help="URL of self-hosted IoT gateway">
+                            <field name="ipai_iot_gateway_url"
+                                   placeholder="http://iot-gateway:8080"/>
+                        </setting>
+                    </block>
+                    <block title="CUPS Printing" name="cups_settings">
+                        <setting string="CUPS Server"
+                                 help="CUPS print server for Linux/Mac printing">
+                            <field name="ipai_iot_cups_server"
+                                   placeholder="localhost:631"/>
+                        </setting>
+                    </block>
+                    <block title="PrintNode Cloud" name="printnode_settings">
+                        <setting string="Enable PrintNode"
+                                 help="Enable PrintNode cloud printing service">
+                            <field name="ipai_iot_printnode_enabled"/>
+                            <div invisible="not ipai_iot_printnode_enabled">
+                                <label for="ipai_iot_printnode_api_key"/>
+                                <field name="ipai_iot_printnode_api_key" password="True"/>
+                                <div class="text-muted">
+                                    Get your API key from app.printnode.com
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

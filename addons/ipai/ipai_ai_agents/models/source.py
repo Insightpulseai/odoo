@@ -10,12 +10,12 @@ class IPAIAISource(models.Model):
     name = fields.Char(required=True)
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
-    enabled = fields.Boolean(default=True, help="If disabled, source won't be used for retrieval")
+    enabled = fields.Boolean(
+        default=True, help="If disabled, source won't be used for retrieval"
+    )
 
     company_id = fields.Many2one(
-        "res.company",
-        required=True,
-        default=lambda self: self.env.company
+        "res.company", required=True, default=lambda self: self.env.company
     )
 
     source_type = fields.Selection(
@@ -32,7 +32,9 @@ class IPAIAISource(models.Model):
         required=True,
         default="docs",
     )
-    url = fields.Char(help="Docs URL / repo URL / or reference used by your external indexer")
+    url = fields.Char(
+        help="Docs URL / repo URL / or reference used by your external indexer"
+    )
 
     # GitHub-specific
     github_repo = fields.Char(help="Repository in format owner/repo")
@@ -41,7 +43,9 @@ class IPAIAISource(models.Model):
 
     # Indexing status
     last_indexed = fields.Datetime(readonly=True)
-    last_indexed_version = fields.Char(readonly=True, help="Commit hash or version identifier")
+    last_indexed_version = fields.Char(
+        readonly=True, help="Commit hash or version identifier"
+    )
     index_status = fields.Selection(
         [
             ("pending", "Pending"),
@@ -50,20 +54,24 @@ class IPAIAISource(models.Model):
             ("error", "Error"),
         ],
         default="pending",
-        readonly=True
+        readonly=True,
     )
     index_error = fields.Text(readonly=True)
-    chunk_count = fields.Integer(readonly=True, help="Number of chunks indexed from this source")
+    chunk_count = fields.Integer(
+        readonly=True, help="Number of chunks indexed from this source"
+    )
 
     notes = fields.Text()
 
     def action_trigger_reindex(self):
         """Trigger a reindex for this source (stub - actual implementation in ipai_ai_sources_odoo)."""
         self.ensure_one()
-        self.write({
-            "index_status": "pending",
-            "index_error": False,
-        })
+        self.write(
+            {
+                "index_status": "pending",
+                "index_error": False,
+            }
+        )
         # TODO: Trigger actual reindex via queue_job or cron
 
     def action_view_chunks(self):

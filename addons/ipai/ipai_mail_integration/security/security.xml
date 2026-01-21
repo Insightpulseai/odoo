@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Security Groups -->
+    <record id="group_ipai_mail_admin" model="res.groups">
+        <field name="name">IPAI Mail Administrator</field>
+        <field name="category_id" ref="base.module_category_administration"/>
+        <field name="comment">
+            Can configure mail OAuth providers and integrations.
+            Replaces EE mail_plugin admin capabilities.
+        </field>
+    </record>
+
+    <record id="group_ipai_mail_user" model="res.groups">
+        <field name="name">IPAI Mail User</field>
+        <field name="category_id" ref="base.module_category_productivity"/>
+        <field name="comment">
+            Can use mail integration features.
+        </field>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo>

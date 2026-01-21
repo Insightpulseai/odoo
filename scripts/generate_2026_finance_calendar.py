@@ -43,18 +43,18 @@ class Holiday:
 
 @dataclass
 class Deadline:
-    form_code: str          # e.g. 1601C, 2550Q
-    period: str             # e.g. "Jan 2026", "Q1 2026"
-    legal_deadline: date    # actual filing/payment deadline
+    form_code: str  # e.g. 1601C, 2550Q
+    period: str  # e.g. "Jan 2026", "Q1 2026"
+    legal_deadline: date  # actual filing/payment deadline
 
 
 @dataclass
 class WorkflowStage:
-    form_code: str          # match to Deadline.form_code
-    stage: str              # "Preparation" | "Review" | "Approval" | ...
-    role: str               # "Finance Supervisor"
-    person_code: str        # CKVC / BOM / JPAL ...
-    objective: str          # IM1 / IM2 etc (optional)
+    form_code: str  # match to Deadline.form_code
+    stage: str  # "Preparation" | "Review" | "Approval" | ...
+    role: str  # "Finance Supervisor"
+    person_code: str  # CKVC / BOM / JPAL ...
+    objective: str  # IM1 / IM2 etc (optional)
     offset_business_days: int
     # positive = N business days BEFORE legal deadline
 
@@ -74,6 +74,7 @@ class Task:
 # -----------------------------
 # Helpers
 # -----------------------------
+
 
 def load_holidays(path: Path) -> List[Holiday]:
     holidays: List[Holiday] = []
@@ -148,6 +149,7 @@ def load_workflow_template(path: Path) -> List[WorkflowStage]:
 # Core generation
 # -----------------------------
 
+
 def build_calendar(
     deadlines: List[Deadline],
     stages: List[WorkflowStage],
@@ -217,7 +219,9 @@ def write_events_json(tasks: List[Task], path: Path) -> None:
     for t in tasks:
         label = f"{t.form_code} {t.period} – {t.stage}"
         status = "open"  # update from completion data later if you want
-        objective = t.objective or ("IM2" if "Tax" in label or "BIR" in label else "IM1")
+        objective = t.objective or (
+            "IM2" if "Tax" in label or "BIR" in label else "IM1"
+        )
         events.append(
             {
                 "date": t.planned_date.isoformat(),

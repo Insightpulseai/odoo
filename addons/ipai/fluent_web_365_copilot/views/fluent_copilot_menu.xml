@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 InsightPulse AI
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <!-- Main Copilot Application Menu -->
+    <menuitem
+        id="menu_copilot_root"
+        name="Copilot"
+        web_icon="fluent_web_365_copilot,static/description/icon.png"
+        sequence="5"
+    />
+
+    <!-- Sessions Menu -->
+    <menuitem
+        id="menu_copilot_sessions"
+        name="Sessions"
+        parent="menu_copilot_root"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_copilot_my_sessions"
+        name="My Sessions"
+        parent="menu_copilot_sessions"
+        action="action_copilot_session_my"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_copilot_all_sessions"
+        name="All Sessions"
+        parent="menu_copilot_sessions"
+        action="action_copilot_session"
+        groups="base.group_system"
+        sequence="20"
+    />
+
+    <!-- Configuration Menu -->
+    <menuitem
+        id="menu_copilot_config"
+        name="Configuration"
+        parent="menu_copilot_root"
+        groups="base.group_system"
+        sequence="90"
+    />
+
+    <menuitem
+        id="menu_copilot_intents"
+        name="Intents"
+        parent="menu_copilot_config"
+        action="action_copilot_intent"
+        sequence="10"
+    />
+</odoo>

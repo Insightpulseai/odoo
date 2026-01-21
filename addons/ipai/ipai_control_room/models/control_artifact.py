@@ -117,16 +117,18 @@ class ControlArtifact(models.Model):
     @api.model
     def create_from_attachment(self, attachment, run_id=None, kind="other"):
         """Create artifact from an ir.attachment"""
-        return self.create({
-            "name": attachment.name,
-            "kind": kind,
-            "run_id": run_id,
-            "storage": "attachment",
-            "attachment_id": attachment.id,
-            "size_bytes": attachment.file_size,
-            "mime_type": attachment.mimetype,
-            "checksum": attachment.checksum,
-        })
+        return self.create(
+            {
+                "name": attachment.name,
+                "kind": kind,
+                "run_id": run_id,
+                "storage": "attachment",
+                "attachment_id": attachment.id,
+                "size_bytes": attachment.file_size,
+                "mime_type": attachment.mimetype,
+                "checksum": attachment.checksum,
+            }
+        )
 
     def action_download(self):
         """Return download action for the artifact"""

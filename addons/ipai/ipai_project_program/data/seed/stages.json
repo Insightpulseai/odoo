@@ -1,8 +1,62 @@
 {
+  "_comment": "OCA-compatible task stages for project_stage_state module",
+  "_doc": "States: draft (not started), open (in progress), pending (waiting), done (completed), cancelled",
   "task_stages": [
-    {"xml_id": "stage_prep", "name": "Preparation", "sequence": 10},
-    {"xml_id": "stage_review", "name": "Review", "sequence": 20},
-    {"xml_id": "stage_approve", "name": "Approval", "sequence": 30},
-    {"xml_id": "stage_filed", "name": "Filed", "sequence": 40}
-  ]
+    {
+      "xml_id": "stage_todo",
+      "name": "To Do",
+      "sequence": 10,
+      "fold": false,
+      "state": "draft",
+      "description": "Tasks not yet started"
+    },
+    {
+      "xml_id": "stage_in_preparation",
+      "name": "In Preparation",
+      "sequence": 20,
+      "fold": false,
+      "state": "open",
+      "description": "Data gathering and initial work in progress"
+    },
+    {
+      "xml_id": "stage_under_review",
+      "name": "Under Review",
+      "sequence": 30,
+      "fold": false,
+      "state": "open",
+      "description": "Supervisor review"
+    },
+    {
+      "xml_id": "stage_pending_approval",
+      "name": "Pending Approval",
+      "sequence": 40,
+      "fold": false,
+      "state": "pending",
+      "description": "Awaiting Finance Director sign-off"
+    },
+    {
+      "xml_id": "stage_done",
+      "name": "Done",
+      "sequence": 50,
+      "fold": true,
+      "state": "done",
+      "description": "Completed tasks (closing stage)"
+    },
+    {
+      "xml_id": "stage_cancelled",
+      "name": "Cancelled",
+      "sequence": 60,
+      "fold": true,
+      "state": "cancelled",
+      "description": "Cancelled tasks"
+    }
+  ],
+  "stage_states": {
+    "_doc": "For project_stage_state OCA module - maps broad states for automated actions",
+    "draft": "Not Started",
+    "open": "In Progress",
+    "pending": "Waiting",
+    "done": "Completed",
+    "cancelled": "Cancelled"
+  }
 }

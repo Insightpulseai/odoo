@@ -73,5 +73,6 @@ class CopilotHubMixin(models.AbstractModel):
             "show_toolbar": ICP.get_param(
                 "ipai.copilot.hub_show_toolbar",
                 default="True",
-            ) == "True",
+            )
+            == "True",
         }

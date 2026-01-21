@@ -44,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_agent_core --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.124676_
+_Audited: 2026-01-21T22:42:52.348083_

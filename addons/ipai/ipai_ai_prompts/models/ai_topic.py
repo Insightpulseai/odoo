@@ -116,9 +116,11 @@ class IpaiAiTopic(models.Model):
         model = self.env["ir.model"].search([("model", "=", model_name)], limit=1)
         if not model:
             return self.browse()
-        return self.search([
-            ("active", "=", True),
-            "|",
-            ("model_ids", "=", False),
-            ("model_ids", "in", model.ids),
-        ])
+        return self.search(
+            [
+                ("active", "=", True),
+                "|",
+                ("model_ids", "=", False),
+                ("model_ids", "in", model.ids),
+            ]
+        )

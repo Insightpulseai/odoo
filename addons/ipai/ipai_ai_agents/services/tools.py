@@ -63,18 +63,16 @@ class ReadOnlyTools:
             # Return action definition for client to execute
             return {
                 "ok": True,
-                "action": action.read()[0] if hasattr(action, "read") else {"xml_id": xml_id},
+                "action": (
+                    action.read()[0] if hasattr(action, "read") else {"xml_id": xml_id}
+                ),
             }
         except Exception as e:
             _logger.warning("open_action failed for %s: %s", xml_id, e)
             return {"ok": False, "error": str(e)}
 
     def search_read(
-        self,
-        model: str,
-        domain: List = None,
-        fields: List[str] = None,
-        limit: int = 20
+        self, model: str, domain: List = None, fields: List[str] = None, limit: int = 20
     ) -> Dict[str, Any]:
         """
         Search and read records (allowlisted models only).
@@ -91,7 +89,7 @@ class ReadOnlyTools:
         if model not in self.ALLOWED_MODELS:
             return {
                 "ok": False,
-                "error": f"Model '{model}' not in allowlist. Allowed: {self.ALLOWED_MODELS[:5]}..."
+                "error": f"Model '{model}' not in allowlist. Allowed: {self.ALLOWED_MODELS[:5]}...",
             }
 
         try:
@@ -122,10 +120,7 @@ class ReadOnlyTools:
             {ok: bool, summary: str, fields: dict, error: str}
         """
         if model not in self.ALLOWED_MODELS:
-            return {
-                "ok": False,
-                "error": f"Model '{model}' not in allowlist"
-            }
+            return {"ok": False, "error": f"Model '{model}' not in allowlist"}
 
         try:
             record = self.env[model].browse(record_id)
@@ -135,7 +130,8 @@ class ReadOnlyTools:
             # Read key fields
             fields_info = record.fields_get()
             readable_fields = [
-                f for f in fields_info.keys()
+                f
+                for f in fields_info.keys()
                 if fields_info[f].get("type") not in ("binary", "html")
                 and not f.startswith("_")
             ][:20]
@@ -143,7 +139,9 @@ class ReadOnlyTools:
             data = record.read(readable_fields)[0] if record else {}
 
             # Build a simple summary
-            name = data.get("name") or data.get("display_name") or f"Record #{record_id}"
+            name = (
+                data.get("name") or data.get("display_name") or f"Record #{record_id}"
+            )
             summary_parts = [f"**{name}** ({model})"]
 
             for field in ["state", "stage_id", "partner_id", "date", "create_date"]:
@@ -180,12 +178,15 @@ class ReadOnlyTools:
 
             return {
                 "ok": True,
-                "menus": [{
-                    "id": m.id,
-                    "name": m.name,
-                    "complete_name": m.complete_name,
-                    "action": m.action.xml_id if m.action else None,
-                } for m in menus],
+                "menus": [
+                    {
+                        "id": m.id,
+                        "name": m.name,
+                        "complete_name": m.complete_name,
+                        "action": m.action.xml_id if m.action else None,
+                    }
+                    for m in menus
+                ],
             }
         except Exception as e:
             _logger.warning("get_menu_items failed: %s", e)
@@ -200,7 +201,9 @@ class ProposedAction:
     but not execute them without user confirmation.
     """
 
-    def __init__(self, action_type: str, model: str, record_id: int = None, vals: Dict = None):
+    def __init__(
+        self, action_type: str, model: str, record_id: int = None, vals: Dict = None
+    ):
         self.action_type = action_type  # 'create', 'write', 'unlink'
         self.model = model
         self.record_id = record_id

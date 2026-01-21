@@ -81,9 +81,7 @@ def create_project_with_alias(
     # Step 1: Ensure alias domain exists
     print(f"Checking alias domain: {domain_name}...")
     dom_ids = models.execute_kw(
-        db, uid, password,
-        "mail.alias.domain", "search",
-        [[["name", "=", domain_name]]]
+        db, uid, password, "mail.alias.domain", "search", [[["name", "=", domain_name]]]
     )
 
     if dom_ids:
@@ -91,18 +89,19 @@ def create_project_with_alias(
         print(f"  Using existing domain ID: {alias_domain_id}")
     else:
         alias_domain_id = models.execute_kw(
-            db, uid, password,
-            "mail.alias.domain", "create",
-            [{"name": domain_name, "catchall_domain": True}]
+            db,
+            uid,
+            password,
+            "mail.alias.domain",
+            "create",
+            [{"name": domain_name, "catchall_domain": True}],
         )
         print(f"  Created new domain ID: {alias_domain_id}")
 
     # Step 2: Find company
     print(f"Finding company: {company_name}...")
     company_ids = models.execute_kw(
-        db, uid, password,
-        "res.company", "search",
-        [[["name", "=", company_name]]]
+        db, uid, password, "res.company", "search", [[["name", "=", company_name]]]
     )
 
     if not company_ids:
@@ -114,9 +113,12 @@ def create_project_with_alias(
     # Step 3: Check if project already exists
     print(f"Checking for existing project: {project_name}...")
     existing_projects = models.execute_kw(
-        db, uid, password,
-        "project.project", "search",
-        [[["name", "=", project_name], ["company_id", "=", company_id]]]
+        db,
+        uid,
+        password,
+        "project.project",
+        "search",
+        [[["name", "=", project_name], ["company_id", "=", company_id]]],
     )
 
     if existing_projects:
@@ -126,68 +128,80 @@ def create_project_with_alias(
         # Create project
         print(f"Creating project: {project_name}...")
         project_id = models.execute_kw(
-            db, uid, password,
-            "project.project", "create",
-            [{
-                "name": project_name,
-                "company_id": company_id,
-                "privacy_visibility": visibility,
-                "allow_task_dependencies": True,
-            }]
+            db,
+            uid,
+            password,
+            "project.project",
+            "create",
+            [
+                {
+                    "name": project_name,
+                    "company_id": company_id,
+                    "privacy_visibility": visibility,
+                    "allow_task_dependencies": True,
+                }
+            ],
         )
         print(f"  Created project ID: {project_id}")
 
     # Step 4: Get model IDs for alias
     task_model_id = models.execute_kw(
-        db, uid, password,
-        "ir.model", "search",
-        [[["model", "=", "project.task"]]]
+        db, uid, password, "ir.model", "search", [[["model", "=", "project.task"]]]
     )[0]
 
     project_model_id = models.execute_kw(
-        db, uid, password,
-        "ir.model", "search",
-        [[["model", "=", "project.project"]]]
+        db, uid, password, "ir.model", "search", [[["model", "=", "project.project"]]]
     )[0]
 
     # Step 5: Check if alias already exists
     print(f"Setting up email alias: {alias_name}@{domain_name}...")
     existing_aliases = models.execute_kw(
-        db, uid, password,
-        "mail.alias", "search",
-        [[
-            ["alias_name", "=", alias_name],
-            ["alias_domain_id", "=", alias_domain_id]
-        ]]
+        db,
+        uid,
+        password,
+        "mail.alias",
+        "search",
+        [[["alias_name", "=", alias_name], ["alias_domain_id", "=", alias_domain_id]]],
     )
 
     if existing_aliases:
         alias_id = existing_aliases[0]
         # Update existing alias to point to this project
         models.execute_kw(
-            db, uid, password,
-            "mail.alias", "write",
-            [[alias_id], {
-                "alias_model_id": task_model_id,
-                "alias_force_thread_id": project_id,
-                "alias_parent_model_id": project_model_id,
-                "alias_parent_thread_id": project_id,
-            }]
+            db,
+            uid,
+            password,
+            "mail.alias",
+            "write",
+            [
+                [alias_id],
+                {
+                    "alias_model_id": task_model_id,
+                    "alias_force_thread_id": project_id,
+                    "alias_parent_model_id": project_model_id,
+                    "alias_parent_thread_id": project_id,
+                },
+            ],
         )
         print(f"  Updated existing alias ID: {alias_id}")
     else:
         # Create new alias
         alias_id = models.execute_kw(
-            db, uid, password,
-            "mail.alias", "create",
-            [{
-                "alias_name": alias_name,
-                "alias_domain_id": alias_domain_id,
-                "alias_model_id": task_model_id,
-                "alias_force_thread_id": project_id,
-                "alias_parent_model_id": project_model_id,
-                "alias_parent_thread_id": project_id,
-            }]
+            db,
+            uid,
+            password,
+            "mail.alias",
+            "create",
+            [
+                {
+                    "alias_name": alias_name,
+                    "alias_domain_id": alias_domain_id,
+                    "alias_model_id": task_model_id,
+                    "alias_force_thread_id": project_id,
+                    "alias_parent_model_id": project_model_id,
+                    "alias_parent_thread_id": project_id,
+                }
+            ],
         )
         print(f"  Created alias ID: {alias_id}")
 
@@ -195,19 +209,26 @@ def create_project_with_alias(
     if portal_emails:
         print(f"Granting portal access to: {portal_emails}...")
         partner_ids = models.execute_kw(
-            db, uid, password,
-            "res.partner", "search",
-            [[["email", "in", portal_emails]]]
+            db,
+            uid,
+            password,
+            "res.partner",
+            "search",
+            [[["email", "in", portal_emails]]],
         )
 
         if partner_ids:
             # Add portal access via message_partner_ids (followers)
             models.execute_kw(
-                db, uid, password,
-                "project.project", "write",
-                [[project_id], {
-                    "message_partner_ids": [(4, pid) for pid in partner_ids]
-                }]
+                db,
+                uid,
+                password,
+                "project.project",
+                "write",
+                [
+                    [project_id],
+                    {"message_partner_ids": [(4, pid) for pid in partner_ids]},
+                ],
             )
             print(f"  Granted access to {len(partner_ids)} partners")
         else:
@@ -227,7 +248,7 @@ def create_project_with_alias(
     print("=" * 60)
     print("\nNext Steps:")
     print(f"  1. Configure Mailgun route to forward {email_address}")
-    print(f"     Expression: match_recipient(\"{email_address}\")")
+    print(f'     Expression: match_recipient("{email_address}")')
     print(f"     Action:     forward(\"{url.replace('/odoo', '')}/mailgate/mailgun\")")
     print("  2. Test by sending an email to the alias")
     print("=" * 60)
@@ -246,33 +267,27 @@ def main():
     parser = argparse.ArgumentParser(
         description="Create Odoo project with email-to-task alias",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__
+        epilog=__doc__,
     )
+    parser.add_argument("--project", "-p", required=True, help="Project name")
     parser.add_argument(
-        "--project", "-p",
+        "--alias",
+        "-a",
         required=True,
-        help="Project name"
+        help="Email alias prefix (e.g., 'sample' for sample@domain.com)",
     )
     parser.add_argument(
-        "--alias", "-a",
-        required=True,
-        help="Email alias prefix (e.g., 'sample' for sample@domain.com)"
+        "--company", "-c", default="TBWA\\SMP", help="Company name (default: TBWA\\SMP)"
     )
     parser.add_argument(
-        "--company", "-c",
-        default="TBWA\\SMP",
-        help="Company name (default: TBWA\\SMP)"
-    )
-    parser.add_argument(
-        "--visibility", "-v",
+        "--visibility",
+        "-v",
         choices=["portal", "internal", "public"],
         default="portal",
-        help="Privacy visibility (default: portal)"
+        help="Privacy visibility (default: portal)",
     )
     parser.add_argument(
-        "--portal-users",
-        nargs="*",
-        help="Portal user emails to grant access"
+        "--portal-users", nargs="*", help="Portal user emails to grant access"
     )
 
     args = parser.parse_args()
