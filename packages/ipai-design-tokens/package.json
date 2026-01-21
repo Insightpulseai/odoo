@@ -1,16 +1,18 @@
 {
   "name": "@ipai/design-tokens",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
-  "description": "Design tokens for IPAI applications: Fluent 2, Material 3 Expressive (Odoo, Next.js, Vite)",
+  "description": "Design tokens for IPAI applications: Fluent 2, Material 3 Expressive, Tableau (Odoo, Superset, Next.js, Vite)",
   "files": [
     "dist/",
     "src/",
     "tokens.css",
     "tokens.scss",
+    "tableau.css",
     "tailwind.preset.js",
     "tailwind-material3.preset.js",
+    "tailwind-tableau.preset.js",
     "material3-expressive.css"
   ],
   "exports": {
@@ -23,8 +25,10 @@
     "./tailwind-preset": "./dist/tailwind-preset.cjs",
     "./tokens.css": "./tokens.css",
     "./tokens.scss": "./tokens.scss",
+    "./tableau.css": "./tableau.css",
     "./tailwind.preset": "./tailwind.preset.js",
     "./tailwind-material3.preset": "./tailwind-material3.preset.js",
+    "./tailwind-tableau.preset": "./tailwind-tableau.preset.js",
     "./material3-expressive.css": "./material3-expressive.css",
     "./material3Theme": {
       "import": "./src/material3Theme.ts",
@@ -37,7 +41,12 @@
     "./odooTokens": {
       "import": "./src/odooTokens.ts",
       "types": "./src/odooTokens.ts"
-    }
+    },
+    "./tableauTokens": {
+      "import": "./src/tableauTokens.ts",
+      "types": "./src/tableauTokens.ts"
+    },
+    "./tableauTokens.json": "./src/tableauTokens.json"
   },
   "scripts": {
     "build": "tsx src/build.ts",
