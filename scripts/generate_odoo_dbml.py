@@ -215,7 +215,9 @@ def parse_model(file_path: Path, module: str) -> List[ModelDef]:
                                     and len(entry) >= 3
                                     and all(isinstance(v, str) for v in entry[:3])
                                 ):
-                                    sql_constraints.append((entry[0], entry[1], entry[2]))
+                                    sql_constraints.append(
+                                        (entry[0], entry[1], entry[2])
+                                    )
             if isinstance(item, ast.FunctionDef):
                 for decorator in item.decorator_list:
                     if isinstance(decorator, ast.Call):
@@ -244,7 +246,9 @@ def parse_model(file_path: Path, module: str) -> List[ModelDef]:
         inherits_val = attrs.get("_inherits")
         if isinstance(inherits_val, dict):
             inherits_delegated = {
-                k: v for k, v in inherits_val.items() if isinstance(k, str) and isinstance(v, str)
+                k: v
+                for k, v in inherits_val.items()
+                if isinstance(k, str) and isinstance(v, str)
             }
         model_def = ModelDef(
             name=model_name,
@@ -282,7 +286,9 @@ def collect_models() -> Dict[str, ModelDef]:
                     if model_def.table and not existing.table:
                         existing.table = model_def.table
                     if model_def.inherits:
-                        existing.inherits = sorted(set(existing.inherits + model_def.inherits))
+                        existing.inherits = sorted(
+                            set(existing.inherits + model_def.inherits)
+                        )
                     existing.inherits_delegated.update(model_def.inherits_delegated)
                 else:
                     models[model_def.name] = model_def
@@ -305,7 +311,9 @@ def ensure_meta_fields(model: ModelDef, table: TableDef) -> None:
         table.fields["company_id"] = FIELD_TYPE_MAP.get("Many2one", "int")
 
 
-def derive_many2many_table(model: ModelDef, field: FieldDef, model_table: str, models: Dict[str, ModelDef]) -> Tuple[str, str, str]:
+def derive_many2many_table(
+    model: ModelDef, field: FieldDef, model_table: str, models: Dict[str, ModelDef]
+) -> Tuple[str, str, str]:
     relation_table = field.relation_table
     comodel_table = None
     if field.relation:
@@ -318,7 +326,9 @@ def derive_many2many_table(model: ModelDef, field: FieldDef, model_table: str, m
     return relation_table, col1, col2
 
 
-def build_tables(models: Dict[str, ModelDef]) -> Tuple[Dict[str, TableDef], List[Tuple[str, str]]]:
+def build_tables(
+    models: Dict[str, ModelDef],
+) -> Tuple[Dict[str, TableDef], List[Tuple[str, str]]]:
     tables: Dict[str, TableDef] = {}
     refs: List[Tuple[str, str]] = []
     for model in models.values():
@@ -361,7 +371,9 @@ def build_tables(models: Dict[str, ModelDef]) -> Tuple[Dict[str, TableDef], List
             if field.related and not field.store:
                 continue
             model_table = model.table
-            relation_table, col1, col2 = derive_many2many_table(model, field, model_table, models)
+            relation_table, col1, col2 = derive_many2many_table(
+                model, field, model_table, models
+            )
             if relation_table not in tables:
                 tables[relation_table] = TableDef(name=relation_table)
             tables[relation_table].fields.setdefault(col1, "int")
@@ -372,17 +384,27 @@ def build_tables(models: Dict[str, ModelDef]) -> Tuple[Dict[str, TableDef], List
     return tables, refs
 
 
-def collect_stub_tables(tables: Dict[str, TableDef], refs: List[Tuple[str, str]], models: Dict[str, ModelDef]) -> None:
+def collect_stub_tables(
+    tables: Dict[str, TableDef],
+    refs: List[Tuple[str, str]],
+    models: Dict[str, ModelDef],
+) -> None:
     model_by_name = models
     for _, target_model in refs:
         if target_model in model_by_name and model_by_name[target_model].table:
             continue
         table_name = target_model.replace(".", "_")
         if table_name not in tables:
-            tables[table_name] = TableDef(name=table_name, fields={"id": "int"}, notes=["stub for core model"]) 
+            tables[table_name] = TableDef(
+                name=table_name, fields={"id": "int"}, notes=["stub for core model"]
+            )
 
 
-def generate_dbml(tables: Dict[str, TableDef], refs: List[Tuple[str, str]], models: Dict[str, ModelDef]) -> str:
+def generate_dbml(
+    tables: Dict[str, TableDef],
+    refs: List[Tuple[str, str]],
+    models: Dict[str, ModelDef],
+) -> str:
     lines: List[str] = []
     for table_name in sorted(tables.keys()):
         table = tables[table_name]
@@ -405,7 +427,11 @@ def generate_dbml(tables: Dict[str, TableDef], refs: List[Tuple[str, str]], mode
     return "\n".join(lines).rstrip() + "\n"
 
 
-def generate_mermaid(tables: Dict[str, TableDef], refs: List[Tuple[str, str]], models: Dict[str, ModelDef]) -> str:
+def generate_mermaid(
+    tables: Dict[str, TableDef],
+    refs: List[Tuple[str, str]],
+    models: Dict[str, ModelDef],
+) -> str:
     lines = ["erDiagram"]
     for table_name in sorted(tables.keys()):
         table = tables[table_name]
@@ -419,11 +445,15 @@ def generate_mermaid(tables: Dict[str, TableDef], refs: List[Tuple[str, str]], m
         target_table = target_model.replace(".", "_")
         if target_model in models and models[target_model].table:
             target_table = models[target_model].table
-        lines.append(f"  {source_table} ||--o{{ {target_table} : \"{source_field}\"")
+        lines.append(f'  {source_table} ||--o{{ {target_table} : "{source_field}"')
     return "\n".join(lines).rstrip() + "\n"
 
 
-def generate_plantuml(tables: Dict[str, TableDef], refs: List[Tuple[str, str]], models: Dict[str, ModelDef]) -> str:
+def generate_plantuml(
+    tables: Dict[str, TableDef],
+    refs: List[Tuple[str, str]],
+    models: Dict[str, ModelDef],
+) -> str:
     lines = ["@startuml", "hide circle", "skinparam linetype ortho"]
     for table_name in sorted(tables.keys()):
         table = tables[table_name]
@@ -454,7 +484,9 @@ def generate_orm_map(models: Dict[str, ModelDef]) -> str:
         if model.inherits:
             lines.append(f"- _inherit: `{', '.join(model.inherits)}`")
         if model.inherits_delegated:
-            inherits_fmt = ", ".join(f"{k} via {v}" for k, v in model.inherits_delegated.items())
+            inherits_fmt = ", ".join(
+                f"{k} via {v}" for k, v in model.inherits_delegated.items()
+            )
             lines.append(f"- _inherits: `{inherits_fmt}`")
         if model.sql_constraints:
             lines.append("- SQL constraints:")
@@ -519,7 +551,9 @@ def generate_orm_map(models: Dict[str, ModelDef]) -> str:
 
 def generate_module_deltas(models: Dict[str, ModelDef]) -> str:
     lines = ["# Odoo Module Deltas", ""]
-    ipai_modules = sorted({m.module for m in models.values() if m.module.startswith("ipai")})
+    ipai_modules = sorted(
+        {m.module for m in models.values() if m.module.startswith("ipai")}
+    )
     for module in ipai_modules:
         lines.append(f"## {module}")
         lines.append("")
@@ -532,7 +566,11 @@ def generate_module_deltas(models: Dict[str, ModelDef]) -> str:
             if model.model_type == "AbstractModel":
                 continue
             if model.table and model.name.replace(".", "_") == model.table:
-                if model.name not in model.inherits or model.name in model.inherits and model.name != model.table:
+                if (
+                    model.name not in model.inherits
+                    or model.name in model.inherits
+                    and model.name != model.table
+                ):
                     new_tables.append(model.table)
             if model.inherits and model.name in model.inherits and model.table:
                 fields_added = sorted(model.fields.keys())
@@ -540,7 +578,9 @@ def generate_module_deltas(models: Dict[str, ModelDef]) -> str:
                     extended_tables.setdefault(model.table, []).extend(fields_added)
             for field in model.fields.values():
                 if field.field_type == "Many2many" and model.table:
-                    relation_table, _, _ = derive_many2many_table(model, field, model.table, models)
+                    relation_table, _, _ = derive_many2many_table(
+                        model, field, model.table, models
+                    )
                     relation_tables.add(relation_table)
         if new_tables:
             lines.append("- New tables:")
@@ -593,7 +633,9 @@ def generate_model_index(models: Dict[str, ModelDef]) -> Dict[str, Any]:
                     for name, sql, msg in sorted(model.sql_constraints)
                 ],
                 "python_constraints": sorted(set(model.python_constraints)),
-                "relations": sorted({f.relation for f in model.fields.values() if f.relation}),
+                "relations": sorted(
+                    {f.relation for f in model.fields.values() if f.relation}
+                ),
             }
         )
     return {"models": model_entries}

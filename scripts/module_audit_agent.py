@@ -45,6 +45,7 @@ DOCS_DIR = REPO_ROOT / "docs" / "modules"
 @dataclass
 class ModuleAudit:
     """Audit result for a single module."""
+
     name: str
     path: str
     version: str = ""
@@ -88,8 +89,14 @@ class ModuleAudit:
             return "FAIL"
         if self.warnings:
             return "WARN"
-        if all([self.manifest_valid, self.python_syntax_ok,
-                self.xml_syntax_ok, self.init_imports_ok]):
+        if all(
+            [
+                self.manifest_valid,
+                self.python_syntax_ok,
+                self.xml_syntax_ok,
+                self.init_imports_ok,
+            ]
+        ):
             return "PASS"
         return "UNKNOWN"
 
@@ -126,9 +133,7 @@ class ModuleAuditor:
         """Run full audit on a module."""
         name = module_path.name
         audit = ModuleAudit(
-            name=name,
-            path=str(module_path),
-            audited_at=datetime.now().isoformat()
+            name=name, path=str(module_path), audited_at=datetime.now().isoformat()
         )
 
         self.log(f"Auditing {name}...")
@@ -169,10 +174,23 @@ class ModuleAuditor:
 
             # Check for enterprise-only deps
             enterprise_only = {
-                "accountant", "knowledge", "web_studio", "sign", "helpdesk",
-                "planning", "sale_subscription", "quality_control", "hr_appraisal",
-                "marketing_automation", "appointment", "web_mobile", "stock_barcode",
-                "voip", "sale_amazon", "industry_fsm", "timesheet_grid",
+                "accountant",
+                "knowledge",
+                "web_studio",
+                "sign",
+                "helpdesk",
+                "planning",
+                "sale_subscription",
+                "quality_control",
+                "hr_appraisal",
+                "marketing_automation",
+                "appointment",
+                "web_mobile",
+                "stock_barcode",
+                "voip",
+                "sale_amazon",
+                "industry_fsm",
+                "timesheet_grid",
             }
             for dep in audit.depends:
                 if dep in enterprise_only:
@@ -239,7 +257,9 @@ class ModuleAuditor:
                 # Validate columns
                 required_cols = {"id", "name", "model_id:id"}
                 if not required_cols.issubset(set(reader.fieldnames or [])):
-                    audit.issues.append(f"Security CSV missing columns: {required_cols}")
+                    audit.issues.append(
+                        f"Security CSV missing columns: {required_cols}"
+                    )
                     return
 
                 audit.security_csv_ok = True
@@ -282,7 +302,9 @@ class ModuleAuditor:
                 if py_file.name.startswith("__"):
                     continue
                 content = py_file.read_text(encoding="utf-8")
-                audit.model_count += content.count("class ") - content.count("class Meta")
+                audit.model_count += content.count("class ") - content.count(
+                    "class Meta"
+                )
 
         # Count views, menus, actions from XML
         for xml_file in module_path.rglob("*.xml"):
@@ -396,7 +418,7 @@ _Audited: {audit.audited_at}_
                 "warn": sum(1 for a in self.audits.values() if a.status == "WARN"),
                 "fail": sum(1 for a in self.audits.values() if a.status == "FAIL"),
             },
-            "modules": {name: asdict(audit) for name, audit in self.audits.items()}
+            "modules": {name: asdict(audit) for name, audit in self.audits.items()},
         }
         json_path.write_text(json.dumps(json_data, indent=2, ensure_ascii=False))
         print(f"Saved: {json_path}")
@@ -405,22 +427,41 @@ _Audited: {audit.audited_at}_
         csv_path = output_dir / "module_audit_matrix.csv"
         with open(csv_path, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
-            writer.writerow([
-                "module", "status", "version", "depends_count",
-                "model_count", "view_count", "menu_count",
-                "manifest_ok", "python_ok", "xml_ok", "security_ok",
-                "issue_count", "warning_count"
-            ])
+            writer.writerow(
+                [
+                    "module",
+                    "status",
+                    "version",
+                    "depends_count",
+                    "model_count",
+                    "view_count",
+                    "menu_count",
+                    "manifest_ok",
+                    "python_ok",
+                    "xml_ok",
+                    "security_ok",
+                    "issue_count",
+                    "warning_count",
+                ]
+            )
             for name, audit in sorted(self.audits.items()):
-                writer.writerow([
-                    name, audit.status, audit.version, len(audit.depends),
-                    audit.model_count, audit.view_count, audit.menu_count,
-                    "Y" if audit.manifest_valid else "N",
-                    "Y" if audit.python_syntax_ok else "N",
-                    "Y" if audit.xml_syntax_ok else "N",
-                    "Y" if audit.security_csv_ok else "N",
-                    len(audit.issues), len(audit.warnings)
-                ])
+                writer.writerow(
+                    [
+                        name,
+                        audit.status,
+                        audit.version,
+                        len(audit.depends),
+                        audit.model_count,
+                        audit.view_count,
+                        audit.menu_count,
+                        "Y" if audit.manifest_valid else "N",
+                        "Y" if audit.python_syntax_ok else "N",
+                        "Y" if audit.xml_syntax_ok else "N",
+                        "Y" if audit.security_csv_ok else "N",
+                        len(audit.issues),
+                        len(audit.warnings),
+                    ]
+                )
         print(f"Saved: {csv_path}")
 
         # Per-module README files
@@ -436,7 +477,9 @@ _Audited: {audit.audited_at}_
         index_content += "| Module | Status | Version | Models | Views |\n"
         index_content += "|--------|--------|---------|--------|-------|\n"
         for name, audit in sorted(self.audits.items()):
-            status_emoji = {"PASS": "✅", "WARN": "⚠️", "FAIL": "❌"}.get(audit.status, "❓")
+            status_emoji = {"PASS": "✅", "WARN": "⚠️", "FAIL": "❌"}.get(
+                audit.status, "❓"
+            )
             index_content += f"| [{name}](./{name}.md) | {status_emoji} | {audit.version} | {audit.model_count} | {audit.view_count} |\n"
         index_path.write_text(index_content)
         print(f"Saved: {index_path}")
@@ -451,10 +494,16 @@ def main():
     parser = argparse.ArgumentParser(description="IPAI Module Audit Agent")
     parser.add_argument("--module", "-m", help="Audit specific module only")
     parser.add_argument("--pattern", "-p", default="ipai_*", help="Module name pattern")
-    parser.add_argument("--output", "-o", default=str(OUTPUT_DIR), help="Output directory")
-    parser.add_argument("--docs", "-d", default=str(DOCS_DIR), help="Docs output directory")
+    parser.add_argument(
+        "--output", "-o", default=str(OUTPUT_DIR), help="Output directory"
+    )
+    parser.add_argument(
+        "--docs", "-d", default=str(DOCS_DIR), help="Docs output directory"
+    )
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
-    parser.add_argument("--ci", action="store_true", help="CI mode (exit code on failure)")
+    parser.add_argument(
+        "--ci", action="store_true", help="CI mode (exit code on failure)"
+    )
     parser.add_argument("--json", action="store_true", help="Output JSON to stdout")
     args = parser.parse_args()
 
@@ -497,12 +546,16 @@ def main():
     print(f"  Total: {len(summary)}")
 
     if args.json:
-        print(json.dumps({
-            "pass": pass_count,
-            "warn": warn_count,
-            "fail": fail_count,
-            "total": len(summary)
-        }))
+        print(
+            json.dumps(
+                {
+                    "pass": pass_count,
+                    "warn": warn_count,
+                    "fail": fail_count,
+                    "total": len(summary),
+                }
+            )
+        )
 
     if args.ci:
         sys.exit(auditor.get_exit_code())

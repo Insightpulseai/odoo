@@ -15,12 +15,10 @@
         "stock_account",
         "point_of_sale",
         "account",
-
         # OCA governance baseline
         "base_tier_validation",
         "base_exception",
         "date_range",
-
         # IPAI bridge (the only custom code layer)
         "ipai_enterprise_bridge",
     ],

@@ -127,11 +127,13 @@ class ControlConnector(models.Model):
         """Test the connector connection"""
         self.ensure_one()
         # Placeholder for actual connection test logic
-        self.write({
-            "last_health_at": fields.Datetime.now(),
-            "last_health_status": "ok",
-            "health_message": "Connection test successful (placeholder)",
-        })
+        self.write(
+            {
+                "last_health_at": fields.Datetime.now(),
+                "last_health_status": "ok",
+                "health_message": "Connection test successful (placeholder)",
+            }
+        )
         return {
             "type": "ir.actions.client",
             "tag": "display_notification",
@@ -139,5 +141,5 @@ class ControlConnector(models.Model):
                 "title": "Connection Test",
                 "message": "Connection test completed.",
                 "type": "success",
-            }
+            },
         }

@@ -49,6 +49,7 @@ except ImportError:
 @dataclass
 class SpaceCoverage:
     """Coverage metrics for a single space."""
+
     source: str
     space: str
     discovered: int = 0
@@ -84,6 +85,7 @@ class SpaceCoverage:
 @dataclass
 class SourceManifest:
     """Parsed source manifest."""
+
     source: str
     display_name: str
     version: str
@@ -94,7 +96,9 @@ class SourceManifest:
 class TrinoClient:
     """Simple Trino HTTP client for coverage queries."""
 
-    def __init__(self, host: str = "localhost", port: int = 8082, user: str = "coverage"):
+    def __init__(
+        self, host: str = "localhost", port: int = 8082, user: str = "coverage"
+    ):
         self.base_url = f"http://{host}:{port}/v1/statement"
         self.user = user
 
@@ -157,47 +161,57 @@ def load_manifests(sources_dir: str = "config/sources") -> list[SourceManifest]:
 
 def count_bronze(trino: TrinoClient, source: str, space: str) -> int:
     """Count Bronze layer rows for source/space."""
-    rows = trino.query(f"""
+    rows = trino.query(
+        f"""
         SELECT COUNT(*) as cnt
         FROM delta.bronze.raw_pages
         WHERE source = '{source}'
-    """)
+    """
+    )
     return int(rows[0]["cnt"]) if rows else 0
 
 
 def count_silver(trino: TrinoClient, source: str, space: str) -> int:
     """Count Silver layer rows for source/space."""
-    rows = trino.query(f"""
+    rows = trino.query(
+        f"""
         SELECT COUNT(*) as cnt
         FROM delta.silver.normalized_docs
         WHERE source = '{source}'
-    """)
+    """
+    )
     return int(rows[0]["cnt"]) if rows else 0
 
 
 def count_gold_chunks(trino: TrinoClient, source: str) -> int:
     """Count Gold chunks for source."""
-    rows = trino.query(f"""
+    rows = trino.query(
+        f"""
         SELECT COUNT(*) as cnt
         FROM delta.gold.chunks
         WHERE source = '{source}'
-    """)
+    """
+    )
     return int(rows[0]["cnt"]) if rows else 0
 
 
 def count_gold_embeddings(trino: TrinoClient, source: str) -> int:
     """Count Gold embeddings for source."""
-    rows = trino.query(f"""
+    rows = trino.query(
+        f"""
         SELECT COUNT(*) as cnt
         FROM delta.gold.embeddings
         WHERE chunk_id IN (
             SELECT chunk_id FROM delta.gold.chunks WHERE source = '{source}'
         )
-    """)
+    """
+    )
     return int(rows[0]["cnt"]) if rows else 0
 
 
-def audit_source(manifest: SourceManifest, trino: Optional[TrinoClient]) -> list[SpaceCoverage]:
+def audit_source(
+    manifest: SourceManifest, trino: Optional[TrinoClient]
+) -> list[SpaceCoverage]:
     """Audit coverage for a single source manifest."""
     results = []
 
@@ -244,25 +258,27 @@ def print_report(all_coverage: list[SpaceCoverage], output_json: bool = False):
                 "total_spaces": len(all_coverage),
                 "complete": sum(1 for c in all_coverage if c.is_complete),
                 "incomplete": sum(1 for c in all_coverage if not c.is_complete),
-            }
+            },
         }
 
         for coverage in all_coverage:
             if coverage.source not in data["sources"]:
                 data["sources"][coverage.source] = []
-            data["sources"][coverage.source].append({
-                "space": coverage.space,
-                "discovered": coverage.discovered,
-                "bronze": coverage.bronze,
-                "silver": coverage.silver,
-                "gold_chunks": coverage.gold_chunks,
-                "gold_embeddings": coverage.gold_embeddings,
-                "bronze_pct": round(coverage.bronze_pct, 1),
-                "silver_pct": round(coverage.silver_pct, 1),
-                "gold_pct": round(coverage.gold_pct, 1),
-                "complete": coverage.is_complete,
-                "errors": coverage.errors,
-            })
+            data["sources"][coverage.source].append(
+                {
+                    "space": coverage.space,
+                    "discovered": coverage.discovered,
+                    "bronze": coverage.bronze,
+                    "silver": coverage.silver,
+                    "gold_chunks": coverage.gold_chunks,
+                    "gold_embeddings": coverage.gold_embeddings,
+                    "bronze_pct": round(coverage.bronze_pct, 1),
+                    "silver_pct": round(coverage.silver_pct, 1),
+                    "gold_pct": round(coverage.gold_pct, 1),
+                    "complete": coverage.is_complete,
+                    "errors": coverage.errors,
+                }
+            )
 
         print(json.dumps(data, indent=2))
         return
@@ -300,7 +316,11 @@ def print_report(all_coverage: list[SpaceCoverage], output_json: bool = False):
     print("\n" + "=" * 80)
     print("SUMMARY")
     print(f"  Total Spaces:    {total}")
-    print(f"  Complete:        {complete} ({complete/total*100:.0f}%)" if total > 0 else "  Complete: 0")
+    print(
+        f"  Complete:        {complete} ({complete/total*100:.0f}%)"
+        if total > 0
+        else "  Complete: 0"
+    )
     print(f"  Incomplete:      {total - complete}")
     print("=" * 80)
 
@@ -313,7 +333,9 @@ def main():
     parser = argparse.ArgumentParser(description="Knowledge Hub Coverage Audit")
     parser.add_argument("--source", help="Audit specific source only")
     parser.add_argument("--json", action="store_true", help="Output JSON format")
-    parser.add_argument("--no-trino", action="store_true", help="Skip Trino queries (manifest-only)")
+    parser.add_argument(
+        "--no-trino", action="store_true", help="Skip Trino queries (manifest-only)"
+    )
     args = parser.parse_args()
 
     # Load manifests
@@ -339,7 +361,9 @@ def main():
     # Audit each source
     all_coverage = []
     for manifest in manifests:
-        print(f"Auditing {manifest.source}..." if not args.json else "", file=sys.stderr)
+        print(
+            f"Auditing {manifest.source}..." if not args.json else "", file=sys.stderr
+        )
         coverage = audit_source(manifest, trino)
         all_coverage.extend(coverage)
 

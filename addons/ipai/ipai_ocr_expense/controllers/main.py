@@ -107,7 +107,11 @@ class IpaiOcrExpenseController(http.Controller):
             "ai_data": {
                 "amount": expense.ai_total_amount,
                 "vendor": expense.ai_vendor_name,
-                "date": expense.ai_expense_date.isoformat() if expense.ai_expense_date else None,
+                "date": (
+                    expense.ai_expense_date.isoformat()
+                    if expense.ai_expense_date
+                    else None
+                ),
                 "confidence": expense.ai_confidence_score,
             },
             "needs_review": expense.needs_review,

@@ -14,6 +14,7 @@ class SupersetAudit(models.Model):
     Every time a user requests a guest token to view a dashboard,
     a record is created here for traceability.
     """
+
     _name = "ipai.superset.audit"
     _description = "Superset Dashboard Access Audit"
     _order = "create_date desc"
@@ -61,5 +62,9 @@ class SupersetAudit(models.Model):
         for record in self:
             dashboard_name = record.dashboard_id.name or "Unknown"
             user_name = record.user_id.name or "Unknown"
-            date_str = record.create_date.strftime("%Y-%m-%d %H:%M") if record.create_date else ""
+            date_str = (
+                record.create_date.strftime("%Y-%m-%d %H:%M")
+                if record.create_date
+                else ""
+            )
             record.display_name = f"{dashboard_name} - {user_name} ({date_str})"

@@ -16,12 +16,14 @@ class TestIPAISampleMetrics(TransactionCase):
 
     def test_create_metric(self):
         """Test basic metric creation."""
-        rec = self.MetricModel.create({
-            "name": "Test Metric",
-            "code": "TEST",
-            "value": 50.0,
-            "unit": "percent",
-        })
+        rec = self.MetricModel.create(
+            {
+                "name": "Test Metric",
+                "code": "TEST",
+                "value": 50.0,
+                "unit": "percent",
+            }
+        )
         self.assertTrue(rec.id)
         self.assertEqual(rec.name, "Test Metric")
         self.assertEqual(rec.code, "TEST")
@@ -30,32 +32,38 @@ class TestIPAISampleMetrics(TransactionCase):
 
     def test_is_alert_low_percent(self):
         """Test that low percentage triggers alert."""
-        rec = self.MetricModel.create({
-            "name": "Low Conversion",
-            "code": "LOW_CONV",
-            "value": 5.0,
-            "unit": "percent",
-        })
+        rec = self.MetricModel.create(
+            {
+                "name": "Low Conversion",
+                "code": "LOW_CONV",
+                "value": 5.0,
+                "unit": "percent",
+            }
+        )
         self.assertTrue(rec.is_alert)  # Below 10% threshold
 
     def test_is_alert_high_percent(self):
         """Test that high percentage triggers alert."""
-        rec = self.MetricModel.create({
-            "name": "High Conversion",
-            "code": "HIGH_CONV",
-            "value": 98.0,
-            "unit": "percent",
-        })
+        rec = self.MetricModel.create(
+            {
+                "name": "High Conversion",
+                "code": "HIGH_CONV",
+                "value": 98.0,
+                "unit": "percent",
+            }
+        )
         self.assertTrue(rec.is_alert)  # Above 95% threshold
 
     def test_is_alert_count_unit(self):
         """Test that count unit never triggers alert."""
-        rec = self.MetricModel.create({
-            "name": "Traffic Count",
-            "code": "TRAFFIC",
-            "value": 5.0,  # Low value but count unit
-            "unit": "count",
-        })
+        rec = self.MetricModel.create(
+            {
+                "name": "Traffic Count",
+                "code": "TRAFFIC",
+                "value": 5.0,  # Low value but count unit
+                "unit": "count",
+            }
+        )
         self.assertFalse(rec.is_alert)
 
     def test_create_from_payload(self):
@@ -88,46 +96,52 @@ class TestIPAISampleMetrics(TransactionCase):
     def test_get_metrics(self):
         """Test API helper get_metrics."""
         # Create test data
-        self.MetricModel.create({
-            "name": "Metric A",
-            "code": "METRIC_A",
-            "value": 30.0,
-            "unit": "percent",
-        })
-        self.MetricModel.create({
-            "name": "Metric B",
-            "code": "METRIC_B",
-            "value": 60.0,
-            "unit": "percent",
-        })
+        self.MetricModel.create(
+            {
+                "name": "Metric A",
+                "code": "METRIC_A",
+                "value": 30.0,
+                "unit": "percent",
+            }
+        )
+        self.MetricModel.create(
+            {
+                "name": "Metric B",
+                "code": "METRIC_B",
+                "value": 60.0,
+                "unit": "percent",
+            }
+        )
 
         # Get all metrics with filter
-        results = self.MetricModel.get_metrics(
-            filters=[("code", "=", "METRIC_A")]
-        )
+        results = self.MetricModel.get_metrics(filters=[("code", "=", "METRIC_A")])
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["code"], "METRIC_A")
         self.assertEqual(results[0]["value"], 30.0)
 
     def test_get_metrics_no_filter(self):
         """Test get_metrics without filter returns records."""
-        self.MetricModel.create({
-            "name": "Unfiltered Metric",
-            "code": "UNFILTERED",
-            "value": 45.0,
-            "unit": "count",
-        })
+        self.MetricModel.create(
+            {
+                "name": "Unfiltered Metric",
+                "code": "UNFILTERED",
+                "value": 45.0,
+                "unit": "count",
+            }
+        )
         results = self.MetricModel.get_metrics()
         self.assertTrue(len(results) >= 1)
 
     def test_active_field(self):
         """Test that active field defaults to True."""
-        rec = self.MetricModel.create({
-            "name": "Active Test",
-            "code": "ACTIVE_TEST",
-            "value": 50.0,
-            "unit": "percent",
-        })
+        rec = self.MetricModel.create(
+            {
+                "name": "Active Test",
+                "code": "ACTIVE_TEST",
+                "value": 50.0,
+                "unit": "percent",
+            }
+        )
         self.assertTrue(rec.active)
 
         # Archive the record

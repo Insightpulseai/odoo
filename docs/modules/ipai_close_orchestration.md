@@ -2,7 +2,7 @@
 
 **Status**: ✅ PASS
 **Version**: 18.0.1.0.0
-**Author**: IPAI
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -12,6 +12,7 @@ Close Cycle Orchestration - Cycles, Tasks, Templates, Checklists, Exceptions, Ga
 
 - `base`
 - `mail`
+- `project`
 
 ## Module Contents
 
@@ -44,4 +45,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_close_orchestration --stop-after-
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.246091_
+_Audited: 2026-01-21T22:42:52.950809_

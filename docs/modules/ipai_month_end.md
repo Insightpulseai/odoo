@@ -45,4 +45,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_month_end --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.605256_
+_Audited: 2026-01-21T22:42:53.956278_

@@ -112,7 +112,9 @@ class SaasSubscription(models.Model):
     def _compute_name(self):
         for record in self:
             if record.tenant_account_id and record.service_id:
-                record.name = f"{record.tenant_account_id.name} - {record.service_id.name}"
+                record.name = (
+                    f"{record.tenant_account_id.name} - {record.service_id.name}"
+                )
             else:
                 record.name = "New Subscription"
 
@@ -141,10 +143,12 @@ class SaasSubscription(models.Model):
         """Activate the subscription."""
         for record in self:
             if record.status == "draft":
-                record.write({
-                    "status": "active",
-                    "started_at": fields.Datetime.now(),
-                })
+                record.write(
+                    {
+                        "status": "active",
+                        "started_at": fields.Datetime.now(),
+                    }
+                )
         return True
 
     def action_suspend(self):
@@ -158,11 +162,13 @@ class SaasSubscription(models.Model):
         """Cancel the subscription."""
         for record in self:
             if record.status in ("active", "suspended"):
-                record.write({
-                    "status": "cancelled",
-                    "cancelled_at": fields.Datetime.now(),
-                    "ended_at": fields.Datetime.now(),
-                })
+                record.write(
+                    {
+                        "status": "cancelled",
+                        "cancelled_at": fields.Datetime.now(),
+                        "ended_at": fields.Datetime.now(),
+                    }
+                )
         return True
 
     def action_reactivate(self):

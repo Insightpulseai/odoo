@@ -150,6 +150,7 @@ class ControlPlaybook(models.Model):
     @api.depends("steps_json")
     def _compute_step_count(self):
         import json
+
         for record in self:
             if record.steps_json:
                 try:
@@ -169,11 +170,13 @@ class ControlPlaybook(models.Model):
         """Create an action to execute this playbook"""
         self.ensure_one()
         Action = self.env["control.action"]
-        action = Action.create({
-            "playbook_id": self.id,
-            "action_type": "playbook_run",
-            "state": "pending",
-        })
+        action = Action.create(
+            {
+                "playbook_id": self.id,
+                "action_type": "playbook_run",
+                "state": "pending",
+            }
+        )
         self.last_executed_at = fields.Datetime.now()
         return {
             "type": "ir.actions.act_window",

@@ -30,9 +30,7 @@ class IpaiAiProviderKapa(models.AbstractModel):
             dict with answer, citations, external_thread_id, confidence, status
         """
         icp = self.env["ir.config_parameter"].sudo()
-        base_url = (
-            icp.get_param("ipai.kapa.base_url") or DEFAULT_BASE_URL
-        ).rstrip("/")
+        base_url = (icp.get_param("ipai.kapa.base_url") or DEFAULT_BASE_URL).rstrip("/")
         api_key = icp.get_param("ipai.kapa.api_key") or ""
         project_id = icp.get_param("ipai.kapa.project_id") or ""
 
@@ -71,9 +69,7 @@ class IpaiAiProviderKapa(models.AbstractModel):
             status = str(r.status_code)
 
             if r.status_code >= 400:
-                _logger.warning(
-                    "Kapa API error: %s - %s", r.status_code, r.text[:200]
-                )
+                _logger.warning("Kapa API error: %s - %s", r.status_code, r.text[:200])
                 return {
                     "status": status,
                     "answer": f"Provider error (HTTP {r.status_code}).",
@@ -144,7 +140,10 @@ class IpaiAiProviderKapa(models.AbstractModel):
                     "source_id": c.get("source_id") or c.get("id"),
                     "title": c.get("title") or c.get("source") or "",
                     "url": c.get("url") or c.get("link"),
-                    "snippet": c.get("snippet") or c.get("text") or c.get("content") or "",
+                    "snippet": c.get("snippet")
+                    or c.get("text")
+                    or c.get("content")
+                    or "",
                     "score": float(c.get("score") or c.get("relevance") or 0.0),
                 }
             )
@@ -159,9 +158,7 @@ class IpaiAiProviderKapa(models.AbstractModel):
 
         # Extract tokens if available
         tokens = int(
-            data.get("tokens")
-            or data.get("usage", {}).get("total_tokens")
-            or 0
+            data.get("tokens") or data.get("usage", {}).get("total_tokens") or 0
         )
 
         return {

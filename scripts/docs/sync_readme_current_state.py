@@ -56,26 +56,46 @@ def main():
     block.append("")
     block.append("| Module | Role | Description |")
     block.append("|--------|------|-------------|")
-    block.append("| `ipai_enterprise_bridge` | Bridge | Thin cross-cutting layer: config, approvals, AI/infra integration, shared mixins |")
-    block.append("| `ipai_scout_bundle` | Vertical | Meta-bundle for Scout retail ops + analytics (depends-only, no business logic) |")
-    block.append("| `ipai_ces_bundle` | Vertical | Meta-bundle for CES creative effectiveness ops (depends-only, no business logic) |")
+    block.append(
+        "| `ipai_enterprise_bridge` | Bridge | Thin cross-cutting layer: config, approvals, AI/infra integration, shared mixins |"
+    )
+    block.append(
+        "| `ipai_scout_bundle` | Vertical | Meta-bundle for Scout retail ops + analytics (depends-only, no business logic) |"
+    )
+    block.append(
+        "| `ipai_ces_bundle` | Vertical | Meta-bundle for CES creative effectiveness ops (depends-only, no business logic) |"
+    )
     block.append("")
     block.append("**Detected in repo:**")
     block.append("")
-    block.append(f"- Canonical modules present: `{', '.join(canon_present)}`" if canon_present else "- Canonical modules present: (none)")
+    block.append(
+        f"- Canonical modules present: `{', '.join(canon_present)}`"
+        if canon_present
+        else "- Canonical modules present: (none)"
+    )
     block.append(f"- Other IPAI modules (feature/legacy): {len(other_ipai)}")
     block.append(f"- Non-IPAI modules at addons root: {len(non_ipai)}")
     block.append("")
     block.append("**Policy:**")
     block.append("- Only canonical modules define the platform surface area")
-    block.append("- Feature modules must be explicitly referenced by a bundle dependency")
-    block.append("- Deprecated modules should be moved to `addons/_deprecated/` and blocked by CI")
+    block.append(
+        "- Feature modules must be explicitly referenced by a bundle dependency"
+    )
+    block.append(
+        "- Deprecated modules should be moved to `addons/_deprecated/` and blocked by CI"
+    )
     block.append("")
     block.append("**Install canonical stack:**")
     block.append("```bash")
-    block.append("docker compose exec -T odoo odoo -d odoo_dev -i ipai_enterprise_bridge --stop-after-init")
-    block.append("docker compose exec -T odoo odoo -d odoo_dev -i ipai_scout_bundle --stop-after-init")
-    block.append("docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-init")
+    block.append(
+        "docker compose exec -T odoo odoo -d odoo_dev -i ipai_enterprise_bridge --stop-after-init"
+    )
+    block.append(
+        "docker compose exec -T odoo odoo -d odoo_dev -i ipai_scout_bundle --stop-after-init"
+    )
+    block.append(
+        "docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-init"
+    )
     block.append("```")
     block.append("")
     block.append("<!-- CURRENT_STATE:END -->")
@@ -85,8 +105,7 @@ def main():
     text = README.read_text(encoding="utf-8")
 
     pattern = re.compile(
-        r"<!-- CURRENT_STATE:BEGIN -->.*?<!-- CURRENT_STATE:END -->\n?",
-        re.S
+        r"<!-- CURRENT_STATE:BEGIN -->.*?<!-- CURRENT_STATE:END -->\n?", re.S
     )
     if pattern.search(text):
         text = pattern.sub(new_block, text)
@@ -101,7 +120,9 @@ def main():
             text = text.rstrip() + "\n\n" + new_block
 
     README.write_text(text, encoding="utf-8")
-    print(f"Synced README current state block (canonical: {len(canon_present)}, other ipai: {len(other_ipai)})")
+    print(
+        f"Synced README current state block (canonical: {len(canon_present)}, other ipai: {len(other_ipai)})"
+    )
 
 
 if __name__ == "__main__":

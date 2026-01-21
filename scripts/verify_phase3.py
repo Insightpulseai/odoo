@@ -4,14 +4,14 @@
 import xmlrpc.client
 
 # Connection settings
-url = 'http://localhost:8069'
-db = 'odoo'
-username = 'admin'
-password = 'admin'
+url = "http://localhost:8069"
+db = "odoo"
+username = "admin"
+password = "admin"
 
 try:
     # Authenticate
-    common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
+    common = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/common")
     uid = common.authenticate(db, username, password, {})
 
     if not uid:
@@ -19,7 +19,7 @@ try:
         exit(1)
 
     # Connect to models
-    models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
+    models = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/object")
 
     # Check new models exist and count records
     print("=" * 60)
@@ -27,16 +27,19 @@ try:
     print("=" * 60)
 
     try:
-        bir_count = models.execute_kw(db, uid, password,
-            'finance.ppm.bir.calendar', 'search_count', [[]])
+        bir_count = models.execute_kw(
+            db, uid, password, "finance.ppm.bir.calendar", "search_count", [[]]
+        )
         print(f"✅ BIR Calendar Records: {bir_count} (expected: 52)")
 
-        logframe_count = models.execute_kw(db, uid, password,
-            'finance.ppm.logframe', 'search_count', [[]])
+        logframe_count = models.execute_kw(
+            db, uid, password, "finance.ppm.logframe", "search_count", [[]]
+        )
         print(f"✅ LogFrame KPI Records: {logframe_count} (expected: 27)")
 
-        holiday_count = models.execute_kw(db, uid, password,
-            'finance.ppm.ph.holiday', 'search_count', [[]])
+        holiday_count = models.execute_kw(
+            db, uid, password, "finance.ppm.ph.holiday", "search_count", [[]]
+        )
         print(f"✅ PH Holiday Records: {holiday_count} (expected: 38)")
 
         print("-" * 60)

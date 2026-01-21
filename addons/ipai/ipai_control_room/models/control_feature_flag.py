@@ -122,33 +122,41 @@ class ControlFeatureFlag(models.Model):
 
         # User scope
         if user_id:
-            domains.append([
-                ("key", "=", key),
-                ("scope", "=", "user"),
-                ("user_id", "=", user_id),
-            ])
+            domains.append(
+                [
+                    ("key", "=", key),
+                    ("scope", "=", "user"),
+                    ("user_id", "=", user_id),
+                ]
+            )
 
         # Project scope
         if project_id:
-            domains.append([
-                ("key", "=", key),
-                ("scope", "=", "project"),
-                ("project_id", "=", project_id),
-            ])
+            domains.append(
+                [
+                    ("key", "=", key),
+                    ("scope", "=", "project"),
+                    ("project_id", "=", project_id),
+                ]
+            )
 
         # Company scope
         if company_id:
-            domains.append([
-                ("key", "=", key),
-                ("scope", "=", "company"),
-                ("company_id", "=", company_id),
-            ])
+            domains.append(
+                [
+                    ("key", "=", key),
+                    ("scope", "=", "company"),
+                    ("company_id", "=", company_id),
+                ]
+            )
 
         # Global scope
-        domains.append([
-            ("key", "=", key),
-            ("scope", "=", "global"),
-        ])
+        domains.append(
+            [
+                ("key", "=", key),
+                ("scope", "=", "global"),
+            ]
+        )
 
         # Check each scope in order
         for domain in domains:
@@ -172,11 +180,25 @@ class ControlFeatureFlag(models.Model):
         domains = []
 
         if user_id:
-            domains.append([("key", "=", key), ("scope", "=", "user"), ("user_id", "=", user_id)])
+            domains.append(
+                [("key", "=", key), ("scope", "=", "user"), ("user_id", "=", user_id)]
+            )
         if project_id:
-            domains.append([("key", "=", key), ("scope", "=", "project"), ("project_id", "=", project_id)])
+            domains.append(
+                [
+                    ("key", "=", key),
+                    ("scope", "=", "project"),
+                    ("project_id", "=", project_id),
+                ]
+            )
         if company_id:
-            domains.append([("key", "=", key), ("scope", "=", "company"), ("company_id", "=", company_id)])
+            domains.append(
+                [
+                    ("key", "=", key),
+                    ("scope", "=", "company"),
+                    ("company_id", "=", company_id),
+                ]
+            )
         domains.append([("key", "=", key), ("scope", "=", "global")])
 
         for domain in domains:

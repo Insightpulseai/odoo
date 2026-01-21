@@ -13,21 +13,17 @@ class ProjectRaci(models.Model):
         string="Project",
         ondelete="cascade",
         index=True,
-        help="Project for project-level RACI assignment."
+        help="Project for project-level RACI assignment.",
     )
     task_id = fields.Many2one(
         "project.task",
         string="Task",
         ondelete="cascade",
         index=True,
-        help="Task for task-level RACI assignment."
+        help="Task for task-level RACI assignment.",
     )
     user_id = fields.Many2one(
-        "res.users",
-        string="User",
-        required=True,
-        ondelete="cascade",
-        index=True
+        "res.users", string="User", required=True, ondelete="cascade", index=True
     )
     role = fields.Selection(
         [
@@ -43,28 +39,23 @@ class ProjectRaci(models.Model):
         - Accountable: Person ultimately answerable (only one per task/activity)
         - Consulted: Person whose input is sought (two-way communication)
         - Informed: Person kept up-to-date on progress (one-way communication)
-        """
+        """,
     )
-    notes = fields.Text(
-        string="Notes"
-    )
+    notes = fields.Text(string="Notes")
     company_id = fields.Many2one(
-        "res.company",
-        compute="_compute_company_id",
-        store=True,
-        readonly=True
+        "res.company", compute="_compute_company_id", store=True, readonly=True
     )
 
     _sql_constraints = [
         (
             "unique_project_user_role",
             "UNIQUE(project_id, user_id, role)",
-            "This user already has this RACI role for this project!"
+            "This user already has this RACI role for this project!",
         ),
         (
             "unique_task_user_role",
             "UNIQUE(task_id, user_id, role)",
-            "This user already has this RACI role for this task!"
+            "This user already has this RACI role for this task!",
         ),
     ]
 

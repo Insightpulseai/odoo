@@ -40,9 +40,7 @@ class IpaiAiService(models.AbstractModel):
             if not thread.exists():
                 raise ValueError("Thread not found.")
         else:
-            thread = self.env["ipai.ai.thread"].create(
-                {"provider_id": provider.id}
-            )
+            thread = self.env["ipai.ai.thread"].create({"provider_id": provider.id})
 
         # Persist user message
         user_msg = self.env["ipai.ai.message"].create(
@@ -145,13 +143,9 @@ class IpaiAiService(models.AbstractModel):
         }
         impl_name = impl_map.get(provider.provider_type)
         if not impl_name:
-            raise ValueError(
-                f"Unsupported provider type: {provider.provider_type}"
-            )
+            raise ValueError(f"Unsupported provider type: {provider.provider_type}")
         if impl_name not in self.env:
-            raise ValueError(
-                f"Provider implementation not installed: {impl_name}"
-            )
+            raise ValueError(f"Provider implementation not installed: {impl_name}")
         return self.env[impl_name]
 
     @api.model

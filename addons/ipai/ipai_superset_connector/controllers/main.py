@@ -11,7 +11,10 @@ from odoo import http
 from odoo.http import request
 from odoo.exceptions import AccessDenied, UserError
 
-from ..services.superset_client import get_superset_client_from_params, SupersetClientError
+from ..services.superset_client import (
+    get_superset_client_from_params,
+    SupersetClientError,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -47,10 +50,13 @@ class SupersetEmbedController(http.Controller):
 
         # Verify user has access to this dashboard
         Dashboard = env["ipai.superset.dashboard"].sudo()
-        dashboard = Dashboard.search([
-            ("superset_dashboard_id", "=", str(dashboard_id)),
-            ("active", "=", True),
-        ], limit=1)
+        dashboard = Dashboard.search(
+            [
+                ("superset_dashboard_id", "=", str(dashboard_id)),
+                ("active", "=", True),
+            ],
+            limit=1,
+        )
 
         if not dashboard:
             raise AccessDenied(f"Dashboard {dashboard_id} not found or inactive")
@@ -117,15 +123,11 @@ class SupersetEmbedController(http.Controller):
 
         # Company-based RLS
         if dashboard.rls_by_company and user.company_id:
-            rls_rules.append({
-                "clause": f"company_id = {user.company_id.id}"
-            })
+            rls_rules.append({"clause": f"company_id = {user.company_id.id}"})
 
         # User-based RLS
         if dashboard.rls_by_user:
-            rls_rules.append({
-                "clause": f"user_id = {user.id}"
-            })
+            rls_rules.append({"clause": f"user_id = {user.id}"})
 
         # Custom RLS clause from dashboard config
         if dashboard.rls_custom_clause:
@@ -141,12 +143,14 @@ class SupersetEmbedController(http.Controller):
     def _log_audit(self, dashboard, user, rls_rules):
         """Create audit log entry for token issuance."""
         try:
-            request.env["ipai.superset.audit"].sudo().create({
-                "dashboard_id": dashboard.id,
-                "user_id": user.id,
-                "company_id": user.company_id.id if user.company_id else False,
-                "rls_summary": str(rls_rules) if rls_rules else "None",
-            })
+            request.env["ipai.superset.audit"].sudo().create(
+                {
+                    "dashboard_id": dashboard.id,
+                    "user_id": user.id,
+                    "company_id": user.company_id.id if user.company_id else False,
+                    "rls_summary": str(rls_rules) if rls_rules else "None",
+                }
+            )
         except Exception as e:
             # Don't fail token issuance on audit error
             _logger.warning("Failed to create audit log: %s", e)
@@ -178,12 +182,14 @@ class SupersetEmbedController(http.Controller):
                 if not any(g in user_groups for g in dash.allowed_group_ids):
                     continue
 
-            result.append({
-                "id": dash.superset_dashboard_id,
-                "name": dash.name,
-                "description": dash.description or "",
-                "odoo_record_id": dash.id,
-            })
+            result.append(
+                {
+                    "id": dash.superset_dashboard_id,
+                    "name": dash.name,
+                    "description": dash.description or "",
+                    "odoo_record_id": dash.id,
+                }
+            )
 
         return result
 

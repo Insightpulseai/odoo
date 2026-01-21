@@ -295,7 +295,9 @@ class CatalogSync(models.AbstractModel):
                     "description": tool_data["description"],
                     "parameters_json": json.dumps(tool_data.get("parameters", {})),
                     "returns_json": json.dumps(tool_data.get("returns", {})),
-                    "requires_confirmation": tool_data.get("requires_confirmation", True),
+                    "requires_confirmation": tool_data.get(
+                        "requires_confirmation", True
+                    ),
                     "allowed_roles": ",".join(tool_data.get("allowed_roles", [])),
                     "tags": ",".join(tool_data.get("tags", [])),
                     "last_sync": fields.Datetime.now(),
@@ -386,9 +388,7 @@ class CatalogSync(models.AbstractModel):
                 "description": model_info.get("description"),
                 "tags": "odoo,model",
                 "res_model": model_info["model"],
-                "metadata_json": json.dumps(
-                    {"fields": model_info.get("fields", [])}
-                ),
+                "metadata_json": json.dumps({"fields": model_info.get("fields", [])}),
                 "last_sync": fields.Datetime.now(),
             }
 
@@ -443,8 +443,17 @@ class CatalogSync(models.AbstractModel):
         return client.export_semantic_model(asset_fqdn, model_name, format)
 
     @api.model
-    def query_semantic_model(self, asset_fqdn, model_name, dimensions, metrics,
-                              filters=None, time_grain=None, time_range=None, limit=1000):
+    def query_semantic_model(
+        self,
+        asset_fqdn,
+        model_name,
+        dimensions,
+        metrics,
+        filters=None,
+        time_grain=None,
+        time_range=None,
+        limit=1000,
+    ):
         """Query a semantic model and get resolved SQL.
 
         Args:
@@ -519,20 +528,27 @@ class CatalogSync(models.AbstractModel):
         # Get or create asset
         asset = CatalogAsset.search([("fqdn", "=", payload["asset_fqdn"])], limit=1)
         if not asset:
-            asset = CatalogAsset.create({
-                "fqdn": payload["asset_fqdn"],
-                "asset_type": "table",
-                "system": "scout" if "scout" in payload["asset_fqdn"] else "supabase",
-                "title": payload.get("asset_title", payload["model"]["name"]),
-                "description": payload.get("asset_description"),
-                "tags": ",".join(payload.get("asset_tags", [])),
-            })
+            asset = CatalogAsset.create(
+                {
+                    "fqdn": payload["asset_fqdn"],
+                    "asset_type": "table",
+                    "system": (
+                        "scout" if "scout" in payload["asset_fqdn"] else "supabase"
+                    ),
+                    "title": payload.get("asset_title", payload["model"]["name"]),
+                    "description": payload.get("asset_description"),
+                    "tags": ",".join(payload.get("asset_tags", [])),
+                }
+            )
 
         # Get or create semantic model
-        model = SemanticModel.search([
-            ("asset_id", "=", asset.id),
-            ("name", "=", payload["model"]["name"]),
-        ], limit=1)
+        model = SemanticModel.search(
+            [
+                ("asset_id", "=", asset.id),
+                ("name", "=", payload["model"]["name"]),
+            ],
+            limit=1,
+        )
 
         model_vals = {
             "asset_id": asset.id,
@@ -555,10 +571,13 @@ class CatalogSync(models.AbstractModel):
 
         # Sync dimensions
         for dim_data in payload.get("dimensions", []):
-            dim = SemanticDimension.search([
-                ("model_id", "=", model.id),
-                ("name", "=", dim_data["name"]),
-            ], limit=1)
+            dim = SemanticDimension.search(
+                [
+                    ("model_id", "=", model.id),
+                    ("name", "=", dim_data["name"]),
+                ],
+                limit=1,
+            )
 
             dim_vals = {
                 "model_id": model.id,
@@ -581,10 +600,13 @@ class CatalogSync(models.AbstractModel):
 
         # Sync metrics
         for met_data in payload.get("metrics", []):
-            met = SemanticMetric.search([
-                ("model_id", "=", model.id),
-                ("name", "=", met_data["name"]),
-            ], limit=1)
+            met = SemanticMetric.search(
+                [
+                    ("model_id", "=", model.id),
+                    ("name", "=", met_data["name"]),
+                ],
+                limit=1,
+            )
 
             met_vals = {
                 "model_id": model.id,

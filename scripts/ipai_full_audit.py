@@ -39,48 +39,142 @@ ODOO_VERSION = "18.0"
 
 # Modules in scope for this audit
 SCOPE_MODULES = [
-    "ipai_workos_affine", "ipai_workos_core", "ipai_bir_tax_compliance",
-    "ipai_close_orchestration", "ipai_finance_ppm", "ipai_finance_ppm_golive",
-    "ipai_month_end", "ipai_ppm_a1", "ipai_superset_connector", "ipai_tbwa_finance",
-    "ipai", "ipai_ask_ai", "ipai_crm_pipeline", "ipai_finance_closing",
-    "ipai_finance_monthly_closing", "ipai_finance_ppm_umbrella", "ipai_grid_view",
-    "ipai_month_end_closing", "ipai_platform_approvals", "ipai_platform_audit",
-    "ipai_platform_permissions", "ipai_platform_theme", "ipai_platform_workflow",
-    "ipai_ppm_monthly_close", "ipai_theme_tbwa_backend", "ipai_workos_blocks",
-    "ipai_workos_canvas", "ipai_workos_collab", "ipai_workos_db",
-    "ipai_workos_search", "ipai_workos_templates", "ipai_workos_views"
+    "ipai_workos_affine",
+    "ipai_workos_core",
+    "ipai_bir_tax_compliance",
+    "ipai_close_orchestration",
+    "ipai_finance_ppm",
+    "ipai_finance_ppm_golive",
+    "ipai_month_end",
+    "ipai_ppm_a1",
+    "ipai_superset_connector",
+    "ipai_tbwa_finance",
+    "ipai",
+    "ipai_ask_ai",
+    "ipai_crm_pipeline",
+    "ipai_finance_closing",
+    "ipai_finance_monthly_closing",
+    "ipai_finance_ppm_umbrella",
+    "ipai_grid_view",
+    "ipai_month_end_closing",
+    "ipai_platform_approvals",
+    "ipai_platform_audit",
+    "ipai_platform_permissions",
+    "ipai_platform_theme",
+    "ipai_platform_workflow",
+    "ipai_ppm_monthly_close",
+    "ipai_theme_tbwa_backend",
+    "ipai_workos_blocks",
+    "ipai_workos_canvas",
+    "ipai_workos_collab",
+    "ipai_workos_db",
+    "ipai_workos_search",
+    "ipai_workos_templates",
+    "ipai_workos_views",
 ]
 
 # CE Core modules (for dependency checking)
 CE_CORE_MODULES = {
-    "base", "web", "base_setup", "base_import", "bus", "mail", "digest", "iap",
-    "web_tour", "web_editor", "portal", "resource", "calendar", "contacts",
-    "sales_team", "crm", "sale", "sale_management", "sale_crm", "analytic",
-    "account", "account_payment", "purchase", "purchase_requisition", "stock",
-    "stock_account", "stock_landed_costs", "stock_picking_batch", "sale_stock",
-    "sale_purchase", "purchase_stock", "mrp", "maintenance", "project",
-    "project_todo", "hr_timesheet", "sale_timesheet", "hr", "hr_contract",
-    "hr_holidays", "hr_attendance", "hr_expense", "hr_recruitment", "hr_skills",
-    "website", "website_sale", "website_crm", "website_blog", "website_forum",
-    "website_slides", "website_event", "website_hr_recruitment", "mass_mailing",
-    "mass_mailing_sms", "point_of_sale", "pos_restaurant", "survey", "lunch",
-    "fleet", "repair", "im_livechat", "sms", "snailmail", "payment",
-    "auth_signup", "auth_oauth", "auth_totp", "l10n_generic_coa",
+    "base",
+    "web",
+    "base_setup",
+    "base_import",
+    "bus",
+    "mail",
+    "digest",
+    "iap",
+    "web_tour",
+    "web_editor",
+    "portal",
+    "resource",
+    "calendar",
+    "contacts",
+    "sales_team",
+    "crm",
+    "sale",
+    "sale_management",
+    "sale_crm",
+    "analytic",
+    "account",
+    "account_payment",
+    "purchase",
+    "purchase_requisition",
+    "stock",
+    "stock_account",
+    "stock_landed_costs",
+    "stock_picking_batch",
+    "sale_stock",
+    "sale_purchase",
+    "purchase_stock",
+    "mrp",
+    "maintenance",
+    "project",
+    "project_todo",
+    "hr_timesheet",
+    "sale_timesheet",
+    "hr",
+    "hr_contract",
+    "hr_holidays",
+    "hr_attendance",
+    "hr_expense",
+    "hr_recruitment",
+    "hr_skills",
+    "website",
+    "website_sale",
+    "website_crm",
+    "website_blog",
+    "website_forum",
+    "website_slides",
+    "website_event",
+    "website_hr_recruitment",
+    "mass_mailing",
+    "mass_mailing_sms",
+    "point_of_sale",
+    "pos_restaurant",
+    "survey",
+    "lunch",
+    "fleet",
+    "repair",
+    "im_livechat",
+    "sms",
+    "snailmail",
+    "payment",
+    "auth_signup",
+    "auth_oauth",
+    "auth_totp",
+    "l10n_generic_coa",
 }
 
 # Enterprise modules (blocklist)
 ENTERPRISE_BLOCKLIST = {
-    "accountant", "knowledge", "web_studio", "sign", "helpdesk", "planning",
-    "sale_subscription", "quality_control", "hr_appraisal", "marketing_automation",
-    "appointment", "web_mobile", "stock_barcode", "voip", "sale_amazon",
-    "industry_fsm", "timesheet_grid", "mrp_workorder", "data_recycle",
-    "marketing_card", "social"
+    "accountant",
+    "knowledge",
+    "web_studio",
+    "sign",
+    "helpdesk",
+    "planning",
+    "sale_subscription",
+    "quality_control",
+    "hr_appraisal",
+    "marketing_automation",
+    "appointment",
+    "web_mobile",
+    "stock_barcode",
+    "voip",
+    "sale_amazon",
+    "industry_fsm",
+    "timesheet_grid",
+    "mrp_workorder",
+    "data_recycle",
+    "marketing_card",
+    "social",
 }
 
 
 @dataclass
 class ModuleAuditInfo:
     """Complete audit information for a module."""
+
     name: str
     display_name: str = ""
     version: str = ""
@@ -125,7 +219,7 @@ class ModuleAuditInfo:
 def parse_manifest(manifest_path: Path) -> Optional[Dict]:
     """Parse __manifest__.py file and return its contents."""
     try:
-        with open(manifest_path, 'r', encoding='utf-8') as f:
+        with open(manifest_path, "r", encoding="utf-8") as f:
             content = f.read()
         return ast.literal_eval(content)
     except Exception as e:
@@ -151,7 +245,7 @@ def extract_models_from_file(py_file: Path) -> List[Dict]:
     """Extract model definitions from a Python file."""
     models = []
     try:
-        with open(py_file, 'r', encoding='utf-8') as f:
+        with open(py_file, "r", encoding="utf-8") as f:
             content = f.read()
 
         tree = ast.parse(content)
@@ -162,17 +256,21 @@ def extract_models_from_file(py_file: Path) -> List[Dict]:
                 for base in node.bases:
                     base_str = ""
                     if isinstance(base, ast.Attribute):
-                        if hasattr(base.value, 'id') and base.value.id == 'models':
+                        if hasattr(base.value, "id") and base.value.id == "models":
                             base_str = f"models.{base.attr}"
 
-                    if base_str in ["models.Model", "models.TransientModel", "models.AbstractModel"]:
+                    if base_str in [
+                        "models.Model",
+                        "models.TransientModel",
+                        "models.AbstractModel",
+                    ]:
                         model_info = {
                             "class_name": node.name,
-                            "model_type": base_str.split('.')[-1],
+                            "model_type": base_str.split(".")[-1],
                             "_name": None,
                             "_inherit": None,
                             "_description": None,
-                            "fields": []
+                            "fields": [],
                         }
 
                         # Extract class body assignments
@@ -181,30 +279,52 @@ def extract_models_from_file(py_file: Path) -> List[Dict]:
                                 for target in item.targets:
                                     if isinstance(target, ast.Name):
                                         name = target.id
-                                        if name == "_name" and isinstance(item.value, ast.Constant):
+                                        if name == "_name" and isinstance(
+                                            item.value, ast.Constant
+                                        ):
                                             model_info["_name"] = item.value.value
                                         elif name == "_inherit":
                                             if isinstance(item.value, ast.Constant):
-                                                model_info["_inherit"] = item.value.value
+                                                model_info["_inherit"] = (
+                                                    item.value.value
+                                                )
                                             elif isinstance(item.value, ast.List):
                                                 model_info["_inherit"] = [
-                                                    e.value for e in item.value.elts
+                                                    e.value
+                                                    for e in item.value.elts
                                                     if isinstance(e, ast.Constant)
                                                 ]
-                                        elif name == "_description" and isinstance(item.value, ast.Constant):
-                                            model_info["_description"] = item.value.value
+                                        elif name == "_description" and isinstance(
+                                            item.value, ast.Constant
+                                        ):
+                                            model_info["_description"] = (
+                                                item.value.value
+                                            )
                                         elif isinstance(item.value, ast.Call):
                                             # Field definition
-                                            if hasattr(item.value.func, 'attr'):
+                                            if hasattr(item.value.func, "attr"):
                                                 field_type = item.value.func.attr
-                                                if field_type in ["Char", "Text", "Integer", "Float",
-                                                                  "Boolean", "Date", "Datetime",
-                                                                  "Binary", "Html", "Selection",
-                                                                  "Many2one", "One2many", "Many2many"]:
-                                                    model_info["fields"].append({
-                                                        "name": name,
-                                                        "type": field_type
-                                                    })
+                                                if field_type in [
+                                                    "Char",
+                                                    "Text",
+                                                    "Integer",
+                                                    "Float",
+                                                    "Boolean",
+                                                    "Date",
+                                                    "Datetime",
+                                                    "Binary",
+                                                    "Html",
+                                                    "Selection",
+                                                    "Many2one",
+                                                    "One2many",
+                                                    "Many2many",
+                                                ]:
+                                                    model_info["fields"].append(
+                                                        {
+                                                            "name": name,
+                                                            "type": field_type,
+                                                        }
+                                                    )
 
                         if model_info["_name"] or model_info["_inherit"]:
                             models.append(model_info)
@@ -230,7 +350,7 @@ def extract_views_from_xml(xml_file: Path) -> List[Dict]:
                     "model": "",
                     "type": "",
                     "name": "",
-                    "inherit_id": None
+                    "inherit_id": None,
                 }
 
                 for field in record.findall("field"):
@@ -241,9 +361,17 @@ def extract_views_from_xml(xml_file: Path) -> List[Dict]:
                         view_info["model"] = field.text or ""
                     elif fname == "arch":
                         # Determine view type from arch content
-                        arch_text = ET.tostring(field, encoding='unicode')
-                        for vtype in ["tree", "form", "kanban", "calendar", "graph",
-                                      "pivot", "search", "activity"]:
+                        arch_text = ET.tostring(field, encoding="unicode")
+                        for vtype in [
+                            "tree",
+                            "form",
+                            "kanban",
+                            "calendar",
+                            "graph",
+                            "pivot",
+                            "search",
+                            "activity",
+                        ]:
                             if f"<{vtype}" in arch_text:
                                 view_info["type"] = vtype
                                 break
@@ -272,7 +400,7 @@ def extract_menus_from_xml(xml_file: Path) -> List[Dict]:
                 "name": menuitem.get("name", ""),
                 "parent": menuitem.get("parent", ""),
                 "action": menuitem.get("action", ""),
-                "sequence": menuitem.get("sequence", "10")
+                "sequence": menuitem.get("sequence", "10"),
             }
             if menu_info["id"]:
                 menus.append(menu_info)
@@ -283,7 +411,7 @@ def extract_menus_from_xml(xml_file: Path) -> List[Dict]:
                 "id": record.get("id", ""),
                 "name": "",
                 "parent": "",
-                "action": ""
+                "action": "",
             }
             for field in record.findall("field"):
                 fname = field.get("name", "")
@@ -305,18 +433,20 @@ def extract_security_from_csv(csv_file: Path) -> List[Dict]:
     """Extract access rules from ir.model.access.csv."""
     rules = []
     try:
-        with open(csv_file, 'r', encoding='utf-8') as f:
+        with open(csv_file, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                rules.append({
-                    "id": row.get("id", ""),
-                    "model": row.get("model_id:id", row.get("model_id/id", "")),
-                    "group": row.get("group_id:id", row.get("group_id/id", "")),
-                    "perm_read": row.get("perm_read", "0"),
-                    "perm_write": row.get("perm_write", "0"),
-                    "perm_create": row.get("perm_create", "0"),
-                    "perm_unlink": row.get("perm_unlink", "0")
-                })
+                rules.append(
+                    {
+                        "id": row.get("id", ""),
+                        "model": row.get("model_id:id", row.get("model_id/id", "")),
+                        "group": row.get("group_id:id", row.get("group_id/id", "")),
+                        "perm_read": row.get("perm_read", "0"),
+                        "perm_write": row.get("perm_write", "0"),
+                        "perm_create": row.get("perm_create", "0"),
+                        "perm_unlink": row.get("perm_unlink", "0"),
+                    }
+                )
     except Exception:
         pass
 
@@ -335,7 +465,7 @@ def extract_security_groups_from_xml(xml_file: Path) -> List[Dict]:
                 "id": record.get("id", ""),
                 "name": "",
                 "category": "",
-                "implied_ids": []
+                "implied_ids": [],
             }
             for field in record.findall("field"):
                 fname = field.get("name", "")
@@ -368,7 +498,7 @@ def extract_record_rules_from_xml(xml_file: Path) -> List[Dict]:
                 "name": "",
                 "model": "",
                 "domain": "",
-                "groups": []
+                "groups": [],
             }
             for field in record.findall("field"):
                 fname = field.get("name", "")
@@ -396,11 +526,7 @@ def extract_system_params_from_xml(xml_file: Path) -> List[Dict]:
         root = tree.getroot()
 
         for record in root.findall(".//record[@model='ir.config_parameter']"):
-            param_info = {
-                "id": record.get("id", ""),
-                "key": "",
-                "value": ""
-            }
+            param_info = {"id": record.get("id", ""), "key": "", "value": ""}
             for field in record.findall("field"):
                 fname = field.get("name", "")
                 if fname == "key":
@@ -430,7 +556,7 @@ def extract_cron_jobs_from_xml(xml_file: Path) -> List[Dict]:
                 "code": "",
                 "interval_number": "",
                 "interval_type": "",
-                "active": True
+                "active": True,
             }
             for field in record.findall("field"):
                 fname = field.get("name", "")
@@ -454,89 +580,107 @@ def extract_cron_jobs_from_xml(xml_file: Path) -> List[Dict]:
     return crons
 
 
-def run_static_checks(module_path: Path, module_name: str, all_modules: Set[str]) -> List[Dict]:
+def run_static_checks(
+    module_path: Path, module_name: str, all_modules: Set[str]
+) -> List[Dict]:
     """Run static validation checks on a module."""
     checks = []
 
     # 1. Manifest syntax check
     manifest_file = module_path / "__manifest__.py"
     if not manifest_file.exists():
-        checks.append({
-            "check": "manifest_exists",
-            "status": "FAIL",
-            "message": "__manifest__.py missing"
-        })
+        checks.append(
+            {
+                "check": "manifest_exists",
+                "status": "FAIL",
+                "message": "__manifest__.py missing",
+            }
+        )
         return checks
 
     try:
-        with open(manifest_file, 'r', encoding='utf-8') as f:
+        with open(manifest_file, "r", encoding="utf-8") as f:
             content = f.read()
         ast.parse(content)
         manifest = ast.literal_eval(content)
-        checks.append({
-            "check": "manifest_syntax",
-            "status": "PASS",
-            "message": "Valid Python syntax"
-        })
+        checks.append(
+            {
+                "check": "manifest_syntax",
+                "status": "PASS",
+                "message": "Valid Python syntax",
+            }
+        )
 
         # Check required fields
         if "name" not in manifest:
-            checks.append({
-                "check": "manifest_name",
-                "status": "FAIL",
-                "message": "Missing 'name' in manifest"
-            })
+            checks.append(
+                {
+                    "check": "manifest_name",
+                    "status": "FAIL",
+                    "message": "Missing 'name' in manifest",
+                }
+            )
 
         if "version" not in manifest:
-            checks.append({
-                "check": "manifest_version",
-                "status": "WARNING",
-                "message": "Missing 'version' in manifest"
-            })
+            checks.append(
+                {
+                    "check": "manifest_version",
+                    "status": "WARNING",
+                    "message": "Missing 'version' in manifest",
+                }
+            )
 
         if "license" not in manifest:
-            checks.append({
-                "check": "manifest_license",
-                "status": "WARNING",
-                "message": "Missing 'license' in manifest"
-            })
+            checks.append(
+                {
+                    "check": "manifest_license",
+                    "status": "WARNING",
+                    "message": "Missing 'license' in manifest",
+                }
+            )
 
         if "depends" not in manifest or not manifest["depends"]:
-            checks.append({
-                "check": "manifest_depends",
-                "status": "WARNING",
-                "message": "No dependencies defined"
-            })
+            checks.append(
+                {
+                    "check": "manifest_depends",
+                    "status": "WARNING",
+                    "message": "No dependencies defined",
+                }
+            )
 
     except SyntaxError as e:
-        checks.append({
-            "check": "manifest_syntax",
-            "status": "FAIL",
-            "message": f"Syntax error: {e}"
-        })
+        checks.append(
+            {
+                "check": "manifest_syntax",
+                "status": "FAIL",
+                "message": f"Syntax error: {e}",
+            }
+        )
         return checks
     except ValueError as e:
-        checks.append({
-            "check": "manifest_syntax",
-            "status": "FAIL",
-            "message": f"Invalid literal: {e}"
-        })
+        checks.append(
+            {
+                "check": "manifest_syntax",
+                "status": "FAIL",
+                "message": f"Invalid literal: {e}",
+            }
+        )
         return checks
 
     # 2. Check __init__.py exists
     init_file = module_path / "__init__.py"
     if not init_file.exists():
-        checks.append({
-            "check": "init_exists",
-            "status": "FAIL",
-            "message": "Missing root __init__.py"
-        })
+        checks.append(
+            {
+                "check": "init_exists",
+                "status": "FAIL",
+                "message": "Missing root __init__.py",
+            }
+        )
     else:
-        checks.append({
-            "check": "init_exists",
-            "status": "PASS",
-            "message": "__init__.py present"
-        })
+        checks.append(
+            {"check": "init_exists", "status": "PASS", "message": "__init__.py present"}
+        )
 
     # 3. Check subdirectory __init__.py files
     for subdir in ["models", "wizards", "controllers", "reports"]:
@@ -544,32 +688,38 @@ def run_static_checks(module_path: Path, module_name: str, all_modules: Set[str]
         if subdir_path.exists() and subdir_path.is_dir():
             subdir_init = subdir_path / "__init__.py"
             if not subdir_init.exists():
-                checks.append({
-                    "check": f"init_{subdir}",
-                    "status": "FAIL",
-                    "message": f"Missing {subdir}/__init__.py"
-                })
+                checks.append(
+                    {
+                        "check": f"init_{subdir}",
+                        "status": "FAIL",
+                        "message": f"Missing {subdir}/__init__.py",
+                    }
+                )
 
     # 4. Python compilation check
     for py_file in module_path.rglob("*.py"):
         try:
-            with open(py_file, 'r', encoding='utf-8') as f:
+            with open(py_file, "r", encoding="utf-8") as f:
                 content = f.read()
-            compile(content, str(py_file), 'exec')
+            compile(content, str(py_file), "exec")
         except SyntaxError as e:
             rel_path = py_file.relative_to(module_path)
-            checks.append({
-                "check": "python_syntax",
-                "status": "FAIL",
-                "message": f"Syntax error in {rel_path}:{e.lineno}: {e.msg}"
-            })
+            checks.append(
+                {
+                    "check": "python_syntax",
+                    "status": "FAIL",
+                    "message": f"Syntax error in {rel_path}:{e.lineno}: {e.msg}",
+                }
+            )
 
     if not any(c["check"] == "python_syntax" for c in checks):
-        checks.append({
-            "check": "python_syntax",
-            "status": "PASS",
-            "message": "All Python files compile"
-        })
+        checks.append(
+            {
+                "check": "python_syntax",
+                "status": "PASS",
+                "message": "All Python files compile",
+            }
+        )
 
     # 5. XML well-formedness check
     xml_errors = []
@@ -582,17 +732,15 @@ def run_static_checks(module_path: Path, module_name: str, all_modules: Set[str]
 
     if xml_errors:
         for error in xml_errors:
-            checks.append({
-                "check": "xml_syntax",
-                "status": "FAIL",
-                "message": error
-            })
+            checks.append({"check": "xml_syntax", "status": "FAIL", "message": error})
     else:
-        checks.append({
-            "check": "xml_syntax",
-            "status": "PASS",
-            "message": "All XML files are well-formed"
-        })
+        checks.append(
+            {
+                "check": "xml_syntax",
+                "status": "PASS",
+                "message": "All XML files are well-formed",
+            }
+        )
 
     # 6. Security CSV check
     models_dir = module_path / "models"
@@ -602,9 +750,9 @@ def run_static_checks(module_path: Path, module_name: str, all_modules: Set[str]
             if py_file.name == "__init__.py":
                 continue
             try:
-                with open(py_file, 'r', encoding='utf-8') as f:
+                with open(py_file, "r", encoding="utf-8") as f:
                     content = f.read()
-                if re.search(r'class\s+\w+\(models\.(Model|TransientModel)\)', content):
+                if re.search(r"class\s+\w+\(models\.(Model|TransientModel)\)", content):
                     has_models = True
                     break
             except Exception:
@@ -613,35 +761,43 @@ def run_static_checks(module_path: Path, module_name: str, all_modules: Set[str]
     if has_models:
         security_csv = module_path / "security" / "ir.model.access.csv"
         if not security_csv.exists():
-            checks.append({
-                "check": "security_csv",
-                "status": "WARNING",
-                "message": "Module has models but missing security/ir.model.access.csv"
-            })
+            checks.append(
+                {
+                    "check": "security_csv",
+                    "status": "WARNING",
+                    "message": "Module has models but missing security/ir.model.access.csv",
+                }
+            )
         else:
             # Validate CSV format
             try:
-                with open(security_csv, 'r', encoding='utf-8') as f:
+                with open(security_csv, "r", encoding="utf-8") as f:
                     reader = csv.DictReader(f)
                     rows = list(reader)
                 if rows:
-                    checks.append({
-                        "check": "security_csv",
-                        "status": "PASS",
-                        "message": f"ir.model.access.csv has {len(rows)} rules"
-                    })
+                    checks.append(
+                        {
+                            "check": "security_csv",
+                            "status": "PASS",
+                            "message": f"ir.model.access.csv has {len(rows)} rules",
+                        }
+                    )
                 else:
-                    checks.append({
-                        "check": "security_csv",
-                        "status": "WARNING",
-                        "message": "ir.model.access.csv is empty"
-                    })
+                    checks.append(
+                        {
+                            "check": "security_csv",
+                            "status": "WARNING",
+                            "message": "ir.model.access.csv is empty",
+                        }
+                    )
             except Exception as e:
-                checks.append({
-                    "check": "security_csv",
-                    "status": "FAIL",
-                    "message": f"Invalid CSV: {e}"
-                })
+                checks.append(
+                    {
+                        "check": "security_csv",
+                        "status": "FAIL",
+                        "message": f"Invalid CSV: {e}",
+                    }
+                )
 
     # 7. Dependency check
     manifest = parse_manifest(module_path / "__manifest__.py")
@@ -658,18 +814,22 @@ def run_static_checks(module_path: Path, module_name: str, all_modules: Set[str]
                     missing_deps.append(dep)
 
         if enterprise_deps:
-            checks.append({
-                "check": "enterprise_deps",
-                "status": "FAIL",
-                "message": f"Enterprise dependencies found: {', '.join(enterprise_deps)}"
-            })
+            checks.append(
+                {
+                    "check": "enterprise_deps",
+                    "status": "FAIL",
+                    "message": f"Enterprise dependencies found: {', '.join(enterprise_deps)}",
+                }
+            )
 
         if missing_deps:
-            checks.append({
-                "check": "missing_deps",
-                "status": "WARNING",
-                "message": f"Dependencies not in CE core or addons: {', '.join(missing_deps)}"
-            })
+            checks.append(
+                {
+                    "check": "missing_deps",
+                    "status": "WARNING",
+                    "message": f"Dependencies not in CE core or addons: {', '.join(missing_deps)}",
+                }
+            )
 
     return checks
 
@@ -680,11 +840,7 @@ def audit_module(module_name: str, all_modules: Set[str]) -> Optional[ModuleAudi
     if not module_path:
         return None
 
-    info = ModuleAuditInfo(
-        name=module_name,
-        path=str(module_path),
-        location=location
-    )
+    info = ModuleAuditInfo(name=module_name, path=str(module_path), location=location)
 
     # Parse manifest
     manifest = parse_manifest(module_path / "__manifest__.py")
@@ -801,7 +957,7 @@ def generate_module_readme(info: ModuleAuditInfo) -> str:
     lines.append("")
     if info.description:
         # Clean up HTML tags if present
-        desc = re.sub(r'<[^>]+>', '', info.description)
+        desc = re.sub(r"<[^>]+>", "", info.description)
         desc = desc.strip()
         if desc:
             lines.append(desc[:500] + "..." if len(desc) > 500 else desc)
@@ -818,7 +974,9 @@ def generate_module_readme(info: ModuleAuditInfo) -> str:
         lines.append("### Data Models")
         lines.append("")
         for model in info.models:
-            model_name = model.get("_name") or model.get("_inherit") or model.get("class_name")
+            model_name = (
+                model.get("_name") or model.get("_inherit") or model.get("class_name")
+            )
             model_desc = model.get("_description", "")
             model_type = model.get("model_type", "Model")
             lines.append(f"- **{model_name}** ({model_type})")
@@ -855,7 +1013,11 @@ def generate_module_readme(info: ModuleAuditInfo) -> str:
     lines.append("")
     if info.depends:
         for dep in info.depends:
-            dep_type = "CE Core" if dep in CE_CORE_MODULES else "IPAI" if dep.startswith("ipai") else "Other"
+            dep_type = (
+                "CE Core"
+                if dep in CE_CORE_MODULES
+                else "IPAI" if dep.startswith("ipai") else "Other"
+            )
             lines.append(f"- `{dep}` ({dep_type})")
     else:
         lines.append("- None")
@@ -906,7 +1068,9 @@ def generate_module_readme(info: ModuleAuditInfo) -> str:
     if info.access_rules:
         lines.append("### Access Rules")
         lines.append("")
-        lines.append(f"*{len(info.access_rules)} access rules defined in ir.model.access.csv*")
+        lines.append(
+            f"*{len(info.access_rules)} access rules defined in ir.model.access.csv*"
+        )
         lines.append("")
 
     if info.record_rules:
@@ -925,7 +1089,10 @@ def generate_module_readme(info: ModuleAuditInfo) -> str:
     lines.append("")
     # Check for external service hints in depends or code
     integrations = []
-    if "ipai_superset_connector" in info.depends or info.name == "ipai_superset_connector":
+    if (
+        "ipai_superset_connector" in info.depends
+        or info.name == "ipai_superset_connector"
+    ):
         integrations.append("Apache Superset (BI/Analytics)")
     if info.name == "ipai_ask_ai":
         integrations.append("OpenAI API / Claude API (AI Assistant)")
@@ -951,10 +1118,14 @@ def generate_module_readme(info: ModuleAuditInfo) -> str:
     lines.append("")
     lines.append("```bash")
     lines.append(f"# 1. Verify module is installed")
-    lines.append(f"psql -d <database> -c \"SELECT name, state FROM ir_module_module WHERE name = '{info.name}'\"")
+    lines.append(
+        f"psql -d <database> -c \"SELECT name, state FROM ir_module_module WHERE name = '{info.name}'\""
+    )
     lines.append("")
     lines.append(f"# 2. Check module info")
-    lines.append(f"odoo-bin shell -d <database> -c 'print(env[\"ir.module.module\"].search([(\"name\", \"=\", \"{info.name}\")]).state)'")
+    lines.append(
+        f'odoo-bin shell -d <database> -c \'print(env["ir.module.module"].search([("name", "=", "{info.name}")]).state)\''
+    )
     lines.append("```")
     lines.append("")
 
@@ -1008,12 +1179,20 @@ def generate_modules_index(modules: List[ModuleAuditInfo]) -> str:
     # Main index table
     lines.append("## Module Index")
     lines.append("")
-    lines.append("| Module | Purpose | Dependencies (CE/OCA) | Data Models | Views/Menus | Security/RLS | Config Settings | External Integrations | Seed Data | Known Limits | Docs Coverage | Test Status |")
-    lines.append("|--------|---------|----------------------|-------------|-------------|--------------|-----------------|----------------------|-----------|--------------|---------------|-------------|")
+    lines.append(
+        "| Module | Purpose | Dependencies (CE/OCA) | Data Models | Views/Menus | Security/RLS | Config Settings | External Integrations | Seed Data | Known Limits | Docs Coverage | Test Status |"
+    )
+    lines.append(
+        "|--------|---------|----------------------|-------------|-------------|--------------|-----------------|----------------------|-----------|--------------|---------------|-------------|"
+    )
 
     for m in sorted(modules, key=lambda x: x.name):
         # Purpose
-        purpose = m.summary[:40] + "..." if m.summary and len(m.summary) > 40 else (m.summary or "-")
+        purpose = (
+            m.summary[:40] + "..."
+            if m.summary and len(m.summary) > 40
+            else (m.summary or "-")
+        )
 
         # Dependencies
         ce_deps = [d for d in m.depends if d in CE_CORE_MODULES]
@@ -1061,7 +1240,9 @@ def generate_modules_index(modules: List[ModuleAuditInfo]) -> str:
         # Test status
         test_status = m.install_status
 
-        lines.append(f"| `{m.name}` | {purpose} | {deps_str} | {models_str} | {views_menus} | {security} | {config} | {integrations} | {seed} | {limits} | {docs} | {test_status} |")
+        lines.append(
+            f"| `{m.name}` | {purpose} | {deps_str} | {models_str} | {views_menus} | {security} | {config} | {integrations} | {seed} | {limits} | {docs} | {test_status} |"
+        )
 
     lines.append("")
 
@@ -1132,12 +1313,14 @@ def generate_modules_index(modules: List[ModuleAuditInfo]) -> str:
 def generate_test_matrix(modules: List[ModuleAuditInfo]) -> Tuple[str, Dict]:
     """Generate test matrix CSV and JSON."""
     csv_lines = []
-    csv_lines.append("module,install_ok,upgrade_ok,errors,warnings,duration_s,db_name,log_excerpt_path,tested_commit")
+    csv_lines.append(
+        "module,install_ok,upgrade_ok,errors,warnings,duration_s,db_name,log_excerpt_path,tested_commit"
+    )
 
     json_data = {
         "generated": datetime.now().isoformat(),
         "odoo_version": ODOO_VERSION,
-        "modules": []
+        "modules": [],
     }
 
     for m in modules:
@@ -1148,33 +1331,41 @@ def generate_test_matrix(modules: List[ModuleAuditInfo]) -> Tuple[str, Dict]:
         if has_fail:
             install_ok = "blocked"
             upgrade_ok = "blocked"
-            errors = ";".join([c["message"] for c in m.static_checks if c["status"] == "FAIL"])[:100]
+            errors = ";".join(
+                [c["message"] for c in m.static_checks if c["status"] == "FAIL"]
+            )[:100]
         else:
             install_ok = "pending"
             upgrade_ok = "pending"
             errors = ""
 
-        warnings = ";".join([c["message"] for c in m.static_checks if c["status"] == "WARNING"])[:100]
+        warnings = ";".join(
+            [c["message"] for c in m.static_checks if c["status"] == "WARNING"]
+        )[:100]
 
-        csv_lines.append(f"{m.name},{install_ok},{upgrade_ok},\"{errors}\",\"{warnings}\",0,test_db,artifacts/logs/{m.name}__install.log,HEAD")
+        csv_lines.append(
+            f'{m.name},{install_ok},{upgrade_ok},"{errors}","{warnings}",0,test_db,artifacts/logs/{m.name}__install.log,HEAD'
+        )
 
-        json_data["modules"].append({
-            "name": m.name,
-            "display_name": m.display_name,
-            "version": m.version,
-            "path": m.path,
-            "location": m.location,
-            "install_status": install_ok,
-            "upgrade_status": upgrade_ok,
-            "static_checks": m.static_checks,
-            "errors": errors,
-            "warnings": warnings,
-            "models_count": len(m.models),
-            "views_count": len(m.views),
-            "menus_count": len(m.menus),
-            "depends": m.depends,
-            "data_files": m.data_files
-        })
+        json_data["modules"].append(
+            {
+                "name": m.name,
+                "display_name": m.display_name,
+                "version": m.version,
+                "path": m.path,
+                "location": m.location,
+                "install_status": install_ok,
+                "upgrade_status": upgrade_ok,
+                "static_checks": m.static_checks,
+                "errors": errors,
+                "warnings": warnings,
+                "models_count": len(m.models),
+                "views_count": len(m.views),
+                "menus_count": len(m.menus),
+                "depends": m.depends,
+                "data_files": m.data_files,
+            }
+        )
 
     return "\n".join(csv_lines), json_data
 
@@ -1213,7 +1404,11 @@ def main():
         info = audit_module(module_name, all_modules)
         if info:
             audited_modules.append(info)
-            status = "PASS" if not any(c["status"] == "FAIL" for c in info.static_checks) else "FAIL"
+            status = (
+                "PASS"
+                if not any(c["status"] == "FAIL" for c in info.static_checks)
+                else "FAIL"
+            )
             print(f"  {'✓' if status == 'PASS' else '✗'} {module_name}: {status}")
         else:
             print(f"  ? {module_name}: NOT FOUND")
@@ -1227,7 +1422,7 @@ def main():
         module_path = Path(info.path)
         readme_path = module_path / "README.md"
 
-        with open(readme_path, 'w', encoding='utf-8') as f:
+        with open(readme_path, "w", encoding="utf-8") as f:
             f.write(readme_content)
         print(f"  ✓ {info.name}/README.md")
 
@@ -1235,7 +1430,7 @@ def main():
     print(f"\n[4/5] Generating Module Index")
     index_content = generate_modules_index(audited_modules)
     index_path = DOCS_DIR / "IPAI_MODULES_INDEX.md"
-    with open(index_path, 'w', encoding='utf-8') as f:
+    with open(index_path, "w", encoding="utf-8") as f:
         f.write(index_content)
     print(f"  ✓ {index_path}")
 
@@ -1244,12 +1439,12 @@ def main():
     csv_content, json_data = generate_test_matrix(audited_modules)
 
     csv_path = ARTIFACTS_DIR / "ipai_install_upgrade_matrix.csv"
-    with open(csv_path, 'w', encoding='utf-8') as f:
+    with open(csv_path, "w", encoding="utf-8") as f:
         f.write(csv_content)
     print(f"  ✓ {csv_path}")
 
     json_path = ARTIFACTS_DIR / "ipai_install_upgrade_matrix.json"
-    with open(json_path, 'w', encoding='utf-8') as f:
+    with open(json_path, "w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=2)
     print(f"  ✓ {json_path}")
 
@@ -1257,12 +1452,14 @@ def main():
     for info in audited_modules:
         for suffix in ["install", "upgrade"]:
             log_path = LOGS_DIR / f"{info.name}__{suffix}.log"
-            with open(log_path, 'w', encoding='utf-8') as f:
+            with open(log_path, "w", encoding="utf-8") as f:
                 f.write(f"# {info.name} {suffix} log\n")
                 f.write(f"# Generated: {datetime.now().isoformat()}\n")
                 f.write(f"# Status: pending (static validation only)\n\n")
                 for check in info.static_checks:
-                    f.write(f"[{check['status']}] {check['check']}: {check['message']}\n")
+                    f.write(
+                        f"[{check['status']}] {check['check']}: {check['message']}\n"
+                    )
     print(f"  ✓ Log placeholders created in {LOGS_DIR}")
 
     # Summary
@@ -1270,8 +1467,11 @@ def main():
     print("AUDIT COMPLETE")
     print("=" * 70)
 
-    passed = sum(1 for m in audited_modules
-                 if not any(c["status"] == "FAIL" for c in m.static_checks))
+    passed = sum(
+        1
+        for m in audited_modules
+        if not any(c["status"] == "FAIL" for c in m.static_checks)
+    )
     failed = len(audited_modules) - passed
 
     print(f"\nSummary:")

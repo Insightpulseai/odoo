@@ -274,7 +274,9 @@ class ProjectTask(models.Model):
                 delta_current = task.x_kr_baseline - task.x_kr_current
 
             if delta_target != 0:
-                task.x_kr_progress = min(100.0, max(0.0, (delta_current / delta_target) * 100))
+                task.x_kr_progress = min(
+                    100.0, max(0.0, (delta_current / delta_target) * 100)
+                )
             else:
                 task.x_kr_progress = 0.0
 

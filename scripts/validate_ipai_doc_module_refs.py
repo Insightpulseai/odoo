@@ -26,8 +26,9 @@ def get_repo_modules() -> set[str]:
         sys.exit(1)
 
     modules = {
-        d.name for d in ipai_dir.iterdir()
-        if d.is_dir() and not d.name.startswith(('.', '__'))
+        d.name
+        for d in ipai_dir.iterdir()
+        if d.is_dir() and not d.name.startswith((".", "__"))
     }
 
     print(f"✅ Found {len(modules)} actual IPAI modules in repository")
@@ -42,26 +43,29 @@ def extract_module_refs(content: str) -> set[str]:
     # - Incomplete names like ipai_module, ipai_all_features
     # - Text in historical sections documenting what doesn't exist
 
-    lines = content.split('\n')
+    lines = content.split("\n")
     modules = set()
     in_exclusion_section = False
 
     for i, line in enumerate(lines):
         # Detect exclusion section starts
-        if any(marker in line for marker in [
-            'Missing modules',
-            'not yet implemented',
-            "don't exist",
-            'MISSING FROM REPO',
-            'Status: ⚠️',
-            'Original Plan',
-            'WRONG',
-            'Deprecated',
-        ]):
+        if any(
+            marker in line
+            for marker in [
+                "Missing modules",
+                "not yet implemented",
+                "don't exist",
+                "MISSING FROM REPO",
+                "Status: ⚠️",
+                "Original Plan",
+                "WRONG",
+                "Deprecated",
+            ]
+        ):
             in_exclusion_section = True
 
         # Detect exclusion section ends (next major heading)
-        if line.startswith('##') and in_exclusion_section:
+        if line.startswith("##") and in_exclusion_section:
             in_exclusion_section = False
 
         # Skip if in exclusion section
@@ -69,11 +73,11 @@ def extract_module_refs(content: str) -> set[str]:
             continue
 
         # Skip lines with patterns/wildcards
-        if '*' in line or 'pattern' in line.lower():
+        if "*" in line or "pattern" in line.lower():
             continue
 
         # Skip lines with exclusion markers
-        if '❌' in line or 'N/A' in line:
+        if "❌" in line or "N/A" in line:
             continue
 
         # Match complete module names
@@ -83,10 +87,10 @@ def extract_module_refs(content: str) -> set[str]:
         for match in matches:
             mod = match.lower()
             # Filter out generic/incomplete names
-            if mod in ['ipai_module', 'ipai_all_features', 'ipai_module_backup']:
+            if mod in ["ipai_module", "ipai_all_features", "ipai_module_backup"]:
                 continue
             # Filter out wildcard suffixes
-            if mod.endswith('_'):
+            if mod.endswith("_"):
                 continue
 
             modules.add(mod)

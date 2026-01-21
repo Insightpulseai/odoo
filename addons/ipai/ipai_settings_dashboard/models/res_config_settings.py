@@ -267,23 +267,30 @@ class ResConfigSettings(models.TransientModel):
         ]
 
         for ptype, name, enabled in providers_config:
-            existing = Provider.search([
-                ("company_id", "=", company.id),
-                ("provider_type", "=", ptype),
-            ], limit=1)
+            existing = Provider.search(
+                [
+                    ("company_id", "=", company.id),
+                    ("provider_type", "=", ptype),
+                ],
+                limit=1,
+            )
 
             if enabled and not existing:
-                Provider.create({
-                    "name": name,
-                    "provider_type": ptype,
-                    "company_id": company.id,
-                    "is_default": ptype == self.ipai_default_provider,
-                })
+                Provider.create(
+                    {
+                        "name": name,
+                        "provider_type": ptype,
+                        "company_id": company.id,
+                        "is_default": ptype == self.ipai_default_provider,
+                    }
+                )
             elif existing:
-                existing.write({
-                    "active": enabled,
-                    "is_default": ptype == self.ipai_default_provider,
-                })
+                existing.write(
+                    {
+                        "active": enabled,
+                        "is_default": ptype == self.ipai_default_provider,
+                    }
+                )
 
         return {
             "type": "ir.actions.client",

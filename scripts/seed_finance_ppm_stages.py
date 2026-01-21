@@ -265,9 +265,7 @@ def rollback():
             [[("project_id", "in", project_ids)]],
         )
         if task_count > 0:
-            print(
-                f"[WARN] Project has {task_count} tasks - archive instead of delete"
-            )
+            print(f"[WARN] Project has {task_count} tasks - archive instead of delete")
             models.execute_kw(
                 ODOO_DB,
                 uid,
@@ -312,9 +310,7 @@ def rollback():
                 [[("stage_id", "in", existing_ids)]],
             )
             if task_count > 0:
-                print(
-                    f"  [SKIP] {stage['name']}: {task_count} tasks using this stage"
-                )
+                print(f"  [SKIP] {stage['name']}: {task_count} tasks using this stage")
             else:
                 models.execute_kw(
                     ODOO_DB,

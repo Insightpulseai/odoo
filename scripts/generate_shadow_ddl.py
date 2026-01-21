@@ -157,7 +157,8 @@ def generate_shadow_ddl(
     # Filter by prefix if specified
     if filter_prefix:
         models = [
-            m for m in models
+            m
+            for m in models
             if m.get("name", "").startswith(filter_prefix)
             or m.get("module", "").startswith(filter_prefix)
         ]
@@ -165,8 +166,12 @@ def generate_shadow_ddl(
 
     # Generate header
     ddl_parts = []
-    ddl_parts.append("-- =============================================================================")
-    ddl_parts.append("-- ODOO SHADOW SCHEMA - Auto-generated from ODOO_MODEL_INDEX.json")
+    ddl_parts.append(
+        "-- ============================================================================="
+    )
+    ddl_parts.append(
+        "-- ODOO SHADOW SCHEMA - Auto-generated from ODOO_MODEL_INDEX.json"
+    )
     ddl_parts.append(f"-- Generated: {datetime.now().isoformat()}")
     ddl_parts.append(f"-- Source: {model_index_path.name}")
     ddl_parts.append(f"-- Models: {len(models)}")
@@ -175,7 +180,9 @@ def generate_shadow_ddl(
     ddl_parts.append("-- ")
     ddl_parts.append("-- DO NOT EDIT MANUALLY - Regenerate via:")
     ddl_parts.append("--   python scripts/generate_shadow_ddl.py")
-    ddl_parts.append("-- =============================================================================")
+    ddl_parts.append(
+        "-- ============================================================================="
+    )
     ddl_parts.append("")
 
     # Schema creation
@@ -187,9 +194,13 @@ def generate_shadow_ddl(
     ddl_parts.append("")
 
     # Metadata table
-    ddl_parts.append("-- =============================================================================")
+    ddl_parts.append(
+        "-- ============================================================================="
+    )
     ddl_parts.append("-- Shadow Metadata Registry")
-    ddl_parts.append("-- =============================================================================")
+    ddl_parts.append(
+        "-- ============================================================================="
+    )
     ddl_parts.append("")
     ddl_parts.append("CREATE TABLE IF NOT EXISTS odoo_shadow_meta (")
     ddl_parts.append("    id bigserial PRIMARY KEY,")
@@ -205,9 +216,13 @@ def generate_shadow_ddl(
     ddl_parts.append("")
 
     # Generate tables
-    ddl_parts.append("-- =============================================================================")
+    ddl_parts.append(
+        "-- ============================================================================="
+    )
     ddl_parts.append("-- Shadow Tables")
-    ddl_parts.append("-- =============================================================================")
+    ddl_parts.append(
+        "-- ============================================================================="
+    )
     ddl_parts.append("")
 
     stats = {
@@ -226,10 +241,7 @@ def generate_shadow_ddl(
             stats["tables_generated"] += 1
 
             # Count stored fields
-            stored_fields = [
-                f for f in model.get("fields", [])
-                if is_stored_column(f)
-            ]
+            stored_fields = [f for f in model.get("fields", []) if is_stored_column(f)]
             stats["total_fields"] += len(stored_fields)
 
             # Prepare metadata insert
@@ -244,11 +256,17 @@ def generate_shadow_ddl(
 
     # Insert metadata
     if meta_inserts:
-        ddl_parts.append("-- =============================================================================")
+        ddl_parts.append(
+            "-- ============================================================================="
+        )
         ddl_parts.append("-- Populate Shadow Metadata")
-        ddl_parts.append("-- =============================================================================")
+        ddl_parts.append(
+            "-- ============================================================================="
+        )
         ddl_parts.append("")
-        ddl_parts.append("INSERT INTO odoo_shadow_meta (table_name, odoo_model, odoo_module, field_count)")
+        ddl_parts.append(
+            "INSERT INTO odoo_shadow_meta (table_name, odoo_model, odoo_module, field_count)"
+        )
         ddl_parts.append("VALUES")
         ddl_parts.append(",\n".join(meta_inserts))
         ddl_parts.append("ON CONFLICT (table_name) DO UPDATE SET")
@@ -276,13 +294,15 @@ def main() -> int:
         description="Generate Supabase shadow DDL from Odoo model index"
     )
     parser.add_argument(
-        "--output", "-o",
+        "--output",
+        "-o",
         type=Path,
         default=DEFAULT_OUTPUT_PATH,
         help=f"Output SQL file (default: {DEFAULT_OUTPUT_PATH})",
     )
     parser.add_argument(
-        "--filter", "-f",
+        "--filter",
+        "-f",
         type=str,
         default=None,
         help="Filter models by prefix (e.g., 'ipai' for IPAI modules only)",
@@ -294,7 +314,8 @@ def main() -> int:
         help=f"Path to ODOO_MODEL_INDEX.json (default: {MODEL_INDEX_PATH})",
     )
     parser.add_argument(
-        "--verbose", "-v",
+        "--verbose",
+        "-v",
         action="store_true",
         help="Enable verbose logging",
     )

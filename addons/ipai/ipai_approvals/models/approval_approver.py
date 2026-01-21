@@ -6,21 +6,16 @@ class IPAIApprovalApprover(models.Model):
     """
     Tracks individual approver decisions on an approval request.
     """
+
     _name = "ipai.approval.approver"
     _description = "Approval Approver"
     _order = "sequence, id"
 
     request_id = fields.Many2one(
-        "ipai.approval.request",
-        required=True,
-        ondelete="cascade"
+        "ipai.approval.request", required=True, ondelete="cascade"
     )
     sequence = fields.Integer(default=10)
-    user_id = fields.Many2one(
-        "res.users",
-        required=True,
-        string="Approver"
-    )
+    user_id = fields.Many2one("res.users", required=True, string="Approver")
 
     state = fields.Selection(
         [
@@ -30,7 +25,7 @@ class IPAIApprovalApprover(models.Model):
             ("delegated", "Delegated"),
         ],
         default="pending",
-        required=True
+        required=True,
     )
 
     # Decision tracking
@@ -38,14 +33,8 @@ class IPAIApprovalApprover(models.Model):
     notes = fields.Text(string="Comments")
 
     # Delegation
-    delegated_to_id = fields.Many2one(
-        "res.users",
-        string="Delegated To"
-    )
-    delegated_from_id = fields.Many2one(
-        "res.users",
-        string="Delegated From"
-    )
+    delegated_to_id = fields.Many2one("res.users", string="Delegated To")
+    delegated_from_id = fields.Many2one("res.users", string="Delegated From")
 
     # Computed
     can_approve = fields.Boolean(compute="_compute_can_approve")
@@ -53,34 +42,33 @@ class IPAIApprovalApprover(models.Model):
     @api.depends("user_id", "state")
     def _compute_can_approve(self):
         for rec in self:
-            rec.can_approve = (
-                rec.user_id == self.env.user and
-                rec.state == "pending"
-            )
+            rec.can_approve = rec.user_id == self.env.user and rec.state == "pending"
 
     def action_approve(self, notes=None):
         """Record approval decision."""
         self.ensure_one()
-        self.write({
-            "state": "approved",
-            "decision_date": fields.Datetime.now(),
-            "notes": notes,
-        })
+        self.write(
+            {
+                "state": "approved",
+                "decision_date": fields.Datetime.now(),
+                "notes": notes,
+            }
+        )
         self.request_id.message_post(
-            body=_("Approved by %s.%s") % (
-                self.user_id.name,
-                f" Notes: {notes}" if notes else ""
-            )
+            body=_("Approved by %s.%s")
+            % (self.user_id.name, f" Notes: {notes}" if notes else "")
         )
 
     def action_reject(self, reason=None):
         """Record rejection decision."""
         self.ensure_one()
-        self.write({
-            "state": "rejected",
-            "decision_date": fields.Datetime.now(),
-            "notes": reason,
-        })
+        self.write(
+            {
+                "state": "rejected",
+                "decision_date": fields.Datetime.now(),
+                "notes": reason,
+            }
+        )
 
     def action_delegate(self, delegate_to_user):
         """Delegate approval to another user."""
@@ -89,25 +77,27 @@ class IPAIApprovalApprover(models.Model):
             return
 
         # Mark current approver as delegated
-        self.write({
-            "state": "delegated",
-            "delegated_to_id": delegate_to_user.id,
-            "decision_date": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "delegated",
+                "delegated_to_id": delegate_to_user.id,
+                "decision_date": fields.Datetime.now(),
+            }
+        )
 
         # Create new approver record for delegate
-        self.env["ipai.approval.approver"].create({
-            "request_id": self.request_id.id,
-            "user_id": delegate_to_user.id,
-            "delegated_from_id": self.user_id.id,
-            "sequence": self.sequence,
-        })
+        self.env["ipai.approval.approver"].create(
+            {
+                "request_id": self.request_id.id,
+                "user_id": delegate_to_user.id,
+                "delegated_from_id": self.user_id.id,
+                "sequence": self.sequence,
+            }
+        )
 
         self.request_id.message_post(
-            body=_("%s delegated approval to %s.") % (
-                self.user_id.name,
-                delegate_to_user.name
-            )
+            body=_("%s delegated approval to %s.")
+            % (self.user_id.name, delegate_to_user.name)
         )
 
         # Create activity for new approver

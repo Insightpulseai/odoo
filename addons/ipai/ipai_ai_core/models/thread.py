@@ -87,18 +87,10 @@ class IpaiAiMessage(models.Model):
     content = fields.Text(required=True)
 
     # Provider metadata
-    provider_latency_ms = fields.Integer(
-        help="Response latency in milliseconds."
-    )
-    provider_status = fields.Char(
-        help="HTTP status or provider-specific status code."
-    )
-    confidence = fields.Float(
-        help="Confidence score from the provider (0.0 - 1.0)."
-    )
-    tokens_used = fields.Integer(
-        help="Number of tokens used for this message."
-    )
+    provider_latency_ms = fields.Integer(help="Response latency in milliseconds.")
+    provider_status = fields.Char(help="HTTP status or provider-specific status code.")
+    confidence = fields.Float(help="Confidence score from the provider (0.0 - 1.0).")
+    tokens_used = fields.Integer(help="Number of tokens used for this message.")
 
     citation_ids = fields.One2many(
         "ipai.ai.citation",
@@ -129,12 +121,8 @@ class IpaiAiCitation(models.Model):
     )
     rank = fields.Integer(default=1)
 
-    source_id = fields.Char(
-        help="External source identifier from the provider."
-    )
+    source_id = fields.Char(help="External source identifier from the provider.")
     title = fields.Char()
     url = fields.Char()
     snippet = fields.Text()
-    score = fields.Float(
-        help="Relevance score from the provider."
-    )
+    score = fields.Float(help="Relevance score from the provider.")

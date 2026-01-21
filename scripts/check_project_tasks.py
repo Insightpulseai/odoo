@@ -36,7 +36,7 @@ PROJECT_IDS = [6, 10, 11]  # Template, BIR Calendar, November 2025
 
 # Expected task counts (update these as projects evolve)
 EXPECTED_TASK_COUNTS = {
-    6: 36,   # Month-end Closing - Template
+    6: 36,  # Month-end Closing - Template
     10: 17,  # Tax Filing & BIR Compliance
     11: 36,  # Monthly Closing - November 2025
 }
@@ -61,19 +61,25 @@ def json_rpc(url: str, method: str, params: Dict[str, Any]) -> Any:
 def odoo_call(service: str, method: str, *args, **kwargs) -> Any:
     """Generic Odoo service call."""
     url = f"{ODOO_URL}/jsonrpc"
-    return json_rpc(url, "call", {
-        "service": service,
-        "method": method,
-        "args": args,
-        "kwargs": kwargs,
-    })
+    return json_rpc(
+        url,
+        "call",
+        {
+            "service": service,
+            "method": method,
+            "args": args,
+            "kwargs": kwargs,
+        },
+    )
 
 
 def authenticate() -> int:
     """Authenticate with Odoo and return UID."""
     uid = odoo_call("common", "authenticate", ODOO_DB, ODOO_LOGIN, ODOO_PASSWORD, {})
     if not uid:
-        raise RuntimeError("Failed to authenticate to Odoo – check ODOO_LOGIN/ODOO_PASSWORD")
+        raise RuntimeError(
+            "Failed to authenticate to Odoo – check ODOO_LOGIN/ODOO_PASSWORD"
+        )
     return uid
 
 
@@ -83,7 +89,9 @@ def execute_kw(uid: int, model: str, method: str, args=None, kwargs=None) -> Any
         args = []
     if kwargs is None:
         kwargs = {}
-    return odoo_call("object", "execute_kw", ODOO_DB, uid, ODOO_PASSWORD, model, method, args, kwargs)
+    return odoo_call(
+        "object", "execute_kw", ODOO_DB, uid, ODOO_PASSWORD, model, method, args, kwargs
+    )
 
 
 def check_projects(uid: int) -> Dict[int, Dict]:
@@ -118,7 +126,9 @@ def check_projects(uid: int) -> Dict[int, Dict]:
         task_count = p.get("task_count", 0)
 
         print(f"  {active_status} Project {pid}: {p['name']}")
-        print(f"     Active: {p['active']} | Visibility: {visibility} | Tasks: {task_count}")
+        print(
+            f"     Active: {p['active']} | Visibility: {visibility} | Tasks: {task_count}"
+        )
 
         if not p["active"]:
             raise RuntimeError(f"Project {pid} is not active")
@@ -140,7 +150,10 @@ def check_tasks(uid: int) -> None:
                 [[["project_id", "=", pid]]],
             )
         except Exception as e:
-            print(f"  ❌ FAIL: Unable to count tasks for project {pid}: {e}", file=sys.stderr)
+            print(
+                f"  ❌ FAIL: Unable to count tasks for project {pid}: {e}",
+                file=sys.stderr,
+            )
             raise
 
         # UI-level check via search_read with same domain
@@ -170,7 +183,9 @@ def check_tasks(uid: int) -> None:
         else:
             status = "❌"
 
-        print(f"  {status} Project {pid}: DB={db_count}, Expected={expected}, UI_accessible={ui_accessible}")
+        print(
+            f"  {status} Project {pid}: DB={db_count}, Expected={expected}, UI_accessible={ui_accessible}"
+        )
 
         # Fail if UI is not accessible but we have tasks in DB
         if db_count > 0 and not ui_accessible:
@@ -181,7 +196,9 @@ def check_tasks(uid: int) -> None:
 
         # Warn if counts don't match expectations
         if expected != -1 and db_count != expected:
-            print(f"  ⚠️  WARN: Task count mismatch for project {pid}. Expected {expected}, got {db_count}")
+            print(
+                f"  ⚠️  WARN: Task count mismatch for project {pid}. Expected {expected}, got {db_count}"
+            )
 
 
 def check_ui_filters(uid: int) -> None:
@@ -207,8 +224,12 @@ def check_ui_filters(uid: int) -> None:
                 found_problems.append(field)
 
         if found_problems:
-            print(f"  ⚠️  WARN: Found potentially problematic fields: {', '.join(found_problems)}")
-            print(f"     These fields may cause filter issues if used in saved searches")
+            print(
+                f"  ⚠️  WARN: Found potentially problematic fields: {', '.join(found_problems)}"
+            )
+            print(
+                f"     These fields may cause filter issues if used in saved searches"
+            )
         else:
             print(f"  ✅ No problematic fields detected")
     except Exception as e:
@@ -236,16 +257,21 @@ def main() -> int:
         check_tasks(uid)
         check_ui_filters(uid)
 
-        print("\n" + "="*60)
-        print("✅ W150_UI_DOMAIN_OK: All finance projects and task domains are healthy.")
-        print("="*60)
+        print("\n" + "=" * 60)
+        print(
+            "✅ W150_UI_DOMAIN_OK: All finance projects and task domains are healthy."
+        )
+        print("=" * 60)
         return 0
 
     except Exception as e:
-        print("\n" + "="*60, file=sys.stderr)
-        print("❌ W150_UI_DOMAIN_FAIL: UI domain / project visibility problem detected.", file=sys.stderr)
+        print("\n" + "=" * 60, file=sys.stderr)
+        print(
+            "❌ W150_UI_DOMAIN_FAIL: UI domain / project visibility problem detected.",
+            file=sys.stderr,
+        )
         print(f"Reason: {e}", file=sys.stderr)
-        print("="*60, file=sys.stderr)
+        print("=" * 60, file=sys.stderr)
         traceback.print_exc()
         return 1
 

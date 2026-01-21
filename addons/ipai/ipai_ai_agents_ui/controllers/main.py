@@ -28,7 +28,9 @@ try:
     import requests as http_requests
 except ImportError:
     http_requests = None
-    _logger.warning("Python 'requests' package not available; external API calls disabled")
+    _logger.warning(
+        "Python 'requests' package not available; external API calls disabled"
+    )
 
 
 class IPAIAIAgentsController(http.Controller):
@@ -55,21 +57,25 @@ class IPAIAIAgentsController(http.Controller):
         Provider = env["ipai.ai.provider"].sudo()
 
         # Get available providers (agents) for this company
-        providers = Provider.search([
-            ("active", "=", True),
-            "|",
-            ("company_id", "=", env.company.id),
-            ("company_id", "=", False),
-        ])
+        providers = Provider.search(
+            [
+                ("active", "=", True),
+                "|",
+                ("company_id", "=", env.company.id),
+                ("company_id", "=", False),
+            ]
+        )
 
         agents = []
         for p in providers:
-            agents.append({
-                "id": p.id,
-                "name": p.name,
-                "provider_type": p.provider_type,
-                "is_default": p.is_default,
-            })
+            agents.append(
+                {
+                    "id": p.id,
+                    "name": p.name,
+                    "provider_type": p.provider_type,
+                    "is_default": p.is_default,
+                }
+            )
 
         return {
             "agents": agents,
@@ -133,17 +139,21 @@ class IPAIAIAgentsController(http.Controller):
             if not thread.exists() or thread.user_id.id != env.user.id:
                 return {"ok": False, "error": "Thread not found."}
         else:
-            thread = Thread.create({
-                "provider_id": provider.id,
-                "user_id": env.user.id,
-            })
+            thread = Thread.create(
+                {
+                    "provider_id": provider.id,
+                    "user_id": env.user.id,
+                }
+            )
 
         # Store user message
-        user_msg = Message.create({
-            "thread_id": thread.id,
-            "role": "user",
-            "content": str(message).strip(),
-        })
+        user_msg = Message.create(
+            {
+                "thread_id": thread.id,
+                "role": "user",
+                "content": str(message).strip(),
+            }
+        )
 
         # Get AI response
         try:
@@ -158,24 +168,28 @@ class IPAIAIAgentsController(http.Controller):
             }
 
         # Store assistant message
-        assistant_msg = Message.create({
-            "thread_id": thread.id,
-            "role": "assistant",
-            "content": result.get("answer", ""),
-            "confidence": result.get("confidence", 0.0),
-            "provider_latency_ms": result.get("latency_ms", 0),
-        })
+        assistant_msg = Message.create(
+            {
+                "thread_id": thread.id,
+                "role": "assistant",
+                "content": result.get("answer", ""),
+                "confidence": result.get("confidence", 0.0),
+                "provider_latency_ms": result.get("latency_ms", 0),
+            }
+        )
 
         # Store citations
         for i, cite in enumerate(result.get("citations", []), start=1):
-            Citation.create({
-                "message_id": assistant_msg.id,
-                "rank": i,
-                "title": cite.get("title"),
-                "url": cite.get("url"),
-                "snippet": cite.get("snippet"),
-                "score": cite.get("score", 0.0),
-            })
+            Citation.create(
+                {
+                    "message_id": assistant_msg.id,
+                    "rank": i,
+                    "title": cite.get("title"),
+                    "url": cite.get("url"),
+                    "snippet": cite.get("snippet"),
+                    "score": cite.get("score", 0.0),
+                }
+            )
 
         # Return thread messages
         messages = self._format_thread_messages(thread)
@@ -200,6 +214,7 @@ class IPAIAIAgentsController(http.Controller):
             dict: {answer, citations, confidence, is_uncertain, latency_ms}
         """
         import time
+
         start_time = time.time()
 
         # Get tenant reference for KB lookup
@@ -252,9 +267,13 @@ class IPAIAIAgentsController(http.Controller):
         # Try embedding-based search first
         embedding = self._get_embedding(query)
         if embedding:
-            return self._search_vector(supabase_url, supabase_key, tenant_ref, embedding, limit)
+            return self._search_vector(
+                supabase_url, supabase_key, tenant_ref, embedding, limit
+            )
         else:
-            return self._search_text(supabase_url, supabase_key, tenant_ref, query, limit)
+            return self._search_text(
+                supabase_url, supabase_key, tenant_ref, query, limit
+            )
 
     def _get_embedding(self, text):
         """Get embedding vector for text using OpenAI API."""
@@ -369,13 +388,19 @@ You must respond with valid JSON containing:
 
     def _build_user_prompt(self, message, evidence):
         """Build user prompt with evidence context."""
-        evidence_text = "\n\n".join([
-            f"[{i+1}] {e.get('title', 'Untitled')}\n"
-            f"URL: {e.get('url', 'N/A')}\n"
-            f"Score: {e.get('score', 0):.2f}\n"
-            f"Content:\n{(e.get('content', '')[:500])}"
-            for i, e in enumerate(evidence)
-        ]) if evidence else "(No evidence found in knowledge base)"
+        evidence_text = (
+            "\n\n".join(
+                [
+                    f"[{i+1}] {e.get('title', 'Untitled')}\n"
+                    f"URL: {e.get('url', 'N/A')}\n"
+                    f"Score: {e.get('score', 0):.2f}\n"
+                    f"Content:\n{(e.get('content', '')[:500])}"
+                    for i, e in enumerate(evidence)
+                ]
+            )
+            if evidence
+            else "(No evidence found in knowledge base)"
+        )
 
         return f"""User Question:
 {message}
@@ -394,7 +419,9 @@ Remember to respond with valid JSON only."""
         if not api_key:
             return self._fallback_response("LLM API key not configured")
 
-        base_url = os.environ.get("IPAI_LLM_BASE_URL", "https://api.openai.com/v1").rstrip("/")
+        base_url = os.environ.get(
+            "IPAI_LLM_BASE_URL", "https://api.openai.com/v1"
+        ).rstrip("/")
         model = os.environ.get("IPAI_LLM_MODEL", "gpt-4o-mini")
         temperature = float(os.environ.get("IPAI_LLM_TEMPERATURE", "0.2"))
 
@@ -470,22 +497,28 @@ Remember to respond with valid JSON only."""
         for msg in thread.message_ids:
             citations = []
             for cite in msg.citation_ids:
-                citations.append({
-                    "rank": cite.rank,
-                    "title": cite.title,
-                    "url": cite.url,
-                    "snippet": cite.snippet,
-                    "score": cite.score,
-                })
+                citations.append(
+                    {
+                        "rank": cite.rank,
+                        "title": cite.title,
+                        "url": cite.url,
+                        "snippet": cite.snippet,
+                        "score": cite.score,
+                    }
+                )
 
-            messages.append({
-                "id": msg.id,
-                "role": msg.role,
-                "content": msg.content,
-                "confidence": msg.confidence,
-                "citations": citations,
-                "create_date": msg.create_date.isoformat() if msg.create_date else None,
-            })
+            messages.append(
+                {
+                    "id": msg.id,
+                    "role": msg.role,
+                    "content": msg.content,
+                    "confidence": msg.confidence,
+                    "citations": citations,
+                    "create_date": (
+                        msg.create_date.isoformat() if msg.create_date else None
+                    ),
+                }
+            )
 
         return messages
 
