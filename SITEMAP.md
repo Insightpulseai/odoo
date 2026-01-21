@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 19147a42aa268ab2dbac293e14b75efa4175c89a
+> Commit: f4487a3e5ecdab9bd90c7dd82e4bc1f9c5ecb1bd
 
 ## 📚 Documentation
 
@@ -251,6 +251,7 @@
 | [Docker Validation Guide](docs/DOCKER_VALIDATION_GUIDE.md) | docs |
 | [DOKS Deployment Success Criteria – Infra + Custom Features](docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE Ecosystem Guide for AI Agents](docs/ECOSYSTEM_GUIDE.md) | docs |
+| [EE/IAP to OCA/IPAI Replacement Mapping](docs/EE_IAP_TO_OCA_IPAI_MAPPING.md) | docs |
 | [Email & OAuth Configuration Guide](docs/EMAIL_AND_OAUTH_SETUP.md) | docs |
 | [Odoo CE v0.9.0 Audit - Executive Summary](docs/EXECUTIVE_SUMMARY.md) | docs |
 | [Cheqroom Parity Feature - Equipment Management on Odoo CE](docs/FEATURE_CHEQROOM_PARITY.md) | docs |
@@ -304,6 +305,7 @@
 | [Odoo CE Comprehensive Deployment Summary](docs/ODOO_CE_DEPLOYMENT_SUMMARY.md) | docs |
 | [Odoo CE v0.9.0 Image Security & Compliance Audit Report](docs/ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md) | docs |
 | [Odoo 18 CE + Fluent 2 Web Design System Token Mapping](docs/ODOO_COPILOT_THEME_TOKEN_MAP.md) | docs |
+| [Odoo Go-Live Settings Inventory](docs/ODOO_GOLIVE_SETTINGS_INVENTORY.md) | docs |
 | [Odoo HTTPS OAuth Troubleshooting Guide](docs/ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md) | docs |
 | [IPAI Odoo 18 Custom Image Specification](docs/ODOO_IMAGE_SPEC.md) | docs |
 | [Odoo Module Deployment Guide](docs/ODOO_MODULE_DEPLOYMENT.md) | docs |
@@ -317,6 +319,7 @@
 | [Production Hotfix Guide: OwlError & OAuth Loop](docs/PRODUCTION_HOTFIX.md) | docs |
 | [Odoo CE Production Readiness - Gap Analysis](docs/PROD_READINESS_GAPS.md) | docs |
 | [Production Snapshot Manifest](docs/PROD_SNAPSHOT_MANIFEST.md) | docs |
+| [Programmatic Configuration Plan](docs/PROGRAMMATIC_CONFIG_PLAN.md) | docs |
 | [Quick Reference: SSO & Permissions Setup](docs/QUICK_REFERENCE_SSO_SETUP.md) | docs |
 | [Quick Start: Multi-Tenant Platform Setup](docs/QUICK_START.md) | docs |
 | [RAG Architecture Implementation Plan](docs/RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md) | docs |
@@ -422,12 +425,15 @@
 | [Git Pre-Flight Integration - Cross-Repository Pattern](docs/infra/GIT_PREFLIGHT_INTEGRATION.md) | docs/infra |
 | [Git Pre-Flight Integration - Implementation Summary](docs/infra/GIT_PREFLIGHT_SUMMARY.md) | docs/infra |
 | [Infra Memory Job - Implementation Complete ✅](docs/infra/IMPLEMENTATION_COMPLETE.md) | docs/infra |
+| [Mailgun Integration](docs/infra/MAILGUN_INTEGRATION.md) | docs/infra |
 | [MCP Jobs System](docs/infra/MCP_JOBS_SYSTEM.md) | docs/infra |
 | [Memory Ingestion Edge Function](docs/infra/MEMORY_INGESTION.md) | docs/infra |
 | [Odoo Shadow Schema - Deployment Guide](docs/infra/ODOO_SHADOW_SCHEMA.md) | docs/infra |
 | [Secrets Management for Odoo-Supabase Integration](docs/infra/SECRETS_MANAGEMENT.md) | docs/infra |
+| [Supabase Branching Integration](docs/infra/SUPABASE_BRANCHING_INTEGRATION.md) | docs/infra |
 | [Supabase-Driven Odoo Seeding Pattern](docs/infra/SUPABASE_ODOO_SEED_PATTERN.md) | docs/infra |
 | [Vercel AI Gateway Integration Strategy](docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md) | docs/infra |
+| [Vercel Integrations](docs/infra/VERCEL_INTEGRATIONS.md) | docs/infra |
 | [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
