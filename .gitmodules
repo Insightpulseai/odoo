@@ -134,9 +134,3 @@
 	path = addons/OCA/sale-workflow
 	url = https://github.com/OCA/sale-workflow.git
 	branch = 18.0
-[submodule "ops-control"]
-	path = ops-control
-	url = git@github.com:jgtolentino/Buildopscontrolroom.git
-[submodule "mcp/servers/mcp-jobs"]
-	path = mcp/servers/mcp-jobs
-	url = https://github.com/jgtolentino/mcp-jobs.git
