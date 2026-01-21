@@ -1,0 +1,76 @@
+{
+  "project": {
+    "name": "odoo-ce",
+    "repo_url": "https://github.com/jgtolentino/odoo-ce",
+    "wiki_url": "https://github.com/jgtolentino/odoo-ce/wiki",
+    "owner": "jgtolentino",
+    "production_url": "https://erp.insightpulseai.net"
+  },
+  "purpose": "Self-hosted Odoo 18 Community Edition + OCA stack with InsightPulse AI (IPAI) custom modules for PH expense/travel, equipment booking, finance month-end close, and BIR tax compliance.",
+  "stack": {
+    "runtime": [
+      "Odoo 18 CE",
+      "Python 3.10+",
+      "Node.js >= 18.0.0"
+    ],
+    "datastores": [
+      "PostgreSQL 16 (primary ERP)",
+      "Supabase (external integrations only)"
+    ],
+    "infra": [
+      "Docker",
+      "DigitalOcean Droplet",
+      "Nginx (reverse proxy)",
+      "GHCR (container registry)"
+    ]
+  },
+  "conventions": {
+    "docs": [
+      "CLAUDE.md for agent instructions",
+      "spec/ bundles with 4-file structure (constitution.md, prd.md, plan.md, tasks.md)",
+      "docs/data-model/ for DBML/ERD/ORM artifacts",
+      "Evidence packs in docs/evidence/"
+    ],
+    "commands": [
+      "docker compose -f deploy/docker-compose.prod.yml up -d",
+      "docker compose exec -T odoo odoo -d DB -i MODULE --stop-after-init",
+      "python scripts/generate_odoo_dbml.py",
+      "./scripts/repo_health.sh",
+      "./scripts/spec_validate.sh",
+      "./scripts/ci_local.sh"
+    ],
+    "ci_gates": [
+      "ci-odoo-ce.yml (main guardrails + data-model drift)",
+      "all-green-gates.yml (all gates aggregator)",
+      "spec-kit-enforce.yml (spec bundle validation)",
+      "repo-structure.yml (tree consistency)",
+      "infra-validate.yml (infrastructure templates)"
+    ]
+  },
+  "module_architecture": {
+    "canonical_modules": [
+      "ipai_enterprise_bridge (base layer)",
+      "ipai_scout_bundle (retail vertical)",
+      "ipai_ces_bundle (creative services vertical)"
+    ],
+    "naming_convention": "ipai_* prefix for all custom modules",
+    "policy": "Config -> OCA -> Delta (ipai_*)"
+  },
+  "constraints": [
+    "CE + OCA only (no Enterprise modules, no IAP dependencies)",
+    "No odoo.com upsells",
+    "Self-hosted via Docker/Kubernetes",
+    "Deterministic docs + seeds with drift gates"
+  ],
+  "deprecated": [
+    "Supabase project xkxyvboeubffxxbebsll",
+    "Supabase project ublqmilcjtpnflofprkr",
+    "Any odoo.com Enterprise module references"
+  ],
+  "unknowns": [
+    "TODO: Wiki content is minimal",
+    "TODO: MCP server detailed configurations",
+    "TODO: n8n workflow templates inventory",
+    "TODO: Keycloak SSO integration details"
+  ]
+}
