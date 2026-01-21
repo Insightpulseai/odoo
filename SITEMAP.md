@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 842cfe49faa0056b61f8f6819d05d2b716beeb0a
+> Commit: 6133c6e54a99a92fb72ee8bc6ef8b22769f8bd09
 
 ## 📚 Documentation
 
@@ -673,6 +673,7 @@
 | [CLAUDE.md — odoo-dev-sandbox Project Instructions](sandbox/dev/CLAUDE.md) | sandbox/dev |
 | [Hot-Reload Development Guide](sandbox/dev/HOT_RELOAD_GUIDE.md) | sandbox/dev |
 | [Implementation Summary - Odoo Dev Sandbox Normalization](sandbox/dev/IMPLEMENTATION_SUMMARY.md) | sandbox/dev |
+| [Production Deployment Complete](sandbox/dev/PRODUCTION_READY.md) | sandbox/dev |
 | [Odoo 18 CE Dev Sandbox](sandbox/dev/README.md) | sandbox/dev |
 | [Odoo Dev Sandbox - Repository Audit Report](sandbox/dev/REPORT.md) | sandbox/dev |
 | [Odoo 18 CE Dev Sandbox - Developer Runbook](sandbox/dev/docs/runbooks/DEV_SANDBOX.md) | sandbox/dev/docs/runbooks |
