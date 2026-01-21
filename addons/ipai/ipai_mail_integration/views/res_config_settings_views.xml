@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ipai_mail" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.mail</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="IPAI Mail Integration"
+                     string="IPAI Mail"
+                     name="ipai_mail_integration"
+                     groups="ipai_mail_integration.group_ipai_mail_admin">
+                    <block title="Gmail Integration" name="gmail_settings">
+                        <setting string="Enable Gmail Integration"
+                                 help="Direct Gmail API integration (replaces EE mail_plugin_gmail)">
+                            <field name="ipai_mail_google_enabled"/>
+                            <div invisible="not ipai_mail_google_enabled">
+                                <label for="ipai_mail_google_client_id"/>
+                                <field name="ipai_mail_google_client_id"/>
+                                <div class="text-muted">
+                                    Create OAuth credentials at console.cloud.google.com
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Outlook 365 Integration" name="outlook_settings">
+                        <setting string="Enable Outlook Integration"
+                                 help="Direct MS Graph integration (replaces EE mail_plugin_outlook)">
+                            <field name="ipai_mail_microsoft_enabled"/>
+                            <div invisible="not ipai_mail_microsoft_enabled">
+                                <label for="ipai_mail_microsoft_client_id"/>
+                                <field name="ipai_mail_microsoft_client_id"/>
+                                <label for="ipai_mail_microsoft_tenant_id"/>
+                                <field name="ipai_mail_microsoft_tenant_id"
+                                       placeholder="common"/>
+                                <div class="text-muted">
+                                    Create app registration at portal.azure.com
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Mass Mailing Provider" name="mass_mailing_settings">
+                        <setting string="Email Service Provider"
+                                 help="Provider for mass mailings (replaces IAP)">
+                            <field name="ipai_mass_mailing_provider"/>
+                            <div invisible="ipai_mass_mailing_provider != 'mailgun'">
+                                <label for="ipai_mailgun_api_key"/>
+                                <field name="ipai_mailgun_api_key"/>
+                                <label for="ipai_mailgun_domain"/>
+                                <field name="ipai_mailgun_domain"/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>
