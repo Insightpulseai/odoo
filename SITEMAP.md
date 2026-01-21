@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d266cc4533a399e3343b918ac212846bcd5ffed5
+> Commit: b1ee8eb4b167450447f4f56fcbd42701827d16ce
 
 ## 📚 Documentation
 
@@ -290,6 +290,7 @@
 | [OCA-style "chore" Scope Conventions](docs/OCA_CHORE_SCOPE.md) | docs |
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
 | [OCA-Style Repository Contract (Canonical)](docs/OCA_STYLE_CONTRACT.md) | docs |
+| [OCA Template Integration Contract](docs/OCA_TEMPLATE_INTEGRATION.md) | docs |
 | [Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)](docs/ODOO18_ENTERPRISE_TO_CE_OCA_MAPPING.md) | docs |
 | [Odoo 18 CE / OCA Cheat Sheet (Smart Delta Edition)](docs/ODOO_18_CE_CHEATSHEET.md) | docs |
 | [Odoo 18 CE Module Install Order](docs/ODOO_18_CE_MODULE_INSTALL_ORDER.md) | docs |
@@ -931,6 +932,8 @@
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
 | [ipai_integrations](./addons/ipai/ipai_integrations) | ✅ |  |
+| [ipai_iot_bridge](./addons/ipai/ipai_iot_bridge) | ✅ |  |
+| [ipai_mail_integration](./addons/ipai/ipai_mail_integration) | ✅ |  |
 | [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
 | [ipai_marketing_journey](./addons/ipai/ipai_marketing_journey) | ✅ |  |
 | [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
