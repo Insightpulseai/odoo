@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_iot_device_user,ipai.iot.device.user,model_ipai_iot_device,base.group_user,1,0,0,0
+access_iot_device_admin,ipai.iot.device.admin,model_ipai_iot_device,base.group_system,1,1,1,1
 access_ipai_policy_user,ipai.policy.user,model_ipai_policy,group_ipai_bridge_user,1,0,0,0
 access_ipai_policy_manager,ipai.policy.manager,model_ipai_policy,group_ipai_bridge_manager,1,1,1,1
 access_ipai_close_checklist_user,ipai.close.checklist.user,model_ipai_close_checklist,group_ipai_bridge_user,1,0,0,0

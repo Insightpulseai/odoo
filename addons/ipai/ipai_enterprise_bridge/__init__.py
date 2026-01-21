@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
-from . import controllers
+# Copyright 2026 InsightPulseAI
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 from . import models
-from .hooks import post_init_hook
