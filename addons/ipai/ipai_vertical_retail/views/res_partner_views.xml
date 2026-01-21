@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Partner Form View Extension for Scout Fields -->
+    <record id="view_partner_form_scout" model="ir.ui.view">
+        <field name="name">res.partner.form.scout</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='sales_purchases']" position="after">
+                <page string="Scout Retail" name="scout_retail"
+                      invisible="not is_retail_outlet">
+                    <group>
+                        <group string="Store Information">
+                            <field name="scout_store_code"/>
+                            <field name="scout_store_type"/>
+                            <field name="scout_banner"/>
+                            <field name="scout_channel"/>
+                            <field name="is_retail_outlet"/>
+                            <field name="scout_active"/>
+                        </group>
+                        <group string="Location">
+                            <field name="scout_region_code"/>
+                            <field name="scout_province"/>
+                            <field name="scout_cluster"/>
+                            <field name="scout_latitude"/>
+                            <field name="scout_longitude"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Field Operations">
+                            <field name="scout_visit_frequency"/>
+                            <field name="scout_last_visit_date"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+            <!-- Add is_retail_outlet to general info -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="is_retail_outlet"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Partner List View Extension -->
+    <record id="view_partner_tree_scout" model="ir.ui.view">
+        <field name="name">res.partner.tree.scout</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='city']" position="after">
+                <field name="scout_store_code" optional="hide"/>
+                <field name="scout_store_type" optional="hide"/>
+                <field name="scout_region_code" optional="hide"/>
+                <field name="is_retail_outlet" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Partner Search View Extension -->
+    <record id="view_partner_search_scout" model="ir.ui.view">
+        <field name="name">res.partner.search.scout</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='supplier']" position="after">
+                <separator/>
+                <filter string="Retail Outlets" name="retail_outlets"
+                        domain="[('is_retail_outlet', '=', True)]"/>
+                <filter string="Active in Scout" name="scout_active"
+                        domain="[('scout_active', '=', True), ('is_retail_outlet', '=', True)]"/>
+                <separator/>
+                <filter string="Sari-sari" name="sari_sari"
+                        domain="[('scout_store_type', '=', 'sari_sari')]"/>
+                <filter string="Grocery" name="grocery"
+                        domain="[('scout_store_type', '=', 'grocery')]"/>
+                <filter string="Pharmacy" name="pharmacy"
+                        domain="[('scout_store_type', '=', 'pharmacy')]"/>
+                <filter string="Modern Trade" name="modern_trade"
+                        domain="[('scout_store_type', '=', 'modern_trade')]"/>
+                <filter string="Distributor" name="distributor"
+                        domain="[('scout_store_type', '=', 'distributor')]"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Store Type" name="group_store_type"
+                        context="{'group_by': 'scout_store_type'}"/>
+                <filter string="Region" name="group_region"
+                        context="{'group_by': 'scout_region_code'}"/>
+                <filter string="Channel" name="group_channel"
+                        context="{'group_by': 'scout_channel'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Scout Retail Outlets Action -->
+    <record id="action_scout_retail_outlets" model="ir.actions.act_window">
+        <field name="name">Scout Retail Outlets</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,kanban,form,map</field>
+        <field name="domain">[('is_retail_outlet', '=', True)]</field>
+        <field name="context">{'default_is_retail_outlet': True, 'search_default_scout_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first retail outlet
+            </p>
+            <p>
+                Track sari-sari stores, groceries, pharmacies, and other retail outlets for Scout analytics.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_scout_retail_root"
+              name="Scout Retail"
+              sequence="25"
+              web_icon="ipai_vertical_retail,static/description/icon.png"/>
+
+    <menuitem id="menu_scout_outlets"
+              name="Retail Outlets"
+              parent="menu_scout_retail_root"
+              action="action_scout_retail_outlets"
+              sequence="10"/>
+</odoo>
