@@ -331,6 +331,44 @@ ipai_superset_connector
 
 ## 2. Locked Install Matrix
 
+### 2.0 Official CE 18 Project Modules (24 modules)
+
+**Source:** Odoo 18 Apps Catalog (odoo.com/apps, filtered: Project category, CE only)
+
+| # | Module | Technical Name | Version | Category | Dependencies |
+|---|--------|----------------|---------|----------|--------------|
+| 1 | **Project** | `project` | 18.0.1.3 | Services | base |
+| 2 | **To-Do** | `project_todo` | 18.0.1.0 | Productivity | project |
+| 3 | **Project Mail Plugin** | `project_mail_plugin` | 18.0.1.0 | Services | project, mail_plugin |
+| 4 | **Project - Account** | `project_account` | 18.0.1.0 | Technical | project, analytic |
+| 5 | **Project Expenses** | `project_hr_expense` | 18.0.1.0 | Services | project, hr_expense |
+| 6 | **Project - Skills** | `project_hr_skills` | 18.0.1.0 | Human Resources | project, hr_skills |
+| 7 | **MRP Project** | `project_mrp` | 18.0.1.0 | Manufacturing | project, mrp |
+| 8 | **MRP Account Project** | `project_mrp_account` | 18.0.1.0 | Technical | project_mrp, mrp_account |
+| 9 | **MRP Project Sale** | `project_mrp_sale` | 18.0.1.0 | Technical | project_mrp, sale_project |
+| 10 | **Project MRP Landed Costs** | `project_mrp_stock_landed_costs` | 18.0.1.0 | Technical | project_mrp, stock_landed_costs |
+| 11 | **Project Purchase** | `project_purchase` | 18.0.1.0 | Services | project, purchase |
+| 12 | **Project - Purchase - Stock** | `project_purchase_stock` | 18.0.1.0 | Technical | project_purchase, stock |
+| 13 | **Project - Sale - Expense** | `project_sale_expense` | 18.0.1.0 | Services | project_hr_expense, sale_project |
+| 14 | **Project - SMS** | `project_sms` | 18.0.1.1 | Services | project, sms |
+| 15 | **Project Stock** | `project_stock` | 18.0.1.0 | Inventory | project, stock |
+| 16 | **Project Stock Account** | `project_stock_account` | 18.0.1.0 | Technical | project_stock, stock_account |
+| 17 | **Project Stock Landed Costs** | `project_stock_landed_costs` | 18.0.1.0 | Technical | project_stock, stock_landed_costs |
+| 18 | **Timesheet when on Time Off** | `project_timesheet_holidays` | 18.0.1.0 | Services | hr_holidays, hr_timesheet |
+| 19 | **Sales - Project** | `sale_project` | 18.0.1.0 | Sales | project, sale_management |
+| 20 | **Sale Project - Sale Stock** | `sale_project_stock` | 18.0.1.0 | Technical | sale_project, sale_stock |
+| 21 | **Sale Project Stock Account** | `sale_project_stock_account` | 18.0.1.0 | Technical | sale_project_stock, stock_account |
+| 22 | **Sale Purchase Project** | `sale_purchase_project` | 18.0.1.0 | Technical | sale_project, purchase |
+| 23 | **Sales - Service** | `sale_service` | 18.0.1.0 | Sales | sale, project |
+| 24 | **Online Task Submission** | `website_project` | 18.0.1.0 | Website | project, website |
+
+**Install All CE Project Modules:**
+```bash
+odoo-bin -d $DB -i project,project_todo,project_mail_plugin,project_account,project_hr_expense,project_hr_skills,project_mrp,project_mrp_account,project_mrp_sale,project_mrp_stock_landed_costs,project_purchase,project_purchase_stock,project_sale_expense,project_sms,project_stock,project_stock_account,project_stock_landed_costs,project_timesheet_holidays,sale_project,sale_project_stock,sale_project_stock_account,sale_purchase_project,sale_service,website_project --stop-after-init
+```
+
+---
+
 ### 2.1 CE Core Modules (Required)
 
 | Module | Technical Name | Purpose |
@@ -516,5 +554,12 @@ done
 
 ---
 
-*Last Updated: 2026-01-05*
-*Version: 1.0.0*
+*Last Updated: 2026-01-21*
+*Version: 1.1.0*
+
+---
+
+## Changelog
+
+- **v1.1.0** (2026-01-21): Added Section 2.0 with all 24 official CE 18 project modules from Odoo Apps catalog
+- **v1.0.0** (2026-01-05): Initial release

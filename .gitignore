@@ -159,6 +159,8 @@ data/source.xlsx
 # --- local env / secrets ---
 .env
 .env.*
+!.env.example
+!**/.env.example
 config/odoo.conf.local
 .mcp.json
 .claude/settings.local.json
