@@ -1,43 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="res_config_settings_view_form_ipai_bridge" model="ir.ui.view">
-        <field name="name">res.config.settings.view.form.ipai.bridge</field>
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.bridge</field>
         <field name="model">res.config.settings</field>
-        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
-        <field name="priority">99</field>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//form" position="inside">
-                <app data-string="IPAI Bridge" string="IPAI Bridge" name="ipai_enterprise_bridge">
-                    <block title="Supabase Integration" name="supabase_settings">
-                        <setting string="Supabase URL" help="Configure Supabase project URL for external integrations">
-                            <field name="ipai_supabase_url"/>
-                        </setting>
-                        <setting string="Supabase Anon Key" help="Anonymous key for public API access">
-                            <field name="ipai_supabase_anon_key" password="True"/>
-                        </setting>
-                    </block>
-                    <block title="AI Integration" name="ai_settings">
-                        <setting string="AI Endpoint URL" help="URL for AI inference endpoint (n8n/Edge Functions)">
-                            <field name="ipai_ai_endpoint_url"/>
-                        </setting>
-                    </block>
-                    <block title="Vertical Features" name="vertical_settings">
-                        <setting string="Enable Scout (Retail)" help="Enable retail intelligence features for POS and inventory">
-                            <field name="ipai_enable_scout"/>
-                        </setting>
-                        <setting string="Enable CES (Creative Ops)" help="Enable creative effectiveness features for projects and timesheets">
-                            <field name="ipai_enable_ces"/>
-                        </setting>
-                    </block>
-                    <block title="Sync Settings" name="sync_settings">
-                        <setting string="Enable Retail Sync" help="Sync POS orders and inventory events to Supabase">
-                            <field name="ipai_enable_retail_sync"/>
-                        </setting>
-                        <setting string="Enable Project Sync" help="Sync project tasks and timesheets to Supabase">
-                            <field name="ipai_enable_project_sync"/>
-                        </setting>
-                    </block>
-                </app>
+            <xpath expr="//app[@name='general_settings']" position="inside">
+                <block title="IPAI Enterprise Bridge" name="ipai_bridge_settings">
+                    <setting string="Email Provider" help="Configure email delivery without IAP">
+                        <field name="ipai_mail_provider"/>
+                        <div class="content-group" invisible="ipai_mail_provider != 'mailgun'">
+                            <div class="row mt16">
+                                <label for="ipai_mailgun_domain" class="col-lg-3"/>
+                                <field name="ipai_mailgun_domain"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_mailgun_api_key" class="col-lg-3"/>
+                                <field name="ipai_mailgun_api_key" password="True"/>
+                            </div>
+                        </div>
+                        <div class="row mt16">
+                            <label for="ipai_mail_catchall_domain" class="col-lg-3"/>
+                            <field name="ipai_mail_catchall_domain" placeholder="mail.example.com"/>
+                        </div>
+                    </setting>
+                    <setting string="OAuth Providers" help="Enable social login without Enterprise">
+                        <div class="content-group">
+                            <div class="row">
+                                <field name="ipai_oauth_google_enabled"/>
+                                <span class="o_form_label">Google OAuth</span>
+                            </div>
+                            <div class="row">
+                                <field name="ipai_oauth_azure_enabled"/>
+                                <span class="o_form_label">Azure AD OAuth</span>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting string="IoT Bridge" help="Control IoT devices without IoT Box subscription">
+                        <field name="ipai_iot_enabled"/>
+                        <div class="content-group" invisible="not ipai_iot_enabled">
+                            <div class="row mt16">
+                                <label for="ipai_iot_mqtt_broker" class="col-lg-3"/>
+                                <field name="ipai_iot_mqtt_broker"/>
+                            </div>
+                            <div class="row">
+                                <label for="ipai_iot_mqtt_port" class="col-lg-3"/>
+                                <field name="ipai_iot_mqtt_port"/>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
             </xpath>
         </field>
     </record>
