@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ef679245912eea679685a003cf1a96657f2578d4
+> Commit: 842cfe49faa0056b61f8f6819d05d2b716beeb0a
 
 ```
 .
@@ -117,6 +117,7 @@
 │   │   ├── release-docs.yml
 │   │   ├── repo-structure.yml
 │   │   ├── run-odoo-cli-job.yml
+│   │   ├── seed-odoo-finance.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
@@ -2108,6 +2109,8 @@
 │   │   ├── MCP_JOBS_SYSTEM.md
 │   │   ├── MEMORY_INGESTION.md
 │   │   ├── ODOO_SHADOW_SCHEMA.md
+│   │   ├── SECRETS_MANAGEMENT.md
+│   │   ├── SUPABASE_ODOO_SEED_PATTERN.md
 │   │   └── VERCEL_AI_GATEWAY_INTEGRATION.md
 │   ├── integration
 │   │   ├── INSIGHTPULSE_ROADMAP.md
@@ -3721,6 +3724,8 @@
 │   │   │   └── index.ts
 │   │   ├── schema-changed
 │   │   │   └── index.ts
+│   │   ├── seed-odoo-finance
+│   │   │   └── index.ts
 │   │   ├── semantic-export-osi
 │   │   │   └── index.ts
 │   │   ├── semantic-import-osi
@@ -3728,6 +3733,8 @@
 │   │   ├── semantic-query
 │   │   │   └── index.ts
 │   │   ├── serve-erd
+│   │   │   └── index.ts
+│   │   ├── shadow-odoo-finance
 │   │   │   └── index.ts
 │   │   ├── skill-eval
 │   │   │   └── index.ts
@@ -3737,8 +3744,9 @@
 │   │   │   └── index.ts
 │   │   ├── three-way-match
 │   │   │   └── index.ts
-│   │   └── vendor-score
-│   │       └── index.ts
+│   │   ├── vendor-score
+│   │   │   └── index.ts
+│   │   └── .env.example
 │   ├── migrations
 │   │   ├── 20240101000001_kb_schema.sql
 │   │   ├── 20240101000002_studio_schema.sql
@@ -3814,6 +3822,7 @@
 │   │   ├── 20260120_infra_schema.sql
 │   │   ├── 20260120_mcp_jobs_schema.sql
 │   │   ├── 20260120_skill_creator_certification.sql
+│   │   ├── 20260121_odoo_seed_schema.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -4134,15 +4143,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1322 directories, 2807 files
+1324 directories, 2814 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1542 |
-| Files | 4278 |
+| Directories | 1544 |
+| Files | 4285 |
 | Python files | 1112 |
 | XML files | 520 |
-| Markdown files | 849 |
+| Markdown files | 851 |
