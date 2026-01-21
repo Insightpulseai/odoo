@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 936a486b4f217ce927e61b76079e0f1c300fd530
+> Commit: ef679245912eea679685a003cf1a96657f2578d4
 
 ## 📚 Documentation
 
@@ -683,6 +683,7 @@
 | [Odoo Company Bootstrap Scripts](scripts/odoo/README_BOOTSTRAP.md) | scripts/odoo |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
+| [Process Mining API](services/pm_api/README.md) | services/pm_api |
 | [IPAI Skills](skills/README.md) | skills |
 | [BIR Tax Filing Skill](skills/bir-tax-filing/SKILL.md) | skills/bir-tax-filing |
 | [Expense Processing Skill](skills/expense-processing/SKILL.md) | skills/expense-processing |
@@ -797,6 +798,10 @@
 | [Plan](spec/odoo-ce/plan.md) | spec/odoo-ce |
 | [PRD — Odoo CE (CE + OCA + IPAI)](spec/odoo-ce/prd.md) | spec/odoo-ce |
 | [Tasks](spec/odoo-ce/tasks.md) | spec/odoo-ce |
+| [Constitution: Odoo Copilot – Process Mining (Local-First)](spec/odoo-copilot-process-mining/constitution.md) | spec/odoo-copilot-process-mining |
+| [Plan: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/plan.md) | spec/odoo-copilot-process-mining |
+| [PRD: Odoo Copilot – Process Mining & Process Intelligence (Mindzie-style, Local-First)](spec/odoo-copilot-process-mining/prd.md) | spec/odoo-copilot-process-mining |
+| [Tasks: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/tasks.md) | spec/odoo-copilot-process-mining |
 | [Anthropic Use Cases vs InsightPulse Stack - Gap Analysis](spec/odoo-mcp-server/GAPS_ANALYSIS.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server + BIR Compliance Skill](spec/odoo-mcp-server/README.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
