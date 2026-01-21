@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b1ee8eb4b167450447f4f56fcbd42701827d16ce
+> Commit: e2c3ee623d2d93fea27554d69fc29f0b0a6b4c0e
 
 ## 📚 Documentation
 
@@ -11,9 +11,11 @@
 | [](.agent/workflows/deploy.md) | .agent/workflows |
 | [This step is manual or handled by the agent writing to the file](.agent/workflows/scaffold.md) | .agent/workflows |
 | [](.agent/workflows/test.md) | .agent/workflows |
+| [Command: Start Dev Server](.claude/commands/dev-server.md) | .claude/commands |
 | [Workflow](.claude/commands/fix-github-issue.md) | .claude/commands |
 | [Rules](.claude/commands/implement.md) | .claude/commands |
 | [Rules](.claude/commands/plan.md) | .claude/commands |
+| [Command: Generate OCA-Style Prototype Module](.claude/commands/prototype-module.md) | .claude/commands |
 | [Shipping Workflow](.claude/commands/ship.md) | .claude/commands |
 | [Primary Responsibility](.claude/commands/verify.md) | .claude/commands |
 | [BIR Compliance Automation Skill](.claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md) | .claude/superclaude/skills/finance/bir-compliance-automation |
@@ -835,6 +837,10 @@
 | [Plan — Seed Bundle](spec/seed-bundle/plan.md) | spec/seed-bundle |
 | [PRD — Seed Bundle](spec/seed-bundle/prd.md) | spec/seed-bundle |
 | [Tasks — Seed Bundle](spec/seed-bundle/tasks.md) | spec/seed-bundle |
+| [Constitution: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/constitution.md) | spec/supabase-platform-kit-observability |
+| [Plan: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/plan.md) | spec/supabase-platform-kit-observability |
+| [PRD: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/prd.md) | spec/supabase-platform-kit-observability |
+| [Tasks: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/tasks.md) | spec/supabase-platform-kit-observability |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
 | [Test Coverage Improvement — Constitution](spec/test-coverage-improvement/constitution.md) | spec/test-coverage-improvement |
 | [Test Coverage Improvement — Implementation Plan](spec/test-coverage-improvement/plan.md) | spec/test-coverage-improvement |
