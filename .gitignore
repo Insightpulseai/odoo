@@ -120,6 +120,7 @@ temp/
 !db/migrations/*.sql
 !db/migrations/**/*.sql
 !db/audit/*.sql
+!db/process_mining/*.sql
 !scripts/erd_dot.sql
 !docs/data-model/*.sql
 
