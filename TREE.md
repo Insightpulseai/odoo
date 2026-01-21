@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 19147a42aa268ab2dbac293e14b75efa4175c89a
+> Commit: f4487a3e5ecdab9bd90c7dd82e4bc1f9c5ecb1bd
 
 ```
 .
@@ -49,7 +49,9 @@
 ├── .github
 │   ├── ISSUE_TEMPLATE
 │   │   ├── copilot_task.yml
-│   │   └── enterprise_replacement.yml
+│   │   ├── ee_iap_replacement.yml
+│   │   ├── enterprise_replacement.yml
+│   │   └── odoo_golive_task.yml
 │   ├── agents
 │   │   └── odoo-oca-triage.agent.md
 │   ├── workflows
@@ -125,6 +127,7 @@
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-kit-enforce.yml
+│   │   ├── supabase-branch-sync.yml
 │   │   ├── supabase-deploy.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
@@ -609,6 +612,7 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_iot_bridge
+│   │   │   ├── controllers
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
@@ -618,6 +622,7 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_mail_integration
+│   │   │   ├── controllers
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
@@ -2145,12 +2150,15 @@
 │   │   ├── GIT_PREFLIGHT_INTEGRATION.md
 │   │   ├── GIT_PREFLIGHT_SUMMARY.md
 │   │   ├── IMPLEMENTATION_COMPLETE.md
+│   │   ├── MAILGUN_INTEGRATION.md
 │   │   ├── MCP_JOBS_SYSTEM.md
 │   │   ├── MEMORY_INGESTION.md
 │   │   ├── ODOO_SHADOW_SCHEMA.md
 │   │   ├── SECRETS_MANAGEMENT.md
+│   │   ├── SUPABASE_BRANCHING_INTEGRATION.md
 │   │   ├── SUPABASE_ODOO_SEED_PATTERN.md
-│   │   └── VERCEL_AI_GATEWAY_INTEGRATION.md
+│   │   ├── VERCEL_AI_GATEWAY_INTEGRATION.md
+│   │   └── VERCEL_INTEGRATIONS.md
 │   ├── integration
 │   │   ├── INSIGHTPULSE_ROADMAP.md
 │   │   └── SLACK_INTEGRATION_SETUP.md
@@ -2528,6 +2536,7 @@
 │   ├── DOCKER_VALIDATION_GUIDE.md
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
 │   ├── ECOSYSTEM_GUIDE.md
+│   ├── EE_IAP_TO_OCA_IPAI_MAPPING.md
 │   ├── EMAIL_AND_OAUTH_SETUP.md
 │   ├── ENTERPRISE_FEATURE_GAP.yaml
 │   ├── EXECUTIVE_SUMMARY.md
@@ -2582,6 +2591,7 @@
 │   ├── ODOO_CE_DEPLOYMENT_SUMMARY.md
 │   ├── ODOO_CE_v0.9.0_SECURITY_AUDIT_REPORT.md
 │   ├── ODOO_COPILOT_THEME_TOKEN_MAP.md
+│   ├── ODOO_GOLIVE_SETTINGS_INVENTORY.md
 │   ├── ODOO_HTTPS_OAUTH_TROUBLESHOOTING.md
 │   ├── ODOO_IMAGE_SPEC.md
 │   ├── ODOO_MODULE_DEPLOYMENT.md
@@ -2595,6 +2605,7 @@
 │   ├── PRODUCTION_HOTFIX.md
 │   ├── PROD_READINESS_GAPS.md
 │   ├── PROD_SNAPSHOT_MANIFEST.md
+│   ├── PROGRAMMATIC_CONFIG_PLAN.md
 │   ├── QUICK_REFERENCE_SSO_SETUP.md
 │   ├── QUICK_START.md
 │   ├── RAG_ARCHITECTURE_IMPLEMENTATION_PLAN.md
@@ -3419,6 +3430,7 @@
 │   ├── validate-continue-config.sh
 │   ├── validate-spec-kit.sh
 │   ├── validate_ai_naming.py
+│   ├── validate_ee_iap_independence.sh
 │   ├── validate_ee_replacements.py
 │   ├── validate_ipai_doc_module_refs.py
 │   ├── validate_m1.sh
@@ -3877,6 +3889,8 @@
 │   │   │   └── index.ts
 │   │   ├── sync-kb-to-schema
 │   │   │   └── index.ts
+│   │   ├── sync-odoo-modules
+│   │   │   └── index.ts
 │   │   ├── tenant-invite
 │   │   │   └── index.ts
 │   │   ├── three-way-match
@@ -3959,6 +3973,7 @@
 │   │   ├── 20260120_infra_schema.sql
 │   │   ├── 20260120_mcp_jobs_schema.sql
 │   │   ├── 20260120_skill_creator_certification.sql
+│   │   ├── 20260121000000_odoo_catalogs.sql
 │   │   ├── 20260121100001_odoo_data_dictionary.sql
 │   │   ├── 20260121_odoo_seed_schema.sql
 │   │   ├── 5001_auth_foundation.sql
@@ -4284,15 +4299,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1361 directories, 2918 files
+1364 directories, 2930 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1595 |
-| Files | 4456 |
-| Python files | 1140 |
-| XML files | 538 |
-| Markdown files | 930 |
+| Directories | 1598 |
+| Files | 4483 |
+| Python files | 1147 |
+| XML files | 546 |
+| Markdown files | 936 |
