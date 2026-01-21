@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="ipai_iot_device_tree" model="ir.ui.view">
+        <field name="name">ipai.iot.device.tree</field>
+        <field name="model">ipai.iot.device</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="device_type"/>
+                <field name="connection_type"/>
+                <field name="gateway_id"/>
+                <field name="ip_address"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'connected'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="last_used"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="ipai_iot_device_form" model="ir.ui.view">
+        <field name="name">ipai.iot.device.form</field>
+        <field name="model">ipai.iot.device</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection"
+                            string="Test Connection"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_print_test_page"
+                            string="Print Test Page"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="device_type != 'printer'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Device Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="device_type"/>
+                            <field name="connection_type"/>
+                            <field name="gateway_id"/>
+                            <field name="identifier"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="last_used"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Network"
+                              invisible="connection_type not in ('network', 'escpos')">
+                            <group>
+                                <field name="ip_address"/>
+                                <field name="port"/>
+                            </group>
+                        </page>
+                        <page string="USB"
+                              invisible="connection_type != 'usb'">
+                            <group>
+                                <field name="usb_vendor_id"/>
+                                <field name="usb_product_id"/>
+                            </group>
+                        </page>
+                        <page string="Serial"
+                              invisible="connection_type != 'serial'">
+                            <group>
+                                <field name="serial_port"/>
+                                <field name="serial_baudrate"/>
+                            </group>
+                        </page>
+                        <page string="CUPS"
+                              invisible="connection_type != 'cups'">
+                            <group>
+                                <field name="cups_printer_name"/>
+                            </group>
+                        </page>
+                        <page string="PrintNode"
+                              invisible="connection_type != 'printnode'">
+                            <group>
+                                <field name="printnode_printer_id"/>
+                            </group>
+                        </page>
+                        <page string="Printer Settings"
+                              invisible="device_type != 'printer'">
+                            <group>
+                                <field name="printer_type"/>
+                                <field name="paper_width"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    <group string="Error Details" invisible="not error_message">
+                        <field name="error_message" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="ipai_iot_device_search" model="ir.ui.view">
+        <field name="name">ipai.iot.device.search</field>
+        <field name="model">ipai.iot.device</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="identifier"/>
+                <field name="gateway_id"/>
+                <filter name="printers" string="Printers"
+                        domain="[('device_type', '=', 'printer')]"/>
+                <filter name="scanners" string="Scanners"
+                        domain="[('device_type', '=', 'scanner')]"/>
+                <filter name="scales" string="Scales"
+                        domain="[('device_type', '=', 'scale')]"/>
+                <separator/>
+                <filter name="connected" string="Connected"
+                        domain="[('state', '=', 'connected')]"/>
+                <filter name="error" string="Error"
+                        domain="[('state', '=', 'error')]"/>
+                <separator/>
+                <filter name="archived" string="Archived"
+                        domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_device_type" string="Device Type"
+                            context="{'group_by': 'device_type'}"/>
+                    <filter name="group_gateway" string="Gateway"
+                            context="{'group_by': 'gateway_id'}"/>
+                    <filter name="group_connection" string="Connection"
+                            context="{'group_by': 'connection_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ipai_iot_device" model="ir.actions.act_window">
+        <field name="name">IoT Devices</field>
+        <field name="res_model">ipai.iot.device</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="ipai_iot_device_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add IoT devices
+            </p>
+            <p>
+                Configure printers, scales, barcode scanners, and other
+                hardware devices for integration with Odoo.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ipai_iot_device"
+              name="Devices"
+              parent="menu_ipai_iot_root"
+              action="action_ipai_iot_device"
+              sequence="20"/>
+</odoo>
