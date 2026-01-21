@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6133c6e54a99a92fb72ee8bc6ef8b22769f8bd09
+> Commit: d266cc4533a399e3343b918ac212846bcd5ffed5
 
 ## 📚 Documentation
 
@@ -597,6 +597,7 @@
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | docs/runbooks |
 | [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
+| [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
 | [Document Upload/OCR FSM](docs/state_machines/odoo/document_upload.md) | docs/state_machines/odoo |
