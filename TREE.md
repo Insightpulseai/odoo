@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e2c3ee623d2d93fea27554d69fc29f0b0a6b4c0e
+> Commit: e1310c095e97dd8064a0ca66ca6a48561e15d3b1
 
 ```
 .
@@ -3486,6 +3486,17 @@
 │   │   ├── get_superset_embed_url.py
 │   │   ├── get_superset_guest_token.py
 │   │   └── validate_superset_health.py
+│   ├── user
+│   │   ├── figma-agent
+│   │   │   ├── config
+│   │   │   ├── examples
+│   │   │   ├── templates
+│   │   │   └── SKILL.md
+│   │   └── supabase-schema-catalog
+│   │       ├── catalog
+│   │       ├── scripts
+│   │       ├── AGENT_PERSONALITY.md
+│   │       └── SKILL.md
 │   ├── visio-drawio-export
 │   │   ├── docker
 │   │   │   ├── Dockerfile
@@ -3560,6 +3571,8 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── figma-dev-plugins-reverse
+│   │   └── capabilities.md
 │   ├── hire-to-retire
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -4195,15 +4208,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1348 directories, 2842 files
+1357 directories, 2846 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1581 |
-| Files | 4363 |
+| Directories | 1590 |
+| Files | 4374 |
 | Python files | 1137 |
 | XML files | 533 |
-| Markdown files | 860 |
+| Markdown files | 864 |
