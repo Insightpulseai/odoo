@@ -207,15 +207,17 @@ class FluentCopilotMessage(models.Model):
             response_type = "suggestion"
 
         # Create the mock response
-        self.create({
-            "session_id": user_message.session_id.id,
-            "role": "assistant",
-            "message_type": response_type,
-            "body": response_body,
-            "mock_confidence": 0.92,
-            "mock_latency_ms": 380,
-            "mock_tokens": len(response_body.split()),
-        })
+        self.create(
+            {
+                "session_id": user_message.session_id.id,
+                "role": "assistant",
+                "message_type": response_type,
+                "body": response_body,
+                "mock_confidence": 0.92,
+                "mock_latency_ms": 380,
+                "mock_tokens": len(response_body.split()),
+            }
+        )
 
         # Update session mock token count
         user_message.session_id.mock_tokens_used += len(response_body.split()) + len(

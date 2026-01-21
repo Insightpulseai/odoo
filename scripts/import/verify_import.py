@@ -93,7 +93,7 @@ for task_xmlid, predecessor_xmlid in dep_checks:
         print(f"  {task_xmlid}: SKIP (predecessor not found)")
         continue
 
-    if hasattr(task, 'depend_on_ids') and predecessor in task.depend_on_ids:
+    if hasattr(task, "depend_on_ids") and predecessor in task.depend_on_ids:
         print(f"  {task.name:<35} -> depends on '{predecessor.name}' OK")
         dep_pass += 1
     else:
@@ -119,7 +119,7 @@ if recurring_task:
     print(f"  repeat_type: {getattr(recurring_task, 'repeat_type', 'N/A')}")
     print(f"  recurrence_id: {getattr(recurring_task, 'recurrence_id', 'N/A')}")
 
-    is_recurring = getattr(recurring_task, 'recurring_task', False)
+    is_recurring = getattr(recurring_task, "recurring_task", False)
     if is_recurring:
         print(f"\n  Recurrence: CONFIGURED")
     else:
@@ -153,11 +153,15 @@ for task_xmlid, milestone_xmlid in milestone_checks:
         print(f"  {task_xmlid}: SKIP (milestone not found)")
         continue
 
-    if hasattr(task, 'milestone_id') and task.milestone_id.id == milestone.id:
+    if hasattr(task, "milestone_id") and task.milestone_id.id == milestone.id:
         print(f"  {task.name:<35} -> milestone '{milestone.name}' OK")
         ms_pass += 1
     else:
-        actual_ms = task.milestone_id.name if hasattr(task, 'milestone_id') and task.milestone_id else "None"
+        actual_ms = (
+            task.milestone_id.name
+            if hasattr(task, "milestone_id") and task.milestone_id
+            else "None"
+        )
         print(f"  {task.name:<35} -> EXPECTED '{milestone.name}', GOT '{actual_ms}'")
         ms_fail += 1
 

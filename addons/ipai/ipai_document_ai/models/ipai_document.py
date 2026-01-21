@@ -147,9 +147,7 @@ class IpaiDocument(models.Model):
                 record.currency_code = self._get_field_value(fields_data, "currency")
                 record.subtotal = self._get_field_value(fields_data, "subtotal") or 0.0
                 record.tax_amount = self._get_field_value(fields_data, "tax") or 0.0
-                record.total_amount = (
-                    self._get_field_value(fields_data, "total") or 0.0
-                )
+                record.total_amount = self._get_field_value(fields_data, "total") or 0.0
 
                 # Parse date
                 date_str = self._get_field_value(

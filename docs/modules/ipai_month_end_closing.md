@@ -19,8 +19,8 @@ SAP AFC-style month-end closing with BIR tax compliance for TBWA Finance
 |------|-------|
 | Models | 0 |
 | Views | 0 |
-| Menus | 0 |
-| Actions | 0 |
+| Menus | 9 |
+| Actions | 5 |
 | Data Files | 5 |
 
 ## Validation Results
@@ -44,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_month_end_closing --stop-after-in
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.621453_
+_Audited: 2026-01-21T22:42:53.982306_

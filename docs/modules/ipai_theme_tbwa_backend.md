@@ -2,16 +2,15 @@
 
 **Status**: ⚠️ WARN
 **Version**: 18.0.1.1.0
-**Author**: InsightPulse AI / TBWA Finance
+**Author**: InsightPulse AI / TBWA
 
 ## Summary
 
-TBWA branding skin - Black + Yellow + IBM Plex
+DEPRECATED - Use ipai_theme_tbwa instead
 
 ## Dependencies
 
 - `web`
-- `ipai_platform_theme`
 
 ## Module Contents
 
@@ -35,6 +34,7 @@ TBWA branding skin - Black + Yellow + IBM Plex
 
 ## Warnings
 
+- ⚠️ Module marked as not installable
 - ⚠️ No security/ir.model.access.csv
 
 ## Install/Upgrade
@@ -48,4 +48,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_theme_tbwa_backend --stop-after-i
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.863735_
+_Audited: 2026-01-21T22:42:54.733692_

@@ -10,12 +10,14 @@ class IPAIAIAgent(models.Model):
     name = fields.Char(required=True)
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
-    enabled = fields.Boolean(default=True, help="If disabled, agent won't appear in Ask AI panel")
+    enabled = fields.Boolean(
+        default=True, help="If disabled, agent won't appear in Ask AI panel"
+    )
     company_id = fields.Many2one(
         "res.company",
         default=lambda self: self.env.company,
         required=False,
-        help="Leave empty for global agent available to all companies"
+        help="Leave empty for global agent available to all companies",
     )
 
     provider = fields.Selection(
@@ -27,11 +29,13 @@ class IPAIAIAgent(models.Model):
         default="openai_compat",
         required=True,
     )
-    model = fields.Char(default="gpt-4o-mini", help="Model identifier (e.g., gpt-4o, claude-3-sonnet)")
+    model = fields.Char(
+        default="gpt-4o-mini", help="Model identifier (e.g., gpt-4o, claude-3-sonnet)"
+    )
 
     system_prompt = fields.Text(
         default=lambda self: self._default_system_prompt(),
-        help="System instructions for the agent"
+        help="System instructions for the agent",
     )
 
     # Tool policies
@@ -39,11 +43,13 @@ class IPAIAIAgent(models.Model):
     allowed_tools_json = fields.Json(default=list, help="List of allowed tool names")
     read_only = fields.Boolean(
         default=True,
-        help="If checked, agent can only read data (open views/reports, search_read)"
+        help="If checked, agent can only read data (open views/reports, search_read)",
     )
 
     # Statistics
-    thread_count = fields.Integer(compute="_compute_thread_count", string="Conversations")
+    thread_count = fields.Integer(
+        compute="_compute_thread_count", string="Conversations"
+    )
 
     def _default_system_prompt(self):
         return (
@@ -65,15 +71,22 @@ class IPAIAIAgent(models.Model):
     @api.model
     def ensure_default_agent(self):
         """Ensure a default 'Ask AI' agent exists for the current company."""
-        agent = self.search([
-            ("name", "=", "Ask AI"),
-            "|", ("company_id", "=", self.env.company.id), ("company_id", "=", False)
-        ], limit=1)
+        agent = self.search(
+            [
+                ("name", "=", "Ask AI"),
+                "|",
+                ("company_id", "=", self.env.company.id),
+                ("company_id", "=", False),
+            ],
+            limit=1,
+        )
         if not agent:
-            agent = self.create({
-                "name": "Ask AI",
-                "company_id": False,  # Global
-            })
+            agent = self.create(
+                {
+                    "name": "Ask AI",
+                    "company_id": False,  # Global
+                }
+            )
         return agent
 
     def action_view_threads(self):

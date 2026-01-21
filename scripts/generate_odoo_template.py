@@ -36,6 +36,7 @@ from typing import Optional
 # Embedded Data Dictionary (mirrors Supabase odoo_dict.fields)
 # =============================================================================
 
+
 @dataclass
 class DictField:
     model_name: str
@@ -233,7 +234,6 @@ FIELDS: list[DictField] = [
         domain="project",
         sequence=110,
     ),
-
     # =========================================================================
     # PROJECT.TASK Fields
     # =========================================================================
@@ -462,7 +462,6 @@ FIELDS: list[DictField] = [
         domain="finance",
         sequence=150,
     ),
-
     # =========================================================================
     # PROJECT.TAGS Fields
     # =========================================================================
@@ -511,7 +510,6 @@ FIELDS: list[DictField] = [
         domain="project",
         sequence=30,
     ),
-
     # =========================================================================
     # PROJECT.TASK.TYPE (Stages) Fields
     # =========================================================================
@@ -590,7 +588,6 @@ FIELDS: list[DictField] = [
         domain="project",
         sequence=50,
     ),
-
     # =========================================================================
     # HR.EMPLOYEE Fields
     # =========================================================================
@@ -714,7 +711,6 @@ FIELDS: list[DictField] = [
         domain="hr",
         sequence=80,
     ),
-
     # =========================================================================
     # ACCOUNT.ANALYTIC.ACCOUNT Fields
     # =========================================================================
@@ -818,9 +814,19 @@ TEMPLATES: list[Template] = [
         description="Full task import for month-end closing and tax filing",
         model_name="project.task",
         field_names=[
-            "x_external_ref", "name", "description", "project_id", "company_id",
-            "user_ids", "stage_id", "planned_hours", "date_deadline", "tag_ids",
-            "priority", "depend_on_ids", "sequence"
+            "x_external_ref",
+            "name",
+            "description",
+            "project_id",
+            "company_id",
+            "user_ids",
+            "stage_id",
+            "planned_hours",
+            "date_deadline",
+            "tag_ids",
+            "priority",
+            "depend_on_ids",
+            "sequence",
         ],
         domain="finance",
     ),
@@ -829,7 +835,13 @@ TEMPLATES: list[Template] = [
         name="Finance PPM Tasks (Minimal)",
         description="Minimal task import with required fields only",
         model_name="project.task",
-        field_names=["x_external_ref", "name", "project_id", "company_id", "date_deadline"],
+        field_names=[
+            "x_external_ref",
+            "name",
+            "project_id",
+            "company_id",
+            "date_deadline",
+        ],
         domain="finance",
     ),
     Template(
@@ -837,7 +849,15 @@ TEMPLATES: list[Template] = [
         name="Finance PPM Projects",
         description="Project import for finance programs",
         model_name="project.project",
-        field_names=["x_external_ref", "name", "description", "company_id", "user_id", "date_start", "date"],
+        field_names=[
+            "x_external_ref",
+            "name",
+            "description",
+            "company_id",
+            "user_id",
+            "date_start",
+            "date",
+        ],
         domain="finance",
     ),
     Template(
@@ -861,7 +881,14 @@ TEMPLATES: list[Template] = [
         name="HR Employees",
         description="Employee master data for assignment references",
         model_name="hr.employee",
-        field_names=["x_external_ref", "name", "work_email", "job_title", "department_id", "company_id"],
+        field_names=[
+            "x_external_ref",
+            "name",
+            "work_email",
+            "job_title",
+            "department_id",
+            "company_id",
+        ],
         domain="hr",
     ),
     Template(
@@ -878,6 +905,7 @@ TEMPLATES: list[Template] = [
 # =============================================================================
 # Helper Functions
 # =============================================================================
+
 
 def get_fields_for_model(model_name: str) -> list[DictField]:
     """Get all fields for a model, sorted by sequence."""
@@ -908,6 +936,7 @@ def get_template_by_slug(slug: str) -> Optional[Template]:
 # Output Generators
 # =============================================================================
 
+
 def generate_csv(fields: list[DictField], include_examples: bool = False) -> str:
     """Generate CSV content from fields."""
     import io
@@ -927,7 +956,9 @@ def generate_csv(fields: list[DictField], include_examples: bool = False) -> str
     return output.getvalue()
 
 
-def generate_json(fields: list[DictField], model_name: str, template_slug: Optional[str] = None) -> str:
+def generate_json(
+    fields: list[DictField], model_name: str, template_slug: Optional[str] = None
+) -> str:
     """Generate JSON metadata from fields."""
     data = {
         "model": model_name,
@@ -957,14 +988,18 @@ def generate_xlsx(fields: list[DictField], include_examples: bool = False) -> by
         import openpyxl
         from openpyxl.styles import Font, PatternFill
     except ImportError:
-        raise ImportError("openpyxl is required for XLSX output. Install with: pip install openpyxl")
+        raise ImportError(
+            "openpyxl is required for XLSX output. Install with: pip install openpyxl"
+        )
 
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Import Template"
 
     # Header style
-    header_fill = PatternFill(start_color="4472C4", end_color="4472C4", fill_type="solid")
+    header_fill = PatternFill(
+        start_color="4472C4", end_color="4472C4", fill_type="solid"
+    )
     header_font = Font(bold=True, color="FFFFFF")
 
     # Header row
@@ -972,7 +1007,9 @@ def generate_xlsx(fields: list[DictField], include_examples: bool = False) -> by
         cell = ws.cell(row=1, column=col, value=field.import_column)
         cell.fill = header_fill
         cell.font = header_font
-        ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = max(15, len(field.import_column) + 2)
+        ws.column_dimensions[openpyxl.utils.get_column_letter(col)].width = max(
+            15, len(field.import_column) + 2
+        )
 
     # Example row if requested
     if include_examples:
@@ -981,6 +1018,7 @@ def generate_xlsx(fields: list[DictField], include_examples: bool = False) -> by
 
     # Save to bytes
     import io
+
     output = io.BytesIO()
     wb.save(output)
     return output.getvalue()
@@ -989,6 +1027,7 @@ def generate_xlsx(fields: list[DictField], include_examples: bool = False) -> by
 # =============================================================================
 # Main CLI
 # =============================================================================
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -1004,13 +1043,31 @@ Examples:
     )
 
     parser.add_argument("--model", "-m", help="Model name (e.g., project.task)")
-    parser.add_argument("--template", "-t", help="Template slug (e.g., finance-ppm-tasks)")
-    parser.add_argument("--output", "-o", default=".", help="Output directory (default: .)")
-    parser.add_argument("--format", "-f", choices=["csv", "xlsx", "json"], default="csv", help="Output format")
-    parser.add_argument("--include-examples", "-e", action="store_true", help="Include example row")
-    parser.add_argument("--list-models", action="store_true", help="List available models")
-    parser.add_argument("--list-templates", action="store_true", help="List available templates")
-    parser.add_argument("--all", "-a", action="store_true", help="Generate all templates")
+    parser.add_argument(
+        "--template", "-t", help="Template slug (e.g., finance-ppm-tasks)"
+    )
+    parser.add_argument(
+        "--output", "-o", default=".", help="Output directory (default: .)"
+    )
+    parser.add_argument(
+        "--format",
+        "-f",
+        choices=["csv", "xlsx", "json"],
+        default="csv",
+        help="Output format",
+    )
+    parser.add_argument(
+        "--include-examples", "-e", action="store_true", help="Include example row"
+    )
+    parser.add_argument(
+        "--list-models", action="store_true", help="List available models"
+    )
+    parser.add_argument(
+        "--list-templates", action="store_true", help="List available templates"
+    )
+    parser.add_argument(
+        "--all", "-a", action="store_true", help="Generate all templates"
+    )
 
     args = parser.parse_args()
 
@@ -1040,7 +1097,14 @@ Examples:
     if args.all:
         for template in TEMPLATES:
             fields = get_fields_for_template(template)
-            generate_and_save(fields, template.model_name, template.slug, output_dir, args.format, args.include_examples)
+            generate_and_save(
+                fields,
+                template.model_name,
+                template.slug,
+                output_dir,
+                args.format,
+                args.include_examples,
+            )
         print(f"Generated {len(TEMPLATES)} templates in {output_dir}")
         return 0
 
@@ -1052,17 +1116,28 @@ Examples:
             print("Use --list-templates to see available templates", file=sys.stderr)
             return 1
         fields = get_fields_for_template(template)
-        generate_and_save(fields, template.model_name, template.slug, output_dir, args.format, args.include_examples)
+        generate_and_save(
+            fields,
+            template.model_name,
+            template.slug,
+            output_dir,
+            args.format,
+            args.include_examples,
+        )
         return 0
 
     # Generate by model name
     if args.model:
         fields = get_fields_for_model(args.model)
         if not fields:
-            print(f"Error: Model '{args.model}' not found in dictionary", file=sys.stderr)
+            print(
+                f"Error: Model '{args.model}' not found in dictionary", file=sys.stderr
+            )
             print("Use --list-models to see available models", file=sys.stderr)
             return 1
-        generate_and_save(fields, args.model, None, output_dir, args.format, args.include_examples)
+        generate_and_save(
+            fields, args.model, None, output_dir, args.format, args.include_examples
+        )
         return 0
 
     # No action specified

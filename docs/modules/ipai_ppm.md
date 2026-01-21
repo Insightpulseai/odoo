@@ -45,4 +45,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_ppm --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.683596_
+_Audited: 2026-01-21T22:42:54.162447_

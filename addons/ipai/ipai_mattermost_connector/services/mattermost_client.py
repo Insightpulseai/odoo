@@ -44,8 +44,7 @@ class MattermostClient:
             # For now, use ir.config_parameter
             ICP = self.connector.env["ir.config_parameter"].sudo()
             self._token = ICP.get_param(
-                f"ipai_mattermost.token_{self.connector.id}",
-                default=""
+                f"ipai_mattermost.token_{self.connector.id}", default=""
             )
         return self._token
 
@@ -95,7 +94,10 @@ class MattermostClient:
                     pass
                 _logger.warning(
                     "Mattermost API error: %s %s -> %s: %s",
-                    method, endpoint, response.status_code, error_msg
+                    method,
+                    endpoint,
+                    response.status_code,
+                    error_msg,
                 )
                 raise UserError(f"Mattermost API error: {error_msg}")
 
@@ -151,10 +153,7 @@ class MattermostClient:
     def get_my_channels(self, team_id):
         """Get channels the user is a member of."""
         user = self.get_me()
-        return self._request(
-            "GET",
-            f"/users/{user['id']}/teams/{team_id}/channels"
-        )
+        return self._request("GET", f"/users/{user['id']}/teams/{team_id}/channels")
 
     # Post endpoints
 
@@ -191,26 +190,35 @@ class MattermostClient:
         return self._request(
             "GET",
             f"/channels/{channel_id}/posts",
-            params={"page": page, "per_page": per_page}
+            params={"page": page, "per_page": per_page},
         )
 
     # Webhook endpoints
 
     def create_incoming_webhook(self, channel_id, display_name, description=""):
         """Create an incoming webhook."""
-        return self._request("POST", "/hooks/incoming", data={
-            "channel_id": channel_id,
-            "display_name": display_name,
-            "description": description,
-        })
+        return self._request(
+            "POST",
+            "/hooks/incoming",
+            data={
+                "channel_id": channel_id,
+                "display_name": display_name,
+                "description": description,
+            },
+        )
 
-    def create_outgoing_webhook(self, team_id, channel_id, trigger_words,
-                                 callback_urls, display_name):
+    def create_outgoing_webhook(
+        self, team_id, channel_id, trigger_words, callback_urls, display_name
+    ):
         """Create an outgoing webhook."""
-        return self._request("POST", "/hooks/outgoing", data={
-            "team_id": team_id,
-            "channel_id": channel_id,
-            "trigger_words": trigger_words,
-            "callback_urls": callback_urls,
-            "display_name": display_name,
-        })
+        return self._request(
+            "POST",
+            "/hooks/outgoing",
+            data={
+                "team_id": team_id,
+                "channel_id": channel_id,
+                "trigger_words": trigger_words,
+                "callback_urls": callback_urls,
+                "display_name": display_name,
+            },
+        )

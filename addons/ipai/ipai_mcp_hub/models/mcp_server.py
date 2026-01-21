@@ -113,10 +113,12 @@ class IpaiMcpServer(models.Model):
         In practice, this would be done via queue_job or external agent.
         """
         self.ensure_one()
-        self.write({
-            "last_health_check": fields.Datetime.now(),
-            "health_status": "unknown",  # Would be set by actual check
-        })
+        self.write(
+            {
+                "last_health_check": fields.Datetime.now(),
+                "health_status": "unknown",  # Would be set by actual check
+            }
+        )
         return True
 
     @api.model
@@ -127,8 +129,10 @@ class IpaiMcpServer(models.Model):
             if company_id
             else self.env.company
         )
-        return self.search([
-            ("company_id", "=", company.id),
-            ("category", "=", category),
-            ("active", "=", True),
-        ])
+        return self.search(
+            [
+                ("company_id", "=", company.id),
+                ("category", "=", category),
+                ("active", "=", True),
+            ]
+        )

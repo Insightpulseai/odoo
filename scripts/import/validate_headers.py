@@ -106,12 +106,14 @@ def validate_headers() -> bool:
 
         # Check for header drift
         if actual_headers != expected_headers:
-            errors.append({
-                "model": model_name,
-                "file": expected["file"],
-                "expected": expected_headers,
-                "actual": actual_headers,
-            })
+            errors.append(
+                {
+                    "model": model_name,
+                    "file": expected["file"],
+                    "expected": expected_headers,
+                    "actual": actual_headers,
+                }
+            )
 
     # Check for new files not in contract
     for model_name in current:
@@ -130,8 +132,8 @@ def validate_headers() -> bool:
             print(f"Actual:   {err['actual']}")
 
             # Show diff
-            expected_set = set(err['expected'])
-            actual_set = set(err['actual'])
+            expected_set = set(err["expected"])
+            actual_set = set(err["actual"])
 
             added = actual_set - expected_set
             removed = expected_set - actual_set
@@ -160,13 +162,9 @@ def main():
     parser.add_argument(
         "--update",
         action="store_true",
-        help="Update the contract file with current headers"
+        help="Update the contract file with current headers",
     )
-    parser.add_argument(
-        "--quiet", "-q",
-        action="store_true",
-        help="Only output errors"
-    )
+    parser.add_argument("--quiet", "-q", action="store_true", help="Only output errors")
 
     args = parser.parse_args()
 

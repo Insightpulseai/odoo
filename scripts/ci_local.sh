@@ -100,10 +100,16 @@ echo ""
 # 6. Module Manifest Validation
 echo -e "${YELLOW}[CHECK]${NC} Validating module manifests..."
 MANIFEST_ISSUES=0
+# Skip container directories that are not Odoo modules
+SKIP_DIRS="OCA|external-src|oca-addons"
 if [ -d "addons" ]; then
     for module_dir in addons/*/; do
         if [ -d "$module_dir" ]; then
             MODULE_NAME=$(basename "$module_dir")
+            # Skip container directories
+            if echo "$MODULE_NAME" | grep -qE "^($SKIP_DIRS)$"; then
+                continue
+            fi
             if [ ! -f "$module_dir/__manifest__.py" ]; then
                 echo -e "  ${RED}Missing __manifest__.py:${NC} $MODULE_NAME"
                 MANIFEST_ISSUES=$((MANIFEST_ISSUES + 1))

@@ -40,7 +40,9 @@ from uuid import UUID, uuid4
 try:
     from supabase import create_client, Client
 except ImportError:
-    print("ERROR: supabase-py not installed. Run: pip install supabase", file=sys.stderr)
+    print(
+        "ERROR: supabase-py not installed. Run: pip install supabase", file=sys.stderr
+    )
     sys.exit(1)
 
 # ============================================================================
@@ -49,7 +51,9 @@ except ImportError:
 
 SUPABASE_URL = os.getenv("SUPABASE_URL", "https://spdtwktxdalcfigzeqrz.supabase.co")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
-CLAUDE_MEM_DB_PATH = os.getenv("CLAUDE_MEM_DB_PATH", os.path.expanduser("~/.claude/project_memory.db"))
+CLAUDE_MEM_DB_PATH = os.getenv(
+    "CLAUDE_MEM_DB_PATH", os.path.expanduser("~/.claude/project_memory.db")
+)
 
 # Default to odoo_developer agent if not specified
 DEFAULT_AGENT_NAME = "odoo_developer"
@@ -61,14 +65,15 @@ MIN_IMPORTANCE_THRESHOLD = 0.3  # Only sync events with importance > 0.3
 # Logging setup
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
 )
 logger = logging.getLogger(__name__)
 
 # ============================================================================
 # SQLite Memory Reader
 # ============================================================================
+
 
 class SQLiteMemoryReader:
     """Read agent memory from local SQLite database."""
@@ -100,12 +105,16 @@ class SQLiteMemoryReader:
         cursor = self.conn.cursor()
 
         # Check if sessions table exists
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT name FROM sqlite_master
             WHERE type='table' AND name='sessions'
-        """)
+        """
+        )
         if not cursor.fetchone():
-            logger.warning("No sessions table in SQLite - will create synthetic sessions")
+            logger.warning(
+                "No sessions table in SQLite - will create synthetic sessions"
+            )
             return []
 
         query = "SELECT * FROM sessions"
@@ -121,7 +130,9 @@ class SQLiteMemoryReader:
         logger.info(f"Found {len(sessions)} sessions in SQLite")
         return sessions
 
-    def get_memories(self, session_id: Optional[str] = None, since: Optional[datetime] = None) -> List[Dict]:
+    def get_memories(
+        self, session_id: Optional[str] = None, since: Optional[datetime] = None
+    ) -> List[Dict]:
         """Get memory entries from SQLite."""
         if not self.conn:
             self.connect()
@@ -130,15 +141,19 @@ class SQLiteMemoryReader:
 
         # Adapt to various SQLite memory schemas (claude-mem, project_memory, etc.)
         # Try common table names
-        for table_name in ['memories', 'events', 'messages', 'interactions']:
-            cursor.execute(f"""
+        for table_name in ["memories", "events", "messages", "interactions"]:
+            cursor.execute(
+                f"""
                 SELECT name FROM sqlite_master
                 WHERE type='table' AND name='{table_name}'
-            """)
+            """
+            )
             if cursor.fetchone():
                 break
         else:
-            logger.error("No memory table found in SQLite (tried: memories, events, messages, interactions)")
+            logger.error(
+                "No memory table found in SQLite (tried: memories, events, messages, interactions)"
+            )
             return []
 
         query = f"SELECT * FROM {table_name}"
@@ -162,9 +177,11 @@ class SQLiteMemoryReader:
         logger.info(f"Found {len(memories)} memory entries in SQLite")
         return memories
 
+
 # ============================================================================
 # Supabase Memory Writer
 # ============================================================================
+
 
 class SupabaseMemoryWriter:
     """Write agent memory to Supabase PostgreSQL."""
@@ -179,7 +196,9 @@ class SupabaseMemoryWriter:
         self.client = create_client(self.url, self.service_key)
         logger.info(f"Connected to Supabase: {self.url}")
 
-    def create_session(self, agent_name: str, source: str = DEFAULT_SOURCE, meta: Optional[Dict] = None) -> str:
+    def create_session(
+        self, agent_name: str, source: str = DEFAULT_SOURCE, meta: Optional[Dict] = None
+    ) -> str:
         """Create a new session in Supabase."""
         if not self.client:
             self.connect()
@@ -189,7 +208,7 @@ class SupabaseMemoryWriter:
             "source": source,
             "started_at": datetime.now(timezone.utc).isoformat(),
             "status": "active",
-            "meta": meta or {}
+            "meta": meta or {},
         }
 
         result = self.client.table("agent_mem.sessions").insert(session_data).execute()
@@ -213,10 +232,12 @@ class SupabaseMemoryWriter:
             "id": session_id,
             "agent_name": session.get("agent_name", DEFAULT_AGENT_NAME),
             "source": session.get("source", DEFAULT_SOURCE),
-            "started_at": session.get("started_at", datetime.now(timezone.utc).isoformat()),
+            "started_at": session.get(
+                "started_at", datetime.now(timezone.utc).isoformat()
+            ),
             "ended_at": session.get("ended_at"),
             "status": session.get("status", "active"),
-            "meta": session.get("meta", {})
+            "meta": session.get("meta", {}),
         }
 
         result = self.client.table("agent_mem.sessions").upsert(session_data).execute()
@@ -234,13 +255,15 @@ class SupabaseMemoryWriter:
 
         event_data = {
             "session_id": session_id,
-            "ts": event.get("timestamp") or event.get("created_at") or datetime.now(timezone.utc).isoformat(),
+            "ts": event.get("timestamp")
+            or event.get("created_at")
+            or datetime.now(timezone.utc).isoformat(),
             "role": event.get("role", "system"),
             "event_type": event.get("event_type", "message"),
             "content": event.get("content", ""),
             "importance": event.get("importance", 0.5),
             "tags": event.get("tags", []),
-            "meta": event.get("meta", {})
+            "meta": event.get("meta", {}),
         }
 
         # Skip events below importance threshold
@@ -264,10 +287,12 @@ class SupabaseMemoryWriter:
             "sync_source": source,
             "session_id": session_id,
             "sync_started_at": datetime.now(timezone.utc).isoformat(),
-            "status": "running"
+            "status": "running",
         }
 
-        result = self.client.table("agent_mem.memory_sync_log").insert(log_data).execute()
+        result = (
+            self.client.table("agent_mem.memory_sync_log").insert(log_data).execute()
+        )
 
         if result.data:
             log_id = result.data[0]["id"]
@@ -276,7 +301,13 @@ class SupabaseMemoryWriter:
         else:
             raise Exception(f"Failed to start sync log: {result}")
 
-    def complete_sync_log(self, log_id: str, events_synced: int, status: str = "completed", error_message: Optional[str] = None):
+    def complete_sync_log(
+        self,
+        log_id: str,
+        events_synced: int,
+        status: str = "completed",
+        error_message: Optional[str] = None,
+    ):
         """Complete a sync operation log."""
         if not self.client:
             self.connect()
@@ -285,19 +316,28 @@ class SupabaseMemoryWriter:
             "events_synced": events_synced,
             "sync_ended_at": datetime.now(timezone.utc).isoformat(),
             "status": status,
-            "error_message": error_message
+            "error_message": error_message,
         }
 
-        result = self.client.table("agent_mem.memory_sync_log").update(log_data).eq("id", log_id).execute()
+        result = (
+            self.client.table("agent_mem.memory_sync_log")
+            .update(log_data)
+            .eq("id", log_id)
+            .execute()
+        )
 
         if result.data:
-            logger.info(f"Completed sync log {log_id}: {events_synced} events, status={status}")
+            logger.info(
+                f"Completed sync log {log_id}: {events_synced} events, status={status}"
+            )
         else:
             logger.error(f"Failed to complete sync log: {result}")
+
 
 # ============================================================================
 # Sync Orchestrator
 # ============================================================================
+
 
 class MemorySyncOrchestrator:
     """Orchestrate SQLite → Supabase memory sync."""
@@ -306,7 +346,9 @@ class MemorySyncOrchestrator:
         self.sqlite_reader = SQLiteMemoryReader(sqlite_path)
         self.supabase_writer = SupabaseMemoryWriter(supabase_url, supabase_key)
 
-    def sync_once(self, session_id: Optional[str] = None, since: Optional[datetime] = None) -> Tuple[int, int]:
+    def sync_once(
+        self, session_id: Optional[str] = None, since: Optional[datetime] = None
+    ) -> Tuple[int, int]:
         """Perform a single sync operation.
 
         Returns:
@@ -332,15 +374,21 @@ class MemorySyncOrchestrator:
                 # Sync sessions
                 for session in sessions:
                     try:
-                        supabase_session_id = self.supabase_writer.upsert_session(session)
+                        supabase_session_id = self.supabase_writer.upsert_session(
+                            session
+                        )
                         sessions_synced += 1
 
                         # Sync events for this session
-                        memories = self.sqlite_reader.get_memories(session_id=session.get("id"))
+                        memories = self.sqlite_reader.get_memories(
+                            session_id=session.get("id")
+                        )
 
                         for memory in memories:
                             try:
-                                event_id = self.supabase_writer.insert_event(supabase_session_id, memory)
+                                event_id = self.supabase_writer.insert_event(
+                                    supabase_session_id, memory
+                                )
                                 if event_id:
                                     events_synced += 1
                             except Exception as e:
@@ -357,7 +405,7 @@ class MemorySyncOrchestrator:
                 supabase_session_id = self.supabase_writer.create_session(
                     agent_name=DEFAULT_AGENT_NAME,
                     source=DEFAULT_SOURCE,
-                    meta={"synthetic": True, "source_db": self.sqlite_reader.db_path}
+                    meta={"synthetic": True, "source_db": self.sqlite_reader.db_path},
                 )
                 sessions_synced = 1
 
@@ -366,7 +414,9 @@ class MemorySyncOrchestrator:
 
                 for memory in memories:
                     try:
-                        event_id = self.supabase_writer.insert_event(supabase_session_id, memory)
+                        event_id = self.supabase_writer.insert_event(
+                            supabase_session_id, memory
+                        )
                         if event_id:
                             events_synced += 1
                     except Exception as e:
@@ -374,14 +424,20 @@ class MemorySyncOrchestrator:
                         continue
 
             # Complete sync log
-            self.supabase_writer.complete_sync_log(log_id, events_synced, status="completed")
+            self.supabase_writer.complete_sync_log(
+                log_id, events_synced, status="completed"
+            )
 
-            logger.info(f"Sync complete: {sessions_synced} sessions, {events_synced} events")
+            logger.info(
+                f"Sync complete: {sessions_synced} sessions, {events_synced} events"
+            )
             return sessions_synced, events_synced
 
         except Exception as e:
             logger.error(f"Sync failed: {e}")
-            self.supabase_writer.complete_sync_log(log_id, 0, status="failed", error_message=str(e))
+            self.supabase_writer.complete_sync_log(
+                log_id, 0, status="failed", error_message=str(e)
+            )
             raise
 
         finally:
@@ -409,17 +465,30 @@ class MemorySyncOrchestrator:
 
             time.sleep(interval_seconds)
 
+
 # ============================================================================
 # CLI
 # ============================================================================
 
+
 def main():
-    parser = argparse.ArgumentParser(description="Sync agent memory from SQLite to Supabase")
-    parser.add_argument("--daemon", action="store_true", help="Run as continuous sync daemon")
-    parser.add_argument("--interval", type=int, default=300, help="Sync interval in seconds (default: 300)")
+    parser = argparse.ArgumentParser(
+        description="Sync agent memory from SQLite to Supabase"
+    )
+    parser.add_argument(
+        "--daemon", action="store_true", help="Run as continuous sync daemon"
+    )
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=300,
+        help="Sync interval in seconds (default: 300)",
+    )
     parser.add_argument("--session-id", help="Sync specific session only")
     parser.add_argument("--since", help="Sync events since timestamp (ISO format)")
-    parser.add_argument("--sqlite-db", default=CLAUDE_MEM_DB_PATH, help="Path to SQLite database")
+    parser.add_argument(
+        "--sqlite-db", default=CLAUDE_MEM_DB_PATH, help="Path to SQLite database"
+    )
 
     args = parser.parse_args()
 
@@ -441,15 +510,18 @@ def main():
     orchestrator = MemorySyncOrchestrator(
         sqlite_path=args.sqlite_db,
         supabase_url=SUPABASE_URL,
-        supabase_key=SUPABASE_SERVICE_KEY
+        supabase_key=SUPABASE_SERVICE_KEY,
     )
 
     # Run sync
     if args.daemon:
         orchestrator.sync_daemon(interval_seconds=args.interval)
     else:
-        sessions, events = orchestrator.sync_once(session_id=args.session_id, since=since)
+        sessions, events = orchestrator.sync_once(
+            session_id=args.session_id, since=since
+        )
         print(f"✅ Sync complete: {sessions} sessions, {events} events")
+
 
 if __name__ == "__main__":
     main()

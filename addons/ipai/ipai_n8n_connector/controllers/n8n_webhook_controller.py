@@ -49,21 +49,25 @@ class N8nWebhookController(http.Controller):
         # Find the workflow
         n8n_workflow_id = payload.get("workflow_id")
         if n8n_workflow_id:
-            workflow = request.env["ipai.n8n.workflow"].sudo().search([
-                ("n8n_workflow_id", "=", str(n8n_workflow_id))
-            ], limit=1)
+            workflow = (
+                request.env["ipai.n8n.workflow"]
+                .sudo()
+                .search([("n8n_workflow_id", "=", str(n8n_workflow_id))], limit=1)
+            )
 
             if workflow:
                 # Log execution
-                request.env["ipai.n8n.execution"].sudo().create({
-                    "workflow_id": workflow.id,
-                    "n8n_execution_id": payload.get("execution_id"),
-                    "trigger_source": "webhook",
-                    "status": payload.get("status", "success"),
-                    "output_data": json.dumps(payload.get("data", {})),
-                    "started_at": request.env.cr.now(),
-                    "finished_at": request.env.cr.now(),
-                })
+                request.env["ipai.n8n.execution"].sudo().create(
+                    {
+                        "workflow_id": workflow.id,
+                        "n8n_execution_id": payload.get("execution_id"),
+                        "trigger_source": "webhook",
+                        "status": payload.get("status", "success"),
+                        "output_data": json.dumps(payload.get("data", {})),
+                        "started_at": request.env.cr.now(),
+                        "finished_at": request.env.cr.now(),
+                    }
+                )
 
         return {"status": "ok"}
 
@@ -122,7 +126,11 @@ class N8nWebhookController(http.Controller):
             return {
                 "status": "success",
                 "record_id": record.id,
-                "record_name": record.display_name if hasattr(record, "display_name") else str(record.id),
+                "record_name": (
+                    record.display_name
+                    if hasattr(record, "display_name")
+                    else str(record.id)
+                ),
             }
         except Exception as e:
             return {"status": "error", "message": str(e)}

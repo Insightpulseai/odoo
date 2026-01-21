@@ -62,9 +62,7 @@ class MarketingJourney(models.Model):
         "journey_id",
         string="Participants",
     )
-    participant_count = fields.Integer(
-        compute="_compute_participant_stats", store=True
-    )
+    participant_count = fields.Integer(compute="_compute_participant_stats", store=True)
     active_participant_count = fields.Integer(
         compute="_compute_participant_stats", store=True
     )

@@ -17,26 +17,26 @@ For Mailgun, use configure_mailgun_smtp.py instead.
 # ============================================
 
 SMTP_CONFIG = {
-    'name': 'SendGrid SMTP - InsightPulse',
-    'smtp_host': 'smtp.sendgrid.net',
-    'smtp_port': 2525,  # Port 2525 bypasses DigitalOcean blocking!
-    'smtp_encryption': 'starttls',  # TLS (STARTTLS)
-    'smtp_user': 'apikey',  # SendGrid uses literal "apikey" as username
-    'smtp_pass': '',  # Your SendGrid API key - SET VIA ODOO UI
-    'from_filter': '@insightpulseai.net',  # Domain-based FROM filter
-    'sequence': 10,
-    'smtp_authentication': 'login',
-    'smtp_debug': False,
-    'active': True,
+    "name": "SendGrid SMTP - InsightPulse",
+    "smtp_host": "smtp.sendgrid.net",
+    "smtp_port": 2525,  # Port 2525 bypasses DigitalOcean blocking!
+    "smtp_encryption": "starttls",  # TLS (STARTTLS)
+    "smtp_user": "apikey",  # SendGrid uses literal "apikey" as username
+    "smtp_pass": "",  # Your SendGrid API key - SET VIA ODOO UI
+    "from_filter": "@insightpulseai.net",  # Domain-based FROM filter
+    "sequence": 10,
+    "smtp_authentication": "login",
+    "smtp_debug": False,
+    "active": True,
 }
 
 SYSTEM_PARAMS = {
-    'mail.catchall.domain': 'insightpulseai.net',
-    'mail.default.from': 'notifications',
-    'mail.catchall.alias': 'catchall',
-    'mail.bounce.alias': 'bounce',
+    "mail.catchall.domain": "insightpulseai.net",
+    "mail.default.from": "notifications",
+    "mail.catchall.alias": "catchall",
+    "mail.bounce.alias": "bounce",
     # Force all outgoing mail to use authorized sender
-    'mail.force.smtp.from': 'notifications@insightpulseai.net',
+    "mail.force.smtp.from": "notifications@insightpulseai.net",
 }
 
 # ============================================
@@ -48,10 +48,10 @@ print("SendGrid SMTP Configuration for Odoo 18 (DigitalOcean)")
 print("=" * 60)
 print("\nUsing PORT 2525 to bypass DigitalOcean SMTP blocking")
 
-MailServer = env['ir.mail_server'].sudo()
+MailServer = env["ir.mail_server"].sudo()
 
 # Check for existing SendGrid server
-existing = MailServer.search([('smtp_host', '=', 'smtp.sendgrid.net')], limit=1)
+existing = MailServer.search([("smtp_host", "=", "smtp.sendgrid.net")], limit=1)
 
 if existing:
     print(f"\nExisting SendGrid server found (ID: {existing.id})")
@@ -78,7 +78,7 @@ print("\n" + "=" * 60)
 print("System Parameters Configuration")
 print("=" * 60)
 
-ICP = env['ir.config_parameter'].sudo()
+ICP = env["ir.config_parameter"].sudo()
 
 for key, value in SYSTEM_PARAMS.items():
     ICP.set_param(key, value)
@@ -113,5 +113,7 @@ print("\nIMPORTANT - USERNAME:")
 print("   SendGrid uses literal 'apikey' as SMTP username")
 print("   Password is your actual SendGrid API key")
 print("\nTo test manually in shell:")
-print("   server = env['ir.mail_server'].sudo().search([('smtp_host', '=', 'smtp.sendgrid.net')], limit=1)")
+print(
+    "   server = env['ir.mail_server'].sudo().search([('smtp_host', '=', 'smtp.sendgrid.net')], limit=1)"
+)
 print("   server.test_smtp_connection()")

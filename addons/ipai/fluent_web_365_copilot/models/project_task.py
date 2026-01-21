@@ -27,10 +27,12 @@ class ProjectTask(models.Model):
     def _compute_copilot_session_ids(self):
         """Find Copilot sessions bound to this task."""
         for task in self:
-            sessions = self.env["fluent.copilot.session"].search([
-                ("context_model", "=", "project.task"),
-                ("context_res_id", "=", task.id),
-            ])
+            sessions = self.env["fluent.copilot.session"].search(
+                [
+                    ("context_model", "=", "project.task"),
+                    ("context_res_id", "=", task.id),
+                ]
+            )
             task.copilot_session_ids = sessions
             task.copilot_session_count = len(sessions)
 
@@ -43,42 +45,50 @@ class ProjectTask(models.Model):
         self.ensure_one()
 
         # Find existing active session
-        existing_session = self.env["fluent.copilot.session"].search([
-            ("context_model", "=", "project.task"),
-            ("context_res_id", "=", self.id),
-            ("user_id", "=", self.env.user.id),
-            ("status", "=", "active"),
-        ], limit=1, order="create_date desc")
+        existing_session = self.env["fluent.copilot.session"].search(
+            [
+                ("context_model", "=", "project.task"),
+                ("context_res_id", "=", self.id),
+                ("user_id", "=", self.env.user.id),
+                ("status", "=", "active"),
+            ],
+            limit=1,
+            order="create_date desc",
+        )
 
         if existing_session:
             session = existing_session
         else:
             # Create new session
-            session = self.env["fluent.copilot.session"].create({
-                "context_model": "project.task",
-                "context_res_id": self.id,
-                "user_id": self.env.user.id,
-                "status": "active",
-            })
+            session = self.env["fluent.copilot.session"].create(
+                {
+                    "context_model": "project.task",
+                    "context_res_id": self.id,
+                    "user_id": self.env.user.id,
+                    "status": "active",
+                }
+            )
 
             # Add system welcome message
             self.env["fluent.copilot.message"].with_context(
                 skip_auto_response=True
-            ).create({
-                "session_id": session.id,
-                "role": "system",
-                "message_type": "suggestion",
-                "body": (
-                    f"**Welcome to Copilot!**\n\n"
-                    f"I'm here to help you with task: **{self.name}**\n\n"
-                    f"You can ask me to:\n"
-                    f"- Summarize this task\n"
-                    f"- Show progress metrics\n"
-                    f"- Explain blockers or dependencies\n"
-                    f"- Navigate to related records\n\n"
-                    f"*Type your question below to get started.*"
-                ),
-            })
+            ).create(
+                {
+                    "session_id": session.id,
+                    "role": "system",
+                    "message_type": "suggestion",
+                    "body": (
+                        f"**Welcome to Copilot!**\n\n"
+                        f"I'm here to help you with task: **{self.name}**\n\n"
+                        f"You can ask me to:\n"
+                        f"- Summarize this task\n"
+                        f"- Show progress metrics\n"
+                        f"- Explain blockers or dependencies\n"
+                        f"- Navigate to related records\n\n"
+                        f"*Type your question below to get started.*"
+                    ),
+                }
+            )
 
         return {
             "type": "ir.actions.act_window",

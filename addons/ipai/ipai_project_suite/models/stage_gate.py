@@ -9,27 +9,21 @@ class ProjectStageGate(models.Model):
     _order = "stage_id, sequence, id"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    name = fields.Char(
-        string="Gate Name",
-        required=True
-    )
+    name = fields.Char(string="Gate Name", required=True)
     stage_id = fields.Many2one(
         "project.task.type",
         string="Stage",
         required=True,
         ondelete="cascade",
         index=True,
-        help="The stage this gate applies to."
+        help="The stage this gate applies to.",
     )
     project_ids = fields.Many2many(
         "project.project",
         string="Projects",
-        help="If set, gate only applies to these projects. Leave empty for all projects using this stage."
+        help="If set, gate only applies to these projects. Leave empty for all projects using this stage.",
     )
-    sequence = fields.Integer(
-        string="Sequence",
-        default=10
-    )
+    sequence = fields.Integer(string="Sequence", default=10)
     check_type = fields.Selection(
         [
             ("required_fields", "Required Fields"),
@@ -39,32 +33,28 @@ class ProjectStageGate(models.Model):
         ],
         string="Check Type",
         required=True,
-        default="approval"
+        default="approval",
     )
     description = fields.Text(
-        string="Description",
-        help="Description of what this gate checks."
+        string="Description", help="Description of what this gate checks."
     )
     required_field_ids = fields.Many2many(
         "ir.model.fields",
         string="Required Fields",
         domain="[('model', '=', 'project.task')]",
-        help="Fields that must be filled before passing this gate."
+        help="Fields that must be filled before passing this gate.",
     )
     approver_group_id = fields.Many2one(
         "res.groups",
         string="Approver Group",
-        help="Group whose members can approve this gate."
+        help="Group whose members can approve this gate.",
     )
     is_blocking = fields.Boolean(
         string="Blocking",
         default=True,
-        help="If enabled, tasks cannot advance past this stage without passing the gate."
+        help="If enabled, tasks cannot advance past this stage without passing the gate.",
     )
-    active = fields.Boolean(
-        string="Active",
-        default=True
-    )
+    active = fields.Boolean(string="Active", default=True)
 
     def check_gate(self, task):
         """
@@ -117,33 +107,15 @@ class ProjectStageGateResult(models.Model):
     _order = "create_date desc"
 
     task_id = fields.Many2one(
-        "project.task",
-        string="Task",
-        required=True,
-        ondelete="cascade",
-        index=True
+        "project.task", string="Task", required=True, ondelete="cascade", index=True
     )
     gate_id = fields.Many2one(
-        "ipai.project.stage.gate",
-        string="Gate",
-        required=True,
-        ondelete="cascade"
+        "ipai.project.stage.gate", string="Gate", required=True, ondelete="cascade"
     )
-    passed = fields.Boolean(
-        string="Passed"
-    )
-    message = fields.Text(
-        string="Message"
-    )
+    passed = fields.Boolean(string="Passed")
+    message = fields.Text(string="Message")
     checked_by_id = fields.Many2one(
-        "res.users",
-        string="Checked By",
-        default=lambda self: self.env.user
+        "res.users", string="Checked By", default=lambda self: self.env.user
     )
-    approved_by_id = fields.Many2one(
-        "res.users",
-        string="Approved By"
-    )
-    approved_date = fields.Datetime(
-        string="Approved Date"
-    )
+    approved_by_id = fields.Many2one("res.users", string="Approved By")
+    approved_date = fields.Datetime(string="Approved Date")

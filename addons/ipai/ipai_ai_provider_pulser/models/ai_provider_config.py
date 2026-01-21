@@ -83,11 +83,13 @@ class IpaiAiProviderConfig(models.Model):
 
     def update_usage(self, tokens=0):
         """Update usage statistics."""
-        self.write({
-            "total_requests": self.total_requests + 1,
-            "total_tokens": self.total_tokens + tokens,
-            "last_used": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "total_requests": self.total_requests + 1,
+                "total_tokens": self.total_tokens + tokens,
+                "last_used": fields.Datetime.now(),
+            }
+        )
 
     @api.model
     def get_default_provider(self):

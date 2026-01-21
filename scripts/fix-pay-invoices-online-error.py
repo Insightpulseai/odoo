@@ -23,27 +23,28 @@ import xmlrpc.client
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
 # Odoo connection details
-ODOO_URL = os.getenv('ODOO_URL', 'https://erp.insightpulseai.net')
-ODOO_DB = os.getenv('ODOO_DB', 'production')
-ODOO_USERNAME = os.getenv('ODOO_USERNAME')
-ODOO_PASSWORD = os.getenv('ODOO_PASSWORD')
+ODOO_URL = os.getenv("ODOO_URL", "https://erp.insightpulseai.net")
+ODOO_DB = os.getenv("ODOO_DB", "production")
+ODOO_USERNAME = os.getenv("ODOO_USERNAME")
+ODOO_PASSWORD = os.getenv("ODOO_PASSWORD")
+
 
 def connect_odoo():
     """Establish XML-RPC connection to Odoo"""
-    common = xmlrpc.client.ServerProxy(f'{ODOO_URL}/xmlrpc/2/common')
+    common = xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/common")
     uid = common.authenticate(ODOO_DB, ODOO_USERNAME, ODOO_PASSWORD, {})
 
     if not uid:
         raise Exception("Authentication failed")
 
     logger.info(f"Connected to {ODOO_URL} as user ID {uid}")
-    return xmlrpc.client.ServerProxy(f'{ODOO_URL}/xmlrpc/2/object'), uid
+    return xmlrpc.client.ServerProxy(f"{ODOO_URL}/xmlrpc/2/object"), uid
+
 
 def find_orphaned_views(models, uid):
     """Find views that reference pay_invoices_online field"""
@@ -52,9 +53,12 @@ def find_orphaned_views(models, uid):
 
     # Search for views containing the field
     view_ids = models.execute_kw(
-        ODOO_DB, uid, ODOO_PASSWORD,
-        'ir.ui.view', 'search',
-        [[['arch_db', 'ilike', '%pay_invoices_online%']]]
+        ODOO_DB,
+        uid,
+        ODOO_PASSWORD,
+        "ir.ui.view",
+        "search",
+        [[["arch_db", "ilike", "%pay_invoices_online%"]]],
     )
 
     if not view_ids:
@@ -63,26 +67,40 @@ def find_orphaned_views(models, uid):
 
     # Read view details
     views = models.execute_kw(
-        ODOO_DB, uid, ODOO_PASSWORD,
-        'ir.ui.view', 'read',
-        [view_ids, ['id', 'name', 'model', 'arch_db', 'inherit_id']]
+        ODOO_DB,
+        uid,
+        ODOO_PASSWORD,
+        "ir.ui.view",
+        "read",
+        [view_ids, ["id", "name", "model", "arch_db", "inherit_id"]],
     )
 
     logger.info(f"Found {len(views)} view(s) with pay_invoices_online:")
     for view in views:
-        logger.info(f"  - ID: {view['id']}, Name: {view['name']}, Model: {view['model']}")
+        logger.info(
+            f"  - ID: {view['id']}, Name: {view['name']}, Model: {view['model']}"
+        )
 
     return views
+
 
 def check_field_exists(models, uid):
     """Check if pay_invoices_online field actually exists"""
 
     try:
         field_info = models.execute_kw(
-            ODOO_DB, uid, ODOO_PASSWORD,
-            'ir.model.fields', 'search_read',
-            [[['model', '=', 'res.config.settings'], ['name', '=', 'pay_invoices_online']]],
-            {'fields': ['id', 'name', 'field_description', 'ttype']}
+            ODOO_DB,
+            uid,
+            ODOO_PASSWORD,
+            "ir.model.fields",
+            "search_read",
+            [
+                [
+                    ["model", "=", "res.config.settings"],
+                    ["name", "=", "pay_invoices_online"],
+                ]
+            ],
+            {"fields": ["id", "name", "field_description", "ttype"]},
         )
 
         if field_info:
@@ -95,6 +113,7 @@ def check_field_exists(models, uid):
         logger.error(f"Error checking field: {e}")
         return False
 
+
 def remove_field_from_views(models, uid, view_ids, dry_run=True):
     """Remove pay_invoices_online field references from views"""
 
@@ -104,12 +123,15 @@ def remove_field_from_views(models, uid, view_ids, dry_run=True):
     for view_id in view_ids:
         try:
             view = models.execute_kw(
-                ODOO_DB, uid, ODOO_PASSWORD,
-                'ir.ui.view', 'read',
-                [[view_id], ['arch_db']]
+                ODOO_DB,
+                uid,
+                ODOO_PASSWORD,
+                "ir.ui.view",
+                "read",
+                [[view_id], ["arch_db"]],
             )[0]
 
-            arch = view['arch_db']
+            arch = view["arch_db"]
 
             # Remove the field element (handles various XML formats)
             import re
@@ -120,18 +142,23 @@ def remove_field_from_views(models, uid, view_ids, dry_run=True):
             pattern2 = r'<field[^>]*name="pay_invoices_online"[^>]*>.*?</field>'
 
             new_arch = arch
-            new_arch = re.sub(pattern1, '', new_arch, flags=re.DOTALL)
-            new_arch = re.sub(pattern2, '', new_arch, flags=re.DOTALL)
+            new_arch = re.sub(pattern1, "", new_arch, flags=re.DOTALL)
+            new_arch = re.sub(pattern2, "", new_arch, flags=re.DOTALL)
 
             if arch != new_arch:
-                logger.info(f"View ID {view_id}: Field reference found and will be removed")
+                logger.info(
+                    f"View ID {view_id}: Field reference found and will be removed"
+                )
 
                 if not dry_run:
                     # Update the view
                     models.execute_kw(
-                        ODOO_DB, uid, ODOO_PASSWORD,
-                        'ir.ui.view', 'write',
-                        [[view_id], {'arch_db': new_arch}]
+                        ODOO_DB,
+                        uid,
+                        ODOO_PASSWORD,
+                        "ir.ui.view",
+                        "write",
+                        [[view_id], {"arch_db": new_arch}],
                     )
                     logger.info(f"View ID {view_id}: Updated successfully")
             else:
@@ -139,6 +166,7 @@ def remove_field_from_views(models, uid, view_ids, dry_run=True):
 
         except Exception as e:
             logger.error(f"Error processing view {view_id}: {e}")
+
 
 def install_account_payment_module(models, uid, dry_run=True):
     """
@@ -153,36 +181,50 @@ def install_account_payment_module(models, uid, dry_run=True):
     try:
         # Search for account_payment module
         module_ids = models.execute_kw(
-            ODOO_DB, uid, ODOO_PASSWORD,
-            'ir.module.module', 'search',
-            [[['name', '=', 'account_payment']]]
+            ODOO_DB,
+            uid,
+            ODOO_PASSWORD,
+            "ir.module.module",
+            "search",
+            [[["name", "=", "account_payment"]]],
         )
 
         if not module_ids:
-            logger.warning("account_payment module not found (likely CE vs Enterprise issue)")
+            logger.warning(
+                "account_payment module not found (likely CE vs Enterprise issue)"
+            )
             return
 
         module = models.execute_kw(
-            ODOO_DB, uid, ODOO_PASSWORD,
-            'ir.module.module', 'read',
-            [module_ids, ['state', 'name']]
+            ODOO_DB,
+            uid,
+            ODOO_PASSWORD,
+            "ir.module.module",
+            "read",
+            [module_ids, ["state", "name"]],
         )[0]
 
-        if module['state'] == 'uninstalled':
+        if module["state"] == "uninstalled":
             logger.info("Installing account_payment module...")
             models.execute_kw(
-                ODOO_DB, uid, ODOO_PASSWORD,
-                'ir.module.module', 'button_immediate_install',
-                [module_ids]
+                ODOO_DB,
+                uid,
+                ODOO_PASSWORD,
+                "ir.module.module",
+                "button_immediate_install",
+                [module_ids],
             )
             logger.info("Module installation triggered (requires restart)")
-        elif module['state'] == 'installed':
+        elif module["state"] == "installed":
             logger.info("account_payment module is already installed")
             logger.info("Attempting module upgrade...")
             models.execute_kw(
-                ODOO_DB, uid, ODOO_PASSWORD,
-                'ir.module.module', 'button_immediate_upgrade',
-                [module_ids]
+                ODOO_DB,
+                uid,
+                ODOO_PASSWORD,
+                "ir.module.module",
+                "button_immediate_upgrade",
+                [module_ids],
             )
         else:
             logger.info(f"Module state: {module['state']}")
@@ -190,14 +232,26 @@ def install_account_payment_module(models, uid, dry_run=True):
     except Exception as e:
         logger.error(f"Error with module operation: {e}")
 
+
 def main():
     """Main execution flow"""
 
     import argparse
-    parser = argparse.ArgumentParser(description='Fix pay_invoices_online field error')
-    parser.add_argument('--dry-run', action='store_true', help='Show what would be done without making changes')
-    parser.add_argument('--remove-field', action='store_true', help='Remove field references from views')
-    parser.add_argument('--install-module', action='store_true', help='Attempt to install/upgrade account_payment module')
+
+    parser = argparse.ArgumentParser(description="Fix pay_invoices_online field error")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would be done without making changes",
+    )
+    parser.add_argument(
+        "--remove-field", action="store_true", help="Remove field references from views"
+    )
+    parser.add_argument(
+        "--install-module",
+        action="store_true",
+        help="Attempt to install/upgrade account_payment module",
+    )
     args = parser.parse_args()
 
     if not ODOO_USERNAME or not ODOO_PASSWORD:
@@ -226,7 +280,9 @@ def main():
 
         if args.remove_field or (not field_exists and not args.install_module):
             logger.info("\n=== REMOVING FIELD REFERENCES ===")
-            remove_field_from_views(models, uid, [v['id'] for v in views], dry_run=args.dry_run)
+            remove_field_from_views(
+                models, uid, [v["id"] for v in views], dry_run=args.dry_run
+            )
 
         if args.dry_run:
             logger.info("\n=== DRY RUN COMPLETE ===")
@@ -242,5 +298,6 @@ def main():
         logger.error(f"Fatal error: {e}")
         sys.exit(1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -207,7 +207,7 @@ def check_view_mode_tree() -> int:
 
             with open(xml_file, "r", encoding="utf-8") as f:
                 for line_num, line in enumerate(f, 1):
-                    if re.search(r'view_mode.*\btree\b', line):
+                    if re.search(r"view_mode.*\btree\b", line):
                         violations.append(
                             Violation(
                                 "LINT-012",
@@ -248,7 +248,14 @@ def check_asset_locations() -> int:
                 rel_path = asset_file.relative_to(static_dir / "src")
             except ValueError:
                 # Not in static/src/
-                if asset_file.suffix in [".js", ".xml", ".scss", ".css", ".sass", ".less"]:
+                if asset_file.suffix in [
+                    ".js",
+                    ".xml",
+                    ".scss",
+                    ".css",
+                    ".sass",
+                    ".less",
+                ]:
                     violations.append(
                         Violation(
                             "LINT-021",
@@ -302,7 +309,10 @@ def check_registered_assets() -> int:
             asset_path = f"{module_dir.name}/{rel_path}"
 
             # Simple check: is the path mentioned in manifest?
-            if asset_path not in manifest_content and str(rel_path) not in manifest_content:
+            if (
+                asset_path not in manifest_content
+                and str(rel_path) not in manifest_content
+            ):
                 # Check for glob patterns like "static/src/js/**/*"
                 parent_glob = f"{module_dir.name}/static/src/{asset_file.parent.relative_to(static_src).parts[0] if asset_file.parent != static_src else ''}/**/*"
                 if parent_glob not in manifest_content:
@@ -336,7 +346,7 @@ def check_inline_scripts() -> int:
 
             with open(xml_file, "r", encoding="utf-8") as f:
                 for line_num, line in enumerate(f, 1):
-                    if re.search(r'<script[^>]*src=|<link[^>]*href=.*\.(js|css)', line):
+                    if re.search(r"<script[^>]*src=|<link[^>]*href=.*\.(js|css)", line):
                         violations.append(
                             Violation(
                                 "LINT-023",
@@ -384,7 +394,9 @@ def check_explicit_dependencies() -> int:
             continue
 
         # Extract depends list
-        depends_match = re.search(r"'depends'\s*:\s*\[(.*?)\]", manifest_content, re.DOTALL)
+        depends_match = re.search(
+            r"'depends'\s*:\s*\[(.*?)\]", manifest_content, re.DOTALL
+        )
         if not depends_match:
             continue
 
@@ -551,15 +563,15 @@ def fix_view_mode_tree() -> int:
             # Pattern 1: view_mode attribute value (view_mode="tree,form")
             new_content = re.sub(
                 r'(view_mode\s*=\s*["\'])([^"\']*\b)tree(\b[^"\']*["\'])',
-                r'\1\2list\3',
-                new_content
+                r"\1\2list\3",
+                new_content,
             )
 
             # Pattern 2: view_mode field content (<field name="view_mode">tree,form</field>)
             new_content = re.sub(
                 r'(<field\s+name=["\']view_mode["\']>)([^<]*\b)tree(\b[^<]*)(</field>)',
-                r'\1\2list\3\4',
-                new_content
+                r"\1\2list\3\4",
+                new_content,
             )
 
             # Write back if changed

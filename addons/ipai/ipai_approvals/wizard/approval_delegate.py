@@ -5,19 +5,15 @@ from odoo.exceptions import UserError
 
 class IPAIApprovalDelegate(models.TransientModel):
     """Wizard to delegate an approval to another user."""
+
     _name = "ipai.approval.delegate.wizard"
     _description = "Delegate Approval Wizard"
 
     approver_id = fields.Many2one(
-        "ipai.approval.approver",
-        required=True,
-        string="Approval Record"
+        "ipai.approval.approver", required=True, string="Approval Record"
     )
     delegate_to_id = fields.Many2one(
-        "res.users",
-        required=True,
-        string="Delegate To",
-        domain=[("active", "=", True)]
+        "res.users", required=True, string="Delegate To", domain=[("active", "=", True)]
     )
     reason = fields.Text(string="Reason for Delegation")
 

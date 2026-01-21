@@ -35,24 +35,28 @@ def get_supabase_client() -> Client:
     return create_client(url, key), project_ref
 
 
-def discover_database_schemas(client: Client, project_ref: str) -> tuple[List[Dict], List[Dict]]:
+def discover_database_schemas(
+    client: Client, project_ref: str
+) -> tuple[List[Dict], List[Dict]]:
     """Discover database schemas via information_schema"""
     nodes = []
     edges = []
 
     # Create project node
     project_id = f"supabase:project:{project_ref}"
-    nodes.append({
-        "id": project_id,
-        "source": "supabase",
-        "kind": "project",
-        "key": project_ref,
-        "name": f"Supabase Project ({project_ref})",
-        "props": {
-            "project_ref": project_ref,
-            "url": os.environ.get("SUPABASE_URL")
+    nodes.append(
+        {
+            "id": project_id,
+            "source": "supabase",
+            "kind": "project",
+            "key": project_ref,
+            "name": f"Supabase Project ({project_ref})",
+            "props": {
+                "project_ref": project_ref,
+                "url": os.environ.get("SUPABASE_URL"),
+            },
         }
-    })
+    )
 
     # Query information_schema for schemas
     try:
@@ -67,28 +71,32 @@ def discover_database_schemas(client: Client, project_ref: str) -> tuple[List[Di
                     continue
 
                 schema_id = f"supabase:schema:{project_ref}:{schema_name}"
-                nodes.append({
-                    "id": schema_id,
-                    "source": "supabase",
-                    "kind": "schema",
-                    "key": f"{project_ref}:{schema_name}",
-                    "name": schema_name,
-                    "props": {
-                        "project_ref": project_ref,
-                        "schema_name": schema_name,
-                        "table_count": schema_info.get("table_count", 0)
+                nodes.append(
+                    {
+                        "id": schema_id,
+                        "source": "supabase",
+                        "kind": "schema",
+                        "key": f"{project_ref}:{schema_name}",
+                        "name": schema_name,
+                        "props": {
+                            "project_ref": project_ref,
+                            "schema_name": schema_name,
+                            "table_count": schema_info.get("table_count", 0),
+                        },
                     }
-                })
+                )
 
                 # Create edge: project HAS_SCHEMA schema
-                edges.append({
-                    "id": f"{project_id}→{schema_id}",
-                    "source": "supabase",
-                    "from_id": project_id,
-                    "to_id": schema_id,
-                    "type": "HAS_SCHEMA",
-                    "props": {}
-                })
+                edges.append(
+                    {
+                        "id": f"{project_id}→{schema_id}",
+                        "source": "supabase",
+                        "from_id": project_id,
+                        "to_id": schema_id,
+                        "type": "HAS_SCHEMA",
+                        "props": {},
+                    }
+                )
     except Exception as e:
         print(f"WARNING: Could not query schemas via RPC: {e}")
         print("Falling back to hardcoded known schemas...")
@@ -97,27 +105,31 @@ def discover_database_schemas(client: Client, project_ref: str) -> tuple[List[Di
         known_schemas = ["public", "auth", "storage", "infra", "scout"]
         for schema_name in known_schemas:
             schema_id = f"supabase:schema:{project_ref}:{schema_name}"
-            nodes.append({
-                "id": schema_id,
-                "source": "supabase",
-                "kind": "schema",
-                "key": f"{project_ref}:{schema_name}",
-                "name": schema_name,
-                "props": {
-                    "project_ref": project_ref,
-                    "schema_name": schema_name,
-                    "discovered_via": "fallback"
+            nodes.append(
+                {
+                    "id": schema_id,
+                    "source": "supabase",
+                    "kind": "schema",
+                    "key": f"{project_ref}:{schema_name}",
+                    "name": schema_name,
+                    "props": {
+                        "project_ref": project_ref,
+                        "schema_name": schema_name,
+                        "discovered_via": "fallback",
+                    },
                 }
-            })
+            )
 
-            edges.append({
-                "id": f"{project_id}→{schema_id}",
-                "source": "supabase",
-                "from_id": project_id,
-                "to_id": schema_id,
-                "type": "HAS_SCHEMA",
-                "props": {}
-            })
+            edges.append(
+                {
+                    "id": f"{project_id}→{schema_id}",
+                    "source": "supabase",
+                    "from_id": project_id,
+                    "to_id": schema_id,
+                    "type": "HAS_SCHEMA",
+                    "props": {},
+                }
+            )
 
     return nodes, edges
 
@@ -152,29 +164,33 @@ def discover_tables(client: Client, project_ref: str) -> tuple[List[Dict], List[
 
             for table_name in tables:
                 table_id = f"supabase:table:{project_ref}:{schema_name}.{table_name}"
-                nodes.append({
-                    "id": table_id,
-                    "source": "supabase",
-                    "kind": "table",
-                    "key": f"{project_ref}:{schema_name}.{table_name}",
-                    "name": f"{schema_name}.{table_name}",
-                    "props": {
-                        "project_ref": project_ref,
-                        "schema_name": schema_name,
-                        "table_name": table_name,
-                        "discovered_via": "hardcoded"  # TODO: Replace with actual discovery
+                nodes.append(
+                    {
+                        "id": table_id,
+                        "source": "supabase",
+                        "kind": "table",
+                        "key": f"{project_ref}:{schema_name}.{table_name}",
+                        "name": f"{schema_name}.{table_name}",
+                        "props": {
+                            "project_ref": project_ref,
+                            "schema_name": schema_name,
+                            "table_name": table_name,
+                            "discovered_via": "hardcoded",  # TODO: Replace with actual discovery
+                        },
                     }
-                })
+                )
 
                 # Create edge: schema HAS_TABLE table
-                edges.append({
-                    "id": f"{schema_id}→{table_id}",
-                    "source": "supabase",
-                    "from_id": schema_id,
-                    "to_id": table_id,
-                    "type": "HAS_TABLE",
-                    "props": {}
-                })
+                edges.append(
+                    {
+                        "id": f"{schema_id}→{table_id}",
+                        "source": "supabase",
+                        "from_id": schema_id,
+                        "to_id": table_id,
+                        "type": "HAS_TABLE",
+                        "props": {},
+                    }
+                )
 
         except Exception as e:
             print(f"WARNING: Could not discover tables in schema {schema_name}: {e}")
@@ -183,7 +199,9 @@ def discover_tables(client: Client, project_ref: str) -> tuple[List[Dict], List[
     return nodes, edges
 
 
-def discover_storage_buckets(client: Client, project_ref: str) -> tuple[List[Dict], List[Dict]]:
+def discover_storage_buckets(
+    client: Client, project_ref: str
+) -> tuple[List[Dict], List[Dict]]:
     """Discover Supabase Storage buckets"""
     nodes = []
     edges = []
@@ -191,27 +209,29 @@ def discover_storage_buckets(client: Client, project_ref: str) -> tuple[List[Dic
     storage_id = f"supabase:storage:{project_ref}"
 
     # Create storage service node
-    nodes.append({
-        "id": storage_id,
-        "source": "supabase",
-        "kind": "storage",
-        "key": project_ref,
-        "name": "Supabase Storage",
-        "props": {
-            "project_ref": project_ref
+    nodes.append(
+        {
+            "id": storage_id,
+            "source": "supabase",
+            "kind": "storage",
+            "key": project_ref,
+            "name": "Supabase Storage",
+            "props": {"project_ref": project_ref},
         }
-    })
+    )
 
     # Edge: project HAS_STORAGE storage
     project_id = f"supabase:project:{project_ref}"
-    edges.append({
-        "id": f"{project_id}→{storage_id}",
-        "source": "supabase",
-        "from_id": project_id,
-        "to_id": storage_id,
-        "type": "HAS_STORAGE",
-        "props": {}
-    })
+    edges.append(
+        {
+            "id": f"{project_id}→{storage_id}",
+            "source": "supabase",
+            "from_id": project_id,
+            "to_id": storage_id,
+            "type": "HAS_STORAGE",
+            "props": {},
+        }
+    )
 
     try:
         # Query buckets
@@ -221,30 +241,34 @@ def discover_storage_buckets(client: Client, project_ref: str) -> tuple[List[Dic
             bucket_id = bucket.get("id") or bucket.get("name")
             bucket_node_id = f"supabase:bucket:{project_ref}:{bucket_id}"
 
-            nodes.append({
-                "id": bucket_node_id,
-                "source": "supabase",
-                "kind": "bucket",
-                "key": f"{project_ref}:{bucket_id}",
-                "name": bucket.get("name", bucket_id),
-                "props": {
-                    "project_ref": project_ref,
-                    "bucket_id": bucket_id,
-                    "public": bucket.get("public", False),
-                    "file_size_limit": bucket.get("file_size_limit"),
-                    "allowed_mime_types": bucket.get("allowed_mime_types", [])
+            nodes.append(
+                {
+                    "id": bucket_node_id,
+                    "source": "supabase",
+                    "kind": "bucket",
+                    "key": f"{project_ref}:{bucket_id}",
+                    "name": bucket.get("name", bucket_id),
+                    "props": {
+                        "project_ref": project_ref,
+                        "bucket_id": bucket_id,
+                        "public": bucket.get("public", False),
+                        "file_size_limit": bucket.get("file_size_limit"),
+                        "allowed_mime_types": bucket.get("allowed_mime_types", []),
+                    },
                 }
-            })
+            )
 
             # Edge: storage HAS_BUCKET bucket
-            edges.append({
-                "id": f"{storage_id}→{bucket_node_id}",
-                "source": "supabase",
-                "from_id": storage_id,
-                "to_id": bucket_node_id,
-                "type": "HAS_BUCKET",
-                "props": {}
-            })
+            edges.append(
+                {
+                    "id": f"{storage_id}→{bucket_node_id}",
+                    "source": "supabase",
+                    "from_id": storage_id,
+                    "to_id": bucket_node_id,
+                    "type": "HAS_BUCKET",
+                    "props": {},
+                }
+            )
 
     except Exception as e:
         print(f"WARNING: Could not query storage buckets: {e}")
@@ -299,10 +323,10 @@ def main():
     nodes_path = output_dir / "supabase_nodes.json"
     edges_path = output_dir / "supabase_edges.json"
 
-    with open(nodes_path, 'w') as f:
+    with open(nodes_path, "w") as f:
         json.dump(all_nodes, f, indent=2)
 
-    with open(edges_path, 'w') as f:
+    with open(edges_path, "w") as f:
         json.dump(all_edges, f, indent=2)
 
     print("=" * 60)

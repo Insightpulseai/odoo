@@ -2,7 +2,7 @@
 
 **Status**: ⚠️ WARN
 **Version**: 18.0.1.0.0
-**Author**: InsightPulseAI
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -21,7 +21,7 @@ Program (parent project) + Implementation Modules (IM1/IM2) as child projects + 
 | Views | 6 |
 | Menus | 7 |
 | Actions | 4 |
-| Data Files | 6 |
+| Data Files | 7 |
 
 ## Validation Results
 
@@ -48,4 +48,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_project_program --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.741679_
+_Audited: 2026-01-21T22:42:54.303694_

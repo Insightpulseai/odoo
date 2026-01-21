@@ -131,27 +131,23 @@ def main():
     ap.add_argument(
         "--workbook",
         required=True,
-        help="Path to Month-end Closing Task and Tax Filing workbook (.xlsx)"
+        help="Path to Month-end Closing Task and Tax Filing workbook (.xlsx)",
     )
     ap.add_argument(
         "--outdir",
         default="data",
-        help="Output directory for generated CSVs (default: data)"
+        help="Output directory for generated CSVs (default: data)",
     )
     ap.add_argument(
-        "--user_map",
-        default="",
-        help="Optional CSV mapping employee_code->email"
+        "--user_map", default="", help="Optional CSV mapping employee_code->email"
     )
     ap.add_argument(
         "--project_close",
         default="Month-end Close",
-        help="Name for Month-end Close project"
+        help="Name for Month-end Close project",
     )
     ap.add_argument(
-        "--project_tax",
-        default="Tax Filing",
-        help="Name for Tax Filing project"
+        "--project_tax", default="Tax Filing", help="Name for Tax Filing project"
     )
     args = ap.parse_args()
 
@@ -264,9 +260,13 @@ def main():
             if not detailed:
                 continue
             matrix_defaults[detailed] = {
-                "Preparation": normalize_assignee_cell(r.get("Preparation", ""), code_to_email),
+                "Preparation": normalize_assignee_cell(
+                    r.get("Preparation", ""), code_to_email
+                ),
                 "Review": normalize_assignee_cell(r.get("Review", ""), code_to_email),
-                "Approval": normalize_assignee_cell(r.get("Approval", ""), code_to_email),
+                "Approval": normalize_assignee_cell(
+                    r.get("Approval", ""), code_to_email
+                ),
             }
 
     # -----------------------------
@@ -305,21 +305,23 @@ def main():
 
         parent_ext = f"close_{slug(detailed)}"
         if parent_ext not in parents_seen:
-            tasks.append({
-                "External ID (optional)": parent_ext,
-                "Task Name* (project.task/name)": detailed,
-                "Project Name* (project_id/name)": P_CLOSE,
-                "Stage Name (stage_id/name)": "Preparation",
-                "Assignee Emails (comma-separated) (user_ids/login)": "",
-                "Start Date (planned_date_begin or date_start)": "",
-                "Due Date (date_deadline)": "",
-                "End Date (planned_date_end) (optional)": "",
-                "Planned Hours (planned_hours)": "",
-                "Priority (0-3)": "",
-                "Tags (comma-separated) (tag_ids/name)": cat,
-                "Description (plain text)": "",
-                "Parent Task External ID (optional parent_id/id)": "",
-            })
+            tasks.append(
+                {
+                    "External ID (optional)": parent_ext,
+                    "Task Name* (project.task/name)": detailed,
+                    "Project Name* (project_id/name)": P_CLOSE,
+                    "Stage Name (stage_id/name)": "Preparation",
+                    "Assignee Emails (comma-separated) (user_ids/login)": "",
+                    "Start Date (planned_date_begin or date_start)": "",
+                    "Due Date (date_deadline)": "",
+                    "End Date (planned_date_end) (optional)": "",
+                    "Planned Hours (planned_hours)": "",
+                    "Priority (0-3)": "",
+                    "Tags (comma-separated) (tag_ids/name)": cat,
+                    "Description (plain text)": "",
+                    "Parent Task External ID (optional parent_id/id)": "",
+                }
+            )
             parents_seen.add(parent_ext)
 
         # Prefer matrix default for that detailed task + stage, else fallback to gantt email
@@ -328,22 +330,28 @@ def main():
             default_email = matrix_defaults[detailed].get(stage, "") or ""
         assignee = default_email if default_email else email_row
 
-        child_ext = f"{parent_ext}_{slug(stage)}_{date_iso.replace('-', '')}" if date_iso else f"{parent_ext}_{slug(stage)}"
-        tasks.append({
-            "External ID (optional)": child_ext,
-            "Task Name* (project.task/name)": f"{detailed} — {stage}",
-            "Project Name* (project_id/name)": P_CLOSE,
-            "Stage Name (stage_id/name)": stage,
-            "Assignee Emails (comma-separated) (user_ids/login)": assignee,
-            "Start Date (planned_date_begin or date_start)": date_iso,
-            "Due Date (date_deadline)": date_iso,
-            "End Date (planned_date_end) (optional)": date_iso,
-            "Planned Hours (planned_hours)": "",
-            "Priority (0-3)": "",
-            "Tags (comma-separated) (tag_ids/name)": cat,
-            "Description (plain text)": "",
-            "Parent Task External ID (optional parent_id/id)": parent_ext,
-        })
+        child_ext = (
+            f"{parent_ext}_{slug(stage)}_{date_iso.replace('-', '')}"
+            if date_iso
+            else f"{parent_ext}_{slug(stage)}"
+        )
+        tasks.append(
+            {
+                "External ID (optional)": child_ext,
+                "Task Name* (project.task/name)": f"{detailed} — {stage}",
+                "Project Name* (project_id/name)": P_CLOSE,
+                "Stage Name (stage_id/name)": stage,
+                "Assignee Emails (comma-separated) (user_ids/login)": assignee,
+                "Start Date (planned_date_begin or date_start)": date_iso,
+                "Due Date (date_deadline)": date_iso,
+                "End Date (planned_date_end) (optional)": date_iso,
+                "Planned Hours (planned_hours)": "",
+                "Priority (0-3)": "",
+                "Tags (comma-separated) (tag_ids/name)": cat,
+                "Description (plain text)": "",
+                "Parent Task External ID (optional parent_id/id)": parent_ext,
+            }
+        )
 
     # Process Tax Filing
     # Try multiple possible header patterns
@@ -373,42 +381,50 @@ def main():
         parent_ext = f"tax_{slug(form)}_{slug(period) if period else 'period'}"
 
         dl = fmt_date(r.get(deadline_col)) if deadline_col else ""
-        tasks.append({
-            "External ID (optional)": parent_ext,
-            "Task Name* (project.task/name)": parent_name,
-            "Project Name* (project_id/name)": P_TAX,
-            "Stage Name (stage_id/name)": "Preparation",
-            "Assignee Emails (comma-separated) (user_ids/login)": "",
-            "Start Date (planned_date_begin or date_start)": "",
-            "Due Date (date_deadline)": dl,
-            "End Date (planned_date_end) (optional)": "",
-            "Planned Hours (planned_hours)": "",
-            "Priority (0-3)": "",
-            "Tags (comma-separated) (tag_ids/name)": "Tax Filing",
-            "Description (plain text)": (f"Deadline: {dl}" if dl else ""),
-            "Parent Task External ID (optional parent_id/id)": "",
-        })
+        tasks.append(
+            {
+                "External ID (optional)": parent_ext,
+                "Task Name* (project.task/name)": parent_name,
+                "Project Name* (project_id/name)": P_TAX,
+                "Stage Name (stage_id/name)": "Preparation",
+                "Assignee Emails (comma-separated) (user_ids/login)": "",
+                "Start Date (planned_date_begin or date_start)": "",
+                "Due Date (date_deadline)": dl,
+                "End Date (planned_date_end) (optional)": "",
+                "Planned Hours (planned_hours)": "",
+                "Priority (0-3)": "",
+                "Tags (comma-separated) (tag_ids/name)": "Tax Filing",
+                "Description (plain text)": (f"Deadline: {dl}" if dl else ""),
+                "Parent Task External ID (optional parent_id/id)": "",
+            }
+        )
 
         for stage, col, role in step_cols:
             if col not in tax.columns or not is_nonempty(r.get(col)):
                 continue
             iso = fmt_date(r.get(col))
-            child_ext = f"{parent_ext}_{slug(stage)}_{iso.replace('-', '')}" if iso else f"{parent_ext}_{slug(stage)}"
-            tasks.append({
-                "External ID (optional)": child_ext,
-                "Task Name* (project.task/name)": f"{parent_name} — {stage}",
-                "Project Name* (project_id/name)": P_TAX,
-                "Stage Name (stage_id/name)": stage,
-                "Assignee Emails (comma-separated) (user_ids/login)": f"<<MAP:{role}>>",
-                "Start Date (planned_date_begin or date_start)": iso,
-                "Due Date (date_deadline)": iso,
-                "End Date (planned_date_end) (optional)": iso,
-                "Planned Hours (planned_hours)": "",
-                "Priority (0-3)": "",
-                "Tags (comma-separated) (tag_ids/name)": "Tax Filing",
-                "Description (plain text)": "",
-                "Parent Task External ID (optional parent_id/id)": parent_ext,
-            })
+            child_ext = (
+                f"{parent_ext}_{slug(stage)}_{iso.replace('-', '')}"
+                if iso
+                else f"{parent_ext}_{slug(stage)}"
+            )
+            tasks.append(
+                {
+                    "External ID (optional)": child_ext,
+                    "Task Name* (project.task/name)": f"{parent_name} — {stage}",
+                    "Project Name* (project_id/name)": P_TAX,
+                    "Stage Name (stage_id/name)": stage,
+                    "Assignee Emails (comma-separated) (user_ids/login)": f"<<MAP:{role}>>",
+                    "Start Date (planned_date_begin or date_start)": iso,
+                    "Due Date (date_deadline)": iso,
+                    "End Date (planned_date_end) (optional)": iso,
+                    "Planned Hours (planned_hours)": "",
+                    "Priority (0-3)": "",
+                    "Tags (comma-separated) (tag_ids/name)": "Tax Filing",
+                    "Description (plain text)": "",
+                    "Parent Task External ID (optional parent_id/id)": parent_ext,
+                }
+            )
 
     # -----------------------------
     # Calendar Events from holidays
@@ -434,27 +450,61 @@ def main():
             tag = "Holiday"
             if "Type" in hol.columns and is_nonempty(r.get("Type")):
                 tag = str(r.get("Type")).strip()
-            cal_rows.append({
-                "External ID (optional)": f"holiday_{d.replace('-', '')}_{slug(name)}",
-                "Event Title* (calendar.event/name)": name,
-                "All Day (Y/N)": "Y",
-                "Start (YYYY-MM-DD)": d,
-                "End (YYYY-MM-DD)": d,
-                "Description": "Imported from Holidays & Calendar",
-                "Tags (optional)": tag,
-            })
+            cal_rows.append(
+                {
+                    "External ID (optional)": f"holiday_{d.replace('-', '')}_{slug(name)}",
+                    "Event Title* (calendar.event/name)": name,
+                    "All Day (Y/N)": "Y",
+                    "Start (YYYY-MM-DD)": d,
+                    "End (YYYY-MM-DD)": d,
+                    "Description": "Imported from Holidays & Calendar",
+                    "Tags (optional)": tag,
+                }
+            )
         print(f"Processing {len(cal_rows)} calendar events from Holidays & Calendar")
 
     # Split Pass A (parents) / Pass B (children)
-    parents_rows = [t for t in tasks if not str(t.get("Parent Task External ID (optional parent_id/id)", "") or "").strip()]
-    children_rows = [t for t in tasks if str(t.get("Parent Task External ID (optional parent_id/id)", "") or "").strip()]
+    parents_rows = [
+        t
+        for t in tasks
+        if not str(
+            t.get("Parent Task External ID (optional parent_id/id)", "") or ""
+        ).strip()
+    ]
+    children_rows = [
+        t
+        for t in tasks
+        if str(
+            t.get("Parent Task External ID (optional parent_id/id)", "") or ""
+        ).strip()
+    ]
 
     # Write outputs
-    write_csv(os.path.join(outdir, "odoo_import_month_end_projects.csv"), projects_rows, projects_fields)
-    write_csv(os.path.join(outdir, "odoo_import_month_end_stages.csv"), stages_rows, stages_fields)
-    write_csv(os.path.join(outdir, "odoo_import_month_end_tasks_PassA_parents.csv"), parents_rows, task_fields)
-    write_csv(os.path.join(outdir, "odoo_import_month_end_tasks_PassB_children.csv"), children_rows, task_fields)
-    write_csv(os.path.join(outdir, "odoo_import_month_end_calendar_events.csv"), cal_rows, cal_fields)
+    write_csv(
+        os.path.join(outdir, "odoo_import_month_end_projects.csv"),
+        projects_rows,
+        projects_fields,
+    )
+    write_csv(
+        os.path.join(outdir, "odoo_import_month_end_stages.csv"),
+        stages_rows,
+        stages_fields,
+    )
+    write_csv(
+        os.path.join(outdir, "odoo_import_month_end_tasks_PassA_parents.csv"),
+        parents_rows,
+        task_fields,
+    )
+    write_csv(
+        os.path.join(outdir, "odoo_import_month_end_tasks_PassB_children.csv"),
+        children_rows,
+        task_fields,
+    )
+    write_csv(
+        os.path.join(outdir, "odoo_import_month_end_calendar_events.csv"),
+        cal_rows,
+        cal_fields,
+    )
 
     print("\nGenerated:")
     for p in [

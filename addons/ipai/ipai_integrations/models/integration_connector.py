@@ -12,40 +12,50 @@ class IntegrationConnector(models.Model):
     name = fields.Char(required=True)
     code = fields.Char(
         required=True,
-        help="Unique code for the connector (e.g., mattermost, focalboard, n8n)"
+        help="Unique code for the connector (e.g., mattermost, focalboard, n8n)",
     )
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
 
-    connector_type = fields.Selection([
-        ("mattermost", "Mattermost"),
-        ("focalboard", "Focalboard"),
-        ("n8n", "n8n"),
-        ("custom", "Custom"),
-    ], required=True)
+    connector_type = fields.Selection(
+        [
+            ("mattermost", "Mattermost"),
+            ("focalboard", "Focalboard"),
+            ("n8n", "n8n"),
+            ("custom", "Custom"),
+        ],
+        required=True,
+    )
 
     # Connection settings
     base_url = fields.Char(
         string="Base URL",
-        help="Base URL of the external service (e.g., https://chat.insightpulseai.net)"
+        help="Base URL of the external service (e.g., https://chat.insightpulseai.net)",
     )
     api_version = fields.Char(default="v4", help="API version to use")
 
     # Authentication
-    auth_type = fields.Selection([
-        ("token", "Personal Access Token"),
-        ("oauth", "OAuth 2.0"),
-        ("basic", "Basic Auth"),
-        ("none", "None"),
-    ], default="token")
+    auth_type = fields.Selection(
+        [
+            ("token", "Personal Access Token"),
+            ("oauth", "OAuth 2.0"),
+            ("basic", "Basic Auth"),
+            ("none", "None"),
+        ],
+        default="token",
+    )
 
     # Status
-    state = fields.Selection([
-        ("draft", "Not Configured"),
-        ("testing", "Testing"),
-        ("active", "Active"),
-        ("error", "Error"),
-    ], default="draft", readonly=True)
+    state = fields.Selection(
+        [
+            ("draft", "Not Configured"),
+            ("testing", "Testing"),
+            ("active", "Active"),
+            ("error", "Error"),
+        ],
+        default="draft",
+        readonly=True,
+    )
     last_ping = fields.Datetime(readonly=True)
     last_error = fields.Text(readonly=True)
 
@@ -53,9 +63,7 @@ class IntegrationConnector(models.Model):
     webhook_ids = fields.One2many(
         "ipai.integration.webhook", "connector_id", string="Webhooks"
     )
-    bot_ids = fields.One2many(
-        "ipai.integration.bot", "connector_id", string="Bots"
-    )
+    bot_ids = fields.One2many("ipai.integration.bot", "connector_id", string="Bots")
     oauth_app_ids = fields.One2many(
         "ipai.integration.oauth", "connector_id", string="OAuth Apps"
     )
@@ -82,9 +90,11 @@ class IntegrationConnector(models.Model):
 
     def _log_audit(self, action, message, level="info"):
         """Create an audit log entry."""
-        self.env["ipai.integration.audit"].create({
-            "connector_id": self.id,
-            "action": action,
-            "message": message,
-            "level": level,
-        })
+        self.env["ipai.integration.audit"].create(
+            {
+                "connector_id": self.id,
+                "action": action,
+                "message": message,
+                "level": level,
+            }
+        )

@@ -8,43 +8,32 @@ class ProjectMilestone(models.Model):
     _order = "date_target, sequence, id"
     _inherit = ["mail.thread", "mail.activity.mixin"]
 
-    name = fields.Char(
-        string="Milestone Name",
-        required=True,
-        tracking=True
-    )
+    name = fields.Char(string="Milestone Name", required=True, tracking=True)
     project_id = fields.Many2one(
         "project.project",
         string="Project",
         required=True,
         ondelete="cascade",
-        index=True
+        index=True,
     )
     company_id = fields.Many2one(
-        related="project_id.company_id",
-        store=True,
-        readonly=True
+        related="project_id.company_id", store=True, readonly=True
     )
     owner_id = fields.Many2one(
         "res.users",
         string="Owner",
         tracking=True,
-        help="User responsible for this milestone."
+        help="User responsible for this milestone.",
     )
     date_target = fields.Date(
         string="Target Date",
         tracking=True,
-        help="Target date for milestone completion."
+        help="Target date for milestone completion.",
     )
     date_actual = fields.Date(
-        string="Actual Date",
-        tracking=True,
-        help="Actual completion date."
+        string="Actual Date", tracking=True, help="Actual completion date."
     )
-    sequence = fields.Integer(
-        string="Sequence",
-        default=10
-    )
+    sequence = fields.Integer(string="Sequence", default=10)
     state = fields.Selection(
         [
             ("open", "Open"),
@@ -53,30 +42,22 @@ class ProjectMilestone(models.Model):
         ],
         string="State",
         default="open",
-        tracking=True
+        tracking=True,
     )
-    description = fields.Text(
-        string="Description"
-    )
+    description = fields.Text(string="Description")
     task_ids = fields.One2many(
         "project.task",
         "ipai_milestone_id",
         string="Tasks",
-        help="Tasks linked to this milestone."
+        help="Tasks linked to this milestone.",
     )
-    task_count = fields.Integer(
-        compute="_compute_task_count",
-        string="Task Count"
-    )
+    task_count = fields.Integer(compute="_compute_task_count", string="Task Count")
     progress = fields.Float(
         compute="_compute_progress",
         string="Progress (%)",
-        help="Percentage of linked tasks completed."
+        help="Percentage of linked tasks completed.",
     )
-    active = fields.Boolean(
-        string="Active",
-        default=True
-    )
+    active = fields.Boolean(string="Active", default=True)
 
     def _compute_task_count(self):
         for rec in self:
@@ -94,17 +75,21 @@ class ProjectMilestone(models.Model):
 
     def action_mark_done(self):
         """Mark milestone as done."""
-        self.write({
-            "state": "done",
-            "date_actual": fields.Date.context_today(self),
-        })
+        self.write(
+            {
+                "state": "done",
+                "date_actual": fields.Date.context_today(self),
+            }
+        )
 
     def action_reopen(self):
         """Reopen a cancelled or done milestone."""
-        self.write({
-            "state": "open",
-            "date_actual": False,
-        })
+        self.write(
+            {
+                "state": "open",
+                "date_actual": False,
+            }
+        )
 
     def action_cancel(self):
         """Cancel the milestone."""
@@ -119,5 +104,8 @@ class ProjectMilestone(models.Model):
             "res_model": "project.task",
             "view_mode": "list,form,kanban",
             "domain": [("ipai_milestone_id", "=", self.id)],
-            "context": {"default_ipai_milestone_id": self.id, "default_project_id": self.project_id.id},
+            "context": {
+                "default_ipai_milestone_id": self.id,
+                "default_project_id": self.project_id.id,
+            },
         }

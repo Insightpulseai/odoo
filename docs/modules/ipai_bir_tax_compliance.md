@@ -13,6 +13,7 @@ Philippine BIR tax compliance - 36 eBIRForms support
 - `base`
 - `mail`
 - `account`
+- `project`
 
 ## Module Contents
 
@@ -45,4 +46,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_bir_tax_compliance --stop-after-i
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.194951_
+_Audited: 2026-01-21T22:42:52.823845_

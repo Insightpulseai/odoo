@@ -120,15 +120,9 @@ class MarketingJourneyNode(models.Model):
     )
 
     # Statistics
-    participant_count = fields.Integer(
-        compute="_compute_stats", store=True
-    )
-    success_count = fields.Integer(
-        compute="_compute_stats", store=True
-    )
-    error_count = fields.Integer(
-        compute="_compute_stats", store=True
-    )
+    participant_count = fields.Integer(compute="_compute_stats", store=True)
+    success_count = fields.Integer(compute="_compute_stats", store=True)
+    error_count = fields.Integer(compute="_compute_stats", store=True)
 
     @api.depends("node_type")
     def _compute_is_entry(self):
@@ -200,7 +194,9 @@ class MarketingJourneyNode(models.Model):
                         lambda e: e.edge_type == "false"
                     )[:1]
 
-                return edge.target_node_id if edge else self.env["marketing.journey.node"]
+                return (
+                    edge.target_node_id if edge else self.env["marketing.journey.node"]
+                )
 
         # Default: return all outgoing targets
         return self.outgoing_edge_ids.mapped("target_node_id")
@@ -248,9 +244,7 @@ class MarketingJourneyNode(models.Model):
                 return {"success": False, "error": "No email address found"}
 
             # Use mass_mailing's send mechanism
-            self.mailing_id.with_context(
-                default_res_id=record.id
-            ).action_send_mail()
+            self.mailing_id.with_context(default_res_id=record.id).action_send_mail()
 
             return {
                 "success": True,
@@ -262,10 +256,12 @@ class MarketingJourneyNode(models.Model):
     def _execute_delay(self, participant):
         """Set participant to wait for delay period."""
         wait_until = fields.Datetime.now() + self.get_delay_timedelta()
-        participant.write({
-            "state": "waiting",
-            "wait_until": wait_until,
-        })
+        participant.write(
+            {
+                "state": "waiting",
+                "wait_until": wait_until,
+            }
+        )
         return {
             "success": True,
             "message": f"Waiting until {wait_until}",
@@ -310,10 +306,14 @@ class MarketingJourneyNode(models.Model):
 
         try:
             if self.tag_action == "add":
-                record.write({"category_id": [(4, tag.id) for tag in self.partner_tag_ids]})
+                record.write(
+                    {"category_id": [(4, tag.id) for tag in self.partner_tag_ids]}
+                )
                 return {"success": True, "message": "Tags added"}
             else:
-                record.write({"category_id": [(3, tag.id) for tag in self.partner_tag_ids]})
+                record.write(
+                    {"category_id": [(3, tag.id) for tag in self.partner_tag_ids]}
+                )
                 return {"success": True, "message": "Tags removed"}
         except Exception as e:
             return {"success": False, "error": str(e)}
@@ -328,13 +328,15 @@ class MarketingJourneyNode(models.Model):
             return {"success": False, "error": "Participant record not found"}
 
         try:
-            self.env["mail.activity"].create({
-                "activity_type_id": self.activity_type_id.id,
-                "summary": self.activity_summary or self.name,
-                "res_model_id": participant.journey_id.model_id.id,
-                "res_id": record.id,
-                "user_id": self.activity_user_id.id or self.env.uid,
-            })
+            self.env["mail.activity"].create(
+                {
+                    "activity_type_id": self.activity_type_id.id,
+                    "summary": self.activity_summary or self.name,
+                    "res_model_id": participant.journey_id.model_id.id,
+                    "res_id": record.id,
+                    "user_id": self.activity_user_id.id or self.env.uid,
+                }
+            )
             return {"success": True, "message": "Activity created"}
         except Exception as e:
             return {"success": False, "error": str(e)}

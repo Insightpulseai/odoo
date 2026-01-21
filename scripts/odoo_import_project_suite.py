@@ -69,13 +69,15 @@ class OdooClient:
             "params": {
                 "service": "common",
                 "method": "authenticate",
-                "args": [self.db, self.login, self.password, {}]
+                "args": [self.db, self.login, self.password, {}],
             },
             "id": 1,
         }
         uid = self._jsonrpc("/jsonrpc", payload)
         if not uid:
-            raise RuntimeError("Authentication failed (check ODOO_DB/ODOO_LOGIN/ODOO_PASSWORD).")
+            raise RuntimeError(
+                "Authentication failed (check ODOO_DB/ODOO_LOGIN/ODOO_PASSWORD)."
+            )
         return uid
 
     def call_kw(self, model: str, method: str, args=None, kwargs=None) -> Any:
@@ -132,16 +134,25 @@ def is_iso_date(s: str) -> bool:
 # -----------------------------
 # External ID mapping via ir.model.data
 # -----------------------------
-def ir_model_data_get_res_id(odoo: OdooClient, model: str, ext_id: str) -> Optional[int]:
+def ir_model_data_get_res_id(
+    odoo: OdooClient, model: str, ext_id: str
+) -> Optional[int]:
     """Get resource ID from external ID."""
     ext_id = norm(ext_id)
     if not ext_id:
         return None
-    ids = odoo.call_kw("ir.model.data", "search", [[
-        ["module", "=", IMPORT_MODULE],
-        ["name", "=", ext_id],
-        ["model", "=", model],
-    ]], {"limit": 1})
+    ids = odoo.call_kw(
+        "ir.model.data",
+        "search",
+        [
+            [
+                ["module", "=", IMPORT_MODULE],
+                ["name", "=", ext_id],
+                ["model", "=", model],
+            ]
+        ],
+        {"limit": 1},
+    )
     if not ids:
         return None
     rec = odoo.call_kw("ir.model.data", "read", [ids, ["res_id"]], {})
@@ -153,11 +164,18 @@ def ir_model_data_set(odoo: OdooClient, model: str, ext_id: str, res_id: int) ->
     ext_id = norm(ext_id)
     if not ext_id:
         return
-    ids = odoo.call_kw("ir.model.data", "search", [[
-        ["module", "=", IMPORT_MODULE],
-        ["name", "=", ext_id],
-        ["model", "=", model],
-    ]], {"limit": 1})
+    ids = odoo.call_kw(
+        "ir.model.data",
+        "search",
+        [
+            [
+                ["module", "=", IMPORT_MODULE],
+                ["name", "=", ext_id],
+                ["model", "=", model],
+            ]
+        ],
+        {"limit": 1},
+    )
     vals = {"module": IMPORT_MODULE, "name": ext_id, "model": model, "res_id": res_id}
     if ids:
         odoo.call_kw("ir.model.data", "write", [ids, vals], {})
@@ -168,7 +186,9 @@ def ir_model_data_set(odoo: OdooClient, model: str, ext_id: str, res_id: int) ->
 # -----------------------------
 # Upsert primitives
 # -----------------------------
-def upsert_project(odoo: OdooClient, row: Dict[str, str], project_fields: Dict[str, Any]) -> int:
+def upsert_project(
+    odoo: OdooClient, row: Dict[str, str], project_fields: Dict[str, Any]
+) -> int:
     """Upsert a project record."""
     name = norm(row.get("Project Name*"))
     if not name:
@@ -179,7 +199,9 @@ def upsert_project(odoo: OdooClient, row: Dict[str, str], project_fields: Dict[s
 
     # Fallback: search by name
     if not existing:
-        ids = odoo.call_kw("project.project", "search", [[["name", "=", name]]], {"limit": 1})
+        ids = odoo.call_kw(
+            "project.project", "search", [[["name", "=", name]]], {"limit": 1}
+        )
         existing = ids[0] if ids else None
 
     vals = {"name": name}
@@ -195,9 +217,13 @@ def upsert_project(odoo: OdooClient, row: Dict[str, str], project_fields: Dict[s
 
     pm_email = norm(row.get("Project Manager Email (user_id/login)"))
     if pm_email and "user_id" in project_fields:
-        uids = odoo.call_kw("res.users", "search", [[["login", "=", pm_email]]], {"limit": 1})
+        uids = odoo.call_kw(
+            "res.users", "search", [[["login", "=", pm_email]]], {"limit": 1}
+        )
         if not uids:
-            uids = odoo.call_kw("res.users", "search", [[["email", "=", pm_email]]], {"limit": 1})
+            uids = odoo.call_kw(
+                "res.users", "search", [[["email", "=", pm_email]]], {"limit": 1}
+            )
         if uids:
             vals["user_id"] = uids[0]
 
@@ -212,8 +238,12 @@ def upsert_project(odoo: OdooClient, row: Dict[str, str], project_fields: Dict[s
     return pid
 
 
-def upsert_stage(odoo: OdooClient, row: Dict[str, str], stage_fields: Dict[str, Any],
-                 project_name_to_id: Dict[str, int]) -> int:
+def upsert_stage(
+    odoo: OdooClient,
+    row: Dict[str, str],
+    stage_fields: Dict[str, Any],
+    project_name_to_id: Dict[str, int],
+) -> int:
     """Upsert a stage record."""
     name = norm(row.get("Stage Name* (project.task.type/name)"))
     if not name:
@@ -223,7 +253,9 @@ def upsert_stage(odoo: OdooClient, row: Dict[str, str], stage_fields: Dict[str, 
     existing = ir_model_data_get_res_id(odoo, "project.task.type", ext) if ext else None
 
     if not existing:
-        ids = odoo.call_kw("project.task.type", "search", [[["name", "=", name]]], {"limit": 1})
+        ids = odoo.call_kw(
+            "project.task.type", "search", [[["name", "=", name]]], {"limit": 1}
+        )
         existing = ids[0] if ids else None
 
     vals = {"name": name}
@@ -239,7 +271,11 @@ def upsert_stage(odoo: OdooClient, row: Dict[str, str], stage_fields: Dict[str, 
     if fold is not None and "fold" in stage_fields:
         vals["fold"] = fold
 
-    applies = norm(row.get("Applies to Projects (comma-separated project names) (project_ids/name)"))
+    applies = norm(
+        row.get(
+            "Applies to Projects (comma-separated project names) (project_ids/name)"
+        )
+    )
     if applies and "project_ids" in stage_fields:
         pnames = [p.strip() for p in applies.split(",") if p.strip()]
         pids = [project_name_to_id[p] for p in pnames if p in project_name_to_id]
@@ -270,7 +306,9 @@ def resolve_users_by_emails(odoo: OdooClient, emails_csv: str) -> List[int]:
     for e in emails:
         ids = odoo.call_kw("res.users", "search", [[["login", "=", e]]], {"limit": 1})
         if not ids:
-            ids = odoo.call_kw("res.users", "search", [[["email", "=", e]]], {"limit": 1})
+            ids = odoo.call_kw(
+                "res.users", "search", [[["email", "=", e]]], {"limit": 1}
+            )
         if ids:
             uids.append(ids[0])
     return uids
@@ -281,7 +319,9 @@ def resolve_stage_id(odoo: OdooClient, stage_name: str) -> Optional[int]:
     stage_name = norm(stage_name)
     if not stage_name:
         return None
-    ids = odoo.call_kw("project.task.type", "search", [[["name", "=", stage_name]]], {"limit": 1})
+    ids = odoo.call_kw(
+        "project.task.type", "search", [[["name", "=", stage_name]]], {"limit": 1}
+    )
     return ids[0] if ids else None
 
 
@@ -302,8 +342,12 @@ def resolve_tags(odoo: OdooClient, tags_csv: str) -> List[int]:
     return tag_ids
 
 
-def create_task(odoo: OdooClient, row: Dict[str, str], task_fields: Dict[str, Any],
-                project_name_to_id: Dict[str, int]) -> int:
+def create_task(
+    odoo: OdooClient,
+    row: Dict[str, str],
+    task_fields: Dict[str, Any],
+    project_name_to_id: Dict[str, int],
+) -> int:
     """Create or update a task."""
     name = norm(row.get("Task Name* (project.task/name)"))
     project_name = norm(row.get("Project Name* (project_id/name)"))
@@ -316,7 +360,9 @@ def create_task(odoo: OdooClient, row: Dict[str, str], task_fields: Dict[str, An
     # Resolve project
     pid = project_name_to_id.get(project_name)
     if not pid:
-        ids = odoo.call_kw("project.project", "search", [[["name", "=", project_name]]], {"limit": 1})
+        ids = odoo.call_kw(
+            "project.project", "search", [[["name", "=", project_name]]], {"limit": 1}
+        )
         if not ids:
             raise RuntimeError(f"Project not found: {project_name}")
         pid = ids[0]
@@ -413,7 +459,9 @@ def resolve_event_types(odoo: OdooClient, tags_csv: str) -> List[int]:
     names = [t.strip() for t in tags_csv.split(",") if t.strip()]
     type_ids = []
     for n in names:
-        ids = odoo.call_kw("calendar.event.type", "search", [[["name", "=", n]]], {"limit": 1})
+        ids = odoo.call_kw(
+            "calendar.event.type", "search", [[["name", "=", n]]], {"limit": 1}
+        )
         if ids:
             type_ids.append(ids[0])
         else:
@@ -422,7 +470,9 @@ def resolve_event_types(odoo: OdooClient, tags_csv: str) -> List[int]:
     return type_ids
 
 
-def create_calendar_event(odoo: OdooClient, row: Dict[str, str], event_fields: Dict[str, Any]) -> int:
+def create_calendar_event(
+    odoo: OdooClient, row: Dict[str, str], event_fields: Dict[str, Any]
+) -> int:
     """Create a calendar event."""
     name = norm(row.get("Event Title* (calendar.event/name)"))
     if not name:
@@ -443,12 +493,22 @@ def create_calendar_event(odoo: OdooClient, row: Dict[str, str], event_fields: D
         vals["allday"] = allday
 
     # Prefer date fields if present
-    if "start_date" in event_fields and "stop_date" in event_fields and is_iso_date(start) and is_iso_date(end):
+    if (
+        "start_date" in event_fields
+        and "stop_date" in event_fields
+        and is_iso_date(start)
+        and is_iso_date(end)
+    ):
         vals["start_date"] = start
         vals["stop_date"] = end
     else:
         # Fallback to datetime fields
-        if "start" in event_fields and "stop" in event_fields and is_iso_date(start) and is_iso_date(end):
+        if (
+            "start" in event_fields
+            and "stop" in event_fields
+            and is_iso_date(start)
+            and is_iso_date(end)
+        ):
             vals["start"] = f"{start} 00:00:00"
             vals["stop"] = f"{end} 23:59:59"
 
@@ -483,10 +543,18 @@ def main():
     ap.add_argument("--password", default=os.getenv("ODOO_PASSWORD", ""))
     ap.add_argument("--projects", required=True, help="Projects CSV path")
     ap.add_argument("--stages", required=True, help="Stages CSV path")
-    ap.add_argument("--tasks_parents", required=True, help="Tasks (Pass A - parents) CSV path")
-    ap.add_argument("--tasks_children", required=True, help="Tasks (Pass B - children) CSV path")
-    ap.add_argument("--calendar_events", required=False, help="Calendar events CSV path (optional)")
-    ap.add_argument("--dry_run", action="store_true", help="Validate without making changes")
+    ap.add_argument(
+        "--tasks_parents", required=True, help="Tasks (Pass A - parents) CSV path"
+    )
+    ap.add_argument(
+        "--tasks_children", required=True, help="Tasks (Pass B - children) CSV path"
+    )
+    ap.add_argument(
+        "--calendar_events", required=False, help="Calendar events CSV path (optional)"
+    )
+    ap.add_argument(
+        "--dry_run", action="store_true", help="Validate without making changes"
+    )
     args = ap.parse_args()
 
     if not args.login or not args.password:
@@ -557,12 +625,16 @@ def main():
                     continue
                 create_calendar_event(odoo, row, event_fields)
         except Exception as e:
-            print(f"\nWarning: Calendar import failed (Calendar module may not be installed): {e}")
+            print(
+                f"\nWarning: Calendar import failed (Calendar module may not be installed): {e}"
+            )
 
     # Verification summary
     print("\n=== VERIFICATION ===")
     for pname, pid in project_name_to_id.items():
-        count = odoo.call_kw("project.task", "search_count", [[["project_id", "=", pid]]], {})
+        count = odoo.call_kw(
+            "project.task", "search_count", [[["project_id", "=", pid]]], {}
+        )
         print(f"- Project '{pname}': {count} tasks")
 
     if args.dry_run:

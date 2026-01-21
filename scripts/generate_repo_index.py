@@ -38,9 +38,7 @@ def scan_spec_bundles(spec_dir: Path) -> List[Dict[str, Any]]:
                     {
                         "name": file_name,
                         "exists": file_path.exists(),
-                        "size": file_path.stat().st_size
-                        if file_path.exists()
-                        else 0,
+                        "size": file_path.stat().st_size if file_path.exists() else 0,
                     }
                 )
 
@@ -57,9 +55,7 @@ def scan_apps(apps_dir: Path) -> List[Dict[str, Any]]:
 
     for d in sorted(apps_dir.iterdir()):
         if d.is_dir() and (d / "package.json").exists():
-            package_json = json.loads(
-                (d / "package.json").read_text(encoding="utf-8")
-            )
+            package_json = json.loads((d / "package.json").read_text(encoding="utf-8"))
             apps.append(
                 {
                     "id": f"app:{d.name}",
@@ -325,9 +321,7 @@ def generate_markdown_index(
         for bundle in spec_bundles:
             all_exist = all(f["exists"] for f in bundle["files"])
             status = "✓ Complete" if all_exist else "⚠ Incomplete"
-            lines.append(
-                f"| {bundle['name']} | `{bundle['path']}` | {status} |"
-            )
+            lines.append(f"| {bundle['name']} | `{bundle['path']}` | {status} |")
         lines.extend(["", "---", ""])
 
     # Applications section
@@ -343,7 +337,11 @@ def generate_markdown_index(
             ]
         )
         for app in apps:
-            desc = app["description"][:50] + "..." if len(app["description"]) > 50 else app["description"]
+            desc = (
+                app["description"][:50] + "..."
+                if len(app["description"]) > 50
+                else app["description"]
+            )
             lines.append(f"| {app['name']} | {app['version']} | {desc} |")
         lines.extend(["", "---", ""])
 
@@ -395,9 +393,7 @@ def generate_markdown_index(
         )
         for script in scripts[:50]:  # Limit to first 50
             exec_status = "✓" if script["executable"] else "✗"
-            lines.append(
-                f"| {script['name']} | {exec_status} | `{script['path']}` |"
-            )
+            lines.append(f"| {script['name']} | {exec_status} | `{script['path']}` |")
         if len(scripts) > 50:
             lines.append(f"| ... | ... | *({len(scripts) - 50} more)* |")
         lines.extend(["", "---", ""])
@@ -439,9 +435,7 @@ def main():
     )
 
     # Generate markdown index
-    index_md = generate_markdown_index(
-        spec_bundles, apps, modules, workflows, scripts
-    )
+    index_md = generate_markdown_index(spec_bundles, apps, modules, workflows, scripts)
 
     # Write outputs
     docs_dir = repo_root / "docs"

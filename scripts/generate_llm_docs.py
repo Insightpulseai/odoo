@@ -18,8 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
@@ -27,7 +26,12 @@ logger = logging.getLogger(__name__)
 class LLMDocsGenerator:
     """Generates LLM-friendly documentation from infrastructure state."""
 
-    def __init__(self, output_dir: str, supabase_url: Optional[str] = None, supabase_key: Optional[str] = None):
+    def __init__(
+        self,
+        output_dir: str,
+        supabase_url: Optional[str] = None,
+        supabase_key: Optional[str] = None,
+    ):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.supabase_url = supabase_url
@@ -37,6 +41,7 @@ class LLMDocsGenerator:
         if supabase_url and supabase_key:
             try:
                 from supabase import create_client
+
                 self.client = create_client(supabase_url, supabase_key)
             except ImportError:
                 logger.warning("supabase-py not installed, using static templates only")
@@ -47,7 +52,7 @@ class LLMDocsGenerator:
             return []
 
         try:
-            result = self.client.rpc('query_kg', {'sql': query}).execute()
+            result = self.client.rpc("query_kg", {"sql": query}).execute()
             return result.data if result.data else []
         except Exception as e:
             logger.warning(f"KG query failed: {e}")
@@ -59,7 +64,9 @@ class LLMDocsGenerator:
             return []
 
         try:
-            result = self.client.from_('kg.v_infrastructure_nodes').select('*').execute()
+            result = (
+                self.client.from_("kg.v_infrastructure_nodes").select("*").execute()
+            )
             return result.data if result.data else []
         except Exception as e:
             logger.warning(f"Could not fetch infrastructure nodes: {e}")
@@ -71,7 +78,9 @@ class LLMDocsGenerator:
             return []
 
         try:
-            result = self.client.from_('kg.v_service_dependencies').select('*').execute()
+            result = (
+                self.client.from_("kg.v_service_dependencies").select("*").execute()
+            )
             return result.data if result.data else []
         except Exception as e:
             logger.warning(f"Could not fetch service dependencies: {e}")
@@ -171,13 +180,15 @@ class LLMDocsGenerator:
             # Group by kind
             by_kind: Dict[str, List] = {}
             for node in nodes:
-                kind = node.get('kind', 'unknown')
+                kind = node.get("kind", "unknown")
                 if kind not in by_kind:
                     by_kind[kind] = []
                 by_kind[kind].append(node)
 
             for kind, kind_nodes in sorted(by_kind.items()):
-                content += f"### {kind.replace('_', ' ').title()} ({len(kind_nodes)})\n\n"
+                content += (
+                    f"### {kind.replace('_', ' ').title()} ({len(kind_nodes)})\n\n"
+                )
                 content += "| Label | Key | Updated |\n"
                 content += "|-------|-----|----------|\n"
                 for node in kind_nodes[:20]:  # Limit to 20 per kind
@@ -203,56 +214,56 @@ class LLMDocsGenerator:
         generated = {}
 
         # Generate index
-        index_path = self.output_dir / 'INDEX.md'
+        index_path = self.output_dir / "INDEX.md"
         index_content = self.generate_index()
-        with open(index_path, 'w') as f:
+        with open(index_path, "w") as f:
             f.write(index_content)
-        generated['INDEX.md'] = str(index_path)
+        generated["INDEX.md"] = str(index_path)
 
         # Generate dynamic state if KG available
         if self.client:
-            state_path = self.output_dir / 'DYNAMIC_STATE.md'
+            state_path = self.output_dir / "DYNAMIC_STATE.md"
             state_content = self.generate_dynamic_state()
-            with open(state_path, 'w') as f:
+            with open(state_path, "w") as f:
                 f.write(state_content)
-            generated['DYNAMIC_STATE.md'] = str(state_path)
+            generated["DYNAMIC_STATE.md"] = str(state_path)
 
         # Generate metadata JSON
         metadata = {
-            'generated_at': datetime.utcnow().isoformat(),
-            'documents': list(generated.keys()),
-            'kg_connected': self.client is not None
+            "generated_at": datetime.utcnow().isoformat(),
+            "documents": list(generated.keys()),
+            "kg_connected": self.client is not None,
         }
-        metadata_path = self.output_dir / 'metadata.json'
-        with open(metadata_path, 'w') as f:
+        metadata_path = self.output_dir / "metadata.json"
+        with open(metadata_path, "w") as f:
             json.dump(metadata, f, indent=2)
-        generated['metadata.json'] = str(metadata_path)
+        generated["metadata.json"] = str(metadata_path)
 
         return generated
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate LLM Documentation')
+    parser = argparse.ArgumentParser(description="Generate LLM Documentation")
     parser.add_argument(
-        '--output-dir', '-o',
-        default='docs/llm',
-        help='Output directory for generated docs'
+        "--output-dir",
+        "-o",
+        default="docs/llm",
+        help="Output directory for generated docs",
     )
     parser.add_argument(
-        '--dry-run', '-n',
-        action='store_true',
-        help='Show what would be generated without writing'
+        "--dry-run",
+        "-n",
+        action="store_true",
+        help="Show what would be generated without writing",
     )
 
     args = parser.parse_args()
 
-    supabase_url = os.environ.get('SUPABASE_URL')
-    supabase_key = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
+    supabase_url = os.environ.get("SUPABASE_URL")
+    supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
     generator = LLMDocsGenerator(
-        output_dir=args.output_dir,
-        supabase_url=supabase_url,
-        supabase_key=supabase_key
+        output_dir=args.output_dir, supabase_url=supabase_url, supabase_key=supabase_key
     )
 
     if args.dry_run:
@@ -267,5 +278,5 @@ def main():
         print(f"  - {name}: {path}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

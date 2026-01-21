@@ -21,12 +21,10 @@ MODULE_ICONS = {
     "ipai_finance_close_seed": "fa-database",  # Seed data
     "ipai_month_end_closing": "fa-calendar-alt",  # Closing tasks
     "ipai_close_orchestration": "fa-tasks",  # Task orchestration
-
     # Project & PPM - Blue (#017E84 - Odoo Project color)
     "ipai_finance_ppm_golive": "fa-rocket",  # Go-live checklist
     "ipai_finance_ppm_umbrella": "fa-umbrella",  # Complete PPM
     "ipai_ppm_a1": "fa-sitemap",  # Control center
-
     # WorkOS Suite - Teal (#00A09D - Odoo Productivity color)
     "ipai_workos_core": "fa-cube",  # Core foundation
     "ipai_workos_blocks": "fa-th",  # Block system
@@ -37,31 +35,25 @@ MODULE_ICONS = {
     "ipai_workos_templates": "fa-file-alt",  # Templates
     "ipai_workos_views": "fa-th-list",  # Views
     "ipai_workos_affine": "fa-layer-group",  # Complete suite
-
     # Platform Infrastructure - Dark Gray (#2C2C36 - Odoo Technical color)
     "ipai_platform_audit": "fa-history",  # Audit trail
     "ipai_platform_permissions": "fa-shield-alt",  # Permissions
     "ipai_platform_theme": "fa-palette",  # Theming
     "ipai_platform_workflow": "fa-project-diagram",  # Workflow engine
     "ipai_platform_approvals": "fa-check-circle",  # Approvals
-
     # AI & Automation - Purple gradient (#8F3A84 - Odoo AI color)
     "ipai_ask_ai": "fa-robot",  # AI assistant
     "ipai_ask_ai_chatter": "fa-comments",  # AI chat
     "ipai_ocr_gateway": "fa-file-image",  # OCR
     "ipai_sms_gateway": "fa-sms",  # SMS
     "ipai_grid_view": "fa-th-large",  # Grid view
-
     # CRM & Sales - Red (#DC6965 - Odoo CRM color)
     "ipai_crm_pipeline": "fa-funnel-dollar",  # CRM pipeline
-
     # Integrations - Green (#2CBB9B - Odoo Integration color)
     "ipai_superset_connector": "fa-chart-bar",  # BI integration
-
     # Themes - Orange (#F06F02 - Odoo Website color)
     "ipai_web_theme_chatgpt": "fa-comments-dollar",  # ChatGPT theme
     "ipai_theme_tbwa_backend": "fa-paint-brush",  # TBWA theme
-
     # Namespace - Gray (system module)
     "ipai": "fa-cube",  # Core namespace
 }
@@ -77,6 +69,7 @@ CATEGORY_ICONS = {
     "Website": "website",
 }
 
+
 def update_manifest_icon(manifest_path: Path, icon_class: str):
     """Update or add icon field in __manifest__.py"""
 
@@ -89,17 +82,11 @@ def update_manifest_icon(manifest_path: Path, icon_class: str):
     # Check if icon already exists
     if re.search(r'"icon":\s*"', content):
         # Update existing icon
-        updated = re.sub(
-            r'"icon":\s*"[^"]*"',
-            f'"icon": "{icon_class}"',
-            content
-        )
+        updated = re.sub(r'"icon":\s*"[^"]*"', f'"icon": "{icon_class}"', content)
     else:
         # Add icon field after license
         updated = re.sub(
-            r'("license":\s*"[^"]*",)',
-            f'\\1\\n    "icon": "{icon_class}",',
-            content
+            r'("license":\s*"[^"]*",)', f'\\1\\n    "icon": "{icon_class}",', content
         )
 
     if updated != content:
@@ -107,6 +94,7 @@ def update_manifest_icon(manifest_path: Path, icon_class: str):
         return True
 
     return False
+
 
 def main():
     """Assign icons to all IPAI custom modules"""
@@ -153,6 +141,7 @@ def main():
     print("=" * 80)
 
     return 0
+
 
 if __name__ == "__main__":
     exit(main())

@@ -21,6 +21,7 @@ jobs:
             "sandbox/dev/docker-compose.yml"
             "sandbox/dev/docker-compose.production.yml"
             "deploy/docker-compose.prod.yml"
+            "infra/docker-compose.prod.yaml"
           )
 
           # Find all docker-compose files in repo (excluding archive/)

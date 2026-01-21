@@ -11,24 +11,24 @@ Gmail App Password: vzab hqzh wvhm zsgz (from Google Account)
 # ============================================
 
 SMTP_CONFIG = {
-    'name': 'Gmail SMTP - InsightPulse',
-    'smtp_host': 'smtp.gmail.com',
-    'smtp_port': 587,
-    'smtp_encryption': 'starttls',  # TLS (STARTTLS)
-    'smtp_user': 'jgtolentino.rn@gmail.com',  # UPDATE: Your Gmail address
-    'smtp_pass': 'vzabhqzhwvhmzsgz',  # App password (no spaces)
-    'from_filter': 'jgtolentino.rn@gmail.com',  # FROM Filtering - same as smtp_user
-    'sequence': 10,  # Priority (lower = higher priority)
-    'smtp_authentication': 'login',  # Username/Password auth
-    'smtp_debug': False,  # Debugging off in production
-    'active': True,
+    "name": "Gmail SMTP - InsightPulse",
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "smtp_encryption": "starttls",  # TLS (STARTTLS)
+    "smtp_user": "jgtolentino.rn@gmail.com",  # UPDATE: Your Gmail address
+    "smtp_pass": "vzabhqzhwvhmzsgz",  # App password (no spaces)
+    "from_filter": "jgtolentino.rn@gmail.com",  # FROM Filtering - same as smtp_user
+    "sequence": 10,  # Priority (lower = higher priority)
+    "smtp_authentication": "login",  # Username/Password auth
+    "smtp_debug": False,  # Debugging off in production
+    "active": True,
 }
 
 SYSTEM_PARAMS = {
-    'mail.catchall.domain': 'insightpulseai.net',
-    'mail.default.from': 'notifications',
-    'mail.catchall.alias': 'catchall',
-    'mail.bounce.alias': 'bounce',
+    "mail.catchall.domain": "insightpulseai.net",
+    "mail.default.from": "notifications",
+    "mail.catchall.alias": "catchall",
+    "mail.bounce.alias": "bounce",
 }
 
 # ============================================
@@ -39,10 +39,10 @@ print("=" * 60)
 print("Gmail SMTP Configuration for Odoo 18")
 print("=" * 60)
 
-MailServer = env['ir.mail_server'].sudo()
+MailServer = env["ir.mail_server"].sudo()
 
 # Check for existing Gmail server
-existing = MailServer.search([('smtp_host', '=', 'smtp.gmail.com')], limit=1)
+existing = MailServer.search([("smtp_host", "=", "smtp.gmail.com")], limit=1)
 
 if existing:
     print(f"\n⚠️  Existing Gmail server found (ID: {existing.id})")
@@ -69,7 +69,7 @@ print("\n" + "=" * 60)
 print("System Parameters Configuration")
 print("=" * 60)
 
-ICP = env['ir.config_parameter'].sudo()
+ICP = env["ir.config_parameter"].sudo()
 
 for key, value in SYSTEM_PARAMS.items():
     ICP.set_param(key, value)
@@ -90,5 +90,7 @@ print("2. Click on 'Gmail SMTP - InsightPulse'")
 print("3. Click 'Test Connection' button")
 print("4. If successful, you're ready to send emails!")
 print("\nTo test manually in shell:")
-print("   server = env['ir.mail_server'].sudo().search([('smtp_host', '=', 'smtp.gmail.com')], limit=1)")
+print(
+    "   server = env['ir.mail_server'].sudo().search([('smtp_host', '=', 'smtp.gmail.com')], limit=1)"
+)
 print("   server.test_smtp_connection()")

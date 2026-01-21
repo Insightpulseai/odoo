@@ -18,7 +18,9 @@ import logging
 import os
 import sys
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
@@ -30,8 +32,8 @@ def confirm_user(email: str, dry_run: bool = False) -> bool:
         logger.error("supabase-py not installed. Run: pip install supabase")
         return False
 
-    supabase_url = os.environ.get('SUPABASE_URL')
-    service_key = os.environ.get('SUPABASE_SERVICE_ROLE_KEY')
+    supabase_url = os.environ.get("SUPABASE_URL")
+    service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 
     if not supabase_url or not service_key:
         logger.error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set")
@@ -45,7 +47,7 @@ def confirm_user(email: str, dry_run: bool = False) -> bool:
     try:
         # Use admin API to list users
         users_response = client.auth.admin.list_users()
-        users = users_response.users if hasattr(users_response, 'users') else []
+        users = users_response.users if hasattr(users_response, "users") else []
 
         target_user = None
         for user in users:
@@ -57,10 +59,14 @@ def confirm_user(email: str, dry_run: bool = False) -> bool:
             logger.error(f"User not found: {email}")
             return False
 
-        logger.info(f"Found user: id={target_user.id}, confirmed={target_user.email_confirmed_at is not None}")
+        logger.info(
+            f"Found user: id={target_user.id}, confirmed={target_user.email_confirmed_at is not None}"
+        )
 
         if target_user.email_confirmed_at:
-            logger.info(f"User {email} is already confirmed (confirmed at: {target_user.email_confirmed_at})")
+            logger.info(
+                f"User {email} is already confirmed (confirmed at: {target_user.email_confirmed_at})"
+            )
             return True
 
         if dry_run:
@@ -69,10 +75,7 @@ def confirm_user(email: str, dry_run: bool = False) -> bool:
 
         # Update user to confirm email
         logger.info(f"Confirming user: {email}")
-        client.auth.admin.update_user_by_id(
-            target_user.id,
-            {"email_confirm": True}
-        )
+        client.auth.admin.update_user_by_id(target_user.id, {"email_confirm": True})
 
         logger.info(f"Successfully confirmed user: {email}")
         return True
@@ -83,9 +86,11 @@ def confirm_user(email: str, dry_run: bool = False) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Confirm Supabase user email')
-    parser.add_argument('--email', '-e', required=True, help='Email address to confirm')
-    parser.add_argument('--dry-run', '-n', action='store_true', help='Show what would be done')
+    parser = argparse.ArgumentParser(description="Confirm Supabase user email")
+    parser.add_argument("--email", "-e", required=True, help="Email address to confirm")
+    parser.add_argument(
+        "--dry-run", "-n", action="store_true", help="Show what would be done"
+    )
 
     args = parser.parse_args()
 
@@ -93,5 +98,5 @@ def main():
     sys.exit(0 if success else 1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

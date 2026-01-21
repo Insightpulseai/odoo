@@ -61,7 +61,9 @@ def main():
     parser = argparse.ArgumentParser(description="Compare audit results")
     parser.add_argument("--baseline", required=True, help="Baseline JSON file")
     parser.add_argument("--current", required=True, help="Current JSON file")
-    parser.add_argument("--strict", action="store_true", help="Fail on new modules with warnings")
+    parser.add_argument(
+        "--strict", action="store_true", help="Fail on new modules with warnings"
+    )
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
@@ -79,14 +81,20 @@ def main():
     baseline = load_audit(baseline_path)
     current = load_audit(current_path)
 
-    regressions, improvements, new_modules = compare_audits(baseline, current, args.strict)
+    regressions, improvements, new_modules = compare_audits(
+        baseline, current, args.strict
+    )
 
     if args.json:
         result = {
             "baseline_count": len(baseline),
             "current_count": len(current),
-            "regressions": [{"module": m, "from": f, "to": t} for m, f, t in regressions],
-            "improvements": [{"module": m, "from": f, "to": t} for m, f, t in improvements],
+            "regressions": [
+                {"module": m, "from": f, "to": t} for m, f, t in regressions
+            ],
+            "improvements": [
+                {"module": m, "from": f, "to": t} for m, f, t in improvements
+            ],
             "new_modules": [{"module": m, "status": s} for m, s in new_modules],
             "passed": len(regressions) == 0,
         }
