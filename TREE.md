@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b1ee8eb4b167450447f4f56fcbd42701827d16ce
+> Commit: e2c3ee623d2d93fea27554d69fc29f0b0a6b4c0e
 
 ```
 .
@@ -13,9 +13,11 @@
 │   └── rules.md
 ├── .claude
 │   ├── commands
+│   │   ├── dev-server.md
 │   │   ├── fix-github-issue.md
 │   │   ├── implement.md
 │   │   ├── plan.md
+│   │   ├── prototype-module.md
 │   │   ├── ship.md
 │   │   └── verify.md
 │   ├── superclaude
@@ -40,7 +42,8 @@
 │   └── config.json
 ├── .devcontainer
 │   ├── devcontainer.json
-│   └── post-create.sh
+│   ├── post-create.sh
+│   └── postCreate.sh
 ├── .githooks
 │   └── pre-commit
 ├── .github
@@ -158,6 +161,14 @@
 │   │   ├── server-ux
 │   │   └── web
 │   ├── ipai
+│   │   ├── fluent_web_365_copilot
+│   │   │   ├── demo
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.rst
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_advisor
 │   │   │   ├── controllers
 │   │   │   ├── data
@@ -1389,6 +1400,8 @@
 │   │   ├── README.md
 │   │   └── package.json
 │   ├── control-room
+│   │   ├── app
+│   │   │   └── api
 │   │   ├── public
 │   │   │   └── assets
 │   │   ├── src
@@ -1396,6 +1409,7 @@
 │   │   │   ├── assets
 │   │   │   ├── components
 │   │   │   ├── hooks
+│   │   │   ├── lib
 │   │   │   ├── theme
 │   │   │   └── types
 │   │   ├── .env.example
@@ -1951,7 +1965,8 @@
 │   │   ├── 202601130002_SCOUT_MEDALLION_TABLES.sql
 │   │   ├── 202601160001_VERIFIED_MEMORY.sql
 │   │   ├── 20260119_agent_memory_schema.sql
-│   │   └── 20260120_agent_coordination_schema.sql
+│   │   ├── 20260120_agent_coordination_schema.sql
+│   │   └── 20260121_observability_schema.sql
 │   ├── process_mining
 │   │   ├── 001_pm_schema.sql
 │   │   └── 010_p2p_etl.sql
@@ -3672,6 +3687,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── supabase-platform-kit-observability
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── test-coverage-improvement
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -4116,6 +4136,8 @@
 ├── deploy_ppm_dashboard.sh
 ├── deploy_ppm_dashboard_direct.sh
 ├── deployment_readiness_assessment.md
+├── devserver.config.json
+├── figma-make-dev.yaml
 ├── final_verification.sh
 ├── finance_calendar_2026.csv
 ├── finance_calendar_2026.html
@@ -4173,15 +4195,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1339 directories, 2829 files
+1348 directories, 2842 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1559 |
-| Files | 4322 |
-| Python files | 1130 |
-| XML files | 527 |
-| Markdown files | 854 |
+| Directories | 1581 |
+| Files | 4363 |
+| Python files | 1137 |
+| XML files | 533 |
+| Markdown files | 860 |
