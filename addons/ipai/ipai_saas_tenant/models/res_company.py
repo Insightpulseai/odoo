@@ -38,22 +38,26 @@ class ResCompany(models.Model):
         if existing:
             slug = f"{slug}-{self.id}"
 
-        account = self.env["saas.account"].create({
-            "name": self.name,
-            "slug": slug,
-            "legal_name": self.name,
-            "country_id": self.country_id.id if self.country_id else False,
-            "company_id": self.id,
-            "partner_id": self.partner_id.id,
-            "billing_email": self.email,
-        })
+        account = self.env["saas.account"].create(
+            {
+                "name": self.name,
+                "slug": slug,
+                "legal_name": self.name,
+                "country_id": self.country_id.id if self.country_id else False,
+                "company_id": self.id,
+                "partner_id": self.partner_id.id,
+                "billing_email": self.email,
+            }
+        )
 
         # Add tenant role by default
-        self.env["saas.account.role"].create({
-            "account_id": account.id,
-            "role": "tenant",
-            "is_primary": True,
-        })
+        self.env["saas.account.role"].create(
+            {
+                "account_id": account.id,
+                "role": "tenant",
+                "is_primary": True,
+            }
+        )
 
         self.saas_account_id = account
 

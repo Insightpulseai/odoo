@@ -17,6 +17,7 @@ POSTGRES_URL = os.getenv("POSTGRES_URL_NON_POOLING", "")
 # Parse connection URL if available, otherwise use individual parameters
 if POSTGRES_URL:
     import urllib.parse
+
     parsed = urllib.parse.urlparse(POSTGRES_URL)
     DB_CONFIG = {
         "host": parsed.hostname,
@@ -70,13 +71,17 @@ def test_schema() -> bool:
         print(f"✅ chunk_embeddings table: {embedding_count} rows")
 
         # Check pgvector extension
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT EXISTS (
                 SELECT 1 FROM pg_extension WHERE extname = 'vector'
             );
-        """)
+        """
+        )
         has_pgvector = cursor.fetchone()[0]
-        print(f"{'✅' if has_pgvector else '❌'} pgvector extension: {'installed' if has_pgvector else 'not found'}")
+        print(
+            f"{'✅' if has_pgvector else '❌'} pgvector extension: {'installed' if has_pgvector else 'not found'}"
+        )
 
         conn.close()
         return chunk_count > 0 and embedding_count > 0 and has_pgvector
@@ -85,7 +90,9 @@ def test_schema() -> bool:
         return False
 
 
-def test_semantic_search(query: str = "What is the BIR 1601-C deadline?", top_k: int = 3) -> bool:
+def test_semantic_search(
+    query: str = "What is the BIR 1601-C deadline?", top_k: int = 3
+) -> bool:
     """Test semantic search capability."""
     print(f"\n🔍 Testing semantic search...")
     print(f"   Query: '{query}'")
@@ -99,7 +106,8 @@ def test_semantic_search(query: str = "What is the BIR 1601-C deadline?", top_k:
         embedding_str = str(query_embedding)
 
         # Execute vector similarity search
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 dc.id,
                 dc.content,
@@ -110,7 +118,9 @@ def test_semantic_search(query: str = "What is the BIR 1601-C deadline?", top_k:
             JOIN afc.chunk_embeddings ce ON ce.chunk_id = dc.id
             ORDER BY similarity ASC
             LIMIT %s
-        """, (embedding_str, top_k))
+        """,
+            (embedding_str, top_k),
+        )
 
         results = cursor.fetchall()
         conn.close()
@@ -121,7 +131,9 @@ def test_semantic_search(query: str = "What is the BIR 1601-C deadline?", top_k:
             return True
 
         print(f"✅ Found {len(results)} results:")
-        for i, (chunk_id, content, source, metadata, similarity) in enumerate(results, 1):
+        for i, (chunk_id, content, source, metadata, similarity) in enumerate(
+            results, 1
+        ):
             print(f"\n   [{i}] Source: {source}")
             print(f"       Similarity: {similarity:.4f}")
             print(f"       Content: {content[:100]}...")
@@ -153,7 +165,7 @@ def test_health_check() -> bool:
             "status": "ok" if chunk_count > 0 and embedding_count > 0 else "error",
             "chunk_count": chunk_count,
             "embedding_count": embedding_count,
-            "message": f"AFC RAG service healthy. {chunk_count} chunks with {embedding_count} embeddings available."
+            "message": f"AFC RAG service healthy. {chunk_count} chunks with {embedding_count} embeddings available.",
         }
 
         print(f"✅ Health check: {health['status']}")

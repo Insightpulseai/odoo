@@ -36,7 +36,9 @@ class OpenAICompatLLM:
     @classmethod
     def from_env(cls, default_model: str = "gpt-4o-mini") -> "OpenAICompatLLM":
         """Create LLM provider from environment variables."""
-        base_url = (os.environ.get("IPAI_LLM_BASE_URL") or "https://api.openai.com/v1").strip()
+        base_url = (
+            os.environ.get("IPAI_LLM_BASE_URL") or "https://api.openai.com/v1"
+        ).strip()
         api_key = (os.environ.get("IPAI_LLM_API_KEY") or "").strip()
         model = (os.environ.get("IPAI_LLM_MODEL") or default_model).strip()
 
@@ -46,10 +48,7 @@ class OpenAICompatLLM:
         return cls(base_url, api_key, model)
 
     def answer(
-        self,
-        system_prompt: str,
-        user_message: str,
-        evidence: List[Dict[str, Any]]
+        self, system_prompt: str, user_message: str, evidence: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """
         Generate an answer with citations.
@@ -81,12 +80,16 @@ class OpenAICompatLLM:
             "temperature": float(os.environ.get("IPAI_LLM_TEMPERATURE", "0.2")),
         }
 
-        resp = requests.post(endpoint, headers=headers, data=json.dumps(body), timeout=60)
+        resp = requests.post(
+            endpoint, headers=headers, data=json.dumps(body), timeout=60
+        )
         if resp.status_code >= 300:
             raise RuntimeError(f"LLM error {resp.status_code}: {resp.text[:1000]}")
 
         data = resp.json()
-        content = (data.get("choices") or [{}])[0].get("message", {}).get("content") or ""
+        content = (data.get("choices") or [{}])[0].get("message", {}).get(
+            "content"
+        ) or ""
 
         # Try to parse structured JSON response
         try:
@@ -104,10 +107,7 @@ class OpenAICompatLLM:
             }
 
     def _build_prompt(
-        self,
-        system_prompt: str,
-        user_message: str,
-        evidence: List[Dict[str, Any]]
+        self, system_prompt: str, user_message: str, evidence: List[Dict[str, Any]]
     ) -> Dict[str, str]:
         """Build the system and user prompts with evidence."""
         citations = self._citations_from_evidence(evidence)
@@ -123,7 +123,9 @@ class OpenAICompatLLM:
                 f"score={c.get('score')}\n---\n{snippet}\n"
             )
 
-        evidence_text = "\n".join(evidence_block) if evidence_block else "(no evidence found)"
+        evidence_text = (
+            "\n".join(evidence_block) if evidence_block else "(no evidence found)"
+        )
 
         system = (
             system_prompt.strip()
@@ -144,30 +146,38 @@ class OpenAICompatLLM:
         )
         return {"system": system, "user": user}
 
-    def _citations_from_evidence(self, evidence: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    def _citations_from_evidence(
+        self, evidence: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
         """Convert evidence chunks to citation format."""
         out = []
         for e in evidence or []:
-            out.append({
-                "title": e.get("title"),
-                "url": e.get("url"),
-                "score": e.get("score"),
-                "snippet": e.get("content"),
-            })
+            out.append(
+                {
+                    "title": e.get("title"),
+                    "url": e.get("url"),
+                    "score": e.get("score"),
+                    "snippet": e.get("content"),
+                }
+            )
         return out
 
-    def _normalize(self, obj: Dict[str, Any], evidence: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def _normalize(
+        self, obj: Dict[str, Any], evidence: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
         """Normalize the LLM JSON response."""
         citations = obj.get("citations") or []
         norm_cites = []
 
         for i, c in enumerate(citations, start=1):
-            norm_cites.append({
-                "index": int(c.get("index") or i),
-                "title": c.get("title"),
-                "url": c.get("url"),
-                "score": float(c.get("score") or 0.0),
-            })
+            norm_cites.append(
+                {
+                    "index": int(c.get("index") or i),
+                    "title": c.get("title"),
+                    "url": c.get("url"),
+                    "score": float(c.get("score") or 0.0),
+                }
+            )
 
         return {
             "answer_markdown": obj.get("answer_markdown") or "",

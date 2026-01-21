@@ -27,9 +27,7 @@ def main():
 
     # Check if index exists
     if not index_file.exists():
-        print(
-            f"WARNING: docs/INDEX.md not found. Run generate_repo_index.py first."
-        )
+        print(f"WARNING: docs/INDEX.md not found. Run generate_repo_index.py first.")
         print(f"Found {len(spec_bundles)} spec bundles that should be indexed.")
         sys.exit(0)
 

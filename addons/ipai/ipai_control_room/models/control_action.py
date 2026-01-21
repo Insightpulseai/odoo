@@ -128,7 +128,11 @@ class ControlAction(models.Model):
         for record in self:
             parts = []
             if record.action_type:
-                parts.append(dict(self._fields["action_type"].selection).get(record.action_type, ""))
+                parts.append(
+                    dict(self._fields["action_type"].selection).get(
+                        record.action_type, ""
+                    )
+                )
             if record.playbook_id:
                 parts.append(f"[{record.playbook_id.name}]")
             elif record.advice_id:
@@ -148,10 +152,12 @@ class ControlAction(models.Model):
 
     def action_start(self):
         """Start the action execution"""
-        self.write({
-            "state": "running",
-            "started_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "running",
+                "started_at": fields.Datetime.now(),
+            }
+        )
 
     def action_complete(self, result=None):
         """Complete the action"""
@@ -165,18 +171,22 @@ class ControlAction(models.Model):
 
     def action_fail(self, error_message=None):
         """Mark action as failed"""
-        self.write({
-            "state": "failed",
-            "done_at": fields.Datetime.now(),
-            "error_message": error_message,
-        })
+        self.write(
+            {
+                "state": "failed",
+                "done_at": fields.Datetime.now(),
+                "error_message": error_message,
+            }
+        )
 
     def action_cancel(self):
         """Cancel the action"""
-        self.write({
-            "state": "canceled",
-            "done_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "canceled",
+                "done_at": fields.Datetime.now(),
+            }
+        )
 
     def action_execute(self):
         """Execute the action based on its type"""
@@ -184,17 +194,23 @@ class ControlAction(models.Model):
         self.action_start()
 
         try:
-            if self.action_type == "pipeline_run" and self.playbook_id and self.playbook_id.automation_pipeline_id:
+            if (
+                self.action_type == "pipeline_run"
+                and self.playbook_id
+                and self.playbook_id.automation_pipeline_id
+            ):
                 result = self.playbook_id.automation_pipeline_id.action_trigger_run()
                 if result and result.get("res_id"):
                     self.run_id = result["res_id"]
                 self.action_complete()
             elif self.action_type == "create_task":
                 Task = self.env["project.task"]
-                task = Task.create({
-                    "name": f"Action: {self.name}",
-                    "description": self.payload_json or "",
-                })
+                task = Task.create(
+                    {
+                        "name": f"Action: {self.name}",
+                        "description": self.payload_json or "",
+                    }
+                )
                 self.task_id = task.id
                 self.action_complete()
             else:

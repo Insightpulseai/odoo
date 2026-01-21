@@ -17,7 +17,9 @@ class CatalogBridgeController(http.Controller):
         auth="user",
         methods=["POST"],
     )
-    def search_catalog(self, query=None, asset_type=None, system=None, limit=20, **kwargs):
+    def search_catalog(
+        self, query=None, asset_type=None, system=None, limit=20, **kwargs
+    ):
         """Search catalog assets.
 
         Args:
@@ -213,9 +215,7 @@ class CatalogBridgeController(http.Controller):
                     "tags": asset.tags,
                     "uri": asset.uri,
                     "metadata": (
-                        json.loads(asset.metadata_json)
-                        if asset.metadata_json
-                        else {}
+                        json.loads(asset.metadata_json) if asset.metadata_json else {}
                     ),
                 },
             }

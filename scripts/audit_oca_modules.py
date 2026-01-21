@@ -99,25 +99,35 @@ REPLACED_BY_CORE = {
 
 def connect_odoo(url: str, db: str, username: str, password: str):
     """Connect to Odoo via XML-RPC and return connection objects."""
-    common = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/common')
+    common = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/common")
 
     # Authenticate
     uid = common.authenticate(db, username, password, {})
     if not uid:
         raise Exception("Authentication failed. Check credentials.")
 
-    models = xmlrpc.client.ServerProxy(f'{url}/xmlrpc/2/object')
+    models = xmlrpc.client.ServerProxy(f"{url}/xmlrpc/2/object")
     return uid, models, db, password
 
 
-def get_module_info(models, db: str, uid: int, password: str,
-                    module_name: str) -> dict:
+def get_module_info(models, db: str, uid: int, password: str, module_name: str) -> dict:
     """Query a single module's info from ir.module.module."""
     result = models.execute_kw(
-        db, uid, password,
-        'ir.module.module', 'search_read',
-        [[['name', '=', module_name]]],
-        {'fields': ['name', 'state', 'installed_version', 'latest_version', 'shortdesc']}
+        db,
+        uid,
+        password,
+        "ir.module.module",
+        "search_read",
+        [[["name", "=", module_name]]],
+        {
+            "fields": [
+                "name",
+                "state",
+                "installed_version",
+                "latest_version",
+                "shortdesc",
+            ]
+        },
     )
 
     if result:
@@ -143,40 +153,48 @@ def audit_modules(url: str, db: str, username: str, password: str) -> dict:
 
             if info is None:
                 # Module not found in database
-                note = REPLACED_BY_CORE.get(module_name, "Code not present in addons path")
-                results[category].append({
-                    'name': module_name,
-                    'status': 'Not found',
-                    'version': '-',
-                    'notes': note
-                })
+                note = REPLACED_BY_CORE.get(
+                    module_name, "Code not present in addons path"
+                )
+                results[category].append(
+                    {
+                        "name": module_name,
+                        "status": "Not found",
+                        "version": "-",
+                        "notes": note,
+                    }
+                )
             else:
-                state = info.get('state', 'unknown')
-                version = info.get('installed_version') or info.get('latest_version') or '-'
-                shortdesc = info.get('shortdesc', '')
+                state = info.get("state", "unknown")
+                version = (
+                    info.get("installed_version") or info.get("latest_version") or "-"
+                )
+                shortdesc = info.get("shortdesc", "")
 
-                if state == 'installed':
-                    status = 'Installed'
-                    note = shortdesc[:50] if shortdesc else ''
-                elif state == 'uninstalled':
-                    status = 'Present, not installed'
-                    note = 'Available to install'
-                elif state == 'to install':
-                    status = 'Pending install'
-                    note = 'Queued for installation'
-                elif state == 'to upgrade':
-                    status = 'Pending upgrade'
-                    note = ''
+                if state == "installed":
+                    status = "Installed"
+                    note = shortdesc[:50] if shortdesc else ""
+                elif state == "uninstalled":
+                    status = "Present, not installed"
+                    note = "Available to install"
+                elif state == "to install":
+                    status = "Pending install"
+                    note = "Queued for installation"
+                elif state == "to upgrade":
+                    status = "Pending upgrade"
+                    note = ""
                 else:
-                    status = f'State: {state}'
-                    note = ''
+                    status = f"State: {state}"
+                    note = ""
 
-                results[category].append({
-                    'name': module_name,
-                    'status': status,
-                    'version': version,
-                    'notes': note
-                })
+                results[category].append(
+                    {
+                        "name": module_name,
+                        "status": status,
+                        "version": version,
+                        "notes": note,
+                    }
+                )
 
     return results
 
@@ -208,14 +226,14 @@ def generate_report(results: dict) -> str:
             )
 
             # Count stats
-            if mod['status'] == 'Installed':
+            if mod["status"] == "Installed":
                 total_installed += 1
-            elif mod['status'] == 'Present, not installed':
+            elif mod["status"] == "Present, not installed":
                 total_present += 1
-                missing_modules.append((category, mod['name']))
-            elif 'Not found' in mod['status']:
+                missing_modules.append((category, mod["name"]))
+            elif "Not found" in mod["status"]:
                 total_not_found += 1
-                missing_modules.append((category, mod['name']))
+                missing_modules.append((category, mod["name"]))
 
     # Summary section
     lines.append("")
@@ -226,14 +244,16 @@ def generate_report(results: dict) -> str:
     lines.append(f"| **Installed** | {total_installed} |")
     lines.append(f"| **Present (not installed)** | {total_present} |")
     lines.append(f"| **Not found** | {total_not_found} |")
-    lines.append(f"| **Total audited** | {total_installed + total_present + total_not_found} |")
+    lines.append(
+        f"| **Total audited** | {total_installed + total_present + total_not_found} |"
+    )
     lines.append("")
 
     # Per-category summary
     lines.append("### Installed per Category")
     lines.append("")
     for category, modules in results.items():
-        installed = sum(1 for m in modules if m['status'] == 'Installed')
+        installed = sum(1 for m in modules if m["status"] == "Installed")
         total = len(modules)
         lines.append(f"- **{category}**: {installed}/{total} installed")
     lines.append("")
@@ -254,13 +274,15 @@ def generate_report(results: dict) -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Audit OCA modules in Odoo via XML-RPC'
+        description="Audit OCA modules in Odoo via XML-RPC"
     )
-    parser.add_argument('--url', required=True, help='Odoo URL (e.g., https://erp.insightpulseai.net)')
-    parser.add_argument('--db', required=True, help='Database name')
-    parser.add_argument('--user', required=True, help='Username (login)')
-    parser.add_argument('--password', required=True, help='Password or API key')
-    parser.add_argument('--output', default=None, help='Output file (default: stdout)')
+    parser.add_argument(
+        "--url", required=True, help="Odoo URL (e.g., https://erp.insightpulseai.net)"
+    )
+    parser.add_argument("--db", required=True, help="Database name")
+    parser.add_argument("--user", required=True, help="Username (login)")
+    parser.add_argument("--password", required=True, help="Password or API key")
+    parser.add_argument("--output", default=None, help="Output file (default: stdout)")
 
     args = parser.parse_args()
 
@@ -269,7 +291,7 @@ def main():
         report = generate_report(results)
 
         if args.output:
-            with open(args.output, 'w') as f:
+            with open(args.output, "w") as f:
                 f.write(report)
             print(f"\nReport saved to: {args.output}")
         else:
@@ -281,5 +303,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

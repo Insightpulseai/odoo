@@ -130,7 +130,9 @@ class FluentCopilotSession(models.Model):
                     if record.exists():
                         session.context_record_name = record.display_name
                     else:
-                        session.context_record_name = f"[Deleted] #{session.context_res_id}"
+                        session.context_record_name = (
+                            f"[Deleted] #{session.context_res_id}"
+                        )
                 except Exception:
                     session.context_record_name = f"[Error] #{session.context_res_id}"
             else:
@@ -144,17 +146,21 @@ class FluentCopilotSession(models.Model):
 
     def action_archive(self):
         """Archive the session."""
-        self.write({
-            "status": "archived",
-            "ended_at": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "status": "archived",
+                "ended_at": fields.Datetime.now(),
+            }
+        )
 
     def action_reopen(self):
         """Reopen an archived session."""
-        self.write({
-            "status": "active",
-            "ended_at": False,
-        })
+        self.write(
+            {
+                "status": "active",
+                "ended_at": False,
+            }
+        )
 
     def action_open_context_record(self):
         """Open the bound record in a new window."""

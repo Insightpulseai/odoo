@@ -89,9 +89,9 @@ class IpaiDocumentAIController(http.Controller):
                 "extracted_fields": {
                     "vendor_name": document.vendor_name,
                     "document_number": document.document_number,
-                    "document_date": str(document.document_date)
-                    if document.document_date
-                    else None,
+                    "document_date": (
+                        str(document.document_date) if document.document_date else None
+                    ),
                     "total_amount": document.total_amount,
                     "tax_amount": document.tax_amount,
                     "currency": document.currency_code,

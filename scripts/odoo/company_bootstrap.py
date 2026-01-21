@@ -6,7 +6,9 @@ TARGET_DB = os.getenv("ODOO_DB", "odoo")
 OLD_COMPANY_NAME = os.getenv("ODOO_OLD_COMPANY_NAME", "YourCompany")
 NEW_COMPANY_NAME = os.getenv("ODOO_NEW_COMPANY_NAME", "InsightPulseAI")
 NEW_COMPANY_EMAIL = os.getenv("ODOO_NEW_COMPANY_EMAIL", "business@insightpulseai.com")
-NEW_COMPANY_WEBSITE = os.getenv("ODOO_NEW_COMPANY_WEBSITE", "https://insightpulseai.net")
+NEW_COMPANY_WEBSITE = os.getenv(
+    "ODOO_NEW_COMPANY_WEBSITE", "https://insightpulseai.net"
+)
 
 TBWA_COMPANY_NAME = os.getenv("ODOO_TBWA_COMPANY_NAME", r"TBWA\SMP")
 TBWA_COMPANY_EMAIL = os.getenv("ODOO_TBWA_COMPANY_EMAIL", "business@insightpulseai.com")
@@ -26,10 +28,12 @@ Groups = env["res.groups"].sudo()
 Country = env["res.country"].sudo()
 Currency = env["res.currency"].sudo()
 
+
 def must_one(recordset, msg):
     if not recordset or len(recordset) != 1:
         raise RuntimeError(f"{msg} (found={len(recordset) if recordset else 0})")
     return recordset
+
 
 def get_country(code):
     r = Country.search([("code", "=", code)], limit=1)
@@ -37,11 +41,13 @@ def get_country(code):
         r = Country.search([("name", "ilike", "Philippines")], limit=1)
     return r
 
+
 def get_currency(code):
     r = Currency.search([("name", "=", code)], limit=1)
     if not r:
         r = Currency.search([("symbol", "=", "₱")], limit=1)
     return r
+
 
 country = get_country(COUNTRY_CODE)
 currency = get_currency(CURRENCY_CODE)
@@ -55,19 +61,23 @@ if not old:
 if not old:
     raise RuntimeError("No company found to rename.")
 
-old.write({
-    "name": NEW_COMPANY_NAME,
-    "email": NEW_COMPANY_EMAIL,
-    "website": NEW_COMPANY_WEBSITE,
-})
-# keep partner aligned (header pulls from company.name but partner is what invoices/contacts show)
-if old.partner_id:
-    old.partner_id.write({
+old.write(
+    {
         "name": NEW_COMPANY_NAME,
         "email": NEW_COMPANY_EMAIL,
         "website": NEW_COMPANY_WEBSITE,
-        **({"country_id": country.id} if country else {}),
-    })
+    }
+)
+# keep partner aligned (header pulls from company.name but partner is what invoices/contacts show)
+if old.partner_id:
+    old.partner_id.write(
+        {
+            "name": NEW_COMPANY_NAME,
+            "email": NEW_COMPANY_EMAIL,
+            "website": NEW_COMPANY_WEBSITE,
+            **({"country_id": country.id} if country else {}),
+        }
+    )
 if currency and old.currency_id != currency:
     old.currency_id = currency.id
 if country and old.country_id != country:
@@ -87,12 +97,14 @@ if not tbwa:
         vals["country_id"] = country.id
     tbwa = Company.create(vals)
     if tbwa.partner_id:
-        tbwa.partner_id.write({
-            "name": TBWA_COMPANY_NAME,
-            "email": TBWA_COMPANY_EMAIL,
-            "website": TBWA_COMPANY_WEBSITE,
-            **({"country_id": country.id} if country else {}),
-        })
+        tbwa.partner_id.write(
+            {
+                "name": TBWA_COMPANY_NAME,
+                "email": TBWA_COMPANY_EMAIL,
+                "website": TBWA_COMPANY_WEBSITE,
+                **({"country_id": country.id} if country else {}),
+            }
+        )
 
 # 3) Grant multi-company access to target user and allow both companies
 user = Users.search([("login", "=", TARGET_USER_LOGIN)], limit=1)
@@ -118,4 +130,12 @@ user.company_id = old.id
 print("OK")
 print("Renamed company:", old.id, old.name)
 print("TBWA company:", tbwa.id, tbwa.name)
-print("User updated:", user.id, user.login, "default_company=", user.company_id.name, "allowed=", [c.name for c in user.company_ids])
+print(
+    "User updated:",
+    user.id,
+    user.login,
+    "default_company=",
+    user.company_id.name,
+    "allowed=",
+    [c.name for c in user.company_ids],
+)

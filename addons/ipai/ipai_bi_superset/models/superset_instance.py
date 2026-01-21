@@ -85,11 +85,14 @@ class IpaiBiSupersetInstance(models.Model):
         """Ensure only one default instance per company."""
         for rec in self:
             if rec.is_default:
-                others = self.search([
-                    ("id", "!=", rec.id),
-                    ("company_id", "=", rec.company_id.id),
-                    ("is_default", "=", True),
-                ], limit=1)
+                others = self.search(
+                    [
+                        ("id", "!=", rec.id),
+                        ("company_id", "=", rec.company_id.id),
+                        ("is_default", "=", True),
+                    ],
+                    limit=1,
+                )
                 if others:
                     others.is_default = False
 
@@ -101,17 +104,23 @@ class IpaiBiSupersetInstance(models.Model):
             if company_id
             else self.env.company
         )
-        rec = self.search([
-            ("company_id", "=", company.id),
-            ("is_default", "=", True),
-            ("active", "=", True),
-        ], limit=1)
+        rec = self.search(
+            [
+                ("company_id", "=", company.id),
+                ("is_default", "=", True),
+                ("active", "=", True),
+            ],
+            limit=1,
+        )
         if rec:
             return rec
-        return self.search([
-            ("company_id", "=", company.id),
-            ("active", "=", True),
-        ], limit=1)
+        return self.search(
+            [
+                ("company_id", "=", company.id),
+                ("active", "=", True),
+            ],
+            limit=1,
+        )
 
     def get_embed_url(self, dashboard_id, filters=None):
         """Generate embed URL for a dashboard with optional filters.
@@ -127,6 +136,7 @@ class IpaiBiSupersetInstance(models.Model):
         url = f"{self.base_url}/superset/dashboard/{dashboard_id}/?standalone=1"
         if filters:
             import urllib.parse
+
             filter_str = urllib.parse.urlencode(filters)
             url = f"{url}&{filter_str}"
         return url

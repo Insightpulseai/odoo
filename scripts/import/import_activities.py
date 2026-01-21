@@ -16,8 +16,10 @@ import os
 import sys
 
 # Configuration
-ACTIVITY_CSV = os.environ.get('ACTIVITY_CSV', '/mnt/extra-addons/../data/import_templates/07_mail.activity.csv')
-DRY_RUN = os.environ.get('DRY_RUN', 'false').lower() == 'true'
+ACTIVITY_CSV = os.environ.get(
+    "ACTIVITY_CSV", "/mnt/extra-addons/../data/import_templates/07_mail.activity.csv"
+)
+DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
 
 print("=" * 60)
 print("MAIL.ACTIVITY IMPORT FROM EXTERNAL IDS")
@@ -68,7 +70,9 @@ def import_activities(csv_path):
             # Check if already exists
             existing = xmlid_to_record(activity_xmlid)
             if existing:
-                print(f"Row {i}: SKIP - {activity_xmlid} already exists (ID: {existing.id})")
+                print(
+                    f"Row {i}: SKIP - {activity_xmlid} already exists (ID: {existing.id})"
+                )
                 continue
 
             # Resolve target record (res_external_id -> res_id)
@@ -87,9 +91,13 @@ def import_activities(csv_path):
             activity_type = xmlid_to_record(activity_type_xmlid)
             if not activity_type:
                 # Fallback to To-Do
-                activity_type = env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
+                activity_type = env.ref(
+                    "mail.mail_activity_data_todo", raise_if_not_found=False
+                )
             if not activity_type:
-                errors.append(f"Row {i}: Activity type not found: {activity_type_xmlid}")
+                errors.append(
+                    f"Row {i}: Activity type not found: {activity_type_xmlid}"
+                )
                 continue
 
             # Resolve user (optional - defaults to current user)
@@ -116,16 +124,24 @@ def import_activities(csv_path):
                 activity = Activity.create(vals)
 
                 # Create external ID reference
-                module, name = activity_xmlid.split(".", 1) if "." in activity_xmlid else ("__import__", activity_xmlid)
-                IrModelData.create({
-                    "name": name,
-                    "module": module,
-                    "model": "mail.activity",
-                    "res_id": activity.id,
-                    "noupdate": True,
-                })
+                module, name = (
+                    activity_xmlid.split(".", 1)
+                    if "." in activity_xmlid
+                    else ("__import__", activity_xmlid)
+                )
+                IrModelData.create(
+                    {
+                        "name": name,
+                        "module": module,
+                        "model": "mail.activity",
+                        "res_id": activity.id,
+                        "noupdate": True,
+                    }
+                )
 
-                print(f"Row {i}: CREATED - {activity_xmlid} -> mail.activity ID {activity.id}")
+                print(
+                    f"Row {i}: CREATED - {activity_xmlid} -> mail.activity ID {activity.id}"
+                )
                 created += 1
 
         except Exception as e:

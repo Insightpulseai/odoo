@@ -232,7 +232,9 @@ class DirectionalSync:
         expected_exit = verification.get("expected_exit_code", 0)
         if result.returncode != expected_exit:
             logger.error(f"Verification failed for: {target_name}")
-            logger.error(f"Expected exit code: {expected_exit}, got: {result.returncode}")
+            logger.error(
+                f"Expected exit code: {expected_exit}, got: {result.returncode}"
+            )
             return False
 
         # Check min/max values if specified
@@ -258,7 +260,9 @@ class DirectionalSync:
             return True
 
         # Check if there are changes
-        result = self._run_command("git diff --quiet && git diff --staged --quiet", check=False)
+        result = self._run_command(
+            "git diff --quiet && git diff --staged --quiet", check=False
+        )
         if result.returncode == 0:
             logger.info("No changes to commit")
             return True
@@ -294,9 +298,7 @@ class DirectionalSync:
         # Expand environment variables in config
         target_config = self._expand_env_vars(target_config)
 
-        direction = target_config.get(
-            "direction", self.config["defaults"]["direction"]
-        )
+        direction = target_config.get("direction", self.config["defaults"]["direction"])
 
         logger.info(f"Syncing: {target_name} ({direction})")
         logger.info(f"Description: {target_config.get('description', 'N/A')}")
@@ -353,7 +355,9 @@ class DirectionalSync:
             output_path = PROJECT_ROOT / output_pattern
             if "*" in output_pattern:
                 # Glob pattern
-                outputs_created.extend([str(p) for p in PROJECT_ROOT.glob(output_pattern)])
+                outputs_created.extend(
+                    [str(p) for p in PROJECT_ROOT.glob(output_pattern)]
+                )
             elif output_path.exists():
                 outputs_created.append(str(output_path))
 
@@ -374,7 +378,9 @@ class DirectionalSync:
 
         # Git commit (PULL operations only)
         if success and direction == "pull" and target_config.get("git_commit_message"):
-            git_commit = target_config.get("git_commit", self.config["defaults"].get("git_commit", False))
+            git_commit = target_config.get(
+                "git_commit", self.config["defaults"].get("git_commit", False)
+            )
             if git_commit:
                 self._git_commit_changes(target_config["git_commit_message"])
 
@@ -432,7 +438,9 @@ class DirectionalSync:
             "total_targets": total,
             "successful": successful,
             "failed": failed,
-            "success_rate": f"{(successful / total * 100):.1f}%" if total > 0 else "N/A",
+            "success_rate": (
+                f"{(successful / total * 100):.1f}%" if total > 0 else "N/A"
+            ),
             "results": [
                 {
                     "target": r.target,
@@ -540,7 +548,9 @@ def main():
 
     # Run sync
     if args.target:
-        result = syncer.sync_target(args.target, verify=args.verify, fail_on_diff=args.fail_on_diff)
+        result = syncer.sync_target(
+            args.target, verify=args.verify, fail_on_diff=args.fail_on_diff
+        )
         results = [result]
     else:
         results = syncer.sync_all(

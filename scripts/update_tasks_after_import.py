@@ -39,12 +39,12 @@ except ImportError:
 
 
 # Color codes for output
-RED = '\033[0;31m'
-GREEN = '\033[0;32m'
-YELLOW = '\033[1;33m'
-BLUE = '\033[0;34m'
-CYAN = '\033[0;36m'
-NC = '\033[0m'  # No Color
+RED = "\033[0;31m"
+GREEN = "\033[0;32m"
+YELLOW = "\033[1;33m"
+BLUE = "\033[0;34m"
+CYAN = "\033[0;36m"
+NC = "\033[0m"  # No Color
 
 
 def log_info(message: str):
@@ -72,22 +72,22 @@ PHASE_TAGS = {
     "Phase I: Initial & Compliance": {
         "pattern": r"^\[I\.",
         "color": 1,  # Red
-        "description": "Initial compliance and setup tasks"
+        "description": "Initial compliance and setup tasks",
     },
     "Phase II: Accruals & Amortization": {
         "pattern": r"^\[II\.",
         "color": 2,  # Orange
-        "description": "Accrual and amortization processing"
+        "description": "Accrual and amortization processing",
     },
     "Phase III: WIP": {
         "pattern": r"^\[III\.",
         "color": 3,  # Yellow
-        "description": "Work in progress reconciliation"
+        "description": "Work in progress reconciliation",
     },
     "Phase IV: Final Adjustments": {
         "pattern": r"^\[IV\.",
         "color": 4,  # Light Blue
-        "description": "Final adjustments and closing entries"
+        "description": "Final adjustments and closing entries",
     },
 }
 
@@ -135,13 +135,15 @@ class OdooClient:
             "params": {
                 "service": "common",
                 "method": "authenticate",
-                "args": [self.db, self.login, self.password, {}]
+                "args": [self.db, self.login, self.password, {}],
             },
             "id": 1,
         }
         uid = self._jsonrpc("/jsonrpc", payload)
         if not uid:
-            raise RuntimeError("Authentication failed (check ODOO_DB/ODOO_LOGIN/ODOO_PASSWORD).")
+            raise RuntimeError(
+                "Authentication failed (check ODOO_DB/ODOO_LOGIN/ODOO_PASSWORD)."
+            )
         return uid
 
     def call_kw(self, model: str, method: str, args=None, kwargs=None) -> Any:
@@ -168,7 +170,9 @@ class OdooClient:
             kwargs["limit"] = limit
         return self.call_kw(model, "search", [domain], kwargs)
 
-    def search_read(self, model: str, domain: List, fields: List[str], limit: int = None) -> List[Dict]:
+    def search_read(
+        self, model: str, domain: List, fields: List[str], limit: int = None
+    ) -> List[Dict]:
         """Search and read records."""
         kwargs = {"fields": fields}
         if limit:
@@ -208,7 +212,9 @@ def ensure_tags_exist(odoo: OdooClient, dry_run: bool = False) -> Dict[str, int]
                 log_info(f"Would create tag: {tag_name}")
                 tag_ids[tag_name] = -1
             else:
-                tid = odoo.create("project.tags", {"name": tag_name, "color": config["color"]})
+                tid = odoo.create(
+                    "project.tags", {"name": tag_name, "color": config["color"]}
+                )
                 tag_ids[tag_name] = tid
                 log_success(f"Created tag: {tag_name} (ID: {tid})")
 
@@ -224,7 +230,9 @@ def ensure_tags_exist(odoo: OdooClient, dry_run: bool = False) -> Dict[str, int]
                 log_info(f"Would create tag: {tag_name}")
                 tag_ids[tag_name] = -1
             else:
-                tid = odoo.create("project.tags", {"name": tag_name, "color": tag_config["color"]})
+                tid = odoo.create(
+                    "project.tags", {"name": tag_name, "color": tag_config["color"]}
+                )
                 tag_ids[tag_name] = tid
                 log_success(f"Created tag: {tag_name} (ID: {tid})")
 
@@ -251,7 +259,7 @@ def assign_phase_tags(
     odoo: OdooClient,
     tag_ids: Dict[str, int],
     project_filter: Optional[str] = None,
-    dry_run: bool = False
+    dry_run: bool = False,
 ) -> Tuple[int, int]:
     """
     Assign phase tags to tasks based on name patterns.
@@ -268,7 +276,9 @@ def assign_phase_tags(
     # Build domain
     domain = []
     if project_filter:
-        project_ids = odoo.search("project.project", [["name", "=", project_filter]], limit=1)
+        project_ids = odoo.search(
+            "project.project", [["name", "=", project_filter]], limit=1
+        )
         if not project_ids:
             log_error(f"Project not found: {project_filter}")
             return 0, 0
@@ -338,7 +348,9 @@ def load_user_mapping(csv_path: str) -> Dict[str, List[str]]:
                 task_name = row.get("Task Name", "").strip()
                 emails = row.get("Assignee Emails", "").strip()
                 if task_name and emails:
-                    mapping[task_name] = [e.strip() for e in emails.split(",") if e.strip()]
+                    mapping[task_name] = [
+                        e.strip() for e in emails.split(",") if e.strip()
+                    ]
         log_success(f"Loaded {len(mapping)} user mappings from CSV")
     except FileNotFoundError:
         log_error(f"User mapping file not found: {csv_path}")
@@ -376,7 +388,7 @@ def assign_users_from_mapping(
     odoo: OdooClient,
     user_mapping: Dict[str, List[str]],
     project_filter: Optional[str] = None,
-    dry_run: bool = False
+    dry_run: bool = False,
 ) -> Tuple[int, int]:
     """
     Assign users to tasks based on mapping.
@@ -393,7 +405,9 @@ def assign_users_from_mapping(
     # Build domain
     domain = []
     if project_filter:
-        project_ids = odoo.search("project.project", [["name", "=", project_filter]], limit=1)
+        project_ids = odoo.search(
+            "project.project", [["name", "=", project_filter]], limit=1
+        )
         if not project_ids:
             log_error(f"Project not found: {project_filter}")
             return 0, 0
@@ -436,7 +450,7 @@ def set_task_stages(
     odoo: OdooClient,
     stage_name: str,
     project_filter: Optional[str] = None,
-    dry_run: bool = False
+    dry_run: bool = False,
 ) -> Tuple[int, int]:
     """
     Set all matching tasks to a specific stage.
@@ -461,7 +475,9 @@ def set_task_stages(
     # Build domain
     domain = [["stage_id", "!=", stage_id]]
     if project_filter:
-        project_ids = odoo.search("project.project", [["name", "=", project_filter]], limit=1)
+        project_ids = odoo.search(
+            "project.project", [["name", "=", project_filter]], limit=1
+        )
         if not project_ids:
             log_error(f"Project not found: {project_filter}")
             return 0, 0
@@ -498,73 +514,71 @@ def print_summary(odoo: OdooClient, project_filter: Optional[str] = None):
     projects = odoo.search_read("project.project", domain, ["id", "name"])
 
     for project in projects:
-        task_count = len(odoo.search("project.task", [["project_id", "=", project["id"]]]))
+        task_count = len(
+            odoo.search("project.task", [["project_id", "=", project["id"]]])
+        )
         print(f"Project: {project['name']} - {task_count} tasks")
 
         # Count by phase tag
         for tag_name in PHASE_TAGS.keys():
             tag_ids = odoo.search("project.tags", [["name", "=", tag_name]], limit=1)
             if tag_ids:
-                count = len(odoo.search("project.task", [
-                    ["project_id", "=", project["id"]],
-                    ["tag_ids", "in", tag_ids]
-                ]))
+                count = len(
+                    odoo.search(
+                        "project.task",
+                        [
+                            ["project_id", "=", project["id"]],
+                            ["tag_ids", "in", tag_ids],
+                        ],
+                    )
+                )
                 if count > 0:
                     print(f"  - {tag_name}: {count} tasks")
 
 
 def main():
     """Main execution function."""
-    parser = argparse.ArgumentParser(
-        description="Update Odoo tasks after CSV import"
-    )
+    parser = argparse.ArgumentParser(description="Update Odoo tasks after CSV import")
     parser.add_argument(
         "--url",
         default=os.getenv("ODOO_URL", "https://erp.insightpulseai.net"),
-        help="Odoo URL"
+        help="Odoo URL",
     )
     parser.add_argument(
-        "--db",
-        default=os.getenv("ODOO_DB", "odoo"),
-        help="Odoo database name"
+        "--db", default=os.getenv("ODOO_DB", "odoo"), help="Odoo database name"
     )
     parser.add_argument(
         "--login",
         default=os.getenv("ODOO_LOGIN", ""),
-        help="Odoo login (or ODOO_LOGIN env var)"
+        help="Odoo login (or ODOO_LOGIN env var)",
     )
     parser.add_argument(
         "--password",
         default=os.getenv("ODOO_PASSWORD", ""),
-        help="Odoo password (or ODOO_PASSWORD env var)"
+        help="Odoo password (or ODOO_PASSWORD env var)",
     )
     parser.add_argument(
-        "--project",
-        help="Filter by project name (e.g., 'Month-End Close')"
+        "--project", help="Filter by project name (e.g., 'Month-End Close')"
+    )
+    parser.add_argument("--user-mapping", help="Path to CSV file with user assignments")
+    parser.add_argument(
+        "--set-stage", help="Set all tasks to this stage (e.g., 'Preparation')"
     )
     parser.add_argument(
-        "--user-mapping",
-        help="Path to CSV file with user assignments"
-    )
-    parser.add_argument(
-        "--set-stage",
-        help="Set all tasks to this stage (e.g., 'Preparation')"
-    )
-    parser.add_argument(
-        "--skip-tags",
-        action="store_true",
-        help="Skip tag creation and assignment"
+        "--skip-tags", action="store_true", help="Skip tag creation and assignment"
     )
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Show what would be done without making changes"
+        help="Show what would be done without making changes",
     )
 
     args = parser.parse_args()
 
     if not args.login or not args.password:
-        log_error("Missing ODOO_LOGIN or ODOO_PASSWORD (use env vars or --login/--password)")
+        log_error(
+            "Missing ODOO_LOGIN or ODOO_PASSWORD (use env vars or --login/--password)"
+        )
         sys.exit(1)
 
     log_info("=" * 80)
@@ -620,7 +634,9 @@ def main():
     # Set stage
     if args.set_stage:
         log_info(f"Setting tasks to stage: {args.set_stage}")
-        updated, skipped = set_task_stages(odoo, args.set_stage, args.project, args.dry_run)
+        updated, skipped = set_task_stages(
+            odoo, args.set_stage, args.project, args.dry_run
+        )
         log_info(f"Stage updates: {updated} updated, {skipped} skipped")
 
     print()

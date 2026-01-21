@@ -90,7 +90,11 @@ class SemanticModel(models.Model):
     last_sync = fields.Datetime(string="Last Sync")
 
     _sql_constraints = [
-        ("asset_name_unique", "unique(asset_id, name)", "Model name must be unique per asset."),
+        (
+            "asset_name_unique",
+            "unique(asset_id, name)",
+            "Model name must be unique per asset.",
+        ),
     ]
 
     def name_get(self):
@@ -211,7 +215,11 @@ class SemanticDimension(models.Model):
     is_hidden = fields.Boolean(string="Hidden", default=False)
 
     _sql_constraints = [
-        ("model_name_unique", "unique(model_id, name)", "Dimension name must be unique per model."),
+        (
+            "model_name_unique",
+            "unique(model_id, name)",
+            "Dimension name must be unique per model.",
+        ),
     ]
 
 
@@ -274,5 +282,9 @@ class SemanticMetric(models.Model):
     is_hidden = fields.Boolean(string="Hidden", default=False)
 
     _sql_constraints = [
-        ("model_name_unique", "unique(model_id, name)", "Metric name must be unique per model."),
+        (
+            "model_name_unique",
+            "unique(model_id, name)",
+            "Metric name must be unique per model.",
+        ),
     ]

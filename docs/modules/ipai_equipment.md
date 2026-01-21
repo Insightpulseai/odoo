@@ -2,7 +2,7 @@
 
 **Status**: ⚠️ WARN
 **Version**: 18.0.1.0.0
-**Author**: InsightPulseAI
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -49,4 +49,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_equipment --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.300550_
+_Audited: 2026-01-21T22:42:53.237240_

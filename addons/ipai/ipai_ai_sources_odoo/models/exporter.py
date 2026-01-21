@@ -66,9 +66,7 @@ class IpaiKbExporter(models.AbstractModel):
             return True
 
         # Calculate lookback window
-        lookback_hours = int(
-            os.environ.get("IPAI_KB_EXPORT_LOOKBACK_HOURS", "24")
-        )
+        lookback_hours = int(os.environ.get("IPAI_KB_EXPORT_LOOKBACK_HOURS", "24"))
         since = fields.Datetime.now() - timedelta(hours=lookback_hours)
 
         # Get tenant reference
@@ -85,30 +83,36 @@ class IpaiKbExporter(models.AbstractModel):
 
         # Create export run record
         ExportRun = self.env["ipai.kb.export.run"].sudo()
-        run = ExportRun.create({
-            "company_id": self.env.company.id,
-            "chunks_count": len(chunks),
-            "state": "running",
-        })
+        run = ExportRun.create(
+            {
+                "company_id": self.env.company.id,
+                "chunks_count": len(chunks),
+                "state": "running",
+            }
+        )
 
         # Push to Supabase
         try:
             self._upsert_chunks(supabase_url, supabase_key, chunks)
-            run.write({
-                "state": "success",
-                "completed_at": fields.Datetime.now(),
-            })
+            run.write(
+                {
+                    "state": "success",
+                    "completed_at": fields.Datetime.now(),
+                }
+            )
             _logger.info(
                 "Exported %d chunks to Supabase KB for tenant %s",
                 len(chunks),
                 tenant_ref,
             )
         except Exception as e:
-            run.write({
-                "state": "failed",
-                "error_message": str(e)[:2000],
-                "completed_at": fields.Datetime.now(),
-            })
+            run.write(
+                {
+                    "state": "failed",
+                    "error_message": str(e)[:2000],
+                    "completed_at": fields.Datetime.now(),
+                }
+            )
             _logger.exception("KB export failed")
             raise UserError(f"KB export failed: {str(e)[:500]}")
 
@@ -126,12 +130,14 @@ class IpaiKbExporter(models.AbstractModel):
             List of chunk dictionaries
         """
         Task = self.env["project.task"].sudo()
-        tasks = Task.search([
-            ("write_date", ">=", since),
-            "|",
-            ("company_id", "=", self.env.company.id),
-            ("company_id", "=", False),
-        ])
+        tasks = Task.search(
+            [
+                ("write_date", ">=", since),
+                "|",
+                ("company_id", "=", self.env.company.id),
+                ("company_id", "=", False),
+            ]
+        )
 
         chunks = []
         base_url = os.environ.get("IPAI_PUBLIC_BASE_URL", "").rstrip("/")
@@ -165,15 +171,17 @@ class IpaiKbExporter(models.AbstractModel):
             if base_url:
                 url = f"{base_url}/web#id={task.id}&model=project.task&view_type=form"
 
-            chunks.append({
-                "tenant_ref": tenant_ref,
-                "source_type": "odoo_task",
-                "source_ref": f"project.task:{task.id}",
-                "title": task.name,
-                "url": url,
-                "content": content,
-                "updated_at": fields.Datetime.now().isoformat(),
-            })
+            chunks.append(
+                {
+                    "tenant_ref": tenant_ref,
+                    "source_type": "odoo_task",
+                    "source_ref": f"project.task:{task.id}",
+                    "title": task.name,
+                    "url": url,
+                    "content": content,
+                    "updated_at": fields.Datetime.now().isoformat(),
+                }
+            )
 
         return chunks
 
@@ -194,12 +202,14 @@ class IpaiKbExporter(models.AbstractModel):
             return []
 
         Page = self.env["document.page"].sudo()
-        pages = Page.search([
-            ("write_date", ">=", since),
-            "|",
-            ("company_id", "=", self.env.company.id),
-            ("company_id", "=", False),
-        ])
+        pages = Page.search(
+            [
+                ("write_date", ">=", since),
+                "|",
+                ("company_id", "=", self.env.company.id),
+                ("company_id", "=", False),
+            ]
+        )
 
         chunks = []
         base_url = os.environ.get("IPAI_PUBLIC_BASE_URL", "").rstrip("/")
@@ -213,15 +223,17 @@ class IpaiKbExporter(models.AbstractModel):
             if base_url:
                 url = f"{base_url}/web#id={page.id}&model=document.page&view_type=form"
 
-            chunks.append({
-                "tenant_ref": tenant_ref,
-                "source_type": "odoo_kb",
-                "source_ref": f"document.page:{page.id}",
-                "title": page.display_name,
-                "url": url,
-                "content": content[:4000],
-                "updated_at": fields.Datetime.now().isoformat(),
-            })
+            chunks.append(
+                {
+                    "tenant_ref": tenant_ref,
+                    "source_type": "odoo_kb",
+                    "source_ref": f"document.page:{page.id}",
+                    "title": page.display_name,
+                    "url": url,
+                    "content": content[:4000],
+                    "updated_at": fields.Datetime.now().isoformat(),
+                }
+            )
 
         return chunks
 
@@ -232,6 +244,7 @@ class IpaiKbExporter(models.AbstractModel):
         Simple regex-based stripping for performance.
         """
         import re
+
         if not html_content:
             return ""
         # Remove HTML tags
@@ -272,7 +285,7 @@ class IpaiKbExporter(models.AbstractModel):
         # Send in batches of 100
         batch_size = 100
         for i in range(0, len(chunks), batch_size):
-            batch = chunks[i:i + batch_size]
+            batch = chunks[i : i + batch_size]
 
             resp = requests.post(
                 endpoint,

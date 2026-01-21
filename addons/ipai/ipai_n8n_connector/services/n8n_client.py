@@ -42,8 +42,7 @@ class N8nClient:
         if self._api_key is None:
             ICP = self.connector.env["ir.config_parameter"].sudo()
             self._api_key = ICP.get_param(
-                f"ipai_n8n.api_key_{self.connector.id}",
-                default=""
+                f"ipai_n8n.api_key_{self.connector.id}", default=""
             )
         return self._api_key
 
@@ -96,7 +95,10 @@ class N8nClient:
                     pass
                 _logger.warning(
                     "n8n API error: %s %s -> %s: %s",
-                    method, endpoint, response.status_code, error_msg
+                    method,
+                    endpoint,
+                    response.status_code,
+                    error_msg,
                 )
                 raise UserError(f"n8n API error: {error_msg}")
 
@@ -113,18 +115,12 @@ class N8nClient:
     def health_check(self):
         """Check if n8n is reachable."""
         try:
-            response = requests.get(
-                f"{self.base_url}/healthz",
-                timeout=DEFAULT_TIMEOUT
-            )
+            response = requests.get(f"{self.base_url}/healthz", timeout=DEFAULT_TIMEOUT)
             return response.status_code == 200
         except requests.RequestException:
             # Try alternative health endpoint
             try:
-                response = requests.get(
-                    self.base_url,
-                    timeout=DEFAULT_TIMEOUT
-                )
+                response = requests.get(self.base_url, timeout=DEFAULT_TIMEOUT)
                 return response.status_code < 400
             except requests.RequestException:
                 return False
@@ -200,8 +196,7 @@ class N8nClient:
 
             if response.status_code >= 400:
                 _logger.warning(
-                    "n8n webhook error: %s -> %s",
-                    path, response.status_code
+                    "n8n webhook error: %s -> %s", path, response.status_code
                 )
                 return None
 

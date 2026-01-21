@@ -120,7 +120,9 @@ class IrModuleModule(models.Model):
     def _compute_x_risk_fields(self):
         """Compute all risk-related fields for modules."""
         for module in self:
-            stage, score, reasons, block, deps_missing, v18_compat = module._compute_risk_for_one()
+            stage, score, reasons, block, deps_missing, v18_compat = (
+                module._compute_risk_for_one()
+            )
             module.x_risk_stage = stage
             module.x_risk_score = score
             module.x_risk_reasons = reasons
@@ -162,7 +164,9 @@ class IrModuleModule(models.Model):
         deprecated_match = self._check_deprecated_patterns()
         if deprecated_match:
             score += 80
-            reasons.append(f"Module name matches deprecated pattern: {deprecated_match}")
+            reasons.append(
+                f"Module name matches deprecated pattern: {deprecated_match}"
+            )
             stage = "deprecated"
             block = True
 
@@ -170,7 +174,9 @@ class IrModuleModule(models.Model):
         experimental_match = self._check_experimental_patterns()
         if experimental_match and stage != "deprecated":
             score += 40
-            reasons.append(f"Module name matches experimental pattern: {experimental_match}")
+            reasons.append(
+                f"Module name matches experimental pattern: {experimental_match}"
+            )
             stage = "experimental"
 
         # Check 4: Missing dependencies (for installed modules)
@@ -233,10 +239,16 @@ class IrModuleModule(models.Model):
         deps = self.dependencies_id.mapped("name")
         if not deps:
             return []
-        installed = self.env["ir.module.module"].search([
-            ("name", "in", deps),
-            ("state", "=", "installed"),
-        ]).mapped("name")
+        installed = (
+            self.env["ir.module.module"]
+            .search(
+                [
+                    ("name", "in", deps),
+                    ("state", "=", "installed"),
+                ]
+            )
+            .mapped("name")
+        )
         return sorted(set(deps) - set(installed))
 
     def _get_deps_not_found(self):
@@ -245,9 +257,15 @@ class IrModuleModule(models.Model):
         deps = self.dependencies_id.mapped("name")
         if not deps:
             return []
-        available = self.env["ir.module.module"].search([
-            ("name", "in", deps),
-        ]).mapped("name")
+        available = (
+            self.env["ir.module.module"]
+            .search(
+                [
+                    ("name", "in", deps),
+                ]
+            )
+            .mapped("name")
+        )
         return sorted(set(deps) - set(available))
 
     def _check_version_mismatch(self):
@@ -360,10 +378,14 @@ class IrModuleModule(models.Model):
 
     def _is_v18_compat_installed(self):
         """Check if ipai_v18_compat module is installed."""
-        return bool(self.env["ir.module.module"].search_count([
-            ("name", "=", "ipai_v18_compat"),
-            ("state", "=", "installed"),
-        ]))
+        return bool(
+            self.env["ir.module.module"].search_count(
+                [
+                    ("name", "=", "ipai_v18_compat"),
+                    ("state", "=", "installed"),
+                ]
+            )
+        )
 
     def _scan_for_tree_patterns(self):
         """Scan module's XML files for tree view patterns."""
@@ -384,7 +406,9 @@ class IrModuleModule(models.Model):
                                 with open(filepath, "r", encoding="utf-8") as f:
                                     content = f.read()
                                     # Check for tree view patterns
-                                    if re.search(r'<tree\b', content) or re.search(r'view_mode.*tree', content):
+                                    if re.search(r"<tree\b", content) or re.search(
+                                        r"view_mode.*tree", content
+                                    ):
                                         return True
                             except (IOError, OSError):
                                 continue
@@ -398,16 +422,40 @@ class IrModuleModule(models.Model):
 
         # Check for proper domain prefix
         valid_prefixes = [
-            "ipai_finance_", "ipai_platform_", "ipai_workspace_",
-            "ipai_dev_studio_", "ipai_studio_", "ipai_industry_",
-            "ipai_workos_", "ipai_theme_", "ipai_web_theme_",
-            "ipai_ce_", "ipai_v18_", "ipai_master_", "ipai_agent_",
-            "ipai_ask_", "ipai_ai_", "ipai_bir_", "ipai_ocr_",
-            "ipai_ppm_", "ipai_project_", "ipai_srm_", "ipai_superset_",
-            "ipai_portal_", "ipai_default_", "ipai_auth_", "ipai_close_",
-            "ipai_expense_", "ipai_equipment_", "ipai_assets_",
-            "ipai_advisor_", "ipai_clarity_", "ipai_custom_",
-            "ipai_chatgpt_", "ipai_marketing_", "ipai_module_",
+            "ipai_finance_",
+            "ipai_platform_",
+            "ipai_workspace_",
+            "ipai_dev_studio_",
+            "ipai_studio_",
+            "ipai_industry_",
+            "ipai_workos_",
+            "ipai_theme_",
+            "ipai_web_theme_",
+            "ipai_ce_",
+            "ipai_v18_",
+            "ipai_master_",
+            "ipai_agent_",
+            "ipai_ask_",
+            "ipai_ai_",
+            "ipai_bir_",
+            "ipai_ocr_",
+            "ipai_ppm_",
+            "ipai_project_",
+            "ipai_srm_",
+            "ipai_superset_",
+            "ipai_portal_",
+            "ipai_default_",
+            "ipai_auth_",
+            "ipai_close_",
+            "ipai_expense_",
+            "ipai_equipment_",
+            "ipai_assets_",
+            "ipai_advisor_",
+            "ipai_clarity_",
+            "ipai_custom_",
+            "ipai_chatgpt_",
+            "ipai_marketing_",
+            "ipai_module_",
             "ipai_test_",
         ]
 
@@ -420,15 +468,19 @@ class IrModuleModule(models.Model):
 
     def _should_block_experimental(self):
         """Check if experimental modules should be blocked."""
-        param = self.env["ir.config_parameter"].sudo().get_param(
-            "ipai_module_gating.block_experimental", "1"
+        param = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("ipai_module_gating.block_experimental", "1")
         )
         return param == "1"
 
     def _is_auto_block_enabled(self):
         """Check if automatic blocking is enabled."""
-        param = self.env["ir.config_parameter"].sudo().get_param(
-            "ipai_module_gating.auto_block", "1"
+        param = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("ipai_module_gating.auto_block", "1")
         )
         return param == "1"
 
@@ -488,47 +540,53 @@ class IrModuleModule(models.Model):
         writer = csv.writer(output)
 
         # Header
-        writer.writerow([
-            "Technical Name",
-            "Display Name",
-            "Stage",
-            "Risk Score",
-            "Blocked",
-            "Override",
-            "State",
-            "Version",
-            "Missing Deps",
-            "V18 Compat Required",
-            "Reasons",
-        ])
+        writer.writerow(
+            [
+                "Technical Name",
+                "Display Name",
+                "Stage",
+                "Risk Score",
+                "Blocked",
+                "Override",
+                "State",
+                "Version",
+                "Missing Deps",
+                "V18 Compat Required",
+                "Reasons",
+            ]
+        )
 
         # Data rows
         for mod in self.sorted(key=lambda m: (m.x_risk_score or 0), reverse=True):
-            writer.writerow([
-                mod.name,
-                mod.shortdesc or mod.name,
-                mod.x_risk_stage or "unknown",
-                mod.x_risk_score or 0,
-                "Yes" if mod.x_block_install else "No",
-                "Yes" if mod.x_block_override else "No",
-                mod.state or "unknown",
-                mod.installed_version or mod.latest_version or "N/A",
-                mod.x_deps_missing or "",
-                "Yes" if mod.x_v18_compat_required else "No",
-                (mod.x_risk_reasons or "").replace("\n", " | "),
-            ])
+            writer.writerow(
+                [
+                    mod.name,
+                    mod.shortdesc or mod.name,
+                    mod.x_risk_stage or "unknown",
+                    mod.x_risk_score or 0,
+                    "Yes" if mod.x_block_install else "No",
+                    "Yes" if mod.x_block_override else "No",
+                    mod.state or "unknown",
+                    mod.installed_version or mod.latest_version or "N/A",
+                    mod.x_deps_missing or "",
+                    "Yes" if mod.x_v18_compat_required else "No",
+                    (mod.x_risk_reasons or "").replace("\n", " | "),
+                ]
+            )
 
         csv_content = output.getvalue()
         output.close()
 
         # Create attachment
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        attachment = self.env["ir.attachment"].create({
-            "name": f"module_health_report_{timestamp}.csv",
-            "type": "binary",
-            "datas": base64.b64encode(csv_content.encode("utf-8")),
-            "mimetype": "text/csv",
-        })
+        attachment = self.env["ir.attachment"].create(
+            {
+                "name": f"module_health_report_{timestamp}.csv",
+                "type": "binary",
+                "datas": base64.b64encode(csv_content.encode("utf-8")),
+                "mimetype": "text/csv",
+            }
+        )
 
         return {
             "type": "ir.actions.act_url",
@@ -559,16 +617,18 @@ class IrModuleModule(models.Model):
         deprecated = self.filtered(lambda m: m.x_risk_stage == "deprecated")
         blocked = self.filtered(lambda m: m.x_block_install)
 
-        lines.extend([
-            f"| Stage | Count |",
-            f"|-------|-------|",
-            f"| Stable ✅ | {len(stable)} |",
-            f"| Beta ⚠️ | {len(beta)} |",
-            f"| Experimental 🧪 | {len(experimental)} |",
-            f"| Deprecated ☠️ | {len(deprecated)} |",
-            f"| **Blocked** | {len(blocked)} |",
-            "",
-        ])
+        lines.extend(
+            [
+                f"| Stage | Count |",
+                f"|-------|-------|",
+                f"| Stable ✅ | {len(stable)} |",
+                f"| Beta ⚠️ | {len(beta)} |",
+                f"| Experimental 🧪 | {len(experimental)} |",
+                f"| Deprecated ☠️ | {len(deprecated)} |",
+                f"| **Blocked** | {len(blocked)} |",
+                "",
+            ]
+        )
 
         # High-risk modules
         high_risk = self.filtered(lambda m: (m.x_risk_score or 0) >= 40).sorted(
@@ -576,12 +636,14 @@ class IrModuleModule(models.Model):
         )
 
         if high_risk:
-            lines.extend([
-                "## High-Risk Modules",
-                "",
-                "| Module | Stage | Score | Blocked | Issues |",
-                "|--------|-------|-------|---------|--------|",
-            ])
+            lines.extend(
+                [
+                    "## High-Risk Modules",
+                    "",
+                    "| Module | Stage | Score | Blocked | Issues |",
+                    "|--------|-------|-------|---------|--------|",
+                ]
+            )
             for mod in high_risk[:20]:  # Top 20
                 reasons = (mod.x_risk_reasons or "").replace("\n", "; ")[:100]
                 lines.append(
@@ -592,10 +654,12 @@ class IrModuleModule(models.Model):
 
         # Blocked modules
         if blocked:
-            lines.extend([
-                "## Blocked Modules",
-                "",
-            ])
+            lines.extend(
+                [
+                    "## Blocked Modules",
+                    "",
+                ]
+            )
             for mod in blocked:
                 override_status = " (override active)" if mod.x_block_override else ""
                 lines.append(f"- `{mod.name}`: {mod.x_risk_reasons}{override_status}")
@@ -604,12 +668,14 @@ class IrModuleModule(models.Model):
         # V18 compat required
         v18_needed = self.filtered(lambda m: m.x_v18_compat_required)
         if v18_needed:
-            lines.extend([
-                "## Modules Requiring V18 Compatibility",
-                "",
-                "These modules may need `ipai_v18_compat` for tree→list view fixes:",
-                "",
-            ])
+            lines.extend(
+                [
+                    "## Modules Requiring V18 Compatibility",
+                    "",
+                    "These modules may need `ipai_v18_compat` for tree→list view fixes:",
+                    "",
+                ]
+            )
             for mod in v18_needed:
                 lines.append(f"- `{mod.name}`")
             lines.append("")
@@ -618,12 +684,14 @@ class IrModuleModule(models.Model):
 
         # Create attachment
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        attachment = self.env["ir.attachment"].create({
-            "name": f"module_health_report_{timestamp}.md",
-            "type": "binary",
-            "datas": base64.b64encode(md_content.encode("utf-8")),
-            "mimetype": "text/markdown",
-        })
+        attachment = self.env["ir.attachment"].create(
+            {
+                "name": f"module_health_report_{timestamp}.md",
+                "type": "binary",
+                "datas": base64.b64encode(md_content.encode("utf-8")),
+                "mimetype": "text/markdown",
+            }
+        )
 
         return {
             "type": "ir.actions.act_url",
@@ -661,31 +729,38 @@ class IrModuleModule(models.Model):
             return True
 
         # Check if allow_override is enabled and user has override
-        allow_override = self.env["ir.config_parameter"].sudo().get_param(
-            "ipai_module_gating.allow_override", "1"
+        allow_override = (
+            self.env["ir.config_parameter"]
+            .sudo()
+            .get_param("ipai_module_gating.allow_override", "1")
         )
 
         for module in self:
             if module.x_block_install and not module.x_block_override:
                 if allow_override != "1":
-                    raise UserError(_(
-                        "Module '%s' is blocked from install/upgrade.\n\n"
-                        "Risk Stage: %s\n"
-                        "Risk Score: %d\n"
-                        "Reasons:\n%s\n\n"
-                        "Contact your administrator to resolve the blocking issues."
-                    ) % (
-                        module.name,
-                        module.x_risk_stage or "Unknown",
-                        module.x_risk_score or 0,
-                        module.x_risk_reasons or "Unknown",
-                    ))
+                    raise UserError(
+                        _(
+                            "Module '%s' is blocked from install/upgrade.\n\n"
+                            "Risk Stage: %s\n"
+                            "Risk Score: %d\n"
+                            "Reasons:\n%s\n\n"
+                            "Contact your administrator to resolve the blocking issues."
+                        )
+                        % (
+                            module.name,
+                            module.x_risk_stage or "Unknown",
+                            module.x_risk_score or 0,
+                            module.x_risk_reasons or "Unknown",
+                        )
+                    )
                 else:
                     # Allow but warn - admin can override
                     _logger.warning(
                         "Installing blocked module '%s' (score=%d, stage=%s). "
                         "Set x_block_override=True to suppress this warning.",
-                        module.name, module.x_risk_score, module.x_risk_stage
+                        module.name,
+                        module.x_risk_score,
+                        module.x_risk_stage,
                     )
         return True
 

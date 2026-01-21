@@ -44,14 +44,16 @@ def fix_odoo18_views(env):
             new_mode_str = ",".join(new_modes)
             _logger.info(
                 "Patching action %s [%s]: '%s' → '%s'",
-                action.id, action.name, action.view_mode, new_mode_str
+                action.id,
+                action.name,
+                action.view_mode,
+                new_mode_str,
             )
             action.write({"view_mode": new_mode_str})
             patched_count += 1
 
     _logger.info(
-        "Odoo 18 compatibility fix complete. Patched %d actions.",
-        patched_count
+        "Odoo 18 compatibility fix complete. Patched %d actions.", patched_count
     )
     return patched_count
 
@@ -72,10 +74,7 @@ def detect_broken_kanbans(env):
     _logger.info("Scanning for broken kanban views...")
 
     View = env["ir.ui.view"].sudo()
-    kanban_views = View.search([
-        ("type", "=", "kanban"),
-        ("active", "=", True)
-    ])
+    kanban_views = View.search([("type", "=", "kanban"), ("active", "=", True)])
 
     broken_views = []
     for view in kanban_views:
@@ -84,13 +83,14 @@ def detect_broken_kanbans(env):
         if 't-name="card"' not in arch and "t-name='card'" not in arch:
             _logger.warning(
                 "Kanban view %s [%s] model=%s may need t-name='card' template",
-                view.id, view.name, view.model
+                view.id,
+                view.name,
+                view.model,
             )
             broken_views.append(view)
 
     _logger.info(
-        "Kanban scan complete. Found %d potentially broken views.",
-        len(broken_views)
+        "Kanban scan complete. Found %d potentially broken views.", len(broken_views)
     )
     return broken_views
 
@@ -149,7 +149,7 @@ def post_init_hook(env):
             "Found %d kanban views that may need manual fixes. "
             "Set system parameter 'ipai_v18_compat.deactivate_broken_kanban=1' "
             "to auto-deactivate. Check logs for details.",
-            len(broken)
+            len(broken),
         )
 
     # Clear registry cache
@@ -158,5 +158,7 @@ def post_init_hook(env):
     _logger.info(
         "ipai_v18_compat post_init_hook complete. "
         "Patched %d actions, found %d kanban issues, deactivated %d views.",
-        patched, len(broken), deactivated
+        patched,
+        len(broken),
+        deactivated,
     )

@@ -12,6 +12,7 @@ class IPAIApprovalType(models.Model):
     - How many approvals are needed
     - Notification settings
     """
+
     _name = "ipai.approval.type"
     _description = "Approval Type"
     _order = "sequence, name"
@@ -20,22 +21,20 @@ class IPAIApprovalType(models.Model):
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
     company_id = fields.Many2one(
-        "res.company",
-        default=lambda self: self.env.company,
-        required=True
+        "res.company", default=lambda self: self.env.company, required=True
     )
     description = fields.Html(translate=True)
 
     # Target model
     res_model = fields.Char(
         string="Model",
-        help="Technical name of the model requiring approval (e.g., purchase.order)"
+        help="Technical name of the model requiring approval (e.g., purchase.order)",
     )
     res_model_id = fields.Many2one(
         "ir.model",
         string="Model (UI)",
         ondelete="cascade",
-        domain=[("transient", "=", False)]
+        domain=[("transient", "=", False)],
     )
 
     # Approval settings
@@ -47,7 +46,7 @@ class IPAIApprovalType(models.Model):
             ("custom", "Custom (via matrix)"),
         ],
         default="user",
-        required=True
+        required=True,
     )
 
     # Approvers (when type = user)
@@ -56,54 +55,49 @@ class IPAIApprovalType(models.Model):
         "ipai_approval_type_user_rel",
         "type_id",
         "user_id",
-        string="Approvers"
+        string="Approvers",
     )
 
     # Approver group (when type = group)
-    approver_group_id = fields.Many2one(
-        "res.groups",
-        string="Approver Group"
-    )
+    approver_group_id = fields.Many2one("res.groups", string="Approver Group")
 
     # Manager levels (when type = manager)
     manager_levels = fields.Integer(
         default=1,
-        help="Number of management levels to involve (1 = direct manager, 2 = manager's manager, etc.)"
+        help="Number of management levels to involve (1 = direct manager, 2 = manager's manager, etc.)",
     )
 
     # Approval requirements
     minimum_approvers = fields.Integer(
         default=1,
-        help="Minimum number of approvals required before the request is approved"
+        help="Minimum number of approvals required before the request is approved",
     )
     require_all = fields.Boolean(
         string="Require All Approvers",
-        help="If checked, ALL designated approvers must approve (ignores minimum_approvers)"
+        help="If checked, ALL designated approvers must approve (ignores minimum_approvers)",
     )
 
     # Notifications
     notify_on_request = fields.Boolean(
-        default=True,
-        help="Send email to approvers when a new request is created"
+        default=True, help="Send email to approvers when a new request is created"
     )
     notify_on_approve = fields.Boolean(
-        default=True,
-        help="Send email to requester when request is approved"
+        default=True, help="Send email to requester when request is approved"
     )
     notify_on_reject = fields.Boolean(
-        default=True,
-        help="Send email to requester when request is rejected"
+        default=True, help="Send email to requester when request is rejected"
     )
 
     # Activity settings
     create_activity = fields.Boolean(
-        default=True,
-        help="Create an activity for pending approvals"
+        default=True, help="Create an activity for pending approvals"
     )
     activity_type_id = fields.Many2one(
         "mail.activity.type",
         string="Activity Type",
-        default=lambda self: self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
+        default=lambda self: self.env.ref(
+            "mail.mail_activity_data_todo", raise_if_not_found=False
+        ),
     )
 
     # Automation
@@ -112,7 +106,7 @@ class IPAIApprovalType(models.Model):
     )
     amount_field = fields.Char(
         default="amount_total",
-        help="Field name containing the amount to check (e.g., amount_total)"
+        help="Field name containing the amount to check (e.g., amount_total)",
     )
 
     # Statistics
@@ -151,9 +145,9 @@ class IPAIApprovalType(models.Model):
 
         elif self.approval_type == "manager":
             # Get employee's manager chain
-            employee = self.env["hr.employee"].search([
-                ("user_id", "=", request.user_id.id)
-            ], limit=1)
+            employee = self.env["hr.employee"].search(
+                [("user_id", "=", request.user_id.id)], limit=1
+            )
             if employee:
                 current = employee
                 for _ in range(self.manager_levels):

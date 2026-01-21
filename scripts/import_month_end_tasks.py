@@ -27,11 +27,11 @@ from psycopg2.extras import execute_values
 from dotenv import load_dotenv
 
 # Color codes for output
-RED = '\033[0;31m'
-GREEN = '\033[0;32m'
-YELLOW = '\033[1;33m'
-BLUE = '\033[0;34m'
-NC = '\033[0m'  # No Color
+RED = "\033[0;31m"
+GREEN = "\033[0;32m"
+YELLOW = "\033[1;33m"
+BLUE = "\033[0;34m"
+NC = "\033[0m"  # No Color
 
 
 def log_info(message: str):
@@ -62,17 +62,17 @@ def parse_relative_date(relative_due: str) -> Optional[int]:
     """
     relative_due = relative_due.strip().upper()
 
-    if relative_due.startswith('M-'):
+    if relative_due.startswith("M-"):
         try:
             return -int(relative_due[2:])
         except ValueError:
             return None
-    elif relative_due.startswith('M+'):
+    elif relative_due.startswith("M+"):
         try:
             return int(relative_due[2:])
         except ValueError:
             return None
-    elif relative_due == 'M':
+    elif relative_due == "M":
         return 0
 
     return None
@@ -109,17 +109,27 @@ def load_csv_data(csv_path: str) -> List[Dict]:
     tasks = []
 
     try:
-        with open(csv_path, 'r', encoding='utf-8') as f:
+        with open(csv_path, "r", encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
-                tasks.append({
-                    'name': row.get('Task Name', '').strip(),
-                    'owner_code': row.get('Owner', '').strip().upper(),
-                    'reviewer_code': row.get('Reviewer', '').strip().upper() if row.get('Reviewer') else None,
-                    'approver_code': row.get('Approver', '').strip().upper() if row.get('Approver') else None,
-                    'cluster_code': row.get('Cluster', '').strip().upper(),
-                    'relative_due': row.get('Due Date', '').strip().upper(),
-                })
+                tasks.append(
+                    {
+                        "name": row.get("Task Name", "").strip(),
+                        "owner_code": row.get("Owner", "").strip().upper(),
+                        "reviewer_code": (
+                            row.get("Reviewer", "").strip().upper()
+                            if row.get("Reviewer")
+                            else None
+                        ),
+                        "approver_code": (
+                            row.get("Approver", "").strip().upper()
+                            if row.get("Approver")
+                            else None
+                        ),
+                        "cluster_code": row.get("Cluster", "").strip().upper(),
+                        "relative_due": row.get("Due Date", "").strip().upper(),
+                    }
+                )
 
         log_success(f"Loaded {len(tasks)} tasks from CSV")
         return tasks
@@ -147,7 +157,7 @@ def deduplicate_tasks(tasks: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
     duplicates = []
 
     for task in tasks:
-        name_key = task['name'].lower()
+        name_key = task["name"].lower()
 
         if name_key in seen:
             duplicates.append(task)
@@ -162,7 +172,9 @@ def deduplicate_tasks(tasks: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
     return unique, duplicates
 
 
-def validate_task(task: Dict, valid_employees: set, valid_clusters: set) -> Tuple[bool, str]:
+def validate_task(
+    task: Dict, valid_employees: set, valid_clusters: set
+) -> Tuple[bool, str]:
     """
     Validate a single task.
 
@@ -175,36 +187,36 @@ def validate_task(task: Dict, valid_employees: set, valid_clusters: set) -> Tupl
         Tuple of (is_valid, error_message)
     """
     # Check required fields
-    if not task['name']:
+    if not task["name"]:
         return False, "Missing task name"
 
-    if not task['owner_code']:
+    if not task["owner_code"]:
         return False, "Missing owner code"
 
-    if not task['cluster_code']:
+    if not task["cluster_code"]:
         return False, "Missing cluster code"
 
-    if not task['relative_due']:
+    if not task["relative_due"]:
         return False, "Missing relative due date"
 
     # Validate owner exists
-    if task['owner_code'] not in valid_employees:
+    if task["owner_code"] not in valid_employees:
         return False, f"Invalid owner code: {task['owner_code']}"
 
     # Validate reviewer if present
-    if task['reviewer_code'] and task['reviewer_code'] not in valid_employees:
+    if task["reviewer_code"] and task["reviewer_code"] not in valid_employees:
         return False, f"Invalid reviewer code: {task['reviewer_code']}"
 
     # Validate approver if present
-    if task['approver_code'] and task['approver_code'] not in valid_employees:
+    if task["approver_code"] and task["approver_code"] not in valid_employees:
         return False, f"Invalid approver code: {task['approver_code']}"
 
     # Validate cluster
-    if task['cluster_code'] not in valid_clusters:
+    if task["cluster_code"] not in valid_clusters:
         return False, f"Invalid cluster code: {task['cluster_code']}"
 
     # Validate relative due format
-    if parse_relative_date(task['relative_due']) is None:
+    if parse_relative_date(task["relative_due"]) is None:
         return False, f"Invalid relative due format: {task['relative_due']}"
 
     return True, ""
@@ -257,10 +269,7 @@ def fetch_valid_codes(conn) -> Tuple[set, set]:
 
 
 def import_tasks(
-    conn,
-    tasks: List[Dict],
-    month_end: datetime,
-    dry_run: bool = False
+    conn, tasks: List[Dict], month_end: datetime, dry_run: bool = False
 ) -> Tuple[int, int]:
     """
     Import tasks into database.
@@ -280,7 +289,7 @@ def import_tasks(
 
     for task in tasks:
         # Calculate due date
-        due_date = calculate_due_date(month_end, task['relative_due'])
+        due_date = calculate_due_date(month_end, task["relative_due"])
 
         if due_date is None:
             log_warning(f"Skipping task (invalid due date): {task['name']}")
@@ -293,7 +302,7 @@ def import_tasks(
             SELECT id FROM public.month_end_tasks
             WHERE name = %s AND month_end = %s
             """,
-            (task['name'], month_end)
+            (task["name"], month_end),
         )
 
         if cursor.fetchone():
@@ -312,18 +321,20 @@ def import_tasks(
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Not started', 0)
                 """,
                 (
-                    task['name'],
-                    task['cluster_code'],
-                    task['relative_due'],
+                    task["name"],
+                    task["cluster_code"],
+                    task["relative_due"],
                     due_date,
                     month_end,
-                    task['owner_code'],
-                    task['reviewer_code'],
-                    task['approver_code']
-                )
+                    task["owner_code"],
+                    task["reviewer_code"],
+                    task["approver_code"],
+                ),
             )
             inserted += 1
-            log_success(f"Inserted: {task['name']} (Owner: {task['owner_code']}, Due: {due_date.strftime('%Y-%m-%d')})")
+            log_success(
+                f"Inserted: {task['name']} (Owner: {task['owner_code']}, Due: {due_date.strftime('%Y-%m-%d')})"
+            )
 
         except Exception as e:
             log_error(f"Failed to insert task '{task['name']}': {e}")
@@ -344,29 +355,21 @@ def import_tasks(
 def main():
     """Main execution function."""
     parser = argparse.ArgumentParser(
-        description='Import month-end closing tasks from CSV with deduplication'
+        description="Import month-end closing tasks from CSV with deduplication"
+    )
+    parser.add_argument("--csv", required=True, help="Path to CSV file")
+    parser.add_argument(
+        "--month-end", required=True, help="Month-end date (YYYY-MM-DD)"
     )
     parser.add_argument(
-        '--csv',
-        required=True,
-        help='Path to CSV file'
-    )
-    parser.add_argument(
-        '--month-end',
-        required=True,
-        help='Month-end date (YYYY-MM-DD)'
-    )
-    parser.add_argument(
-        '--dry-run',
-        action='store_true',
-        help='Validate without committing changes'
+        "--dry-run", action="store_true", help="Validate without committing changes"
     )
 
     args = parser.parse_args()
 
     # Load environment variables
     load_dotenv()
-    postgres_url = os.getenv('POSTGRES_URL')
+    postgres_url = os.getenv("POSTGRES_URL")
 
     if not postgres_url:
         log_error("POSTGRES_URL environment variable not set")
@@ -374,17 +377,19 @@ def main():
 
     # Parse month-end date
     try:
-        month_end = datetime.strptime(args.month_end, '%Y-%m-%d')
+        month_end = datetime.strptime(args.month_end, "%Y-%m-%d")
     except ValueError:
-        log_error(f"Invalid month-end date format: {args.month_end} (expected YYYY-MM-DD)")
+        log_error(
+            f"Invalid month-end date format: {args.month_end} (expected YYYY-MM-DD)"
+        )
         sys.exit(1)
 
-    log_info("="*80)
+    log_info("=" * 80)
     log_info("Month-End Task Import - With Deduplication")
     log_info(f"CSV File: {args.csv}")
     log_info(f"Month-End: {month_end.strftime('%Y-%m-%d')}")
     log_info(f"Mode: {'DRY RUN' if args.dry_run else 'LIVE IMPORT'}")
-    log_info("="*80)
+    log_info("=" * 80)
     print()
 
     # Load CSV data
@@ -432,9 +437,9 @@ def main():
         print()
 
         # Summary
-        log_info("="*80)
+        log_info("=" * 80)
         log_info("Import Summary")
-        log_info("="*80)
+        log_info("=" * 80)
         log_info(f"Total tasks in CSV: {len(tasks)}")
         log_info(f"Duplicates found: {len(duplicates)}")
         log_info(f"Unique tasks: {len(unique_tasks)}")
@@ -442,12 +447,12 @@ def main():
         log_info(f"Invalid tasks: {len(invalid_tasks)}")
         log_success(f"Tasks inserted: {inserted}")
         log_warning(f"Tasks skipped: {skipped}")
-        log_info("="*80)
+        log_info("=" * 80)
     else:
         log_warning("No valid tasks to import")
 
     conn.close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

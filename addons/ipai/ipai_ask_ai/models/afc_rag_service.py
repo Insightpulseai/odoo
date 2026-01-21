@@ -151,8 +151,12 @@ class AfcRagService(models.AbstractModel):
             by_owner[owner].append(
                 {
                     "name": task.name,
-                    "deadline": task.date_deadline.isoformat() if task.date_deadline else None,
-                    "days_overdue": (today - task.date_deadline).days if task.date_deadline else 0,
+                    "deadline": (
+                        task.date_deadline.isoformat() if task.date_deadline else None
+                    ),
+                    "days_overdue": (
+                        (today - task.date_deadline).days if task.date_deadline else 0
+                    ),
                     "project": task.project_id.name if task.project_id else None,
                 }
             )
@@ -183,7 +187,9 @@ class AfcRagService(models.AbstractModel):
             {
                 "name": t.name,
                 "deadline": t.date_deadline.isoformat() if t.date_deadline else None,
-                "days_until": (t.date_deadline - today).days if t.date_deadline else None,
+                "days_until": (
+                    (t.date_deadline - today).days if t.date_deadline else None
+                ),
                 "owner": t.user_id.name if t.user_id else "Unassigned",
                 "project": t.project_id.name if t.project_id else None,
             }
@@ -214,7 +220,11 @@ class AfcRagService(models.AbstractModel):
             return [
                 {
                     "form": d.name if hasattr(d, "name") else str(d),
-                    "deadline": d.deadline_date.isoformat() if hasattr(d, "deadline_date") else None,
+                    "deadline": (
+                        d.deadline_date.isoformat()
+                        if hasattr(d, "deadline_date")
+                        else None
+                    ),
                     "description": d.description if hasattr(d, "description") else None,
                 }
                 for d in deadlines
@@ -285,8 +295,12 @@ class AfcRagService(models.AbstractModel):
             "completed": completed,
             "overdue": overdue,
             "completion_rate": round(completion_rate, 1),
-            "in_progress": Task.search_count(domain + [("finance_state", "=", "active")]),
-            "under_review": Task.search_count(domain + [("finance_state", "=", "review")]),
+            "in_progress": Task.search_count(
+                domain + [("finance_state", "=", "active")]
+            ),
+            "under_review": Task.search_count(
+                domain + [("finance_state", "=", "review")]
+            ),
         }
 
     @api.model

@@ -62,16 +62,40 @@ EXPERIMENTAL_PATTERNS = [
 
 # Valid IPAI prefixes
 VALID_IPAI_PREFIXES = [
-    "ipai_finance_", "ipai_platform_", "ipai_workspace_",
-    "ipai_dev_studio_", "ipai_studio_", "ipai_industry_",
-    "ipai_workos_", "ipai_theme_", "ipai_web_theme_",
-    "ipai_ce_", "ipai_v18_", "ipai_master_", "ipai_agent_",
-    "ipai_ask_", "ipai_ai_", "ipai_bir_", "ipai_ocr_",
-    "ipai_ppm_", "ipai_project_", "ipai_srm_", "ipai_superset_",
-    "ipai_portal_", "ipai_default_", "ipai_auth_", "ipai_close_",
-    "ipai_expense_", "ipai_equipment_", "ipai_assets_",
-    "ipai_advisor_", "ipai_clarity_", "ipai_custom_",
-    "ipai_chatgpt_", "ipai_marketing_", "ipai_module_",
+    "ipai_finance_",
+    "ipai_platform_",
+    "ipai_workspace_",
+    "ipai_dev_studio_",
+    "ipai_studio_",
+    "ipai_industry_",
+    "ipai_workos_",
+    "ipai_theme_",
+    "ipai_web_theme_",
+    "ipai_ce_",
+    "ipai_v18_",
+    "ipai_master_",
+    "ipai_agent_",
+    "ipai_ask_",
+    "ipai_ai_",
+    "ipai_bir_",
+    "ipai_ocr_",
+    "ipai_ppm_",
+    "ipai_project_",
+    "ipai_srm_",
+    "ipai_superset_",
+    "ipai_portal_",
+    "ipai_default_",
+    "ipai_auth_",
+    "ipai_close_",
+    "ipai_expense_",
+    "ipai_equipment_",
+    "ipai_assets_",
+    "ipai_advisor_",
+    "ipai_clarity_",
+    "ipai_custom_",
+    "ipai_chatgpt_",
+    "ipai_marketing_",
+    "ipai_module_",
     "ipai_test_",
 ]
 
@@ -190,7 +214,9 @@ def compute_module_risk(
     # Check 6: V18 tree→list patterns
     if name.startswith("ipai_") and scan_for_tree_patterns(module_path):
         score += 25
-        reasons.append("Module may contain 'tree' view patterns; ipai_v18_compat recommended")
+        reasons.append(
+            "Module may contain 'tree' view patterns; ipai_v18_compat recommended"
+        )
         v18_compat_required = True
         if stage == "stable":
             stage = "beta"
@@ -239,8 +265,19 @@ def generate_reports(addons_path: str, output_dir: str) -> dict[str, Any]:
 
     # Also add known Odoo base modules
     base_modules = {
-        "base", "web", "mail", "contacts", "project", "hr", "hr_expense",
-        "account", "sale", "purchase", "stock", "crm", "website",
+        "base",
+        "web",
+        "mail",
+        "contacts",
+        "project",
+        "hr",
+        "hr_expense",
+        "account",
+        "sale",
+        "purchase",
+        "stock",
+        "crm",
+        "website",
     }
     all_module_names.update(base_modules)
 
@@ -250,9 +287,7 @@ def generate_reports(addons_path: str, output_dir: str) -> dict[str, Any]:
         manifest = parse_manifest(manifest_path)
         module_path = manifest_path.parent
 
-        risk = compute_module_risk(
-            module_name, manifest, module_path, all_module_names
-        )
+        risk = compute_module_risk(module_name, manifest, module_path, all_module_names)
 
         modules[module_name] = {
             "name": module_name,
@@ -273,8 +308,12 @@ def generate_reports(addons_path: str, output_dir: str) -> dict[str, Any]:
         "summary": {
             "stable": len([m for m in modules.values() if m["stage"] == "stable"]),
             "beta": len([m for m in modules.values() if m["stage"] == "beta"]),
-            "experimental": len([m for m in modules.values() if m["stage"] == "experimental"]),
-            "deprecated": len([m for m in modules.values() if m["stage"] == "deprecated"]),
+            "experimental": len(
+                [m for m in modules.values() if m["stage"] == "experimental"]
+            ),
+            "deprecated": len(
+                [m for m in modules.values() if m["stage"] == "deprecated"]
+            ),
             "blocked": len([m for m in modules.values() if m["blocked"]]),
         },
         "modules": modules,
@@ -304,24 +343,29 @@ def generate_reports(addons_path: str, output_dir: str) -> dict[str, Any]:
         if stage_name == "blocked":
             continue
         pct = f"{count / total * 100:.1f}%" if total > 0 else "0%"
-        emoji = {"stable": "✅", "beta": "⚠️", "experimental": "🧪", "deprecated": "☠️"}.get(
-            stage_name, ""
-        )
+        emoji = {
+            "stable": "✅",
+            "beta": "⚠️",
+            "experimental": "🧪",
+            "deprecated": "☠️",
+        }.get(stage_name, "")
         md_lines.append(f"| {stage_name.title()} {emoji} | {count} | {pct} |")
 
-    md_lines.extend([
-        "",
-        f"**Blocked Modules:** {report_data['summary']['blocked']}",
-        "",
-        "---",
-        "",
-        "## High-Risk Modules",
-        "",
-        "Modules with risk score ≥ 40:",
-        "",
-        "| Module | Stage | Score | Blocked | Issues |",
-        "|--------|-------|-------|---------|--------|",
-    ])
+    md_lines.extend(
+        [
+            "",
+            f"**Blocked Modules:** {report_data['summary']['blocked']}",
+            "",
+            "---",
+            "",
+            "## High-Risk Modules",
+            "",
+            "Modules with risk score ≥ 40:",
+            "",
+            "| Module | Stage | Score | Blocked | Issues |",
+            "|--------|-------|-------|---------|--------|",
+        ]
+    )
 
     high_risk = sorted(
         [m for m in modules.values() if m["score"] >= 40],
@@ -342,15 +386,17 @@ def generate_reports(addons_path: str, output_dir: str) -> dict[str, Any]:
     # Blocked modules section
     blocked = [m for m in modules.values() if m["blocked"]]
     if blocked:
-        md_lines.extend([
-            "",
-            "---",
-            "",
-            "## Blocked Modules",
-            "",
-            "These modules are blocked from install/upgrade:",
-            "",
-        ])
+        md_lines.extend(
+            [
+                "",
+                "---",
+                "",
+                "## Blocked Modules",
+                "",
+                "These modules are blocked from install/upgrade:",
+                "",
+            ]
+        )
         for mod in sorted(blocked, key=lambda x: x["name"]):
             reasons_str = "; ".join(mod["reasons"])
             md_lines.append(f"- **`{mod['name']}`**: {reasons_str}")
@@ -358,38 +404,47 @@ def generate_reports(addons_path: str, output_dir: str) -> dict[str, Any]:
     # V18 compat needed
     v18_needed = [m for m in modules.values() if m.get("v18_compat_required")]
     if v18_needed:
-        md_lines.extend([
-            "",
-            "---",
-            "",
-            "## V18 Compatibility Required",
-            "",
-            "These modules may need `ipai_v18_compat` for tree→list view fixes:",
-            "",
-        ])
+        md_lines.extend(
+            [
+                "",
+                "---",
+                "",
+                "## V18 Compatibility Required",
+                "",
+                "These modules may need `ipai_v18_compat` for tree→list view fixes:",
+                "",
+            ]
+        )
         for mod in sorted(v18_needed, key=lambda x: x["name"]):
             md_lines.append(f"- `{mod['name']}`")
 
     # All modules table
-    md_lines.extend([
-        "",
-        "---",
-        "",
-        "## All Modules",
-        "",
-        "| Module | Category | Stage | Score | Version |",
-        "|--------|----------|-------|-------|---------|",
-    ])
+    md_lines.extend(
+        [
+            "",
+            "---",
+            "",
+            "## All Modules",
+            "",
+            "| Module | Category | Stage | Score | Version |",
+            "|--------|----------|-------|-------|---------|",
+        ]
+    )
 
     for mod in sorted(modules.values(), key=lambda x: x["name"]):
-        emoji = {"stable": "✅", "beta": "⚠️", "experimental": "🧪", "deprecated": "☠️"}.get(
-            mod["stage"], ""
-        )
+        emoji = {
+            "stable": "✅",
+            "beta": "⚠️",
+            "experimental": "🧪",
+            "deprecated": "☠️",
+        }.get(mod["stage"], "")
         md_lines.append(
             f"| `{mod['name']}` | {mod['category']} | {mod['stage']} {emoji} | {mod['score']} | {mod['version']} |"
         )
 
-    md_lines.extend(["", "---", "", "_Generated by `scripts/generate_module_health_report.py`_"])
+    md_lines.extend(
+        ["", "---", "", "_Generated by `scripts/generate_module_health_report.py`_"]
+    )
 
     md_path = output_path / "MODULES_PROD_STATUS.md"
     with open(md_path, "w", encoding="utf-8") as f:

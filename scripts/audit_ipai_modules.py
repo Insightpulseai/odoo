@@ -107,21 +107,23 @@ def analyze_module(module_path: Path) -> dict:
         return result
 
     # Extract manifest fields
-    result.update({
-        "name": manifest.get("name", ""),
-        "version": manifest.get("version", ""),
-        "author": manifest.get("author", ""),
-        "website": manifest.get("website", ""),
-        "license": manifest.get("license", ""),
-        "category": manifest.get("category", ""),
-        "summary": manifest.get("summary", ""),
-        "depends": manifest.get("depends", []),
-        "data": manifest.get("data", []),
-        "assets": manifest.get("assets", {}),
-        "installable": manifest.get("installable", True),
-        "application": manifest.get("application", False),
-        "auto_install": manifest.get("auto_install", False),
-    })
+    result.update(
+        {
+            "name": manifest.get("name", ""),
+            "version": manifest.get("version", ""),
+            "author": manifest.get("author", ""),
+            "website": manifest.get("website", ""),
+            "license": manifest.get("license", ""),
+            "category": manifest.get("category", ""),
+            "summary": manifest.get("summary", ""),
+            "depends": manifest.get("depends", []),
+            "data": manifest.get("data", []),
+            "assets": manifest.get("assets", {}),
+            "installable": manifest.get("installable", True),
+            "application": manifest.get("application", False),
+            "auto_install": manifest.get("auto_install", False),
+        }
+    )
 
     # Check for enterprise dependencies
     enterprise_deps = [d for d in result["depends"] if d in ENTERPRISE_MODULES]
@@ -135,7 +137,9 @@ def analyze_module(module_path: Path) -> dict:
     result["has_security"] = (module_path / "security").is_dir()
     result["has_static"] = (module_path / "static").is_dir()
     result["has_data"] = (module_path / "data").is_dir()
-    result["has_wizard"] = (module_path / "wizard").is_dir() or (module_path / "wizards").is_dir()
+    result["has_wizard"] = (module_path / "wizard").is_dir() or (
+        module_path / "wizards"
+    ).is_dir()
 
     # Count Python files (complexity indicator)
     py_files = list(module_path.rglob("*.py"))
@@ -171,10 +175,12 @@ def classify_redundancy(module: dict) -> dict:
     # Check for overlap with OCA capabilities
     for capability, oca_modules in OCA_CAPABILITY_MAP.items():
         if capability in module_name.lower():
-            classification["oca_overlap"].append({
-                "capability": capability,
-                "oca_modules": oca_modules,
-            })
+            classification["oca_overlap"].append(
+                {
+                    "capability": capability,
+                    "oca_modules": oca_modules,
+                }
+            )
 
     # Classify by module structure and naming patterns
     name_lower = module_name.lower()
@@ -201,7 +207,9 @@ def classify_redundancy(module: dict) -> dict:
     elif "brand" in name_lower or "theme" in name_lower or "cleaner" in name_lower:
         classification["type"] = "branding"
         classification["recommendation"] = "DEMOTE"
-        classification["reason"] = "Branding/UI customization - should be application=False"
+        classification["reason"] = (
+            "Branding/UI customization - should be application=False"
+        )
 
     # Portal/route fixes
     elif "portal" in name_lower or "route" in name_lower or "fix" in name_lower:
@@ -254,12 +262,16 @@ def classify_redundancy(module: dict) -> dict:
     # Studio-like modules (potential overlap with OCA automation)
     elif "studio" in name_lower:
         classification["type"] = "feature"
-        classification["oca_overlap"].append({
-            "capability": "automation",
-            "oca_modules": ["automation_oca", "base_automation"],
-        })
+        classification["oca_overlap"].append(
+            {
+                "capability": "automation",
+                "oca_modules": ["automation_oca", "base_automation"],
+            }
+        )
         classification["recommendation"] = "REVIEW"
-        classification["reason"] = "Studio-like functionality - check OCA automation overlap"
+        classification["reason"] = (
+            "Studio-like functionality - check OCA automation overlap"
+        )
 
     # Advisor/Dashboard
     elif "advisor" in name_lower or "dashboard" in name_lower:
@@ -288,7 +300,9 @@ def classify_redundancy(module: dict) -> dict:
     # Override if enterprise deps found
     if module.get("has_enterprise_deps"):
         classification["recommendation"] = "REFACTOR"
-        classification["reason"] = f"Has enterprise deps: {module.get('enterprise_deps', [])}"
+        classification["reason"] = (
+            f"Has enterprise deps: {module.get('enterprise_deps', [])}"
+        )
 
     return classification
 
@@ -303,9 +317,17 @@ def find_potential_duplicates(modules: list) -> list:
         name = m["module_name"]
         # Extract base name (remove common suffixes)
         base = name
-        for suffix in ["_closing", "_close", "_ppm", "_tdi", "_seed", "_automation", "_dashboard"]:
+        for suffix in [
+            "_closing",
+            "_close",
+            "_ppm",
+            "_tdi",
+            "_seed",
+            "_automation",
+            "_dashboard",
+        ]:
             if base.endswith(suffix):
-                base = base[:-len(suffix)]
+                base = base[: -len(suffix)]
                 break
 
         if base not in name_groups:
@@ -315,11 +337,13 @@ def find_potential_duplicates(modules: list) -> list:
     # Flag groups with multiple modules
     for base, names in name_groups.items():
         if len(names) > 1:
-            duplicates.append({
-                "base_name": base,
-                "modules": names,
-                "count": len(names),
-            })
+            duplicates.append(
+                {
+                    "base_name": base,
+                    "modules": names,
+                    "count": len(names),
+                }
+            )
 
     return duplicates
 
@@ -342,17 +366,41 @@ def generate_reports(modules: list, output_dir: Path):
         "potential_duplicates": duplicates,
         "summary": {
             "ok": len([m for m in modules if m.get("status") == "OK"]),
-            "enterprise_deps": len([m for m in modules if m.get("status") == "ENTERPRISE_DEP"]),
+            "enterprise_deps": len(
+                [m for m in modules if m.get("status") == "ENTERPRISE_DEP"]
+            ),
             "deprecated": len([m for m in modules if m.get("status") == "DEPRECATED"]),
-            "parse_error": len([m for m in modules if m.get("status") == "PARSE_ERROR"]),
+            "parse_error": len(
+                [m for m in modules if m.get("status") == "PARSE_ERROR"]
+            ),
             "applications": len([m for m in modules if m.get("application")]),
             "installable": len([m for m in modules if m.get("installable", True)]),
         },
         "recommendations": {
-            "keep": len([m for m in modules if m["classification"]["recommendation"] == "KEEP"]),
-            "demote": len([m for m in modules if m["classification"]["recommendation"] == "DEMOTE"]),
-            "review": len([m for m in modules if m["classification"]["recommendation"] == "REVIEW"]),
-            "refactor": len([m for m in modules if m["classification"]["recommendation"] == "REFACTOR"]),
+            "keep": len(
+                [m for m in modules if m["classification"]["recommendation"] == "KEEP"]
+            ),
+            "demote": len(
+                [
+                    m
+                    for m in modules
+                    if m["classification"]["recommendation"] == "DEMOTE"
+                ]
+            ),
+            "review": len(
+                [
+                    m
+                    for m in modules
+                    if m["classification"]["recommendation"] == "REVIEW"
+                ]
+            ),
+            "refactor": len(
+                [
+                    m
+                    for m in modules
+                    if m["classification"]["recommendation"] == "REFACTOR"
+                ]
+            ),
         },
     }
 
@@ -364,12 +412,27 @@ def generate_reports(modules: list, output_dir: Path):
     # Generate CSV
     csv_path = output_dir / "inventory.csv"
     fieldnames = [
-        "module_name", "name", "version", "author", "license", "category",
-        "installable", "application", "auto_install",
-        "depends_count", "has_enterprise_deps", "enterprise_deps",
-        "python_file_count", "xml_file_count",
-        "has_models", "has_views", "has_controllers",
-        "status", "classification_type", "recommendation", "reason",
+        "module_name",
+        "name",
+        "version",
+        "author",
+        "license",
+        "category",
+        "installable",
+        "application",
+        "auto_install",
+        "depends_count",
+        "has_enterprise_deps",
+        "enterprise_deps",
+        "python_file_count",
+        "xml_file_count",
+        "has_models",
+        "has_views",
+        "has_controllers",
+        "status",
+        "classification_type",
+        "recommendation",
+        "reason",
     ]
 
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
@@ -417,8 +480,14 @@ def generate_reports(modules: list, output_dir: Path):
             app_flag = "Yes" if m.get("application") else "No"
             rec = m["classification"]["recommendation"]
             mtype = m["classification"]["type"]
-            reason = m["classification"]["reason"][:50] + "..." if len(m["classification"]["reason"]) > 50 else m["classification"]["reason"]
-            f.write(f"| {m['module_name']} | {m.get('version', '')} | {app_flag} | {rec} | {mtype} | {reason} |\n")
+            reason = (
+                m["classification"]["reason"][:50] + "..."
+                if len(m["classification"]["reason"]) > 50
+                else m["classification"]["reason"]
+            )
+            f.write(
+                f"| {m['module_name']} | {m.get('version', '')} | {app_flag} | {rec} | {mtype} | {reason} |\n"
+            )
         f.write("\n")
 
         if duplicates:
@@ -432,9 +501,13 @@ def generate_reports(modules: list, output_dir: Path):
         enterprise_mods = [m for m in modules if m.get("has_enterprise_deps")]
         if enterprise_mods:
             f.write("## Enterprise Dependency Warnings\n\n")
-            f.write("These modules depend on Enterprise-only modules and need refactoring:\n\n")
+            f.write(
+                "These modules depend on Enterprise-only modules and need refactoring:\n\n"
+            )
             for m in enterprise_mods:
-                f.write(f"- **{m['module_name']}**: depends on {', '.join(m['enterprise_deps'])}\n")
+                f.write(
+                    f"- **{m['module_name']}**: depends on {', '.join(m['enterprise_deps'])}\n"
+                )
             f.write("\n")
 
     print(f"Generated: {md_path}")

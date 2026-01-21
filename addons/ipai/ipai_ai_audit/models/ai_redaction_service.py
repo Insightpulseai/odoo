@@ -20,7 +20,10 @@ class IpaiAiRedactionService(models.AbstractModel):
         # Email addresses
         (r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", "[EMAIL]"),
         # Phone numbers (various formats)
-        (r"\b(?:\+?63|0)?[\s.-]?(?:9\d{2}|2\d{1,2})[\s.-]?\d{3}[\s.-]?\d{4}\b", "[PHONE]"),
+        (
+            r"\b(?:\+?63|0)?[\s.-]?(?:9\d{2}|2\d{1,2})[\s.-]?\d{3}[\s.-]?\d{4}\b",
+            "[PHONE]",
+        ),
         # Credit card numbers (simple pattern)
         (r"\b(?:\d{4}[\s-]?){3}\d{4}\b", "[CARD]"),
         # SSS/TIN numbers (Philippines)
@@ -108,10 +111,12 @@ class IpaiAiRedactionService(models.AbstractModel):
             try:
                 matches = re.findall(pattern, text)
                 if matches:
-                    detected.append({
-                        "type": label,
-                        "count": len(matches),
-                    })
+                    detected.append(
+                        {
+                            "type": label,
+                            "count": len(matches),
+                        }
+                    )
             except re.error:
                 continue
 

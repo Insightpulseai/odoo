@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-01-04T10:26:06.964015",
-  "module_count": 64,
+  "generated_at": "2026-01-21T22:42:54.976664",
+  "module_count": 122,
   "summary": {
-    "pass": 40,
-    "warn": 24,
+    "pass": 67,
+    "warn": 55,
     "fail": 0
   },
   "modules": {
@@ -35,7 +35,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.107292"
+      "audited_at": "2026-01-21T22:42:52.321685"
     },
     "ipai_agent_core": {
       "name": "ipai_agent_core",
@@ -65,30 +65,94 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.124676"
+      "audited_at": "2026-01-21T22:42:52.348083"
     },
-    "ipai_ask_ai": {
-      "name": "ipai_ask_ai",
-      "path": "/home/user/odoo-ce/addons/ipai_ask_ai",
-      "version": "18.0.1.1.0",
-      "summary": "AI-powered conversational assistant for Odoo",
-      "author": "InsightPulse AI",
+    "ipai_ai_agents": {
+      "name": "ipai_ai_agents",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_agents",
+      "version": "18.0.1.0.0",
+      "summary": "Odoo 19-style Ask AI / AI agents UX for Odoo CE 18 (OCA-friendly custom addon)",
+      "author": "InsightPulseAI",
       "depends": [
         "base",
         "web",
+        "mail"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 4,
+      "view_count": 8,
+      "menu_count": 7,
+      "action_count": 5,
+      "data_file_count": 7,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['services']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.371673"
+    },
+    "ipai_ai_agents_ui": {
+      "name": "ipai_ai_agents_ui",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_agents_ui",
+      "version": "18.0.1.0.0",
+      "summary": "React + Fluent UI v9 panel for AI agents (Ask AI, citations, evidence)",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web",
+        "ipai_ai_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 1,
+      "action_count": 1,
+      "data_file_count": 2,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.401782"
+    },
+    "ipai_ai_audit": {
+      "name": "ipai_ai_audit",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_audit",
+      "version": "18.0.1.0.1",
+      "summary": "AI usage logging, redaction, and governance controls",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
         "mail",
-        "ipai_platform_theme"
+        "ipai_ai_provider_pulser"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
       "xml_syntax_ok": true,
       "security_csv_ok": true,
       "init_imports_ok": true,
-      "model_count": 4,
-      "view_count": 1,
-      "menu_count": 0,
-      "action_count": 0,
-      "data_file_count": 6,
+      "model_count": 3,
+      "view_count": 7,
+      "menu_count": 5,
+      "action_count": 2,
+      "data_file_count": 7,
       "issues": [],
       "warnings": [],
       "install_tested": false,
@@ -97,13 +161,13 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.141335"
+      "audited_at": "2026-01-21T22:42:52.431304"
     },
-    "ipai_ask_ai_chatter": {
-      "name": "ipai_ask_ai_chatter",
-      "path": "/home/user/odoo-ce/addons/ipai_ask_ai_chatter",
-      "version": "18.0.1.1.0",
-      "summary": "Copilot-style @askai in chatter with async jobs + external executor",
+    "ipai_ai_connectors": {
+      "name": "ipai_ai_connectors",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_connectors",
+      "version": "18.0.1.0.0",
+      "summary": "Inbound integration hub for AI platform (n8n, GitHub, Slack webhooks)",
       "author": "InsightPulse AI",
       "depends": [
         "base",
@@ -113,12 +177,45 @@
       "python_syntax_ok": true,
       "xml_syntax_ok": true,
       "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 1,
+      "view_count": 3,
+      "menu_count": 1,
+      "action_count": 1,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.453290"
+    },
+    "ipai_ai_copilot": {
+      "name": "ipai_ai_copilot",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_copilot",
+      "version": "18.0.1.0.0",
+      "summary": "Ask AI buttons and sidebar for forms",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_ai_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
       "init_imports_ok": true,
-      "model_count": 2,
-      "view_count": 0,
+      "model_count": 3,
+      "view_count": 2,
       "menu_count": 0,
       "action_count": 0,
-      "data_file_count": 1,
+      "data_file_count": 3,
       "issues": [],
       "warnings": [],
       "install_tested": false,
@@ -127,14 +224,358 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.161929"
+      "audited_at": "2026-01-21T22:42:52.473450"
+    },
+    "ipai_ai_core": {
+      "name": "ipai_ai_core",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_core",
+      "version": "18.0.1.0.1",
+      "summary": "Provider-based AI threads/messages/citations for Odoo CE 18 (works with OCA AI UI).",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 5,
+      "view_count": 8,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.495505"
+    },
+    "ipai_ai_prompts": {
+      "name": "ipai_ai_prompts",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_prompts",
+      "version": "18.0.1.0.1",
+      "summary": "Prompt templates and topic library for AI interactions",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_agent_core",
+        "ipai_ai_provider_pulser"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 6,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 6,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.521991"
+    },
+    "ipai_ai_provider_kapa": {
+      "name": "ipai_ai_provider_kapa",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_provider_kapa",
+      "version": "18.0.1.0.0",
+      "summary": "Kapa-style RAG provider for IPAI AI Core.",
+      "author": "InsightPulse AI",
+      "depends": [
+        "ipai_ai_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 1,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.543391"
+    },
+    "ipai_ai_provider_pulser": {
+      "name": "ipai_ai_provider_pulser",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_provider_pulser",
+      "version": "18.0.1.0.1",
+      "summary": "AI provider adapter for Pulser/self-hosted AI gateway",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_agent_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 2,
+      "menu_count": 1,
+      "action_count": 1,
+      "data_file_count": 3,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.553813"
+    },
+    "ipai_ai_sources_odoo": {
+      "name": "ipai_ai_sources_odoo",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_sources_odoo",
+      "version": "18.0.1.0.0",
+      "summary": "Export Odoo data (tasks, KB articles) to Supabase KB for RAG retrieval",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "project"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 2,
+      "view_count": 3,
+      "menu_count": 1,
+      "action_count": 1,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.570030"
+    },
+    "ipai_ai_studio": {
+      "name": "ipai_ai_studio",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ai_studio",
+      "version": "18.0.1.0.0",
+      "summary": "AI-driven Studio-like module generator for Odoo CE (spec -> addon scaffold -> validate -> apply)",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 2,
+      "menu_count": 2,
+      "action_count": 1,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.589005"
+    },
+    "ipai_aiux_chat": {
+      "name": "ipai_aiux_chat",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_aiux_chat",
+      "version": "18.0.0.1.0",
+      "summary": "AIUX OWL chat widget scaffold (Ask AI integration)",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web",
+        "ipai_theme_aiux"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.609454"
+    },
+    "ipai_approvals": {
+      "name": "ipai_approvals",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_approvals",
+      "version": "18.0.1.0.0",
+      "summary": "Generic approval workflow system - Enterprise Approvals parity for Odoo CE",
+      "author": "InsightPulseAI",
+      "depends": [
+        "base",
+        "mail",
+        "hr"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 3,
+      "view_count": 9,
+      "menu_count": 6,
+      "action_count": 5,
+      "data_file_count": 9,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.621182"
+    },
+    "ipai_ask_ai": {
+      "name": "ipai_ask_ai",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ask_ai",
+      "version": "18.0.1.0.0",
+      "summary": "ERP-aware RAG Engine for Finance and Month-End Close workflows",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "project",
+        "ipai_finance_ppm"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 4,
+      "view_count": 4,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.686449"
+    },
+    "ipai_ask_ai_bridge": {
+      "name": "ipai_ask_ai_bridge",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ask_ai_bridge",
+      "version": "18.0.1.0.0",
+      "summary": "Minimal launcher for external Ask AI / Copilot service.",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 1,
+      "view_count": 1,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 2,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.717494"
+    },
+    "ipai_ask_ai_chatter": {
+      "name": "ipai_ask_ai_chatter",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ask_ai_chatter",
+      "version": "18.0.1.0.0",
+      "summary": "Integrate Ask AI into Odoo Chatter for contextual AI assistance",
+      "author": "InsightPulse AI",
+      "depends": [
+        "mail",
+        "ipai_ask_ai"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 1,
+      "view_count": 3,
+      "menu_count": 1,
+      "action_count": 1,
+      "data_file_count": 2,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.745554"
     },
     "ipai_assets": {
       "name": "ipai_assets",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_assets",
       "version": "18.0.1.1.0",
       "summary": "Equipment and asset checkout tracking (Cheqroom-style parity)",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "mail",
@@ -159,14 +600,75 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.168452"
+      "audited_at": "2026-01-21T22:42:52.763680"
+    },
+    "ipai_auth_oauth_internal": {
+      "name": "ipai_auth_oauth_internal",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_auth_oauth_internal",
+      "version": "18.0.1.0.0",
+      "summary": "Makes OAuth users Internal Users instead of Portal users",
+      "author": "InsightPulse AI",
+      "depends": [
+        "auth_oauth"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 1,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.784773"
+    },
+    "ipai_bi_superset": {
+      "name": "ipai_bi_superset",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_bi_superset",
+      "version": "18.0.1.0.0",
+      "summary": "Thin-layer Superset integration via guest token embedding",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 3,
+      "view_count": 7,
+      "menu_count": 5,
+      "action_count": 3,
+      "data_file_count": 6,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.792024"
     },
     "ipai_bir_compliance": {
       "name": "ipai_bir_compliance",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_bir_compliance",
       "version": "18.0.1.0.0",
       "summary": "BIR 2307 Generator & Alphalist/RELIEF DAT File Engine",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "account"
       ],
@@ -190,7 +692,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.184311"
+      "audited_at": "2026-01-21T22:42:52.808455"
     },
     "ipai_bir_tax_compliance": {
       "name": "ipai_bir_tax_compliance",
@@ -201,7 +703,8 @@
       "depends": [
         "base",
         "mail",
-        "account"
+        "account",
+        "project"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
@@ -221,17 +724,50 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.194951"
+      "audited_at": "2026-01-21T22:42:52.823845"
+    },
+    "ipai_catalog_bridge": {
+      "name": "ipai_catalog_bridge",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_catalog_bridge",
+      "version": "18.0.1.0.0",
+      "summary": "Unity Catalog-like asset registry bridge for Odoo ↔ Supabase sync",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_dev_studio_base"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 6,
+      "view_count": 6,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.851590"
     },
     "ipai_ce_branding": {
       "name": "ipai_ce_branding",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_ce_branding",
-      "version": "1.2.0",
+      "version": "18.0.1.2.0",
       "summary": "Custom branding for Odoo CE login and backend",
       "author": "InsightPulse AI",
       "depends": [
         "web",
-        "base"
+        "base",
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
@@ -253,17 +789,19 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.212991"
+      "audited_at": "2026-01-21T22:42:52.882915"
     },
     "ipai_ce_cleaner": {
       "name": "ipai_ce_cleaner",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_ce_cleaner",
       "version": "18.0.1.0.0",
       "summary": "Hides Enterprise/IAP upsells and rewires links away from odoo.com.",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
-        "web"
+        "web",
+        "remove_odoo_enterprise",
+        "disable_odoo_online"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
@@ -285,7 +823,78 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.220333"
+      "audited_at": "2026-01-21T22:42:52.895083"
+    },
+    "ipai_ces_bundle": {
+      "name": "ipai_ces_bundle",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ces_bundle",
+      "version": "18.0.1.0.0",
+      "summary": "One-click meta-installer for CES creative effectiveness vertical",
+      "author": "InsightPulse AI",
+      "depends": [
+        "project",
+        "hr",
+        "hr_timesheet",
+        "mail",
+        "portal",
+        "base_tier_validation",
+        "base_exception",
+        "date_range",
+        "ipai_enterprise_bridge"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.907584"
+    },
+    "ipai_chatgpt_sdk_theme": {
+      "name": "ipai_chatgpt_sdk_theme",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_chatgpt_sdk_theme",
+      "version": "18.0.1.0.0",
+      "summary": "Design tokens and theme aligned to ChatGPT App SDK design system",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web",
+        "website"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.912765"
     },
     "ipai_clarity_ppm_parity": {
       "name": "ipai_clarity_ppm_parity",
@@ -314,17 +923,18 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.226641"
+      "audited_at": "2026-01-21T22:42:52.921456"
     },
     "ipai_close_orchestration": {
       "name": "ipai_close_orchestration",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_close_orchestration",
       "version": "18.0.1.0.0",
       "summary": "Close Cycle Orchestration - Cycles, Tasks, Templates, Checklists, Exceptions, Gates",
-      "author": "IPAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
-        "mail"
+        "mail",
+        "project"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
@@ -344,7 +954,133 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.246091"
+      "audited_at": "2026-01-21T22:42:52.950809"
+    },
+    "ipai_command_center": {
+      "name": "ipai_command_center",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_command_center",
+      "version": "18.0.1.0.0",
+      "summary": "Platform cockpit for runs, KPIs, alerts, and AI",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_design_system_apps_sdk"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 7,
+      "menu_count": 5,
+      "action_count": 3,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:52.981708"
+    },
+    "ipai_control_room": {
+      "name": "ipai_control_room",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_control_room",
+      "version": "18.0.1.0.0",
+      "summary": "Control Room for pipelines, data quality, and operational insights",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "project",
+        "web",
+        "ipai_theme_fluent2"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 18,
+      "view_count": 41,
+      "menu_count": 21,
+      "action_count": 16,
+      "data_file_count": 9,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.004724"
+    },
+    "ipai_copilot_hub": {
+      "name": "ipai_copilot_hub",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_copilot_hub",
+      "version": "18.0.1.0.0",
+      "summary": "Ops Control Room / AI Runbook Hub with Fluent UI shell",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "web",
+        "mail"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 1,
+      "menu_count": 5,
+      "action_count": 3,
+      "data_file_count": 5,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.051438"
+    },
+    "ipai_copilot_ui": {
+      "name": "ipai_copilot_ui",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_copilot_ui",
+      "version": "18.0.1.0.0",
+      "summary": "M365 Copilot-inspired Fluent UI for Odoo CE 18",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 1,
+      "action_count": 1,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.081985"
     },
     "ipai_crm_pipeline": {
       "name": "ipai_crm_pipeline",
@@ -376,7 +1112,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.267088"
+      "audited_at": "2026-01-21T22:42:53.098855"
     },
     "ipai_custom_routes": {
       "name": "ipai_custom_routes",
@@ -412,7 +1148,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.278276"
+      "audited_at": "2026-01-21T22:42:53.121232"
     },
     "ipai_default_home": {
       "name": "ipai_default_home",
@@ -445,14 +1181,45 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.283494"
+      "audited_at": "2026-01-21T22:42:53.132145"
+    },
+    "ipai_design_system_apps_sdk": {
+      "name": "ipai_design_system_apps_sdk",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_design_system_apps_sdk",
+      "version": "18.0.1.0.0",
+      "summary": "ChatGPT Apps SDK UI design tokens for all IPAI apps",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.156167"
     },
     "ipai_dev_studio_base": {
       "name": "ipai_dev_studio_base",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_dev_studio_base",
       "version": "18.0.1.1.0",
       "summary": "Base OCA/CE module bundle and dev tools for InsightPulse",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "web",
@@ -480,14 +1247,90 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.296810"
+      "audited_at": "2026-01-21T22:42:53.167337"
+    },
+    "ipai_document_ai": {
+      "name": "ipai_document_ai",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_document_ai",
+      "version": "18.0.1.0.0",
+      "summary": "Self-hosted OCR and document intelligence for Odoo",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "account"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 4,
+      "menu_count": 3,
+      "action_count": 1,
+      "data_file_count": 5,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.174169"
+    },
+    "ipai_enterprise_bridge": {
+      "name": "ipai_enterprise_bridge",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_enterprise_bridge",
+      "version": "18.0.1.0.0",
+      "summary": "Thin glue layer for CE+OCA parity: config, approvals, AI/infra integration",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "web",
+        "mail",
+        "contacts",
+        "account",
+        "sale_management",
+        "purchase",
+        "stock",
+        "project",
+        "hr",
+        "hr_timesheet",
+        "base_tier_validation",
+        "base_exception",
+        "date_range",
+        "ipai_workspace_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 13,
+      "view_count": 10,
+      "menu_count": 9,
+      "action_count": 4,
+      "data_file_count": 11,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.202586"
     },
     "ipai_equipment": {
       "name": "ipai_equipment",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_equipment",
       "version": "18.0.1.0.0",
       "summary": "Cheqroom-style equipment catalog, bookings, and incidents on Odoo CE + OCA.",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "stock",
         "maintenance",
@@ -513,14 +1356,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.300550"
+      "audited_at": "2026-01-21T22:42:53.237240"
     },
     "ipai_expense": {
       "name": "ipai_expense",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_expense",
       "version": "18.0.1.0.0",
       "summary": "PH-focused expense & travel workflows (SAP Concur-style) on Odoo CE + OCA.",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "hr",
         "hr_expense",
@@ -547,14 +1390,44 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.312282"
+      "audited_at": "2026-01-21T22:42:53.254287"
+    },
+    "ipai_expense_ocr": {
+      "name": "ipai_expense_ocr",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_expense_ocr",
+      "version": "18.0.1.0.0",
+      "summary": "OCR-powered receipt scanning for expense management",
+      "author": "InsightPulse AI",
+      "depends": [
+        "hr_expense",
+        "ipai_document_ai"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 3,
+      "view_count": 6,
+      "menu_count": 1,
+      "action_count": 1,
+      "data_file_count": 5,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.273178"
     },
     "ipai_finance_bir_compliance": {
       "name": "ipai_finance_bir_compliance",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_bir_compliance",
       "version": "18.0.1.0.0",
       "summary": "JSON-seeded BIR schedule that generates Prep/Review/Approval/Filing tasks into IM2",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project",
         "mail",
@@ -580,14 +1453,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.324333"
+      "audited_at": "2026-01-21T22:42:53.306050"
     },
     "ipai_finance_close_automation": {
       "name": "ipai_finance_close_automation",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_close_automation",
       "version": "18.0.1.0.0",
       "summary": "Month-end close generator with working-day deadline offsets",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project",
         "resource",
@@ -611,14 +1484,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.341340"
+      "audited_at": "2026-01-21T22:42:53.333971"
     },
     "ipai_finance_close_seed": {
       "name": "ipai_finance_close_seed",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_close_seed",
       "version": "18.0.1.0.0",
       "summary": "Seed data for Month-End Close + BIR Tax Filing + PH Holidays",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project",
         "resource"
@@ -643,7 +1516,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.352900"
+      "audited_at": "2026-01-21T22:42:53.358010"
     },
     "ipai_finance_closing": {
       "name": "ipai_finance_closing",
@@ -673,14 +1546,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.360159"
+      "audited_at": "2026-01-21T22:42:53.373150"
     },
     "ipai_finance_month_end": {
       "name": "ipai_finance_month_end",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_month_end",
       "version": "18.0.1.0.0",
       "summary": "JSON-seeded month-end templates that generate Preparation/Review/Approval tasks into IM1",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project",
         "mail",
@@ -706,14 +1579,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.366292"
+      "audited_at": "2026-01-21T22:42:53.389649"
     },
     "ipai_finance_monthly_closing": {
       "name": "ipai_finance_monthly_closing",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_monthly_closing",
       "version": "18.0.1.0.0",
       "summary": "Structured month-end closing and BIR filing on top of Projects (CE/OCA-only).",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project"
       ],
@@ -735,14 +1608,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.384275"
+      "audited_at": "2026-01-21T22:42:53.416396"
     },
     "ipai_finance_ppm": {
       "name": "ipai_finance_ppm",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm",
-      "version": "18.0.1.0.0",
+      "version": "18.0.1.1.0",
       "summary": "Finance Project Portfolio Management (Notion Parity).",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "mail",
@@ -753,14 +1626,14 @@
       "xml_syntax_ok": true,
       "security_csv_ok": true,
       "init_imports_ok": false,
-      "model_count": 17,
-      "view_count": 24,
-      "menu_count": 12,
-      "action_count": 11,
-      "data_file_count": 11,
+      "model_count": 19,
+      "view_count": 29,
+      "menu_count": 16,
+      "action_count": 15,
+      "data_file_count": 18,
       "issues": [],
       "warnings": [
-        "Subpackages not imported in __init__.py: ['controllers']"
+        "Subpackages not imported in __init__.py: ['tests', 'controllers']"
       ],
       "install_tested": false,
       "install_success": false,
@@ -768,14 +1641,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.392826"
+      "audited_at": "2026-01-21T22:42:53.429940"
     },
     "ipai_finance_ppm_closing": {
       "name": "ipai_finance_ppm_closing",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_closing",
       "version": "18.0.1.1.0",
       "summary": "Idempotent Month-End Close & BIR Task Generator with audit trail.",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project",
         "ipai_finance_ppm",
@@ -793,7 +1666,7 @@
       "data_file_count": 2,
       "issues": [],
       "warnings": [
-        "Subpackages not imported in __init__.py: ['tests', 'scripts']"
+        "Subpackages not imported in __init__.py: ['scripts', 'tests']"
       ],
       "install_tested": false,
       "install_success": false,
@@ -801,14 +1674,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.451197"
+      "audited_at": "2026-01-21T22:42:53.519921"
     },
     "ipai_finance_ppm_dashboard": {
       "name": "ipai_finance_ppm_dashboard",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_dashboard",
       "version": "18.0.1.0.0",
       "summary": "Month-end & BIR calendar dashboard (Gantt + calendar graph)",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "web"
@@ -833,7 +1706,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.468996"
+      "audited_at": "2026-01-21T22:42:53.548004"
     },
     "ipai_finance_ppm_golive": {
       "name": "ipai_finance_ppm_golive",
@@ -865,14 +1738,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.478606"
+      "audited_at": "2026-01-21T22:42:53.562779"
     },
     "ipai_finance_ppm_tdi": {
       "name": "ipai_finance_ppm_tdi",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_ppm_tdi",
-      "version": "1.0.0",
+      "version": "18.0.1.0.0",
       "summary": "Import finance team, tasks, BIR calendar, and LogFrame data",
-      "author": "InsightPulse AI - Jake Tolentino",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "project",
@@ -897,12 +1770,12 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.493467"
+      "audited_at": "2026-01-21T22:42:53.589472"
     },
     "ipai_finance_ppm_umbrella": {
       "name": "ipai_finance_ppm_umbrella",
       "path": "/home/user/odoo-ce/addons/ipai_finance_ppm_umbrella",
-      "version": "1.0.0",
+      "version": "18.0.1.0.0",
       "summary": "Complete seed data for 8-employee Finance SSC with BIR compliance and month-end closing tasks",
       "author": "InsightPulse AI",
       "depends": [
@@ -929,14 +1802,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.521465"
+      "audited_at": "2026-01-21T22:42:53.636316"
     },
     "ipai_finance_project_hybrid": {
       "name": "ipai_finance_project_hybrid",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_finance_project_hybrid",
       "version": "18.0.1.0.0",
       "summary": "Turns finance phases into IM projects, seeds finance directory/BIR schedule, generates month-end + compliance tasks, and adds analytics dashboards.",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project",
         "mail"
@@ -961,7 +1834,38 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.539433"
+      "audited_at": "2026-01-21T22:42:53.661005"
+    },
+    "ipai_focalboard_connector": {
+      "name": "ipai_focalboard_connector",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_focalboard_connector",
+      "version": "18.0.1.0.0",
+      "summary": "API client and sync for Focalboard project boards",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "project",
+        "ipai_integrations"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 4,
+      "view_count": 4,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 3,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.696249"
     },
     "ipai_grid_view": {
       "name": "ipai_grid_view",
@@ -992,14 +1896,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.562163"
+      "audited_at": "2026-01-21T22:42:53.719760"
     },
     "ipai_industry_accounting_firm": {
       "name": "ipai_industry_accounting_firm",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_industry_accounting_firm",
       "version": "18.0.1.0.0",
       "summary": "Accounting firm vertical with month-end closing and compliance workflows",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "ipai_workspace_core"
       ],
@@ -1021,14 +1925,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.582804"
+      "audited_at": "2026-01-21T22:42:53.748591"
     },
     "ipai_industry_marketing_agency": {
       "name": "ipai_industry_marketing_agency",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_industry_marketing_agency",
       "version": "18.0.1.0.0",
       "summary": "Marketing agency vertical with campaign-specific fields and workflows",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "ipai_workspace_core"
       ],
@@ -1050,14 +1954,179 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.589621"
+      "audited_at": "2026-01-21T22:42:53.760036"
+    },
+    "ipai_integrations": {
+      "name": "ipai_integrations",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_integrations",
+      "version": "18.0.1.0.0",
+      "summary": "Central integration hub for Mattermost, Focalboard, and n8n",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "web",
+        "mail"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 6,
+      "view_count": 11,
+      "menu_count": 8,
+      "action_count": 5,
+      "data_file_count": 9,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.771725"
+    },
+    "ipai_iot_bridge": {
+      "name": "ipai_iot_bridge",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_iot_bridge",
+      "version": "18.0.1.0.0",
+      "summary": "IoT device bridge for CE+OCA without EE IoT dependencies",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_enterprise_bridge"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 4,
+      "view_count": 5,
+      "menu_count": 4,
+      "action_count": 3,
+      "data_file_count": 3,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.803167"
+    },
+    "ipai_mail_integration": {
+      "name": "ipai_mail_integration",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_mail_integration",
+      "version": "18.0.1.0.0",
+      "summary": "Mailgun/SMTP/OAuth mail integration without IAP dependencies",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_enterprise_bridge"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 3,
+      "view_count": 4,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.823865"
+    },
+    "ipai_marketing_ai": {
+      "name": "ipai_marketing_ai",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_marketing_ai",
+      "version": "18.0.1.0.0",
+      "summary": "Umbrella module for AI-powered marketing automation workflows",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "mass_mailing",
+        "ipai_ask_ai",
+        "ipai_agent_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.842893"
+    },
+    "ipai_marketing_journey": {
+      "name": "ipai_marketing_journey",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_marketing_journey",
+      "version": "18.0.1.0.1",
+      "summary": "Node-based marketing journey builder (Enterprise MA substitute)",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "mass_mailing",
+        "utm",
+        "ipai_agent_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 6,
+      "view_count": 9,
+      "menu_count": 7,
+      "action_count": 4,
+      "data_file_count": 8,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.847602"
     },
     "ipai_master_control": {
       "name": "ipai_master_control",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_master_control",
       "version": "18.0.1.0.0",
       "summary": "Bridge Odoo events to Master Control work items",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "hr",
@@ -1068,12 +2137,45 @@
       "python_syntax_ok": true,
       "xml_syntax_ok": true,
       "security_csv_ok": true,
-      "init_imports_ok": true,
+      "init_imports_ok": false,
       "model_count": 4,
       "view_count": 0,
       "menu_count": 0,
       "action_count": 0,
       "data_file_count": 2,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.878157"
+    },
+    "ipai_mattermost_connector": {
+      "name": "ipai_mattermost_connector",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_mattermost_connector",
+      "version": "18.0.1.0.0",
+      "summary": "API client and sync for Mattermost chat platform",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_integrations"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 3,
+      "view_count": 3,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 3,
       "issues": [],
       "warnings": [],
       "install_tested": false,
@@ -1082,7 +2184,65 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.595948"
+      "audited_at": "2026-01-21T22:42:53.897464"
+    },
+    "ipai_mcp_hub": {
+      "name": "ipai_mcp_hub",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_mcp_hub",
+      "version": "18.0.1.0.0",
+      "summary": "Model Context Protocol (MCP) server and tool registry",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 3,
+      "view_count": 8,
+      "menu_count": 4,
+      "action_count": 3,
+      "data_file_count": 7,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.918802"
+    },
+    "ipai_module_gating": {
+      "name": "ipai_module_gating",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_module_gating",
+      "version": "18.0.1.0.0",
+      "summary": "Automated production readiness assessment and install/upgrade gating for Odoo modules",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 1,
+      "view_count": 3,
+      "menu_count": 3,
+      "action_count": 5,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:53.938089"
     },
     "ipai_month_end": {
       "name": "ipai_month_end",
@@ -1113,7 +2273,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.605256"
+      "audited_at": "2026-01-21T22:42:53.956278"
     },
     "ipai_month_end_closing": {
       "name": "ipai_month_end_closing",
@@ -1132,8 +2292,8 @@
       "init_imports_ok": true,
       "model_count": 0,
       "view_count": 0,
-      "menu_count": 0,
-      "action_count": 0,
+      "menu_count": 9,
+      "action_count": 5,
       "data_file_count": 5,
       "issues": [],
       "warnings": [],
@@ -1143,7 +2303,68 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.621453"
+      "audited_at": "2026-01-21T22:42:53.982306"
+    },
+    "ipai_n8n_connector": {
+      "name": "ipai_n8n_connector",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_n8n_connector",
+      "version": "18.0.1.0.0",
+      "summary": "Workflow automation integration with n8n",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_integrations"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 3,
+      "view_count": 4,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 3,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.002588"
+    },
+    "ipai_ocr_expense": {
+      "name": "ipai_ocr_expense",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ocr_expense",
+      "version": "18.0.1.0.0",
+      "summary": "AI-powered receipt scanning and expense digitization",
+      "author": "InsightPulse AI",
+      "depends": [
+        "hr_expense",
+        "ipai_expense"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 3,
+      "menu_count": 3,
+      "action_count": 2,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.030677"
     },
     "ipai_ocr_gateway": {
       "name": "ipai_ocr_gateway",
@@ -1173,7 +2394,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.632261"
+      "audited_at": "2026-01-21T22:42:54.053080"
     },
     "ipai_platform_approvals": {
       "name": "ipai_platform_approvals",
@@ -1204,7 +2425,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.642768"
+      "audited_at": "2026-01-21T22:42:54.070989"
     },
     "ipai_platform_audit": {
       "name": "ipai_platform_audit",
@@ -1234,7 +2455,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.649320"
+      "audited_at": "2026-01-21T22:42:54.084221"
     },
     "ipai_platform_permissions": {
       "name": "ipai_platform_permissions",
@@ -1264,13 +2485,13 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.656350"
+      "audited_at": "2026-01-21T22:42:54.097848"
     },
     "ipai_platform_theme": {
       "name": "ipai_platform_theme",
-      "path": "/home/user/odoo-ce/addons/ipai_platform_theme",
-      "version": "18.0.1.1.0",
-      "summary": "Single source of truth for IPAI design tokens and branding",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_platform_theme",
+      "version": "18.0.1.0.0",
+      "summary": "Core design tokens and theme infrastructure for IPAI platform",
       "author": "InsightPulse AI",
       "depends": [
         "web"
@@ -1295,7 +2516,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.663010"
+      "audited_at": "2026-01-21T22:42:54.127701"
     },
     "ipai_platform_workflow": {
       "name": "ipai_platform_workflow",
@@ -1325,14 +2546,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.668972"
+      "audited_at": "2026-01-21T22:42:54.137234"
     },
     "ipai_portal_fix": {
       "name": "ipai_portal_fix",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_portal_fix",
       "version": "18.0.1.0.1",
       "summary": "Fixes KeyError: website in portal.frontend_layout template",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "portal"
       ],
@@ -1356,7 +2577,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.675063"
+      "audited_at": "2026-01-21T22:42:54.148922"
     },
     "ipai_ppm": {
       "name": "ipai_ppm",
@@ -1387,14 +2608,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.683596"
+      "audited_at": "2026-01-21T22:42:54.162447"
     },
     "ipai_ppm_a1": {
       "name": "ipai_ppm_a1",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_a1",
       "version": "18.0.1.0.0",
       "summary": "A1 Control Center - Workstreams, Templates, Tasks, Checks + Seed Import/Export",
-      "author": "IPAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "mail",
@@ -1418,7 +2639,41 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.701289"
+      "audited_at": "2026-01-21T22:42:54.188990"
+    },
+    "ipai_ppm_dashboard_canvas": {
+      "name": "ipai_ppm_dashboard_canvas",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ppm_dashboard_canvas",
+      "version": "18.0.1.0.0",
+      "summary": "Clarity Canvas-style Project Dashboard with phases, milestones, tasks, to-dos, and OKR views",
+      "author": "InsightPulse AI",
+      "depends": [
+        "project",
+        "mail",
+        "web",
+        "hr_timesheet"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 6,
+      "action_count": 0,
+      "data_file_count": 9,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.222983"
     },
     "ipai_ppm_monthly_close": {
       "name": "ipai_ppm_monthly_close",
@@ -1452,14 +2707,75 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.723365"
+      "audited_at": "2026-01-21T22:42:54.230094"
+    },
+    "ipai_project_gantt": {
+      "name": "ipai_project_gantt",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_project_gantt",
+      "version": "18.0.1.0.0",
+      "summary": "Community Gantt-like planning view for Project tasks (no Enterprise deps).",
+      "author": "InsightPulse AI",
+      "depends": [
+        "project",
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 1,
+      "view_count": 3,
+      "menu_count": 1,
+      "action_count": 2,
+      "data_file_count": 3,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.261233"
+    },
+    "ipai_project_profitability_bridge": {
+      "name": "ipai_project_profitability_bridge",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_project_profitability_bridge",
+      "version": "18.0.1.0.1",
+      "summary": "Lightweight profitability KPIs per project using analytic lines (CE-safe).",
+      "author": "InsightPulse AI",
+      "depends": [
+        "project",
+        "analytic",
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 7,
+      "menu_count": 1,
+      "action_count": 2,
+      "data_file_count": 5,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.284949"
     },
     "ipai_project_program": {
       "name": "ipai_project_program",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_project_program",
       "version": "18.0.1.0.0",
       "summary": "Program (parent project) + Implementation Modules (IM1/IM2) as child projects + Directory + seed loader",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "project",
         "mail"
@@ -1473,7 +2789,7 @@
       "view_count": 6,
       "menu_count": 7,
       "action_count": 4,
-      "data_file_count": 6,
+      "data_file_count": 7,
       "issues": [],
       "warnings": [
         "Subpackages not imported in __init__.py: ['tests', 'seed']"
@@ -1484,7 +2800,204 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.741679"
+      "audited_at": "2026-01-21T22:42:54.303694"
+    },
+    "ipai_project_suite": {
+      "name": "ipai_project_suite",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_project_suite",
+      "version": "18.0.1.0.0",
+      "summary": "Toggleable enterprise-like project management features for Odoo CE",
+      "author": "InsightPulse AI",
+      "depends": [
+        "project",
+        "mail"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 12,
+      "view_count": 10,
+      "menu_count": 3,
+      "action_count": 5,
+      "data_file_count": 8,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.340041"
+    },
+    "ipai_saas_tenant": {
+      "name": "ipai_saas_tenant",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_saas_tenant",
+      "version": "18.0.1.0.0",
+      "summary": "Multi-tenant provider model for SaaS platform",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "mail"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 10,
+      "view_count": 15,
+      "menu_count": 12,
+      "action_count": 6,
+      "data_file_count": 7,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.367567"
+    },
+    "ipai_sample_metrics": {
+      "name": "ipai_sample_metrics",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_sample_metrics",
+      "version": "18.0.1.0.0",
+      "summary": "Minimal OCA-style example app: metrics with list/form views and API helpers",
+      "author": "InsightPulseAI",
+      "depends": [
+        "base"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 1,
+      "view_count": 3,
+      "menu_count": 2,
+      "action_count": 1,
+      "data_file_count": 3,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.396838"
+    },
+    "ipai_scout_bundle": {
+      "name": "ipai_scout_bundle",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_scout_bundle",
+      "version": "18.0.1.0.0",
+      "summary": "One-click meta-installer for Scout retail intelligence vertical",
+      "author": "InsightPulse AI",
+      "depends": [
+        "sale_management",
+        "purchase",
+        "stock",
+        "stock_account",
+        "point_of_sale",
+        "account",
+        "base_tier_validation",
+        "base_exception",
+        "date_range",
+        "ipai_enterprise_bridge"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.418657"
+    },
+    "ipai_settings_dashboard": {
+      "name": "ipai_settings_dashboard",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_settings_dashboard",
+      "version": "18.0.1.0.0",
+      "summary": "Unified AI provider settings with Kapa RAG, OpenAI, and Gemini support",
+      "author": "InsightPulse AI / TBWA",
+      "depends": [
+        "base",
+        "mail",
+        "ipai_ai_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 2,
+      "view_count": 1,
+      "menu_count": 2,
+      "action_count": 1,
+      "data_file_count": 2,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.424053"
+    },
+    "ipai_skill_api": {
+      "name": "ipai_skill_api",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_skill_api",
+      "version": "18.0.1.0.0",
+      "summary": "REST API endpoints for agent skill execution",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "web",
+        "ipai_agent_core"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 2,
+      "issues": [],
+      "warnings": [
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.443630"
     },
     "ipai_sms_gateway": {
       "name": "ipai_sms_gateway",
@@ -1514,14 +3027,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.764827"
+      "audited_at": "2026-01-21T22:42:54.459313"
     },
     "ipai_srm": {
       "name": "ipai_srm",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_srm",
       "version": "18.0.1.0.0",
       "summary": "Supplier lifecycle and performance management (SAP SRM/Ariba-style parity)",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "base",
         "mail",
@@ -1546,7 +3059,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.777909"
+      "audited_at": "2026-01-21T22:42:54.481231"
     },
     "ipai_studio_ai": {
       "name": "ipai_studio_ai",
@@ -1576,33 +3089,28 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.793494"
+      "audited_at": "2026-01-21T22:42:54.503756"
     },
     "ipai_superset_connector": {
       "name": "ipai_superset_connector",
-      "path": "/home/user/odoo-ce/addons/ipai_superset_connector",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_superset_connector",
       "version": "18.0.1.0.0",
-      "summary": "Apache Superset integration with managed dataset sync",
+      "summary": "Embed Superset dashboards in Odoo with guest token authentication",
       "author": "InsightPulse AI",
       "depends": [
         "base",
-        "mail",
-        "sale",
-        "account",
-        "stock",
-        "hr",
-        "project"
+        "web"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
       "xml_syntax_ok": true,
       "security_csv_ok": true,
       "init_imports_ok": true,
-      "model_count": 5,
-      "view_count": 9,
-      "menu_count": 6,
-      "action_count": 5,
-      "data_file_count": 8,
+      "model_count": 2,
+      "view_count": 6,
+      "menu_count": 5,
+      "action_count": 3,
+      "data_file_count": 6,
       "issues": [],
       "warnings": [],
       "install_tested": false,
@@ -1611,7 +3119,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.822685"
+      "audited_at": "2026-01-21T22:42:54.569771"
     },
     "ipai_tbwa_finance": {
       "name": "ipai_tbwa_finance",
@@ -1642,17 +3150,143 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.841927"
+      "audited_at": "2026-01-21T22:42:54.603212"
     },
-    "ipai_theme_tbwa_backend": {
-      "name": "ipai_theme_tbwa_backend",
-      "path": "/home/user/odoo-ce/addons/ipai_theme_tbwa_backend",
-      "version": "18.0.1.1.0",
-      "summary": "TBWA branding skin - Black + Yellow + IBM Plex",
-      "author": "InsightPulse AI / TBWA Finance",
+    "ipai_tenant_core": {
+      "name": "ipai_tenant_core",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_tenant_core",
+      "version": "18.0.1.0.0",
+      "summary": "Multi-tenant platform core for InsightPulse AI",
+      "author": "InsightPulse AI",
       "depends": [
-        "web",
-        "ipai_platform_theme"
+        "base",
+        "mail",
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 1,
+      "view_count": 3,
+      "menu_count": 2,
+      "action_count": 1,
+      "data_file_count": 4,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.637709"
+    },
+    "ipai_test_fixtures": {
+      "name": "ipai_test_fixtures",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_test_fixtures",
+      "version": "18.0.1.0.0",
+      "summary": "Shared test fixtures and factory methods for IPAI modules",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base",
+        "hr",
+        "project"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": false,
+      "model_count": 2,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv",
+        "Subpackages not imported in __init__.py: ['tests']"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.654506"
+    },
+    "ipai_theme_aiux": {
+      "name": "ipai_theme_aiux",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_aiux",
+      "version": "18.0.0.1.0",
+      "summary": "AIUX backend theme scaffold (sidebar tokens + widget hooks)",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.664809"
+    },
+    "ipai_theme_copilot": {
+      "name": "ipai_theme_copilot",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_copilot",
+      "version": "18.0.1.0.0",
+      "summary": "Fluent-style TBWA theme for Odoo 18 CE.",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.675850"
+    },
+    "ipai_theme_fluent2": {
+      "name": "ipai_theme_fluent2",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_fluent2",
+      "version": "18.0.1.1.0",
+      "summary": "Microsoft Fluent 2 / Microsoft 365 Copilot design tokens for Odoo backend",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
@@ -1674,7 +3308,195 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.863735"
+      "audited_at": "2026-01-21T22:42:54.686461"
+    },
+    "ipai_theme_tbwa": {
+      "name": "ipai_theme_tbwa",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_tbwa",
+      "version": "18.0.2.0.0",
+      "summary": "TBWA brand skin for Odoo backend - overrides ipai_platform_theme tokens",
+      "author": "InsightPulse AI / TBWA",
+      "depends": [
+        "web",
+        "ipai_platform_theme"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.708712"
+    },
+    "ipai_theme_tbwa_backend": {
+      "name": "ipai_theme_tbwa_backend",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_theme_tbwa_backend",
+      "version": "18.0.1.1.0",
+      "summary": "DEPRECATED - Use ipai_theme_tbwa instead",
+      "author": "InsightPulse AI / TBWA",
+      "depends": [
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "Module marked as not installable",
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.733692"
+    },
+    "ipai_ui_brand_tokens": {
+      "name": "ipai_ui_brand_tokens",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_ui_brand_tokens",
+      "version": "18.0.1.0.0",
+      "summary": "Single source of truth for brand tokens (Odoo + React)",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web",
+        "base"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 1,
+      "view_count": 1,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 3,
+      "issues": [],
+      "warnings": [],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.742521"
+    },
+    "ipai_v18_compat": {
+      "name": "ipai_v18_compat",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_v18_compat",
+      "version": "18.0.1.0.0",
+      "summary": "Post-migrate hotfixes for Odoo 18 view_mode rename (tree->list) and kanban card template issues",
+      "author": "InsightPulse AI",
+      "depends": [
+        "base"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 0,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.766332"
+    },
+    "ipai_web_fluent2": {
+      "name": "ipai_web_fluent2",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_web_fluent2",
+      "version": "18.0.1.0.0",
+      "summary": "Fluent 2 design tokens + UI styling for Odoo CE 18 backend (and optional frontend/login).",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web",
+        "mail"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.775854"
+    },
+    "ipai_web_icons_fluent": {
+      "name": "ipai_web_icons_fluent",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_web_icons_fluent",
+      "version": "18.0.1.0.0",
+      "summary": "Microsoft Fluent System Icons for consistent Odoo + React UI",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.788695"
     },
     "ipai_web_theme_chatgpt": {
       "name": "ipai_web_theme_chatgpt",
@@ -1705,7 +3527,40 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.869829"
+      "audited_at": "2026-01-21T22:42:54.798801"
+    },
+    "ipai_web_theme_tbwa": {
+      "name": "ipai_web_theme_tbwa",
+      "path": "/home/user/odoo-ce/addons/ipai/ipai_web_theme_tbwa",
+      "version": "18.0.1.0.0",
+      "summary": "TBWA brand styling for Odoo CE 18 backend (consumes brand tokens)",
+      "author": "InsightPulse AI",
+      "depends": [
+        "web",
+        "mail",
+        "ipai_ui_brand_tokens"
+      ],
+      "manifest_valid": true,
+      "python_syntax_ok": true,
+      "xml_syntax_ok": true,
+      "security_csv_ok": true,
+      "init_imports_ok": true,
+      "model_count": 0,
+      "view_count": 0,
+      "menu_count": 0,
+      "action_count": 0,
+      "data_file_count": 1,
+      "issues": [],
+      "warnings": [
+        "No security/ir.model.access.csv"
+      ],
+      "install_tested": false,
+      "install_success": false,
+      "install_log": "",
+      "upgrade_tested": false,
+      "upgrade_success": false,
+      "upgrade_log": "",
+      "audited_at": "2026-01-21T22:42:54.806514"
     },
     "ipai_workos_affine": {
       "name": "ipai_workos_affine",
@@ -1745,7 +3600,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.874370"
+      "audited_at": "2026-01-21T22:42:54.817655"
     },
     "ipai_workos_blocks": {
       "name": "ipai_workos_blocks",
@@ -1776,7 +3631,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.876362"
+      "audited_at": "2026-01-21T22:42:54.822321"
     },
     "ipai_workos_canvas": {
       "name": "ipai_workos_canvas",
@@ -1787,7 +3642,8 @@
       "depends": [
         "base",
         "web",
-        "mail"
+        "mail",
+        "ipai_workos_core"
       ],
       "manifest_valid": true,
       "python_syntax_ok": true,
@@ -1807,7 +3663,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.886963"
+      "audited_at": "2026-01-21T22:42:54.839139"
     },
     "ipai_workos_collab": {
       "name": "ipai_workos_collab",
@@ -1838,7 +3694,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.895760"
+      "audited_at": "2026-01-21T22:42:54.856091"
     },
     "ipai_workos_core": {
       "name": "ipai_workos_core",
@@ -1871,7 +3727,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.902402"
+      "audited_at": "2026-01-21T22:42:54.869189"
     },
     "ipai_workos_db": {
       "name": "ipai_workos_db",
@@ -1902,7 +3758,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.914771"
+      "audited_at": "2026-01-21T22:42:54.892443"
     },
     "ipai_workos_search": {
       "name": "ipai_workos_search",
@@ -1935,7 +3791,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.926340"
+      "audited_at": "2026-01-21T22:42:54.912226"
     },
     "ipai_workos_templates": {
       "name": "ipai_workos_templates",
@@ -1968,7 +3824,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.935066"
+      "audited_at": "2026-01-21T22:42:54.924692"
     },
     "ipai_workos_views": {
       "name": "ipai_workos_views",
@@ -2000,14 +3856,14 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.943410"
+      "audited_at": "2026-01-21T22:42:54.940040"
     },
     "ipai_workspace_core": {
       "name": "ipai_workspace_core",
       "path": "/home/user/odoo-ce/addons/ipai/ipai_workspace_core",
-      "version": "18.0.1.0.0",
+      "version": "18.0.1.0.1",
       "summary": "Unified workspace model for marketing agencies and accounting firms.",
-      "author": "InsightPulseAI",
+      "author": "InsightPulse AI",
       "depends": [
         "ipai_dev_studio_base"
       ],
@@ -2029,7 +3885,7 @@
       "upgrade_tested": false,
       "upgrade_success": false,
       "upgrade_log": "",
-      "audited_at": "2026-01-04T10:26:06.954966"
+      "audited_at": "2026-01-21T22:42:54.957907"
     }
   }
 }

@@ -44,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_finance_closing --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.360159_
+_Audited: 2026-01-21T22:42:53.373150_

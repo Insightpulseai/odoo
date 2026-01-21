@@ -38,12 +38,15 @@ ROLE_MAP_HINTS = [
     ("Finance Supervisor", "beng.manalo@omc.com"),
 ]
 
+
 def fail(msg: str) -> None:
     print(f"::error::{msg}")
     sys.exit(1)
 
+
 def warn(msg: str) -> None:
     print(f"::warning::{msg}")
+
 
 def read_text(p: Path) -> str:
     try:
@@ -52,6 +55,7 @@ def read_text(p: Path) -> str:
         fail(f"Missing required file: {p}")
     except Exception as e:
         fail(f"Failed to read {p}: {e}")
+
 
 def check_manifest() -> None:
     text = read_text(REQUIRED_MD)
@@ -62,6 +66,7 @@ def check_manifest() -> None:
     # Basic sanity: date must be present (YYYY-MM-DD)
     if not re.search(r"\b20\d{2}-\d{2}-\d{2}\b", text):
         fail("Go-live manifest must include an ISO date (YYYY-MM-DD).")
+
 
 def iter_csv_files():
     files = []
@@ -74,11 +79,13 @@ def iter_csv_files():
             uniq.append(f)
     return uniq
 
+
 def check_csv_no_placeholders(path: str) -> None:
     raw = Path(path).read_text(encoding="utf-8", errors="ignore")
     for pat in PLACEHOLDER_PATTERNS:
         if re.search(pat, raw):
             fail(f"CSV contains placeholders ({pat}): {path}")
+
 
 def check_role_map_beng(path: str) -> None:
     # Accept either "role,email" or Odoo import-style headers; just scan rows.
@@ -94,20 +101,27 @@ def check_role_map_beng(path: str) -> None:
     for role, email in ROLE_MAP_HINTS:
         if role.lower() in joined and email.lower() in joined:
             return
-    fail(f"Role map does not confirm 'Finance Supervisor' -> beng.manalo@omc.com in: {path}")
+    fail(
+        f"Role map does not confirm 'Finance Supervisor' -> beng.manalo@omc.com in: {path}"
+    )
+
 
 def check_csvs() -> None:
     csvs = iter_csv_files()
     if not csvs:
         # Not all teams commit import artifacts. If you don’t commit them, manifest still enforced.
-        warn("No odoo_import_month_end_*.csv found in repo (data/ or artifacts/). Skipping CSV checks.")
+        warn(
+            "No odoo_import_month_end_*.csv found in repo (data/ or artifacts/). Skipping CSV checks."
+        )
         return
 
     for f in csvs:
         check_csv_no_placeholders(f)
 
     # If a role map exists, enforce Beng mapping
-    role_map_candidates = [c for c in csvs if "role" in c.lower() and "map" in c.lower()]
+    role_map_candidates = [
+        c for c in csvs if "role" in c.lower() and "map" in c.lower()
+    ]
     if role_map_candidates:
         # enforce first candidate; if multiple, all must pass
         for rm in role_map_candidates:
@@ -115,10 +129,12 @@ def check_csvs() -> None:
     else:
         warn("No role_email_map CSV found; Beng mapping enforcement skipped.")
 
+
 def main() -> None:
     check_manifest()
     check_csvs()
     print("OK: Go-live manifest gate passed.")
+
 
 if __name__ == "__main__":
     main()
