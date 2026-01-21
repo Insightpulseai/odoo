@@ -70,9 +70,10 @@
     },
 
     "microsoft-learn": {
-      "command": "npx",
-      "args": ["-y", "@microsoft/learn-mcp-server"],
-      "description": "Microsoft Learn MCP - Azure/DevOps docs, KQL patterns"
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "tools": ["*"],
+      "description": "Microsoft Learn MCP (official hosted endpoint) - Azure, .NET, VS, DevOps docs with code samples"
     },
 
     "playwright": {

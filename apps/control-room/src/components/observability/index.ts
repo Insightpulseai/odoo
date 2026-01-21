@@ -9,3 +9,4 @@ export { JobsTab } from './JobsTab';
 export { AgentsTab } from './AgentsTab';
 export { HealthTab } from './HealthTab';
 export { TopologyTab } from './TopologyTab';
+export { JobQueueCard } from './JobQueueCard';
