@@ -1,12 +1,24 @@
 # InsightPulse AI Platform - Makefile
 # Multi-tenant Odoo + Supabase + Superset orchestration
+# Dev server orchestration for cloud IDEs (Claude Code Web, Codex, Figma Make)
 
 .PHONY: help provision-tbwa provision-tenant test-connection
+.PHONY: dev dev-minimal dev-full dev-frontend dev-backend dev-stop dev-status dev-health
 
 # Default target
 help:
 	@echo "InsightPulse AI Platform - Make Targets"
 	@echo "========================================"
+	@echo ""
+	@echo "Dev Server (Cloud IDE):"
+	@echo "  make dev                    Start default dev server (Odoo Core)"
+	@echo "  make dev-minimal            Start minimal stack (Postgres + Odoo Core)"
+	@echo "  make dev-full               Start full stack (all services)"
+	@echo "  make dev-frontend           Start Control Room frontend (port 3000)"
+	@echo "  make dev-backend            Start Control Room API (port 8789)"
+	@echo "  make dev-stop               Stop all dev services"
+	@echo "  make dev-status             Show running services"
+	@echo "  make dev-health             Run health checks on all services"
 	@echo ""
 	@echo "Tenant Provisioning:"
 	@echo "  make provision-tbwa         Provision TBWA tenant (shortcut)"
@@ -258,3 +270,133 @@ odoo-schema-pipeline-ci:
 	fi
 	$(MAKE) odoo-schema-pipeline
 	$(MAKE) odoo-schema-validate || true
+
+# =============================================================================
+# Dev Server Orchestration (Cloud IDE Support)
+# =============================================================================
+# Unified dev server targets for Claude Code Web, Codex, Figma Make, and CI runners
+# Config: devserver.config.json
+
+# Default dev server (Odoo Core + Postgres)
+dev:
+	@echo "🚀 Starting default dev server (Odoo Core)..."
+	@echo ""
+	@if [ -f "docker-compose.yml" ]; then \
+		docker compose up -d postgres; \
+		sleep 3; \
+		docker compose up odoo-core; \
+	else \
+		echo "❌ docker-compose.yml not found"; \
+		exit 1; \
+	fi
+
+# Minimal stack (Postgres + Odoo Core only)
+dev-minimal:
+	@echo "🚀 Starting minimal stack..."
+	@echo "   Services: postgres, odoo-core"
+	@echo "   Ports: 5432, 8069"
+	@echo ""
+	docker compose up -d postgres
+	@sleep 3
+	docker compose up -d odoo-core
+	@echo ""
+	@echo "✅ Minimal stack started"
+	@echo "   Odoo:     http://localhost:8069"
+	@echo "   Postgres: localhost:5432"
+
+# Full stack (all services)
+dev-full:
+	@echo "🚀 Starting full stack..."
+	@echo "   Services: postgres, odoo-core, odoo-marketing, odoo-accounting, n8n"
+	@echo "   Ports: 5432, 8069, 8070, 8071, 5678"
+	@echo ""
+	docker compose up -d
+	@echo ""
+	@echo "✅ Full stack started"
+	@echo "   Odoo Core:       http://localhost:8069"
+	@echo "   Odoo Marketing:  http://localhost:8070"
+	@echo "   Odoo Accounting: http://localhost:8071"
+	@echo "   n8n:             http://localhost:5678"
+	@echo "   Postgres:        localhost:5432"
+
+# Control Room frontend (Next.js)
+dev-frontend:
+	@echo "🚀 Starting Control Room frontend..."
+	@echo "   Port: 3000"
+	@echo ""
+	@if command -v pnpm &> /dev/null; then \
+		pnpm install --filter control-room; \
+		pnpm --filter control-room dev; \
+	elif command -v npm &> /dev/null; then \
+		cd apps/control-room && npm install && npm run dev; \
+	else \
+		echo "❌ pnpm or npm not found"; \
+		exit 1; \
+	fi
+
+# Control Room API (FastAPI)
+dev-backend:
+	@echo "🚀 Starting Control Room API..."
+	@echo "   Port: 8789"
+	@echo ""
+	@if [ -d "apps/control-room-api" ]; then \
+		cd apps/control-room-api && \
+		pip install -r requirements.txt 2>/dev/null || pip3 install -r requirements.txt 2>/dev/null || true && \
+		uvicorn app:app --reload --host 0.0.0.0 --port 8789; \
+	else \
+		echo "❌ apps/control-room-api not found"; \
+		exit 1; \
+	fi
+
+# Stop all dev services
+dev-stop:
+	@echo "🛑 Stopping dev services..."
+	@if [ -f "docker-compose.yml" ]; then \
+		docker compose down; \
+	fi
+	@echo "✅ Dev services stopped"
+
+# Show running services status
+dev-status:
+	@echo "📊 Dev Services Status"
+	@echo "======================"
+	@echo ""
+	@if [ -f "docker-compose.yml" ]; then \
+		docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"; \
+	else \
+		echo "No docker-compose.yml found"; \
+	fi
+	@echo ""
+	@echo "Port Check:"
+	@for port in 8069 8070 8071 5678 3000 8789 5432; do \
+		if nc -z localhost $$port 2>/dev/null; then \
+			echo "  ✅ Port $$port: OPEN"; \
+		else \
+			echo "  ⚪ Port $$port: closed"; \
+		fi; \
+	done
+
+# Health checks for all services
+dev-health:
+	@echo "🏥 Running health checks..."
+	@echo ""
+	@echo "Odoo Core (8069):"
+	@curl -sf http://localhost:8069/web/health && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
+	@echo ""
+	@echo "Odoo Marketing (8070):"
+	@curl -sf http://localhost:8070/web/health && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
+	@echo ""
+	@echo "Odoo Accounting (8071):"
+	@curl -sf http://localhost:8071/web/health && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
+	@echo ""
+	@echo "n8n (5678):"
+	@curl -sf http://localhost:5678/healthz && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
+	@echo ""
+	@echo "Control Room (3000):"
+	@curl -sf http://localhost:3000/ >/dev/null && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
+	@echo ""
+	@echo "Control Room API (8789):"
+	@curl -sf http://localhost:8789/health && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
+	@echo ""
+	@echo "MCP Coordinator (8766):"
+	@curl -sf http://localhost:8766/health && echo "  ✅ Healthy" || echo "  ❌ Unhealthy or not running"
