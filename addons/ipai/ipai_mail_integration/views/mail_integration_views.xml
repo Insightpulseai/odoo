@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Mail Gateway Tree View -->
+    <record id="view_ipai_mail_gateway_tree" model="ir.ui.view">
+        <field name="name">ipai.mail.gateway.tree</field>
+        <field name="model">ipai.mail.gateway</field>
+        <field name="arch" type="xml">
+            <tree string="Mail Gateways">
+                <field name="name"/>
+                <field name="gateway_type"/>
+                <field name="is_active"/>
+                <field name="is_default"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Mail Gateway Form View -->
+    <record id="view_ipai_mail_gateway_form" model="ir.ui.view">
+        <field name="name">ipai.mail.gateway.form</field>
+        <field name="model">ipai.mail.gateway</field>
+        <field name="arch" type="xml">
+            <form string="Mail Gateway">
+                <header>
+                    <button name="test_connection" type="object" string="Test Connection" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Inactive" bg_color="text-bg-danger" invisible="is_active"/>
+                    <widget name="web_ribbon" title="Default" bg_color="text-bg-success" invisible="not is_default"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Gateway Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="gateway_type"/>
+                            <field name="is_active"/>
+                            <field name="is_default"/>
+                        </group>
+                        <group>
+                            <field name="track_opens"/>
+                            <field name="track_clicks"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="SMTP Configuration" name="smtp" invisible="gateway_type != 'smtp'">
+                            <group>
+                                <group>
+                                    <field name="smtp_host"/>
+                                    <field name="smtp_port"/>
+                                    <field name="smtp_encryption"/>
+                                </group>
+                                <group>
+                                    <field name="smtp_user"/>
+                                    <field name="smtp_password" password="True"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="API Configuration" name="api" invisible="gateway_type == 'smtp'">
+                            <group>
+                                <group>
+                                    <field name="api_key" password="True"/>
+                                    <field name="api_domain"/>
+                                </group>
+                                <group>
+                                    <field name="api_endpoint"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="OAuth Configuration" name="oauth">
+                            <group>
+                                <group>
+                                    <field name="oauth_enabled"/>
+                                    <field name="oauth_client_id" invisible="not oauth_enabled"/>
+                                    <field name="oauth_client_secret" password="True" invisible="not oauth_enabled"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Mail Log Tree View -->
+    <record id="view_ipai_mail_log_tree" model="ir.ui.view">
+        <field name="name">ipai.mail.log.tree</field>
+        <field name="model">ipai.mail.log</field>
+        <field name="arch" type="xml">
+            <tree string="Mail Log">
+                <field name="create_date"/>
+                <field name="recipient"/>
+                <field name="subject"/>
+                <field name="status" decoration-success="status in ('delivered', 'opened', 'clicked')" decoration-danger="status in ('bounced', 'complained', 'failed')"/>
+                <field name="gateway_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Mail Gateway Action -->
+    <record id="action_ipai_mail_gateway" model="ir.actions.act_window">
+        <field name="name">Mail Gateways</field>
+        <field name="res_model">ipai.mail.gateway</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure mail gateways
+            </p>
+            <p>
+                Set up SMTP, Mailgun, or other mail gateways for direct email sending.
+            </p>
+        </field>
+    </record>
+
+    <!-- Mail Log Action -->
+    <record id="action_ipai_mail_log" model="ir.actions.act_window">
+        <field name="name">Mail Log</field>
+        <field name="res_model">ipai.mail.log</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem
+        id="menu_ipai_mail_root"
+        name="Mail Integration"
+        parent="base.menu_administration"
+        sequence="101"/>
+
+    <menuitem
+        id="menu_ipai_mail_gateways"
+        name="Gateways"
+        parent="menu_ipai_mail_root"
+        action="action_ipai_mail_gateway"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_ipai_mail_log"
+        name="Mail Log"
+        parent="menu_ipai_mail_root"
+        action="action_ipai_mail_log"
+        sequence="20"/>
+
+</odoo>

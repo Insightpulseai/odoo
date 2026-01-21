@@ -7,3 +7,4 @@ from . import account_move
 from . import purchase_order
 from . import ai_mixin
 from . import ipai_job
+from . import enterprise_bridge
