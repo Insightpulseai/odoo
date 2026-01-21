@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <!--
+        Finance PPM: Month-End Close + BIR Returns Task Seeds
+        Pure CE/OCA implementation using project.task
+
+        Task assignments use finance_code references:
+        - CKVC: Finance Director (approvals)
+        - RIM: Senior Finance Manager (review)
+        - BOM: Finance Supervisor (preparation/filing)
+        - JPAL, LAS, RMQB, JPL, JI, JO, JM, CJD: Accountants
+    -->
+
+    <!-- ========================================== -->
+    <!-- MONTH-END CLOSE TASKS (ME01-ME08)         -->
+    <!-- ========================================== -->
+
+    <!-- ME01 - Payroll & Personnel -->
+    <record id="fin_ppm_me_payroll_personnel" model="project.task">
+        <field name="name">ME01 - Payroll &amp; Personnel</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">4.0</field>
+        <field name="review_hours">1.0</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Process and record Payroll, Final Pay, SL conversions, and any retirement accruals.
+
+Tasks:
+- Process payroll JV from HR
+- Record final pay for separated employees
+- Process SL conversion entries
+- Record retirement/gratuity accruals
+
+Preparer: BOM | Reviewer: RIM | Approver: CKVC
+        </field>
+    </record>
+
+    <!-- ME02 - Tax & Provisions -->
+    <record id="fin_ppm_me_tax_provisions" model="project.task">
+        <field name="name">ME02 - Tax &amp; Provisions</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_las"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">3.0</field>
+        <field name="review_hours">1.0</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Calculate and record monthly Tax Provision and PPE Provision.
+
+Tasks:
+- Calculate income tax provision
+- Record deferred tax adjustments
+- Process PPE provision entries
+- Update provision schedules
+
+Preparer: LAS | Reviewer: RIM | Approver: CKVC
+        </field>
+    </record>
+
+    <!-- ME03 - Rent & Leases -->
+    <record id="fin_ppm_me_rent_leases" model="project.task">
+        <field name="name">ME03 - Rent &amp; Leases</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_jpl"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">2.0</field>
+        <field name="review_hours">0.5</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Record monthly rental income/expense and any accruals for leases.
+
+Tasks:
+- Process rent expense entries
+- Record lease amortization (IFRS 16)
+- Update rent schedule
+- Reconcile lease liability
+
+Preparer: JPL | Reviewer: BOM | Approver: RIM
+        </field>
+    </record>
+
+    <!-- ME04 - Accruals & Expenses -->
+    <record id="fin_ppm_me_accruals_expenses" model="project.task">
+        <field name="name">ME04 - Accruals &amp; Expenses</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_ji"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">4.0</field>
+        <field name="review_hours">1.0</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Prepare accrual JVs for consultancy, fees, and recurring OPEX.
+
+Tasks:
+- Accrue consultancy fees
+- Record professional service accruals
+- Process recurring OPEX accruals
+- Update accrual schedule
+
+Preparer: JI | Reviewer: BOM | Approver: RIM
+        </field>
+    </record>
+
+    <!-- ME05 - Corporate Cards -->
+    <record id="fin_ppm_me_corporate_cards" model="project.task">
+        <field name="name">ME05 - Corporate Cards</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_jo"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">2.0</field>
+        <field name="review_hours">0.5</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Record monthly corporate card expenses and allocations.
+
+Tasks:
+- Download corporate card statements
+- Allocate expenses to cost centers
+- Record corporate card JV
+- Reconcile card liability
+
+Preparer: JO | Reviewer: BOM | Approver: RIM
+        </field>
+    </record>
+
+    <!-- ME06 - Insurance -->
+    <record id="fin_ppm_me_insurance" model="project.task">
+        <field name="name">ME06 - Insurance</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_jm"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">1.5</field>
+        <field name="review_hours">0.5</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Record monthly expense for various insurance policies.
+
+Tasks:
+- Amortize prepaid insurance
+- Record HMO expense allocation
+- Process fire/comprehensive insurance
+- Update insurance schedule
+
+Preparer: JM | Reviewer: BOM | Approver: RIM
+        </field>
+    </record>
+
+    <!-- ME07 - Treasury & Other -->
+    <record id="fin_ppm_me_treasury_other" model="project.task">
+        <field name="name">ME07 - Treasury &amp; Other</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_cjd"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">2.5</field>
+        <field name="review_hours">0.5</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Bank charges, interest, FX revaluation, treasury-related month-end tasks.
+
+Tasks:
+- Record bank charges and fees
+- Process interest income/expense
+- Run FX revaluation
+- Reconcile intercompany accounts
+
+Preparer: CJD | Reviewer: BOM | Approver: RIM
+        </field>
+    </record>
+
+    <!-- ME08 - Regional Reporting -->
+    <record id="fin_ppm_me_region_reporting" model="project.task">
+        <field name="name">ME08 - Regional Reporting</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">6.0</field>
+        <field name="review_hours">2.0</field>
+        <field name="approval_hours">1.0</field>
+        <field name="description">
+Prepare reports for Flash, WINS, Losses, and Revenue for the region.
+
+Tasks:
+- Prepare Flash report
+- Update WINS/Losses tracker
+- Compile revenue analysis
+- Submit regional package
+
+Preparer: BOM | Reviewer: RIM | Approver: CKVC
+        </field>
+    </record>
+
+    <!-- ME09 - WIPDO Management -->
+    <record id="fin_ppm_me_wipdo" model="project.task">
+        <field name="name">ME09 - WIPDO Management</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_jpal"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">4.0</field>
+        <field name="review_hours">1.0</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Work-In-Progress and Direct Operating expense reconciliation and management.
+
+Tasks:
+- Reconcile WIP balances
+- Review unbilled receivables
+- Process WIP adjustments
+- Update WIPDO tracker
+
+Preparer: JPAL | Reviewer: BOM | Approver: RIM
+        </field>
+    </record>
+
+    <!-- ME10 - Trial Balance & Reconciliation -->
+    <record id="fin_ppm_me_trial_balance" model="project.task">
+        <field name="name">ME10 - Trial Balance &amp; Reconciliation</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_month_end_close"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">month_end</field>
+        <field name="finance_stage">prep</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_rmqb"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">5.0</field>
+        <field name="review_hours">2.0</field>
+        <field name="approval_hours">1.0</field>
+        <field name="description">
+Final trial balance preparation and account reconciliation.
+
+Tasks:
+- Generate trial balance
+- Complete BS reconciliations
+- Review variance analysis
+- Prepare month-end package
+
+Preparer: RMQB | Reviewer: BOM | Approver: RIM
+        </field>
+    </record>
+
+    <!-- ========================================== -->
+    <!-- BIR RETURNS TASKS                         -->
+    <!-- ========================================== -->
+
+    <!-- BIR-1601C - Monthly Compensation Withholding Tax -->
+    <record id="fin_ppm_bir_1601c" model="project.task">
+        <field name="name">BIR-1601C - Compensation Withholding Tax</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">1601-C</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">2.0</field>
+        <field name="review_hours">0.5</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Monthly compensation tax return (1601-C).
+
+Due: 10th of the following month
+
+Process:
+1. Preparation - Finance Supervisor (BOM)
+2. Report Approval - Senior Finance Manager (RIM)
+3. Payment Approval - Finance Director (CKVC)
+4. Filing &amp; Payment - Finance Supervisor (BOM)
+        </field>
+    </record>
+
+    <!-- BIR-0619E - Monthly Expanded Withholding Tax -->
+    <record id="fin_ppm_bir_0619e" model="project.task">
+        <field name="name">BIR-0619E - Monthly EWT</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">0619-E</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">2.0</field>
+        <field name="review_hours">0.5</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Monthly expanded withholding tax remittance (0619-E).
+
+Due: 10th of the following month
+
+Covers: Professional fees, rental, contractor payments
+        </field>
+    </record>
+
+    <!-- BIR-1601EQ - Quarterly EWT -->
+    <record id="fin_ppm_bir_1601eq" model="project.task">
+        <field name="name">BIR-1601EQ - Quarterly EWT Return</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">1601-EQ</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">3.0</field>
+        <field name="review_hours">1.0</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Quarterly expanded withholding tax return (1601-EQ).
+
+Due: Last day of the month following end of quarter
+
+Includes: Alpha list, summary of EWT remittances
+        </field>
+    </record>
+
+    <!-- BIR-2550M - Monthly VAT -->
+    <record id="fin_ppm_bir_2550m" model="project.task">
+        <field name="name">BIR-2550M - Monthly VAT</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">2550M</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">2.0</field>
+        <field name="review_hours">0.5</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Monthly VAT declaration (2550M).
+
+Due: 20th of the following month
+
+For: 1st and 2nd month of each quarter
+        </field>
+    </record>
+
+    <!-- BIR-2550Q - Quarterly VAT -->
+    <record id="fin_ppm_bir_2550q" model="project.task">
+        <field name="name">BIR-2550Q - Quarterly VAT Return</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">2550Q</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">4.0</field>
+        <field name="review_hours">1.0</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Quarterly VAT return (2550Q).
+
+Due: 25th of the month following end of quarter
+
+Includes: Summary of sales/purchases, input/output VAT reconciliation
+        </field>
+    </record>
+
+    <!-- BIR-1702Q - Quarterly Income Tax -->
+    <record id="fin_ppm_bir_1702q" model="project.task">
+        <field name="name">BIR-1702Q - Quarterly Income Tax</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">1702Q</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">6.0</field>
+        <field name="review_hours">2.0</field>
+        <field name="approval_hours">1.0</field>
+        <field name="description">
+Quarterly corporate income tax return (1702Q).
+
+Due: 60 days after end of quarter
+
+Includes: Computation of quarterly taxable income, MCIT comparison
+        </field>
+    </record>
+
+    <!-- BIR-1702 - Annual Income Tax -->
+    <record id="fin_ppm_bir_1702" model="project.task">
+        <field name="name">BIR-1702 - Annual Income Tax Return</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">1702</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">16.0</field>
+        <field name="review_hours">4.0</field>
+        <field name="approval_hours">2.0</field>
+        <field name="description">
+Annual corporate income tax return (1702-RT or 1702-MX).
+
+Due: April 15 (calendar year filers)
+
+Major annual filing - requires audited FS and detailed reconciliation.
+        </field>
+    </record>
+
+    <!-- BIR-1604E - Annual Info Return EWT -->
+    <record id="fin_ppm_bir_1604e" model="project.task">
+        <field name="name">BIR-1604E - Annual Info Return (EWT)</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">1604-E</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">8.0</field>
+        <field name="review_hours">2.0</field>
+        <field name="approval_hours">1.0</field>
+        <field name="description">
+Annual information return of income taxes withheld on compensation and expanded withholding taxes.
+
+Due: January 31
+
+Includes: Alpha list of all payees, summary by BIR form
+        </field>
+    </record>
+
+    <!-- BIR-1604CF - Annual Info Return Compensation -->
+    <record id="fin_ppm_bir_1604cf" model="project.task">
+        <field name="name">BIR-1604CF - Annual Info Return (Compensation)</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">1604-CF</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_ckvc"/>
+        <field name="prep_hours">8.0</field>
+        <field name="review_hours">2.0</field>
+        <field name="approval_hours">1.0</field>
+        <field name="description">
+Annual information return of income taxes withheld on compensation.
+
+Due: January 31
+
+Includes: Alpha list of employees, 2316 forms issuance
+        </field>
+    </record>
+
+    <!-- BIR-2307 - Certificate of Creditable Tax Withheld -->
+    <record id="fin_ppm_bir_2307" model="project.task">
+        <field name="name">BIR-2307 - Certificate of Creditable Tax</field>
+        <field name="project_id" ref="ipai_finance_workflow.project_bir_returns"/>
+        <field name="stage_id" ref="ipai_finance_workflow.fin_stage_prep"/>
+        <field name="finance_workflow_type">bir</field>
+        <field name="finance_stage">prep</field>
+        <field name="bir_form_code">2307</field>
+        <field name="preparer_id" ref="ipai_finance_workflow.user_jpal"/>
+        <field name="reviewer_id" ref="ipai_finance_workflow.user_bom"/>
+        <field name="approver_id" ref="ipai_finance_workflow.user_rim"/>
+        <field name="prep_hours">4.0</field>
+        <field name="review_hours">1.0</field>
+        <field name="approval_hours">0.5</field>
+        <field name="description">
+Certificate of creditable tax withheld at source (Form 2307).
+
+Issuance: Upon request or with quarterly/annual returns
+
+For: Suppliers/contractors to claim tax credits
+        </field>
+    </record>
+</odoo>
