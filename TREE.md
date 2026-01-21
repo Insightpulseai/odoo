@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 936a486b4f217ce927e61b76079e0f1c300fd530
+> Commit: ef679245912eea679685a003cf1a96657f2578d4
 
 ```
 .
@@ -1931,6 +1931,9 @@
 │   │   ├── 202601160001_VERIFIED_MEMORY.sql
 │   │   ├── 20260119_agent_memory_schema.sql
 │   │   └── 20260120_agent_coordination_schema.sql
+│   ├── process_mining
+│   │   ├── 001_pm_schema.sql
+│   │   └── 010_p2p_etl.sql
 │   ├── rls
 │   │   ├── RLS_BASE_TEMPLATE.sql
 │   │   └── RLS_ROLES.md
@@ -3400,12 +3403,18 @@
 │   │   ├── .env.example
 │   │   ├── README.md
 │   │   └── pyproject.toml
-│   └── ocr
+│   ├── ocr
+│   │   ├── app
+│   │   │   ├── main.py
+│   │   │   └── pipeline.py
+│   │   ├── Dockerfile
+│   │   └── requirements.txt
+│   └── pm_api
 │       ├── app
-│       │   ├── main.py
-│       │   └── pipeline.py
-│       ├── Dockerfile
-│       └── requirements.txt
+│       │   ├── __init__.py
+│       │   └── main.py
+│       ├── README.md
+│       └── pyproject.toml
 ├── skillpack
 │   └── manifest.json
 ├── skills
@@ -3588,6 +3597,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── odoo-ce
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── odoo-copilot-process-mining
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -4120,15 +4134,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1318 directories, 2797 files
+1322 directories, 2807 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1538 |
-| Files | 4268 |
-| Python files | 1110 |
+| Directories | 1542 |
+| Files | 4278 |
+| Python files | 1112 |
 | XML files | 520 |
-| Markdown files | 844 |
+| Markdown files | 849 |
