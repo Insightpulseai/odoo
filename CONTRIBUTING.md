@@ -386,6 +386,59 @@ Brief description of changes
 4. Address feedback
 5. Squash and merge when approved
 
+### Checkout and Manual Merge via Command Line
+
+If you cannot use the merge button or an automatic merge cannot be performed, you can
+perform a manual merge on the command line.
+
+> **Note:** These steps are not applicable if the base branch is protected.
+
+**Step 1:** Clone the repository or update your local repository with the latest changes.
+
+```bash
+git pull origin main
+```
+
+**Step 2:** Switch to the head branch of the pull request.
+
+```bash
+git checkout <pr-branch-name>
+```
+
+**Step 3:** Merge the base branch into the head branch.
+
+```bash
+git merge main
+```
+
+**Step 4:** Fix any conflicts and commit the result.
+
+```bash
+# After resolving conflicts in your editor:
+git add <resolved-files>
+git commit -m "fix: resolve merge conflicts with main"
+```
+
+See [Resolving a merge conflict using the command line](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line) for detailed conflict resolution instructions.
+
+**Step 5:** Push the changes.
+
+```bash
+git push -u origin <pr-branch-name>
+```
+
+**Example:** For a PR from branch `feat/add-expense-ocr`:
+
+```bash
+git pull origin main
+git checkout feat/add-expense-ocr
+git merge main
+# Resolve any conflicts...
+git add .
+git commit -m "fix: resolve merge conflicts with main"
+git push -u origin feat/add-expense-ocr
+```
+
 ### Commit Message Format
 
 We use [Conventional Commits](https://www.conventionalcommits.org/):
