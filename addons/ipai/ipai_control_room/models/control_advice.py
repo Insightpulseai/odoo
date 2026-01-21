@@ -197,12 +197,14 @@ class ControlAdvice(models.Model):
             return False
 
         Action = self.env["control.action"]
-        action = Action.create({
-            "advice_id": self.id,
-            "playbook_id": self.playbook_id.id,
-            "action_type": "playbook_run",
-            "state": "pending",
-        })
+        action = Action.create(
+            {
+                "advice_id": self.id,
+                "playbook_id": self.playbook_id.id,
+                "action_type": "playbook_run",
+                "state": "pending",
+            }
+        )
         return {
             "type": "ir.actions.act_window",
             "res_model": "control.action",

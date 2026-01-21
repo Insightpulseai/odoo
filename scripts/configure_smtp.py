@@ -86,25 +86,25 @@ print(f"  FROM Filter: {SMTP_FROM_FILTER or 'Not set'}")
 # CONFIGURE MAIL SERVER
 # ============================================
 
-MailServer = env['ir.mail_server'].sudo()
+MailServer = env["ir.mail_server"].sudo()
 
 # Search for existing server by name
-server = MailServer.search([('name', '=', SMTP_NAME)], limit=1)
+server = MailServer.search([("name", "=", SMTP_NAME)], limit=1)
 
 vals = {
-    'name': SMTP_NAME,
-    'smtp_host': SMTP_HOST,
-    'smtp_port': SMTP_PORT,
-    'smtp_user': SMTP_USER,
-    'smtp_pass': SMTP_PASSWORD,
-    'smtp_encryption': SMTP_ENCRYPTION,
-    'smtp_authentication': 'login',
-    'smtp_debug': False,
-    'active': True,
+    "name": SMTP_NAME,
+    "smtp_host": SMTP_HOST,
+    "smtp_port": SMTP_PORT,
+    "smtp_user": SMTP_USER,
+    "smtp_pass": SMTP_PASSWORD,
+    "smtp_encryption": SMTP_ENCRYPTION,
+    "smtp_authentication": "login",
+    "smtp_debug": False,
+    "active": True,
 }
 
 if SMTP_FROM_FILTER:
-    vals['from_filter'] = SMTP_FROM_FILTER
+    vals["from_filter"] = SMTP_FROM_FILTER
 
 if server:
     print(f"\nUpdating existing server (ID: {server.id})...")
@@ -123,14 +123,14 @@ if MAIL_CATCHALL_DOMAIN or MAIL_FORCE_FROM:
     print("System Parameters")
     print("=" * 60)
 
-    ICP = env['ir.config_parameter'].sudo()
+    ICP = env["ir.config_parameter"].sudo()
 
     if MAIL_CATCHALL_DOMAIN:
-        ICP.set_param('mail.catchall.domain', MAIL_CATCHALL_DOMAIN)
+        ICP.set_param("mail.catchall.domain", MAIL_CATCHALL_DOMAIN)
         print(f"  mail.catchall.domain = {MAIL_CATCHALL_DOMAIN}")
 
     if MAIL_FORCE_FROM:
-        ICP.set_param('mail.force.smtp.from', MAIL_FORCE_FROM)
+        ICP.set_param("mail.force.smtp.from", MAIL_FORCE_FROM)
         print(f"  mail.force.smtp.from = {MAIL_FORCE_FROM}")
 
 # ============================================
@@ -143,7 +143,7 @@ print("=" * 60)
 
 try:
     # Try different test methods (varies by Odoo version)
-    for method in ('test_smtp_connection', '_test_smtp_connection', 'test_connection'):
+    for method in ("test_smtp_connection", "_test_smtp_connection", "test_connection"):
         if hasattr(server, method):
             getattr(server, method)()
             print("\nSUCCESS: SMTP connection test passed!")

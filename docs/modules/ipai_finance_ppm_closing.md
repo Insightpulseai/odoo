@@ -2,7 +2,7 @@
 
 **Status**: ⚠️ WARN
 **Version**: 18.0.1.1.0
-**Author**: InsightPulseAI
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -36,7 +36,7 @@ Idempotent Month-End Close & BIR Task Generator with audit trail.
 
 ## Warnings
 
-- ⚠️ Subpackages not imported in __init__.py: ['tests', 'scripts']
+- ⚠️ Subpackages not imported in __init__.py: ['scripts', 'tests']
 
 ## Install/Upgrade
 
@@ -49,4 +49,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_finance_ppm_closing --stop-after-
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.451197_
+_Audited: 2026-01-21T22:42:53.519921_

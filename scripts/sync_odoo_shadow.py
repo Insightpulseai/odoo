@@ -108,7 +108,9 @@ TYPE_CONVERTERS = {
     "datetime": lambda v: v if v else None,
     "date": lambda v: v if v else None,
     "binary": lambda v: None,  # Skip binary fields in shadow
-    "many2one": lambda v: v[0] if isinstance(v, (list, tuple)) and v else (v if v else None),
+    "many2one": lambda v: (
+        v[0] if isinstance(v, (list, tuple)) and v else (v if v else None)
+    ),
 }
 
 
@@ -136,7 +138,9 @@ def compute_row_hash(row: dict) -> str:
     """Compute hash of row data for change detection."""
     # Remove tracking columns before hashing
     data = {k: v for k, v in row.items() if not k.startswith("_")}
-    return hashlib.md5(json.dumps(data, sort_keys=True, default=str).encode()).hexdigest()
+    return hashlib.md5(
+        json.dumps(data, sort_keys=True, default=str).encode()
+    ).hexdigest()
 
 
 # =============================================================================
@@ -211,7 +215,9 @@ class OdooConnection:
 
     def get_model_fields(self, model: str) -> dict:
         """Get field definitions for a model."""
-        return self.execute(model, "fields_get", [], attributes=["type", "store", "readonly"])
+        return self.execute(
+            model, "fields_get", [], attributes=["type", "store", "readonly"]
+        )
 
     def get_record_count(self, model: str, domain: list = None) -> int:
         """Get count of records matching domain."""
@@ -501,7 +507,12 @@ class ShadowSyncEngine:
                     error=str(e),
                 )
             logger.error(f"  Failed to sync {model}: {e}")
-            return {"model": model, "synced": 0, "duration_ms": duration_ms, "error": str(e)}
+            return {
+                "model": model,
+                "synced": 0,
+                "duration_ms": duration_ms,
+                "error": str(e),
+            }
 
     def sync_all(self, models: list[str] = None) -> list[dict]:
         """Sync multiple models."""

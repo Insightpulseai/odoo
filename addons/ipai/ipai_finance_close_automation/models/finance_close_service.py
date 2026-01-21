@@ -329,7 +329,9 @@ class IpaFinanceCloseService(models.AbstractModel):
             if days_until < 0:
                 # Overdue task
                 summary = f"OVERDUE: {task.name}"
-                note = f"This task was due on {deadline}. Please complete it immediately."
+                note = (
+                    f"This task was due on {deadline}. Please complete it immediately."
+                )
             elif days_until <= alert_days:
                 # Within alert window
                 summary = f"Upcoming Deadline: {task.name}"
@@ -358,9 +360,7 @@ class IpaFinanceCloseService(models.AbstractModel):
                 Activity.create(
                     {
                         "res_id": task.id,
-                        "res_model_id": self.env["ir.model"]
-                        ._get("project.task")
-                        .id,
+                        "res_model_id": self.env["ir.model"]._get("project.task").id,
                         "activity_type_id": activity_type.id,
                         "summary": summary,
                         "note": note,
@@ -373,11 +373,11 @@ class IpaFinanceCloseService(models.AbstractModel):
                     "Created deadline alert for task %s (ID: %s)", task.name, task.id
                 )
             except Exception as e:
-                _logger.error(
-                    "Failed to create alert for task %s: %s", task.id, str(e)
-                )
+                _logger.error("Failed to create alert for task %s: %s", task.id, str(e))
 
-        _logger.info("Deadline alert check complete. Created %s alerts.", alerts_created)
+        _logger.info(
+            "Deadline alert check complete. Created %s alerts.", alerts_created
+        )
         return {"alerts_created": alerts_created}
 
     @api.model
@@ -478,8 +478,12 @@ class IpaFinanceCloseService(models.AbstractModel):
                 {
                     "id": task.id,
                     "name": task.name,
-                    "deadline": task.date_deadline.isoformat() if task.date_deadline else None,
-                    "days_overdue": (today - task.date_deadline).days if task.date_deadline else 0,
+                    "deadline": (
+                        task.date_deadline.isoformat() if task.date_deadline else None
+                    ),
+                    "days_overdue": (
+                        (today - task.date_deadline).days if task.date_deadline else 0
+                    ),
                     "is_closing": task.is_closing_task,
                     "is_compliance": task.is_compliance_task,
                 }

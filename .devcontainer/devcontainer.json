@@ -1,68 +1,61 @@
 {
-  "name": "Odoo 18 CE + IPAI",
+  "name": "odoo-ce-18-dev",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "remoteUser": "vscode",
 
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "20"
     },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
-    "ghcr.io/devcontainers/features/git:1": {}
-  },
-
-  "postCreateCommand": "bash .devcontainer/post-create.sh",
-
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-python.debugpy",
-        "charliermarsh.ruff",
-        "esbenp.prettier-vscode",
-        "dbaeumer.vscode-eslint",
-        "Odoo.odoo",
-        "odoo-ide.odoo-ide",
-        "redhat.vscode-yaml",
-        "tamasfe.even-better-toml",
-        "eamodio.gitlens",
-        "github.copilot"
-      ],
-      "settings": {
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.analysis.typeCheckingMode": "basic",
-        "python.analysis.autoImportCompletions": true,
-        "editor.formatOnSave": true,
-        "editor.defaultFormatter": "charliermarsh.ruff",
-        "[python]": {
-          "editor.defaultFormatter": "charliermarsh.ruff"
-        },
-        "[javascript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "[typescript]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        },
-        "[json]": {
-          "editor.defaultFormatter": "esbenp.prettier-vscode"
-        }
-      }
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest"
+    },
+    "ghcr.io/devcontainers/features/postgres:1": {
+      "version": "16",
+      "dbName": "odoo_dev",
+      "postgresUser": "odoo",
+      "postgresPassword": "odoo"
     }
   },
 
-  "forwardPorts": [8069, 8070, 8071, 5432],
+  "forwardPorts": [
+    8069,
+    8070,
+    8071,
+    3000,
+    5678,
+    8766,
+    8789,
+    5432
+  ],
 
   "portsAttributes": {
     "8069": {
-      "label": "Odoo Core",
-      "onAutoForward": "notify"
+      "label": "Odoo CE Core",
+      "onAutoForward": "openBrowser"
     },
     "8070": {
       "label": "Odoo Marketing",
-      "onAutoForward": "silent"
+      "onAutoForward": "notify"
     },
     "8071": {
       "label": "Odoo Accounting",
+      "onAutoForward": "notify"
+    },
+    "3000": {
+      "label": "Control Room Dashboard",
+      "onAutoForward": "openBrowser"
+    },
+    "5678": {
+      "label": "n8n Workflows",
+      "onAutoForward": "notify"
+    },
+    "8766": {
+      "label": "MCP Coordinator",
+      "onAutoForward": "silent"
+    },
+    "8789": {
+      "label": "Control Room API",
       "onAutoForward": "silent"
     },
     "5432": {
@@ -71,11 +64,45 @@
     }
   },
 
-  "remoteEnv": {
-    "ODOO_ADDONS_PATH": "/workspaces/odoo-ce/addons/ipai:/workspaces/odoo-ce/addons/oca"
+  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "/usr/local/bin/python",
+        "python.languageServer": "Pylance",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "editor.formatOnSave": true,
+        "editor.rulers": [88, 120],
+        "files.trimTrailingWhitespace": true
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.black-formatter",
+        "ms-azuretools.vscode-docker",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml",
+        "bradlc.vscode-tailwindcss",
+        "GitHub.copilot",
+        "ms-vscode-remote.remote-containers"
+      ]
+    },
+    "codespaces": {
+      "openFiles": [
+        "README.md",
+        "CLAUDE.md"
+      ]
+    }
   },
 
   "containerEnv": {
-    "PYTHONDONTWRITEBYTECODE": "1"
+    "POSTGRES_USER": "odoo",
+    "POSTGRES_PASSWORD": "odoo",
+    "POSTGRES_DB": "odoo_dev",
+    "PGHOST": "localhost",
+    "PGUSER": "odoo",
+    "PGPASSWORD": "odoo"
   }
 }

@@ -28,200 +28,339 @@ ODOO_VERSION = "18.0"
 
 # The apps list to audit
 APPS_LIST = [
-    "sale_management", "pos_restaurant", "account", "ipai_workos_core", "crm",
-    "mrp_workorder", "website", "stock", "accountant", "knowledge", "purchase",
-    "point_of_sale", "project", "website_sale", "mrp", "mass_mailing",
-    "timesheet_grid", "hr_expense", "web_studio", "hr_holidays", "hr_recruitment",
-    "industry_fsm", "hr", "data_recycle", "ipai_bir_tax_compliance",
-    "ipai_close_orchestration", "ipai_finance_ppm", "ipai_finance_ppm_golive",
-    "ipai_month_end", "ipai_ppm_a1", "ipai_superset_connector", "ipai_tbwa_finance",
-    "maintenance", "marketing_card", "sign", "helpdesk", "sale_subscription",
-    "quality_control", "website_slides", "planning", "website_event", "mail",
-    "contacts", "calendar", "social", "hr_appraisal", "fleet",
-    "marketing_automation", "im_livechat", "appointment", "survey", "web_mobile",
-    "repair", "hr_attendance", "mass_mailing_sms", "stock_barcode", "project_todo",
-    "hr_skills", "voip", "lunch", "website_hr_recruitment", "sale_amazon",
-    "hr_contract", "ipai_workos_affine"
+    "sale_management",
+    "pos_restaurant",
+    "account",
+    "ipai_workos_core",
+    "crm",
+    "mrp_workorder",
+    "website",
+    "stock",
+    "accountant",
+    "knowledge",
+    "purchase",
+    "point_of_sale",
+    "project",
+    "website_sale",
+    "mrp",
+    "mass_mailing",
+    "timesheet_grid",
+    "hr_expense",
+    "web_studio",
+    "hr_holidays",
+    "hr_recruitment",
+    "industry_fsm",
+    "hr",
+    "data_recycle",
+    "ipai_bir_tax_compliance",
+    "ipai_close_orchestration",
+    "ipai_finance_ppm",
+    "ipai_finance_ppm_golive",
+    "ipai_month_end",
+    "ipai_ppm_a1",
+    "ipai_superset_connector",
+    "ipai_tbwa_finance",
+    "maintenance",
+    "marketing_card",
+    "sign",
+    "helpdesk",
+    "sale_subscription",
+    "quality_control",
+    "website_slides",
+    "planning",
+    "website_event",
+    "mail",
+    "contacts",
+    "calendar",
+    "social",
+    "hr_appraisal",
+    "fleet",
+    "marketing_automation",
+    "im_livechat",
+    "appointment",
+    "survey",
+    "web_mobile",
+    "repair",
+    "hr_attendance",
+    "mass_mailing_sms",
+    "stock_barcode",
+    "project_todo",
+    "hr_skills",
+    "voip",
+    "lunch",
+    "website_hr_recruitment",
+    "sale_amazon",
+    "hr_contract",
+    "ipai_workos_affine",
 ]
 
 # Known Odoo CE core modules (Odoo 18.0)
 # These are available in the standard Odoo CE distribution
 CE_CORE_MODULES = {
     # Base
-    "base", "web", "base_setup", "base_import", "bus", "mail", "digest", "iap",
-    "web_tour", "web_editor", "portal", "resource",
+    "base",
+    "web",
+    "base_setup",
+    "base_import",
+    "bus",
+    "mail",
+    "digest",
+    "iap",
+    "web_tour",
+    "web_editor",
+    "portal",
+    "resource",
     # Calendar
     "calendar",
     # Contacts/CRM
-    "contacts", "sales_team", "crm", "sale", "sale_management", "sale_crm",
+    "contacts",
+    "sales_team",
+    "crm",
+    "sale",
+    "sale_management",
+    "sale_crm",
     # Accounting
-    "analytic", "account", "account_payment",
+    "analytic",
+    "account",
+    "account_payment",
     # Purchase
-    "purchase", "purchase_requisition",
+    "purchase",
+    "purchase_requisition",
     # Inventory
-    "stock", "stock_account", "stock_landed_costs", "stock_picking_batch",
-    "sale_stock", "sale_purchase", "purchase_stock",
+    "stock",
+    "stock_account",
+    "stock_landed_costs",
+    "stock_picking_batch",
+    "sale_stock",
+    "sale_purchase",
+    "purchase_stock",
     # Manufacturing
-    "mrp", "maintenance",
+    "mrp",
+    "maintenance",
     # Project
-    "project", "project_todo", "hr_timesheet", "sale_timesheet",
+    "project",
+    "project_todo",
+    "hr_timesheet",
+    "sale_timesheet",
     # HR
-    "hr", "hr_contract", "hr_holidays", "hr_attendance", "hr_expense",
-    "hr_recruitment", "hr_skills",
+    "hr",
+    "hr_contract",
+    "hr_holidays",
+    "hr_attendance",
+    "hr_expense",
+    "hr_recruitment",
+    "hr_skills",
     # Website
-    "website", "website_sale", "website_crm", "website_blog", "website_forum",
-    "website_slides", "website_event", "website_hr_recruitment",
+    "website",
+    "website_sale",
+    "website_crm",
+    "website_blog",
+    "website_forum",
+    "website_slides",
+    "website_event",
+    "website_hr_recruitment",
     # Marketing
-    "mass_mailing", "mass_mailing_sms",
+    "mass_mailing",
+    "mass_mailing_sms",
     # Point of Sale
-    "point_of_sale", "pos_restaurant",
+    "point_of_sale",
+    "pos_restaurant",
     # Others
-    "survey", "lunch", "fleet", "repair", "im_livechat", "sms", "snailmail",
-    "payment", "auth_signup", "auth_oauth", "auth_totp", "l10n_generic_coa",
+    "survey",
+    "lunch",
+    "fleet",
+    "repair",
+    "im_livechat",
+    "sms",
+    "snailmail",
+    "payment",
+    "auth_signup",
+    "auth_oauth",
+    "auth_totp",
+    "l10n_generic_coa",
 }
 
 # Known Enterprise-only modules
 ENTERPRISE_ONLY = {
-    "accountant", "knowledge", "web_studio", "sign", "helpdesk", "planning",
-    "sale_subscription", "quality_control", "hr_appraisal", "marketing_automation",
-    "appointment", "web_mobile", "stock_barcode", "voip", "sale_amazon",
-    "industry_fsm", "timesheet_grid", "mrp_workorder", "data_recycle",
-    "marketing_card", "social"
+    "accountant",
+    "knowledge",
+    "web_studio",
+    "sign",
+    "helpdesk",
+    "planning",
+    "sale_subscription",
+    "quality_control",
+    "hr_appraisal",
+    "marketing_automation",
+    "appointment",
+    "web_mobile",
+    "stock_barcode",
+    "voip",
+    "sale_amazon",
+    "industry_fsm",
+    "timesheet_grid",
+    "mrp_workorder",
+    "data_recycle",
+    "marketing_card",
+    "social",
 }
 
 # OCA equivalents mapping
 OCA_EQUIVALENTS = {
     "accountant": {
-        "modules": ["account_financial_report", "mis_builder", "mis_builder_budget",
-                    "account_asset_management", "account_reconcile_oca"],
-        "repos": ["OCA/account-financial-reporting", "OCA/mis-builder",
-                  "OCA/account-financial-tools"],
+        "modules": [
+            "account_financial_report",
+            "mis_builder",
+            "mis_builder_budget",
+            "account_asset_management",
+            "account_reconcile_oca",
+        ],
+        "repos": [
+            "OCA/account-financial-reporting",
+            "OCA/mis-builder",
+            "OCA/account-financial-tools",
+        ],
         "parity": "95%",
-        "notes": "Full replacement except for some automated entries"
+        "notes": "Full replacement except for some automated entries",
     },
     "mrp_workorder": {
-        "modules": ["mrp_multi_level", "mrp_multi_level_estimate",
-                    "mrp_production_request", "mrp_workorder_sequence"],
+        "modules": [
+            "mrp_multi_level",
+            "mrp_multi_level_estimate",
+            "mrp_production_request",
+            "mrp_workorder_sequence",
+        ],
         "repos": ["OCA/manufacture"],
         "parity": "90%",
-        "notes": "Missing tablet view, but core functionality covered"
+        "notes": "Missing tablet view, but core functionality covered",
     },
     "hr_appraisal": {
         "modules": ["hr_appraisal"],
         "repos": ["OCA/hr"],
         "parity": "85%",
-        "notes": "Basic appraisal flow, customize for goals"
+        "notes": "Basic appraisal flow, customize for goals",
     },
     "timesheet_grid": {
-        "modules": ["hr_timesheet_sheet", "hr_timesheet_task_required",
-                    "project_timesheet_time_control"],
+        "modules": [
+            "hr_timesheet_sheet",
+            "hr_timesheet_task_required",
+            "project_timesheet_time_control",
+        ],
         "repos": ["OCA/timesheet", "OCA/project"],
         "parity": "90%",
-        "notes": "Grid view via sheet, slightly different UX"
+        "notes": "Grid view via sheet, slightly different UX",
     },
     "sale_subscription": {
         "modules": ["sale_subscription"],
         "repos": ["OCA/sale-workflow"],
         "parity": "80%",
-        "notes": "Core subscription logic, may need customization"
+        "notes": "Core subscription logic, may need customization",
     },
     "helpdesk": {
-        "modules": ["helpdesk_mgmt", "helpdesk_mgmt_timesheet", "helpdesk_mgmt_project"],
+        "modules": [
+            "helpdesk_mgmt",
+            "helpdesk_mgmt_timesheet",
+            "helpdesk_mgmt_project",
+        ],
         "repos": ["OCA/helpdesk"],
         "parity": "85%",
-        "notes": "Full ticketing, SLA via custom fields"
+        "notes": "Full ticketing, SLA via custom fields",
     },
     "planning": {
-        "modules": ["project_timeline", "project_stage_closed", "project_task_dependency"],
+        "modules": [
+            "project_timeline",
+            "project_stage_closed",
+            "project_task_dependency",
+        ],
         "repos": ["OCA/project"],
         "parity": "75%",
-        "notes": "Timeline view available, Gantt needs frontend work"
+        "notes": "Timeline view available, Gantt needs frontend work",
     },
     "quality_control": {
         "modules": ["quality_control", "quality_control_stock"],
         "repos": ["OCA/manufacture"],
         "parity": "70%",
-        "notes": "Basic QC, advanced metrics via Control Room"
+        "notes": "Basic QC, advanced metrics via Control Room",
     },
     "social": {
         "modules": [],
         "repos": [],
         "parity": "60%",
         "notes": "n8n workflows for posting, no unified dashboard",
-        "replacement_type": "n8n"
+        "replacement_type": "n8n",
     },
     "knowledge": {
         "modules": ["knowledge"],
         "repos": ["OCA/knowledge"],
         "parity": "70%",
-        "notes": "Basic knowledge base, or use control_room.kb custom replacement"
+        "notes": "Basic knowledge base, or use control_room.kb custom replacement",
     },
     "web_studio": {
         "modules": [],
         "repos": [],
         "parity": "50%",
-        "notes": "No direct OCA equivalent; use control_room.studio custom replacement"
+        "notes": "No direct OCA equivalent; use control_room.studio custom replacement",
     },
     "sign": {
         "modules": [],
         "repos": [],
         "parity": "60%",
-        "notes": "No direct OCA equivalent; use control_room.sign with DocuSign integration"
+        "notes": "No direct OCA equivalent; use control_room.sign with DocuSign integration",
     },
     "appointment": {
         "modules": ["calendar_ics"],
         "repos": ["OCA/calendar"],
         "parity": "60%",
-        "notes": "Limited OCA options; use control_room.booking custom replacement"
+        "notes": "Limited OCA options; use control_room.booking custom replacement",
     },
     "industry_fsm": {
         "modules": ["fieldservice", "fieldservice_project"],
         "repos": ["OCA/field-service"],
         "parity": "80%",
-        "notes": "OCA Field Service suite provides good coverage"
+        "notes": "OCA Field Service suite provides good coverage",
     },
     "stock_barcode": {
         "modules": ["stock_barcodes"],
         "repos": ["OCA/stock-logistics-barcode"],
         "parity": "70%",
-        "notes": "Basic barcode scanning; or use control_room.barcode"
+        "notes": "Basic barcode scanning; or use control_room.barcode",
     },
     "web_mobile": {
         "modules": ["web_responsive"],
         "repos": ["OCA/web"],
         "parity": "50%",
-        "notes": "Responsive web only; no native mobile app"
+        "notes": "Responsive web only; no native mobile app",
     },
     "marketing_automation": {
         "modules": ["mass_mailing_automation"],
         "repos": ["OCA/social"],
         "parity": "60%",
-        "notes": "Basic automation; use n8n for complex workflows"
+        "notes": "Basic automation; use n8n for complex workflows",
     },
     "voip": {
         "modules": [],
         "repos": [],
         "parity": "0%",
-        "notes": "No OCA equivalent; requires third-party integration"
+        "notes": "No OCA equivalent; requires third-party integration",
     },
     "sale_amazon": {
         "modules": [],
         "repos": [],
         "parity": "0%",
-        "notes": "No OCA equivalent; use n8n Amazon connector"
+        "notes": "No OCA equivalent; use n8n Amazon connector",
     },
     "data_recycle": {
         "modules": ["auto_backup", "database_cleanup"],
         "repos": ["OCA/server-tools"],
         "parity": "50%",
-        "notes": "Different approach; cleanup vs recycle bin"
+        "notes": "Different approach; cleanup vs recycle bin",
     },
     "marketing_card": {
         "modules": [],
         "repos": [],
         "parity": "0%",
-        "notes": "No OCA equivalent; Enterprise-specific feature"
-    }
+        "notes": "No OCA equivalent; Enterprise-specific feature",
+    },
 }
 
 
@@ -245,7 +384,7 @@ class ModuleInfo:
 def parse_manifest(manifest_path: Path) -> Optional[Dict]:
     """Parse __manifest__.py file and return its contents."""
     try:
-        with open(manifest_path, 'r', encoding='utf-8') as f:
+        with open(manifest_path, "r", encoding="utf-8") as f:
             content = f.read()
         return ast.literal_eval(content)
     except Exception as e:
@@ -381,7 +520,7 @@ def check_manifest_syntax(module_path: Path) -> Optional[str]:
         return f"__manifest__.py missing"
 
     try:
-        with open(manifest_file, 'r', encoding='utf-8') as f:
+        with open(manifest_file, "r", encoding="utf-8") as f:
             content = f.read()
         ast.parse(content)
         ast.literal_eval(content)
@@ -440,9 +579,9 @@ def check_security_csv(module_path: Path) -> List[str]:
         if py_file.name == "__init__.py":
             continue
         try:
-            with open(py_file, 'r', encoding='utf-8') as f:
+            with open(py_file, "r", encoding="utf-8") as f:
                 content = f.read()
-                if re.search(r'class\s+\w+\(models\.(Model|TransientModel)\)', content):
+                if re.search(r"class\s+\w+\(models\.(Model|TransientModel)\)", content):
                     has_models = True
                     break
         except Exception:
@@ -451,7 +590,9 @@ def check_security_csv(module_path: Path) -> List[str]:
     if has_models:
         security_csv = module_path / "security" / "ir.model.access.csv"
         if not security_csv.exists():
-            issues.append("Module defines models but missing security/ir.model.access.csv")
+            issues.append(
+                "Module defines models but missing security/ir.model.access.csv"
+            )
 
     return issues
 
@@ -462,9 +603,9 @@ def check_python_imports(module_path: Path) -> List[str]:
 
     for py_file in module_path.rglob("*.py"):
         try:
-            with open(py_file, 'r', encoding='utf-8') as f:
+            with open(py_file, "r", encoding="utf-8") as f:
                 content = f.read()
-            compile(content, str(py_file), 'exec')
+            compile(content, str(py_file), "exec")
         except SyntaxError as e:
             rel_path = py_file.relative_to(module_path)
             issues.append(f"Python syntax error in {rel_path}:{e.lineno}: {e.msg}")
@@ -488,101 +629,119 @@ def check_dependencies(module_path: Path, all_modules: Set[str]) -> List[str]:
     return issues
 
 
-def quality_gate_audit(module_name: str, module_path: Path,
-                       all_modules: Set[str]) -> List[QualityCheckResult]:
+def quality_gate_audit(
+    module_name: str, module_path: Path, all_modules: Set[str]
+) -> List[QualityCheckResult]:
     """Run quality gate checks on a single module."""
     results = []
 
     # 1. Manifest syntax check
     manifest_issue = check_manifest_syntax(module_path)
     if manifest_issue:
-        results.append(QualityCheckResult(
-            module=module_name,
-            status="FAIL",
-            stage="static",
-            error_summary=manifest_issue,
-            file_line=f"{module_path}/__manifest__.py",
-            fix_recommendation="Fix Python syntax in __manifest__.py"
-        ))
+        results.append(
+            QualityCheckResult(
+                module=module_name,
+                status="FAIL",
+                stage="static",
+                error_summary=manifest_issue,
+                file_line=f"{module_path}/__manifest__.py",
+                fix_recommendation="Fix Python syntax in __manifest__.py",
+            )
+        )
         return results  # Cannot continue without valid manifest
 
     # 2. Init files check
     init_issues = check_init_files(module_path)
     for issue in init_issues:
-        results.append(QualityCheckResult(
-            module=module_name,
-            status="FAIL",
-            stage="static",
-            error_summary=issue,
-            file_line=str(module_path),
-            fix_recommendation=f"Create missing __init__.py file"
-        ))
+        results.append(
+            QualityCheckResult(
+                module=module_name,
+                status="FAIL",
+                stage="static",
+                error_summary=issue,
+                file_line=str(module_path),
+                fix_recommendation=f"Create missing __init__.py file",
+            )
+        )
 
     # 3. XML well-formedness
     xml_issues = check_xml_wellformed(module_path)
     for issue in xml_issues:
-        results.append(QualityCheckResult(
-            module=module_name,
-            status="FAIL",
-            stage="static",
-            error_summary=issue,
-            file_line=str(module_path),
-            fix_recommendation="Fix XML syntax errors"
-        ))
+        results.append(
+            QualityCheckResult(
+                module=module_name,
+                status="FAIL",
+                stage="static",
+                error_summary=issue,
+                file_line=str(module_path),
+                fix_recommendation="Fix XML syntax errors",
+            )
+        )
 
     # 4. Security CSV check
     security_issues = check_security_csv(module_path)
     for issue in security_issues:
-        results.append(QualityCheckResult(
-            module=module_name,
-            status="WARNING",
-            stage="static",
-            error_summary=issue,
-            file_line=f"{module_path}/security/ir.model.access.csv",
-            fix_recommendation="Add security/ir.model.access.csv with model access rules"
-        ))
+        results.append(
+            QualityCheckResult(
+                module=module_name,
+                status="WARNING",
+                stage="static",
+                error_summary=issue,
+                file_line=f"{module_path}/security/ir.model.access.csv",
+                fix_recommendation="Add security/ir.model.access.csv with model access rules",
+            )
+        )
 
     # 5. Python compilation
     python_issues = check_python_imports(module_path)
     for issue in python_issues:
-        results.append(QualityCheckResult(
-            module=module_name,
-            status="FAIL",
-            stage="static",
-            error_summary=issue,
-            file_line=str(module_path),
-            fix_recommendation="Fix Python syntax errors"
-        ))
+        results.append(
+            QualityCheckResult(
+                module=module_name,
+                status="FAIL",
+                stage="static",
+                error_summary=issue,
+                file_line=str(module_path),
+                fix_recommendation="Fix Python syntax errors",
+            )
+        )
 
     # 6. Dependency check
     dep_issues = check_dependencies(module_path, all_modules)
     for issue in dep_issues:
-        results.append(QualityCheckResult(
-            module=module_name,
-            status="FAIL",
-            stage="static",
-            error_summary=issue,
-            file_line=f"{module_path}/__manifest__.py",
-            fix_recommendation="Add missing dependency to addons path or remove from depends"
-        ))
+        results.append(
+            QualityCheckResult(
+                module=module_name,
+                status="FAIL",
+                stage="static",
+                error_summary=issue,
+                file_line=f"{module_path}/__manifest__.py",
+                fix_recommendation="Add missing dependency to addons path or remove from depends",
+            )
+        )
 
     # If no issues found, module passes
     if not results:
-        results.append(QualityCheckResult(
-            module=module_name,
-            status="PASS",
-            stage="static",
-            error_summary="All static checks passed",
-            fix_recommendation=""
-        ))
+        results.append(
+            QualityCheckResult(
+                module=module_name,
+                status="PASS",
+                stage="static",
+                error_summary="All static checks passed",
+                fix_recommendation="",
+            )
+        )
 
     return results
 
 
-def generate_markdown_report(modules: List[ModuleInfo], quality_results: Dict[str, List[QualityCheckResult]],
-                              output_path: Path):
+def generate_markdown_report(
+    modules: List[ModuleInfo],
+    quality_results: Dict[str, List[QualityCheckResult]],
+    output_path: Path,
+):
     """Generate markdown report."""
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write("# CE/OCA Equivalents Audit Report\n\n")
         f.write(f"**Odoo Version:** {ODOO_VERSION}\n\n")
         f.write(f"**Generated:** {os.popen('date').read().strip()}\n\n")
@@ -590,7 +749,9 @@ def generate_markdown_report(modules: List[ModuleInfo], quality_results: Dict[st
         f.write(f"- Custom: `{ADDONS_ROOT}`\n")
         f.write(f"- Custom (nested): `{IPAI_NESTED}`\n")
         f.write(f"- OCA: `{EXTERNAL_SRC}`\n")
-        f.write(f"- CE Core: `/usr/lib/python3/dist-packages/odoo/addons` (Docker image)\n\n")
+        f.write(
+            f"- CE Core: `/usr/lib/python3/dist-packages/odoo/addons` (Docker image)\n\n"
+        )
 
         f.write("## Module Classification Summary\n\n")
 
@@ -606,8 +767,12 @@ def generate_markdown_report(modules: List[ModuleInfo], quality_results: Dict[st
         f.write("\n")
 
         f.write("## Module Details\n\n")
-        f.write("| Module | App Label | Classification | Found Path | Installable | Upgradeable | OCA Equivalents | Notes |\n")
-        f.write("|--------|-----------|----------------|------------|-------------|-------------|-----------------|-------|\n")
+        f.write(
+            "| Module | App Label | Classification | Found Path | Installable | Upgradeable | OCA Equivalents | Notes |\n"
+        )
+        f.write(
+            "|--------|-----------|----------------|------------|-------------|-------------|-----------------|-------|\n"
+        )
 
         for m in modules:
             app_label = m.manifest_name or m.name
@@ -617,13 +782,19 @@ def generate_markdown_report(modules: List[ModuleInfo], quality_results: Dict[st
             oca_equiv = ", ".join(m.oca_equivalents[:3]) if m.oca_equivalents else "-"
             notes = m.notes[:50] + "..." if len(m.notes) > 50 else m.notes
 
-            f.write(f"| {m.name} | {app_label} | {m.classification} | `{found_path}` | {m.installable} | {m.upgradeable} | {oca_equiv} | {notes} |\n")
+            f.write(
+                f"| {m.name} | {app_label} | {m.classification} | `{found_path}` | {m.installable} | {m.upgradeable} | {oca_equiv} | {notes} |\n"
+            )
 
         # Enterprise-only modules with compliance risk
-        enterprise_modules = [m for m in modules if m.classification == "enterprise-only"]
+        enterprise_modules = [
+            m for m in modules if m.classification == "enterprise-only"
+        ]
         if enterprise_modules:
             f.write("\n## Enterprise-Only Modules (Compliance Risk)\n\n")
-            f.write("These modules are Enterprise-only and require licensing or OCA alternatives:\n\n")
+            f.write(
+                "These modules are Enterprise-only and require licensing or OCA alternatives:\n\n"
+            )
             for m in enterprise_modules:
                 f.write(f"### {m.name}\n\n")
                 if m.oca_equivalents:
@@ -639,13 +810,22 @@ def generate_markdown_report(modules: List[ModuleInfo], quality_results: Dict[st
 
             # Summary
             total_modules = len(quality_results)
-            passed = sum(1 for results in quality_results.values()
-                        if all(r.status == "PASS" for r in results))
-            failed = sum(1 for results in quality_results.values()
-                        if any(r.status == "FAIL" for r in results))
-            warnings = sum(1 for results in quality_results.values()
-                          if any(r.status == "WARNING" for r in results) and
-                          not any(r.status == "FAIL" for r in results))
+            passed = sum(
+                1
+                for results in quality_results.values()
+                if all(r.status == "PASS" for r in results)
+            )
+            failed = sum(
+                1
+                for results in quality_results.values()
+                if any(r.status == "FAIL" for r in results)
+            )
+            warnings = sum(
+                1
+                for results in quality_results.values()
+                if any(r.status == "WARNING" for r in results)
+                and not any(r.status == "FAIL" for r in results)
+            )
 
             f.write("## Summary\n\n")
             f.write(f"| Status | Count |\n")
@@ -656,19 +836,39 @@ def generate_markdown_report(modules: List[ModuleInfo], quality_results: Dict[st
             f.write(f"| **Total** | {total_modules} |\n\n")
 
             f.write("## Quality Gate Results\n\n")
-            f.write("| Module | Status | Stage | Error Summary | File/Line | Fix Recommendation |\n")
-            f.write("|--------|--------|-------|---------------|-----------|--------------------|\n")
+            f.write(
+                "| Module | Status | Stage | Error Summary | File/Line | Fix Recommendation |\n"
+            )
+            f.write(
+                "|--------|--------|-------|---------------|-----------|--------------------|\n"
+            )
 
             for module_name, results in sorted(quality_results.items()):
                 for r in results:
-                    error_summary = r.error_summary[:40] + "..." if len(r.error_summary) > 40 else r.error_summary
-                    file_line = r.file_line[-30:] if len(r.file_line) > 30 else r.file_line
-                    fix = r.fix_recommendation[:30] + "..." if len(r.fix_recommendation) > 30 else r.fix_recommendation
-                    f.write(f"| {r.module} | {r.status} | {r.stage} | {error_summary} | `{file_line}` | {fix} |\n")
+                    error_summary = (
+                        r.error_summary[:40] + "..."
+                        if len(r.error_summary) > 40
+                        else r.error_summary
+                    )
+                    file_line = (
+                        r.file_line[-30:] if len(r.file_line) > 30 else r.file_line
+                    )
+                    fix = (
+                        r.fix_recommendation[:30] + "..."
+                        if len(r.fix_recommendation) > 30
+                        else r.fix_recommendation
+                    )
+                    f.write(
+                        f"| {r.module} | {r.status} | {r.stage} | {error_summary} | `{file_line}` | {fix} |\n"
+                    )
 
             # Blockers section
-            blockers = [(mod, r) for mod, results in quality_results.items()
-                       for r in results if r.status == "FAIL"]
+            blockers = [
+                (mod, r)
+                for mod, results in quality_results.items()
+                for r in results
+                if r.status == "FAIL"
+            ]
             if blockers:
                 f.write("\n## Blockers (Must Fix)\n\n")
                 for mod, r in blockers:
@@ -679,30 +879,44 @@ def generate_markdown_report(modules: List[ModuleInfo], quality_results: Dict[st
 
 def generate_csv(modules: List[ModuleInfo], output_path: Path):
     """Generate CSV report."""
-    with open(output_path, 'w', newline='', encoding='utf-8') as f:
+    with open(output_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow([
-            "module", "app_label", "classification", "found_path",
-            "installable", "upgradeable", "oca_equivalents", "oca_repos",
-            "oca_parity", "notes"
-        ])
+        writer.writerow(
+            [
+                "module",
+                "app_label",
+                "classification",
+                "found_path",
+                "installable",
+                "upgradeable",
+                "oca_equivalents",
+                "oca_repos",
+                "oca_parity",
+                "notes",
+            ]
+        )
         for m in modules:
-            writer.writerow([
-                m.name,
-                m.manifest_name or m.name,
-                m.classification,
-                m.found_path or "",
-                m.installable,
-                m.upgradeable,
-                ";".join(m.oca_equivalents),
-                ";".join(m.oca_repos),
-                m.oca_parity,
-                m.notes
-            ])
+            writer.writerow(
+                [
+                    m.name,
+                    m.manifest_name or m.name,
+                    m.classification,
+                    m.found_path or "",
+                    m.installable,
+                    m.upgradeable,
+                    ";".join(m.oca_equivalents),
+                    ";".join(m.oca_repos),
+                    m.oca_parity,
+                    m.notes,
+                ]
+            )
 
 
-def generate_json(modules: List[ModuleInfo], quality_results: Dict[str, List[QualityCheckResult]],
-                  output_path: Path):
+def generate_json(
+    modules: List[ModuleInfo],
+    quality_results: Dict[str, List[QualityCheckResult]],
+    output_path: Path,
+):
     """Generate JSON report."""
     data = {
         "environment": {
@@ -711,29 +925,31 @@ def generate_json(modules: List[ModuleInfo], quality_results: Dict[str, List[Qua
                 "custom": str(ADDONS_ROOT),
                 "custom_nested": str(IPAI_NESTED),
                 "oca": str(EXTERNAL_SRC),
-                "ce_core": "/usr/lib/python3/dist-packages/odoo/addons"
-            }
+                "ce_core": "/usr/lib/python3/dist-packages/odoo/addons",
+            },
         },
         "modules": [],
-        "quality_gate": {}
+        "quality_gate": {},
     }
 
     for m in modules:
-        data["modules"].append({
-            "name": m.name,
-            "classification": m.classification,
-            "found_path": m.found_path,
-            "manifest_name": m.manifest_name,
-            "version": m.version,
-            "depends": m.depends,
-            "is_application": m.is_application,
-            "installable": m.installable,
-            "upgradeable": m.upgradeable,
-            "oca_equivalents": m.oca_equivalents,
-            "oca_repos": m.oca_repos,
-            "oca_parity": m.oca_parity,
-            "notes": m.notes
-        })
+        data["modules"].append(
+            {
+                "name": m.name,
+                "classification": m.classification,
+                "found_path": m.found_path,
+                "manifest_name": m.manifest_name,
+                "version": m.version,
+                "depends": m.depends,
+                "is_application": m.is_application,
+                "installable": m.installable,
+                "upgradeable": m.upgradeable,
+                "oca_equivalents": m.oca_equivalents,
+                "oca_repos": m.oca_repos,
+                "oca_parity": m.oca_parity,
+                "notes": m.notes,
+            }
+        )
 
     for module_name, results in quality_results.items():
         data["quality_gate"][module_name] = [
@@ -742,12 +958,12 @@ def generate_json(modules: List[ModuleInfo], quality_results: Dict[str, List[Qua
                 "stage": r.stage,
                 "error_summary": r.error_summary,
                 "file_line": r.file_line,
-                "fix_recommendation": r.fix_recommendation
+                "fix_recommendation": r.fix_recommendation,
             }
             for r in results
         ]
 
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
 
 
@@ -779,7 +995,11 @@ def main():
     for module_name in APPS_LIST:
         info = classify_module(module_name)
         modules.append(info)
-        status_icon = "✓" if info.classification in ["CE", "custom"] else "⚠" if info.classification == "OCA" else "✗"
+        status_icon = (
+            "✓"
+            if info.classification in ["CE", "custom"]
+            else "⚠" if info.classification == "OCA" else "✗"
+        )
         print(f"    {status_icon} {module_name}: {info.classification}")
 
     # Quality Gate Audit for ipai_* modules
@@ -836,25 +1056,47 @@ def main():
     print(f"  ✓ JSON report: {json_path}")
 
     # Generate separate quality gate outputs
-    with open(quality_csv_path, 'w', newline='', encoding='utf-8') as f:
+    with open(quality_csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow(["module", "status", "stage", "error_summary", "file_line", "fix_recommendation"])
+        writer.writerow(
+            [
+                "module",
+                "status",
+                "stage",
+                "error_summary",
+                "file_line",
+                "fix_recommendation",
+            ]
+        )
         for module_name, results in sorted(quality_results.items()):
             for r in results:
-                writer.writerow([r.module, r.status, r.stage, r.error_summary, r.file_line, r.fix_recommendation])
+                writer.writerow(
+                    [
+                        r.module,
+                        r.status,
+                        r.stage,
+                        r.error_summary,
+                        r.file_line,
+                        r.fix_recommendation,
+                    ]
+                )
     print(f"  ✓ Quality gate CSV: {quality_csv_path}")
 
-    with open(quality_json_path, 'w', encoding='utf-8') as f:
-        json.dump({
-            "environment": {
-                "odoo_version": ODOO_VERSION,
-                "custom_addons_root": str(ADDONS_ROOT)
+    with open(quality_json_path, "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "environment": {
+                    "odoo_version": ODOO_VERSION,
+                    "custom_addons_root": str(ADDONS_ROOT),
+                },
+                "results": {
+                    mod: [asdict(r) for r in results]
+                    for mod, results in quality_results.items()
+                },
             },
-            "results": {
-                mod: [asdict(r) for r in results]
-                for mod, results in quality_results.items()
-            }
-        }, f, indent=2)
+            f,
+            indent=2,
+        )
     print(f"  ✓ Quality gate JSON: {quality_json_path}")
 
     # Summary
@@ -866,10 +1108,16 @@ def main():
     custom_count = sum(1 for m in modules if m.classification == "custom")
     enterprise_count = sum(1 for m in modules if m.classification == "enterprise-only")
 
-    passed_count = sum(1 for results in quality_results.values()
-                      if all(r.status == "PASS" for r in results))
-    failed_count = sum(1 for results in quality_results.values()
-                      if any(r.status == "FAIL" for r in results))
+    passed_count = sum(
+        1
+        for results in quality_results.values()
+        if all(r.status == "PASS" for r in results)
+    )
+    failed_count = sum(
+        1
+        for results in quality_results.values()
+        if any(r.status == "FAIL" for r in results)
+    )
 
     print(f"\nApps List Analysis ({len(modules)} modules):")
     print(f"  - CE Core: {ce_count}")

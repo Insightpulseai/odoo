@@ -15,6 +15,7 @@ class SupersetDashboard(models.Model):
     Access is controlled via Odoo groups, and RLS rules can be configured
     to scope data by company, user, or custom SQL clauses.
     """
+
     _name = "ipai.superset.dashboard"
     _description = "Superset Dashboard Configuration"
     _order = "sequence, name"
@@ -53,7 +54,7 @@ class SupersetDashboard(models.Model):
         column2="group_id",
         string="Allowed Groups",
         help="If set, only users in these groups can access this dashboard. "
-             "Leave empty to allow all authenticated users.",
+        "Leave empty to allow all authenticated users.",
     )
 
     # Row-Level Security Configuration
@@ -70,7 +71,7 @@ class SupersetDashboard(models.Model):
     rls_custom_clause = fields.Char(
         string="Custom RLS Clause",
         help="Custom SQL clause for RLS. Placeholders: "
-             "${company_id}, ${user_id}, ${user_login}",
+        "${company_id}, ${user_id}, ${user_login}",
     )
 
     # UI Configuration

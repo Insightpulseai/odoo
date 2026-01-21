@@ -105,7 +105,9 @@ class HrExpense(models.Model):
         )
 
         if not attachments:
-            raise UserError(_("No receipt attachment found. Please upload a receipt first."))
+            raise UserError(
+                _("No receipt attachment found. Please upload a receipt first.")
+            )
 
         attachment = attachments[0]
 
@@ -119,7 +121,9 @@ class HrExpense(models.Model):
                 "tag": "display_notification",
                 "params": {
                     "title": _("Potential Duplicate"),
-                    "message": _("This receipt may have already been submitted. Please review."),
+                    "message": _(
+                        "This receipt may have already been submitted. Please review."
+                    ),
                     "type": "warning",
                     "sticky": True,
                 },
@@ -143,7 +147,9 @@ class HrExpense(models.Model):
             "tag": "display_notification",
             "params": {
                 "title": _("OCR Started"),
-                "message": _("Receipt is being processed. Fields will be updated automatically."),
+                "message": _(
+                    "Receipt is being processed. Fields will be updated automatically."
+                ),
                 "type": "info",
             },
         }
@@ -179,7 +185,9 @@ class HrExpense(models.Model):
                 "tag": "display_notification",
                 "params": {
                     "title": _("Fields Applied"),
-                    "message": _("OCR extracted fields have been applied to the expense."),
+                    "message": _(
+                        "OCR extracted fields have been applied to the expense."
+                    ),
                     "type": "success",
                 },
             }
@@ -189,7 +197,9 @@ class HrExpense(models.Model):
                 "tag": "display_notification",
                 "params": {
                     "title": _("No Changes"),
-                    "message": _("No new fields to apply (expense already has values)."),
+                    "message": _(
+                        "No new fields to apply (expense already has values)."
+                    ),
                     "type": "warning",
                 },
             }

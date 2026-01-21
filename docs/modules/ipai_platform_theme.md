@@ -1,12 +1,12 @@
 # ipai_platform_theme
 
 **Status**: ⚠️ WARN
-**Version**: 18.0.1.1.0
+**Version**: 18.0.1.0.0
 **Author**: InsightPulse AI
 
 ## Summary
 
-Single source of truth for IPAI design tokens and branding
+Core design tokens and theme infrastructure for IPAI platform
 
 ## Dependencies
 
@@ -47,4 +47,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_platform_theme --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.663010_
+_Audited: 2026-01-21T22:42:54.127701_

@@ -1,8 +1,8 @@
 # ipai_finance_ppm
 
 **Status**: ⚠️ WARN
-**Version**: 18.0.1.0.0
-**Author**: InsightPulseAI
+**Version**: 18.0.1.1.0
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -18,11 +18,11 @@ Finance Project Portfolio Management (Notion Parity).
 
 | Type | Count |
 |------|-------|
-| Models | 17 |
-| Views | 24 |
-| Menus | 12 |
-| Actions | 11 |
-| Data Files | 11 |
+| Models | 19 |
+| Views | 29 |
+| Menus | 16 |
+| Actions | 15 |
+| Data Files | 18 |
 
 ## Validation Results
 
@@ -36,7 +36,7 @@ Finance Project Portfolio Management (Notion Parity).
 
 ## Warnings
 
-- ⚠️ Subpackages not imported in __init__.py: ['controllers']
+- ⚠️ Subpackages not imported in __init__.py: ['tests', 'controllers']
 
 ## Install/Upgrade
 
@@ -49,4 +49,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_finance_ppm --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.392826_
+_Audited: 2026-01-21T22:42:53.429940_

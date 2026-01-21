@@ -9,7 +9,12 @@ _logger = logging.getLogger(__name__)
 class ExpenseOcrController(http.Controller):
     """HTTP endpoints for Expense OCR operations."""
 
-    @http.route("/ipai/expense_ocr/scan/<int:expense_id>", type="json", auth="user", methods=["POST"])
+    @http.route(
+        "/ipai/expense_ocr/scan/<int:expense_id>",
+        type="json",
+        auth="user",
+        methods=["POST"],
+    )
     def scan_expense(self, expense_id, **kwargs):
         """Trigger OCR scan for an expense."""
         try:
@@ -29,7 +34,12 @@ class ExpenseOcrController(http.Controller):
             _logger.error(f"Expense OCR scan failed: {e}")
             return {"success": False, "error": str(e)}
 
-    @http.route("/ipai/expense_ocr/status/<int:expense_id>", type="json", auth="user", methods=["GET"])
+    @http.route(
+        "/ipai/expense_ocr/status/<int:expense_id>",
+        type="json",
+        auth="user",
+        methods=["GET"],
+    )
     def get_status(self, expense_id, **kwargs):
         """Get OCR status for an expense."""
         try:
@@ -53,7 +63,9 @@ class ExpenseOcrController(http.Controller):
                 "confidence": result.confidence,
                 "fields": {
                     "merchant_name": result.merchant_name,
-                    "receipt_date": str(result.receipt_date) if result.receipt_date else None,
+                    "receipt_date": (
+                        str(result.receipt_date) if result.receipt_date else None
+                    ),
                     "total_amount": result.total_amount,
                     "currency": result.currency_code,
                     "tax_amount": result.tax_amount,
@@ -64,7 +76,12 @@ class ExpenseOcrController(http.Controller):
             _logger.error(f"Get expense OCR status failed: {e}")
             return {"success": False, "error": str(e)}
 
-    @http.route("/ipai/expense_ocr/apply/<int:expense_id>", type="json", auth="user", methods=["POST"])
+    @http.route(
+        "/ipai/expense_ocr/apply/<int:expense_id>",
+        type="json",
+        auth="user",
+        methods=["POST"],
+    )
     def apply_ocr(self, expense_id, **kwargs):
         """Apply OCR fields to expense."""
         try:

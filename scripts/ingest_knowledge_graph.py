@@ -125,7 +125,9 @@ def upsert_edges(conn, edges: List[Dict[str, Any]]) -> int:
         return len(edges)
 
 
-def record_source(conn, source_kind: str, source_id: str, payload: Dict[str, Any]) -> bool:
+def record_source(
+    conn, source_kind: str, source_id: str, payload: Dict[str, Any]
+) -> bool:
     """Record ingestion source with content hash for change detection"""
     content_hash = compute_content_hash(payload)
 
@@ -326,6 +328,7 @@ def main():
     except Exception as e:
         print(f"\nERROR: Ingestion failed: {e}")
         import traceback
+
         traceback.print_exc()
         sys.exit(1)
     finally:

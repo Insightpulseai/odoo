@@ -42,7 +42,9 @@ except ImportError:
 class TrinoClient:
     """Simple Trino HTTP client."""
 
-    def __init__(self, host: str = "localhost", port: int = 8082, user: str = "lakehouse"):
+    def __init__(
+        self, host: str = "localhost", port: int = 8082, user: str = "lakehouse"
+    ):
         self.base_url = f"http://{host}:{port}/v1/statement"
         self.user = user
 
@@ -107,12 +109,17 @@ class SupabaseClient:
         return len(rows)
 
 
-def mirror_chunks(trino: TrinoClient, supabase: SupabaseClient,
-                  lookback_days: int = 7, batch_size: int = 1000) -> int:
+def mirror_chunks(
+    trino: TrinoClient,
+    supabase: SupabaseClient,
+    lookback_days: int = 7,
+    batch_size: int = 1000,
+) -> int:
     """Mirror gold.chunks to rag.chunks."""
     print(f"Mirroring gold.chunks (lookback={lookback_days} days)...")
 
-    rows = trino.query(f"""
+    rows = trino.query(
+        f"""
         SELECT
             tenant_id,
             chunk_id as id,
@@ -127,7 +134,8 @@ def mirror_chunks(trino: TrinoClient, supabase: SupabaseClient,
         WHERE chunk_date >= current_date - INTERVAL '{lookback_days}' DAY
         ORDER BY created_at DESC
         LIMIT {batch_size}
-    """)
+    """
+    )
 
     if rows:
         # Note: Supabase table is rag.chunks but REST uses just "chunks" with schema prefix
@@ -140,12 +148,17 @@ def mirror_chunks(trino: TrinoClient, supabase: SupabaseClient,
     return 0
 
 
-def mirror_embeddings(trino: TrinoClient, supabase: SupabaseClient,
-                      lookback_days: int = 7, batch_size: int = 1000) -> int:
+def mirror_embeddings(
+    trino: TrinoClient,
+    supabase: SupabaseClient,
+    lookback_days: int = 7,
+    batch_size: int = 1000,
+) -> int:
     """Mirror gold.embeddings to rag.embeddings."""
     print(f"Mirroring gold.embeddings (lookback={lookback_days} days)...")
 
-    rows = trino.query(f"""
+    rows = trino.query(
+        f"""
         SELECT
             tenant_id,
             embedding_id as id,
@@ -158,7 +171,8 @@ def mirror_embeddings(trino: TrinoClient, supabase: SupabaseClient,
         WHERE embed_date >= current_date - INTERVAL '{lookback_days}' DAY
         ORDER BY created_at DESC
         LIMIT {batch_size}
-    """)
+    """
+    )
 
     if rows:
         count = supabase.upsert("embeddings", rows, on_conflict="id")

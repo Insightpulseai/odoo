@@ -1,7 +1,7 @@
 # ipai_finance_ppm_umbrella
 
 **Status**: ⚠️ WARN
-**Version**: 1.0.0
+**Version**: 18.0.1.0.0
 **Author**: InsightPulse AI
 
 ## Summary
@@ -48,4 +48,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_finance_ppm_umbrella --stop-after
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.521465_
+_Audited: 2026-01-21T22:42:53.636316_

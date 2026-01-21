@@ -122,23 +122,29 @@ class IpaiJob(models.Model):
 
     def _mark_completed(self, result):
         """Mark job as completed with result."""
-        self.write({
-            "state": "completed",
-            "result": json.dumps(result) if result else None,
-            "completed_date": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "completed",
+                "result": json.dumps(result) if result else None,
+                "completed_date": fields.Datetime.now(),
+            }
+        )
 
     def _mark_failed(self, error_message):
         """Mark job as failed or retry if retries remaining."""
         self.ensure_one()
         if self.retry_count < self.max_retries:
-            self.write({
-                "state": "pending",
-                "retry_count": self.retry_count + 1,
-                "error_message": error_message,
-            })
+            self.write(
+                {
+                    "state": "pending",
+                    "retry_count": self.retry_count + 1,
+                    "error_message": error_message,
+                }
+            )
         else:
-            self.write({
-                "state": "failed",
-                "error_message": error_message,
-            })
+            self.write(
+                {
+                    "state": "failed",
+                    "error_message": error_message,
+                }
+            )

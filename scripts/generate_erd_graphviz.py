@@ -47,7 +47,7 @@ def generate_dot(
     lines: List[str] = []
     lines.append("digraph ERD {")
     lines.append("  rankdir=LR;")
-    lines.append("  node [shape=record, fontsize=10, fontname=\"Helvetica\"];")
+    lines.append('  node [shape=record, fontsize=10, fontname="Helvetica"];')
     lines.append("  edge [arrowsize=0.7, fontsize=8];")
     lines.append("  splines=ortho;")
     lines.append("  nodesep=0.5;")
@@ -121,7 +121,9 @@ def generate_dot(
             elif "_rel" in table_name:
                 color = "#f0f0f0"  # light gray for relation tables
 
-            lines.append(f'  "{table_name}" [label="{label}", fillcolor="{color}", style=filled];')
+            lines.append(
+                f'  "{table_name}" [label="{label}", fillcolor="{color}", style=filled];'
+            )
         lines.append("")
 
     # Generate edges
@@ -138,7 +140,9 @@ def generate_dot(
         if target_table not in included_tables:
             continue
 
-        lines.append(f'  "{source_table}" -> "{target_table}" [label="{source_field}"];')
+        lines.append(
+            f'  "{source_table}" -> "{target_table}" [label="{source_field}"];'
+        )
 
     lines.append("}")
     return "\n".join(lines)
@@ -159,7 +163,10 @@ def render_graphviz(dot_content: str, output_path: Path, fmt: str = "svg") -> bo
         output_path.write_bytes(result.stdout)
         return True
     except FileNotFoundError:
-        print("Graphviz not installed. Install with: apt-get install graphviz", file=sys.stderr)
+        print(
+            "Graphviz not installed. Install with: apt-get install graphviz",
+            file=sys.stderr,
+        )
         return False
     except subprocess.TimeoutExpired:
         print("Graphviz rendering timed out", file=sys.stderr)

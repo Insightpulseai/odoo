@@ -29,42 +29,42 @@ from pathlib import Path
 from typing import Dict, List, Tuple, Optional
 
 # Required manifest fields
-REQUIRED_FIELDS = ['name', 'version', 'summary', 'depends']
+REQUIRED_FIELDS = ["name", "version", "summary", "depends"]
 
 # Recommended fields
-RECOMMENDED_FIELDS = ['license', 'author', 'website', 'category']
+RECOMMENDED_FIELDS = ["license", "author", "website", "category"]
 
 # Valid Odoo CE licenses
 VALID_LICENSES = [
-    'AGPL-3',
-    'GPL-3',
-    'LGPL-3',
-    'OEEL-1',  # Enterprise license (should trigger warning)
-    'Other proprietary',
+    "AGPL-3",
+    "GPL-3",
+    "LGPL-3",
+    "OEEL-1",  # Enterprise license (should trigger warning)
+    "Other proprietary",
 ]
 
 # OCA-recommended licenses
-OCA_LICENSES = ['AGPL-3', 'GPL-3', 'LGPL-3']
+OCA_LICENSES = ["AGPL-3", "GPL-3", "LGPL-3"]
 
 # Version pattern (Odoo 18.0.x.y.z format)
-VERSION_PATTERN = re.compile(r'^1[4-9]\.0\.\d+\.\d+\.\d+$')
+VERSION_PATTERN = re.compile(r"^1[4-9]\.0\.\d+\.\d+\.\d+$")
 
 # Enterprise module indicators
 ENTERPRISE_INDICATORS = [
-    'web_enterprise',
-    'iap',
-    'planning',
-    'helpdesk',
-    'sign',
-    'knowledge',
-    'documents',
-    'spreadsheet',
-    'voip',
-    'appointment',
-    'marketing_automation',
-    'social',
-    'quality_control',
-    'stock_barcode',
+    "web_enterprise",
+    "iap",
+    "planning",
+    "helpdesk",
+    "sign",
+    "knowledge",
+    "documents",
+    "spreadsheet",
+    "voip",
+    "appointment",
+    "marketing_automation",
+    "social",
+    "quality_control",
+    "stock_barcode",
 ]
 
 
@@ -85,10 +85,10 @@ def find_manifests(root_path: str) -> List[Path]:
     manifests = []
     root = Path(root_path)
 
-    if root.is_file() and root.name == '__manifest__.py':
+    if root.is_file() and root.name == "__manifest__.py":
         return [root]
 
-    for manifest in root.rglob('__manifest__.py'):
+    for manifest in root.rglob("__manifest__.py"):
         manifests.append(manifest)
 
     return manifests
@@ -97,11 +97,11 @@ def find_manifests(root_path: str) -> List[Path]:
 def parse_manifest(manifest_path: Path) -> Tuple[Optional[Dict], Optional[str]]:
     """Parse a manifest file and return its contents."""
     try:
-        with open(manifest_path, 'r', encoding='utf-8') as f:
+        with open(manifest_path, "r", encoding="utf-8") as f:
             content = f.read()
 
         # Parse as Python literal
-        tree = ast.parse(content, mode='eval')
+        tree = ast.parse(content, mode="eval")
         manifest = ast.literal_eval(content)
 
         if not isinstance(manifest, dict):
@@ -125,83 +125,99 @@ def validate_manifest(manifest_path: Path) -> List[ManifestError]:
     # Parse manifest
     manifest, parse_error = parse_manifest(manifest_path)
     if parse_error:
-        errors.append(ManifestError(path_str, 'error', parse_error))
+        errors.append(ManifestError(path_str, "error", parse_error))
         return errors
 
     # Check required fields
     for field in REQUIRED_FIELDS:
         if field not in manifest:
-            errors.append(ManifestError(path_str, 'error', f"Missing required field: '{field}'"))
+            errors.append(
+                ManifestError(path_str, "error", f"Missing required field: '{field}'")
+            )
         elif not manifest[field]:
-            errors.append(ManifestError(path_str, 'error', f"Empty required field: '{field}'"))
+            errors.append(
+                ManifestError(path_str, "error", f"Empty required field: '{field}'")
+            )
 
     # Check recommended fields
     for field in RECOMMENDED_FIELDS:
         if field not in manifest:
-            errors.append(ManifestError(path_str, 'warning', f"Missing recommended field: '{field}'"))
+            errors.append(
+                ManifestError(
+                    path_str, "warning", f"Missing recommended field: '{field}'"
+                )
+            )
 
     # Validate version format
-    version = manifest.get('version', '')
+    version = manifest.get("version", "")
     if version and not VERSION_PATTERN.match(version):
-        errors.append(ManifestError(
-            path_str, 'warning',
-            f"Version '{version}' does not follow Odoo format (e.g., 18.0.1.0.0)"
-        ))
+        errors.append(
+            ManifestError(
+                path_str,
+                "warning",
+                f"Version '{version}' does not follow Odoo format (e.g., 18.0.1.0.0)",
+            )
+        )
 
     # Check license
-    license_val = manifest.get('license', '')
+    license_val = manifest.get("license", "")
     if license_val:
         if license_val not in VALID_LICENSES:
-            errors.append(ManifestError(
-                path_str, 'warning',
-                f"Unknown license: '{license_val}'"
-            ))
-        elif license_val == 'OEEL-1':
-            errors.append(ManifestError(
-                path_str, 'error',
-                "Enterprise license (OEEL-1) detected - not allowed in CE deployment"
-            ))
+            errors.append(
+                ManifestError(path_str, "warning", f"Unknown license: '{license_val}'")
+            )
+        elif license_val == "OEEL-1":
+            errors.append(
+                ManifestError(
+                    path_str,
+                    "error",
+                    "Enterprise license (OEEL-1) detected - not allowed in CE deployment",
+                )
+            )
         elif license_val not in OCA_LICENSES:
-            errors.append(ManifestError(
-                path_str, 'info',
-                f"License '{license_val}' is not OCA-recommended"
-            ))
+            errors.append(
+                ManifestError(
+                    path_str, "info", f"License '{license_val}' is not OCA-recommended"
+                )
+            )
 
     # Check for Enterprise dependencies
-    depends = manifest.get('depends', [])
+    depends = manifest.get("depends", [])
     if isinstance(depends, list):
         for dep in depends:
             for indicator in ENTERPRISE_INDICATORS:
                 if indicator in dep:
-                    errors.append(ManifestError(
-                        path_str, 'error',
-                        f"Enterprise module dependency detected: '{dep}'"
-                    ))
+                    errors.append(
+                        ManifestError(
+                            path_str,
+                            "error",
+                            f"Enterprise module dependency detected: '{dep}'",
+                        )
+                    )
                     break
 
     # Check installable flag
-    installable = manifest.get('installable', True)
+    installable = manifest.get("installable", True)
     if not installable:
-        errors.append(ManifestError(
-            path_str, 'info',
-            "Module is marked as not installable"
-        ))
+        errors.append(
+            ManifestError(path_str, "info", "Module is marked as not installable")
+        )
 
     # Check application flag consistency
-    if manifest.get('application') and not manifest.get('category'):
-        errors.append(ManifestError(
-            path_str, 'warning',
-            "Application module should have a category"
-        ))
+    if manifest.get("application") and not manifest.get("category"):
+        errors.append(
+            ManifestError(
+                path_str, "warning", "Application module should have a category"
+            )
+        )
 
     # Check for assets (Odoo 18 style)
-    if 'assets' in manifest:
-        assets = manifest['assets']
+    if "assets" in manifest:
+        assets = manifest["assets"]
         if not isinstance(assets, dict):
-            errors.append(ManifestError(
-                path_str, 'error',
-                "'assets' must be a dictionary"
-            ))
+            errors.append(
+                ManifestError(path_str, "error", "'assets' must be a dictionary")
+            )
 
     return errors
 
@@ -213,7 +229,7 @@ def main():
         scan_path = sys.argv[1]
     else:
         # Default to addons directory
-        scan_path = 'addons'
+        scan_path = "addons"
 
     if not os.path.exists(scan_path):
         print(f"Path not found: {scan_path}")
@@ -243,9 +259,9 @@ def main():
         all_errors.extend(errors)
 
         for error in errors:
-            if error.level == 'error':
+            if error.level == "error":
                 error_count += 1
-            elif error.level == 'warning':
+            elif error.level == "warning":
                 warning_count += 1
             else:
                 info_count += 1
@@ -275,5 +291,5 @@ def main():
         sys.exit(0)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

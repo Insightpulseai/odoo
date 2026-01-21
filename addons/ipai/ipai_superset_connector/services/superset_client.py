@@ -24,6 +24,7 @@ TOKEN_TTL_SECONDS = 240  # 4 minutes cache TTL
 
 class SupersetClientError(Exception):
     """Raised when Superset API calls fail."""
+
     pass
 
 

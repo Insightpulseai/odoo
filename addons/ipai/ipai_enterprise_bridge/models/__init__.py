@@ -10,3 +10,4 @@ from . import ipai_policy
 from . import product_template
 from . import purchase_order
 from . import res_config_settings
+from . import enterprise_bridge

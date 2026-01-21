@@ -169,10 +169,12 @@ class IpaiAiPrompt(models.Model):
         self.ensure_one()
 
         # Update usage stats
-        self.sudo().write({
-            "usage_count": self.usage_count + 1,
-            "last_used": fields.Datetime.now(),
-        })
+        self.sudo().write(
+            {
+                "usage_count": self.usage_count + 1,
+                "last_used": fields.Datetime.now(),
+            }
+        )
 
         # Render prompt
         rendered = self.render(variables, **kwargs)

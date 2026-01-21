@@ -37,8 +37,7 @@ import logging
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 _logger = logging.getLogger("fix_odoo18_views")
 
@@ -70,7 +69,10 @@ def fix_tree_to_list(env):
         if new_modes != modes:
             _logger.info(
                 "  [%s] %s: '%s' → '%s'",
-                a.id, a.name or "(no name)", a.view_mode, ",".join(new_modes)
+                a.id,
+                a.name or "(no name)",
+                a.view_mode,
+                ",".join(new_modes),
             )
             a.write({"view_mode": ",".join(new_modes)})
             changed += 1
@@ -109,7 +111,11 @@ def list_broken_kanban(env):
     for v in broken[:200]:
         _logger.info(
             "  broken kanban: id=%s xmlid=%s name=%s model=%s module=%s",
-            v.id, v.xml_id, v.name, v.model, getattr(v, 'module', 'N/A')
+            v.id,
+            v.xml_id,
+            v.name,
+            v.model,
+            getattr(v, "module", "N/A"),
         )
 
     return broken
@@ -203,7 +209,8 @@ def main():
         _logger.error(
             "Odoo not found in Python path. "
             "Run this script from within the Odoo container or set PYTHONPATH. "
-            "Error: %s", e
+            "Error: %s",
+            e,
         )
         sys.exit(1)
     except Exception as e:

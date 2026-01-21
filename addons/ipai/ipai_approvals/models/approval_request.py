@@ -14,33 +14,25 @@ class IPAIApprovalRequest(models.Model):
     - rejected: Rejected by an approver
     - cancelled: Cancelled by requester
     """
+
     _name = "ipai.approval.request"
     _description = "Approval Request"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "create_date desc"
 
-    name = fields.Char(
-        required=True,
-        default=lambda self: _("New"),
-        copy=False
-    )
+    name = fields.Char(required=True, default=lambda self: _("New"), copy=False)
     type_id = fields.Many2one(
-        "ipai.approval.type",
-        required=True,
-        tracking=True,
-        string="Approval Type"
+        "ipai.approval.type", required=True, tracking=True, string="Approval Type"
     )
     company_id = fields.Many2one(
-        "res.company",
-        related="type_id.company_id",
-        store=True
+        "res.company", related="type_id.company_id", store=True
     )
     user_id = fields.Many2one(
         "res.users",
         default=lambda self: self.env.user,
         required=True,
         tracking=True,
-        string="Requester"
+        string="Requester",
     )
 
     # Reference to approved record
@@ -52,8 +44,7 @@ class IPAIApprovalRequest(models.Model):
     description = fields.Html(string="Description")
     amount = fields.Float(help="Amount for threshold-based auto-approval")
     currency_id = fields.Many2one(
-        "res.currency",
-        default=lambda self: self.env.company.currency_id
+        "res.currency", default=lambda self: self.env.company.currency_id
     )
 
     # State
@@ -67,22 +58,17 @@ class IPAIApprovalRequest(models.Model):
         ],
         default="draft",
         tracking=True,
-        required=True
+        required=True,
     )
 
     # Approver tracking
     approver_ids = fields.One2many(
-        "ipai.approval.approver",
-        "request_id",
-        string="Approvers"
+        "ipai.approval.approver", "request_id", string="Approvers"
     )
     approval_count = fields.Integer(
-        compute="_compute_approval_count",
-        string="Approvals"
+        compute="_compute_approval_count", string="Approvals"
     )
-    required_approvals = fields.Integer(
-        related="type_id.minimum_approvers"
-    )
+    required_approvals = fields.Integer(related="type_id.minimum_approvers")
 
     # Dates
     date_submitted = fields.Datetime(tracking=True)
@@ -91,9 +77,7 @@ class IPAIApprovalRequest(models.Model):
 
     # Final decision
     final_approver_id = fields.Many2one(
-        "res.users",
-        string="Final Decision By",
-        tracking=True
+        "res.users", string="Final Decision By", tracking=True
     )
     rejection_reason = fields.Text(tracking=True)
 
@@ -112,9 +96,9 @@ class IPAIApprovalRequest(models.Model):
     @api.depends("approver_ids.state")
     def _compute_approval_count(self):
         for rec in self:
-            rec.approval_count = len(rec.approver_ids.filtered(
-                lambda a: a.state == "approved"
-            ))
+            rec.approval_count = len(
+                rec.approver_ids.filtered(lambda a: a.state == "approved")
+            )
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -132,7 +116,10 @@ class IPAIApprovalRequest(models.Model):
                 raise UserError(_("Only draft requests can be submitted."))
 
             # Check for auto-approval based on amount threshold
-            if rec.type_id.auto_approve_amount > 0 and rec.amount <= rec.type_id.auto_approve_amount:
+            if (
+                rec.type_id.auto_approve_amount > 0
+                and rec.amount <= rec.type_id.auto_approve_amount
+            ):
                 rec._auto_approve()
                 continue
 
@@ -142,15 +129,19 @@ class IPAIApprovalRequest(models.Model):
                 raise UserError(_("No approvers configured for this approval type."))
 
             for user in approvers:
-                self.env["ipai.approval.approver"].create({
-                    "request_id": rec.id,
-                    "user_id": user.id,
-                })
+                self.env["ipai.approval.approver"].create(
+                    {
+                        "request_id": rec.id,
+                        "user_id": user.id,
+                    }
+                )
 
-            rec.write({
-                "state": "pending",
-                "date_submitted": fields.Datetime.now(),
-            })
+            rec.write(
+                {
+                    "state": "pending",
+                    "date_submitted": fields.Datetime.now(),
+                }
+            )
 
             # Send notifications
             if rec.type_id.notify_on_request:
@@ -172,7 +163,9 @@ class IPAIApprovalRequest(models.Model):
             lambda a: a.user_id == self.env.user and a.state == "pending"
         )
         if not approver:
-            raise UserError(_("You are not an approver for this request or have already decided."))
+            raise UserError(
+                _("You are not an approver for this request or have already decided.")
+            )
 
         approver.action_approve()
         self._check_approval_complete()
@@ -187,27 +180,33 @@ class IPAIApprovalRequest(models.Model):
             lambda a: a.user_id == self.env.user and a.state == "pending"
         )
         if not approver:
-            raise UserError(_("You are not an approver for this request or have already decided."))
+            raise UserError(
+                _("You are not an approver for this request or have already decided.")
+            )
 
         approver.action_reject(reason)
 
-        self.write({
-            "state": "rejected",
-            "date_rejected": fields.Datetime.now(),
-            "final_approver_id": self.env.user.id,
-            "rejection_reason": reason,
-        })
+        self.write(
+            {
+                "state": "rejected",
+                "date_rejected": fields.Datetime.now(),
+                "final_approver_id": self.env.user.id,
+                "rejection_reason": reason,
+            }
+        )
 
         if self.type_id.notify_on_reject:
             self._send_notification("rejected")
 
         # Remove pending activities
-        self.activity_ids.filtered(lambda a: a.activity_type_id == self.type_id.activity_type_id).unlink()
+        self.activity_ids.filtered(
+            lambda a: a.activity_type_id == self.type_id.activity_type_id
+        ).unlink()
 
-        self.message_post(body=_("Request rejected by %s. Reason: %s") % (
-            self.env.user.name,
-            reason or _("No reason provided")
-        ))
+        self.message_post(
+            body=_("Request rejected by %s. Reason: %s")
+            % (self.env.user.name, reason or _("No reason provided"))
+        )
 
     def action_cancel(self):
         """Cancel the request."""
@@ -226,20 +225,24 @@ class IPAIApprovalRequest(models.Model):
                 raise UserError(_("Only cancelled or rejected requests can be reset."))
 
             rec.approver_ids.unlink()
-            rec.write({
-                "state": "draft",
-                "date_submitted": False,
-                "date_approved": False,
-                "date_rejected": False,
-                "final_approver_id": False,
-                "rejection_reason": False,
-            })
+            rec.write(
+                {
+                    "state": "draft",
+                    "date_submitted": False,
+                    "date_approved": False,
+                    "date_rejected": False,
+                    "final_approver_id": False,
+                    "rejection_reason": False,
+                }
+            )
             rec.message_post(body=_("Request reset to draft."))
 
     def _check_approval_complete(self):
         """Check if enough approvals have been received."""
         self.ensure_one()
-        approved_count = len(self.approver_ids.filtered(lambda a: a.state == "approved"))
+        approved_count = len(
+            self.approver_ids.filtered(lambda a: a.state == "approved")
+        )
 
         if self.type_id.require_all:
             # Need all approvers to approve
@@ -253,11 +256,13 @@ class IPAIApprovalRequest(models.Model):
 
     def _finalize_approval(self):
         """Finalize the approval."""
-        self.write({
-            "state": "approved",
-            "date_approved": fields.Datetime.now(),
-            "final_approver_id": self.env.user.id,
-        })
+        self.write(
+            {
+                "state": "approved",
+                "date_approved": fields.Datetime.now(),
+                "final_approver_id": self.env.user.id,
+            }
+        )
 
         if self.type_id.notify_on_approve:
             self._send_notification("approved")
@@ -271,11 +276,13 @@ class IPAIApprovalRequest(models.Model):
 
     def _auto_approve(self):
         """Auto-approve based on threshold."""
-        self.write({
-            "state": "approved",
-            "date_submitted": fields.Datetime.now(),
-            "date_approved": fields.Datetime.now(),
-        })
+        self.write(
+            {
+                "state": "approved",
+                "date_submitted": fields.Datetime.now(),
+                "date_approved": fields.Datetime.now(),
+            }
+        )
         self.message_post(body=_("Request auto-approved (amount below threshold)."))
 
     def _send_notification(self, notification_type):

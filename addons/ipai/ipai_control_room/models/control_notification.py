@@ -133,5 +133,5 @@ class ControlNotificationChannel(models.Model):
                 "title": "Test Notification",
                 "message": f"Test notification sent via {self.channel_type}",
                 "type": "success",
-            }
+            },
         }

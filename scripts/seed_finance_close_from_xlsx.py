@@ -25,7 +25,13 @@ except ImportError:
     sys.exit(1)
 
 # Module output directory
-OUT_DIR = Path(__file__).parent.parent / "addons" / "ipai" / "ipai_finance_close_seed" / "data"
+OUT_DIR = (
+    Path(__file__).parent.parent
+    / "addons"
+    / "ipai"
+    / "ipai_finance_close_seed"
+    / "data"
+)
 
 # Tag mapping from category name to XML ID
 TAG_MAP = {
@@ -132,7 +138,11 @@ def generate_month_end_tasks(xlsx_path: Path) -> int:
     closing["Employee Code"] = closing["Employee Code"].ffill()
     closing["Task Category"] = closing["Task Category"].ffill()
 
-    lines = ['<?xml version="1.0" encoding="utf-8"?>', "<odoo>", '    <data noupdate="1">']
+    lines = [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        "<odoo>",
+        '    <data noupdate="1">',
+    ]
     count = 0
 
     for i, row in closing.iterrows():
@@ -140,10 +150,22 @@ def generate_month_end_tasks(xlsx_path: Path) -> int:
         if not name or name.lower() == "nan":
             continue
 
-        category = str(row["Task Category"]).strip() if not pd.isna(row["Task Category"]) else ""
-        employee_code = str(row["Employee Code"]).strip() if not pd.isna(row["Employee Code"]) else ""
-        reviewed_by = str(row["Reviewed by"]).strip() if not pd.isna(row["Reviewed by"]) else ""
-        approved_by = str(row["Approved by"]).strip() if not pd.isna(row["Approved by"]) else ""
+        category = (
+            str(row["Task Category"]).strip()
+            if not pd.isna(row["Task Category"])
+            else ""
+        )
+        employee_code = (
+            str(row["Employee Code"]).strip()
+            if not pd.isna(row["Employee Code"])
+            else ""
+        )
+        reviewed_by = (
+            str(row["Reviewed by"]).strip() if not pd.isna(row["Reviewed by"]) else ""
+        )
+        approved_by = (
+            str(row["Approved by"]).strip() if not pd.isna(row["Approved by"]) else ""
+        )
 
         prep_hours = duration_to_hours(row["Preparation"])
         review_hours = duration_to_hours(row["Review"])
@@ -157,11 +179,17 @@ def generate_month_end_tasks(xlsx_path: Path) -> int:
 
         lines.append(f'        <record id="{task_id}" model="project.task">')
         lines.append(f'            <field name="name">{xml_escape(name)}</field>')
-        lines.append('            <field name="project_id" ref="project_month_end_template"/>')
+        lines.append(
+            '            <field name="project_id" ref="project_month_end_template"/>'
+        )
         if tag_ref:
-            lines.append(f"            <field name=\"tag_ids\" eval=\"[(6, 0, [ref('{tag_ref}')])]\"/>")
-        lines.append(f"            <field name=\"planned_hours\">{total_hours}</field>")
-        lines.append(f'            <field name="description">{xml_escape(desc)}</field>')
+            lines.append(
+                f'            <field name="tag_ids" eval="[(6, 0, [ref(\'{tag_ref}\')])]"/>'
+            )
+        lines.append(f'            <field name="planned_hours">{total_hours}</field>')
+        lines.append(
+            f'            <field name="description">{xml_escape(desc)}</field>'
+        )
         lines.append("        </record>")
         count += 1
 
@@ -177,7 +205,11 @@ def generate_bir_tasks(xlsx_path: Path) -> int:
     """Generate BIR tasks XML from Excel."""
     tax = pd.read_excel(xlsx_path, sheet_name="Tax Filing")
 
-    lines = ['<?xml version="1.0" encoding="utf-8"?>', "<odoo>", '    <data noupdate="1">']
+    lines = [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        "<odoo>",
+        '    <data noupdate="1">',
+    ]
     count = 0
 
     for i, row in tax.iterrows():
@@ -208,10 +240,16 @@ def generate_bir_tasks(xlsx_path: Path) -> int:
 
         lines.append(f'        <record id="{task_id}" model="project.task">')
         lines.append(f'            <field name="name">{xml_escape(name)}</field>')
-        lines.append('            <field name="project_id" ref="project_bir_tax_filing"/>')
+        lines.append(
+            '            <field name="project_id" ref="project_bir_tax_filing"/>'
+        )
         if deadline:
-            lines.append(f'            <field name="date_deadline">{deadline.isoformat()}</field>')
-        lines.append(f'            <field name="description">{xml_escape(desc)}</field>')
+            lines.append(
+                f'            <field name="date_deadline">{deadline.isoformat()}</field>'
+            )
+        lines.append(
+            f'            <field name="description">{xml_escape(desc)}</field>'
+        )
         lines.append("        </record>")
         count += 1
 
@@ -241,7 +279,9 @@ def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     month_end_count = generate_month_end_tasks(xlsx_path)
-    print(f"Generated {month_end_count} month-end tasks -> {OUT_DIR / 'tasks_month_end.xml'}")
+    print(
+        f"Generated {month_end_count} month-end tasks -> {OUT_DIR / 'tasks_month_end.xml'}"
+    )
 
     bir_count = generate_bir_tasks(xlsx_path)
     print(f"Generated {bir_count} BIR tasks -> {OUT_DIR / 'tasks_bir.xml'}")

@@ -13,7 +13,7 @@ class MattermostChannel(models.Model):
         "ipai.integration.connector",
         required=True,
         ondelete="cascade",
-        domain="[('connector_type', '=', 'mattermost')]"
+        domain="[('connector_type', '=', 'mattermost')]",
     )
 
     # Mattermost IDs
@@ -23,12 +23,14 @@ class MattermostChannel(models.Model):
     # Channel info
     name = fields.Char(required=True)
     display_name = fields.Char()
-    channel_type = fields.Selection([
-        ("O", "Open"),
-        ("P", "Private"),
-        ("D", "Direct"),
-        ("G", "Group"),
-    ])
+    channel_type = fields.Selection(
+        [
+            ("O", "Open"),
+            ("P", "Private"),
+            ("D", "Direct"),
+            ("G", "Group"),
+        ]
+    )
     header = fields.Text()
     purpose = fields.Text()
 
@@ -37,8 +39,11 @@ class MattermostChannel(models.Model):
     active = fields.Boolean(default=True)
 
     _sql_constraints = [
-        ("channel_uniq", "unique(connector_id, mm_channel_id)",
-         "Channel already exists for this connector!"),
+        (
+            "channel_uniq",
+            "unique(connector_id, mm_channel_id)",
+            "Channel already exists for this connector!",
+        ),
     ]
 
     @api.model
@@ -50,10 +55,13 @@ class MattermostChannel(models.Model):
         channels = client.get_channels(connector.mm_team_id)
 
         for ch in channels:
-            existing = self.search([
-                ("connector_id", "=", connector.id),
-                ("mm_channel_id", "=", ch["id"]),
-            ], limit=1)
+            existing = self.search(
+                [
+                    ("connector_id", "=", connector.id),
+                    ("mm_channel_id", "=", ch["id"]),
+                ],
+                limit=1,
+            )
 
             vals = {
                 "connector_id": connector.id,

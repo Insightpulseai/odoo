@@ -6,27 +6,22 @@
 
 ## Summary
 
-Apache Superset integration with managed dataset sync
+Embed Superset dashboards in Odoo with guest token authentication
 
 ## Dependencies
 
 - `base`
-- `mail`
-- `sale`
-- `account`
-- `stock`
-- `hr`
-- `project`
+- `web`
 
 ## Module Contents
 
 | Type | Count |
 |------|-------|
-| Models | 5 |
-| Views | 9 |
-| Menus | 6 |
-| Actions | 5 |
-| Data Files | 8 |
+| Models | 2 |
+| Views | 6 |
+| Menus | 5 |
+| Actions | 3 |
+| Data Files | 6 |
 
 ## Validation Results
 
@@ -49,4 +44,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_superset_connector --stop-after-i
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.822685_
+_Audited: 2026-01-21T22:42:54.569771_

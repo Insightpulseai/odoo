@@ -30,11 +30,13 @@
         "data/scheduled_actions.xml",
         "data/mail_server.xml",
         "data/oauth_providers.xml",
+        "data/enterprise_bridge_data.xml",
         "views/res_config_settings_views.xml",
         "views/iot_device_views.xml",
         "views/ipai_close_views.xml",
         "views/ipai_policy_views.xml",
         "views/product_views.xml",
+        "views/enterprise_bridge_views.xml",
     ],
     "demo": [
         "demo/demo_data.xml",

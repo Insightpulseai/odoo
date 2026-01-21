@@ -1,8 +1,8 @@
 # ipai_master_control
 
-**Status**: ✅ PASS
+**Status**: ⚠️ WARN
 **Version**: 18.0.1.0.0
-**Author**: InsightPulseAI
+**Author**: InsightPulse AI
 
 ## Summary
 
@@ -33,7 +33,11 @@ Bridge Odoo events to Master Control work items
 | Python Syntax | ✅ |
 | XML Syntax | ✅ |
 | Security CSV | ✅ |
-| Init Imports | ✅ |
+| Init Imports | ⚠️ |
+
+## Warnings
+
+- ⚠️ Subpackages not imported in __init__.py: ['tests']
 
 ## Install/Upgrade
 
@@ -46,4 +50,4 @@ odoo -c /etc/odoo/odoo.conf -d YOUR_DB -u ipai_master_control --stop-after-init
 ```
 
 ---
-_Audited: 2026-01-04T10:26:06.595948_
+_Audited: 2026-01-21T22:42:53.878157_

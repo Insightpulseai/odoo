@@ -25,13 +25,22 @@ class IntegrationWebhookController(http.Controller):
         connector-specific modules (ipai_mattermost_connector, etc.)
         """
         # Find the connector
-        connector = request.env["ipai.integration.connector"].sudo().search([
-            ("code", "=", connector_code),
-            ("state", "=", "active"),
-        ], limit=1)
+        connector = (
+            request.env["ipai.integration.connector"]
+            .sudo()
+            .search(
+                [
+                    ("code", "=", connector_code),
+                    ("state", "=", "active"),
+                ],
+                limit=1,
+            )
+        )
 
         if not connector:
-            _logger.warning("Webhook received for unknown connector: %s", connector_code)
+            _logger.warning(
+                "Webhook received for unknown connector: %s", connector_code
+            )
             return {"status": "error", "message": "Unknown connector"}
 
         # Log the incoming webhook
@@ -61,17 +70,25 @@ class IntegrationWebhookController(http.Controller):
 
         This allows multiple webhook endpoints per connector.
         """
-        webhook = request.env["ipai.integration.webhook"].sudo().search([
-            ("connector_id.code", "=", connector_code),
-            ("id", "=", int(webhook_id)),
-            ("direction", "=", "incoming"),
-            ("active", "=", True),
-        ], limit=1)
+        webhook = (
+            request.env["ipai.integration.webhook"]
+            .sudo()
+            .search(
+                [
+                    ("connector_id.code", "=", connector_code),
+                    ("id", "=", int(webhook_id)),
+                    ("direction", "=", "incoming"),
+                    ("active", "=", True),
+                ],
+                limit=1,
+            )
+        )
 
         if not webhook:
             _logger.warning(
                 "Webhook received for unknown endpoint: %s/%s",
-                connector_code, webhook_id
+                connector_code,
+                webhook_id,
             )
             return {"status": "error", "message": "Unknown webhook endpoint"}
 
@@ -84,10 +101,12 @@ class IntegrationWebhookController(http.Controller):
                 return {"status": "error", "message": "Invalid signature"}
 
         # Update stats
-        webhook.sudo().write({
-            "last_triggered": request.env.cr.now(),
-            "success_count": webhook.success_count + 1,
-        })
+        webhook.sudo().write(
+            {
+                "last_triggered": request.env.cr.now(),
+                "success_count": webhook.success_count + 1,
+            }
+        )
 
         # Log
         request.env["ipai.integration.audit"].sudo().log(
@@ -111,11 +130,18 @@ class IntegrationWebhookController(http.Controller):
         Handle incoming slash commands from chat integrations.
         """
         # Find the bot and command
-        bot_command = request.env["ipai.integration.bot.command"].sudo().search([
-            ("bot_id.bot_username", "=", bot_username),
-            ("command", "=", f"/{command}"),
-            ("active", "=", True),
-        ], limit=1)
+        bot_command = (
+            request.env["ipai.integration.bot.command"]
+            .sudo()
+            .search(
+                [
+                    ("bot_id.bot_username", "=", bot_username),
+                    ("command", "=", f"/{command}"),
+                    ("active", "=", True),
+                ],
+                limit=1,
+            )
+        )
 
         if not bot_command:
             return {

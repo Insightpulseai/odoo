@@ -32,6 +32,7 @@ Program (PRJ-2025-002)
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "data/project_task_stages.xml",
         "views/project_project_views.xml",
         "views/directory_views.xml",
         "views/menus.xml",

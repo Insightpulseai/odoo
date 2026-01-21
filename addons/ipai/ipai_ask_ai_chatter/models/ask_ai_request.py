@@ -177,28 +177,58 @@ class AskAiRequest(models.Model):
             if res_model == "project.task":
                 context.update(
                     {
-                        "project": record.project_id.name if record.project_id else None,
+                        "project": (
+                            record.project_id.name if record.project_id else None
+                        ),
                         "assignee": record.user_id.name if record.user_id else None,
-                        "deadline": str(record.date_deadline) if record.date_deadline else None,
-                        "finance_state": record.finance_state if hasattr(record, "finance_state") else None,
-                        "is_closing_task": record.is_closing_task if hasattr(record, "is_closing_task") else False,
-                        "is_compliance_task": record.is_compliance_task if hasattr(record, "is_compliance_task") else False,
+                        "deadline": (
+                            str(record.date_deadline) if record.date_deadline else None
+                        ),
+                        "finance_state": (
+                            record.finance_state
+                            if hasattr(record, "finance_state")
+                            else None
+                        ),
+                        "is_closing_task": (
+                            record.is_closing_task
+                            if hasattr(record, "is_closing_task")
+                            else False
+                        ),
+                        "is_compliance_task": (
+                            record.is_compliance_task
+                            if hasattr(record, "is_compliance_task")
+                            else False
+                        ),
                     }
                 )
             elif res_model == "hr.expense":
                 context.update(
                     {
-                        "amount": record.total_amount_currency if hasattr(record, "total_amount_currency") else None,
-                        "employee": record.employee_id.name if record.employee_id else None,
+                        "amount": (
+                            record.total_amount_currency
+                            if hasattr(record, "total_amount_currency")
+                            else None
+                        ),
+                        "employee": (
+                            record.employee_id.name if record.employee_id else None
+                        ),
                         "description": record.name,
                     }
                 )
             elif res_model == "account.move":
                 context.update(
                     {
-                        "move_type": record.move_type if hasattr(record, "move_type") else None,
-                        "partner": record.partner_id.name if record.partner_id else None,
-                        "amount_total": record.amount_total if hasattr(record, "amount_total") else None,
+                        "move_type": (
+                            record.move_type if hasattr(record, "move_type") else None
+                        ),
+                        "partner": (
+                            record.partner_id.name if record.partner_id else None
+                        ),
+                        "amount_total": (
+                            record.amount_total
+                            if hasattr(record, "amount_total")
+                            else None
+                        ),
                     }
                 )
 

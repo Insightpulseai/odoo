@@ -139,12 +139,8 @@ class IpaiProjectProfitability(models.Model):
 
             # If we have both costs and revenues, need to sum them separately
             if data.get("lines"):
-                revenue = sum(
-                    l.amount for l in data["lines"] if (l.amount or 0) > 0
-                )
-                cost = abs(
-                    sum(l.amount for l in data["lines"] if (l.amount or 0) < 0)
-                )
+                revenue = sum(l.amount for l in data["lines"] if (l.amount or 0) > 0)
+                cost = abs(sum(l.amount for l in data["lines"] if (l.amount or 0) < 0))
 
             margin = revenue - cost
             margin_pct = (margin / revenue * 100.0) if revenue else 0.0

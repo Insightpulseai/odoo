@@ -124,9 +124,11 @@ def redact_sensitive(data: dict) -> dict:
     def redact_recursive(obj: Any) -> Any:
         if isinstance(obj, dict):
             return {
-                k: "REDACTED"
-                if k in ("archive_download_url", "upload_url") and v
-                else redact_recursive(v)
+                k: (
+                    "REDACTED"
+                    if k in ("archive_download_url", "upload_url") and v
+                    else redact_recursive(v)
+                )
                 for k, v in obj.items()
             }
         elif isinstance(obj, list):
@@ -214,7 +216,9 @@ def get_compare(base: str, head: str) -> tuple[Optional[dict], list[str]]:
     return data, unverified
 
 
-def get_workflow_runs(head_sha: str, published_at: str) -> tuple[Optional[dict], list[str]]:
+def get_workflow_runs(
+    head_sha: str, published_at: str
+) -> tuple[Optional[dict], list[str]]:
     """Find deployment workflow run matching the release."""
     unverified = []
     status, data = rest_get(
@@ -238,9 +242,13 @@ def get_workflow_runs(head_sha: str, published_at: str) -> tuple[Optional[dict],
     # Find matching run by head_sha first
     for run in runs:
         run_name = (run.get("name") or "").lower()
-        workflow_name = (run.get("workflow", {}).get("name") or run.get("path") or "").lower()
+        workflow_name = (
+            run.get("workflow", {}).get("name") or run.get("path") or ""
+        ).lower()
         if run.get("head_sha") == head_sha:
-            if any(hint in run_name or hint in workflow_name for hint in workflow_hints):
+            if any(
+                hint in run_name or hint in workflow_name for hint in workflow_hints
+            ):
                 save_proof(f"api_workflow_run_{run['id']}.json", run)
                 return run, unverified
 
@@ -251,7 +259,9 @@ def get_workflow_runs(head_sha: str, published_at: str) -> tuple[Optional[dict],
             for run in runs:
                 run_time_str = run.get("created_at", "")
                 if run_time_str:
-                    run_time = datetime.fromisoformat(run_time_str.replace("Z", "+00:00"))
+                    run_time = datetime.fromisoformat(
+                        run_time_str.replace("Z", "+00:00")
+                    )
                     time_diff = abs((pub_time - run_time).total_seconds())
                     # Within 30 minutes
                     if time_diff < 1800:
@@ -297,7 +307,9 @@ def get_deployments() -> tuple[list[dict], list[str]]:
     else:
         # Deployments API may not be enabled
         unverified.append(f"deployments: API returned {status} (may not be enabled)")
-        save_proof("api_deployments.json", {"error": f"API returned {status}", "data": data})
+        save_proof(
+            "api_deployments.json", {"error": f"API returned {status}", "data": data}
+        )
         return [], unverified
 
 
@@ -311,12 +323,15 @@ def get_commits_prs_graphql(commit_shas: list[str]) -> tuple[list[dict], list[st
     # Limit to 100 commits per query to avoid complexity limits
     shas_to_query = commit_shas[:100]
     if len(commit_shas) > 100:
-        unverified.append(f"graphql_commits: Truncated to 100 of {len(commit_shas)} commits")
+        unverified.append(
+            f"graphql_commits: Truncated to 100 of {len(commit_shas)} commits"
+        )
 
     # Build GraphQL query with aliases for each commit
     commit_fragments = []
     for i, sha in enumerate(shas_to_query):
-        commit_fragments.append(f"""
+        commit_fragments.append(
+            f"""
         commit{i}: object(oid: "{sha}") {{
           ... on Commit {{
             oid
@@ -352,7 +367,8 @@ def get_commits_prs_graphql(commit_shas: list[str]) -> tuple[list[dict], list[st
             }}
           }}
         }}
-        """)
+        """
+        )
 
     query = f"""
     query {{
@@ -383,39 +399,47 @@ def get_commits_prs_graphql(commit_shas: list[str]) -> tuple[list[dict], list[st
         commit_obj = repo_data.get(f"commit{i}")
         if commit_obj:
             author_name = commit_obj.get("author", {}).get("name", "")
-            author_login = (
-                commit_obj.get("author", {}).get("user", {}) or {}
-            ).get("login", "")
+            author_login = (commit_obj.get("author", {}).get("user", {}) or {}).get(
+                "login", ""
+            )
 
             prs = []
             for pr_node in (
                 commit_obj.get("associatedPullRequests", {}).get("nodes", []) or []
             ):
                 if pr_node and pr_node.get("mergedAt"):
-                    prs.append({
-                        "number": pr_node.get("number"),
-                        "title": pr_node.get("title"),
-                        "url": pr_node.get("url"),
-                        "merged_at": pr_node.get("mergedAt"),
-                        "labels": [
-                            l.get("name")
-                            for l in (pr_node.get("labels", {}).get("nodes", []) or [])
-                            if l
-                        ],
-                        "author": (pr_node.get("author") or {}).get("login", ""),
-                        "changed_files": pr_node.get("changedFiles"),
-                        "additions": pr_node.get("additions"),
-                        "deletions": pr_node.get("deletions"),
-                        "merge_commit_sha": (pr_node.get("mergeCommit") or {}).get("oid"),
-                    })
+                    prs.append(
+                        {
+                            "number": pr_node.get("number"),
+                            "title": pr_node.get("title"),
+                            "url": pr_node.get("url"),
+                            "merged_at": pr_node.get("mergedAt"),
+                            "labels": [
+                                l.get("name")
+                                for l in (
+                                    pr_node.get("labels", {}).get("nodes", []) or []
+                                )
+                                if l
+                            ],
+                            "author": (pr_node.get("author") or {}).get("login", ""),
+                            "changed_files": pr_node.get("changedFiles"),
+                            "additions": pr_node.get("additions"),
+                            "deletions": pr_node.get("deletions"),
+                            "merge_commit_sha": (pr_node.get("mergeCommit") or {}).get(
+                                "oid"
+                            ),
+                        }
+                    )
 
-            commits_data.append({
-                "sha": commit_obj.get("oid"),
-                "message_headline": commit_obj.get("messageHeadline"),
-                "author": author_login or author_name or "UNVERIFIED",
-                "committer_date": commit_obj.get("committedDate"),
-                "associated_prs": prs,
-            })
+            commits_data.append(
+                {
+                    "sha": commit_obj.get("oid"),
+                    "message_headline": commit_obj.get("messageHeadline"),
+                    "author": author_login or author_name or "UNVERIFIED",
+                    "committer_date": commit_obj.get("committedDate"),
+                    "associated_prs": prs,
+                }
+            )
 
     return commits_data, unverified
 
@@ -502,9 +526,7 @@ def build_output(
     unique_prs.sort(key=lambda p: p.get("number", 0), reverse=True)
 
     # Sort commits by date ascending
-    commits_sorted = sorted(
-        commits_prs, key=lambda c: c.get("committer_date", "")
-    )
+    commits_sorted = sorted(commits_prs, key=lambda c: c.get("committer_date", ""))
 
     # Classify PR areas based on compare files
     files_by_area = {}
@@ -544,7 +566,9 @@ def generate_markdown(data: dict, compare: Optional[dict]) -> str:
     lines.append("# What's Deployed")
     lines.append("")
     lines.append(f"**Generated:** {data.get('generated_at')}")
-    lines.append(f"**Repository:** [{data.get('repo')}](https://github.com/{data.get('repo')})")
+    lines.append(
+        f"**Repository:** [{data.get('repo')}](https://github.com/{data.get('repo')})"
+    )
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -595,7 +619,9 @@ def generate_markdown(data: dict, compare: Optional[dict]) -> str:
     lines.append("| `api_compare.json` | Commit comparison between tags |")
     lines.append("| `api_workflow_runs.json` | Recent workflow runs |")
     if wf:
-        lines.append(f"| `api_workflow_run_{wf.get('id')}.json` | Deployment workflow details |")
+        lines.append(
+            f"| `api_workflow_run_{wf.get('id')}.json` | Deployment workflow details |"
+        )
     lines.append("| `artifacts_index.json` | Workflow artifacts list |")
     lines.append("| `graphql_commits_prs.json` | Commit-to-PR mapping |")
     lines.append("| `api_deployments.json` | Environment deployments |")
@@ -687,7 +713,9 @@ def generate_markdown(data: dict, compare: Optional[dict]) -> str:
             elif len(parts) >= 2:
                 modules.add(parts[1])
 
-        lines.append(f"**{len(odoo_files)} file(s) changed across {len(modules)} module(s):**")
+        lines.append(
+            f"**{len(odoo_files)} file(s) changed across {len(modules)} module(s):**"
+        )
         lines.append("")
         for m in sorted(modules)[:30]:
             lines.append(f"- `{m}`")
@@ -738,7 +766,9 @@ def generate_markdown(data: dict, compare: Optional[dict]) -> str:
     # Footer
     lines.append("---")
     lines.append("")
-    lines.append("*Generated by `scripts/whats_deployed.py` using GitHub REST + GraphQL APIs*")
+    lines.append(
+        "*Generated by `scripts/whats_deployed.py` using GitHub REST + GraphQL APIs*"
+    )
 
     return "\n".join(lines)
 
@@ -813,7 +843,9 @@ def main():
         )
         all_unverified.extend(unv)
         if workflow_run:
-            print(f"      Found: Run #{workflow_run.get('id')} ({workflow_run.get('conclusion')})")
+            print(
+                f"      Found: Run #{workflow_run.get('id')} ({workflow_run.get('conclusion')})"
+            )
         else:
             print("      Not found")
 
@@ -842,7 +874,9 @@ def main():
         all_unverified.extend(unv)
         print(f"      Mapped: {len(commits_prs)} commits")
     else:
-        save_proof("graphql_commits_prs.json", {"data": None, "note": "No compare data"})
+        save_proof(
+            "graphql_commits_prs.json", {"data": None, "note": "No compare data"}
+        )
 
     # Build output
     print("")
