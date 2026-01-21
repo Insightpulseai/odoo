@@ -67,6 +67,9 @@ verify_jwt = true
 [functions.ipai-copilot]
 verify_jwt = false
 
+[functions.sync-odoo-modules]
+verify_jwt = false
+
 # =============================================================================
 # Auth Configuration
 # =============================================================================

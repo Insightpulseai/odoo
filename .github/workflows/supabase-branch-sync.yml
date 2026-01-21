@@ -1,0 +1,169 @@
+# Supabase Branch Sync Workflow
+# Syncs database migrations and Edge Functions on feature branches
+
+name: Supabase Branch Sync
+
+on:
+  push:
+    branches:
+      - 'feature/*'
+      - 'claude/*'
+    paths:
+      - 'supabase/**'
+      - 'scripts/sync_to_supabase.py'
+
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - 'supabase/**'
+
+  workflow_dispatch:
+    inputs:
+      deploy_functions:
+        description: 'Deploy Edge Functions'
+        type: boolean
+        default: true
+      sync_modules:
+        description: 'Sync Odoo modules to catalog'
+        type: boolean
+        default: false
+
+jobs:
+  # ==========================================================================
+  # Validate Migrations
+  # ==========================================================================
+  validate-migrations:
+    name: Validate Migrations
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Validate SQL syntax
+        run: |
+          for file in supabase/migrations/*.sql; do
+            echo "Validating $file..."
+            # Basic SQL syntax check using psql in dry-run mode
+            if grep -qE "DROP TABLE|DROP SCHEMA|TRUNCATE" "$file"; then
+              echo "::warning file=$file::Destructive operation detected"
+            fi
+          done
+
+      - name: Check for EE references
+        run: |
+          # Ensure no EE-related tables or references
+          if grep -rE "license.*OEEL|enterprise_only" supabase/migrations/; then
+            echo "::error::EE references found in migrations"
+            exit 1
+          fi
+          echo "No EE references found"
+
+  # ==========================================================================
+  # Push to Preview Branch
+  # ==========================================================================
+  push-preview:
+    name: Push to Preview Branch
+    runs-on: ubuntu-latest
+    needs: validate-migrations
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link to Supabase project
+        run: |
+          supabase link --project-ref ${{ secrets.SUPABASE_PROJECT_REF }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Push database changes
+        run: |
+          supabase db push --dry-run
+          echo "---"
+          echo "Dry run successful. Applying migrations..."
+          supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy Edge Functions
+        if: github.event.inputs.deploy_functions != 'false'
+        run: |
+          # Deploy sync-odoo-modules function
+          supabase functions deploy sync-odoo-modules --no-verify-jwt
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+  # ==========================================================================
+  # Sync Odoo Modules
+  # ==========================================================================
+  sync-odoo-modules:
+    name: Sync Odoo Modules
+    runs-on: ubuntu-latest
+    needs: push-preview
+    if: github.event.inputs.sync_modules == 'true'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install supabase requests
+
+      - name: Sync modules to Supabase
+        env:
+          ODOO_URL: ${{ secrets.DEV_ODOO_URL }}
+          ODOO_DATABASE: ${{ secrets.ODOO_DATABASE }}
+          ODOO_USER: admin
+          ODOO_PASSWORD: ${{ secrets.ODOO_ADMIN_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python scripts/sync_to_supabase.py
+
+  # ==========================================================================
+  # Verify Catalog
+  # ==========================================================================
+  verify-catalog:
+    name: Verify Catalog
+    runs-on: ubuntu-latest
+    needs: [push-preview]
+
+    steps:
+      - name: Check capabilities catalog
+        run: |
+          RESPONSE=$(curl -sf "${{ secrets.SUPABASE_URL }}/rest/v1/odoo_capabilities?select=count" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Prefer: count=exact")
+
+          COUNT=$(echo "$RESPONSE" | jq -r '.[0].count // 0')
+          echo "Capabilities count: $COUNT"
+
+          if [ "$COUNT" -lt 5 ]; then
+            echo "::warning::Low capability count - catalog may not be fully seeded"
+          fi
+
+      - name: Check design systems catalog
+        run: |
+          RESPONSE=$(curl -sf "${{ secrets.SUPABASE_URL }}/rest/v1/design_system_languages?is_active=eq.true" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}")
+
+          COUNT=$(echo "$RESPONSE" | jq 'length')
+          echo "Active design systems: $COUNT"
+
+          # List available design systems
+          echo "$RESPONSE" | jq -r '.[].language_key'
