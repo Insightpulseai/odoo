@@ -500,4 +500,27 @@ pre-commit run --all-files
 
 ---
 
+## 15. OCA Template Integration
+
+For creating standalone OCA-style addon repositories (outside this monorepo),
+see [OCA_TEMPLATE_INTEGRATION.md](OCA_TEMPLATE_INTEGRATION.md) for:
+
+- Copier-based repository bootstrapping
+- Version branching (18.0, 19.0)
+- CI and pre-commit setup from OCA template
+- Module scaffolding with mrbob
+- Template update protocol
+
+### Enterprise Bridge Modules
+
+Three key modules provide EE/IAP-free operation:
+
+| Module | Purpose |
+|--------|---------|
+| `ipai_enterprise_bridge` | EE feature stubs, IAP bypass, OCA routing |
+| `ipai_mail_integration` | Direct SMTP/Mailgun without IAP mail |
+| `ipai_iot_bridge` | Direct device communication without EE IoT |
+
+---
+
 **This document is the canonical source of truth. All generators, validators, scaffolders, and deployment scripts must conform to these rules.**
