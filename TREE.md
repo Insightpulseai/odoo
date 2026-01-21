@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9b2539b46e2a7f6064ba7721d2bb3dae9f6cee78
+> Commit: e903637382dd3e246845077cbdcfafc21f2c27f1
 
 ```
 .
@@ -581,6 +581,13 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_finance_workflow
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_focalboard_connector
 │   │   │   ├── data
 │   │   │   ├── models
@@ -879,6 +886,20 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_vertical_media
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_vertical_retail
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_web_fluent2
 │   │   │   ├── static
 │   │   │   ├── views
@@ -2538,6 +2559,7 @@
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
 │   ├── ECOSYSTEM_GUIDE.md
 │   ├── EE_IAP_TO_OCA_IPAI_MAPPING.md
+│   ├── EE_TO_CE_OCA_MAPPING.md
 │   ├── EMAIL_AND_OAUTH_SETUP.md
 │   ├── ENTERPRISE_FEATURE_GAP.yaml
 │   ├── EXECUTIVE_SUMMARY.md
@@ -2551,6 +2573,7 @@
 │   ├── FIN_WORKSPACE_AUTOMATION_STATUS.md
 │   ├── FIN_WORKSPACE_HARDENING_STATUS.md
 │   ├── FIN_WORKSPACE_SETUP.md
+│   ├── GANTT_TO_ODOO_CE_MAPPING.md
 │   ├── GITHUB_SECRETS_SETUP.md
 │   ├── GIT_WORKTREE_STRATEGY.md
 │   ├── GO_LIVE_CHECKLIST.md
@@ -2579,6 +2602,7 @@
 │   ├── N8N_CREDENTIALS_BOOTSTRAP.md
 │   ├── NAMING_CONVENTION_EQ_APP_TOOLS.md
 │   ├── OCA_CHORE_SCOPE.md
+│   ├── OCA_INSTALLATION_GUIDE.md
 │   ├── OCA_MIGRATION.md
 │   ├── OCA_STYLE_CONTRACT.md
 │   ├── OCA_TEMPLATE_INTEGRATION.md
@@ -4305,15 +4329,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1364 directories, 2936 files
+1379 directories, 2945 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1603 |
-| Files | 4499 |
-| Python files | 1147 |
-| XML files | 546 |
-| Markdown files | 938 |
+| Directories | 1618 |
+| Files | 4541 |
+| Python files | 1163 |
+| XML files | 566 |
+| Markdown files | 941 |
