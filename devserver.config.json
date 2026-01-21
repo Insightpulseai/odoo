@@ -1,0 +1,93 @@
+{
+  "$schema": "https://insightpulse.ai/schemas/devserver.schema.json",
+  "version": "1.0.0",
+  "name": "odoo-ce-stack",
+  "description": "InsightPulse AI Odoo CE Development Stack",
+  "services": {
+    "odoo-core": {
+      "command": "docker compose up odoo-core postgres",
+      "cwd": ".",
+      "port": 8069,
+      "healthPath": "/web/health",
+      "description": "Odoo CE 18.0 Core Edition",
+      "dependencies": ["postgres"]
+    },
+    "odoo-marketing": {
+      "command": "docker compose up odoo-marketing",
+      "cwd": ".",
+      "port": 8070,
+      "healthPath": "/web/health",
+      "description": "Odoo CE Marketing Edition",
+      "dependencies": ["postgres", "odoo-core"]
+    },
+    "odoo-accounting": {
+      "command": "docker compose up odoo-accounting",
+      "cwd": ".",
+      "port": 8071,
+      "healthPath": "/web/health",
+      "description": "Odoo CE Accounting Edition",
+      "dependencies": ["postgres", "odoo-core"]
+    },
+    "n8n": {
+      "command": "docker compose up n8n",
+      "cwd": ".",
+      "port": 5678,
+      "healthPath": "/healthz",
+      "description": "n8n Workflow Automation Engine"
+    },
+    "mcp-coordinator": {
+      "command": "node mcp/coordinator/index.js",
+      "cwd": ".",
+      "port": 8766,
+      "healthPath": "/health",
+      "description": "MCP Coordinator for agent routing"
+    },
+    "control-room": {
+      "command": "pnpm --filter control-room dev",
+      "cwd": ".",
+      "port": 3000,
+      "healthPath": "/",
+      "description": "Control Room Next.js Dashboard"
+    },
+    "control-room-api": {
+      "command": "uvicorn apps.control-room-api.app:app --reload --host 0.0.0.0 --port 8789",
+      "cwd": ".",
+      "port": 8789,
+      "healthPath": "/health",
+      "description": "Control Room FastAPI Backend"
+    },
+    "postgres": {
+      "command": "docker compose up postgres",
+      "cwd": ".",
+      "port": 5432,
+      "healthPath": null,
+      "description": "PostgreSQL 15 Database"
+    },
+    "full-stack": {
+      "command": "docker compose up -d",
+      "cwd": ".",
+      "port": null,
+      "healthPath": null,
+      "description": "Full stack (all services)",
+      "composite": true
+    }
+  },
+  "defaultService": "odoo-core",
+  "profiles": {
+    "minimal": ["postgres", "odoo-core"],
+    "development": ["postgres", "odoo-core", "n8n", "control-room"],
+    "full": ["postgres", "odoo-core", "odoo-marketing", "odoo-accounting", "n8n", "mcp-coordinator", "control-room", "control-room-api"]
+  },
+  "environment": {
+    "required": [
+      "POSTGRES_USER",
+      "POSTGRES_PASSWORD",
+      "POSTGRES_DB"
+    ],
+    "optional": [
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "OPENAI_API_KEY"
+    ]
+  }
+}
