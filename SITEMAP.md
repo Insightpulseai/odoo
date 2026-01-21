@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9b2539b46e2a7f6064ba7721d2bb3dae9f6cee78
+> Commit: e903637382dd3e246845077cbdcfafc21f2c27f1
 
 ## 📚 Documentation
 
@@ -253,6 +253,7 @@
 | [DOKS Deployment Success Criteria – Infra + Custom Features](docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE Ecosystem Guide for AI Agents](docs/ECOSYSTEM_GUIDE.md) | docs |
 | [EE/IAP to OCA/IPAI Replacement Mapping](docs/EE_IAP_TO_OCA_IPAI_MAPPING.md) | docs |
+| [Odoo Enterprise to CE+OCA Technical Mapping Guide](docs/EE_TO_CE_OCA_MAPPING.md) | docs |
 | [Email & OAuth Configuration Guide](docs/EMAIL_AND_OAUTH_SETUP.md) | docs |
 | [Odoo CE v0.9.0 Audit - Executive Summary](docs/EXECUTIVE_SUMMARY.md) | docs |
 | [Cheqroom Parity Feature - Equipment Management on Odoo CE](docs/FEATURE_CHEQROOM_PARITY.md) | docs |
@@ -265,6 +266,7 @@
 | [fin-workspace Automation Status](docs/FIN_WORKSPACE_AUTOMATION_STATUS.md) | docs |
 | [fin-workspace Automation Hardening Status](docs/FIN_WORKSPACE_HARDENING_STATUS.md) | docs |
 | [fin-workspace Setup Guide](docs/FIN_WORKSPACE_SETUP.md) | docs |
+| [Gantt Chart to Odoo CE + OCA Mapping](docs/GANTT_TO_ODOO_CE_MAPPING.md) | docs |
 | [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
 | [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
 | [ODOO-CE GO-LIVE CHECKLIST](docs/GO_LIVE_CHECKLIST.md) | docs |
@@ -293,6 +295,7 @@
 | [n8n Credentials Bootstrap – Finance Stack](docs/N8N_CREDENTIALS_BOOTSTRAP.md) | docs |
 | [Naming Convention - Equivalent APP TOOLS](docs/NAMING_CONVENTION_EQ_APP_TOOLS.md) | docs |
 | [OCA-style "chore" Scope Conventions](docs/OCA_CHORE_SCOPE.md) | docs |
+| [OCA Installation Guide (Canonical)](docs/OCA_INSTALLATION_GUIDE.md) | docs |
 | [IPAI OCA-First Module Strategy](docs/OCA_MIGRATION.md) | docs |
 | [OCA-Style Repository Contract (Canonical)](docs/OCA_STYLE_CONTRACT.md) | docs |
 | [OCA Template Integration Contract](docs/OCA_TEMPLATE_INTEGRATION.md) | docs |
@@ -1012,6 +1015,7 @@
 | [ipai_finance_ppm_dashboard](./addons/ipai/ipai_finance_ppm_dashboard) | ✅ |  |
 | [ipai_finance_ppm_tdi](./addons/ipai/ipai_finance_ppm_tdi) | ✅ |  |
 | [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
+| [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
 | [ipai_focalboard_connector](./addons/ipai/ipai_focalboard_connector) | ✅ |  |
 | [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
 | [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
@@ -1053,6 +1057,8 @@
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |
 | [ipai_v18_compat](./addons/ipai/ipai_v18_compat) | ✅ |  |
+| [ipai_vertical_media](./addons/ipai/ipai_vertical_media) | ✅ |  |
+| [ipai_vertical_retail](./addons/ipai/ipai_vertical_retail) | ✅ |  |
 | [ipai_web_fluent2](./addons/ipai/ipai_web_fluent2) | ✅ |  |
 | [ipai_web_icons_fluent](./addons/ipai/ipai_web_icons_fluent) | ✅ |  |
 | [ipai_web_theme_tbwa](./addons/ipai/ipai_web_theme_tbwa) | ✅ |  |
