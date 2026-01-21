@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8466f2f4c3a0019ae8bc2b3d9e4ad337c6c5301c
+> Commit: 36112708d5215733e6e1eb4b8150039580e17bdb
 
 ```
 .
@@ -2067,6 +2067,7 @@
 │   │   ├── IPAI_AI_PLATFORM_SCHEMA.dbml
 │   │   ├── IPAI_FINANCE_OKR_SCHEMA.dbml
 │   │   ├── MULTI_TENANT_PROVIDER_SCHEMA.dbml
+│   │   ├── OCA_PROJECT_DATA_MODEL.md
 │   │   ├── ODOO_CANONICAL_SCHEMA.dbml
 │   │   ├── ODOO_ERD.mmd
 │   │   ├── ODOO_ERD.puml
@@ -2195,21 +2196,48 @@
 │   │   ├── generation_summary.json
 │   │   ├── ipai_advisor.md
 │   │   ├── ipai_agent_core.md
+│   │   ├── ipai_ai_agents.md
+│   │   ├── ipai_ai_agents_ui.md
+│   │   ├── ipai_ai_audit.md
+│   │   ├── ipai_ai_connectors.md
+│   │   ├── ipai_ai_copilot.md
+│   │   ├── ipai_ai_core.md
+│   │   ├── ipai_ai_prompts.md
+│   │   ├── ipai_ai_provider_kapa.md
+│   │   ├── ipai_ai_provider_pulser.md
+│   │   ├── ipai_ai_sources_odoo.md
+│   │   ├── ipai_ai_studio.md
+│   │   ├── ipai_aiux_chat.md
+│   │   ├── ipai_approvals.md
 │   │   ├── ipai_ask_ai.md
+│   │   ├── ipai_ask_ai_bridge.md
 │   │   ├── ipai_ask_ai_chatter.md
 │   │   ├── ipai_assets.md
+│   │   ├── ipai_auth_oauth_internal.md
+│   │   ├── ipai_bi_superset.md
 │   │   ├── ipai_bir_compliance.md
 │   │   ├── ipai_bir_tax_compliance.md
+│   │   ├── ipai_catalog_bridge.md
 │   │   ├── ipai_ce_branding.md
 │   │   ├── ipai_ce_cleaner.md
+│   │   ├── ipai_ces_bundle.md
+│   │   ├── ipai_chatgpt_sdk_theme.md
 │   │   ├── ipai_clarity_ppm_parity.md
 │   │   ├── ipai_close_orchestration.md
+│   │   ├── ipai_command_center.md
+│   │   ├── ipai_control_room.md
+│   │   ├── ipai_copilot_hub.md
+│   │   ├── ipai_copilot_ui.md
 │   │   ├── ipai_crm_pipeline.md
 │   │   ├── ipai_custom_routes.md
 │   │   ├── ipai_default_home.md
+│   │   ├── ipai_design_system_apps_sdk.md
 │   │   ├── ipai_dev_studio_base.md
+│   │   ├── ipai_document_ai.md
+│   │   ├── ipai_enterprise_bridge.md
 │   │   ├── ipai_equipment.md
 │   │   ├── ipai_expense.md
+│   │   ├── ipai_expense_ocr.md
 │   │   ├── ipai_finance_bir_compliance.md
 │   │   ├── ipai_finance_close_automation.md
 │   │   ├── ipai_finance_close_seed.md
@@ -2223,12 +2251,23 @@
 │   │   ├── ipai_finance_ppm_tdi.md
 │   │   ├── ipai_finance_ppm_umbrella.md
 │   │   ├── ipai_finance_project_hybrid.md
+│   │   ├── ipai_focalboard_connector.md
 │   │   ├── ipai_grid_view.md
 │   │   ├── ipai_industry_accounting_firm.md
 │   │   ├── ipai_industry_marketing_agency.md
+│   │   ├── ipai_integrations.md
+│   │   ├── ipai_iot_bridge.md
+│   │   ├── ipai_mail_integration.md
+│   │   ├── ipai_marketing_ai.md
+│   │   ├── ipai_marketing_journey.md
 │   │   ├── ipai_master_control.md
+│   │   ├── ipai_mattermost_connector.md
+│   │   ├── ipai_mcp_hub.md
+│   │   ├── ipai_module_gating.md
 │   │   ├── ipai_month_end.md
 │   │   ├── ipai_month_end_closing.md
+│   │   ├── ipai_n8n_connector.md
+│   │   ├── ipai_ocr_expense.md
 │   │   ├── ipai_ocr_gateway.md
 │   │   ├── ipai_platform_approvals.md
 │   │   ├── ipai_platform_audit.md
@@ -2238,16 +2277,36 @@
 │   │   ├── ipai_portal_fix.md
 │   │   ├── ipai_ppm.md
 │   │   ├── ipai_ppm_a1.md
+│   │   ├── ipai_ppm_dashboard_canvas.md
 │   │   ├── ipai_ppm_monthly_close.md
+│   │   ├── ipai_project_gantt.md
+│   │   ├── ipai_project_profitability_bridge.md
 │   │   ├── ipai_project_program.md
+│   │   ├── ipai_project_suite.md
+│   │   ├── ipai_saas_tenant.md
+│   │   ├── ipai_sample_metrics.md
+│   │   ├── ipai_scout_bundle.md
+│   │   ├── ipai_settings_dashboard.md
+│   │   ├── ipai_skill_api.md
 │   │   ├── ipai_sms_gateway.md
 │   │   ├── ipai_srm.md
 │   │   ├── ipai_studio_ai.md
 │   │   ├── ipai_superset_connector.md
 │   │   ├── ipai_superset_connector_technical_guide.md
 │   │   ├── ipai_tbwa_finance.md
+│   │   ├── ipai_tenant_core.md
+│   │   ├── ipai_test_fixtures.md
+│   │   ├── ipai_theme_aiux.md
+│   │   ├── ipai_theme_copilot.md
+│   │   ├── ipai_theme_fluent2.md
+│   │   ├── ipai_theme_tbwa.md
 │   │   ├── ipai_theme_tbwa_backend.md
+│   │   ├── ipai_ui_brand_tokens.md
+│   │   ├── ipai_v18_compat.md
+│   │   ├── ipai_web_fluent2.md
+│   │   ├── ipai_web_icons_fluent.md
 │   │   ├── ipai_web_theme_chatgpt.md
+│   │   ├── ipai_web_theme_tbwa.md
 │   │   ├── ipai_workos_affine.md
 │   │   ├── ipai_workos_blocks.md
 │   │   ├── ipai_workos_canvas.md
@@ -2562,6 +2621,7 @@
 │   ├── branch-cleanup-analysis.md
 │   ├── llms.txt
 │   ├── notion-odoo-substitute-catalog.md
+│   ├── oca_project_modules_18.csv
 │   ├── odoo-apps-parity.md
 │   ├── odoo_core_schema.sql
 │   ├── supabase-integration.md
@@ -3271,6 +3331,7 @@
 │   ├── install_module_xmlrpc.py
 │   ├── install_oauth_module.py
 │   ├── install_oca_modules.sh
+│   ├── install_oca_project_modules.sh
 │   ├── introspect_project.py
 │   ├── ipai_full_audit.py
 │   ├── ipai_install_upgrade_test.sh
@@ -3313,6 +3374,7 @@
 │   ├── run_project_introspection.sh
 │   ├── scan_ipai_modules.py
 │   ├── seed_finance_close_from_xlsx.py
+│   ├── seed_finance_ppm_stages.py
 │   ├── setup-mailgun-secrets.sh
 │   ├── setup_afc_rag.sh
 │   ├── setup_keycloak_db.sh
@@ -4208,15 +4270,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1357 directories, 2846 files
+1357 directories, 2908 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1590 |
-| Files | 4374 |
-| Python files | 1137 |
-| XML files | 533 |
-| Markdown files | 864 |
+| Directories | 1591 |
+| Files | 4440 |
+| Python files | 1138 |
+| XML files | 534 |
+| Markdown files | 923 |
