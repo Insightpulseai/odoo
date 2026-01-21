@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f4487a3e5ecdab9bd90c7dd82e4bc1f9c5ecb1bd
+> Commit: 9b2539b46e2a7f6064ba7721d2bb3dae9f6cee78
 
 ## 📚 Documentation
 
@@ -159,6 +159,7 @@
 | [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
 | [IPAI AI Studio - ChatGPT App](apps/chatgpt_ipai_ai_studio/README.md) | apps/chatgpt_ipai_ai_studio |
 | [Finance Landing Page Implementation - Verification Checklist](apps/control-room/FINANCE_LANDING_CHECKLIST.md) | apps/control-room |
+| [IPAI Platform Kit - Control Room Orchestration](apps/control-room/PLATFORM_KIT_SPEC.md) | apps/control-room |
 | [devops-engineer](apps/devops-engineer/APP.md) | apps/devops-engineer |
 | [DO Advisor Agent](apps/do-advisor-agent/README.md) | apps/do-advisor-agent |
 | [DO Advisor - Unified Infrastructure Intelligence](apps/do-advisor-agent/prompts/unified_advisor.md) | apps/do-advisor-agent/prompts |
@@ -711,6 +712,7 @@
 | [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
+| [Preset.io Parity Roadmap](infra/superset/PRESET_PARITY_ROADMAP.md) | infra/superset |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
 | [Agent Audit Rules](kb/audit/AGENT_AUDIT_RULES.md) | kb/audit |
 | [Month-End Close SOP](kb/finance_close/sop.md) | kb/finance_close |

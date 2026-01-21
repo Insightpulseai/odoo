@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f4487a3e5ecdab9bd90c7dd82e4bc1f9c5ecb1bd
+> Commit: 9b2539b46e2a7f6064ba7721d2bb3dae9f6cee78
 
 ```
 .
@@ -1422,6 +1422,7 @@
 │   │   │   └── types
 │   │   ├── .env.example
 │   │   ├── FINANCE_LANDING_CHECKLIST.md
+│   │   ├── PLATFORM_KIT_SPEC.md
 │   │   ├── next-env.d.ts
 │   │   ├── next.config.js
 │   │   ├── package.json
@@ -2761,6 +2762,7 @@
 │   │   └── compose.stack.yml
 │   ├── superset
 │   │   ├── Dockerfile
+│   │   ├── PRESET_PARITY_ROADMAP.md
 │   │   ├── README.md
 │   │   ├── do-app-spec.yaml
 │   │   ├── entrypoint.sh
@@ -3044,10 +3046,14 @@
 │   │   │   ├── react
 │   │   │   ├── build.ts
 │   │   │   ├── material3Theme.ts
-│   │   │   └── odooTokens.ts
+│   │   │   ├── odooTokens.ts
+│   │   │   ├── tableauTokens.json
+│   │   │   └── tableauTokens.ts
 │   │   ├── material3-expressive.css
 │   │   ├── package.json
+│   │   ├── tableau.css
 │   │   ├── tailwind-material3.preset.js
+│   │   ├── tailwind-tableau.preset.js
 │   │   ├── tailwind.preset.js
 │   │   ├── tokens.css
 │   │   └── tokens.scss
@@ -4299,15 +4305,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1364 directories, 2930 files
+1364 directories, 2936 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1598 |
-| Files | 4483 |
+| Directories | 1603 |
+| Files | 4499 |
 | Python files | 1147 |
 | XML files | 546 |
-| Markdown files | 936 |
+| Markdown files | 938 |
