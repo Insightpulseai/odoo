@@ -349,8 +349,36 @@ UPDATE project_task SET x_external_ref = NULL WHERE x_external_ref IS NOT NULL;
 
 ---
 
+## Secrets Management
+
+**CRITICAL:** All secrets must be managed via Supabase secrets or Vault. See [SECRETS_MANAGEMENT.md](./SECRETS_MANAGEMENT.md) for:
+
+- Setting secrets via CLI (`supabase functions secrets set`)
+- Local development with `.env.local`
+- HashiCorp Vault integration (optional)
+- Secret rotation procedures
+- Emergency response procedures
+
+**Quick Setup:**
+
+```bash
+# Set all required secrets
+supabase functions secrets set \
+  ODOO_URL="https://erp.insightpulseai.net" \
+  ODOO_DB="production" \
+  ODOO_USER="seed_bot@insightpulseai.com" \
+  ODOO_PASSWORD="<password>" \
+  SEED_RUN_TOKEN="$(openssl rand -hex 32)"
+
+# Verify
+supabase functions secrets list
+```
+
+---
+
 ## Related Documentation
 
+- [SECRETS_MANAGEMENT.md](./SECRETS_MANAGEMENT.md) - **Secrets boundary pattern**
 - [ops.odoo_bindings](../migrations/202601080003_4502_OPS_ODOO_BINDINGS.sql) - Context resolution layer
 - [CE_OCA_PROJECT_STACK.md](../CE_OCA_PROJECT_STACK.md) - Project module parity
 - [MCP_JOBS_SYSTEM.md](./MCP_JOBS_SYSTEM.md) - Job queue pattern
