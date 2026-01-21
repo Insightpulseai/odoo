@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Tree View -->
+    <record id="ipai_mail_oauth_provider_tree" model="ir.ui.view">
+        <field name="name">ipai.mail.oauth.provider.tree</field>
+        <field name="model">ipai.mail.oauth.provider</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="provider_type"/>
+                <field name="client_id"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'authorized'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'draft'"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="ipai_mail_oauth_provider_form" model="ir.ui.view">
+        <field name="name">ipai.mail.oauth.provider.form</field>
+        <field name="model">ipai.mail.oauth.provider</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_test_connection"
+                            string="Test Connection"
+                            type="object"
+                            class="btn-primary"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object"
+                                class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button"
+                                   options='{"terminology": "archive"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Provider Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="provider_type"/>
+                            <field name="client_id"/>
+                            <field name="tenant_id"
+                                   invisible="provider_type != 'microsoft'"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="scope"/>
+                        </group>
+                    </group>
+                    <group string="OAuth Endpoints" name="endpoints">
+                        <field name="auth_endpoint" readonly="1"/>
+                        <field name="token_endpoint" readonly="1"/>
+                        <field name="api_endpoint" readonly="1"/>
+                    </group>
+                    <group string="Error Details"
+                           invisible="not error_message">
+                        <field name="error_message" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ipai_mail_oauth_provider" model="ir.actions.act_window">
+        <field name="name">Mail OAuth Providers</field>
+        <field name="res_model">ipai.mail.oauth.provider</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure OAuth providers for mail integration
+            </p>
+            <p>
+                Add Google (Gmail) or Microsoft (Outlook 365) OAuth providers
+                to enable direct mail API integration.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_ipai_mail_oauth_provider"
+              name="OAuth Providers"
+              parent="mail.menu_mail_config"
+              action="action_ipai_mail_oauth_provider"
+              sequence="50"/>
+</odoo>
