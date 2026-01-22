@@ -1,0 +1,32 @@
+// IPAI Design System - Main SCSS Entry Point
+// Import all SCSS partials in correct order: tokens → base → brand → variant
+
+@import 'tokens';
+@import 'fluent2';
+@import 'tbwa';
+@import 'copilot';
+@import 'aiux';
+
+// Global utility classes
+.ipai-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 $spacing-md;
+}
+
+.ipai-section {
+    margin-bottom: $spacing-xl;
+}
+
+// Responsive utilities
+@media (max-width: 768px) {
+    .ipai-container {
+        padding: 0 $spacing-sm;
+    }
+}
+
+@media (min-width: 1400px) {
+    .ipai-container {
+        max-width: 1320px;
+    }
+}

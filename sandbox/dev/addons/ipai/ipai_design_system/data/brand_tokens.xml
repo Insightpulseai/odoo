@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- IPAI Design System Brand Tokens -->
+
+    <!-- Primary Color -->
+    <record id="ipai_brand_token_primary_color" model="ir.config_parameter">
+        <field name="key">ipai_design_system.primary_color</field>
+        <field name="value">#0078d4</field>
+    </record>
+
+    <!-- Spacing Unit -->
+    <record id="ipai_brand_token_spacing_unit" model="ir.config_parameter">
+        <field name="key">ipai_design_system.spacing_unit</field>
+        <field name="value">8px</field>
+    </record>
+
+    <!-- Typography -->
+    <record id="ipai_brand_token_font_family" model="ir.config_parameter">
+        <field name="key">ipai_design_system.font_family</field>
+        <field name="value">-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif</field>
+    </record>
+
+    <!-- Border Radius -->
+    <record id="ipai_brand_token_border_radius" model="ir.config_parameter">
+        <field name="key">ipai_design_system.border_radius</field>
+        <field name="value">4px</field>
+    </record>
+</odoo>
