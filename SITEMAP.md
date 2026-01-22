@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9e94d9797614ffe3b65c69c964546252e5f32874
+> Commit: 2049279f0153602c91a9ae020047a4b68de9e995
 
 ## 📚 Documentation
 
@@ -405,6 +405,7 @@
 | [Supabase Features Overview](docs/evidence/20260119-1121/digitalocean-postgresql/SUPABASE_FEATURES.md) | docs/evidence/20260119-1121/digitalocean-postgresql |
 | [A2A Communication Implementation Evidence](docs/evidence/20260120-agent-communication/IMPLEMENTATION.md) | docs/evidence/20260120-agent-communication |
 | [Mailgun DNS Verification Checklist](docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md) | docs/evidence/20260120-mailgun |
+| [Docker Image Diff Evidence](docs/evidence/20260121-0000/docker-image-diff/README.md) | docs/evidence/20260121-0000/docker-image-diff |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -804,6 +805,8 @@
 | [Production Deployment Complete](sandbox/dev/PRODUCTION_READY.md) | sandbox/dev |
 | [Odoo 18 CE Dev Sandbox](sandbox/dev/README.md) | sandbox/dev |
 | [Odoo Dev Sandbox - Repository Audit Report](sandbox/dev/REPORT.md) | sandbox/dev |
+| [IPAI Design System](sandbox/dev/addons/ipai/ipai_design_system/README.md) | sandbox/dev/addons/ipai/ipai_design_system |
+| [UI/Theme Module Consolidation - Status Update](sandbox/dev/docs/UI_CONSOLIDATION_STATUS.md) | sandbox/dev/docs |
 | [Odoo 18 CE Dev Sandbox - Developer Runbook](sandbox/dev/docs/runbooks/DEV_SANDBOX.md) | sandbox/dev/docs/runbooks |
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](sandbox/dev/docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | sandbox/dev/docs/runbooks |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
@@ -1080,6 +1083,7 @@
 | [ipai_ask_ai](./ops-control/odoo_modules/ipai_ask_ai) | ✅ | AI Copilot assistant for Odoo - Claude/ChatGPT-grade conversational UI |
 | [ipai_ask_ai_chatter](./ops-control/odoo_modules/ipai_ask_ai_chatter) | ✅ | Context-aware AI entry points in chatter, forms, and lists |
 | [ipai_platform_theme](./ops-control/odoo_modules/ipai_platform_theme) | ✅ | Material 3 Expressive + Fluent design tokens for Odoo backend |
+| [ipai_design_system](./sandbox/dev/addons/ipai/ipai_design_system) | ✅ |  |
 | [ipai_enterprise_bridge](./spec/ipai_enterprise_bridge) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen/ipai_module_gen) | ⚠️ | Missing manifest |

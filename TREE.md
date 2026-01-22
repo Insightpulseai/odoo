@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9e94d9797614ffe3b65c69c964546252e5f32874
+> Commit: 2049279f0153602c91a9ae020047a4b68de9e995
 
 ```
 .
@@ -94,6 +94,7 @@
 │   │   ├── go-live-manifest-gate.yml
 │   │   ├── health-check.yml
 │   │   ├── icons-drift.yml
+│   │   ├── image-diff.yml
 │   │   ├── infra-memory-job.yml
 │   │   ├── infra-validate.yml
 │   │   ├── infra_memory_job.yml
@@ -1524,8 +1525,10 @@
 │   │   │   └── digitalocean-postgresql
 │   │   ├── 20260120-agent-communication
 │   │   │   └── IMPLEMENTATION.md
-│   │   └── 20260120-mailgun
-│   │       └── VERIFICATION_CHECKLIST.md
+│   │   ├── 20260120-mailgun
+│   │   │   └── VERIFICATION_CHECKLIST.md
+│   │   └── 20260121-0000
+│   │       └── docker-image-diff
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2638,11 +2641,14 @@
 │       │   └── settings.local.json
 │       ├── .github
 │       │   └── workflows
+│       ├── addons
+│       │   └── ipai
 │       ├── config
 │       │   ├── .env.example
 │       │   └── odoo.conf
 │       ├── docs
-│       │   └── runbooks
+│       │   ├── runbooks
+│       │   └── UI_CONSOLIDATION_STATUS.md
 │       ├── scripts
 │       │   ├── dev
 │       │   └── verify.sh
@@ -2672,6 +2678,7 @@
 │   │   ├── compare_audit_baseline.py
 │   │   ├── constraints-gevent.txt
 │   │   ├── deploy-ipai-modules.sh
+│   │   ├── docker-image-diff.sh
 │   │   ├── import-n8n-workflows.sh
 │   │   ├── install-oca-modules.sh
 │   │   ├── install_odoo_18.sh
@@ -3858,15 +3865,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1002 directories, 2851 files
+1006 directories, 2854 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1187 |
-| Files | 3750 |
-| Python files | 588 |
-| XML files | 247 |
-| Markdown files | 992 |
+| Directories | 1199 |
+| Files | 3769 |
+| Python files | 592 |
+| XML files | 250 |
+| Markdown files | 995 |
