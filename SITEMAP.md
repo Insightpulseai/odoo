@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 015f8768b5b09906b8f174ebe52fe5e7fd756d17
+> Commit: 86190705b4277418fb27af579ce0febe2182687f
 
 ## 📚 Documentation
 
@@ -18,6 +18,7 @@
 | [Command: Generate OCA-Style Prototype Module](.claude/commands/prototype-module.md) | .claude/commands |
 | [Shipping Workflow](.claude/commands/ship.md) | .claude/commands |
 | [Primary Responsibility](.claude/commands/verify.md) | .claude/commands |
+| [SessionStart Hook - Web Session Initialization](.claude/hooks/SessionStart.md) | .claude/hooks |
 | [BIR Compliance Automation Skill](.claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md) | .claude/superclaude/skills/finance/bir-compliance-automation |
 | [/implement Command](.continue/prompts/implement.md) | .continue/prompts |
 | [/plan Command](.continue/prompts/plan.md) | .continue/prompts |
@@ -406,6 +407,8 @@
 | [A2A Communication Implementation Evidence](docs/evidence/20260120-agent-communication/IMPLEMENTATION.md) | docs/evidence/20260120-agent-communication |
 | [Mailgun DNS Verification Checklist](docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md) | docs/evidence/20260120-mailgun |
 | [Docker Image Diff Evidence](docs/evidence/20260121-0000/docker-image-diff/README.md) | docs/evidence/20260121-0000/docker-image-diff |
+| [CD Pipeline Deployment Ready](docs/evidence/20260122-1200/cd-pipeline/DEPLOYMENT_READY.md) | docs/evidence/20260122-1200/cd-pipeline |
+| [Summary](docs/evidence/20260122-1200/cd-pipeline/PR_BODY.md) | docs/evidence/20260122-1200/cd-pipeline |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
