@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e903637382dd3e246845077cbdcfafc21f2c27f1
+> Commit: 9e94d9797614ffe3b65c69c964546252e5f32874
 
 ## 📚 Documentation
 
@@ -30,6 +30,7 @@
 | [Analytics Activation Sequence](ANALYTICS_ACTIVATION_SEQUENCE.md) | . |
 | [🎯 Odoo CE v0.9.1 - Security Audit Fixes Applied](AUDIT_FIXES_APPLIED.md) | . |
 | [Auto-Healing System Implementation Summary](AUTO_HEALING_SYSTEM_SUMMARY.md) | . |
+| [Auto Review and Fix Summary](AUTO_REVIEW_AND_FIX_SUMMARY.md) | . |
 | [Changelog - Odoo CE & Finance PPM](CHANGELOG.md) | . |
 | [CI/CD Automation Infrastructure - Deployment Summary](CI_CD_AUTOMATION_SUMMARY.md) | . |
 | [CI/CD Troubleshooting Guide - GitHub Actions Database Connection](CI_CD_TROUBLESHOOTING_GUIDE.md) | . |
@@ -46,6 +47,7 @@
 | [WorkOS Production Deployment Report](DEPLOYMENT_REPORT.md) | . |
 | [WorkOS Production Deployment Report](DEPLOYMENT_REPORT_FINAL.md) | . |
 | [WorkOS Production Deployment Runbook](DEPLOYMENT_RUNBOOK.md) | . |
+| [Deployment State Current](DEPLOYMENT_STATE_CURRENT.md) | . |
 | [Odoo CE Deployment Status - Live Instance](DEPLOYMENT_STATUS.md) | . |
 | [Deployment Validation Report](DEPLOYMENT_VALIDATION_REPORT.md) | . |
 | [Deployment Verification - Strategic Portfolio Command Center](DEPLOYMENT_VERIFICATION.md) | . |
@@ -71,6 +73,7 @@
 | [InsightPulse AI OCR Enhancement - Project Complete](OCR_PROJECT_COMPLETE.md) | . |
 | [Odoo 18 VS Code Development Setup](ODOO_18_VSCODE_SETUP.md) | . |
 | [InsightPulse OCR for Odoo Expenses - Service Definition](ODOO_OCR_SETUP.md) | . |
+| [Pending Tasks Auto Audit](PENDING_TASKS_AUTO_AUDIT.md) | . |
 | [PostgreSQL Password Configuration Solution](POSTGRES_PASSWORD_SOLUTION.md) | . |
 | [IPAI Odoo CE Production Deployment Guide](PROD_DEPLOY.md) | . |
 | [Finance PPM Project Wrapper Implementation](PROJECT_WRAPPER_IMPLEMENTATION.md) | . |
@@ -92,32 +95,10 @@
 | [IPAI Verification Commands](VERIFY.md) | . |
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
 | [IPAI Module Namespace](addons/ipai/README.md) | addons/ipai |
-| [ipai_ai_agents (Odoo CE/OCA 18)](addons/ipai/ipai_ai_agents/README.md) | addons/ipai/ipai_ai_agents |
 | [IPAI AI Agents UI](addons/ipai/ipai_ai_agents_ui/README.md) | addons/ipai/ipai_ai_agents_ui |
-| [IPAI AI Connectors](addons/ipai/ipai_ai_connectors/README.md) | addons/ipai/ipai_ai_connectors |
-| [IPAI AI Sources (Odoo Export)](addons/ipai/ipai_ai_sources_odoo/README.md) | addons/ipai/ipai_ai_sources_odoo |
-| [ipai_approvals (Enterprise Parity)](addons/ipai/ipai_approvals/README.md) | addons/ipai/ipai_approvals |
-| [Clarity PPM Parity - Implementation Complete ✅](addons/ipai/ipai_clarity_ppm_parity/IMPLEMENTATION_SUMMARY.md) | addons/ipai/ipai_clarity_ppm_parity |
-| [Clarity PPM Parity - Quick Start Guide](addons/ipai/ipai_clarity_ppm_parity/QUICK_START.md) | addons/ipai/ipai_clarity_ppm_parity |
-| [Clarity PPM Parity Module - Final Status](addons/ipai/ipai_clarity_ppm_parity/STATUS.md) | addons/ipai/ipai_clarity_ppm_parity |
-| [Clarity PPM Parity Module - Test Report](addons/ipai/ipai_clarity_ppm_parity/TEST_REPORT.md) | addons/ipai/ipai_clarity_ppm_parity |
-| [IPAI Close Cycle Orchestration](addons/ipai/ipai_close_orchestration/README.md) | addons/ipai/ipai_close_orchestration |
-| [InsightPulse Custom Routes](addons/ipai/ipai_custom_routes/README.md) | addons/ipai/ipai_custom_routes |
-| [InsightPulse Default Home Page](addons/ipai/ipai_default_home/README.md) | addons/ipai/ipai_default_home |
+| [IPAI Design System (Single Source of Truth)](addons/ipai/ipai_design_system_apps_sdk/README.md) | addons/ipai/ipai_design_system_apps_sdk |
 | [IPAI Enterprise Bridge Policy](addons/ipai/ipai_enterprise_bridge/POLICY.md) | addons/ipai/ipai_enterprise_bridge |
 | [IPAI Enterprise Bridge](addons/ipai/ipai_enterprise_bridge/README.md) | addons/ipai/ipai_enterprise_bridge |
-| [IPAI Equipment Management](addons/ipai/ipai_equipment/README.md) | addons/ipai/ipai_equipment |
-| [IPAI Expense & Travel (PH)](addons/ipai/ipai_expense/README.md) | addons/ipai/ipai_expense |
-| [IPAI Finance Monthly Closing](addons/ipai/ipai_finance_monthly_closing/README.md) | addons/ipai/ipai_finance_monthly_closing |
-| [IPAI Finance PPM](addons/ipai/ipai_finance_ppm/README.md) | addons/ipai/ipai_finance_ppm |
-| [Finance PPM Transaction Data Ingestion (TDI)](addons/ipai/ipai_finance_ppm_tdi/README.md) | addons/ipai/ipai_finance_ppm_tdi |
-| [ipai_finance_project_hybrid](addons/ipai/ipai_finance_project_hybrid/README.md) | addons/ipai/ipai_finance_project_hybrid |
-| [IPAI Portal Fix - Deployment Verification Report](addons/ipai/ipai_portal_fix/DEPLOYMENT_VERIFICATION.md) | addons/ipai/ipai_portal_fix |
-| [IPAI Portal Fix - Website-Free Support](addons/ipai/ipai_portal_fix/README.md) | addons/ipai/ipai_portal_fix |
-| [IPAI PPM A1 Control Center](addons/ipai/ipai_ppm_a1/README.md) | addons/ipai/ipai_ppm_a1 |
-| [November 2025 Monthly Close - Installation & Testing Guide](addons/ipai/ipai_ppm_monthly_close/INSTALL_NOVEMBER_2025.md) | addons/ipai/ipai_ppm_monthly_close |
-| [PPM Monthly Close Scheduler](addons/ipai/ipai_ppm_monthly_close/README.md) | addons/ipai/ipai_ppm_monthly_close |
-| [ipai_tenant_core - Technical Implementation Guide](addons/ipai/ipai_tenant_core/TECHNICAL_GUIDE.md) | addons/ipai/ipai_tenant_core |
 | [AFC RAG Integration - Change Summary](addons/ipai_ask_ai/CHANGES.md) | addons/ipai_ask_ai |
 | [AFC RAG Deployment Checklist](addons/ipai_ask_ai/DEPLOYMENT_CHECKLIST.md) | addons/ipai_ask_ai |
 | [AFC RAG Integration - Deployment Complete ✅](addons/ipai_ask_ai/DEPLOYMENT_COMPLETE.md) | addons/ipai_ask_ai |
@@ -271,6 +252,7 @@
 | [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
 | [ODOO-CE GO-LIVE CHECKLIST](docs/GO_LIVE_CHECKLIST.md) | docs |
 | [Odoo 18 CE + OCA + IPAI Go-Live Checklist (InsightPulseAI)](docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md) | docs |
+| [Go-Live & Production Checklist (Odoo 18 CE + OCA + IPAI)](docs/GO_LIVE_PRODUCTION_CHECKLIST.md) | docs |
 | [Finance Stack Health Check System](docs/HEALTH_CHECK.md) | docs |
 | [Target Image Documentation](docs/IMAGE_GUIDE.md) | docs |
 | [Odoo CE v0.9.1 - Implementation Summary](docs/IMPLEMENTATION_SUMMARY.md) | docs |
@@ -288,6 +270,7 @@
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |
 | [MCP + Supabase Integration Architecture](docs/MCP_SUPABASE_INTEGRATION.md) | docs |
 | [Mixed Content Fix - HTTPS Asset Loading](docs/MIXED_CONTENT_FIX.md) | docs |
+| [Module Consolidation Technical Guide](docs/MODULE_CONSOLIDATION_GUIDE.md) | docs |
 | [IPAI Custom Modules - Complete Status Report](docs/MODULE_STATUS_FINAL.md) | docs |
 | [Odoo CE Custom Modules Status Report](docs/MODULE_STATUS_REPORT.md) | docs |
 | [fin-workspace Monorepo Structure](docs/MONOREPO_STRUCTURE.md) | docs |
@@ -723,6 +706,14 @@
 | [MCP Coordinator](mcp/coordinator/README.md) | mcp/coordinator |
 | [Local MCP Server](mcp/local/README.md) | mcp/local |
 | [Agent Coordination MCP Server](mcp/servers/agent-coordination-server/README.md) | mcp/servers/agent-coordination-server |
+| [MCP-Jobs Lockfile Fix - Deployment Report](mcp/servers/mcp-jobs/LOCKFILE_FIX_REPORT.md) | mcp/servers/mcp-jobs |
+| [MCP-Jobs: Supabase Platform Kit Integration](mcp/servers/mcp-jobs/PLATFORM_KIT_SETUP.md) | mcp/servers/mcp-jobs |
+| [Open in v0](mcp/servers/mcp-jobs/README.md) | mcp/servers/mcp-jobs |
+| [MCP-Jobs Vercel Build Fix - Summary](mcp/servers/mcp-jobs/VERCEL_BUILD_FIX_SUMMARY.md) | mcp/servers/mcp-jobs |
+| [MCP Jobs Service – Constitution](mcp/servers/mcp-jobs/spec/mcp-jobs/constitution.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
+| [MCP Jobs Service – Plan](mcp/servers/mcp-jobs/spec/mcp-jobs/plan.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
+| [MCP Jobs Service – PRD](mcp/servers/mcp-jobs/spec/mcp-jobs/prd.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
+| [MCP Jobs Service – Tasks](mcp/servers/mcp-jobs/spec/mcp-jobs/tasks.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [Odoo ERP MCP Server](mcp/servers/odoo-erp-server/README.md) | mcp/servers/odoo-erp-server |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
 | [n8n Finance Automation - Deployment Status](notion-n8n-monthly-close/DEPLOYMENT_STATUS.md) | notion-n8n-monthly-close |
@@ -736,6 +727,66 @@
 | [Receipt OCR Test Harness](ocr-adapter/scripts/README.md) | ocr-adapter/scripts |
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
+| [✅ Action Plan - Deploy Your Ops Control Room](ops-control/ACTION_PLAN.md) | ops-control |
+| [](ops-control/ATTRIBUTIONS.md) | ops-control |
+| [Command Reference](ops-control/COMMANDS.md) | ops-control |
+| [✅ Database Error Fix - Summary](ops-control/DATABASE_FIX_SUMMARY.md) | ops-control |
+| [✅ Database Setup Fixed](ops-control/DATABASE_SETUP_FIXED.md) | ops-control |
+| [✅ Dependency Installation Fix](ops-control/DEPENDENCY_FIX.md) | ops-control |
+| [🚀 Deployment Guide - Ops Control Room](ops-control/DEPLOY.md) | ops-control |
+| [📚 Ops Control Room - Documentation Index](ops-control/DOCUMENTATION_INDEX.md) | ops-control |
+| [✅ Environment Variables - Graceful Degradation](ops-control/ENV_GRACEFUL_FIX.md) | ops-control |
+| [🔑 Environment Variables Setup Guide](ops-control/ENV_SETUP.md) | ops-control |
+| [🎨 Figma Make + Supabase Deployment Guide](ops-control/FIGMA_MAKE_DEPLOY.md) | ops-control |
+| [✅ Fixed: Deployment Configuration](ops-control/FIXED.md) | ops-control |
+| [🚨 URGENT: Fix Database Errors - 2 Minute Guide](ops-control/FIX_DATABASE_ERRORS.md) | ops-control |
+| [🎉 Ops Control Room - Implementation Complete!](ops-control/IMPLEMENTATION_SUMMARY.md) | ops-control |
+| [🎯 Ops Control Room - Implementation Summary](ops-control/IMPLEMENTATION_SUMMARY_JAN7.md) | ops-control |
+| [🔧 Database Migration Setup - Quick Fix](ops-control/MIGRATION_SETUP.md) | ops-control |
+| [Migration to Public Schema - Complete Summary](ops-control/MIGRATION_TO_PUBLIC_SCHEMA.md) | ops-control |
+| [🚀 Next Steps - Immediate Actions](ops-control/NEXT_STEPS.md) | ops-control |
+| [Ops Control Room - Implementation Summary](ops-control/OCR_IMPLEMENTATION.md) | ops-control |
+| [✅ Package.json Restoration](ops-control/PACKAGE_JSON_FIX.md) | ops-control |
+| [Parallel OCR Setup Guide](ops-control/PARALLEL_OCR_SETUP.md) | ops-control |
+| [Parallel OCR Implementation Summary](ops-control/PARALLEL_OCR_SUMMARY.md) | ops-control |
+| [🎯 Ops Control Room - Phased Implementation Plan](ops-control/PHASED_IMPLEMENTATION_PLAN.md) | ops-control |
+| [Ops Control Room - Quick Start](ops-control/QUICKSTART.md) | ops-control |
+| [Ops Control Room - Quick Start](ops-control/QUICKSTART_OCR.md) | ops-control |
+| [🚀 Quick Fix Guide - Database Errors](ops-control/QUICK_FIX.md) | ops-control |
+| [🚀 Ops Control Room - Quick Reference Card](ops-control/QUICK_REFERENCE.md) | ops-control |
+| [🎯 Ops Control Room - Production Architecture](ops-control/README.md) | ops-control |
+| [Ops Control Room - Implementation Guide](ops-control/README_OCR.md) | ops-control |
+| [Schema Fix Summary](ops-control/SCHEMA_FIX_SUMMARY.md) | ops-control |
+| [Schema Fix V2 Summary](ops-control/SCHEMA_FIX_V2_SUMMARY.md) | ops-control |
+| [🔐 Secrets Setup Guide (Figma Make)](ops-control/SECRETS_SETUP.md) | ops-control |
+| [Ops Control Room - Setup Guide](ops-control/SETUP.md) | ops-control |
+| [✅ Spec Kit Bundle Created for Ops Control Room](ops-control/SPEC_KIT_CREATED.md) | ops-control |
+| [🚀 START HERE - Ops Control Room](ops-control/START_HERE.md) | ops-control |
+| [✅ Ops Control Room - System Status](ops-control/STATUS.md) | ops-control |
+| [Final Working Structure](ops-control/STRUCTURE.md) | ops-control |
+| [Supabase Setup Guide for Ops Control Room](ops-control/SUPABASE_SETUP_GUIDE.md) | ops-control |
+| [Ops Control Room MCP Server](ops-control/apps/mcp-server/README.md) | ops-control/apps/mcp-server |
+| [API Adapter Implementation Guide](ops-control/docs/ADAPTER_GUIDE.md) | ops-control/docs |
+| [Demo Mode (No Supabase Required)](ops-control/docs/DEMO_MODE.md) | ops-control/docs |
+| [🚀 Deployment Checklist](ops-control/docs/DEPLOYMENT_CHECKLIST.md) | ops-control/docs |
+| [🔧 Developer Guide: Adding New Runbook Types](ops-control/docs/DEVELOPER_GUIDE.md) | ops-control/docs |
+| [🔄 GitHub-First Runbook Pattern](ops-control/docs/GITHUB_FIRST_PATTERN.md) | ops-control/docs |
+| [📚 Documentation Index](ops-control/docs/INDEX.md) | ops-control/docs |
+| [🎯 Ops Control Room - Quick Reference](ops-control/docs/QUICK_REFERENCE.md) | ops-control/docs |
+| [General guidelines](ops-control/guidelines/Guidelines.md) | ops-control/guidelines |
+| [IPAI Ask AI - Response Schema & Contracts](ops-control/odoo_modules/docs/AI_RESPONSE_SCHEMA.md) | ops-control/odoo_modules/docs |
+| [Spec Kit Bundles](ops-control/spec/README.md) | ops-control/spec |
+| [spec/continue-orchestrator/constitution.md](ops-control/spec/continue-orchestrator/constitution.md) | ops-control/spec/continue-orchestrator |
+| [spec/continue-orchestrator/plan.md](ops-control/spec/continue-orchestrator/plan.md) | ops-control/spec/continue-orchestrator |
+| [spec/continue-orchestrator/prd.md](ops-control/spec/continue-orchestrator/prd.md) | ops-control/spec/continue-orchestrator |
+| [spec/continue-orchestrator/tasks.md](ops-control/spec/continue-orchestrator/tasks.md) | ops-control/spec/continue-orchestrator |
+| [Constitution — Ops Control Room (Parallel Runbook Executor)](ops-control/spec/ops-control-room/constitution.md) | ops-control/spec/ops-control-room |
+| [Plan — Ops Control Room](ops-control/spec/ops-control-room/plan.md) | ops-control/spec/ops-control-room |
+| [PRD — Ops Control Room (Parallel Runbook Executor)](ops-control/spec/ops-control-room/prd.md) | ops-control/spec/ops-control-room |
+| [Tasks — Ops Control Room](ops-control/spec/ops-control-room/tasks.md) | ops-control/spec/ops-control-room |
+| [Supabase Edge Function: ops-executor](ops-control/supabase/functions/ops-executor/README.md) | ops-control/supabase/functions/ops-executor |
+| [Supabase Migrations](ops-control/supabase/migrations/README.md) | ops-control/supabase/migrations |
+| [OCR Parallel Workers](ops-control/workers/README.md) | ops-control/workers |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
 | [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
 | [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
@@ -963,106 +1014,25 @@
 
 | Module | Status | Description |
 |--------|--------|-------------|
-| [ipai_advisor](./addons/ipai/ipai_advisor) | ✅ |  |
-| [ipai_agent_core](./addons/ipai/ipai_agent_core) | ✅ |  |
-| [ipai_ai_agents](./addons/ipai/ipai_ai_agents) | ✅ |  |
 | [ipai_ai_agents_ui](./addons/ipai/ipai_ai_agents_ui) | ✅ |  |
-| [ipai_ai_audit](./addons/ipai/ipai_ai_audit) | ✅ |  |
-| [ipai_ai_connectors](./addons/ipai/ipai_ai_connectors) | ✅ |  |
-| [ipai_ai_copilot](./addons/ipai/ipai_ai_copilot) | ✅ |  |
-| [ipai_ai_core](./addons/ipai/ipai_ai_core) | ✅ |  |
-| [ipai_ai_prompts](./addons/ipai/ipai_ai_prompts) | ✅ |  |
-| [ipai_ai_provider_kapa](./addons/ipai/ipai_ai_provider_kapa) | ✅ |  |
-| [ipai_ai_provider_pulser](./addons/ipai/ipai_ai_provider_pulser) | ✅ |  |
-| [ipai_ai_sources_odoo](./addons/ipai/ipai_ai_sources_odoo) | ✅ |  |
-| [ipai_ai_studio](./addons/ipai/ipai_ai_studio) | ✅ |  |
 | [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ |  |
-| [ipai_approvals](./addons/ipai/ipai_approvals) | ✅ |  |
-| [ipai_ask_ai](./addons/ipai/ipai_ask_ai) | ✅ |  |
-| [ipai_ask_ai_bridge](./addons/ipai/ipai_ask_ai_bridge) | ✅ |  |
-| [ipai_ask_ai_chatter](./addons/ipai/ipai_ask_ai_chatter) | ✅ |  |
-| [ipai_assets](./addons/ipai/ipai_assets) | ✅ |  |
-| [ipai_auth_oauth_internal](./addons/ipai/ipai_auth_oauth_internal) | ✅ |  |
-| [ipai_bi_superset](./addons/ipai/ipai_bi_superset) | ✅ |  |
-| [ipai_bir_compliance](./addons/ipai/ipai_bir_compliance) | ✅ |  |
-| [ipai_catalog_bridge](./addons/ipai/ipai_catalog_bridge) | ✅ |  |
-| [ipai_ce_branding](./addons/ipai/ipai_ce_branding) | ✅ |  |
-| [ipai_ce_cleaner](./addons/ipai/ipai_ce_cleaner) | ✅ |  |
-| [ipai_ces_bundle](./addons/ipai/ipai_ces_bundle) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
-| [ipai_clarity_ppm_parity](./addons/ipai/ipai_clarity_ppm_parity) | ✅ |  |
-| [ipai_close_orchestration](./addons/ipai/ipai_close_orchestration) | ✅ |  |
-| [ipai_command_center](./addons/ipai/ipai_command_center) | ✅ |  |
-| [ipai_control_room](./addons/ipai/ipai_control_room) | ✅ |  |
-| [ipai_copilot_hub](./addons/ipai/ipai_copilot_hub) | ✅ |  |
 | [ipai_copilot_ui](./addons/ipai/ipai_copilot_ui) | ✅ |  |
-| [ipai_custom_routes](./addons/ipai/ipai_custom_routes) | ✅ |  |
-| [ipai_default_home](./addons/ipai/ipai_default_home) | ✅ |  |
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
-| [ipai_dev_studio_base](./addons/ipai/ipai_dev_studio_base) | ✅ |  |
-| [ipai_document_ai](./addons/ipai/ipai_document_ai) | ✅ |  |
 | [ipai_enterprise_bridge](./addons/ipai/ipai_enterprise_bridge) | ✅ |  |
-| [ipai_equipment](./addons/ipai/ipai_equipment) | ✅ |  |
-| [ipai_expense](./addons/ipai/ipai_expense) | ✅ |  |
-| [ipai_expense_ocr](./addons/ipai/ipai_expense_ocr) | ✅ |  |
-| [ipai_finance_bir_compliance](./addons/ipai/ipai_finance_bir_compliance) | ✅ |  |
-| [ipai_finance_close_automation](./addons/ipai/ipai_finance_close_automation) | ✅ |  |
-| [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ✅ |  |
-| [ipai_finance_month_end](./addons/ipai/ipai_finance_month_end) | ✅ |  |
-| [ipai_finance_monthly_closing](./addons/ipai/ipai_finance_monthly_closing) | ✅ |  |
-| [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ✅ |  |
-| [ipai_finance_ppm_closing](./addons/ipai/ipai_finance_ppm_closing) | ✅ |  |
-| [ipai_finance_ppm_dashboard](./addons/ipai/ipai_finance_ppm_dashboard) | ✅ |  |
-| [ipai_finance_ppm_tdi](./addons/ipai/ipai_finance_ppm_tdi) | ✅ |  |
-| [ipai_finance_project_hybrid](./addons/ipai/ipai_finance_project_hybrid) | ✅ |  |
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
-| [ipai_focalboard_connector](./addons/ipai/ipai_focalboard_connector) | ✅ |  |
-| [ipai_industry_accounting_firm](./addons/ipai/ipai_industry_accounting_firm) | ✅ |  |
-| [ipai_industry_marketing_agency](./addons/ipai/ipai_industry_marketing_agency) | ✅ |  |
-| [ipai_integrations](./addons/ipai/ipai_integrations) | ✅ |  |
-| [ipai_iot_bridge](./addons/ipai/ipai_iot_bridge) | ✅ |  |
-| [ipai_mail_integration](./addons/ipai/ipai_mail_integration) | ✅ |  |
-| [ipai_marketing_ai](./addons/ipai/ipai_marketing_ai) | ✅ |  |
-| [ipai_marketing_journey](./addons/ipai/ipai_marketing_journey) | ✅ |  |
-| [ipai_master_control](./addons/ipai/ipai_master_control) | ✅ |  |
-| [ipai_mattermost_connector](./addons/ipai/ipai_mattermost_connector) | ✅ |  |
-| [ipai_mcp_hub](./addons/ipai/ipai_mcp_hub) | ✅ |  |
-| [ipai_module_gating](./addons/ipai/ipai_module_gating) | ✅ |  |
-| [ipai_n8n_connector](./addons/ipai/ipai_n8n_connector) | ✅ |  |
-| [ipai_ocr_expense](./addons/ipai/ipai_ocr_expense) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
-| [ipai_portal_fix](./addons/ipai/ipai_portal_fix) | ✅ |  |
-| [ipai_ppm](./addons/ipai/ipai_ppm) | ✅ |  |
-| [ipai_ppm_a1](./addons/ipai/ipai_ppm_a1) | ✅ |  |
-| [ipai_ppm_dashboard_canvas](./addons/ipai/ipai_ppm_dashboard_canvas) | ✅ |  |
-| [ipai_ppm_monthly_close](./addons/ipai/ipai_ppm_monthly_close) | ✅ |  |
-| [ipai_project_gantt](./addons/ipai/ipai_project_gantt) | ✅ |  |
-| [ipai_project_profitability_bridge](./addons/ipai/ipai_project_profitability_bridge) | ✅ |  |
-| [ipai_project_program](./addons/ipai/ipai_project_program) | ✅ |  |
-| [ipai_project_suite](./addons/ipai/ipai_project_suite) | ✅ |  |
-| [ipai_saas_tenant](./addons/ipai/ipai_saas_tenant) | ✅ |  |
-| [ipai_sample_metrics](./addons/ipai/ipai_sample_metrics) | ✅ |  |
-| [ipai_scout_bundle](./addons/ipai/ipai_scout_bundle) | ✅ |  |
-| [ipai_settings_dashboard](./addons/ipai/ipai_settings_dashboard) | ✅ |  |
-| [ipai_skill_api](./addons/ipai/ipai_skill_api) | ✅ |  |
-| [ipai_srm](./addons/ipai/ipai_srm) | ✅ |  |
-| [ipai_studio_ai](./addons/ipai/ipai_studio_ai) | ✅ |  |
-| [ipai_superset_connector](./addons/ipai/ipai_superset_connector) | ✅ |  |
-| [ipai_tenant_core](./addons/ipai/ipai_tenant_core) | ✅ |  |
-| [ipai_test_fixtures](./addons/ipai/ipai_test_fixtures) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_copilot](./addons/ipai/ipai_theme_copilot) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
 | [ipai_theme_tbwa](./addons/ipai/ipai_theme_tbwa) | ✅ |  |
 | [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |
-| [ipai_v18_compat](./addons/ipai/ipai_v18_compat) | ✅ |  |
 | [ipai_vertical_media](./addons/ipai/ipai_vertical_media) | ✅ |  |
 | [ipai_vertical_retail](./addons/ipai/ipai_vertical_retail) | ✅ |  |
 | [ipai_web_fluent2](./addons/ipai/ipai_web_fluent2) | ✅ |  |
 | [ipai_web_icons_fluent](./addons/ipai/ipai_web_icons_fluent) | ✅ |  |
 | [ipai_web_theme_tbwa](./addons/ipai/ipai_web_theme_tbwa) | ✅ |  |
-| [ipai_workspace_core](./addons/ipai/ipai_workspace_core) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
@@ -1107,6 +1077,9 @@
 | [ipai_finance_ppm](./archive/compose/dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 | [ipai_finance_okr](./docs/evidence/20260112-0358/ipai_finance_okr) | ⚠️ | Missing manifest |
+| [ipai_ask_ai](./ops-control/odoo_modules/ipai_ask_ai) | ✅ | AI Copilot assistant for Odoo - Claude/ChatGPT-grade conversational UI |
+| [ipai_ask_ai_chatter](./ops-control/odoo_modules/ipai_ask_ai_chatter) | ✅ | Context-aware AI entry points in chatter, forms, and lists |
+| [ipai_platform_theme](./ops-control/odoo_modules/ipai_platform_theme) | ✅ | Material 3 Expressive + Fluent design tokens for Odoo backend |
 | [ipai_enterprise_bridge](./spec/ipai_enterprise_bridge) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen/ipai_module_gen) | ⚠️ | Missing manifest |
