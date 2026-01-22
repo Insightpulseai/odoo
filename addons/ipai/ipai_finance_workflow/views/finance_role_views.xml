@@ -33,20 +33,20 @@
                     <notebook>
                         <page string="Assigned Users" name="users">
                             <field name="user_ids" nolabel="1">
-                                <tree>
+                                <list>
                                     <field name="name"/>
                                     <field name="login"/>
                                     <field name="finance_code"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                         <page string="Assigned Employees" name="employees">
                             <field name="employee_ids" nolabel="1">
-                                <tree>
+                                <list>
                                     <field name="name"/>
                                     <field name="job_id"/>
                                     <field name="department_id"/>
-                                </tree>
+                                </list>
                             </field>
                         </page>
                     </notebook>
@@ -60,14 +60,14 @@
         <field name="name">ipai.finance.role.tree</field>
         <field name="model">ipai.finance.role</field>
         <field name="arch" type="xml">
-            <tree string="Finance Roles">
+            <list string="Finance Roles">
                 <field name="sequence" widget="handle"/>
                 <field name="code"/>
                 <field name="name"/>
                 <field name="role_type"/>
                 <field name="can_review"/>
                 <field name="can_approve"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -99,7 +99,7 @@
     <record id="action_finance_roles" model="ir.actions.act_window">
         <field name="name">Finance Roles</field>
         <field name="res_model">ipai.finance.role</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Define your first finance role

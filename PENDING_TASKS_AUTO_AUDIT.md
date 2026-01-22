@@ -9,26 +9,33 @@
 
 | Priority | Count | Description |
 |----------|-------|-------------|
-| CRITICAL | 3 | Blocks downstream work |
+| CRITICAL | 1 | Blocks downstream work (Ops Control Room schema only) |
 | HIGH | 8 | Should address in next sprint |
 | MEDIUM | 15 | Feature completion |
 | LOW | 20+ | Documentation and polish |
+
+**CRITICAL Issues Resolved** (2/3):
+- ✅ OCA Project aggregation (already in oca-aggregate.yml)
+- ✅ Workbook → Seed year validation (Check 5 added)
 
 ---
 
 ## 1. CRITICAL - Blocking Issues
 
-### 1.1 OCA Project Modules Not in Active Aggregation
+### 1.1 OCA Project Modules - RESOLVED ✅
 
-**Location:** `oca-aggregate.yml`
-**Impact:** Finance PPM stage management depends on OCA project modules
+**Location:** `oca-aggregate.yml` (line 42)
+**Status:** RESOLVED - project repository IS in active merges
 
 ```yaml
-# ISSUE: project repo is commented out in oca-aggregate.yml
-# But oca.lock.json expects: project_stage_state, project_task_recurring, etc.
+# Tier 3: Project Management (Finance PPM dependency)
+- oca project 18.0
 ```
 
-**Resolution:** Update `oca-aggregate.yml` to include project repository.
+**Verified:**
+- ✅ `oca-aggregate.yml` includes `oca project 18.0` at line 42
+- ✅ `oca.lock.json` has project modules configured
+- ✅ No action needed
 
 ### 1.2 Ops Control Room Schema Access (M0)
 
@@ -41,16 +48,20 @@ Tasks pending:
 - [ ] Verify API access for RLS policies
 - [ ] Document schema access patterns
 
-### 1.3 Excel Workbook → Seed Alignment
+### 1.3 Excel Workbook → Seed Alignment - ENHANCED ✅
 
 **Location:** `scripts/seed_finance_close_from_xlsx.py`
-**Impact:** Workbook updates not automatically reflected in seeds
+**Status:** Enhanced with year mismatch validation
 
-Gaps identified (from workbook review):
-- [ ] Add `task_code` column to align across all sheets
-- [ ] Add `stage_id` using external IDs (not labels)
-- [ ] Add `assignee_login` for unambiguous user mapping
-- [ ] Separate employee metadata from task rows in source
+**Completed:**
+- [x] Add year mismatch validation (Check 5): Blocks export when BIR approval year < period covered year
+- [x] Validation passed on current workbook (no year mismatches detected)
+
+**Remaining (optional enhancements):**
+- [ ] Add `task_code` column to align across all sheets (current: auto-generated)
+- [ ] Add `stage_id` using external IDs (current: uses labels)
+- [ ] Add `assignee_login` for unambiguous user mapping (current: uses employee_code)
+- [ ] Separate employee metadata from task rows in source (current: embedded)
 
 ---
 

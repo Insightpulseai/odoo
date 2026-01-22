@@ -4,7 +4,7 @@ This file defines the **canonical, stable repo layout** for `jgtolentino/odoo-ce
 CI must ensure required roots exist and deploy config uses these paths.
 
 > **Important**: This is the **flat structure** currently in use. Do NOT invent paths
-> like `src/apps/odoo/` or `src/addons/` unless this contract is explicitly updated.
+> (forbidden example paths: `src/apps/odoo/` or `src/addons/`) unless this contract is explicitly updated.
 
 ## Required Root Directories
 
@@ -85,7 +85,7 @@ CI runs these checks on every PR:
 
 ## What NOT to Do
 
-- **DO NOT** create `src/apps/odoo_core/` or `src/addons/` paths
+- **DO NOT** create forbidden restructure paths like `src/apps/odoo_core/` or `src/addons/`
 - **DO NOT** invent alternative module locations
 - **DO NOT** bypass this contract without updating this file first
 - **DO NOT** trust agent audits that reference non-existent paths
@@ -127,13 +127,16 @@ odoo-ce/
 └── ...
 ```
 
-### Required Changes for Future Refactor
+### Optional Future Refactor (Currently FORBIDDEN - Examples Only)
 
-1. Move `addons/` contents to `src/addons/`
-2. Add Odoo core as submodule at `src/apps/odoo_core/`
-3. Move OCA modules to `src/oca/`
-4. Update `deploy/odoo.conf`:
+**NOTE**: These paths are NOT ALLOWED currently. This section documents a hypothetical future restructure.
+
+1. Move `addons/` contents to `src/addons/` (FORBIDDEN currently)
+2. Add Odoo core as submodule at `src/apps/odoo_core/` (FORBIDDEN currently)
+3. Move OCA modules to `src/oca/` (FORBIDDEN currently)
+4. Update `deploy/odoo.conf` (HYPOTHETICAL EXAMPLE):
    ```ini
+   # FORBIDDEN EXAMPLE - do not use these paths
    addons_path = /opt/odoo-ce/src/apps/odoo_core/addons,/opt/odoo-ce/src/addons,/opt/odoo-ce/src/oca
    ```
 5. Update all CI workflows

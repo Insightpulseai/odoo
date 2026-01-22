@@ -79,7 +79,7 @@
     <record id="action_ces_pitches" model="ir.actions.act_window">
         <field name="name">CES Pitches</field>
         <field name="res_model">crm.lead</field>
-        <field name="view_mode">kanban,tree,form,pivot,graph</field>
+        <field name="view_mode">list,form,pivot,graph</field>
         <field name="domain">[('ces_pitch_type', '!=', False)]</field>
         <field name="context">{'default_type': 'opportunity'}</field>
         <field name="help" type="html">
