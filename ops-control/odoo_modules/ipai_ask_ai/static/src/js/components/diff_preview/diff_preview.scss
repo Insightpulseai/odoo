@@ -1,0 +1,95 @@
+// Diff Preview Component Styles
+
+.ipai-diff {
+  font-family: var(--ipai-font-mono);
+  font-size: var(--ipai-text-sm);
+  border-radius: var(--ipai-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--ipai-outline-variant);
+  margin-top: var(--ipai-space-2);
+}
+
+.ipai-diff-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-2) var(--ipai-space-3);
+  background: var(--ipai-surface-container);
+  border-bottom: 1px solid var(--ipai-outline-variant);
+  font-family: var(--ipai-font-sans);
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-medium);
+  color: var(--ipai-on-surface-variant);
+
+  i {
+    color: var(--ipai-primary);
+  }
+}
+
+.ipai-diff-content {
+  padding: var(--ipai-space-3);
+  background: var(--ipai-surface);
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.ipai-diff-field {
+  margin-bottom: var(--ipai-space-3);
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.ipai-diff-field-name {
+  font-family: var(--ipai-font-sans);
+  font-size: var(--ipai-text-xs);
+  font-weight: var(--ipai-font-semibold);
+  color: var(--ipai-on-surface-muted);
+  margin-bottom: var(--ipai-space-1);
+  text-transform: uppercase;
+  letter-spacing: var(--ipai-tracking-wider);
+}
+
+.ipai-diff-line {
+  display: flex;
+  padding: var(--ipai-space-1) var(--ipai-space-2);
+  border-radius: var(--ipai-radius-sm);
+  margin: var(--ipai-space-0-5) 0;
+
+  &--add {
+    background: var(--ipai-diff-add-bg);
+    color: var(--ipai-diff-add-text);
+  }
+
+  &--remove {
+    background: var(--ipai-diff-remove-bg);
+    color: var(--ipai-diff-remove-text);
+  }
+
+  &--change {
+    background: var(--ipai-diff-change-bg);
+    color: var(--ipai-diff-change-text);
+  }
+}
+
+.ipai-diff-line-prefix {
+  width: 20px;
+  flex-shrink: 0;
+  font-weight: var(--ipai-font-bold);
+}
+
+.ipai-diff-line-content {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ipai-diff-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ipai-space-2);
+  padding: var(--ipai-space-3);
+  background: var(--ipai-surface-container-low);
+  border-top: 1px solid var(--ipai-outline-variant);
+}

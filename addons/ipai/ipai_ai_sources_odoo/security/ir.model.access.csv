@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_kb_export_run_user,ipai.kb.export.run user,model_ipai_kb_export_run,base.group_user,1,0,0,0
-access_ipai_kb_export_run_system,ipai.kb.export.run system,model_ipai_kb_export_run,base.group_system,1,1,1,1

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.AskAIAction">
+        <div t-att-class="layoutClass">
+            <AskAIPanel onClose.bind="onClose"/>
+        </div>
+    </t>
+
+</templates>

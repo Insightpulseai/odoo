@@ -1,9 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_skill_api_user,ipai.agent.skill.api.user,ipai_agent_core.model_ipai_agent_skill,group_agent_api_user,1,0,0,0
-access_tool_api_user,ipai.agent.tool.api.user,ipai_agent_core.model_ipai_agent_tool,group_agent_api_user,1,0,0,0
-access_run_api_user,ipai.agent.run.api.user,ipai_agent_core.model_ipai_agent_run,group_agent_api_user,1,1,1,0
-access_knowledge_api_user,ipai.agent.knowledge_source.api.user,ipai_agent_core.model_ipai_agent_knowledge_source,group_agent_api_user,1,0,0,0
-access_skill_api_manager,ipai.agent.skill.api.manager,ipai_agent_core.model_ipai_agent_skill,group_agent_api_manager,1,1,1,1
-access_tool_api_manager,ipai.agent.tool.api.manager,ipai_agent_core.model_ipai_agent_tool,group_agent_api_manager,1,1,1,1
-access_run_api_manager,ipai.agent.run.api.manager,ipai_agent_core.model_ipai_agent_run,group_agent_api_manager,1,1,1,1
-access_knowledge_api_manager,ipai.agent.knowledge_source.api.manager,ipai_agent_core.model_ipai_agent_knowledge_source,group_agent_api_manager,1,1,1,1

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.ActionChip">
+        <button t-att-class="chipClass"
+                t-att-disabled="props.executed"
+                t-att-title="description"
+                t-on-click="onClick">
+            <!-- Icon -->
+            <i t-attf-class="fa {{ icon }} ipai-action-chip-icon"
+               t-if="!props.executed"/>
+            <i class="fa fa-check ipai-action-chip-icon"
+               t-if="props.executed"/>
+
+            <!-- Label -->
+            <span t-esc="label"/>
+
+            <!-- Preview indicator -->
+            <i class="fa fa-chevron-down"
+               t-if="hasPreview and !props.executed"
+               style="font-size: 10px; margin-left: 4px;"
+               t-att-class="{ 'fa-chevron-up': props.expanded }"/>
+        </button>
+    </t>
+
+</templates>

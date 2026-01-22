@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_ai_event_viewer,ipai.ai.event viewer,model_ipai_ai_event,group_ipai_ai_connectors_viewer,1,0,0,0
-access_ipai_ai_event_manager,ipai.ai.event manager,model_ipai_ai_event,group_ipai_ai_connectors_manager,1,1,1,1
-access_ipai_ai_event_system,ipai.ai.event system,model_ipai_ai_event,base.group_system,1,1,1,1

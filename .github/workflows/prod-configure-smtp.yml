@@ -130,23 +130,23 @@ jobs:
 
           echo "📧 Sending test email to ${TEST_EMAIL}..."
 
-          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << ENDSSH
+          ssh ${PROD_SSH_USER}@${PROD_SSH_HOST} bash -s << 'ENDSSH'
             set -euo pipefail
 
             cd ${{ env.PROD_REPO_PATH }}
 
             docker exec -i odoo-ce odoo shell -d ${ODOO_DB:-odoo} << 'ENDPY'
-import os
-TEST_EMAIL = os.environ.get('TEST_EMAIL', '')
-if TEST_EMAIL:
-    mail = env['mail.mail'].create({
-        'email_to': TEST_EMAIL,
-        'subject': 'SMTP Test - GitHub Actions Deploy',
-        'body_html': '<p>SMTP configuration deployed successfully via GitHub Actions!</p>'
-    })
-    mail.send()
-    print(f"Test email sent to {TEST_EMAIL} - State: {mail.state}")
-ENDPY
+          import os
+          TEST_EMAIL = os.environ.get('TEST_EMAIL', '')
+          if TEST_EMAIL:
+              mail = env['mail.mail'].create({
+                  'email_to': TEST_EMAIL,
+                  'subject': 'SMTP Test - GitHub Actions Deploy',
+                  'body_html': '<p>SMTP configuration deployed successfully via GitHub Actions!</p>'
+              })
+              mail.send()
+              print(f"Test email sent to {TEST_EMAIL} - State: {mail.state}")
+          ENDPY
           ENDSSH
 
       - name: Summary

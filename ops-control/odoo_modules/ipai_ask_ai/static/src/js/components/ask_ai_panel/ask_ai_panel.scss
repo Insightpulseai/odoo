@@ -1,0 +1,172 @@
+// AskAI Panel Component Styles
+
+.ipai-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--ipai-background);
+
+  &.ipai-panel--sidebar {
+    border-left: 1px solid var(--ipai-outline-variant);
+    width: var(--ipai-panel-width);
+    min-width: var(--ipai-panel-min-width);
+    max-width: var(--ipai-panel-max-width);
+  }
+}
+
+.ipai-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ipai-space-3);
+  padding: var(--ipai-space-3) var(--ipai-space-4);
+  background: var(--ipai-surface);
+  border-bottom: 1px solid var(--ipai-outline-variant);
+  min-height: var(--ipai-header-height);
+}
+
+.ipai-panel-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-2);
+}
+
+.ipai-panel-header-right {
+  display: flex;
+  align-items: center;
+  gap: var(--ipai-space-1);
+}
+
+// Mode selector
+.ipai-mode-selector {
+  position: relative;
+}
+
+.ipai-mode-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: var(--ipai-space-1);
+  min-width: 200px;
+  padding: var(--ipai-space-1);
+  z-index: var(--ipai-z-dropdown);
+}
+
+.ipai-mode-option {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ipai-space-3);
+  width: 100%;
+  padding: var(--ipai-space-2) var(--ipai-space-3);
+  border: none;
+  background: transparent;
+  text-align: left;
+  border-radius: var(--ipai-radius-md);
+  cursor: pointer;
+  transition: background var(--ipai-duration-fast) var(--ipai-ease-out);
+
+  &:hover {
+    background: var(--ipai-surface-container);
+  }
+
+  &.active {
+    background: var(--ipai-primary-container);
+  }
+
+  i {
+    margin-top: 2px;
+    color: var(--ipai-primary);
+  }
+}
+
+.ipai-mode-option-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ipai-space-0-5);
+}
+
+.ipai-mode-option-label {
+  font-size: var(--ipai-text-sm);
+  font-weight: var(--ipai-font-medium);
+  color: var(--ipai-on-surface);
+}
+
+.ipai-mode-option-desc {
+  font-size: var(--ipai-text-xs);
+  color: var(--ipai-on-surface-muted);
+}
+
+// Empty state
+.ipai-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--ipai-space-8) var(--ipai-space-4);
+  height: 100%;
+}
+
+.ipai-empty-state-icon {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ipai-primary-container);
+  border-radius: var(--ipai-radius-full);
+  margin-bottom: var(--ipai-space-4);
+
+  i {
+    font-size: 28px;
+    color: var(--ipai-primary);
+  }
+}
+
+.ipai-quick-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ipai-space-2);
+  margin-top: var(--ipai-space-6);
+  width: 100%;
+  max-width: 280px;
+}
+
+// Messages container
+.ipai-messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ipai-message-gap);
+}
+
+// Panel body scrollbar
+.ipai-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ipai-space-4);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--ipai-outline);
+    border-radius: var(--ipai-radius-full);
+    border: 2px solid var(--ipai-background);
+
+    &:hover {
+      background: var(--ipai-on-surface-muted);
+    }
+  }
+}
+
+// Footer
+.ipai-panel-footer {
+  padding: var(--ipai-space-3) var(--ipai-space-4);
+  background: var(--ipai-surface);
+  border-top: 1px solid var(--ipai-outline-variant);
+}

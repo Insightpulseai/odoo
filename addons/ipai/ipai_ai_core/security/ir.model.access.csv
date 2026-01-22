@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_ai_provider_manager,ipai.ai.provider.manager,model_ipai_ai_provider,base.group_system,1,1,1,1
-access_ipai_ai_provider_user,ipai.ai.provider.user,model_ipai_ai_provider,base.group_user,1,0,0,0
-access_ipai_ai_thread_user,ipai.ai.thread.user,model_ipai_ai_thread,base.group_user,1,1,1,0
-access_ipai_ai_message_user,ipai.ai.message.user,model_ipai_ai_message,base.group_user,1,0,0,0
-access_ipai_ai_citation_user,ipai.ai.citation.user,model_ipai_ai_citation,base.group_user,1,0,0,0
