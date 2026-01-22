@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ipai_ask_ai.Message">
+        <div t-att-class="messageClass">
+            <!-- Message header -->
+            <div class="ipai-message-header" t-if="!isLoading">
+                <span class="ipai-message-sender">
+                    <t t-if="isUser">You</t>
+                    <t t-if="isAssistant">AI Copilot</t>
+                    <t t-if="isSystem">System</t>
+                </span>
+                <span class="ipai-timestamp" t-if="timestamp" t-esc="timestamp"/>
+            </div>
+
+            <!-- Loading state -->
+            <div class="ipai-message-content" t-if="isLoading">
+                <div class="ipai-typing">
+                    <span class="ipai-typing-dot"/>
+                    <span class="ipai-typing-dot"/>
+                    <span class="ipai-typing-dot"/>
+                </div>
+            </div>
+
+            <!-- Message content -->
+            <div class="ipai-message-content" t-if="!isLoading">
+                <t t-out="renderMarkdown(content)"/>
+            </div>
+
+            <!-- Actions -->
+            <div class="ipai-message-actions" t-if="actions.length and !isLoading">
+                <t t-foreach="actions" t-as="action" t-key="action_index">
+                    <ActionChip
+                        action="action"
+                        index="action_index"
+                        expanded="state.expandedAction === action_index"
+                        executed="props.message.action_executed"
+                        onClick="() => this.onActionClick(action_index)"
+                        onExecute="() => this.executeAction(action_index)"
+                    />
+
+                    <!-- Diff preview -->
+                    <t t-if="state.expandedAction === action_index and action.preview_diff">
+                        <DiffPreview
+                            diff="action.preview_diff"
+                            onApply="() => this.executeAction(action_index)"
+                            onCancel="() => this.state.expandedAction = null"
+                        />
+                    </t>
+                </t>
+            </div>
+
+            <!-- Citations -->
+            <div class="ipai-citations-list" t-if="citations.length and !isLoading">
+                <span class="ipai-caption ipai-text-muted" style="width: 100%;">Sources:</span>
+                <t t-foreach="displayedCitations" t-as="citation" t-key="citation_index">
+                    <Citation citation="citation"/>
+                </t>
+                <button class="ipai-btn ipai-btn--text ipai-btn--sm"
+                        t-if="hasMoreCitations"
+                        t-on-click="toggleCitations">
+                    <t t-if="state.showAllCitations">Show less</t>
+                    <t t-else="">+<t t-esc="citations.length - 3"/> more</t>
+                </button>
+            </div>
+        </div>
+    </t>
+
+</templates>

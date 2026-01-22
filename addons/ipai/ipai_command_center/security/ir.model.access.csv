@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_command_center_run_user,ipai.command.center.run.user,model_ipai_command_center_run,base.group_user,1,0,0,0
-access_command_center_run_manager,ipai.command.center.run.manager,model_ipai_command_center_run,base.group_system,1,1,1,1
-access_command_center_alert_user,ipai.command.center.alert.user,model_ipai_command_center_alert,base.group_user,1,1,0,0
-access_command_center_alert_manager,ipai.command.center.alert.manager,model_ipai_command_center_alert,base.group_system,1,1,1,1

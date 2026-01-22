@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ipai_directory_person_user,ipai.directory.person user,model_ipai_directory_person,base.group_user,1,1,1,0
-access_ipai_directory_person_manager,ipai.directory.person manager,model_ipai_directory_person,project.group_project_manager,1,1,1,1
-access_ipai_convert_phases_wizard_user,ipai.convert.phases.wizard user,model_ipai_convert_phases_wizard,base.group_user,1,1,1,1

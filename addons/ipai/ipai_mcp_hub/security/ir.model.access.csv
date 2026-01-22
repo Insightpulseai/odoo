@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mcp_server_admin,ipai.mcp.server admin,model_ipai_mcp_server,group_ipai_mcp_admin,1,1,1,1
-access_mcp_server_user,ipai.mcp.server user,model_ipai_mcp_server,group_ipai_mcp_user,1,0,0,0
-access_mcp_tool_admin,ipai.mcp.tool admin,model_ipai_mcp_tool,group_ipai_mcp_admin,1,1,1,1
-access_mcp_tool_user,ipai.mcp.tool user,model_ipai_mcp_tool,group_ipai_mcp_user,1,0,0,0
-access_mcp_binding_admin,ipai.mcp.binding admin,model_ipai_mcp_binding,group_ipai_mcp_admin,1,1,1,1
-access_mcp_binding_user,ipai.mcp.binding user,model_ipai_mcp_binding,group_ipai_mcp_user,1,0,0,0

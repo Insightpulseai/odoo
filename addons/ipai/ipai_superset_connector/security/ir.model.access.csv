@@ -1,4 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_superset_dashboard_user,ipai.superset.dashboard.user,model_ipai_superset_dashboard,group_superset_user,1,0,0,0
-access_superset_dashboard_manager,ipai.superset.dashboard.manager,model_ipai_superset_dashboard,group_superset_manager,1,1,1,1
-access_superset_audit_manager,ipai.superset.audit.manager,model_ipai_superset_audit,group_superset_manager,1,0,0,0

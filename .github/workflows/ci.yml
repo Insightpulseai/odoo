@@ -131,13 +131,21 @@ jobs:
               for module_dir in $addon_dir/*/; do
                 if [ -d "$module_dir" ]; then
                   MODULE_NAME=$(basename "$module_dir")
-                  if [ ! -f "$module_dir/__manifest__.py" ]; then
-                    echo "::error::Missing __manifest__.py in $MODULE_NAME"
-                    ISSUES=$((ISSUES + 1))
-                  fi
-                  if [ ! -f "$module_dir/__init__.py" ]; then
-                    echo "::error::Missing __init__.py in $MODULE_NAME"
-                    ISSUES=$((ISSUES + 1))
+                  # Skip non-module directories (OCA repos, scripts, etc.)
+                  # Only validate if it looks like a module (has __manifest__.py OR __openerp__.py)
+                  if [ -f "$module_dir/__manifest__.py" ] || [ -f "$module_dir/__openerp__.py" ]; then
+                    # It's a module, validate required files
+                    if [ ! -f "$module_dir/__manifest__.py" ] && [ ! -f "$module_dir/__openerp__.py" ]; then
+                      echo "::error::Missing __manifest__.py or __openerp__.py in $MODULE_NAME"
+                      ISSUES=$((ISSUES + 1))
+                    fi
+                    if [ ! -f "$module_dir/__init__.py" ]; then
+                      echo "::error::Missing __init__.py in $MODULE_NAME"
+                      ISSUES=$((ISSUES + 1))
+                    fi
+                  else
+                    # Not a module, skip validation (likely an OCA repo containing modules)
+                    echo "ℹ️  Skipping $MODULE_NAME (not a module directory)"
                   fi
                 fi
               done

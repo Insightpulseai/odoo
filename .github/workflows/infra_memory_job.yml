@@ -130,14 +130,14 @@ jobs:
           timestamp=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
           git commit -m "docs(infra): update infrastructure knowledge graph and LLM docs
 
-Generated: ${timestamp}
-Workflow: infra_memory_job
-Run ID: ${{ github.run_id }}
+          Generated: ${timestamp}
+          Workflow: infra_memory_job
+          Run ID: ${{ github.run_id }}
 
-Updates:
-- Knowledge graph nodes and edges
-- LLM-friendly documentation
-- Stack relationships and glossary"
+          Updates:
+          - Knowledge graph nodes and edges
+          - LLM-friendly documentation
+          - Stack relationships and glossary"
 
           git push
           echo "✅ Changes committed and pushed"

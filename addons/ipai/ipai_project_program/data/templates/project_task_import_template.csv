@@ -1,6 +1,0 @@
-id,name,project_id/id,stage_id/id,user_id/id,planned_hours,description,sequence,date_deadline
-__import__.task_001,Example Task 1,__import__.project_finance_ppm,ipai_project_program.stage_todo,__import__.user_finance_mgr,4.0,"Example task in To Do stage",10,2026-02-15
-__import__.task_002,Example Task 2,__import__.project_finance_ppm,ipai_project_program.stage_in_preparation,__import__.user_finance_mgr,2.0,"Example task in In Preparation stage",20,2026-02-16
-__import__.task_003,Example Task 3,__import__.project_finance_ppm,ipai_project_program.stage_under_review,__import__.user_finance_sup,3.0,"Example task in Under Review stage",30,2026-02-17
-__import__.task_004,Example Task 4,__import__.project_finance_ppm,ipai_project_program.stage_pending_approval,__import__.user_finance_dir,1.0,"Example task in Pending Approval stage",40,2026-02-18
-__import__.task_005,Example Task 5,__import__.project_finance_ppm,ipai_project_program.stage_done,__import__.user_finance_mgr,2.0,"Example completed task",50,2026-02-10

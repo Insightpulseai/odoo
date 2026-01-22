@@ -1,7 +1,0 @@
-id,name,sequence,fold,description
-ipai_project_program.stage_todo,To Do,10,False,Tasks not yet started
-ipai_project_program.stage_in_preparation,In Preparation,20,False,Data gathering and initial work in progress
-ipai_project_program.stage_under_review,Under Review,30,False,Supervisor review
-ipai_project_program.stage_pending_approval,Pending Approval,40,False,Awaiting Finance Director sign-off
-ipai_project_program.stage_done,Done,50,True,Completed tasks (closing stage)
-ipai_project_program.stage_cancelled,Cancelled,60,True,Cancelled tasks
