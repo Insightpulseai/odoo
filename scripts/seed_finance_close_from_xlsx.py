@@ -63,6 +63,51 @@ TAG_MAP = {
     "WIP": "tag_wip",
 }
 
+# Task code prefix mapping from category to short code
+# Aligns with Supabase Logframe CSV and Odoo Import sheets
+TASK_CODE_MAP = {
+    "Payroll & Personnel": "PAYROLL",
+    "Tax & Provisions": "TAX_PROV",
+    "Rent & Leases": "RENT",
+    "Accruals & Expenses": "ACCRUAL",
+    "Prior Period Review": "PRIOR",
+    "Amortization & Corporate": "AMORT",
+    "Corporate Accruals": "CORP_ACC",
+    "Insurance": "INSURE",
+    "Treasury & Other": "TREASURY",
+    "Regional Reporting": "REGIONAL",
+    "Client Billings": "BILLING",
+    "WIP/OOP Management": "WIP_OOP",
+    "AR Aging - WC": "AR_WC",
+    "CA Liquidations": "CA_LIQ",
+    "AP Aging - WC": "AP_WC",
+    "OOP": "OOP",
+    "Asset & Lease Entries": "ASSET",
+    "Reclassifications": "RECLASS",
+    "VAT & Taxes": "VAT",
+    "Accruals & Assets": "ACC_ASSET",
+    "AP Aging": "AP",
+    "Expense Reclassification": "EXP_REC",
+    "VAT Reporting": "VAT_RPT",
+    "Job Transfers": "JOB_XFER",
+    "Accruals": "ACCRUALS",
+    "WIP": "WIP",
+}
+
+# OCA-compatible stage mapping (external IDs)
+# Aligns with OCA Stage Config sheet in workbook
+STAGE_MAP = {
+    "todo": "ipai_stage_todo",
+    "preparation": "ipai_stage_preparation",
+    "review": "ipai_stage_review",
+    "approval": "ipai_stage_approval",
+    "done": "ipai_stage_done",
+    "cancelled": "ipai_stage_cancelled",
+}
+
+# Category counters for generating unique task codes
+_category_counters: dict[str, int] = {}
+
 
 def duration_to_hours(s) -> float:
     """Convert duration like '1 Day' or '0.5 Day' to hours."""
@@ -130,13 +175,26 @@ def parse_period(val) -> str:
     return str(val).strip()
 
 
-def generate_month_end_tasks(xlsx_path: Path) -> int:
-    """Generate month-end tasks XML from Excel."""
+def generate_task_code(category: str, seq: int) -> str:
+    """Generate a unique task code from category and sequence."""
+    prefix = TASK_CODE_MAP.get(category, "CLOSE")
+    return f"{prefix}_{seq:03d}"
+
+
+def generate_month_end_tasks(xlsx_path: Path) -> tuple[int, list[dict]]:
+    """Generate month-end tasks XML from Excel.
+
+    Returns tuple of (count, task_list) where task_list contains task metadata
+    for CSV export alignment.
+    """
     closing = pd.read_excel(xlsx_path, sheet_name="Closing Task")
 
     # Clean and forward-fill
     closing["Employee Code"] = closing["Employee Code"].ffill()
     closing["Task Category"] = closing["Task Category"].ffill()
+
+    # Reset category counters for task code generation
+    category_counters: dict[str, int] = {}
 
     lines = [
         '<?xml version="1.0" encoding="utf-8"?>',
@@ -144,6 +202,7 @@ def generate_month_end_tasks(xlsx_path: Path) -> int:
         '    <data noupdate="1">',
     ]
     count = 0
+    task_list = []
 
     for i, row in closing.iterrows():
         name = str(row["Detailed Monthly Tasks"]).strip()
@@ -172,15 +231,24 @@ def generate_month_end_tasks(xlsx_path: Path) -> int:
         approval_hours = duration_to_hours(row["Approval"])
         total_hours = prep_hours + review_hours + approval_hours
 
-        tag_ref = TAG_MAP.get(category, "")
-        task_id = f"task_close_{i + 1:02d}_{make_id(name[:30])}"
+        # Generate unique task code
+        category_counters[category] = category_counters.get(category, 0) + 1
+        task_code = generate_task_code(category, category_counters[category])
 
-        desc = f"Category: {category}\\nEmployee Code: {employee_code}\\nReviewed by: {reviewed_by}\\nApproved by: {approved_by}"
+        tag_ref = TAG_MAP.get(category, "")
+        task_id = f"task_close_{count + 1:02d}_{make_id(name[:30])}"
+
+        # Enhanced description with task_code for cross-sheet alignment
+        desc = f"Task Code: {task_code}\\nCategory: {category}\\nEmployee Code: {employee_code}\\nReviewed by: {reviewed_by}\\nApproved by: {approved_by}"
 
         lines.append(f'        <record id="{task_id}" model="project.task">')
         lines.append(f'            <field name="name">{xml_escape(name)}</field>')
         lines.append(
             '            <field name="project_id" ref="project_month_end_template"/>'
+        )
+        # Default stage: preparation (matches workbook OCA Stage Config)
+        lines.append(
+            f'            <field name="stage_id" ref="{STAGE_MAP["preparation"]}"/>'
         )
         if tag_ref:
             lines.append(
@@ -191,6 +259,18 @@ def generate_month_end_tasks(xlsx_path: Path) -> int:
             f'            <field name="description">{xml_escape(desc)}</field>'
         )
         lines.append("        </record>")
+
+        # Store task metadata for CSV export
+        task_list.append({
+            "task_code": task_code,
+            "task_id": task_id,
+            "name": name,
+            "category": category,
+            "employee_code": employee_code,
+            "reviewed_by": reviewed_by,
+            "approved_by": approved_by,
+            "planned_hours": total_hours,
+        })
         count += 1
 
     lines.append("    </data>")
@@ -198,11 +278,25 @@ def generate_month_end_tasks(xlsx_path: Path) -> int:
 
     output_path = OUT_DIR / "tasks_month_end.xml"
     output_path.write_text("\n".join(lines), encoding="utf-8")
-    return count
+
+    # Also generate CSV for Supabase/BI alignment
+    csv_path = OUT_DIR / "tasks_month_end.csv"
+    if task_list:
+        import csv
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=task_list[0].keys())
+            writer.writeheader()
+            writer.writerows(task_list)
+
+    return count, task_list
 
 
-def generate_bir_tasks(xlsx_path: Path) -> int:
-    """Generate BIR tasks XML from Excel."""
+def generate_bir_tasks(xlsx_path: Path) -> tuple[int, list[dict]]:
+    """Generate BIR tasks XML from Excel.
+
+    Returns tuple of (count, task_list) where task_list contains task metadata
+    for CSV export alignment.
+    """
     tax = pd.read_excel(xlsx_path, sheet_name="Tax Filing")
 
     lines = [
@@ -211,6 +305,7 @@ def generate_bir_tasks(xlsx_path: Path) -> int:
         '    <data noupdate="1">',
     ]
     count = 0
+    task_list = []
 
     for i, row in tax.iterrows():
         bir_form = str(row["BIR Form"]).strip() if not pd.isna(row["BIR Form"]) else ""
@@ -221,13 +316,15 @@ def generate_bir_tasks(xlsx_path: Path) -> int:
         deadline = parse_date(row["BIR Filing & Payment Deadline (2026)"])
 
         name = f"{bir_form} - {period}"
-        task_id = f"task_bir_{i + 1:02d}_{make_id(bir_form)}_{make_id(period)}"
+        # Generate task code for BIR forms (e.g., TAX_1601C_001)
+        task_code = f"TAX_{make_id(bir_form).upper()}_{count + 1:03d}"
+        task_id = f"task_bir_{count + 1:02d}_{make_id(bir_form)}_{make_id(period)}"
 
         prep_date = parse_date(row["1. Prep & File Request (Finance Supervisor)"])
         review_date = parse_date(row["2. Report Approval (Senior Finance Manager)"])
         approval_date = parse_date(row["3. Payment Approval (Finance Director)"])
 
-        desc_parts = [f"BIR Form: {bir_form}", f"Period: {period}"]
+        desc_parts = [f"Task Code: {task_code}", f"BIR Form: {bir_form}", f"Period: {period}"]
         if deadline:
             desc_parts.append(f"Deadline: {deadline.isoformat()}")
         if prep_date:
@@ -243,6 +340,10 @@ def generate_bir_tasks(xlsx_path: Path) -> int:
         lines.append(
             '            <field name="project_id" ref="project_bir_tax_filing"/>'
         )
+        # Default stage: preparation
+        lines.append(
+            f'            <field name="stage_id" ref="{STAGE_MAP["preparation"]}"/>'
+        )
         if deadline:
             lines.append(
                 f'            <field name="date_deadline">{deadline.isoformat()}</field>'
@@ -251,6 +352,18 @@ def generate_bir_tasks(xlsx_path: Path) -> int:
             f'            <field name="description">{xml_escape(desc)}</field>'
         )
         lines.append("        </record>")
+
+        # Store task metadata for CSV export
+        task_list.append({
+            "task_code": task_code,
+            "task_id": task_id,
+            "bir_form": bir_form,
+            "period": period,
+            "deadline": deadline.isoformat() if deadline else "",
+            "prep_date": prep_date.isoformat() if prep_date else "",
+            "review_date": review_date.isoformat() if review_date else "",
+            "approval_date": approval_date.isoformat() if approval_date else "",
+        })
         count += 1
 
     lines.append("    </data>")
@@ -258,7 +371,17 @@ def generate_bir_tasks(xlsx_path: Path) -> int:
 
     output_path = OUT_DIR / "tasks_bir.xml"
     output_path.write_text("\n".join(lines), encoding="utf-8")
-    return count
+
+    # Also generate CSV for Supabase/BI alignment
+    csv_path = OUT_DIR / "tasks_bir.csv"
+    if task_list:
+        import csv
+        with open(csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=task_list[0].keys())
+            writer.writeheader()
+            writer.writerows(task_list)
+
+    return count, task_list
 
 
 def main():
@@ -269,6 +392,11 @@ def main():
         default="config/finance/Month-end Closing Task and Tax Filing (7).xlsx",
         help="Path to the Excel file",
     )
+    parser.add_argument(
+        "--validate",
+        action="store_true",
+        help="Run validation checks (mirrors Excel Data Validation sheet)",
+    )
     args = parser.parse_args()
 
     xlsx_path = Path(args.xlsx_path)
@@ -278,17 +406,74 @@ def main():
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
-    month_end_count = generate_month_end_tasks(xlsx_path)
+    month_end_count, month_end_tasks = generate_month_end_tasks(xlsx_path)
     print(
         f"Generated {month_end_count} month-end tasks -> {OUT_DIR / 'tasks_month_end.xml'}"
     )
+    print(f"  CSV export -> {OUT_DIR / 'tasks_month_end.csv'}")
 
-    bir_count = generate_bir_tasks(xlsx_path)
+    bir_count, bir_tasks = generate_bir_tasks(xlsx_path)
     print(f"Generated {bir_count} BIR tasks -> {OUT_DIR / 'tasks_bir.xml'}")
+    print(f"  CSV export -> {OUT_DIR / 'tasks_bir.csv'}")
 
     print(f"\nTotal: {month_end_count + bir_count} tasks")
+
+    if args.validate:
+        print("\n=== Validation Checks ===")
+        validate_seed_data(month_end_tasks, bir_tasks)
+
     print("\nTo install/update the seed module:")
     print("  ./odoo-bin -d <db> -u ipai_finance_close_seed --stop-after-init")
+
+
+def validate_seed_data(month_end_tasks: list[dict], bir_tasks: list[dict]) -> bool:
+    """Validate seed data (mirrors Excel Data Validation sheet checks)."""
+    errors = []
+    warnings = []
+
+    # Check 1: All task codes unique
+    all_codes = [t["task_code"] for t in month_end_tasks] + [t["task_code"] for t in bir_tasks]
+    if len(all_codes) != len(set(all_codes)):
+        duplicates = [c for c in all_codes if all_codes.count(c) > 1]
+        errors.append(f"Duplicate task codes found: {set(duplicates)}")
+    else:
+        print("  [PASS] All task codes unique")
+
+    # Check 2: All task IDs unique
+    all_ids = [t["task_id"] for t in month_end_tasks] + [t["task_id"] for t in bir_tasks]
+    if len(all_ids) != len(set(all_ids)):
+        duplicates = [i for i in all_ids if all_ids.count(i) > 1]
+        errors.append(f"Duplicate task IDs found: {set(duplicates)}")
+    else:
+        print("  [PASS] All task IDs unique")
+
+    # Check 3: BIR deadlines present
+    missing_deadlines = [t for t in bir_tasks if not t.get("deadline")]
+    if missing_deadlines:
+        warnings.append(f"BIR tasks missing deadlines: {len(missing_deadlines)}")
+    else:
+        print("  [PASS] All BIR deadlines present")
+
+    # Check 4: Employee codes valid (known codes from workbook)
+    known_codes = {"RIM", "BOM", "JPAL", "LAS", "JLI", "RMQB", "JAP", "JRMO", "CKVC"}
+    for t in month_end_tasks:
+        code = t.get("employee_code", "")
+        if code and code not in known_codes:
+            warnings.append(f"Unknown employee code: {code} in task {t['task_code']}")
+
+    if warnings:
+        print(f"  [WARN] {len(warnings)} warnings found")
+        for w in warnings[:5]:
+            print(f"    - {w}")
+
+    if errors:
+        print(f"  [FAIL] {len(errors)} errors found")
+        for e in errors:
+            print(f"    - {e}")
+        return False
+
+    print("  [PASS] Validation complete - ready for import")
+    return True
 
 
 if __name__ == "__main__":

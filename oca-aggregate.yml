@@ -38,6 +38,15 @@
     - oca account-financial-tools 18.0
     - oca account-financial-reporting 18.0
 
+    # Tier 3: Project Management (Finance PPM dependency)
+    - oca project 18.0
+
+    # Tier 5: Background Processing (Agent runtime)
+    - oca queue 18.0
+
+    # Tier 6: Reporting Engine
+    - oca reporting-engine 18.0
+
     # Tier 9: Workflow Extensions
     - oca sale-workflow 18.0
     - oca purchase-workflow 18.0
