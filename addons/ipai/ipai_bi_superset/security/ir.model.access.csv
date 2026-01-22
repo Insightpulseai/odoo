@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_superset_instance_admin,ipai.bi.superset.instance admin,model_ipai_bi_superset_instance,group_ipai_bi_admin,1,1,1,1
-access_superset_instance_user,ipai.bi.superset.instance user,model_ipai_bi_superset_instance,group_ipai_bi_user,1,0,0,0
-access_superset_dataset_admin,ipai.bi.superset.dataset admin,model_ipai_bi_superset_dataset,group_ipai_bi_admin,1,1,1,1
-access_superset_dataset_user,ipai.bi.superset.dataset user,model_ipai_bi_superset_dataset,group_ipai_bi_user,1,0,0,0
-access_superset_dashboard_admin,ipai.bi.superset.dashboard admin,model_ipai_bi_superset_dashboard,group_ipai_bi_admin,1,1,1,1
-access_superset_dashboard_user,ipai.bi.superset.dashboard user,model_ipai_bi_superset_dashboard,group_ipai_bi_user,1,0,0,0
