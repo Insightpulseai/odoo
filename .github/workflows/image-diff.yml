@@ -1,0 +1,262 @@
+# =============================================================================
+# GitHub Actions: Docker Image Diff
+# =============================================================================
+# Compares production Odoo image against target/edge build.
+# Generates diff reports for:
+#   - Layer history
+#   - Pip packages
+#   - Odoo addons
+#   - Configuration
+#
+# Triggers:
+#   - Manual workflow dispatch
+#   - After successful build-unified-image runs
+#
+# Outputs:
+#   - Markdown diff report as workflow artifact
+#   - JSON summary for downstream automation
+#   - Optional PR comment with diff summary
+# =============================================================================
+
+name: Docker Image Diff
+
+on:
+  workflow_dispatch:
+    inputs:
+      live_image:
+        description: 'Production/live image to compare'
+        required: true
+        default: 'ghcr.io/jgtolentino/odoo-ce:latest'
+        type: string
+      target_image:
+        description: 'Target/new image to compare against'
+        required: true
+        default: 'ghcr.io/jgtolentino/odoo-ce:edge-standard'
+        type: string
+      add_pr_comment:
+        description: 'Add diff summary as PR comment'
+        required: false
+        default: 'false'
+        type: boolean
+      pr_number:
+        description: 'PR number for comment (if add_pr_comment is true)'
+        required: false
+        type: string
+
+  workflow_run:
+    workflows: ["Build IPAI Odoo Images"]
+    types:
+      - completed
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: jgtolentino/odoo-ce
+
+jobs:
+  # ===========================================================================
+  # Run Image Diff
+  # ===========================================================================
+  diff:
+    name: Compare Images
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+
+    permissions:
+      contents: read
+      packages: read
+      pull-requests: write
+
+    outputs:
+      size_diff_mb: ${{ steps.diff.outputs.size_diff_mb }}
+      pip_added: ${{ steps.diff.outputs.pip_added }}
+      pip_removed: ${{ steps.diff.outputs.pip_removed }}
+
+    steps:
+      # -----------------------------------------------------------------------
+      # Checkout
+      # -----------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # Registry Login
+      # -----------------------------------------------------------------------
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # -----------------------------------------------------------------------
+      # Determine Images
+      # -----------------------------------------------------------------------
+      - name: Determine images to compare
+        id: images
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "live=${{ github.event.inputs.live_image }}" >> $GITHUB_OUTPUT
+            echo "target=${{ github.event.inputs.target_image }}" >> $GITHUB_OUTPUT
+          else
+            # Auto-triggered after build: compare latest vs edge
+            echo "live=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_OUTPUT
+            echo "target=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:edge-standard" >> $GITHUB_OUTPUT
+          fi
+
+      # -----------------------------------------------------------------------
+      # Run Diff Script
+      # -----------------------------------------------------------------------
+      - name: Run image diff
+        id: diff
+        run: |
+          chmod +x ./scripts/ci/docker-image-diff.sh
+
+          OUTPUT_DIR="/tmp/image-diff-${{ github.run_id }}"
+
+          ./scripts/ci/docker-image-diff.sh \
+            "${{ steps.images.outputs.live }}" \
+            "${{ steps.images.outputs.target }}" \
+            "$OUTPUT_DIR"
+
+          # Export outputs for downstream steps
+          if [ -f "$OUTPUT_DIR/summary/diff_summary.json" ]; then
+            SIZE_DIFF=$(jq -r '.size_diff_mb' "$OUTPUT_DIR/summary/diff_summary.json")
+            PIP_ADDED=$(jq -r '.pip_added' "$OUTPUT_DIR/summary/diff_summary.json")
+            PIP_REMOVED=$(jq -r '.pip_removed' "$OUTPUT_DIR/summary/diff_summary.json")
+
+            echo "size_diff_mb=$SIZE_DIFF" >> $GITHUB_OUTPUT
+            echo "pip_added=$PIP_ADDED" >> $GITHUB_OUTPUT
+            echo "pip_removed=$PIP_REMOVED" >> $GITHUB_OUTPUT
+          fi
+
+          echo "output_dir=$OUTPUT_DIR" >> $GITHUB_OUTPUT
+
+      # -----------------------------------------------------------------------
+      # Upload Artifacts
+      # -----------------------------------------------------------------------
+      - name: Upload diff report
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-diff-report-${{ github.run_id }}
+          path: /tmp/image-diff-${{ github.run_id }}/
+          retention-days: 30
+
+      # -----------------------------------------------------------------------
+      # Job Summary
+      # -----------------------------------------------------------------------
+      - name: Write job summary
+        run: |
+          OUTPUT_DIR="/tmp/image-diff-${{ github.run_id }}"
+
+          echo "## Docker Image Diff Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Live Image:** \`${{ steps.images.outputs.live }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Target Image:** \`${{ steps.images.outputs.target }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "$OUTPUT_DIR/summary/diff_summary.json" ]; then
+            echo "### Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Size Difference | ${{ steps.diff.outputs.size_diff_mb }} MB |" >> $GITHUB_STEP_SUMMARY
+            echo "| Pip Packages Added | ${{ steps.diff.outputs.pip_added }} |" >> $GITHUB_STEP_SUMMARY
+            echo "| Pip Packages Removed | ${{ steps.diff.outputs.pip_removed }} |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "### Full Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "$OUTPUT_DIR/summary/DIFF_REPORT.md" ]; then
+            # Include report but limit to avoid huge summaries
+            head -100 "$OUTPUT_DIR/summary/DIFF_REPORT.md" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "_[Truncated - see full artifact for complete report]_" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      # -----------------------------------------------------------------------
+      # Optional: PR Comment
+      # -----------------------------------------------------------------------
+      - name: Add PR comment
+        if: |
+          github.event_name == 'workflow_dispatch' &&
+          github.event.inputs.add_pr_comment == 'true' &&
+          github.event.inputs.pr_number != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const outputDir = '/tmp/image-diff-${{ github.run_id }}';
+            const summaryPath = `${outputDir}/summary/DIFF_REPORT.md`;
+
+            let body = '## Docker Image Diff Results\n\n';
+            body += `**Live Image:** \`${{ steps.images.outputs.live }}\`\n`;
+            body += `**Target Image:** \`${{ steps.images.outputs.target }}\`\n\n`;
+            body += `| Metric | Value |\n`;
+            body += `|--------|-------|\n`;
+            body += `| Size Difference | ${{ steps.diff.outputs.size_diff_mb }} MB |\n`;
+            body += `| Pip Packages Added | ${{ steps.diff.outputs.pip_added }} |\n`;
+            body += `| Pip Packages Removed | ${{ steps.diff.outputs.pip_removed }} |\n\n`;
+
+            if (fs.existsSync(summaryPath)) {
+              const report = fs.readFileSync(summaryPath, 'utf8');
+              // Truncate if too long
+              const maxLen = 4000;
+              if (report.length > maxLen) {
+                body += '<details><summary>Full Diff Report (click to expand)</summary>\n\n';
+                body += report.substring(0, maxLen);
+                body += '\n\n_[Truncated]_\n</details>';
+              } else {
+                body += '<details><summary>Full Diff Report (click to expand)</summary>\n\n';
+                body += report;
+                body += '\n</details>';
+              }
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: parseInt('${{ github.event.inputs.pr_number }}'),
+              body: body
+            });
+
+  # ===========================================================================
+  # Alert on Large Changes
+  # ===========================================================================
+  alert:
+    name: Check Thresholds
+    runs-on: ubuntu-latest
+    needs: diff
+    if: |
+      needs.diff.outputs.size_diff_mb != '' &&
+      (needs.diff.outputs.size_diff_mb > 100 || needs.diff.outputs.pip_removed > 10)
+
+    steps:
+      - name: Alert on large image changes
+        run: |
+          echo "## ⚠️ Large Image Changes Detected" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The following thresholds were exceeded:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          SIZE_DIFF="${{ needs.diff.outputs.size_diff_mb }}"
+          PIP_REMOVED="${{ needs.diff.outputs.pip_removed }}"
+
+          if [ "$SIZE_DIFF" -gt 100 ]; then
+            echo "- **Size increase:** ${SIZE_DIFF}MB (threshold: 100MB)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "$PIP_REMOVED" -gt 10 ]; then
+            echo "- **Pip packages removed:** ${PIP_REMOVED} (threshold: 10)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Please review the diff report before deploying." >> $GITHUB_STEP_SUMMARY
+
+          # Optionally fail the workflow on large changes
+          # exit 1
