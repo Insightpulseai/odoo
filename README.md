@@ -297,4 +297,4 @@ If CI fails, reproduce locally by running the same generator commands + `git dif
 ## Support
 
 - Issues: [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
-- Docs: https://docs.insightpulseai.net/erp
+- Docs: https://jgtolentino.github.io/odoo-ce/
