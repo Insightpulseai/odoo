@@ -2,14 +2,19 @@
 # =============================================================================
 # Full Supabase Verification: Migrations + Edge Functions + Vault Secrets
 # =============================================================================
+# Credentials are auto-loaded from .env.local (run setup_credentials.sh first)
+#
 # Usage:
-#   export POSTGRES_URL="postgresql://..."
-#   export SUPABASE_URL="https://spdtwktxdalcfigzeqrz.supabase.co"
-#   export SUPABASE_SERVICE_ROLE_KEY="..."
 #   ./scripts/verify_supabase_full.sh
 # =============================================================================
 
 set -euo pipefail
+
+# Auto-load credentials from .env.local
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/lib/load_env.sh" ]; then
+    source "$SCRIPT_DIR/lib/load_env.sh"
+fi
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
