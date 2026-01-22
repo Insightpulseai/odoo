@@ -11,3 +11,5 @@ from . import product_template
 from . import purchase_order
 from . import res_config_settings
 from . import enterprise_bridge
+from . import hr_expense_integration
+from . import maintenance_equipment_integration
