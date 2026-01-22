@@ -1,0 +1,82 @@
+{
+  "$schema": "https://claude.ai/schemas/settings.json",
+  "description": "Web session settings - full CLI parity for Codespaces/cloud sandbox",
+
+  "allowedTools": [
+    "Edit",
+    "Read",
+    "Write",
+    "Glob",
+    "Grep",
+    "Bash(*)",
+    "WebFetch",
+    "WebSearch",
+    "Task",
+    "NotebookEdit"
+  ],
+
+  "trustedCommands": [
+    "git *",
+    "gh *",
+    "supabase *",
+    "docker *",
+    "docker-compose *",
+    "docker compose *",
+    "npm *",
+    "pnpm *",
+    "npx *",
+    "node *",
+    "python *",
+    "python3 *",
+    "pip *",
+    "pip3 *",
+    "pipx *",
+    "make *",
+    "curl *",
+    "wget *",
+    "psql *",
+    "pg_dump *",
+    "pg_restore *",
+    "./scripts/*"
+  ],
+
+  "agentCommands": {
+    "plan": ".claude/commands/plan.md",
+    "implement": ".claude/commands/implement.md",
+    "verify": ".claude/commands/verify.md",
+    "ship": ".claude/commands/ship.md",
+    "fix-github-issue": ".claude/commands/fix-github-issue.md",
+    "dev-server": ".claude/commands/dev-server.md",
+    "prototype-module": ".claude/commands/prototype-module.md",
+    "session-start": ".claude/hooks/SessionStart.md"
+  },
+
+  "mcpServers": {
+    "enabled": ["supabase", "github", "odoo-erp", "memory", "agent-coordination"],
+    "autoConnect": true
+  },
+
+  "environment": {
+    "SUPABASE_PROJECT_REF": "spdtwktxdalcfigzeqrz",
+    "SUPABASE_URL": "https://spdtwktxdalcfigzeqrz.supabase.co"
+  },
+
+  "capabilities": {
+    "webSearch": true,
+    "webFetch": true,
+    "fileSystem": true,
+    "shellExecution": true,
+    "backgroundTasks": true,
+    "parallelTools": true
+  },
+
+  "autoActions": {
+    "onSessionStart": [
+      "source .env.local 2>/dev/null || true",
+      "superclaude doctor 2>/dev/null || true"
+    ],
+    "onCommit": [
+      "./scripts/repo_health.sh"
+    ]
+  }
+}
