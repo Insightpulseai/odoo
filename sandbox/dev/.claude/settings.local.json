@@ -89,7 +89,9 @@
       "Bash(for wf in .github/workflows/{erd-graphviz,erd-docs,erd-schemaspy,odoo-schema-pipeline,seed-odoo-finance,n8n-orchestrator}.yml)",
       "Bash(do echo \"=== $wf ===\" grep -A5 \"^on:\" \"$wf\")",
       "Bash(for f in erd-graphviz erd-docs erd-schemaspy odoo-schema-pipeline seed-odoo-finance n8n-orchestrator)",
-      "Bash(do grep \"uses:\" .github/workflows/$f.yml done)"
+      "Bash(do grep \"uses:\" .github/workflows/$f.yml done)",
+      "Bash(python scripts/seed_finance_close_from_xlsx.py:*)",
+      "Bash(gh run download:*)"
     ]
   }
 }

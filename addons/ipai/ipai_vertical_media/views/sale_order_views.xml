@@ -81,7 +81,7 @@
     <record id="action_ces_orders" model="ir.actions.act_window">
         <field name="name">CES Orders</field>
         <field name="res_model">sale.order</field>
-        <field name="view_mode">tree,kanban,form,pivot,graph</field>
+        <field name="view_mode">list,kanban,form,pivot,graph</field>
         <field name="domain">[('ces_campaign_id', '!=', False)]</field>
         <field name="context">{'search_default_ces_orders': 1}</field>
     </record>

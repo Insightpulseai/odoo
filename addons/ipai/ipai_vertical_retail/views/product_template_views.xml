@@ -86,7 +86,7 @@
     <record id="action_scout_products" model="ir.actions.act_window">
         <field name="name">Scout Products</field>
         <field name="res_model">product.template</field>
-        <field name="view_mode">tree,kanban,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="domain">[('scout_category', '!=', False)]</field>
         <field name="context">{'search_default_focus_skus': 0}</field>
         <field name="help" type="html">
