@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 015f8768b5b09906b8f174ebe52fe5e7fd756d17
+> Commit: 86190705b4277418fb27af579ce0febe2182687f
 
 ```
 .
@@ -20,6 +20,8 @@
 │   │   ├── prototype-module.md
 │   │   ├── ship.md
 │   │   └── verify.md
+│   ├── hooks
+│   │   └── SessionStart.md
 │   ├── superclaude
 │   │   └── skills
 │   │       └── finance
@@ -27,7 +29,8 @@
 │   ├── project_memory.db
 │   ├── query_memory.py
 │   ├── settings.json
-│   └── settings.local.json
+│   ├── settings.local.json
+│   └── settings.web.json
 ├── .continue
 │   ├── prompts
 │   │   ├── implement.md
@@ -42,7 +45,6 @@
 │   └── config.json
 ├── .devcontainer
 │   ├── devcontainer.json
-│   ├── post-create.sh
 │   └── postCreate.sh
 ├── .githooks
 │   └── pre-commit
@@ -66,6 +68,7 @@
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
 │   │   ├── canonical-gate.yml
+│   │   ├── cd-production.yml
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
 │   │   ├── compose-topology-guard.yml
@@ -1527,8 +1530,10 @@
 │   │   │   └── IMPLEMENTATION.md
 │   │   ├── 20260120-mailgun
 │   │   │   └── VERIFICATION_CHECKLIST.md
-│   │   └── 20260121-0000
-│   │       └── docker-image-diff
+│   │   ├── 20260121-0000
+│   │   │   └── docker-image-diff
+│   │   └── 20260122-1200
+│   │       └── cd-pipeline
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2735,6 +2740,8 @@
 │   │   ├── create_delta_tables_trino.sql
 │   │   ├── mirror_gold_to_supabase.py
 │   │   └── validate_contracts.py
+│   ├── lib
+│   │   └── load_env.sh
 │   ├── mailgun
 │   │   ├── README.md
 │   │   ├── send_test_email.sh
@@ -2846,9 +2853,11 @@
 │   ├── deploy_odoo_smart.sh
 │   ├── deploy_odoo_upgrade.sh
 │   ├── deploy_prod.sh
+│   ├── deploy_production.sh
 │   ├── deploy_with_credentials.sh
 │   ├── deploy_workos_prod.sh
 │   ├── deployment-checklist.sh
+│   ├── diagnose_prod.sh
 │   ├── diagnose_smtp.sh
 │   ├── discover_digitalocean_infra.sh
 │   ├── discover_docker_infra.sh
@@ -2959,6 +2968,7 @@
 │   ├── seed_finance_ppm_stages.py
 │   ├── setup-mailgun-secrets.sh
 │   ├── setup_afc_rag.sh
+│   ├── setup_credentials.sh
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
@@ -3012,8 +3022,10 @@
 │   ├── verify_phase3.py
 │   ├── verify_smtp.py
 │   ├── verify_supabase_deploy.sh
+│   ├── verify_supabase_full.sh
 │   ├── verify_web_assets.sh
 │   ├── web_sandbox_verify.sh
+│   ├── web_session_init.sh
 │   ├── whats_deployed.py
 │   ├── whats_deployed.sh
 │   ├── wiki_sync.sh
@@ -3867,15 +3879,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1006 directories, 2856 files
+1010 directories, 2864 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1199 |
-| Files | 3771 |
+| Directories | 1203 |
+| Files | 3781 |
 | Python files | 592 |
 | XML files | 250 |
-| Markdown files | 995 |
+| Markdown files | 998 |
