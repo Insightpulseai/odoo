@@ -8,7 +8,8 @@ Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI cu
 - Finance month-end close and PH BIR tax filing task automation (Finance PPM)
 - Canonical, versioned data-model artifacts (DBML / ERD / ORM maps) with CI-enforced drift gates
 
-Production URL: https://erp.insightpulseai.net
+**Production URL:** https://erp.insightpulseai.net
+**Documentation:** https://jgtolentino.github.io/odoo-ce/
 
 ---
 
