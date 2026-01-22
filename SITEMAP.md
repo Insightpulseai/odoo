@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 504bfb8f1d6c3c8f0f704049c58c1807962bd169
+> Commit: 44d3da297f2b6d26408b6425cd8a7e88ceb7a9f5
 
 ## 📚 Documentation
 
@@ -336,6 +336,7 @@
 | [Multi-Tenant Platform Architecture](docs/TENANT_ARCHITECTURE.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [Deterministic Troubleshooting Framework for Odoo CE 18.0](docs/TROUBLESHOOTING.md) | docs |
+| [UI/Theme Module Consolidation Proposal](docs/UI_THEME_CONSOLIDATION_PROPOSAL.md) | docs |
 | [Verified Memory System](docs/VERIFIED_MEMORY.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
@@ -428,7 +429,10 @@
 | [Supabase-Driven Odoo Seeding Pattern](docs/infra/SUPABASE_ODOO_SEED_PATTERN.md) | docs/infra |
 | [Vercel AI Gateway Integration Strategy](docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md) | docs/infra |
 | [Vercel Integrations](docs/infra/VERCEL_INTEGRATIONS.md) | docs/infra |
+| [IPAI Event Taxonomy - Expense, Equipment, Finance PPM](docs/integration/EVENT_TAXONOMY.md) | docs/integration |
 | [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
+| [IPAI Integration Bus - Quick Start (5 Minutes)](docs/integration/QUICK_START.md) | docs/integration |
+| [IPAI Integration Bus - Complete Implementation Guide](docs/integration/README.md) | docs/integration |
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
 | [Mattermost Integration](docs/integrations/MATTERMOST.md) | docs/integrations |
@@ -1036,7 +1040,9 @@
 | [ipai_design_system](./addons/ipai/ipai_design_system) | ✅ | Unified design tokens for IPAI stack (Fluent UI v9 + Copilot) |
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
 | [ipai_enterprise_bridge](./addons/ipai/ipai_enterprise_bridge) | ✅ |  |
+| [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ⚠️ | Missing manifest |
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
+| [ipai_fluent_web_365_copilot](./addons/ipai/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_copilot](./addons/ipai/ipai_theme_copilot) | ✅ |  |
