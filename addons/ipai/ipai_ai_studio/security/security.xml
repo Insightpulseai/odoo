@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-  <record id="group_ipai_ai_studio_admin" model="res.groups">
-    <field name="name">AI Studio Admin</field>
-    <field name="category_id" ref="base.module_category_hidden"/>
-  </record>
-</odoo>

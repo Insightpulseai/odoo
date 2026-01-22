@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mattermost_channel_user,ipai.mattermost.channel.user,model_ipai_mattermost_channel,ipai_integrations.group_integration_user,1,0,0,0
-access_mattermost_channel_manager,ipai.mattermost.channel.manager,model_ipai_mattermost_channel,ipai_integrations.group_integration_manager,1,1,1,1
-access_mattermost_message_user,ipai.mattermost.message.user,model_ipai_mattermost_message,ipai_integrations.group_integration_user,1,0,0,0
-access_mattermost_message_manager,ipai.mattermost.message.manager,model_ipai_mattermost_message,ipai_integrations.group_integration_manager,1,1,1,0

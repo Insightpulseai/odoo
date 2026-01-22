@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <!-- Menu item under Project -->
-    <menuitem id="menu_ipai_project_profitability"
-              name="Profitability (IPAI)"
-              parent="project.menu_main_pm"
-              action="action_ipai_project_profitability"
-              sequence="36"/>
-</odoo>

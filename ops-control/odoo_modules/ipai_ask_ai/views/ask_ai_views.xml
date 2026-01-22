@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Client Action for the AI Copilot Panel -->
+    <record id="action_ask_ai_panel" model="ir.actions.client">
+        <field name="name">AI Copilot</field>
+        <field name="tag">ask_ai_panel</field>
+        <field name="target">current</field>
+    </record>
+
+    <!-- Conversation Tree View -->
+    <record id="view_ask_ai_conversation_tree" model="ir.ui.view">
+        <field name="name">ask.ai.conversation.tree</field>
+        <field name="model">ask.ai.conversation</field>
+        <field name="arch" type="xml">
+            <tree string="AI Conversations">
+                <field name="title"/>
+                <field name="user_id"/>
+                <field name="message_count"/>
+                <field name="mode"/>
+                <field name="context_model"/>
+                <field name="last_message_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Conversation Form View -->
+    <record id="view_ask_ai_conversation_form" model="ir.ui.view">
+        <field name="name">ask.ai.conversation.form</field>
+        <field name="model">ask.ai.conversation</field>
+        <field name="arch" type="xml">
+            <form string="AI Conversation">
+                <header>
+                    <button name="action_archive" string="Archive"
+                            type="object" class="btn-secondary"
+                            invisible="state == 'archived'"/>
+                    <button name="action_unarchive" string="Unarchive"
+                            type="object" class="btn-secondary"
+                            invisible="state == 'active'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="title"/>
+                            <field name="user_id"/>
+                            <field name="mode"/>
+                        </group>
+                        <group>
+                            <field name="context_model"/>
+                            <field name="context_res_id"/>
+                            <field name="context_view_type"/>
+                            <field name="context_action_id"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Messages" name="messages">
+                            <field name="message_ids">
+                                <tree string="Messages" create="false" delete="false">
+                                    <field name="create_date"/>
+                                    <field name="role"/>
+                                    <field name="content" widget="text"/>
+                                    <field name="has_actions"/>
+                                    <field name="has_citations"/>
+                                    <field name="action_executed"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Message Form View -->
+    <record id="view_ask_ai_message_form" model="ir.ui.view">
+        <field name="name">ask.ai.message.form</field>
+        <field name="model">ask.ai.message</field>
+        <field name="arch" type="xml">
+            <form string="AI Message">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="conversation_id"/>
+                            <field name="role"/>
+                            <field name="create_date"/>
+                        </group>
+                        <group>
+                            <field name="has_actions"/>
+                            <field name="has_citations"/>
+                            <field name="action_executed"/>
+                            <field name="tokens_prompt"/>
+                            <field name="tokens_completion"/>
+                        </group>
+                    </group>
+                    <group string="Content">
+                        <field name="content" nolabel="1"/>
+                    </group>
+                    <group string="Metadata (JSON)" invisible="not metadata">
+                        <field name="metadata" nolabel="1" widget="text"/>
+                    </group>
+                    <group string="Action Result" invisible="not action_result">
+                        <field name="action_result" nolabel="1" widget="text"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Admin Menu Items -->
+    <menuitem id="menu_ask_ai_root"
+              name="AI Copilot"
+              web_icon="ipai_ask_ai,static/description/icon.png"
+              groups="group_ask_ai_admin"
+              sequence="100"/>
+
+    <menuitem id="menu_ask_ai_conversations"
+              name="Conversations"
+              parent="menu_ask_ai_root"
+              action="action_ask_ai_conversation_list"
+              sequence="10"/>
+
+    <record id="action_ask_ai_conversation_list" model="ir.actions.act_window">
+        <field name="name">AI Conversations</field>
+        <field name="res_model">ask.ai.conversation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'active')]</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_ask_ai_conversation_search" model="ir.ui.view">
+        <field name="name">ask.ai.conversation.search</field>
+        <field name="model">ask.ai.conversation</field>
+        <field name="arch" type="xml">
+            <search string="Search Conversations">
+                <field name="title"/>
+                <field name="user_id"/>
+                <field name="context_model"/>
+                <filter name="filter_active" string="Active"
+                        domain="[('state', '=', 'active')]"/>
+                <filter name="filter_archived" string="Archived"
+                        domain="[('state', '=', 'archived')]"/>
+                <separator/>
+                <filter name="filter_ask" string="Ask Mode"
+                        domain="[('mode', '=', 'ask')]"/>
+                <filter name="filter_do" string="Do Mode"
+                        domain="[('mode', '=', 'do')]"/>
+                <filter name="filter_explain" string="Explain Mode"
+                        domain="[('mode', '=', 'explain')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_user" string="User"
+                            context="{'group_by': 'user_id'}"/>
+                    <filter name="group_mode" string="Mode"
+                            context="{'group_by': 'mode'}"/>
+                    <filter name="group_model" string="Context Model"
+                            context="{'group_by': 'context_model'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>
