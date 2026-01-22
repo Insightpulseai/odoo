@@ -3,10 +3,10 @@
 [![odoo-ce-ci](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml/badge.svg)](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml)
 
 Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
-- PH Expense & Travel (Concur replacement)
-- Equipment booking (Cheqroom parity)
-- Finance month-end close + PH tax filing task automation
-- Canonical, versioned data-model artifacts (DBML/ERD/ORM maps) with CI drift gates
+- PH expense & travel management
+- Equipment booking & inventory
+- Finance month-end close and PH BIR tax filing task automation (Finance PPM)
+- Canonical, versioned data-model artifacts (DBML / ERD / ORM maps) with CI-enforced drift gates
 
 Production URL: https://erp.insightpulseai.net
 
