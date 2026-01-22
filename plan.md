@@ -101,8 +101,7 @@ Aligned PRD: specs/002-odoo-expense-equipment-mvp.prd.md
 - Implement additional CI checks:
   - Search for `odoo.com` and known Enterprise markers.
 - Wire help links to InsightPulse docs:
-  - `docs.insightpulseai.net/erp/expense`
-  - `docs.insightpulseai.net/erp/equipment`
+  - `jgtolentino.github.io/odoo-ce/`
 
 **Exit criteria:**
 
