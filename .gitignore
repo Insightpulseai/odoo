@@ -189,3 +189,5 @@ docs/incidents/*
 
 # OCA local clones (dev-only, not committed)
 sandbox/dev/oca-addons/
+.env.local
+!scripts/lib/
