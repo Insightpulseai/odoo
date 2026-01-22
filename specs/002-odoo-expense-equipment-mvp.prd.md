@@ -69,7 +69,7 @@ This PRD defines the **MVP feature set** and constraints, GitHub Spec-Kit style,
    * All environments accessible via:
 
      * `https://erp.insightpulseai.net` (primary)
-     * Additional sub-domains if needed: `https://docs.insightpulseai.net/erp`, etc.
+     * Additional sub-domains if needed: `https://jgtolentino.github.io/odoo-ce/`, etc.
    * No outbound links that confuse users into thinking odoo.com is the provider.
 
 ### 2.2 Non-Goals (MVP)
@@ -255,7 +255,7 @@ This PRD defines the **MVP feature set** and constraints, GitHub Spec-Kit style,
    * Any `href` or redirect to `*.odoo.com` must be:
 
      * Removed, or
-     * Repointed to `https://docs.insightpulseai.net/erp` or specific OCA docs.
+     * Repointed to `https://jgtolentino.github.io/odoo-ce/` or specific OCA docs.
 
 4. **No IAP Price / Credit Screens**
 
@@ -284,7 +284,7 @@ This PRD defines the **MVP feature set** and constraints, GitHub Spec-Kit style,
    * Production ERP: `https://erp.insightpulseai.net`
    * Optional:
 
-     * Docs: `https://docs.insightpulseai.net/erp`
+     * Docs: `https://jgtolentino.github.io/odoo-ce/`
      * API: `https://api.insightpulseai.net/erp` (if exposed later).
 
 2. **Branding**
@@ -300,8 +300,7 @@ This PRD defines the **MVP feature set** and constraints, GitHub Spec-Kit style,
 
    * Replace "Documentation" / "Support" menu items with:
 
-     * `docs.insightpulseai.net/erp/expense`
-     * `docs.insightpulseai.net/erp/equipment`
+     * `jgtolentino.github.io/odoo-ce/`
      * or direct OCA docs pages for modules in use.
 
 ---

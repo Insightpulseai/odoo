@@ -1,0 +1,235 @@
+# IPAI Dev Workspace
+# Unified development stack: Odoo + Superset + n8n + MCP Gateway
+#
+# Usage:
+#   docker compose -f docker-compose.dev.yml up -d
+#   docker compose -f docker-compose.dev.yml logs -f odoo
+#
+# Endpoints:
+#   - Odoo:     http://localhost:8069
+#   - Superset: http://localhost:8088 (admin/admin)
+#   - n8n:      http://localhost:5678
+#   - MCP:      http://localhost:3333 (placeholder)
+#   - Postgres: localhost:5432 (dev/dev)
+#   - Redis:    localhost:6379
+
+services:
+  # ===========================================
+  # DATABASE LAYER
+  # ===========================================
+  postgres:
+    image: postgres:16
+    container_name: ipai-postgres-dev
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+      POSTGRES_DB: dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./dev/postgres-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: ipai-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  # ===========================================
+  # ODOO (System of Record)
+  # ===========================================
+  odoo:
+    image: odoo:18
+    container_name: ipai-odoo-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: dev
+      PASSWORD: dev
+    ports:
+      - "8069:8069"
+      - "8072:8072"  # Longpolling
+    volumes:
+      # Custom addons for hot-reload development
+      - ./addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons/OCA:/mnt/extra-addons/OCA:ro
+      # Odoo data
+      - odoo_data:/var/lib/odoo
+      - odoo_addons:/mnt/extra-addons/custom
+    command: >
+      odoo
+      --db_host=postgres --db_port=5432 --db_user=dev --db_password=dev
+      --database=odoo_dev
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/OCA,/mnt/extra-addons/custom
+      --dev=reload,qweb,werkzeug,xml
+      --log-level=info
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  # ===========================================
+  # SUPERSET (BI & Analytics)
+  # ===========================================
+  superset:
+    image: apache/superset:latest
+    container_name: ipai-superset-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      SUPERSET_ENV: development
+      SUPERSET_CONFIG_PATH: /app/pythonpath/superset_config.py
+      SUPERSET_SECRET_KEY: dev-secret-key-change-in-prod
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://dev:dev@postgres:5432/superset
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./dev/superset/superset_config.py:/app/pythonpath/superset_config.py:ro
+      - superset_home:/app/superset_home
+    command: >
+      /bin/bash -lc "
+      superset db upgrade &&
+      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password admin || true &&
+      superset init &&
+      superset run -p 8088 -h 0.0.0.0 --with-threads --reload --debugger
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-sf", "http://localhost:8088/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+    restart: unless-stopped
+
+  # ===========================================
+  # N8N (Workflow Automation)
+  # ===========================================
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: ipai-n8n-dev
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=development
+      - WEBHOOK_URL=http://localhost:5678/
+      - GENERIC_TIMEZONE=Asia/Manila
+      # Database
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=postgres
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=dev
+      - DB_POSTGRESDB_USER=dev
+      - DB_POSTGRESDB_PASSWORD=dev
+      - DB_POSTGRESDB_SCHEMA=n8n
+      # Security
+      - N8N_BASIC_AUTH_ACTIVE=true
+      - N8N_BASIC_AUTH_USER=admin
+      - N8N_BASIC_AUTH_PASSWORD=admin
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n:/home/node/workflows:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:5678/healthz || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  # ===========================================
+  # MCP GATEWAY (Model Context Protocol)
+  # ===========================================
+  mcp_gateway:
+    image: node:20-alpine
+    container_name: ipai-mcp-dev
+    working_dir: /app
+    volumes:
+      - ./mcp:/app:ro
+      - mcp_modules:/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - MCP_PORT=3333
+      - ODOO_URL=http://odoo:8069
+      - SUPERSET_URL=http://superset:8088
+      - N8N_URL=http://n8n:5678
+      - POSTGRES_URL=postgresql://dev:dev@postgres:5432/odoo_dev
+    ports:
+      - "3333:3333"
+    command: >
+      sh -c "
+      echo 'MCP Gateway placeholder - replace with actual server' &&
+      node -e \"
+        const http = require('http');
+        const server = http.createServer((req, res) => {
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          res.end(JSON.stringify({
+            status: 'ok',
+            service: 'MCP Gateway',
+            endpoints: {
+              odoo: process.env.ODOO_URL,
+              superset: process.env.SUPERSET_URL,
+              n8n: process.env.N8N_URL
+            }
+          }));
+        });
+        server.listen(3333, '0.0.0.0', () => console.log('MCP Gateway listening on :3333'));
+      \"
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3333/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+    name: ipai-dev-pgdata
+  redis_data:
+    name: ipai-dev-redis
+  odoo_data:
+    name: ipai-dev-odoo-data
+  odoo_addons:
+    name: ipai-dev-odoo-addons
+  superset_home:
+    name: ipai-dev-superset-home
+  n8n_data:
+    name: ipai-dev-n8n-data
+  mcp_modules:
+    name: ipai-dev-mcp-modules
+
+networks:
+  default:
+    name: ipai-dev-network
