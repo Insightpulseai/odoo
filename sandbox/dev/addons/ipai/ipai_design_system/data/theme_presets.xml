@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!-- IPAI Design System Theme Presets -->
+
+    <!-- Fluent 2 Theme Preset -->
+    <record id="ipai_theme_preset_fluent2" model="ir.config_parameter">
+        <field name="key">ipai_design_system.theme.fluent2.primary_color</field>
+        <field name="value">#0078d4</field>
+    </record>
+
+    <!-- TBWA Theme Preset -->
+    <record id="ipai_theme_preset_tbwa" model="ir.config_parameter">
+        <field name="key">ipai_design_system.theme.tbwa.primary_color</field>
+        <field name="value">#d10000</field>
+    </record>
+
+    <!-- Copilot Theme Preset -->
+    <record id="ipai_theme_preset_copilot" model="ir.config_parameter">
+        <field name="key">ipai_design_system.theme.copilot.primary_color</field>
+        <field name="value">#8661c5</field>
+    </record>
+
+    <!-- AI/UX Theme Preset -->
+    <record id="ipai_theme_preset_aiux" model="ir.config_parameter">
+        <field name="key">ipai_design_system.theme.aiux.primary_color</field>
+        <field name="value">#00d4aa</field>
+    </record>
+</odoo>

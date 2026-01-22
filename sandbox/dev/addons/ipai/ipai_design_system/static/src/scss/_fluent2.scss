@@ -1,0 +1,55 @@
+// IPAI Design System - Fluent 2 Theme
+// Microsoft Fluent Design System 2.0 styling
+
+// Fluent 2 Color Overrides
+$primary-color: #0078d4;  // Microsoft Blue
+$secondary-color: #8661c5; // Microsoft Purple
+
+// Fluent 2 Typography
+$font-family-base: "Segoe UI", "Segoe UI Web (West European)", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+
+// Fluent 2 Border Radius
+$border-radius-base: 4px;
+$border-radius-lg: 8px;
+
+// Fluent 2 Shadows (elevation)
+$box-shadow-sm: 0 1.6px 3.6px rgba(0, 0, 0, 0.132), 0 0.3px 0.9px rgba(0, 0, 0, 0.108);
+$box-shadow-base: 0 3.2px 7.2px rgba(0, 0, 0, 0.132), 0 0.6px 1.8px rgba(0, 0, 0, 0.108);
+$box-shadow-lg: 0 6.4px 14.4px rgba(0, 0, 0, 0.132), 0 1.2px 3.6px rgba(0, 0, 0, 0.108);
+
+// Fluent 2 Component Styles
+.fluent2-button {
+    border-radius: $border-radius-base;
+    padding: $spacing-sm $spacing-md;
+    font-family: $font-family-base;
+    box-shadow: $box-shadow-sm;
+    transition: all 0.1s ease-in-out;
+
+    &:hover {
+        box-shadow: $box-shadow-base;
+    }
+
+    &:active {
+        box-shadow: none;
+    }
+}
+
+.fluent2-card {
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $box-shadow-base;
+    background-color: #ffffff;
+}
+
+.fluent2-input {
+    border-radius: $border-radius-base;
+    border: 1px solid #8a8886;
+    padding: $spacing-sm;
+    font-family: $font-family-base;
+
+    &:focus {
+        border-color: $primary-color;
+        outline: none;
+        box-shadow: 0 0 0 1px $primary-color;
+    }
+}
