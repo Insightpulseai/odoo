@@ -1,0 +1,44 @@
+// IPAI Design System - Design Tokens (Foundation Layer)
+// Base design tokens shared by all themes
+
+// Color System
+$primary-color: #0078d4 !default;
+$secondary-color: #6c757d !default;
+$success-color: #28a745 !default;
+$danger-color: #dc3545 !default;
+$warning-color: #ffc107 !default;
+$info-color: #17a2b8 !default;
+
+// Spacing System
+$spacing-unit: 8px !default;
+$spacing-xs: $spacing-unit * 0.5;  // 4px
+$spacing-sm: $spacing-unit;        // 8px
+$spacing-md: $spacing-unit * 2;    // 16px
+$spacing-lg: $spacing-unit * 3;    // 24px
+$spacing-xl: $spacing-unit * 4;    // 32px
+
+// Typography
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-size-base: 14px !default;
+$font-size-sm: 12px !default;
+$font-size-lg: 16px !default;
+$line-height-base: 1.5 !default;
+
+// Border Radius
+$border-radius-base: 4px !default;
+$border-radius-sm: 2px !default;
+$border-radius-lg: 8px !default;
+
+// Shadows
+$box-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1) !default;
+$box-shadow-base: 0 2px 4px rgba(0, 0, 0, 0.15) !default;
+$box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.2) !default;
+
+// Z-Index System
+$z-index-dropdown: 1000 !default;
+$z-index-sticky: 1020 !default;
+$z-index-fixed: 1030 !default;
+$z-index-modal-backdrop: 1040 !default;
+$z-index-modal: 1050 !default;
+$z-index-popover: 1060 !default;
+$z-index-tooltip: 1070 !default;

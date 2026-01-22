@@ -1,0 +1,49 @@
+// IPAI Design System - TBWA Corporate Theme
+// TBWA branding overrides
+
+// TBWA Color Overrides
+$primary-color: #d10000;  // TBWA Red
+$secondary-color: #000000; // TBWA Black
+
+// TBWA Typography
+$font-family-base: "Helvetica Neue", Helvetica, Arial, sans-serif;
+$font-weight-bold: 700;
+
+// TBWA specific styling
+.tbwa-header {
+    background-color: $primary-color;
+    color: #ffffff;
+    padding: $spacing-md;
+    font-family: $font-family-base;
+}
+
+.tbwa-button {
+    background-color: $primary-color;
+    color: #ffffff;
+    border: none;
+    border-radius: $border-radius-base;
+    padding: $spacing-sm $spacing-lg;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+    }
+
+    &:active {
+        background-color: darken($primary-color, 20%);
+    }
+}
+
+.tbwa-card {
+    border: 2px solid $primary-color;
+    border-radius: $border-radius-base;
+    padding: $spacing-lg;
+    background-color: #ffffff;
+}
+
+.tbwa-accent {
+    color: $primary-color;
+    font-weight: $font-weight-bold;
+}

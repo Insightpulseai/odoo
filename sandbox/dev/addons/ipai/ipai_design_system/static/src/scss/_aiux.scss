@@ -1,0 +1,82 @@
+// IPAI Design System - AI/UX Hybrid Theme
+// Modern AI-enhanced UX styling
+
+// AI/UX Color Overrides
+$primary-color: #00d4aa;  // AI Teal
+$secondary-color: #6366f1; // Indigo
+$accent-color: #8b5cf6;   // Purple
+
+// AI/UX Gradients
+$gradient-primary: linear-gradient(135deg, $primary-color 0%, $secondary-color 100%);
+$gradient-accent: linear-gradient(135deg, $secondary-color 0%, $accent-color 100%);
+
+// AI/UX Components
+.aiux-card {
+    background: #ffffff;
+    border-radius: $border-radius-lg;
+    padding: $spacing-lg;
+    box-shadow: $box-shadow-lg;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: $gradient-primary;
+    }
+}
+
+.aiux-button {
+    background: $gradient-primary;
+    color: #ffffff;
+    border: none;
+    border-radius: $border-radius-lg;
+    padding: $spacing-md $spacing-xl;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        transition: left 0.3s ease;
+    }
+
+    &:hover::before {
+        left: 100%;
+    }
+}
+
+.aiux-badge {
+    background: $gradient-accent;
+    color: #ffffff;
+    padding: $spacing-xs $spacing-sm;
+    border-radius: $border-radius-lg;
+    font-size: $font-size-sm;
+    font-weight: 600;
+}
+
+.aiux-input {
+    border: 2px solid transparent;
+    border-radius: $border-radius-lg;
+    padding: $spacing-md;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba($primary-color, 0.1);
+    }
+}
