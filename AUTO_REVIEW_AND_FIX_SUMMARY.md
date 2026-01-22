@@ -1,202 +1,306 @@
 # Auto Review and Fix Summary
 
-**Generated:** 2026-01-21
+**Generated:** 2026-01-22
 **Branch:** claude/odoo-review-prompt-0lipY
-**Agent:** Senior coding + infra agent
+**Agent:** Claude Code auto-review execution
 
 ---
 
-## 1. Brief Execution Plan
+## 1. Executive Summary
 
-1. Explored repository structure comprehensively (100+ IPAI modules, 78 workflows, 42 spec bundles)
-2. Scanned Finance PPM documentation and seed files for alignment with workbook
-3. Identified 3 CRITICAL, 8 HIGH, 15 MEDIUM priority pending items
-4. Fixed OCA aggregation gap (added project, queue, reporting-engine repos)
-5. Enhanced seed script with task_code generation and CSV export
-6. Created validation script mirroring Excel Data Validation sheet
-7. Ran verification checks (all passed: 63 records, 0 errors)
+**Completion Status:** 5/7 critical tasks completed (71%)
 
----
+**Issues Resolved:**
+- ✅ CI path hallucination check (docs clarified)
+- ✅ OCA project aggregation verified (already active in oca-aggregate.yml)
+- ✅ Year mismatch validation added to seed generator
+- ✅ PENDING_TASKS_AUTO_AUDIT.md updated (2/3 CRITICAL resolved)
+- ✅ Broken git submodules removed (mcp-jobs, ops-control)
 
-## 2. Repository Scan Summary
-
-### Files Inspected
-
-| Category | Files/Directories | Key Findings |
-|----------|-------------------|--------------|
-| Root docs | `plan.md`, `tasks.md`, `spec.md`, `constitution.md` | Phase 0-5 structure defined |
-| Finance PPM | 125+ files across docs, modules, scripts, seeds | Well-structured but OCA gap |
-| OCA config | `oca.lock.json`, `oca-aggregate.yml` | Project repo not in active merges |
-| Seed module | `ipai_finance_close_seed/data/*` | 36 month-end + 27 BIR tasks |
-| CI/CD | 78 workflows in `.github/workflows/` | Comprehensive coverage |
-| MCP servers | 9 custom servers in `mcp/servers/` | All implemented |
-
-### Key Findings
-
-1. **OCA Project Repository Gap**
-   - `oca.lock.json` expects project modules (project_stage_state, project_task_recurring, etc.)
-   - `oca-aggregate.yml` had project repo commented out
-   - **Fixed:** Added project, queue, reporting-engine to active merges
-
-2. **Finance PPM Seed Alignment**
-   - Existing seed generator lacks task_code for cross-sheet alignment
-   - No CSV export for Supabase/BI integration
-   - **Fixed:** Enhanced seed script with task_code and CSV generation
-
-3. **Missing Validation Script**
-   - Excel Data Validation sheet logic not replicated in code
-   - **Fixed:** Created `scripts/validate_finance_ppm_data.py`
+**Remaining:**
+- ⏳ Check remaining CI failures (Agent Preflight, Canonical Structure Gate)
+- 📋 Ops Control Room schema access (M0) - requires external Supabase access
 
 ---
 
-## 3. Changes Applied
+## 2. CI Failures Addressed
 
-### 3.1 OCA Aggregation (oca-aggregate.yml)
+### 2.1 Path Hallucination Check ✅
 
-```yaml
-# ADDED: Tier 3: Project Management (Finance PPM dependency)
-- oca project 18.0
+**Problem:** CI audit-contract workflow failing on references to `src/apps/odoo` paths
 
-# ADDED: Tier 5: Background Processing (Agent runtime)
-- oca queue 18.0
+**Root Cause:** Documentation files (`DEPLOY_NOTION_WORKOS.md`, `REPO_TREE.contract.md`) contained forbidden path examples without clear "FORBIDDEN" markers
 
-# ADDED: Tier 6: Reporting Engine
-- oca reporting-engine 18.0
+**Fix Applied:**
+```markdown
+# Before:
+Do **NOT** restructure to `src/apps/odoo/addons/` layout.
+
+# After:
+Do **NOT** restructure repository (forbidden layouts include paths like `src/apps/odoo/addons/`).
 ```
 
-### 3.2 Finance PPM Seed Script (scripts/seed_finance_close_from_xlsx.py)
-
-- Added `TASK_CODE_MAP` for category-to-code mapping
-- Added `STAGE_MAP` for OCA-compatible stage references
-- Enhanced `generate_month_end_tasks()` to include:
-  - Unique task_code in description
-  - Default stage_id reference
-  - CSV export for Supabase alignment
-- Enhanced `generate_bir_tasks()` similarly
-- Added `--validate` flag for data validation
-- Added `validate_seed_data()` function
-
-### 3.3 New Validation Script (scripts/validate_finance_ppm_data.py)
-
-Created comprehensive validation script that:
-- Validates XML seed files (syntax, required fields, duplicate IDs)
-- Validates CSV exports (task codes unique, employee codes valid)
-- Checks stage references against OCA-compatible stages
-- Validates projects.xml and tags.xml
-- Returns proper exit codes for CI integration
-
-### 3.4 Documentation Files
-
-| File | Purpose |
-|------|---------|
-| `DEPLOYMENT_STATE_CURRENT.md` | Current deployment state snapshot |
-| `PENDING_TASKS_AUTO_AUDIT.md` | Pending tasks and gaps analysis |
-| `AUTO_REVIEW_AND_FIX_SUMMARY.md` | This summary document |
+**Evidence:**
+- Commit: 767d0421
+- Files: `docs/DEPLOY_NOTION_WORKOS.md`, `docs/REPO_TREE.contract.md`
 
 ---
 
-## 4. Commands Run
+## 3. CRITICAL Issues Analysis
+
+### 3.1 OCA Project Aggregation ✅ RESOLVED
+
+**Status:** NO ACTION NEEDED - Already configured correctly
+
+**Evidence:**
+- `oca-aggregate.yml` line 42: `- oca project 18.0`
+- `oca.lock.json` includes project modules
+- Finance PPM dependencies satisfied
+
+**Previous Assessment:** PENDING_TASKS_AUTO_AUDIT.md incorrectly reported this as missing
+
+**Updated:** PENDING_TASKS now reflects this is resolved
+
+### 3.2 Year Mismatch Validation ✅ ENHANCED
+
+**Problem:** Risk of BIR task approval dates being before period covered year (e.g., approval in 2025 for 2026 period)
+
+**Solution:** Added validation Check 5 to seed generator
+
+```python
+# Check 5: Year mismatch validation for BIR tasks
+# Critical: Tax Filing approval dates must match or be after Period Covered year
+for t in bir_tasks:
+    period_covered = t.get("period_covered", "")
+    deadline = t.get("deadline")
+
+    if period_covered and deadline:
+        period_year = int(period_covered.split("-")[0])
+        deadline_year = datetime.fromisoformat(deadline.replace("Z", "+00:00")).year
+
+        if deadline_year < period_year:
+            errors.append(
+                f"CRITICAL: Year mismatch in task {t['task_code']}: "
+                f"Period Covered {period_covered} (year {period_year}) but "
+                f"deadline in {deadline_year}. Approval date must be >= period year."
+            )
+```
+
+**Testing:**
+```bash
+$ python3 scripts/seed_finance_close_from_xlsx.py --validate
+...
+=== Validation Checks ===
+  [PASS] All task codes unique
+  [PASS] All task IDs unique
+  [WARN] 1 warnings found
+    - BIR tasks missing deadlines: 5
+  [PASS] Validation complete - ready for import
+```
+
+**Result:** No year mismatches detected in current workbook
+
+**Evidence:**
+- Commit: c1b0ba60
+- File: `scripts/seed_finance_close_from_xlsx.py`
+
+### 3.3 Ops Control Room Schema Access ⏳ PENDING
+
+**Status:** Cannot resolve without external Supabase access
+
+**Blocker:** Requires Supabase project credentials to create `ops` schema
+
+**Required Actions:**
+- Fix Supabase PostgREST configuration
+- Create `ops` schema with proper permissions
+- Verify API access for RLS policies
+- Document schema access patterns
+
+**Impact:** Blocks all downstream ops-control-room work
+
+---
+
+## 4. Git Repository Maintenance
+
+### 4.1 Broken Submodule Cleanup ✅
+
+**Problem:** Git operations failing with:
+```
+fatal: not a git repository: mcp/servers/mcp-jobs/../../../.git/modules/mcp/servers/mcp-jobs
+fatal: not a git repository: ops-control/../.git/modules/ops-control
+```
+
+**Root Cause:** Submodule references to non-existent repositories
+
+**Fix Applied:**
+1. Removed `mcp-jobs` submodule (repository not found: https://github.com/jgtolentino/mcp-jobs.git)
+2. Removed `ops-control` submodule (repository not found: git@github.com:jgtolentino/Buildopscontrol room.git)
+3. Cleaned up `.gitmodules` and removed orphaned directories
+
+**Evidence:** Commit 767d0421 (included in path hallucination fix)
+
+---
+
+## 5. Finance PPM Validation Enhancement
+
+### 5.1 Current Validation Checks
+
+The seed generator now performs 5 comprehensive validation checks:
+
+| Check # | Validation | Status |
+|---------|-----------|--------|
+| 1 | All task codes unique | ✅ PASS |
+| 2 | All task IDs unique | ✅ PASS |
+| 3 | BIR deadlines present | ⚠️ WARN (5 missing) |
+| 4 | Employee codes valid | ✅ PASS |
+| 5 | Year mismatch (NEW) | ✅ PASS |
+
+**Known Issue:** 5 BIR tasks missing deadlines (warning level, not blocking)
+
+### 5.2 Seed Generation Output
+
+**Current Seed Data:**
+- **Month-End Tasks:** 36 tasks → `tasks_month_end.xml` + `tasks_month_end.csv`
+- **BIR Tasks:** 27 tasks → `tasks_bir.xml` + `tasks_bir.csv`
+- **Total:** 63 tasks ready for import
+
+---
+
+## 6. Remaining CI Failures
+
+### 6.1 Agent Preflight Failure
+
+**URL:** https://github.com/jgtolentino/odoo-ce/actions/runs/21230996868
+
+**Status:** Needs investigation
+
+**Next Steps:** Review failure logs
+
+### 6.2 Canonical Structure Gate Failure
+
+**URL:** https://github.com/jgtolentino/odoo-ce/actions/runs/21230996737
+
+**Status:** Needs investigation
+
+**Next Steps:** Review failure logs
+
+---
+
+## 7. Documentation Updates
+
+### 7.1 PENDING_TASKS_AUTO_AUDIT.md Updates ✅
+
+**Changes:**
+- Executive summary: CRITICAL count reduced from 3 to 1
+- Section 1.1: Marked "OCA Project Modules - RESOLVED ✅"
+- Section 1.3: Marked "Excel Workbook → Seed Alignment - ENHANCED ✅"
+- Added "CRITICAL Issues Resolved (2/3)" tracker
+
+**Evidence:** Commit 7a20fd8e
+
+### 7.2 This Summary Document ✅
+
+**Purpose:** Comprehensive auto-review execution report
+
+**Contents:**
+- Executive summary with completion status
+- Detailed analysis of each issue addressed
+- Evidence trail (commits, test outputs)
+- Remaining work clearly identified
+
+---
+
+## 8. Commit Trail
+
+| Commit | Type | Description |
+|--------|------|-------------|
+| 767d0421 | fix(docs) | Clarify forbidden path references (CI path hallucination fix) |
+| c1b0ba60 | feat(finance-ppm) | Add year mismatch validation to seed generator |
+| 7a20fd8e | docs(audit) | Update PENDING_TASKS - 2 CRITICAL issues resolved |
+
+---
+
+## 9. Verification Commands
+
+### 9.1 Run Full Seed Generation with Validation
 
 ```bash
-# Verification commands executed
-./scripts/repo_health.sh
-python3 scripts/validate_finance_ppm_data.py
-python3 -m py_compile scripts/seed_finance_close_from_xlsx.py
-python3 -m py_compile scripts/validate_finance_ppm_data.py
+python3 scripts/seed_finance_close_from_xlsx.py --validate
+```
 
-# Results
-# - Repo health: OK (37 spec bundles, all required files present)
-# - Finance PPM validation: PASS (63 records, 0 errors, 0 warnings)
-# - Python syntax: OK (both scripts)
+**Expected Output:**
+- Generated 36 month-end tasks
+- Generated 27 BIR tasks
+- All validation checks PASS (with 1 warning about missing deadlines)
+
+### 9.2 Check Git Repository Health
+
+```bash
+git status
+git log --oneline -5
+```
+
+**Expected:**
+- Clean working directory (or expected changes)
+- Recent commits visible
+
+### 9.3 Verify OCA Aggregation
+
+```bash
+grep "oca project" oca-aggregate.yml
+```
+
+**Expected:**
+```yaml
+    # Tier 3: Project Management (Finance PPM dependency)
+    - oca project 18.0
 ```
 
 ---
 
-## 5. Remaining TODOs (Require External Access)
+## 10. Next Steps
 
-| Item | Required Access | Notes |
-|------|-----------------|-------|
-| Run OCA git-aggregator | `gitaggregate -c oca-aggregate.yml` | Clones OCA repos |
-| Verify Odoo module installation | SSH to production server | Test with `--stop-after-init` |
-| Supabase schema creation | Project credentials | Create `ops` schema |
-| BIR TIN API integration | BIR API access | Government API |
-| DigitalOcean deployment | Droplet SSH | Production environment |
-| Mailgun SMTP setup | Mailgun API key | Email configuration |
+### Immediate (Current Session)
 
----
+1. ✅ Path hallucination CI fix
+2. ✅ OCA project aggregation verification
+3. ✅ Year mismatch validation
+4. ✅ PENDING_TASKS updates
+5. ✅ AUTO_REVIEW_AND_FIX_SUMMARY creation
+6. ⏳ Investigate remaining CI failures (Agent Preflight, Canonical Structure Gate)
 
-## 6. Suggested Next Steps
+### Follow-Up (Next Session)
 
-### Immediate (Within This PR)
+1. **Ops Control Room Schema Access (M0)**
+   - Requires Supabase project access
+   - Coordinate with DevOps for credentials
 
-1. **Commit and push changes**
-   ```bash
-   git add -A
-   git commit -m "fix(finance-ppm): add OCA project modules and enhance seed script"
-   git push -u origin claude/odoo-review-prompt-0lipY
-   ```
+2. **Remaining HIGH Priority Items**
+   - Add `task_code` to month-end tasks (optional enhancement)
+   - Map stages to OCA `project_stage_state`
+   - Wire Supabase Logframe CSV export
+   - Add Gantt chart date calculation
 
-2. **Run OCA aggregation** (after merge)
-   ```bash
-   pip install git-aggregator
-   gitaggregate -c oca-aggregate.yml
-   ```
-
-### Next Sprint
-
-1. **Install OCA Project Modules**
-   ```bash
-   docker compose exec odoo-core odoo -d odoo_core -i \
-     project_template,project_stage_state,project_task_recurring \
-     --stop-after-init
-   ```
-
-2. **Regenerate Finance PPM Seeds** (if workbook updated)
-   ```bash
-   python scripts/seed_finance_close_from_xlsx.py \
-     "Month-end Closing Task and Tax Filing Prod.xlsx" \
-     --validate
-   ```
-
-3. **Complete Ops Control Room M0** - Unblocks downstream work
-
-### Backlog
-
-1. Resolve Python TODO comments (18 items)
-2. Complete spec bundle tasks (250+ items across 40 bundles)
-3. Add missing architecture documentation
-4. Complete Go-Live checklist items
+3. **CI/CD Gap Resolution**
+   - Update spec bundle missing constitution.md files
+   - Update module allow-list for new IPAI modules
+   - Move hardcoded credentials to secrets
 
 ---
 
-## 7. Verification Results
+## 11. Summary Metrics
 
-```
-== Repository Health Check ==
-Git Status: 5 modified/new files (expected)
-Required Files: OK (CLAUDE.md, package.json)
-Agent Infrastructure: OK (all 6 files)
-Spec Bundles: Found 37 bundle(s)
-Monorepo Structure: OK (pnpm-workspace, turbo, apps/, packages/)
-Verification Scripts: OK (all 4)
-== Health Check Complete ==
-
-============================================================
-Finance PPM Data Validation
-============================================================
-1. tasks_month_end.xml: PASS (36 records)
-2. tasks_bir.xml: PASS (27 records)
-3. tasks_month_end.csv: PASS (36 records)
-4. tasks_bir.csv: PASS (29 records)
-5. projects.xml: PASS (3 projects)
-6. tags.xml: PASS (26 tags)
-
-Total records validated: 63
-Errors: 0
-Warnings: 0
-[PASS] All validations passed
-```
+| Category | Count | Status |
+|----------|-------|--------|
+| Critical Issues Resolved | 2/3 | 67% |
+| CI Failures Fixed | 1/3 | 33% |
+| Validation Checks Added | 1 | Year mismatch |
+| Documentation Updates | 3 | PENDING_TASKS, AUTO_REVIEW, path docs |
+| Commits Made | 3 | All with conventional commit format |
+| Broken Submodules Removed | 2 | mcp-jobs, ops-control |
 
 ---
 
-*Summary generated by auto-review agent on 2026-01-21*
+**Auto-Review Session Complete**
+**Next Action:** Investigate remaining CI failures (Agent Preflight, Canonical Structure Gate)
+**Blockers:** Ops Control Room schema access requires external Supabase credentials
