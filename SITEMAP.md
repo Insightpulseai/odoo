@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 86190705b4277418fb27af579ce0febe2182687f
+> Commit: 504bfb8f1d6c3c8f0f704049c58c1807962bd169
 
 ## 📚 Documentation
 
@@ -97,6 +97,7 @@
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
 | [IPAI Module Namespace](addons/ipai/README.md) | addons/ipai |
 | [IPAI AI Agents UI](addons/ipai/ipai_ai_agents_ui/README.md) | addons/ipai/ipai_ai_agents_ui |
+| [IPAI Design System](addons/ipai/ipai_design_system/README.md) | addons/ipai/ipai_design_system |
 | [IPAI Design System (Single Source of Truth)](addons/ipai/ipai_design_system_apps_sdk/README.md) | addons/ipai/ipai_design_system_apps_sdk |
 | [IPAI Enterprise Bridge Policy](addons/ipai/ipai_enterprise_bridge/POLICY.md) | addons/ipai/ipai_enterprise_bridge |
 | [IPAI Enterprise Bridge](addons/ipai/ipai_enterprise_bridge/README.md) | addons/ipai/ipai_enterprise_bridge |
@@ -195,6 +196,7 @@
 | [Production Droplet Setup - Complete Runbook](deploy/PRODUCTION_SETUP.md) | deploy |
 | [Deployment Guide](deploy/README.md) | deploy |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
+| [IPAI Design Extraction](design/README.md) | design |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
@@ -318,6 +320,7 @@
 | [Repo Tree (generated)](docs/REPO_TREE.generated.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
 | [Secrets Naming and Storage - Canonical Reference](docs/SECRETS_NAMING_AND_STORAGE.md) | docs |
+| [Finance PPM Seed Data Assessment](docs/SEED_DATA_ASSESSMENT.md) | docs |
 | [Semantic Versioning Strategy - InsightPulse Odoo CE](docs/SEMANTIC_VERSIONING_STRATEGY.md) | docs |
 | [AIUX Ship v1.1.0 - Production Release Summary](docs/SHIP_v1.1.0_SUMMARY.md) | docs |
 | [Odoo CE 18.0 - InsightPulse AI Module Sitemap](docs/SITEMAP.md) | docs |
@@ -629,6 +632,8 @@
 | [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
 | [Modules](docs/pages/modules.md) | docs/pages |
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
+| [Implementation Map](docs/parity/IMPLEMENTATION_MAP.md) | docs/parity |
+| [Target Capability Suite](docs/parity/TARGET_CAPABILITIES.md) | docs/parity |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
@@ -866,6 +871,10 @@
 | [Implementation Plan: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/plan.md) | spec/docs-platform-sapgrade |
 | [PRD: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/prd.md) | spec/docs-platform-sapgrade |
 | [Tasks: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/tasks.md) | spec/docs-platform-sapgrade |
+| [Enterprise Parity Constitution](spec/enterprise-parity/constitution.md) | spec/enterprise-parity |
+| [Enterprise Parity Implementation Plan](spec/enterprise-parity/plan.md) | spec/enterprise-parity |
+| [Enterprise Parity PRD](spec/enterprise-parity/prd.md) | spec/enterprise-parity |
+| [Enterprise Parity Task Checklist](spec/enterprise-parity/tasks.md) | spec/enterprise-parity |
 | [ERP SaaS Clone Suite — Constitution](spec/erp-saas-clone-suite/constitution.md) | spec/erp-saas-clone-suite |
 | [ERP SaaS Clone Suite — Implementation Plan](spec/erp-saas-clone-suite/plan.md) | spec/erp-saas-clone-suite |
 | [ERP SaaS Clone Suite — Product Requirements Document](spec/erp-saas-clone-suite/prd.md) | spec/erp-saas-clone-suite |
@@ -1024,6 +1033,7 @@
 | [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
 | [ipai_copilot_ui](./addons/ipai/ipai_copilot_ui) | ✅ |  |
+| [ipai_design_system](./addons/ipai/ipai_design_system) | ✅ | Unified design tokens for IPAI stack (Fluent UI v9 + Copilot) |
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
 | [ipai_enterprise_bridge](./addons/ipai/ipai_enterprise_bridge) | ✅ |  |
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |

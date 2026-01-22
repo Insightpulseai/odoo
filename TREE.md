@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 86190705b4277418fb27af579ce0febe2182687f
+> Commit: 504bfb8f1d6c3c8f0f704049c58c1807962bd169
 
 ```
 .
@@ -199,6 +199,11 @@
 │   │   ├── ipai_copilot_ui
 │   │   │   ├── static
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_design_system
+│   │   │   ├── static
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_design_system_apps_sdk
@@ -1407,6 +1412,25 @@
 │   ├── odoo.canonical.conf
 │   ├── odoo.conf
 │   └── odoo.conf.droplet
+├── design
+│   ├── components
+│   │   └── .gitkeep
+│   ├── inputs
+│   │   └── .gitkeep
+│   ├── tokens
+│   │   └── m365_planner.tokens.json
+│   ├── wireframe
+│   │   └── m365_planner.shell.json
+│   ├── README.md
+│   ├── schema.tokens.json
+│   └── schema.wireframe.json
+├── dev
+│   ├── odoo-addons
+│   │   └── .gitkeep
+│   ├── postgres-init
+│   │   └── 00-init.sql
+│   └── superset
+│       └── superset_config.py
 ├── docs
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
@@ -1774,6 +1798,9 @@
 │   │   ├── index.md
 │   │   ├── modules.md
 │   │   └── runbooks.md
+│   ├── parity
+│   │   ├── IMPLEMENTATION_MAP.md
+│   │   └── TARGET_CAPABILITIES.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
@@ -2020,6 +2047,7 @@
 │   ├── REPO_TREE.generated.md
 │   ├── SAAS_PARITY_READINESS.md
 │   ├── SECRETS_NAMING_AND_STORAGE.md
+│   ├── SEED_DATA_ASSESSMENT.md
 │   ├── SEMANTIC_VERSIONING_STRATEGY.md
 │   ├── SHIP_v1.1.0_SUMMARY.md
 │   ├── SITEMAP.md
@@ -3219,6 +3247,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── enterprise-parity
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── erp-saas-clone-suite
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -3821,6 +3854,7 @@
 ├── deploy_ppm_dashboard_direct.sh
 ├── deployment_readiness_assessment.md
 ├── devserver.config.json
+├── docker-compose.dev.yml
 ├── figma-make-dev.yaml
 ├── final_verification.sh
 ├── finance_calendar_2026.csv
@@ -3879,15 +3913,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1010 directories, 2864 files
+1023 directories, 2885 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1203 |
-| Files | 3781 |
-| Python files | 592 |
+| Directories | 1219 |
+| Files | 3806 |
+| Python files | 595 |
 | XML files | 250 |
-| Markdown files | 998 |
+| Markdown files | 1007 |
