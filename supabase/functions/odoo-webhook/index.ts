@@ -1,4 +1,4 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "https://esm.sh/v135/@supabase/supabase-js@2.47.10";
 
 function timingSafeEqual(a: string, b: string) {
   const enc = new TextEncoder();
@@ -61,26 +61,25 @@ Deno.serve(async (req) => {
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-  // Write outbox + append-only event log
-  const { error: e1 } = await supabase.from("integration.outbox").insert({
-    source: "odoo",
-    event_type,
-    aggregate_type,
-    aggregate_id: String(aggregate_id),
-    payload,
-    idempotency_key: idem,
+  // Write outbox using RPC (integration schema not exposed via PostgREST)
+  const { error: e1 } = await supabase.rpc("insert_outbox_event", {
+    p_source: "odoo",
+    p_event_type: event_type,
+    p_aggregate_type: aggregate_type,
+    p_aggregate_id: String(aggregate_id),
+    p_payload: payload,
+    p_idempotency_key: idem
   });
 
-  // If duplicate, treat as success (idempotent)
-  const dup = e1 && String(e1.message ?? "").toLowerCase().includes("duplicate");
-  if (e1 && !dup) return new Response(`DB error: ${e1.message}`, { status: 500 });
+  if (e1) return new Response(`DB error: ${e1.message}`, { status: 500 });
 
-  await supabase.from("integration.event_log").insert({
-    source: "odoo",
-    event_type,
-    aggregate_type,
-    aggregate_id: String(aggregate_id),
-    payload,
+  // Write event log
+  await supabase.rpc("insert_event_log", {
+    p_source: "odoo",
+    p_event_type: event_type,
+    p_aggregate_type: aggregate_type,
+    p_aggregate_id: String(aggregate_id),
+    p_payload: payload
   });
 
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers: { "content-type": "application/json" } });
