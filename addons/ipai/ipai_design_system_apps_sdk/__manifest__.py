@@ -1,44 +1,57 @@
 {
-    "name": "IPAI Design System - Apps SDK UI",
+    "name": "IPAI Design System (SSOT)",
     "version": "18.0.1.0.0",
-    "category": "Tools/UI",
-    "summary": "ChatGPT Apps SDK UI design tokens for all IPAI apps",
+    "category": "Theme/Backend",
+    "summary": "Single Source of Truth for all IPAI UI/UX: tokens, components, and brand styling",
     "description": """
-IPAI Design System - Apps SDK UI
-================================
+IPAI Design System (Single Source of Truth)
+============================================
 
-This module injects the ChatGPT Apps SDK UI design system into all Odoo
-backend applications, providing a consistent platform-wide visual language.
+This is the **ONLY** design system module for IPAI. All other theme/styling
+modules should depend on this or be deprecated.
+
+CE + OCA Compliant:
+-------------------
+* No Enterprise dependencies
+* No IAP requirements
+* Self-hosted compatible
 
 Features:
 ---------
-* Apps SDK UI CSS tokens and utilities
-* TBWA accent color bridge
-* Platform component classes (ipai-btn-primary, ipai-card, ipai-input)
-* Scoped styling via .ipai-appsdk root class
-* Optional portal/website support
+* Complete design token system (colors, spacing, typography, radius, shadows)
+* TBWA brand color palette (light theme)
+* Reusable component classes (buttons, cards, inputs, badges, etc.)
+* Utility classes (flex, spacing, visibility, cursor)
+* Animation helpers
+* Scoped styling via .ipai-appsdk root class (safe for legacy screens)
+* Backend and frontend asset bundles
 
-Usage:
-------
-1. Install this module first before other IPAI modules
-2. In your IPAI app templates, wrap UI with <div class="ipai-app">
-3. Use platform component classes for consistent styling
-
-Token Variables:
-----------------
-* --ipai-accent: Primary accent color (TBWA yellow)
-* --ipai-bg: Background color
-* --ipai-surface: Surface/card background
-* --ipai-border: Border color
-* --ipai-text: Primary text color
-* --ipai-muted: Muted/secondary text
+Design Token Categories:
+------------------------
+* Brand: --brand-yellow, --brand-black, --brand-white
+* Accents: --accent-brown-gold, --accent-charcoal, --accent-sand
+* Status: --status-success, --status-info, --status-warning, --status-danger
+* Semantic: --ipai-bg, --ipai-surface, --ipai-text, --ipai-accent, --ipai-border
+* Spacing: --ipai-space-xs through --ipai-space-2xl
+* Radius: --ipai-radius-sm through --ipai-radius-full
+* Typography: --ipai-font-sans, --ipai-font-mono
 
 Component Classes:
 ------------------
-* .ipai-btn-primary: Primary action button
-* .ipai-card: Card container
-* .ipai-input: Text input field
-* .ipai-dialog: Modal dialog styling
+* .ipai-btn-primary, .ipai-btn-secondary, .ipai-btn-ghost, .ipai-btn-dark
+* .ipai-card, .ipai-card-elevated
+* .ipai-input, .ipai-textarea, .ipai-select
+* .ipai-badge, .ipai-badge-success, .ipai-badge-warning, .ipai-badge-error
+* .ipai-header-bar, .ipai-tat-bar
+* .ipai-heading-xl through .ipai-heading-sm
+* .ipai-text-body, .ipai-text-secondary, .ipai-text-muted
+
+Usage:
+------
+1. Install this module (auto_install=False for explicit control)
+2. Wrap IPAI app content with <div class="ipai-appsdk"><div class="ipai-app">
+3. Use component classes for consistent styling across all IPAI apps
+4. Reference design tokens via CSS custom properties (var(--ipai-*))
     """,
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",
