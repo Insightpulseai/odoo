@@ -118,7 +118,4 @@ backend = "postgres"
 # =============================================================================
 # Local Development
 # =============================================================================
-
-[local]
-# Enable local development features
-enabled = true
+# Note: Local development config managed via .supabase/config.toml after linking

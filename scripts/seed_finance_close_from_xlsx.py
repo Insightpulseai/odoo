@@ -461,6 +461,28 @@ def validate_seed_data(month_end_tasks: list[dict], bir_tasks: list[dict]) -> bo
         if code and code not in known_codes:
             warnings.append(f"Unknown employee code: {code} in task {t['task_code']}")
 
+    # Check 5: Year mismatch validation for BIR tasks
+    # Critical: Tax Filing approval dates must match or be after Period Covered year
+    for t in bir_tasks:
+        period_covered = t.get("period_covered", "")
+        deadline = t.get("deadline")
+
+        if period_covered and deadline:
+            try:
+                # Extract year from period_covered (e.g., "2026-12" -> 2026)
+                period_year = int(period_covered.split("-")[0])
+                # Extract year from deadline datetime
+                deadline_year = datetime.fromisoformat(deadline.replace("Z", "+00:00")).year
+
+                if deadline_year < period_year:
+                    errors.append(
+                        f"CRITICAL: Year mismatch in task {t['task_code']}: "
+                        f"Period Covered {period_covered} (year {period_year}) but "
+                        f"deadline in {deadline_year}. Approval date must be >= period year."
+                    )
+            except (ValueError, AttributeError, IndexError) as e:
+                warnings.append(f"Could not validate year for task {t['task_code']}: {e}")
+
     if warnings:
         print(f"  [WARN] {len(warnings)} warnings found")
         for w in warnings[:5]:
