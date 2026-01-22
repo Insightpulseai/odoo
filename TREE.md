@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 504bfb8f1d6c3c8f0f704049c58c1807962bd169
+> Commit: 44d3da297f2b6d26408b6425cd8a7e88ceb7a9f5
 
 ```
 .
@@ -141,6 +141,8 @@
 ├── .insightpulse
 │   ├── sync-config.yaml
 │   └── sync.yaml
+├── .supabase
+│   └── config.toml
 ├── .vscode
 │   ├── README.md
 │   ├── extensions.json
@@ -169,14 +171,6 @@
 │   │   ├── server-ux
 │   │   └── web
 │   ├── ipai
-│   │   ├── fluent_web_365_copilot
-│   │   │   ├── demo
-│   │   │   ├── models
-│   │   │   ├── security
-│   │   │   ├── views
-│   │   │   ├── README.rst
-│   │   │   ├── __init__.py
-│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_agents_ui
 │   │   │   ├── controllers
 │   │   │   ├── security
@@ -218,6 +212,7 @@
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── tests
+│   │   │   ├── utils
 │   │   │   ├── views
 │   │   │   ├── POLICY.md
 │   │   │   ├── README.md
@@ -225,11 +220,21 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_finance_close_seed
+│   │   │   └── data
 │   │   ├── ipai_finance_workflow
 │   │   │   ├── data
 │   │   │   ├── models
 │   │   │   ├── security
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_fluent_web_365_copilot
+│   │   │   ├── demo
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.rst
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_platform_theme
@@ -242,7 +247,6 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_copilot
-│   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
@@ -252,12 +256,10 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_tbwa
-│   │   │   ├── static
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_tbwa_backend
-│   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_ui_brand_tokens
@@ -298,8 +300,6 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
-│   │   ├── scripts
-│   │   │   └── fix_odoo18_views.py
 │   │   ├── .gitkeep
 │   │   ├── README.md
 │   │   ├── __init__.py
@@ -1582,7 +1582,10 @@
 │   │   ├── VERCEL_AI_GATEWAY_INTEGRATION.md
 │   │   └── VERCEL_INTEGRATIONS.md
 │   ├── integration
+│   │   ├── EVENT_TAXONOMY.md
 │   │   ├── INSIGHTPULSE_ROADMAP.md
+│   │   ├── QUICK_START.md
+│   │   ├── README.md
 │   │   └── SLACK_INTEGRATION_SETUP.md
 │   ├── integrations
 │   │   ├── FOCALBOARD.md
@@ -2063,6 +2066,7 @@
 │   ├── TENANT_ARCHITECTURE.md
 │   ├── TESTING_ODOO_18.md
 │   ├── TROUBLESHOOTING.md
+│   ├── UI_THEME_CONSOLIDATION_PROPOSAL.md
 │   ├── VERIFIED_MEMORY.md
 │   ├── WBS_LOGFRAME_MAPPING.md
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
@@ -2373,6 +2377,8 @@
 │   └── agentic-cloud.yaml
 ├── n8n
 │   ├── workflows
+│   │   ├── integration
+│   │   │   └── event-router.json
 │   │   ├── .gitkeep
 │   │   ├── deployment-notify.json
 │   │   └── github-deploy-trigger.json
@@ -2759,6 +2765,11 @@
 │   │   ├── discover_odoo.py
 │   │   ├── discover_supabase.py
 │   │   └── discover_vercel.py
+│   ├── integration
+│   │   ├── deploy-supabase.sh
+│   │   └── test-webhook.py
+│   ├── ipai-view-migration
+│   │   └── fix_odoo18_views.py
 │   ├── kb
 │   │   ├── seed_oca_catalog.sql
 │   │   ├── seed_odoo_catalog.sql
@@ -3475,6 +3486,8 @@
 │   │   │   └── index.ts
 │   │   ├── odoo-template-export
 │   │   │   └── index.ts
+│   │   ├── odoo-webhook
+│   │   │   └── index.ts
 │   │   ├── ops-job-worker
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
@@ -3584,6 +3597,7 @@
 │   │   ├── 20260121000000_odoo_catalogs.sql
 │   │   ├── 20260121100001_odoo_data_dictionary.sql
 │   │   ├── 20260121_odoo_seed_schema.sql
+│   │   ├── 20260122000100_integration_bus.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3913,15 +3927,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1023 directories, 2885 files
+1027 directories, 2895 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1219 |
-| Files | 3806 |
-| Python files | 595 |
-| XML files | 250 |
-| Markdown files | 1007 |
+| Directories | 1217 |
+| Files | 3816 |
+| Python files | 598 |
+| XML files | 252 |
+| Markdown files | 1011 |
