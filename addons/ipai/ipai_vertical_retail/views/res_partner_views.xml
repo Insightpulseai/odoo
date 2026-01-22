@@ -98,7 +98,7 @@
     <record id="action_scout_retail_outlets" model="ir.actions.act_window">
         <field name="name">Scout Retail Outlets</field>
         <field name="res_model">res.partner</field>
-        <field name="view_mode">tree,kanban,form,map</field>
+        <field name="view_mode">list,kanban,form,map</field>
         <field name="domain">[('is_retail_outlet', '=', True)]</field>
         <field name="context">{'default_is_retail_outlet': True, 'search_default_scout_active': 1}</field>
         <field name="help" type="html">
