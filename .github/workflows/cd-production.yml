@@ -198,112 +198,98 @@ jobs:
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
           echo "Deploying image tag: $TAG"
 
-      - name: Deploy via SSH
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      - name: Deploy via DigitalOcean API
         id: deploy
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
           IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
         run: |
-          # Check secrets are configured
-          if [ -z "$SSH_PRIVATE_KEY" ] || [ -z "$SSH_HOST" ]; then
-            echo "::error::SSH secrets not configured"
-            echo "Required secrets: SSH_PRIVATE_KEY, SSH_HOST, SSH_USER"
+          # Find the droplet (odoo server)
+          DROPLET_ID=$(doctl compute droplet list --format ID,Name --no-header | grep -i odoo | head -1 | awk '{print $1}')
+
+          if [ -z "$DROPLET_ID" ]; then
+            echo "::error::No Odoo droplet found"
             echo "status=failed" >> $GITHUB_OUTPUT
             exit 1
           fi
 
-          # Setup SSH with retry logic
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
+          echo "Found droplet ID: $DROPLET_ID"
 
-          # Retry ssh-keyscan with exponential backoff
-          for i in 1 2 3 4; do
-            if ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null; then
-              echo "SSH keyscan successful"
-              break
-            fi
-            WAIT=$((2**i))
-            echo "Retry $i: waiting ${WAIT}s..."
-            sleep $WAIT
-          done
+          # Deploy script to run on droplet
+          DEPLOY_SCRIPT=$(cat <<'SCRIPT'
+          set -e
+          echo "=== Starting deployment ==="
 
-          # Deploy with retry logic
-          MAX_RETRIES=4
-          RETRY=0
+          # Navigate to repo
+          cd /opt/odoo-ce || cd /workspace/odoo-ce || cd ~/odoo-ce
 
-          while [ $RETRY -lt $MAX_RETRIES ]; do
-            if ssh -i ~/.ssh/deploy_key -o ConnectTimeout=30 "${SSH_USER}@${SSH_HOST}" << DEPLOY_EOF
-              set -e
-              echo "=== Starting deployment ==="
+          # Pull latest code
+          echo "Pulling latest code..."
+          git fetch origin main
+          git checkout main
+          git pull origin main --ff-only
 
-              # Navigate to repo
-              cd /opt/odoo-ce || cd /workspace/odoo-ce || cd ~/odoo-ce
+          # Update submodules
+          git submodule update --init --recursive
 
-              # Pull latest code
-              echo "Pulling latest code..."
-              git fetch origin main
-              git checkout main
-              git pull origin main --ff-only
+          # Login to GHCR
+          echo "Logging into registry..."
+          echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
 
-              # Update submodules
-              git submodule update --init --recursive
+          # Pull new image
+          echo "Pulling image..."
+          docker pull "ghcr.io/jgtolentino/odoo-ce:${IMAGE_TAG}"
+          docker tag "ghcr.io/jgtolentino/odoo-ce:${IMAGE_TAG}" "ghcr.io/jgtolentino/odoo-ce:latest"
 
-              # Login to GHCR
-              echo "Logging into registry..."
-              echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          # Recreate containers
+          echo "Recreating containers..."
+          cd deploy
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d --force-recreate
 
-              # Pull new image
-              echo "Pulling image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}..."
-              docker pull "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}"
+          # Wait for Odoo to start
+          echo "Waiting for Odoo to initialize..."
+          sleep 45
 
-              # Tag as latest for docker-compose
-              docker tag "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${IMAGE_TAG}" "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-
-              # Recreate containers
-              echo "Recreating containers..."
-              cd deploy
-              docker compose -f docker-compose.prod.yml pull
-              docker compose -f docker-compose.prod.yml up -d --force-recreate
-
-              # Wait for Odoo to start
-              echo "Waiting for Odoo to initialize..."
-              sleep 45
-
-              # Health check with retries
-              for i in 1 2 3 4 5; do
-                if curl -sf http://localhost:8069/web/health > /dev/null 2>&1; then
-                  echo "Health check passed!"
-                  exit 0
-                fi
-                echo "Health check attempt \$i failed, retrying..."
-                sleep 10
-              done
-
-              echo "Health check failed after retries"
-              docker logs odoo-ce --tail 50
-              exit 1
-DEPLOY_EOF
-            then
-              echo "Deployment successful!"
-              echo "status=success" >> $GITHUB_OUTPUT
-              echo "tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          # Health check
+          for i in 1 2 3 4 5; do
+            if curl -sf http://localhost:8069/web/health > /dev/null 2>&1; then
+              echo "Health check passed!"
               exit 0
             fi
-
-            RETRY=$((RETRY + 1))
-            if [ $RETRY -lt $MAX_RETRIES ]; then
-              WAIT=$((2**RETRY))
-              echo "Deploy attempt $RETRY failed. Retrying in ${WAIT}s..."
-              sleep $WAIT
-            fi
+            echo "Health check attempt $i failed, retrying..."
+            sleep 10
           done
 
-          echo "::error::Deployment failed after $MAX_RETRIES attempts"
-          echo "status=failed" >> $GITHUB_OUTPUT
+          echo "Health check failed"
+          docker logs odoo-ce --tail 50
           exit 1
+          SCRIPT
+          )
+
+          # Execute via doctl ssh
+          echo "Deploying to droplet $DROPLET_ID..."
+
+          # Export vars for the script
+          export GHCR_TOKEN="${GHCR_TOKEN}"
+          export GHCR_USER="${GHCR_USER}"
+          export IMAGE_TAG="${IMAGE_TAG}"
+
+          if doctl compute ssh "$DROPLET_ID" --ssh-command "GHCR_TOKEN='${GHCR_TOKEN}' GHCR_USER='${GHCR_USER}' IMAGE_TAG='${IMAGE_TAG}' bash -c '${DEPLOY_SCRIPT}'"; then
+            echo "Deployment successful!"
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Deployment failed"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
 
       - name: Deploy summary
         if: always()
