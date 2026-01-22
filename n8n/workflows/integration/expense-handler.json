@@ -1,0 +1,98 @@
+{
+  "name": "IPAI Expense Event Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "expense-handler",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "expense-handler"
+    },
+    {
+      "parameters": {
+        "jsCode": "const event = $input.item.json;\nconst payload = event.payload || {};\n\nlet message = '';\nlet icon = '';\n\nswitch (event.event_type) {\n  case 'expense.submitted':\n    icon = '📝';\n    message = `**${icon} Expense Submitted**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Description:** ${payload.description || 'N/A'}\\n**Date:** ${payload.date || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  case 'expense.approved':\n    icon = '✅';\n    message = `**${icon} Expense Approved**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Approved by:** ${payload.approved_by || 'Unknown'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  case 'expense.rejected':\n    icon = '❌';\n    message = `**${icon} Expense Rejected**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Rejected by:** ${payload.rejected_by || 'Unknown'}\\n**Reason:** ${payload.rejection_reason || 'No reason provided'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  case 'expense.paid':\n    icon = '💰';\n    message = `**${icon} Expense Paid**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Payment Date:** ${payload.payment_date || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  default:\n    icon = 'ℹ️';\n    message = `**${icon} Expense Event: ${event.event_type}**\\n\\nUnhandled event type. Raw payload:\\n\`\`\`json\\n${JSON.stringify(payload, null, 2)}\\n\`\`\``;\n}\n\nreturn { json: { message, event_id: event.id } };"
+      },
+      "id": "format_message",
+      "name": "Format Mattermost Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"text\": $json.message } }}",
+        "options": {}
+      },
+      "id": "send_mattermost",
+      "name": "Send to Mattermost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true, \"event_id\": $json.event_id } }}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Mattermost Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Mattermost Message": {
+      "main": [
+        [
+          {
+            "node": "Send to Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Mattermost": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["integration", "expense"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-22T00:00:00.000Z",
+  "versionId": "1"
+}

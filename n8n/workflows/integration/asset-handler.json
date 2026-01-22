@@ -1,0 +1,98 @@
+{
+  "name": "IPAI Asset Event Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "asset-handler",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "asset-handler"
+    },
+    {
+      "parameters": {
+        "jsCode": "const event = $input.item.json;\nconst payload = event.payload || {};\n\nlet message = '';\nlet icon = '';\n\nswitch (event.event_type) {\n  case 'asset.reserved':\n    icon = '📅';\n    message = `**${icon} Asset Reserved**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Category:** ${payload.asset_category || 'N/A'}\\n**Reserved by:** ${payload.reserved_by_name || 'Unknown'}\\n**From:** ${payload.reserved_from || 'N/A'}\\n**To:** ${payload.reserved_to || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  case 'asset.checked_out':\n    icon = '📤';\n    message = `**${icon} Asset Checked Out**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Checked out by:** ${payload.checked_out_by || 'Unknown'}\\n**Time:** ${payload.checked_out_at || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  case 'asset.checked_in':\n    icon = '📥';\n    message = `**${icon} Asset Checked In**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Checked in by:** ${payload.checked_in_by || 'Unknown'}\\n**Time:** ${payload.checked_in_at || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  case 'asset.overdue':\n    icon = '⚠️';\n    message = `**${icon} Asset Overdue**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Days overdue:** ${payload.days_overdue || 0}\\n**Reserved by:** ${payload.reserved_by_name || 'Unknown'}\\n\\n**Action required:** Please return the asset immediately.\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  default:\n    icon = 'ℹ️';\n    message = `**${icon} Asset Event: ${event.event_type}**\\n\\nUnhandled event type. Raw payload:\\n\`\`\`json\\n${JSON.stringify(payload, null, 2)}\\n\`\`\``;\n}\n\nreturn { json: { message, event_id: event.id } };"
+      },
+      "id": "format_message",
+      "name": "Format Mattermost Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"text\": $json.message } }}",
+        "options": {}
+      },
+      "id": "send_mattermost",
+      "name": "Send to Mattermost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true, \"event_id\": $json.event_id } }}"
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [850, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Mattermost Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Mattermost Message": {
+      "main": [
+        [
+          {
+            "node": "Send to Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Mattermost": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["integration", "asset"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-22T00:00:00.000Z",
+  "versionId": "1"
+}
