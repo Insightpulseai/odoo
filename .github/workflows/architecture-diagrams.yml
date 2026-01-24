@@ -1,0 +1,88 @@
+name: Architecture Diagrams
+
+on:
+  push:
+    paths:
+      - 'docs/architecture/*.drawio'
+      - 'docs/architecture/exports/**'
+      - 'scripts/export_architecture_diagrams.sh'
+  pull_request:
+    paths:
+      - 'docs/architecture/*.drawio'
+      - 'docs/architecture/exports/**'
+      - 'scripts/export_architecture_diagrams.sh'
+  workflow_dispatch:
+
+jobs:
+  check-exports:
+    name: Check Diagram Exports
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Export diagrams
+        run: |
+          chmod +x scripts/export_architecture_diagrams.sh
+          ./scripts/export_architecture_diagrams.sh
+
+      - name: Check for drift
+        run: |
+          if git diff --exit-code docs/architecture/exports/; then
+            echo "✅ Exports are up to date"
+          else
+            echo "❌ Diagram exports are out of sync!"
+            echo ""
+            echo "Changed files:"
+            git diff --name-only docs/architecture/exports/
+            echo ""
+            echo "Please run './scripts/export_architecture_diagrams.sh' locally and commit the updated exports."
+            exit 1
+          fi
+
+      - name: Verify SVG renders
+        run: |
+          # Check that SVG files exist and are non-empty
+          for svg in docs/architecture/exports/*.svg; do
+            if [[ -f "$svg" ]]; then
+              size=$(stat -c%s "$svg" 2>/dev/null || stat -f%z "$svg")
+              if [[ $size -lt 100 ]]; then
+                echo "❌ $svg appears to be empty or corrupted"
+                exit 1
+              fi
+              echo "✅ $svg ($size bytes)"
+            fi
+          done
+
+      - name: Upload exports as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: architecture-diagrams
+          path: docs/architecture/exports/
+          retention-days: 30
+
+  export-diagrams:
+    name: Export Diagrams (on demand)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull Draw.io export image
+        run: docker pull rlespinasse/drawio-export:latest
+
+      - name: Export all diagrams
+        run: |
+          chmod +x scripts/export_architecture_diagrams.sh
+          ./scripts/export_architecture_diagrams.sh
+
+      - name: Commit and push exports
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(docs): auto-export architecture diagrams"
+          file_pattern: "docs/architecture/exports/*"
+          commit_user_name: github-actions[bot]
+          commit_user_email: github-actions[bot]@users.noreply.github.com

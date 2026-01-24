@@ -1,0 +1,83 @@
+# OCA Stack Base Compose
+# Usage: docker compose up -d
+#        docker compose -f docker-compose.yml -f docker-compose.caddy.yml up -d (with TLS)
+
+services:
+  # -----------------------------------------
+  # PostgreSQL 16 Database
+  # -----------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: odoo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-odoo}
+      POSTGRES_USER: ${DB_USER:-odoo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-odoo}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    command:
+      - "postgres"
+      - "-c"
+      - "max_connections=100"
+      - "-c"
+      - "shared_buffers=256MB"
+      - "-c"
+      - "effective_cache_size=1GB"
+      - "-c"
+      - "work_mem=16MB"
+      - "-c"
+      - "maintenance_work_mem=128MB"
+      - "-c"
+      - "log_min_duration_statement=1000"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - odoo-backend
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-odoo} -d ${DB_NAME:-odoo}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # -----------------------------------------
+  # Odoo 18 CE Application
+  # -----------------------------------------
+  odoo:
+    image: odoo:18.0
+    container_name: odoo-ce
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      USER: ${DB_USER:-odoo}
+      PASSWORD: ${DB_PASSWORD:-odoo}
+    volumes:
+      - odoo-data:/var/lib/odoo
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./addons/custom:/mnt/extra-addons/custom:ro
+      - ./addons/oca:/mnt/extra-addons/oca:ro
+      - ./logs:/var/log/odoo
+    ports:
+      - "127.0.0.1:8069:8069"
+    networks:
+      - odoo-backend
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8069/web/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+networks:
+  odoo-backend:
+    driver: bridge
+    name: odoo-backend
+
+volumes:
+  db-data:
+    name: odoo-db-data
+  odoo-data:
+    name: odoo-filestore

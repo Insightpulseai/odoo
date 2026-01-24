@@ -1,0 +1,88 @@
+# Cursor Bugbot PR Review
+# Invokes Cursor Bugbot on PRs when the 'cursor-bugbot' label is added
+#
+# Prerequisites:
+#   - Cursor Bugbot GitHub App installed on repo/org
+#   - Label 'cursor-bugbot' created (auto-created by this workflow if missing)
+#
+# Usage:
+#   gh pr edit <PR_NUMBER> --add-label cursor-bugbot
+
+name: cursor-bugbot
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  pull-requests: write
+  issues: write
+
+jobs:
+  invoke-bugbot:
+    if: github.event.label.name == 'cursor-bugbot'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Comment to invoke Cursor Bugbot
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+
+          # Construct the Bugbot invocation comment
+          BODY='@cursor run bugbot
+
+          Please review this PR for:
+
+          ## Review Checklist
+
+          ### Correctness
+          - Logic errors and edge cases
+          - Null/undefined handling
+          - Race conditions
+          - Off-by-one errors
+
+          ### Security
+          - SQL injection (especially raw Odoo cr.execute)
+          - XSS vulnerabilities
+          - Authentication/authorization gaps
+          - Secrets exposure
+          - RLS policy gaps (Supabase)
+
+          ### Performance
+          - N+1 queries (Odoo ORM)
+          - Heavy operations in loops
+          - Missing indexes
+          - Blocking calls in async contexts
+
+          ### Reliability
+          - Idempotency of operations
+          - Retry logic and timeouts
+          - Error handling completeness
+          - Transaction boundaries
+
+          ### Maintainability
+          - Test coverage gaps
+          - Code duplication
+          - Unclear naming/structure
+
+          ---
+
+          **Stack context**: Odoo CE 18 + OCA, Supabase (observability), n8n (automation), Vercel (frontend)
+
+          Return: Prioritized findings (P0/P1/P2) with suggested patches.'
+
+          gh api "repos/${REPO}/issues/${PR_NUMBER}/comments" -f body="$BODY"
+
+      - name: Add review-requested status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          gh api "repos/${REPO}/statuses/${PR_SHA}" \
+            -f state=pending \
+            -f context="Cursor Bugbot" \
+            -f description="Bugbot review requested" || true
