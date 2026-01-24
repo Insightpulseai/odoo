@@ -1,0 +1,51 @@
+# Cursor Indexing Control
+# Controls what Cursor indexes for semantic search
+# Note: This is a community pattern; behavior may vary by Cursor version
+
+# ---- Force-include high-value docs (negation) ----
+# These should always be indexed for context
+!CLAUDE.md
+!README.md
+!docs/architecture/**
+!docs/prompts/**
+!spec/**
+!.cursor/rules/**
+
+# ---- Exclude low-value content ----
+# Large generated files
+docs/llms-full.txt
+docs/llms/external/**
+
+# Evidence snapshots (historical, not design docs)
+docs/evidence/**
+
+# Database dumps and backups
+backups/**
+*.dump
+*.backup
+
+# Generated inventory (regenerated on each run)
+docs/inventory/repo_inventory.json
+docs/inventory/feature_matrix.json
+
+# Test fixtures and snapshots
+**/__snapshots__/**
+**/fixtures/**
+**/testdata/**
+
+# Vendor code (not our patterns)
+**/vendor/**
+**/third_party/**
+
+# OCA cloned repos (external code)
+addons/oca/*/
+
+# Large data files
+**/*.csv
+**/*.xlsx
+**/*.json
+!package.json
+!turbo.json
+!tsconfig.json
+!**/manifest.json
+!**/__manifest__.py
