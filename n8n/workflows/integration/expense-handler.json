@@ -1,0 +1,325 @@
+{
+  "name": "IPAI Expense Handler",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "expense-handler",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook_trigger",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "expense-handler"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "rules": [
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.event_type }}",
+                    "operation": "equals",
+                    "value2": "expense.submitted"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "submitted"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.event_type }}",
+                    "operation": "equals",
+                    "value2": "expense.approved"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "approved"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.event_type }}",
+                    "operation": "equals",
+                    "value2": "expense.rejected"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "rejected"
+            },
+            {
+              "conditions": {
+                "string": [
+                  {
+                    "value1": "={{ $json.event_type }}",
+                    "operation": "equals",
+                    "value2": "expense.paid"
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "paid"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "switch_event",
+      "name": "Route by Event",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "finance-notifications"
+            },
+            {
+              "name": "username",
+              "value": "Expense Bot"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":receipt:"
+            },
+            {
+              "name": "text",
+              "value": "#### :inbox_tray: Expense Submitted\n**{{ $json.payload.employee_name }}** submitted expense **{{ $json.payload.name }}**\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n- Description: {{ $json.payload.description }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "notify_submitted",
+      "name": "Notify Submitted",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 150]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "finance-notifications"
+            },
+            {
+              "name": "username",
+              "value": "Expense Bot"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":white_check_mark:"
+            },
+            {
+              "name": "text",
+              "value": "#### :white_check_mark: Expense Approved\nExpense **{{ $json.payload.name }}** for **{{ $json.payload.employee_name }}** has been approved.\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "notify_approved",
+      "name": "Notify Approved",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 270]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "finance-notifications"
+            },
+            {
+              "name": "username",
+              "value": "Expense Bot"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":x:"
+            },
+            {
+              "name": "text",
+              "value": "#### :x: Expense Rejected\nExpense **{{ $json.payload.name }}** for **{{ $json.payload.employee_name }}** was rejected.\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n- Reason: {{ $json.payload.rejection_reason || 'No reason provided' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "notify_rejected",
+      "name": "Notify Rejected",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 390]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "finance-notifications"
+            },
+            {
+              "name": "username",
+              "value": "Expense Bot"
+            },
+            {
+              "name": "icon_emoji",
+              "value": ":moneybag:"
+            },
+            {
+              "name": "text",
+              "value": "#### :moneybag: Expense Paid\nExpense **{{ $json.payload.name }}** for **{{ $json.payload.employee_name }}** has been paid/posted.\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "notify_paid",
+      "name": "Notify Paid",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 510]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, event_type: $('Webhook').item.json.event_type }) }}"
+      },
+      "id": "respond_success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [950, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Route by Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Event": {
+      "main": [
+        [
+          {
+            "node": "Notify Submitted",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Approved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Paid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Submitted": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Approved": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Rejected": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Paid": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["integration", "expense", "finance"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-22T00:00:00.000Z",
+  "versionId": "1"
+}

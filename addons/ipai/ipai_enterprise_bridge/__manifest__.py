@@ -15,6 +15,9 @@
         "auth_oauth",
         "fetchmail",
         "web",
+        "hr_expense",
+        "maintenance",
+        "project",
     ],
     "external_dependencies": {
         "python": [
