@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ebc68ae1c3b1a94a865cb889f97e20ff5eb5f2ee
+> Commit: 1f3f2b3e34afe03df8a28cd7a352fbc709cf8a52
 
 ## 📚 Documentation
 
@@ -25,6 +25,7 @@
 | [/ship Command](.continue/prompts/ship.md) | .continue/prompts |
 | [/verify Command](.continue/prompts/verify.md) | .continue/prompts |
 | [Agentic Rules (Continue)](.continue/rules/agentic.md) | .continue/rules |
+| [GitHub Member Status Taxonomy](.github/STATUS_TAXONOMY.md) | .github |
 | [Mission](.github/agents/odoo-oca-triage.agent.md) | .github/agents |
 | [Copilot Instructions for InsightPulse Odoo CE](.github/copilot-instructions.md) | .github |
 | [Summary](.github/pull_request_template.md) | .github |
@@ -431,6 +432,7 @@
 | [CD Pipeline Deployment Ready](docs/evidence/20260122-1200/cd-pipeline/DEPLOYMENT_READY.md) | docs/evidence/20260122-1200/cd-pipeline |
 | [Summary](docs/evidence/20260122-1200/cd-pipeline/PR_BODY.md) | docs/evidence/20260122-1200/cd-pipeline |
 | [Supabase Preview Branches Configuration Diagnosis](docs/evidence/20260124-1434/supabase-preview-config/diagnosis.md) | docs/evidence/20260124-1434/supabase-preview-config |
+| [Figma Dev Mode Access Implementation Report](docs/evidence/20260124-2104/figma-dev-mode-access/implementation_report.md) | docs/evidence/20260124-2104/figma-dev-mode-access |
 | [Dump Analysis Addendum — OCR Engines + Ops Workbench](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_ADDENDUM.md) | docs/evidence/20260124-dump-analysis |
 | [Consolidated Dump Analysis — Engineering Upgrade Roadmap](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_CONSOLIDATED.md) | docs/evidence/20260124-dump-analysis |
 | [DigitalOcean PostgreSQL Cluster — Infrastructure Evidence](docs/evidence/20260124-supabase-setup/infra/DIGITALOCEAN_POSTGRES.md) | docs/evidence/20260124-supabase-setup/infra |
@@ -1080,6 +1082,8 @@
 | [diagramflow](tools/diagramflow/README.md) | tools/diagramflow |
 | [Kapa-style Docs Copilot for Odoo CE + OCA 18.0](tools/docs-crawler/README.md) | tools/docs-crawler |
 | [Documentation Catalogue → Odoo CE/OCA Mapper](tools/docs_catalog/README.md) | tools/docs_catalog |
+| [Model Repo Scanner](tools/model-repo-scanner/README.md) | tools/model-repo-scanner |
+| [Model Repo Scanner Report](tools/model-repo-scanner/artifacts/model-repo-report.md) | tools/model-repo-scanner/artifacts |
 | [Walkthrough - Notion Parity Modules](walkthrough.md) | . |
 | [Shadow Enterprise Webhook & AI Stack](workflows/SHADOW_ENTERPRISE_STACK.md) | workflows |
 | [n8n Webhook Deployment Guide - TBWA Finance SSC](workflows/WEBHOOK_DEPLOYMENT_GUIDE.md) | workflows |

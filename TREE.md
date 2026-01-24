@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ebc68ae1c3b1a94a865cb889f97e20ff5eb5f2ee
+> Commit: 1f3f2b3e34afe03df8a28cd7a352fbc709cf8a52
 
 ```
 .
@@ -173,6 +173,7 @@
 │   │   ├── workbench-deploy.yml
 │   │   └── workflow-yaml-validate.yml
 │   ├── CODEOWNERS
+│   ├── STATUS_TAXONOMY.md
 │   ├── copilot-instructions.md
 │   └── pull_request_template.md
 ├── .insightpulse
@@ -1659,6 +1660,8 @@
 │   │   │   └── cd-pipeline
 │   │   ├── 20260124-1434
 │   │   │   └── supabase-preview-config
+│   │   ├── 20260124-2104
+│   │   │   └── figma-dev-mode-access
 │   │   ├── 20260124-dump-analysis
 │   │   │   ├── DUMP_ANALYSIS_ADDENDUM.md
 │   │   │   └── DUMP_ANALYSIS_CONSOLIDATED.md
@@ -2976,7 +2979,9 @@
 │   │   ├── drive_manifest.yml
 │   │   └── sync_docs.mjs
 │   ├── figma
-│   │   └── figma_featuremap_sync.py
+│   │   ├── figma_export_variables.sh
+│   │   ├── figma_featuremap_sync.py
+│   │   └── verify_dev_mode_access.sh
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
 │   ├── generate
@@ -3065,6 +3070,8 @@
 │   │   └── generate_project_stack_xlsx.py
 │   ├── sql
 │   │   └── update_phase_tags.sql
+│   ├── status
+│   │   └── set_status.sh
 │   ├── supabase
 │   │   ├── sql
 │   │   │   ├── assert_exposed_schemas.sql
@@ -4060,6 +4067,19 @@
 │   │   │   ├── __init__.py
 │   │   │   └── generate.py
 │   │   └── pyproject.toml
+│   ├── model-repo-scanner
+│   │   ├── .github
+│   │   │   └── workflows
+│   │   ├── artifacts
+│   │   │   ├── model-repo-report.md
+│   │   │   └── model-repo-scores.json
+│   │   ├── config
+│   │   │   └── scoring.yaml
+│   │   ├── scripts
+│   │   │   ├── adopt_model_repo.sh
+│   │   │   └── find_model_repo.sh
+│   │   ├── README.md
+│   │   └── model-repo-scanner.zip
 │   ├── odoo_schema
 │   │   ├── __init__.py
 │   │   ├── export_schema.py
@@ -4216,6 +4236,7 @@
 ├── devserver.config.json
 ├── docker-compose.dev.yml
 ├── figma-make-dev.yaml
+├── figma.config.json
 ├── final_verification.sh
 ├── finance_calendar_2026.csv
 ├── finance_calendar_2026.html
@@ -4273,15 +4294,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1108 directories, 3160 files
+1117 directories, 3172 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1300 |
-| Files | 4106 |
+| Directories | 1309 |
+| Files | 4121 |
 | Python files | 626 |
 | XML files | 253 |
-| Markdown files | 1070 |
+| Markdown files | 1074 |
