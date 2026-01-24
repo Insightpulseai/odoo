@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5665265409e2f1efd76f9625fcc7171b6865a591
+> Commit: 45647a2eb4d3cbbffdb177c1402f48899d0d50fa
 
 ## 📚 Documentation
 
@@ -173,6 +173,7 @@
 | [OdooForge Sandbox](archive/compose/odooforge-sandbox/README.md) | archive/compose/odooforge-sandbox |
 | [OdooForge Sandbox - UAT Test Plan](archive/compose/odooforge-sandbox/tests/UAT_TEST_PLAN.md) | archive/compose/odooforge-sandbox/tests |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
+| [Vendor Backlog Exports](backlog/vendors/README.md) | backlog/vendors |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
 | [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
@@ -207,6 +208,7 @@
 | [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
+| [Backlog Coverage Report](docs/BACKLOG_COVERAGE_REPORT.md) | docs |
 | [Canonical Structure Enforcement Report](docs/CANONICAL_ENFORCEMENT_REPORT.md) | docs |
 | [Canonical Linting Rules](docs/CANONICAL_LINT.md) | docs |
 | [Canonical Structure & Namespace Map](docs/CANONICAL_MAP.md) | docs |
