@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0ccffa623a78a8040c09d19264996a9d5d6b85d1
+> Commit: ebc68ae1c3b1a94a865cb889f97e20ff5eb5f2ee
 
 ```
 .
@@ -1686,6 +1686,7 @@
 │   │   ├── ODOO_SUPABASE_MASTER_PATTERN.md
 │   │   ├── SECRETS_MANAGEMENT.md
 │   │   ├── SUPABASE_BRANCHING_INTEGRATION.md
+│   │   ├── SUPABASE_ENVIRONMENTS.md
 │   │   ├── SUPABASE_ODOO_SEED_PATTERN.md
 │   │   ├── VERCEL_AI_GATEWAY_INTEGRATION.md
 │   │   └── VERCEL_INTEGRATIONS.md
@@ -4272,7 +4273,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1108 directories, 3159 files
+1108 directories, 3160 files
 ```
 
 ## 📊 Stats
@@ -4280,7 +4281,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1300 |
-| Files | 4105 |
+| Files | 4106 |
 | Python files | 626 |
 | XML files | 253 |
-| Markdown files | 1069 |
+| Markdown files | 1070 |
