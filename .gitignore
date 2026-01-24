@@ -123,6 +123,7 @@ temp/
 !db/process_mining/*.sql
 !scripts/erd_dot.sql
 !docs/data-model/*.sql
+!tests/sql/*.sql
 
 # Parity audit generated files
 parity_report.json
