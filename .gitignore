@@ -191,3 +191,19 @@ docs/incidents/*
 sandbox/dev/oca-addons/
 .env.local
 !scripts/lib/
+
+# ---- Large/derived artifacts (indexer-noise reduction) ----
+# These bloat semantic search indexes with low-value content
+**/.turbo/
+**/.vercel/
+**/coverage/
+**/.nyc_output/
+**/storybook-static/
+**/.docusaurus/
+**/*.min.js
+**/*.min.css
+**/*.bundle.js
+**/*.chunk.js
+**/vendor/
+**/.terraform/
+**/terraform.tfstate*
