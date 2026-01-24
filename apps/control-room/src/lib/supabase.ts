@@ -63,3 +63,36 @@ export interface ServiceHealth {
   error?: string;
   lastCheck: string;
 }
+
+// Types for Tables Browser
+export interface DatabaseRelation {
+  schema_name: string;
+  relation_name: string;
+  relation_type: 'table' | 'view' | 'materialized_view' | 'partitioned_table' | 'other';
+  row_estimate: number;
+  is_exposed: boolean;
+}
+
+export interface DatabaseSchema {
+  schema_name: string;
+  is_exposed: boolean;
+  table_count: number;
+  description: string | null;
+}
+
+export interface TableColumn {
+  column_name: string;
+  data_type: string;
+  is_nullable: boolean;
+  column_default: string | null;
+  ordinal_position: number;
+  is_primary_key: boolean;
+}
+
+export interface ExposedSchema {
+  schema_name: string;
+  exposed: boolean;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+}
