@@ -227,3 +227,70 @@ jobs:
           else
             echo "No contract changes detected"
           fi
+
+  design-contract:
+    name: Design Contract Validation (Optional)
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'pull_request'
+    continue-on-error: true  # Design contract is optional for non-UI PRs
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for UI Changes
+        id: ui_check
+        run: |
+          # Detect if PR includes UI-related changes
+          ui_changes=$(git diff --name-only origin/main...HEAD -- \
+            'apps/control-room/**' \
+            'apps/web/**' \
+            'packages/ipai-design-tokens/**' \
+            '*.tsx' '*.jsx' '*.css' '*.scss' \
+            'tokens.json' \
+            2>/dev/null || echo "")
+
+          if [ -n "$ui_changes" ]; then
+            echo "UI changes detected"
+            echo "has_ui_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No UI changes detected"
+            echo "has_ui_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate Figma Contract
+        if: steps.ui_check.outputs.has_ui_changes == 'true'
+        run: |
+          if [ -f ops/design/figma_contract.json ]; then
+            chmod +x scripts/design/validate_contract.sh
+            bash scripts/design/validate_contract.sh ops/design/figma_contract.json
+          else
+            echo "WARNING: UI changes detected but no Figma contract found."
+            echo "Consider running: ./scripts/design/export_figma_contract.ts --file-key <KEY>"
+            # Don't fail - design contract is encouraged but not required yet
+          fi
+
+      - name: Compute Token Diff
+        if: steps.ui_check.outputs.has_ui_changes == 'true' && hashFiles('ops/design/figma_contract.json') != ''
+        run: |
+          # Install tsx for TypeScript execution
+          npm install -g tsx 2>/dev/null || true
+
+          if [ -f scripts/design/compute_token_diff.ts ]; then
+            npx tsx scripts/design/compute_token_diff.ts \
+              --figma ops/design/figma_contract.json \
+              --baseline tokens.json \
+              --out-json ops/design/token_diff.json \
+              --out-md ops/design/token_diff.md
+          fi
+
+      - name: Add Token Diff to Summary
+        if: hashFiles('ops/design/token_diff.md') != ''
+        run: |
+          if [ -f ops/design/token_diff.md ]; then
+            echo "## Token Diff" >> "$GITHUB_STEP_SUMMARY"
+            cat ops/design/token_diff.md >> "$GITHUB_STEP_SUMMARY"
+          fi
