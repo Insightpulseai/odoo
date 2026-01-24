@@ -1,0 +1,191 @@
+# Vendor Apps Catalog - SSOT for integrated external applications
+# Git-driven: changes here trigger backlog sync + deployment matrix
+version: 1
+
+apps:
+  # =========================================================================
+  # Shelf.nu - Open Source Asset Management
+  # =========================================================================
+  - slug: shelf
+    name: "Shelf.nu"
+    description: "Open-source asset management platform for IT assets, equipment, and inventory"
+    repo: "https://github.com/Shelf-nu/shelf.nu.git"
+    ref: "main"
+    type: "node"
+    runtime:
+      node_version: "22"
+      package_manager: "npm"
+    deploy:
+      provider: "fly"
+      path: "."
+      app_name: "shelf-ipai"  # Fly.io app name
+      region: "sjc"
+    supabase:
+      shared: false           # Uses its own Supabase project
+      migrations_path: "supabase/migrations"
+    backlog:
+      github:
+        owner: "Shelf-nu"
+        repo: "shelf.nu"
+        include_prs: false
+        state: "open"
+        labels: ""            # Optional: filter by labels
+      projectv2:
+        enabled: true
+        owner: "Shelf-nu"
+        owner_type: "org"
+        number: 1             # Update with actual ProjectV2 number
+    health:
+      endpoint: "/api/health"
+      timeout_ms: 5000
+    depends_on: []
+    tags:
+      - "asset-management"
+      - "qr-codes"
+      - "inventory"
+
+  # =========================================================================
+  # Atomic CRM - React + Supabase CRM
+  # =========================================================================
+  - slug: atomic-crm
+    name: "Atomic CRM"
+    description: "Full-featured CRM built with React, shadcn-admin-kit, and Supabase"
+    repo: "https://github.com/marmelab/atomic-crm.git"
+    ref: "main"
+    type: "node"
+    runtime:
+      node_version: "22"
+      package_manager: "npm"
+    deploy:
+      provider: "vercel"
+      path: "."
+      project_name: "atomic-crm-ipai"
+      production_branch: "main"
+    supabase:
+      shared: false
+      migrations_path: "supabase/migrations"
+    backlog:
+      github:
+        owner: "marmelab"
+        repo: "atomic-crm"
+        include_prs: false
+        state: "open"
+        labels: ""
+      projectv2:
+        enabled: false
+    health:
+      endpoint: "/"
+      timeout_ms: 5000
+    depends_on: []
+    tags:
+      - "crm"
+      - "sales"
+      - "contacts"
+
+  # =========================================================================
+  # Internal: Control Room (Platform Kit UI)
+  # =========================================================================
+  - slug: control-room
+    name: "Control Room"
+    description: "Platform Kit observability dashboard for IPAI"
+    repo: "internal"          # Lives in this monorepo
+    ref: "main"
+    type: "node"
+    runtime:
+      node_version: "22"
+      package_manager: "pnpm"
+    deploy:
+      provider: "vercel"
+      path: "apps/control-room"
+      project_name: "ipai-control-room"
+      production_branch: "main"
+    supabase:
+      shared: true            # Uses shared IPAI Supabase
+      project_ref: "spdtwktxdalcfigzeqrz"
+    backlog:
+      github:
+        owner: "jgtolentino"
+        repo: "odoo-ce"
+        include_prs: false
+        state: "open"
+        labels: "control-room,platform-kit"
+      projectv2:
+        enabled: false
+    health:
+      endpoint: "/api/health"
+      timeout_ms: 5000
+    depends_on:
+      - "config-registry"     # Depends on ops.config_* schema
+    tags:
+      - "platform-kit"
+      - "observability"
+      - "internal"
+
+  # =========================================================================
+  # Config Registry Service (Edge Functions)
+  # =========================================================================
+  - slug: config-registry
+    name: "Config Registry"
+    description: "Supabase Edge Functions for config publish/heartbeat"
+    repo: "internal"
+    ref: "main"
+    type: "supabase-functions"
+    deploy:
+      provider: "supabase"
+      path: "supabase/functions"
+      functions:
+        - "config-publish"
+        - "consumer-heartbeat"
+    supabase:
+      shared: true
+      project_ref: "spdtwktxdalcfigzeqrz"
+    backlog:
+      github:
+        owner: "jgtolentino"
+        repo: "odoo-ce"
+        include_prs: false
+        state: "open"
+        labels: "config-registry,ops"
+      projectv2:
+        enabled: false
+    health:
+      endpoint: "/functions/v1/ops-health"
+      timeout_ms: 5000
+    depends_on: []
+    tags:
+      - "config"
+      - "infrastructure"
+      - "internal"
+
+# =========================================================================
+# Global Settings
+# =========================================================================
+settings:
+  # Default backlog export settings
+  backlog:
+    export_dir: "backlog/vendors"
+    validate_strict: true
+    diff_max_items: 20
+    project_field_allowlist:
+      - "Status"
+      - "Priority"
+      - "Assignees"
+      - "Milestone"
+      - "Iteration"
+      - "Start date"
+      - "Due date"
+      - "Estimate"
+      - "Points"
+      - "Type"
+
+  # Deployment defaults
+  deploy:
+    timeout_minutes: 15
+    rollback_on_failure: true
+    notify_on_deploy: true
+
+  # Health check defaults
+  health:
+    interval_minutes: 5
+    failure_threshold: 3
+    recovery_threshold: 2
