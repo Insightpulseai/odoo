@@ -1,0 +1,442 @@
+name: Ops CI Router (Multi-Signal Scoring + Alerting)
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no Mattermost posts)'
+        required: false
+        default: 'false'
+
+jobs:
+  route:
+    name: Score Health + Route Alerts
+    runs-on: ubuntu-latest
+
+    env:
+      SYSTEM: "erp.insightpulseai.net"
+      ENVIRONMENT: "prod"
+      RUNBOOK_REF: "repo@HEAD:artifacts/erp.insightpulseai.net/runbooks/incident_response.md"
+      ARTIFACT_REF: "repo@HEAD:artifacts/erp.insightpulseai.net"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Score health and route alerts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          MM_WEBHOOK_CRITICAL: ${{ secrets.MM_WEBHOOK_CRITICAL }}
+          MM_WEBHOOK_WARN: ${{ secrets.MM_WEBHOOK_WARN }}
+          MM_WEBHOOK_INFO: ${{ secrets.MM_WEBHOOK_INFO }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request
+          from datetime import datetime, timezone
+
+          SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+          SRK = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+          DRY_RUN = os.environ.get("DRY_RUN", "false").lower() == "true"
+
+          if not SUPABASE_URL or not SRK:
+              print("WARNING: Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY")
+              print("Skipping alerting (secrets not configured)")
+              raise SystemExit(0)
+
+          SYSTEM = os.environ["SYSTEM"]
+          ENVIRONMENT = os.environ["ENVIRONMENT"]
+          RUNBOOK_REF = os.environ.get("RUNBOOK_REF")
+          ARTIFACT_REF = os.environ.get("ARTIFACT_REF")
+
+          MM_WEBHOOK_CRITICAL = os.environ.get("MM_WEBHOOK_CRITICAL", "")
+          MM_WEBHOOK_WARN = os.environ.get("MM_WEBHOOK_WARN", "")
+          MM_WEBHOOK_INFO = os.environ.get("MM_WEBHOOK_INFO", "")
+
+          # Load scoring config from repo
+          with open("ops/alerting/scoring.json", "r", encoding="utf-8") as f:
+              cfg = json.load(f)
+
+          WINDOW_MINUTES = int(cfg["window_minutes"])
+          W = cfg["weights"]
+          NORM = cfg["normalize"]
+          BANDS = cfg["bands"]
+          HARD = cfg.get("hard_thresholds", {})
+          PERSIST = cfg.get("persistence", {"warn": {"n": 1, "m": 1}, "critical": {"n": 1, "m": 1}})
+          COOLDOWNS = cfg.get("cooldowns", {"critical": 5, "warn": 15, "info": 60})
+
+          def req_json(url, body_obj):
+              body = json.dumps(body_obj, separators=(",", ":"), sort_keys=True).encode()
+              req = urllib.request.Request(
+                  url,
+                  data=body,
+                  headers={
+                      "content-type": "application/json",
+                      "apikey": SRK,
+                      "authorization": f"Bearer {SRK}",
+                  },
+              )
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  data = r.read().decode()
+                  return json.loads(data) if data else None
+
+          def rpc(fn, args):
+              return req_json(f"{SUPABASE_URL}/rest/v1/rpc/{fn}", args)
+
+          def insert(table, row):
+              url = f"{SUPABASE_URL}/rest/v1/{table}"
+              body = json.dumps(row, separators=(",", ":"), sort_keys=True).encode()
+              req = urllib.request.Request(
+                  url,
+                  data=body,
+                  headers={
+                      "content-type": "application/json",
+                      "apikey": SRK,
+                      "authorization": f"Bearer {SRK}",
+                      "prefer": "return=representation",
+                  },
+                  method="POST",
+              )
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  out = r.read().decode()
+                  return json.loads(out) if out else []
+
+          def post_mm(webhook, text):
+              if DRY_RUN:
+                  print(f"DRY RUN - Would post to Mattermost: {text[:200]}...")
+                  return
+              if not webhook:
+                  print("WARNING: missing webhook; skipping Mattermost post")
+                  return
+              body = json.dumps({"text": text}).encode()
+              req = urllib.request.Request(
+                  webhook, data=body, headers={"content-type": "application/json"}
+              )
+              with urllib.request.urlopen(req, timeout=30) as r:
+                  print("Mattermost:", r.status)
+
+          def norm_value(key, value):
+              cap = float(NORM[key]["cap"])
+              v = float(value)
+              if cap <= 0:
+                  return 0.0
+              return max(0.0, min(1.0, v / cap))
+
+          # 1) Fetch alert state
+          try:
+              st = rpc("get_alert_state", {
+                  "p_system": SYSTEM,
+                  "p_environment": ENVIRONMENT,
+                  "p_window_minutes": WINDOW_MINUTES,
+              }) or {}
+          except Exception as e:
+              print(f"ERROR: Failed to fetch alert state: {e}")
+              raise SystemExit(1)
+
+          signals = {
+              "dlq_count": int(st.get("dlq_count", 0)),
+              "error_rate": float(st.get("error_rate", 0.0)),
+              "mirror_stale_minutes": int(st.get("mirror_stale_minutes", 0)),
+          }
+
+          normalized = {k: norm_value(k, signals[k]) for k in W.keys()}
+          raw = sum(float(W[k]) * float(normalized[k]) for k in W.keys())
+          score = int(round(100.0 * raw))
+
+          # 2) Determine severity
+          severity = "info"
+          if score >= int(BANDS["critical"]):
+              severity = "critical"
+          elif score >= int(BANDS["warn"]):
+              severity = "warn"
+
+          # Hard overrides
+          if signals["dlq_count"] >= int(HARD.get("dlq_nonzero", 999999)):
+              severity = "critical"
+          if signals["error_rate"] >= float(HARD.get("error_rate_critical", 1e9)):
+              severity = "critical"
+
+          print(f"Health score: {score}, severity: {severity}")
+          print(f"Signals: {signals}")
+          print(f"Normalized: {normalized}")
+
+          # 3) Record health window
+          try:
+              meta = {"bands": BANDS, "hard_thresholds": HARD, "persistence": PERSIST}
+              hw_id = rpc("record_health_window", {
+                  "p_system": SYSTEM,
+                  "p_environment": ENVIRONMENT,
+                  "p_window_minutes": WINDOW_MINUTES,
+                  "p_score": score,
+                  "p_severity": severity,
+                  "p_signals": signals,
+                  "p_normalized": normalized,
+                  "p_weights": W,
+                  "p_meta": meta,
+              })
+              print(f"Health window recorded: {hw_id}")
+          except Exception as e:
+              print(f"WARNING: Failed to record health window: {e}")
+              hw_id = None
+
+          # 4) Persistence gate
+          def gate(target):
+              n = int(PERSIST[target]["n"])
+              m = int(PERSIST[target]["m"])
+              try:
+                  return bool(rpc("persistence_gate", {
+                      "p_system": SYSTEM,
+                      "p_environment": ENVIRONMENT,
+                      "p_target": target,
+                      "p_n": n,
+                      "p_m": m,
+                  }))
+              except Exception as e:
+                  print(f"WARNING: Persistence gate failed: {e}")
+                  return True  # Fail open
+
+          fire = False
+          if severity == "critical":
+              fire = gate("critical")
+          elif severity == "warn":
+              fire = gate("warn")
+
+          if not fire:
+              print(f"Not firing alert (persistence gate not met for {severity})")
+              # Still healthy - no alert needed
+              raise SystemExit(0)
+
+          # 5) Ensure incident + cooldown gate
+          corr = f"{SYSTEM}.{ENVIRONMENT}.health_score"
+          title = f"Health score {score} ({severity})"
+
+          try:
+              inc_id = rpc("ensure_incident", {
+                  "p_system": SYSTEM,
+                  "p_environment": ENVIRONMENT,
+                  "p_severity": severity,
+                  "p_title": title,
+                  "p_correlation_key": corr,
+                  "p_artifact_ref": ARTIFACT_REF,
+                  "p_metadata": {
+                      "correlation_key": corr,
+                      "runbook_ref": RUNBOOK_REF,
+                      "health_window_id": hw_id,
+                  },
+              })
+          except Exception as e:
+              print(f"ERROR: Failed to ensure incident: {e}")
+              raise SystemExit(1)
+
+          cooldown = COOLDOWNS.get(severity, 15)
+          try:
+              allowed = rpc("allow_fire", {
+                  "p_correlation_key": corr,
+                  "p_severity": severity,
+                  "p_incident_id": inc_id,
+                  "p_cooldown_minutes": cooldown,
+                  "p_context": {
+                      "health_window_id": hw_id,
+                      "signals": signals,
+                      "normalized": normalized,
+                      "score": score,
+                  },
+              })
+          except Exception as e:
+              print(f"WARNING: Cooldown gate failed: {e}")
+              allowed = True  # Fail open
+
+          if not allowed:
+              print(f"Deduped by cooldown ({cooldown} min)")
+              raise SystemExit(0)
+
+          # 6) Log alert event + post to Mattermost
+          msg = (
+              f"{severity.upper()}: Health score {score} (window={WINDOW_MINUTES}m)\n"
+              f"Signals: {signals}\n"
+              f"Normalized: {normalized}\n"
+              f"System: {SYSTEM} | Env: {ENVIRONMENT}\n"
+              f"Incident: {inc_id}\n"
+              f"Runbook: {RUNBOOK_REF}\n"
+              f"Artifacts: {ARTIFACT_REF}\n"
+              f"Correlation: {corr}"
+          )
+
+          try:
+              insert("ops.alert_events", {
+                  "alert_key": "health_score",
+                  "severity": severity,
+                  "message": f"Health score {score} ({severity})",
+                  "correlation_key": corr,
+                  "incident_id": inc_id,
+                  "context": {
+                      "health_window_id": hw_id,
+                      "signals": signals,
+                      "normalized": normalized,
+                      "weights": W,
+                      "score": score,
+                      "meta": meta,
+                  },
+              })
+          except Exception as e:
+              print(f"WARNING: Failed to log alert event: {e}")
+
+          try:
+              rpc("append_incident_timeline", {
+                  "p_incident_id": inc_id,
+                  "p_entry": {
+                      "ts": datetime.now(timezone.utc).isoformat(),
+                      "type": "health_score_alert",
+                      "severity": severity,
+                      "score": score,
+                      "health_window_id": hw_id,
+                      "signals": signals,
+                      "normalized": normalized,
+                      "weights": W,
+                  },
+              })
+          except Exception as e:
+              print(f"WARNING: Failed to append timeline: {e}")
+
+          webhook = MM_WEBHOOK_CRITICAL if severity == "critical" else MM_WEBHOOK_WARN
+          post_mm(webhook, msg)
+          print(f"Alert fired: {severity}, score={score}, incident={inc_id}")
+          PY
+
+  escalation:
+    name: Escalation Runner
+    runs-on: ubuntu-latest
+    needs: route
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run escalation sweep
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request
+          from datetime import datetime, timezone
+
+          SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
+          SRK = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
+
+          if not SUPABASE_URL or not SRK:
+              print("WARNING: Missing secrets, skipping escalation")
+              raise SystemExit(0)
+
+          def req(url, method="GET", body=None):
+              data = None
+              headers = {"apikey": SRK, "authorization": f"Bearer {SRK}"}
+              if body is not None:
+                  data = json.dumps(body).encode()
+                  headers["content-type"] = "application/json"
+              r = urllib.request.Request(url, data=data, method=method, headers=headers)
+              with urllib.request.urlopen(r, timeout=30) as resp:
+                  out = resp.read().decode()
+                  return json.loads(out) if out else None
+
+          def rpc(fn, args):
+              return req(f"{SUPABASE_URL}/rest/v1/rpc/{fn}", method="POST", body=args)
+
+          def post_webhook(url, text):
+              if not url:
+                  return
+              body = json.dumps({"text": text}).encode()
+              r = urllib.request.Request(
+                  url, data=body, headers={"content-type": "application/json"}, method="POST"
+              )
+              with urllib.request.urlopen(r, timeout=30) as resp:
+                  print("Escalation Mattermost:", resp.status)
+
+          # Pull active escalation states
+          try:
+              states = req(
+                  f"{SUPABASE_URL}/rest/v1/ops.escalation_state?select=*&is_active=eq.true&order=started_at.asc&limit=50"
+              ) or []
+          except Exception as e:
+              print(f"WARNING: Failed to fetch escalation states: {e}")
+              raise SystemExit(0)
+
+          now = datetime.now(timezone.utc)
+
+          for s in states:
+              corr = s["correlation_key"]
+              policy_id = s["policy_id"]
+              step_idx = int(s.get("current_step_index", 0))
+              started_at = datetime.fromisoformat(s["started_at"].replace("Z", "+00:00"))
+
+              # Stop if acked
+              try:
+                  acked = rpc("is_acked", {"p_correlation_key": corr, "p_now": now.isoformat()})
+              except Exception as e:
+                  print(f"WARNING: is_acked failed: {e}")
+                  acked = False
+
+              if acked:
+                  # Deactivate
+                  try:
+                      req(
+                          f"{SUPABASE_URL}/rest/v1/ops.escalation_state?correlation_key=eq.{corr}",
+                          method="PATCH",
+                          body={"is_active": False},
+                      )
+                      print(f"Escalation deactivated (acked): {corr}")
+                  except Exception as e:
+                      print(f"WARNING: Failed to deactivate: {e}")
+                  continue
+
+              # Fetch steps
+              try:
+                  steps = req(
+                      f"{SUPABASE_URL}/rest/v1/ops.escalation_steps?select=*&policy_id=eq.{policy_id}&order=step_index.asc"
+                  ) or []
+              except Exception as e:
+                  print(f"WARNING: Failed to fetch steps: {e}")
+                  continue
+
+              # Find next step
+              next_step = None
+              for st in steps:
+                  if int(st["step_index"]) == step_idx + 1:
+                      next_step = st
+                      break
+              if not next_step:
+                  continue
+
+              # Check time threshold
+              after_min = int(next_step["after_minutes"])
+              elapsed_min = int((now - started_at).total_seconds() // 60)
+              if elapsed_min < after_min:
+                  continue
+
+              # Execute escalation step
+              prefix = next_step.get("message_prefix", "ESCALATION")
+              text = (
+                  f"{prefix}: Unacked incident escalation\n"
+                  f"Correlation: {corr}\n"
+                  f"Elapsed: {elapsed_min}m\n"
+                  f"Next step: {next_step['step_index']}"
+              )
+              post_webhook(next_step["webhook_url"], text)
+
+              # Advance state
+              try:
+                  req(
+                      f"{SUPABASE_URL}/rest/v1/ops.escalation_state?correlation_key=eq.{corr}",
+                      method="PATCH",
+                      body={
+                          "current_step_index": int(next_step["step_index"]),
+                          "last_escalated_at": now.isoformat(),
+                      },
+                  )
+                  print(f"Escalation advanced: {corr} -> step {next_step['step_index']}")
+              except Exception as e:
+                  print(f"WARNING: Failed to advance escalation: {e}")
+
+          print("Escalation sweep complete")
+          PY

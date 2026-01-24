@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ipai_ops_summary_user,access_ipai_ops_summary_user,model_ipai_ops_summary,base.group_user,1,0,0,0
+access_ipai_ops_summary_admin,access_ipai_ops_summary_admin,model_ipai_ops_summary,base.group_system,1,1,1,1
+access_ipai_outbox_event_user,access_ipai_outbox_event_user,model_ipai_outbox_event,base.group_user,1,0,0,0
+access_ipai_outbox_event_admin,access_ipai_outbox_event_admin,model_ipai_outbox_event,base.group_system,1,1,1,1

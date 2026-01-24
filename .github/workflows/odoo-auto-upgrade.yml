@@ -1,0 +1,177 @@
+name: Odoo Auto Install/Upgrade
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "addons/**"
+      - "config/odoo/**"
+      - "scripts/odoo_*.sh"
+      - ".github/workflows/odoo-auto-upgrade.yml"
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Modules to upgrade (comma-separated or "all")'
+        required: false
+        default: 'all'
+      skip_seed:
+        description: 'Skip post-upgrade seeding'
+        required: false
+        default: 'false'
+      dry_run:
+        description: 'Dry run (validate only, no changes)'
+        required: false
+        default: 'false'
+
+jobs:
+  validate:
+    name: Validate Scripts
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate shell scripts
+        run: |
+          echo "Validating Odoo scripts..."
+          for script in scripts/odoo_*.sh; do
+            if [[ -f "$script" ]]; then
+              echo "Checking: $script"
+              bash -n "$script"
+            fi
+          done
+          echo "All scripts valid"
+
+      - name: Validate desired modules config
+        run: |
+          echo "Validating desired modules config..."
+          python3 -c "
+          import yaml
+          with open('config/odoo/desired_modules.yml', 'r') as f:
+              cfg = yaml.safe_load(f)
+          mods = cfg.get('modules', [])
+          print(f'Found {len(mods)} desired modules')
+          for m in mods:
+              if m and not m.startswith('#'):
+                  print(f'  - {m}')
+          "
+
+  upgrade:
+    name: Upgrade Odoo Modules
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event.inputs.dry_run != 'true'
+
+    # Only run if we have SSH access configured
+    # Remove this condition if running on self-hosted runner with Docker access
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy and upgrade via SSH
+        env:
+          SSH_HOST: ${{ secrets.ODOO_PROD_SSH_HOST }}
+          SSH_USER: ${{ secrets.ODOO_PROD_SSH_USER }}
+          SSH_KEY: ${{ secrets.ODOO_PROD_SSH_KEY }}
+          ODOO_CONTAINER: ${{ secrets.ODOO_CONTAINER || 'odoo-core' }}
+          ODOO_DB: ${{ secrets.ODOO_DB || 'odoo_core' }}
+          MODULES: ${{ github.event.inputs.modules || 'all' }}
+          SKIP_SEED: ${{ github.event.inputs.skip_seed || 'false' }}
+        run: |
+          set -euo pipefail
+
+          # Skip if secrets not configured
+          if [[ -z "${SSH_HOST:-}" ]] || [[ -z "${SSH_KEY:-}" ]]; then
+            echo "WARNING: SSH secrets not configured"
+            echo "To enable auto-upgrade, set these repository secrets:"
+            echo "  - ODOO_PROD_SSH_HOST"
+            echo "  - ODOO_PROD_SSH_USER"
+            echo "  - ODOO_PROD_SSH_KEY"
+            echo "Skipping deployment..."
+            exit 0
+          fi
+
+          # Setup SSH
+          install -m 700 -d ~/.ssh
+          printf "%s" "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          echo "Connecting to ${SSH_HOST}..."
+
+          ssh -o StrictHostKeyChecking=no "${SSH_USER}@${SSH_HOST}" <<REMOTE
+            set -euo pipefail
+
+            echo "[deploy] Starting Odoo auto-upgrade..."
+
+            # Navigate to repo (adjust path as needed)
+            REPO_PATH="${REPO_PATH:-/opt/odoo-ce/repo}"
+            if [[ -d "\$REPO_PATH" ]]; then
+              cd "\$REPO_PATH"
+            else
+              echo "[deploy] WARNING: Repo path not found: \$REPO_PATH"
+              echo "[deploy] Trying current directory..."
+            fi
+
+            # Pull latest main
+            echo "[deploy] Pulling latest main..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Set environment
+            export ODOO_CONTAINER="${ODOO_CONTAINER}"
+            export ODOO_DB="${ODOO_DB}"
+            export ODOO_CONF="/etc/odoo/odoo.conf"
+            export MODULES="${MODULES}"
+
+            echo "[deploy] Container: \$ODOO_CONTAINER"
+            echo "[deploy] Database: \$ODOO_DB"
+            echo "[deploy] Modules: \$MODULES"
+
+            # Step 1: Ensure desired modules are installed
+            echo "[deploy] Step 1: Ensuring modules installed..."
+            if [[ -x ./scripts/odoo_ensure_modules_installed.sh ]]; then
+              ./scripts/odoo_ensure_modules_installed.sh || true
+            fi
+
+            # Step 2: Upgrade modules
+            echo "[deploy] Step 2: Upgrading modules..."
+            if [[ -x ./scripts/odoo_upgrade_modules.sh ]]; then
+              ./scripts/odoo_upgrade_modules.sh
+            fi
+
+            # Step 3: Run post-upgrade seeds (unless skipped)
+            if [[ "${SKIP_SEED}" != "true" ]]; then
+              echo "[deploy] Step 3: Running post-upgrade seeds..."
+              if [[ -x ./scripts/odoo_seed_post_upgrade.sh ]]; then
+                ./scripts/odoo_seed_post_upgrade.sh || true
+              fi
+            else
+              echo "[deploy] Step 3: Skipping seeds (SKIP_SEED=true)"
+            fi
+
+            echo "[deploy] Odoo auto-upgrade complete!"
+          REMOTE
+
+          echo "Deployment complete"
+
+  notify:
+    name: Notify Status
+    runs-on: ubuntu-latest
+    needs: [validate, upgrade]
+    if: always()
+
+    steps:
+      - name: Report status
+        run: |
+          echo "=== Odoo Auto-Upgrade Summary ==="
+          echo "Validation: ${{ needs.validate.result }}"
+          echo "Upgrade: ${{ needs.upgrade.result }}"
+
+          if [[ "${{ needs.upgrade.result }}" == "success" ]]; then
+            echo "STATUS: All modules upgraded successfully"
+          elif [[ "${{ needs.upgrade.result }}" == "skipped" ]]; then
+            echo "STATUS: Upgrade skipped (dry run or missing secrets)"
+          else
+            echo "STATUS: Upgrade failed - check logs"
+          fi
