@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0f8e6694b36b9fba38fb38ac6b34c597e62b7bec
+> Commit: 0ccffa623a78a8040c09d19264996a9d5d6b85d1
 
 ```
 .
@@ -151,6 +151,7 @@
 │   │   ├── repo-structure.yml
 │   │   ├── reusable-pr-gate.yml
 │   │   ├── run-odoo-cli-job.yml
+│   │   ├── secret-scan.yml
 │   │   ├── seed-odoo-finance.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── spec-and-parity.yml
@@ -258,6 +259,9 @@
 │   │   │   └── hooks.py
 │   │   ├── ipai_finance_close_seed
 │   │   │   └── data
+│   │   ├── ipai_finance_ppm
+│   │   │   ├── models
+│   │   │   └── __init__.py
 │   │   ├── ipai_finance_workflow
 │   │   │   ├── data
 │   │   │   ├── models
@@ -3076,6 +3080,8 @@
 │   │   ├── schema-to-openapi.js
 │   │   ├── spec-to-prisma.js
 │   │   └── sync-all.js
+│   ├── .env.example
+│   ├── CONFIG_INVENTORY.txt
 │   ├── FIX_OWLERROR_GUIDE.md
 │   ├── README.md
 │   ├── activate-n8n-workflows.sh
@@ -3115,6 +3121,7 @@
 │   ├── ci_smoke_test.sh
 │   ├── clean-branches.sh
 │   ├── cleanup-branches.sh
+│   ├── config_files_found.txt
 │   ├── configure_base_url.py
 │   ├── configure_gmail_smtp.py
 │   ├── configure_gmail_smtp.sh
@@ -3161,6 +3168,7 @@
 │   ├── docker-staging-audit.sh
 │   ├── ee_replace_request.sh
 │   ├── enhanced_health_check.sh
+│   ├── env_vars_found.txt
 │   ├── erd_dot.sql
 │   ├── erp_config_cli.sh
 │   ├── execute_rationalization.sh
@@ -3220,6 +3228,7 @@
 │   ├── install_oca_modules.sh
 │   ├── install_oca_project_modules.sh
 │   ├── introspect_project.py
+│   ├── inventory_config_keys.sh
 │   ├── ipai_full_audit.py
 │   ├── ipai_install_upgrade_test.sh
 │   ├── ipai_quality_gate.sh
@@ -4263,15 +4272,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1106 directories, 3152 files
+1108 directories, 3159 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1298 |
-| Files | 4096 |
-| Python files | 623 |
+| Directories | 1300 |
+| Files | 4105 |
+| Python files | 626 |
 | XML files | 253 |
 | Markdown files | 1069 |
