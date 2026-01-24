@@ -8,12 +8,18 @@ on:
       - "odoo/**"
       - "config/odoo/**"
       - "scripts/ci_odoo_*.py"
+      - "scripts/ci_odoo_*.sh"
+      - "ci/odoo/**"
       - ".github/workflows/odoo-ci-gate.yml"
 
 jobs:
   gate:
     name: Odoo Module Gate
     runs-on: ubuntu-latest
+    outputs:
+      modules_json: ${{ steps.detect.outputs.modules_json }}
+      modules_csv: ${{ steps.resolve.outputs.modules_csv }}
+      count: ${{ steps.detect.outputs.count }}
 
     steps:
       - name: Checkout
@@ -50,6 +56,22 @@ jobs:
           echo "$mods_json" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
           echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve impacted modules
+        id: resolve
+        if: steps.detect.outputs.count != '0'
+        env:
+          ODOO_CHANGED_MODULES_JSON: ${{ steps.detect.outputs.modules_json }}
+        run: |
+          set -euo pipefail
+          echo "Resolving impacted modules (changed + reverse deps)..."
+          result="$(python3 scripts/ci_odoo_resolve_impacted.py)"
+          echo "$result"
+
+          # Extract CSV for install test
+          csv=$(echo "$result" | python3 -c "import json,sys; print(json.load(sys.stdin).get('impacted_csv', ''))")
+          echo "Impacted modules CSV: $csv"
+          echo "modules_csv=$csv" >> "$GITHUB_OUTPUT"
 
       - name: Enforce Odoo gate policy
         if: steps.detect.outputs.count != '0'
@@ -129,3 +151,43 @@ jobs:
           done
 
           echo "Security check complete"
+
+  install-test:
+    name: Install/Upgrade Test (${{ matrix.odoo_version }})
+    runs-on: ubuntu-latest
+    needs: gate
+    if: needs.gate.outputs.count != '0' && needs.gate.outputs.modules_csv != ''
+
+    strategy:
+      fail-fast: false
+      matrix:
+        odoo_version:
+          - "18.0"
+          # - "17.0"  # Uncomment to test against 17.0
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run install/upgrade test
+        env:
+          ODOO_IMAGE: "odoo:${{ matrix.odoo_version }}"
+          MODULES_CSV: ${{ needs.gate.outputs.modules_csv }}
+          COMPOSE_FILE: "ci/odoo/docker-compose.ci.yml"
+        run: |
+          set -euo pipefail
+          echo "=== Odoo Install/Upgrade Test ==="
+          echo "Image: ${ODOO_IMAGE}"
+          echo "Modules: ${MODULES_CSV}"
+
+          chmod +x scripts/ci_odoo_run_install_upgrade.sh
+          ./scripts/ci_odoo_run_install_upgrade.sh
+
+      - name: Cleanup on failure
+        if: failure()
+        run: |
+          docker compose -f ci/odoo/docker-compose.ci.yml down -v 2>/dev/null || true
+          docker compose -f ci/odoo/docker-compose.ci.yml logs 2>/dev/null || true
