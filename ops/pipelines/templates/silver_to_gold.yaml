@@ -1,0 +1,240 @@
+# Pipeline: Silver to Gold
+# Description: Creates aggregated business-ready gold layer marts
+# Layer: gold
+
+version: "1.0"
+name: silver_to_gold
+description: >
+  Creates gold layer marts for business intelligence:
+  - Customer metrics
+  - Revenue analytics
+  - Sales performance
+  - Aging reports
+  - Dashboard-ready aggregates
+
+spec_slug: lakehouse-control-room
+layer: gold
+
+schedule:
+  cron: "0 6 * * *"  # Daily at 6 AM
+  timezone: "UTC"
+
+tags:
+  source: silver
+  layer: gold
+  team: analytics
+
+caps:
+  max_runtime_seconds: 3600
+  max_phase_runtime_seconds: 1200
+  max_retries: 2
+  max_artifacts_mb: 2000
+
+phases:
+  - name: create_customer_360
+    type: transform
+    timeout_seconds: 600
+    config:
+      input_uri: "s3://lakehouse/silver"
+      output_uri: "s3://lakehouse/gold/customer_360"
+      layer: gold
+      sql: |
+        WITH customer_orders AS (
+          SELECT
+            partner_id,
+            COUNT(*) AS total_orders,
+            SUM(amount_total) AS lifetime_value,
+            MIN(order_date) AS first_order_date,
+            MAX(order_date) AS last_order_date
+          FROM silver_sales_orders
+          GROUP BY partner_id
+        ),
+        customer_invoices AS (
+          SELECT
+            partner_id,
+            COUNT(*) AS total_invoices,
+            SUM(amount_total) AS total_invoiced,
+            SUM(amount_due) AS total_outstanding
+          FROM silver_invoices
+          WHERE move_type = 'out_invoice'
+          GROUP BY partner_id
+        )
+        SELECT
+          p.id AS customer_id,
+          p.name AS customer_name,
+          p.email,
+          p.city,
+          p.postal_code,
+          p.is_company,
+          COALESCE(o.total_orders, 0) AS total_orders,
+          COALESCE(o.lifetime_value, 0) AS lifetime_value,
+          o.first_order_date,
+          o.last_order_date,
+          DATEDIFF('day', o.last_order_date, CURRENT_DATE) AS days_since_last_order,
+          COALESCE(i.total_invoices, 0) AS total_invoices,
+          COALESCE(i.total_invoiced, 0) AS total_invoiced,
+          COALESCE(i.total_outstanding, 0) AS total_outstanding,
+          CASE
+            WHEN o.lifetime_value >= 100000 THEN 'enterprise'
+            WHEN o.lifetime_value >= 10000 THEN 'business'
+            WHEN o.lifetime_value >= 1000 THEN 'professional'
+            ELSE 'starter'
+          END AS customer_tier,
+          p.created_at,
+          p.updated_at,
+          CURRENT_TIMESTAMP AS _gold_ts
+        FROM silver_partners p
+        LEFT JOIN customer_orders o ON p.id = o.partner_id
+        LEFT JOIN customer_invoices i ON p.id = i.partner_id
+        WHERE p.is_company = false OR p.is_company IS NULL
+
+  - name: create_revenue_daily
+    type: transform
+    timeout_seconds: 300
+    config:
+      input_uri: "s3://lakehouse/silver"
+      output_uri: "s3://lakehouse/gold/revenue_daily"
+      layer: gold
+      sql: |
+        SELECT
+          DATE_TRUNC('day', invoice_date) AS date,
+          company_id,
+          currency_id,
+          COUNT(DISTINCT invoice_id) AS invoice_count,
+          SUM(amount_total) AS gross_revenue,
+          SUM(CASE WHEN move_type = 'out_refund' THEN -amount_total ELSE 0 END) AS refunds,
+          SUM(CASE WHEN move_type = 'out_invoice' THEN amount_total ELSE 0 END) -
+          SUM(CASE WHEN move_type = 'out_refund' THEN amount_total ELSE 0 END) AS net_revenue,
+          COUNT(DISTINCT partner_id) AS unique_customers,
+          CURRENT_TIMESTAMP AS _gold_ts
+        FROM silver_invoices
+        WHERE state = 'posted'
+        GROUP BY 1, 2, 3
+
+  - name: create_revenue_monthly
+    type: transform
+    depends_on: [create_revenue_daily]
+    timeout_seconds: 300
+    config:
+      input_uri: "s3://lakehouse/gold/revenue_daily"
+      output_uri: "s3://lakehouse/gold/revenue_monthly"
+      layer: gold
+      sql: |
+        SELECT
+          DATE_TRUNC('month', date) AS month,
+          company_id,
+          currency_id,
+          SUM(invoice_count) AS invoice_count,
+          SUM(gross_revenue) AS gross_revenue,
+          SUM(refunds) AS refunds,
+          SUM(net_revenue) AS net_revenue,
+          SUM(unique_customers) AS transactions,
+          AVG(net_revenue) AS avg_daily_revenue,
+          CURRENT_TIMESTAMP AS _gold_ts
+        FROM gold_revenue_daily
+        GROUP BY 1, 2, 3
+
+  - name: create_ar_aging
+    type: transform
+    timeout_seconds: 300
+    config:
+      input_uri: "s3://lakehouse/silver"
+      output_uri: "s3://lakehouse/gold/ar_aging"
+      layer: gold
+      sql: |
+        SELECT
+          partner_id,
+          p.name AS customer_name,
+          invoice_id,
+          invoice_number,
+          invoice_date,
+          due_date,
+          amount_total,
+          amount_due,
+          DATEDIFF('day', due_date, CURRENT_DATE) AS days_overdue,
+          CASE
+            WHEN amount_due <= 0 THEN 'paid'
+            WHEN due_date >= CURRENT_DATE THEN 'current'
+            WHEN DATEDIFF('day', due_date, CURRENT_DATE) <= 30 THEN '1-30'
+            WHEN DATEDIFF('day', due_date, CURRENT_DATE) <= 60 THEN '31-60'
+            WHEN DATEDIFF('day', due_date, CURRENT_DATE) <= 90 THEN '61-90'
+            ELSE '90+'
+          END AS aging_bucket,
+          CURRENT_TIMESTAMP AS _gold_ts
+        FROM silver_invoices i
+        LEFT JOIN silver_partners p ON i.partner_id = p.id
+        WHERE i.move_type = 'out_invoice'
+          AND i.state = 'posted'
+
+  - name: validate_gold
+    type: validate
+    depends_on: [create_customer_360, create_revenue_daily, create_revenue_monthly, create_ar_aging]
+    timeout_seconds: 120
+    config:
+      checks:
+        - name: customer_360_not_empty
+          type: row_count
+          threshold: 1
+        - name: revenue_daily_not_empty
+          type: row_count
+          threshold: 1
+        - name: no_negative_revenue
+          type: range_check
+          column: net_revenue
+          expected:
+            min: 0
+
+  - name: publish_to_superset
+    type: publish
+    depends_on: [validate_gold]
+    timeout_seconds: 120
+    config:
+      input_uri: "s3://lakehouse/gold/*"
+      targets:
+        - type: superset
+          config:
+            database_id: 1
+            datasets:
+              - customer_360
+              - revenue_daily
+              - revenue_monthly
+              - ar_aging
+        - type: catalog
+          config:
+            catalog_ref: openmetadata
+            database: lakehouse_gold
+        - type: webhook
+          config:
+            url: "${NOTIFY_WEBHOOK_URL}"
+
+quality:
+  - name: customer_ids_unique
+    type: custom
+    sql: |
+      SELECT COUNT(*) - COUNT(DISTINCT customer_id) AS duplicate_count
+      FROM gold_customer_360
+      HAVING duplicate_count > 0
+    fail_on_error: true
+
+  - name: revenue_balances
+    type: custom
+    sql: |
+      SELECT
+        ABS(SUM(gross_revenue) - SUM(net_revenue) - SUM(refunds)) AS imbalance
+      FROM gold_revenue_daily
+      HAVING imbalance > 0.01
+    fail_on_error: false
+
+input_manifest:
+  silver_tables:
+    - partners
+    - invoices
+    - invoice_lines
+    - sales_orders
+
+output_manifest:
+  gold_tables:
+    - customer_360
+    - revenue_daily
+    - revenue_monthly
+    - ar_aging

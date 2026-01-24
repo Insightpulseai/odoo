@@ -1,82 +1,59 @@
-# Lakehouse Control Room - Constitution
-
-## Overview
-
-This document defines the non-negotiable rules, constraints, and success criteria for the Lakehouse Control Room system - an open-source alternative to Databricks capabilities built on Supabase (control plane) + containerized executors (data plane).
-
-## Core Principles
-
-### 1. Separation of Concerns
-
-- **Control Plane (Supabase)**: Stores intent, state, events, artifacts, caps, routing decisions
-- **Executor Plane (Containers/K8s)**: Stateless workers that claim work, execute phases, and report back
-- **Data Plane (Object Storage)**: S3-compatible storage for artifacts, logs, datasets, Delta/Iceberg tables
-
-### 2. Deterministic Operations
-
-- Every run MUST be reproducible given the same input spec
-- Runs are immutable once created; only status transitions allowed
-- Events are append-only; never mutate historical records
-- Artifacts are write-once with checksums for integrity verification
-
-### 3. GitOps-First
-
-- Pipeline specs live in Git as the source of truth
-- CI validates specs before they can be executed
-- Schema/contract drift blocks deployment
-- Migrations are forward-only with explicit rollback migrations
+# Constitution — Lakehouse Control Room (No Databricks License)
 
 ## Non-Negotiables
+1. **No Databricks license dependency**: must run on open-source + commodity cloud primitives.
+2. **Supabase is the system-of-record** for runs, run_events, artifacts, and RBAC (RLS enforced).
+3. **Deterministic execution**: every run is reproducible; inputs/outputs are versioned and hashed.
+4. **No manual UI-only ops**: all deployments and orchestration steps must be automatable via CLI/CI.
+5. **GitHub Spec Kit compliance**: work must be anchored to `spec/<slug>/{constitution,prd,plan,tasks}.md`.
+6. **Secure-by-default**: secrets never stored in repo; no plaintext credentials in logs/artifacts.
+7. **Observability required**: every run emits structured events; health checks and failure classification are mandatory.
+8. **Pluggable compute**: executor must support multiple backends (Spark optional; SQL-only path required).
+9. **Open table formats**: Delta/Iceberg/Hudi must be supported via open tooling (MVP can pick one, but design must not preclude others).
+10. **Odoo-first operationalization**: when Odoo is live, it becomes a primary upstream system; ingestion contracts must be explicit.
 
-### Security
-
-1. No secrets in Git - use env/secret manager references only
-2. Service role keys are server-only (never exposed to clients)
-3. RLS enforced on all user-facing tables
-4. Audit trail for all state transitions
-
-### Reliability
-
-1. Heartbeat-based liveness detection for all executors
-2. Automatic requeue of stale/zombie runs
-3. Caps enforcement at multiple layers (executor + orchestration + query engine)
-4. Retry semantics with exponential backoff and max retry limits
-
-### Observability
-
-1. All runs emit structured events
-2. Artifacts include metadata for lineage tracking
-3. Routing matrix drives alert escalation
-4. Multi-signal scoring for prioritization
+## Invariants (Always True)
+- Every run has: `run_id`, `phase`, `status`, `input_manifest`, `output_manifest`, `started_at`, `finished_at`.
+- Every artifact is immutable and addressable: `sha256`, `content_type`, `byte_size`, `storage_url`.
+- Executor is stateless; state lives in Supabase + object storage.
+- RLS boundaries: org/project/environment; least privilege enforced.
+- Runs MUST reference `git_sha` and `spec_slug` for traceability.
 
 ## Success Criteria
 
 | Metric | Target | Measurement |
 |--------|--------|-------------|
-| Run claim latency | < 1s | p95 time from queued to claimed |
-| Event ingestion | < 100ms | p95 time to persist event |
-| Heartbeat tolerance | 15 min | Max time before requeue |
-| Artifact integrity | 100% | SHA-256 verification pass rate |
+| Run event completeness | 95% | Runs with complete event trails (no missing phases) |
+| Enqueue-to-start latency | < 30s | Median time for lightweight phases |
+| Deterministic rebuild | 100% | Same inputs + same commit → identical output hashes |
+| Odoo ingestion freshness | < 15 min | Data freshness for operational tables (V1) |
 | Cap enforcement | 100% | No cap exceeded without termination |
 
 ## Constraints
 
 ### Technical
-
 - PostgreSQL 15+ (Supabase)
-- S3-compatible object storage
-- Containerized executors (Docker/K8s)
+- S3-compatible object storage (MinIO/AWS S3/GCS/Azure Blob)
+- Containerized executors (Docker/K8s/DO workers)
 - Node.js 20+ for Edge Functions
-- Python 3.11+ for scripts
+- Python 3.11+ for data processing
+- Delta-rs or Iceberg for table format (MVP chooses one)
 
 ### Operational
-
 - Forward-only migrations (no destructive changes)
 - Evidence-first deployment (proofs before claims)
 - CI gates block non-compliant changes
+- Secrets via vault/env; never in artifacts
+- Audit trail: all run events persisted
+- Signed artifact URLs or private bucket access
+
+## Out of Scope
+- Re-creating proprietary Databricks UX pixel-perfect.
+- Proprietary Unity Catalog implementation; we provide open catalog equivalents.
+- Enterprise-only governance features unless open-source equivalents exist.
+- Photon engine (proprietary); use tuning + Trino + Spark AQE instead.
 
 ## Governance
-
 - Changes to this constitution require explicit approval
 - All significant features require a spec bundle
 - Contract changes require migration + compatibility verification

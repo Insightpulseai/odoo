@@ -1,37 +1,50 @@
-# Lakehouse Control Room - Product Requirements Document
+# PRD — Lakehouse Control Room (Databricks-Class, No License)
 
 ## Problem Alignment
 
-### Problem Statement
+### Context
+We need Databricks-class capabilities (jobs, pipelines, notebooks, SQL, dashboards, governance) without Databricks licensing, and we must operationalize this **after Odoo is live** so Odoo becomes a canonical upstream system for finance/ops/event streams.
 
-Organizations need Databricks-like lakehouse capabilities (Delta tables, job orchestration, SQL warehouses, governance) but face significant licensing costs and vendor lock-in. Existing open-source alternatives require substantial integration effort and lack a unified control plane.
+### Users
+- **Ops/Platform**: needs deterministic runs, incident visibility, rollback, audit trails.
+- **Data Engineering**: needs medallion pipelines, scheduling, versioned artifacts, lineage.
+- **Product/BI**: needs SQL exploration, dashboards, and shareable results.
+- **AI/Agents**: needs a stable executor contract (claim work, run phases, emit events).
 
-### Target Users
+### Problems
+1. Fragmented orchestration across tools; no single "control plane" for runs and artifacts.
+2. Lack of deterministic, auditable pipeline execution tied to Git commits/specs.
+3. No unified contract that agents (Claude/Codex/CI) can use to run lakehouse phases.
+4. Odoo-live introduces new operational requirements: ingestion reliability, schema stability, and finance-grade auditability.
 
-1. **Data Engineers**: Need to author, schedule, and monitor data pipelines
-2. **Data Platform Teams**: Require governance, cost controls, and operational visibility
-3. **Analytics Engineers**: Want SQL access to lakehouse tables with proper security
-4. **MLOps Engineers**: Need experiment tracking and model serving infrastructure
+### Goals (MVP → V1)
+- MVP: run orchestration + artifacts + SQL outputs with clear lineage and audit.
+- V1: end-to-end Odoo ingestion → bronze/silver/gold → dashboards + AI query layer.
 
-### Current Pain Points
+### Success Metrics
+- 95% of runs have complete event trails (no missing phases/events).
+- Median run enqueue-to-start < 30s for lightweight phases.
+- Deterministic rebuild: same inputs + same code commit → identical output hashes.
+- Odoo ingestion SLO: < 15 min data freshness for operational tables (V1 target).
 
-- Databricks licensing costs for full-featured usage
-- Vendor lock-in with proprietary formats and APIs
-- Fragmented tooling across orchestration, compute, and governance
-- Lack of unified observability across data pipelines
+---
 
 ## Solution Alignment
 
-### Core Solution
+### Architecture Summary (Control Plane vs Data Plane)
 
-A Supabase-backed control plane that orchestrates lakehouse operations across containerized executors, providing:
+**Control Plane**
+- BuildOps Control Room UI (web) + API
+- Supabase `ops` schema: `runs`, `run_events`, `artifacts`, `connections`, `secrets_refs`
+- GitHub integration: PR gates + run triggers + artifact links
 
-1. **Unified Control Room UI**: Single pane for runs, events, artifacts, routing
-2. **Executor Registry**: Manage Spark/Trino/dbt workers with capability flags
-3. **Job Templates**: Repeatable jobs with promotion gates
-4. **Runtime Caps**: Cost control with enforcement at multiple layers
+**Data Plane**
+- Lakehouse Executor(s): stateless workers (Edge Function + optional Docker workers)
+- Object Storage: S3-compatible bucket (artifacts + tables)
+- SQL Engine: Trino (preferred) or DuckDB for MVP local mode
+- Table Format: Delta Lake (delta-rs) OR Iceberg (MVP chooses one, interface supports both)
 
-### Architecture Overview
+### Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
@@ -56,70 +69,100 @@ A Supabase-backed control plane that orchestrates lakehouse operations across co
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Capability Parity with Databricks
+### Control Room ↔ Lakehouse Executor Contract (Authoritative)
 
-| Databricks Feature | Our Implementation | Parity Level |
-|--------------------|-------------------|--------------|
-| Delta Lake tables | Delta Lake OSS + Spark | Strong |
-| Workflows/Jobs | Control Room + Executors | Strong |
-| SQL Warehouse | Trino/Spark Thrift | Strong |
-| Unity Catalog | OpenMetadata + Policy | Strong |
-| Dashboards | Superset/Metabase | Strong |
-| DLT Pipelines | dbt + streaming + gates | Partial |
-| Genie (NL→SQL) | WrenAI + RAG | Strong |
-| Photon | N/A (proprietary) | Hard |
+#### Entities
+- **Run**: a unit of work consisting of ordered phases.
+- **Phase**: deterministic step (ingest, validate, transform, publish, profile, etc.).
+- **Artifact**: immutable output blob or structured dataset reference.
 
-### Key Differentiators
+#### API Surface (logical)
+1. `POST /ops/runs` create run with `spec_slug`, `git_sha`, `phases[]`, `input_manifest`
+2. `POST /ops/runs/{run_id}/claim` executor claims next runnable phase (leases)
+3. `POST /ops/runs/{run_id}/events` append run events (structured)
+4. `POST /ops/artifacts` register artifacts with hashes + URLs
+5. `POST /ops/runs/{run_id}/complete` finalize with output manifest
 
-1. **No License Cost**: All core components are open source
-2. **Portable**: Standard APIs, no vendor lock-in
-3. **Supabase-Native**: Leverage existing Supabase infrastructure
-4. **GitOps-First**: Everything as code, CI-enforced
+> Implementation note: these endpoints can be implemented as Supabase RPCs or Edge Functions, but the *contract* must remain stable.
+
+#### Event Model (minimum)
+- `RUN_CREATED`, `PHASE_CLAIMED`, `PHASE_STARTED`, `PHASE_PROGRESS`, `PHASE_FAILED`, `PHASE_SUCCEEDED`, `RUN_SUCCEEDED`, `RUN_FAILED`
+- Each event includes: `run_id`, `phase`, `ts`, `level`, `message`, `payload(json)`
+
+#### Idempotency
+- `claim` uses lease tokens; repeated calls must not double-execute.
+- `events` are append-only; duplicates tolerated via `event_id` de-dupe.
+- `artifacts` are immutable; same sha may be referenced by multiple runs.
+
+### Databricks Capability Mapping (Open Stack)
+
+This product targets "capability parity", not brand parity.
+
+| Databricks area | Open equivalent (recommended) | MVP scope |
+|---|---|---|
+| Jobs/Workflows | Temporal / Dagster / Argo Workflows | ✅ via Control Room runs/phases |
+| DLT Pipelines | Dagster assets / dbt + orchestration | ✅ bronze/silver/gold |
+| Notebooks | JupyterHub / VSCode web / markdown+SQL blocks | ⏳ optional (M2) |
+| SQL Warehouse | Trino / ClickHouse / Postgres+FDW | ✅ Trino or Postgres+FDW MVP |
+| Delta Lake | delta-rs / Spark optional | ✅ choose Delta or Iceberg |
+| Unity Catalog | OpenMetadata / DataHub + policy layer | ⏳ M3+ |
+| MLflow | MLflow OSS | ⏳ M3+ |
+| Dashboards | Superset / Metabase | ✅ Superset path |
+| Genie/NLQ | WrenAI-style semantic templates + RAG | ✅ integrate later |
+
+### Odoo-Live Integration (V1)
+- Ingest: Odoo Postgres → CDC (optional) → bronze
+- Transform: bronze → silver normalized → gold marts
+- Publish: gold views + Superset datasets + AI query endpoints
+
+### Requirements (Functional)
+1. Run lifecycle management (create, claim, execute, emit, complete).
+2. Artifact registry with content-addressing and metadata.
+3. Pipeline templates: medallion (bronze/silver/gold) + schema checks.
+4. SQL outputs: store query text + result manifest + preview samples.
+5. Git linkage: every run references `git_sha` and `spec_slug`.
+6. Environment separation: dev/stage/prod.
+
+### Requirements (Non-Functional)
+- RLS enforcement for all ops tables.
+- Structured logs/events (JSON).
+- Backpressure + retry with exponential policy.
+- Timeouts per phase.
+- Minimal cost path for MVP (no always-on heavy clusters).
+
+---
 
 ## Launch Readiness
 
-### Phase 1: Foundation (Current)
+### Release Phases
+- **MVP (Control Plane)**: runs/events/artifacts + executor contract + basic pipeline execution
+- **V1 (Odoo-Live)**: Odoo ingestion + medallion + Superset datasets + monitoring
+- **V2**: notebook UX + catalog/lineage
+- **V3**: MLflow + model serving + advanced governance
 
-- [x] OpenAPI contract for executor communication
-- [x] Supabase ops schema (runs, events, artifacts, routing, caps)
-- [x] Spec bundle with governance rules
-- [ ] PR gate workflow for contract validation
-- [ ] Basic executor implementation (claim/execute/report)
+### Dependencies
+- Supabase project + RLS policies
+- Object storage bucket + service credentials
+- Executor runtime: Edge Function + optional DO docker worker
+- CI gate: Spec Kit validation + required checks
 
-### Phase 2: Core Capabilities
+### Rollout Plan
+- Dev: executor in dry-run mode + small sample datasets
+- Stage: real Odoo staging connection + limited tables
+- Prod: full ingestion with SLOs and alerting
 
-- [ ] Job templates with scheduling
-- [ ] Spark executor integration
-- [ ] Trino SQL warehouse setup
-- [ ] Artifact storage with checksums
-- [ ] Routing matrix with escalation
+### Monitoring
+- Run success rate by phase
+- Queue depth + lease timeouts
+- Artifact upload failures
+- Odoo ingestion freshness
 
-### Phase 3: Governance & UX
+### Security
+- Secrets via vault/env; never in artifacts
+- Audit trail: all run events persisted
+- Signed artifact URLs or private bucket access
 
-- [ ] Control Room UI (Next.js + Supabase UI)
-- [ ] Multi-signal scoring
-- [ ] Caps enforcement at all layers
-- [ ] OpenMetadata integration
-- [ ] Lineage capture
-
-### Phase 4: Advanced
-
-- [ ] Streaming pipelines
-- [ ] ML experiment tracking (MLflow)
-- [ ] Delta Sharing protocol
-- [ ] NL→SQL (WrenAI integration)
-
-## Success Metrics
-
-| Metric | Target | Timeline |
-|--------|--------|----------|
-| Executor types supported | 5+ | Phase 2 |
-| Run throughput | 1000/day | Phase 2 |
-| UI page load | < 2s | Phase 3 |
-| Feature parity score | 80%+ | Phase 3 |
-| Zero-license cost | Yes | Always |
-
-## Risks & Mitigations
+### Risks & Mitigations
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
