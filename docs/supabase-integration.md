@@ -239,8 +239,15 @@ Preview branches are billed per hour of compute usage:
 
 ## Related Documentation
 
-- [Supabase Docs](https://supabase.com/docs)
-- [Supabase Branching](https://supabase.com/docs/guides/deployment/branching)
+**In this repo:**
+- [Environment Management Quick Reference](./infra/SUPABASE_ENVIRONMENTS.md) - Quick start guide
+- [Branching Integration Details](./infra/SUPABASE_BRANCHING_INTEGRATION.md) - Catalog sync, Edge Functions
 - [Migrations](../supabase/migrations/)
 - [Control Room API](../apps/control-room/)
 - [n8n Workflows](../workflows/n8n/)
+
+**Official Supabase Docs:**
+- [Deployment & Branching Overview](https://supabase.com/docs/guides/deployment)
+- [Branching Guide](https://supabase.com/docs/guides/deployment/branching)
+- [Database Migrations](https://supabase.com/docs/guides/deployment/database-migrations)
+- [Managing Environments](https://supabase.com/docs/guides/deployment/managing-environments)
