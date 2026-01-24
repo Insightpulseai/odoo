@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 33f0041b07489fd73d282f883b63dc353e04451a
+> Commit: bfd3cdb70925945387a37beb7c429d2335dfd489
 
 ## 📚 Documentation
 
@@ -394,6 +394,8 @@
 | [Odoo Data Model Artifacts](docs/data-model/README.md) | docs/data-model |
 | [Odoo Shadow Schema Feasibility Assessment](docs/data-model/SHADOW_SCHEMA_FEASIBILITY.md) | docs/data-model |
 | [Superset ERD Integration Guide](docs/data-model/SUPERSET_ERD_INTEGRATION.md) | docs/data-model |
+| [Databricks Data Science Agent](docs/databricks/DATA_SCIENCE_AGENT.md) | docs/databricks |
+| [Unity Catalog (Open Source)](docs/databricks/UNITY_CATALOG_OSS.md) | docs/databricks |
 | [InsightPulse Supabase DB – Conventions & House Style](docs/db/DB_CONVENTIONS_AND_NAMING.md) | docs/db |
 | [DB Current Inventory (Summary)](docs/db/DB_CURRENT_INVENTORY.md) | docs/db |
 | [Domain Table Specs (Conceptual)](docs/db/DB_DOMAIN_TABLE_SPECS.md) | docs/db |
@@ -744,6 +746,7 @@
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
 | [AI Provider Router](infra/ai/provider_router/README.md) | infra/ai/provider_router |
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
+| [DigitalOcean PR Sandbox (Ephemeral)](infra/digitalocean/pr-sandbox/README.md) | infra/digitalocean/pr-sandbox |
 | [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
