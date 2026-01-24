@@ -1,0 +1,131 @@
+name: Odoo-aware CI Gate
+
+on:
+  pull_request:
+    paths:
+      - "addons/**"
+      - "oca/**"
+      - "odoo/**"
+      - "config/odoo/**"
+      - "scripts/ci_odoo_*.py"
+      - ".github/workflows/odoo-ci-gate.yml"
+
+jobs:
+  gate:
+    name: Odoo Module Gate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Detect changed Odoo modules
+        id: detect
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          echo "Detecting changed modules..."
+          mods_json="$(python3 scripts/ci_odoo_changed_modules.py)"
+          echo "$mods_json"
+
+          # Count modules
+          count=$(echo "$mods_json" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))")
+          echo "Changed modules: $count"
+
+          # Output for next step
+          echo "modules_json<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$mods_json" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+      - name: Enforce Odoo gate policy
+        if: steps.detect.outputs.count != '0'
+        env:
+          ODOO_CHANGED_MODULES_JSON: ${{ steps.detect.outputs.modules_json }}
+        run: |
+          set -euo pipefail
+          echo "Enforcing Odoo CI policy..."
+          python3 scripts/ci_odoo_gate.py
+
+      - name: Skip gate (no modules changed)
+        if: steps.detect.outputs.count == '0'
+        run: |
+          echo "No Odoo modules changed; gate skipped."
+
+  manifest-lint:
+    name: Manifest Linting
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check manifest syntax
+        run: |
+          echo "Checking all __manifest__.py files..."
+          errors=0
+
+          for manifest in $(find addons -name "__manifest__.py" 2>/dev/null); do
+            if ! python3 -c "
+          import ast
+          try:
+              with open('$manifest', 'r') as f:
+                  ast.literal_eval(f.read())
+              print('OK: $manifest')
+          except Exception as e:
+              print(f'ERROR: $manifest - {e}')
+              exit(1)
+          " 2>/dev/null; then
+              errors=$((errors + 1))
+            fi
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo "Found $errors manifest errors"
+            exit 1
+          fi
+
+          echo "All manifests valid"
+
+  security-check:
+    name: Security File Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check security files
+        run: |
+          echo "Checking for security files in modules with models..."
+
+          for module_dir in $(find addons -maxdepth 2 -name "__manifest__.py" -exec dirname {} \;); do
+            module_name=$(basename "$module_dir")
+
+            # Check if module has models
+            has_models=$(grep -rl "class.*Model" "$module_dir"/*.py "$module_dir"/models/*.py 2>/dev/null | wc -l || echo 0)
+
+            if [ "$has_models" -gt 0 ]; then
+              # Check for security files
+              if [ ! -f "$module_dir/security/ir.model.access.csv" ] && \
+                 [ ! -f "$module_dir/security/security.xml" ] && \
+                 [ ! -d "$module_dir/security" ]; then
+                echo "WARNING: $module_name has models but no security directory"
+              else
+                echo "OK: $module_name has security files"
+              fi
+            fi
+          done
+
+          echo "Security check complete"
