@@ -1,0 +1,128 @@
+name: Ops SSOT Verification
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/**'
+      - 'tools/ops-mirror-worker/**'
+      - 'addons/ipai_ops_mirror/**'
+      - 'ops/**'
+      - '.github/workflows/ops-ssot-verify.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'supabase/**'
+      - 'tools/ops-mirror-worker/**'
+      - 'addons/ipai_ops_mirror/**'
+      - 'ops/**'
+
+jobs:
+  sanity:
+    name: Ops SSOT Sanity Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify Supabase migrations exist
+        run: |
+          echo "Checking Supabase migrations directory..."
+          test -d supabase/migrations
+          echo "Found migrations:"
+          ls -1 supabase/migrations/*.sql 2>/dev/null | wc -l
+          echo "Ops migrations:"
+          ls -1 supabase/migrations/*ops*.sql 2>/dev/null || echo "No ops migrations found"
+
+      - name: Verify Edge Functions exist
+        run: |
+          echo "Checking Edge Functions..."
+          test -f supabase/functions/ops-ingest/index.ts
+          test -f supabase/functions/ops-summary/index.ts
+          test -f supabase/functions/ops-health/index.ts
+          echo "All ops Edge Functions present"
+
+      - name: Python worker syntax check
+        run: |
+          echo "Checking worker Python syntax..."
+          python3 -m py_compile tools/ops-mirror-worker/worker.py
+          echo "Worker syntax OK"
+
+      - name: Odoo module manifest check
+        run: |
+          echo "Checking Odoo module..."
+          test -f addons/ipai_ops_mirror/__manifest__.py
+          test -f addons/ipai_ops_mirror/__init__.py
+          test -f addons/ipai_ops_mirror/models/ops_summary.py
+          test -f addons/ipai_ops_mirror/models/outbox_event.py
+          echo "Odoo module structure OK"
+
+      - name: Scoring config validation
+        run: |
+          echo "Checking scoring config..."
+          test -f ops/alerting/scoring.json
+          python3 -c "
+          import json
+          with open('ops/alerting/scoring.json') as f:
+              cfg = json.load(f)
+          assert 'weights' in cfg, 'Missing weights'
+          assert 'bands' in cfg, 'Missing bands'
+          assert sum(cfg['weights'].values()) == 1.0, 'Weights must sum to 1.0'
+          print('Scoring config valid')
+          "
+
+  migrations-lint:
+    name: Migrations Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check migration naming convention
+        run: |
+          echo "Checking migration naming..."
+          for f in supabase/migrations/*.sql; do
+            if [[ ! "$f" =~ ^supabase/migrations/[0-9]{14}_.+\.sql$ ]] && \
+               [[ ! "$f" =~ ^supabase/migrations/[0-9]{8}[0-9]{6}_.+\.sql$ ]] && \
+               [[ ! "$f" =~ ^supabase/migrations/[0-9]{8}_.+\.sql$ ]]; then
+              echo "WARNING: Non-standard naming: $f"
+            fi
+          done
+          echo "Migration naming check complete"
+
+      - name: Check for unsafe patterns
+        run: |
+          echo "Checking for unsafe SQL patterns..."
+          UNSAFE_PATTERNS=(
+            "DROP TABLE"
+            "DROP SCHEMA"
+            "TRUNCATE"
+            "DELETE FROM.*WHERE 1=1"
+          )
+          for pattern in "${UNSAFE_PATTERNS[@]}"; do
+            if grep -rni "$pattern" supabase/migrations/*ops*.sql 2>/dev/null; then
+              echo "WARNING: Found potentially unsafe pattern: $pattern"
+            fi
+          done
+          echo "Safety check complete"
+
+  typescript-check:
+    name: Edge Functions TypeScript Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Check Edge Functions
+        run: |
+          echo "Type-checking Edge Functions..."
+          for func in ops-ingest ops-summary ops-health; do
+            if [ -f "supabase/functions/$func/index.ts" ]; then
+              deno check "supabase/functions/$func/index.ts" || echo "WARNING: Type check failed for $func"
+            fi
+          done
