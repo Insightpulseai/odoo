@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 483de27b28ba916e9b3974e8ba44e1784d1a1343
+> Commit: 29b9ea834242b857312d606d5f7dd3a5b9fd3b2a
 
 ## 📚 Documentation
 
@@ -708,6 +708,8 @@
 | [Chart Query Lifecycle FSM](docs/state_machines/superset/chart_query_lifecycle.md) | docs/state_machines/superset |
 | [Dashboard Filtering FSM](docs/state_machines/superset/dashboard_filtering.md) | docs/state_machines/superset |
 | [Guest Token Acquisition FSM](docs/state_machines/superset/embed_guest_token.md) | docs/state_machines/superset |
+| [Visual Parity Checklist](docs/supabase-docs-patterns/VISUAL_PARITY_CHECKLIST.md) | docs/supabase-docs-patterns |
+| [Supabase Docs UI Specification](docs/supabase-docs-patterns/docs_ui_spec.md) | docs/supabase-docs-patterns |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Database Selector Issue - Troubleshooting Guide](docs/troubleshooting/DBFILTER_FIX.md) | docs/troubleshooting |
