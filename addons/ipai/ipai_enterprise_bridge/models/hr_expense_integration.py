@@ -1,167 +1,180 @@
 # -*- coding: utf-8 -*-
-# Copyright 2026 InsightPulseAI
-# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 """
-HR Expense Integration - Event Emission for Supabase Integration Bus
+HR Expense Integration - IPAI Event Emission
+Emit events to Supabase integration bus for expense lifecycle
+"""
 
-Emits events when expense lifecycle changes occur:
-- expense.submitted: Expense submitted for approval
-- expense.approved: Expense approved
-- expense.rejected: Expense rejected
-- expense.paid: Expense paid/posted
-"""
-import hashlib
-import hmac
-import json
+from datetime import timedelta
+from odoo import models, api
+from odoo.addons.ipai_enterprise_bridge.utils.ipai_webhook import send_ipai_event
 import logging
-import time
-
-import requests
-from odoo import api, fields, models
 
 _logger = logging.getLogger(__name__)
 
 
 class HrExpenseIntegration(models.Model):
-    """Extend hr.expense with integration event emission."""
-
-    _inherit = "hr.expense"
-
-    integration_last_event = fields.Char(
-        string="Last Integration Event",
-        readonly=True,
-        copy=False,
-        help="Last event emitted to the integration bus",
-    )
-    integration_last_event_at = fields.Datetime(
-        string="Last Event At",
-        readonly=True,
-        copy=False,
-    )
-
-    def _get_integration_config(self):
-        """Get webhook URL and secret from system parameters."""
-        ICP = self.env["ir.config_parameter"].sudo()
-        return {
-            "url": ICP.get_param("ipai.webhook.url", ""),
-            "secret": ICP.get_param("ipai.webhook.secret", ""),
-        }
-
-    def _compute_hmac_signature(self, payload_str, secret, timestamp):
-        """Compute HMAC-SHA256 signature for webhook payload."""
-        message = f"{timestamp}.{payload_str}"
-        return hmac.new(
-            secret.encode("utf-8"),
-            message.encode("utf-8"),
-            hashlib.sha256,
-        ).hexdigest()
-
-    def _emit_integration_event(self, event_type, payload_extra=None):
-        """Emit an event to the Supabase integration bus.
-
-        Args:
-            event_type: Event type (e.g., 'expense.submitted')
-            payload_extra: Additional payload data to merge
-        """
-        config = self._get_integration_config()
-        if not config["url"]:
-            _logger.debug("Integration webhook URL not configured, skipping event")
-            return
-
-        for expense in self:
-            try:
-                timestamp = str(int(time.time()))
-                idempotency_key = f"expense-{expense.id}-{event_type}-{timestamp[:10]}"
-
-                payload = {
-                    "source": "odoo",
-                    "event_type": event_type,
-                    "aggregate_type": "expense",
-                    "aggregate_id": f"hr.expense,{expense.id}",
-                    "idempotency_key": idempotency_key,
-                    "payload": {
-                        "expense_id": expense.id,
-                        "name": expense.name,
-                        "employee_id": expense.employee_id.id,
-                        "employee_name": expense.employee_id.name,
-                        "total_amount": expense.total_amount,
-                        "currency": expense.currency_id.name,
-                        "state": expense.state,
-                        "description": expense.description or "",
-                        "date": str(expense.date) if expense.date else None,
-                    },
-                }
-
-                if payload_extra:
-                    payload["payload"].update(payload_extra)
-
-                payload_str = json.dumps(payload, default=str)
-                signature = self._compute_hmac_signature(
-                    payload_str, config["secret"], timestamp
-                )
-
-                headers = {
-                    "Content-Type": "application/json",
-                    "X-Webhook-Signature": signature,
-                    "X-Webhook-Timestamp": timestamp,
-                }
-
-                response = requests.post(
-                    config["url"],
-                    data=payload_str,
-                    headers=headers,
-                    timeout=10,
-                )
-                response.raise_for_status()
-
-                expense.sudo().write({
-                    "integration_last_event": event_type,
-                    "integration_last_event_at": fields.Datetime.now(),
-                })
-                _logger.info(
-                    "Emitted integration event %s for expense %s",
-                    event_type,
-                    expense.id,
-                )
-
-            except requests.RequestException as e:
-                _logger.error(
-                    "Failed to emit integration event %s for expense %s: %s",
-                    event_type,
-                    expense.id,
-                    str(e),
-                )
-            except Exception as e:
-                _logger.exception(
-                    "Unexpected error emitting event %s for expense %s: %s",
-                    event_type,
-                    expense.id,
-                    str(e),
-                )
+    _inherit = 'hr.expense'
 
     def action_submit_expenses(self):
-        """Override to emit expense.submitted event."""
-        result = super().action_submit_expenses()
-        self._emit_integration_event("expense.submitted")
-        return result
+        """Override: Emit expense.submitted event when expense is submitted"""
+        res = super().action_submit_expenses()
+
+        # Get webhook config
+        webhook_url = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.url')
+        webhook_secret = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.secret')
+
+        if not webhook_url or not webhook_secret:
+            _logger.warning("IPAI webhook not configured - skipping event emission")
+            return res
+
+        # Emit event for each expense
+        for expense in self:
+            event = {
+                "event_type": "expense.submitted",
+                "aggregate_type": "expense",
+                "aggregate_id": str(expense.id),
+                "payload": {
+                    "expense_id": expense.id,
+                    "employee_id": expense.employee_id.id if expense.employee_id else None,
+                    "employee_name": expense.employee_id.name if expense.employee_id else None,
+                    "employee_code": expense.employee_id.employee_code if expense.employee_id and hasattr(expense.employee_id, 'employee_code') else None,
+                    "amount": float(expense.total_amount),
+                    "currency": expense.currency_id.name if expense.currency_id else None,
+                    "description": expense.name or "",
+                    "date": expense.date.isoformat() if expense.date else None,
+                    "category": expense.product_id.name if expense.product_id else None,
+                    "submitted_at": expense.write_date.isoformat() if expense.write_date else None,
+                    "state": expense.state,
+                }
+            }
+
+            # Use composite key for idempotency
+            idempotency_key = f"expense.submitted:{expense.id}:{expense.write_date.timestamp()}"
+
+            try:
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
+                _logger.info(f"✅ Emitted expense.submitted event for expense #{expense.id}")
+            except Exception as e:
+                _logger.error(f"❌ Failed to emit expense.submitted event: {e}")
+
+        return res
 
     def approve_expense_sheets(self):
-        """Override to emit expense.approved event."""
-        result = super().approve_expense_sheets()
-        self._emit_integration_event("expense.approved")
-        return result
+        """Override: Emit expense.approved event when expense is approved"""
+        res = super().approve_expense_sheets()
 
-    def refuse_expense_sheets(self, reason=None):
-        """Override to emit expense.rejected event."""
-        result = super().refuse_expense_sheets(reason=reason)
-        self._emit_integration_event(
-            "expense.rejected",
-            payload_extra={"rejection_reason": reason or ""},
-        )
-        return result
+        webhook_url = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.url')
+        webhook_secret = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.secret')
 
-    def action_sheet_move_post(self):
-        """Override to emit expense.paid event when posted."""
-        result = super().action_sheet_move_post()
-        self._emit_integration_event("expense.paid")
-        return result
+        if not webhook_url or not webhook_secret:
+            return res
+
+        for expense in self:
+            event = {
+                "event_type": "expense.approved",
+                "aggregate_type": "expense",
+                "aggregate_id": str(expense.id),
+                "payload": {
+                    "expense_id": expense.id,
+                    "employee_id": expense.employee_id.id if expense.employee_id else None,
+                    "employee_name": expense.employee_id.name if expense.employee_id else None,
+                    "amount": float(expense.total_amount),
+                    "currency": expense.currency_id.name if expense.currency_id else None,
+                    "approved_by": self.env.user.name,
+                    "approved_at": expense.write_date.isoformat() if expense.write_date else None,
+                    "state": expense.state,
+                }
+            }
+
+            idempotency_key = f"expense.approved:{expense.id}:{expense.write_date.timestamp()}"
+
+            try:
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
+                _logger.info(f"✅ Emitted expense.approved event for expense #{expense.id}")
+            except Exception as e:
+                _logger.error(f"❌ Failed to emit expense.approved event: {e}")
+
+        return res
+
+    def refuse_expense(self, reason):
+        """Override: Emit expense.rejected event when expense is rejected"""
+        res = super().refuse_expense(reason)
+
+        webhook_url = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.url')
+        webhook_secret = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.secret')
+
+        if not webhook_url or not webhook_secret:
+            return res
+
+        for expense in self:
+            event = {
+                "event_type": "expense.rejected",
+                "aggregate_type": "expense",
+                "aggregate_id": str(expense.id),
+                "payload": {
+                    "expense_id": expense.id,
+                    "employee_id": expense.employee_id.id if expense.employee_id else None,
+                    "employee_name": expense.employee_id.name if expense.employee_id else None,
+                    "amount": float(expense.total_amount),
+                    "currency": expense.currency_id.name if expense.currency_id else None,
+                    "rejection_reason": reason,
+                    "rejected_by": self.env.user.name,
+                    "rejected_at": expense.write_date.isoformat() if expense.write_date else None,
+                    "state": expense.state,
+                }
+            }
+
+            idempotency_key = f"expense.rejected:{expense.id}:{expense.write_date.timestamp()}"
+
+            try:
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
+                _logger.info(f"✅ Emitted expense.rejected event for expense #{expense.id}")
+            except Exception as e:
+                _logger.error(f"❌ Failed to emit expense.rejected event: {e}")
+
+        return res
+
+    @api.model
+    def _cron_detect_paid_expenses(self):
+        """
+        Cron job to detect when expenses are paid (journal entry posted)
+        Emits expense.paid event
+
+        Run this cron daily to check for newly paid expenses
+        """
+        webhook_url = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.url')
+        webhook_secret = self.env['ir.config_parameter'].sudo().get_param('ipai.webhook.secret')
+
+        if not webhook_url or not webhook_secret:
+            return
+
+        # Find expenses that were recently marked as 'done' (paid)
+        # This assumes 'done' state means payment journal entry was posted
+        recent_paid = self.search([
+            ('state', '=', 'done'),
+            ('write_date', '>=', (self.env.cr.now() - timedelta(days=1)).isoformat())
+        ])
+
+        for expense in recent_paid:
+            event = {
+                "event_type": "expense.paid",
+                "aggregate_type": "expense",
+                "aggregate_id": str(expense.id),
+                "payload": {
+                    "expense_id": expense.id,
+                    "employee_id": expense.employee_id.id if expense.employee_id else None,
+                    "employee_name": expense.employee_id.name if expense.employee_id else None,
+                    "amount": float(expense.total_amount),
+                    "currency": expense.currency_id.name if expense.currency_id else None,
+                    "payment_date": expense.write_date.isoformat() if expense.write_date else None,
+                    "state": expense.state,
+                }
+            }
+
+            idempotency_key = f"expense.paid:{expense.id}:{expense.write_date.timestamp()}"
+
+            try:
+                send_ipai_event(webhook_url, webhook_secret, event, idempotency_key=idempotency_key)
+                _logger.info(f"✅ Emitted expense.paid event for expense #{expense.id}")
+            except Exception as e:
+                _logger.error(f"❌ Failed to emit expense.paid event: {e}")
