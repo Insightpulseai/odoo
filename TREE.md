@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 33f0041b07489fd73d282f883b63dc353e04451a
+> Commit: bfd3cdb70925945387a37beb7c429d2335dfd489
 
 ```
 .
@@ -76,6 +76,8 @@
 │   │   ├── build-unified-image.yml
 │   │   ├── canonical-gate.yml
 │   │   ├── cd-production.yml
+│   │   ├── ci-docs-only.yml
+│   │   ├── ci-platform-gates.yml
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
 │   │   ├── compose-topology-guard.yml
@@ -93,6 +95,8 @@
 │   │   ├── diagrams-qa.yml
 │   │   ├── diagrams.yml
 │   │   ├── directional-sync.yml
+│   │   ├── do-pr-sandbox.yml
+│   │   ├── do-sandbox-janitor.yml
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── docs-current-state-gate.yml
@@ -1593,6 +1597,9 @@
 │   │   ├── SHADOW_SCHEMA_FEASIBILITY.md
 │   │   ├── SUPERSET_ERD_INTEGRATION.md
 │   │   └── insightpulse_canonical.dbml
+│   ├── databricks
+│   │   ├── DATA_SCIENCE_AGENT.md
+│   │   └── UNITY_CATALOG_OSS.md
 │   ├── db
 │   │   ├── DB_CONVENTIONS_AND_NAMING.md
 │   │   ├── DB_CURRENT_INVENTORY.md
@@ -2298,11 +2305,16 @@
 │   │   ├── notebooks
 │   │   │   ├── bronze
 │   │   │   ├── gold
-│   │   │   └── silver
+│   │   │   ├── silver
+│   │   │   └── agent_eda_template.py
 │   │   ├── resources
 │   │   │   ├── jobs.yml
 │   │   │   └── schemas.yml
 │   │   └── databricks.yml
+│   ├── digitalocean
+│   │   └── pr-sandbox
+│   │       ├── README.md
+│   │       └── main.tf
 │   ├── dns
 │   │   └── mailgun_dns_records.md
 │   ├── do-oca-stack
@@ -2810,6 +2822,7 @@
 │   │   ├── src
 │   │   │   └── server.ts
 │   │   ├── .env.example
+│   │   ├── GITHUB_APP_CONFIG.json
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   ├── ipai-design-tokens
@@ -2915,6 +2928,7 @@
 │   │   ├── run_odoo_tests.sh
 │   │   ├── schema_drift_check.sh
 │   │   ├── supabase_preview.sh
+│   │   ├── validate_github_app.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
 │   ├── ci_gate
@@ -4241,15 +4255,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1101 directories, 3135 files
+1104 directories, 3146 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1293 |
-| Files | 4079 |
-| Python files | 622 |
+| Directories | 1296 |
+| Files | 4090 |
+| Python files | 623 |
 | XML files | 253 |
-| Markdown files | 1065 |
+| Markdown files | 1068 |
