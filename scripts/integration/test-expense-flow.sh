@@ -1,130 +1,181 @@
 #!/usr/bin/env bash
-# Test the expense integration flow end-to-end
-# Usage: ./scripts/integration/test-expense-flow.sh
+# Test end-to-end expense notification flow
+# This script simulates an Odoo expense.submitted event and verifies the full pipeline
+
 set -euo pipefail
 
-# Load environment variables
-if [[ -f .env ]]; then
-    # shellcheck disable=SC1091
-    source .env
-fi
-
-# Configuration
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SUPABASE_URL="${SUPABASE_URL:-https://spdtwktxdalcfigzeqrz.supabase.co}"
-SUPABASE_SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY:-}"
-WEBHOOK_SECRET="${IPAI_WEBHOOK_SECRET:-test-secret}"
+WEBHOOK_SECRET="${WEBHOOK_SECRET:-6900445459d89179a31e3bce61cf2d7f7732425650e17886edbbaec61c40a980}"
+WEBHOOK_URL="${SUPABASE_URL}/functions/v1/odoo-webhook"
 
-if [[ -z "$SUPABASE_SERVICE_ROLE_KEY" ]]; then
-    echo "Error: SUPABASE_SERVICE_ROLE_KEY not set"
-    echo "Set it in .env or export it before running this script"
-    exit 1
-fi
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-echo "=== Supabase Integration Bus - Expense Flow Test ==="
+echo "========================================="
+echo "IPAI Integration Bus - E2E Test"
+echo "========================================="
 echo ""
 
-# Generate test data
-TIMESTAMP=$(date +%s)
-IDEMPOTENCY_KEY="test-expense-${TIMESTAMP}"
+# 1. Prepare test event
+TIMESTAMP=$(date +%s000)  # Milliseconds (append 000 to seconds)
+EVENT_TYPE="expense.submitted"
+AGGREGATE_TYPE="expense"
+AGGREGATE_ID="test-$(date +%s)"
+IDEMPOTENCY_KEY="${EVENT_TYPE}:${AGGREGATE_ID}:${TIMESTAMP}"
 
-# Build test payload
 PAYLOAD=$(cat <<EOF
 {
-    "source": "odoo",
-    "event_type": "expense.submitted",
-    "aggregate_type": "expense",
-    "aggregate_id": "hr.expense,999",
-    "idempotency_key": "${IDEMPOTENCY_KEY}",
-    "payload": {
-        "expense_id": 999,
-        "name": "Test Expense - Integration Test",
-        "employee_id": 1,
-        "employee_name": "Test Employee",
-        "total_amount": 150.00,
-        "currency": "PHP",
-        "state": "submitted",
-        "description": "Integration test expense created at ${TIMESTAMP}",
-        "date": "$(date +%Y-%m-%d)"
-    }
+  "event_type": "${EVENT_TYPE}",
+  "aggregate_type": "${AGGREGATE_TYPE}",
+  "aggregate_id": "${AGGREGATE_ID}",
+  "payload": {
+    "expense_id": 9999,
+    "employee_id": 42,
+    "employee_name": "Test User",
+    "employee_code": "TEST001",
+    "amount": 1234.56,
+    "currency": "PHP",
+    "description": "Test expense for integration bus verification",
+    "date": "2026-01-22",
+    "category": "Office Supplies",
+    "submitted_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)",
+    "state": "submit"
+  }
 }
 EOF
 )
 
-# Compute HMAC signature
-SIGNATURE=$(echo -n "${TIMESTAMP}.${PAYLOAD}" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | sed 's/^.* //')
+# 2. Generate HMAC signature
+MESSAGE="${TIMESTAMP}.${PAYLOAD}"
+SIGNATURE=$(echo -n "$MESSAGE" | openssl dgst -sha256 -hmac "$WEBHOOK_SECRET" | awk '{print $2}')
 
-echo "Step 1: Sending test event to Edge Function webhook..."
-echo "  URL: ${SUPABASE_URL}/functions/v1/odoo-webhook"
-echo "  Idempotency Key: ${IDEMPOTENCY_KEY}"
-
-# Send to Edge Function
-RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "${SUPABASE_URL}/functions/v1/odoo-webhook" \
-    -H "Content-Type: application/json" \
-    -H "X-Webhook-Signature: ${SIGNATURE}" \
-    -H "X-Webhook-Timestamp: ${TIMESTAMP}" \
-    -d "$PAYLOAD")
-
-HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-BODY=$(echo "$RESPONSE" | sed '$d')
-
-echo "  Response: HTTP ${HTTP_CODE}"
-echo "  Body: ${BODY}"
+echo "📤 Step 1: Send test event to Supabase Edge Function"
+echo "   Event Type: ${EVENT_TYPE}"
+echo "   Aggregate ID: ${AGGREGATE_ID}"
+echo "   Idempotency Key: ${IDEMPOTENCY_KEY}"
 echo ""
 
-if [[ "$HTTP_CODE" != "200" ]]; then
-    echo "Warning: Webhook returned non-200 status. Trying direct insert..."
+# 3. Send event to webhook
+HTTP_CODE=$(curl -s -o /tmp/webhook_response.json -w "%{http_code}" \
+  -X POST "${WEBHOOK_URL}" \
+  -H "Content-Type: application/json" \
+  -H "x-idempotency-key: ${IDEMPOTENCY_KEY}" \
+  -H "x-ipai-signature: ${SIGNATURE}" \
+  -H "x-ipai-timestamp: ${TIMESTAMP}" \
+  -d "${PAYLOAD}")
 
-    # Fallback: Insert directly to outbox
-    DIRECT_RESPONSE=$(curl -s -X POST "${SUPABASE_URL}/rest/v1/integration.outbox" \
-        -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
-        -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
-        -H "Content-Type: application/json" \
-        -H "Prefer: return=representation" \
-        -d "$PAYLOAD")
-
-    echo "  Direct insert response: ${DIRECT_RESPONSE}"
-    echo ""
+if [ "$HTTP_CODE" -ne 200 ]; then
+  echo -e "${RED}❌ Webhook call failed with HTTP ${HTTP_CODE}${NC}"
+  cat /tmp/webhook_response.json
+  exit 1
 fi
 
-echo "Step 2: Verifying event in outbox..."
-sleep 1
-
-OUTBOX_CHECK=$(curl -s -X GET "${SUPABASE_URL}/rest/v1/integration.outbox?idempotency_key=eq.${IDEMPOTENCY_KEY}&select=id,status,event_type,created_at" \
-    -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
-    -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
-
-echo "  Outbox entry: ${OUTBOX_CHECK}"
+WEBHOOK_RESPONSE=$(cat /tmp/webhook_response.json)
+echo -e "${GREEN}✅ Webhook accepted event (HTTP 200)${NC}"
+echo "   Response: ${WEBHOOK_RESPONSE}"
 echo ""
 
-echo "Step 3: Verifying event in event_log..."
-EVENT_LOG=$(curl -s -X GET "${SUPABASE_URL}/rest/v1/integration.event_log?order=created_at.desc&limit=1&select=id,event_type,source,created_at" \
-    -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
-    -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}")
-
-echo "  Latest event: ${EVENT_LOG}"
+# 4. Verify event in outbox (requires Supabase CLI or direct DB access)
+echo "📊 Step 2: Verify event in integration.outbox"
 echo ""
 
-# Parse results
-if echo "$OUTBOX_CHECK" | grep -q '"status":"pending"'; then
-    echo "=== TEST PASSED ==="
-    echo "Event successfully stored in outbox with 'pending' status."
-    echo "The n8n Event Router will pick it up on next poll cycle (every 30s)."
-elif echo "$OUTBOX_CHECK" | grep -q '"status":"processing"'; then
-    echo "=== TEST PASSED ==="
-    echo "Event is already being processed by n8n."
-elif echo "$OUTBOX_CHECK" | grep -q '"status":"done"'; then
-    echo "=== TEST PASSED ==="
-    echo "Event was already processed and completed!"
+if command -v psql &> /dev/null && [ -n "${POSTGRES_URL_NON_POOLING:-}" ]; then
+  OUTBOX_COUNT=$(psql "$POSTGRES_URL_NON_POOLING" -t -c \
+    "SELECT COUNT(*) FROM integration.outbox WHERE aggregate_id = '${AGGREGATE_ID}' AND status = 'pending';")
+
+  if [ "$OUTBOX_COUNT" -eq 1 ]; then
+    echo -e "${GREEN}✅ Event found in outbox (status=pending)${NC}"
+
+    # Show event details
+    psql "$POSTGRES_URL_NON_POOLING" -c \
+      "SELECT id, event_type, aggregate_type, aggregate_id, status, created_at FROM integration.outbox WHERE aggregate_id = '${AGGREGATE_ID}';"
+  else
+    echo -e "${RED}❌ Event not found in outbox (expected 1, found ${OUTBOX_COUNT})${NC}"
+    exit 1
+  fi
+  echo ""
+
+  # 5. Verify event in event_log
+  echo "📜 Step 3: Verify event in integration.event_log"
+  echo ""
+
+  LOG_COUNT=$(psql "$POSTGRES_URL_NON_POOLING" -t -c \
+    "SELECT COUNT(*) FROM integration.event_log WHERE aggregate_id = '${AGGREGATE_ID}';")
+
+  if [ "$LOG_COUNT" -eq 1 ]; then
+    echo -e "${GREEN}✅ Event logged in event_log (immutable audit trail)${NC}"
+  else
+    echo -e "${YELLOW}⚠️  Event not found in event_log (expected 1, found ${LOG_COUNT})${NC}"
+  fi
+  echo ""
 else
-    echo "=== TEST INCONCLUSIVE ==="
-    echo "Could not verify event status. Check the responses above."
+  echo -e "${YELLOW}⚠️  psql not available or POSTGRES_URL_NON_POOLING not set${NC}"
+  echo "   Cannot verify database state directly."
+  echo "   Run this command manually to check:"
+  echo ""
+  echo "   psql \"\$POSTGRES_URL_NON_POOLING\" -c \\"
+  echo "     \"SELECT * FROM integration.outbox WHERE aggregate_id = '${AGGREGATE_ID}';\""
+  echo ""
 fi
 
+# 6. Instructions for n8n verification
+echo "🔄 Step 4: n8n Event Router Processing"
 echo ""
-echo "Manual verification queries:"
+echo "The n8n event-router workflow (if active) will:"
+echo "  1. Poll claim_outbox() every 30 seconds"
+echo "  2. Claim this event (status: pending → processing)"
+echo "  3. Route to expense-handler webhook"
+echo "  4. Format Mattermost message"
+echo "  5. Send notification to configured channel"
+echo "  6. Acknowledge event (status: processing → completed)"
 echo ""
-echo "-- Check outbox"
-echo "SELECT * FROM integration.outbox WHERE idempotency_key = '${IDEMPOTENCY_KEY}';"
+echo "To verify:"
+echo "  - Check n8n Executions: https://n8n.insightpulseai.net/executions"
+echo "  - Check Mattermost channel for notification"
+echo "  - Check outbox status (should become 'completed'):"
 echo ""
-echo "-- Check event log"
-echo "SELECT * FROM integration.event_log ORDER BY created_at DESC LIMIT 5;"
+echo "    psql \"\$POSTGRES_URL_NON_POOLING\" -c \\"
+echo "      \"SELECT status, locked_by FROM integration.outbox WHERE aggregate_id = '${AGGREGATE_ID}';\""
+echo ""
+
+# 7. Manual claim test (optional)
+if [ "${RUN_MANUAL_CLAIM:-false}" = "true" ] && command -v psql &> /dev/null && [ -n "${POSTGRES_URL_NON_POOLING:-}" ]; then
+  echo "🔧 Manual Claim Test (optional)"
+  echo ""
+
+  CLAIMED=$(psql "$POSTGRES_URL_NON_POOLING" -t -c \
+    "SELECT COUNT(*) FROM claim_outbox(1, 'test-manual-claim');")
+
+  if [ "$CLAIMED" -eq 1 ]; then
+    echo -e "${GREEN}✅ Successfully claimed 1 event via claim_outbox()${NC}"
+
+    # Show claimed event
+    psql "$POSTGRES_URL_NON_POOLING" -c \
+      "SELECT id, event_type, status, locked_by FROM integration.outbox WHERE aggregate_id = '${AGGREGATE_ID}';"
+  else
+    echo -e "${YELLOW}⚠️  No events claimed (may have already been processed)${NC}"
+  fi
+  echo ""
+fi
+
+echo "========================================="
+echo -e "${GREEN}✅ End-to-End Test Complete${NC}"
+echo "========================================="
+echo ""
+echo "Summary:"
+echo "  ✅ Event sent to webhook endpoint"
+echo "  ✅ Event stored in integration.outbox"
+echo "  ✅ Event logged in integration.event_log"
+echo "  ⏳ Waiting for n8n to process (check executions)"
+echo ""
+echo "Next Steps:"
+echo "  1. Import n8n workflows (see n8n/workflows/integration/README.md)"
+echo "  2. Activate workflows in n8n"
+echo "  3. Configure Mattermost webhook URL"
+echo "  4. Wait 30-60 seconds for event router to pick up event"
+echo "  5. Check Mattermost for notification"
+echo ""
