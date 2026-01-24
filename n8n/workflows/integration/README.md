@@ -315,3 +315,116 @@ Domain handler webhooks are **internal only** (called from event-router, not exp
 - **Supabase Migration**: `supabase/migrations/20260122000100_integration_bus.sql`
 - **Edge Function**: `supabase/functions/odoo-webhook/index.ts`
 - **Odoo Event Hooks**: `addons/ipai/ipai_enterprise_bridge/models/*_integration.py`
+
+---
+
+# Marketplace Integration Workflows
+
+These workflows handle marketplace integrations for external services (GitHub, Google Workspace, AWS S3).
+
+## Additional Workflows
+
+### 5. github-artifacts-mirror.json
+
+**Purpose**: Mirror GitHub Actions workflow artifacts to Google Drive and AWS S3
+
+**Trigger**: GitHub `workflow_run` webhook (completed events)
+
+**Flow**:
+1. Receive webhook → Verify HMAC signature
+2. Filter for successful completions only
+3. Fetch artifact list from GitHub API
+4. Download each artifact
+5. Upload to Google Drive and S3 in parallel
+6. Log sync records to Supabase (`marketplace.artifact_syncs`)
+7. Send Slack notification
+
+**Required Credentials**:
+- `github-token`: GitHub API token with `actions:read` scope
+- `google-drive-oauth`: Google Drive OAuth2 credentials
+- `aws-s3`: AWS S3 credentials
+- `supabase-service-key`: Supabase service role key
+- `slack-bot`: Slack Bot token
+
+**Environment Variables**:
+- `GITHUB_WEBHOOK_SECRET`: Webhook signature secret
+- `GOOGLE_DRIVE_ARTIFACTS_FOLDER_ID`: Target Drive folder ID
+- `AWS_S3_ARTIFACTS_BUCKET`: Target S3 bucket name
+- `SUPABASE_URL`: Supabase project URL
+- `SUPABASE_SERVICE_ROLE_KEY`: Service role key
+- `SLACK_ARTIFACTS_CHANNEL`: Notification channel (e.g., `#ci-artifacts`)
+
+### 6. workspace-events-handler.json
+
+**Purpose**: Process Google Workspace events (Drive, Docs, Gmail, Sheets)
+
+**Trigger**: Workspace change webhook
+
+**Flow**:
+1. Receive webhook → Parse event source/type
+2. Log event to Supabase (`marketplace.webhook_events`)
+3. Route by source:
+   - **Drive**: Download file → Log sync
+   - **Docs**: Export to Markdown → Log sync (for specs/PRDs)
+   - **Gmail**: Process notification → Create task
+   - **Sheets**: Sync data changes
+
+**Required Credentials**:
+- `google-drive-oauth`: Google Drive OAuth2 credentials
+- `google-docs-oauth`: Google Docs OAuth2 credentials
+- `supabase-service-key`: Supabase service role key
+
+**Environment Variables**:
+- `SUPABASE_URL`: Supabase project URL
+- `SUPABASE_SERVICE_ROLE_KEY`: Service role key
+
+## Marketplace Schema
+
+These workflows use the `marketplace` schema in Supabase:
+
+| Table | Purpose |
+|-------|---------|
+| `integrations` | Registry of configured integrations |
+| `webhook_events` | Incoming webhook event log |
+| `artifact_syncs` | Track artifact sync status |
+| `sync_rules` | Automatic sync rule definitions |
+
+## GitHub Webhook Setup
+
+1. Go to repository Settings → Webhooks → Add webhook
+2. Payload URL: `https://<n8n-host>/webhook/github-workflow-webhook`
+3. Content type: `application/json`
+4. Secret: Set `GITHUB_WEBHOOK_SECRET`
+5. Events: Select "Workflow runs"
+
+## Testing
+
+### Test GitHub Artifacts Workflow
+
+```bash
+# Trigger a workflow manually
+gh api repos/<owner>/<repo>/actions/workflows/<workflow_id>/dispatches \
+  -f ref=main
+
+# Check sync records
+psql "$SUPABASE_URL" -c "SELECT * FROM marketplace.v_recent_syncs LIMIT 5;"
+```
+
+### Test Workspace Events
+
+```bash
+curl -X POST https://<n8n-host>/webhook/workspace-webhook \
+  -H "Content-Type: application/json" \
+  -d '{
+    "kind": "drive#change",
+    "type": "change",
+    "fileId": "test-file-id",
+    "time": "2026-01-24T12:00:00Z"
+  }'
+```
+
+## Related Documentation
+
+- **Marketplace Integrations**: `docs/integrations/MARKETPLACE_INTEGRATIONS.md`
+- **Edge Function**: `supabase/functions/marketplace-webhook/`
+- **Supabase Migration**: `supabase/migrations/20260124120000_marketplace_integrations.sql`
