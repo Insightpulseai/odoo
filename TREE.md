@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3714b695cedb4a0e88ab2f73aaabba234be6bab8
+> Commit: 483de27b28ba916e9b3974e8ba44e1784d1a1343
 
 ```
 .
@@ -149,6 +149,7 @@
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── supabase-branch-sync.yml
 │   │   ├── supabase-deploy.yml
+│   │   ├── supabase-preview-ci.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
 │   │   ├── vendor-app-deploy.yml
@@ -1623,6 +1624,8 @@
 │   │   │   └── docker-image-diff
 │   │   ├── 20260122-1200
 │   │   │   └── cd-pipeline
+│   │   ├── 20260124-1434
+│   │   │   └── supabase-preview-config
 │   │   ├── 20260124-dump-analysis
 │   │   │   ├── DUMP_ANALYSIS_ADDENDUM.md
 │   │   │   └── DUMP_ANALYSIS_CONSOLIDATED.md
@@ -2857,6 +2860,7 @@
 │   │   └── set_password.ts
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
+│   │   ├── check_supabase_preview_config.sh
 │   │   ├── compare_audit_baseline.py
 │   │   ├── constraints-gevent.txt
 │   │   ├── deploy-ipai-modules.sh
@@ -2866,8 +2870,10 @@
 │   │   ├── install_odoo_18.sh
 │   │   ├── introspect_feature_inventory.py
 │   │   ├── module_drift_gate.sh
+│   │   ├── needs_supabase_ci_preview.sh
 │   │   ├── run_odoo_tests.sh
 │   │   ├── schema_drift_check.sh
+│   │   ├── supabase_preview.sh
 │   │   ├── verify-deployment.sh
 │   │   └── wait_for_postgres.sh
 │   ├── ci_gate
@@ -3848,6 +3854,7 @@
 │   │   ├── 001_hr_seed.sql
 │   │   ├── 002_finance_seed.sql
 │   │   └── 003_odoo_dict_seed.sql
+│   ├── .supabase-preview-config.json
 │   ├── SECURITY_LINTER_REMEDIATION.md
 │   └── config.toml
 ├── tasks
@@ -4152,15 +4159,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1081 directories, 3066 files
+1083 directories, 3071 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1271 |
-| Files | 3999 |
+| Directories | 1273 |
+| Files | 4005 |
 | Python files | 617 |
 | XML files | 253 |
-| Markdown files | 1049 |
+| Markdown files | 1050 |
