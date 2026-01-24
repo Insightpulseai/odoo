@@ -1,0 +1,205 @@
+# Pipeline: Bronze to Silver
+# Description: Transforms raw bronze data to cleaned, normalized silver layer
+# Layer: silver
+
+version: "1.0"
+name: bronze_to_silver
+description: >
+  Transforms bronze layer data to silver layer with:
+  - Data type standardization
+  - Null handling
+  - Deduplication
+  - Schema normalization
+  - Business key extraction
+
+spec_slug: lakehouse-control-room
+layer: silver
+
+schedule:
+  cron: "30 */4 * * *"  # 30 minutes after bronze ingest
+  timezone: "UTC"
+
+tags:
+  source: bronze
+  layer: silver
+  team: data-platform
+
+caps:
+  max_runtime_seconds: 2400
+  max_phase_runtime_seconds: 900
+  max_retries: 2
+  max_artifacts_mb: 3000
+
+phases:
+  - name: transform_partners
+    type: transform
+    timeout_seconds: 300
+    config:
+      input_uri: "s3://lakehouse/bronze/odoo_core/res_partner"
+      output_uri: "s3://lakehouse/silver/partners"
+      layer: silver
+      sql: |
+        SELECT
+          id,
+          name,
+          LOWER(TRIM(email)) AS email,
+          phone,
+          COALESCE(street, '') AS street,
+          COALESCE(city, '') AS city,
+          COALESCE(zip, '') AS postal_code,
+          country_id,
+          company_id,
+          is_company,
+          active,
+          create_date AS created_at,
+          write_date AS updated_at,
+          _ingest_ts,
+          _run_id
+        FROM bronze_partners
+        WHERE id IS NOT NULL
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY id ORDER BY _ingest_ts DESC) = 1
+
+  - name: transform_invoices
+    type: transform
+    timeout_seconds: 600
+    config:
+      input_uri: "s3://lakehouse/bronze/odoo_accounting/account_move"
+      output_uri: "s3://lakehouse/silver/invoices"
+      layer: silver
+      sql: |
+        SELECT
+          id AS invoice_id,
+          name AS invoice_number,
+          partner_id,
+          journal_id,
+          move_type,
+          state,
+          invoice_date,
+          invoice_date_due AS due_date,
+          amount_total,
+          amount_residual AS amount_due,
+          currency_id,
+          company_id,
+          create_date AS created_at,
+          write_date AS updated_at,
+          _ingest_ts,
+          _run_id
+        FROM bronze_account_move
+        WHERE move_type IN ('out_invoice', 'in_invoice', 'out_refund', 'in_refund')
+          AND state != 'cancel'
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY id ORDER BY _ingest_ts DESC) = 1
+
+  - name: transform_invoice_lines
+    type: transform
+    depends_on: [transform_invoices]
+    timeout_seconds: 600
+    config:
+      input_uri: "s3://lakehouse/bronze/odoo_accounting/account_move_line"
+      output_uri: "s3://lakehouse/silver/invoice_lines"
+      layer: silver
+      sql: |
+        SELECT
+          l.id AS line_id,
+          l.move_id AS invoice_id,
+          l.product_id,
+          l.name AS description,
+          l.quantity,
+          l.price_unit,
+          l.discount,
+          l.price_subtotal,
+          l.price_total,
+          l.tax_ids,
+          l.account_id,
+          l.partner_id,
+          l.currency_id,
+          l._ingest_ts,
+          l._run_id
+        FROM bronze_account_move_line l
+        INNER JOIN silver_invoices i ON l.move_id = i.invoice_id
+        WHERE l.exclude_from_invoice_tab = false
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY l.id ORDER BY l._ingest_ts DESC) = 1
+
+  - name: transform_sales
+    type: transform
+    timeout_seconds: 300
+    config:
+      input_uri: "s3://lakehouse/bronze/odoo_sales/sale_order"
+      output_uri: "s3://lakehouse/silver/sales_orders"
+      layer: silver
+      sql: |
+        SELECT
+          id AS order_id,
+          name AS order_number,
+          partner_id,
+          user_id AS salesperson_id,
+          state,
+          date_order AS order_date,
+          commitment_date AS delivery_date,
+          amount_untaxed,
+          amount_tax,
+          amount_total,
+          currency_id,
+          company_id,
+          create_date AS created_at,
+          write_date AS updated_at,
+          _ingest_ts,
+          _run_id
+        FROM bronze_sale_order
+        WHERE state NOT IN ('cancel', 'draft')
+        QUALIFY ROW_NUMBER() OVER (PARTITION BY id ORDER BY _ingest_ts DESC) = 1
+
+  - name: validate_silver
+    type: validate
+    depends_on: [transform_partners, transform_invoices, transform_invoice_lines, transform_sales]
+    timeout_seconds: 120
+    config:
+      checks:
+        - name: partners_not_empty
+          type: row_count
+          threshold: 1
+        - name: invoices_not_empty
+          type: row_count
+          threshold: 1
+        - name: no_null_invoice_ids
+          type: null_check
+          column: invoice_id
+          threshold: 0
+        - name: no_null_partner_ids
+          type: null_check
+          column: partner_id
+          threshold: 0
+
+  - name: publish_silver
+    type: publish
+    depends_on: [validate_silver]
+    timeout_seconds: 60
+    config:
+      input_uri: "s3://lakehouse/silver/*"
+      targets:
+        - type: catalog
+          config:
+            catalog_ref: openmetadata
+            database: lakehouse_silver
+
+quality:
+  - name: invoice_amount_positive
+    type: range_check
+    column: amount_total
+    expected:
+      min: 0
+    fail_on_error: false
+
+  - name: dedup_check
+    type: custom
+    sql: |
+      SELECT COUNT(*) - COUNT(DISTINCT invoice_id) AS duplicate_count
+      FROM silver_invoices
+      HAVING duplicate_count > 0
+    fail_on_error: true
+
+input_manifest:
+  bronze_tables:
+    - res_partner
+    - account_move
+    - account_move_line
+    - sale_order

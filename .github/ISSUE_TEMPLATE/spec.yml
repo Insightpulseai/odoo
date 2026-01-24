@@ -1,0 +1,69 @@
+name: Spec Request (Spec Kit)
+description: Request a Spec Kit bundle for a new initiative.
+title: "spec: "
+labels: ["spec", "needs-spec"]
+body:
+  - type: input
+    id: slug
+    attributes:
+      label: Spec Slug
+      description: Folder name under spec/<slug>/ (lowercase, hyphens only)
+      placeholder: "lakehouse-executor"
+    validations:
+      required: true
+  - type: textarea
+    id: problem_alignment
+    attributes:
+      label: Problem Alignment
+      description: |
+        What problem are we solving and why now?
+        Include context, users affected, and urgency.
+    validations:
+      required: true
+  - type: textarea
+    id: solution_alignment
+    attributes:
+      label: Solution Alignment
+      description: |
+        Proposed solution and scope boundaries.
+        What's in scope? What's explicitly out of scope?
+    validations:
+      required: true
+  - type: textarea
+    id: launch_readiness
+    attributes:
+      label: Launch Readiness
+      description: |
+        Dependencies, rollout plan, risks.
+        What must be true before launch?
+    validations:
+      required: true
+  - type: dropdown
+    id: phase
+    attributes:
+      label: Current Phase
+      description: Which SDLC phase is this work in?
+      options:
+        - "0 - Portfolio / Intake"
+        - "1 - Discovery & IA"
+        - "2 - System Design"
+        - "3 - Design"
+        - "4 - Build"
+        - "5 - Test & Hardening"
+        - "6 - Launch & Operate"
+    validations:
+      required: true
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: Impact Areas
+      description: Which systems does this affect?
+      options:
+        - label: Control Room UI
+        - label: Lakehouse Executor
+        - label: Supabase Schema
+        - label: Odoo Modules
+        - label: CI/CD Pipeline
+        - label: Design System / Tokens
+        - label: Figma Design
+        - label: Documentation

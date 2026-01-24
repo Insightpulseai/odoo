@@ -1,0 +1,306 @@
+version: 1
+product: "Lakehouse Control Room (Databricks-like OSS)"
+description: |
+  Open-source alternative to Databricks capabilities built on Supabase (control plane)
+  and containerized executors (data plane). Provides job orchestration, SQL warehousing,
+  governance, and observability without licensing costs.
+
+principles:
+  - "Supabase = control-plane SSOT"
+  - "Executor plane = stateless workers"
+  - "Every run emits events + artifacts"
+  - "Caps enforced centrally"
+  - "Routing matrix drives escalation"
+  - "Exports are canonicalized (ignore timestamps)"
+  - "GitOps-first: specs in Git, CI-validated"
+  - "No secrets in Git - env/secret manager only"
+
+epics:
+  - id: CR
+    name: "Control Room Core"
+    outcome: "Runs, events, artifacts, executors, queues, idempotent contracts"
+    items:
+      - id: CR-001
+        title: "Runs & Events"
+        goal: "Single pane for runs, logs, artifacts, statuses"
+        acceptance:
+          - "Can start a run"
+          - "See phase transitions"
+          - "Stream events in real-time"
+          - "Download artifacts"
+          - "Rerun failed jobs"
+
+      - id: CR-002
+        title: "Executor Registry"
+        goal: "Register executors (local docker, k8s, ECS, Dataproc, EMR, etc.)"
+        acceptance:
+          - "CRUD executors"
+          - "Health status monitoring"
+          - "Capability flags"
+          - "Routing rules"
+
+      - id: CR-003
+        title: "Job Templates"
+        goal: "Repeatable jobs (SQL, Spark, dbt, Python, notebook, pipeline)"
+        acceptance:
+          - "Template creation and editing"
+          - "Template instantiation"
+          - "Run execution"
+          - "Artifacts captured"
+
+      - id: CR-004
+        title: "Secrets & Connections"
+        goal: "Store connection refs only; actual secrets via env/secret manager"
+        acceptance:
+          - "No secrets committed"
+          - "Executor pulls from env/secret store"
+          - "Audit trail for access"
+
+  - id: LH
+    name: "Lakehouse Executor"
+    outcome: "Claim, execute, emit, ack; deterministic phases"
+    items:
+      - id: LH-010
+        title: "Executor Contract (API)"
+        goal: "Standard RPC for submitting runs and streaming events"
+        acceptance:
+          - "OpenAPI spec complete"
+          - "Any executor implementation passes contract tests"
+          - "Health, submit, status, cancel, events endpoints"
+
+      - id: LH-020
+        title: "Storage Layer"
+        goal: "Object storage as truth (S3-compatible)"
+        acceptance:
+          - "Artifacts land in bucket"
+          - "Logs captured"
+          - "Datasets stored"
+          - "Immutable run folders"
+
+      - id: LH-030
+        title: "Table Format"
+        goal: "Delta Lake (primary). Optional: Iceberg/Hudi adapters later"
+        acceptance:
+          - "Write/read Delta tables"
+          - "Time travel works"
+          - "Schema evolution policy set"
+
+      - id: LH-040
+        title: "Compute"
+        goal: "Spark (batch) + optional streaming; containerized"
+        acceptance:
+          - "Submit Spark jobs"
+          - "Observe driver/executor logs"
+          - "Retries work"
+
+      - id: LH-050
+        title: "SQL Warehouse"
+        goal: "Trino (or Spark Thrift Server) for interactive SQL"
+        acceptance:
+          - "Query via API"
+          - "Results stored as artifacts"
+          - "Dashboards can refresh"
+
+      - id: LH-060
+        title: "Orchestration"
+        goal: "Prefect/Dagster/Temporal-like scheduling"
+        acceptance:
+          - "Cron triggers"
+          - "Adhoc triggers"
+          - "Dependency graph"
+          - "Backfills"
+
+      - id: LH-070
+        title: "Data Quality"
+        goal: "Great Expectations / Soda / Deequ"
+        acceptance:
+          - "Quality checks as run phases"
+          - "Fail gates"
+          - "Publish report artifacts"
+
+      - id: LH-080
+        title: "Lineage"
+        goal: "OpenLineage -> Marquez (or OpenMetadata lineage)"
+        acceptance:
+          - "Runs emit lineage events"
+          - "UI links datasets to runs"
+
+  - id: CAT
+    name: "Catalog & Governance"
+    outcome: "Metadata catalog and access control"
+    items:
+      - id: CAT-101
+        title: "Metadata Catalog"
+        goal: "OpenMetadata (or DataHub) as Unity Catalog analogue"
+        acceptance:
+          - "Tables, schemas, owners, tags searchable"
+          - "Links to storage"
+          - "Lineage integration"
+
+      - id: CAT-110
+        title: "Access Control"
+        goal: "Policy checks enforced at query layer + app layer"
+        acceptance:
+          - "Role-based access"
+          - "Blocks unauthorized datasets in UI"
+          - "Blocks unauthorized SQL endpoints"
+          - "RLS where applicable"
+
+  - id: UX
+    name: "Databricks UX Parity Surfaces"
+    outcome: "User-facing interfaces matching Databricks experience"
+    items:
+      - id: UX-201
+        title: "Notebook Workspace (optional)"
+        goal: "JupyterHub (or VSCode server) integrated with runs"
+        acceptance:
+          - "Notebook run -> artifact"
+          - "Notebook stored in Git"
+          - "Reproducible environments"
+
+      - id: UX-210
+        title: "Dashboards"
+        goal: "Superset (primary) or Metabase; embed into Control Room"
+        acceptance:
+          - "Dashboards parameterized"
+          - "Refresh via runs"
+          - "RBAC respected"
+
+      - id: UX-220
+        title: "Genie-like NL to SQL"
+        goal: "Enhanced WrenAI-style NL to SQL with RAG + template matcher"
+        acceptance:
+          - "Query suggestions"
+          - "Safe SQL generation"
+          - "Audit log"
+          - "Optional LLM fallback"
+
+  - id: SEC
+    name: "Security/Compliance"
+    outcome: "Secure, auditable, compliant operations"
+    items:
+      - id: SEC-001
+        title: "Signed Artifacts"
+        goal: "Provenance: run artifacts hashed; optional Sigstore"
+        acceptance:
+          - "Artifact manifest includes SHA-256"
+          - "Reproducible builds flagged"
+
+      - id: SEC-010
+        title: "Policy Gates"
+        goal: "Block merges if schema, tokens, or API contract drifts"
+        acceptance:
+          - "PR checks fail with clear diff outputs"
+          - "No drift allowed without explicit approval"
+
+  - id: ROUTE
+    name: "Routing & Scoring"
+    outcome: "Deterministic alerting + escalation ladder"
+    items:
+      - id: ROUTE-001
+        title: "Routing Matrix"
+        goal: "Match conditions to routing rules"
+        acceptance:
+          - "Routing matrix table"
+          - "Lint rules"
+          - "Active/inactive toggle"
+
+      - id: ROUTE-002
+        title: "Escalation Policy"
+        goal: "TTL + fallback owner chain"
+        acceptance:
+          - "After X minutes, escalate to next owner"
+          - "Fallback owner always defined"
+
+      - id: ROUTE-003
+        title: "Notification Adapters"
+        goal: "Webhook/email/slack-like interfaces"
+        acceptance:
+          - "Multiple channel types"
+          - "Delivery tracking"
+          - "Retry on failure"
+
+      - id: ROUTE-004
+        title: "Multi-Signal Scoring"
+        goal: "Compute confidence/priority from multiple signals"
+        acceptance:
+          - "Signals ingestion schema"
+          - "Weighted scoring function"
+          - "Score impacts routing/priority"
+
+  - id: CAPS
+    name: "Runtime Caps & Limits"
+    outcome: "Prevent runaway costs; auditable consumption"
+    items:
+      - id: CAPS-001
+        title: "Caps Definitions"
+        goal: "Define limits per resource type"
+        acceptance:
+          - "Caps table with key, limit, window"
+          - "Enable/disable toggle"
+
+      - id: CAPS-002
+        title: "Usage Ledger"
+        goal: "Track consumption per run"
+        acceptance:
+          - "Cap usage records with timestamps"
+          - "Link to run ID"
+
+      - id: CAPS-003
+        title: "Enforcement"
+        goal: "Pre-claim and mid-run cap checks"
+        acceptance:
+          - "Deny claim if cap exceeded"
+          - "Terminate run if cap exceeded mid-run"
+
+      - id: CAPS-004
+        title: "Caps Report"
+        goal: "Generator for MD + JSON reports"
+        acceptance:
+          - "Current usage vs limits"
+          - "Percentage utilization"
+          - "Trend indicators"
+
+exports:
+  - id: EX-01
+    name: "Backlog JSON"
+    input: "ops/backlog/control-room-lakehouse-backlog.yaml"
+    output: "ops/backlog/export/backlog.json"
+
+  - id: EX-02
+    name: "Routing Matrix JSON"
+    input: "DB ops.routing_matrix"
+    output: "ops/backlog/export/routing_matrix.json"
+
+  - id: EX-03
+    name: "Caps Report"
+    input: "DB ops.caps + ops.cap_usage"
+    output: "ops/backlog/export/caps_report.md"
+
+canonicalization:
+  description: "Keys to ignore when computing diffs (volatile timestamps)"
+  ignore_keys:
+    - updated_at
+    - created_at
+    - last_seen_at
+    - heartbeat_at
+    - claimed_at
+    - started_at
+    - finished_at
+    - ts
+
+routing_matrix:
+  capabilities:
+    - Databricks Delta Lake tables -> LH-030 (delta-rs / Delta Lake + Spark)
+    - Databricks Workflows / Jobs -> LH-060 + CR-003 (Prefect / Dagster / Temporal)
+    - Databricks DLT -> LH-060 + LH-070 (dbt + Spark streaming + quality gates)
+    - Databricks Unity Catalog -> CAT-101/110 (OpenMetadata / DataHub)
+    - Databricks SQL Warehouses -> LH-050 (Trino / Spark Thrift / DuckDB)
+    - Databricks Dashboards -> UX-210 (Superset / Metabase)
+    - Databricks Notebooks -> UX-201 (JupyterHub / VSCode server)
+    - Databricks MLflow -> (Add LH-090) (MLflow OSS)
+    - Databricks Model Serving -> (Add LH-095) (KServe / Seldon / BentoML)
+    - Databricks Feature Store -> (Add LH-096) (Feast)
+    - Databricks Autoloader -> LH-020/040 (Spark file source + checkpoints)
+    - Databricks Genie -> UX-220 (WrenAI-style + RAG)
+    - Databricks Photon -> N/A (proprietary, use tuning + Trino + Spark AQE)
