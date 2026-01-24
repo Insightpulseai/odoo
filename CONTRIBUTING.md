@@ -14,6 +14,7 @@ for contributing to this Odoo CE/OCA-aligned repository.
 - [Testing](#testing)
 - [Documentation](#documentation)
 - [Pull Request Process](#pull-request-process)
+  - [Command Line Checkout](#checkout-and-manual-merge-via-command-line)
 
 ---
 
