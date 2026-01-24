@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d0a2f5deb19d63a35476407244e1ae1d69a491eb
+> Commit: 3714b695cedb4a0e88ab2f73aaabba234be6bab8
 
 ```
 .
@@ -1867,6 +1867,7 @@
 │   │   ├── CONVERSATIONS_README.md
 │   │   ├── EXECUTION_BOARD.md
 │   │   ├── GO_LIVE_CHECKLIST.md
+│   │   ├── GO_LIVE_PROD_CHECKLIST.md
 │   │   ├── LOCAL_DEV.md
 │   │   ├── PREVENT_502.md
 │   │   ├── QUICK_START.md
@@ -2090,6 +2091,7 @@
 │   ├── INDUSTRY_PACKS_OCA_DEPENDENCIES.md
 │   ├── INDUSTRY_PARITY_ANALYSIS.md
 │   ├── INFRASTRUCTURE_CHECKLIST.md
+│   ├── INTEGRATION_BUS_DEPLOYMENT.md
 │   ├── IPAI_MODULES_INDEX.md
 │   ├── IPAI_MODULE_INSTALLATION_ORDER.md
 │   ├── KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md
@@ -2497,7 +2499,11 @@
 │   │   │   ├── deploy-trigger.json
 │   │   │   └── health-check-scheduler.json
 │   │   ├── integration
-│   │   │   └── event-router.json
+│   │   │   ├── README.md
+│   │   │   ├── asset-handler.json
+│   │   │   ├── event-router.json
+│   │   │   ├── expense-handler.json
+│   │   │   └── finance-handler.json
 │   │   ├── .gitkeep
 │   │   ├── deployment-notify.json
 │   │   └── github-deploy-trigger.json
@@ -2809,35 +2815,38 @@
 │   │       └── README.md
 │   └── README.md
 ├── sandbox
-│   └── dev
-│       ├── .claude
-│       │   └── settings.local.json
-│       ├── .github
-│       │   └── workflows
-│       ├── addons
-│       │   └── ipai
-│       ├── config
-│       │   ├── .env.example
-│       │   └── odoo.conf
-│       ├── docs
-│       │   ├── runbooks
-│       │   └── UI_CONSOLIDATION_STATUS.md
-│       ├── scripts
-│       │   ├── dev
-│       │   └── verify.sh
-│       ├── .env.example
-│       ├── .gitignore
-│       ├── CANONICAL_NAMING.md
-│       ├── CLAUDE.md
-│       ├── HOT_RELOAD_GUIDE.md
-│       ├── IMPLEMENTATION_SUMMARY.md
-│       ├── Makefile
-│       ├── PRODUCTION_READY.md
-│       ├── README.md
-│       ├── REPORT.md
-│       ├── docker-compose.production.yml
-│       ├── docker-compose.yml
-│       └── odoo.conf.production
+│   ├── dev
+│   │   ├── .claude
+│   │   │   └── settings.local.json
+│   │   ├── .github
+│   │   │   └── workflows
+│   │   ├── addons
+│   │   │   └── ipai
+│   │   ├── config
+│   │   │   ├── .env.example
+│   │   │   └── odoo.conf
+│   │   ├── docs
+│   │   │   ├── runbooks
+│   │   │   └── UI_CONSOLIDATION_STATUS.md
+│   │   ├── scripts
+│   │   │   ├── dev
+│   │   │   └── verify.sh
+│   │   ├── .env.example
+│   │   ├── .gitignore
+│   │   ├── CANONICAL_NAMING.md
+│   │   ├── CLAUDE.md
+│   │   ├── HOT_RELOAD_GUIDE.md
+│   │   ├── IMPLEMENTATION_SUMMARY.md
+│   │   ├── Makefile
+│   │   ├── PRODUCTION_READY.md
+│   │   ├── README.md
+│   │   ├── REPORT.md
+│   │   ├── docker-compose.production.yml
+│   │   ├── docker-compose.yml
+│   │   └── odoo.conf.production
+│   └── workbench
+│       ├── .env.workbench.example
+│       └── docker-compose.workbench.yml
 ├── scripts
 │   ├── aiux
 │   │   ├── verify_assets.sh
@@ -2912,7 +2921,10 @@
 │   │   ├── discover_supabase.py
 │   │   └── discover_vercel.py
 │   ├── integration
+│   │   ├── configure-odoo-params.sh
+│   │   ├── configure-odoo-params.sql
 │   │   ├── deploy-supabase.sh
+│   │   ├── test-expense-flow.sh
 │   │   └── test-webhook.py
 │   ├── integrations
 │   │   ├── affected_apps.py
@@ -3477,6 +3489,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── ipai-copilot
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── ipai-enterprise-workbench
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -4135,15 +4152,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1079 directories, 3051 files
+1081 directories, 3066 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1269 |
-| Files | 3981 |
-| Python files | 614 |
+| Directories | 1271 |
+| Files | 3999 |
+| Python files | 617 |
 | XML files | 253 |
-| Markdown files | 1042 |
+| Markdown files | 1049 |
