@@ -1,0 +1,66 @@
+name: Sync FigJam Feature Map to GitHub Issues
+
+on:
+  workflow_dispatch:
+    inputs:
+      figma_file_key:
+        description: "Figma/FigJam file key (optional, uses secret if not provided)"
+        required: false
+        type: string
+  schedule:
+    # Run every 6 hours
+    - cron: "0 */6 * * *"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  sync:
+    name: Sync Feature Map
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Sync FigJam to GitHub Issues
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+          FIGMA_FILE_KEY: ${{ inputs.figma_file_key || secrets.FIGMA_FILE_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OWNER: ${{ github.repository_owner }}
+          GITHUB_REPO: ${{ github.event.repository.name }}
+        run: |
+          mkdir -p ops/release
+          python scripts/figma/figma_featuremap_sync.py | tee ops/release/figma_sync_report.json
+
+      - name: Upload sync report
+        uses: actions/upload-artifact@v4
+        with:
+          name: figma-sync-report
+          path: ops/release/figma_sync_report.json
+          retention-days: 30
+
+      - name: Add to job summary
+        run: |
+          echo "## FigJam Feature Map Sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f ops/release/figma_sync_report.json ]; then
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            cat ops/release/figma_sync_report.json >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "No sync report generated." >> "$GITHUB_STEP_SUMMARY"
+          fi

@@ -1,0 +1,67 @@
+name: Feature Request
+description: Propose a feature with outcomes and acceptance criteria.
+title: "feat: "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Opportunity
+      description: What user/system pain are we solving? Why now?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution at a high level.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: Clear, testable criteria for completion.
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      description: Business priority level
+      options:
+        - P0 (Critical path blocker)
+        - P1 (High priority)
+        - P2 (Medium priority)
+        - P3 (Low priority / nice-to-have)
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Primary Component
+      description: Which part of the system does this primarily affect?
+      options:
+        - Control Room UI
+        - Lakehouse Executor
+        - Supabase Schema
+        - Odoo Modules
+        - CI/CD Pipeline
+        - Design System
+        - Documentation
+        - Cross-cutting
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies / Blockers
+      description: What needs to happen first? Any external dependencies?
+      placeholder: |
+        - Blocked by: #123
+        - Requires: Supabase migration
+        - Depends on: Design review

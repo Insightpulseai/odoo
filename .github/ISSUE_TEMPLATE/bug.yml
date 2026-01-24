@@ -1,0 +1,73 @@
+name: Bug Report
+description: Report a defect with clear reproduction and expected behavior.
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What broke?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal steps to reproduce the issue.
+      placeholder: |
+        1) ...
+        2) ...
+        3) ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should happen?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: Impact level of this bug
+      options:
+        - Sev0 (Production down)
+        - Sev1 (Major function broken)
+        - Sev2 (Degraded / workaround exists)
+        - Sev3 (Minor)
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Component
+      description: Which part of the system is affected?
+      options:
+        - Control Room UI
+        - Lakehouse Executor
+        - Supabase Schema
+        - Odoo Modules
+        - CI/CD Pipeline
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / Evidence
+      description: Paste logs, screenshots, links, or error messages.
+      placeholder: |
+        ```
+        Error logs here
+        ```
