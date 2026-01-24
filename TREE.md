@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1f3f2b3e34afe03df8a28cd7a352fbc709cf8a52
+> Commit: 5cfc84433c760ea84f89177f779b5a47908f8e07
 
 ```
 .
@@ -127,6 +127,7 @@
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-control-room-gate.yml
 │   │   ├── lakehouse-smoke.yml
+│   │   ├── memory-distill.yml
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
 │   │   ├── modules-audit-drift.yml
@@ -1701,6 +1702,7 @@
 │   │   └── SLACK_INTEGRATION_SETUP.md
 │   ├── integrations
 │   │   ├── FOCALBOARD.md
+│   │   ├── MARKETPLACE_INTEGRATIONS.md
 │   │   ├── MATTERMOST.md
 │   │   ├── N8N.md
 │   │   ├── OCA_SUBTREE_MIGRATION.md
@@ -2548,6 +2550,21 @@
 │   ├── tools
 │   │   └── n8n-tools.yaml
 │   └── agentic-cloud.yaml
+├── memory
+│   ├── packs
+│   │   ├── chatgpt
+│   │   │   ├── 30_current_focus.md
+│   │   │   └── README.md
+│   │   ├── claude
+│   │   │   ├── 30_current_focus.md
+│   │   │   ├── 40_error_recovery.md
+│   │   │   └── README.md
+│   │   └── common
+│   │       ├── 00_constitution.md
+│   │       ├── 10_repo_map.md
+│   │       └── 20_workflows.md
+│   ├── README.md
+│   └── memory_policy.yaml
 ├── n8n
 │   ├── workflows
 │   │   ├── control-plane
@@ -2560,7 +2577,9 @@
 │   │   │   ├── asset-handler.json
 │   │   │   ├── event-router.json
 │   │   │   ├── expense-handler.json
-│   │   │   └── finance-handler.json
+│   │   │   ├── finance-handler.json
+│   │   │   ├── github-artifacts-mirror.json
+│   │   │   └── workspace-events-handler.json
 │   │   ├── .gitkeep
 │   │   ├── chatops-hotfix.json
 │   │   ├── deployment-notify.json
@@ -3034,6 +3053,8 @@
 │   │   ├── verify_all.sh
 │   │   ├── verify_dns.sh
 │   │   └── verify_domain.sh
+│   ├── memory
+│   │   └── distill_packs.sh
 │   ├── odoo
 │   │   ├── README_BOOTSTRAP.md
 │   │   ├── bootstrap_companies.sh
@@ -3797,6 +3818,10 @@
 │   │   │   └── index.ts
 │   │   ├── ipai-copilot
 │   │   │   └── index.ts
+│   │   ├── marketplace-webhook
+│   │   │   ├── handlers
+│   │   │   ├── index.ts
+│   │   │   └── types.ts
 │   │   ├── mcp-gateway
 │   │   │   └── index.ts
 │   │   ├── memory-ingest
@@ -3927,6 +3952,7 @@
 │   │   ├── 20260124000004_ops_multisignal_scoring.sql
 │   │   ├── 20260124000005_ops_routing_matrix_escalation.sql
 │   │   ├── 20260124100001_ops_config_registry.sql
+│   │   ├── 20260124120000_marketplace_integrations.sql
 │   │   ├── 20260124_1000_ops_lakehouse_control_plane.sql
 │   │   ├── 20260125_000001_secret_registry.sql
 │   │   ├── 20260125_000002_ops_run_system.sql
@@ -4294,15 +4320,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1117 directories, 3172 files
+1125 directories, 3190 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1309 |
-| Files | 4121 |
+| Directories | 1317 |
+| Files | 4142 |
 | Python files | 626 |
 | XML files | 253 |
-| Markdown files | 1074 |
+| Markdown files | 1084 |
