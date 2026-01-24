@@ -80,7 +80,8 @@
     }
   },
 
-  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+  "postCreateCommand": "bash scripts/codespaces/bootstrap.sh",
+  "postStartCommand": "bash scripts/codespaces/start.sh",
 
   "customizations": {
     "vscode": {

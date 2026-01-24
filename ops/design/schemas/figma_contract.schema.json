@@ -1,0 +1,314 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jgtolentino/odoo-ce/ops/design/schemas/figma_contract.schema.json",
+  "title": "Figma Design Contract",
+  "description": "Machine-readable contract exported from Figma for AI-first SDLC enforcement",
+  "type": "object",
+  "required": [
+    "version",
+    "feature_slug",
+    "phase",
+    "owners",
+    "figma_meta",
+    "routes",
+    "tokens_touched",
+    "schemas_touched"
+  ],
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "Contract schema version (e.g., '1.0')"
+    },
+    "feature_slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "minLength": 3,
+      "maxLength": 64,
+      "description": "Unique identifier matching spec/<slug>/"
+    },
+    "phase": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 6,
+      "description": "SDLC phase (0=Portfolio, 1=Discovery, 2=System Design, 3=Design, 4=Build, 5=Test, 6=Launch)"
+    },
+    "phase_label": {
+      "type": "string",
+      "enum": ["Portfolio", "Discovery", "System Design", "Design", "Build", "Test", "Launch"],
+      "description": "Human-readable phase name"
+    },
+    "owners": {
+      "type": "object",
+      "required": ["design", "engineering"],
+      "properties": {
+        "design": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "GitHub handles of design owners"
+        },
+        "engineering": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "GitHub handles of engineering owners"
+        },
+        "data": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "GitHub handles of data/platform owners"
+        },
+        "ops": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "GitHub handles of ops/SRE owners"
+        },
+        "product": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "GitHub handles of product owners"
+        }
+      },
+      "additionalProperties": false
+    },
+    "figma_meta": {
+      "type": "object",
+      "required": ["file_key", "exported_at"],
+      "properties": {
+        "file_key": {
+          "type": "string",
+          "description": "Figma file key"
+        },
+        "file_name": {
+          "type": "string",
+          "description": "Figma file name"
+        },
+        "node_id": {
+          "type": "string",
+          "description": "Specific node/frame ID if applicable"
+        },
+        "exported_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of export"
+        },
+        "exporter_version": {
+          "type": "string",
+          "description": "Version of export script"
+        },
+        "figma_last_modified": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Figma file last modified timestamp"
+        }
+      },
+      "additionalProperties": false
+    },
+    "routes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "name"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "pattern": "^/",
+            "description": "URL path (e.g., '/dashboard/runs')"
+          },
+          "name": {
+            "type": "string",
+            "description": "Route name/identifier"
+          },
+          "component": {
+            "type": "string",
+            "description": "Primary component name"
+          },
+          "roles": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "RLS roles that can access this route"
+          },
+          "figma_frame_id": {
+            "type": "string",
+            "description": "Figma frame ID for this route"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Routes/pages included in this feature"
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Component name"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["existing", "new", "modified"],
+            "description": "Component status"
+          },
+          "figma_component_id": {
+            "type": "string",
+            "description": "Figma component key"
+          },
+          "props": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Component props"
+          },
+          "variants": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Component variants"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Components used in this feature"
+    },
+    "tokens_touched": {
+      "type": "object",
+      "properties": {
+        "colors": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Color token keys affected"
+        },
+        "spacing": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Spacing token keys affected"
+        },
+        "typography": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Typography token keys affected"
+        },
+        "shadows": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Shadow token keys affected"
+        },
+        "radii": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Border radius token keys affected"
+        },
+        "other": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Other token keys affected"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Design tokens touched by this feature"
+    },
+    "schemas_touched": {
+      "type": "object",
+      "properties": {
+        "tables": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Database tables affected (e.g., 'ops.runs')"
+        },
+        "functions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Database functions affected"
+        },
+        "rls_policies": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "RLS policies affected"
+        },
+        "edge_functions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Supabase Edge Functions affected"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Database schemas touched by this feature"
+    },
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "permissions"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Role name"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["view", "create", "edit", "delete", "admin"]
+            },
+            "description": "Permissions for this role"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "RLS roles and their permissions"
+    },
+    "success_metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "target"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Metric name"
+          },
+          "target": {
+            "type": "string",
+            "description": "Target value or threshold"
+          },
+          "measurement": {
+            "type": "string",
+            "description": "How the metric is measured"
+          }
+        },
+        "additionalProperties": false
+      },
+      "description": "Success metrics for this feature"
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "spec_bundles": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required spec bundles (e.g., 'lakehouse-control-room')"
+        },
+        "migrations": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required migration files"
+        },
+        "packages": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required npm/pip packages"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Dependencies for this feature"
+    },
+    "contract_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "SHA-256 hash of the contract (excluding this field)"
+    }
+  },
+  "additionalProperties": false
+}

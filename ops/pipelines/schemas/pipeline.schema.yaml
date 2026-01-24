@@ -1,0 +1,177 @@
+# Pipeline Spec Schema
+# Version: 1.0.0
+# Description: Schema for Lakehouse Control Room pipeline specifications
+
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://insightpulseai.net/schemas/pipeline/v1"
+title: Pipeline Specification
+type: object
+
+required:
+  - version
+  - name
+  - phases
+
+properties:
+  version:
+    type: string
+    const: "1.0"
+    description: Schema version
+
+  name:
+    type: string
+    pattern: "^[a-z][a-z0-9_-]*$"
+    description: Pipeline name (lowercase, hyphen/underscore allowed)
+
+  description:
+    type: string
+    description: Human-readable description
+
+  spec_slug:
+    type: string
+    description: Reference to spec bundle (spec/<slug>/)
+
+  git_sha:
+    type: string
+    description: Git commit SHA for reproducibility
+
+  layer:
+    type: string
+    enum: [bronze, silver, gold, platinum]
+    description: Medallion layer this pipeline produces
+
+  schedule:
+    type: object
+    properties:
+      cron:
+        type: string
+        description: Cron expression for scheduled runs
+      timezone:
+        type: string
+        default: "UTC"
+    description: Optional scheduling configuration
+
+  phases:
+    type: array
+    minItems: 1
+    items:
+      $ref: "#/$defs/phase"
+    description: Ordered list of pipeline phases
+
+  input_manifest:
+    type: object
+    additionalProperties: true
+    description: Input dataset references and parameters
+
+  output_manifest:
+    type: object
+    additionalProperties: true
+    description: Output dataset references (populated after run)
+
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+    description: Key-value tags for filtering and routing
+
+  caps:
+    $ref: "#/$defs/caps"
+    description: Runtime caps and limits
+
+  quality:
+    type: array
+    items:
+      $ref: "#/$defs/quality_check"
+    description: Data quality checks (run in validate phase)
+
+$defs:
+  phase:
+    type: object
+    required:
+      - name
+      - type
+    properties:
+      name:
+        type: string
+        description: Phase identifier
+
+      type:
+        type: string
+        enum: [ingest, validate, transform, publish, query]
+        description: Phase type (maps to executor handler)
+
+      depends_on:
+        type: array
+        items:
+          type: string
+        description: Phase dependencies (names)
+
+      timeout_seconds:
+        type: integer
+        default: 600
+        description: Max execution time
+
+      max_retries:
+        type: integer
+        default: 1
+        description: Retry attempts on failure
+
+      config:
+        type: object
+        additionalProperties: true
+        description: Phase-specific configuration
+
+  caps:
+    type: object
+    properties:
+      max_runtime_seconds:
+        type: integer
+        default: 3600
+        description: Total pipeline runtime limit
+      max_phase_runtime_seconds:
+        type: integer
+        default: 600
+        description: Per-phase runtime limit
+      max_retries:
+        type: integer
+        default: 3
+        description: Max retries across all phases
+      max_artifacts_mb:
+        type: integer
+        default: 1000
+        description: Max artifact storage per run
+
+  quality_check:
+    type: object
+    required:
+      - name
+      - type
+    properties:
+      name:
+        type: string
+        description: Check identifier
+
+      type:
+        type: string
+        enum: [row_count, null_check, schema_drift, range_check, custom]
+        description: Check type
+
+      column:
+        type: string
+        description: Target column (if applicable)
+
+      threshold:
+        type: number
+        description: Threshold value
+
+      expected:
+        description: Expected value or schema
+
+      sql:
+        type: string
+        description: Custom SQL for validation
+
+      fail_on_error:
+        type: boolean
+        default: true
+        description: Whether to fail the pipeline on check failure

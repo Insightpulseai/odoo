@@ -1,0 +1,18 @@
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/${LOCAL_WORKSPACE_FOLDER_BASENAME:-odoo-ce}:cached
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DEV_COMPOSE_FILE=${DEV_COMPOSE_FILE:-docker-compose.yml}
+      - DEV_COMPOSE_PROJECT=${DEV_COMPOSE_PROJECT:-odoo-dev}
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY:-}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-}
+    network_mode: host
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
