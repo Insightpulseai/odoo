@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/figma-config.json",
+  "codeConnect": {
+    "parser": "react",
+    "include": [
+      "apps/*/src/components/**/*",
+      "packages/*/src/components/**/*",
+      "packages/ipai-design-tokens/src/**/*"
+    ],
+    "exclude": [
+      "**/*.test.*",
+      "**/*.spec.*",
+      "**/__tests__/**",
+      "**/tests/**",
+      "**/docs/**",
+      "**/build/**",
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/*.stories.*"
+    ],
+    "importPaths": {
+      "apps/control-room/src/components/*": "@control-room/components",
+      "apps/web/src/components/*": "@web/components",
+      "packages/ipai-design-tokens/src/*": "@ipai/design-tokens"
+    }
+  },
+  "documentUrlSubstitutions": {},
+  "label": "IPAI Components"
+}
