@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 45647a2eb4d3cbbffdb177c1402f48899d0d50fa
+> Commit: 348340c7e93e7e7f90b4465dde8cfd9be727aae5
 
 ## 📚 Documentation
 
@@ -27,6 +27,7 @@
 | [Agentic Rules (Continue)](.continue/rules/agentic.md) | .continue/rules |
 | [Mission](.github/agents/odoo-oca-triage.agent.md) | .github/agents |
 | [Copilot Instructions for InsightPulse Odoo CE](.github/copilot-instructions.md) | .github |
+| [Summary](.github/pull_request_template.md) | .github |
 | [VSCode/Cursor/Claude Code Workspace Configuration](.vscode/README.md) | .vscode |
 | [Analytics Activation Sequence](ANALYTICS_ACTIVATION_SEQUENCE.md) | . |
 | [🎯 Odoo CE v0.9.1 - Security Audit Fixes Applied](AUDIT_FIXES_APPLIED.md) | . |
@@ -803,6 +804,7 @@
 | [Supabase Migrations](ops-control/supabase/migrations/README.md) | ops-control/supabase/migrations |
 | [OCR Parallel Workers](ops-control/workers/README.md) | ops-control/workers |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
+| [Design → Code Contract (Figma SSOT)](ops/design/README.md) | ops/design |
 | [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
 | [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
 | [OCR Service Operations Runbook](ops/runbooks/ocr_service.md) | ops/runbooks |
@@ -942,6 +944,10 @@
 | [Implementation Plan: Knowledge Hub](spec/knowledge-hub/plan.md) | spec/knowledge-hub |
 | [PRD: Knowledge Hub](spec/knowledge-hub/prd.md) | spec/knowledge-hub |
 | [Tasks: Knowledge Hub](spec/knowledge-hub/tasks.md) | spec/knowledge-hub |
+| [Constitution — Lakehouse Control Room (No Databricks License)](spec/lakehouse-control-room/constitution.md) | spec/lakehouse-control-room |
+| [Plan — Lakehouse Control Room](spec/lakehouse-control-room/plan.md) | spec/lakehouse-control-room |
+| [PRD — Lakehouse Control Room (Databricks-Class, No License)](spec/lakehouse-control-room/prd.md) | spec/lakehouse-control-room |
+| [Tasks — Lakehouse Control Room](spec/lakehouse-control-room/tasks.md) | spec/lakehouse-control-room |
 | [Notion x Finance PPM Control Room — Constitution](spec/notion-finance-ppm-control-room/constitution.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Implementation Plan](spec/notion-finance-ppm-control-room/plan.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Product Requirements Document](spec/notion-finance-ppm-control-room/prd.md) | spec/notion-finance-ppm-control-room |

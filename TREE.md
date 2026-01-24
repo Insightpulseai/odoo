@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 45647a2eb4d3cbbffdb177c1402f48899d0d50fa
+> Commit: 348340c7e93e7e7f90b4465dde8cfd9be727aae5
 
 ```
 .
@@ -45,15 +45,19 @@
 │   └── config.json
 ├── .devcontainer
 │   ├── devcontainer.json
+│   ├── docker-compose.yml
 │   └── postCreate.sh
 ├── .githooks
 │   └── pre-commit
 ├── .github
 │   ├── ISSUE_TEMPLATE
+│   │   ├── bug.yml
 │   │   ├── copilot_task.yml
 │   │   ├── ee_iap_replacement.yml
 │   │   ├── enterprise_replacement.yml
-│   │   └── odoo_golive_task.yml
+│   │   ├── feature.yml
+│   │   ├── odoo_golive_task.yml
+│   │   └── spec.yml
 │   ├── agents
 │   │   └── odoo-oca-triage.agent.md
 │   ├── workflows
@@ -94,6 +98,7 @@
 │   │   ├── erd-docs.yml
 │   │   ├── erd-graphviz.yml
 │   │   ├── erd-schemaspy.yml
+│   │   ├── figma-featuremap-sync.yml
 │   │   ├── fin-workspace-weekly-sync.yml
 │   │   ├── finance-ppm-health.yml
 │   │   ├── go-live-manifest-gate.yml
@@ -111,6 +116,7 @@
 │   │   ├── ipai-dynamic-qg.yml
 │   │   ├── ipai-module-matrix.yml
 │   │   ├── ipai-prod-checks.yml
+│   │   ├── lakehouse-control-room-gate.yml
 │   │   ├── lakehouse-smoke.yml
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
@@ -132,6 +138,7 @@
 │   │   ├── project-automation.yml
 │   │   ├── release-docs.yml
 │   │   ├── repo-structure.yml
+│   │   ├── reusable-pr-gate.yml
 │   │   ├── run-odoo-cli-job.yml
 │   │   ├── seed-odoo-finance.yml
 │   │   ├── seeds-validate.yml
@@ -144,8 +151,10 @@
 │   │   ├── vendor-app-deploy.yml
 │   │   ├── vendor-backlog-sync.yml
 │   │   ├── wiki-sync.yml
+│   │   ├── workbench-deploy.yml
 │   │   └── workflow-yaml-validate.yml
-│   └── copilot-instructions.md
+│   ├── copilot-instructions.md
+│   └── pull_request_template.md
 ├── .insightpulse
 │   ├── sync-config.yaml
 │   └── sync.yaml
@@ -1335,13 +1344,15 @@
 │   ├── odoo-core.conf
 │   ├── odoo.conf.template
 │   ├── pipeline.yaml
+│   ├── routing_matrix.yml
 │   └── ship_set.txt
 ├── contracts
-│   └── delta
-│       ├── bronze_raw_pages.yaml
-│       ├── gold_chunks.yaml
-│       ├── gold_embeddings.yaml
-│       └── silver_normalized_docs.yaml
+│   ├── delta
+│   │   ├── bronze_raw_pages.yaml
+│   │   ├── gold_chunks.yaml
+│   │   ├── gold_embeddings.yaml
+│   │   └── silver_normalized_docs.yaml
+│   └── lakehouse-executor.openapi.yaml
 ├── data
 │   ├── finance_seed
 │   │   ├── 01_project.tags.csv
@@ -2492,6 +2503,12 @@
 ├── ops
 │   ├── alerting
 │   │   └── scoring.json
+│   ├── backlog
+│   │   └── control-room-lakehouse-backlog.yaml
+│   ├── design
+│   │   ├── schemas
+│   │   │   └── figma_contract.schema.json
+│   │   └── README.md
 │   ├── github
 │   │   ├── apply_labels.sh
 │   │   └── labels.json
@@ -2500,6 +2517,13 @@
 │   │       ├── finance_stack_rollout.yaml
 │   │       ├── ipai_finance_ppm_install.yaml
 │   │       └── ipai_finance_ppm_upgrade.yaml
+│   ├── pipelines
+│   │   ├── schemas
+│   │   │   └── pipeline.schema.yaml
+│   │   └── templates
+│   │       ├── bronze_to_silver.yaml
+│   │       ├── odoo_ingest_bronze.yaml
+│   │       └── silver_to_gold.yaml
 │   ├── runbooks
 │   │   ├── expenses_ocr_runbook.md
 │   │   ├── mailgun_domain_verification.md
@@ -2769,11 +2793,19 @@
 │   │   ├── compute_addons_roots.sh
 │   │   ├── gate_modules.sh
 │   │   └── module_gate.py
+│   ├── codespaces
+│   │   ├── bootstrap.sh
+│   │   ├── start.sh
+│   │   └── stop.sh
 │   ├── deploy
 │   │   ├── bootstrap_from_tag.sh
 │   │   ├── deploy-prod-e2e.sh
 │   │   ├── do-bootstrap-odoo-prod.sh
 │   │   └── verify_prod.sh
+│   ├── design
+│   │   ├── compute_token_diff.ts
+│   │   ├── export_figma_contract.ts
+│   │   └── validate_contract.sh
 │   ├── docs
 │   │   └── sync_readme_current_state.py
 │   ├── drive_sync
@@ -2784,6 +2816,8 @@
 │   │   ├── README.md
 │   │   ├── drive_manifest.yml
 │   │   └── sync_docs.mjs
+│   ├── figma
+│   │   └── figma_featuremap_sync.py
 │   ├── fixes
 │   │   └── fix_odoo_email_config.sh
 │   ├── github
@@ -2895,6 +2929,9 @@
 │   ├── canonical_audit.py
 │   ├── ce_oca_audit.py
 │   ├── check-enterprise-modules.sh
+│   ├── check-generated-tokens.sh
+│   ├── check-spec-kit.sh
+│   ├── check-supabase-migrations.sh
 │   ├── check_addon_allowlist.py
 │   ├── check_go_live_manifest.py
 │   ├── check_module_status.sh
@@ -2941,6 +2978,7 @@
 │   ├── deploy_odoo_upgrade.sh
 │   ├── deploy_prod.sh
 │   ├── deploy_production.sh
+│   ├── deploy_vercel_prod.sh
 │   ├── deploy_with_credentials.sh
 │   ├── deploy_workos_prod.sh
 │   ├── deployment-checklist.sh
@@ -3054,6 +3092,7 @@
 │   ├── run_odoo_shell.sh
 │   ├── run_project_introspection.sh
 │   ├── scan_ipai_modules.py
+│   ├── secret-scan.sh
 │   ├── seed_finance_close_from_xlsx.py
 │   ├── seed_finance_ppm_stages.py
 │   ├── setup-mailgun-secrets.sh
@@ -3090,6 +3129,7 @@
 │   ├── update_task_phase_tags.sh
 │   ├── update_tasks_after_import.py
 │   ├── validate-continue-config.sh
+│   ├── validate-openapi.mjs
 │   ├── validate-spec-kit.sh
 │   ├── validate_ai_naming.py
 │   ├── validate_ee_iap_independence.sh
@@ -3101,6 +3141,7 @@
 │   ├── validate_manifests.py
 │   ├── validate_production.sh
 │   ├── validate_spec_kit.py
+│   ├── vercel_promote_previous.sh
 │   ├── verify-addon-permissions.sh
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
@@ -3396,6 +3437,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── lakehouse-control-room
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── notion-finance-ppm-control-room
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -3525,6 +3571,10 @@
 │   │   │   └── index.ts
 │   │   ├── docs-ai-ask
 │   │   │   └── index.ts
+│   │   ├── executor
+│   │   │   ├── handlers
+│   │   │   ├── index.ts
+│   │   │   └── types.ts
 │   │   ├── expense-policy-check
 │   │   │   └── index.ts
 │   │   ├── github-app-auth
@@ -3665,6 +3715,7 @@
 │   │   ├── 20260124000004_ops_multisignal_scoring.sql
 │   │   ├── 20260124000005_ops_routing_matrix_escalation.sql
 │   │   ├── 20260124100001_ops_config_registry.sql
+│   │   ├── 20260124_1000_ops_lakehouse_control_plane.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3748,6 +3799,8 @@
 │   │   ├── verify_alignment.py
 │   │   ├── verify_expected_paths.sh
 │   │   └── verify_workos_install.sql
+│   ├── backlog
+│   │   └── export_backlog.mjs
 │   ├── catalog
 │   │   └── databricks_org_catalog.py
 │   ├── db-inventory
@@ -3803,6 +3856,10 @@
 │   ├── parity
 │   │   ├── parity_audit.py
 │   │   └── validate_spec_kit.py
+│   ├── pr-gate
+│   │   └── enforce_gate.mjs
+│   ├── routing
+│   │   └── caps_report.mjs
 │   ├── seed_all.ts
 │   ├── seed_doc_ocr.ts
 │   ├── seed_ppm.ts
@@ -3998,15 +4055,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1047 directories, 2946 files
+1062 directories, 2988 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1237 |
-| Files | 3867 |
-| Python files | 612 |
+| Directories | 1252 |
+| Files | 3914 |
+| Python files | 613 |
 | XML files | 253 |
-| Markdown files | 1013 |
+| Markdown files | 1019 |
