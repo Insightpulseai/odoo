@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5665265409e2f1efd76f9625fcc7171b6865a591
+> Commit: 45647a2eb4d3cbbffdb177c1402f48899d0d50fa
 
 ```
 .
@@ -65,6 +65,7 @@
 │   │   ├── audit-contract.yml
 │   │   ├── auth-email-ai-gate.yml
 │   │   ├── auto-sitemap-tree.yml
+│   │   ├── backlog-coverage.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
 │   │   ├── canonical-gate.yml
@@ -72,6 +73,7 @@
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
 │   │   ├── compose-topology-guard.yml
+│   │   ├── config-publish.yml
 │   │   ├── control-room-ci.yml
 │   │   ├── databricks-dab-ci.yml
 │   │   ├── deploy-finance-ppm.yml
@@ -139,6 +141,8 @@
 │   │   ├── supabase-deploy.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
+│   │   ├── vendor-app-deploy.yml
+│   │   ├── vendor-backlog-sync.yml
 │   │   ├── wiki-sync.yml
 │   │   └── workflow-yaml-validate.yml
 │   └── copilot-instructions.md
@@ -1261,6 +1265,9 @@
 │       ├── README_FINANCE_CLOSING.md
 │       ├── bir_deadline_reminder_workflow.json
 │       └── bir_overdue_nudge_workflow.json
+├── backlog
+│   └── vendors
+│       └── README.md
 ├── baselines
 │   └── v0.2.1-quality-baseline-20251121.txt
 ├── bin
@@ -1301,6 +1308,8 @@
 │       ├── analysis_options.yaml
 │       └── pubspec.yaml
 ├── config
+│   ├── consumers
+│   │   └── consumers.json
 │   ├── entrypoint.d
 │   │   ├── 10-log-env.sh
 │   │   ├── 20-render-conf.sh
@@ -1314,6 +1323,8 @@
 │   │   ├── oca_repos.yaml
 │   │   ├── odoo_docs.yaml
 │   │   └── sap_help.yaml
+│   ├── tokens
+│   │   └── tokens.json
 │   ├── MAILGUN_INTEGRATION_COMPLETE.md
 │   ├── MAILGUN_INTEGRATION_DEPLOYMENT.md
 │   ├── PRODUCTION_DEPLOYMENT_SCRIPT.sh
@@ -1956,6 +1967,8 @@
 │   ├── AI_MODULE_NAMING_CONVENTION.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
+│   ├── BACKLOG_COVERAGE_REPORT.json
+│   ├── BACKLOG_COVERAGE_REPORT.md
 │   ├── CANONICAL_ENFORCEMENT_REPORT.md
 │   ├── CANONICAL_LINT.md
 │   ├── CANONICAL_MAP.md
@@ -2227,6 +2240,8 @@
 │   ├── .env.example
 │   ├── docker-compose.prod.yaml
 │   └── odoo.conf
+├── integrations
+│   └── apps.yml
 ├── inventory
 │   ├── latest -> runs/20251231T020517Z
 │   └── runs
@@ -2791,6 +2806,10 @@
 │   ├── integration
 │   │   ├── deploy-supabase.sh
 │   │   └── test-webhook.py
+│   ├── integrations
+│   │   ├── affected_apps.py
+│   │   ├── deploy_one.py
+│   │   └── vendor_backlog_sync.py
 │   ├── ipai-view-migration
 │   │   └── fix_odoo18_views.py
 │   ├── kb
@@ -2864,6 +2883,7 @@
 │   ├── audit_ipai_modules.py
 │   ├── audit_oca_modules.py
 │   ├── auto_error_handler.sh
+│   ├── backlog_scan.py
 │   ├── backup_odoo.sh
 │   ├── baseline-validation.sh
 │   ├── bootstrap_apps_from_inventory.sh
@@ -3493,6 +3513,10 @@
 │   │   │   └── index.ts
 │   │   ├── catalog-sync
 │   │   │   └── index.ts
+│   │   ├── config-publish
+│   │   │   └── index.ts
+│   │   ├── consumer-heartbeat
+│   │   │   └── index.ts
 │   │   ├── context-resolve
 │   │   │   └── index.ts
 │   │   ├── copilot-chat
@@ -3640,6 +3664,7 @@
 │   │   ├── 20260124000003_ops_rls.sql
 │   │   ├── 20260124000004_ops_multisignal_scoring.sql
 │   │   ├── 20260124000005_ops_routing_matrix_escalation.sql
+│   │   ├── 20260124100001_ops_config_registry.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3973,15 +3998,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1039 directories, 2929 files
+1047 directories, 2946 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1229 |
-| Files | 3850 |
-| Python files | 608 |
+| Directories | 1237 |
+| Files | 3867 |
+| Python files | 612 |
 | XML files | 253 |
-| Markdown files | 1011 |
+| Markdown files | 1013 |
