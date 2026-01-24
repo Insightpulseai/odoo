@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 483de27b28ba916e9b3974e8ba44e1784d1a1343
+> Commit: 29b9ea834242b857312d606d5f7dd3a5b9fd3b2a
 
 ```
 .
@@ -1999,6 +1999,10 @@
 │   │   │   ├── dashboard_filtering.md
 │   │   │   └── embed_guest_token.md
 │   │   └── README.md
+│   ├── supabase-docs-patterns
+│   │   ├── VISUAL_PARITY_CHECKLIST.md
+│   │   ├── docs_ui_spec.md
+│   │   └── nav_schema.json
 │   ├── templates
 │   │   └── ipai-ops-stack
 │   │       ├── caddy
@@ -4159,15 +4163,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1083 directories, 3071 files
+1084 directories, 3074 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1273 |
-| Files | 4005 |
+| Directories | 1276 |
+| Files | 4018 |
 | Python files | 617 |
 | XML files | 253 |
-| Markdown files | 1050 |
+| Markdown files | 1052 |
