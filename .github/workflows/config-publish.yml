@@ -1,0 +1,225 @@
+name: Publish Config SSOT to Supabase
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "config/tokens/**"
+      - "config/workflows/**"
+      - "config/consumers/**"
+      - "supabase/migrations/**"
+      - "supabase/functions/config-publish/**"
+      - "supabase/functions/consumer-heartbeat/**"
+
+  workflow_dispatch:
+    inputs:
+      artifact_slug:
+        description: 'Specific artifact slug to publish (leave empty for all)'
+        required: false
+        type: string
+      dry_run:
+        description: 'Dry run (validate only, do not publish)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  validate:
+    name: Validate Config Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate tokens.json
+        run: |
+          echo "Validating config/tokens/tokens.json..."
+          if [ -f "config/tokens/tokens.json" ]; then
+            python3 -c "
+          import json
+          import sys
+
+          with open('config/tokens/tokens.json') as f:
+              data = json.load(f)
+
+          required_fields = ['name', 'version']
+          for field in required_fields:
+              if field not in data:
+                  print(f'ERROR: Missing required field: {field}')
+                  sys.exit(1)
+
+          print(f'Token artifact: {data[\"name\"]} v{data[\"version\"]}')
+          print('Validation passed')
+          "
+          else
+            echo "No tokens.json found, skipping"
+          fi
+
+      - name: Validate consumers.json
+        run: |
+          echo "Validating config/consumers/consumers.json..."
+          if [ -f "config/consumers/consumers.json" ]; then
+            python3 -c "
+          import json
+          import sys
+
+          with open('config/consumers/consumers.json') as f:
+              data = json.load(f)
+
+          if 'consumers' not in data:
+              print('ERROR: Missing consumers array')
+              sys.exit(1)
+
+          valid_types = ['odoo', 'edge_fn', 'web_app', 'n8n', 'mcp_server', 'docker']
+          for consumer in data['consumers']:
+              if 'consumer_type' not in consumer or consumer['consumer_type'] not in valid_types:
+                  print(f'ERROR: Invalid consumer_type for {consumer.get(\"consumer_key\", \"unknown\")}')
+                  sys.exit(1)
+              if 'consumer_key' not in consumer:
+                  print('ERROR: Missing consumer_key')
+                  sys.exit(1)
+
+          print(f'Validated {len(data[\"consumers\"])} consumers')
+          print('Validation passed')
+          "
+          else
+            echo "No consumers.json found, skipping"
+          fi
+
+  publish:
+    name: Publish to Supabase
+    needs: validate
+    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.dry_run != 'true' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Compute payload for tokens
+        id: tokens
+        run: |
+          set -euo pipefail
+          SHA="${GITHUB_SHA}"
+
+          if [ -f "config/tokens/tokens.json" ]; then
+            VERSION="$(jq -r '.version' config/tokens/tokens.json)"
+            NAME="$(jq -r '.name' config/tokens/tokens.json)"
+
+            jq -n \
+              --arg kind "design_tokens" \
+              --arg slug "$NAME" \
+              --arg name "$NAME" \
+              --arg description "IPAI Design System tokens" \
+              --arg version "$VERSION" \
+              --arg git_sha "$SHA" \
+              --slurpfile content config/tokens/tokens.json \
+              '{kind:$kind, slug:$slug, name:$name, description:$description, version:$version, git_sha:$git_sha, content_json:$content[0], auto_promote:true}' \
+              > /tmp/tokens.payload.json
+
+            echo "TOKENS_PAYLOAD=/tmp/tokens.payload.json" >> $GITHUB_OUTPUT
+            echo "HAS_TOKENS=true" >> $GITHUB_OUTPUT
+            echo "::notice::Prepared tokens payload: $NAME v$VERSION"
+          else
+            echo "HAS_TOKENS=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish tokens to Supabase
+        if: steps.tokens.outputs.HAS_TOKENS == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+            echo "::warning::Supabase credentials not configured. Skipping publish."
+            exit 0
+          fi
+
+          echo "Publishing tokens to Supabase..."
+
+          RESPONSE=$(curl -sS -X POST "${SUPABASE_URL}/functions/v1/config-publish" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            --data-binary @${{ steps.tokens.outputs.TOKENS_PAYLOAD }} \
+            --max-time 30 \
+            --retry 3 \
+            --retry-delay 2)
+
+          echo "$RESPONSE" | jq .
+
+          OK=$(echo "$RESPONSE" | jq -r '.ok')
+          if [ "$OK" != "true" ]; then
+            echo "::error::Publish failed: $(echo "$RESPONSE" | jq -r '.error')"
+            exit 1
+          fi
+
+          DEDUPED=$(echo "$RESPONSE" | jq -r '.deduped')
+          if [ "$DEDUPED" = "true" ]; then
+            echo "::notice::Config already up to date (deduplicated)"
+          else
+            echo "::notice::Config published successfully"
+          fi
+
+      - name: Record publish evidence
+        if: always()
+        run: |
+          EVIDENCE_DIR="docs/evidence/$(date +%Y%m%d-%H%M)/config-publish"
+          mkdir -p "$EVIDENCE_DIR"
+
+          cat > "$EVIDENCE_DIR/publish_result.json" <<EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "git_sha": "${GITHUB_SHA}",
+            "git_ref": "${GITHUB_REF}",
+            "workflow_run": "${GITHUB_RUN_ID}",
+            "status": "${{ job.status }}",
+            "artifacts_published": ["ipai-design-tokens"]
+          }
+          EOF
+
+          echo "Evidence recorded at: $EVIDENCE_DIR/publish_result.json"
+
+  drift-check:
+    name: Check Config Drift
+    needs: publish
+    runs-on: ubuntu-latest
+    if: always() && needs.publish.result != 'failure'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for drift
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+            echo "::warning::Supabase credentials not configured. Skipping drift check."
+            exit 0
+          fi
+
+          echo "Checking for config drift..."
+
+          # Query drift detection function
+          RESPONSE=$(curl -sS -X POST "${SUPABASE_URL}/rest/v1/rpc/detect_config_drift" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "apikey: ${SUPABASE_SERVICE_ROLE_KEY}" \
+            --max-time 30 \
+            --retry 2) || {
+            echo "::warning::Drift check RPC not available"
+            exit 0
+          }
+
+          echo "$RESPONSE" | jq .
+
+          DRIFT_COUNT=$(echo "$RESPONSE" | jq 'length')
+          if [ "$DRIFT_COUNT" -gt 0 ]; then
+            echo "::warning::Detected $DRIFT_COUNT consumers with config drift"
+            echo "$RESPONSE" | jq -r '.[] | "  - \(.consumer_key): \(.drift_type) (expected: \(.expected_version), actual: \(.actual_version))"'
+          else
+            echo "::notice::No config drift detected"
+          fi

@@ -1,0 +1,70 @@
+{
+  "$schema": "./consumers.schema.json",
+  "version": "1.0.0",
+  "description": "Config consumers registry - systems that consume configuration artifacts",
+  "consumers": [
+    {
+      "consumer_type": "odoo",
+      "consumer_key": "odoo-core",
+      "environment": "prod",
+      "description": "Main Odoo CE instance",
+      "consumes": ["ipai-design-tokens", "ipai-odoo-config"],
+      "heartbeat_url": "https://erp.insightpulseai.net/api/heartbeat",
+      "health_endpoint": "https://erp.insightpulseai.net/web/health"
+    },
+    {
+      "consumer_type": "odoo",
+      "consumer_key": "odoo-marketing",
+      "environment": "prod",
+      "description": "Marketing agency Odoo instance",
+      "consumes": ["ipai-design-tokens"],
+      "heartbeat_url": null,
+      "health_endpoint": null
+    },
+    {
+      "consumer_type": "odoo",
+      "consumer_key": "odoo-accounting",
+      "environment": "prod",
+      "description": "Accounting firm Odoo instance",
+      "consumes": ["ipai-design-tokens"],
+      "heartbeat_url": null,
+      "health_endpoint": null
+    },
+    {
+      "consumer_type": "web_app",
+      "consumer_key": "control-room",
+      "environment": "prod",
+      "description": "Control Room Platform Kit UI",
+      "consumes": ["ipai-design-tokens"],
+      "heartbeat_url": null,
+      "health_endpoint": null
+    },
+    {
+      "consumer_type": "n8n",
+      "consumer_key": "n8n-automation",
+      "environment": "prod",
+      "description": "n8n workflow automation",
+      "consumes": ["ipai-workflow-configs"],
+      "heartbeat_url": null,
+      "health_endpoint": null
+    },
+    {
+      "consumer_type": "mcp_server",
+      "consumer_key": "odoo-erp-server",
+      "environment": "prod",
+      "description": "Odoo MCP Server",
+      "consumes": ["ipai-odoo-config"],
+      "heartbeat_url": null,
+      "health_endpoint": null
+    },
+    {
+      "consumer_type": "edge_fn",
+      "consumer_key": "ops-health",
+      "environment": "prod",
+      "description": "Ops Health Edge Function",
+      "consumes": [],
+      "heartbeat_url": null,
+      "health_endpoint": null
+    }
+  ]
+}

@@ -1,0 +1,984 @@
+{
+  "timestamp": "2026-01-24T08:42:04.244493Z",
+  "git_sha": "5abbe901c168",
+  "total_items": 67,
+  "implemented": 64,
+  "partial": 0,
+  "missing": 3,
+  "items": [
+    {
+      "id": "c568d071417b",
+      "title": "Config Registry schema (ops.config_artifacts, config_versions)",
+      "category": "DB",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/migrations",
+      "status": "implemented",
+      "priority": "P0",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md:42",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:29",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:10",
+        "scripts/backlog_scan.py:79",
+        "supabase/migrations/20260124100001_ops_config_registry.sql",
+        "scripts/backlog_scan.py:86",
+        "spec/supabase-platform-kit-observability/tasks.md:43"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "ab0fe42233da",
+      "title": "Config Registry RLS policies",
+      "category": "DB",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/migrations",
+      "status": "implemented",
+      "priority": "P0",
+      "evidence": [
+        "supabase/migrations/20260124100001_ops_config_registry.sql:165",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:196",
+        "scripts/backlog_scan.py:96",
+        "scripts/backlog_scan.py:95"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "c8a5de6cb8b1",
+      "title": "Config publish Edge Function",
+      "category": "API",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/functions/config-publish",
+      "status": "implemented",
+      "priority": "P0",
+      "evidence": [
+        "supabase/functions/config-publish/index.ts"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "bdad1943596a",
+      "title": "Consumer heartbeat Edge Function",
+      "category": "API",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/functions/consumer-heartbeat",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "supabase/functions/consumer-heartbeat/index.ts"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "b63cfaa786f2",
+      "title": "Config consumers table (ops.config_consumers)",
+      "category": "DB",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/migrations",
+      "status": "implemented",
+      "priority": "P0",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md:44",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:350",
+        "scripts/backlog_scan.py:118",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:60",
+        "supabase/functions/consumer-heartbeat/index.ts:91",
+        "spec/supabase-platform-kit-observability/tasks.md:50",
+        "scripts/backlog_scan.py:124"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "a1ed99d6d22c",
+      "title": "Config rollouts table (ops.config_rollouts)",
+      "category": "DB",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/migrations",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md:46",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:97",
+        "scripts/backlog_scan.py:128"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "012ea604ac59",
+      "title": "Drift detection function (ops.detect_config_drift)",
+      "category": "DB",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/migrations",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "supabase/migrations/20260124100001_ops_config_registry.sql:431",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:118",
+        "scripts/backlog_scan.py:143",
+        ".github/workflows/config-publish.yml:207",
+        "spec/supabase-platform-kit-observability/tasks.md:52",
+        "scripts/backlog_scan.py:137",
+        "spec/supabase-platform-kit-observability/tasks.md:47"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "7b61d64e4cdb",
+      "title": "Config publish CI workflow",
+      "category": "CI",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": ".github/workflows",
+      "status": "implemented",
+      "priority": "P0",
+      "evidence": [
+        ".github/workflows/config-publish.yml"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "f9d280c08c6b",
+      "title": "Design tokens SSOT (config/tokens/tokens.json)",
+      "category": "Config",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "config/tokens",
+      "status": "implemented",
+      "priority": "P0",
+      "evidence": [
+        "config/tokens/tokens.json"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "94aec1ef6195",
+      "title": "Consumers registry (config/consumers/consumers.json)",
+      "category": "Config",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "config/consumers",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "config/consumers/consumers.json"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "1f66115232b9",
+      "title": "Control Room Platform Kit UI",
+      "category": "UI",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "apps/control-room",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "apps/control-room/PLATFORM_KIT_SPEC.md",
+        "spec/supabase-platform-kit-observability/plan.md:44",
+        "apps/control-room/src/components/observability/ObservabilityManager.tsx:32",
+        "apps/control-room/src/components/observability/index.ts:7",
+        "spec/supabase-platform-kit-observability/prd.md:100",
+        "spec/supabase-platform-kit-observability/tasks.md:20",
+        "scripts/backlog_scan.py:180"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "01faa27c3d79",
+      "title": "Ops health Edge Function",
+      "category": "API",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/functions/ops-health",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "supabase/functions/ops-health/index.ts"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "ba37f1b9fb0c",
+      "title": "Config rollback RPC function",
+      "category": "DB",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "supabase/migrations",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md:53",
+        "supabase/migrations/20260124100001_ops_config_registry.sql:466",
+        "scripts/backlog_scan.py:198"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "d5b7a02c343d",
+      "title": "Backlog coverage CI gate",
+      "category": "CI",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": ".github/workflows",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        ".github/workflows/backlog-coverage.yml",
+        ".github/workflows/backlog-coverage.yml:10",
+        "scripts/backlog_scan.py:3",
+        "spec/supabase-platform-kit-observability/tasks.md:59"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "26db8e6625cb",
+      "title": "Spec bundle for Platform Kit observability",
+      "category": "Config",
+      "source_file": "scripts/backlog_scan.py",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P1",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/constitution.md",
+        "spec/supabase-platform-kit-observability/prd.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "54c572e5423a",
+      "title": "Create `addons/ipai_platform_workflow/` scaffold",
+      "category": "Config",
+      "source_file": "spec/erp-saas-clone-suite/tasks.md",
+      "target_component": "spec/erp-saas-clone-suite",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/erp-saas-clone-suite/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "7dca2ee1cd44",
+      "title": "Create `addons/ipai_platform_approvals/` scaffold",
+      "category": "Config",
+      "source_file": "spec/erp-saas-clone-suite/tasks.md",
+      "target_component": "spec/erp-saas-clone-suite",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/erp-saas-clone-suite/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "fa341ba88398",
+      "title": "Create `addons/ipai_platform_audit/` scaffold",
+      "category": "Config",
+      "source_file": "spec/erp-saas-clone-suite/tasks.md",
+      "target_component": "spec/erp-saas-clone-suite",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/erp-saas-clone-suite/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "9f25bd11db7e",
+      "title": "Create `addons/ipai_platform_theme/` scaffold",
+      "category": "Config",
+      "source_file": "spec/erp-saas-clone-suite/tasks.md",
+      "target_component": "spec/erp-saas-clone-suite",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/erp-saas-clone-suite/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "00d2f4eec6fd",
+      "title": "Implement A1 role configuration model",
+      "category": "Config",
+      "source_file": "spec/parallel-control-planes/tasks.md",
+      "target_component": "spec/parallel-control-planes",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/parallel-control-planes/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "2875c7bd4c85",
+      "title": "Create `observability` schema migration",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "86e8a320ea2a",
+      "title": "Create health API route",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "9f5d5add3052",
+      "title": "Create ObservabilityManager component",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "06bbce43e6fb",
+      "title": "Create HealthTab component",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "a8d7295ca11f",
+      "title": "Create ops.config_artifacts table",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "1aa8bdd6e64c",
+      "title": "Create ops.config_versions table (immutable snapshots)",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "2341fb3ab456",
+      "title": "Create ops.config_consumers table (health tracking)",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "0603303fbcf2",
+      "title": "Create ops.config_checks table (detailed probes)",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "8daa1ddcb00b",
+      "title": "Create ops.config_rollouts table (deployment tracking)",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "c05daf0ed70b",
+      "title": "Create ops.config_drift_events table",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "b4b76775e8d3",
+      "title": "Add Config Registry RLS policies",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "51f4ebd2bba9",
+      "title": "Create publish_config_version RPC",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "db73e70017cb",
+      "title": "Create record_config_check RPC",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "64063012618e",
+      "title": "Create detect_config_drift RPC",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "c7c47a5164e1",
+      "title": "Create rollback_config RPC",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "d93fd00a882c",
+      "title": "Create config-publish Edge Function",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "706a0b425a46",
+      "title": "Create design tokens SSOT (config/tokens/tokens.json)",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "9e1d1fe50411",
+      "title": "Create consumers registry (config/consumers/consumers.json)",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "55fb37abbf07",
+      "title": "Create config-publish CI workflow",
+      "category": "Config",
+      "source_file": "spec/supabase-platform-kit-observability/tasks.md",
+      "target_component": "spec/supabase-platform-kit-observability",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/supabase-platform-kit-observability/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "172c980a08b3",
+      "title": "Add settings toggles (config_parameter-backed)",
+      "category": "Config",
+      "source_file": "spec/project-ce/tasks.md",
+      "target_component": "spec/project-ce",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/project-ce/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "26ef2fc6b5af",
+      "title": "Menu items for configuration",
+      "category": "Config",
+      "source_file": "spec/project-ce/tasks.md",
+      "target_component": "spec/project-ce",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/project-ce/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "df31d256c1fc",
+      "title": "Create shared roles configuration",
+      "category": "Config",
+      "source_file": "spec/seed-bundle/tasks.md",
+      "target_component": "spec/seed-bundle",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/seed-bundle/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "e0b24c75fa61",
+      "title": "Create notion_mapping.yaml configuration",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "4a34fe427a62",
+      "title": "Create databricks.yml bundle configuration",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "07008f463674",
+      "title": "Create notion_sync/config.py (configuration loading)",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "ba0cadc4fcee",
+      "title": "Create databricks.yml (bundle config)",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "623a3e86d25a",
+      "title": "Configure Tailwind CSS",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "06826e74830b",
+      "title": "Configure TypeScript",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "eb4a26015ca5",
+      "title": "Create next.config.js",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "dddead3c0d6c",
+      "title": "Create tailwind.config.js",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "cbc1356340d5",
+      "title": "Create src/app/api/health/route.ts",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "43773617da5f",
+      "title": "Create src/lib/config.ts (configuration)",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "ffdfe748b56f",
+      "title": "Create src/components/dashboard/HealthBadge.tsx",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "a902930103dc",
+      "title": "Create scripts/notion-ppm/health_check.sh",
+      "category": "Config",
+      "source_file": "spec/notion-finance-ppm-control-room/tasks.md",
+      "target_component": "spec/notion-finance-ppm-control-room",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/notion-finance-ppm-control-room/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "87d2e019fd72",
+      "title": "Create `spec/ipai-ai-platform-odoo18/constitution.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+      "target_component": "spec/ipai-ai-platform-odoo18",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform-odoo18/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "78197974136f",
+      "title": "Create `spec/ipai-ai-platform-odoo18/prd.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+      "target_component": "spec/ipai-ai-platform-odoo18",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform-odoo18/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "402a9c5e84ab",
+      "title": "Create `spec/ipai-ai-platform-odoo18/plan.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+      "target_component": "spec/ipai-ai-platform-odoo18",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform-odoo18/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "b94c860373e1",
+      "title": "Create `spec/ipai-ai-platform-odoo18/tasks.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform-odoo18/tasks.md",
+      "target_component": "spec/ipai-ai-platform-odoo18",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform-odoo18/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "963704f20ad4",
+      "title": "Create `spec/ipai-ai-platform/constitution.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform/tasks.md",
+      "target_component": "spec/ipai-ai-platform",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "9f9ce790f600",
+      "title": "Create `spec/ipai-ai-platform/prd.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform/tasks.md",
+      "target_component": "spec/ipai-ai-platform",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "0027ba544dad",
+      "title": "Create `spec/ipai-ai-platform/plan.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform/tasks.md",
+      "target_component": "spec/ipai-ai-platform",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "42bb7fa82986",
+      "title": "Create `spec/ipai-ai-platform/tasks.md`",
+      "category": "Config",
+      "source_file": "spec/ipai-ai-platform/tasks.md",
+      "target_component": "spec/ipai-ai-platform",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/ipai-ai-platform/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "f95a599bb537",
+      "title": "Configure TypeScript",
+      "category": "Config",
+      "source_file": "spec/insightpulse-mobile/tasks.md",
+      "target_component": "spec/insightpulse-mobile",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/insightpulse-mobile/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "040a7304a16d",
+      "title": "Configure Zustand store",
+      "category": "Config",
+      "source_file": "spec/insightpulse-mobile/tasks.md",
+      "target_component": "spec/insightpulse-mobile",
+      "status": "implemented",
+      "priority": "P2",
+      "evidence": [
+        "spec/insightpulse-mobile/tasks.md"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "e14eadbd6034",
+      "title": "TODO: INSERT SAMPLE BIR CONFIG",
+      "category": "Config",
+      "source_file": "supabase/seed/9001_erp/9001_erp_finance_bir_templates.sql:10",
+      "target_component": "supabase/seed/9001_erp",
+      "status": "missing",
+      "priority": "P2",
+      "evidence": [
+        "supabase/seed/9001_erp/9001_erp_finance_bir_templates.sql:10"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "f29c57d535b8",
+      "title": "TODO: AGENT REGISTRY",
+      "category": "Config",
+      "source_file": "supabase/migrations/202512071170_4000_AI_RAG_AND_AGENTS.sql:19",
+      "target_component": "supabase/migrations",
+      "status": "missing",
+      "priority": "P2",
+      "evidence": [
+        "supabase/migrations/202512071170_4000_AI_RAG_AND_AGENTS.sql:19"
+      ],
+      "owner": null,
+      "notes": ""
+    },
+    {
+      "id": "fb16ea96804c",
+      "title": "TODO: comments related to Platform Kit.\"\"\"",
+      "category": "Config",
+      "source_file": "scripts/backlog_scan.py:358",
+      "target_component": "scripts",
+      "status": "missing",
+      "priority": "P2",
+      "evidence": [
+        "scripts/backlog_scan.py:358"
+      ],
+      "owner": null,
+      "notes": ""
+    }
+  ],
+  "warnings": []
+}

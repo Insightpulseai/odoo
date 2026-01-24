@@ -1,0 +1,182 @@
+name: Backlog Coverage Gate
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "apps/control-room/**"
+      - "config/**"
+      - "spec/supabase-platform-kit-observability/**"
+      - "scripts/backlog_scan.py"
+      - ".github/workflows/backlog-coverage.yml"
+
+  push:
+    branches: [main]
+    paths:
+      - "supabase/**"
+      - "apps/control-room/**"
+      - "config/**"
+      - "spec/supabase-platform-kit-observability/**"
+
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: 'Fail if any P0 items are missing'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  scan:
+    name: Scan Platform Kit Backlog
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run backlog scan
+        id: scan
+        run: |
+          python scripts/backlog_scan.py --output-dir docs --repo-root .
+
+          # Extract summary for annotations
+          IMPLEMENTED=$(jq '.implemented' docs/BACKLOG_COVERAGE_REPORT.json)
+          PARTIAL=$(jq '.partial' docs/BACKLOG_COVERAGE_REPORT.json)
+          MISSING=$(jq '.missing' docs/BACKLOG_COVERAGE_REPORT.json)
+          TOTAL=$(jq '.total_items' docs/BACKLOG_COVERAGE_REPORT.json)
+
+          echo "IMPLEMENTED=$IMPLEMENTED" >> $GITHUB_OUTPUT
+          echo "PARTIAL=$PARTIAL" >> $GITHUB_OUTPUT
+          echo "MISSING=$MISSING" >> $GITHUB_OUTPUT
+          echo "TOTAL=$TOTAL" >> $GITHUB_OUTPUT
+
+          echo "::notice::Backlog Coverage: $IMPLEMENTED/$TOTAL implemented, $PARTIAL partial, $MISSING missing"
+
+      - name: Check for P0 missing items
+        if: ${{ github.event.inputs.strict == 'true' || github.event_name == 'pull_request' }}
+        run: |
+          # Check for warnings (P0 missing items)
+          WARNINGS=$(jq '.warnings | length' docs/BACKLOG_COVERAGE_REPORT.json)
+
+          if [ "$WARNINGS" -gt 0 ]; then
+            echo "::warning::$WARNINGS P0 items are missing implementation"
+            jq -r '.warnings[]' docs/BACKLOG_COVERAGE_REPORT.json | while read warning; do
+              echo "::warning::$warning"
+            done
+
+            # In strict mode, fail the build
+            if [ "${{ github.event.inputs.strict }}" = "true" ]; then
+              echo "::error::Strict mode enabled - failing due to missing P0 items"
+              exit 1
+            fi
+          else
+            echo "::notice::All P0 items are implemented"
+          fi
+
+      - name: Generate coverage badge data
+        run: |
+          IMPLEMENTED=${{ steps.scan.outputs.IMPLEMENTED }}
+          TOTAL=${{ steps.scan.outputs.TOTAL }}
+
+          if [ "$TOTAL" -gt 0 ]; then
+            PERCENT=$((IMPLEMENTED * 100 / TOTAL))
+          else
+            PERCENT=0
+          fi
+
+          if [ "$PERCENT" -ge 80 ]; then
+            COLOR="brightgreen"
+          elif [ "$PERCENT" -ge 60 ]; then
+            COLOR="yellow"
+          elif [ "$PERCENT" -ge 40 ]; then
+            COLOR="orange"
+          else
+            COLOR="red"
+          fi
+
+          cat > docs/backlog-coverage-badge.json <<EOF
+          {
+            "schemaVersion": 1,
+            "label": "backlog",
+            "message": "$IMPLEMENTED/$TOTAL ($PERCENT%)",
+            "color": "$COLOR"
+          }
+          EOF
+
+          echo "::notice::Coverage badge generated: $PERCENT%"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: backlog-coverage-report
+          path: |
+            docs/BACKLOG_COVERAGE_REPORT.md
+            docs/BACKLOG_COVERAGE_REPORT.json
+            docs/backlog-coverage-badge.json
+          retention-days: 30
+
+      - name: Post coverage summary to PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('docs/BACKLOG_COVERAGE_REPORT.json', 'utf8'));
+
+            const implemented = report.implemented;
+            const partial = report.partial;
+            const missing = report.missing;
+            const total = report.total_items;
+            const percent = total > 0 ? Math.round((implemented / total) * 100) : 0;
+
+            let status = ':white_check_mark:';
+            if (missing > 0) status = ':warning:';
+            if (report.warnings.length > 0) status = ':x:';
+
+            let body = `## ${status} Backlog Coverage Report\n\n`;
+            body += `| Status | Count |\n`;
+            body += `|--------|-------|\n`;
+            body += `| Implemented | ${implemented} |\n`;
+            body += `| Partial | ${partial} |\n`;
+            body += `| Missing | ${missing} |\n`;
+            body += `| **Total** | **${total}** |\n\n`;
+            body += `**Coverage**: ${percent}%\n\n`;
+
+            if (report.warnings.length > 0) {
+              body += `### :warning: P0 Items Missing\n\n`;
+              for (const warning of report.warnings) {
+                body += `- ${warning}\n`;
+              }
+            }
+
+            // Find existing comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.data.find(c =>
+              c.user.type === 'Bot' && c.body.includes('Backlog Coverage Report')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body,
+              });
+            }

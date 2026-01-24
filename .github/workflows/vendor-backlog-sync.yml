@@ -1,0 +1,145 @@
+name: Vendor Backlog Sync (attached repos -> backlog/vendors)
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_slug:
+        description: 'Specific app slug to sync (leave empty for all)'
+        required: false
+        type: string
+  schedule:
+    - cron: "23 * * * *"   # Hourly at minute 23
+  pull_request:
+    paths:
+      - "integrations/**"
+      - "scripts/backlog_export/**"
+      - "scripts/integrations/**"
+      - ".github/workflows/vendor-backlog-sync.yml"
+      - "backlog/**"
+  push:
+    branches: [main]
+    paths:
+      - "integrations/**"
+      - "scripts/backlog_export/**"
+      - "scripts/integrations/**"
+      - ".github/workflows/vendor-backlog-sync.yml"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: vendor-backlog-sync-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    name: Sync Vendor Backlogs
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Mint GitHub App installation token
+        id: app-token
+        uses: tibdex/github-app-token@v2
+        with:
+          app_id: ${{ secrets.GH_APP_ID }}
+          private_key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+        continue-on-error: true
+
+      - name: Fallback to GITHUB_TOKEN
+        id: token
+        run: |
+          if [ -n "${{ steps.app-token.outputs.token }}" ]; then
+            echo "token=${{ steps.app-token.outputs.token }}" >> $GITHUB_OUTPUT
+          else
+            echo "token=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+            echo "::warning::Using GITHUB_TOKEN fallback - rate limits may apply"
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          pip install --no-cache-dir pyyaml
+
+      - name: Export all vendor backlogs
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+          BACKLOG_EXPORT_VALIDATE_STRICT: "1"
+          BACKLOG_DIFF_MAX_ITEMS: "20"
+          BACKLOG_PROJECT_FIELD_ALLOWLIST: "Status,Priority,Assignees,Milestone,Iteration,Start date,Due date,Estimate,Points,Type"
+        run: |
+          set -euo pipefail
+          python3 scripts/integrations/vendor_backlog_sync.py
+
+      - name: Gate PR comment on non-zero diff
+        id: diff_gate
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          if [ -f scripts/backlog_export/diff_nonzero_gate.py ]; then
+            python3 scripts/backlog_export/diff_nonzero_gate.py || exit_code=$?
+            if [ "${exit_code:-0}" -eq 10 ]; then
+              echo "should_comment=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            if [ "${exit_code:-0}" -ne 0 ]; then
+              exit "${exit_code:-1}"
+            fi
+            echo "should_comment=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_comment=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upsert PR comment with diff summary
+        if: github.event_name == 'pull_request' && steps.diff_gate.outputs.should_comment == 'true'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+        run: |
+          set -euo pipefail
+          if [ -f scripts/backlog_export/pr_comment_upsert.py ] && [ -f docs/BACKLOG_EXPORT_DIFF.md ]; then
+            python3 scripts/backlog_export/pr_comment_upsert.py \
+              --repo "${{ github.repository }}" \
+              --pr "${{ github.event.pull_request.number }}" \
+              --body-file "docs/BACKLOG_EXPORT_DIFF.md"
+          fi
+
+      - name: Upload sync artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor-backlog-sync
+          path: |
+            backlog/vendors/
+            docs/VENDOR_BACKLOG_SYNC_SUMMARY.json
+            docs/VENDOR_BACKLOG_SYNC_SUMMARY.md
+            docs/BACKLOG_EXPORT_DIFF.md
+            docs/BACKLOG_EXPORT_DIFF.json
+          retention-days: 14
+
+      - name: Commit and push backlog updates (main only)
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ steps.token.outputs.token }}
+        run: |
+          set -euo pipefail
+
+          # Check for changes
+          git status --porcelain -- backlog/ docs/
+          if git diff --quiet -- backlog/ docs/VENDOR_BACKLOG_SYNC_SUMMARY.* docs/BACKLOG_EXPORT_DIFF.*; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add backlog/ docs/VENDOR_BACKLOG_SYNC_SUMMARY.* docs/BACKLOG_EXPORT_DIFF.* || true
+          git commit -m "chore(backlog): sync vendor exports + diff summary [skip ci]" || exit 0
+          git push
