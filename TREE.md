@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 32a04a91e141c92f0239036883434929ce537e3b
+> Commit: d0a2f5deb19d63a35476407244e1ae1d69a491eb
 
 ```
 .
@@ -156,6 +156,7 @@
 │   │   ├── wiki-sync.yml
 │   │   ├── workbench-deploy.yml
 │   │   └── workflow-yaml-validate.yml
+│   ├── CODEOWNERS
 │   ├── copilot-instructions.md
 │   └── pull_request_template.md
 ├── .insightpulse
@@ -1508,6 +1509,7 @@
 │   │   ├── AI_MODULE_DEPRECATION_MANIFEST.md
 │   │   ├── ASK_AI_CONTRACT.md
 │   │   ├── AUTH_MODEL.md
+│   │   ├── CAPS_REPORT.md
 │   │   ├── CURSOR_ECOSYSTEM_CAPABILITIES.md
 │   │   ├── EXT_AGENT_TOOL_CAPABILITIES.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
@@ -1517,6 +1519,7 @@
 │   │   ├── IPAI_MODULE_REDUCTION_PLAN.md
 │   │   ├── IPAI_TARGET_ARCHITECTURE.md
 │   │   ├── OCR_PIPELINE.md
+│   │   ├── OCR_ROUTING_MATRIX.md
 │   │   ├── ODOO_OFFICIAL_TO_TBWA_CANONICAL.md
 │   │   ├── PROD_RUNTIME_SNAPSHOT.md
 │   │   ├── README.md
@@ -1618,8 +1621,14 @@
 │   │   │   └── VERIFICATION_CHECKLIST.md
 │   │   ├── 20260121-0000
 │   │   │   └── docker-image-diff
-│   │   └── 20260122-1200
-│   │       └── cd-pipeline
+│   │   ├── 20260122-1200
+│   │   │   └── cd-pipeline
+│   │   ├── 20260124-dump-analysis
+│   │   │   ├── DUMP_ANALYSIS_ADDENDUM.md
+│   │   │   └── DUMP_ANALYSIS_CONSOLIDATED.md
+│   │   └── 20260124-supabase-setup
+│   │       ├── infra
+│   │       └── integrations
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -4126,15 +4135,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1075 directories, 3046 files
+1079 directories, 3051 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1265 |
-| Files | 3972 |
+| Directories | 1269 |
+| Files | 3981 |
 | Python files | 614 |
 | XML files | 253 |
-| Markdown files | 1035 |
+| Markdown files | 1042 |
