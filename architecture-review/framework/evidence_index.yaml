@@ -1,0 +1,230 @@
+# Evidence Index v1.0
+# Maps review questions to required evidence artifacts
+
+version: "1.0"
+updated: "2026-01-24"
+
+# Evidence types
+evidence_types:
+  config:
+    name: Configuration File
+    format: YAML, JSON, TOML, ENV
+    example: .env.example, supabase/config.toml
+
+  output:
+    name: Command Output
+    format: Text, JSON
+    example: "psql -c 'SELECT * FROM pg_policies'"
+
+  screenshot:
+    name: Screenshot/Recording
+    format: PNG, MP4
+    note: Prefer machine-verifiable alternatives when possible
+
+  code:
+    name: Source Code
+    format: Git ref + file path
+    example: "HEAD:db/migrations/20260124_rls.sql"
+
+  log:
+    name: Log Entry/Query
+    format: JSON, text with timestamps
+    example: Supabase log query result
+
+  document:
+    name: Documentation
+    format: Markdown, PDF
+    example: Runbook, architecture diagram
+
+  metric:
+    name: Metric/Dashboard
+    format: JSON, screenshot
+    example: Grafana panel export
+
+# Evidence requirements per domain
+domains:
+  tenancy_isolation:
+    required:
+      - type: output
+        name: RLS policy list
+        command: "psql -c \"SELECT schemaname, tablename, policyname FROM pg_policies;\""
+      - type: code
+        name: Tenant context middleware
+        path: "apps/**/middleware.ts"
+      - type: config
+        name: Tenant isolation config
+        path: "supabase/config.toml"
+    recommended:
+      - type: document
+        name: Tenancy architecture diagram
+        path: "docs/architecture/tenancy.md"
+
+  identity_authz:
+    required:
+      - type: config
+        name: Auth provider config
+        path: "supabase/config.toml#auth"
+      - type: output
+        name: RBAC role definitions
+        command: "psql -c \"SELECT rolname, rolsuper FROM pg_roles;\""
+      - type: code
+        name: Service account definitions
+        path: ".github/workflows/*.yml"
+    recommended:
+      - type: log
+        name: Auth audit log sample
+        query: "SELECT * FROM auth.audit_log_entries LIMIT 10"
+
+  data_architecture:
+    required:
+      - type: code
+        name: Schema migrations
+        path: "db/migrations/*.sql"
+      - type: output
+        name: Table inventory
+        command: "psql -c \"SELECT schemaname, tablename FROM pg_tables WHERE schemaname NOT IN ('pg_catalog', 'information_schema');\""
+      - type: config
+        name: Backup configuration
+        path: "infra/backup/*.yaml"
+    recommended:
+      - type: document
+        name: Data model documentation
+        path: "docs/data-model/*.md"
+      - type: metric
+        name: Database size metrics
+        source: Supabase dashboard
+
+  app_architecture:
+    required:
+      - type: code
+        name: Module manifests
+        path: "addons/ipai/**/__manifest__.py"
+      - type: config
+        name: Package dependencies
+        path: "package.json, requirements.txt"
+      - type: code
+        name: API route definitions
+        path: "apps/**/api/**/*.ts"
+    recommended:
+      - type: document
+        name: API documentation
+        path: "docs/api/*.md"
+
+  integration_automation:
+    required:
+      - type: code
+        name: n8n workflow definitions
+        path: "n8n/workflows/**/*.json"
+      - type: code
+        name: Idempotency implementation
+        path: "scripts/*.sh"
+      - type: config
+        name: MCP server configuration
+        path: ".claude/mcp-servers.json"
+    recommended:
+      - type: log
+        name: Workflow execution logs
+        query: "SELECT * FROM observability.jobs ORDER BY created_at DESC LIMIT 20"
+
+  reliability_dr:
+    required:
+      - type: document
+        name: RPO/RTO targets
+        path: "docs/architecture/reliability.md"
+      - type: document
+        name: Backup restore drill log
+        path: "docs/evidence/*/backup-restore-drill.md"
+      - type: config
+        name: Health check configuration
+        path: "docker-compose.yml#healthcheck"
+    recommended:
+      - type: output
+        name: Recent backup list
+        command: "ls -la backups/"
+
+  observability_audit:
+    required:
+      - type: code
+        name: Logging configuration
+        path: "config/odoo.conf#log_level"
+      - type: code
+        name: Observability schema
+        path: "db/migrations/*observability*.sql"
+      - type: output
+        name: Metrics endpoint
+        command: "curl -s http://localhost:8069/web/health"
+    recommended:
+      - type: metric
+        name: Dashboard screenshots
+        source: Superset/Grafana
+
+  security_engineering:
+    required:
+      - type: output
+        name: Secret scanning results
+        command: "gh secret-scanning alerts list"
+      - type: config
+        name: Dependency lock files
+        path: "package-lock.json, pnpm-lock.yaml"
+      - type: output
+        name: Vulnerability scan
+        command: "npm audit --json"
+    recommended:
+      - type: code
+        name: Security headers
+        path: "next.config.js, Caddyfile"
+
+  performance_capacity:
+    required:
+      - type: output
+        name: Slow query log
+        command: "psql -c \"SELECT query, calls, mean_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;\""
+      - type: config
+        name: Worker/connection limits
+        path: "config/odoo.conf#workers"
+    recommended:
+      - type: metric
+        name: Load test results
+        path: "docs/evidence/load-test-*.md"
+
+  cost_finops:
+    required:
+      - type: output
+        name: Resource inventory
+        command: "doctl compute droplet list --format ID,Name,VCPUs,Memory,Disk"
+      - type: document
+        name: Cost allocation model
+        path: "docs/finops/cost-allocation.md"
+    recommended:
+      - type: metric
+        name: Monthly cost trend
+        source: DO/Vercel/Supabase billing
+
+  compliance_governance:
+    required:
+      - type: document
+        name: Data retention policy
+        path: "docs/compliance/retention.md"
+      - type: code
+        name: PII handling
+        path: "db/migrations/*pii*.sql"
+    recommended:
+      - type: log
+        name: Access review log
+        path: "docs/compliance/access-reviews/*.md"
+
+  sdlc_change_control:
+    required:
+      - type: config
+        name: Branch protection rules
+        command: "gh api repos/{owner}/{repo}/branches/main/protection"
+      - type: code
+        name: CI workflow definitions
+        path: ".github/workflows/*.yml"
+      - type: document
+        name: Rollback runbook
+        path: "docs/runbooks/rollback.md"
+    recommended:
+      - type: log
+        name: Recent deployments
+        command: "gh run list --limit 10"

@@ -1,0 +1,48 @@
+# Caddy TLS Proxy Override
+# Usage: docker compose -f docker-compose.yml -f docker-compose.caddy.yml up -d
+#
+# Prerequisites:
+#   - Set DOMAIN environment variable (e.g., odoo.example.com)
+#   - Ensure DNS A/AAAA record points to this droplet
+#   - Ports 80 and 443 open in firewall
+#
+# Caddy will automatically obtain and renew Let's Encrypt certificates.
+
+services:
+  # -----------------------------------------
+  # Caddy Reverse Proxy with Auto-TLS
+  # -----------------------------------------
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"  # HTTP/3
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      ODOO_BACKEND: odoo:8069
+    volumes:
+      - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - odoo-backend
+    depends_on:
+      - odoo
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Override odoo to remove direct port exposure
+  odoo:
+    ports: []  # Remove host binding, only accessible via Caddy
+
+volumes:
+  caddy-data:
+    name: caddy-data
+  caddy-config:
+    name: caddy-config

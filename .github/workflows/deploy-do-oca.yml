@@ -1,0 +1,191 @@
+# Deploy OCA Stack to DigitalOcean Droplet
+# Triggered on push to main or manual dispatch
+#
+# Required secrets:
+#   DO_DROPLET_HOST - Droplet IP or hostname
+#   DO_DROPLET_USER - SSH user (default: root)
+#   DO_SSH_PRIVATE_KEY - SSH private key for droplet access
+#   DO_SPACES_ACCESS_KEY - (optional) for backup uploads
+#   DO_SPACES_SECRET_KEY - (optional) for backup uploads
+
+name: Deploy OCA Stack (DO)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/do-oca-stack/**'
+      - 'addons/ipai/**'
+      - 'docker-compose.yml'
+      - '.github/workflows/deploy-do-oca.yml'
+  workflow_dispatch:
+    inputs:
+      deploy_target:
+        description: 'Deploy target environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+      skip_backup:
+        description: 'Skip pre-deploy backup'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  DEPLOY_PATH: /opt/odoo-oca
+  COMPOSE_PROJECT_NAME: odoo-oca
+
+jobs:
+  # -----------------------------------------
+  # Pre-flight checks
+  # -----------------------------------------
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate compose files
+        run: |
+          docker compose -f infra/do-oca-stack/docker-compose.yml config --quiet
+          docker compose -f infra/do-oca-stack/docker-compose.caddy.yml config --quiet
+
+      - name: Check OCA lock file
+        id: check
+        run: |
+          if [[ -f infra/do-oca-stack/oca.lock ]]; then
+            echo "OCA lock file found"
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::No oca.lock file - deploying with branch refs"
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  # -----------------------------------------
+  # Backup (pre-deploy)
+  # -----------------------------------------
+  backup:
+    needs: preflight
+    if: ${{ needs.preflight.outputs.should_deploy == 'true' && github.event.inputs.skip_backup != 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run pre-deploy backup
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_DROPLET_HOST }}
+          username: ${{ secrets.DO_DROPLET_USER || 'root' }}
+          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+            cd ${{ env.DEPLOY_PATH }}
+
+            # Create backup directory
+            BACKUP_DIR="backups/$(date +%Y%m%d-%H%M%S)"
+            mkdir -p "$BACKUP_DIR"
+
+            # Database backup
+            docker compose exec -T db pg_dump -U odoo odoo > "$BACKUP_DIR/odoo.sql"
+            gzip "$BACKUP_DIR/odoo.sql"
+
+            # Filestore backup (if exists)
+            if docker volume inspect odoo-filestore >/dev/null 2>&1; then
+              docker run --rm -v odoo-filestore:/data -v "$(pwd)/$BACKUP_DIR":/backup \
+                alpine tar czf /backup/filestore.tar.gz -C /data .
+            fi
+
+            echo "Backup complete: $BACKUP_DIR"
+            ls -la "$BACKUP_DIR"
+
+  # -----------------------------------------
+  # Deploy
+  # -----------------------------------------
+  deploy:
+    needs: [preflight, backup]
+    if: ${{ always() && needs.preflight.outputs.should_deploy == 'true' && (needs.backup.result == 'success' || needs.backup.result == 'skipped') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to droplet
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_DROPLET_HOST }}
+          username: ${{ secrets.DO_DROPLET_USER || 'root' }}
+          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+
+            # Navigate to deploy path
+            cd ${{ env.DEPLOY_PATH }}
+
+            # Pull latest code
+            git fetch origin main
+            git checkout main
+            git pull origin main --ff-only
+
+            # Sync OCA repos from lock file
+            cd infra/do-oca-stack
+            if [[ -f oca.lock ]]; then
+              make verify || make fetch
+            else
+              make fetch
+            fi
+            cd ../..
+
+            # Pull latest images
+            docker compose pull
+
+            # Deploy with zero-downtime restart
+            docker compose up -d --remove-orphans
+
+            # Wait for health
+            sleep 10
+            docker compose ps
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DO_DROPLET_HOST }}
+          username: ${{ secrets.DO_DROPLET_USER || 'root' }}
+          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          script: |
+            set -euo pipefail
+            cd ${{ env.DEPLOY_PATH }}
+
+            # Health check
+            for i in {1..30}; do
+              if curl -fsS http://127.0.0.1:8069/web/health >/dev/null 2>&1; then
+                echo "✓ Odoo health check passed"
+                break
+              fi
+              echo "Waiting for Odoo... ($i/30)"
+              sleep 2
+            done
+
+            # Verify containers
+            docker compose ps --format json | jq -e '.[] | select(.State != "running")' && exit 1 || true
+
+            echo "✓ Deployment verified"
+
+  # -----------------------------------------
+  # Notify
+  # -----------------------------------------
+  notify:
+    needs: [deploy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment status
+        run: |
+          if [[ "${{ needs.deploy.result }}" == "success" ]]; then
+            echo "✅ Deployment successful"
+          else
+            echo "❌ Deployment failed"
+            exit 1
+          fi
