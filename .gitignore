@@ -207,3 +207,4 @@ sandbox/dev/oca-addons/
 **/vendor/
 **/.terraform/
 **/terraform.tfstate*
+.ci_artifacts/
