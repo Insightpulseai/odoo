@@ -17,31 +17,86 @@ The Data Science Agent is an AI-powered assistant in Databricks notebooks and SQ
 - Databricks Assistant Agent Mode preview enabled
 - Unity Catalog permissions for target tables
 
+## Lakeflow Architecture
+
+Lakeflow is Databricks' end-to-end data engineering solution with three pipeline layers:
+
+| Layer | Automation | Customization | Use Case |
+|-------|------------|---------------|----------|
+| **Fully-managed connectors** | High | Low | Fast ingestion from popular sources |
+| **Lakeflow Spark Declarative Pipelines** | Medium | Medium | Reliable ETL with some customization |
+| **Structured Streaming** | Low | High | Advanced custom streaming solutions |
+
+### Available Lakeflow Connect Sources
+
+**Databricks Native Connectors:**
+- Amazon S3
+- Salesforce
+- Google Analytics Raw Data
+- SAP Business Data Cloud
+- Workday Reports
+- ServiceNow
+- Dynamics 365 (Preview)
+- Jira (Preview)
+- Confluence (Preview)
+
+**Fivetran Connectors (via Partner Connect):**
+- OneDrive
+- Google Drive
+- GitHub
+- Webhooks
+- Adjust
+- [See all Fivetran connectors](https://fivetran.com/connectors)
+
+### Connector Selection Guide
+
+| Data Source | Recommended Connector | Notes |
+|-------------|----------------------|-------|
+| Odoo PostgreSQL | S3 export / Custom | Export to S3 or use Structured Streaming |
+| Salesforce CRM | Salesforce (native) | Fully managed, CDC support |
+| Google Analytics | GA Raw Data (native) | Automated schema handling |
+| HR Data | Workday Reports (native) | Scheduled sync |
+| ITSM Data | ServiceNow (native) | Incident/change feeds |
+| Dev Metrics | Jira + GitHub (Fivetran) | Issue + PR correlation |
+| Documentation | Confluence (native) | Knowledge base sync |
+
 ## Integration with InsightPulseAI Stack
 
 ### Data Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                     Ingestion Layer                              │
+│              Lakeflow Connect (Fully-Managed Connectors)         │
 ├─────────────────────────────────────────────────────────────────┤
-│  S3 → Salesforce → GA Raw → Workday → ServiceNow → Jira        │
-│                              │                                   │
-│                              ▼                                   │
-│                    Bronze/Silver/Gold Tables                     │
-│                              │                                   │
-│                              ▼                                   │
-│              ┌───────────────────────────────┐                  │
-│              │   Data Science Agent          │                  │
-│              │   (Notebook + SQL Editor)     │                  │
-│              └───────────────────────────────┘                  │
-│                              │                                   │
-│                    ┌─────────┴─────────┐                        │
-│                    ▼                   ▼                        │
-│              SQL Dashboards      Curated Marts                  │
-│                    │                   │                        │
-│                    ▼                   ▼                        │
-│              Superset BI         Supabase/Odoo                  │
+│  ┌────────┐ ┌──────────┐ ┌─────────┐ ┌─────────┐ ┌───────────┐ │
+│  │   S3   │ │Salesforce│ │ GA Raw  │ │ Workday │ │ServiceNow │ │
+│  └────┬───┘ └────┬─────┘ └────┬────┘ └────┬────┘ └─────┬─────┘ │
+│       │          │            │           │            │        │
+│       └──────────┴─────┬──────┴───────────┴────────────┘        │
+│                        ▼                                         │
+├─────────────────────────────────────────────────────────────────┤
+│         Lakeflow Spark Declarative Pipelines (ETL)               │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────┐            │
+│  │   Bronze    │──▶│   Silver    │──▶│    Gold     │            │
+│  │ (Raw Data)  │   │ (Cleaned)   │   │ (Curated)   │            │
+│  └─────────────┘   └─────────────┘   └─────────────┘            │
+│                        │                                         │
+│                        ▼                                         │
+├─────────────────────────────────────────────────────────────────┤
+│              Data Science Agent (Analysis Layer)                 │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  Notebook + SQL Editor                                    │  │
+│  │  • Auto-generate analysis code                            │  │
+│  │  • Execute & iterate                                      │  │
+│  │  • Interpret results                                      │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                        │                                         │
+│              ┌─────────┴─────────┐                              │
+│              ▼                   ▼                              │
+│       SQL Dashboards      Curated Marts                         │
+│              │                   │                              │
+│              ▼                   ▼                              │
+│        Superset BI         Supabase/Odoo                        │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
