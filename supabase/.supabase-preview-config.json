@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Supabase GitHub Integration expected configuration for Preview Branches",
+  "project_ref": "spdtwktxdalcfigzeqrz",
+  "github_integration": {
+    "enabled": true,
+    "preview_branches": {
+      "enabled": true,
+      "watched_directory": "supabase/",
+      "note": "IMPORTANT: The Supabase dashboard must be configured to watch 'supabase/' NOT 'supabase/supabase/'"
+    }
+  },
+  "repo_structure": {
+    "supabase_root": "supabase/",
+    "config_file": "supabase/config.toml",
+    "migrations_dir": "supabase/migrations/",
+    "functions_dir": "supabase/functions/",
+    "seeds_dir": "supabase/seeds/"
+  },
+  "dashboard_settings_checklist": [
+    "Navigate to: https://supabase.com/dashboard/project/spdtwktxdalcfigzeqrz/settings/integrations",
+    "Under GitHub Integration > Preview Branches",
+    "Set 'Supabase directory' to: supabase/",
+    "NOT: supabase/supabase/ (current misconfiguration)"
+  ]
+}
