@@ -1,0 +1,30 @@
+name: supabase-sql-rls-checks
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - "scripts/supabase/**"
+      - ".github/workflows/supabase-sql-rls-checks.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "supabase/**"
+      - "scripts/supabase/**"
+
+jobs:
+  sql-rls:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install psql
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Run schema + RLS + policy checks
+        run: |
+          ./scripts/supabase/checks.sh
