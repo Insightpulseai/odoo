@@ -1,0 +1,1765 @@
+================================================================================
+InsightPulseAI — llms-full.txt
+================================================================================
+
+Generated: 2026-01-24T13:04:01Z
+Repository: odoo-ce
+Purpose: Consolidated documentation for LLM context injection
+
+This file contains:
+1. Internal documentation (CLAUDE.md, architecture docs)
+2. Index of external llms packs (fetched separately)
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+
+1. CLAUDE.md
+2. README.md
+3. docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md
+4. docs/prompts/DUMP_REVIEW_TO_STACK_UPGRADES.md
+5. External LLMs Pack Index (docs/llms/external/)
+
+================================================================================
+
+================================================================================
+FILE: CLAUDE.md
+================================================================================
+
+# CLAUDE.md — Odoo CE Project
+
+---
+
+# Operating Contract: Execute, Deploy, Verify (No Guides)
+
+## Default behavior (always)
+
+You are an execution agent. Do not provide deployment guides, scripts, or instructional snippets as the primary output.
+
+Instead:
+
+1. Take action (make the change / deploy / run the migration / push the tag).
+2. Verify the result with deterministic checks.
+3. Produce an evidence pack in-repo.
+4. Commit & push evidence and any code/config changes.
+
+If you cannot execute due to missing credentials/tooling/access, say exactly what is missing in one sentence, then continue by producing everything that *can* be executed (PR-ready changes + CI-ready automation + evidence placeholders) without asking questions.
+
+## Output format (mandatory)
+
+Your final response must be only:
+
+* Outcome (1–3 lines)
+* Evidence (bullet list of files + links/paths)
+* Verification results (bullet list, pass/fail)
+* Changes shipped (bullet list)
+  No "Next steps", no tutorials.
+
+## Execution surfaces (assume cloud IDE parity)
+
+Assume you have access to:
+
+* Git (commit/push)
+* CI workflows (GitHub Actions)
+* Remote execution via SSH (DigitalOcean droplet)
+* Container runtime (Docker)
+* Supabase CLI or SQL execution surface (migrations/functions)
+  If multiple surfaces exist, choose the fastest deterministic path that yields verifiable proofs.
+
+## Evidence pack (required on every deploy/change)
+
+Write all proofs to:
+`docs/evidence/<YYYYMMDD-HHMM>/<scope>/`
+
+Include, as applicable:
+
+* git state: current branch, HEAD SHA, diffstat
+* CI proof: workflow run URL + status + artifacts list
+* runtime proof: service health endpoint headers + status
+* container proof: image digest + container ps + last logs
+* database proof: migration status + schema/version marker
+* app proof: key routes returning 200 + version banner if available
+
+Also add/update:
+
+* `docs/releases/WHAT_SHIPPED.md` (human)
+* `docs/releases/WHAT_SHIPPED.json` (machine)
+* `docs/releases/GO_LIVE_MANIFEST.md`
+  for production tags/releases.
+
+## Verification (must be executed, not suggested)
+
+For any change that touches runtime, you must run and capture:
+
+* service health checks (HTTP status + headers)
+* container logs for startup errors
+* DB connectivity check (read + write where safe)
+* Odoo: `--stop-after-init` equivalent verification
+* Supabase: migrations/functions status verification
+
+If verification fails:
+
+* Fix, re-run verification, update evidence, then commit.
+
+## Git rules
+
+* One logical change-set per commit (plus evidence commit if needed).
+* Commit message must include scope + intent (OCA-style).
+* Push to a branch; open PR if not already on main.
+* Never claim "deployed" without evidence files in-repo.
+
+## Banned behaviors
+
+* No "here's a guide"
+* No "run these commands"
+* No "you should…"
+* No asking for confirmation to proceed
+* No time estimates
+* No unstated assumptions
+
+### Banned phrases (never say)
+
+* "Docker/CLI is not available in this environment"
+* "I can't run commands here"
+* "Follow these UI steps…" (clickpaths, screenshots, wizard instructions)
+* "Go to the dashboard and click…"
+* "Open Settings → …"
+
+### Output format for actionable steps
+
+All actionable steps must be in **fenced code blocks only**:
+
+```bash
+# CLI / shell steps - always generate these
+git checkout -b feat/some-change
+./scripts/apply_migration.sh
+```
+
+```yaml
+# CI / deployment workflow
+name: deploy-odoo
+on: { push: { branches: [main] } }
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./scripts/deploy_odoo.sh
+```
+
+If something is environment-specific, **generate a script with TODO comments**, not prose.
+
+---
+
+## Odoo / Odoo.sh Rules
+
+### Prefer
+
+* `addons/` modules + migrations
+* `scripts/odoo_*.sh` wrappers
+* `odoo.sh` / CI YAML for deploy
+* `--stop-after-init` verification commands
+
+### Avoid
+
+* Explaining how to click through Odoo UI for installs or upgrades
+* Manual Odoo.sh dashboard instructions
+* "Go to Settings → Technical → …" guides
+
+### Task completion for Odoo
+
+Whenever an Odoo task is requested, generate:
+
+1. The module / config changes
+2. The CLI/CI script to install/update modules:
+   ```bash
+   docker compose exec odoo-core odoo -d odoo_core -u module_name --stop-after-init
+   ```
+3. A verification command:
+   ```bash
+   curl -s -o /dev/null -w "%{http_code}" http://localhost:8069/web/health
+   ```
+
+---
+
+## Naming conventions (OCA-style)
+
+* Modules: `ipai_ai_*` for AI-related addons; avoid generic "assistant/copilot" naming collisions.
+* Docs: `docs/<domain>/...` and `docs/evidence/...` strictly.
+* Workflows: prefer few "golden" workflows; delete redundant ones only with proof that replacements cover the same gates.
+
+---
+
+## Quick Reference
+
+| Item | Value |
+|------|-------|
+| **Stack** | Odoo CE 18.0 + OCA + n8n + Mattermost + PostgreSQL 15 |
+| **Node** | >= 18.0.0 (pnpm workspaces) |
+| **Python** | 3.10+ (Odoo 18 requirement) |
+| **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
+
+> **Claude Code Web Users**: See [CLAUDE_CODE_WEB.md](./CLAUDE_CODE_WEB.md) for cloud sandbox execution contract.
+
+### Common Commands
+
+```bash
+# Stack management
+docker compose up -d                    # Start full stack
+docker compose --profile init up        # Run with init profiles
+docker compose logs -f odoo-core        # View logs
+
+# Module deployment
+./scripts/deploy-odoo-modules.sh        # Deploy IPAI modules
+
+# Testing
+./scripts/ci/run_odoo_tests.sh          # Run Odoo unit tests
+./scripts/ci_local.sh                   # Run local CI checks
+
+# Verification (always run before commit)
+./scripts/repo_health.sh                # Check repo structure
+./scripts/spec_validate.sh              # Validate spec bundles
+
+# Node.js workspaces
+pnpm install                            # Install dependencies
+npm run dev:runner                      # Run pulser-runner
+npm run dev:github-app                  # Run github-app
+```
+
+---
+
+## Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         InsightPulse AI Stack                        │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   Mattermost ◄──► n8n ◄──► Odoo CE 18 ◄──► PostgreSQL 15            │
+│       │           │            │                                     │
+│       │           │            ├── Core (8069)                       │
+│       │           │            ├── Marketing (8070)                  │
+│       │           │            └── Accounting (8071)                 │
+│       │           │                                                  │
+│       │           └──────────► Supabase (external integrations)      │
+│       │                                                              │
+│       └─────────────────────► AI Agents (Pulser, Claude, Codex)     │
+│                                                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│  Superset (BI)  │  Keycloak (SSO)  │  DigitalOcean (Hosting)        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Multi-Edition Docker Architecture
+
+The stack supports 3 Odoo editions sharing a single PostgreSQL instance:
+
+| Edition | Port | Database | Module Focus |
+|---------|------|----------|--------------|
+| Core | 8069 | odoo_core | Base CE + IPAI workspace |
+| Marketing | 8070 | odoo_marketing | Marketing agency extensions |
+| Accounting | 8071 | odoo_accounting | Accounting firm extensions |
+
+---
+
+## Agent Workflow (Mandatory)
+
+All changes must follow this pattern:
+
+```
+explore → plan → implement → verify → commit
+```
+
+### Role Commands
+
+| Command | Purpose |
+|---------|---------|
+| `/project:plan` | Create detailed implementation plan |
+| `/project:implement` | Execute plan with minimal changes |
+| `/project:verify` | Run all verification checks |
+| `/project:ship` | Orchestrate full workflow end-to-end |
+| `/project:fix-github-issue` | Fix a specific GitHub issue |
+
+### Verification Sequence
+
+Always run before committing:
+
+```bash
+./scripts/repo_health.sh       # Check repo structure
+./scripts/spec_validate.sh     # Validate spec bundles
+./scripts/ci_local.sh          # Run local CI checks
+```
+
+### Agent Rules
+
+1. **Never guess**: Read files first, then change them
+2. **Simplicity first**: Prefer the simplest implementation that solves the task
+3. **Verify always**: Include verification after any mutation
+4. **Minimal diffs**: Keep changes small and reviewable
+5. **Update together**: Docs and tests change with code
+
+---
+
+## Directory Structure
+
+```
+odoo-ce/
+├── addons/                    # Odoo modules
+│   ├── ipai/                  # IPAI custom modules (80+ modules)
+│   │   ├── ipai_dev_studio_base/
+│   │   ├── ipai_workspace_core/
+│   │   ├── ipai_finance_ppm/
+│   │   ├── ipai_master_control/
+│   │   ├── ipai_ai_agents/
+│   │   ├── ipai_approvals/
+│   │   └── ...
+│   ├── OCA/                   # OCA community modules (12 repos)
+│   └── oca/                   # OCA submodules
+│
+├── apps/                      # Applications (20 apps)
+│   ├── pulser-runner/         # Automation runner
+│   ├── control-room/          # Control plane UI
+│   ├── control-room-api/      # Control plane API
+│   ├── bi-architect/          # BI analytics
+│   ├── mcp-coordinator/       # MCP coordination
+│   ├── web/                   # Web frontend
+│   └── ...
+│
+├── packages/                  # Shared packages (3 packages)
+│   ├── agent-core/            # Core agent framework
+│   ├── github-app/            # GitHub App integration
+│   └── ipai-design-tokens/    # Design system tokens
+│
+├── spec/                      # Spec bundles (32 feature specs)
+│   ├── constitution.md        # Root non-negotiable rules
+│   ├── prd.md                 # Root product requirements
+│   ├── pulser-master-control/ # Example spec bundle
+│   └── ...
+│
+├── scripts/                   # Automation scripts (160+ scripts)
+│   ├── ci/                    # CI-specific scripts
+│   ├── deploy-odoo-modules.sh
+│   ├── repo_health.sh
+│   ├── spec_validate.sh
+│   └── ...
+│
+├── docker/                    # Docker configurations
+│   ├── Dockerfile.seeded
+│   ├── Dockerfile.unified
+│   └── nginx/
+│
+├── deploy/                    # Deployment configurations
+│   ├── docker-compose.yml     # Production compose
+│   └── nginx/
+│
+├── infra/                     # Infrastructure templates
+│   ├── azure/
+│   ├── databricks/
+│   ├── superset/
+│   └── doctl/
+│
+├── db/                        # Database management
+│   ├── schema/                # Schema definitions
+│   ├── migrations/            # Migration scripts
+│   ├── seeds/                 # Seed data
+│   └── rls/                   # Row-level security
+│
+├── docs/                      # Documentation
+│   ├── architecture/
+│   ├── data-model/            # DBML, ERD, ORM maps
+│   └── ...
+│
+├── mcp/                       # Model Context Protocol
+│   ├── coordinator/           # MCP routing & aggregation
+│   └── servers/               # MCP server implementations
+│       ├── odoo-erp-server/   # Odoo ERP integration
+│       ├── digitalocean-mcp-server/  # DO infrastructure
+│       ├── superset-mcp-server/      # BI platform
+│       ├── vercel-mcp-server/        # Deployments
+│       ├── pulser-mcp-server/        # Agent orchestration
+│       └── speckit-mcp-server/       # Spec enforcement
+│
+├── n8n/                       # n8n workflow templates
+│
+├── .claude/                   # Claude Code configuration
+│   ├── project_memory.db      # SQLite config database
+│   ├── query_memory.py        # Memory query script
+│   ├── settings.json          # Allowed tools config
+│   ├── mcp-servers.json       # MCP server configuration
+│   └── commands/              # Slash commands
+│
+├── .github/workflows/         # CI/CD pipelines (47 workflows)
+│
+├── docker-compose.yml         # Main compose file
+├── package.json               # Node.js monorepo config
+├── turbo.json                 # Turbo CI/CD config
+└── oca.lock.json             # OCA module lock
+```
+
+---
+
+## IPAI Module Naming Convention
+
+All custom modules use the `ipai_` prefix organized by domain:
+
+| Domain | Prefix Pattern | Examples |
+|--------|---------------|----------|
+| AI/Agents | `ipai_ai_*`, `ipai_agent_*` | `ipai_ai_agents`, `ipai_ai_core`, `ipai_agent_core` |
+| Finance | `ipai_finance_*` | `ipai_finance_ppm`, `ipai_finance_bir_compliance`, `ipai_finance_month_end` |
+| Platform | `ipai_platform_*` | `ipai_platform_workflow`, `ipai_platform_audit`, `ipai_platform_approvals` |
+| Workspace | `ipai_workspace_*` | `ipai_workspace_core` |
+| Studio | `ipai_dev_studio_*`, `ipai_studio_*` | `ipai_dev_studio_base`, `ipai_studio_ai` |
+| Industry | `ipai_industry_*` | `ipai_industry_marketing_agency`, `ipai_industry_accounting_firm` |
+| WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks`, `ipai_workos_canvas` |
+| Theme/UI | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*` | `ipai_theme_tbwa_backend`, `ipai_ui_brand_tokens` |
+| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_mattermost_connector`, `ipai_superset_connector` |
+| PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
+
+### Key Module Hierarchy
+
+```
+ipai_dev_studio_base           # Base dependencies (install first)
+    └── ipai_workspace_core    # Core workspace functionality
+        └── ipai_ce_branding   # CE branding layer
+            ├── ipai_ai_core   # AI core framework
+            │   ├── ipai_ai_agents     # Agent system
+            │   └── ipai_ai_prompts    # Prompt management
+            ├── ipai_finance_ppm       # Finance PPM
+            │   └── ipai_finance_month_end
+            └── [other modules]
+```
+
+---
+
+## Spec Kit Structure
+
+All significant features require a spec bundle:
+
+```
+spec/<feature-slug>/
+├── constitution.md   # Non-negotiable rules and constraints
+├── prd.md            # Product requirements document
+├── plan.md           # Implementation plan
+└── tasks.md          # Task checklist with status
+```
+
+### Current Spec Bundles (32)
+
+- `pulser-master-control` - Master control plane
+- `close-orchestration` - Month-end close workflows
+- `bir-tax-compliance` - BIR tax compliance
+- `expense-automation` - Expense automation
+- `hire-to-retire` - HR lifecycle management
+- `ipai-control-center` - Control center UI
+- `odoo-mcp-server` - MCP server integration
+- `adk-control-room` - ADK control room
+- `auto-claude-framework` - Auto Claude framework
+- `ipai-ai-platform` - AI platform core
+- `ipai-ai-platform-odoo18` - Odoo 18 AI platform
+- `kapa-plus` - Kapa+ documentation AI
+- `workos-notion-clone` - WorkOS Notion clone
+- See `spec/` directory for complete list
+
+---
+
+## External Memory (Just-in-Time Retrieval)
+
+Project configuration is stored in SQLite to reduce context usage:
+
+```bash
+python .claude/query_memory.py config       # Supabase/DB config
+python .claude/query_memory.py arch         # Architecture components
+python .claude/query_memory.py commands     # All commands
+python .claude/query_memory.py rules        # Project rules
+python .claude/query_memory.py deprecated   # Deprecated items
+python .claude/query_memory.py all          # Everything
+```
+
+---
+
+## CI/CD Pipelines
+
+### Core Pipelines
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `ci-odoo-ce.yml` | Push/PR | Main Odoo CE tests |
+| `ci-odoo-oca.yml` | Push/PR | OCA module compliance |
+| `spec-kit-enforce.yml` | Push/PR | Validate spec bundle structure |
+| `repo-structure.yml` | Push/PR | Verify repo structure |
+| `all-green-gates.yml` | Push/PR | All gates must pass |
+
+### Build & Deploy
+
+| Workflow | Purpose |
+|----------|---------|
+| `build-unified-image.yml` | Build unified Docker image |
+| `build-seeded-image.yml` | Build pre-seeded image |
+| `deploy-production.yml` | Production deployment |
+| `deploy-odoo-prod.yml` | Odoo-specific deployment |
+
+### Quality Gates
+
+| Workflow | Purpose |
+|----------|---------|
+| `seeds-validate.yml` | Validate seed data |
+| `spec-validate.yml` | Validate spec completeness |
+| `spec-and-parity.yml` | Enterprise parity checks |
+| `infra-validate.yml` | Infrastructure templates |
+
+### Monitoring
+
+| Workflow | Purpose |
+|----------|---------|
+| `health-check.yml` | Health check execution |
+| `finance-ppm-health.yml` | Finance PPM checks |
+| `ipai-prod-checks.yml` | IPAI production checks |
+
+---
+
+## Allowed Tools (Safety)
+
+Claude Code is restricted to these tools (see `.claude/settings.json`):
+
+```json
+{
+  "allowedTools": [
+    "Edit", "Read", "Write", "Glob", "Grep",
+    "Bash(git status)", "Bash(git diff*)", "Bash(git add*)",
+    "Bash(git commit*)", "Bash(git push*)", "Bash(git log*)",
+    "Bash(git branch*)", "Bash(gh *)",
+    "Bash(npm run lint*)", "Bash(npm run typecheck*)",
+    "Bash(npm run test*)", "Bash(npm run build*)",
+    "Bash(pnpm -s lint*)", "Bash(pnpm -s typecheck*)",
+    "Bash(pnpm -s test*)", "Bash(pnpm -s build*)",
+    "Bash(python3 -m py_compile*)",
+    "Bash(black --check*)", "Bash(black *)",
+    "Bash(isort --check*)", "Bash(isort *)", "Bash(flake8*)",
+    "Bash(./scripts/repo_health.sh)",
+    "Bash(./scripts/spec_validate.sh)",
+    "Bash(./scripts/verify.sh)",
+    "Bash(./scripts/ci_local.sh*)",
+    "Bash(./scripts/ci/*)"
+  ],
+  "agentCommands": {
+    "plan": ".claude/commands/plan.md",
+    "implement": ".claude/commands/implement.md",
+    "verify": ".claude/commands/verify.md",
+    "ship": ".claude/commands/ship.md",
+    "fix-github-issue": ".claude/commands/fix-github-issue.md"
+  }
+}
+```
+
+---
+
+## Critical Rules
+
+### Must Follow
+
+1. **Secrets**: Use `.env` files only, never hardcode (see `.env.example`)
+2. **Database**: Odoo uses local PostgreSQL (`db`), NOT Supabase
+3. **Supabase**: Only for n8n workflows, task bus, external integrations
+4. **CE Only**: No Enterprise modules, no odoo.com IAP dependencies
+5. **Specs Required**: All significant changes must reference a spec bundle
+6. **OCA First**: Prefer OCA modules over custom ipai_* when available
+
+### Deprecated (Never Use)
+
+- Supabase project `xkxyvboeubffxxbebsll`
+- Supabase project `ublqmilcjtpnflofprkr`
+- Any `odoo.com` Enterprise module references
+
+### Module Philosophy
+
+```
+Config → OCA → Delta (ipai_*)
+```
+
+1. **Config**: Use Odoo's built-in configuration first
+2. **OCA**: Use vetted OCA community modules second
+3. **Delta**: Only create ipai_* modules for truly custom needs
+
+---
+
+## OCA-Style Workflow (Canonical)
+
+### Purpose
+
+Keep this repo aligned with **OCA tooling + conventions** while preserving the existing layered architecture:
+- **Odoo CE runtime**
+- **OCA addons** (managed via `oca.lock.json`, not tracked)
+- **IPAI addons** (tracked, ship-ready)
+
+### Non-Negotiables
+
+- **Do NOT run** `copier` in the repo root (it will overwrite structure).
+- Use `/tmp/oca-template/` to generate templates and **selectively port** only the needed files.
+- New custom modules live under: `addons/ipai/<module_name>/`
+- OCA repos cloned under: `addons/oca/*/` are **NOT tracked** (only keep base marker files per `.gitignore`).
+- Changes must remain deterministic and CI-friendly (no "works on my machine" steps).
+
+### Standard Tooling (Must Stay Green)
+
+#### Pre-commit
+
+Install + run:
+
+```bash
+pip install -r requirements.txt
+pre-commit install
+pre-commit run -a
+```
+
+#### Local verification (mirror CI)
+
+Run:
+
+```bash
+./scripts/verify_local.sh
+```
+
+### Using OCA Template Safely (Selective Port Only)
+
+#### Generate OCA template in a temp directory
+
+```bash
+rm -rf /tmp/oca-template && mkdir -p /tmp/oca-template
+cd /tmp/oca-template
+pipx install copier || true
+copier copy https://github.com/OCA/oca-addons-repo-template.git/ repo --trust
+```
+
+#### Allowed files to port (only if beneficial)
+
+* `.pre-commit-config.yaml` (rules/tools)
+* `pyproject.toml` (lint/format defaults)
+* targeted `.github/workflows/*` patterns (lint/test hygiene)
+
+#### Forbidden
+
+* Overwriting repo layout
+* Introducing a second "root" structure
+* Moving existing directories to match the template
+
+### Fast Module Scaffolding (mrbob)
+
+#### Install
+
+```bash
+pipx install mrbob
+pipx inject mrbob bobtemplates.odoo
+```
+
+#### Create addon (then move under addons/ipai/)
+
+```bash
+mrbob bobtemplates.odoo:addon
+# move generated module into addons/ipai/<module_name>/
+```
+
+#### Create model scaffolding inside addon
+
+```bash
+mrbob bobtemplates.odoo:model
+```
+
+### Commit Rules (OCA-style)
+
+* Use conventional commits: `chore(oca): ...`, `feat(ipai_*): ...`, `fix(ci): ...`
+* One feature = one commit whenever possible.
+* Always include proof commands (logs/status) after changes that affect runtime or CI.
+
+---
+
+## Testing
+
+### Odoo Tests
+
+```bash
+# Run all tests
+./scripts/ci/run_odoo_tests.sh
+
+# Run tests for specific module
+./scripts/ci/run_odoo_tests.sh ipai_finance_ppm
+
+# Smoke tests
+./scripts/ci_smoke_test.sh
+```
+
+### Python Linting
+
+```bash
+black --check addons/ipai/
+isort --check addons/ipai/
+flake8 addons/ipai/
+python3 -m py_compile addons/ipai/**/*.py
+```
+
+### Node.js
+
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
+
+---
+
+## PR Discipline
+
+### Commit Convention
+
+```
+feat|fix|refactor|docs|test|chore(scope): description
+```
+
+Examples:
+- `feat(finance-ppm): add month-end close wizard`
+- `fix(workspace): resolve portal access issue`
+- `docs(claude): update CLAUDE.md with architecture`
+- `chore(ci): add spec validation workflow`
+
+### Chore Scope Conventions (OCA-style)
+
+| Scope | When to Use |
+|-------|-------------|
+| `chore(oca):` | OCA layer: submodules, `oca.lock.json`, `oca-aggregate.yml`, pins |
+| `chore(repo):` | Repo-wide maintenance (docs regen, formatting, housekeeping) |
+| `chore(ci):` | Workflows, gating, pre-commit, drift checks |
+| `chore(deps):` | Python/Node deps, devcontainer, toolchain pins |
+| `chore(deploy):` | Docker compose, nginx, env templates, infra docs |
+
+See [docs/OCA_CHORE_SCOPE.md](docs/OCA_CHORE_SCOPE.md) for full conventions.
+
+### PR Requirements
+
+1. Small, focused commits with descriptive messages
+2. All CI gates must pass (green status)
+3. Update docs + tests alongside code changes
+4. Never push directly to main without verification
+5. Reference spec bundle in PR description when applicable
+
+---
+
+## Docker Commands
+
+### Development
+
+```bash
+# Start core services
+docker compose up -d postgres odoo-core
+
+# Run init profiles (first-time setup)
+docker compose --profile ce-init up    # Install CE modules
+docker compose --profile init up       # Install IPAI modules
+
+# View logs
+docker compose logs -f odoo-core
+
+# Restart service
+docker compose restart odoo-core
+```
+
+### Database Access
+
+```bash
+# Connect to PostgreSQL
+docker compose exec postgres psql -U odoo -d odoo_core
+
+# Backup database
+docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
+```
+
+---
+
+## Key Scripts Reference
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/deploy-odoo-modules.sh` | Deploy IPAI modules to Odoo |
+| `scripts/repo_health.sh` | Verify repository structure |
+| `scripts/spec_validate.sh` | Validate spec bundle completeness |
+| `scripts/ci_local.sh` | Run full local CI suite |
+| `scripts/verify_local.sh` | OCA-style local verification (mirrors CI) |
+| `scripts/ci/run_odoo_tests.sh` | Execute Odoo unit tests |
+| `scripts/ci/module_drift_gate.sh` | Check for module drift |
+| `scripts/ce_oca_audit.py` | Comprehensive OCA/CE audit |
+| `scripts/generate_odoo_dbml.py` | Generate data model artifacts |
+| `scripts/gen_repo_tree.sh` | Auto-generate repo structure docs |
+| `scripts/web_sandbox_verify.sh` | Claude Code Web sandbox verification |
+| `scripts/db_verify.sh` | Database health verification script |
+
+---
+
+## Data Model Artifacts
+
+Located in `docs/data-model/`:
+
+| File | Format | Purpose |
+|------|--------|---------|
+| `ODOO_CANONICAL_SCHEMA.dbml` | DBML | Schema for dbdiagram.io |
+| `ODOO_ERD.mmd` | Mermaid | Entity-relationship diagram |
+| `ODOO_ERD.puml` | PlantUML | UML diagram |
+| `ODOO_ORM_MAP.md` | Markdown | Comprehensive ORM field mapping |
+| `ODOO_MODEL_INDEX.json` | JSON | Machine-readable model index |
+
+Regenerate with:
+```bash
+python scripts/generate_odoo_dbml.py
+```
+
+---
+
+## Integration Points
+
+### n8n Workflows
+
+- Located in `n8n/` directory
+- Deploy with: `./scripts/deploy-n8n-workflows.sh`
+- Activate with: `./scripts/activate-n8n-workflows.sh`
+
+### Mattermost ChatOps
+
+- Runbooks in `mattermost/`
+- Webhooks for alerts and notifications
+- AI assistant integrations
+
+### MCP Servers
+
+**Architecture:**
+```
+Claude Desktop / VS Code / Agents
+        ↓
+MCP Coordinator (port 8766)
+    ↓                    ↓
+External MCPs       Custom MCPs
+(Supabase, GitHub)  (Odoo, DO, Superset)
+```
+
+**Configuration:** `.claude/mcp-servers.json`
+
+**External MCP Servers (install via npx):**
+
+| Server | Purpose | Required Env |
+|--------|---------|--------------|
+| `@supabase/mcp-server` | Schema, SQL, functions | `SUPABASE_ACCESS_TOKEN` |
+| `@modelcontextprotocol/server-github` | Repos, PRs, workflows | `GITHUB_TOKEN` |
+| `dbhub-mcp-server` | Direct Postgres access | `POSTGRES_URL` |
+| `@anthropic/figma-mcp-server` | Design tokens, components | `FIGMA_ACCESS_TOKEN` |
+| `@notionhq/notion-mcp-server` | Workspace docs, PRDs | `NOTION_API_KEY` |
+| `@anthropic/firecrawl-mcp-server` | Web scraping, ETL | `FIRECRAWL_API_KEY` |
+| `@huggingface/mcp-server` | Models, datasets | `HF_TOKEN` |
+| `@anthropic/playwright-mcp-server` | Browser automation | (none) |
+
+**Custom MCP Servers (in `mcp/servers/`):**
+
+| Server | Purpose | Location |
+|--------|---------|----------|
+| `odoo-erp-server` | Odoo CE accounting, BIR compliance | `mcp/servers/odoo-erp-server/` |
+| `digitalocean-mcp-server` | Droplets, apps, deployments | `mcp/servers/digitalocean-mcp-server/` |
+| `superset-mcp-server` | Dashboards, charts, datasets | `mcp/servers/superset-mcp-server/` |
+| `vercel-mcp-server` | Projects, deployments, logs | `mcp/servers/vercel-mcp-server/` |
+| `pulser-mcp-server` | Agent orchestration | `mcp/servers/pulser-mcp-server/` |
+| `speckit-mcp-server` | Spec bundle enforcement | `mcp/servers/speckit-mcp-server/` |
+| `mcp-jobs` | **Canonical Jobs & Observability Backend** | `mcp/servers/mcp-jobs/` |
+
+**Server Groups:**
+- `core`: supabase, github, dbhub, odoo-erp
+- `design`: figma, notion
+- `infra`: digitalocean, vercel
+- `automation`: pulser, speckit
+
+**Building Custom Servers:**
+```bash
+cd mcp/servers/<server-name>
+npm install
+npm run build
+```
+
+---
+
+## MCP Jobs System – Canonical Jobs & Observability Backend
+
+**Repository**: `git@github.com:jgtolentino/mcp-jobs.git` (standalone service)
+**Submodule**: `mcp/servers/mcp-jobs/` (integrated into odoo-ce)
+**Deployed**: https://v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app/
+**Purpose**: Shared job orchestration + observability service for all MCP-enabled apps (Odoo, n8n, Vercel apps, Supabase Edge Functions)
+
+### Architecture
+
+```
+MCP-Enabled Apps (Odoo, n8n, Vercel, Edge Functions)
+    ↓ HTTP POST /api/jobs/enqueue
+v0 Next.js App (mcp-jobs UI)
+    ↓ Supabase Client
+Supabase PostgreSQL (mcp_jobs schema)
+    ├── jobs (queue + state machine)
+    ├── job_runs (execution history)
+    ├── job_events (detailed logs)
+    ├── dead_letter_queue (failed jobs after max retries)
+    └── metrics (aggregated stats)
+```
+
+### Core Components
+
+**Database Schema** (`mcp_jobs`):
+- **jobs**: Main job queue with state machine (queued → processing → completed | failed | cancelled)
+- **job_runs**: Execution history for each run/retry
+- **job_events**: Detailed event log (started, progress, completed, failed)
+- **dead_letter_queue**: Failed jobs after max retries exhausted
+- **metrics**: Aggregated job metrics per hour
+
+**RPCs** (Supabase functions):
+- `enqueue_job()`: Add new job to queue
+- `claim_next_job()`: Worker claims next available job (atomic with SKIP LOCKED)
+- `complete_job()`: Mark job as completed
+- `fail_job()`: Mark job as failed, retry or move to DLQ
+
+**API Routes** (Next.js v0 app):
+- POST `/api/jobs/enqueue` - Enqueue new job
+- GET `/api/jobs/list` - List jobs with filters (source, jobType, status)
+- GET `/api/jobs/[id]` - Get job details with runs and events
+- DELETE `/api/jobs/[id]` - Cancel queued job
+
+**TypeScript Client** (`lib/supabaseJobsClient.ts`):
+- Type-safe interfaces for Job, JobRun, JobEvent
+- Helper functions: `enqueueJob()`, `listJobs()`, `getJob()`, `getJobStats()`
+
+### Integration Patterns
+
+**From Odoo** (Python XML-RPC):
+```python
+import os
+import requests
+
+SUPABASE_URL = os.getenv('SUPABASE_URL')
+SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY')
+
+def enqueue_discovery_job(source: str, payload: dict):
+    """Enqueue infrastructure discovery job"""
+    response = requests.post(
+        f"{SUPABASE_URL}/rest/v1/rpc/enqueue_job",
+        headers={
+            'Authorization': f'Bearer {SUPABASE_SERVICE_ROLE_KEY}',
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+        },
+        json={
+            'p_source': source,
+            'p_job_type': 'discovery',
+            'p_payload': payload,
+            'p_priority': 5
+        }
+    )
+    response.raise_for_status()
+    return response.json()
+```
+
+**From n8n Workflow** (HTTP Request node):
+```json
+{
+  "nodes": [{
+    "parameters": {
+      "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+      "authentication": "headerAuth",
+      "sendBody": true,
+      "bodyParameters": {
+        "parameters": [
+          { "name": "p_source", "value": "n8n" },
+          { "name": "p_job_type", "value": "sync" },
+          { "name": "p_payload", "value": "={{ $json }}" }
+        ]
+      }
+    },
+    "name": "Enqueue Job",
+    "type": "n8n-nodes-base.httpRequest"
+  }]
+}
+```
+
+**From Vercel App** (Next.js API route):
+```typescript
+import { enqueueJob } from '@/lib/supabaseJobsClient'
+
+export async function POST(req: Request) {
+  const body = await req.json()
+  const jobId = await enqueueJob(body.source, body.jobType, body.payload)
+  return NextResponse.json({ ok: true, jobId })
+}
+```
+
+### Vercel AI Gateway Integration
+
+All LLM calls from MCP Jobs workers **MUST** route through Vercel AI Gateway for centralized model management. See `docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md` for complete integration strategy.
+
+**Job Classification** (OpenAI GPT-4o-mini):
+```typescript
+import { generateText } from 'ai'
+
+export async function classifyJobType(payload: unknown): Promise<JobType> {
+  const result = await generateText({
+    model: 'openai/gpt-4o-mini',
+    prompt: `Classify this job payload: ${JSON.stringify(payload)}`
+  })
+  return result.text.trim() as JobType
+}
+```
+
+**Failure Analysis** (Anthropic Claude Sonnet 4.5):
+```typescript
+export async function analyzeJobFailure(
+  job: Job,
+  error: string
+): Promise<{ shouldRetry: boolean; reason: string }> {
+  const result = await generateObject({
+    model: 'anthropic/claude-sonnet-4.5',
+    schema: z.object({
+      shouldRetry: z.boolean(),
+      reason: z.string()
+    }),
+    prompt: `Analyze this job failure: ${error}`
+  })
+  return result.object
+}
+```
+
+### Deployment
+
+**Supabase Schema**:
+```bash
+psql "$POSTGRES_URL" -f supabase/migrations/20260120_mcp_jobs_schema.sql
+# OR
+supabase db push
+```
+
+**Vercel App** (already deployed):
+- URL: https://v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app/
+- Environment: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_SUPABASE_URL`
+
+**Test Endpoints**:
+```bash
+# Enqueue test job
+curl -X POST "https://v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app/api/jobs/enqueue" \
+  -H "Content-Type: application/json" \
+  -d '{"source": "test", "jobType": "discovery", "payload": {"test": true}}'
+
+# List jobs
+curl "https://v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app/api/jobs/list?limit=10"
+```
+
+### Monitoring
+
+**Key Metrics** (SQL queries):
+```sql
+-- Job queue depth by source
+SELECT source, status, COUNT(*) as count
+FROM mcp_jobs.jobs
+WHERE status IN ('queued', 'running')
+GROUP BY source, status;
+
+-- Success rate by source
+SELECT source, job_type,
+  COUNT(*) FILTER (WHERE status = 'completed') as completed,
+  COUNT(*) FILTER (WHERE status = 'failed') as failed
+FROM mcp_jobs.jobs
+WHERE created_at > NOW() - INTERVAL '7 days'
+GROUP BY source, job_type;
+
+-- Dead letter queue (unresolved failures)
+SELECT source, job_type, COUNT(*) as count
+FROM mcp_jobs.dead_letter_queue
+WHERE NOT resolved
+GROUP BY source, job_type;
+```
+
+**Alert Thresholds**:
+- **Critical**: Queue depth >100 jobs, DLQ >10 unresolved, success rate <80%
+- **Warning**: Queue depth >50 jobs, DLQ >5 unresolved, success rate <90%
+
+### Documentation
+
+- **Complete System Docs**: `docs/infra/MCP_JOBS_SYSTEM.md`
+- **AI Gateway Strategy**: `docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md`
+- **Spec Kit**: `mcp/servers/mcp-jobs/spec/mcp-jobs/` (constitution, prd, plan, tasks)
+
+---
+
+## GitHub Projects v2 – API Limits
+
+### Iteration Fields (Quarter/Sprint)
+
+Iteration **values** (Quarter/Sprint) **CANNOT** be created via GitHub API as of 2026.
+
+**Behavior when asked to configure iterations:**
+1. Mark the step as: `PHASE_REQUIRES_UI(GitHub iterations API missing)`
+2. Output a one-paragraph checklist only (no screen-by-screen guide)
+3. Continue automating everything else (fields, statuses, syncing, labels)
+
+**Manual UI Setup Required:**
+
+For **Roadmap** (`Quarter` field):
+- Length: 3 months
+- Start date: 2026-01-01
+- Generate: 4 cycles (Q1–Q4)
+
+For **Execution Board** (`Sprint` field):
+- Length: 14 days
+- Start date: Next Monday
+- Generate: 12–26 cycles
+
+**What CAN be automated:**
+- Project creation (`gh project create`)
+- Field creation (`gh project field-create --data-type ITERATION`)
+- Single select fields with options
+- Status fields
+- Labels and milestones
+- Issue/PR linking
+
+**What CANNOT be automated:**
+- Iteration values/cycles
+- Iteration start dates
+- Iteration lengths
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Module not found**
+```bash
+# Ensure module is in addons path
+docker compose exec odoo-core ls /mnt/extra-addons/ipai/
+
+# Update module list
+docker compose exec odoo-core odoo -d odoo_core -u base
+```
+
+**Database connection issues**
+```bash
+# Check PostgreSQL status
+docker compose ps postgres
+docker compose logs postgres
+```
+
+**Permission errors (SCSS compilation failures)**
+```bash
+# Symptom: "Style compilation failed" errors in Odoo
+# Root cause: Addons owned by wrong user, Odoo container can't read SCSS files
+
+# Auto-fix permissions (recommended)
+./scripts/verify-addon-permissions.sh
+
+# Manual fix on server
+ssh root@178.128.112.214
+cd /opt/odoo-ce/repo/addons
+chown -R 100:101 ipai ipai_theme_tbwa*
+chmod -R 755 ipai ipai_theme_tbwa*
+docker restart odoo-prod
+```
+
+---
+
+*Query `.claude/project_memory.db` for detailed configuration*
+*Last updated: 2026-01-12*
+
+
+================================================================================
+FILE: README.md
+================================================================================
+
+# InsightPulse Odoo CE – ERP Platform (CE + OCA + IPAI)
+
+[![odoo-ce-ci](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml/badge.svg)](https://github.com/jgtolentino/odoo-ce/actions/workflows/ci-odoo-ce.yml)
+
+Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulseAI custom modules (IPAI) for:
+- PH expense & travel management
+- Equipment booking & inventory
+- Finance month-end close and PH BIR tax filing task automation (Finance PPM)
+- Canonical, versioned data-model artifacts (DBML / ERD / ORM maps) with CI-enforced drift gates
+
+**Production URL:** https://erp.insightpulseai.net
+**Documentation:** https://jgtolentino.github.io/odoo-ce/
+
+---
+
+## Quick Start
+
+**Three canonical environments. See [SANDBOX.md](./SANDBOX.md) for complete documentation.**
+
+```bash
+# Local dev sandbox (default)
+cd sandbox/dev && docker compose up -d
+
+# Prod-connection sandbox (DO Managed Postgres)
+cd sandbox/dev && docker compose -f docker-compose.production.yml --env-file .env.production up -d
+
+# Production deploy (droplet only)
+cd deploy && docker compose -f docker-compose.prod.yml up -d
+```
+
+---
+
+## Key Constraints (Non-negotiable)
+
+- ✅ **CE + OCA only** (no Enterprise modules, no IAP dependencies)
+- ✅ **No odoo.com upsells** (branding/links rewired)
+- ✅ **Self-hosted** via Docker/Kubernetes (DigitalOcean supported)
+- ✅ **Deterministic docs + seeds** (generated artifacts are versioned + drift-checked)
+
+---
+
+<!-- CURRENT_STATE:BEGIN -->
+
+## Current State (Authoritative)
+
+**Canonical IPAI strategy (single-bridge + vertical bundles):**
+
+| Module | Role | Description |
+|--------|------|-------------|
+| `ipai_enterprise_bridge` | Bridge | Thin cross-cutting layer: config, approvals, AI/infra integration, shared mixins |
+| `ipai_scout_bundle` | Vertical | Meta-bundle for Scout retail ops + analytics (depends-only, no business logic) |
+| `ipai_ces_bundle` | Vertical | Meta-bundle for CES creative effectiveness ops (depends-only, no business logic) |
+
+**Detected in repo:**
+
+- Canonical modules present: `ipai_ces_bundle, ipai_enterprise_bridge, ipai_scout_bundle`
+- Other IPAI modules (feature/legacy): 117
+- Non-IPAI modules at addons root: 1
+
+**Policy:**
+- Only canonical modules define the platform surface area
+- Feature modules must be explicitly referenced by a bundle dependency
+- Deprecated modules should be moved to `addons/_deprecated/` and blocked by CI
+
+**Install canonical stack:**
+```bash
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_enterprise_bridge --stop-after-init
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_scout_bundle --stop-after-init
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-init
+```
+
+<!-- CURRENT_STATE:END -->
+
+## Repository Layout
+
+```
+odoo-ce/
+├── addons/                    # Custom InsightPulse modules
+│   ├── ipai/                  # IPAI namespace (nested modules)
+│   │   ├── ipai_expense/      # PH expense & travel workflows
+│   │   ├── ipai_equipment/    # Equipment booking system
+│   │   ├── ipai_ce_cleaner/   # Enterprise/IAP removal
+│   │   ├── ipai_finance_*     # Finance PPM, BIR compliance, month-end
+│   │   ├── ipai_ppm*/         # Project Portfolio Management
+│   │   └── ...                # Additional IPAI modules
+│   ├── ipai_finance_close_seed/   # Finance close seed data
+│   ├── ipai_*                 # Flat IPAI modules (various)
+│   └── ...
+├── oca/                       # OCA community addons (submodules)
+├── deploy/                    # Deployment configurations
+│   ├── docker-compose.yml     # Docker Compose stack
+│   ├── odoo.conf              # Odoo CE configuration
+│   └── nginx/                 # Nginx reverse proxy configs
+├── docs/                      # Documentation
+│   └── data-model/            # Canonical DBML/ERD/ORM maps + JSON index
+├── scripts/                   # Deterministic generators + automation
+├── spec/                      # Spec bundles (constitution, PRD, plan, tasks)
+├── .github/workflows/         # CI/CD guardrails + drift gates
+├── spec.md                    # Project specification
+├── plan.md                    # Implementation plan
+└── tasks.md                   # Task checklist
+```
+
+---
+
+## Module Architecture
+
+### Canonical Stack (Install These)
+
+The platform surface is defined by **three canonical modules** only:
+
+```
+ipai_enterprise_bridge     # Base layer: config, approvals, AI/infra glue
+    ├── ipai_scout_bundle  # Retail vertical (POS, inventory, sales)
+    └── ipai_ces_bundle    # Creative services vertical (projects, timesheets)
+```
+
+Installing a bundle installs all its dependencies transitively.
+
+### Bridge Module
+
+**`ipai_enterprise_bridge`** — Thin glue layer for CE+OCA parity:
+- Configuration policies and settings
+- Approval tier validation mixins
+- AI/infrastructure connector stubs
+- Shared security groups
+
+### Vertical Bundles
+
+| Bundle | Focus | CE Modules Included |
+|--------|-------|---------------------|
+| `ipai_scout_bundle` | Retail ops | `sale_management`, `purchase`, `stock`, `point_of_sale`, `account` |
+| `ipai_ces_bundle` | Creative ops | `project`, `hr`, `hr_timesheet`, `mail`, `portal` |
+
+### Feature Modules (Optional)
+
+Feature modules are **not part of the canonical surface**. They must be:
+1. Explicitly depended on by a bundle, OR
+2. Installed manually for specific use cases
+
+| Category | Examples | Purpose |
+|----------|----------|---------|
+| Finance | `ipai_finance_ppm`, `ipai_finance_month_end`, `ipai_bir_compliance` | PH tax, month-end close |
+| Expense | `ipai_expense`, `ipai_expense_ocr` | PH expense workflows |
+| Equipment | `ipai_equipment` | Cheqroom-style booking |
+| AI | `ipai_ai_core`, `ipai_ai_agents` | AI platform integrations |
+| Branding | `ipai_ce_cleaner`, `ipai_ce_branding` | Remove Enterprise upsells |
+
+### Deprecated Modules
+
+Modules that are no longer maintained should be moved to `addons/_deprecated/` and blocked by CI.
+
+---
+
+## Quick Start (Production - DigitalOcean)
+
+Recommended for fresh Ubuntu 22.04/24.04 droplet.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/deploy_m1.sh.template -o deploy_m1.sh
+chmod +x deploy_m1.sh
+sudo ./deploy_m1.sh
+```
+
+Access:
+- https://erp.insightpulseai.net/web
+- Secrets:
+
+```bash
+cat /opt/odoo-ce/deploy/.env
+tail -f /var/log/odoo_deploy.log
+```
+
+---
+
+## Quick Start (Local Dev)
+
+```bash
+git clone https://github.com/jgtolentino/odoo-ce.git
+cd odoo-ce
+cd deploy
+docker compose up -d
+docker compose logs -f odoo
+```
+
+---
+
+## Install IPAI Modules
+
+### Install canonical stack (recommended)
+
+```bash
+# Install bridge first (required by all bundles)
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_enterprise_bridge --stop-after-init
+
+# Install verticals as needed
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_scout_bundle --stop-after-init    # Retail
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_ces_bundle --stop-after-init      # Creative
+```
+
+### Install optional feature modules
+
+```bash
+# Finance close seed data
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_finance_close_seed --stop-after-init
+
+# Other feature modules as needed
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_expense --stop-after-init
+docker compose exec -T odoo odoo -d odoo_dev -i ipai_equipment --stop-after-init
+```
+
+### Verify installation
+
+```bash
+docker compose exec -T db psql -U odoo -d odoo_dev -c "
+SELECT name, state FROM ir_module_module
+WHERE name IN ('ipai_enterprise_bridge','ipai_scout_bundle','ipai_ces_bundle')
+ORDER BY name;"
+```
+
+---
+
+## Canonical Data Model (DBML / ERD / ORM maps)
+
+Canonical, machine-readable outputs live in:
+
+- `docs/data-model/`
+  - `ODOO_CANONICAL_SCHEMA.dbml` — DBML schema for dbdiagram.io
+  - `ODOO_ERD.mmd` — Mermaid ER diagram
+  - `ODOO_ERD.puml` — PlantUML ER diagram
+  - `ODOO_ORM_MAP.md` — ORM map linking models, tables, fields
+  - `ODOO_MODULE_DELTAS.md` — Per-module schema deltas
+  - `ODOO_MODEL_INDEX.json` — Machine-readable index
+
+Regenerate deterministically:
+
+```bash
+python scripts/generate_odoo_dbml.py
+git diff --exit-code docs/data-model/
+```
+
+---
+
+## Deterministic Seed Generator (from Excel)
+
+If you update the source Excel or want to refresh seed artifacts:
+
+```bash
+python scripts/seed_finance_close_from_xlsx.py
+git diff --exit-code addons/ipai_finance_close_seed
+```
+
+---
+
+## CI/CD Guardrails (What must stay green)
+
+CI enforces:
+
+- **Odoo 18 CE / OCA CI** — Lint, static checks, and unit tests
+- **guardrails** — Block Enterprise modules and odoo.com links
+- **repo-structure** — Repo tree in spec.md must match generator
+- **data-model-drift** — `docs/data-model/` must match generator output
+- **seed-finance-close-drift** — `addons/ipai_finance_close_seed` must match `seed_finance_close_from_xlsx.py` output
+- **spec-kit-enforce** — Spec bundles must have complete 4-file structure
+- **infra-validate** — Infrastructure template validation
+
+### Key workflows:
+
+| Workflow | Purpose |
+|----------|---------|
+| `ci-odoo-ce.yml` | Main guardrails + data-model drift |
+| `repo-structure.yml` | Repo tree consistency |
+| `spec-kit-enforce.yml` | Spec bundle validation |
+| `infra-validate.yml` | Infrastructure templates |
+| `auto-sitemap-tree.yml` | Auto-update SITEMAP.md/TREE.md |
+
+If CI fails, reproduce locally by running the same generator commands + `git diff --exit-code` checks above.
+
+---
+
+## Docs
+
+- `spec.md` — Project spec / repo snapshot
+- `plan.md` — Implementation plan
+- `tasks.md` — Task checklist
+- `docs/` — Architecture + deployment docs
+- `docs/data-model/` — Canonical schema outputs
+
+---
+
+## License
+
+- IPAI modules: **AGPL-3**
+- OCA modules: See each upstream repo/license
+
+---
+
+## Support
+
+- Issues: [GitHub Issues](https://github.com/jgtolentino/odoo-ce/issues)
+- Docs: https://jgtolentino.github.io/odoo-ce/
+
+
+================================================================================
+FILE: docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md
+================================================================================
+
+# External Agent/Tool Capabilities (Stack Fit)
+
+**Date**: 2026-01-24
+**Goal**: Identify where external agentic tools (Jules, TestSprite, etc.) plug into the existing stack:
+Odoo (OCA-first) + DigitalOcean + Supabase (system-of-record) + Vercel (optional retention) + n8n (automation fabric).
+
+---
+
+## 1) Jules (Google) — Code-change agent (repo ops)
+
+**What it is**
+- A developer agent designed to help with code changes and workflows, with documented interfaces and integrations.
+- Integrations include common git hosting surfaces (review docs for your exact host + auth model).
+
+**Best-fit roles in your stack**
+- **Spec Kit enforcement assistant**: generate/update spec bundles, plans, tasks, drift checks.
+- **Refactor assistant**: mechanical migrations (tree→list for Odoo 18+, view_mode changes, lint passes).
+- **Docs agent**: maintain llms-full packs, runtime snapshot drift fixes, runbook refreshes.
+- **CI hygiene**: propose fixes from failing pipelines (without bypassing gates).
+
+**Guardrails**
+- Must operate via PRs with CI gates; no direct-to-main.
+- Output must be deterministic and repo-local: scripts, migrations, workflow YAML.
+
+**Primary references**
+- Jules docs: https://jules.google/docs
+
+---
+
+## 2) TestSprite — Autonomous AI test engineer (test generation → diagnosis)
+
+**What it is (capability claims)**
+- Positions itself as an autonomous AI test engineer handling testing end-to-end: case generation → execution → issue diagnosis.
+
+**Best-fit roles in your stack**
+- **Pre-merge quality gate**: generate regression suites for Odoo customizations, Supabase Edge Functions, and Next/Vercel frontends.
+- **API contract regression**: pin OpenAPI + PostgREST behaviors; detect breaking changes early.
+- **Agent workflow regression**: validate Pulser/n8n orchestrations using scenario-based tests.
+
+**Guardrails**
+- Treat as *quality amplifier*—do not let it "author architecture."
+- Store its outputs as evidence artifacts: test plans, failures, repro steps, flake stats.
+
+---
+
+## 3) Stack Alignment (where each tool lands)
+
+| Layer | System-of-record? | Primary tool | Optional tool | Evidence target |
+|---|---:|---|---|---|
+| Observability plane | Yes | Supabase (ops schema, run_events, artifacts) | Vercel Observability Plus | `docs/evidence/**` + `supabase/migrations/**` |
+| Source control workflow | Yes | GitHub PR + CI gates | Jules (PR author) | PR checks + logs |
+| Automation fabric | Yes | n8n (self-hosted) | SaaS connectors | workflow JSON exports + runs |
+| ERP runtime | Yes | Odoo CE + OCA | none | runtime snapshot + health |
+| Test/QA | Evidence-driven | CI test harness + linters | TestSprite | junit/log bundles |
+
+---
+
+## 4) Recommended "Agentic SDLC" loop (your workflow-first stance)
+
+1. **Spec**: Spec Kit bundle + constraints (human-approved).
+2. **Change**: Jules proposes PR (code + scripts + docs).
+3. **Verify**: CI + TestSprite regression suite.
+4. **Deploy**: DO + Vercel + Supabase migrations (idempotent).
+5. **Observe**: Supabase ops plane stores run logs + evidence packs.
+
+---
+
+## 5) Integration Patterns
+
+### Jules → GitHub → CI → Supabase
+
+```
+Jules (code agent)
+    │
+    ▼ Opens PR
+GitHub PR
+    │
+    ▼ Triggers
+CI Workflows (.github/workflows/)
+    │
+    ├── Lint/typecheck/test
+    ├── Spec validation
+    └── Deploy (on merge)
+    │
+    ▼ Records results
+Supabase (observability.jobs)
+```
+
+### TestSprite → CI → Supabase
+
+```
+TestSprite (test agent)
+    │
+    ▼ Generates tests
+CI Test Harness
+    │
+    ├── Run tests
+    ├── Collect coverage
+    └── Record failures
+    │
+    ▼ Stores artifacts
+Supabase (observability.job_events)
+    │
+    ▼ Triggers on failure
+n8n (alert workflow)
+```
+
+---
+
+## 6) Evidence Artifacts (where to store outputs)
+
+| Tool | Artifact Type | Storage Location |
+|------|--------------|------------------|
+| Jules | PR diff, commit SHA | GitHub + `docs/evidence/<date>/jules/` |
+| TestSprite | Test plans, failure logs | `docs/evidence/<date>/testsprite/` |
+| n8n | Workflow runs, execution logs | Supabase `observability.job_runs` |
+| CI | Pipeline logs, test results | GitHub Actions artifacts |
+| Odoo | Runtime health snapshots | `docs/evidence/<date>/odoo/` |
+
+---
+
+## 7) Constraints (non-negotiables)
+
+1. **No agent bypasses CI gates** — all changes flow through PR + checks
+2. **Supabase is the observability SSOT** — agents write evidence here
+3. **n8n orchestrates, doesn't hold state** — stateless thin orchestrator
+4. **Deterministic outputs only** — no "creative" architecture from agents
+5. **Human approval on spec changes** — agents can propose, not approve
+
+
+================================================================================
+FILE: docs/prompts/DUMP_REVIEW_TO_STACK_UPGRADES.md
+================================================================================
+
+# Dump Review → Stack Upgrades Prompt
+
+Use this template when reviewing pasted dumps (notes, screenshots, links, chat logs) to extract actionable stack improvements.
+
+---
+
+## How to Use
+
+1. Paste the dump content in sections
+2. For EACH section, apply the template below
+3. Output concrete artifacts (SQL, YAML, scripts, docs)
+
+---
+
+## Template (apply to each section)
+
+### A) What this section is (1–2 lines)
+- Identify the domain (e.g., CI/CD, observability, agent runtime, docs surface, testing, k8s, etc.)
+- Identify whether it's **actionable** for our stack.
+
+### B) Fit to current stack (bullet map)
+Map to:
+- **Odoo CE + OCA** on DigitalOcean (ERP layer)
+- **Supabase** (system-of-record observability plane)
+- **Vercel** (frontend + optional Observability Plus retention)
+- **n8n** (automation fabric, thin orchestrator)
+- **GitHub** (Spec Kit + CI gates)
+- **External docs** (Figma/Microsoft/GitHub/SAP knowledge surfaces)
+
+### C) Improvements (prioritized, no fluff)
+Give:
+- **P0**: immediate wins (≤3) — can implement now
+- **P1**: next iteration (≤3) — implement this week
+- **P2**: later (≤3) — backlog
+
+Each improvement must include:
+- **What** to change
+- **Where** (file paths / component / service)
+- **How to validate** (commands + expected evidence artifact)
+
+### D) Risks / failure modes (≤5 bullets)
+
+### E) Output artifacts to add to repo
+One or more of:
+- Migration SQL (`db/migrations/*.sql`)
+- Workflow YAML (`.github/workflows/*.yml`)
+- Audit scripts (`scripts/audit/*`)
+- Architecture docs (`docs/architecture/*`)
+- Evidence generator (`docs/evidence/*`)
+- n8n workflow JSON (`n8n/workflows/*.json`)
+
+---
+
+## Example Application
+
+**Section**: "Vercel llms-full.txt documentation format"
+
+### A) What this is
+- Documentation packaging format for LLM consumption
+- Actionable: YES — we can adopt this pattern for our docs
+
+### B) Fit to current stack
+- **GitHub**: Store llms-full.txt in repo root
+- **Vercel**: Serve at `/llms-full.txt` route
+- **n8n**: Use in workflow context injection
+- **External docs**: Fetch and index external llms packs
+
+### C) Improvements
+- **P0**: Create `docs/llms-full.txt` generator script
+- **P0**: Add to CI to regenerate on doc changes
+- **P1**: Fetch external llms packs (Vercel, n8n, OCA)
+- **P2**: Auto-inject into Claude Code context
+
+### D) Risks
+- External fetches may 403 (record failures, don't fail silently)
+- Large llms-full.txt may exceed context limits
+- Version drift between llms.txt and actual docs
+
+### E) Artifacts
+- `scripts/docs/build_llms_full.sh`
+- `scripts/docs/fetch_external_llms_packs.sh`
+- `.github/workflows/docs-llms-update.yml`
+
+---
+
+## Agent Prompt (copy-paste ready)
+
+```text
+[ROLE] Senior platform engineer + automation architect. Review a pasted multi-topic "dump" (notes, screenshots, links, chat logs). Produce actionable improvements to my production stack.
+
+[GOAL] For each section of the dump, identify what it suggests for improving: (1) Odoo+OCA, (2) Supabase, (3) Vercel, (4) DigitalOcean/Docker, (5) n8n workflows, (6) agentic AI runtime patterns.
+
+[CONSTRAINTS]
+- No UI instructions. Output CLI/scripts/config only.
+- Prefer idempotent automation.
+- Assume n8n is self-hosted in Docker on DigitalOcean.
+- Assume Supabase is the backend and Vercel hosts the frontend.
+- Provide concrete artifacts: compose snippets, env templates, workflow JSON, SQL, GitHub Actions YAML.
+
+[OUTPUT FORMAT]
+For each section:
+1) What it is (1 sentence)
+2) Risk/limitation if used naïvely (bullets)
+3) Best-practice integration into my stack (bullets)
+4) Concrete artifacts (code blocks):
+   - n8n workflow snippet or node plan
+   - Supabase SQL / Edge Function stub (if relevant)
+   - Docker compose / env changes (if relevant)
+   - CI checks / GitHub Actions (if relevant)
+5) Verification commands (curl/sql/kubectl where applicable)
+```
+
+---
+
+## Quick Reference: Stack Components
+
+| Component | Role | Key Files |
+|-----------|------|-----------|
+| Odoo CE + OCA | ERP runtime | `addons/ipai/**`, `docker-compose.yml` |
+| Supabase | Observability SSOT | `db/migrations/*.sql` |
+| Vercel | Frontend + deploys | `apps/web/**`, deploy hooks |
+| n8n | Automation fabric | `n8n/workflows/**/*.json` |
+| GitHub | CI + Spec Kit | `.github/workflows/**`, `spec/**` |
+| DigitalOcean | Infrastructure | `infra/do-oca-stack/**` |
+
+
+================================================================================
+EXTERNAL LLMS PACKS INDEX
+================================================================================
+
+Location: docs/llms/external/
+Fetched via: ./scripts/docs/fetch_external_llms_packs.sh
+
+Available packs:
+
+Failed fetches:
+  - ai_sdk_dev
+  - anthropic_docs
+  - digitalocean_docs
+  - github_docs
+  - google_jules
+  - microsoft_learn
+  - n8n_docs
+  - oca_odoo_community
+  - odoo_docs_18
+  - sap_help
+  - supabase_docs
+  - vercel_ai_sdk
+  - vercel_docs
+
+================================================================================
+END OF llms-full.txt
+================================================================================
