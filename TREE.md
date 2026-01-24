@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bfd3cdb70925945387a37beb7c429d2335dfd489
+> Commit: 9026722b9f54cae3e46171edc2aee1be1fd8e07c
 
 ```
 .
@@ -142,6 +142,7 @@
 │   │   ├── odoo-schema-pipeline.yml
 │   │   ├── ops-ci-router.yml
 │   │   ├── ops-ssot-verify.yml
+│   │   ├── patch-release.yml
 │   │   ├── pr-installability-gate.yml
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
@@ -1678,6 +1679,7 @@
 │   │   ├── MCP_JOBS_SYSTEM.md
 │   │   ├── MEMORY_INGESTION.md
 │   │   ├── ODOO_SHADOW_SCHEMA.md
+│   │   ├── ODOO_SUPABASE_MASTER_PATTERN.md
 │   │   ├── SECRETS_MANAGEMENT.md
 │   │   ├── SUPABASE_BRANCHING_INTEGRATION.md
 │   │   ├── SUPABASE_ODOO_SEED_PATTERN.md
@@ -2535,6 +2537,8 @@
 │   │   │   └── tsconfig.json
 │   │   ├── odoo-erp.yaml
 │   │   └── odoo-lab.yaml
+│   ├── tools
+│   │   └── n8n-tools.yaml
 │   └── agentic-cloud.yaml
 ├── n8n
 │   ├── workflows
@@ -2550,8 +2554,10 @@
 │   │   │   ├── expense-handler.json
 │   │   │   └── finance-handler.json
 │   │   ├── .gitkeep
+│   │   ├── chatops-hotfix.json
 │   │   ├── deployment-notify.json
-│   │   └── github-deploy-trigger.json
+│   │   ├── github-deploy-trigger.json
+│   │   └── github-router.json
 │   └── n8n_tenant_provisioning.json
 ├── notion-n8n-monthly-close
 │   ├── scripts
@@ -2609,6 +2615,8 @@
 │   ├── requirements.txt
 │   └── test-ocr.sh
 ├── odoo
+│   ├── compose
+│   │   └── docker-compose.platform.yml
 │   ├── ODOO_INTEGRATION_MAP.md
 │   └── ipai_finance_closing_seed.json
 ├── odoo-schema-mirror
@@ -4255,15 +4263,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1104 directories, 3146 files
+1106 directories, 3152 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1296 |
-| Files | 4090 |
+| Directories | 1298 |
+| Files | 4096 |
 | Python files | 623 |
 | XML files | 253 |
-| Markdown files | 1068 |
+| Markdown files | 1069 |
