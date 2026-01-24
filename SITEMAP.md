@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 29b9ea834242b857312d606d5f7dd3a5b9fd3b2a
+> Commit: 04e6bec13a849e4faf344be6cb0dab7d1ea2cbab
 
 ## 📚 Documentation
 
@@ -29,6 +29,7 @@
 | [Copilot Instructions for InsightPulse Odoo CE](.github/copilot-instructions.md) | .github |
 | [Summary](.github/pull_request_template.md) | .github |
 | [VSCode/Cursor/Claude Code Workspace Configuration](.vscode/README.md) | .vscode |
+| [Agent Operating Contract (SSOT)](AGENTS.md) | . |
 | [Analytics Activation Sequence](ANALYTICS_ACTIVATION_SEQUENCE.md) | . |
 | [🎯 Odoo CE v0.9.1 - Security Audit Fixes Applied](AUDIT_FIXES_APPLIED.md) | . |
 | [Auto-Healing System Implementation Summary](AUTO_HEALING_SYSTEM_SUMMARY.md) | . |
@@ -142,6 +143,7 @@
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
 | [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
 | [IPAI AI Studio - ChatGPT App](apps/chatgpt_ipai_ai_studio/README.md) | apps/chatgpt_ipai_ai_studio |
+| [Control Plane (Supabase Management API)](apps/control-plane/README.md) | apps/control-plane |
 | [Finance Landing Page Implementation - Verification Checklist](apps/control-room/FINANCE_LANDING_CHECKLIST.md) | apps/control-room |
 | [IPAI Platform Kit - Control Room Orchestration](apps/control-room/PLATFORM_KIT_SPEC.md) | apps/control-room |
 | [devops-engineer](apps/devops-engineer/APP.md) | apps/devops-engineer |
@@ -695,6 +697,11 @@
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | docs/runbooks |
 | [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
+| [Runbook: digitalocean](docs/runbooks/digitalocean.md) | docs/runbooks |
+| [Runbook: figma-sites](docs/runbooks/figma-sites.md) | docs/runbooks |
+| [Runbook: supabase](docs/runbooks/supabase.md) | docs/runbooks |
+| [Runbook: superset](docs/runbooks/superset.md) | docs/runbooks |
+| [Runbook: vercel](docs/runbooks/vercel.md) | docs/runbooks |
 | [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
@@ -839,6 +846,7 @@
 | [OCR Service Operations Runbook](ops/runbooks/ocr_service.md) | ops/runbooks |
 | [Sinch SMS/OTP Setup Runbook](ops/runbooks/sinch_setup.md) | ops/runbooks |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
+| [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
@@ -1001,6 +1009,10 @@
 | [Plan: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/plan.md) | spec/odoo-copilot-process-mining |
 | [PRD: Odoo Copilot – Process Mining & Process Intelligence (Mindzie-style, Local-First)](spec/odoo-copilot-process-mining/prd.md) | spec/odoo-copilot-process-mining |
 | [Tasks: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/tasks.md) | spec/odoo-copilot-process-mining |
+| [Constitution: Odoo Decoupled Platform](spec/odoo-decoupled-platform/constitution.md) | spec/odoo-decoupled-platform |
+| [Plan: Odoo Decoupled Platform](spec/odoo-decoupled-platform/plan.md) | spec/odoo-decoupled-platform |
+| [PRD: Odoo Decoupled Platform](spec/odoo-decoupled-platform/prd.md) | spec/odoo-decoupled-platform |
+| [Tasks: Odoo Decoupled Platform](spec/odoo-decoupled-platform/tasks.md) | spec/odoo-decoupled-platform |
 | [Anthropic Use Cases vs InsightPulse Stack - Gap Analysis](spec/odoo-mcp-server/GAPS_ANALYSIS.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server + BIR Compliance Skill](spec/odoo-mcp-server/README.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
@@ -1016,6 +1028,7 @@
 | [Product Requirements — Parallel Control Planes](spec/parallel-control-planes/prd.md) | spec/parallel-control-planes |
 | [Tasks — Parallel Control Planes](spec/parallel-control-planes/tasks.md) | spec/parallel-control-planes |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
+| [Platform Capabilities SSOT (Template)](spec/platforms/platform-capabilities.template.md) | spec/platforms |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
 | [Constitution — Project CE Suite (Toggleable)](spec/project-ce/constitution.md) | spec/project-ce |
 | [Plan — Implementation](spec/project-ce/plan.md) | spec/project-ce |
