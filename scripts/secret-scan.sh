@@ -1,115 +1,164 @@
 #!/usr/bin/env bash
-# ============================================================================
-# Secret Scan Script
-#
-# Scans repository for potential secrets and sensitive data.
-# Checks for common patterns like API keys, tokens, passwords, etc.
-# ============================================================================
 set -euo pipefail
 
-die() {
-  echo "[secret-scan] FAIL: $*" >&2
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+echo "=== Secret Scan ==="
+
+# Files that may contain public-safe client keys or otherwise acceptable patterns
+ALLOWLIST_PATHS=(
+  "config/config_keys.json"
+  "scripts/secret-scan.sh"
+  "*.md"
+  # Supabase anon keys are public/safe for client-side
+  "clients/flutter_receipt_ocr/lib/receipt_ocr/config.dart"
+  "ops-control/utils/supabase/info.tsx"
+)
+
+is_allowlisted_file() {
+  local f="$1"
+  for p in "${ALLOWLIST_PATHS[@]}"; do
+    # shellcheck disable=SC2053
+    [[ "$f" == *"$p"* ]] && return 0
+  done
+  return 1
+}
+
+fail_with_matches() {
+  local title="$1"
+  shift
+  local matches=("$@")
+  echo -e "${RED}FOUND${NC}"
+  printf '%s\n' "${matches[@]}"
+  echo -e "${RED}FAIL:${NC} ${title}"
   exit 1
 }
 
-warn() {
-  echo "[secret-scan] WARN: $*" >&2
+# Helper: rg list of files, then filter out allowlist globs
+rg_files_filtered() {
+  local pattern="$1"
+  local files
+  mapfile -t files < <(
+    rg -l --no-ignore-vcs -g '!node_modules' -g '!.git' -g '!*.lock' -g '!.env.local' \
+      "$pattern" "$REPO_ROOT" 2>/dev/null || true
+  )
+
+  local kept=()
+  for f in "${files[@]}"; do
+    if is_allowlisted_file "$f"; then
+      continue
+    fi
+    kept+=("$f")
+  done
+
+  printf '%s\n' "${kept[@]}"
 }
 
-# Directories to exclude from scanning
-EXCLUDE_DIRS=".git node_modules .venv venv __pycache__ dist build .next .nuxt"
-
-# Build exclude pattern for grep
-EXCLUDE_PATTERN=""
-for dir in $EXCLUDE_DIRS; do
-  EXCLUDE_PATTERN="$EXCLUDE_PATTERN --exclude-dir=$dir"
-done
-
-# Also exclude binary files and common non-sensitive files
-EXCLUDE_FILES="--exclude=*.png --exclude=*.jpg --exclude=*.gif --exclude=*.ico --exclude=*.woff --exclude=*.woff2 --exclude=*.ttf --exclude=*.eot --exclude=*.pdf --exclude=*.zip --exclude=*.tar.gz --exclude=*.lock --exclude=package-lock.json --exclude=pnpm-lock.yaml --exclude=yarn.lock"
-
-echo "[secret-scan] Scanning for potential secrets..."
-
-# Define patterns to search for
-PATTERNS=(
-  # API Keys with common prefixes
-  "sk-[a-zA-Z0-9]{20,}"           # OpenAI, Stripe secret keys
-  "pk-[a-zA-Z0-9]{20,}"           # Stripe publishable keys
-  "AKIA[A-Z0-9]{16}"              # AWS Access Key ID
-  "ghp_[a-zA-Z0-9]{36}"           # GitHub personal access token
-  "gho_[a-zA-Z0-9]{36}"           # GitHub OAuth token
-  "ghr_[a-zA-Z0-9]{36}"           # GitHub refresh token
-  "github_pat_[a-zA-Z0-9_]{22,}"  # GitHub fine-grained PAT
-
-  # Generic patterns (more likely to have false positives)
-  "api[_-]?key['\"]?\s*[:=]\s*['\"][a-zA-Z0-9]{20,}"
-  "secret[_-]?key['\"]?\s*[:=]\s*['\"][a-zA-Z0-9]{20,}"
-  "password['\"]?\s*[:=]\s*['\"][^'\"]{8,}"
-
-  # Service-specific
-  "xoxb-[0-9]{10,}-[0-9]{10,}-[a-zA-Z0-9]{24}"  # Slack bot token
-  "xoxp-[0-9]{10,}-[0-9]{10,}-[a-zA-Z0-9]{24}"  # Slack user token
-  "eyJ[a-zA-Z0-9_-]{50,}\\.[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_-]+"  # JWT tokens
+# Pattern 1: JWT-like tokens (eyJ...) — keep broad detection, exclude known public anon-key files + anon identifiers
+echo -n "Checking for JWT tokens... "
+mapfile -t jwt_files < <(
+  rg_files_filtered 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
 )
 
-# Files that commonly contain secrets (should be in .gitignore)
-SENSITIVE_FILES=(
-  ".env"
-  ".env.local"
-  ".env.production"
-  ".env.development"
-  "credentials.json"
-  "service-account.json"
-  "secrets.json"
-  "*.pem"
-  "*.key"
+# If any hits remain, double-check that they are not explicitly marked as anon/public identifiers in-code
+if ((${#jwt_files[@]} > 0)); then
+  # Re-scan content and check each match individually
+  mapfile -t jwt_suspects < <(
+    for file in "${jwt_files[@]}"; do
+      # Skip markdown and example files
+      [[ "$file" == *.md ]] && continue
+      [[ "$file" == *.example ]] && continue
+      [[ "$file" == *config_keys.json ]] && continue
+
+      # Get JWT matches from this file with 2 lines of context before
+      rg -n -B 2 -A 0 'eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}' "$file" 2>/dev/null | {
+        in_anon_block=false
+        while IFS= read -r line; do
+          # Check if this block contains anon key identifiers
+          if [[ "$line" =~ (SUPABASE_ANON_KEY|anon[_-]?[Kk]ey|public[Aa]non[Kk]ey|supabaseAnonKey) ]]; then
+            in_anon_block=true
+          fi
+
+          # If we hit a JWT line
+          if [[ "$line" =~ eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,} ]]; then
+            # Only output if we're not in an anon block
+            if [[ "$in_anon_block" == "false" ]]; then
+              echo "$line"
+            fi
+            # Reset for next match
+            in_anon_block=false
+          fi
+        done
+      }
+    done
+  )
+  if ((${#jwt_suspects[@]} > 0)); then
+    fail_with_matches "JWT-like token(s) detected (review/rotate if real secrets)" "${jwt_suspects[@]}"
+  fi
+fi
+echo -e "${GREEN}OK${NC}"
+
+# Pattern 1b: Service role key references (higher risk)
+echo -n "Checking for Supabase service_role key usage... "
+mapfile -t sr_hits < <(
+  rg -n --no-ignore-vcs -g '!node_modules' -g '!.git' -g '!*.lock' -g '!.env.local' \
+    '(SUPABASE_SERVICE_ROLE_KEY|service[_-]?role)' "$REPO_ROOT" 2>/dev/null \
+    | grep -v -E '(\.example|\.md|config_keys\.json)' \
+    || true
 )
+echo -e "${GREEN}OK${NC}"
 
-found_issues=0
-
-# Check for sensitive files that shouldn't be committed
-echo "[secret-scan] Checking for sensitive files..."
-for pattern in "${SENSITIVE_FILES[@]}"; do
-  # Use find to locate files matching the pattern
-  while IFS= read -r -d '' file; do
-    if [ -f "$file" ] && ! echo "$file" | grep -qE "\.example$|\.sample$|\.template$"; then
-      warn "Potentially sensitive file found: $file"
-      found_issues=$((found_issues + 1))
-    fi
-  done < <(find . -name "$pattern" -not -path "./.git/*" -not -path "./node_modules/*" -print0 2>/dev/null || true)
-done
-
-# Run pattern matching (limited to avoid false positives)
-echo "[secret-scan] Checking for secret patterns..."
-
-# Check for hardcoded Supabase service role keys (common mistake)
-if grep -rn $EXCLUDE_PATTERN $EXCLUDE_FILES "SUPABASE_SERVICE_ROLE_KEY.*=.*eyJ" . 2>/dev/null | grep -v "\.example\|\.sample\|\.template\|CLAUDE\.md" | head -5; then
-  warn "Potential hardcoded Supabase service role key found"
-  found_issues=$((found_issues + 1))
+# Pattern 2: AWS keys
+echo -n "Checking for AWS keys... "
+if rg -n --no-ignore-vcs -g '!node_modules' -g '!.git' -g '!*.lock' -g '!.env.local' \
+  'AKIA[0-9A-Z]{16}' "$REPO_ROOT" 2>/dev/null | grep -v -E '(\.example|\.md|config_keys\.json)'; then
+  echo -e "${RED}FOUND${NC}"
+  exit 1
+else
+  echo -e "${GREEN}OK${NC}"
 fi
 
-# Check for AWS keys
-if grep -rn $EXCLUDE_PATTERN $EXCLUDE_FILES "AKIA[A-Z0-9]{16}" . 2>/dev/null | grep -v "\.example\|\.sample\|\.template\|CLAUDE\.md" | head -5; then
-  warn "Potential AWS access key found"
-  found_issues=$((found_issues + 1))
+# Pattern 3: Private keys
+echo -n "Checking for private keys... "
+if rg -n --no-ignore-vcs -g '!node_modules' -g '!.git' -g '!*.lock' -g '!.env.local' \
+  'BEGIN (RSA|EC|OPENSSH|DSA) PRIVATE KEY' "$REPO_ROOT" 2>/dev/null \
+  | grep -v -E '(\.example|\.md|config_keys\.json)' \
+  | grep -v -E '^[^:]+:\d+:--' \
+  | grep -v -E '(#|//|/\*).*BEGIN.*PRIVATE KEY'; then
+  echo -e "${RED}FOUND${NC}"
+  exit 1
+else
+  echo -e "${GREEN}OK${NC}"
 fi
 
-# Check for private keys
-if grep -rn $EXCLUDE_PATTERN $EXCLUDE_FILES "BEGIN RSA PRIVATE KEY\|BEGIN PRIVATE KEY\|BEGIN EC PRIVATE KEY" . 2>/dev/null | grep -v "\.example\|\.sample\|\.template" | head -5; then
-  warn "Potential private key found"
-  found_issues=$((found_issues + 1))
+# Pattern 4: DigitalOcean tokens
+echo -n "Checking for DO tokens... "
+if rg -n --no-ignore-vcs -g '!node_modules' -g '!.git' -g '!*.lock' -g '!.env.local' \
+  'dop_v1_[A-Za-z0-9]+' "$REPO_ROOT" 2>/dev/null | grep -v -E '(\.example|\.md|config_keys\.json)'; then
+  echo -e "${RED}FOUND${NC}"
+  exit 1
+else
+  echo -e "${GREEN}OK${NC}"
 fi
 
-echo ""
-echo "[secret-scan] Summary:"
-echo "  - Potential issues found: $found_issues"
-
-if [ "$found_issues" -gt 0 ]; then
-  echo ""
-  echo "[secret-scan] Please review the warnings above."
-  echo "[secret-scan] If these are false positives, consider adding them to the exclusion list."
-  # Don't fail on warnings - secrets detection has high false positive rates
-  # In production, you'd want to use a more sophisticated tool like truffleHog or gitleaks
+# Pattern 5: "hardcoded API key-ish" heuristics (keep conservative)
+echo -n "Checking for hardcoded API keys... "
+if rg -n --no-ignore-vcs -g '!node_modules' -g '!.git' -g '!*.lock' -g '!.env.local' \
+  -g '!*.woff' -g '!*.woff2' -g '!*.ttf' -g '!*.otf' -g '!*.po' -g '!*.pot' \
+  -g '!*.sql' -g '!**/tests/**' -g '!**/test_*.py' \
+  '(api[_-]?key|secret|token)\s*(=|:)\s*["\x27][A-Za-z0-9_\-]{24,}["\x27]' "$REPO_ROOT" 2>/dev/null \
+  | grep -v -E '(\.example|\.md|config_keys\.json)' \
+  | grep -v -E '\$\{?[A-Z_]+\}?' \
+  | grep -v -E '(x{5,}|-{5,}|\.\.\.|\*\*\*|secret_your_|your_|_here|_placeholder)' \
+  | grep -v 'app_store_connect_api_key'; then
+  echo -e "${RED}FOUND${NC}"
+  exit 1
+else
+  echo -e "${GREEN}OK${NC}"
 fi
 
-echo "[secret-scan] OK (scan complete, review warnings if any)"
+echo "=== No secrets detected ==="

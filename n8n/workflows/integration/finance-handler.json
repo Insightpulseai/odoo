@@ -1,14 +1,13 @@
 {
-  "name": "IPAI Finance Task Handler",
+  "name": "IPAI Finance Task Event Handler",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
         "path": "finance-handler",
-        "responseMode": "lastNode",
         "options": {}
       },
-      "id": "webhook_trigger",
+      "id": "webhook",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
@@ -17,70 +16,12 @@
     },
     {
       "parameters": {
-        "rules": {
-          "rules": [
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "finance_task.created"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "created"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "finance_task.in_progress"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "in_progress"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "finance_task.submitted"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "submitted"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "finance_task.approved"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "approved"
-            }
-          ]
-        },
-        "options": {
-          "fallbackOutput": "extra"
-        }
+        "jsCode": "const event = $input.item.json;\nconst payload = event.payload || {};\n\nlet message = '';\nlet icon = '';\n\nswitch (event.event_type) {\n  case 'finance_task.created':\n    icon = '📋';\n    message = `**${icon} Finance Task Created**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Period:** ${payload.period_covered || 'N/A'}\\n**Employee:** ${payload.employee_code || 'N/A'}\\n**Prep Deadline:** ${payload.prep_deadline || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.in_progress':\n    icon = '🔄';\n    message = `**${icon} Finance Task In Progress**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Assigned to:** ${payload.assigned_to || 'Unknown'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.submitted':\n    icon = '✅';\n    message = `**${icon} Finance Task Submitted**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Status:** ${payload.status || 'Submitted'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.approved':\n    icon = '✅';\n    message = `**${icon} Finance Task Approved**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Status:** ${payload.status || 'Approved'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.filed':\n    icon = '📄';\n    message = `**${icon} Finance Task Filed**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Filing Deadline:** ${payload.filing_deadline || 'N/A'}\\n\\n✅ Task completed and filed with BIR.\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  case 'finance_task.overdue':\n    icon = '🚨';\n    message = `**${icon} Finance Task OVERDUE**\\n\\n**Task:** ${payload.task_name || 'Unknown'}\\n**BIR Form:** ${payload.bir_form || 'N/A'}\\n**Days overdue:** ${payload.days_overdue || 0}\\n**Filing Deadline:** ${payload.filing_deadline || 'N/A'}\\n**Assigned to:** ${payload.assigned_to || 'Unknown'}\\n\\n**URGENT:** This task is past its deadline!\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.task_id}&model=project.task)`;\n    break;\n    \n  default:\n    icon = 'ℹ️';\n    message = `**${icon} Finance Task Event: ${event.event_type}**\\n\\nUnhandled event type. Raw payload:\\n\`\`\`json\\n${JSON.stringify(payload, null, 2)}\\n\`\`\``;\n}\n\nreturn { json: { message, event_id: event.id } };"
       },
-      "id": "switch_event",
-      "name": "Route by Event",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
+      "id": "format_message",
+      "name": "Format Mattermost Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [450, 300]
     },
     {
@@ -88,176 +29,26 @@
         "method": "POST",
         "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Finance Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":clipboard:"
-            },
-            {
-              "name": "text",
-              "value": "#### :clipboard: Finance Task Created\n**{{ $json.payload.name }}** has been created.\n- Type: {{ $json.payload.finance_task_type }}\n- Project: {{ $json.payload.project_name }}\n- Assigned to: {{ $json.payload.user_name || 'Unassigned' }}\n- Filing deadline: {{ $json.payload.filing_deadline || 'Not set' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.task_id }}&model=project.task&view_type=form)"
-            }
-          ]
-        },
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"text\": $json.message } }}",
         "options": {}
       },
-      "id": "notify_created",
-      "name": "Notify Created",
+      "id": "send_mattermost",
+      "name": "Send to Mattermost",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [700, 100]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Finance Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":hourglass_flowing_sand:"
-            },
-            {
-              "name": "text",
-              "value": "#### :hourglass_flowing_sand: Finance Task In Progress\n**{{ $json.payload.name }}** is now in progress.\n- Type: {{ $json.payload.finance_task_type }}\n- Assigned to: {{ $json.payload.user_name }}\n- Filing deadline: {{ $json.payload.filing_deadline || 'Not set' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.task_id }}&model=project.task&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_in_progress",
-      "name": "Notify In Progress",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 220]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Finance Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":inbox_tray:"
-            },
-            {
-              "name": "text",
-              "value": "#### :inbox_tray: Finance Task Submitted for Review\n**{{ $json.payload.name }}** has been submitted for review.\n- Type: {{ $json.payload.finance_task_type }}\n- Submitted by: {{ $json.payload.user_name }}\n- Filing deadline: {{ $json.payload.filing_deadline || 'Not set' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.task_id }}&model=project.task&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_submitted",
-      "name": "Notify Submitted",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 340]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Finance Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":white_check_mark:"
-            },
-            {
-              "name": "text",
-              "value": "#### :white_check_mark: Finance Task Approved\n**{{ $json.payload.name }}** has been approved.\n- Type: {{ $json.payload.finance_task_type }}\n- Reference: {{ $json.payload.filing_reference || 'N/A' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.task_id }}&model=project.task&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_approved",
-      "name": "Notify Approved",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 460]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Finance Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":warning:"
-            },
-            {
-              "name": "text",
-              "value": "#### :warning: Finance Task Update\n**{{ $json.payload.name }}** - {{ $json.event_type }}\n- Type: {{ $json.payload.finance_task_type }}\n- Stage: {{ $json.payload.stage_name }}\n{{ $json.payload.days_overdue ? '- **OVERDUE by ' + $json.payload.days_overdue + ' days!**' : '' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.task_id }}&model=project.task&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_other",
-      "name": "Notify Other (Filed/Overdue)",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 580]
+      "position": [650, 300]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ success: true, event_type: $('Webhook').item.json.event_type }) }}"
+        "responseBody": "={{ { \"ok\": true, \"event_id\": $json.event_id } }}"
       },
-      "id": "respond_success",
-      "name": "Respond Success",
+      "id": "respond",
+      "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [950, 340]
+      "typeVersion": 1,
+      "position": [850, 300]
     }
   ],
   "connections": {
@@ -265,101 +56,29 @@
       "main": [
         [
           {
-            "node": "Route by Event",
+            "node": "Format Mattermost Message",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Route by Event": {
+    "Format Mattermost Message": {
       "main": [
         [
           {
-            "node": "Notify Created",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify In Progress",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Submitted",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Approved",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Other (Filed/Overdue)",
+            "node": "Send to Mattermost",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Notify Created": {
+    "Send to Mattermost": {
       "main": [
         [
           {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify In Progress": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Submitted": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Approved": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Other (Filed/Overdue)": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
+            "node": "Respond",
             "type": "main",
             "index": 0
           }
@@ -367,11 +86,12 @@
       ]
     }
   },
+  "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": ["integration", "finance", "compliance"],
+  "tags": ["integration", "finance"],
   "triggerCount": 1,
   "updatedAt": "2026-01-22T00:00:00.000Z",
   "versionId": "1"

@@ -1,14 +1,13 @@
 {
-  "name": "IPAI Expense Handler",
+  "name": "IPAI Expense Event Handler",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
         "path": "expense-handler",
-        "responseMode": "lastNode",
         "options": {}
       },
-      "id": "webhook_trigger",
+      "id": "webhook",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
@@ -17,68 +16,12 @@
     },
     {
       "parameters": {
-        "rules": {
-          "rules": [
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "expense.submitted"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "submitted"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "expense.approved"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "approved"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "expense.rejected"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "rejected"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "expense.paid"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "paid"
-            }
-          ]
-        },
-        "options": {}
+        "jsCode": "const event = $input.item.json;\nconst payload = event.payload || {};\n\nlet message = '';\nlet icon = '';\n\nswitch (event.event_type) {\n  case 'expense.submitted':\n    icon = '📝';\n    message = `**${icon} Expense Submitted**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Description:** ${payload.description || 'N/A'}\\n**Date:** ${payload.date || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  case 'expense.approved':\n    icon = '✅';\n    message = `**${icon} Expense Approved**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Approved by:** ${payload.approved_by || 'Unknown'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  case 'expense.rejected':\n    icon = '❌';\n    message = `**${icon} Expense Rejected**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Rejected by:** ${payload.rejected_by || 'Unknown'}\\n**Reason:** ${payload.rejection_reason || 'No reason provided'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  case 'expense.paid':\n    icon = '💰';\n    message = `**${icon} Expense Paid**\\n\\n**Employee:** ${payload.employee_name || 'Unknown'}\\n**Amount:** ${payload.currency || ''} ${payload.amount || 0}\\n**Payment Date:** ${payload.payment_date || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.expense_id}&model=hr.expense)`;\n    break;\n    \n  default:\n    icon = 'ℹ️';\n    message = `**${icon} Expense Event: ${event.event_type}**\\n\\nUnhandled event type. Raw payload:\\n\`\`\`json\\n${JSON.stringify(payload, null, 2)}\\n\`\`\``;\n}\n\nreturn { json: { message, event_id: event.id } };"
       },
-      "id": "switch_event",
-      "name": "Route by Event",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
+      "id": "format_message",
+      "name": "Format Mattermost Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [450, 300]
     },
     {
@@ -86,143 +29,26 @@
         "method": "POST",
         "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Expense Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":receipt:"
-            },
-            {
-              "name": "text",
-              "value": "#### :inbox_tray: Expense Submitted\n**{{ $json.payload.employee_name }}** submitted expense **{{ $json.payload.name }}**\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n- Description: {{ $json.payload.description }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
-            }
-          ]
-        },
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"text\": $json.message } }}",
         "options": {}
       },
-      "id": "notify_submitted",
-      "name": "Notify Submitted",
+      "id": "send_mattermost",
+      "name": "Send to Mattermost",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [700, 150]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Expense Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":white_check_mark:"
-            },
-            {
-              "name": "text",
-              "value": "#### :white_check_mark: Expense Approved\nExpense **{{ $json.payload.name }}** for **{{ $json.payload.employee_name }}** has been approved.\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_approved",
-      "name": "Notify Approved",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 270]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Expense Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":x:"
-            },
-            {
-              "name": "text",
-              "value": "#### :x: Expense Rejected\nExpense **{{ $json.payload.name }}** for **{{ $json.payload.employee_name }}** was rejected.\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n- Reason: {{ $json.payload.rejection_reason || 'No reason provided' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_rejected",
-      "name": "Notify Rejected",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 390]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "finance-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Expense Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":moneybag:"
-            },
-            {
-              "name": "text",
-              "value": "#### :moneybag: Expense Paid\nExpense **{{ $json.payload.name }}** for **{{ $json.payload.employee_name }}** has been paid/posted.\n- Amount: **{{ $json.payload.currency }} {{ $json.payload.total_amount }}**\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.expense_id }}&model=hr.expense&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_paid",
-      "name": "Notify Paid",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 510]
+      "position": [650, 300]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ success: true, event_type: $('Webhook').item.json.event_type }) }}"
+        "responseBody": "={{ { \"ok\": true, \"event_id\": $json.event_id } }}"
       },
-      "id": "respond_success",
-      "name": "Respond Success",
+      "id": "respond",
+      "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [950, 300]
+      "typeVersion": 1,
+      "position": [850, 300]
     }
   ],
   "connections": {
@@ -230,83 +56,29 @@
       "main": [
         [
           {
-            "node": "Route by Event",
+            "node": "Format Mattermost Message",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Route by Event": {
+    "Format Mattermost Message": {
       "main": [
         [
           {
-            "node": "Notify Submitted",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Approved",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Rejected",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Paid",
+            "node": "Send to Mattermost",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Notify Submitted": {
+    "Send to Mattermost": {
       "main": [
         [
           {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Approved": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Rejected": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Paid": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
+            "node": "Respond",
             "type": "main",
             "index": 0
           }
@@ -314,11 +86,12 @@
       ]
     }
   },
+  "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": ["integration", "expense", "finance"],
+  "tags": ["integration", "expense"],
   "triggerCount": 1,
   "updatedAt": "2026-01-22T00:00:00.000Z",
   "versionId": "1"

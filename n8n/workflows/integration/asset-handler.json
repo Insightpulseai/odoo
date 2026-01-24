@@ -1,14 +1,13 @@
 {
-  "name": "IPAI Asset Handler",
+  "name": "IPAI Asset Event Handler",
   "nodes": [
     {
       "parameters": {
         "httpMethod": "POST",
         "path": "asset-handler",
-        "responseMode": "lastNode",
         "options": {}
       },
-      "id": "webhook_trigger",
+      "id": "webhook",
       "name": "Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1.1,
@@ -17,68 +16,12 @@
     },
     {
       "parameters": {
-        "rules": {
-          "rules": [
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "asset.reserved"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "reserved"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "asset.checked_out"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "checked_out"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "asset.checked_in"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "checked_in"
-            },
-            {
-              "conditions": {
-                "string": [
-                  {
-                    "value1": "={{ $json.event_type }}",
-                    "operation": "equals",
-                    "value2": "asset.overdue"
-                  }
-                ]
-              },
-              "renameOutput": true,
-              "outputKey": "overdue"
-            }
-          ]
-        },
-        "options": {}
+        "jsCode": "const event = $input.item.json;\nconst payload = event.payload || {};\n\nlet message = '';\nlet icon = '';\n\nswitch (event.event_type) {\n  case 'asset.reserved':\n    icon = '📅';\n    message = `**${icon} Asset Reserved**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Category:** ${payload.asset_category || 'N/A'}\\n**Reserved by:** ${payload.reserved_by_name || 'Unknown'}\\n**From:** ${payload.reserved_from || 'N/A'}\\n**To:** ${payload.reserved_to || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  case 'asset.checked_out':\n    icon = '📤';\n    message = `**${icon} Asset Checked Out**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Checked out by:** ${payload.checked_out_by || 'Unknown'}\\n**Time:** ${payload.checked_out_at || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  case 'asset.checked_in':\n    icon = '📥';\n    message = `**${icon} Asset Checked In**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Checked in by:** ${payload.checked_in_by || 'Unknown'}\\n**Time:** ${payload.checked_in_at || 'N/A'}\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  case 'asset.overdue':\n    icon = '⚠️';\n    message = `**${icon} Asset Overdue**\\n\\n**Asset:** ${payload.asset_name || 'Unknown'}\\n**Days overdue:** ${payload.days_overdue || 0}\\n**Reserved by:** ${payload.reserved_by_name || 'Unknown'}\\n\\n**Action required:** Please return the asset immediately.\\n\\n[View in Odoo](${$env.ODOO_BASE_URL}/web#id=${payload.asset_id}&model=maintenance.equipment)`;\n    break;\n    \n  default:\n    icon = 'ℹ️';\n    message = `**${icon} Asset Event: ${event.event_type}**\\n\\nUnhandled event type. Raw payload:\\n\`\`\`json\\n${JSON.stringify(payload, null, 2)}\\n\`\`\``;\n}\n\nreturn { json: { message, event_id: event.id } };"
       },
-      "id": "switch_event",
-      "name": "Route by Event",
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3,
+      "id": "format_message",
+      "name": "Format Mattermost Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [450, 300]
     },
     {
@@ -86,143 +29,26 @@
         "method": "POST",
         "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
         "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "operations-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Asset Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":bookmark:"
-            },
-            {
-              "name": "text",
-              "value": "#### :bookmark: Asset Reserved\n**{{ $json.payload.name }}** ({{ $json.payload.serial_no }}) has been reserved.\n- Category: {{ $json.payload.category }}\n- Reserved for: **{{ $json.payload.assigned_employee_name }}**\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.equipment_id }}&model=maintenance.equipment&view_type=form)"
-            }
-          ]
-        },
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"text\": $json.message } }}",
         "options": {}
       },
-      "id": "notify_reserved",
-      "name": "Notify Reserved",
+      "id": "send_mattermost",
+      "name": "Send to Mattermost",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [700, 150]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "operations-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Asset Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":outbox_tray:"
-            },
-            {
-              "name": "text",
-              "value": "#### :outbox_tray: Asset Checked Out\n**{{ $json.payload.name }}** ({{ $json.payload.serial_no }}) checked out.\n- Category: {{ $json.payload.category }}\n- Assigned to: **{{ $json.payload.assigned_employee_name }}**\n- Checkout date: {{ $json.payload.checkout_date }}\n- Expected return: {{ $json.payload.expected_return_date || 'Not specified' }}\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.equipment_id }}&model=maintenance.equipment&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_checked_out",
-      "name": "Notify Checked Out",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 270]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "operations-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Asset Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":inbox_tray:"
-            },
-            {
-              "name": "text",
-              "value": "#### :inbox_tray: Asset Returned\n**{{ $json.payload.name }}** ({{ $json.payload.serial_no }}) has been returned.\n- Category: {{ $json.payload.category }}\n- Asset is now available for use.\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.equipment_id }}&model=maintenance.equipment&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_checked_in",
-      "name": "Notify Checked In",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 390]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
-        "sendBody": true,
-        "bodyParameters": {
-          "parameters": [
-            {
-              "name": "channel",
-              "value": "operations-notifications"
-            },
-            {
-              "name": "username",
-              "value": "Asset Bot"
-            },
-            {
-              "name": "icon_emoji",
-              "value": ":warning:"
-            },
-            {
-              "name": "text",
-              "value": "#### :warning: Asset Overdue\n**{{ $json.payload.name }}** ({{ $json.payload.serial_no }}) is **{{ $json.payload.days_overdue }} days overdue** for return!\n- Category: {{ $json.payload.category }}\n- Assigned to: **{{ $json.payload.assigned_employee_name }}**\n- Expected return: {{ $json.payload.expected_return_date }}\n\nPlease follow up immediately.\n\n[View in Odoo]({{ $env.ODOO_BASE_URL }}/web#id={{ $json.payload.equipment_id }}&model=maintenance.equipment&view_type=form)"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "notify_overdue",
-      "name": "Notify Overdue",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [700, 510]
+      "position": [650, 300]
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ JSON.stringify({ success: true, event_type: $('Webhook').item.json.event_type }) }}"
+        "responseBody": "={{ { \"ok\": true, \"event_id\": $json.event_id } }}"
       },
-      "id": "respond_success",
-      "name": "Respond Success",
+      "id": "respond",
+      "name": "Respond",
       "type": "n8n-nodes-base.respondToWebhook",
-      "typeVersion": 1.1,
-      "position": [950, 300]
+      "typeVersion": 1,
+      "position": [850, 300]
     }
   ],
   "connections": {
@@ -230,83 +56,29 @@
       "main": [
         [
           {
-            "node": "Route by Event",
+            "node": "Format Mattermost Message",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Route by Event": {
+    "Format Mattermost Message": {
       "main": [
         [
           {
-            "node": "Notify Reserved",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Checked Out",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Checked In",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Notify Overdue",
+            "node": "Send to Mattermost",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Notify Reserved": {
+    "Send to Mattermost": {
       "main": [
         [
           {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Checked Out": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Checked In": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Notify Overdue": {
-      "main": [
-        [
-          {
-            "node": "Respond Success",
+            "node": "Respond",
             "type": "main",
             "index": 0
           }
@@ -314,11 +86,12 @@
       ]
     }
   },
+  "pinData": {},
   "settings": {
     "executionOrder": "v1"
   },
   "staticData": null,
-  "tags": ["integration", "asset", "operations"],
+  "tags": ["integration", "asset"],
   "triggerCount": 1,
   "updatedAt": "2026-01-22T00:00:00.000Z",
   "versionId": "1"
