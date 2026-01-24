@@ -1,0 +1,229 @@
+name: Lakehouse Control Room Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "contracts/**"
+      - "supabase/migrations/**"
+      - "spec/lakehouse-control-room/**"
+      - "ops/backlog/**"
+      - "scripts/validate-openapi.mjs"
+      - "scripts/check-*.sh"
+      - ".github/workflows/lakehouse-control-room-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "contracts/**"
+      - "supabase/migrations/**"
+      - "spec/lakehouse-control-room/**"
+      - "ops/backlog/**"
+
+concurrency:
+  group: lakehouse-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Contracts & Specs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install ripgrep
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep
+
+      - name: Validate OpenAPI Contract
+        run: |
+          node scripts/validate-openapi.mjs contracts/lakehouse-executor.openapi.yaml
+
+      - name: Lint Supabase Migrations
+        run: |
+          chmod +x scripts/check-supabase-migrations.sh
+          bash scripts/check-supabase-migrations.sh
+
+      - name: Validate Spec Bundle
+        run: |
+          chmod +x scripts/check-spec-kit.sh
+          bash scripts/check-spec-kit.sh
+
+      - name: Check Token Generation (if applicable)
+        run: |
+          chmod +x scripts/check-generated-tokens.sh
+          bash scripts/check-generated-tokens.sh
+        continue-on-error: true
+
+      - name: Secret Scan
+        run: |
+          chmod +x scripts/secret-scan.sh
+          bash scripts/secret-scan.sh
+
+      - name: Validate Backlog YAML
+        run: |
+          # Check backlog YAML exists and is valid
+          if [ -f ops/backlog/control-room-lakehouse-backlog.yaml ]; then
+            echo "Backlog YAML found"
+            # Basic YAML validation using Python
+            python3 -c "
+          import yaml
+          import sys
+          try:
+              with open('ops/backlog/control-room-lakehouse-backlog.yaml', 'r') as f:
+                  data = yaml.safe_load(f)
+              if 'version' not in data:
+                  print('Missing version field')
+                  sys.exit(1)
+              if 'epics' not in data:
+                  print('Missing epics field')
+                  sys.exit(1)
+              print(f'Valid backlog with {len(data.get(\"epics\", []))} epics')
+          except Exception as e:
+              print(f'YAML validation error: {e}')
+              sys.exit(1)
+          "
+          else
+            echo "No backlog YAML found (optional)"
+          fi
+
+      - name: Generate Gate Summary
+        if: always()
+        run: |
+          echo "## Lakehouse Control Room Gate Summary" > /tmp/gate_summary.md
+          echo "" >> /tmp/gate_summary.md
+          echo "| Check | Status |" >> /tmp/gate_summary.md
+          echo "|-------|--------|" >> /tmp/gate_summary.md
+
+          # OpenAPI check
+          if node scripts/validate-openapi.mjs contracts/lakehouse-executor.openapi.yaml 2>/dev/null; then
+            echo "| OpenAPI Contract | :white_check_mark: Pass |" >> /tmp/gate_summary.md
+          else
+            echo "| OpenAPI Contract | :x: Fail |" >> /tmp/gate_summary.md
+          fi
+
+          # Migrations check
+          if bash scripts/check-supabase-migrations.sh 2>/dev/null; then
+            echo "| Supabase Migrations | :white_check_mark: Pass |" >> /tmp/gate_summary.md
+          else
+            echo "| Supabase Migrations | :x: Fail |" >> /tmp/gate_summary.md
+          fi
+
+          # Spec bundle check
+          if bash scripts/check-spec-kit.sh 2>/dev/null; then
+            echo "| Spec Bundle | :white_check_mark: Pass |" >> /tmp/gate_summary.md
+          else
+            echo "| Spec Bundle | :x: Fail |" >> /tmp/gate_summary.md
+          fi
+
+          echo "" >> /tmp/gate_summary.md
+          echo "### Files Changed" >> /tmp/gate_summary.md
+          echo "\`\`\`" >> /tmp/gate_summary.md
+          git diff --name-only origin/main...HEAD 2>/dev/null | head -20 || echo "Unable to determine changed files"
+          echo "\`\`\`" >> /tmp/gate_summary.md
+
+          cat /tmp/gate_summary.md
+
+      - name: Comment PR Summary
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '/tmp/gate_summary.md';
+            let body = 'Gate summary not generated.';
+            if (fs.existsSync(path)) {
+              body = fs.readFileSync(path, 'utf8');
+            }
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            // Marker for upsert
+            const marker = '<!-- LAKEHOUSE_CONTROL_ROOM_GATE -->';
+            const full = `${marker}\n${body}`;
+
+            try {
+              const comments = await github.rest.issues.listComments({
+                owner, repo, issue_number, per_page: 100
+              });
+
+              const existing = comments.data.find(c => (c.body || '').includes(marker));
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner, repo, comment_id: existing.id, body: full
+                });
+              } else {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number, body: full
+                });
+              }
+            } catch (e) {
+              console.log('Could not post PR comment:', e.message);
+            }
+
+  schema-diff:
+    name: Schema Drift Check
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for Schema Changes
+        run: |
+          echo "Checking for schema changes in migrations..."
+
+          # Get changed migration files
+          changed_migrations=$(git diff --name-only origin/main...HEAD -- 'supabase/migrations/*.sql' 2>/dev/null || echo "")
+
+          if [ -n "$changed_migrations" ]; then
+            echo "Changed migrations:"
+            echo "$changed_migrations"
+
+            echo ""
+            echo "Schema diff:"
+            for f in $changed_migrations; do
+              if [ -f "$f" ]; then
+                echo "=== $f ==="
+                head -50 "$f"
+                echo "..."
+              fi
+            done
+          else
+            echo "No migration changes detected"
+          fi
+
+      - name: Check Contract Changes
+        run: |
+          echo "Checking for contract changes..."
+
+          changed_contracts=$(git diff --name-only origin/main...HEAD -- 'contracts/*.yaml' 'contracts/*.yml' 2>/dev/null || echo "")
+
+          if [ -n "$changed_contracts" ]; then
+            echo "Changed contracts:"
+            echo "$changed_contracts"
+
+            echo ""
+            echo "Contract diff summary:"
+            git diff origin/main...HEAD -- 'contracts/*.yaml' 'contracts/*.yml' --stat 2>/dev/null || true
+          else
+            echo "No contract changes detected"
+          fi
