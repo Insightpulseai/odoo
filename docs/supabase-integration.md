@@ -150,9 +150,97 @@ serve(async (req) => {
 | Mattermost | $10/user/mo | $0 |
 | **Total** | $55-620/mo | **$155/mo** |
 
+## Branching (Preview Environments)
+
+Supabase Branching creates isolated preview environments for each git branch, enabling safe testing of database migrations and Edge Functions before deploying to production.
+
+### How It Works
+
+1. **Create branch**: Push to `feature/*`, `claude/*`, or `fix/*` branches
+2. **Preview created**: Supabase automatically creates an isolated environment
+3. **Test changes**: Each preview has its own database, Auth, and Edge Functions
+4. **Merge to main**: Changes deploy to production automatically
+5. **Cleanup**: Preview branch is deleted after PR merge
+
+### Branch Architecture
+
+```
+main (Production)
+├── feature/add-new-api     → Preview: feature-add-new-api.supabase.co
+├── claude/fix-auth-issue   → Preview: claude-fix-auth-issue.supabase.co
+└── fix/migration-rollback  → Preview: fix-migration-rollback.supabase.co
+```
+
+### Environment Variables for Preview
+
+When working with a preview branch, update environment variables:
+
+```bash
+# Production
+SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
+
+# Preview branch (example)
+SUPABASE_URL=https://preview-abc123.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://preview-abc123.supabase.co
+```
+
+### Seed Data
+
+Preview branches are seeded automatically using `supabase/seed.sql`:
+- Core tenants, roles, and users
+- ERP integration demo data
+- AI agent configurations
+- Sample finance data (expenses, budgets, approvals)
+
+### Workflow Configuration
+
+See `.github/workflows/supabase-branching.yml` for the complete CI/CD pipeline:
+- Validates migrations before applying
+- Deploys Edge Functions to preview
+- Posts preview URLs to PR comments
+- Cleans up branches on merge
+
+### Manual Branch Operations
+
+```bash
+# List branches
+supabase branches list
+
+# Create branch manually
+supabase branches create my-feature
+
+# Delete branch
+supabase branches delete my-feature --confirm
+
+# Reset branch (re-apply migrations + seed)
+supabase db reset
+```
+
+### Prerequisites
+
+1. **Enable GitHub Integration**: Dashboard > Project Settings > Integrations
+2. **Enable Branching**: Dashboard > Project Settings > Branching
+3. **Configure Secrets**: `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`
+
+### Limitations
+
+- Preview branches don't include production data (by design)
+- Custom database roles created via dashboard aren't captured
+- Branches can only merge to main (not between previews)
+- Iteration field values require manual UI setup (GitHub API limitation)
+
+### Pricing
+
+Preview branches are billed per hour of compute usage:
+- Micro Compute: ~$0.01344/hour ($10/month if always running)
+- Preview branches auto-pause after 7 days of inactivity
+- Usage counts toward subscription quota
+
 ## Related Documentation
 
 - [Supabase Docs](https://supabase.com/docs)
+- [Supabase Branching](https://supabase.com/docs/guides/deployment/branching)
 - [Migrations](../supabase/migrations/)
 - [Control Room API](../apps/control-room/)
 - [n8n Workflows](../workflows/n8n/)
