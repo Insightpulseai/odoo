@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 348340c7e93e7e7f90b4465dde8cfd9be727aae5
+> Commit: 32a04a91e141c92f0239036883434929ce537e3b
 
 ```
 .
@@ -66,6 +66,7 @@
 │   │   ├── ai-naming-gate.yml
 │   │   ├── aiux-ship-gate.yml
 │   │   ├── all-green-gates.yml
+│   │   ├── architecture-diagrams.yml
 │   │   ├── audit-contract.yml
 │   │   ├── auth-email-ai-gate.yml
 │   │   ├── auto-sitemap-tree.yml
@@ -79,7 +80,9 @@
 │   │   ├── compose-topology-guard.yml
 │   │   ├── config-publish.yml
 │   │   ├── control-room-ci.yml
+│   │   ├── cursor-bugbot.yml
 │   │   ├── databricks-dab-ci.yml
+│   │   ├── deploy-do-oca.yml
 │   │   ├── deploy-finance-ppm.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-odoo-prod.yml
@@ -1003,6 +1006,16 @@
 │       ├── postcss.config.js
 │       ├── tailwind.config.js
 │       └── tsconfig.json
+├── architecture-review
+│   ├── baseline
+│   │   └── azure_architecture_review_structure.md
+│   ├── framework
+│   │   ├── evidence_index.yaml
+│   │   └── scoring_model.yaml
+│   ├── templates
+│   │   ├── assessment_report.md
+│   │   └── risk_register.md
+│   └── README.md
 ├── archive
 │   ├── addons
 │   │   ├── ipai_accounting_firm_pack
@@ -1416,7 +1429,9 @@
 │   │   ├── 202601160001_VERIFIED_MEMORY.sql
 │   │   ├── 20260119_agent_memory_schema.sql
 │   │   ├── 20260120_agent_coordination_schema.sql
-│   │   └── 20260121_observability_schema.sql
+│   │   ├── 20260121_observability_schema.sql
+│   │   ├── 20260124_code_intelligence_schema.sql
+│   │   └── 20260124_ops_control_plane.sql
 │   ├── process_mining
 │   │   ├── 001_pm_schema.sql
 │   │   └── 010_p2p_etl.sql
@@ -1484,6 +1499,8 @@
 │   │   ├── catalog
 │   │   │   ├── COPILOT_TOOLS_SCHEMA.md
 │   │   │   └── copilot_tools.openapi.json
+│   │   ├── exports
+│   │   │   └── README.md
 │   │   ├── runtime_snapshot
 │   │   │   ├── 20260108_013846
 │   │   │   └── README.md
@@ -1491,6 +1508,8 @@
 │   │   ├── AI_MODULE_DEPRECATION_MANIFEST.md
 │   │   ├── ASK_AI_CONTRACT.md
 │   │   ├── AUTH_MODEL.md
+│   │   ├── CURSOR_ECOSYSTEM_CAPABILITIES.md
+│   │   ├── EXT_AGENT_TOOL_CAPABILITIES.md
 │   │   ├── INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md
 │   │   ├── IPAI_AI_PLATFORM_ARCH.md
 │   │   ├── IPAI_AI_PLATFORM_ERD.dbml
@@ -1662,6 +1681,21 @@
 │   │   ├── STACK_RELATIONSHIPS.md
 │   │   ├── SUPABASE_STACK.md
 │   │   └── VERCEL_STACK.md
+│   ├── llms
+│   │   └── external
+│   │       ├── ai_sdk_dev__FETCH_FAILED.txt
+│   │       ├── anthropic_docs__FETCH_FAILED.txt
+│   │       ├── digitalocean_docs__FETCH_FAILED.txt
+│   │       ├── github_docs__FETCH_FAILED.txt
+│   │       ├── google_jules__FETCH_FAILED.txt
+│   │       ├── microsoft_learn__FETCH_FAILED.txt
+│   │       ├── n8n_docs__FETCH_FAILED.txt
+│   │       ├── oca_odoo_community__FETCH_FAILED.txt
+│   │       ├── odoo_docs_18__FETCH_FAILED.txt
+│   │       ├── sap_help__FETCH_FAILED.txt
+│   │       ├── supabase_docs__FETCH_FAILED.txt
+│   │       ├── vercel_ai_sdk__FETCH_FAILED.txt
+│   │       └── vercel_docs__FETCH_FAILED.txt
 │   ├── mailgun
 │   │   ├── INBOUND_EMAIL_ROUTES.md
 │   │   ├── ODOO_SMTP_SETUP.md
@@ -1860,6 +1894,14 @@
 │   │   ├── IPAI_SHIP_PRD_ODOO18_AIUX.md
 │   │   ├── ODOO18_DO_FRESH_REDEPLOY.md
 │   │   └── aiux_ship_end_state.v1.1.0.json
+│   ├── prompts
+│   │   ├── openai-academy
+│   │   │   ├── PROMPT_PACKS_CRAWL_AND_CURATE.md
+│   │   │   ├── README.md
+│   │   │   ├── prompt_library.md
+│   │   │   ├── prompt_pack_gap_report.md
+│   │   │   └── prompt_packs_raw.json
+│   │   └── DUMP_REVIEW_TO_STACK_UPGRADES.md
 │   ├── proofs
 │   │   └── PROD_DEPLOY_PROOF_SCHEMA.json
 │   ├── rationalization
@@ -1884,8 +1926,10 @@
 │   │   │   ├── GO_LIVE_MANIFEST.md
 │   │   │   ├── WHAT_SHIPPED.json
 │   │   │   └── WHAT_SHIPPED.md
+│   │   ├── GO_LIVE_CHECKLIST_TEMPLATE.md
 │   │   ├── GO_LIVE_MANIFEST.md
 │   │   ├── GO_LIVE_MANIFEST_prod-20260109-2219.md
+│   │   ├── GO_LIVE_WELL_ARCHITECTED_TEMPLATE.md
 │   │   ├── LATEST.json
 │   │   ├── LATEST.md
 │   │   ├── TBWA_FINOPS_INVITE_EMAIL.md
@@ -2117,6 +2161,7 @@
 │   ├── WORKOS_DEPLOYMENT_MANIFEST.md
 │   ├── ZOHO_DNS_SETUP.md
 │   ├── branch-cleanup-analysis.md
+│   ├── llms-full.txt
 │   ├── llms.txt
 │   ├── notion-odoo-substitute-catalog.md
 │   ├── oca_project_modules_18.csv
@@ -2216,6 +2261,19 @@
 │   │   └── databricks.yml
 │   ├── dns
 │   │   └── mailgun_dns_records.md
+│   ├── do-oca-stack
+│   │   ├── config
+│   │   │   ├── Caddyfile
+│   │   │   └── odoo.conf
+│   │   ├── scripts
+│   │   │   ├── backup-do-spaces.sh
+│   │   │   ├── oca-rollback.sh
+│   │   │   └── oca-verify.sh
+│   │   ├── Makefile
+│   │   ├── README.md
+│   │   ├── docker-compose.caddy.yml
+│   │   ├── docker-compose.yml
+│   │   └── oca-requirements.txt
 │   ├── docker
 │   │   ├── DOCKER_DESKTOP_SSOT.yaml
 │   │   ├── DOCKER_STAGING_SSOT.yaml
@@ -2424,6 +2482,11 @@
 │   └── agentic-cloud.yaml
 ├── n8n
 │   ├── workflows
+│   │   ├── control-plane
+│   │   │   ├── README.md
+│   │   │   ├── backup-scheduler.json
+│   │   │   ├── deploy-trigger.json
+│   │   │   └── health-check-scheduler.json
 │   │   ├── integration
 │   │   │   └── event-router.json
 │   │   ├── .gitkeep
@@ -2807,6 +2870,8 @@
 │   │   ├── export_figma_contract.ts
 │   │   └── validate_contract.sh
 │   ├── docs
+│   │   ├── build_llms_full.sh
+│   │   ├── fetch_external_llms_packs.sh
 │   │   └── sync_readme_current_state.py
 │   ├── drive_sync
 │   │   ├── lib
@@ -2995,7 +3060,9 @@
 │   ├── erd_dot.sql
 │   ├── erp_config_cli.sh
 │   ├── execute_rationalization.sh
+│   ├── export_architecture_diagrams.sh
 │   ├── export_todo_seed.py
+│   ├── extract_openai_academy_prompt_packs.py
 │   ├── extract_remote_data.py
 │   ├── finance_ppm_health_check.sh
 │   ├── finance_ppm_health_check.sql
@@ -3054,7 +3121,9 @@
 │   ├── ipai_quality_gate.sh
 │   ├── map_logframe.py
 │   ├── module_audit_agent.py
+│   ├── n8n-gitops.sh
 │   ├── new_conversation_entry.sh
+│   ├── new_go_live_checklist.sh
 │   ├── notify_slack.sh
 │   ├── oca-bootstrap.sh
 │   ├── oca-sync.sh
@@ -3143,6 +3212,7 @@
 │   ├── validate_spec_kit.py
 │   ├── vercel_promote_previous.sh
 │   ├── verify-addon-permissions.sh
+│   ├── verify-control-plane.sh
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
 │   ├── verify.sh
@@ -3904,6 +3974,7 @@
 │   ├── n8n_ocr_expense_webhook.json
 │   └── n8n_scout_sync_webhook.json
 ├── .agentignore
+├── .cursorignore
 ├── .env.example
 ├── .env.production
 ├── .env.smtp.example
@@ -4055,15 +4126,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1062 directories, 2988 files
+1075 directories, 3046 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1252 |
-| Files | 3914 |
-| Python files | 613 |
+| Directories | 1265 |
+| Files | 3972 |
+| Python files | 614 |
 | XML files | 253 |
-| Markdown files | 1019 |
+| Markdown files | 1035 |

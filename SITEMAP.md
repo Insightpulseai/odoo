@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 348340c7e93e7e7f90b4465dde8cfd9be727aae5
+> Commit: 32a04a91e141c92f0239036883434929ce537e3b
 
 ## 📚 Documentation
 
@@ -161,6 +161,10 @@
 | [odoo-developer-agent](apps/odoo-developer-agent/APP.md) | apps/odoo-developer-agent |
 | [odoo-saas-platform](apps/odoo-saas-platform/APP.md) | apps/odoo-saas-platform |
 | [superset-analytics](apps/superset-analytics/APP.md) | apps/superset-analytics |
+| [Architecture Review Kit](architecture-review/README.md) | architecture-review |
+| [Azure Architecture Review - Baseline Structure](architecture-review/baseline/azure_architecture_review_structure.md) | architecture-review/baseline |
+| [Architecture Review Report](architecture-review/templates/assessment_report.md) | architecture-review/templates |
+| [Architecture Risk Register](architecture-review/templates/risk_register.md) | architecture-review/templates |
 | [AP Aging Month-End Close Automation - Implementation Summary](archive/addons/ipai_finance_ap_aging/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_ap_aging |
 | [Finance Controller Dashboard - Implementation Summary](archive/addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_controller_dashboard |
 | [IPAI Intelligent Document Processing (IDP)](archive/addons/ipai_idp/README.md) | archive/addons/ipai_idp |
@@ -350,6 +354,8 @@
 | [AI Module Deprecation Manifest](docs/architecture/AI_MODULE_DEPRECATION_MANIFEST.md) | docs/architecture |
 | [Ask AI Contract](docs/architecture/ASK_AI_CONTRACT.md) | docs/architecture |
 | [Authentication & Authorization Model](docs/architecture/AUTH_MODEL.md) | docs/architecture |
+| [Cursor Ecosystem Capabilities (Bugbot + Composer + Codebase Indexing)](docs/architecture/CURSOR_ECOSYSTEM_CAPABILITIES.md) | docs/architecture |
+| [External Agent/Tool Capabilities (Stack Fit)](docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md) | docs/architecture |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
@@ -362,6 +368,7 @@
 | [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
+| [Architecture Diagram Exports](docs/architecture/exports/README.md) | docs/architecture/exports |
 | [InsightPulse AI - Multi-Tenant ERP SaaS Architecture](docs/architecture/multi_tenant_architecture.md) | docs/architecture |
 | [Prod Runtime Snapshot (20260108_013846)](docs/architecture/runtime_snapshot/20260108_013846/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture/runtime_snapshot/20260108_013846 |
 | [Runtime Snapshots](docs/architecture/runtime_snapshot/README.md) | docs/architecture/runtime_snapshot |
@@ -647,12 +654,19 @@
 | [IPAI AIUX Ship PRD v1.1.0 (Complete, Production)](docs/prd/AIUX_SHIP_PRD_v1.1.0.md) | docs/prd |
 | [IPAI AIUX Ship Bundle PRD](docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md) | docs/prd |
 | [Odoo 18 CE Fresh Redeploy PRD](docs/prd/ODOO18_DO_FRESH_REDEPLOY.md) | docs/prd |
+| [Dump Review → Stack Upgrades Prompt](docs/prompts/DUMP_REVIEW_TO_STACK_UPGRADES.md) | docs/prompts |
+| [OpenAI Academy Prompt Packs: Crawl and Curate](docs/prompts/openai-academy/PROMPT_PACKS_CRAWL_AND_CURATE.md) | docs/prompts/openai-academy |
+| [OpenAI Academy Prompt Packs](docs/prompts/openai-academy/README.md) | docs/prompts/openai-academy |
+| [OpenAI Academy Prompt Library](docs/prompts/openai-academy/prompt_library.md) | docs/prompts/openai-academy |
+| [OpenAI Academy Prompt Pack Gap Report](docs/prompts/openai-academy/prompt_pack_gap_report.md) | docs/prompts/openai-academy |
 | [Odoo Module Rationalization - Execution Checklist](docs/rationalization/EXECUTION_CHECKLIST.md) | docs/rationalization |
 | [Odoo Module Rationalization System](docs/rationalization/README.md) | docs/rationalization |
 | [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
 | [Deployment Proofs: prod-20260109-2219](docs/releases/DEPLOYMENT_PROOFS/prod-20260109-2219/README.md) | docs/releases/DEPLOYMENT_PROOFS/prod-20260109-2219 |
+| [Go-Live Checklist Template](docs/releases/GO_LIVE_CHECKLIST_TEMPLATE.md) | docs/releases |
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
 | [Go-Live Manifest: prod-20260109-2219](docs/releases/GO_LIVE_MANIFEST_prod-20260109-2219.md) | docs/releases |
+| [Go-Live Checklist Template (Well-Architected)](docs/releases/GO_LIVE_WELL_ARCHITECTED_TEMPLATE.md) | docs/releases |
 | [Latest Release: prod-20260109-1642](docs/releases/LATEST.md) | docs/releases |
 | [TBWA Finance Ops Pilot – Invitation Email Template](docs/releases/TBWA_FINOPS_INVITE_EMAIL.md) | docs/releases |
 | [TBWA Finance Ops Pilot – Go-Live Runbook v1](docs/releases/TBWA_FINOPS_V1_RUNBOOK.md) | docs/releases |
@@ -712,6 +726,7 @@
 | [AI Provider Router](infra/ai/provider_router/README.md) | infra/ai/provider_router |
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
 | [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
+| [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
 | [Preset.io Parity Roadmap](infra/superset/PRESET_PARITY_ROADMAP.md) | infra/superset |
@@ -731,6 +746,7 @@
 | [MCP Jobs Service – PRD](mcp/servers/mcp-jobs/spec/mcp-jobs/prd.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [MCP Jobs Service – Tasks](mcp/servers/mcp-jobs/spec/mcp-jobs/tasks.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [Odoo ERP MCP Server](mcp/servers/odoo-erp-server/README.md) | mcp/servers/odoo-erp-server |
+| [Control Plane Workflows](n8n/workflows/control-plane/README.md) | n8n/workflows/control-plane |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
 | [n8n Finance Automation - Deployment Status](notion-n8n-monthly-close/DEPLOYMENT_STATUS.md) | notion-n8n-monthly-close |
 | [Deployment Summary - 2025-11-21](notion-n8n-monthly-close/DEPLOYMENT_SUMMARY.md) | notion-n8n-monthly-close |
