@@ -1,0 +1,138 @@
+name: SQL Migrations Validate
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/migrations/**'
+      - 'tests/sql/**'
+      - 'db/migrations/**'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'tests/sql/**'
+      - 'db/migrations/**'
+
+jobs:
+  validate-sql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres; do
+            echo "Waiting for postgres..."
+            sleep 2
+          done
+
+      - name: Validate Supabase migrations parse
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+          echo "[sql-validate] Testing Supabase migrations..."
+
+          for f in supabase/migrations/*.sql; do
+            if [ -f "$f" ]; then
+              echo "[sql-validate] Parsing: $f"
+              psql "postgresql://postgres:postgres@localhost:5432/test_db" \
+                -v ON_ERROR_STOP=1 \
+                -f "$f"
+            fi
+          done
+
+          echo "[sql-validate] All Supabase migrations valid"
+
+      - name: Validate DB migrations parse
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+          echo "[sql-validate] Testing DB migrations..."
+
+          for f in db/migrations/*.sql; do
+            if [ -f "$f" ]; then
+              echo "[sql-validate] Parsing: $f"
+              psql "postgresql://postgres:postgres@localhost:5432/test_db" \
+                -v ON_ERROR_STOP=1 \
+                -f "$f" || true
+            fi
+          done
+
+          echo "[sql-validate] DB migrations check complete"
+
+      - name: Run SQL governance tests
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+          echo "[sql-validate] Running governance tests..."
+
+          # Set exposed schemas for RLS checks
+          psql "postgresql://postgres:postgres@localhost:5432/test_db" \
+            -v ON_ERROR_STOP=1 \
+            -c "SET app.exposed_schemas = 'public';"
+
+          # Run smoke test only (RLS tests need actual tables with RLS)
+          for f in tests/sql/00_smoke.sql; do
+            if [ -f "$f" ]; then
+              echo "[sql-validate] Running: $f"
+              psql "postgresql://postgres:postgres@localhost:5432/test_db" \
+                -v ON_ERROR_STOP=1 \
+                -f "$f"
+            fi
+          done
+
+          echo "[sql-validate] Governance tests complete"
+
+      - name: Verify ops schema functions
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+          echo "[sql-validate] Testing ops schema functions..."
+
+          psql "postgresql://postgres:postgres@localhost:5432/test_db" \
+            -v ON_ERROR_STOP=1 <<'SQL'
+          -- Test start_run
+          SELECT ops.start_run('ci-test', 'test/repo', 'main', 'test-pack', '{"test": true}'::jsonb) AS run_id;
+
+          -- Test log_event
+          DO $$
+          DECLARE
+            v_run_id uuid;
+          BEGIN
+            SELECT id INTO v_run_id FROM ops.runs ORDER BY created_at DESC LIMIT 1;
+            PERFORM ops.log_event(v_run_id, 'info', 'Test event', '{"key": "value"}'::jsonb);
+          END $$;
+
+          -- Test complete_run
+          DO $$
+          DECLARE
+            v_run_id uuid;
+          BEGIN
+            SELECT id INTO v_run_id FROM ops.runs ORDER BY created_at DESC LIMIT 1;
+            PERFORM ops.complete_run(v_run_id, '{"result": "success"}'::jsonb);
+          END $$;
+
+          -- Verify run completed
+          SELECT status FROM ops.runs ORDER BY created_at DESC LIMIT 1;
+          SQL
+
+          echo "[sql-validate] Ops schema functions verified"

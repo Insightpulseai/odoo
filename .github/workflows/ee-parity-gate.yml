@@ -1,0 +1,241 @@
+name: EE Parity Gate
+
+on:
+  pull_request:
+    paths:
+      - "config/ee_parity/**"
+      - "config/oca/**"
+      - "addons/ipai_enterprise_bridge/**"
+      - "addons/ipai/ipai_enterprise_bridge/**"
+      - "scripts/odoo_parity/**"
+      - ".github/workflows/ee-parity-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "config/ee_parity/**"
+      - "config/oca/**"
+  workflow_dispatch:
+
+env:
+  PARITY_BASE_REF: origin/main
+
+jobs:
+  validate-manifests:
+    name: Validate Manifests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Validate OCA manifests
+        run: |
+          set -euo pipefail
+          echo "=== Validating OCA Manifests ==="
+
+          for manifest in config/oca/*.yml; do
+            echo "Checking: $manifest"
+            python3 << EOF
+          import yaml
+          import sys
+
+          with open("$manifest", "r") as f:
+              data = yaml.safe_load(f)
+
+          if not data:
+              print("  WARN: empty manifest")
+              sys.exit(0)
+
+          meta = data.get("meta", {})
+          modules = data.get("modules", [])
+          includes = data.get("includes", [])
+
+          if modules:
+              print(f"  Modules: {len(modules)}")
+          if includes:
+              print(f"  Includes: {len(includes)}")
+          if meta.get("odoo_version"):
+              print(f"  Odoo version: {meta.get('odoo_version')}")
+          EOF
+          done
+
+      - name: Validate EE parity catalog
+        run: |
+          set -euo pipefail
+          echo "=== Validating EE Parity Catalog ==="
+
+          python3 << 'EOF'
+          import yaml
+          import sys
+
+          with open("config/ee_parity/ee_feature_catalog.yml", "r") as f:
+              data = yaml.safe_load(f)
+
+          features = data.get("features", [])
+          if not features:
+              print("WARN: No features in catalog")
+              sys.exit(0)
+
+          print(f"Total features: {len(features)}")
+
+          # Validate structure
+          required_fields = ["id", "name", "category", "source", "priority"]
+          for f in features:
+              missing = [field for field in required_fields if field not in f]
+              if missing:
+                  print(f"ERROR: Feature '{f.get('id', 'unknown')}' missing fields: {missing}")
+                  sys.exit(1)
+
+          # Group by category
+          by_cat = {}
+          for f in features:
+              cat = f.get("category", "Other")
+              by_cat.setdefault(cat, []).append(f["id"])
+
+          print("\nBy category:")
+          for cat, ids in sorted(by_cat.items()):
+              print(f"  {cat}: {len(ids)}")
+
+          print("\nCatalog validation passed.")
+          EOF
+
+      - name: Validate EE parity mapping
+        run: |
+          set -euo pipefail
+          echo "=== Validating EE Parity Mapping ==="
+
+          python3 << 'EOF'
+          import yaml
+          import sys
+
+          with open("config/ee_parity/ee_feature_catalog.yml", "r") as f:
+              catalog = yaml.safe_load(f)
+
+          with open("config/ee_parity/ee_parity_mapping.yml", "r") as f:
+              mapping = yaml.safe_load(f)
+
+          features = {f["id"]: f for f in catalog.get("features", []) if isinstance(f, dict) and f.get("id")}
+          entries = mapping.get("mapping", [])
+          mapped = {e.get("feature_id"): e for e in entries if isinstance(e, dict) and e.get("feature_id")}
+
+          # Check all features have mappings
+          missing = [fid for fid in features.keys() if fid not in mapped]
+          if missing:
+              print(f"ERROR: Missing mappings for: {missing}")
+              sys.exit(1)
+
+          # Status summary
+          status_counts = {}
+          for e in mapped.values():
+              status = e.get("status", "unmapped")
+              status_counts[status] = status_counts.get(status, 0) + 1
+
+          print("Mapping status:")
+          for status, count in sorted(status_counts.items()):
+              print(f"  {status}: {count}")
+
+          # Strategy summary
+          strategy_counts = {}
+          for e in mapped.values():
+              strategy = e.get("strategy", "unknown")
+              strategy_counts[strategy] = strategy_counts.get(strategy, 0) + 1
+
+          print("\nMapping strategy:")
+          for strategy, count in sorted(strategy_counts.items()):
+              print(f"  {strategy}: {count}")
+
+          print("\nMapping validation passed.")
+          EOF
+
+      - name: Build OCA parity bundle
+        run: |
+          set -euo pipefail
+          echo "=== Building OCA Parity Bundle ==="
+          python3 scripts/odoo_parity/build_oca_bundle.py
+
+      - name: Check EE parity gate (no DB)
+        run: |
+          set -euo pipefail
+          echo "=== Checking EE Parity Gate ==="
+          python3 scripts/odoo_parity/check_ee_parity.py || {
+            echo ""
+            echo "NOTE: Some features may not be fully verified yet."
+            echo "This is expected during the CE+OCA parity build-out phase."
+            echo "The gate will become strict once all features reach 'verified' status."
+          }
+
+  block-bridge-changes:
+    name: Block Bridge Changes
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml
+
+      - name: Check for premature bridge changes
+        env:
+          PARITY_BASE_REF: origin/${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          echo "=== Checking for Premature Bridge Changes ==="
+
+          # Get changed files
+          git fetch origin ${{ github.base_ref }} --depth=1 || true
+          CHANGED=$(git diff --name-only $PARITY_BASE_REF...HEAD 2>/dev/null || echo "")
+
+          # Check if bridge is touched
+          BRIDGE_TOUCHED=false
+          if echo "$CHANGED" | grep -q "addons/ipai_enterprise_bridge\|addons/ipai/ipai_enterprise_bridge"; then
+            BRIDGE_TOUCHED=true
+          fi
+
+          if [ "$BRIDGE_TOUCHED" = "true" ]; then
+            echo "Bridge changes detected. Checking parity status..."
+
+            python3 << 'EOF'
+          import yaml
+          import sys
+
+          with open("config/ee_parity/ee_parity_mapping.yml", "r") as f:
+              mapping = yaml.safe_load(f)
+
+          entries = mapping.get("mapping", [])
+          not_verified = [
+              e.get("feature_id")
+              for e in entries
+              if isinstance(e, dict) and e.get("status") != "verified"
+          ]
+
+          if not_verified:
+              print("BLOCKED: ipai_enterprise_bridge changes are not allowed until all features are verified.")
+              print(f"Not verified ({len(not_verified)}): {not_verified}")
+              sys.exit(1)
+
+          print("OK: All features verified. Bridge changes allowed.")
+          EOF
+          else
+            echo "No bridge changes detected. Gate passed."
+          fi

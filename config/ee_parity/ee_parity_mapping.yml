@@ -1,0 +1,178 @@
+# EE Parity Mapping (SSOT)
+# Maps each EE feature to CE core / OCA / external service / (last resort) custom
+# Status progression: unmapped -> planned -> installed -> verified
+
+meta:
+  odoo_version_target: "19.0"
+  enforcement: "block_custom_until_covered"
+  description: |
+    All features must reach 'verified' status before ipai_enterprise_bridge
+    changes are allowed. This is enforced by CI.
+
+mapping:
+  # ---- Accounting ----
+  - feature_id: accounting_asset_management
+    strategy: "oca"
+    oca_modules:
+      - account_asset_management
+    repo_refs:
+      - "OCA/account-financial-tools"
+    status: "planned"
+    owner: "platform"
+    notes: "OCA account_asset_management provides full asset lifecycle"
+
+  - feature_id: accounting_budget
+    strategy: "oca"
+    oca_modules:
+      - mis_builder
+      - mis_builder_budget
+    repo_refs:
+      - "OCA/mis-builder"
+    status: "planned"
+    owner: "platform"
+    notes: "MIS Builder provides flexible budgeting and variance analysis"
+
+  - feature_id: accounting_consolidation
+    strategy: "oca"
+    oca_modules:
+      - account_consolidation
+    repo_refs:
+      - "OCA/account-consolidation"
+    status: "planned"
+    owner: "platform"
+    notes: "OCA consolidation module for multi-company"
+
+  - feature_id: accounting_analytic_plans
+    strategy: "oca"
+    oca_modules:
+      - analytic_tag_dimension
+    repo_refs:
+      - "OCA/account-analytic"
+    status: "planned"
+    owner: "platform"
+    notes: "Analytic dimensions via tags"
+
+  # ---- Documents/Sign ----
+  - feature_id: sign_electronic_signature
+    strategy: "external"
+    external_service: "DocuSign/SignRequest/Yousign"
+    oca_modules: []
+    status: "planned"
+    owner: "platform"
+    notes: "Use third-party signature service via API integration"
+
+  - feature_id: documents_management
+    strategy: "oca"
+    oca_modules:
+      - dms
+      - dms_field
+    repo_refs:
+      - "OCA/dms"
+    status: "planned"
+    owner: "platform"
+    notes: "OCA DMS provides document workspace"
+
+  # ---- HR ----
+  - feature_id: hr_appraisal
+    strategy: "oca"
+    oca_modules:
+      - hr_appraisal_survey
+    repo_refs:
+      - "OCA/hr"
+    status: "planned"
+    owner: "platform"
+    notes: "Survey-based appraisals via OCA"
+
+  - feature_id: hr_payroll
+    strategy: "oca"
+    oca_modules:
+      - payroll
+      - payroll_account
+    repo_refs:
+      - "OCA/payroll"
+    status: "planned"
+    owner: "platform"
+    notes: "OCA payroll provides base salary computation"
+
+  # ---- Planning/Gantt ----
+  - feature_id: planning_gantt
+    strategy: "oca"
+    oca_modules:
+      - web_timeline
+      - project_timeline
+    repo_refs:
+      - "OCA/web"
+      - "OCA/project"
+    status: "planned"
+    owner: "platform"
+    notes: "Timeline view as Gantt alternative"
+
+  - feature_id: project_forecast
+    strategy: "oca"
+    oca_modules:
+      - project_forecast_line
+    repo_refs:
+      - "OCA/project"
+    status: "planned"
+    owner: "platform"
+    notes: "Resource planning via forecast lines"
+
+  # ---- Quality ----
+  - feature_id: quality_control
+    strategy: "oca"
+    oca_modules:
+      - quality_control_oca
+    repo_refs:
+      - "OCA/manufacture"
+    status: "planned"
+    owner: "platform"
+    notes: "OCA quality control module"
+
+  # ---- Marketing ----
+  - feature_id: marketing_automation
+    strategy: "external"
+    external_service: "n8n/Mautic"
+    oca_modules: []
+    status: "planned"
+    owner: "platform"
+    notes: "Use n8n workflows or Mautic for marketing automation"
+
+  # ---- Studio ----
+  - feature_id: studio_customization
+    strategy: "ce"
+    ce_modules:
+      - base_automation
+      - base_action_rule
+    oca_modules:
+      - web_widget_many2many_tags_multi_selection
+    status: "planned"
+    owner: "platform"
+    notes: "Automated actions + OCA web widgets provide basic customization"
+
+  # ---- IAP Services ----
+  - feature_id: iap_sms
+    strategy: "external"
+    external_service: "Twilio/MessageBird"
+    oca_modules:
+      - sms_no_iap
+    repo_refs:
+      - "OCA/social"
+    status: "planned"
+    owner: "platform"
+    notes: "External SMS gateway, no Odoo IAP"
+
+  - feature_id: iap_ocr
+    strategy: "external"
+    external_service: "OCR.space/Google Vision/AWS Textract"
+    oca_modules: []
+    status: "planned"
+    owner: "platform"
+    notes: "External OCR service via API integration"
+
+  - feature_id: iap_partner_autocomplete
+    strategy: "external"
+    external_service: "Clearbit/Apollo/custom"
+    oca_modules: []
+    status: "planned"
+    owner: "platform"
+    notes: "External company data enrichment API"

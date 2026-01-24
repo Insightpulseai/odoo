@@ -1,0 +1,190 @@
+name: Spec Gate
+
+on:
+  pull_request:
+    paths:
+      - 'spec/**'
+      - 'supabase/migrations/**'
+      - 'packages/**'
+      - 'apps/**'
+  push:
+    branches: [main]
+    paths:
+      - 'spec/**'
+      - 'supabase/migrations/**'
+
+jobs:
+  spec-files:
+    name: Validate Spec Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required spec files exist
+        run: |
+          set -euo pipefail
+
+          echo "=== Checking Spec Kit Structure ==="
+
+          # Required spec kit files for odoo-decoupled-platform
+          REQUIRED_FILES=(
+            "spec/odoo-decoupled-platform/constitution.md"
+            "spec/odoo-decoupled-platform/prd.md"
+            "spec/odoo-decoupled-platform/plan.md"
+            "spec/odoo-decoupled-platform/tasks.md"
+            "spec/auth/roles.yaml"
+            "spec/schema/entities.yaml"
+          )
+
+          MISSING=()
+          for f in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$f" ]; then
+              MISSING+=("$f")
+              echo "::error::Missing required spec file: $f"
+            else
+              echo "✓ Found: $f"
+            fi
+          done
+
+          if [ ${#MISSING[@]} -gt 0 ]; then
+            echo ""
+            echo "::error::Missing ${#MISSING[@]} required spec files"
+            exit 1
+          fi
+
+          echo ""
+          echo "✓ All required spec files present"
+
+      - name: Validate YAML specs
+        run: |
+          set -euo pipefail
+
+          echo "=== Validating YAML Specs ==="
+
+          # Install yq for YAML validation
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+          # Validate auth/roles.yaml
+          if [ -f "spec/auth/roles.yaml" ]; then
+            echo "Validating spec/auth/roles.yaml..."
+            yq e '.version' spec/auth/roles.yaml > /dev/null || {
+              echo "::error::Invalid YAML in spec/auth/roles.yaml"
+              exit 1
+            }
+            ROLE_COUNT=$(yq e '.roles | length' spec/auth/roles.yaml)
+            echo "  - Found $ROLE_COUNT roles defined"
+          fi
+
+          # Validate schema/entities.yaml
+          if [ -f "spec/schema/entities.yaml" ]; then
+            echo "Validating spec/schema/entities.yaml..."
+            yq e '.version' spec/schema/entities.yaml > /dev/null || {
+              echo "::error::Invalid YAML in spec/schema/entities.yaml"
+              exit 1
+            }
+            ENTITY_COUNT=$(yq e '.entities | length' spec/schema/entities.yaml)
+            echo "  - Found $ENTITY_COUNT entities defined"
+          fi
+
+          echo ""
+          echo "✓ All YAML specs valid"
+
+  migrations:
+    name: Validate Migrations
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check migrations exist
+        run: |
+          if [ ! -d "supabase/migrations" ]; then
+            echo "::error::supabase/migrations directory not found"
+            exit 1
+          fi
+
+          COUNT=$(ls -1 supabase/migrations/*.sql 2>/dev/null | wc -l)
+          echo "Found $COUNT migration files"
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "::warning::No migration files found"
+          fi
+
+      - name: Validate migrations parse
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+
+          echo "=== Validating Migration SQL ==="
+
+          for f in supabase/migrations/*.sql; do
+            if [ -f "$f" ]; then
+              echo "Parsing: $f"
+              psql "postgresql://postgres:postgres@localhost:5432/test_db" \
+                -v ON_ERROR_STOP=1 \
+                -f "$f" || {
+                  echo "::error::Migration failed to parse: $f"
+                  exit 1
+                }
+            fi
+          done
+
+          echo ""
+          echo "✓ All migrations valid"
+
+      - name: Check RLS enabled on app schema
+        env:
+          PGPASSWORD: postgres
+        run: |
+          set -euo pipefail
+
+          echo "=== Checking RLS on app schema ==="
+
+          # Query for tables without RLS in app schema
+          UNPROTECTED=$(psql "postgresql://postgres:postgres@localhost:5432/test_db" -t -c "
+            SELECT n.nspname || '.' || c.relname
+            FROM pg_class c
+            JOIN pg_namespace n ON n.oid = c.relnamespace
+            WHERE n.nspname = 'app'
+              AND c.relkind = 'r'
+              AND c.relrowsecurity = false;
+          " | grep -v '^$' || true)
+
+          if [ -n "$UNPROTECTED" ]; then
+            echo "::error::Tables without RLS in app schema:"
+            echo "$UNPROTECTED"
+            exit 1
+          fi
+
+          echo "✓ All app schema tables have RLS enabled"
+
+  summary:
+    name: Gate Summary
+    runs-on: ubuntu-latest
+    needs: [spec-files, migrations]
+    steps:
+      - name: Summary
+        run: |
+          echo "## Spec Gate Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Spec Files | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "| Migrations | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "| RLS Check | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
