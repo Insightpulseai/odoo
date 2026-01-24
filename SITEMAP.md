@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1f3f2b3e34afe03df8a28cd7a352fbc709cf8a52
+> Commit: 5cfc84433c760ea84f89177f779b5a47908f8e07
 
 ## 📚 Documentation
 
@@ -462,6 +462,7 @@
 | [IPAI Integration Bus - Complete Implementation Guide](docs/integration/README.md) | docs/integration |
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
+| [Marketplace Integrations](docs/integrations/MARKETPLACE_INTEGRATIONS.md) | docs/integrations |
 | [Mattermost Integration](docs/integrations/MATTERMOST.md) | docs/integrations |
 | [n8n Integration](docs/integrations/N8N.md) | docs/integrations |
 | [OCA Subtree Migration Plan](docs/integrations/OCA_SUBTREE_MIGRATION.md) | docs/integrations |
@@ -772,6 +773,15 @@
 | [MCP Jobs Service – PRD](mcp/servers/mcp-jobs/spec/mcp-jobs/prd.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [MCP Jobs Service – Tasks](mcp/servers/mcp-jobs/spec/mcp-jobs/tasks.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [Odoo ERP MCP Server](mcp/servers/odoo-erp-server/README.md) | mcp/servers/odoo-erp-server |
+| [LLM Memory Packs](memory/README.md) | memory |
+| [Current Focus (ChatGPT)](memory/packs/chatgpt/30_current_focus.md) | memory/packs/chatgpt |
+| [ChatGPT Pack](memory/packs/chatgpt/README.md) | memory/packs/chatgpt |
+| [Current Focus (Claude)](memory/packs/claude/30_current_focus.md) | memory/packs/claude |
+| [Error Recovery Playbooks (Claude)](memory/packs/claude/40_error_recovery.md) | memory/packs/claude |
+| [Claude Pack](memory/packs/claude/README.md) | memory/packs/claude |
+| [IPAI Engineering Constitution (LLM Pack)](memory/packs/common/00_constitution.md) | memory/packs/common |
+| [Repository Map](memory/packs/common/10_repo_map.md) | memory/packs/common |
+| [Common Workflows](memory/packs/common/20_workflows.md) | memory/packs/common |
 | [Control Plane Workflows](n8n/workflows/control-plane/README.md) | n8n/workflows/control-plane |
 | [IPAI Integration Bus - n8n Workflows](n8n/workflows/integration/README.md) | n8n/workflows/integration |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
