@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d0a2f5deb19d63a35476407244e1ae1d69a491eb
+> Commit: 3714b695cedb4a0e88ab2f73aaabba234be6bab8
 
 ## 📚 Documentation
 
@@ -270,6 +270,7 @@
 | [Odoo Industry Packs - OCA Dependencies Guide](docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md) | docs |
 | [Odoo CE/OCA 18 vs Enterprise Parity Analysis](docs/INDUSTRY_PARITY_ANALYSIS.md) | docs |
 | [Infrastructure Implementation Checklist](docs/INFRASTRUCTURE_CHECKLIST.md) | docs |
+| [Supabase Integration Bus - Deployment Guide](docs/INTEGRATION_BUS_DEPLOYMENT.md) | docs |
 | [IPAI Modules Index](docs/IPAI_MODULES_INDEX.md) | docs |
 | [IPAI Module Installation Order](docs/IPAI_MODULE_INSTALLATION_ORDER.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
@@ -622,6 +623,7 @@
 | [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
 | [Execution Board - GitHub Projects Setup](docs/ops/EXECUTION_BOARD.md) | docs/ops |
 | [Kickoff → Go-Live Checklist (CE/OCA/IPAI)](docs/ops/GO_LIVE_CHECKLIST.md) | docs/ops |
+| [Go-Live & Production Checklist — Odoo CE + OCA + IPAI (Workbench)](docs/ops/GO_LIVE_PROD_CHECKLIST.md) | docs/ops |
 | [Local Dev (Docker Compose)](docs/ops/LOCAL_DEV.md) | docs/ops |
 | [Preventing 502 Bad Gateway Errors in Odoo](docs/ops/PREVENT_502.md) | docs/ops |
 | [Quick Start - Execution Board](docs/ops/QUICK_START.md) | docs/ops |
@@ -754,6 +756,7 @@
 | [MCP Jobs Service – Tasks](mcp/servers/mcp-jobs/spec/mcp-jobs/tasks.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [Odoo ERP MCP Server](mcp/servers/odoo-erp-server/README.md) | mcp/servers/odoo-erp-server |
 | [Control Plane Workflows](n8n/workflows/control-plane/README.md) | n8n/workflows/control-plane |
+| [IPAI Integration Bus - n8n Workflows](n8n/workflows/integration/README.md) | n8n/workflows/integration |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
 | [n8n Finance Automation - Deployment Status](notion-n8n-monthly-close/DEPLOYMENT_STATUS.md) | notion-n8n-monthly-close |
 | [Deployment Summary - 2025-11-21](notion-n8n-monthly-close/DEPLOYMENT_SUMMARY.md) | notion-n8n-monthly-close |
@@ -943,6 +946,10 @@
 | [Plan: IPAI Copilot](spec/ipai-copilot/plan.md) | spec/ipai-copilot |
 | [PRD: IPAI Copilot (Odoo CE)](spec/ipai-copilot/prd.md) | spec/ipai-copilot |
 | [Tasks: IPAI Copilot](spec/ipai-copilot/tasks.md) | spec/ipai-copilot |
+| [Constitution — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/constitution.md) | spec/ipai-enterprise-workbench |
+| [Plan — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/plan.md) | spec/ipai-enterprise-workbench |
+| [PRD — IPAI Enterprise Workbench for Odoo CE (18/19)](spec/ipai-enterprise-workbench/prd.md) | spec/ipai-enterprise-workbench |
+| [Tasks — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/tasks.md) | spec/ipai-enterprise-workbench |
 | [ipai_month_end Module Constitution](spec/ipai-month-end/constitution.md) | spec/ipai-month-end |
 | [ipai_month_end Implementation Plan](spec/ipai-month-end/plan.md) | spec/ipai-month-end |
 | [ipai_month_end - Product Requirements](spec/ipai-month-end/prd.md) | spec/ipai-month-end |
