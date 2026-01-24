@@ -113,6 +113,9 @@ temp/
 # Database
 *.sql
 !supabase/migrations/*.sql
+!supabase/seed.sql
+!supabase/seeds/*.sql
+!supabase/seed/**/*.sql
 !scripts/lakehouse/*.sql
 !infra/lakehouse/**/*.sql
 !tools/audit/*.sql
