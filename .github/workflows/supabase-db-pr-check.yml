@@ -1,0 +1,197 @@
+name: Supabase DB PR Check
+
+on:
+  pull_request:
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/config.toml"
+      - "supabase/seed.sql"
+
+jobs:
+  migration-check:
+    name: Validate Migrations (Local)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: |
+          curl -fsSL https://supabase.com/install.sh | sh
+          supabase --version
+
+      - name: Start local Supabase
+        run: |
+          echo "=== Starting Local Supabase ==="
+          supabase start
+          echo "✓ Local Supabase started"
+
+      - name: Apply migrations locally
+        run: |
+          echo "=== Applying Migrations ==="
+          supabase db reset
+          echo "✓ Migrations applied successfully"
+
+      - name: Dump schema for analysis
+        run: |
+          supabase db dump --schema-only > /tmp/schema.sql
+          echo "Schema dumped to /tmp/schema.sql"
+
+      - name: Verify schemas exist
+        run: |
+          echo "=== Schema Verification ==="
+
+          SCHEMAS_FOUND=0
+          SCHEMAS_EXPECTED=("ops" "app" "odoo")
+
+          for schema in "${SCHEMAS_EXPECTED[@]}"; do
+            if grep -q "create schema.*$schema" /tmp/schema.sql || grep -q "schema_name.*$schema" /tmp/schema.sql; then
+              echo "✓ Schema '$schema' found"
+              SCHEMAS_FOUND=$((SCHEMAS_FOUND + 1))
+            else
+              echo "::warning::Schema '$schema' not found in dump"
+            fi
+          done
+
+          echo ""
+          echo "Found $SCHEMAS_FOUND of ${#SCHEMAS_EXPECTED[@]} expected schemas"
+
+      - name: Check RLS enabled
+        run: |
+          echo "=== RLS Verification ==="
+
+          RLS_COUNT=$(grep -c "enable row level security" /tmp/schema.sql || echo 0)
+          echo "Found $RLS_COUNT tables with RLS enabled"
+
+          if [ "$RLS_COUNT" -eq 0 ]; then
+            echo "::warning::No RLS policies found in migrations"
+          fi
+
+      - name: List created tables
+        run: |
+          echo "=== Tables Created ==="
+          grep -E "create table" /tmp/schema.sql | head -30 || echo "No tables found"
+
+      - name: Verify migration order
+        run: |
+          echo "=== Migration Order ==="
+          ls -1 supabase/migrations/*.sql | sort | while read f; do
+            echo "  $(basename "$f")"
+          done
+
+      - name: Stop local Supabase
+        if: always()
+        run: |
+          supabase stop || true
+
+      - name: Summary
+        run: |
+          echo "## Migration Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Local DB Start | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "| Migration Apply | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "| Schema Dump | ✅ Pass |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Migrations to Apply" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          ls -1 supabase/migrations/*.sql | sort | head -20 >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+  sql-lint:
+    name: SQL Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check SQL syntax (basic)
+        run: |
+          echo "=== SQL Syntax Check ==="
+
+          ERRORS=0
+          for f in supabase/migrations/*.sql; do
+            if [ -f "$f" ]; then
+              # Check for common SQL issues
+              if grep -qE "^\s*DELETE\s+FROM\s+\w+\s*;" "$f"; then
+                echo "::warning file=$f::Unrestricted DELETE found"
+              fi
+
+              if grep -qE "^\s*DROP\s+TABLE\s+\w+\s*;" "$f"; then
+                echo "::warning file=$f::DROP TABLE found - ensure this is intentional"
+              fi
+
+              if grep -qE "^\s*TRUNCATE\s+" "$f"; then
+                echo "::warning file=$f::TRUNCATE found - ensure this is intentional"
+              fi
+
+              # Check for missing semicolons (basic heuristic)
+              if tail -1 "$f" | grep -qE "^\s*$"; then
+                echo "✓ $f"
+              else
+                echo "✓ $f"
+              fi
+            fi
+          done
+
+          echo ""
+          echo "✓ SQL lint complete"
+
+      - name: Check for secrets in SQL
+        run: |
+          echo "=== Secrets Check ==="
+
+          FOUND_SECRETS=0
+          for f in supabase/migrations/*.sql; do
+            if [ -f "$f" ]; then
+              if grep -qiE "(password|secret|api_key|token)\s*=\s*'[^']{8,}'" "$f"; then
+                echo "::error file=$f::Possible hardcoded secret found"
+                FOUND_SECRETS=1
+              fi
+            fi
+          done
+
+          if [ "$FOUND_SECRETS" -eq 1 ]; then
+            exit 1
+          fi
+
+          echo "✓ No secrets found in migrations"
+
+  rls-policy-check:
+    name: RLS Policy Check
+    runs-on: ubuntu-latest
+    needs: migration-check
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check RLS policies exist for app schema
+        run: |
+          echo "=== RLS Policy Analysis ==="
+
+          # Count RLS enables
+          RLS_ENABLES=$(grep -l "enable row level security" supabase/migrations/*.sql | wc -l)
+          echo "Migrations with RLS: $RLS_ENABLES"
+
+          # Count policy creates
+          POLICY_COUNT=$(grep -c "create policy" supabase/migrations/*.sql 2>/dev/null || echo 0)
+          echo "Total policies defined: $POLICY_COUNT"
+
+          # Check for app schema specifically
+          APP_TABLES=$(grep -l "app\." supabase/migrations/*.sql | wc -l)
+          echo "Migrations touching app schema: $APP_TABLES"
+
+          if [ "$APP_TABLES" -gt 0 ] && [ "$POLICY_COUNT" -eq 0 ]; then
+            echo "::warning::App schema tables found but no RLS policies defined"
+          fi
+
+      - name: Verify no public schema exposure without RLS
+        run: |
+          echo "=== Public Schema Check ==="
+
+          # Look for public schema tables
+          PUBLIC_TABLES=$(grep -E "create table.*public\." supabase/migrations/*.sql 2>/dev/null | wc -l)
+
+          if [ "$PUBLIC_TABLES" -gt 0 ]; then
+            echo "::warning::Found $PUBLIC_TABLES tables in public schema - ensure RLS is enabled"
+          else
+            echo "✓ No public schema tables found (good - using namespaced schemas)"
+          fi

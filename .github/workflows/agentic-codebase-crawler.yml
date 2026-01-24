@@ -1,0 +1,122 @@
+name: Agentic Codebase Crawler
+
+on:
+  pull_request:
+    paths:
+      - 'supabase/**'
+      - 'packages/**'
+      - 'config/**'
+      - 'AGENTS.md'
+      - 'CLAUDE.md'
+      - '.github/workflows/**'
+  workflow_dispatch:
+    inputs:
+      apply_patches:
+        description: 'Apply generated patches'
+        required: false
+        default: 'false'
+        type: boolean
+      crawl_urls:
+        description: 'URLs to crawl (comma-separated)'
+        required: false
+        type: string
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile=false
+
+      - name: Build crawler
+        run: |
+          cd packages/agentic-codebase-crawler
+          pnpm install
+          pnpm run build
+
+      - name: Run crawler (parity check)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          FIRECRAWL_BASE_URL: ${{ secrets.FIRECRAWL_BASE_URL }}
+          CRAWLER_ACTOR: github-actions
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          set +e  # Don't exit on failure, we want to capture artifacts
+
+          APPLY_FLAG=""
+          if [ "${{ github.event.inputs.apply_patches }}" = "true" ]; then
+            APPLY_FLAG="--apply"
+          fi
+
+          CRAWL_URLS=""
+          if [ -n "${{ github.event.inputs.crawl_urls }}" ]; then
+            IFS=',' read -ra URLS <<< "${{ github.event.inputs.crawl_urls }}"
+            for url in "${URLS[@]}"; do
+              CRAWL_URLS="$CRAWL_URLS --crawl-url $url"
+            done
+          fi
+
+          node packages/agentic-codebase-crawler/dist/index.js \
+            --repo-root . \
+            --config packages/agentic-codebase-crawler/templates/parity-controls.yml \
+            --out ops/agentic-codebase-crawler/out \
+            --skip-verify \
+            $APPLY_FLAG \
+            $CRAWL_URLS
+
+          EXIT_CODE=$?
+          echo "CRAWLER_EXIT_CODE=$EXIT_CODE" >> $GITHUB_ENV
+          exit 0  # Always continue to upload artifacts
+
+      - name: Upload findings
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-findings
+          path: ops/agentic-codebase-crawler/out/
+          retention-days: 30
+
+      - name: Check for high severity failures
+        run: |
+          if [ -f ops/agentic-codebase-crawler/out/findings.json ]; then
+            HIGH_FAILS=$(jq '[.findings[] | select(.status == "fail" and .severity == "high")] | length' ops/agentic-codebase-crawler/out/findings.json)
+            echo "High severity failures: $HIGH_FAILS"
+            if [ "$HIGH_FAILS" -gt 0 ]; then
+              echo "::warning::Found $HIGH_FAILS high-severity parity control failures"
+              jq -r '.findings[] | select(.status == "fail" and .severity == "high") | "  - \(.control_id): \(.title)"' ops/agentic-codebase-crawler/out/findings.json
+            fi
+          fi
+
+      - name: Summary
+        run: |
+          echo "## Parity Control Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f ops/agentic-codebase-crawler/out/findings.json ]; then
+            PASS=$(jq '.summary.pass' ops/agentic-codebase-crawler/out/findings.json)
+            FAIL=$(jq '.summary.fail' ops/agentic-codebase-crawler/out/findings.json)
+            echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| ✅ Pass | $PASS |" >> $GITHUB_STEP_SUMMARY
+            echo "| ❌ Fail | $FAIL |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Failed Controls" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            jq -r '.findings[] | select(.status == "fail") | "- **\(.control_id)** (\(.severity)): \(.title)"' ops/agentic-codebase-crawler/out/findings.json >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No findings file generated" >> $GITHUB_STEP_SUMMARY
+          fi

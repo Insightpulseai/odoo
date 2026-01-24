@@ -1,0 +1,133 @@
+# EE/upsell/IAP Feature Catalog (SSOT)
+# Lists all Odoo Enterprise/IAP/upsell capabilities we intend to cover via CE+OCA.
+# This is the internal contract - IDs are stable keys.
+
+meta:
+  odoo_version_target: "19.0"
+  policy: "CE+OCA-first; custom only as last resort; no EE/IAP dependency"
+  description: |
+    Each feature must be mapped to a strategy in ee_parity_mapping.yml before
+    any ipai_enterprise_bridge development can proceed.
+
+features:
+  # ---- Accounting EE Features ----
+  - id: accounting_asset_management
+    name: "Asset Management"
+    category: "Accounting"
+    source: "EE-only"
+    priority: "P0"
+    description: "Fixed asset depreciation and management"
+
+  - id: accounting_budget
+    name: "Budget Management"
+    category: "Accounting"
+    source: "EE-only"
+    priority: "P0"
+    description: "Budget planning and variance tracking"
+
+  - id: accounting_consolidation
+    name: "Accounting Consolidation"
+    category: "Accounting"
+    source: "EE-only"
+    priority: "P1"
+    description: "Multi-company consolidation"
+
+  - id: accounting_analytic_plans
+    name: "Multiple Analytic Plans"
+    category: "Accounting"
+    source: "EE-only"
+    priority: "P0"
+    description: "Multiple analytic dimensions"
+
+  # ---- Documents/Sign EE Features ----
+  - id: sign_electronic_signature
+    name: "Electronic Signature"
+    category: "Documents"
+    source: "IAP/EE"
+    priority: "P1"
+    description: "Digital document signing"
+
+  - id: documents_management
+    name: "Document Management System"
+    category: "Documents"
+    source: "EE-only"
+    priority: "P1"
+    description: "Centralized document workspace"
+
+  # ---- HR EE Features ----
+  - id: hr_appraisal
+    name: "Employee Appraisals"
+    category: "HR"
+    source: "EE-only"
+    priority: "P1"
+    description: "Performance reviews and appraisals"
+
+  - id: hr_payroll
+    name: "Payroll"
+    category: "HR"
+    source: "EE-only"
+    priority: "P0"
+    description: "Salary computation and payslips"
+
+  # ---- Planning/Gantt EE Features ----
+  - id: planning_gantt
+    name: "Gantt View Planning"
+    category: "Project"
+    source: "EE-only"
+    priority: "P1"
+    description: "Visual project planning with Gantt charts"
+
+  - id: project_forecast
+    name: "Project Forecasting"
+    category: "Project"
+    source: "EE-only"
+    priority: "P1"
+    description: "Resource planning and forecasting"
+
+  # ---- Quality EE Features ----
+  - id: quality_control
+    name: "Quality Control"
+    category: "Manufacturing"
+    source: "EE-only"
+    priority: "P1"
+    description: "Quality checks and control points"
+
+  # ---- Marketing EE Features ----
+  - id: marketing_automation
+    name: "Marketing Automation"
+    category: "Marketing"
+    source: "EE-only"
+    priority: "P2"
+    description: "Automated marketing campaigns"
+
+  # ---- Studio EE Features ----
+  - id: studio_customization
+    name: "Odoo Studio"
+    category: "Platform"
+    source: "EE-only"
+    priority: "P2"
+    description: "No-code app customization"
+
+  # ---- IAP Services ----
+  - id: iap_sms
+    name: "SMS Integration"
+    category: "Communication"
+    source: "IAP"
+    priority: "P1"
+    description: "SMS messaging via Odoo IAP"
+
+  - id: iap_ocr
+    name: "OCR Document Digitization"
+    category: "Documents"
+    source: "IAP"
+    priority: "P1"
+    description: "Invoice/expense OCR via Odoo IAP"
+
+  - id: iap_partner_autocomplete
+    name: "Partner Autocomplete"
+    category: "CRM"
+    source: "IAP"
+    priority: "P2"
+    description: "Company data enrichment"
+
+# TODO: Add more features as you identify them

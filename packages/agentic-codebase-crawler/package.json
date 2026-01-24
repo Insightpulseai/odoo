@@ -1,0 +1,28 @@
+{
+  "name": "@ipai/agentic-codebase-crawler",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "agentic-codebase-crawler": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "node --loader ts-node/esm src/index.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "commander": "^12.1.0",
+    "fast-glob": "^3.3.2",
+    "js-yaml": "^4.1.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.11.30",
+    "typescript": "^5.6.3"
+  }
+}

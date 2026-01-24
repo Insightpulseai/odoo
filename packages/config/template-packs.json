@@ -1,0 +1,39 @@
+{
+  "packs": [
+    {
+      "id": "supabase-enterprise-parity-baseline",
+      "description": "RLS, auditability, logging, safe secrets, environment separation, CLI-driven migrations",
+      "applies_to": ["supabase", "postgres", "edge-functions"]
+    },
+    {
+      "id": "vercel-prod-hardening",
+      "description": "Preview/prod separation, env validation, build-time checks, runtime health endpoints",
+      "applies_to": ["vercel", "nextjs"]
+    },
+    {
+      "id": "agentic-codebase-crawler",
+      "description": "Repo scan -> detect gaps -> generate PR-ready patches -> verify -> emit artifacts",
+      "applies_to": ["github", "monorepo", "ci"]
+    },
+    {
+      "id": "bi-superset-parity",
+      "description": "Superset project + SQL views + scheduling via cron/queues + exportable dashboards",
+      "applies_to": ["superset", "bi"]
+    },
+    {
+      "id": "odoo-oca-baseline",
+      "description": "OCA must-have modules + EE parity gate + manifest-driven installation",
+      "applies_to": ["odoo", "oca", "erp"]
+    },
+    {
+      "id": "n8n-workflow-as-code",
+      "description": "JSON workflows + Edge Function triggers + Management API proxy integration",
+      "applies_to": ["n8n", "automation"]
+    },
+    {
+      "id": "digitalocean-infra-parity",
+      "description": "Droplet provisioning + app platform + managed DB + networking via doctl/Terraform",
+      "applies_to": ["digitalocean", "infra"]
+    }
+  ]
+}
