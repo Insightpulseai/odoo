@@ -1,0 +1,115 @@
+name: DO / Sandbox Janitor (TTL Cleanup)
+
+# Periodic cleanup of stale PR sandbox droplets that exceed TTL
+# Runs every 6 hours to destroy orphaned resources
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (list only, no destroy)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+env:
+  DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+  TTL_HOURS: 24
+
+jobs:
+  cleanup:
+    name: Cleanup Stale Sandboxes
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install doctl
+        run: |
+          curl -sL https://github.com/digitalocean/doctl/releases/download/v1.100.0/doctl-1.100.0-linux-amd64.tar.gz | tar xz
+          sudo mv doctl /usr/local/bin/
+          doctl auth init -t "$DIGITALOCEAN_TOKEN"
+
+      - name: Find stale droplets
+        id: stale
+        run: |
+          echo "## Sandbox Cleanup Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Get all pr-sandbox tagged droplets
+          droplets=$(doctl compute droplet list --tag-name pr-sandbox --format ID,Name,Created --no-header 2>/dev/null || echo "")
+
+          if [[ -z "$droplets" ]]; then
+            echo "No PR sandbox droplets found." >> $GITHUB_STEP_SUMMARY
+            echo "stale_ids=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          stale_ids=""
+          echo "| ID | Name | Created | Age | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|---|---|---|" >> $GITHUB_STEP_SUMMARY
+
+          while IFS= read -r line; do
+            id=$(echo "$line" | awk '{print $1}')
+            name=$(echo "$line" | awk '{print $2}')
+            created=$(echo "$line" | awk '{print $3}')
+
+            # Calculate age in hours
+            created_ts=$(date -d "$created" +%s 2>/dev/null || echo "0")
+            now_ts=$(date +%s)
+            age_hours=$(( (now_ts - created_ts) / 3600 ))
+
+            if [[ $age_hours -gt $TTL_HOURS ]]; then
+              status="STALE (>$TTL_HOURS h)"
+              stale_ids="$stale_ids $id"
+            else
+              status="OK"
+            fi
+
+            echo "| $id | $name | $created | ${age_hours}h | $status |" >> $GITHUB_STEP_SUMMARY
+          done <<< "$droplets"
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "stale_ids=$(echo $stale_ids | xargs)" >> $GITHUB_OUTPUT
+
+      - name: Destroy stale droplets
+        if: steps.stale.outputs.stale_ids != '' && inputs.dry_run != 'true'
+        run: |
+          for id in ${{ steps.stale.outputs.stale_ids }}; do
+            echo "Destroying droplet $id..."
+            doctl compute droplet delete "$id" --force || true
+          done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Destroyed droplets:** ${{ steps.stale.outputs.stale_ids }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Dry run notice
+        if: inputs.dry_run == 'true'
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**DRY RUN:** No droplets were destroyed." >> $GITHUB_STEP_SUMMARY
+
+      - name: Cleanup VPCs and Firewalls
+        if: steps.stale.outputs.stale_ids != '' && inputs.dry_run != 'true'
+        run: |
+          echo "Cleaning up orphaned VPCs and firewalls..."
+
+          # Find VPCs with pr-sandbox in name that have no droplets
+          doctl compute vpc list --format ID,Name --no-header | grep "pr-.*-vpc" | while read -r vpc_id vpc_name; do
+            members=$(doctl compute vpc members list "$vpc_id" --format ID --no-header 2>/dev/null | wc -l || echo "0")
+            if [[ "$members" -eq 0 ]]; then
+              echo "Deleting orphaned VPC: $vpc_name ($vpc_id)"
+              doctl compute vpc delete "$vpc_id" --force || true
+            fi
+          done
+
+          # Find firewalls with pr-sandbox in name that have no droplets
+          doctl compute firewall list --format ID,Name,DropletIDs --no-header | grep "pr-.*-fw" | while read -r fw_id fw_name droplets; do
+            if [[ -z "$droplets" ]]; then
+              echo "Deleting orphaned firewall: $fw_name ($fw_id)"
+              doctl compute firewall delete "$fw_id" --force || true
+            fi
+          done

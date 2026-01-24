@@ -1,0 +1,70 @@
+name: CI / Docs Only
+
+on:
+  pull_request:
+    paths:
+      - "docs/**"
+      - "**/*.md"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - ".github/workflows/ci-docs-only.yml"
+      - ".github/workflows/docs-pages.yml"
+
+jobs:
+  docs-lint:
+    name: Docs Lint & Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for empty markdown files
+        run: |
+          echo "Checking for empty markdown files..."
+          empty_files=()
+          while IFS= read -r -d '' file; do
+            if [[ ! -s "$file" ]]; then
+              empty_files+=("$file")
+            fi
+          done < <(find docs -name "*.md" -print0 2>/dev/null || true)
+
+          if [[ ${#empty_files[@]} -gt 0 ]]; then
+            echo "ERROR: Found empty markdown files:"
+            printf '  - %s\n' "${empty_files[@]}"
+            exit 1
+          fi
+          echo "All markdown files have content."
+
+      - name: Check for broken internal links
+        run: |
+          echo "Checking for broken internal doc links..."
+          errors=0
+          while IFS= read -r -d '' file; do
+            # Extract markdown links to local .md files
+            grep -oP '\[.*?\]\(\K[^)]+\.md(?=\))' "$file" 2>/dev/null | while read -r link; do
+              dir=$(dirname "$file")
+              target="$dir/$link"
+              if [[ ! -f "$target" ]] && [[ ! -f "docs/$link" ]]; then
+                echo "WARNING: Broken link in $file: $link"
+                ((errors++)) || true
+              fi
+            done
+          done < <(find docs -name "*.md" -print0 2>/dev/null || true)
+
+          if [[ $errors -gt 0 ]]; then
+            echo "Found $errors potential broken links (warnings only)"
+          fi
+          echo "Link check complete."
+
+      - name: Validate MkDocs config (if present)
+        if: hashFiles('mkdocs.yml') != ''
+        run: |
+          pip install mkdocs mkdocs-material pyyaml
+          python -c "import yaml; yaml.safe_load(open('mkdocs.yml'))"
+          echo "MkDocs config is valid YAML."
+
+  docs-gate-pass:
+    name: Docs Gate (All Checks)
+    needs: [docs-lint]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "All docs-only checks passed."
