@@ -1,0 +1,403 @@
+{
+  "name": "GitHub Artifacts Mirror to Drive/S3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "github-workflow-webhook",
+        "authentication": "headerAuth",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "webhook-trigger",
+      "name": "GitHub Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [240, 300],
+      "webhookId": "github-artifacts-webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Verify GitHub webhook signature\nconst crypto = require('crypto');\n\nconst signature = $input.first().headers['x-hub-signature-256'];\nconst payload = $input.first().body;\nconst webhookSecret = $env.GITHUB_WEBHOOK_SECRET;\n\nif (!webhookSecret || !signature) {\n  throw new Error('Missing webhook secret or signature');\n}\n\nconst expectedSignature = 'sha256=' + crypto\n  .createHmac('sha256', webhookSecret)\n  .update(JSON.stringify(payload))\n  .digest('hex');\n\nif (signature !== expectedSignature) {\n  throw new Error('Invalid webhook signature');\n}\n\n// Only process completed successful workflow runs\nif (payload.action !== 'completed' || payload.workflow_run?.conclusion !== 'success') {\n  return {\n    json: {\n      skip: true,\n      reason: `Skipping: action=${payload.action}, conclusion=${payload.workflow_run?.conclusion}`\n    }\n  };\n}\n\nreturn {\n  json: {\n    workflow_run_id: payload.workflow_run.id,\n    workflow_name: payload.workflow_run.name,\n    head_sha: payload.workflow_run.head_sha,\n    head_branch: payload.workflow_run.head_branch,\n    artifacts_url: payload.workflow_run.artifacts_url,\n    repository: payload.repository.full_name,\n    html_url: payload.workflow_run.html_url\n  }\n};"
+      },
+      "id": "verify-signature",
+      "name": "Verify Signature & Filter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.skip }}",
+              "value2": true,
+              "operation": "notEqual"
+            }
+          ]
+        }
+      },
+      "id": "check-skip",
+      "name": "Should Process?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.artifacts_url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": false
+            }
+          }
+        }
+      },
+      "id": "fetch-artifacts",
+      "name": "Fetch Workflow Artifacts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [900, 200],
+      "credentials": {
+        "githubApi": {
+          "id": "github-token",
+          "name": "GitHub API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Filter artifacts and prepare download list\nconst artifacts = $input.first().json.artifacts || [];\nconst workflowContext = $('Verify Signature & Filter').first().json;\n\n// Filter out expired artifacts\nconst validArtifacts = artifacts.filter(a => !a.expired);\n\nif (validArtifacts.length === 0) {\n  return {\n    json: {\n      skip: true,\n      reason: 'No valid artifacts found'\n    }\n  };\n}\n\n// Map artifacts with download URLs\nreturn validArtifacts.map(artifact => ({\n  json: {\n    artifact_id: artifact.id,\n    artifact_name: artifact.name,\n    artifact_size: artifact.size_in_bytes,\n    download_url: artifact.archive_download_url,\n    workflow_run_id: workflowContext.workflow_run_id,\n    workflow_name: workflowContext.workflow_name,\n    head_sha: workflowContext.head_sha,\n    head_branch: workflowContext.head_branch,\n    repository: workflowContext.repository\n  }\n}));"
+      },
+      "id": "prepare-artifacts",
+      "name": "Prepare Artifact List",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.download_url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "download-artifact",
+      "name": "Download Artifact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1340, 200],
+      "credentials": {
+        "githubApi": {
+          "id": "github-token",
+          "name": "GitHub API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "name": "={{ $('Prepare Artifact List').item.json.artifact_name }}.zip",
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $env.GOOGLE_DRIVE_ARTIFACTS_FOLDER_ID }}",
+          "mode": "id"
+        },
+        "options": {
+          "parents": [
+            "={{ $env.GOOGLE_DRIVE_ARTIFACTS_FOLDER_ID }}"
+          ]
+        }
+      },
+      "id": "upload-to-drive",
+      "name": "Upload to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [1560, 100],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "google-drive-oauth",
+          "name": "Google Drive OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucket": "={{ $env.AWS_S3_ARTIFACTS_BUCKET }}",
+        "fileName": "ci-artifacts/{{ new Date().toISOString().split('T')[0] }}/{{ $('Prepare Artifact List').item.json.workflow_name.replace(/[^a-zA-Z0-9-_]/g, '_') }}/{{ $('Prepare Artifact List').item.json.artifact_name }}.zip",
+        "options": {
+          "storageClass": "STANDARD_IA"
+        }
+      },
+      "id": "upload-to-s3",
+      "name": "Upload to S3",
+      "type": "n8n-nodes-base.s3",
+      "typeVersion": 1,
+      "position": [1560, 300],
+      "credentials": {
+        "s3": {
+          "id": "aws-s3",
+          "name": "AWS S3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/create_artifact_sync",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source_provider\": \"github\",\n  \"p_source_path\": \"{{ $('Prepare Artifact List').item.json.repository }}/actions/runs/{{ $('Prepare Artifact List').item.json.workflow_run_id }}/artifacts/{{ $('Prepare Artifact List').item.json.artifact_id }}\",\n  \"p_source_ref\": \"{{ $('Prepare Artifact List').item.json.head_sha }}\",\n  \"p_destination_provider\": \"google_drive\",\n  \"p_destination_path\": \"{{ $json.name }}\",\n  \"p_artifact_type\": \"zip\",\n  \"p_artifact_name\": \"{{ $('Prepare Artifact List').item.json.artifact_name }}\",\n  \"p_triggered_by\": \"n8n\",\n  \"p_metadata\": {\n    \"drive_file_id\": \"{{ $json.id }}\",\n    \"drive_web_link\": \"{{ $json.webViewLink }}\",\n    \"workflow_name\": \"{{ $('Prepare Artifact List').item.json.workflow_name }}\",\n    \"branch\": \"{{ $('Prepare Artifact List').item.json.head_branch }}\"\n  }\n}"
+      },
+      "id": "log-drive-sync",
+      "name": "Log Drive Sync to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1780, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-key",
+          "name": "Supabase Service Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/create_artifact_sync",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_SERVICE_ROLE_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source_provider\": \"github\",\n  \"p_source_path\": \"{{ $('Prepare Artifact List').item.json.repository }}/actions/runs/{{ $('Prepare Artifact List').item.json.workflow_run_id }}/artifacts/{{ $('Prepare Artifact List').item.json.artifact_id }}\",\n  \"p_source_ref\": \"{{ $('Prepare Artifact List').item.json.head_sha }}\",\n  \"p_destination_provider\": \"aws_s3\",\n  \"p_destination_path\": \"{{ $json.key }}\",\n  \"p_artifact_type\": \"zip\",\n  \"p_artifact_name\": \"{{ $('Prepare Artifact List').item.json.artifact_name }}\",\n  \"p_triggered_by\": \"n8n\",\n  \"p_metadata\": {\n    \"s3_bucket\": \"{{ $env.AWS_S3_ARTIFACTS_BUCKET }}\",\n    \"s3_key\": \"{{ $json.key }}\",\n    \"s3_etag\": \"{{ $json.ETag }}\",\n    \"workflow_name\": \"{{ $('Prepare Artifact List').item.json.workflow_name }}\",\n    \"branch\": \"{{ $('Prepare Artifact List').item.json.head_branch }}\"\n  }\n}"
+      },
+      "id": "log-s3-sync",
+      "name": "Log S3 Sync to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1780, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-key",
+          "name": "Supabase Service Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "={{ $env.SLACK_ARTIFACTS_CHANNEL }}",
+        "text": "=:white_check_mark: *Artifact Sync Complete*\n\n*Repository:* {{ $('Prepare Artifact List').first().json.repository }}\n*Workflow:* {{ $('Prepare Artifact List').first().json.workflow_name }}\n*Branch:* {{ $('Prepare Artifact List').first().json.head_branch }}\n*Commit:* `{{ $('Prepare Artifact List').first().json.head_sha.substring(0, 7) }}`\n\n*Artifacts synced:* {{ $('Prepare Artifact List').all().length }}\n• Google Drive: {{ $('Upload to Google Drive').all().length }} files\n• S3: {{ $('Upload to S3').all().length }} files",
+        "otherOptions": {}
+      },
+      "id": "notify-slack",
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [2000, 200],
+      "credentials": {
+        "slackApi": {
+          "id": "slack-bot",
+          "name": "Slack Bot"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "skip-end",
+      "name": "Skip (No Action)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [900, 400]
+    }
+  ],
+  "connections": {
+    "GitHub Webhook": {
+      "main": [
+        [
+          {
+            "node": "Verify Signature & Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Signature & Filter": {
+      "main": [
+        [
+          {
+            "node": "Should Process?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Process?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Workflow Artifacts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip (No Action)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Workflow Artifacts": {
+      "main": [
+        [
+          {
+            "node": "Prepare Artifact List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Artifact List": {
+      "main": [
+        [
+          {
+            "node": "Download Artifact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Artifact": {
+      "main": [
+        [
+          {
+            "node": "Upload to Google Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload to S3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to Google Drive": {
+      "main": [
+        [
+          {
+            "node": "Log Drive Sync to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to S3": {
+      "main": [
+        [
+          {
+            "node": "Log S3 Sync to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Drive Sync to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log S3 Sync to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "integration",
+      "createdAt": "2026-01-24T12:00:00.000Z",
+      "updatedAt": "2026-01-24T12:00:00.000Z"
+    },
+    {
+      "name": "github",
+      "createdAt": "2026-01-24T12:00:00.000Z",
+      "updatedAt": "2026-01-24T12:00:00.000Z"
+    },
+    {
+      "name": "artifacts",
+      "createdAt": "2026-01-24T12:00:00.000Z",
+      "updatedAt": "2026-01-24T12:00:00.000Z"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-24T12:00:00.000Z",
+  "versionId": "1"
+}
