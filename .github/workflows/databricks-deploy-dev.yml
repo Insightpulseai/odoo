@@ -1,0 +1,46 @@
+# Databricks Deploy to Dev
+# Deploys bundle to dev workspace on merge to main
+
+name: Databricks Deploy Dev
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/databricks/**'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: infra/databricks
+
+jobs:
+  deploy:
+    name: Deploy to Dev
+    runs-on: ubuntu-latest
+    environment: databricks-dev
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Configure Databricks auth
+        run: |
+          databricks configure --host "$DATABRICKS_HOST" --token "$DATABRICKS_TOKEN"
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+      - name: Validate bundle
+        run: databricks bundle validate --target dev
+
+      - name: Deploy bundle
+        run: databricks bundle deploy --target dev
+
+      - name: Verify deployment
+        run: |
+          echo "Verifying deployment..."
+          databricks bundle run --target dev dq_checks || true

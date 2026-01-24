@@ -1,0 +1,28 @@
+# Production environment configuration
+
+environment: prod
+catalog: ppm
+
+schemas:
+  bronze: bronze
+  silver: silver
+  gold: gold
+
+# Notion databases to sync
+notion:
+  databases:
+    programs: "NOTION_PROGRAMS_DB_ID"
+    projects: "NOTION_PROJECTS_DB_ID"
+    budget_lines: "NOTION_BUDGET_LINES_DB_ID"
+    risks: "NOTION_RISKS_DB_ID"
+
+# Alerting (enabled in prod)
+alerting:
+  enabled: true
+  webhook_url: "${SLACK_WEBHOOK_URL}"
+
+# Data quality thresholds (strictest in prod)
+quality:
+  null_threshold_pct: 1.0
+  unique_threshold_pct: 0.0
+  referential_threshold_pct: 0.1

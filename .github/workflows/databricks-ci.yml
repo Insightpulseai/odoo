@@ -1,0 +1,94 @@
+# Databricks Asset Bundle CI
+# Validates bundle configuration on PRs
+
+name: Databricks CI
+
+on:
+  pull_request:
+    paths:
+      - 'infra/databricks/**'
+      - '.github/workflows/databricks-*.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'infra/databricks/**'
+
+defaults:
+  run:
+    working-directory: infra/databricks
+
+jobs:
+  lint:
+    name: Lint Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff black mypy
+
+      - name: Run ruff
+        run: ruff check src/
+
+      - name: Run black check
+        run: black --check src/
+
+      - name: Run mypy
+        run: mypy src/ --ignore-missing-imports
+
+  validate-bundle:
+    name: Validate Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Validate bundle syntax
+        run: databricks bundle validate
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest tests/ -v --tb=short
+
+  yaml-lint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Lint YAML files
+        run: |
+          yamllint -d relaxed databricks.yml resources/ config/
