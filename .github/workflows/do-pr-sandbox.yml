@@ -1,0 +1,185 @@
+name: DO / PR Sandbox (Ephemeral)
+
+# Creates ephemeral DigitalOcean droplet per PR for isolated testing
+# Auto-destroys on PR close or after TTL expiry
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    paths:
+      - 'addons/**'
+      - 'docker-compose.yml'
+      - 'docker/**'
+      - 'infra/digitalocean/**'
+      - '.github/workflows/do-pr-sandbox.yml'
+
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'create'
+        type: choice
+        options:
+          - create
+          - destroy
+          - status
+      pr_number:
+        description: 'PR number (for manual runs)'
+        required: false
+        type: string
+
+env:
+  TF_VAR_pr_number: ${{ github.event.pull_request.number || inputs.pr_number }}
+  TF_VAR_branch_name: ${{ github.head_ref || github.ref_name }}
+  TF_VAR_repo_name: ${{ github.event.repository.name }}
+  TERRAFORM_DIR: infra/digitalocean/pr-sandbox
+
+jobs:
+  # Determine action based on event
+  preflight:
+    name: Preflight
+    runs-on: ubuntu-latest
+    outputs:
+      action: ${{ steps.determine.outputs.action }}
+      pr_number: ${{ steps.determine.outputs.pr_number }}
+    steps:
+      - name: Determine action
+        id: determine
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "action=${{ inputs.action }}" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ inputs.pr_number }}" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.action }}" == "closed" ]]; then
+            echo "action=destroy" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          else
+            echo "action=create" >> $GITHUB_OUTPUT
+            echo "pr_number=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          fi
+
+  # Create sandbox droplet
+  create:
+    name: Create Sandbox
+    needs: preflight
+    if: needs.preflight.outputs.action == 'create'
+    runs-on: ubuntu-latest
+    env:
+      DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Terraform Init
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform init
+
+      - name: Terraform Plan
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: |
+          terraform plan -out=tfplan \
+            -var="pr_number=${{ needs.preflight.outputs.pr_number }}" \
+            -var="branch_name=${{ env.TF_VAR_branch_name }}"
+
+      - name: Terraform Apply
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform apply -auto-approve tfplan
+
+      - name: Get Outputs
+        id: outputs
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: |
+          echo "droplet_ip=$(terraform output -raw droplet_ip)" >> $GITHUB_OUTPUT
+          echo "sandbox_url=$(terraform output -raw sandbox_url)" >> $GITHUB_OUTPUT
+          echo "ssh_command=$(terraform output -raw ssh_command)" >> $GITHUB_OUTPUT
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## DO Sandbox Created
+
+            | Resource | Value |
+            |----------|-------|
+            | **Droplet IP** | \`${{ steps.outputs.outputs.droplet_ip }}\` |
+            | **Odoo URL** | ${{ steps.outputs.outputs.sandbox_url }} |
+            | **SSH** | \`${{ steps.outputs.outputs.ssh_command }}\` |
+            | **TTL** | 24 hours (auto-destroy on PR close) |
+
+            > Services may take 2-3 minutes to start after droplet creation.
+            `;
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: body
+            });
+
+  # Destroy sandbox droplet
+  destroy:
+    name: Destroy Sandbox
+    needs: preflight
+    if: needs.preflight.outputs.action == 'destroy'
+    runs-on: ubuntu-latest
+    env:
+      DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.6.0"
+
+      - name: Terraform Init
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: terraform init
+
+      - name: Terraform Destroy
+        working-directory: ${{ env.TERRAFORM_DIR }}
+        run: |
+          terraform destroy -auto-approve \
+            -var="pr_number=${{ needs.preflight.outputs.pr_number }}" \
+            -var="branch_name=${{ env.TF_VAR_branch_name }}" || true
+
+      - name: Comment on PR (if open)
+        if: github.event_name == 'pull_request' && github.event.action == 'closed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '## DO Sandbox Destroyed\n\nEphemeral sandbox resources have been cleaned up.'
+            });
+
+  # Status check (manual)
+  status:
+    name: Check Sandbox Status
+    needs: preflight
+    if: needs.preflight.outputs.action == 'status'
+    runs-on: ubuntu-latest
+    env:
+      DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check droplet status via doctl
+        run: |
+          curl -sL https://github.com/digitalocean/doctl/releases/download/v1.100.0/doctl-1.100.0-linux-amd64.tar.gz | tar xz
+          sudo mv doctl /usr/local/bin/
+
+          doctl auth init -t "$DIGITALOCEAN_TOKEN"
+
+          echo "## Sandbox Droplets" >> $GITHUB_STEP_SUMMARY
+          doctl compute droplet list --tag-name pr-sandbox --format ID,Name,PublicIPv4,Status,Tags --no-header | \
+            while read -r line; do
+              echo "| $line |" >> $GITHUB_STEP_SUMMARY
+            done

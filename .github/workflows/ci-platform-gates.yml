@@ -1,0 +1,124 @@
+name: CI / Platform Gates (Skip Docs-Only)
+
+# This workflow runs heavy platform checks but SKIPS docs-only changes.
+# For docs-only PRs, see ci-docs-only.yml
+
+on:
+  pull_request:
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - ".github/workflows/ci-docs-only.yml"
+      - ".github/workflows/docs-pages.yml"
+      - ".github/workflows/release-docs.yml"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".gitignore"
+  push:
+    branches: ["main"]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+
+jobs:
+  preflight:
+    name: Platform Preflight
+    runs-on: ubuntu-latest
+    outputs:
+      has_supabase_changes: ${{ steps.filter.outputs.supabase }}
+      has_odoo_changes: ${{ steps.filter.outputs.odoo }}
+      has_infra_changes: ${{ steps.filter.outputs.infra }}
+      has_app_changes: ${{ steps.filter.outputs.apps }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Path filter
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            supabase:
+              - 'supabase/**'
+              - 'db/**'
+            odoo:
+              - 'addons/**'
+              - 'docker-compose.yml'
+              - 'docker/**'
+            infra:
+              - 'infra/**'
+              - 'deploy/**'
+              - '.github/workflows/**'
+            apps:
+              - 'apps/**'
+              - 'packages/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+
+      - name: Summary
+        run: |
+          echo "## Path Filter Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Area | Changed |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Supabase | ${{ steps.filter.outputs.supabase }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Odoo | ${{ steps.filter.outputs.odoo }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Infra | ${{ steps.filter.outputs.infra }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Apps | ${{ steps.filter.outputs.apps }} |" >> $GITHUB_STEP_SUMMARY
+
+  # Gate: Only runs when non-docs platform files change
+  platform-syntax:
+    name: Platform Syntax Checks
+    needs: preflight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate YAML workflows
+        run: |
+          pip install pyyaml
+          python - <<'PY'
+          import glob, sys, yaml
+          errors = []
+          for f in glob.glob(".github/workflows/*.yml"):
+              try:
+                  yaml.safe_load(open(f))
+              except Exception as e:
+                  errors.append(f"{f}: {e}")
+          if errors:
+              print("YAML validation errors:")
+              for e in errors:
+                  print(f"  - {e}")
+              sys.exit(1)
+          print(f"Validated {len(glob.glob('.github/workflows/*.yml'))} workflow files")
+          PY
+
+      - name: Validate JSON configs
+        run: |
+          python - <<'PY'
+          import glob, json, sys
+          errors = []
+          for pattern in ["**/*.json", ".claude/*.json"]:
+              for f in glob.glob(pattern, recursive=True):
+                  if "node_modules" in f or ".git" in f:
+                      continue
+                  try:
+                      json.load(open(f))
+                  except Exception as e:
+                      errors.append(f"{f}: {e}")
+          if errors:
+              print("JSON validation errors (first 10):")
+              for e in errors[:10]:
+                  print(f"  - {e}")
+              sys.exit(1)
+          print("JSON configs valid")
+          PY
+
+  platform-gate-pass:
+    name: Platform Gate (All Checks)
+    needs: [preflight, platform-syntax]
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Platform gates passed for this PR."
