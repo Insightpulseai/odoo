@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 32a04a91e141c92f0239036883434929ce537e3b
+> Commit: d0a2f5deb19d63a35476407244e1ae1d69a491eb
 
 ## 📚 Documentation
 
@@ -354,6 +354,7 @@
 | [AI Module Deprecation Manifest](docs/architecture/AI_MODULE_DEPRECATION_MANIFEST.md) | docs/architecture |
 | [Ask AI Contract](docs/architecture/ASK_AI_CONTRACT.md) | docs/architecture |
 | [Authentication & Authorization Model](docs/architecture/AUTH_MODEL.md) | docs/architecture |
+| [CAPS Report — Cost / Accuracy / Privacy / Speed](docs/architecture/CAPS_REPORT.md) | docs/architecture |
 | [Cursor Ecosystem Capabilities (Bugbot + Composer + Codebase Indexing)](docs/architecture/CURSOR_ECOSYSTEM_CAPABILITIES.md) | docs/architecture |
 | [External Agent/Tool Capabilities (Stack Fit)](docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md) | docs/architecture |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
@@ -362,6 +363,7 @@
 | [IPAI Module Reduction Plan](docs/architecture/IPAI_MODULE_REDUCTION_PLAN.md) | docs/architecture |
 | [IPAI Target Module Architecture](docs/architecture/IPAI_TARGET_ARCHITECTURE.md) | docs/architecture |
 | [OCR Pipeline Architecture](docs/architecture/OCR_PIPELINE.md) | docs/architecture |
+| [OCR / Document Understanding Routing Matrix](docs/architecture/OCR_ROUTING_MATRIX.md) | docs/architecture |
 | [Odoo Official Docker Image → TBWA\SMP Production Canonical Mapping](docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md) | docs/architecture |
 | [Production Runtime Snapshot - Odoo CE 18.0](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
@@ -423,6 +425,11 @@
 | [Docker Image Diff Evidence](docs/evidence/20260121-0000/docker-image-diff/README.md) | docs/evidence/20260121-0000/docker-image-diff |
 | [CD Pipeline Deployment Ready](docs/evidence/20260122-1200/cd-pipeline/DEPLOYMENT_READY.md) | docs/evidence/20260122-1200/cd-pipeline |
 | [Summary](docs/evidence/20260122-1200/cd-pipeline/PR_BODY.md) | docs/evidence/20260122-1200/cd-pipeline |
+| [Dump Analysis Addendum — OCR Engines + Ops Workbench](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_ADDENDUM.md) | docs/evidence/20260124-dump-analysis |
+| [Consolidated Dump Analysis — Engineering Upgrade Roadmap](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_CONSOLIDATED.md) | docs/evidence/20260124-dump-analysis |
+| [DigitalOcean PostgreSQL Cluster — Infrastructure Evidence](docs/evidence/20260124-supabase-setup/infra/DIGITALOCEAN_POSTGRES.md) | docs/evidence/20260124-supabase-setup/infra |
+| [Supabase Project Setup Evidence](docs/evidence/20260124-supabase-setup/integrations/SUPABASE_PROJECT_SETUP.md) | docs/evidence/20260124-supabase-setup/integrations |
+| [Supabase Project Verification Results](docs/evidence/20260124-supabase-setup/integrations/verification_results.md) | docs/evidence/20260124-supabase-setup/integrations |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
