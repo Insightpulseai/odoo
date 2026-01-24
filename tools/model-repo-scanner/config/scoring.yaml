@@ -1,0 +1,207 @@
+# =============================================================================
+# Model Repo Scanner - Scoring Configuration
+# =============================================================================
+# Defines weights and patterns for ranking repositories as "model repos"
+# Edit weights to adjust scoring priorities for your organization.
+# =============================================================================
+
+# Target GitHub organization (override via GITHUB_ORG env var)
+organization: "jgtolentino"
+
+# Cache directory for cloned repos
+cache_dir: ".cache/repos"
+
+# Output directory for artifacts
+artifacts_dir: "artifacts"
+
+# =============================================================================
+# Scoring Weights (must sum to 100)
+# =============================================================================
+weights:
+  ci_governance: 30      # CI & governance maturity
+  integration: 35        # Integration surfaces (Supabase, MCP, n8n, Vercel)
+  automation: 25         # Automation maturity
+  recency: 10            # Recency & adoption readiness
+
+# =============================================================================
+# CI & Governance Patterns (max 30 points)
+# =============================================================================
+ci_governance:
+  # Unified CI runner scripts (10 points)
+  ci_scripts:
+    weight: 10
+    patterns:
+      - "scripts/ci/**/*.sh"
+      - "scripts/run_all.sh"
+      - "scripts/ci_local.sh"
+      - "scripts/verify*.sh"
+    content_patterns:
+      - "ci-green-aggregate"
+      - "all-green-gates"
+
+  # GitHub workflows quality (10 points)
+  workflows:
+    weight: 10
+    patterns:
+      - ".github/workflows/*.yml"
+      - ".github/workflows/*.yaml"
+    content_patterns:
+      - "workflow_call"           # Reusable workflows
+      - "required_status_checks"
+      - "branch_protection"
+
+  # Governance files (10 points)
+  governance:
+    weight: 10
+    patterns:
+      - "CODEOWNERS"
+      - ".github/CODEOWNERS"
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/pull_request_template.md"
+      - "spec/**/constitution.md"
+      - "spec/**/prd.md"
+      - "spec/**/plan.md"
+      - "spec/**/tasks.md"
+
+# =============================================================================
+# Integration Surfaces (max 35 points)
+# =============================================================================
+integration:
+  # Supabase integration (8 points)
+  supabase:
+    weight: 8
+    patterns:
+      - "supabase/config.toml"
+      - "supabase/migrations/**"
+      - "supabase/functions/**"
+      - "db/migrations/**"
+    content_patterns:
+      - "SUPABASE_URL"
+      - "supabase.co"
+
+  # MCP (Model Context Protocol) (10 points)
+  mcp:
+    weight: 10
+    patterns:
+      - "mcp/**"
+      - ".claude/mcp-servers.json"
+      - "tools/**/*.ts"
+      - "tools/**/*.py"
+    content_patterns:
+      - "mcp-server"
+      - "tool_registry"
+      - "supabase.*"
+      - "odoo.*"
+      - "memory.*"
+
+  # n8n workflows (7 points)
+  n8n:
+    weight: 7
+    patterns:
+      - "n8n/**"
+      - "workflows/*.json"
+      - "scripts/*n8n*.sh"
+    content_patterns:
+      - "n8n.io"
+      - "webhook"
+      - "workflow_dispatch"
+
+  # Vercel deployment (5 points)
+  vercel:
+    weight: 5
+    patterns:
+      - "vercel.json"
+      - ".vercel/**"
+      - "apps/**/vercel.json"
+    content_patterns:
+      - "vercel.app"
+      - "VERCEL_"
+
+  # Ops Control Room / Platform UI (5 points)
+  ops_platform:
+    weight: 5
+    patterns:
+      - "apps/control-room/**"
+      - "ops/**"
+      - "dashboards/**"
+    content_patterns:
+      - "control-room"
+      - "observability"
+      - "monitoring"
+
+# =============================================================================
+# Automation Maturity (max 25 points)
+# =============================================================================
+automation:
+  # Deterministic docs/drift gates (10 points)
+  drift_gates:
+    weight: 10
+    patterns:
+      - "scripts/gen_*.sh"
+      - "scripts/generate_*.sh"
+      - "scripts/drift*.sh"
+    content_patterns:
+      - "git diff --exit-code"
+      - "no drift"
+      - "auto-update"
+      - "[skip ci]"
+
+  # Branch hygiene (8 points)
+  branch_hygiene:
+    weight: 8
+    patterns:
+      - ".github/workflows/*branch*.yml"
+      - "scripts/*branch*.sh"
+    content_patterns:
+      - "default_branch"
+      - "branch_protection"
+      - "label sync"
+
+  # Security scanning (7 points)
+  security:
+    weight: 7
+    patterns:
+      - ".github/secret_scanning.yml"
+      - "scripts/security/**"
+      - ".gitleaks.toml"
+    content_patterns:
+      - "secret_scanning"
+      - "gitleaks"
+      - "trufflehog"
+
+# =============================================================================
+# Recency & Adoption Readiness (max 10 points)
+# =============================================================================
+recency:
+  # Recent activity (5 points)
+  activity:
+    weight: 5
+    # Scored by: commits in last 30 days, open PRs, recent releases
+
+  # Documentation quality (5 points)
+  documentation:
+    weight: 5
+    patterns:
+      - "README.md"
+      - "docs/**/*.md"
+      - "CLAUDE.md"
+      - "CONTRIBUTING.md"
+    content_patterns:
+      - "## Usage"
+      - "## Installation"
+      - "```bash"
+
+# =============================================================================
+# Exclusions
+# =============================================================================
+exclude_repos:
+  - "demo-repository"
+  - "archived-*"
+  - ".github"  # Org-level repo (handle separately)
+
+exclude_patterns:
+  - "node_modules/**"
+  - ".git/**"
+  - "vendor/**"
+  - "dist/**"
+  - "build/**"
