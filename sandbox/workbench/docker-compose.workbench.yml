@@ -1,0 +1,69 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${ODOO_DB_NAME:-odoo_dev}
+      POSTGRES_USER: ${ODOO_DB_USER:-odoo}
+      POSTGRES_PASSWORD: ${ODOO_DB_PASSWORD:-odoo}
+    ports:
+      - "${WORKBENCH_DB_PORT:-5433}:5432"
+    volumes:
+      - workbench_db:/var/lib/postgresql/data
+
+  odoo:
+    # TODO: align image/tag to your repo's canonical Odoo image if different
+    image: odoo:18.0
+    depends_on:
+      - db
+    environment:
+      HOST: db
+      USER: ${ODOO_DB_USER:-odoo}
+      PASSWORD: ${ODOO_DB_PASSWORD:-odoo}
+    ports:
+      - "${WORKBENCH_ODOO_PORT:-8069}:8069"
+    volumes:
+      # Bind repo addons for fast iteration
+      - ../../addons:/mnt/extra-addons
+      # Optional: bind a custom odoo.conf if you have one
+      # - ../../deploy/odoo.conf:/etc/odoo/odoo.conf:ro
+      - workbench_odoo_data:/var/lib/odoo
+
+  superset-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${SUPERSET_DB_NAME:-superset}
+      POSTGRES_USER: ${SUPERSET_DB_USER:-superset}
+      POSTGRES_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset}
+    ports:
+      - "${WORKBENCH_SUPERSET_DB_PORT:-5434}:5432"
+    volumes:
+      - workbench_superset_db:/var/lib/postgresql/data
+
+  superset:
+    image: apache/superset:latest
+    depends_on:
+      - superset-db
+    ports:
+      - "${WORKBENCH_SUPERSET_PORT:-8088}:8088"
+    environment:
+      SUPERSET_ENV: production
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-dev-only-change-me}
+      DATABASE_DB: ${SUPERSET_DB_NAME:-superset}
+      DATABASE_USER: ${SUPERSET_DB_USER:-superset}
+      DATABASE_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset}
+      DATABASE_HOST: superset-db
+      DATABASE_PORT: 5432
+    volumes:
+      - workbench_superset_home:/app/superset_home
+    command: >
+      /bin/sh -lc "
+      superset db upgrade &&
+      superset init &&
+      gunicorn --bind 0.0.0.0:8088 'superset.app:create_app()'
+      "
+
+volumes:
+  workbench_db:
+  workbench_odoo_data:
+  workbench_superset_db:
+  workbench_superset_home:

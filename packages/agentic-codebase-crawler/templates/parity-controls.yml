@@ -1,0 +1,113 @@
+# Parity Controls Configuration
+# Edit these rules to match your definition of "Supabase Enterprise parity"
+# Each rule can:
+# - assert files exist
+# - assert env vars are referenced
+# - assert GitHub workflows exist
+# - assert Supabase features are configured (by presence of files/policies)
+
+controls:
+  - id: rls-required
+    title: "Row Level Security policies exist for exposed schemas"
+    severity: high
+    checks:
+      - type: glob_exists
+        pattern: "supabase/migrations/*.sql"
+        must_contain_regex: "(?is)enable row level security|create policy|alter table.*enable row level security"
+
+  - id: audit-logging
+    title: "Audit logging plan present (DB + platform)"
+    severity: medium
+    checks:
+      - type: any_file_exists
+        paths:
+          - "docs/security/AUDIT_LOGS.md"
+          - "docs/ops/audit-logging.md"
+
+  - id: network-restrictions
+    title: "Network restrictions documented + enforced where applicable"
+    severity: medium
+    checks:
+      - type: any_file_exists
+        paths:
+          - "docs/security/NETWORK_RESTRICTIONS.md"
+          - "docs/ops/network-restrictions.md"
+
+  - id: backups-pitr
+    title: "Backups/PITR & restore drill documented"
+    severity: medium
+    checks:
+      - type: any_file_exists
+        paths:
+          - "docs/ops/BACKUPS_RESTORE.md"
+          - "docs/ops/pitr.md"
+
+  - id: vercel-secrets
+    title: "Vercel/Supabase secrets are referenced via env (never committed)"
+    severity: high
+    checks:
+      - type: deny_glob
+        pattern: "**/*.env"
+      - type: repo_regex_deny
+        regex: "(?i)service_role|SUPABASE_SERVICE_ROLE_KEY\\s*=\\s*['\"]?[A-Za-z0-9_.-]{20,}"
+
+  - id: ci-parity-gates
+    title: "CI has parity gates (typecheck, lint, tests, migration lint)"
+    severity: high
+    checks:
+      - type: any_file_exists
+        paths:
+          - ".github/workflows/ci.yml"
+          - ".github/workflows/test.yml"
+          - ".github/workflows/supabase.yml"
+          - ".github/workflows/sql-migrations-validate.yml"
+
+  - id: ops-schema
+    title: "ops.runs schema exists for agent auditability"
+    severity: medium
+    checks:
+      - type: glob_exists
+        pattern: "supabase/migrations/*ops*.sql"
+        must_contain_regex: "(?is)create schema.*ops|ops\\.runs|ops\\.artifacts"
+
+  - id: template-packs
+    title: "Template packs registry exists"
+    severity: low
+    checks:
+      - type: any_file_exists
+        paths:
+          - "packages/config/template-packs.json"
+          - "config/template-packs.json"
+
+  - id: agents-contract
+    title: "Agent operating contract (AGENTS.md) exists"
+    severity: medium
+    checks:
+      - type: any_file_exists
+        paths:
+          - "AGENTS.md"
+
+  - id: platform-ssot
+    title: "Platform capabilities SSOT exists"
+    severity: low
+    checks:
+      - type: any_file_exists
+        paths:
+          - "spec/platforms/platform-capabilities.template.md"
+
+  - id: secret-registry
+    title: "Secret registry for tracking secret usage exists"
+    severity: medium
+    checks:
+      - type: glob_exists
+        pattern: "supabase/migrations/*secret*.sql"
+        must_contain_regex: "(?is)secret_registry|touch_secret"
+
+  - id: ee-parity-gate
+    title: "EE parity gate blocks premature enterprise bridge work"
+    severity: high
+    checks:
+      - type: any_file_exists
+        paths:
+          - "config/ee_parity/ee_parity_mapping.yml"
+          - ".github/workflows/ee-parity-gate.yml"

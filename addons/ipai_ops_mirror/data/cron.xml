@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Cron job to refresh ops summary from Supabase SSOT -->
+        <record id="ir_cron_ipai_ops_mirror_refresh" model="ir.cron">
+            <field name="name">IPAI Ops Mirror Refresh</field>
+            <field name="model_id" ref="model_ipai_ops_summary"/>
+            <field name="state">code</field>
+            <field name="code">model.refresh_all()</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="doall">False</field>
+            <field name="priority">50</field>
+        </record>
+    </data>
+</odoo>

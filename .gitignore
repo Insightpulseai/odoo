@@ -123,6 +123,7 @@ temp/
 !db/process_mining/*.sql
 !scripts/erd_dot.sql
 !docs/data-model/*.sql
+!tests/sql/*.sql
 
 # Parity audit generated files
 parity_report.json
@@ -189,3 +190,22 @@ docs/incidents/*
 
 # OCA local clones (dev-only, not committed)
 sandbox/dev/oca-addons/
+.env.local
+!scripts/lib/
+
+# ---- Large/derived artifacts (indexer-noise reduction) ----
+# These bloat semantic search indexes with low-value content
+**/.turbo/
+**/.vercel/
+**/coverage/
+**/.nyc_output/
+**/storybook-static/
+**/.docusaurus/
+**/*.min.js
+**/*.min.css
+**/*.bundle.js
+**/*.chunk.js
+**/vendor/
+**/.terraform/
+**/terraform.tfstate*
+.ci_artifacts/

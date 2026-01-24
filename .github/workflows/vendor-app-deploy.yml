@@ -1,0 +1,234 @@
+name: Vendor App Deploy (matrix)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "integrations/**"
+      - "supabase/functions/**"
+      - "apps/**"
+      - ".github/workflows/vendor-app-deploy.yml"
+      - "scripts/integrations/**"
+
+  workflow_dispatch:
+    inputs:
+      app_slug:
+        description: 'Specific app slug to deploy (leave empty for affected)'
+        required: false
+        type: string
+      force_all:
+        description: 'Force deploy all apps'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: vendor-app-deploy-${{ github.ref }}
+  cancel-in-progress: false  # Don't cancel in-progress deploys
+
+jobs:
+  compute_affected:
+    name: Compute Affected Apps
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.out.outputs.matrix }}
+      has_apps: ${{ steps.out.outputs.has_apps }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install --no-cache-dir pyyaml
+
+      - name: Compute affected apps
+        id: out
+        run: |
+          set -euo pipefail
+
+          # Handle manual dispatch with specific app
+          if [ -n "${{ github.event.inputs.app_slug }}" ]; then
+            echo "Manual dispatch for: ${{ github.event.inputs.app_slug }}"
+            echo 'matrix=["${{ github.event.inputs.app_slug }}"]' >> $GITHUB_OUTPUT
+            echo "has_apps=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Handle force_all
+          if [ "${{ github.event.inputs.force_all }}" = "true" ]; then
+            echo "Force deploying all apps"
+            # Extract all external app slugs from catalog
+            APPS=$(python3 -c "
+          import yaml
+          from pathlib import Path
+          cfg = yaml.safe_load(Path('integrations/apps.yml').read_text())
+          apps = [a['slug'] for a in cfg.get('apps', []) if a.get('repo') != 'internal']
+          print(repr(apps))
+          ")
+            echo "matrix=$APPS" >> $GITHUB_OUTPUT
+            echo "has_apps=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # Compute from git diff
+          git fetch origin main --depth=1 || true
+          AFFECTED=$(python3 scripts/integrations/affected_apps.py)
+          echo "Affected apps: $AFFECTED"
+
+          # Filter to only external/deployable apps
+          DEPLOYABLE=$(python3 -c "
+          import json
+          import yaml
+          from pathlib import Path
+
+          affected = json.loads('$AFFECTED')
+          cfg = yaml.safe_load(Path('integrations/apps.yml').read_text())
+          by_slug = {a['slug']: a for a in cfg.get('apps', [])}
+
+          # Only include apps with deploy config and non-internal repos
+          deployable = []
+          for slug in affected:
+              app = by_slug.get(slug, {})
+              if app.get('deploy', {}).get('provider') and app.get('repo') != 'internal':
+                  deployable.append(slug)
+
+          print(json.dumps(deployable))
+          ")
+
+          echo "Deployable apps: $DEPLOYABLE"
+          echo "matrix=$DEPLOYABLE" >> $GITHUB_OUTPUT
+
+          if [ "$DEPLOYABLE" = "[]" ]; then
+            echo "has_apps=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_apps=true" >> $GITHUB_OUTPUT
+          fi
+
+  deploy:
+    name: Deploy ${{ matrix.slug }}
+    needs: compute_affected
+    if: needs.compute_affected.outputs.has_apps == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        slug: ${{ fromJson(needs.compute_affected.outputs.matrix) }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install --no-cache-dir pyyaml
+
+      - name: Install Vercel CLI
+        run: npm i -g vercel@latest
+
+      - name: Install Fly CLI
+        run: |
+          curl -L https://fly.io/install.sh | sh
+          echo "$HOME/.fly/bin" >> $GITHUB_PATH
+
+      - name: Install Supabase CLI
+        run: |
+          npm i -g supabase@latest
+
+      - name: Deploy app
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          set -euo pipefail
+          python3 scripts/integrations/deploy_one.py --slug "${{ matrix.slug }}"
+
+      - name: Upload deploy evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-evidence-${{ matrix.slug }}
+          path: docs/evidence/*/deploy/*
+          retention-days: 30
+
+  deploy_internal:
+    name: Deploy Internal Apps
+    needs: compute_affected
+    runs-on: ubuntu-latest
+    # Only run if config-registry is affected
+    if: contains(needs.compute_affected.outputs.matrix, 'config-registry')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: npm i -g supabase@latest
+
+      - name: Deploy Supabase Functions
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SUPABASE_ACCESS_TOKEN:-}" ] || [ -z "${SUPABASE_PROJECT_REF:-}" ]; then
+            echo "::warning::Supabase credentials not configured. Skipping function deployment."
+            exit 0
+          fi
+
+          # Link project
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+          # Deploy config functions
+          for func in config-publish consumer-heartbeat; do
+            if [ -d "supabase/functions/$func" ]; then
+              echo "Deploying function: $func"
+              supabase functions deploy "$func"
+            fi
+          done
+
+  notify:
+    name: Notify Deploy Status
+    needs: [deploy, deploy_internal]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Summarize deployment
+        run: |
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.deploy.result }}" = "success" ]; then
+            echo "External apps: **Success**" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.deploy.result }}" = "skipped" ]; then
+            echo "External apps: **Skipped** (no affected apps)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "External apps: **${{ needs.deploy.result }}**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.deploy_internal.result }}" = "success" ]; then
+            echo "Internal apps: **Success**" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.deploy_internal.result }}" = "skipped" ]; then
+            echo "Internal apps: **Skipped**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Internal apps: **${{ needs.deploy_internal.result }}**" >> $GITHUB_STEP_SUMMARY
+          fi

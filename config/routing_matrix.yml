@@ -1,0 +1,99 @@
+# Routing Matrix Configuration
+# Controls issue routing, team caps, and escalation policies
+
+version: 1
+
+# Label-to-team routing
+labels_to_route:
+  bug:
+    team: "Eng"
+    severity_default: "Sev2"
+  feature:
+    team: "ProductEng"
+    severity_default: "Sev3"
+  spec:
+    team: "Product"
+    severity_default: "Sev3"
+  ops:
+    team: "Ops"
+    severity_default: "Sev2"
+  security:
+    team: "Security"
+    severity_default: "Sev1"
+  design:
+    team: "Design"
+    severity_default: "Sev3"
+  documentation:
+    team: "Docs"
+    severity_default: "Sev3"
+
+# Team capacity limits (caps)
+caps:
+  Eng:
+    max_open_p0_p1: 10
+    max_open_total: 60
+    description: "Engineering team"
+  ProductEng:
+    max_open_p0_p1: 8
+    max_open_total: 50
+    description: "Product Engineering (features)"
+  Product:
+    max_open_p0_p1: 12
+    max_open_total: 80
+    description: "Product team (specs, planning)"
+  Ops:
+    max_open_p0_p1: 8
+    max_open_total: 40
+    description: "Operations/SRE team"
+  Security:
+    max_open_p0_p1: 6
+    max_open_total: 30
+    description: "Security team"
+  Design:
+    max_open_p0_p1: 5
+    max_open_total: 25
+    description: "Design team"
+  Docs:
+    max_open_p0_p1: 3
+    max_open_total: 20
+    description: "Documentation team"
+
+# Escalation policies by severity
+escalation:
+  Sev0:
+    sla_hours: 1
+    notify: ["ops", "security", "engineering-lead"]
+    description: "Production down - immediate response"
+  Sev1:
+    sla_hours: 4
+    notify: ["ops", "engineering-lead"]
+    description: "Major function broken - same day"
+  Sev2:
+    sla_hours: 24
+    notify: ["eng"]
+    description: "Degraded / workaround exists - next business day"
+  Sev3:
+    sla_hours: 120
+    notify: ["product"]
+    description: "Minor / nice-to-have - within sprint"
+
+# Priority definitions
+priorities:
+  P0:
+    description: "Critical path blocker"
+    sla_hours: 4
+  P1:
+    description: "High priority"
+    sla_hours: 24
+  P2:
+    description: "Medium priority"
+    sla_hours: 72
+  P3:
+    description: "Low priority / nice-to-have"
+    sla_hours: 168  # 1 week
+
+# Labels that bypass caps check
+bypass_labels:
+  - "gate:ignore-caps"
+  - "emergency"
+  - "hotfix"

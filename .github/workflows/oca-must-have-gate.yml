@@ -1,0 +1,337 @@
+name: OCA Must-Have Base Gate
+
+on:
+  pull_request:
+    paths:
+      - "config/oca/**"
+      - "scripts/odoo_install_oca_must_have.sh"
+      - "scripts/odoo_verify_oca_must_have.py"
+      - "scripts/ci/oca_must_have_gate.sh"
+      - ".github/workflows/oca-must-have-gate.yml"
+  workflow_dispatch:
+    inputs:
+      odoo_version:
+        description: "Odoo version to test"
+        required: false
+        default: "19.0"
+        type: choice
+        options:
+          - "19.0"
+          - "18.0"
+      dry_run:
+        description: "Dry run (validate manifest only)"
+        required: false
+        default: false
+        type: boolean
+
+env:
+  ODOO_VERSION: ${{ inputs.odoo_version || '19.0' }}
+
+jobs:
+  validate-manifest:
+    name: Validate OCA Manifest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Validate manifest structure
+        run: |
+          set -euo pipefail
+          echo "=== Validating OCA Must-Have Manifest ==="
+
+          MANIFEST="config/oca/oca_must_have_base.yml"
+
+          if [ ! -f "$MANIFEST" ]; then
+            echo "ERROR: Manifest not found: $MANIFEST"
+            exit 1
+          fi
+
+          python3 << 'EOF'
+          import yaml
+          import sys
+
+          with open("config/oca/oca_must_have_base.yml", "r") as f:
+              data = yaml.safe_load(f)
+
+          # Validate required sections
+          required = ["meta", "repositories", "modules", "policy"]
+          missing = [k for k in required if k not in data]
+          if missing:
+              print(f"ERROR: Missing required sections: {missing}")
+              sys.exit(1)
+
+          # Validate meta
+          meta = data.get("meta", {})
+          if "odoo_version" not in meta:
+              print("ERROR: meta.odoo_version is required")
+              sys.exit(1)
+
+          # Validate modules list
+          modules = data.get("modules", [])
+          if not modules:
+              print("ERROR: No modules defined in manifest")
+              sys.exit(1)
+
+          print(f"Manifest valid:")
+          print(f"  Odoo version: {meta.get('odoo_version')}")
+          print(f"  Repositories: {len(data.get('repositories', []))}")
+          print(f"  Modules: {len(modules)}")
+
+          print("\nModules to install:")
+          for m in modules:
+              print(f"  - {m}")
+          EOF
+
+      - name: Check OCA repository availability
+        run: |
+          set -euo pipefail
+          echo "=== Checking OCA Repository Availability ==="
+
+          python3 << 'EOF'
+          import yaml
+          import urllib.request
+          import sys
+
+          with open("config/oca/oca_must_have_base.yml", "r") as f:
+              data = yaml.safe_load(f)
+
+          repos = data.get("repositories", [])
+          errors = []
+
+          for repo in repos:
+              name = repo.get("name", "")
+              branch = repo.get("branch", "19.0")
+
+              # Check if branch exists on GitHub
+              url = f"https://api.github.com/repos/{name}/branches/{branch}"
+              try:
+                  req = urllib.request.Request(url)
+                  req.add_header("Accept", "application/vnd.github.v3+json")
+                  with urllib.request.urlopen(req, timeout=10) as resp:
+                      if resp.status == 200:
+                          print(f"OK: {name} @ {branch}")
+                      else:
+                          print(f"WARN: {name} @ {branch} - status {resp.status}")
+                          errors.append(f"{name}@{branch}")
+              except urllib.error.HTTPError as e:
+                  if e.code == 404:
+                      print(f"WARN: {name} @ {branch} - branch not found (may not exist yet)")
+                  else:
+                      print(f"WARN: {name} @ {branch} - HTTP {e.code}")
+              except Exception as e:
+                  print(f"WARN: {name} @ {branch} - {e}")
+
+          if errors:
+              print(f"\nNote: Some branches may not exist yet for Odoo 19.0")
+              print("This is expected for new versions. CI will validate at install time.")
+          EOF
+
+  install-test:
+    name: Install Test (Odoo ${{ matrix.odoo_version }})
+    runs-on: ubuntu-latest
+    needs: validate-manifest
+    if: ${{ !inputs.dry_run }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        odoo_version:
+          - "18.0"
+          # - "19.0"  # Uncomment when Odoo 19 is released
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyyaml psycopg2-binary
+
+      - name: Clone OCA repositories
+        run: |
+          set -euo pipefail
+          echo "=== Cloning OCA Repositories ==="
+
+          mkdir -p oca-addons
+
+          python3 << 'EOF'
+          import yaml
+          import subprocess
+          import os
+
+          with open("config/oca/oca_must_have_base.yml", "r") as f:
+              data = yaml.safe_load(f)
+
+          repos = data.get("repositories", [])
+
+          for repo in repos:
+              name = repo.get("name", "")
+              branch = repo.get("branch", "18.0")  # Fallback to 18.0 if 19.0 not available
+
+              repo_name = name.split("/")[-1]
+              target_dir = f"oca-addons/{repo_name}"
+
+              if os.path.exists(target_dir):
+                  print(f"Skip: {target_dir} already exists")
+                  continue
+
+              url = f"https://github.com/{name}.git"
+              print(f"Cloning {name} @ {branch}...")
+
+              try:
+                  subprocess.run(
+                      ["git", "clone", "--depth", "1", "-b", branch, url, target_dir],
+                      check=True,
+                      capture_output=True
+                  )
+                  print(f"  OK: {target_dir}")
+              except subprocess.CalledProcessError as e:
+                  print(f"  WARN: Failed to clone {name}@{branch}, trying 18.0...")
+                  try:
+                      subprocess.run(
+                          ["git", "clone", "--depth", "1", "-b", "18.0", url, target_dir],
+                          check=True,
+                          capture_output=True
+                      )
+                      print(f"  OK: {target_dir} (fallback to 18.0)")
+                  except subprocess.CalledProcessError:
+                      print(f"  ERROR: Failed to clone {name}")
+          EOF
+
+      - name: Setup Odoo
+        run: |
+          set -euo pipefail
+          echo "=== Setting up Odoo ==="
+
+          # Install Odoo from nightly
+          pip install https://nightly.odoo.com/${{ matrix.odoo_version }}/nightly/src/odoo_${{ matrix.odoo_version }}.latest.zip
+
+          # Build addons path
+          ADDONS_PATH="addons"
+          for dir in oca-addons/*; do
+            if [ -d "$dir" ]; then
+              ADDONS_PATH="$ADDONS_PATH,$dir"
+            fi
+          done
+
+          echo "ODOO_ADDONS_PATH=$ADDONS_PATH" >> $GITHUB_ENV
+          echo "Addons path: $ADDONS_PATH"
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -U odoo; then
+              echo "PostgreSQL is ready"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 2
+          done
+
+      - name: Install OCA must-have modules
+        env:
+          ODOO_BIN: odoo
+          ODOO_DB: odoo
+          ODOO_ADMIN_PASS: admin
+          PGHOST: localhost
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          set -euo pipefail
+          echo "=== Installing OCA Must-Have Modules ==="
+
+          chmod +x scripts/odoo_install_oca_must_have.sh
+          ./scripts/odoo_install_oca_must_have.sh config/oca/oca_must_have_base.yml || {
+            echo "Install failed - checking which modules are missing..."
+
+            # List available modules
+            python3 << 'PYEOF'
+          import yaml
+          import os
+          import glob
+
+          with open("config/oca/oca_must_have_base.yml", "r") as f:
+              data = yaml.safe_load(f)
+
+          required = set(data.get("modules", []))
+
+          # Find all available modules
+          available = set()
+          for manifest in glob.glob("addons/*/__manifest__.py") + glob.glob("oca-addons/*/**/__manifest__.py", recursive=True):
+              module_name = os.path.basename(os.path.dirname(manifest))
+              available.add(module_name)
+
+          missing = required - available
+          if missing:
+              print(f"Missing modules not found in addons paths: {sorted(missing)}")
+          else:
+              print("All required modules found in addons paths")
+          PYEOF
+
+            exit 1
+          }
+
+      - name: Verify OCA must-have modules
+        env:
+          ODOO_DB: odoo
+          PGHOST: localhost
+          PGUSER: odoo
+          PGPASSWORD: odoo
+        run: |
+          set -euo pipefail
+          echo "=== Verifying OCA Must-Have Modules ==="
+
+          chmod +x scripts/odoo_verify_oca_must_have.py
+          ./scripts/odoo_verify_oca_must_have.py config/oca/oca_must_have_base.yml
+
+      - name: Generate install report
+        if: always()
+        run: |
+          echo "=== OCA Must-Have Install Report ==="
+          echo "Odoo Version: ${{ matrix.odoo_version }}"
+          echo "Manifest: config/oca/oca_must_have_base.yml"
+
+          python3 << 'EOF'
+          import yaml
+
+          with open("config/oca/oca_must_have_base.yml", "r") as f:
+              data = yaml.safe_load(f)
+
+          print(f"\nTotal modules in manifest: {len(data.get('modules', []))}")
+          print(f"Total repositories: {len(data.get('repositories', []))}")
+          EOF

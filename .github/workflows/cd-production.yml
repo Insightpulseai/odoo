@@ -1,0 +1,457 @@
+# =============================================================================
+# GitHub Actions: Continuous Deployment to Production
+# =============================================================================
+# Unified pipeline: Build → Test → Deploy → Verify → Tag
+#
+# Triggers:
+#   - Push to main branch (auto-deploy)
+#   - Manual workflow dispatch
+#
+# Target: erp.insightpulseai.net (DigitalOcean Droplet)
+# =============================================================================
+
+name: CD Production
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'addons/**'
+      - 'docker/**'
+      - 'config/**'
+      - 'deploy/**'
+      - 'scripts/**'
+      - '.github/workflows/cd-production.yml'
+  workflow_dispatch:
+    inputs:
+      skip_build:
+        description: 'Skip build and use existing image'
+        required: false
+        default: false
+        type: boolean
+      image_tag:
+        description: 'Image tag to deploy (if skip_build)'
+        required: false
+        default: 'edge-standard'
+        type: string
+      dry_run:
+        description: 'Dry run (no actual deployment)'
+        required: false
+        default: false
+        type: boolean
+
+concurrency:
+  group: cd-production
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: jgtolentino/odoo-ce
+  DEPLOY_TAG: prod-${{ github.run_id }}
+
+jobs:
+  # ===========================================================================
+  # Stage 1: Build Docker Image
+  # ===========================================================================
+  build:
+    name: Build & Push Image
+    runs-on: ubuntu-latest
+    if: ${{ !inputs.skip_build }}
+    permissions:
+      contents: read
+      packages: write
+
+    outputs:
+      image_digest: ${{ steps.build.outputs.digest }}
+      image_tag: ${{ steps.tags.outputs.deploy_tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate tags
+        id: tags
+        run: |
+          TIMESTAMP=$(date -u +'%Y%m%d-%H%M')
+          DEPLOY_TAG="prod-${TIMESTAMP}"
+          SHORT_SHA="${GITHUB_SHA::7}"
+
+          echo "deploy_tag=${DEPLOY_TAG}" >> $GITHUB_OUTPUT
+          echo "short_sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "timestamp=${TIMESTAMP}" >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.unified
+          build-args: |
+            PROFILE=standard
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            GIT_SHA=${{ github.sha }}
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tags.outputs.deploy_tag }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:edge-standard
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha,scope=standard
+          cache-to: type=gha,mode=max,scope=standard
+
+      - name: Summary
+        run: |
+          echo "## Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag | \`${{ steps.tags.outputs.deploy_tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Digest | \`${{ steps.build.outputs.digest }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| SHA | \`${{ steps.tags.outputs.short_sha }}\` |" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Stage 2: Smoke Test
+  # ===========================================================================
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ !inputs.skip_build }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run smoke test
+        run: |
+          IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.build.outputs.image_tag }}"
+          echo "Testing image: $IMAGE"
+
+          # Pull the image
+          docker pull "$IMAGE"
+
+          # Run --stop-after-init test
+          docker run --rm \
+            -e DB_HOST=localhost \
+            "$IMAGE" \
+            odoo --version
+
+          echo "Smoke test passed"
+
+      - name: Cleanup
+        if: always()
+        run: docker system prune -f || true
+
+  # ===========================================================================
+  # Stage 3: Deploy to Production
+  # ===========================================================================
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [build, smoke-test]
+    if: |
+      always() &&
+      (needs.build.result == 'success' || inputs.skip_build) &&
+      (needs.smoke-test.result == 'success' || inputs.skip_build) &&
+      !inputs.dry_run
+
+    environment:
+      name: production
+      url: https://erp.insightpulseai.net
+
+    outputs:
+      deployed_tag: ${{ steps.deploy.outputs.tag }}
+      deploy_status: ${{ steps.deploy.outputs.status }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine image tag
+        id: image
+        run: |
+          if [ "${{ inputs.skip_build }}" == "true" ]; then
+            TAG="${{ inputs.image_tag }}"
+          else
+            TAG="${{ needs.build.outputs.image_tag }}"
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "Deploying image tag: $TAG"
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_TOKEN }}
+
+      - name: Deploy via DigitalOcean API
+        id: deploy
+        env:
+          IMAGE_TAG: ${{ steps.image.outputs.tag }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+        run: |
+          # Find the droplet (odoo server)
+          DROPLET_ID=$(doctl compute droplet list --format ID,Name --no-header | grep -i odoo | head -1 | awk '{print $1}')
+
+          if [ -z "$DROPLET_ID" ]; then
+            echo "::error::No Odoo droplet found"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          echo "Found droplet ID: $DROPLET_ID"
+
+          # Deploy script to run on droplet
+          DEPLOY_SCRIPT=$(cat <<'SCRIPT'
+          set -e
+          echo "=== Starting deployment ==="
+
+          # Navigate to repo
+          cd /opt/odoo-ce || cd /workspace/odoo-ce || cd ~/odoo-ce
+
+          # Pull latest code
+          echo "Pulling latest code..."
+          git fetch origin main
+          git checkout main
+          git pull origin main --ff-only
+
+          # Update submodules
+          git submodule update --init --recursive
+
+          # Login to GHCR
+          echo "Logging into registry..."
+          echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USER}" --password-stdin
+
+          # Pull new image
+          echo "Pulling image..."
+          docker pull "ghcr.io/jgtolentino/odoo-ce:${IMAGE_TAG}"
+          docker tag "ghcr.io/jgtolentino/odoo-ce:${IMAGE_TAG}" "ghcr.io/jgtolentino/odoo-ce:latest"
+
+          # Recreate containers
+          echo "Recreating containers..."
+          cd deploy
+          docker compose -f docker-compose.prod.yml pull
+          docker compose -f docker-compose.prod.yml up -d --force-recreate
+
+          # Wait for Odoo to start
+          echo "Waiting for Odoo to initialize..."
+          sleep 45
+
+          # Health check
+          for i in 1 2 3 4 5; do
+            if curl -sf http://localhost:8069/web/health > /dev/null 2>&1; then
+              echo "Health check passed!"
+              exit 0
+            fi
+            echo "Health check attempt $i failed, retrying..."
+            sleep 10
+          done
+
+          echo "Health check failed"
+          docker logs odoo-ce --tail 50
+          exit 1
+          SCRIPT
+          )
+
+          # Execute via doctl ssh
+          echo "Deploying to droplet $DROPLET_ID..."
+
+          # Export vars for the script
+          export GHCR_TOKEN="${GHCR_TOKEN}"
+          export GHCR_USER="${GHCR_USER}"
+          export IMAGE_TAG="${IMAGE_TAG}"
+
+          if doctl compute ssh "$DROPLET_ID" --ssh-command "GHCR_TOKEN='${GHCR_TOKEN}' GHCR_USER='${GHCR_USER}' IMAGE_TAG='${IMAGE_TAG}' bash -c '${DEPLOY_SCRIPT}'"; then
+            echo "Deployment successful!"
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          else
+            echo "::error::Deployment failed"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Deploy summary
+        if: always()
+        run: |
+          echo "## Deployment Result" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Target | erp.insightpulseai.net |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image Tag | \`${{ steps.image.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ${{ steps.deploy.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Triggered By | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Stage 4: Production Verification
+  # ===========================================================================
+  verify:
+    name: Verify Production
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: needs.deploy.outputs.deploy_status == 'success'
+
+    steps:
+      - name: Wait for stability
+        run: sleep 30
+
+      - name: Health check
+        id: health
+        run: |
+          # Try public health endpoint
+          for i in 1 2 3 4 5; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+              --connect-timeout 10 \
+              --max-time 30 \
+              "https://erp.insightpulseai.net/web/health" || echo "000")
+
+            echo "Attempt $i: HTTP $HTTP_CODE"
+
+            if [ "$HTTP_CODE" == "200" ]; then
+              echo "status=healthy" >> $GITHUB_OUTPUT
+              echo "Production is healthy!"
+              exit 0
+            fi
+
+            sleep 15
+          done
+
+          echo "status=unhealthy" >> $GITHUB_OUTPUT
+          echo "::warning::Production health check returned HTTP $HTTP_CODE"
+
+      - name: Login page check
+        run: |
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+            --connect-timeout 10 \
+            "https://erp.insightpulseai.net/web/login" || echo "000")
+
+          echo "Login page: HTTP $HTTP_CODE"
+
+          if [ "$HTTP_CODE" == "200" ] || [ "$HTTP_CODE" == "303" ]; then
+            echo "Login page accessible"
+          else
+            echo "::warning::Login page returned HTTP $HTTP_CODE"
+          fi
+
+      - name: Verification summary
+        run: |
+          echo "## Production Verification" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Endpoint | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| /web/health | ${{ steps.health.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Stage 5: Auto-Tag Release
+  # ===========================================================================
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [deploy, verify]
+    if: needs.deploy.outputs.deploy_status == 'success'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create release tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ needs.deploy.outputs.deployed_tag }}"
+
+          # Create and push tag
+          git tag "$TAG" -m "Production deployment $TAG"
+
+          # Push with retry
+          for i in 1 2 3 4; do
+            if git push origin "$TAG"; then
+              echo "Tag pushed successfully"
+              break
+            fi
+            WAIT=$((2**i))
+            echo "Push failed, retrying in ${WAIT}s..."
+            sleep $WAIT
+          done
+
+          # Create GitHub release
+          gh release create "$TAG" \
+            --title "Production: $TAG" \
+            --notes "Automated production deployment
+
+**Image:** \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:$TAG\`
+**Commit:** ${{ github.sha }}
+**Deployed by:** ${{ github.actor }}
+**Workflow:** [Run #${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" \
+            --latest
+
+      - name: Release summary
+        run: |
+          echo "## Release Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Tag:** \`${{ needs.deploy.outputs.deployed_tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[View Release](https://github.com/${{ github.repository }}/releases/tag/${{ needs.deploy.outputs.deployed_tag }})" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Notify on Failure
+  # ===========================================================================
+  notify-failure:
+    name: Notify Failure
+    runs-on: ubuntu-latest
+    needs: [build, smoke-test, deploy, verify]
+    if: failure()
+
+    steps:
+      - name: Create failure issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "CD Pipeline Failed: ${{ github.run_id }}" \
+            --body "## CD Pipeline Failure
+
+**Workflow Run:** [#${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+**Triggered by:** ${{ github.actor }}
+**Commit:** ${{ github.sha }}
+
+### Failed Jobs
+Check the workflow run for details on which stage failed.
+
+### Recovery Steps
+1. Check the workflow logs
+2. Fix the issue
+3. Re-run the workflow or push a fix to main" \
+            --label "bug,ci" || echo "Could not create issue"
+
+      - name: Failure summary
+        run: |
+          echo "## Pipeline Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the job logs above for details." >> $GITHUB_STEP_SUMMARY

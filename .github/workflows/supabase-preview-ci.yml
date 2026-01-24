@@ -1,0 +1,49 @@
+name: supabase-preview-ci
+
+on:
+  pull_request:
+    paths:
+      - "supabase/**"
+      - ".github/workflows/supabase-preview-ci.yml"
+      - "scripts/ci/supabase_preview.sh"
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies (psql, python)
+        run: |
+          set -euo pipefail
+          sudo apt-get update -y
+          sudo apt-get install -y postgresql-client python3
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Run Supabase preview (local stack)
+        run: |
+          set -euo pipefail
+          ./scripts/ci/supabase_preview.sh
+
+      - name: Upload preview artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: supabase-preview-artifacts
+          path: .ci_artifacts/supabase
+          if-no-files-found: warn
+
+      - name: Stop Supabase
+        if: always()
+        run: |
+          set -euo pipefail
+          supabase stop || true

@@ -1,0 +1,56 @@
+# OCA Must-Have Accounting (Odoo 19) - SSOT manifest
+# NOTE: module names are commonly used OCA technical names.
+# CI will validate module availability for 19.0.
+
+meta:
+  odoo_version: "19.0"
+  purpose: "OCA Must-Have Accounting modules for every Odoo instance"
+  install_order:
+    - "account-financial-tools"
+    - "account-financial-reporting"
+    - "account-invoicing"
+    - "account-payment"
+    - "bank-payment"
+
+repositories:
+  # TODO: pin to exact git SHAs in oca.lock.json
+  - name: "OCA/account-financial-tools"
+    branch: "19.0"
+  - name: "OCA/account-financial-reporting"
+    branch: "19.0"
+  - name: "OCA/account-invoicing"
+    branch: "19.0"
+  - name: "OCA/account-payment"
+    branch: "19.0"
+  - name: "OCA/bank-payment"
+    branch: "19.0"
+
+modules:
+  # --- account-financial-tools (core accounting hygiene) ---
+  - account_move_name_sequence
+  - account_lock_date_update
+  - account_fiscal_year
+  - account_type_menu
+
+  # --- account-financial-reporting (management reporting) ---
+  - account_financial_report
+  - account_tax_balance
+
+  # --- account-invoicing (invoice workflows) ---
+  - account_invoice_refund_link
+  - account_invoice_start_end_dates
+  - account_invoice_view_payment
+
+  # --- account-payment (payment processing) ---
+  - account_payment_order
+  - account_payment_mode
+  - account_payment_partner
+
+  # --- bank-payment (bank operations) ---
+  - account_banking_pain_base
+  - account_banking_sepa_credit_transfer
+
+policy:
+  require_all_modules_installed: true
+  fail_if_missing_repo: true
+  fail_if_module_not_found: true

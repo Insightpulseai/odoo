@@ -1,0 +1,153 @@
+# Pipeline: Odoo Ingest to Bronze
+# Description: Ingests data from Odoo PostgreSQL to bronze layer
+# Layer: bronze
+
+version: "1.0"
+name: odoo_ingest_bronze
+description: >
+  Ingests raw data from Odoo PostgreSQL database tables to the bronze layer.
+  Preserves original schema with added metadata columns for lineage tracking.
+
+spec_slug: lakehouse-control-room
+layer: bronze
+
+schedule:
+  cron: "0 */4 * * *"  # Every 4 hours
+  timezone: "UTC"
+
+tags:
+  source: odoo
+  layer: bronze
+  team: data-platform
+
+caps:
+  max_runtime_seconds: 1800
+  max_phase_runtime_seconds: 600
+  max_retries: 3
+  max_artifacts_mb: 5000
+
+phases:
+  - name: ingest_core_tables
+    type: ingest
+    timeout_seconds: 300
+    max_retries: 2
+    config:
+      source:
+        type: postgres
+        connection_ref: odoo_prod
+        tables:
+          - res_partner
+          - res_users
+          - res_company
+          - res_currency
+          - res_country
+      destination:
+        type: delta
+        base_uri: "s3://lakehouse/bronze/odoo_core"
+        partition_by: ["_ingest_date"]
+      options:
+        add_metadata: true
+        metadata_columns:
+          - _ingest_ts
+          - _source_table
+          - _run_id
+
+  - name: ingest_accounting
+    type: ingest
+    depends_on: [ingest_core_tables]
+    timeout_seconds: 600
+    config:
+      source:
+        type: postgres
+        connection_ref: odoo_prod
+        tables:
+          - account_move
+          - account_move_line
+          - account_journal
+          - account_account
+          - account_tax
+      destination:
+        type: delta
+        base_uri: "s3://lakehouse/bronze/odoo_accounting"
+        partition_by: ["_ingest_date"]
+
+  - name: ingest_sales
+    type: ingest
+    depends_on: [ingest_core_tables]
+    timeout_seconds: 300
+    config:
+      source:
+        type: postgres
+        connection_ref: odoo_prod
+        tables:
+          - sale_order
+          - sale_order_line
+          - crm_lead
+      destination:
+        type: delta
+        base_uri: "s3://lakehouse/bronze/odoo_sales"
+        partition_by: ["_ingest_date"]
+
+  - name: validate_ingested
+    type: validate
+    depends_on: [ingest_core_tables, ingest_accounting, ingest_sales]
+    timeout_seconds: 120
+    config:
+      checks:
+        - name: core_row_count
+          type: row_count
+          threshold: 1
+        - name: accounting_not_empty
+          type: row_count
+          threshold: 1
+        - name: no_null_partner_names
+          type: null_check
+          column: name
+          threshold: 0.01
+
+  - name: publish_manifest
+    type: publish
+    depends_on: [validate_ingested]
+    timeout_seconds: 60
+    config:
+      input_uri: "s3://lakehouse/bronze/odoo_*"
+      targets:
+        - type: catalog
+          config:
+            catalog_ref: openmetadata
+            database: lakehouse_bronze
+        - type: webhook
+          config:
+            url: "${NOTIFY_WEBHOOK_URL}"
+
+quality:
+  - name: partner_id_not_null
+    type: null_check
+    column: id
+    threshold: 0
+    fail_on_error: true
+
+  - name: partner_name_not_null
+    type: null_check
+    column: name
+    threshold: 0.01
+    fail_on_error: true
+
+  - name: schema_unchanged
+    type: schema_drift
+    expected:
+      id: integer
+      name: string
+      email: string
+    fail_on_error: false
+
+input_manifest:
+  connection_ref: odoo_prod
+  tables:
+    - res_partner
+    - res_users
+    - res_company
+    - account_move
+    - account_move_line
+    - sale_order
+    - sale_order_line

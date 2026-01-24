@@ -1,0 +1,170 @@
+name: workbench-build-and-deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/control-room/**"
+      - "apps/control-room-api/**"
+      - "supabase/**"
+      - "scripts/**"
+      - ".github/workflows/workbench-deploy.yml"
+  workflow_dispatch: {}
+
+concurrency:
+  group: workbench-prod
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Node setup
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Typecheck
+        run: npm run typecheck --if-present
+
+      - name: Unit tests
+        run: npm test --if-present
+
+      - name: Build
+        run: npm run build --if-present
+
+  supabase_migrate:
+    name: Supabase Migrations
+    runs-on: ubuntu-latest
+    needs: [verify]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link Supabase project
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Apply DB migrations
+        run: supabase db push
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Deploy Edge Functions
+        run: |
+          # Deploy executor function
+          if [ -d "supabase/functions/executor" ]; then
+            supabase functions deploy executor
+          fi
+
+          # Deploy control-room-executor if exists
+          if [ -d "supabase/functions/control-room-executor" ]; then
+            supabase functions deploy control-room-executor
+          fi
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+      - name: Set Edge Function secrets
+        run: |
+          supabase secrets set \
+            SUPABASE_URL="${{ secrets.SUPABASE_URL }}" \
+            SUPABASE_SERVICE_ROLE_KEY="${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            EXECUTOR_ID="executor:prod:control-room-1"
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+
+  deploy_vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: [supabase_migrate]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Deploy to Vercel (production)
+        run: bash scripts/deploy_vercel_prod.sh
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+      - name: Verify Deployment
+        run: |
+          echo "Waiting for deployment to be ready..."
+          sleep 30
+
+          # Get deployment URL from Vercel
+          DEPLOY_URL=$(npm exec -y vercel ls --token "$VERCEL_TOKEN" --scope "$VERCEL_ORG_ID" 2>/dev/null | head -2 | tail -1 | awk '{print $2}')
+
+          if [ -n "$DEPLOY_URL" ]; then
+            echo "Deployment URL: $DEPLOY_URL"
+            curl -fsS -o /dev/null -w "%{http_code}" "https://${DEPLOY_URL}" || echo "Health check pending"
+          fi
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+
+  deploy_do_workers:
+    name: Deploy DO Workers (optional)
+    runs-on: ubuntu-latest
+    needs: [supabase_migrate]
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy-workers]')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -euo pipefail
+            cd /opt/odoo-ce/repo
+
+            # Pull latest changes
+            git pull origin main
+
+            # Restart worker services
+            docker compose -f docker-compose.yml pull
+            docker compose -f docker-compose.yml up -d
+
+            # Health check
+            docker compose ps
+            docker compose logs --tail=50
+
+  notify:
+    name: Notify on Completion
+    runs-on: ubuntu-latest
+    needs: [deploy_vercel]
+    if: always()
+    steps:
+      - name: Post deployment status
+        run: |
+          STATUS="${{ needs.deploy_vercel.result }}"
+          if [ "$STATUS" = "success" ]; then
+            echo "Deployment succeeded"
+          else
+            echo "Deployment failed: $STATUS"
+            exit 1
+          fi

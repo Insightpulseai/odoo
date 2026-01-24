@@ -1,5 +1,5 @@
 {
-  "name": "odoo-ce-18-dev",
+  "name": "IPAI Odoo CE 18 Dev",
   "image": "mcr.microsoft.com/devcontainers/python:3.11",
   "remoteUser": "vscode",
 
@@ -15,6 +15,12 @@
       "dbName": "odoo_dev",
       "postgresUser": "odoo",
       "postgresPassword": "odoo"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    },
+    "ghcr.io/supabase/cli:1": {
+      "version": "latest"
     }
   },
 
@@ -26,7 +32,9 @@
     5678,
     8766,
     8789,
-    5432
+    5432,
+    54321,
+    54322
   ],
 
   "portsAttributes": {
@@ -61,10 +69,19 @@
     "5432": {
       "label": "PostgreSQL",
       "onAutoForward": "silent"
+    },
+    "54321": {
+      "label": "Supabase API",
+      "onAutoForward": "silent"
+    },
+    "54322": {
+      "label": "Supabase Studio",
+      "onAutoForward": "notify"
     }
   },
 
-  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+  "postCreateCommand": "bash scripts/codespaces/bootstrap.sh",
+  "postStartCommand": "bash scripts/codespaces/start.sh",
 
   "customizations": {
     "vscode": {
@@ -74,7 +91,10 @@
         "terminal.integrated.defaultProfile.linux": "bash",
         "editor.formatOnSave": true,
         "editor.rulers": [88, 120],
-        "files.trimTrailingWhitespace": true
+        "files.trimTrailingWhitespace": true,
+        "terminal.integrated.env.linux": {
+          "SUPABASE_PROJECT_REF": "spdtwktxdalcfigzeqrz"
+        }
       },
       "extensions": [
         "ms-python.python",
@@ -86,14 +106,25 @@
         "redhat.vscode-yaml",
         "bradlc.vscode-tailwindcss",
         "GitHub.copilot",
-        "ms-vscode-remote.remote-containers"
+        "ms-vscode-remote.remote-containers",
+        "supabase.supabase-cli",
+        "anthropic.claude-code"
       ]
     },
     "codespaces": {
       "openFiles": [
-        "README.md",
-        "CLAUDE.md"
-      ]
+        "CLAUDE.md",
+        "README.md"
+      ],
+      "repositories": {
+        "jgtolentino/odoo-ce": {
+          "permissions": {
+            "contents": "write",
+            "pull_requests": "write",
+            "issues": "write"
+          }
+        }
+      }
     }
   },
 
@@ -103,6 +134,26 @@
     "POSTGRES_DB": "odoo_dev",
     "PGHOST": "localhost",
     "PGUSER": "odoo",
-    "PGPASSWORD": "odoo"
+    "PGPASSWORD": "odoo",
+    "SUPABASE_PROJECT_REF": "spdtwktxdalcfigzeqrz",
+    "SUPABASE_URL": "https://spdtwktxdalcfigzeqrz.supabase.co"
+  },
+
+  "secrets": {
+    "SUPABASE_SERVICE_ROLE_KEY": {
+      "description": "Supabase service role key for API access"
+    },
+    "SUPABASE_ANON_KEY": {
+      "description": "Supabase anonymous key for public access"
+    },
+    "ANTHROPIC_API_KEY": {
+      "description": "Anthropic API key for Claude Code"
+    }
+  },
+
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
   }
 }

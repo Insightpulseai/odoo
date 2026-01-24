@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 2049279f0153602c91a9ae020047a4b68de9e995
+> Commit: 04e6bec13a849e4faf344be6cb0dab7d1ea2cbab
 
 ## 📚 Documentation
 
@@ -18,6 +18,7 @@
 | [Command: Generate OCA-Style Prototype Module](.claude/commands/prototype-module.md) | .claude/commands |
 | [Shipping Workflow](.claude/commands/ship.md) | .claude/commands |
 | [Primary Responsibility](.claude/commands/verify.md) | .claude/commands |
+| [SessionStart Hook - Web Session Initialization](.claude/hooks/SessionStart.md) | .claude/hooks |
 | [BIR Compliance Automation Skill](.claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md) | .claude/superclaude/skills/finance/bir-compliance-automation |
 | [/implement Command](.continue/prompts/implement.md) | .continue/prompts |
 | [/plan Command](.continue/prompts/plan.md) | .continue/prompts |
@@ -26,7 +27,9 @@
 | [Agentic Rules (Continue)](.continue/rules/agentic.md) | .continue/rules |
 | [Mission](.github/agents/odoo-oca-triage.agent.md) | .github/agents |
 | [Copilot Instructions for InsightPulse Odoo CE](.github/copilot-instructions.md) | .github |
+| [Summary](.github/pull_request_template.md) | .github |
 | [VSCode/Cursor/Claude Code Workspace Configuration](.vscode/README.md) | .vscode |
+| [Agent Operating Contract (SSOT)](AGENTS.md) | . |
 | [Analytics Activation Sequence](ANALYTICS_ACTIVATION_SEQUENCE.md) | . |
 | [🎯 Odoo CE v0.9.1 - Security Audit Fixes Applied](AUDIT_FIXES_APPLIED.md) | . |
 | [Auto-Healing System Implementation Summary](AUTO_HEALING_SYSTEM_SUMMARY.md) | . |
@@ -96,6 +99,7 @@
 | [VS Code & Claude CLI Configuration Pack - Complete Implementation](VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md) | . |
 | [IPAI Module Namespace](addons/ipai/README.md) | addons/ipai |
 | [IPAI AI Agents UI](addons/ipai/ipai_ai_agents_ui/README.md) | addons/ipai/ipai_ai_agents_ui |
+| [IPAI Design System](addons/ipai/ipai_design_system/README.md) | addons/ipai/ipai_design_system |
 | [IPAI Design System (Single Source of Truth)](addons/ipai/ipai_design_system_apps_sdk/README.md) | addons/ipai/ipai_design_system_apps_sdk |
 | [IPAI Enterprise Bridge Policy](addons/ipai/ipai_enterprise_bridge/POLICY.md) | addons/ipai/ipai_enterprise_bridge |
 | [IPAI Enterprise Bridge](addons/ipai/ipai_enterprise_bridge/README.md) | addons/ipai/ipai_enterprise_bridge |
@@ -139,6 +143,7 @@
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
 | [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
 | [IPAI AI Studio - ChatGPT App](apps/chatgpt_ipai_ai_studio/README.md) | apps/chatgpt_ipai_ai_studio |
+| [Control Plane (Supabase Management API)](apps/control-plane/README.md) | apps/control-plane |
 | [Finance Landing Page Implementation - Verification Checklist](apps/control-room/FINANCE_LANDING_CHECKLIST.md) | apps/control-room |
 | [IPAI Platform Kit - Control Room Orchestration](apps/control-room/PLATFORM_KIT_SPEC.md) | apps/control-room |
 | [devops-engineer](apps/devops-engineer/APP.md) | apps/devops-engineer |
@@ -158,6 +163,10 @@
 | [odoo-developer-agent](apps/odoo-developer-agent/APP.md) | apps/odoo-developer-agent |
 | [odoo-saas-platform](apps/odoo-saas-platform/APP.md) | apps/odoo-saas-platform |
 | [superset-analytics](apps/superset-analytics/APP.md) | apps/superset-analytics |
+| [Architecture Review Kit](architecture-review/README.md) | architecture-review |
+| [Azure Architecture Review - Baseline Structure](architecture-review/baseline/azure_architecture_review_structure.md) | architecture-review/baseline |
+| [Architecture Review Report](architecture-review/templates/assessment_report.md) | architecture-review/templates |
+| [Architecture Risk Register](architecture-review/templates/risk_register.md) | architecture-review/templates |
 | [AP Aging Month-End Close Automation - Implementation Summary](archive/addons/ipai_finance_ap_aging/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_ap_aging |
 | [Finance Controller Dashboard - Implementation Summary](archive/addons/ipai_finance_controller_dashboard/IMPLEMENTATION_SUMMARY.md) | archive/addons/ipai_finance_controller_dashboard |
 | [IPAI Intelligent Document Processing (IDP)](archive/addons/ipai_idp/README.md) | archive/addons/ipai_idp |
@@ -171,6 +180,7 @@
 | [OdooForge Sandbox](archive/compose/odooforge-sandbox/README.md) | archive/compose/odooforge-sandbox |
 | [OdooForge Sandbox - UAT Test Plan](archive/compose/odooforge-sandbox/tests/UAT_TEST_PLAN.md) | archive/compose/odooforge-sandbox/tests |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
+| [Vendor Backlog Exports](backlog/vendors/README.md) | backlog/vendors |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
 | [100% CLI Deployment - Complete Automation Report](claudedocs/100_PERCENT_CLI_DEPLOYMENT.md) | claudedocs |
 | [BIR Compliance & Finance PPM Deployment Summary](claudedocs/DEPLOYMENT_SUMMARY.md) | claudedocs |
@@ -194,6 +204,7 @@
 | [Production Droplet Setup - Complete Runbook](deploy/PRODUCTION_SETUP.md) | deploy |
 | [Deployment Guide](deploy/README.md) | deploy |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
+| [IPAI Design Extraction](design/README.md) | design |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
@@ -204,6 +215,7 @@
 | [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
+| [Backlog Coverage Report](docs/BACKLOG_COVERAGE_REPORT.md) | docs |
 | [Canonical Structure Enforcement Report](docs/CANONICAL_ENFORCEMENT_REPORT.md) | docs |
 | [Canonical Linting Rules](docs/CANONICAL_LINT.md) | docs |
 | [Canonical Structure & Namespace Map](docs/CANONICAL_MAP.md) | docs |
@@ -260,6 +272,7 @@
 | [Odoo Industry Packs - OCA Dependencies Guide](docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md) | docs |
 | [Odoo CE/OCA 18 vs Enterprise Parity Analysis](docs/INDUSTRY_PARITY_ANALYSIS.md) | docs |
 | [Infrastructure Implementation Checklist](docs/INFRASTRUCTURE_CHECKLIST.md) | docs |
+| [Supabase Integration Bus - Deployment Guide](docs/INTEGRATION_BUS_DEPLOYMENT.md) | docs |
 | [IPAI Modules Index](docs/IPAI_MODULES_INDEX.md) | docs |
 | [IPAI Module Installation Order](docs/IPAI_MODULE_INSTALLATION_ORDER.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
@@ -317,6 +330,7 @@
 | [Repo Tree (generated)](docs/REPO_TREE.generated.md) | docs |
 | [SaaS Parity Readiness - Odoo CE Stack](docs/SAAS_PARITY_READINESS.md) | docs |
 | [Secrets Naming and Storage - Canonical Reference](docs/SECRETS_NAMING_AND_STORAGE.md) | docs |
+| [Finance PPM Seed Data Assessment](docs/SEED_DATA_ASSESSMENT.md) | docs |
 | [Semantic Versioning Strategy - InsightPulse Odoo CE](docs/SEMANTIC_VERSIONING_STRATEGY.md) | docs |
 | [AIUX Ship v1.1.0 - Production Release Summary](docs/SHIP_v1.1.0_SUMMARY.md) | docs |
 | [Odoo CE 18.0 - InsightPulse AI Module Sitemap](docs/SITEMAP.md) | docs |
@@ -332,6 +346,7 @@
 | [Multi-Tenant Platform Architecture](docs/TENANT_ARCHITECTURE.md) | docs |
 | [Testing Odoo 18 - Official Patterns](docs/TESTING_ODOO_18.md) | docs |
 | [Deterministic Troubleshooting Framework for Odoo CE 18.0](docs/TROUBLESHOOTING.md) | docs |
+| [UI/Theme Module Consolidation Proposal](docs/UI_THEME_CONSOLIDATION_PROPOSAL.md) | docs |
 | [Verified Memory System](docs/VERIFIED_MEMORY.md) | docs |
 | [WBS & LogFrame Mapping Documentation](docs/WBS_LOGFRAME_MAPPING.md) | docs |
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
@@ -342,18 +357,23 @@
 | [AI Module Deprecation Manifest](docs/architecture/AI_MODULE_DEPRECATION_MANIFEST.md) | docs/architecture |
 | [Ask AI Contract](docs/architecture/ASK_AI_CONTRACT.md) | docs/architecture |
 | [Authentication & Authorization Model](docs/architecture/AUTH_MODEL.md) | docs/architecture |
+| [CAPS Report — Cost / Accuracy / Privacy / Speed](docs/architecture/CAPS_REPORT.md) | docs/architecture |
+| [Cursor Ecosystem Capabilities (Bugbot + Composer + Codebase Indexing)](docs/architecture/CURSOR_ECOSYSTEM_CAPABILITIES.md) | docs/architecture |
+| [External Agent/Tool Capabilities (Stack Fit)](docs/architecture/EXT_AGENT_TOOL_CAPABILITIES.md) | docs/architecture |
 | [InsightPulseAI Technical Architecture](docs/architecture/INSIGHTPULSEAI_TECHNICAL_ARCHITECTURE.md) | docs/architecture |
 | [IPAI AI Platform Architecture](docs/architecture/IPAI_AI_PLATFORM_ARCH.md) | docs/architecture |
 | [Object Relationship Document (ORD)](docs/architecture/IPAI_AI_PLATFORM_ORD.md) | docs/architecture |
 | [IPAI Module Reduction Plan](docs/architecture/IPAI_MODULE_REDUCTION_PLAN.md) | docs/architecture |
 | [IPAI Target Module Architecture](docs/architecture/IPAI_TARGET_ARCHITECTURE.md) | docs/architecture |
 | [OCR Pipeline Architecture](docs/architecture/OCR_PIPELINE.md) | docs/architecture |
+| [OCR / Document Understanding Routing Matrix](docs/architecture/OCR_ROUTING_MATRIX.md) | docs/architecture |
 | [Odoo Official Docker Image → TBWA\SMP Production Canonical Mapping](docs/architecture/ODOO_OFFICIAL_TO_TBWA_CANONICAL.md) | docs/architecture |
 | [Production Runtime Snapshot - Odoo CE 18.0](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
+| [Architecture Diagram Exports](docs/architecture/exports/README.md) | docs/architecture/exports |
 | [InsightPulse AI - Multi-Tenant ERP SaaS Architecture](docs/architecture/multi_tenant_architecture.md) | docs/architecture |
 | [Prod Runtime Snapshot (20260108_013846)](docs/architecture/runtime_snapshot/20260108_013846/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture/runtime_snapshot/20260108_013846 |
 | [Runtime Snapshots](docs/architecture/runtime_snapshot/README.md) | docs/architecture/runtime_snapshot |
@@ -406,6 +426,14 @@
 | [A2A Communication Implementation Evidence](docs/evidence/20260120-agent-communication/IMPLEMENTATION.md) | docs/evidence/20260120-agent-communication |
 | [Mailgun DNS Verification Checklist](docs/evidence/20260120-mailgun/VERIFICATION_CHECKLIST.md) | docs/evidence/20260120-mailgun |
 | [Docker Image Diff Evidence](docs/evidence/20260121-0000/docker-image-diff/README.md) | docs/evidence/20260121-0000/docker-image-diff |
+| [CD Pipeline Deployment Ready](docs/evidence/20260122-1200/cd-pipeline/DEPLOYMENT_READY.md) | docs/evidence/20260122-1200/cd-pipeline |
+| [Summary](docs/evidence/20260122-1200/cd-pipeline/PR_BODY.md) | docs/evidence/20260122-1200/cd-pipeline |
+| [Supabase Preview Branches Configuration Diagnosis](docs/evidence/20260124-1434/supabase-preview-config/diagnosis.md) | docs/evidence/20260124-1434/supabase-preview-config |
+| [Dump Analysis Addendum — OCR Engines + Ops Workbench](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_ADDENDUM.md) | docs/evidence/20260124-dump-analysis |
+| [Consolidated Dump Analysis — Engineering Upgrade Roadmap](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_CONSOLIDATED.md) | docs/evidence/20260124-dump-analysis |
+| [DigitalOcean PostgreSQL Cluster — Infrastructure Evidence](docs/evidence/20260124-supabase-setup/infra/DIGITALOCEAN_POSTGRES.md) | docs/evidence/20260124-supabase-setup/infra |
+| [Supabase Project Setup Evidence](docs/evidence/20260124-supabase-setup/integrations/SUPABASE_PROJECT_SETUP.md) | docs/evidence/20260124-supabase-setup/integrations |
+| [Supabase Project Verification Results](docs/evidence/20260124-supabase-setup/integrations/verification_results.md) | docs/evidence/20260124-supabase-setup/integrations |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -422,7 +450,10 @@
 | [Supabase-Driven Odoo Seeding Pattern](docs/infra/SUPABASE_ODOO_SEED_PATTERN.md) | docs/infra |
 | [Vercel AI Gateway Integration Strategy](docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md) | docs/infra |
 | [Vercel Integrations](docs/infra/VERCEL_INTEGRATIONS.md) | docs/infra |
+| [IPAI Event Taxonomy - Expense, Equipment, Finance PPM](docs/integration/EVENT_TAXONOMY.md) | docs/integration |
 | [InsightPulse Finance SSC — Consolidated Implementation Roadmap](docs/integration/INSIGHTPULSE_ROADMAP.md) | docs/integration |
+| [IPAI Integration Bus - Quick Start (5 Minutes)](docs/integration/QUICK_START.md) | docs/integration |
+| [IPAI Integration Bus - Complete Implementation Guide](docs/integration/README.md) | docs/integration |
 | [Claude for Slack Integration — TBWA Finance SSC](docs/integration/SLACK_INTEGRATION_SETUP.md) | docs/integration |
 | [Focalboard Integration](docs/integrations/FOCALBOARD.md) | docs/integrations |
 | [Mattermost Integration](docs/integrations/MATTERMOST.md) | docs/integrations |
@@ -595,6 +626,7 @@
 | [Conversations Index System](docs/ops/CONVERSATIONS_README.md) | docs/ops |
 | [Execution Board - GitHub Projects Setup](docs/ops/EXECUTION_BOARD.md) | docs/ops |
 | [Kickoff → Go-Live Checklist (CE/OCA/IPAI)](docs/ops/GO_LIVE_CHECKLIST.md) | docs/ops |
+| [Go-Live & Production Checklist — Odoo CE + OCA + IPAI (Workbench)](docs/ops/GO_LIVE_PROD_CHECKLIST.md) | docs/ops |
 | [Local Dev (Docker Compose)](docs/ops/LOCAL_DEV.md) | docs/ops |
 | [Preventing 502 Bad Gateway Errors in Odoo](docs/ops/PREVENT_502.md) | docs/ops |
 | [Quick Start - Execution Board](docs/ops/QUICK_START.md) | docs/ops |
@@ -626,18 +658,27 @@
 | [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
 | [Modules](docs/pages/modules.md) | docs/pages |
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
+| [Implementation Map](docs/parity/IMPLEMENTATION_MAP.md) | docs/parity |
+| [Target Capability Suite](docs/parity/TARGET_CAPABILITIES.md) | docs/parity |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
 | [IPAI AIUX Ship PRD v1.1.0 (Complete, Production)](docs/prd/AIUX_SHIP_PRD_v1.1.0.md) | docs/prd |
 | [IPAI AIUX Ship Bundle PRD](docs/prd/IPAI_SHIP_PRD_ODOO18_AIUX.md) | docs/prd |
 | [Odoo 18 CE Fresh Redeploy PRD](docs/prd/ODOO18_DO_FRESH_REDEPLOY.md) | docs/prd |
+| [Dump Review → Stack Upgrades Prompt](docs/prompts/DUMP_REVIEW_TO_STACK_UPGRADES.md) | docs/prompts |
+| [OpenAI Academy Prompt Packs: Crawl and Curate](docs/prompts/openai-academy/PROMPT_PACKS_CRAWL_AND_CURATE.md) | docs/prompts/openai-academy |
+| [OpenAI Academy Prompt Packs](docs/prompts/openai-academy/README.md) | docs/prompts/openai-academy |
+| [OpenAI Academy Prompt Library](docs/prompts/openai-academy/prompt_library.md) | docs/prompts/openai-academy |
+| [OpenAI Academy Prompt Pack Gap Report](docs/prompts/openai-academy/prompt_pack_gap_report.md) | docs/prompts/openai-academy |
 | [Odoo Module Rationalization - Execution Checklist](docs/rationalization/EXECUTION_CHECKLIST.md) | docs/rationalization |
 | [Odoo Module Rationalization System](docs/rationalization/README.md) | docs/rationalization |
 | [Deployment Proofs](docs/releases/DEPLOYMENT_PROOFS/README.md) | docs/releases/DEPLOYMENT_PROOFS |
 | [Deployment Proofs: prod-20260109-2219](docs/releases/DEPLOYMENT_PROOFS/prod-20260109-2219/README.md) | docs/releases/DEPLOYMENT_PROOFS/prod-20260109-2219 |
+| [Go-Live Checklist Template](docs/releases/GO_LIVE_CHECKLIST_TEMPLATE.md) | docs/releases |
 | [Go-Live Manifest](docs/releases/GO_LIVE_MANIFEST.md) | docs/releases |
 | [Go-Live Manifest: prod-20260109-2219](docs/releases/GO_LIVE_MANIFEST_prod-20260109-2219.md) | docs/releases |
+| [Go-Live Checklist Template (Well-Architected)](docs/releases/GO_LIVE_WELL_ARCHITECTED_TEMPLATE.md) | docs/releases |
 | [Latest Release: prod-20260109-1642](docs/releases/LATEST.md) | docs/releases |
 | [TBWA Finance Ops Pilot – Invitation Email Template](docs/releases/TBWA_FINOPS_INVITE_EMAIL.md) | docs/releases |
 | [TBWA Finance Ops Pilot – Go-Live Runbook v1](docs/releases/TBWA_FINOPS_V1_RUNBOOK.md) | docs/releases |
@@ -656,6 +697,11 @@
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | docs/runbooks |
 | [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
+| [Runbook: digitalocean](docs/runbooks/digitalocean.md) | docs/runbooks |
+| [Runbook: figma-sites](docs/runbooks/figma-sites.md) | docs/runbooks |
+| [Runbook: supabase](docs/runbooks/supabase.md) | docs/runbooks |
+| [Runbook: superset](docs/runbooks/superset.md) | docs/runbooks |
+| [Runbook: vercel](docs/runbooks/vercel.md) | docs/runbooks |
 | [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
@@ -669,6 +715,8 @@
 | [Chart Query Lifecycle FSM](docs/state_machines/superset/chart_query_lifecycle.md) | docs/state_machines/superset |
 | [Dashboard Filtering FSM](docs/state_machines/superset/dashboard_filtering.md) | docs/state_machines/superset |
 | [Guest Token Acquisition FSM](docs/state_machines/superset/embed_guest_token.md) | docs/state_machines/superset |
+| [Visual Parity Checklist](docs/supabase-docs-patterns/VISUAL_PARITY_CHECKLIST.md) | docs/supabase-docs-patterns |
+| [Supabase Docs UI Specification](docs/supabase-docs-patterns/docs_ui_spec.md) | docs/supabase-docs-patterns |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
 | [Database Selector Issue - Troubleshooting Guide](docs/troubleshooting/DBFILTER_FIX.md) | docs/troubleshooting |
@@ -697,6 +745,7 @@
 | [AI Provider Router](infra/ai/provider_router/README.md) | infra/ai/provider_router |
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
 | [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
+| [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
 | [Preset.io Parity Roadmap](infra/superset/PRESET_PARITY_ROADMAP.md) | infra/superset |
@@ -716,6 +765,8 @@
 | [MCP Jobs Service – PRD](mcp/servers/mcp-jobs/spec/mcp-jobs/prd.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [MCP Jobs Service – Tasks](mcp/servers/mcp-jobs/spec/mcp-jobs/tasks.md) | mcp/servers/mcp-jobs/spec/mcp-jobs |
 | [Odoo ERP MCP Server](mcp/servers/odoo-erp-server/README.md) | mcp/servers/odoo-erp-server |
+| [Control Plane Workflows](n8n/workflows/control-plane/README.md) | n8n/workflows/control-plane |
+| [IPAI Integration Bus - n8n Workflows](n8n/workflows/integration/README.md) | n8n/workflows/integration |
 | [n8n Automation Strategy for Odoo CE](n8n_automation_strategy.md) | . |
 | [n8n Finance Automation - Deployment Status](notion-n8n-monthly-close/DEPLOYMENT_STATUS.md) | notion-n8n-monthly-close |
 | [Deployment Summary - 2025-11-21](notion-n8n-monthly-close/DEPLOYMENT_SUMMARY.md) | notion-n8n-monthly-close |
@@ -789,11 +840,13 @@
 | [Supabase Migrations](ops-control/supabase/migrations/README.md) | ops-control/supabase/migrations |
 | [OCR Parallel Workers](ops-control/workers/README.md) | ops-control/workers |
 | [Disaster Recovery Procedures](ops/DISASTER_RECOVERY.md) | ops |
+| [Design → Code Contract (Figma SSOT)](ops/design/README.md) | ops/design |
 | [Expenses OCR Runbook](ops/runbooks/expenses_ocr_runbook.md) | ops/runbooks |
 | [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
 | [OCR Service Operations Runbook](ops/runbooks/ocr_service.md) | ops/runbooks |
 | [Sinch SMS/OTP Setup Runbook](ops/runbooks/sinch_setup.md) | ops/runbooks |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
+| [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
@@ -863,6 +916,10 @@
 | [Implementation Plan: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/plan.md) | spec/docs-platform-sapgrade |
 | [PRD: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/prd.md) | spec/docs-platform-sapgrade |
 | [Tasks: SAP-Grade Documentation Platform](spec/docs-platform-sapgrade/tasks.md) | spec/docs-platform-sapgrade |
+| [Enterprise Parity Constitution](spec/enterprise-parity/constitution.md) | spec/enterprise-parity |
+| [Enterprise Parity Implementation Plan](spec/enterprise-parity/plan.md) | spec/enterprise-parity |
+| [Enterprise Parity PRD](spec/enterprise-parity/prd.md) | spec/enterprise-parity |
+| [Enterprise Parity Task Checklist](spec/enterprise-parity/tasks.md) | spec/enterprise-parity |
 | [ERP SaaS Clone Suite — Constitution](spec/erp-saas-clone-suite/constitution.md) | spec/erp-saas-clone-suite |
 | [ERP SaaS Clone Suite — Implementation Plan](spec/erp-saas-clone-suite/plan.md) | spec/erp-saas-clone-suite |
 | [ERP SaaS Clone Suite — Product Requirements Document](spec/erp-saas-clone-suite/prd.md) | spec/erp-saas-clone-suite |
@@ -900,6 +957,10 @@
 | [Plan: IPAI Copilot](spec/ipai-copilot/plan.md) | spec/ipai-copilot |
 | [PRD: IPAI Copilot (Odoo CE)](spec/ipai-copilot/prd.md) | spec/ipai-copilot |
 | [Tasks: IPAI Copilot](spec/ipai-copilot/tasks.md) | spec/ipai-copilot |
+| [Constitution — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/constitution.md) | spec/ipai-enterprise-workbench |
+| [Plan — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/plan.md) | spec/ipai-enterprise-workbench |
+| [PRD — IPAI Enterprise Workbench for Odoo CE (18/19)](spec/ipai-enterprise-workbench/prd.md) | spec/ipai-enterprise-workbench |
+| [Tasks — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/tasks.md) | spec/ipai-enterprise-workbench |
 | [ipai_month_end Module Constitution](spec/ipai-month-end/constitution.md) | spec/ipai-month-end |
 | [ipai_month_end Implementation Plan](spec/ipai-month-end/plan.md) | spec/ipai-month-end |
 | [ipai_month_end - Product Requirements](spec/ipai-month-end/prd.md) | spec/ipai-month-end |
@@ -924,6 +985,10 @@
 | [Implementation Plan: Knowledge Hub](spec/knowledge-hub/plan.md) | spec/knowledge-hub |
 | [PRD: Knowledge Hub](spec/knowledge-hub/prd.md) | spec/knowledge-hub |
 | [Tasks: Knowledge Hub](spec/knowledge-hub/tasks.md) | spec/knowledge-hub |
+| [Constitution — Lakehouse Control Room (No Databricks License)](spec/lakehouse-control-room/constitution.md) | spec/lakehouse-control-room |
+| [Plan — Lakehouse Control Room](spec/lakehouse-control-room/plan.md) | spec/lakehouse-control-room |
+| [PRD — Lakehouse Control Room (Databricks-Class, No License)](spec/lakehouse-control-room/prd.md) | spec/lakehouse-control-room |
+| [Tasks — Lakehouse Control Room](spec/lakehouse-control-room/tasks.md) | spec/lakehouse-control-room |
 | [Notion x Finance PPM Control Room — Constitution](spec/notion-finance-ppm-control-room/constitution.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Implementation Plan](spec/notion-finance-ppm-control-room/plan.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Product Requirements Document](spec/notion-finance-ppm-control-room/prd.md) | spec/notion-finance-ppm-control-room |
@@ -944,6 +1009,10 @@
 | [Plan: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/plan.md) | spec/odoo-copilot-process-mining |
 | [PRD: Odoo Copilot – Process Mining & Process Intelligence (Mindzie-style, Local-First)](spec/odoo-copilot-process-mining/prd.md) | spec/odoo-copilot-process-mining |
 | [Tasks: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/tasks.md) | spec/odoo-copilot-process-mining |
+| [Constitution: Odoo Decoupled Platform](spec/odoo-decoupled-platform/constitution.md) | spec/odoo-decoupled-platform |
+| [Plan: Odoo Decoupled Platform](spec/odoo-decoupled-platform/plan.md) | spec/odoo-decoupled-platform |
+| [PRD: Odoo Decoupled Platform](spec/odoo-decoupled-platform/prd.md) | spec/odoo-decoupled-platform |
+| [Tasks: Odoo Decoupled Platform](spec/odoo-decoupled-platform/tasks.md) | spec/odoo-decoupled-platform |
 | [Anthropic Use Cases vs InsightPulse Stack - Gap Analysis](spec/odoo-mcp-server/GAPS_ANALYSIS.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server + BIR Compliance Skill](spec/odoo-mcp-server/README.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
@@ -959,6 +1028,7 @@
 | [Product Requirements — Parallel Control Planes](spec/parallel-control-planes/prd.md) | spec/parallel-control-planes |
 | [Tasks — Parallel Control Planes](spec/parallel-control-planes/tasks.md) | spec/parallel-control-planes |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
+| [Platform Capabilities SSOT (Template)](spec/platforms/platform-capabilities.template.md) | spec/platforms |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
 | [Constitution — Project CE Suite (Toggleable)](spec/project-ce/constitution.md) | spec/project-ce |
 | [Plan — Implementation](spec/project-ce/plan.md) | spec/project-ce |
@@ -1021,9 +1091,12 @@
 | [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
 | [ipai_copilot_ui](./addons/ipai/ipai_copilot_ui) | ✅ |  |
+| [ipai_design_system](./addons/ipai/ipai_design_system) | ✅ | Unified design tokens for IPAI stack (Fluent UI v9 + Copilot) |
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
 | [ipai_enterprise_bridge](./addons/ipai/ipai_enterprise_bridge) | ✅ |  |
+| [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ⚠️ | Missing manifest |
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
+| [ipai_fluent_web_365_copilot](./addons/ipai/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_copilot](./addons/ipai/ipai_theme_copilot) | ✅ |  |
@@ -1048,6 +1121,7 @@
 | [ipai_month_end](./addons/ipai_month_end) | ✅ |  |
 | [ipai_month_end_closing](./addons/ipai_month_end_closing) | ✅ |  |
 | [ipai_ocr_gateway](./addons/ipai_ocr_gateway) | ✅ |  |
+| [ipai_ops_mirror](./addons/ipai_ops_mirror) | ✅ |  |
 | [ipai_platform_approvals](./addons/ipai_platform_approvals) | ✅ |  |
 | [ipai_platform_audit](./addons/ipai_platform_audit) | ✅ |  |
 | [ipai_platform_permissions](./addons/ipai_platform_permissions) | ✅ |  |

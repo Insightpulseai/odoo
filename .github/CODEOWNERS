@@ -1,0 +1,36 @@
+# CODEOWNERS for odoo-ce repository
+# Default owners for all files
+* @jgtolentino
+
+# High-risk areas requiring platform team review
+/.github/ @jgtolentino
+/supabase/ @jgtolentino
+/supabase/migrations/ @jgtolentino
+/supabase/functions/ @jgtolentino
+
+# Odoo modules
+/addons/ipai/ @jgtolentino
+/addons/OCA/ @jgtolentino
+
+# Infrastructure
+/deploy/ @jgtolentino
+/infra/ @jgtolentino
+/docker/ @jgtolentino
+/docker-compose.yml @jgtolentino
+
+# MCP servers
+/mcp/ @jgtolentino
+
+# Spec bundles
+/spec/ @jgtolentino
+
+# Documentation
+/docs/ @jgtolentino
+/CLAUDE.md @jgtolentino
+
+# Apps
+/apps/ @jgtolentino
+/packages/ @jgtolentino
+
+# Scripts
+/scripts/ @jgtolentino

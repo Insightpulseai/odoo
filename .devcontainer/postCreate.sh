@@ -2,7 +2,7 @@
 set -euo pipefail
 
 echo "========================================"
-echo "[postCreate] Setting up odoo-ce-18-dev"
+echo "[postCreate] Setting up IPAI Odoo CE 18 Dev"
 echo "========================================"
 echo ""
 
@@ -49,6 +49,7 @@ pip install \
   pre-commit \
   pytest \
   psycopg2-binary \
+  superclaude \
   || true
 
 # --- Node.js tooling for monorepo / control-room frontends ---
@@ -92,18 +93,44 @@ if [ -f ".pre-commit-config.yaml" ]; then
   pre-commit install || true
 fi
 
-# --- Claude Code CLI placeholder ---
+# --- Claude Code CLI ---
 echo ""
-echo "[postCreate] NOTE: Claude Code CLI installation placeholder"
-echo "  To install Claude Code CLI, run:"
-echo "    npm install -g @anthropic-ai/claude-code"
-echo ""
+echo "[postCreate] Installing Claude Code CLI..."
+npm install -g @anthropic-ai/claude-code 2>/dev/null || {
+  echo "  Claude Code CLI not available via npm, skipping..."
+}
+
+# --- SuperClaude Framework ---
+echo "[postCreate] Installing SuperClaude commands..."
+superclaude install 2>/dev/null || {
+  echo "  SuperClaude commands installation skipped"
+}
+
+# --- Supabase CLI Link ---
+echo "[postCreate] Linking Supabase project..."
+if [ -n "${SUPABASE_SERVICE_ROLE_KEY:-}" ]; then
+  echo "  Service role key found, linking project..."
+  supabase link --project-ref "${SUPABASE_PROJECT_REF:-spdtwktxdalcfigzeqrz}" 2>/dev/null || true
+else
+  echo "  No service role key, skipping Supabase link"
+  echo "  Set SUPABASE_SERVICE_ROLE_KEY in Codespaces secrets to enable"
+fi
+
+# --- Load environment from .env.local if exists ---
+if [ -f ".env.local" ]; then
+  echo "[postCreate] Loading .env.local..."
+  set -a
+  source .env.local
+  set +a
+fi
 
 # --- Print summary ---
 echo ""
 echo "========================================"
 echo "[postCreate] Setup Complete!"
 echo "========================================"
+echo ""
+echo "🚀 IPAI Odoo CE 18 Development Environment"
 echo ""
 echo "Available dev commands:"
 echo "  make dev           - Start Odoo Core dev server"
@@ -114,12 +141,31 @@ echo "  make dev-backend   - Start Control Room API"
 echo "  make dev-status    - Show running services"
 echo "  make dev-health    - Run health checks"
 echo ""
+echo "SuperClaude commands (if installed):"
+echo "  /sc:research       - Deep web research"
+echo "  /sc:implement      - Code implementation"
+echo "  /sc:test           - Testing workflows"
+echo "  /sc:pm             - Project management"
+echo ""
+echo "Supabase commands:"
+echo "  supabase db push   - Push migrations"
+echo "  supabase functions deploy - Deploy edge functions"
+echo "  supabase status    - Check project status"
+echo ""
+echo "Verification:"
+echo "  ./scripts/verify_supabase_full.sh  - Full Supabase audit"
+echo "  ./scripts/repo_health.sh           - Repo health check"
+echo ""
 echo "Forwarded ports:"
-echo "  8069 - Odoo CE Core"
-echo "  8070 - Odoo Marketing"
-echo "  8071 - Odoo Accounting"
-echo "  3000 - Control Room Dashboard"
-echo "  5678 - n8n Workflows"
-echo "  8766 - MCP Coordinator"
-echo "  8789 - Control Room API"
+echo "  8069  - Odoo CE Core"
+echo "  8070  - Odoo Marketing"
+echo "  8071  - Odoo Accounting"
+echo "  3000  - Control Room Dashboard"
+echo "  5678  - n8n Workflows"
+echo "  8766  - MCP Coordinator"
+echo "  8789  - Control Room API"
+echo "  54321 - Supabase API"
+echo "  54322 - Supabase Studio"
+echo ""
+echo "📚 Read CLAUDE.md for full documentation"
 echo ""

@@ -1,0 +1,164 @@
+name: Reusable PR Gate (Backlog + Routing + Caps + Comment)
+
+on:
+  workflow_call:
+    inputs:
+      enable_figma_contract:
+        type: boolean
+        required: false
+        default: false
+        description: "Enable Figma contract export and diff"
+      figma_file_key:
+        type: string
+        required: false
+        default: ""
+        description: "Figma file key for contract export"
+      strict_mode:
+        type: boolean
+        required: false
+        default: false
+        description: "Fail on any cap violation (no warnings)"
+    secrets:
+      FIGMA_TOKEN:
+        required: false
+        description: "Figma API token (required if enable_figma_contract is true)"
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: read
+
+jobs:
+  pr_gate:
+    name: PR Gate Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          npm install -g js-yaml 2>/dev/null || true
+
+      - name: Export backlog
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .artifacts
+          node tools/backlog/export_backlog.mjs \
+            --repo "${{ github.repository }}" \
+            --out ".artifacts/backlog.json"
+
+      - name: Generate caps report
+        run: |
+          node tools/routing/caps_report.mjs \
+            --routing "config/routing_matrix.yml" \
+            --backlog ".artifacts/backlog.json" \
+            --out ".artifacts/caps_report.json" \
+            --md ".artifacts/pr_gate_summary.md"
+
+      - name: Export Figma contract
+        if: ${{ inputs.enable_figma_contract && inputs.figma_file_key != '' }}
+        env:
+          FIGMA_TOKEN: ${{ secrets.FIGMA_TOKEN }}
+        run: |
+          if [ -f scripts/design/export_figma_contract.ts ]; then
+            npx tsx scripts/design/export_figma_contract.ts \
+              --file-key "${{ inputs.figma_file_key }}" \
+              --out ".artifacts/figma_contract.json" || true
+          fi
+        continue-on-error: true
+
+      - name: Compute token diff
+        if: ${{ inputs.enable_figma_contract && hashFiles('.artifacts/figma_contract.json') != '' }}
+        run: |
+          if [ -f scripts/design/compute_token_diff.ts ]; then
+            npx tsx scripts/design/compute_token_diff.ts \
+              --figma ".artifacts/figma_contract.json" \
+              --baseline "tokens.json" \
+              --out-json ".artifacts/token_diff.json" \
+              --out-md ".artifacts/token_diff.md" || true
+            # Append token diff to summary
+            if [ -f ".artifacts/token_diff.md" ]; then
+              cat ".artifacts/token_diff.md" >> ".artifacts/pr_gate_summary.md"
+            fi
+          fi
+        continue-on-error: true
+
+      - name: Enforce gate
+        id: gate
+        run: |
+          if [ "${{ inputs.strict_mode }}" = "true" ]; then
+            node tools/pr-gate/enforce_gate.mjs --caps ".artifacts/caps_report.json" --strict
+          else
+            node tools/pr-gate/enforce_gate.mjs --caps ".artifacts/caps_report.json" --allow-warnings
+          fi
+        continue-on-error: true
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-gate-artifacts
+          path: .artifacts/
+          retention-days: 7
+
+      - name: Post PR comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summaryPath = '.artifacts/pr_gate_summary.md';
+
+            let body = '## PR Gate Summary\n\nNo summary generated.';
+            if (fs.existsSync(summaryPath)) {
+              body = fs.readFileSync(summaryPath, 'utf8');
+            }
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            // Marker for upsert
+            const marker = '<!-- PR_GATE_SUMMARY -->';
+            const full = `${marker}\n${body}`;
+
+            try {
+              const comments = await github.rest.issues.listComments({
+                owner, repo, issue_number, per_page: 100
+              });
+
+              const existing = comments.data.find(c => (c.body || '').includes(marker));
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner, repo, comment_id: existing.id, body: full
+                });
+                console.log('Updated existing PR comment');
+              } else {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number, body: full
+                });
+                console.log('Created new PR comment');
+              }
+            } catch (e) {
+              console.log('Could not post PR comment:', e.message);
+            }
+
+      - name: Add to job summary
+        run: |
+          if [ -f ".artifacts/pr_gate_summary.md" ]; then
+            cat ".artifacts/pr_gate_summary.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Check gate result
+        if: steps.gate.outcome == 'failure' && inputs.strict_mode
+        run: |
+          echo "PR Gate failed in strict mode"
+          exit 1
