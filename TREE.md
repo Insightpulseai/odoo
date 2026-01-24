@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 44d3da297f2b6d26408b6425cd8a7e88ceb7a9f5
+> Commit: 5665265409e2f1efd76f9625fcc7171b6865a591
 
 ```
 .
@@ -117,9 +117,13 @@
 │   │   ├── no-deprecated-repo-refs.yml
 │   │   ├── notify-superset.yml
 │   │   ├── notion-sync-ci.yml
+│   │   ├── odoo-auto-upgrade.yml
+│   │   ├── odoo-ci-gate.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
 │   │   ├── odoo-schema-pipeline.yml
+│   │   ├── ops-ci-router.yml
+│   │   ├── ops-ssot-verify.yml
 │   │   ├── pr-installability-gate.yml
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
@@ -501,6 +505,17 @@
 │   │   │   └── ir.model.access.csv
 │   │   ├── views
 │   │   │   └── ipai_ocr_views.xml
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ops_mirror
+│   │   ├── data
+│   │   │   └── cron.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── ops_summary.py
+│   │   │   └── outbox_event.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   ├── ipai_platform_approvals
@@ -1266,6 +1281,9 @@
 │   ├── best_of_breed.yaml
 │   ├── equivalence_matrix.csv
 │   └── equivalence_matrix_workos_notion.csv
+├── ci
+│   └── odoo
+│       └── docker-compose.ci.yml
 ├── claudedocs
 │   ├── 100_PERCENT_CLI_DEPLOYMENT.md
 │   ├── DEPLOYMENT_SUMMARY.md
@@ -1289,6 +1307,9 @@
 │   │   └── 90-preflight.sh
 │   ├── finance
 │   │   └── Month-end Closing Task and Tax Filing (7).xlsx
+│   ├── odoo
+│   │   ├── ci_policy.yml
+│   │   └── desired_modules.yml
 │   ├── sources
 │   │   ├── oca_repos.yaml
 │   │   ├── odoo_docs.yaml
@@ -2454,6 +2475,8 @@
 │   ├── sync_to_supabase.py
 │   └── validate_parity.py
 ├── ops
+│   ├── alerting
+│   │   └── scoring.json
 │   ├── github
 │   │   ├── apply_labels.sh
 │   │   └── labels.json
@@ -2858,6 +2881,11 @@
 │   ├── check_project_tasks.py
 │   ├── check_undocumented_specs.py
 │   ├── ci_local.sh
+│   ├── ci_odoo_changed_modules.py
+│   ├── ci_odoo_gate.py
+│   ├── ci_odoo_resolve_deps.py
+│   ├── ci_odoo_resolve_impacted.py
+│   ├── ci_odoo_run_install_upgrade.sh
 │   ├── ci_smoke_test.sh
 │   ├── clean-branches.sh
 │   ├── cleanup-branches.sh
@@ -2976,12 +3004,15 @@
 │   ├── oca-update.sh
 │   ├── oca_hydrate.sh
 │   ├── odoo-18-oca-install.sh
+│   ├── odoo_ensure_modules_installed.sh
 │   ├── odoo_import_project_suite.py
 │   ├── odoo_mattermost_integration.py
 │   ├── odoo_rationalization.sh
 │   ├── odoo_runtime_snapshot.sh
+│   ├── odoo_seed_post_upgrade.sh
 │   ├── odoo_smoke_close.sh
 │   ├── odoo_update_modules.sh
+│   ├── odoo_upgrade_modules.sh
 │   ├── odoo_verify_modules.py
 │   ├── package_image_tarball.sh
 │   ├── parse_notion_tasks.py
@@ -3488,7 +3519,13 @@
 │   │   │   └── index.ts
 │   │   ├── odoo-webhook
 │   │   │   └── index.ts
+│   │   ├── ops-health
+│   │   │   └── index.ts
+│   │   ├── ops-ingest
+│   │   │   └── index.ts
 │   │   ├── ops-job-worker
+│   │   │   └── index.ts
+│   │   ├── ops-summary
 │   │   │   └── index.ts
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
@@ -3598,6 +3635,11 @@
 │   │   ├── 20260121100001_odoo_data_dictionary.sql
 │   │   ├── 20260121_odoo_seed_schema.sql
 │   │   ├── 20260122000100_integration_bus.sql
+│   │   ├── 20260124000001_ops_ssot_base.sql
+│   │   ├── 20260124000002_ops_hardening.sql
+│   │   ├── 20260124000003_ops_rls.sql
+│   │   ├── 20260124000004_ops_multisignal_scoring.sql
+│   │   ├── 20260124000005_ops_routing_matrix_escalation.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -3729,6 +3771,10 @@
 │   │   ├── export_schema.py
 │   │   ├── schema_to_drawio.py
 │   │   └── schema_to_pydantic.py
+│   ├── ops-mirror-worker
+│   │   ├── Dockerfile
+│   │   ├── requirements.txt
+│   │   └── worker.py
 │   ├── parity
 │   │   ├── parity_audit.py
 │   │   └── validate_spec_kit.py
@@ -3927,15 +3973,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1027 directories, 2895 files
+1039 directories, 2929 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1217 |
-| Files | 3816 |
-| Python files | 598 |
-| XML files | 252 |
+| Directories | 1229 |
+| Files | 3850 |
+| Python files | 608 |
+| XML files | 253 |
 | Markdown files | 1011 |
