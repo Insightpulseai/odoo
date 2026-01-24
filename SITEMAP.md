@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0ccffa623a78a8040c09d19264996a9d5d6b85d1
+> Commit: ebc68ae1c3b1a94a865cb889f97e20ff5eb5f2ee
 
 ## 📚 Documentation
 
@@ -450,6 +450,7 @@
 | [Odoo-Supabase Master Pattern](docs/infra/ODOO_SUPABASE_MASTER_PATTERN.md) | docs/infra |
 | [Secrets Management for Odoo-Supabase Integration](docs/infra/SECRETS_MANAGEMENT.md) | docs/infra |
 | [Supabase Branching Integration](docs/infra/SUPABASE_BRANCHING_INTEGRATION.md) | docs/infra |
+| [Supabase Environment Management](docs/infra/SUPABASE_ENVIRONMENTS.md) | docs/infra |
 | [Supabase-Driven Odoo Seeding Pattern](docs/infra/SUPABASE_ODOO_SEED_PATTERN.md) | docs/infra |
 | [Vercel AI Gateway Integration Strategy](docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md) | docs/infra |
 | [Vercel Integrations](docs/infra/VERCEL_INTEGRATIONS.md) | docs/infra |
