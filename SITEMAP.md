@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0f8e6694b36b9fba38fb38ac6b34c597e62b7bec
+> Commit: 0ccffa623a78a8040c09d19264996a9d5d6b85d1
 
 ## 📚 Documentation
 
@@ -272,7 +272,7 @@
 | [Odoo Industry Packs - OCA Dependencies Guide](docs/INDUSTRY_PACKS_OCA_DEPENDENCIES.md) | docs |
 | [Odoo CE/OCA 18 vs Enterprise Parity Analysis](docs/INDUSTRY_PARITY_ANALYSIS.md) | docs |
 | [Infrastructure Implementation Checklist](docs/INFRASTRUCTURE_CHECKLIST.md) | docs |
-| [Supabase Integration Bus - Deployment Guide](docs/INTEGRATION_BUS_DEPLOYMENT.md) | docs |
+| [IPAI Supabase Integration Bus - Deployment Complete ✅](docs/INTEGRATION_BUS_DEPLOYMENT.md) | docs |
 | [IPAI Modules Index](docs/IPAI_MODULES_INDEX.md) | docs |
 | [IPAI Module Installation Order](docs/IPAI_MODULE_INSTALLATION_ORDER.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
@@ -1099,6 +1099,7 @@
 | [ipai_design_system_apps_sdk](./addons/ipai/ipai_design_system_apps_sdk) | ✅ |  |
 | [ipai_enterprise_bridge](./addons/ipai/ipai_enterprise_bridge) | ✅ |  |
 | [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ⚠️ | Missing manifest |
+| [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ⚠️ | Missing manifest |
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
 | [ipai_fluent_web_365_copilot](./addons/ipai/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
