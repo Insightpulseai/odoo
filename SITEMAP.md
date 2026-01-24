@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3714b695cedb4a0e88ab2f73aaabba234be6bab8
+> Commit: 483de27b28ba916e9b3974e8ba44e1784d1a1343
 
 ## 📚 Documentation
 
@@ -426,6 +426,7 @@
 | [Docker Image Diff Evidence](docs/evidence/20260121-0000/docker-image-diff/README.md) | docs/evidence/20260121-0000/docker-image-diff |
 | [CD Pipeline Deployment Ready](docs/evidence/20260122-1200/cd-pipeline/DEPLOYMENT_READY.md) | docs/evidence/20260122-1200/cd-pipeline |
 | [Summary](docs/evidence/20260122-1200/cd-pipeline/PR_BODY.md) | docs/evidence/20260122-1200/cd-pipeline |
+| [Supabase Preview Branches Configuration Diagnosis](docs/evidence/20260124-1434/supabase-preview-config/diagnosis.md) | docs/evidence/20260124-1434/supabase-preview-config |
 | [Dump Analysis Addendum — OCR Engines + Ops Workbench](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_ADDENDUM.md) | docs/evidence/20260124-dump-analysis |
 | [Consolidated Dump Analysis — Engineering Upgrade Roadmap](docs/evidence/20260124-dump-analysis/DUMP_ANALYSIS_CONSOLIDATED.md) | docs/evidence/20260124-dump-analysis |
 | [DigitalOcean PostgreSQL Cluster — Infrastructure Evidence](docs/evidence/20260124-supabase-setup/infra/DIGITALOCEAN_POSTGRES.md) | docs/evidence/20260124-supabase-setup/infra |
