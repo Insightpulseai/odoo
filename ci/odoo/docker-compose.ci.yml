@@ -1,0 +1,47 @@
+version: "3.8"
+
+# CI-only docker-compose for testing Odoo module install/upgrade
+# Used by GitHub Actions to validate changed modules
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: odoo_ci
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo_ci"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  odoo:
+    image: ${ODOO_IMAGE:-odoo:18.0}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+    volumes:
+      # Mount repo addons (read-only for safety)
+      - ../../addons:/mnt/repo/addons:ro
+      - ../../oca:/mnt/repo/oca:ro
+      # Persistent filestore (not needed for CI but avoids errors)
+      - odoo_ci_data:/var/lib/odoo
+    # Default command for one-shot tests
+    command: >
+      odoo
+      --db_host=db
+      --db_port=5432
+      --db_user=odoo
+      --db_password=odoo
+      -d odoo_ci
+      --without-demo=all
+      --stop-after-init
+      --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/repo/addons,/mnt/repo/oca
+
+volumes:
+  odoo_ci_data:
