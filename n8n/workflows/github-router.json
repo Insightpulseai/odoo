@@ -1,0 +1,304 @@
+{
+  "name": "GitHub Router - Master Pattern",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "github/router",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "webhook-github-router",
+      "name": "GitHub Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "github-router-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "release-event",
+              "leftValue": "={{ $json.headers['x-github-event'] }}",
+              "rightValue": "release",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-release",
+      "name": "IF Release Event",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "push-event",
+              "leftValue": "={{ $json.headers['x-github-event'] }}",
+              "rightValue": "push",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-push",
+      "name": "IF Push Event",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [470, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $('GitHub Webhook').item.json.body.repository.full_name }}/dispatches",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_type\": \"deploy\",\n  \"client_payload\": {\n    \"ref\": \"{{ $('GitHub Webhook').item.json.body.release.tag_name }}\",\n    \"action\": \"{{ $('GitHub Webhook').item.json.body.action }}\",\n    \"release_url\": \"{{ $('GitHub Webhook').item.json.body.release.html_url }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "dispatch-deploy",
+      "name": "Dispatch Deploy Workflow",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"n8n-github-router\",\n  \"p_job_type\": \"release-event\",\n  \"p_payload\": {\n    \"event\": \"release\",\n    \"tag\": \"{{ $('GitHub Webhook').item.json.body.release.tag_name }}\",\n    \"action\": \"{{ $('GitHub Webhook').item.json.body.action }}\",\n    \"repository\": \"{{ $('GitHub Webhook').item.json.body.repository.full_name }}\",\n    \"timestamp\": \"{{ $now.toISO() }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "log-to-supabase",
+      "name": "Log to Supabase Jobs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 340],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role",
+          "name": "Supabase Service Role"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "pr-event",
+              "leftValue": "={{ $json.headers['x-github-event'] }}",
+              "rightValue": "pull_request",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-pr",
+      "name": "IF PR Event",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [470, 700]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"deployments\",\n  \"username\": \"GitHub Router\",\n  \"icon_emoji\": \":rocket:\",\n  \"text\": \"**Release Published**: {{ $('GitHub Webhook').item.json.body.release.tag_name }}\\n{{ $('GitHub Webhook').item.json.body.release.html_url }}\"\n}",
+        "options": {}
+      },
+      "id": "notify-mattermost",
+      "name": "Notify Mattermost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [920, 200]
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "event_type",
+              "value": "={{ $json.headers['x-github-event'] }}"
+            },
+            {
+              "name": "repository",
+              "value": "={{ $json.body.repository.full_name }}"
+            },
+            {
+              "name": "action",
+              "value": "={{ $json.body.action }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "set-context",
+      "name": "Set Event Context",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [920, 500]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"n8n-github-router\",\n  \"p_job_type\": \"pr-preview-request\",\n  \"p_payload\": {\n    \"event\": \"pull_request\",\n    \"pr_number\": {{ $('GitHub Webhook').item.json.body.pull_request.number }},\n    \"action\": \"{{ $('GitHub Webhook').item.json.body.action }}\",\n    \"head_ref\": \"{{ $('GitHub Webhook').item.json.body.pull_request.head.ref }}\",\n    \"repository\": \"{{ $('GitHub Webhook').item.json.body.repository.full_name }}\",\n    \"timestamp\": \"{{ $now.toISO() }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "log-pr-to-supabase",
+      "name": "Log PR to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [700, 700],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role",
+          "name": "Supabase Service Role"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "GitHub Webhook": {
+      "main": [
+        [
+          {
+            "node": "IF Release Event",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF Push Event",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF PR Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Release Event": {
+      "main": [
+        [
+          {
+            "node": "Dispatch Deploy Workflow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log to Supabase Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "IF Push Event": {
+      "main": [
+        [
+          {
+            "node": "Set Event Context",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "IF PR Event": {
+      "main": [
+        [
+          {
+            "node": "Log PR to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Dispatch Deploy Workflow": {
+      "main": [
+        [
+          {
+            "node": "Notify Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "master-pattern"
+    },
+    {
+      "name": "github"
+    },
+    {
+      "name": "ci-cd"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-24T00:00:00.000Z",
+  "versionId": "1"
+}

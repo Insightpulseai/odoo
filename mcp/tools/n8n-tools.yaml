@@ -1,0 +1,376 @@
+# MCP Tools Registry: n8n-exposed Safe Tools
+# These tools can be invoked by AI agents through the MCP protocol
+# All actions are logged to Supabase ops.run_events for auditability
+#
+# Usage: Agents call tools → n8n validates → executes → logs → returns result
+
+version: "1.0"
+namespace: n8n
+
+# Environment variable references
+env:
+  N8N_WEBHOOK_BASE: "${N8N_WEBHOOK_URL:-http://localhost:5678/webhook}"
+  SUPABASE_URL: "${SUPABASE_URL}"
+  GITHUB_REPO: "${GITHUB_REPOSITORY:-jgtolentino/odoo-ce}"
+
+tools:
+  # === Deployment Tools ===
+  - name: deploy_release
+    description: "Trigger controlled deploy via n8n webhook. Deploys specified version to target environment. Human-in-the-loop approval can be configured."
+    category: deployment
+    approval_required: true
+    input_schema:
+      type: object
+      properties:
+        ref:
+          type: string
+          description: "Git ref/tag to deploy (e.g., v1.2.3, main)"
+        target:
+          type: string
+          enum: [staging, production]
+          default: staging
+          description: "Target environment"
+        skip_tests:
+          type: boolean
+          default: false
+          description: "Skip test gates (emergency only)"
+      required: [ref]
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/deploy/release"
+      headers:
+        Content-Type: application/json
+    response_schema:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [queued, approved, rejected, failed]
+        job_id:
+          type: string
+        deploy_url:
+          type: string
+
+  - name: rollback_release
+    description: "Rollback to a previous known-good release. Redeploys previous container image and applies forward-fix migrations if needed."
+    category: deployment
+    approval_required: true
+    input_schema:
+      type: object
+      properties:
+        target_version:
+          type: string
+          description: "Version to rollback to (e.g., v1.2.2)"
+        target:
+          type: string
+          enum: [staging, production]
+          default: staging
+      required: [target_version]
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/deploy/rollback"
+
+  # === Hotfix Tools ===
+  - name: create_hotfix_pr
+    description: "Create a hotfix PR from the given issue. Auto-branches from main, applies fix, opens PR with proper labels."
+    category: hotfix
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        issue_number:
+          type: integer
+          description: "GitHub issue number to hotfix"
+        base_branch:
+          type: string
+          default: main
+          description: "Branch to base hotfix from"
+      required: [issue_number]
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/hotfix/create-pr"
+    response_schema:
+      type: object
+      properties:
+        pr_number:
+          type: integer
+        pr_url:
+          type: string
+        branch:
+          type: string
+
+  # === Testing Tools ===
+  - name: run_tests
+    description: "Trigger test suite execution. Runs Odoo module smoke tests, Supabase migration validation, and frontend builds."
+    category: testing
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        scope:
+          type: string
+          enum: [all, odoo, supabase, frontend]
+          default: all
+          description: "Test scope to run"
+        ref:
+          type: string
+          default: main
+          description: "Git ref to test"
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/test/run"
+    response_schema:
+      type: object
+      properties:
+        run_id:
+          type: string
+        status:
+          type: string
+          enum: [running, passed, failed]
+        results_url:
+          type: string
+
+  - name: smoke_test
+    description: "Run quick smoke test against a running environment. Verifies health endpoints and basic functionality."
+    category: testing
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        target:
+          type: string
+          enum: [local, staging, production]
+          default: staging
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/test/smoke"
+
+  # === Database Tools ===
+  - name: run_migration
+    description: "Apply pending Supabase migrations to target environment. Validates migration order before applying."
+    category: database
+    approval_required: true
+    input_schema:
+      type: object
+      properties:
+        target:
+          type: string
+          enum: [staging, production]
+          default: staging
+        dry_run:
+          type: boolean
+          default: true
+          description: "If true, validate only without applying"
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/db/migrate"
+
+  - name: seed_data
+    description: "Seed test/demo data to target environment. Only available for non-production environments."
+    category: database
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        target:
+          type: string
+          enum: [local, staging]
+          description: "Target environment (production not allowed)"
+        seed_set:
+          type: string
+          enum: [minimal, full, test_fixtures]
+          default: minimal
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/db/seed"
+
+  - name: backfill_data
+    description: "Run data backfill job for specific domain. Used for data migration and cleanup tasks."
+    category: database
+    approval_required: true
+    input_schema:
+      type: object
+      properties:
+        domain:
+          type: string
+          enum: [contacts, invoices, journal_entries, opportunities]
+          description: "Data domain to backfill"
+        date_from:
+          type: string
+          format: date
+          description: "Start date for backfill (ISO format)"
+        date_to:
+          type: string
+          format: date
+          description: "End date for backfill (ISO format)"
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/db/backfill"
+
+  # === Odoo Tools ===
+  - name: odoo_install_module
+    description: "Install or update an Odoo module on the target environment."
+    category: odoo
+    approval_required: true
+    input_schema:
+      type: object
+      properties:
+        module:
+          type: string
+          description: "Module technical name (e.g., ipai_finance_ppm)"
+        action:
+          type: string
+          enum: [install, upgrade]
+          default: upgrade
+        target:
+          type: string
+          enum: [staging, production]
+          default: staging
+      required: [module]
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/odoo/module"
+
+  - name: odoo_create_task
+    description: "Create a task in Odoo project management."
+    category: odoo
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        name:
+          type: string
+          description: "Task name"
+        project:
+          type: string
+          description: "Project name or ID"
+        description:
+          type: string
+          description: "Task description"
+        assignee:
+          type: string
+          description: "Employee code to assign (e.g., CKVC, RIM)"
+      required: [name, project]
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/odoo/task"
+
+  # === GitHub Tools ===
+  - name: create_pr
+    description: "Create a pull request from the current branch to target branch."
+    category: github
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        title:
+          type: string
+          description: "PR title"
+        body:
+          type: string
+          description: "PR body/description"
+        head:
+          type: string
+          description: "Source branch"
+        base:
+          type: string
+          default: main
+          description: "Target branch"
+        labels:
+          type: array
+          items:
+            type: string
+          description: "Labels to apply"
+      required: [title, head]
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/github/create-pr"
+
+  - name: dispatch_workflow
+    description: "Trigger a GitHub Actions workflow via repository dispatch."
+    category: github
+    approval_required: true
+    input_schema:
+      type: object
+      properties:
+        event_type:
+          type: string
+          description: "Event type for repository_dispatch"
+        payload:
+          type: object
+          description: "Client payload to pass to workflow"
+      required: [event_type]
+    endpoint:
+      method: POST
+      url: "${N8N_WEBHOOK_BASE}/github/dispatch"
+
+  # === Observability Tools ===
+  - name: get_health_status
+    description: "Get current health status of all platform services."
+    category: observability
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        services:
+          type: array
+          items:
+            type: string
+            enum: [odoo, n8n, supabase, vercel]
+          default: [odoo, n8n, supabase]
+    endpoint:
+      method: GET
+      url: "${N8N_WEBHOOK_BASE}/health/status"
+
+  - name: get_job_status
+    description: "Get status of a specific job from the MCP Jobs queue."
+    category: observability
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        job_id:
+          type: string
+          description: "Job ID to query"
+      required: [job_id]
+    endpoint:
+      method: GET
+      url: "${N8N_WEBHOOK_BASE}/jobs/{job_id}"
+
+  - name: list_recent_jobs
+    description: "List recent jobs from the MCP Jobs queue with optional filters."
+    category: observability
+    approval_required: false
+    input_schema:
+      type: object
+      properties:
+        source:
+          type: string
+          description: "Filter by job source"
+        job_type:
+          type: string
+          description: "Filter by job type"
+        status:
+          type: string
+          enum: [queued, running, completed, failed]
+          description: "Filter by status"
+        limit:
+          type: integer
+          default: 10
+          maximum: 100
+    endpoint:
+      method: GET
+      url: "${N8N_WEBHOOK_BASE}/jobs/list"
+
+# Approval workflow configuration
+approval:
+  channel: "#approvals"  # Mattermost/Slack channel for approval requests
+  timeout_minutes: 30
+  escalation_channel: "#ops-critical"
+  required_approvers: 1
+
+# Audit configuration
+audit:
+  log_all_calls: true
+  supabase_table: "ops.run_events"
+  retention_days: 90

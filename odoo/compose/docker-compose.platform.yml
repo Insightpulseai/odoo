@@ -1,0 +1,136 @@
+# Master Pattern: Reproducible Platform Stack
+# Odoo CE + n8n + PostgreSQL (Supabase managed externally)
+#
+# Usage:
+#   docker compose -f odoo/compose/docker-compose.platform.yml up -d
+#   docker compose -f odoo/compose/docker-compose.platform.yml logs -f
+#
+# Verify:
+#   curl -fsS http://localhost:5678/healthz   # n8n health
+#   curl -fsS http://localhost:8069/web/health # Odoo health
+
+services:
+  db:
+    image: postgres:16
+    container_name: platform-db
+    environment:
+      POSTGRES_DB: odoo
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d odoo"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  odoo:
+    image: odoo:18.0
+    container_name: platform-odoo
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      HOST: db
+      USER: odoo
+      PASSWORD: odoo
+      # Supabase integration (external)
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+    ports:
+      - "8069:8069"
+    volumes:
+      - ../../addons/ipai:/mnt/extra-addons/ipai:ro
+      - ../../addons/OCA:/mnt/extra-addons/OCA:ro
+      - odoo_data:/var/lib/odoo
+    command: >
+      odoo
+        --addons-path=/mnt/extra-addons/ipai,/mnt/extra-addons/OCA,/usr/lib/python3/dist-packages/odoo/addons
+        --db_host=db
+        --db_port=5432
+        --db_user=odoo
+        --db_password=odoo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: platform-n8n
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      # Database backend (shared PostgreSQL)
+      - DB_TYPE=postgresdb
+      - DB_POSTGRESDB_HOST=db
+      - DB_POSTGRESDB_PORT=5432
+      - DB_POSTGRESDB_DATABASE=n8n
+      - DB_POSTGRESDB_USER=odoo
+      - DB_POSTGRESDB_PASSWORD=odoo
+      # Webhook base URL for MCP/GitHub integration
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL:-http://localhost:5678}
+      # Supabase integration
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-}
+      # GitHub integration
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ../../n8n/workflows:/workflows:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5678/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # MCP Gateway (optional - for agent integration)
+  mcp-gateway:
+    image: node:20-alpine
+    container_name: platform-mcp-gateway
+    working_dir: /app
+    depends_on:
+      - odoo
+      - n8n
+    environment:
+      - ODOO_URL=http://odoo:8069
+      - N8N_URL=http://n8n:5678
+      - SUPABASE_URL=${SUPABASE_URL:-}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-}
+    ports:
+      - "3333:3333"
+    volumes:
+      - ../../mcp:/app/mcp:ro
+    command: >
+      sh -c "echo 'MCP Gateway placeholder - implement with mcp/coordinator' && sleep infinity"
+    profiles:
+      - mcp
+
+volumes:
+  db_data:
+    name: platform-db-data
+  odoo_data:
+    name: platform-odoo-data
+  n8n_data:
+    name: platform-n8n-data
+
+networks:
+  default:
+    name: platform-network
