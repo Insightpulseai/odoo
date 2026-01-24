@@ -1,5 +1,9 @@
--- Fails if no policies exist for required tables.
--- shell wrapper injects __TABLE_LIST__.
+-- =============================================================================
+-- Assert Policies Exist on Protected Tables
+-- =============================================================================
+-- Fails if no RLS policies exist for required tables.
+-- The shell wrapper replaces __TABLE_LIST__ with actual table names.
+-- =============================================================================
 
 DO $$
 DECLARE

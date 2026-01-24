@@ -1,9 +1,10 @@
--- Fails if configured "exposed schemas" are missing
--- This is executed against a live DB.
--- NOTE: keep this list in sync with supabase/config.toml extraction.
--- Placeholder list is injected by the shell wrapper.
+-- =============================================================================
+-- Assert Exposed Schemas Exist
+-- =============================================================================
+-- Fails if configured "exposed schemas" are missing from the database.
+-- The shell wrapper replaces __SCHEMA_LIST__ with actual schema names.
+-- =============================================================================
 
--- shell wrapper will replace __SCHEMA_LIST__ with ('public','ops',...)
 DO $$
 DECLARE
   missing text[];

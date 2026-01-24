@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 04e6bec13a849e4faf344be6cb0dab7d1ea2cbab
+> Commit: 33f0041b07489fd73d282f883b63dc353e04451a
 
 ```
 .
@@ -153,10 +153,12 @@
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── sql-migrations-validate.yml
 │   │   ├── supabase-branch-sync.yml
+│   │   ├── supabase-branching.yml
 │   │   ├── supabase-db-pr-check.yml
 │   │   ├── supabase-db-push.yml
 │   │   ├── supabase-deploy.yml
 │   │   ├── supabase-preview-ci.yml
+│   │   ├── supabase-sql-rls-checks.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
 │   │   ├── vendor-app-deploy.yml
@@ -3037,6 +3039,11 @@
 │   ├── sql
 │   │   └── update_phase_tags.sql
 │   ├── supabase
+│   │   ├── sql
+│   │   │   ├── assert_exposed_schemas.sql
+│   │   │   ├── assert_policies_exist.sql
+│   │   │   └── assert_rls_enabled.sql
+│   │   ├── checks.sh
 │   │   └── exposed_schemas.py
 │   ├── sync
 │   │   ├── docs-to-kb.js
@@ -3925,7 +3932,8 @@
 │   │   └── 003_odoo_dict_seed.sql
 │   ├── .supabase-preview-config.json
 │   ├── SECURITY_LINTER_REMEDIATION.md
-│   └── config.toml
+│   ├── config.toml
+│   └── seed.sql
 ├── tasks
 │   └── infra
 │       └── AGENT_SERVICES_HARD_DELETE_CHECKLIST.md
@@ -4233,15 +4241,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1100 directories, 3128 files
+1101 directories, 3135 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1292 |
-| Files | 4072 |
+| Directories | 1293 |
+| Files | 4079 |
 | Python files | 622 |
 | XML files | 253 |
 | Markdown files | 1065 |

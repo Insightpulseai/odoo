@@ -1,3 +1,17 @@
+# =============================================================================
+# Supabase SQL + RLS Checks
+# =============================================================================
+# Validates exposed schemas, RLS enablement, and policy existence on
+# protected tables against the production Supabase database.
+#
+# Triggers:
+#   - PR: when supabase/ or scripts/supabase/ changes
+#   - Push to main: after merge
+#
+# Requirements:
+#   - SUPABASE_DB_URL secret (admin connection string)
+# =============================================================================
+
 name: supabase-sql-rls-checks
 
 on:
@@ -6,25 +20,81 @@ on:
       - "supabase/**"
       - "scripts/supabase/**"
       - ".github/workflows/supabase-sql-rls-checks.yml"
+
   push:
     branches: ["main"]
     paths:
       - "supabase/**"
       - "scripts/supabase/**"
 
+  workflow_dispatch:
+    inputs:
+      skip_rls:
+        description: "Skip RLS checks (emergency bypass)"
+        required: false
+        default: "false"
+        type: boolean
+
+concurrency:
+  group: supabase-rls-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   sql-rls:
+    name: Schema + RLS + Policy Checks
     runs-on: ubuntu-latest
     permissions:
       contents: read
+
     env:
       DATABASE_URL: ${{ secrets.SUPABASE_DB_URL }}
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Install psql
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL client
         run: |
           sudo apt-get update
           sudo apt-get install -y postgresql-client
+
+      - name: Validate secrets
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::error::SUPABASE_DB_URL secret not configured"
+            echo "Add SUPABASE_DB_URL to repository secrets (admin connection string)"
+            exit 1
+          fi
+          echo "Secrets validated"
+
       - name: Run schema + RLS + policy checks
+        if: ${{ github.event.inputs.skip_rls != 'true' }}
         run: |
           ./scripts/supabase/checks.sh
+
+      - name: Skip RLS checks (emergency bypass)
+        if: ${{ github.event.inputs.skip_rls == 'true' }}
+        run: |
+          echo "::warning::RLS checks skipped via emergency bypass"
+          echo "This should only be used for critical hotfixes"
+
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## Supabase SQL + RLS Checks" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ github.event.inputs.skip_rls }}" = "true" ]; then
+            echo "**Status:** Skipped (emergency bypass)" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ job.status }}" = "success" ]; then
+            echo "**Status:** Passed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All checks completed successfully:" >> $GITHUB_STEP_SUMMARY
+            echo "- Exposed schemas exist" >> $GITHUB_STEP_SUMMARY
+            echo "- RLS enabled on protected tables" >> $GITHUB_STEP_SUMMARY
+            echo "- Policies exist for protected tables" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Status:** Failed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Review the job logs for details on which checks failed." >> $GITHUB_STEP_SUMMARY
+          fi

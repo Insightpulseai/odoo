@@ -1,5 +1,9 @@
+-- =============================================================================
+-- Assert RLS Enabled on Protected Tables
+-- =============================================================================
 -- Fails if RLS is not enabled on required tables.
--- shell wrapper injects __TABLE_LIST__ with ('schema.table','schema.table',...)
+-- The shell wrapper replaces __TABLE_LIST__ with actual table names.
+-- =============================================================================
 
 DO $$
 DECLARE
