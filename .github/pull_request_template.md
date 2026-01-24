@@ -1,6 +1,14 @@
 ## Summary
 <!-- What changed and why? Keep it brief. -->
 
+## Status Context
+<!-- Optional: If you're in a Launching window, indicate priority -->
+
+<!-- Uncomment if applicable:
+**Current:** Launching — merge → deploy → validate
+Priority review requested. CI is green.
+-->
+
 ## Spec Kit Compliance
 <!-- Required for significant features. Check all that apply. -->
 
