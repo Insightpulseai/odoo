@@ -1,0 +1,368 @@
+{
+  "name": "ChatOps Hotfix - Master Pattern",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "chatops/hotfix",
+        "httpMethod": "POST",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-hotfix",
+      "name": "Hotfix Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [250, 300],
+      "webhookId": "chatops-hotfix-webhook"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "command",
+              "value": "={{ $json.body.text || $json.body.command }}"
+            },
+            {
+              "name": "user",
+              "value": "={{ $json.body.user_name || $json.body.user }}"
+            },
+            {
+              "name": "channel",
+              "value": "={{ $json.body.channel_name || $json.body.channel }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "parse-command",
+      "name": "Parse Command",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [470, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse /hotfix <issue> [options] command\nconst command = $input.first().json.command;\nconst match = command.match(/^\\/hotfix\\s+(\\d+)(?:\\s+--base=(\\w+))?/);\n\nif (!match) {\n  return [{\n    json: {\n      valid: false,\n      error: 'Invalid command format. Usage: /hotfix <issue_number> [--base=branch]'\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    valid: true,\n    issue_number: parseInt(match[1]),\n    base_branch: match[2] || 'main',\n    user: $input.first().json.user,\n    channel: $input.first().json.channel\n  }\n}];"
+      },
+      "id": "validate-command",
+      "name": "Validate Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "valid-command",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-valid",
+      "name": "IF Valid Command",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [910, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.github.com/repos/${{ $env.GITHUB_REPOSITORY }}/issues/{{ $json.issue_number }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "options": {}
+      },
+      "id": "get-issue",
+      "name": "Get GitHub Issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1130, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/${{ $env.GITHUB_REPOSITORY }}/git/refs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ref\": \"refs/heads/hotfix/issue-{{ $('Validate Command').item.json.issue_number }}\",\n  \"sha\": \"{{ $json.object.sha }}\"\n}",
+        "options": {}
+      },
+      "id": "create-branch",
+      "name": "Create Hotfix Branch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1570, 200]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.github.com/repos/${{ $env.GITHUB_REPOSITORY }}/git/ref/heads/{{ $('Validate Command').item.json.base_branch }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "options": {}
+      },
+      "id": "get-base-ref",
+      "name": "Get Base Ref",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1350, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/${{ $env.GITHUB_REPOSITORY }}/pulls",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"[HOTFIX] {{ $('Get GitHub Issue').item.json.title }}\",\n  \"head\": \"hotfix/issue-{{ $('Validate Command').item.json.issue_number }}\",\n  \"base\": \"{{ $('Validate Command').item.json.base_branch }}\",\n  \"body\": \"## Hotfix for #{{ $('Validate Command').item.json.issue_number }}\\n\\n{{ $('Get GitHub Issue').item.json.body }}\\n\\n---\\n\\n**Triggered by**: {{ $('Validate Command').item.json.user }}\\n**Via ChatOps**: /hotfix {{ $('Validate Command').item.json.issue_number }}\",\n  \"draft\": true\n}",
+        "options": {}
+      },
+      "id": "create-pr",
+      "name": "Create Draft PR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1790, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/${{ $env.GITHUB_REPOSITORY }}/issues/{{ $json.number }}/labels",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"hotfix\", \"priority:high\", \"chatops\"]\n}",
+        "options": {}
+      },
+      "id": "add-labels",
+      "name": "Add Labels",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2010, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/rpc/enqueue_job",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"p_source\": \"n8n-chatops\",\n  \"p_job_type\": \"hotfix-created\",\n  \"p_payload\": {\n    \"issue_number\": {{ $('Validate Command').item.json.issue_number }},\n    \"pr_number\": {{ $('Create Draft PR').item.json.number }},\n    \"pr_url\": \"{{ $('Create Draft PR').item.json.html_url }}\",\n    \"branch\": \"hotfix/issue-{{ $('Validate Command').item.json.issue_number }}\",\n    \"user\": \"{{ $('Validate Command').item.json.user }}\",\n    \"channel\": \"{{ $('Validate Command').item.json.channel }}\",\n    \"timestamp\": \"{{ $now.toISO() }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "log-to-supabase",
+      "name": "Log to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2230, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "supabase-service-role",
+          "name": "Supabase Service Role"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"response_type\": \"in_channel\",\n  \"text\": \":white_check_mark: **Hotfix PR Created**\\n\\n**Issue**: #{{ $('Validate Command').item.json.issue_number }}\\n**PR**: {{ $('Create Draft PR').item.json.html_url }}\\n**Branch**: `hotfix/issue-{{ $('Validate Command').item.json.issue_number }}`\\n\\n:arrow_right: PR is in draft mode. Ready for fixes!\"\n}",
+        "options": {}
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [2450, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"response_type\": \"ephemeral\",\n  \"text\": \":x: **Error**: {{ $('Validate Command').item.json.error }}\\n\\n**Usage**: `/hotfix <issue_number> [--base=branch]`\\n\\n**Examples**:\\n- `/hotfix 123` - Create hotfix for issue #123 from main\\n- `/hotfix 123 --base=release-1.2` - Create from release branch\"\n}",
+        "options": {}
+      },
+      "id": "respond-error",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1130, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MATTERMOST_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"deployments\",\n  \"username\": \"Hotfix Bot\",\n  \"icon_emoji\": \":ambulance:\",\n  \"text\": \"**Hotfix PR Created by {{ $('Validate Command').item.json.user }}**\\n\\n| Field | Value |\\n|-------|-------|\\n| Issue | #{{ $('Validate Command').item.json.issue_number }} |\\n| PR | {{ $('Create Draft PR').item.json.html_url }} |\\n| Branch | `hotfix/issue-{{ $('Validate Command').item.json.issue_number }}` |\\n| Status | :construction: Draft - Ready for fixes |\\n\\n:point_right: CI gates will run on push. Mark ready for review when done.\"\n}",
+        "options": {}
+      },
+      "id": "notify-mattermost",
+      "name": "Notify Mattermost",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2230, 350]
+    }
+  ],
+  "connections": {
+    "Hotfix Webhook": {
+      "main": [
+        [
+          {
+            "node": "Parse Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Command": {
+      "main": [
+        [
+          {
+            "node": "Validate Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Command": {
+      "main": [
+        [
+          {
+            "node": "IF Valid Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Valid Command": {
+      "main": [
+        [
+          {
+            "node": "Get GitHub Issue",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get GitHub Issue": {
+      "main": [
+        [
+          {
+            "node": "Get Base Ref",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Base Ref": {
+      "main": [
+        [
+          {
+            "node": "Create Hotfix Branch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Hotfix Branch": {
+      "main": [
+        [
+          {
+            "node": "Create Draft PR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Draft PR": {
+      "main": [
+        [
+          {
+            "node": "Add Labels",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Labels": {
+      "main": [
+        [
+          {
+            "node": "Log to Supabase",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Mattermost",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "master-pattern"
+    },
+    {
+      "name": "chatops"
+    },
+    {
+      "name": "hotfix"
+    }
+  ],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-24T00:00:00.000Z",
+  "versionId": "1"
+}
