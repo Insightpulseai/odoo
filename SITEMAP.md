@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bfd3cdb70925945387a37beb7c429d2335dfd489
+> Commit: 9026722b9f54cae3e46171edc2aee1be1fd8e07c
 
 ## 📚 Documentation
 
@@ -447,6 +447,7 @@
 | [MCP Jobs System](docs/infra/MCP_JOBS_SYSTEM.md) | docs/infra |
 | [Memory Ingestion Edge Function](docs/infra/MEMORY_INGESTION.md) | docs/infra |
 | [Odoo Shadow Schema - Deployment Guide](docs/infra/ODOO_SHADOW_SCHEMA.md) | docs/infra |
+| [Odoo-Supabase Master Pattern](docs/infra/ODOO_SUPABASE_MASTER_PATTERN.md) | docs/infra |
 | [Secrets Management for Odoo-Supabase Integration](docs/infra/SECRETS_MANAGEMENT.md) | docs/infra |
 | [Supabase Branching Integration](docs/infra/SUPABASE_BRANCHING_INTEGRATION.md) | docs/infra |
 | [Supabase-Driven Odoo Seeding Pattern](docs/infra/SUPABASE_ODOO_SEED_PATTERN.md) | docs/infra |
