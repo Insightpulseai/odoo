@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 199bfbf6edac512b78f814f4e00c880e39debb09
+> Commit: 70242fcb17d0e4ae89ef0af91e9b1831c97110ad
 
 ## 📚 Documentation
 
@@ -441,6 +441,7 @@
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
+| [Databricks Training Guidelines for Agent Development](docs/infra/DATABRICKS_TRAINING_GUIDELINES.md) | docs/infra |
 | [Git Pre-Flight Integration - Deployment Report](docs/infra/GIT_PREFLIGHT_DEPLOYMENT_REPORT.md) | docs/infra |
 | [Git Pre-Flight Integration - Cross-Repository Pattern](docs/infra/GIT_PREFLIGHT_INTEGRATION.md) | docs/infra |
 | [Git Pre-Flight Integration - Implementation Summary](docs/infra/GIT_PREFLIGHT_SUMMARY.md) | docs/infra |
@@ -754,6 +755,7 @@
 | [Databricks Data Engineering Workbench](infra/databricks/README.md) | infra/databricks |
 | [Agent Bricks: Feedback Intelligence](infra/databricks/agent_systems/feedback_intel/README.md) | infra/databricks/agent_systems/feedback_intel |
 | [Feedback Classifier Prompt Template](infra/databricks/agent_systems/feedback_intel/src/prompts/feedback_classifier.md) | infra/databricks/agent_systems/feedback_intel/src/prompts |
+| [Databricks Agent Training](infra/databricks/training/README.md) | infra/databricks/training |
 | [DigitalOcean PR Sandbox (Ephemeral)](infra/digitalocean/pr-sandbox/README.md) | infra/digitalocean/pr-sandbox |
 | [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |
