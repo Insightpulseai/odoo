@@ -1172,5 +1172,24 @@ docker restart odoo-prod
 
 ---
 
+## Enabled Skills
+
+Agent capabilities enforced via repo-level skill contracts:
+
+| Skill | Purpose | Contract |
+|-------|---------|----------|
+| Web Session Command Bridge | Ensures all changes produce CLI-ready commands for Claude Web/CI/Docker | [skills/web-session-command-bridge/skill.md](skills/web-session-command-bridge/skill.md) |
+
+### Skill Enforcement
+
+Skills are enforced via CI workflow `.github/workflows/skill-enforce.yml`.
+
+To check skill compliance locally:
+```bash
+./scripts/skill_web_session_bridge.sh
+```
+
+---
+
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-12*
+*Last updated: 2026-01-24*
