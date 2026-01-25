@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 199bfbf6edac512b78f814f4e00c880e39debb09
+> Commit: 70242fcb17d0e4ae89ef0af91e9b1831c97110ad
 
 ```
 .
@@ -1683,6 +1683,7 @@
 │   │       ├── POST_MORTEM.md
 │   │       └── error_envelope.json
 │   ├── infra
+│   │   ├── DATABRICKS_TRAINING_GUIDELINES.md
 │   │   ├── GIT_PREFLIGHT_DEPLOYMENT_REPORT.md
 │   │   ├── GIT_PREFLIGHT_INTEGRATION.md
 │   │   ├── GIT_PREFLIGHT_SUMMARY.md
@@ -2355,6 +2356,11 @@
 │   │   │   ├── integration
 │   │   │   ├── unit
 │   │   │   └── __init__.py
+│   │   ├── training
+│   │   │   ├── scripts
+│   │   │   ├── validators
+│   │   │   ├── README.md
+│   │   │   └── competencies.yaml
 │   │   ├── README.md
 │   │   ├── databricks.yml
 │   │   └── pyproject.toml
@@ -4355,15 +4361,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1139 directories, 3211 files
+1142 directories, 3214 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1344 |
-| Files | 4200 |
-| Python files | 654 |
+| Directories | 1347 |
+| Files | 4213 |
+| Python files | 660 |
 | XML files | 253 |
-| Markdown files | 1087 |
+| Markdown files | 1089 |
