@@ -1,0 +1,29 @@
+{
+  "name": "ai-control-plane",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI Control Plane - BugBot, Vercel Bot, and infrastructure automation via Vercel AI Gateway + Supabase Vault",
+  "scripts": {
+    "dev": "next dev --port 3100",
+    "build": "next build",
+    "start": "next start --port 3100",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.0",
+    "ai": "^3.4.0",
+    "next": "^14.2.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.2.0",
+    "typescript": "^5.3.3"
+  }
+}
