@@ -1,0 +1,61 @@
+# OCA Must-Have Base (Odoo 19) - SSOT manifest
+# NOTE: module names below are the commonly used OCA technical names.
+# TODO: confirm exact availability for 19.0 in your chosen OCA repos; CI will validate.
+
+meta:
+  odoo_version: "19.0"
+  purpose: "Baseline must-have modules for every Odoo instance (technical hygiene + UX + operations)"
+  install_order:
+    - "server-tools"
+    - "web"
+    - "server-ux"
+    - "reporting-engine"
+    - "queue"
+    - "mis-builder"
+
+repositories:
+  # TODO: pin to exact git SHAs in your repo's lockfile/pins file
+  - name: "OCA/server-tools"
+    branch: "19.0"
+  - name: "OCA/web"
+    branch: "19.0"
+  - name: "OCA/server-ux"
+    branch: "19.0"
+  - name: "OCA/reporting-engine"
+    branch: "19.0"
+  - name: "OCA/queue"
+    branch: "19.0"
+  - name: "OCA/mis-builder"
+    branch: "19.0"
+
+modules:
+  # --- server-tools (core operational hygiene) ---
+  - base_technical_features
+  - base_search_fuzzy
+  - base_export_manager
+  - base_import_match
+  - base_name_search_improved
+  - base_exception
+  - base_suspend_security
+
+  # --- web / server-ux (usability + admin) ---
+  - web_responsive
+  - web_environment_ribbon
+  - web_no_bubble
+  - web_company_color
+  - web_ir_actions_act_window_message
+  - date_range
+
+  # --- queue (async jobs infrastructure) ---
+  - queue_job
+  - queue_job_cron
+  - queue_job_batch
+
+  # --- reporting / MIS (management reporting baseline) ---
+  - mis_builder
+  - mis_builder_budget
+
+policy:
+  require_all_modules_installed: true
+  fail_if_missing_repo: true
+  fail_if_module_not_found: true

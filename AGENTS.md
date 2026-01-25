@@ -1,4 +1,4 @@
-# Agent Capability Contract
+# Agent Operating Contract (SSOT)
 
 > Canonical rules for all AI agents operating in this repository.
 
@@ -9,6 +9,14 @@
 3. **Commands must be copy-pasteable** - no placeholders or prose instructions
 4. **Execute, don't explain** - act first, report results
 5. **Evidence-based** - all claims must have verifiable proof
+
+## Canonical Workflow
+
+1. Read Spec Kit (`spec/<slug>/*`) + `spec/platforms/*`
+2. Implement scripts + config deterministically
+3. Add tests + drift checks
+4. Update runbooks in `docs/runbooks/`
+5. CI must reproduce locally with `./scripts/ci/run_all.sh`
 
 ## Enabled Skills
 
@@ -36,6 +44,20 @@ Every significant change must include:
 ### ROLLBACK
 <commands to undo if needed>
 ```
+
+## Required Outputs for Platform Changes
+
+- Apply commands
+- Test/verify commands
+- Deploy/rollback commands
+- Production validation commands
+
+## Where to Write Things
+
+- Specs: `spec/`
+- Runbooks: `docs/runbooks/`
+- Scripts: `scripts/`
+- Workflows: `.github/workflows/`
 
 ## Environment Awareness
 

@@ -849,6 +849,45 @@ npm install
 npm run build
 ```
 
+### Figma Dev Mode Access
+
+**Prerequisites:**
+- Dev seat or Full seat on a paid Figma plan (Collab/View-only seats do NOT include Dev Mode)
+- Personal Access Token with required scopes
+
+**Seat Comparison:**
+
+| Seat Type | Dev Mode | Variables API | Code Connect |
+|-----------|----------|---------------|--------------|
+| Full      | ✓        | Enterprise    | ✓            |
+| Dev       | ✓        | Enterprise    | ✓            |
+| Collab    | ✗        | ✗             | ✗            |
+| View-only | ✗        | ✗             | ✗            |
+
+**Setup Commands:**
+
+```bash
+# 1. Set environment variables
+export FIGMA_ACCESS_TOKEN=figd_xxxxxxxxxxxxx
+export FIGMA_FILE_KEY=your_file_key_here
+
+# 2. Verify access
+./scripts/figma/verify_dev_mode_access.sh
+
+# 3. Install Code Connect CLI
+npm install --global @figma/code-connect@latest
+
+# 4. Publish component mappings
+npx figma connect publish --token="$FIGMA_ACCESS_TOKEN"
+
+# 5. Export variables (Enterprise only)
+./scripts/figma/figma_export_variables.sh
+```
+
+**Hotkey:** Toggle Dev Mode in Figma with `Shift + D`
+
+**Note:** The Variables REST API is only available to full members of Enterprise orgs. For non-Enterprise plans, use Code Connect or Figma Tokens Studio plugin.
+
 ---
 
 ## MCP Jobs System – Canonical Jobs & Observability Backend

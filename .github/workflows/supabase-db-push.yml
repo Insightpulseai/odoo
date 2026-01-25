@@ -1,0 +1,144 @@
+name: Supabase DB Push
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "supabase/migrations/**"
+      - "supabase/seed.sql"
+      - "supabase/config.toml"
+      - ".github/workflows/supabase-db-push.yml"
+
+concurrency:
+  group: supabase-db-push-main
+  cancel-in-progress: false
+
+jobs:
+  db-push:
+    name: Apply Migrations to Remote DB
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate required inputs
+        run: |
+          set -euo pipefail
+
+          echo "=== Validating Environment ==="
+
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "::error::SUPABASE_ACCESS_TOKEN secret not set"
+            exit 1
+          fi
+
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
+            echo "::error::SUPABASE_PROJECT_REF secret not set"
+            exit 1
+          fi
+
+          if [ -z "$SUPABASE_DB_PASSWORD" ]; then
+            echo "::error::SUPABASE_DB_PASSWORD secret not set"
+            exit 1
+          fi
+
+          if [ ! -d "supabase/migrations" ]; then
+            echo "::error::supabase/migrations directory not found"
+            exit 1
+          fi
+
+          MIGRATION_COUNT=$(ls -1 supabase/migrations/*.sql 2>/dev/null | wc -l)
+          echo "Found $MIGRATION_COUNT migration files"
+
+          echo "✓ All required inputs validated"
+
+      - name: Install Supabase CLI
+        run: |
+          curl -fsSL https://supabase.com/install.sh | sh
+          supabase --version
+
+      - name: Link project
+        run: |
+          echo "=== Linking to Supabase Project ==="
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+          echo "✓ Project linked"
+
+      - name: Push migrations to remote DB
+        run: |
+          echo "=== Applying Migrations ==="
+          supabase db push
+          echo "✓ Migrations applied successfully"
+
+      - name: Apply seed (if exists)
+        if: ${{ hashFiles('supabase/seed.sql') != '' }}
+        run: |
+          echo "=== Applying Seed Data ==="
+          supabase db seed --file supabase/seed.sql
+          echo "✓ Seed data applied"
+
+      - name: Verify migration status
+        run: |
+          echo "=== Migration Status ==="
+          supabase migration list || true
+
+      - name: Summary
+        run: |
+          echo "## Supabase DB Push Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Project | \`$SUPABASE_PROJECT_REF\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Migrations Applied | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          echo "| Seed Applied | ${{ hashFiles('supabase/seed.sql') != '' && '✅ Yes' || '⏭️ Skipped' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Migrations" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          ls -1 supabase/migrations/*.sql | head -20 >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+  post-push-checks:
+    name: Post-Push Verification
+    runs-on: ubuntu-latest
+    needs: db-push
+    if: success()
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        run: |
+          curl -fsSL https://supabase.com/install.sh | sh
+
+      - name: Link project
+        run: |
+          supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Dump schema for verification
+        run: |
+          echo "=== Schema Verification ==="
+          supabase db dump --schema-only > /tmp/schema.sql
+
+          echo "Schemas found:"
+          grep -n "create schema" /tmp/schema.sql || echo "No explicit schema creates found"
+
+          echo ""
+          echo "Tables with RLS:"
+          grep -n "enable row level security" /tmp/schema.sql || echo "No RLS found (warning!)"
+
+      - name: Verify ops schema exists
+        run: |
+          supabase db dump --schema-only | grep -q "schema.*ops" && echo "✓ ops schema exists" || echo "::warning::ops schema not found"
+
+      - name: Verify app schema exists
+        run: |
+          supabase db dump --schema-only | grep -q "schema.*app" && echo "✓ app schema exists" || echo "::warning::app schema not found"

@@ -1,0 +1,127 @@
+name: memory-distill
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no commit)'
+        required: false
+        default: 'false'
+        type: boolean
+  schedule:
+    # Daily at 03:23 UTC
+    - cron: "23 3 * * *"
+  push:
+    branches: ["main"]
+    paths:
+      - "memory/**"
+      - "scripts/memory/**"
+
+concurrency:
+  group: memory-distill-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  distill:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run distillation
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          ./scripts/memory/distill_packs.sh
+
+      - name: Validate pack sizes
+        run: |
+          echo "=== Pack Token Estimates ==="
+          for pack in common chatgpt claude; do
+            total_words=0
+            for f in memory/packs/$pack/*.md; do
+              if [ -f "$f" ]; then
+                words=$(wc -w < "$f")
+                total_words=$((total_words + words))
+              fi
+            done
+            # Rough estimate: 1 token ~ 0.75 words
+            tokens=$((total_words * 4 / 3))
+            echo "$pack: ~$tokens tokens"
+
+            # Check against limits
+            case $pack in
+              common)
+                if [ $tokens -gt 3000 ]; then
+                  echo "::warning::Common pack exceeds 3000 token guideline ($tokens)"
+                fi
+                ;;
+              chatgpt)
+                if [ $tokens -gt 6000 ]; then
+                  echo "::warning::ChatGPT pack exceeds 6000 token guideline ($tokens)"
+                fi
+                ;;
+              claude)
+                if [ $tokens -gt 12000 ]; then
+                  echo "::warning::Claude pack exceeds 12000 token guideline ($tokens)"
+                fi
+                ;;
+            esac
+          done
+
+      - name: Check for secrets in packs
+        run: |
+          echo "=== Scanning for secrets ==="
+          # Simple pattern check (not comprehensive)
+          if grep -rE "(password|secret|token|api_key|apikey)\\s*[:=]\\s*['\"][^'\"]+['\"]" memory/packs/ 2>/dev/null; then
+            echo "::error::Potential secrets detected in memory packs!"
+            exit 1
+          fi
+          echo "No obvious secrets detected."
+
+      - name: Commit updates
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        run: |
+          set -euo pipefail
+
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Check for changes
+          if git diff --quiet memory/; then
+            echo "No changes to memory packs."
+            exit 0
+          fi
+
+          # Stage and commit
+          git add memory/
+          git commit -m "chore(memory): distill updates from ops memory [skip ci]"
+
+          # Push
+          git push
+
+      - name: Summary
+        run: |
+          echo "## Memory Distillation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Files Updated" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          find memory/packs -name "90_*.md" -exec ls -la {} \; >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Pack Structure" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          find memory/packs -type f -name "*.md" | sort >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

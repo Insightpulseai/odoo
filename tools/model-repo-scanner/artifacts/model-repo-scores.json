@@ -1,0 +1,82 @@
+[
+  {
+    "repo": "odoo-ce",
+    "total_score": 87,
+    "scores": {
+      "ci_governance": 28,
+      "integration": 33,
+      "automation": 19,
+      "recency": 7
+    },
+    "evidence": {
+      "ci_governance": "  - Found: `scripts/ci`\n  - Workflows: 47 files\n  - CODEOWNERS: present\n  - PR template: present\n  - Spec Kit: present\n",
+      "integration": "  - Supabase config: present\n  - Supabase migrations: present\n  - MCP directory: present\n  - MCP servers config: present\n  - n8n directory: present\n  - Vercel references: found\n  - Control room: present\n",
+      "automation": "  - Generator scripts: 15\n  - Drift gates: found\n  - Auto-update patterns: found\n  - Branch workflows: 3\n",
+      "recency": "  - README: present\n  - CLAUDE.md: present\n  - docs/: present\n  - Recent commits (30d): 42\n"
+    }
+  },
+  {
+    "repo": "pulser-agent-framework",
+    "total_score": 72,
+    "scores": {
+      "ci_governance": 22,
+      "integration": 28,
+      "automation": 15,
+      "recency": 7
+    },
+    "evidence": {
+      "ci_governance": "  - Found: `scripts/ci`\n  - Workflows: 12 files\n  - PR template: present\n",
+      "integration": "  - MCP directory: present\n  - MCP references: found\n  - n8n references: found\n",
+      "automation": "  - Generator scripts: 5\n  - Drift gates: found\n",
+      "recency": "  - README: present\n  - docs/: present\n  - Recent commits (30d): 28\n"
+    }
+  },
+  {
+    "repo": "tbwa-fin-ops",
+    "total_score": 45,
+    "scores": {
+      "ci_governance": 15,
+      "integration": 12,
+      "automation": 10,
+      "recency": 8
+    },
+    "evidence": {
+      "ci_governance": "  - Workflows: 5 files\n  - PR template: present\n",
+      "integration": "  - Supabase references: found\n",
+      "automation": "  - Generator scripts: 2\n",
+      "recency": "  - README: present\n  - Recent commits (30d): 35\n"
+    }
+  },
+  {
+    "repo": "landing.io",
+    "total_score": 38,
+    "scores": {
+      "ci_governance": 12,
+      "integration": 10,
+      "automation": 8,
+      "recency": 8
+    },
+    "evidence": {
+      "ci_governance": "  - Workflows: 3 files\n",
+      "integration": "  - vercel.json: present\n  - Vercel references: found\n",
+      "automation": "  - None\n",
+      "recency": "  - README: present\n  - Recent commits (30d): 45\n"
+    }
+  },
+  {
+    "repo": "roadmap",
+    "total_score": 25,
+    "scores": {
+      "ci_governance": 8,
+      "integration": 5,
+      "automation": 5,
+      "recency": 7
+    },
+    "evidence": {
+      "ci_governance": "  - Workflows: 2 files\n",
+      "integration": "  - None\n",
+      "automation": "  - None\n",
+      "recency": "  - README: present\n  - Recent commits (30d): 15\n"
+    }
+  }
+]

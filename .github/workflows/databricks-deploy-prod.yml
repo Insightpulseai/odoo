@@ -1,0 +1,84 @@
+# Databricks Deploy to Production
+# Deploys bundle to production workspace on release tags
+
+name: Databricks Deploy Prod
+
+on:
+  push:
+    tags:
+      - 'databricks-v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "deploy-prod" to confirm production deployment'
+        required: true
+
+defaults:
+  run:
+    working-directory: infra/databricks
+
+jobs:
+  validate:
+    name: Validate Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      should_deploy: ${{ steps.check.outputs.should_deploy }}
+    steps:
+      - name: Check confirmation
+        id: check
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          elif [[ "${{ github.event.inputs.confirm }}" == "deploy-prod" ]]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+            echo "::error::Invalid confirmation. Expected 'deploy-prod'"
+            exit 1
+          fi
+
+  deploy:
+    name: Deploy to Production
+    needs: validate
+    if: needs.validate.outputs.should_deploy == 'true'
+    runs-on: ubuntu-latest
+    environment: databricks-prod
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Configure Databricks auth
+        run: |
+          databricks configure --host "$DATABRICKS_HOST" --token "$DATABRICKS_TOKEN"
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_PROD }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_PROD }}
+
+      - name: Validate bundle
+        run: databricks bundle validate --target prod
+
+      - name: Deploy bundle
+        run: databricks bundle deploy --target prod
+
+      - name: Verify deployment
+        run: |
+          echo "Verifying production deployment..."
+          # List deployed jobs
+          databricks jobs list --output json | jq '.jobs[] | select(.settings.name | contains("Notion")) | {id: .job_id, name: .settings.name}'
+
+      - name: Create deployment record
+        run: |
+          echo "Creating deployment record..."
+          mkdir -p ../../docs/evidence/$(date +%Y%m%d-%H%M)/databricks
+          cat > ../../docs/evidence/$(date +%Y%m%d-%H%M)/databricks/deployment.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "tag": "${{ github.ref_name }}",
+            "sha": "${{ github.sha }}",
+            "target": "prod",
+            "status": "deployed"
+          }
+          EOF

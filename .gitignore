@@ -113,7 +113,11 @@ temp/
 # Database
 *.sql
 !supabase/migrations/*.sql
+!supabase/seed.sql
+!supabase/seeds/*.sql
+!supabase/seed/**/*.sql
 !scripts/lakehouse/*.sql
+!scripts/supabase/sql/*.sql
 !infra/lakehouse/**/*.sql
 !tools/audit/*.sql
 !scripts/sql/*.sql
@@ -123,6 +127,7 @@ temp/
 !db/process_mining/*.sql
 !scripts/erd_dot.sql
 !docs/data-model/*.sql
+!tests/sql/*.sql
 
 # Parity audit generated files
 parity_report.json
@@ -207,3 +212,4 @@ sandbox/dev/oca-addons/
 **/vendor/
 **/.terraform/
 **/terraform.tfstate*
+.ci_artifacts/

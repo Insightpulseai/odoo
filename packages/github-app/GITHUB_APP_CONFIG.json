@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "pulser-hub",
+  "description": "GitHub App configuration for InsightPulse AI pulser-hub",
+  "app_id": "2191216",
+  "client_id": "Iv23liwGL7fnYySPPAjS",
+  "urls": {
+    "homepage": "https://mcp.insightpulseai.net",
+    "callback": "https://mcp.insightpulseai.net/callback",
+    "webhook": "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/github-app-auth/webhook",
+    "setup": null
+  },
+  "webhook_events": [
+    "check_suite",
+    "installation",
+    "installation_repositories",
+    "issue_comment",
+    "pull_request",
+    "pull_request_review",
+    "pull_request_review_comment",
+    "pull_request_review_thread",
+    "push",
+    "workflow_run"
+  ],
+  "permissions": {
+    "checks": "read",
+    "contents": "write",
+    "issues": "write",
+    "metadata": "read",
+    "pull_requests": "write",
+    "workflows": "write"
+  },
+  "routing": {
+    "oauth_callback": {
+      "handler": "supabase-edge-function",
+      "endpoint": "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/github-app-auth/callback",
+      "purpose": "Exchange OAuth code for tokens, store in github_oauth_tokens table"
+    },
+    "webhooks": {
+      "primary_handler": "supabase-edge-function",
+      "endpoint": "https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/github-app-auth/webhook",
+      "routes_to": [
+        {
+          "event": "push",
+          "destination": "https://n8n.insightpulseai.net/webhook/github-push"
+        },
+        {
+          "event": "pull_request",
+          "destination": "https://n8n.insightpulseai.net/webhook/github-pr"
+        },
+        {
+          "event": "installation",
+          "destination": "internal (github_installations table)"
+        },
+        {
+          "event": "installation_repositories",
+          "destination": "internal (github_installations table)"
+        }
+      ]
+    },
+    "probot_server": {
+      "handler": "packages/github-app",
+      "port": 3009,
+      "endpoint": "/api/github/webhooks",
+      "purpose": "Handle /pulser commands, CI failures, merge conflicts",
+      "note": "Alternative webhook handler for local development or dedicated deployment"
+    }
+  },
+  "environment_variables": {
+    "required": [
+      "APP_ID",
+      "WEBHOOK_SECRET",
+      "PRIVATE_KEY",
+      "GITHUB_CLIENT_SECRET"
+    ],
+    "optional": [
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_KEY",
+      "N8N_WEBHOOK_URL",
+      "GITHUB_CALLBACK_URL"
+    ]
+  },
+  "supabase_tables": [
+    "github_installations",
+    "github_installation_tokens",
+    "github_oauth_tokens",
+    "github_webhook_events"
+  ],
+  "_meta": {
+    "updated": "2026-01-24",
+    "source": "packages/github-app/GITHUB_APP_CONFIG.json"
+  }
+}

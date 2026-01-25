@@ -3,13 +3,36 @@
 # =============================================================================
 # Project: spdtwktxdalcfigzeqrz (Production)
 #
+# Branching:
+#   - Preview branches are created automatically via GitHub integration
+#   - Each branch gets isolated database, Auth, Storage, and Edge Functions
+#   - Merge to main deploys to production
+#
 # Usage:
 #   supabase link --project-ref spdtwktxdalcfigzeqrz
 #   supabase db push
 #   supabase functions deploy
+#   supabase branches list
 # =============================================================================
 
 project_id = "spdtwktxdalcfigzeqrz"
+
+# =============================================================================
+# Branching Configuration
+# =============================================================================
+# When branching is enabled, config.toml syncs to all preview branches.
+# Persistent branches remain active; preview branches auto-pause after inactivity.
+
+[branching]
+# Enable Supabase branching (requires GitHub integration)
+enabled = true
+
+# Default branch behavior
+[branching.preview]
+# Preview branches pause after 7 days of inactivity
+pause_after_inactive_days = 7
+# Seed data file for preview branches
+seed_file = "seed.sql"
 
 [api]
 # Port to use for the API URL

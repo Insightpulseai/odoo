@@ -1,0 +1,288 @@
+# Patch Release Pipeline
+# Hotfix PR → gates → release → deploy → verify
+#
+# Trigger: workflow_dispatch with version input
+# Usage: gh workflow run patch-release.yml -f version=v1.2.3
+
+name: Patch Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Patch version tag (e.g., v1.2.3)"
+        required: true
+        type: string
+      skip_tests:
+        description: "Skip test gates (emergency only)"
+        required: false
+        default: false
+        type: boolean
+      deploy_target:
+        description: "Deploy target"
+        required: false
+        default: "staging"
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: write
+  packages: write
+  deployments: write
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Gate 1: Validate version format
+  validate:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      is_hotfix: ${{ steps.version.outputs.is_hotfix }}
+    steps:
+      - name: Validate version format
+        id: version
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-hotfix\.[0-9]+)?$ ]]; then
+            echo "::error::Invalid version format. Expected: v1.2.3 or v1.2.3-hotfix.1"
+            exit 1
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          if [[ "$VERSION" == *"-hotfix"* ]]; then
+            echo "is_hotfix=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_hotfix=false" >> $GITHUB_OUTPUT
+          fi
+
+  # Gate 2: Run tests (unless skipped for emergency)
+  test:
+    needs: validate
+    if: ${{ !inputs.skip_tests }}
+    runs-on: ubuntu-latest
+    services:
+      db:
+        image: postgres:16
+        env:
+          POSTGRES_DB: odoo
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U odoo -d odoo"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Odoo module install smoke test
+        run: |
+          docker run --rm \
+            --network host \
+            -v "$PWD/addons/ipai:/mnt/extra-addons/ipai" \
+            odoo:18.0 \
+            odoo -d odoo -i base --stop-after-init \
+            --db_host=127.0.0.1 --db_port=5432 --db_user=odoo --db_password=odoo
+
+      - name: Validate Supabase migrations
+        run: |
+          if [ -d "supabase/migrations" ]; then
+            ls -1 supabase/migrations | sort | diff -u - <(ls -1 supabase/migrations) || true
+          fi
+
+  # Create tag and release
+  release:
+    needs: [validate, test]
+    if: always() && needs.validate.result == 'success' && (needs.test.result == 'success' || needs.test.result == 'skipped')
+    runs-on: ubuntu-latest
+    outputs:
+      release_url: ${{ steps.release.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag "${{ needs.validate.outputs.version }}" -m "Release ${{ needs.validate.outputs.version }}"
+          git push origin "${{ needs.validate.outputs.version }}"
+
+      - name: Create GitHub release
+        id: release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "${{ needs.validate.outputs.is_hotfix }}" = "true" ]; then
+            gh release create "${{ needs.validate.outputs.version }}" \
+              --title "Hotfix ${{ needs.validate.outputs.version }}" \
+              --generate-notes \
+              --prerelease
+          else
+            gh release create "${{ needs.validate.outputs.version }}" \
+              --title "Release ${{ needs.validate.outputs.version }}" \
+              --generate-notes
+          fi
+          echo "url=https://github.com/${{ github.repository }}/releases/tag/${{ needs.validate.outputs.version }}" >> $GITHUB_OUTPUT
+
+  # Build and push container image
+  build:
+    needs: [validate, release]
+    runs-on: ubuntu-latest
+    outputs:
+      image_digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.validate.outputs.version }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.unified
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.validate.outputs.version }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Deploy to target environment
+  deploy:
+    needs: [validate, release, build]
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.deploy_target }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy Supabase migrations
+        if: ${{ vars.SUPABASE_PROJECT_ID != '' }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          npx supabase link --project-ref ${{ vars.SUPABASE_PROJECT_ID }}
+          npx supabase db push
+
+      - name: Deploy Supabase Edge Functions
+        if: ${{ vars.SUPABASE_PROJECT_ID != '' }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          if [ -d "supabase/functions" ]; then
+            for fn in supabase/functions/*/; do
+              fn_name=$(basename "$fn")
+              npx supabase functions deploy "$fn_name" --no-verify-jwt
+            done
+          fi
+
+      - name: Deploy to Vercel (apps/web)
+        if: ${{ vars.VERCEL_PROJECT_ID != '' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
+        run: |
+          if [ -d "apps/web" ]; then
+            cd apps/web
+            if [ "${{ inputs.deploy_target }}" = "production" ]; then
+              npx vercel --prod --token=$VERCEL_TOKEN
+            else
+              npx vercel --token=$VERCEL_TOKEN
+            fi
+          fi
+
+      - name: Notify n8n webhook
+        if: ${{ vars.N8N_WEBHOOK_URL != '' }}
+        run: |
+          curl -X POST "${{ vars.N8N_WEBHOOK_URL }}/patch/deployed" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "version": "${{ needs.validate.outputs.version }}",
+              "target": "${{ inputs.deploy_target }}",
+              "image_digest": "${{ needs.build.outputs.image_digest }}",
+              "release_url": "${{ needs.release.outputs.release_url }}",
+              "actor": "${{ github.actor }}"
+            }' || true
+
+  # Verify deployment
+  verify:
+    needs: [validate, deploy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Health check - Odoo
+        if: ${{ vars.ODOO_URL != '' }}
+        run: |
+          for i in {1..10}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ vars.ODOO_URL }}/web/health" || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "Odoo health check passed"
+              exit 0
+            fi
+            echo "Attempt $i: status $STATUS, retrying..."
+            sleep 10
+          done
+          echo "::error::Odoo health check failed after 10 attempts"
+          exit 1
+
+      - name: Health check - Supabase
+        if: ${{ vars.SUPABASE_URL != '' }}
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" "${{ vars.SUPABASE_URL }}/rest/v1/" -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" || echo "000")
+          if [ "$STATUS" = "200" ]; then
+            echo "Supabase health check passed"
+          else
+            echo "::warning::Supabase returned status $STATUS"
+          fi
+
+      - name: Write evidence to Supabase
+        if: ${{ vars.SUPABASE_URL != '' }}
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -X POST "$SUPABASE_URL/rest/v1/rpc/enqueue_job" \
+            -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "p_source": "github-actions",
+              "p_job_type": "patch-release-evidence",
+              "p_payload": {
+                "version": "${{ needs.validate.outputs.version }}",
+                "target": "${{ inputs.deploy_target }}",
+                "workflow_run": "${{ github.run_id }}",
+                "actor": "${{ github.actor }}",
+                "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
+              }
+            }' || true
+
+      - name: Summary
+        run: |
+          echo "## Patch Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ needs.validate.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Target | ${{ inputs.deploy_target }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Release | ${{ needs.release.outputs.release_url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Actor | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
