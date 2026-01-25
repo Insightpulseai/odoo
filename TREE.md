@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1fc7aab44717d1c60a5822f3de44ed1b13315af1
+> Commit: 0e89eb570ca48d557a118d8d94e8f70f667042ac
 
 ```
 .
@@ -854,6 +854,18 @@
 ├── api
 │   └── oca-docs-brain-openapi.yaml
 ├── apps
+│   ├── ai-control-plane
+│   │   ├── app
+│   │   │   ├── api
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── lib
+│   │   │   ├── supabase.ts
+│   │   │   └── types.ts
+│   │   ├── .env.example
+│   │   ├── next.config.js
+│   │   ├── package.json
+│   │   └── tsconfig.json
 │   ├── bi-architect
 │   │   ├── do
 │   │   │   └── app.json
@@ -1684,6 +1696,7 @@
 │   │   │   ├── infra
 │   │   │   └── integrations
 │   │   └── 20260125-1500
+│   │       ├── ai-control-plane
 │   │       └── azure-waf-lakehouse
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
@@ -1740,6 +1753,8 @@
 │   │   └── module_scan.json
 │   ├── knowledge
 │   │   └── graph_seed.json
+│   ├── lakehouse
+│   │   └── DATABRICKS_PARITY_MATRIX.md
 │   ├── llm
 │   │   ├── DIGITALOCEAN_DOCKER_STACK.md
 │   │   ├── GLOSSARY.md
@@ -3835,6 +3850,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── upstream-parity
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── workos-notion-clone
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -3877,6 +3897,8 @@
 │   │   ├── auth-otp-request
 │   │   │   └── index.ts
 │   │   ├── auth-otp-verify
+│   │   │   └── index.ts
+│   │   ├── bugbot-control-plane
 │   │   │   └── index.ts
 │   │   ├── catalog-sync
 │   │   │   └── index.ts
@@ -4047,6 +4069,7 @@
 │   │   ├── 20260125_000002_ops_run_system.sql
 │   │   ├── 20260125_000003_odoo_bridge.sql
 │   │   ├── 20260125_000004_app_schema_rls.sql
+│   │   ├── 20260125_100001_control_plane_vault.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -4409,15 +4432,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1152 directories, 3252 files
+1160 directories, 3267 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1367 |
-| Files | 4265 |
+| Directories | 1378 |
+| Files | 4284 |
 | Python files | 660 |
 | XML files | 253 |
-| Markdown files | 1108 |
+| Markdown files | 1114 |
