@@ -1,0 +1,26 @@
+# Small Job Cluster Configuration
+# For lightweight ETL tasks and transformations
+
+resources:
+  clusters:
+    job_cluster_small:
+      cluster_name: "ppm-job-small"
+      spark_version: "14.3.x-scala2.12"
+      node_type_id: "Standard_DS3_v2"
+      num_workers: 1
+
+      autotermination_minutes: 20
+      enable_elastic_disk: true
+
+      spark_conf:
+        "spark.databricks.delta.preview.enabled": "true"
+        "spark.databricks.delta.optimizeWrite.enabled": "true"
+        "spark.databricks.delta.autoCompact.enabled": "true"
+
+      custom_tags:
+        team: platform
+        cost_center: ppm
+        environment: "${bundle.target}"
+
+      spark_env_vars:
+        DATABRICKS_CATALOG: "${var.catalog}"

@@ -1,0 +1,52 @@
+# Databricks Deploy to Staging
+# Deploys bundle to staging workspace on release candidate tags
+
+name: Databricks Deploy Staging
+
+on:
+  push:
+    tags:
+      - 'databricks-v*-rc*'
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Deployment target'
+        required: true
+        default: 'staging'
+
+defaults:
+  run:
+    working-directory: infra/databricks
+
+jobs:
+  deploy:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    environment: databricks-staging
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Configure Databricks auth
+        run: |
+          databricks configure --host "$DATABRICKS_HOST" --token "$DATABRICKS_TOKEN"
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_STAGING }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_STAGING }}
+
+      - name: Validate bundle
+        run: databricks bundle validate --target staging
+
+      - name: Deploy bundle
+        run: databricks bundle deploy --target staging
+
+      - name: Run smoke tests
+        run: |
+          echo "Running smoke tests..."
+          # Run DQ checks job
+          databricks bundle run --target staging dq_checks
+          # Verify control room refresh
+          databricks bundle run --target staging control_room_refresh
