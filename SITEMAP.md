@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5cfc84433c760ea84f89177f779b5a47908f8e07
+> Commit: 199bfbf6edac512b78f814f4e00c880e39debb09
 
 ## 📚 Documentation
 
@@ -751,6 +751,9 @@
 | [Optimization Plan: Google Antigravity for Odoo CE](implementation_plan_agent.md) | . |
 | [AI Provider Router](infra/ai/provider_router/README.md) | infra/ai/provider_router |
 | [Continue+ CI Templates](infra/ci/continue-plus/README.md) | infra/ci/continue-plus |
+| [Databricks Data Engineering Workbench](infra/databricks/README.md) | infra/databricks |
+| [Agent Bricks: Feedback Intelligence](infra/databricks/agent_systems/feedback_intel/README.md) | infra/databricks/agent_systems/feedback_intel |
+| [Feedback Classifier Prompt Template](infra/databricks/agent_systems/feedback_intel/src/prompts/feedback_classifier.md) | infra/databricks/agent_systems/feedback_intel/src/prompts |
 | [DigitalOcean PR Sandbox (Ephemeral)](infra/digitalocean/pr-sandbox/README.md) | infra/digitalocean/pr-sandbox |
 | [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |

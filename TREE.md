@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5cfc84433c760ea84f89177f779b5a47908f8e07
+> Commit: 199bfbf6edac512b78f814f4e00c880e39debb09
 
 ```
 .
@@ -84,7 +84,11 @@
 │   │   ├── config-publish.yml
 │   │   ├── control-room-ci.yml
 │   │   ├── cursor-bugbot.yml
+│   │   ├── databricks-ci.yml
 │   │   ├── databricks-dab-ci.yml
+│   │   ├── databricks-deploy-dev.yml
+│   │   ├── databricks-deploy-prod.yml
+│   │   ├── databricks-deploy-staging.yml
 │   │   ├── deploy-do-oca.yml
 │   │   ├── deploy-finance-ppm.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
@@ -2314,15 +2318,46 @@
 │   │   ├── structure-check.sh
 │   │   └── structure_check.py
 │   ├── databricks
+│   │   ├── agent_systems
+│   │   │   └── feedback_intel
+│   │   ├── config
+│   │   │   ├── dev.yaml
+│   │   │   ├── prod.yaml
+│   │   │   └── staging.yaml
 │   │   ├── notebooks
 │   │   │   ├── bronze
 │   │   │   ├── gold
 │   │   │   ├── silver
 │   │   │   └── agent_eda_template.py
 │   │   ├── resources
+│   │   │   ├── clusters
+│   │   │   ├── permissions
+│   │   │   ├── pipelines
+│   │   │   ├── schedules
 │   │   │   ├── jobs.yml
 │   │   │   └── schemas.yml
-│   │   └── databricks.yml
+│   │   ├── scripts
+│   │   │   ├── bundle-deploy.sh
+│   │   │   ├── bundle-validate.sh
+│   │   │   ├── fmt.sh
+│   │   │   ├── lint.sh
+│   │   │   ├── smoke.sh
+│   │   │   └── test.sh
+│   │   ├── sql
+│   │   │   ├── bronze.sql
+│   │   │   ├── gold.sql
+│   │   │   ├── grants.sql
+│   │   │   ├── schemas.sql
+│   │   │   └── silver.sql
+│   │   ├── src
+│   │   │   └── workbench
+│   │   ├── tests
+│   │   │   ├── integration
+│   │   │   ├── unit
+│   │   │   └── __init__.py
+│   │   ├── README.md
+│   │   ├── databricks.yml
+│   │   └── pyproject.toml
 │   ├── digitalocean
 │   │   └── pr-sandbox
 │   │       ├── README.md
@@ -4320,15 +4355,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1125 directories, 3190 files
+1139 directories, 3211 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1317 |
-| Files | 4142 |
-| Python files | 626 |
+| Directories | 1344 |
+| Files | 4200 |
+| Python files | 654 |
 | XML files | 253 |
-| Markdown files | 1084 |
+| Markdown files | 1087 |
