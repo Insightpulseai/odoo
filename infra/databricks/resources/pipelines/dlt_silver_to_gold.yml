@@ -1,0 +1,31 @@
+# DLT Pipeline: Silver to Gold
+# Delta Live Tables pipeline for mart building
+
+resources:
+  pipelines:
+    silver_to_gold:
+      name: "PPM Silver to Gold"
+      target: "${var.schema_gold}"
+      catalog: "${var.catalog}"
+      development: true  # Set to false in prod target
+      continuous: false
+      channel: "PREVIEW"
+
+      clusters:
+        - label: "default"
+          autoscale:
+            min_workers: 1
+            max_workers: 2
+            mode: "ENHANCED"
+
+      # Gold layer marts are built via regular jobs, not DLT
+      # This pipeline is a placeholder for future DLT gold tables
+
+      configuration:
+        "spark.databricks.delta.preview.enabled": "true"
+
+      notifications:
+        - email_recipients:
+            - platform-alerts@insightpulseai.net
+          alerts:
+            - on_failure

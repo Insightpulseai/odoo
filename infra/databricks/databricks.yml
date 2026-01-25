@@ -29,6 +29,11 @@ workspace:
 
 include:
   - resources/*.yml
+  - resources/jobs/*.yml
+  - resources/pipelines/*.yml
+  - resources/clusters/*.yml
+  - resources/schedules/*.yml
+  - resources/permissions/*.yml
 
 artifacts:
   notion_sync_wheel:

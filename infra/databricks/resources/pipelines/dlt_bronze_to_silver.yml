@@ -1,0 +1,33 @@
+# DLT Pipeline: Bronze to Silver
+# Delta Live Tables pipeline for data transformation
+
+resources:
+  pipelines:
+    bronze_to_silver:
+      name: "PPM Bronze to Silver"
+      target: "${var.schema_silver}"
+      catalog: "${var.catalog}"
+      development: true  # Set to false in prod target
+      continuous: false
+      channel: "PREVIEW"
+
+      clusters:
+        - label: "default"
+          autoscale:
+            min_workers: 1
+            max_workers: 4
+            mode: "ENHANCED"
+
+      libraries:
+        - notebook:
+            path: ../../src/workbench/dlt/pipeline_bronze_to_silver.py
+
+      configuration:
+        "spark.databricks.delta.preview.enabled": "true"
+
+      notifications:
+        - email_recipients:
+            - platform-alerts@insightpulseai.net
+          alerts:
+            - on_failure
+            - on_flow_failure
