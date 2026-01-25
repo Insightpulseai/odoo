@@ -212,4 +212,6 @@ sandbox/dev/oca-addons/
 **/vendor/
 **/.terraform/
 **/terraform.tfstate*
+**/terraform.tfvars
+**/.supabase-token
 .ci_artifacts/

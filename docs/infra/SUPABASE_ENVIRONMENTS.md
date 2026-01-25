@@ -60,7 +60,7 @@ This repo supports three deployment methods (per [Supabase docs](https://supabas
 |--------|-------------|----------|
 | **GitHub Integration** | Default (recommended) | `.github/workflows/supabase-branching.yml` |
 | **Supabase CLI** | Manual deploys | `supabase db push` |
-| **Terraform** | Infrastructure-as-code | See [Terraform provider](https://supabase.com/docs/guides/deployment/terraform) |
+| **Terraform** | Infrastructure-as-code | See [Terraform Integration Guide](./SUPABASE_TERRAFORM_INTEGRATION.md) |
 
 ---
 
@@ -145,6 +145,8 @@ sql_paths = ["./seed.sql"]
 - [Database Migrations](https://supabase.com/docs/guides/deployment/database-migrations)
 - [Managing Environments](https://supabase.com/docs/guides/deployment/managing-environments)
 - [Terraform Provider](https://supabase.com/docs/guides/deployment/terraform)
+- [Terraform Tutorial](https://supabase.com/docs/guides/deployment/terraform/tutorial)
+- [Terraform Reference](https://supabase.com/docs/guides/deployment/terraform/reference)
 
 ---
 
