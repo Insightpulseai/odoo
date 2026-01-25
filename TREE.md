@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 70242fcb17d0e4ae89ef0af91e9b1831c97110ad
+> Commit: 6d260ad16e4620b8752488cda10ce662c9c2df50
 
 ```
 .
@@ -95,6 +95,7 @@
 │   │   ├── deploy-odoo-prod.yml
 │   │   ├── deploy-production.yml
 │   │   ├── deploy.yml
+│   │   ├── design-sync.yml
 │   │   ├── diagrams-drawio-enforce.yml
 │   │   ├── diagrams-qa.yml
 │   │   ├── diagrams.yml
@@ -162,6 +163,7 @@
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-gate.yml
 │   │   ├── spec-kit-enforce.yml
+│   │   ├── spec-kit-gate.yml
 │   │   ├── sql-migrations-validate.yml
 │   │   ├── supabase-branch-sync.yml
 │   │   ├── supabase-branching.yml
@@ -1335,9 +1337,13 @@
 │   ├── 2026_FinanceClosing_Master.csv
 │   └── FinanceClosing_RecurringTasks.ics
 ├── catalog
+│   ├── alternatives.yaml
 │   ├── best_of_breed.yaml
 │   ├── equivalence_matrix.csv
-│   └── equivalence_matrix_workos_notion.csv
+│   ├── equivalence_matrix_workos_notion.csv
+│   ├── odoo_parity_plans.schema.json
+│   ├── odoo_parity_plans.yaml
+│   └── schema.json
 ├── ci
 │   └── odoo
 │       └── docker-compose.ci.yml
@@ -1610,6 +1616,7 @@
 │   │   └── insightpulse_canonical.dbml
 │   ├── databricks
 │   │   ├── DATA_SCIENCE_AGENT.md
+│   │   ├── DATA_SCIENCE_PLATFORM.md
 │   │   └── UNITY_CATALOG_OSS.md
 │   ├── db
 │   │   ├── DB_CONVENTIONS_AND_NAMING.md
@@ -2275,6 +2282,16 @@
 │   ├── reporting-engine
 │   ├── server-tools
 │   └── web
+├── figma
+│   ├── community
+│   │   ├── README.md
+│   │   ├── manifest.json
+│   │   └── shortlist.csv
+│   ├── connect
+│   │   └── .gitkeep
+│   ├── tokens
+│   │   └── .gitkeep
+│   └── README.md
 ├── handbook
 │   ├── compliance
 │   │   └── bir
@@ -3228,6 +3245,7 @@
 │   ├── deploy_with_credentials.sh
 │   ├── deploy_workos_prod.sh
 │   ├── deployment-checklist.sh
+│   ├── design-sync.sh
 │   ├── diagnose_prod.sh
 │   ├── diagnose_smtp.sh
 │   ├── discover_digitalocean_infra.sh
@@ -3246,6 +3264,7 @@
 │   ├── export_todo_seed.py
 │   ├── extract_openai_academy_prompt_packs.py
 │   ├── extract_remote_data.py
+│   ├── figma-export-variables.mjs
 │   ├── finance_ppm_health_check.sh
 │   ├── finance_ppm_health_check.sql
 │   ├── finance_ppm_restore_golden.sh
@@ -3389,6 +3408,7 @@
 │   ├── validate-openapi.mjs
 │   ├── validate-spec-kit.sh
 │   ├── validate_ai_naming.py
+│   ├── validate_catalog.mjs
 │   ├── validate_ee_iap_independence.sh
 │   ├── validate_ee_replacements.py
 │   ├── validate_finance_ppm_data.py
@@ -3396,8 +3416,10 @@
 │   ├── validate_m1.sh
 │   ├── validate_manifest.py
 │   ├── validate_manifests.py
+│   ├── validate_odoo_parity_plans.mjs
 │   ├── validate_production.sh
 │   ├── validate_spec_kit.py
+│   ├── validate_spec_kit.sh
 │   ├── vercel_promote_previous.sh
 │   ├── verify-addon-permissions.sh
 │   ├── verify-control-plane.sh
@@ -3712,6 +3734,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── odoo-alternatives
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── odoo-apps-inventory
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -3733,6 +3760,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── odoo-decoupled-platform
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── odoo-ee-parity-matrix
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -4361,15 +4393,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1142 directories, 3214 files
+1148 directories, 3240 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1347 |
-| Files | 4213 |
+| Directories | 1353 |
+| Files | 4239 |
 | Python files | 660 |
 | XML files | 253 |
-| Markdown files | 1089 |
+| Markdown files | 1100 |
