@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6d260ad16e4620b8752488cda10ce662c9c2df50
+> Commit: 4e4409b87899e725a7d2fc84aa5c566075dc7abd
 
 ## 📚 Documentation
 
@@ -373,6 +373,7 @@
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
 | [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
+| [Tables Browser Architecture](docs/architecture/TABLES_BROWSER.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
 | [Architecture Diagram Exports](docs/architecture/exports/README.md) | docs/architecture/exports |
 | [InsightPulse AI - Multi-Tenant ERP SaaS Architecture](docs/architecture/multi_tenant_architecture.md) | docs/architecture |
@@ -904,6 +905,7 @@
 | [Claude Agent Personality: Sandbox-Aware Dev Agent](skills/user/supabase-schema-catalog/AGENT_PERSONALITY.md) | skills/user/supabase-schema-catalog |
 | [Skill: Supabase Schema Catalog](skills/user/supabase-schema-catalog/SKILL.md) | skills/user/supabase-schema-catalog |
 | [Visio-DrawIO Export Skill](skills/visio-drawio-export/README.md) | skills/visio-drawio-export |
+| [Skill: Web Session Command Bridge](skills/web-session-command-bridge/skill.md) | skills/web-session-command-bridge |
 | [InsightPulse Odoo CE – Project Spec](spec.md) | . |
 | [ADK Control Room — Constitution](spec/adk-control-room/constitution.md) | spec/adk-control-room |
 | [ADK Control Room — Implementation Plan](spec/adk-control-room/plan.md) | spec/adk-control-room |
