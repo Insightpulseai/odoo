@@ -1,0 +1,43 @@
+name: spec-kit-gate
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+    paths:
+      - "spec/**"
+      - "catalog/**"
+      - "scripts/validate_*.sh"
+      - "scripts/validate_*.mjs"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Spec Kit (odoo-alternatives)
+        run: |
+          bash scripts/validate_spec_kit.sh odoo-alternatives
+
+      - name: Validate Spec Kit (odoo-ee-parity-matrix)
+        run: |
+          bash scripts/validate_spec_kit.sh odoo-ee-parity-matrix
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install validation deps
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm i -D ajv ajv-formats yaml
+
+      - name: Validate Catalog Schema
+        run: |
+          node scripts/validate_catalog.mjs
+
+      - name: Validate Parity Plans Catalog
+        run: |
+          node scripts/validate_odoo_parity_plans.mjs
