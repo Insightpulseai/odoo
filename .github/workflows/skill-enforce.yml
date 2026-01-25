@@ -1,0 +1,71 @@
+# =============================================================================
+# Skill Enforcement Workflow
+# =============================================================================
+# Ensures all required skills are properly configured in the repository.
+# Fails PR if skill contracts are missing or not referenced.
+# =============================================================================
+
+name: Skill Enforce
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  enforce-skills:
+    name: Enforce Skill Contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify Web Session Command Bridge skill
+        run: |
+          set -euo pipefail
+          echo "== Checking Web Session Command Bridge skill =="
+
+          # Check skill contract exists
+          if [ ! -f skills/web-session-command-bridge/skill.md ]; then
+            echo "ERROR: skills/web-session-command-bridge/skill.md not found"
+            exit 1
+          fi
+          echo "✓ Skill contract exists"
+
+          # Check skill is referenced in CLAUDE.md or AGENTS.md
+          if grep -q "skills/web-session-command-bridge/skill.md" CLAUDE.md 2>/dev/null || \
+             grep -q "skills/web-session-command-bridge/skill.md" AGENTS.md 2>/dev/null; then
+            echo "✓ Skill is referenced in agent SSOT"
+          else
+            echo "ERROR: Skill not referenced in CLAUDE.md or AGENTS.md"
+            exit 1
+          fi
+
+          # Check entrypoint script exists and is executable
+          if [ -x scripts/skill_web_session_bridge.sh ]; then
+            echo "✓ Skill entrypoint script exists and is executable"
+          else
+            echo "ERROR: scripts/skill_web_session_bridge.sh not found or not executable"
+            exit 1
+          fi
+
+          echo ""
+          echo "== All skill checks passed =="
+
+      - name: Run skill entrypoint (smoke test)
+        run: |
+          ./scripts/skill_web_session_bridge.sh
+
+      - name: Verify AGENTS.md exists
+        run: |
+          if [ -f AGENTS.md ]; then
+            echo "✓ AGENTS.md exists"
+          else
+            echo "WARNING: AGENTS.md not found (optional but recommended)"
+          fi
