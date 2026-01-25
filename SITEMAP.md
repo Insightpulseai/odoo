@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 70242fcb17d0e4ae89ef0af91e9b1831c97110ad
+> Commit: 6d260ad16e4620b8752488cda10ce662c9c2df50
 
 ## 📚 Documentation
 
@@ -396,6 +396,7 @@
 | [Odoo Shadow Schema Feasibility Assessment](docs/data-model/SHADOW_SCHEMA_FEASIBILITY.md) | docs/data-model |
 | [Superset ERD Integration Guide](docs/data-model/SUPERSET_ERD_INTEGRATION.md) | docs/data-model |
 | [Databricks Data Science Agent](docs/databricks/DATA_SCIENCE_AGENT.md) | docs/databricks |
+| [Databricks Data Science Platform](docs/databricks/DATA_SCIENCE_PLATFORM.md) | docs/databricks |
 | [Unity Catalog (Open Source)](docs/databricks/UNITY_CATALOG_OSS.md) | docs/databricks |
 | [InsightPulse Supabase DB – Conventions & House Style](docs/db/DB_CONVENTIONS_AND_NAMING.md) | docs/db |
 | [DB Current Inventory (Summary)](docs/db/DB_CURRENT_INVENTORY.md) | docs/db |
@@ -742,6 +743,8 @@
 | [Releases & Changelog](docs/wiki/Releases-and-Changelog.md) | docs/wiki |
 | [AI Agents & RAG](docs/wiki/cap-ai-agents.md) | docs/wiki |
 | [Approval Workflows](docs/wiki/cap-approvals.md) | docs/wiki |
+| [Figma Design Sync](figma/README.md) | figma |
+| [Figma Community Toolkit for Data Engineering UI](figma/community/README.md) | figma/community |
 | [Gemini Agent Operating Contract (ipai_workspace / odoo-ce)](gemini.md) | . |
 | [TBWA Finance SSC Handbook](handbook/README.md) | handbook |
 | [Summary](handbook/SUMMARY.md) | handbook |
@@ -1015,6 +1018,10 @@
 | [Notion x Finance PPM Control Room — Implementation Plan](spec/notion-finance-ppm-control-room/plan.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Product Requirements Document](spec/notion-finance-ppm-control-room/prd.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Task Checklist](spec/notion-finance-ppm-control-room/tasks.md) | spec/notion-finance-ppm-control-room |
+| [Constitution — Odoo Alternatives (EE → CE/OCA)](spec/odoo-alternatives/constitution.md) | spec/odoo-alternatives |
+| [Plan — Odoo Alternatives (EE → CE/OCA)](spec/odoo-alternatives/plan.md) | spec/odoo-alternatives |
+| [PRD — Odoo Alternatives (EE → CE/OCA)](spec/odoo-alternatives/prd.md) | spec/odoo-alternatives |
+| [Tasks — Odoo Alternatives (EE → CE/OCA)](spec/odoo-alternatives/tasks.md) | spec/odoo-alternatives |
 | [Odoo Apps Inventory — Constitution](spec/odoo-apps-inventory/constitution.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
@@ -1035,6 +1042,10 @@
 | [Plan: Odoo Decoupled Platform](spec/odoo-decoupled-platform/plan.md) | spec/odoo-decoupled-platform |
 | [PRD: Odoo Decoupled Platform](spec/odoo-decoupled-platform/prd.md) | spec/odoo-decoupled-platform |
 | [Tasks: Odoo Decoupled Platform](spec/odoo-decoupled-platform/tasks.md) | spec/odoo-decoupled-platform |
+| [Constitution — Odoo EE → CE/OCA Parity Matrix](spec/odoo-ee-parity-matrix/constitution.md) | spec/odoo-ee-parity-matrix |
+| [Plan — Odoo EE → CE/OCA Parity Matrix](spec/odoo-ee-parity-matrix/plan.md) | spec/odoo-ee-parity-matrix |
+| [PRD — Odoo EE → CE/OCA Parity Matrix](spec/odoo-ee-parity-matrix/prd.md) | spec/odoo-ee-parity-matrix |
+| [Tasks — Odoo EE → CE/OCA Parity Matrix](spec/odoo-ee-parity-matrix/tasks.md) | spec/odoo-ee-parity-matrix |
 | [Anthropic Use Cases vs InsightPulse Stack - Gap Analysis](spec/odoo-mcp-server/GAPS_ANALYSIS.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server + BIR Compliance Skill](spec/odoo-mcp-server/README.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
