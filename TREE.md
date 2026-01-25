@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4e4409b87899e725a7d2fc84aa5c566075dc7abd
+> Commit: 1fc7aab44717d1c60a5822f3de44ed1b13315af1
 
 ```
 .
@@ -1680,9 +1680,11 @@
 │   │   ├── 20260124-dump-analysis
 │   │   │   ├── DUMP_ANALYSIS_ADDENDUM.md
 │   │   │   └── DUMP_ANALYSIS_CONSOLIDATED.md
-│   │   └── 20260124-supabase-setup
-│   │       ├── infra
-│   │       └── integrations
+│   │   ├── 20260124-supabase-setup
+│   │   │   ├── infra
+│   │   │   └── integrations
+│   │   └── 20260125-1500
+│   │       └── azure-waf-lakehouse
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -3692,6 +3694,11 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── ipai-data-connectors
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ipai-enterprise-workbench
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -4402,15 +4409,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1149 directories, 3248 files
+1152 directories, 3252 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1364 |
-| Files | 4257 |
+| Directories | 1367 |
+| Files | 4265 |
 | Python files | 660 |
 | XML files | 253 |
-| Markdown files | 1102 |
+| Markdown files | 1108 |

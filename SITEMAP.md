@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4e4409b87899e725a7d2fc84aa5c566075dc7abd
+> Commit: 1fc7aab44717d1c60a5822f3de44ed1b13315af1
 
 ## 📚 Documentation
 
@@ -440,6 +440,8 @@
 | [DigitalOcean PostgreSQL Cluster — Infrastructure Evidence](docs/evidence/20260124-supabase-setup/infra/DIGITALOCEAN_POSTGRES.md) | docs/evidence/20260124-supabase-setup/infra |
 | [Supabase Project Setup Evidence](docs/evidence/20260124-supabase-setup/integrations/SUPABASE_PROJECT_SETUP.md) | docs/evidence/20260124-supabase-setup/integrations |
 | [Supabase Project Verification Results](docs/evidence/20260124-supabase-setup/integrations/verification_results.md) | docs/evidence/20260124-supabase-setup/integrations |
+| [Azure Well-Architected + Lakehouse Hybrid Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/AZURE_WAF_LAKEHOUSE_ASSESSMENT.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
+| [Gap Analysis: Azure WAF + Lakehouse Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/gaps.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -984,6 +986,10 @@
 | [Plan: IPAI Copilot](spec/ipai-copilot/plan.md) | spec/ipai-copilot |
 | [PRD: IPAI Copilot (Odoo CE)](spec/ipai-copilot/prd.md) | spec/ipai-copilot |
 | [Tasks: IPAI Copilot](spec/ipai-copilot/tasks.md) | spec/ipai-copilot |
+| [IPAI Data Connectors — Constitution](spec/ipai-data-connectors/constitution.md) | spec/ipai-data-connectors |
+| [IPAI Data Connectors — Implementation Plan](spec/ipai-data-connectors/plan.md) | spec/ipai-data-connectors |
+| [IPAI Data Connectors — Product Requirements Document](spec/ipai-data-connectors/prd.md) | spec/ipai-data-connectors |
+| [IPAI Data Connectors — Task Checklist](spec/ipai-data-connectors/tasks.md) | spec/ipai-data-connectors |
 | [Constitution — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/constitution.md) | spec/ipai-enterprise-workbench |
 | [Plan — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/plan.md) | spec/ipai-enterprise-workbench |
 | [PRD — IPAI Enterprise Workbench for Odoo CE (18/19)](spec/ipai-enterprise-workbench/prd.md) | spec/ipai-enterprise-workbench |
