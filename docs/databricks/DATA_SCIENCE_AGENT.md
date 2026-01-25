@@ -2,6 +2,8 @@
 
 Integration guide for using the Data Science Agent within the InsightPulseAI stack.
 
+> **See also**: [Data Science Platform](./DATA_SCIENCE_PLATFORM.md) for the broader platform capabilities including collaborative notebooks, IDE integrations, and visual tools.
+
 ## Overview
 
 The Data Science Agent is an AI-powered assistant in Databricks notebooks and SQL Editor that can:
@@ -282,8 +284,23 @@ schedule:
 | Time saved per analysis | Manual comparison | >50% reduction |
 | Tables analyzed | Unity Catalog | Comprehensive coverage |
 
+## Platform Context
+
+The Data Science Agent operates within the broader Databricks Data Science Platform:
+
+| Platform Feature | Agent Integration |
+|-----------------|-------------------|
+| Collaborative Notebooks | Agent generates code in shared notebooks |
+| Unity Catalog | Agent respects catalog permissions and references tables via `@table` |
+| Delta Lake | Agent reads/writes Delta tables with ACID guarantees |
+| MLflow | Agent can log models and experiments automatically |
+| Dashboards | Agent-generated insights can be exported to dashboards |
+
+For complete platform capabilities including IDE integrations, visual tools, and collaboration features, see [Data Science Platform](./DATA_SCIENCE_PLATFORM.md).
+
 ## Related Documentation
 
+- [Data Science Platform](./DATA_SCIENCE_PLATFORM.md) - Full platform capabilities
 - [Databricks Data Science Agent](https://docs.databricks.com/notebooks/use-data-science-agent.html)
 - [Unity Catalog Permissions](https://docs.databricks.com/data-governance/unity-catalog/index.html)
 - [MLflow Integration](https://docs.databricks.com/mlflow/index.html)
