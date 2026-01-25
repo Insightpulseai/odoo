@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6d260ad16e4620b8752488cda10ce662c9c2df50
+> Commit: 4e4409b87899e725a7d2fc84aa5c566075dc7abd
 
 ```
 .
@@ -77,6 +77,7 @@
 │   │   ├── canonical-gate.yml
 │   │   ├── cd-production.yml
 │   │   ├── ci-docs-only.yml
+│   │   ├── ci-green-aggregate.yml
 │   │   ├── ci-platform-gates.yml
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
@@ -160,6 +161,7 @@
 │   │   ├── secret-scan.yml
 │   │   ├── seed-odoo-finance.yml
 │   │   ├── seeds-validate.yml
+│   │   ├── skill-enforce.yml
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-gate.yml
 │   │   ├── spec-kit-enforce.yml
@@ -1568,6 +1570,7 @@
 │   │   ├── README.md
 │   │   ├── RUNTIME_IDENTIFIERS.md
 │   │   ├── SOURCE_OF_TRUTH.md
+│   │   ├── TABLES_BROWSER.md
 │   │   ├── ipai_idp_architecture.drawio
 │   │   ├── ipai_idp_build_deploy_custom_models.drawio
 │   │   ├── ipai_idp_multi_agent_workflow.drawio
@@ -3018,6 +3021,7 @@
 │   │   ├── module_drift_gate.sh
 │   │   ├── needs_supabase_ci_preview.sh
 │   │   ├── oca_must_have_gate.sh
+│   │   ├── run_all.sh
 │   │   ├── run_odoo_tests.sh
 │   │   ├── schema_drift_check.sh
 │   │   ├── supabase_preview.sh
@@ -3254,6 +3258,7 @@
 │   ├── discover_supabase_infra.py
 │   ├── docker-desktop-audit.sh
 │   ├── docker-staging-audit.sh
+│   ├── docs_refresh.sh
 │   ├── ee_replace_request.sh
 │   ├── enhanced_health_check.sh
 │   ├── env_vars_found.txt
@@ -3376,6 +3381,7 @@
 │   ├── setup_keycloak_db.sh
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
+│   ├── skill_web_session_bridge.sh
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
@@ -3580,6 +3586,8 @@
 │   │   │   └── validate.js
 │   │   ├── README.md
 │   │   └── skill.yaml
+│   ├── web-session-command-bridge
+│   │   └── skill.md
 │   ├── README.md
 │   ├── architecture_diagrams.skill.json
 │   ├── registry.yaml
@@ -4026,6 +4034,7 @@
 │   │   ├── 20260124000005_ops_routing_matrix_escalation.sql
 │   │   ├── 20260124100001_ops_config_registry.sql
 │   │   ├── 20260124120000_marketplace_integrations.sql
+│   │   ├── 20260124200001_ops_tables_browser.sql
 │   │   ├── 20260124_1000_ops_lakehouse_control_plane.sql
 │   │   ├── 20260125_000001_secret_registry.sql
 │   │   ├── 20260125_000002_ops_run_system.sql
@@ -4393,15 +4402,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1148 directories, 3240 files
+1149 directories, 3248 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1353 |
-| Files | 4239 |
+| Directories | 1364 |
+| Files | 4257 |
 | Python files | 660 |
 | XML files | 253 |
-| Markdown files | 1100 |
+| Markdown files | 1102 |
