@@ -1,4 +1,16 @@
 # Input Variables for Supabase Terraform
+# Supabase Control Plane Configuration
+
+variable "environment" {
+  type        = string
+  description = "Environment name (dev/staging/prod)"
+  default     = "dev"
+
+  validation {
+    condition     = contains(["dev", "staging", "prod"], var.environment)
+    error_message = "Environment must be one of: dev, staging, prod."
+  }
+}
 
 variable "supabase_access_token" {
   type        = string

@@ -314,15 +314,21 @@ jobs:
 
 ```
 infra/supabase/
-├── main.tf              # Provider configuration
-├── variables.tf         # Input variables
-├── outputs.tf           # Output values
-├── production.tf        # Production project resource
-├── settings.tf          # API/Auth/DB settings
-├── environments.tf      # Multi-environment setup (optional)
-├── terraform.tfvars     # Variable values (gitignored)
-├── terraform.tfvars.example
-└── .terraform.lock.hcl  # Provider lock file
+├── main.tf                    # Provider configuration
+├── variables.tf               # Input variables
+├── outputs.tf                 # Output values
+├── production.tf              # Production project resource
+├── vault_secrets.tf           # Vault secrets integration
+├── Makefile                   # Idempotent operations
+├── terraform.tfvars.example   # Example values
+├── README.md
+└── envs/
+    ├── dev/
+    │   └── terraform.tfvars   # Development config
+    ├── staging/
+    │   └── terraform.tfvars   # Staging config
+    └── prod/
+        └── terraform.tfvars   # Production config
 ```
 
 ---
@@ -429,6 +435,105 @@ Terraform manages **project settings**, while GitHub Integration manages **datab
 | Edge Functions | Supabase CLI | `supabase-branching.yml` |
 | Preview branches | GitHub Integration | Automatic on PR |
 | Production deploy | Both | Terraform + migrations |
+
+---
+
+## Supabase as Control Plane
+
+Supabase serves as the unified control plane for secrets, configuration, and state across the InsightPulse AI stack:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Supabase Control Plane                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│   Vault (Secrets)    Database (State)    Edge Functions     │
+│         │                   │                   │           │
+│         ▼                   ▼                   ▼           │
+│   ┌─────────┐         ┌─────────┐         ┌─────────┐       │
+│   │ Odoo    │         │ MCP     │         │ Webhooks│       │
+│   │ Vercel  │         │ Jobs    │         │ Crons   │       │
+│   │ DO      │         │ State   │         │ Sync    │       │
+│   └─────────┘         └─────────┘         └─────────┘       │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Vault Secrets Integration
+
+Secrets are stored in Supabase Vault and injected into runtimes:
+
+```hcl
+# infra/supabase/vault_secrets.tf (placeholder)
+
+variable "odoo_db_url" {
+  type      = string
+  sensitive = true
+}
+
+variable "digitalocean_token" {
+  type      = string
+  sensitive = true
+}
+
+# When Terraform provider supports Vault:
+# resource "supabase_vault_secret" "odoo_db_url" {
+#   project_ref = var.production_project_ref
+#   name        = "ODOO_DB_URL"
+#   value       = var.odoo_db_url
+# }
+```
+
+### Runtime Secret Injection
+
+Edge Functions access Vault secrets via:
+
+```typescript
+// supabase/functions/example/index.ts
+const odooDbUrl = Deno.env.get('ODOO_DB_URL');
+```
+
+Database functions access via:
+
+```sql
+SELECT vault.get_secret('ODOO_DB_URL');
+```
+
+---
+
+## Makefile Operations
+
+Use the Makefile for idempotent, environment-aware operations:
+
+```bash
+# Plan for environment
+make ENV=dev plan
+make ENV=staging plan
+make ENV=prod plan
+
+# Apply to environment
+make ENV=dev apply
+make ENV=prod apply
+
+# Validate configuration
+make validate
+
+# Format files
+make fmt
+
+# Database operations
+make db-push      # Push migrations
+make db-diff      # Show pending changes
+make db-reset     # Reset local DB (dev only)
+```
+
+### CI Targets
+
+```bash
+# Non-interactive CI operations
+make ci-plan ENV=prod
+make ci-apply ENV=prod
+```
 
 ---
 

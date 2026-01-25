@@ -1,4 +1,10 @@
 # Output Values for Supabase Terraform
+# Supabase Control Plane Outputs
+
+output "environment" {
+  value       = var.environment
+  description = "Current deployment environment"
+}
 
 output "project_ref" {
   value       = var.production_project_ref
