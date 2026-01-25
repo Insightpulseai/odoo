@@ -1,0 +1,42 @@
+{
+  "$schema": "./manifest.schema.json",
+  "version": "1.0.0",
+  "lastUpdated": "2026-01-25",
+  "description": "Curated Figma Community assets for Data Engineering UI toolkit",
+  "categories": {
+    "templates": [],
+    "plugins": [],
+    "libraries": []
+  },
+  "scoringRubric": {
+    "relevance": { "max": 30, "description": "Relevance to Data Engineering UI (notebooks, tables, charts, pipelines, catalog, RBAC, dashboards)" },
+    "adoption": { "max": 20, "description": "Installs/likes, publisher reputation, recency of updates" },
+    "tokenReadiness": { "max": 15, "description": "Uses variables, styles, consistent naming" },
+    "handoffReadiness": { "max": 15, "description": "Component structure, variants, auto-layout, Dev Mode support" },
+    "extensibility": { "max": 10, "description": "Can be adapted to design tokens + Code Connect mapping" },
+    "license": { "max": 10, "description": "Permissive or clearly stated usage" }
+  },
+  "targetQueries": [
+    "data dashboard ui kit",
+    "databricks",
+    "notebook ui",
+    "table grid ui",
+    "data catalog",
+    "workflow builder",
+    "pipeline builder",
+    "diagram nodes"
+  ],
+  "pluginQueries": [
+    "tokens",
+    "variables",
+    "accessibility",
+    "contrast checker",
+    "table generator",
+    "chart",
+    "json to figma",
+    "design lint",
+    "rename",
+    "export"
+  ],
+  "items": []
+}
