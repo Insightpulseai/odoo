@@ -2,6 +2,8 @@
 
 DAB-first repo structure for ETL, DLT, Jobs, and optional agent systems.
 
+> **See also**: [Data Science Platform](../../docs/databricks/DATA_SCIENCE_PLATFORM.md) | [Data Science Agent](../../docs/databricks/DATA_SCIENCE_AGENT.md)
+
 ## Structure
 
 ```
