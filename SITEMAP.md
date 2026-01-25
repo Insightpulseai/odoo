@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 1fc7aab44717d1c60a5822f3de44ed1b13315af1
+> Commit: 0e89eb570ca48d557a118d8d94e8f70f667042ac
 
 ## 📚 Documentation
 
@@ -440,6 +440,7 @@
 | [DigitalOcean PostgreSQL Cluster — Infrastructure Evidence](docs/evidence/20260124-supabase-setup/infra/DIGITALOCEAN_POSTGRES.md) | docs/evidence/20260124-supabase-setup/infra |
 | [Supabase Project Setup Evidence](docs/evidence/20260124-supabase-setup/integrations/SUPABASE_PROJECT_SETUP.md) | docs/evidence/20260124-supabase-setup/integrations |
 | [Supabase Project Verification Results](docs/evidence/20260124-supabase-setup/integrations/verification_results.md) | docs/evidence/20260124-supabase-setup/integrations |
+| [AI Control Plane Implementation Evidence](docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md) | docs/evidence/20260125-1500/ai-control-plane |
 | [Azure Well-Architected + Lakehouse Hybrid Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/AZURE_WAF_LAKEHOUSE_ASSESSMENT.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
 | [Gap Analysis: Azure WAF + Lakehouse Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/gaps.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
@@ -482,6 +483,7 @@
 | [IPAI Install Profiles](docs/ipai/PROFILES.md) | docs/ipai |
 | [IPAI Module Suite - Technical Documentation](docs/ipai/README.md) | docs/ipai |
 | [IPAI Module Suite - Security Model](docs/ipai/SECURITY_MODEL.md) | docs/ipai |
+| [Databricks Lakehouse Parity Matrix (Self-Hosted)](docs/lakehouse/DATABRICKS_PARITY_MATRIX.md) | docs/lakehouse |
 | [DigitalOcean & Docker Stack](docs/llm/DIGITALOCEAN_DOCKER_STACK.md) | docs/llm |
 | [Glossary](docs/llm/GLOSSARY.md) | docs/llm |
 | [LLM Query Playbook](docs/llm/LLM_QUERY_PLAYBOOK.md) | docs/llm |
@@ -1092,6 +1094,10 @@
 | [Test Coverage Improvement — Implementation Plan](spec/test-coverage-improvement/plan.md) | spec/test-coverage-improvement |
 | [Test Coverage Improvement — Product Requirements Document](spec/test-coverage-improvement/prd.md) | spec/test-coverage-improvement |
 | [Test Coverage Improvement — Task Checklist](spec/test-coverage-improvement/tasks.md) | spec/test-coverage-improvement |
+| [Upstream Parity – Constitution](spec/upstream-parity/constitution.md) | spec/upstream-parity |
+| [Upstream Parity – Implementation Plan](spec/upstream-parity/plan.md) | spec/upstream-parity |
+| [Upstream Parity PRD](spec/upstream-parity/prd.md) | spec/upstream-parity |
+| [Upstream Parity – Task Checklist](spec/upstream-parity/tasks.md) | spec/upstream-parity |
 | [Notion Clone Module Constitution (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/constitution.md) | spec/workos-notion-clone |
 | [Plan — Notion Clone Module (Odoo CE 18 + OCA 18)](spec/workos-notion-clone/plan.md) | spec/workos-notion-clone |
 | [PRD — Work OS Notion Clone (Odoo CE 18 + OCA 18) — Bootstrapped in `jgtolentino/odoo-ce`](spec/workos-notion-clone/prd.md) | spec/workos-notion-clone |
