@@ -1,0 +1,46 @@
+# Agent Evaluation Jobs
+# Automated evaluation of agent performance
+
+resources:
+  jobs:
+    agent_eval_job:
+      name: "Agent Evaluation Pipeline"
+      description: "Evaluate agent performance against test cases"
+      tags:
+        domain: agent_systems
+        module: feedback_intel
+        type: evaluation
+        team: platform
+
+      tasks:
+        - task_key: run_eval_suite
+          description: "Run evaluation test suite"
+          notebook_task:
+            notebook_path: ../src/evaluators/run_eval.py
+            source: WORKSPACE
+            base_parameters:
+              eval_dataset: "${var.catalog}.gold.agent_eval_dataset"
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+          timeout_seconds: 3600
+
+        - task_key: publish_metrics
+          description: "Publish evaluation metrics to MLflow"
+          depends_on:
+            - task_key: run_eval_suite
+          notebook_task:
+            notebook_path: ../src/evaluators/publish_metrics.py
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+          timeout_seconds: 600
+
+      # Run weekly
+      schedule:
+        quartz_cron_expression: "0 0 5 ? * SUN"
+        timezone_id: "UTC"
+        pause_status: PAUSED  # Enable when eval dataset is ready

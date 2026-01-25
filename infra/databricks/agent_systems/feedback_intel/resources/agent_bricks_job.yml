@@ -1,0 +1,46 @@
+# Agent Bricks Job Configuration
+# Placeholder for Agent Bricks integration
+
+# Note: Agent Bricks jobs are typically created through the
+# Databricks UI or Agent Bricks SDK. This file documents
+# the expected configuration pattern.
+
+resources:
+  jobs:
+    agent_feedback_pipeline:
+      name: "Agent Feedback Pipeline"
+      description: "Process feedback data for Agent Bricks consumption"
+      tags:
+        domain: agent_systems
+        module: feedback_intel
+        team: platform
+
+      tasks:
+        - task_key: prepare_feedback_data
+          description: "Prepare feedback data for agent training"
+          notebook_task:
+            notebook_path: ../src/pipelines/prepare_feedback.py
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+          timeout_seconds: 1800
+
+        - task_key: export_to_mlflow
+          description: "Export processed data to MLflow"
+          depends_on:
+            - task_key: prepare_feedback_data
+          notebook_task:
+            notebook_path: ../src/pipelines/export_mlflow.py
+            source: WORKSPACE
+          new_cluster:
+            spark_version: "14.3.x-scala2.12"
+            node_type_id: "Standard_DS3_v2"
+            num_workers: 1
+          timeout_seconds: 900
+
+      schedule:
+        quartz_cron_expression: "0 0 4 * * ?"
+        timezone_id: "UTC"
+        pause_status: PAUSED  # Enable when Agent Bricks is configured
