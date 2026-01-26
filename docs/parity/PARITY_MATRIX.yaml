@@ -75,7 +75,28 @@ features:
       odoo_install_test: false
       docs_updated: true
     artifacts:
-      module: addons/ipai_finance_bir_compliance
+      module: addons/ipai_bir_tax_compliance
+
+  - id: EE-PAYROLL-0001
+    name: PH Payroll & Statutory Deductions
+    phase: 2
+    owner: ipai_hr_payroll_ph
+    status: in_progress
+    ee_equivalent: hr_payroll
+    gates:
+      runnable_module: true
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_hr_payroll_ph
+      models:
+        - addons/ipai/ipai_hr_payroll_ph/models/hr_payslip.py
+        - addons/ipai/ipai_hr_payroll_ph/models/ph_contribution_table.py
+    features:
+      - 2025 SSS contribution tables
+      - 2025 PhilHealth premium rates
+      - 2025 Pag-IBIG contribution rates
+      - BIR TRAIN Law withholding tax
 
   - id: EE-EXPENSE-0003
     name: Expense Policy Engine
@@ -172,6 +193,31 @@ features:
         - project_task_dependency
         - project_task_checklist
         - project_task_recurrent
+
+  # ---------------------------------------------------------------------------
+  # PHASE 5b: HELPDESK (Services)
+  # ---------------------------------------------------------------------------
+  - id: EE-HELPDESK-0001
+    name: Helpdesk Ticketing System
+    phase: 5
+    owner: ipai_helpdesk
+    status: in_progress
+    ee_equivalent: helpdesk
+    gates:
+      runnable_module: true
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_helpdesk
+      models:
+        - addons/ipai/ipai_helpdesk/models/helpdesk_ticket.py
+        - addons/ipai/ipai_helpdesk/models/helpdesk_team.py
+        - addons/ipai/ipai_helpdesk/models/helpdesk_sla.py
+    features:
+      - Multi-team ticket management
+      - SLA policies with escalation
+      - Auto-assignment (balanced, round-robin)
+      - Customer portal self-service
 
   # ---------------------------------------------------------------------------
   # PHASE 6: COPILOT (Joule Parity)
@@ -293,9 +339,9 @@ ci_gates:
 # =============================================================================
 
 summary:
-  total_features: 12
+  total_features: 14
   shipped: 2
-  in_progress: 2
+  in_progress: 4
   planned: 8
   blocked: 0
-  completion_percent: 16.7
+  completion_percent: 14.3

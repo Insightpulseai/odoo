@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Payroll-specific security groups -->
+    <record id="group_payroll_user" model="res.groups">
+        <field name="name">Payroll User</field>
+        <field name="category_id" ref="base.module_category_human_resources_payroll"/>
+        <field name="implied_ids" eval="[(4, ref('hr.group_hr_user'))]"/>
+    </record>
+
+    <record id="group_payroll_manager" model="res.groups">
+        <field name="name">Payroll Manager</field>
+        <field name="category_id" ref="base.module_category_human_resources_payroll"/>
+        <field name="implied_ids" eval="[(4, ref('group_payroll_user'))]"/>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Record rules -->
+    <record id="payslip_company_rule" model="ir.rule">
+        <field name="name">Payslip: multi-company</field>
+        <field name="model_id" ref="model_hr_payslip"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+
+    <record id="payslip_employee_rule" model="ir.rule">
+        <field name="name">Payslip: employee own payslips</field>
+        <field name="model_id" ref="model_hr_payslip"/>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+</odoo>
