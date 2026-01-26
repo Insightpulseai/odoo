@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ae15729ef5d60a51f39d87eb28f9b58a8e3cde0b
+> Commit: 692d63d8ab4e0aa3964991e474c750ca861e63de
 
 ```
 .
@@ -84,6 +84,7 @@
 │   │   ├── compose-topology-guard.yml
 │   │   ├── config-publish.yml
 │   │   ├── control-room-ci.yml
+│   │   ├── curation-guardrail.yml
 │   │   ├── cursor-bugbot.yml
 │   │   ├── databricks-ci.yml
 │   │   ├── databricks-dab-ci.yml
@@ -1635,6 +1636,9 @@
 │   │   └── README.md
 │   ├── connectors
 │   │   └── CLAUDE_CONNECTORS.md
+│   ├── curation
+│   │   ├── CURATED_DOCS.yaml
+│   │   └── CURATION_POLICY.md
 │   ├── data-model
 │   │   ├── EXTENDED_PLATFORM_ERD.mmd
 │   │   ├── EXTENDED_PLATFORM_ORM_MAP.md
@@ -3075,6 +3079,7 @@
 │   │   ├── constraints-gevent.txt
 │   │   ├── deploy-ipai-modules.sh
 │   │   ├── docker-image-diff.sh
+│   │   ├── guardrail_no_bulk_doc_dump.sh
 │   │   ├── import-n8n-workflows.sh
 │   │   ├── install-oca-modules.sh
 │   │   ├── install_odoo_18.sh
@@ -4536,15 +4541,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1227 directories, 3304 files
+1228 directories, 3308 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1447 |
-| Files | 4402 |
+| Directories | 1448 |
+| Files | 4406 |
 | Python files | 680 |
 | XML files | 261 |
-| Markdown files | 1118 |
+| Markdown files | 1119 |

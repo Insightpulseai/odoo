@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ae15729ef5d60a51f39d87eb28f9b58a8e3cde0b
+> Commit: 692d63d8ab4e0aa3964991e474c750ca861e63de
 
 ## 📚 Documentation
 
@@ -389,6 +389,7 @@
 | [Claude Code Quick Reference Card](docs/claude_code/QUICK_REFERENCE.md) | docs/claude_code |
 | [Claude Code Project Index](docs/claude_code/README.md) | docs/claude_code |
 | [Claude Connector Configuration Guide](docs/connectors/CLAUDE_CONNECTORS.md) | docs/connectors |
+| [Curation Policy (ipai-learn)](docs/curation/CURATION_POLICY.md) | docs/curation |
 | [Extended Platform ORM Mapping](docs/data-model/EXTENDED_PLATFORM_ORM_MAP.md) | docs/data-model |
 | [OCA Project Data Model - Odoo CE 18.0](docs/data-model/OCA_PROJECT_DATA_MODEL.md) | docs/data-model |
 | [Odoo Module Deltas](docs/data-model/ODOO_MODULE_DELTAS.md) | docs/data-model |
