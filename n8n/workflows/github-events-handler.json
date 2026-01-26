@@ -1,0 +1,370 @@
+{
+  "name": "GitHub Events Handler (pulser-hub App)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "github-pulser",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "webhook-github",
+      "name": "Webhook: GitHub Events",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "notes": "Receives webhooks from pulser-hub GitHub App"
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract GitHub event type from headers\nconst eventType = $input.first().headers['x-github-event'];\nconst delivery = $input.first().headers['x-github-delivery'];\nconst payload = $input.first().json;\n\nreturn {\n  eventType,\n  delivery,\n  action: payload.action || null,\n  repository: payload.repository?.full_name || null,\n  sender: payload.sender?.login || null,\n  payload\n};"
+      },
+      "id": "parse-event",
+      "name": "Parse GitHub Event",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.eventType }}",
+              "operation": "equals",
+              "value2": "push"
+            }
+          ]
+        }
+      },
+      "id": "if-push",
+      "name": "Is Push?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 150]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.eventType }}",
+              "operation": "equals",
+              "value2": "pull_request"
+            }
+          ]
+        }
+      },
+      "id": "if-pr",
+      "name": "Is Pull Request?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.eventType }}",
+              "operation": "equals",
+              "value2": "issues"
+            }
+          ]
+        }
+      },
+      "id": "if-issue",
+      "name": "Is Issue?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 450]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.eventType }}",
+              "operation": "equals",
+              "value2": "issue_comment"
+            }
+          ]
+        }
+      },
+      "id": "if-comment",
+      "name": "Is Comment?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [650, 600]
+    },
+    {
+      "parameters": {
+        "channel": "#github-activity",
+        "text": "=:rocket: *Push to {{ $json.repository }}*\n\nBranch: `{{ $json.payload.ref }}`\nCommits: {{ $json.payload.commits.length }}\nBy: {{ $json.sender }}\n\n{{ $json.payload.commits.map(c => '• ' + c.message.split('\\n')[0]).join('\\n') }}",
+        "otherOptions": {}
+      },
+      "id": "slack-push",
+      "name": "Slack: Push Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [900, 100]
+    },
+    {
+      "parameters": {
+        "channel": "#github-activity",
+        "text": "=:git-pull-request: *{{ $json.action }} PR #{{ $json.payload.pull_request.number }}*\n\n*{{ $json.payload.pull_request.title }}*\nRepo: {{ $json.repository }}\nBy: {{ $json.sender }}\n\n<{{ $json.payload.pull_request.html_url }}|View PR>",
+        "otherOptions": {}
+      },
+      "id": "slack-pr",
+      "name": "Slack: PR Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [900, 250]
+    },
+    {
+      "parameters": {
+        "functionCode": "// Check if comment mentions @claude for AI assistance\nconst comment = $json.payload.comment?.body || '';\nconst mentionsClaude = comment.includes('@claude');\n\nreturn {\n  ...$json,\n  mentionsClaude,\n  commentBody: comment\n};"
+      },
+      "id": "check-claude-mention",
+      "name": "Check @claude Mention",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [900, 550]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.mentionsClaude }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "if-claude-mention",
+      "name": "Mentions @claude?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1100, 550]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/github_events",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $env.SUPABASE_ANON_KEY }}"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "event_type",
+              "value": "={{ $json.eventType }}"
+            },
+            {
+              "name": "action",
+              "value": "={{ $json.action }}"
+            },
+            {
+              "name": "repository",
+              "value": "={{ $json.repository }}"
+            },
+            {
+              "name": "sender",
+              "value": "={{ $json.sender }}"
+            },
+            {
+              "name": "delivery_id",
+              "value": "={{ $json.delivery }}"
+            },
+            {
+              "name": "raw_payload",
+              "value": "={{ JSON.stringify($json.payload) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "supabase-audit",
+      "name": "Audit Log to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.CLAUDE_CODE_WEBHOOK_URL }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "action",
+              "value": "process_comment"
+            },
+            {
+              "name": "repository",
+              "value": "={{ $json.repository }}"
+            },
+            {
+              "name": "issue_number",
+              "value": "={{ $json.payload.issue?.number || $json.payload.pull_request?.number }}"
+            },
+            {
+              "name": "comment_id",
+              "value": "={{ $json.payload.comment?.id }}"
+            },
+            {
+              "name": "comment_body",
+              "value": "={{ $json.commentBody }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "trigger-claude",
+      "name": "Trigger Claude Code",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1300, 500],
+      "notes": "Trigger Claude Code to process @claude mention"
+    },
+    {
+      "parameters": {},
+      "id": "noop-end",
+      "name": "No Action",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1300, 650]
+    }
+  ],
+  "connections": {
+    "Webhook: GitHub Events": {
+      "main": [
+        [
+          {
+            "node": "Parse GitHub Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse GitHub Event": {
+      "main": [
+        [
+          {
+            "node": "Is Push?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Pull Request?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Issue?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Comment?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Audit Log to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Push?": {
+      "main": [
+        [
+          {
+            "node": "Slack: Push Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Pull Request?": {
+      "main": [
+        [
+          {
+            "node": "Slack: PR Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Comment?": {
+      "main": [
+        [
+          {
+            "node": "Check @claude Mention",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check @claude Mention": {
+      "main": [
+        [
+          {
+            "node": "Mentions @claude?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mentions @claude?": {
+      "main": [
+        [
+          {
+            "node": "Trigger Claude Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "staticData": null,
+  "tags": ["github", "pulser-hub", "automation"],
+  "triggerCount": 1,
+  "updatedAt": "2026-01-26T00:00:00.000Z",
+  "versionId": "1"
+}

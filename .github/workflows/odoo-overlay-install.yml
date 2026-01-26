@@ -1,0 +1,270 @@
+name: Odoo Overlay Module Install
+
+# =============================================================================
+# PURPOSE: Verify IPAI overlay modules install successfully on Odoo 18 CE
+# This workflow runs on PR to provide fast feedback on module quality
+# =============================================================================
+
+on:
+  pull_request:
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/ipai_*/**'
+      - 'docker/Dockerfile.*'
+      - 'docs/parity/PARITY_MATRIX.yaml'
+      - '.github/workflows/odoo-overlay-install.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'addons/ipai/**'
+      - 'addons/ipai_*/**'
+  workflow_dispatch:
+
+env:
+  ODOO_VERSION: "18.0"
+  POSTGRES_USER: odoo
+  POSTGRES_PASSWORD: odoo
+  POSTGRES_DB: test_odoo
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Gate: Runnable Slice Check (fast, no Docker)
+  # ---------------------------------------------------------------------------
+  runnable-slice-gate:
+    name: Runnable Slice Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify runnable slice exists
+        run: ./scripts/parity/require_runnable_slice.sh
+
+      - name: Verify parity matrix exists
+        run: |
+          if [ ! -f docs/parity/PARITY_MATRIX.yaml ]; then
+            echo "ERROR: docs/parity/PARITY_MATRIX.yaml not found"
+            exit 1
+          fi
+          echo "OK: PARITY_MATRIX.yaml exists"
+
+  # ---------------------------------------------------------------------------
+  # Build: Create CI Image
+  # ---------------------------------------------------------------------------
+  build-ci-image:
+    name: Build CI Image
+    runs-on: ubuntu-latest
+    needs: runnable-slice-gate
+    outputs:
+      image_tag: ${{ steps.meta.outputs.tags }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ipai-odoo-ci
+          tags: |
+            type=sha,prefix=ci-
+
+      - name: Build CI image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.ci
+          push: false
+          load: true
+          tags: ipai-odoo-ci:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Save image for next job
+        run: |
+          docker save ipai-odoo-ci:${{ github.sha }} | gzip > /tmp/ipai-odoo-ci.tar.gz
+
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp/ipai-odoo-ci.tar.gz
+          retention-days: 1
+
+  # ---------------------------------------------------------------------------
+  # Test: Module Install Verification
+  # ---------------------------------------------------------------------------
+  module-install-test:
+    name: Module Install Test
+    runs-on: ubuntu-latest
+    needs: build-ci-image
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U odoo"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download CI image
+        uses: actions/download-artifact@v4
+        with:
+          name: ci-image
+          path: /tmp
+
+      - name: Load CI image
+        run: |
+          gunzip -c /tmp/ipai-odoo-ci.tar.gz | docker load
+
+      - name: Discover installable modules
+        id: discover
+        run: |
+          # Find all ipai modules with __manifest__.py
+          MODULES=$(find addons/ipai -name "__manifest__.py" -exec dirname {} \; | \
+                    xargs -I {} basename {} | \
+                    sort -u | \
+                    tr '\n' ',' | \
+                    sed 's/,$//')
+
+          # Fallback to ipai_foundation if nothing found
+          if [ -z "$MODULES" ]; then
+            MODULES="ipai_foundation"
+          fi
+
+          echo "modules=$MODULES" >> $GITHUB_OUTPUT
+          echo "Discovered modules: $MODULES"
+
+      - name: Test base installation
+        run: |
+          docker run --rm --network host \
+            -e HOST=127.0.0.1 \
+            -e PORT=5432 \
+            -e USER=${{ env.POSTGRES_USER }} \
+            -e PASSWORD=${{ env.POSTGRES_PASSWORD }} \
+            ipai-odoo-ci:${{ github.sha }} \
+            odoo \
+              --database=${{ env.POSTGRES_DB }} \
+              --db_host=127.0.0.1 \
+              --db_port=5432 \
+              --db_user=${{ env.POSTGRES_USER }} \
+              --db_password=${{ env.POSTGRES_PASSWORD }} \
+              --init=base \
+              --stop-after-init \
+              --log-level=warn \
+            2>&1 | tee base_install.log
+
+          # Check for fatal errors
+          if grep -iE "error|traceback|exception" base_install.log | grep -v "INFO\|DEBUG\|WARNING"; then
+            echo "::error::Base installation failed with errors"
+            exit 1
+          fi
+          echo "Base installation successful"
+
+      - name: Test ipai_foundation installation
+        if: always()
+        run: |
+          # ipai_foundation is the Phase 1 vertical slice marker
+          if [ -d "addons/ipai/ipai_foundation" ]; then
+            docker run --rm --network host \
+              -e HOST=127.0.0.1 \
+              -e PORT=5432 \
+              -e USER=${{ env.POSTGRES_USER }} \
+              -e PASSWORD=${{ env.POSTGRES_PASSWORD }} \
+              ipai-odoo-ci:${{ github.sha }} \
+              odoo \
+                --database=${{ env.POSTGRES_DB }} \
+                --db_host=127.0.0.1 \
+                --db_port=5432 \
+                --db_user=${{ env.POSTGRES_USER }} \
+                --db_password=${{ env.POSTGRES_PASSWORD }} \
+                --update=ipai_foundation \
+                --stop-after-init \
+                --log-level=warn \
+              2>&1 | tee foundation_install.log
+
+            if grep -iE "error|traceback|exception" foundation_install.log | grep -v "INFO\|DEBUG\|WARNING"; then
+              echo "::error::ipai_foundation installation failed"
+              exit 1
+            fi
+            echo "ipai_foundation installation successful"
+          else
+            echo "::warning::ipai_foundation module not found, skipping"
+          fi
+
+      - name: Verify Odoo health
+        run: |
+          # Start Odoo in background
+          docker run -d --name odoo-health-check --network host \
+            -e HOST=127.0.0.1 \
+            -e PORT=5432 \
+            -e USER=${{ env.POSTGRES_USER }} \
+            -e PASSWORD=${{ env.POSTGRES_PASSWORD }} \
+            ipai-odoo-ci:${{ github.sha }} \
+            odoo \
+              --database=${{ env.POSTGRES_DB }} \
+              --db_host=127.0.0.1 \
+              --db_port=5432 \
+              --db_user=${{ env.POSTGRES_USER }} \
+              --db_password=${{ env.POSTGRES_PASSWORD }}
+
+          # Wait for health endpoint
+          for i in {1..30}; do
+            if curl -sf http://127.0.0.1:8069/web/health > /dev/null 2>&1; then
+              echo "Odoo health check passed"
+              docker stop odoo-health-check
+              exit 0
+            fi
+            echo "Waiting for Odoo... ($i/30)"
+            sleep 2
+          done
+
+          echo "::error::Odoo health check failed"
+          docker logs odoo-health-check
+          docker stop odoo-health-check
+          exit 1
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: install-logs
+          path: |
+            base_install.log
+            foundation_install.log
+          retention-days: 7
+
+  # ---------------------------------------------------------------------------
+  # Summary
+  # ---------------------------------------------------------------------------
+  summary:
+    name: Installation Summary
+    runs-on: ubuntu-latest
+    needs: [runnable-slice-gate, module-install-test]
+    if: always()
+    steps:
+      - name: Check results
+        run: |
+          if [ "${{ needs.runnable-slice-gate.result }}" == "failure" ]; then
+            echo "::error::Runnable slice gate failed"
+            exit 1
+          fi
+          if [ "${{ needs.module-install-test.result }}" == "failure" ]; then
+            echo "::error::Module install test failed"
+            exit 1
+          fi
+          echo "All overlay module install tests passed"
