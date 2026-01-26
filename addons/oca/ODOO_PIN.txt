@@ -1,0 +1,9 @@
+# Odoo CE Upstream Pin
+# This file tracks the exact Odoo CE version for reproducible builds
+# Updated: 2026-01-26
+# Branch: 18.0
+# To update: git rev-parse odoo-upstream/18.0 > oca/manifest/ODOO_PIN.txt
+
+# Odoo 18.0 stable (January 2026)
+# https://github.com/odoo/odoo/tree/18.0
+18.0

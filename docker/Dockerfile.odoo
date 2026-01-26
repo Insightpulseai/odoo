@@ -1,0 +1,68 @@
+# Dockerfile.odoo - IPAI Overlay Image (Odoo 18 CE + OCA + ipai)
+# =============================================================================
+# Build: docker build -t ipai-odoo:latest -f docker/Dockerfile.odoo .
+# Run:   docker run -d -p 8069:8069 --name ipai-odoo ipai-odoo:latest
+# =============================================================================
+
+ARG ODOO_VERSION=18.0
+FROM odoo:${ODOO_VERSION}
+
+LABEL maintainer="InsightPulse AI <team@insightpulse.ai>"
+LABEL description="Odoo 18 CE + OCA modules + IPAI overlay addons"
+LABEL version="1.0.0"
+
+# Switch to root for package installation
+USER root
+
+# Install additional system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create overlay addons directories
+RUN mkdir -p \
+    /mnt/extra-addons/ipai \
+    /mnt/extra-addons/oca
+
+# Copy IPAI overlay addons (custom modules)
+# These are tracked in git and form the EE-replacement layer
+COPY addons/ipai /mnt/extra-addons/ipai/
+
+# Copy legacy ipai_* modules from addons root (if any)
+COPY addons/ipai_* /mnt/extra-addons/ipai/ 2>/dev/null || true
+
+# Copy OCA meta layer (manifest.yaml defines which OCA repos to fetch)
+# Note: Actual OCA modules are fetched at runtime or via oca-aggregate
+COPY addons/oca /mnt/extra-addons/oca-meta/
+
+# Set environment for addons path
+ENV ODOO_EXTRA_ADDONS="/mnt/extra-addons/ipai,/mnt/extra-addons/oca"
+
+# Create odoo.conf with overlay paths
+RUN cat > /etc/odoo/odoo.conf <<'EOF'
+[options]
+addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/oca
+admin_passwd = $pbkdf2-sha512$600000$admin
+db_host = False
+db_port = False
+db_user = odoo
+db_password = False
+list_db = True
+log_level = info
+without_demo = True
+EOF
+
+# Set proper permissions
+RUN chown -R odoo:odoo /mnt/extra-addons /etc/odoo/odoo.conf
+
+# Switch back to odoo user
+USER odoo
+
+# Healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
+    CMD curl -sf http://localhost:8069/web/health || exit 1
+
+# Default command with overlay addons path
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["odoo"]
