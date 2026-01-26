@@ -1,0 +1,21 @@
+{
+  "name": "@ipai/platformkit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "platformkit": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "lint": "node -e \"console.log('TODO: add eslint if needed');\"",
+    "test": "node dist/index.js --help >/dev/null"
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
