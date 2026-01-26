@@ -1,0 +1,21 @@
+{
+  "repo": "jgtolentino/odoo-ce",
+  "commit": "1d63f114a331ffbe8459e67abd40a5a6dc08ccf0",
+  "branch": "claude/github-odoo-governance-H3zwb",
+  "tasks": {
+    "file": "spec/enterprise-parity/tasks.md",
+    "total": 233,
+    "done": 6,
+    "todo": 227,
+    "percent_done": 2.58
+  },
+  "runnable_gates": {
+    "require_runnable_slice": "pass",
+    "check_ipai_foundation": "pass"
+  },
+  "inventory": {
+    "ipai_manifest_count": 23,
+    "has_ee_parity_gate_workflow": true
+  },
+  "blockers": []
+}

@@ -1,0 +1,49 @@
+{
+  "properties": [
+    {
+      "property_name": "runtime_tier",
+      "value_type": "single_select",
+      "required": true,
+      "default_value": "dev",
+      "allowed_values": ["dev", "stage", "prod"],
+      "description": "Deployment tier for the repository"
+    },
+    {
+      "property_name": "contains_odoo",
+      "value_type": "true_false",
+      "required": true,
+      "default_value": false,
+      "description": "Repository contains Odoo modules or configuration"
+    },
+    {
+      "property_name": "contains_data_model",
+      "value_type": "true_false",
+      "required": true,
+      "default_value": false,
+      "description": "Repository contains database schema or data models"
+    },
+    {
+      "property_name": "data_sensitivity",
+      "value_type": "single_select",
+      "required": true,
+      "default_value": "internal",
+      "allowed_values": ["public", "internal", "confidential", "restricted"],
+      "description": "Data classification level for compliance"
+    },
+    {
+      "property_name": "parity_program",
+      "value_type": "single_select",
+      "required": false,
+      "allowed_values": ["odoo-ee-parity", "databricks-parity", "fivetran-parity"],
+      "description": "Enterprise parity program this repo participates in"
+    },
+    {
+      "property_name": "team_ownership",
+      "value_type": "single_select",
+      "required": true,
+      "default_value": "platform",
+      "allowed_values": ["platform", "data", "erp", "docs"],
+      "description": "Primary team responsible for the repository"
+    }
+  ]
+}
