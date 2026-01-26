@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- AI Source Views -->
+    <record id="view_ipai_ai_source_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.source.tree</field>
+        <field name="model">ipai.ai.source</field>
+        <field name="arch" type="xml">
+            <tree string="AI Sources">
+                <field name="name"/>
+                <field name="agent_id"/>
+                <field name="source_type"/>
+                <field name="ingest_status" decoration-success="ingest_status == 'done'" decoration-warning="ingest_status == 'processing'" decoration-danger="ingest_status == 'error'"/>
+                <field name="chunk_count"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_source_form" model="ir.ui.view">
+        <field name="name">ipai.ai.source.form</field>
+        <field name="model">ipai.ai.source</field>
+        <field name="arch" type="xml">
+            <form string="AI Source">
+                <header>
+                    <button name="action_ingest" string="Ingest" type="object" class="btn-primary" invisible="ingest_status == 'processing'"/>
+                    <button name="action_reset" string="Reset" type="object" class="btn-secondary" invisible="ingest_status == 'pending'"/>
+                    <field name="ingest_status" widget="statusbar" statusbar_visible="pending,processing,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-cubes" type="object" name="action_view_chunks" invisible="chunk_count == 0">
+                            <field name="chunk_count" widget="statinfo" string="Chunks"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Error" bg_color="bg-danger" invisible="ingest_status != 'error'"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Source Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="agent_id"/>
+                            <field name="source_type"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group string="Source Configuration">
+                        <field name="locator" invisible="source_type == 'file'" placeholder="URL or model:field:domain"/>
+                        <field name="file_content" filename="file_name" invisible="source_type != 'file'"/>
+                        <field name="file_name" invisible="source_type != 'file'"/>
+                    </group>
+                    <group string="Metadata (JSON)" invisible="1">
+                        <field name="metadata" nolabel="1"/>
+                    </group>
+                    <group string="Error Details" invisible="ingest_status != 'error'">
+                        <field name="ingest_error" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_source_search" model="ir.ui.view">
+        <field name="name">ipai.ai.source.search</field>
+        <field name="model">ipai.ai.source</field>
+        <field name="arch" type="xml">
+            <search string="AI Sources">
+                <field name="name"/>
+                <field name="agent_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Pending" name="pending" domain="[('ingest_status', '=', 'pending')]"/>
+                <filter string="Done" name="done" domain="[('ingest_status', '=', 'done')]"/>
+                <filter string="Errors" name="errors" domain="[('ingest_status', '=', 'error')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Agent" name="group_agent" context="{'group_by': 'agent_id'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'source_type'}"/>
+                    <filter string="Status" name="group_status" context="{'group_by': 'ingest_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- AI Chunk Views -->
+    <record id="view_ipai_ai_chunk_tree" model="ir.ui.view">
+        <field name="name">ipai.ai.chunk.tree</field>
+        <field name="model">ipai.ai.chunk</field>
+        <field name="arch" type="xml">
+            <tree string="AI Chunks" default_order="source_id, index">
+                <field name="source_id"/>
+                <field name="index"/>
+                <field name="content" optional="show"/>
+                <field name="token_count"/>
+                <field name="has_embedding"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_ipai_ai_chunk_form" model="ir.ui.view">
+        <field name="name">ipai.ai.chunk.form</field>
+        <field name="model">ipai.ai.chunk</field>
+        <field name="arch" type="xml">
+            <form string="AI Chunk" create="0" edit="0">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="source_id"/>
+                            <field name="index"/>
+                            <field name="token_count"/>
+                        </group>
+                        <group>
+                            <field name="content_hash"/>
+                            <field name="has_embedding"/>
+                        </group>
+                    </group>
+                    <group string="Content">
+                        <field name="content" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_ipai_ai_source" model="ir.actions.act_window">
+        <field name="name">AI Sources</field>
+        <field name="res_model">ipai.ai.source</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_ipai_ai_source_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add your first AI Source
+            </p>
+            <p>
+                Sources provide knowledge for your AI agents via RAG.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_ipai_ai_chunk" model="ir.actions.act_window">
+        <field name="name">AI Chunks</field>
+        <field name="res_model">ipai.ai.chunk</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_ipai_ai_sources"
+              name="Sources"
+              parent="ipai_ai_agent_builder.menu_ipai_ai_root"
+              action="action_ipai_ai_source"
+              sequence="25"/>
+</odoo>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_ipai_ai" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.ipai.ai</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="AI Agent Builder" string="AI Agent Builder" name="ipai_ai_agent_builder" groups="ipai_ai_agent_builder.group_ipai_ai_admin">
+                    <block title="LLM Providers" name="llm_providers">
+                        <setting string="Default Provider" help="Select the default LLM provider for new agents">
+                            <field name="ipai_ai_default_provider"/>
+                        </setting>
+                        <setting string="OpenAI API Key" help="API key for ChatGPT. Can also be set via OPENAI_API_KEY environment variable.">
+                            <field name="ipai_ai_openai_api_key" password="True"/>
+                        </setting>
+                        <setting string="Google API Key" help="API key for Gemini. Can also be set via GOOGLE_API_KEY environment variable.">
+                            <field name="ipai_ai_google_api_key" password="True"/>
+                        </setting>
+                    </block>
+                    <block title="RAG Configuration" name="rag_config">
+                        <setting string="Embedding Model" help="Model used for generating vector embeddings">
+                            <field name="ipai_ai_embedding_model"/>
+                        </setting>
+                        <setting string="Chunk Size" help="Default chunk size in tokens for RAG">
+                            <field name="ipai_ai_chunk_size"/>
+                        </setting>
+                        <setting string="Chunk Overlap" help="Overlap between chunks in tokens">
+                            <field name="ipai_ai_chunk_overlap"/>
+                        </setting>
+                        <setting string="Retrieval Top K" help="Number of chunks to retrieve for context">
+                            <field name="ipai_ai_retrieval_top_k"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_ipai_ai_config_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module': 'ipai_ai_agent_builder'}</field>
+    </record>
+
+    <menuitem id="menu_ipai_ai_settings"
+              name="Settings"
+              parent="menu_ipai_ai_config"
+              action="action_ipai_ai_config_settings"
+              sequence="10"/>
+</odoo>
