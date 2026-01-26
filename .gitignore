@@ -216,3 +216,4 @@ sandbox/dev/oca-addons/
 **/terraform.tfvars
 **/.supabase-token
 .ci_artifacts/
+scripts/audit/.env
