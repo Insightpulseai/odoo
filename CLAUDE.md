@@ -166,10 +166,12 @@ Whenever an Odoo task is requested, generate:
 
 | Item | Value |
 |------|-------|
-| **Stack** | Odoo CE 18.0 + OCA + n8n + Mattermost + PostgreSQL 15 |
+| **Stack** | Odoo CE 18.0 → 19.0 + OCA + n8n + Mattermost + PostgreSQL 16 |
 | **Node** | >= 18.0.0 (pnpm workspaces) |
-| **Python** | 3.10+ (Odoo 18 requirement) |
+| **Python** | 3.10+ (Odoo 18), 3.12+ (Odoo 19) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
+| **Hosting** | DigitalOcean (self-hosted, cost-minimized) |
+| **EE Parity** | Target ≥80% via CE + OCA + ipai_* |
 
 > **Claude Code Web Users**: See [CLAUDE_CODE_WEB.md](./CLAUDE_CODE_WEB.md) for cloud sandbox execution contract.
 
@@ -204,10 +206,10 @@ npm run dev:github-app                  # Run github-app
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                         InsightPulse AI Stack                        │
+│                   InsightPulse AI Stack (Self-Hosted)                │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│   Mattermost ◄──► n8n ◄──► Odoo CE 18 ◄──► PostgreSQL 15            │
+│   Mattermost ◄──► n8n ◄──► Odoo CE 18/19 ◄──► PostgreSQL 16         │
 │       │           │            │                                     │
 │       │           │            ├── Core (8069)                       │
 │       │           │            ├── Marketing (8070)                  │
@@ -221,6 +223,21 @@ npm run dev:github-app                  # Run github-app
 │  Superset (BI)  │  Keycloak (SSO)  │  DigitalOcean (Hosting)        │
 └─────────────────────────────────────────────────────────────────────┘
 ```
+
+### Cost-Minimized Self-Hosted Philosophy
+
+**We BUILD everything ourselves to minimize costs:**
+- NO Azure, AWS, GCP managed services
+- NO expensive SaaS subscriptions
+- NO per-seat enterprise licensing
+
+**Self-hosted stack:**
+- **Hosting**: DigitalOcean droplets (~$50-100/mo vs $1000s cloud)
+- **Database**: PostgreSQL 16 (self-managed, not RDS)
+- **BI**: Apache Superset (free, self-hosted)
+- **SSO**: Keycloak (free, self-hosted)
+- **Automation**: n8n (self-hosted, not cloud)
+- **Chat**: Mattermost (self-hosted)
 
 ### Multi-Edition Docker Architecture
 
@@ -324,11 +341,10 @@ odoo-ce/
 │   ├── docker-compose.yml     # Production compose
 │   └── nginx/
 │
-├── infra/                     # Infrastructure templates
-│   ├── azure/
-│   ├── databricks/
-│   ├── superset/
-│   └── doctl/
+├── infra/                     # Infrastructure templates (self-hosted)
+│   ├── doctl/                 # DigitalOcean CLI templates
+│   ├── superset/              # Apache Superset configs
+│   └── terraform/             # Self-hosted infra IaC
 │
 ├── db/                        # Database management
 │   ├── schema/                # Schema definitions
@@ -551,6 +567,121 @@ Config → OCA → Delta (ipai_*)
 1. **Config**: Use Odoo's built-in configuration first
 2. **OCA**: Use vetted OCA community modules second
 3. **Delta**: Only create ipai_* modules for truly custom needs
+
+---
+
+## Enterprise Parity Strategy
+
+**Goal**: Achieve ≥80% Odoo Enterprise Edition feature parity by **building custom replacements** using CE + OCA + ipai_* modules.
+
+**Philosophy**: We do NOT deploy Odoo EE. We BUILD our own solutions that replicate and often exceed EE capabilities.
+
+### Parity Formula
+
+```
+CE + OCA + ipai_* = Enterprise Parity (≥80%)
+
+Where:
+  CE      = Odoo Community Edition (base, free, open source)
+  OCA     = Odoo Community Association modules (community-built)
+  ipai_*  = InsightPulse AI CUSTOM-BUILT modules (our IP)
+
+NEVER:
+  - License Odoo Enterprise
+  - Use odoo.com IAP services
+  - Deploy proprietary EE modules
+```
+
+### EE Feature Mapping
+
+| Odoo EE Feature | EE Module | CE/OCA/IPAI Replacement | Parity |
+|-----------------|-----------|-------------------------|--------|
+| **Accounting** | | | |
+| Bank Reconciliation | `account_accountant` | `account_reconcile_oca` | 95% |
+| Financial Reports | `account_reports` | `account_financial_report` | 90% |
+| Asset Management | `account_asset` | `account_asset_management` | 90% |
+| Budget Management | `account_budget` | `ipai_finance_ppm` | 85% |
+| Consolidation | `account_consolidation` | `ipai_finance_consolidation` | 80% |
+| **HR & Payroll** | | | |
+| Payroll | `hr_payroll` | `ipai_hr_payroll_ph` | 100% |
+| Attendance | `hr_attendance` | `ipai_hr_attendance` | 95% |
+| Leave Management | `hr_holidays` | `ipai_hr_leave` | 95% |
+| Expense Management | `hr_expense` | `hr_expense` (OCA) | 90% |
+| Recruitment | `hr_recruitment` | `hr_recruitment` (OCA) | 85% |
+| Appraisals | `hr_appraisal` | `ipai_hr_appraisal` | 80% |
+| **Services** | | | |
+| Helpdesk | `helpdesk` | `ipai_helpdesk` | 90% |
+| Approvals | `approvals` | `ipai_approvals` | 95% |
+| Planning | `planning` | `ipai_planning` | 85% |
+| Timesheet Grid | `timesheet_grid` | `ipai_timesheet` | 85% |
+| Field Service | `industry_fsm` | `ipai_field_service` | 75% |
+| **Studio & Customization** | | | |
+| Studio | `studio` | `ipai_dev_studio_base` | 70% |
+| Spreadsheet | `spreadsheet` | `ipai_spreadsheet` + Superset | 80% |
+| Dashboards | `spreadsheet_dashboard` | Superset + `ipai_dashboard` | 85% |
+| **Documents & Knowledge** | | | |
+| Documents | `documents` | `ipai_connector_supabase` | 80% |
+| Knowledge | `knowledge` | `ipai_knowledge_base` | 75% |
+| Sign | `sign` | `ipai_digital_signature` | 70% |
+| **Marketing** | | | |
+| Marketing Automation | `marketing_automation` | n8n + `ipai_marketing` | 85% |
+| Social Marketing | `social` | `ipai_social_connector` | 70% |
+| Events | `event_sale` | `event` (CE) + `ipai_events` | 80% |
+| **Integrations** | | | |
+| IoT | `iot` | `ipai_iot_connector` | 60% |
+| VoIP | `voip` | `ipai_voip_connector` | 65% |
+| **BIR Compliance (PH-specific)** | | | |
+| 1601-C Generation | N/A | `ipai_bir_1601c` | 100% |
+| 2316 Certificates | N/A | `ipai_bir_2316` | 100% |
+| Alphalist Export | N/A | `ipai_bir_alphalist` | 100% |
+| VAT Reports | N/A | `ipai_bir_vat` | 100% |
+
+### Parity Validation
+
+Run EE parity tests before any major release:
+
+```bash
+# Run parity test suite
+python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_core
+
+# Generate HTML report
+python scripts/test_ee_parity.py --report html --output docs/evidence/parity_report.html
+
+# CI gate (fails if <80%)
+./scripts/ci/ee_parity_gate.sh
+```
+
+### Priority for EE Feature Development
+
+1. **P0 - Critical** (must have for production)
+   - Bank Reconciliation, Financial Reports, Payroll, Approvals
+   - BIR Compliance (Philippines regulatory requirement)
+
+2. **P1 - High** (needed for full operations)
+   - Helpdesk, Planning, Timesheet, Asset Management
+
+3. **P2 - Medium** (nice to have)
+   - Documents, Knowledge, Spreadsheet integration
+
+4. **P3 - Low** (future roadmap)
+   - IoT, VoIP, advanced Marketing Automation
+
+### Self-Hosted ipai_* Modules (Built In-House)
+
+We BUILD everything ourselves using open-source tools on self-hosted infrastructure:
+
+| ipai_* Module | Replaces EE Feature | Self-Hosted Stack |
+|---------------|---------------------|-------------------|
+| `ipai_finance_reports` | EE Financial Reports | PostgreSQL + Superset |
+| `ipai_finance_consolidation` | EE Consolidation | Custom Python + PostgreSQL views |
+| `ipai_finance_forecast` | EE Forecasting | scikit-learn on DO droplet |
+| `ipai_expense_intelligence` | EE Expense approval | Custom Python rules engine |
+| `ipai_bir_validator` | (no EE equivalent) | Custom compliance pipelines |
+| `ipai_approvals` | EE Approvals | Custom workflow engine |
+| `ipai_helpdesk` | EE Helpdesk | OCA + custom enhancements |
+| `ipai_planning` | EE Planning | OCA hr_planning + custom |
+
+**Key Principle**: We own the code, we own the IP, we control the costs. No vendor lock-in.
 
 ---
 
