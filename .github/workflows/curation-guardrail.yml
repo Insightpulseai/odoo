@@ -1,0 +1,45 @@
+name: curation-guardrail
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'docs-site/**'
+  workflow_dispatch:
+    inputs:
+      threshold:
+        description: 'Max new markdown files allowed'
+        required: false
+        default: '50'
+
+permissions:
+  contents: read
+
+jobs:
+  guardrail:
+    name: Prevent Bulk Doc Dumps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guardrail - prevent bulk doc dump
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: |
+          bash scripts/ci/guardrail_no_bulk_doc_dump.sh ${{ inputs.threshold || '50' }}
+
+      - name: Verify curation manifest exists
+        run: |
+          if [ ! -f docs/curation/CURATED_DOCS.yaml ]; then
+            echo "WARNING: docs/curation/CURATED_DOCS.yaml not found"
+            echo "New curated docs should be recorded in the manifest"
+          else
+            echo "Curation manifest found"
+            echo "=== Current manifest ==="
+            cat docs/curation/CURATED_DOCS.yaml
+          fi
