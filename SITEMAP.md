@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 847c902d9952fd375c811728b7b477480ade8834
+> Commit: ae15729ef5d60a51f39d87eb28f9b58a8e3cde0b
 
 ## 📚 Documentation
 
@@ -1116,6 +1116,8 @@
 | [Supabase Database Linter - Security Remediation Plan](supabase/SECURITY_LINTER_REMEDIATION.md) | supabase |
 | [AFC Close Manager — Canonical Schema Deployment Report](supabase/migrations/AFC_DEPLOYMENT_SUMMARY.md) | supabase/migrations |
 | [RLS Deployment Complete - Security Remediation Summary](supabase/migrations/RLS_DEPLOYMENT_COMPLETE.md) | supabase/migrations |
+| [AFC Close Manager — Canonical Schema Deployment Report](supabase/supabase/migrations/AFC_DEPLOYMENT_SUMMARY.md) | supabase/supabase/migrations |
+| [RLS Deployment Complete - Security Remediation Summary](supabase/supabase/migrations/RLS_DEPLOYMENT_COMPLETE.md) | supabase/supabase/migrations |
 | [Task: n8n Automation Strategy for Odoo CE](task.md) | . |
 | [Tasks – InsightPulse Odoo CE](tasks.md) | . |
 | [Agent Services Hard Delete Checklist](tasks/infra/AGENT_SERVICES_HARD_DELETE_CHECKLIST.md) | tasks/infra |
