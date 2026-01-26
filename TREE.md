@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 692d63d8ab4e0aa3964991e474c750ca861e63de
+> Commit: c6a4a090e1de3956b7b652b18fac8e78186fb0d0
 
 ```
 .
@@ -162,6 +162,7 @@
 │   │   ├── reusable-pr-gate.yml
 │   │   ├── run-odoo-cli-job.yml
 │   │   ├── secret-scan.yml
+│   │   ├── secrets-audit.yml
 │   │   ├── seed-odoo-finance.yml
 │   │   ├── seeds-validate.yml
 │   │   ├── skill-enforce.yml
@@ -179,6 +180,7 @@
 │   │   ├── supabase-sql-rls-checks.yml
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
+│   │   ├── terraform-supabase.yml
 │   │   ├── vendor-app-deploy.yml
 │   │   ├── vendor-backlog-sync.yml
 │   │   ├── wiki-sync.yml
@@ -1440,6 +1442,7 @@
 │   ├── odoo.conf.template
 │   ├── pipeline.yaml
 │   ├── routing_matrix.yml
+│   ├── secrets_inventory.md
 │   └── ship_set.txt
 ├── contracts
 │   ├── delta
@@ -1757,6 +1760,7 @@
 │   │   ├── SUPABASE_BRANCHING_INTEGRATION.md
 │   │   ├── SUPABASE_ENVIRONMENTS.md
 │   │   ├── SUPABASE_ODOO_SEED_PATTERN.md
+│   │   ├── SUPABASE_TERRAFORM_INTEGRATION.md
 │   │   ├── VERCEL_AI_GATEWAY_INTEGRATION.md
 │   │   └── VERCEL_INTEGRATIONS.md
 │   ├── integration
@@ -2479,6 +2483,19 @@
 │   ├── stack
 │   │   ├── .env.example
 │   │   └── compose.stack.yml
+│   ├── supabase
+│   │   ├── envs
+│   │   │   ├── dev
+│   │   │   ├── prod
+│   │   │   └── staging
+│   │   ├── Makefile
+│   │   ├── README.md
+│   │   ├── main.tf
+│   │   ├── outputs.tf
+│   │   ├── production.tf
+│   │   ├── terraform.tfvars.example
+│   │   ├── variables.tf
+│   │   └── vault_secrets.tf
 │   ├── superset
 │   │   ├── Dockerfile
 │   │   ├── PRESET_PARITY_ROADMAP.md
@@ -3280,6 +3297,7 @@
 │   ├── check_go_live_manifest.py
 │   ├── check_module_status.sh
 │   ├── check_project_tasks.py
+│   ├── check_secrets.sh
 │   ├── check_undocumented_specs.py
 │   ├── ci_local.sh
 │   ├── ci_odoo_changed_modules.py
@@ -3771,6 +3789,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── ipai-data-connectors
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── ipai-databricks
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -4541,15 +4564,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1228 directories, 3308 files
+1234 directories, 3325 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1448 |
-| Files | 4406 |
+| Directories | 1454 |
+| Files | 4426 |
 | Python files | 680 |
 | XML files | 261 |
-| Markdown files | 1119 |
+| Markdown files | 1126 |
