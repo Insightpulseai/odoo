@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Expense Root Menu -->
+    <menuitem
+        id="menu_hr_expense_root"
+        name="Expenses"
+        web_icon="hr_expense,static/description/icon.png"
+        sequence="45"/>
+
+    <!-- My Expenses -->
+    <menuitem
+        id="menu_hr_expense_my_expenses"
+        name="My Expenses"
+        parent="menu_hr_expense_root"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_expense_my_expenses_to_submit"
+        name="Expenses to Submit"
+        parent="menu_hr_expense_my_expenses"
+        action="action_hr_expense_my"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_expense_sheet_my"
+        name="My Reports"
+        parent="menu_hr_expense_my_expenses"
+        action="action_hr_expense_sheet_my"
+        sequence="20"/>
+
+    <!-- Expense Reports (Manager) -->
+    <menuitem
+        id="menu_hr_expense_reports"
+        name="Expense Reports"
+        parent="menu_hr_expense_root"
+        groups="hr_expense.group_hr_expense_manager"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_hr_expense_sheet_to_approve"
+        name="Reports to Approve"
+        parent="menu_hr_expense_reports"
+        action="action_hr_expense_sheet_to_approve"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_hr_expense_sheet_all"
+        name="All Reports"
+        parent="menu_hr_expense_reports"
+        action="action_hr_expense_sheet_all"
+        sequence="20"/>
+
+    <menuitem
+        id="menu_hr_expense_all"
+        name="All Expenses"
+        parent="menu_hr_expense_reports"
+        action="action_hr_expense_all"
+        sequence="30"/>
+
+    <!-- Configuration -->
+    <menuitem
+        id="menu_hr_expense_configuration"
+        name="Configuration"
+        parent="menu_hr_expense_root"
+        groups="hr_expense.group_hr_expense_manager"
+        sequence="99"/>
+
+    <menuitem
+        id="menu_hr_expense_product"
+        name="Expense Categories"
+        parent="menu_hr_expense_configuration"
+        action="action_product_expense_category"
+        sequence="10"/>
+</odoo>

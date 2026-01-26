@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Asset Category Views -->
+    <record id="view_account_asset_category_tree" model="ir.ui.view">
+        <field name="name">account.asset.category.tree</field>
+        <field name="model">account.asset.category</field>
+        <field name="arch" type="xml">
+            <list string="Asset Categories">
+                <field name="name"/>
+                <field name="journal_id"/>
+                <field name="method"/>
+                <field name="method_number"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_asset_category_form" model="ir.ui.view">
+        <field name="name">account.asset.category.form</field>
+        <field name="model">account.asset.category</field>
+        <field name="arch" type="xml">
+            <form string="Asset Category">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Category Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Accounting">
+                            <field name="journal_id"/>
+                            <field name="account_asset_id"/>
+                            <field name="account_depreciation_id"/>
+                            <field name="account_expense_id"/>
+                        </group>
+                        <group string="Depreciation Defaults">
+                            <field name="method"/>
+                            <field name="method_number"/>
+                            <field name="method_period"/>
+                            <field name="prorata"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Asset Views -->
+    <record id="view_account_asset_tree" model="ir.ui.view">
+        <field name="name">account.asset.tree</field>
+        <field name="model">account.asset</field>
+        <field name="arch" type="xml">
+            <list string="Assets" decoration-muted="state == 'close'">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="category_id"/>
+                <field name="date_start"/>
+                <field name="original_value"/>
+                <field name="book_value"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'"
+                       decoration-success="state == 'open'"
+                       decoration-muted="state == 'close'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_account_asset_form" model="ir.ui.view">
+        <field name="name">account.asset.form</field>
+        <field name="model">account.asset</field>
+        <field name="arch" type="xml">
+            <form string="Fixed Asset">
+                <header>
+                    <button name="action_confirm" string="Confirm"
+                            type="object" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_close" string="Close"
+                            type="object"
+                            invisible="state != 'open'"/>
+                    <button name="action_set_to_draft" string="Set to Draft"
+                            type="object"
+                            invisible="state == 'draft'"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,open,close"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Asset Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Asset Information">
+                            <field name="code"/>
+                            <field name="category_id"/>
+                            <field name="partner_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Values">
+                            <field name="original_value"/>
+                            <field name="salvage_value"/>
+                            <field name="accumulated_depreciation"/>
+                            <field name="book_value"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Depreciation Method">
+                            <field name="method"/>
+                            <field name="method_number"/>
+                            <field name="method_period"/>
+                            <field name="prorata"/>
+                        </group>
+                        <group string="Dates">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Depreciation Board">
+                            <field name="depreciation_line_ids">
+                                <list string="Depreciation Lines" editable="bottom">
+                                    <field name="sequence"/>
+                                    <field name="depreciation_date"/>
+                                    <field name="amount"/>
+                                    <field name="remaining_value"/>
+                                    <field name="move_id"/>
+                                    <field name="move_posted" invisible="1"/>
+                                    <button name="action_create_move"
+                                            string="Create Entry"
+                                            type="object"
+                                            invisible="move_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Accounting">
+                            <group>
+                                <field name="account_asset_id"/>
+                                <field name="account_depreciation_id"/>
+                                <field name="account_expense_id"/>
+                                <field name="journal_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="action_account_asset_category" model="ir.actions.act_window">
+        <field name="name">Asset Categories</field>
+        <field name="res_model">account.asset.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_account_asset" model="ir.actions.act_window">
+        <field name="name">Fixed Assets</field>
+        <field name="res_model">account.asset</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_running': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a fixed asset
+            </p>
+        </field>
+    </record>
+</odoo>

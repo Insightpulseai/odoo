@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Reconciliation Model Tree View -->
+    <record id="view_account_reconcile_model_tree" model="ir.ui.view">
+        <field name="name">account.reconcile.model.tree</field>
+        <field name="model">account.reconcile.model</field>
+        <field name="arch" type="xml">
+            <list string="Reconciliation Models">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="match_partner"/>
+                <field name="account_id"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Reconciliation Model Form View -->
+    <record id="view_account_reconcile_model_form" model="ir.ui.view">
+        <field name="name">account.reconcile.model.form</field>
+        <field name="model">account.reconcile.model</field>
+        <field name="arch" type="xml">
+            <form string="Reconciliation Model">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Model Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="General">
+                            <field name="rule_type"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Counterpart">
+                            <field name="account_id"/>
+                            <field name="journal_id"/>
+                            <field name="label"/>
+                        </group>
+                    </group>
+                    <group string="Matching Criteria">
+                        <group>
+                            <field name="match_partner"/>
+                            <field name="match_label"/>
+                            <field name="match_label_param"
+                                   invisible="not match_label"/>
+                        </group>
+                        <group>
+                            <field name="match_amount"/>
+                            <field name="match_amount_min"
+                                   invisible="match_amount != 'between'"/>
+                            <field name="match_amount_max"
+                                   invisible="match_amount != 'between'"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Bank Statement Line Form Extension -->
+    <record id="view_bank_statement_line_form_reconcile" model="ir.ui.view">
+        <field name="name">account.bank.statement.line.form.reconcile</field>
+        <field name="model">account.bank.statement.line</field>
+        <field name="inherit_id" ref="account.view_bank_statement_line_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="inside">
+                <group string="Auto-Reconciliation" name="auto_reconcile">
+                    <field name="match_confidence" widget="progressbar"/>
+                    <field name="suggested_partner_id"/>
+                    <field name="suggested_account_id"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action for Reconciliation Models -->
+    <record id="action_account_reconcile_model" model="ir.actions.act_window">
+        <field name="name">Reconciliation Models</field>
+        <field name="res_model">account.reconcile.model</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a reconciliation model
+            </p>
+            <p>
+                Reconciliation models help automate bank statement reconciliation
+                by matching statement lines with invoices, bills, and other entries.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action for Auto-Reconcile -->
+    <record id="action_auto_reconcile_statements" model="ir.actions.server">
+        <field name="name">Auto-Reconcile Statements</field>
+        <field name="model_id" ref="account.model_account_bank_statement_line"/>
+        <field name="binding_model_id" ref="account.model_account_bank_statement_line"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    records.action_auto_reconcile()
+        </field>
+    </record>
+</odoo>
