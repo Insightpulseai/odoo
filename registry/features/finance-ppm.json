@@ -1,0 +1,13 @@
+{
+  "id": "finance-ppm",
+  "name": "Finance PPM (Project Portfolio Management)",
+  "summary": "Month-end close orchestration, budget management, and financial reporting replacing Odoo EE account_budget.",
+  "tags": ["finance", "accounting", "ppm", "reporting"],
+  "stage": "ga",
+  "availability": "all",
+  "links": {
+    "runbook": "docs/runbooks/finance-ppm.md"
+  },
+  "related_assets": ["bir-compliance", "month-end-close", "enterprise-parity"],
+  "ipai_module": "ipai_finance_ppm"
+}

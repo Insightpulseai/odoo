@@ -1,0 +1,20 @@
+{
+  "id": "odoo-erp",
+  "name": "Odoo ERP MCP Server",
+  "summary": "Odoo CE accounting, BIR compliance, and module management via MCP protocol.",
+  "category": "productivity",
+  "type": "native",
+  "capabilities": ["accounting", "bir-compliance", "module-install", "record-crud", "reports"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_odoo_mcp.sh",
+    "scopes": [],
+    "env_vars": ["ODOO_URL", "ODOO_DB", "ODOO_USERNAME", "ODOO_PASSWORD"],
+    "auto_configure": true
+  },
+  "links": {
+    "docs": "https://www.odoo.com/documentation/18.0/",
+    "repo": "https://github.com/jgtolentino/odoo-ce"
+  },
+  "mcp_server": "odoo-erp-server",
+  "status": "active"
+}
