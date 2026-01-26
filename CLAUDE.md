@@ -1421,5 +1421,363 @@ To check skill compliance locally:
 
 ---
 
+---
+
+## Custom Module Decision Framework
+
+Build custom modules based on payment status and need:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                     BUILD CUSTOM MODULE WHEN:                       │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ❌ NOT PAYING + NEED FEATURE → Replace it                          │
+│     └── Odoo EE features → ipai_enterprise_parity                   │
+│                                                                     │
+│  ✅ PAYING + WANT MAX ROI → Build connector                         │
+│     └── Vercel Observability Plus → ipai_connector_vercel           │
+│                                                                     │
+│  ❌ NOT PAYING + WORKS AS-IS → No module needed                     │
+│     └── Supabase free tier → Just use SDK/API directly              │
+│     └── n8n self-hosted → Just webhooks, no module                  │
+│                                                                     │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Module Summary
+
+| Service | Paying? | Module | Purpose |
+|---------|---------|--------|---------|
+| Odoo EE | ❌ No | `ipai_enterprise_parity` | Replace EE-only features |
+| Vercel Observability+ | ✅ Yes ($10/mo) | `ipai_connector_vercel` | Maximize ROI |
+| Supabase | ❌ No (free/pro) | None | Use SDK directly |
+| n8n | ❌ No (self-hosted) | None | Just webhooks |
+
+---
+
+## GitHub Integration
+
+### Recommended: GitHub Team ($4/user/mo)
+
+Stay on GitHub Team - it provides everything needed:
+
+| Feature | Free | Team | Enterprise | Our Approach |
+|---------|------|------|------------|--------------|
+| Protected branches | ❌ | ✅ | ✅ | Use Team |
+| Required reviewers | ❌ | ✅ | ✅ | Use Team |
+| CODEOWNERS | ❌ | ✅ | ✅ | Use Team |
+| Draft PRs | ❌ | ✅ | ✅ | Use Team |
+| Actions minutes | 2,000 | 3,000 | 50,000 | Self-hosted runners |
+| Secret scanning | ❌ | ❌ | $19/user | GitLeaks (free) |
+| Code scanning | ❌ | ❌ | $30/user | Semgrep (free) |
+| SAML SSO | ❌ | ❌ | ✅ | Keycloak (free) |
+
+**Annual savings**: ~$6,600/year vs Enterprise + GHAS
+
+### GitHub App: pulser-hub
+
+```
+App ID: 2191216
+Client ID: Iv23liwGL7fnYySPPAjS
+Webhook URL: https://n8n.insightpulseai.net/webhook/github-pulser
+```
+
+**Capabilities:**
+- Webhooks → n8n → Odoo task creation
+- OAuth → "Sign in with GitHub" for apps
+- Installation tokens → Secure API access
+
+### Self-Hosted Security Pipeline
+
+Replace GitHub Advanced Security with free tools:
+
+```yaml
+# .github/workflows/security.yml
+name: Security Scan
+on: [push, pull_request]
+jobs:
+  secrets:
+    runs-on: self-hosted  # Your DO droplet = unlimited minutes
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gitleaks/gitleaks-action@v2
+
+  sast:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v4
+      - uses: returntocorp/semgrep-action@v1
+        with:
+          config: p/owasp-top-ten p/python
+
+  deps:
+    runs-on: self-hosted
+    steps:
+      - uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          severity: 'CRITICAL,HIGH'
+```
+
+### Self-Hosted Runner Setup
+
+```bash
+# On DigitalOcean droplet (178.128.112.214)
+mkdir -p ~/actions-runner && cd ~/actions-runner
+curl -o actions-runner-linux-x64-2.321.0.tar.gz -L \
+  https://github.com/actions/runner/releases/download/v2.321.0/actions-runner-linux-x64-2.321.0.tar.gz
+tar xzf ./actions-runner-linux-x64-2.321.0.tar.gz
+./config.sh --url https://github.com/jgtolentino/odoo-ce --token YOUR_TOKEN
+sudo ./svc.sh install && sudo ./svc.sh start
+```
+
+---
+
+## Supabase Maximization (Pro Plan)
+
+### Current Usage
+
+| Feature | Status | Action |
+|---------|--------|--------|
+| Database | ✅ 208 tables | Well utilized |
+| Functions | ✅ 59 functions | Well utilized |
+| pgvector | ✅ Installed | Use for AI search |
+| Auth | ⚠️ 9 req/24h | Underutilized |
+| Storage | ❌ 0 usage | Activate! |
+| Realtime | ❌ 0 usage | Activate! |
+| Edge Functions | ❓ Check | Evaluate |
+
+### Features to Activate (FREE with Pro)
+
+**Realtime** - Live dashboards:
+```typescript
+supabase
+  .channel('odoo-sync')
+  .on('postgres_changes',
+    { event: '*', schema: 'odoo_mirror', table: '*' },
+    (payload) => console.log('Change:', payload)
+  )
+  .subscribe()
+```
+
+**Storage** - Replace S3/Cloudinary:
+```typescript
+await supabase.storage
+  .from('documents')
+  .upload(`bir/${year}/${form_type}/${filename}`, file)
+```
+
+**pg_cron** - Replace n8n for DB-only jobs:
+```sql
+SELECT cron.schedule(
+  'refresh-gold-views',
+  '0 2 * * *',
+  $$SELECT scout.refresh_gold_materialized_views()$$
+);
+```
+
+### Security Fixes (Run Immediately)
+
+```sql
+-- Fix function search_path (200+ functions)
+DO $$
+DECLARE func_record RECORD;
+BEGIN
+    FOR func_record IN
+        SELECT n.nspname, p.proname, pg_get_function_identity_arguments(p.oid) as args
+        FROM pg_proc p JOIN pg_namespace n ON p.pronamespace = n.oid
+        WHERE n.nspname NOT IN ('pg_catalog', 'information_schema')
+    LOOP
+        EXECUTE format('ALTER FUNCTION %I.%I(%s) SET search_path = %I, pg_temp',
+            func_record.nspname, func_record.proname, func_record.args, func_record.nspname);
+    END LOOP;
+END $$;
+
+-- Enable RLS on unprotected tables
+ALTER TABLE public."SsoDetails" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public."UserOrganization" ENABLE ROW LEVEL SECURITY;
+```
+
+---
+
+## BIR Compliance (Philippines)
+
+### 2025 Contribution Tables
+
+**SSS (Social Security System)**
+```python
+# 15% total: 5% employee, 10% employer
+# Maximum Monthly Salary Credit: ₱35,000
+sss_base = min(gross_wage, 35000)
+sss_ee = sss_base * 0.05
+sss_er = sss_base * 0.10
+```
+
+**PhilHealth**
+```python
+# 5% total: 2.5% each
+# Minimum base: ₱10,000, Maximum: ₱100,000
+ph_base = min(max(gross_wage, 10000), 100000)
+philhealth_ee = ph_base * 0.025
+philhealth_er = ph_base * 0.025
+```
+
+**Pag-IBIG**
+```python
+# 2% each, maximum base: ₱5,000
+pi_base = min(gross_wage, 5000)
+pagibig_ee = pi_base * 0.02
+pagibig_er = pi_base * 0.02
+```
+
+### TRAIN Law Tax Table (Monthly)
+
+```python
+def compute_bir_tax(taxable_income):
+    """2025 Monthly Withholding Tax (TRAIN Law)"""
+    if taxable_income <= 20833:
+        return 0
+    elif taxable_income <= 33333:
+        return (taxable_income - 20833) * 0.15
+    elif taxable_income <= 66667:
+        return 1875 + (taxable_income - 33333) * 0.20
+    elif taxable_income <= 166667:
+        return 8542 + (taxable_income - 66667) * 0.25
+    elif taxable_income <= 666667:
+        return 33542 + (taxable_income - 166667) * 0.30
+    else:
+        return 183542 + (taxable_income - 666667) * 0.35
+```
+
+### BIR Forms (ipai_* modules)
+
+| Form | Module | Purpose |
+|------|--------|---------|
+| 1601-C | `ipai_bir_1601c` | Monthly Withholding Tax |
+| 2316 | `ipai_bir_2316` | Certificate of Compensation |
+| Alphalist | `ipai_bir_alphalist` | Annual Employee List |
+| 2550M/Q | `ipai_bir_vat` | Monthly/Quarterly VAT |
+
+---
+
+## Vercel Observability Plus Integration
+
+**Cost**: $10/mo + usage
+**Module**: `ipai_connector_vercel`
+
+### What You Get
+
+| Feature | Value |
+|---------|-------|
+| 30-day retention | Historical data access |
+| Function latency (p75) | Performance metrics |
+| Path breakdown | Per-route analytics |
+| External API metrics | Third-party call tracking |
+| Runtime logs (30d) | Error debugging |
+
+### Integration Pattern
+
+```python
+# ipai_connector_vercel/models/vercel_sync.py
+class VercelConfig(models.Model):
+    _name = "ipai.vercel.config"
+
+    workspace_url = fields.Char(required=True)
+    api_token = fields.Char(required=True)
+    error_rate_threshold = fields.Float(default=5.0)
+    latency_p75_threshold = fields.Integer(default=3000)
+
+    def _cron_sync_metrics(self):
+        """Sync Vercel metrics → create Odoo tasks for alerts"""
+        # Fetch from Vercel API
+        # Create project.task if threshold exceeded
+```
+
+---
+
+## n8n Automation Layer
+
+### GitHub Events Handler
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    n8n.insightpulseai.net                           │
+├─────────────────────────────────────────────────────────────────────┤
+│  GitHub Webhooks (via pulser-hub app)                               │
+│  ├── Push to main → Deploy to erp.insightpulseai.net               │
+│  ├── PR opened → Odoo task + Slack notification                    │
+│  ├── Issue labeled "ai" → Claude Code agent workflow               │
+│  ├── @claude comment → Queue for AI processing                     │
+│  └── CI failure → 🔴 Immediate Slack alert                         │
+│                                                                     │
+│  Scheduled Jobs                                                     │
+│  ├── Daily: Export Actions logs → Supabase audit_logs              │
+│  ├── Weekly: Dependency update digest → Email                      │
+│  └── Monthly: Compliance report → Superset snapshot                │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Event Routing
+
+```javascript
+// n8n webhook receives GitHub events
+const event = headers['x-github-event'];
+const payload = body;
+
+switch(event) {
+  case 'push':
+    if (payload.ref === 'refs/heads/main') {
+      return { action: 'deploy', branch: payload.ref };
+    }
+    break;
+  case 'pull_request':
+    return { action: 'create_odoo_task', pr: payload.pull_request };
+  case 'issue_comment':
+    if (payload.comment.body.includes('@claude')) {
+      return { action: 'queue_claude', issue: payload.issue };
+    }
+    break;
+}
+```
+
+---
+
+## Claude Integration
+
+### Claude in Slack
+
+Claude is installed in Slack workspace. Usage:
+- Direct chat: Message Claude in Apps section
+- Channel mentions: @Claude in channels
+- Combined with GitHub: @claude in PR comments → n8n → processing
+
+### Claude Code MCP
+
+```bash
+# Add GitHub MCP to Claude Code
+claude mcp add github \
+  -e GITHUB_PERSONAL_ACCESS_TOKEN=ghp_xxx \
+  -- npx -y @anthropic-ai/mcp-server-github
+```
+
+### Claude as PR Agent
+
+```bash
+#!/bin/bash
+# ~/bin/claude-pr - Automated PR generation
+ISSUE_NUM=$1
+gh issue view "$ISSUE_NUM" --json title,body > /tmp/issue.json
+
+claude --print "Implement this GitHub issue:
+$(cat /tmp/issue.json)
+Repository: Odoo 18 CE, ipai_* conventions, OCA style."
+
+gh pr create --title "$(jq -r .title /tmp/issue.json)" \
+  --body "Closes #$ISSUE_NUM - Generated by Claude Code"
+```
+
+---
+
 *Query `.claude/project_memory.db` for detailed configuration*
-*Last updated: 2026-01-24*
+*Last updated: 2026-01-26*
