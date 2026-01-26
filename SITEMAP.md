@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b9a826946ca6497fc09d46b35e076ce5c6ca5a32
+> Commit: 13d1c64c37b5a1d7d73c8db8bfb17b030b4d8f1b
 
 ## 📚 Documentation
 
@@ -911,6 +911,7 @@
 | [Mailgun Scripts](scripts/mailgun/README.md) | scripts/mailgun |
 | [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |
 | [Odoo Company Bootstrap Scripts](scripts/odoo/README_BOOTSTRAP.md) | scripts/odoo |
+| [Integration Provisioners](scripts/provisioners/README.md) | scripts/provisioners |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
 | [Process Mining API](services/pm_api/README.md) | services/pm_api |
