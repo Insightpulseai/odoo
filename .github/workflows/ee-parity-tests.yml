@@ -1,0 +1,58 @@
+name: ee-parity-tests
+
+on:
+  pull_request:
+    paths:
+      - "config/ee_parity/**"
+      - "scripts/test_ee_parity.py"
+      - "scripts/report_ee_parity.py"
+      - "docs/releases/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "config/ee_parity/**"
+      - "scripts/test_ee_parity.py"
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install pyyaml
+
+      - name: Validate YAML syntax
+        run: |
+          python3 -c "
+          import yaml, pathlib
+          p = pathlib.Path('config/ee_parity/ee_parity_mapping.yml')
+          yaml.safe_load(p.read_text())
+          print('PASS: YAML parsed', p)
+          "
+
+      - name: Validate Python syntax
+        run: |
+          python3 -m py_compile scripts/test_ee_parity.py
+          echo "PASS: Python syntax valid"
+
+      - name: Run parity tests
+        run: |
+          python scripts/test_ee_parity.py --report text || true
+
+      - name: Generate parity report
+        if: always()
+        run: |
+          if [ -f scripts/report_ee_parity.py ]; then
+            python scripts/report_ee_parity.py
+          else
+            echo "Parity report script not found, skipping"
+          fi

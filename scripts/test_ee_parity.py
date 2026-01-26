@@ -353,6 +353,204 @@ EE_PARITY_TESTS = [
             "Access control",
         ],
     ),
+
+    # Odoo 19 New Features (2026-01-26)
+
+    # AI Platform (P0 - Critical)
+    FeatureTest(
+        id="AI-001",
+        name="AI Agents",
+        ee_module="ai",
+        ipai_module="ipai_ai_agent_builder",
+        priority=Priority.P0,
+        description="AI agents with system prompts, topics, and tools",
+        test_steps=[
+            "Create agent with system prompt",
+            "Configure LLM provider",
+            "Assign topics to agent",
+            "Test chat interaction",
+        ],
+    ),
+    FeatureTest(
+        id="AI-002",
+        name="AI RAG Sources",
+        ee_module="ai",
+        ipai_module="ipai_ai_rag",
+        priority=Priority.P0,
+        description="RAG pipeline for document-based context",
+        test_steps=[
+            "Add file source",
+            "Ingest and chunk content",
+            "Generate embeddings",
+            "Retrieve relevant context",
+        ],
+    ),
+    FeatureTest(
+        id="AI-003",
+        name="AI Tools",
+        ee_module="ai",
+        ipai_module="ipai_ai_tools",
+        priority=Priority.P0,
+        description="Tool registry with audited execution",
+        test_steps=[
+            "Register custom tool",
+            "Configure permissions",
+            "Execute tool via agent",
+            "Verify audit trail",
+        ],
+    ),
+    FeatureTest(
+        id="AI-004",
+        name="AI Fields",
+        ee_module="ai",
+        ipai_module="ipai_ai_fields",
+        priority=Priority.P1,
+        description="AI-powered field population",
+        test_steps=[
+            "Configure AI field",
+            "Trigger AI generation",
+            "Verify field populated",
+        ],
+    ),
+    FeatureTest(
+        id="AI-005",
+        name="AI Livechat",
+        ee_module="ai",
+        ipai_module="ipai_ai_livechat",
+        priority=Priority.P2,
+        description="AI agent connected to live chat",
+        test_steps=[
+            "Connect agent to livechat",
+            "Test visitor conversation",
+            "Verify handoff to human",
+        ],
+    ),
+
+    # ESG App (P2 - New in Odoo 19)
+    FeatureTest(
+        id="ESG-001",
+        name="Carbon Analytics",
+        ee_module="esg",
+        ipai_module="ipai_esg",
+        priority=Priority.P2,
+        description="Carbon footprint tracking by scope",
+        test_steps=[
+            "Create emission entry",
+            "Assign scope and activity",
+            "Calculate CO2e",
+            "Generate report",
+        ],
+    ),
+    FeatureTest(
+        id="ESG-002",
+        name="Social Metrics",
+        ee_module="esg",
+        ipai_module="ipai_esg_social",
+        priority=Priority.P2,
+        description="Gender parity and pay gap tracking",
+        test_steps=[
+            "Import employee data",
+            "Calculate gender distribution",
+            "Calculate pay gap",
+            "Generate ESG report",
+        ],
+    ),
+
+    # Equity App (P3 - New in Odoo 19)
+    FeatureTest(
+        id="EQU-001",
+        name="Share Tracking",
+        ee_module="equity",
+        ipai_module="ipai_equity",
+        priority=Priority.P3,
+        description="Share and option transaction tracking",
+        test_steps=[
+            "Create share class",
+            "Record share issuance",
+            "Track shareholder",
+            "Generate cap table",
+        ],
+    ),
+
+    # WhatsApp Integration (P1)
+    FeatureTest(
+        id="WA-001",
+        name="WhatsApp Integration",
+        ee_module="whatsapp",
+        ipai_module="ipai_whatsapp_connector",
+        priority=Priority.P1,
+        description="WhatsApp messaging for follow-ups and notifications",
+        test_steps=[
+            "Configure WhatsApp provider",
+            "Send test message",
+            "Verify delivery status",
+            "Use in follow-up",
+        ],
+    ),
+
+    # Tax Return (P0 - Odoo 19)
+    FeatureTest(
+        id="TAX-001",
+        name="Tax Return Workflow",
+        ee_module="account",
+        ipai_module="ipai_finance_tax_return",
+        priority=Priority.P0,
+        description="Tax return creation and validation",
+        test_steps=[
+            "Create tax return",
+            "Run validation checks",
+            "Submit return",
+            "Track status",
+        ],
+    ),
+
+    # Project Templates (P1 - Odoo 19)
+    FeatureTest(
+        id="PRJ-001",
+        name="Project Templates",
+        ee_module="project",
+        ipai_module="ipai_project_templates",
+        priority=Priority.P1,
+        description="Project and task templates with roles",
+        test_steps=[
+            "Create project template",
+            "Add task templates",
+            "Assign roles",
+            "Create project from template",
+        ],
+    ),
+
+    # Planning Analysis (P1 - Odoo 19)
+    FeatureTest(
+        id="PLN-001",
+        name="Planning/Attendance Analysis",
+        ee_module="planning",
+        ipai_module="ipai_planning_attendance",
+        priority=Priority.P1,
+        description="Compare planned vs attended hours",
+        test_steps=[
+            "Create planning shifts",
+            "Record attendance",
+            "Generate comparison report",
+            "Identify discrepancies",
+        ],
+    ),
+
+    # Documents AI (P2 - Odoo 19)
+    FeatureTest(
+        id="DOC-001",
+        name="Documents AI Management",
+        ee_module="documents",
+        ipai_module="ipai_documents_ai",
+        priority=Priority.P2,
+        description="AI-driven document classification",
+        test_steps=[
+            "Upload document",
+            "Run AI classification",
+            "Verify tags assigned",
+            "Trigger automated action",
+        ],
+    ),
 ]
 
 
