@@ -1,0 +1,19 @@
+# Production Environment Configuration
+# Supabase control plane for production
+
+environment            = "prod"
+production_project_ref = "spdtwktxdalcfigzeqrz"
+
+# Secrets - set via environment variables or CI secrets:
+# export TF_VAR_supabase_access_token="sbp_..."
+# export TF_VAR_supabase_org_id="..."
+
+# API Configuration (production limits)
+api_max_rows = 1000
+
+# Auth Configuration (production URLs)
+site_url = "https://erp.insightpulseai.net"
+additional_redirect_urls = [
+  "https://control.insightpulseai.net/**",
+  "https://app.insightpulseai.net/**"
+]
