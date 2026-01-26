@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 13d1c64c37b5a1d7d73c8db8bfb17b030b4d8f1b
+> Commit: 7cc3187fe2981d66dc48083e06507d4572a05c4d
 
 ```
 .
@@ -112,6 +112,7 @@
 │   │   ├── drive-sync.yml
 │   │   ├── ee-parity-gate.yml
 │   │   ├── ee-parity-test-runner.yml
+│   │   ├── ee-parity-tests.yml
 │   │   ├── erd-docs.yml
 │   │   ├── erd-graphviz.yml
 │   │   ├── erd-schemaspy.yml
@@ -167,6 +168,7 @@
 │   │   ├── secrets-audit.yml
 │   │   ├── seed-odoo-finance.yml
 │   │   ├── seeds-validate.yml
+│   │   ├── ship-on-deploy.yml
 │   │   ├── skill-enforce.yml
 │   │   ├── spec-and-parity.yml
 │   │   ├── spec-gate.yml
@@ -225,12 +227,54 @@
 │   │   ├── server-ux
 │   │   └── web
 │   ├── ipai
+│   │   ├── ipai_ai_agent_builder
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_ai_agents_ui
 │   │   │   ├── controllers
 │   │   │   ├── security
 │   │   │   ├── static
 │   │   │   ├── tests
 │   │   │   ├── ui
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_automations
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_fields
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_livechat
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_rag
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_ai_tools
+│   │   │   ├── models
+│   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── README.md
 │   │   │   ├── __init__.py
@@ -259,6 +303,13 @@
 │   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_documents_ai
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_enterprise_bridge
 │   │   │   ├── controllers
 │   │   │   ├── data
@@ -274,11 +325,39 @@
 │   │   │   ├── __init__.py
 │   │   │   ├── __manifest__.py
 │   │   │   └── hooks.py
+│   │   ├── ipai_equity
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_esg
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_esg_social
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_finance_close_seed
 │   │   │   └── data
 │   │   ├── ipai_finance_ppm
 │   │   │   ├── models
 │   │   │   └── __init__.py
+│   │   ├── ipai_finance_tax_return
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_finance_workflow
 │   │   │   ├── data
 │   │   │   ├── models
@@ -306,6 +385,13 @@
 │   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_helpdesk_refund
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_hr_payroll_ph
 │   │   │   ├── models
 │   │   │   ├── security
@@ -313,8 +399,29 @@
 │   │   │   ├── wizard
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
+│   │   ├── ipai_planning_attendance
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
 │   │   ├── ipai_platform_theme
 │   │   │   ├── static
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_project_templates
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_sign
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_aiux
@@ -374,6 +481,13 @@
 │   │   ├── ipai_web_theme_tbwa
 │   │   │   ├── static
 │   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_whatsapp_connector
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── .gitkeep
@@ -1484,6 +1598,7 @@
 │   ├── consumers
 │   │   └── consumers.json
 │   ├── ee_parity
+│   │   ├── INSTALL_MANIFEST.md
 │   │   ├── ee_feature_catalog.yml
 │   │   ├── ee_parity_mapping.yml
 │   │   └── oca_parity_bundle.yml
@@ -1820,8 +1935,10 @@
 │   │   │   └── parity-audit
 │   │   ├── 20260126-0801
 │   │   │   └── parity-test-runner
-│   │   └── 20260126-0815
-│   │       └── odoo-19-migration
+│   │   ├── 20260126-0815
+│   │   │   └── odoo-19-migration
+│   │   └── 20260126-parity-analysis
+│   │       └── EVIDENCE.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2143,6 +2260,7 @@
 │   │   ├── GO_LIVE_WELL_ARCHITECTED_TEMPLATE.md
 │   │   ├── LATEST.json
 │   │   ├── LATEST.md
+│   │   ├── ODOO_19_PARITY_ANALYSIS.md
 │   │   ├── TBWA_FINOPS_INVITE_EMAIL.md
 │   │   ├── TBWA_FINOPS_V1_RUNBOOK.md
 │   │   ├── WHAT_DEPLOYED.json
@@ -3548,6 +3666,7 @@
 │   ├── install_module_xmlrpc.py
 │   ├── install_oauth_module.py
 │   ├── install_oca_modules.sh
+│   ├── install_oca_parity.sh
 │   ├── install_oca_project_modules.sh
 │   ├── introspect_project.py
 │   ├── inventory_config_keys.sh
@@ -3595,11 +3714,14 @@
 │   ├── replace_seed_from_excel.py
 │   ├── repo_health.sh
 │   ├── report_ci_telemetry.sh
+│   ├── report_ee_parity.py
 │   ├── report_stale_branches.sh
 │   ├── run_clarity_ppm_reverse.sh
 │   ├── run_odoo_migrations.sh
 │   ├── run_odoo_shell.sh
 │   ├── run_project_introspection.sh
+│   ├── scaffold_ipai_parity.py
+│   ├── scaffold_ipai_parity.sh
 │   ├── scan_ipai_modules.py
 │   ├── secret-scan.sh
 │   ├── seed_finance_close_from_xlsx.py
@@ -4700,6 +4822,7 @@
 ├── pyproject.toml
 ├── query_memory.py
 ├── requirements-docs.txt
+├── requirements-oca.txt
 ├── requirements.txt
 ├── ship_v1_1_0.sh
 ├── spec.md
@@ -4715,15 +4838,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1270 directories, 3440 files
+1335 directories, 3498 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1490 |
-| Files | 4543 |
-| Python files | 728 |
-| XML files | 267 |
-| Markdown files | 1143 |
+| Directories | 1555 |
+| Files | 4665 |
+| Python files | 794 |
+| XML files | 283 |
+| Markdown files | 1162 |
