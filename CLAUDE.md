@@ -683,6 +683,105 @@ We BUILD everything ourselves using open-source tools on self-hosted infrastruct
 
 **Key Principle**: We own the code, we own the IP, we control the costs. No vendor lock-in.
 
+### Parity Development Workflow
+
+Every ipai_* module that claims EE parity must follow this workflow:
+
+```
+1. IDENTIFY   → Document which EE feature(s) are being replaced
+2. SPECIFY    → Create spec bundle with acceptance criteria
+3. IMPLEMENT  → Build using CE + OCA + custom code
+4. TEST       → Verify against EE behavior checklist
+5. MEASURE    → Run parity test, document score
+6. CERTIFY    → Add to parity matrix, update CLAUDE.md
+```
+
+### Module Parity Certification Checklist
+
+Before claiming parity for any ipai_* module:
+
+```markdown
+## Parity Certification: ipai_<module_name>
+
+- [ ] **Spec Bundle**: spec/<module>/prd.md documents EE feature being replaced
+- [ ] **Functional Tests**: tests/ cover 80%+ of EE feature behavior
+- [ ] **UI/UX Parity**: User workflow matches or improves on EE
+- [ ] **Data Model**: Compatible with EE migration path (if applicable)
+- [ ] **Performance**: Benchmarked against EE baseline
+- [ ] **Documentation**: User docs in docs/<module>/
+- [ ] **CI Gate**: Added to scripts/test_ee_parity.py
+```
+
+### Parity CI Gate
+
+The CI pipeline enforces parity thresholds:
+
+```yaml
+# .github/workflows/ee-parity-gate.yml
+name: EE Parity Gate
+on: [push, pull_request]
+jobs:
+  parity-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run parity tests
+        run: python scripts/test_ee_parity.py --threshold 80
+      - name: Fail if below threshold
+        run: |
+          score=$(cat docs/evidence/latest/parity_score.txt)
+          if (( $(echo "$score < 80" | bc -l) )); then
+            echo "❌ Parity score $score% below 80% threshold"
+            exit 1
+          fi
+```
+
+### EE Feature Replacement Patterns
+
+| EE Capability | Self-Hosted Replacement Pattern |
+|---------------|--------------------------------|
+| **Reports/Dashboards** | PostgreSQL views + Superset dashboards |
+| **Workflow Automation** | n8n workflows + `ipai_platform_workflow` |
+| **Document Management** | Supabase Storage + `ipai_documents` |
+| **Approval Workflows** | Custom state machine in `ipai_approvals` |
+| **AI/ML Features** | scikit-learn + Hugging Face on DO droplet |
+| **Real-time Sync** | Supabase Realtime + webhooks |
+| **SSO/Auth** | Keycloak + `ipai_auth_keycloak` |
+| **BI/Analytics** | Apache Superset (self-hosted) |
+| **Scheduling** | n8n cron + `ipai_scheduler` |
+| **Notifications** | Mattermost + `ipai_notifications` |
+
+### Testing EE Parity Claims
+
+```bash
+# Run full parity test suite
+python scripts/test_ee_parity.py --odoo-url http://localhost:8069 --db odoo_core
+
+# Test specific module parity
+python scripts/test_ee_parity.py --module ipai_finance_ppm
+
+# Generate parity report
+python scripts/test_ee_parity.py --report html --output docs/evidence/parity_report.html
+
+# CI gate (fails if <80%)
+./scripts/ci/ee_parity_gate.sh
+```
+
+### Parity Score Calculation
+
+```python
+# Weighted scoring by priority
+weights = {
+    "P0_critical": 3.0,   # Must-have for production
+    "P1_high": 2.0,       # Needed for full operations
+    "P2_medium": 1.0,     # Nice to have
+    "P3_low": 0.5         # Future roadmap
+}
+
+# Score = Σ(feature_parity * weight) / Σ(weight)
+# Target: ≥80% weighted parity score
+```
+
 ---
 
 ## OCA-Style Workflow (Canonical)
