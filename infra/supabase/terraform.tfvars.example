@@ -1,0 +1,25 @@
+# Example Terraform Variables
+# Copy to terraform.tfvars and fill in values
+
+# Organization ID (from Supabase dashboard)
+supabase_org_id = "your-org-id-here"
+
+# Project reference (already set with default)
+# production_project_ref = "spdtwktxdalcfigzeqrz"
+
+# Region (default: ap-southeast-1)
+# region = "ap-southeast-1"
+
+# API Configuration
+# api_schemas = ["public", "storage", "graphql_public", "mcp_jobs"]
+# api_max_rows = 1000
+
+# Auth Configuration
+# site_url = "https://erp.insightpulseai.net"
+# additional_redirect_urls = [
+#   "https://control.insightpulseai.net/**",
+#   "http://localhost:3000/**"
+# ]
+
+# NOTE: Set SUPABASE_ACCESS_TOKEN via environment variable
+# export SUPABASE_ACCESS_TOKEN="sbp_xxxxxxxxxxxxx"
