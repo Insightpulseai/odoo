@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Balance Sheet Report Definition -->
+    <record id="report_balance_sheet" model="account.financial.report">
+        <field name="name">Balance Sheet</field>
+        <field name="report_type">sum</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="report_assets" model="account.financial.report">
+        <field name="name">Assets</field>
+        <field name="parent_id" ref="report_balance_sheet"/>
+        <field name="report_type">account_type</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="report_liabilities" model="account.financial.report">
+        <field name="name">Liabilities</field>
+        <field name="parent_id" ref="report_balance_sheet"/>
+        <field name="report_type">account_type</field>
+        <field name="sequence">20</field>
+        <field name="sign">-1</field>
+    </record>
+
+    <record id="report_equity" model="account.financial.report">
+        <field name="name">Equity</field>
+        <field name="parent_id" ref="report_balance_sheet"/>
+        <field name="report_type">account_type</field>
+        <field name="sequence">30</field>
+        <field name="sign">-1</field>
+    </record>
+
+    <!-- Profit and Loss Report Definition -->
+    <record id="report_profit_loss" model="account.financial.report">
+        <field name="name">Profit and Loss</field>
+        <field name="report_type">sum</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <record id="report_income" model="account.financial.report">
+        <field name="name">Income</field>
+        <field name="parent_id" ref="report_profit_loss"/>
+        <field name="report_type">account_type</field>
+        <field name="sequence">10</field>
+        <field name="sign">-1</field>
+    </record>
+
+    <record id="report_expenses" model="account.financial.report">
+        <field name="name">Expenses</field>
+        <field name="parent_id" ref="report_profit_loss"/>
+        <field name="report_type">account_type</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Trial Balance Report -->
+    <record id="report_trial_balance" model="account.financial.report">
+        <field name="name">Trial Balance</field>
+        <field name="report_type">accounts</field>
+        <field name="display_detail">detail_flat</field>
+        <field name="sequence">30</field>
+    </record>
+</odoo>

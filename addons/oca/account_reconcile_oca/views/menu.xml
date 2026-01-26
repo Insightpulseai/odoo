@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menu for Bank Reconciliation -->
+    <menuitem
+        id="menu_account_reconcile_root"
+        name="Bank Reconciliation"
+        parent="account.menu_finance_receivables"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_account_reconcile_models"
+        name="Reconciliation Models"
+        parent="menu_account_reconcile_root"
+        action="action_account_reconcile_model"
+        sequence="10"/>
+</odoo>

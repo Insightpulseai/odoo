@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Financial Reports Menu -->
+    <menuitem
+        id="menu_financial_reports_root"
+        name="Financial Reports"
+        parent="account.menu_finance_reports"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_financial_report_definitions"
+        name="Report Definitions"
+        parent="menu_financial_reports_root"
+        action="action_account_financial_report"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_generate_financial_report"
+        name="Generate Report"
+        parent="menu_financial_reports_root"
+        action="action_account_financial_report_wizard"
+        sequence="20"/>
+</odoo>

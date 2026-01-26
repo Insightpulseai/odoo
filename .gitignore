@@ -55,6 +55,19 @@ addons/oca/*/
 !addons/oca/requirements.txt
 !addons/oca/oca.lock.json
 !addons/oca/README.md
+!addons/oca/OCA_PINS.yaml
+!addons/oca/ODOO_PIN.txt
+
+# --- OCA Bridge Modules (custom-built for EE parity) ---
+# These are NOT cloned OCA repos; they are IPAI-built bridges
+!addons/oca/account_reconcile_oca/
+!addons/oca/account_reconcile_oca/**
+!addons/oca/account_financial_report/
+!addons/oca/account_financial_report/**
+!addons/oca/account_asset_management/
+!addons/oca/account_asset_management/**
+!addons/oca/hr_expense/
+!addons/oca/hr_expense/**
 
 # Common ignores
 addons/**/__pycache__/
