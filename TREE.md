@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 847c902d9952fd375c811728b7b477480ade8834
+> Commit: ae15729ef5d60a51f39d87eb28f9b58a8e3cde0b
 
 ```
 .
@@ -4163,6 +4163,54 @@
 │   │   ├── 001_hr_seed.sql
 │   │   ├── 002_finance_seed.sql
 │   │   └── 003_odoo_dict_seed.sql
+│   ├── supabase
+│   │   ├── functions
+│   │   │   ├── auth-bootstrap
+│   │   │   ├── auth-otp-request
+│   │   │   ├── auth-otp-verify
+│   │   │   ├── bugbot-control-plane
+│   │   │   ├── catalog-sync
+│   │   │   ├── config-publish
+│   │   │   ├── consumer-heartbeat
+│   │   │   ├── context-resolve
+│   │   │   ├── copilot-chat
+│   │   │   ├── cron-processor
+│   │   │   ├── docs-ai-ask
+│   │   │   ├── executor
+│   │   │   ├── expense-policy-check
+│   │   │   ├── github-app-auth
+│   │   │   ├── github-mattermost-bridge
+│   │   │   ├── infra-memory-ingest
+│   │   │   ├── ipai-copilot
+│   │   │   ├── marketplace-webhook
+│   │   │   ├── mcp-gateway
+│   │   │   ├── memory-ingest
+│   │   │   ├── odoo-template-export
+│   │   │   ├── odoo-webhook
+│   │   │   ├── ops-health
+│   │   │   ├── ops-ingest
+│   │   │   ├── ops-job-worker
+│   │   │   ├── ops-summary
+│   │   │   ├── realtime-sync
+│   │   │   ├── schema-changed
+│   │   │   ├── seed-odoo-finance
+│   │   │   ├── semantic-export-osi
+│   │   │   ├── semantic-import-osi
+│   │   │   ├── semantic-query
+│   │   │   ├── serve-erd
+│   │   │   ├── shadow-odoo-finance
+│   │   │   ├── skill-eval
+│   │   │   ├── sync-kb-to-schema
+│   │   │   ├── sync-odoo-modules
+│   │   │   ├── tenant-invite
+│   │   │   ├── three-way-match
+│   │   │   └── vendor-score
+│   │   ├── migrations
+│   │   │   ├── 99999999_rollback_ops_run_system.sql.example
+│   │   │   ├── AFC_DEPLOYMENT_SUMMARY.md
+│   │   │   └── RLS_DEPLOYMENT_COMPLETE.md
+│   │   └── config.toml
+│   ├── .preview-trigger
 │   ├── .supabase-preview-config.json
 │   ├── SECURITY_LINTER_REMEDIATION.md
 │   ├── config.toml
@@ -4488,15 +4536,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1184 directories, 3299 files
+1227 directories, 3304 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1402 |
-| Files | 4347 |
+| Directories | 1447 |
+| Files | 4402 |
 | Python files | 680 |
 | XML files | 261 |
-| Markdown files | 1116 |
+| Markdown files | 1118 |
