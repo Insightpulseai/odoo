@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4d53b1aad8082949d9ef12e084b86c30b761b875
+> Commit: 847c902d9952fd375c811728b7b477480ade8834
 
 ## 📚 Documentation
 
@@ -1150,6 +1150,8 @@
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
 | [ipai_fluent_web_365_copilot](./addons/ipai/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_foundation](./addons/ipai/ipai_foundation) | ✅ |  |
+| [ipai_helpdesk](./addons/ipai/ipai_helpdesk) | ✅ |  |
+| [ipai_hr_payroll_ph](./addons/ipai/ipai_hr_payroll_ph) | ✅ |  |
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
 | [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_copilot](./addons/ipai/ipai_theme_copilot) | ✅ |  |
