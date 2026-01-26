@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 0e89eb570ca48d557a118d8d94e8f70f667042ac
+> Commit: 9424c6ba3cf8275e33f45083b6df80023bec1ff7
 
 ```
 .
@@ -285,6 +285,11 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── README.rst
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_foundation
+│   │   │   ├── models
+│   │   │   ├── security
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_platform_theme
@@ -3155,6 +3160,9 @@
 │   ├── odoo_parity
 │   │   ├── build_oca_bundle.py
 │   │   └── check_ee_parity.py
+│   ├── parity
+│   │   ├── check_ipai_foundation.sh
+│   │   └── require_runnable_slice.sh
 │   ├── ppm
 │   │   ├── deploy-databricks.sh
 │   │   ├── run-dq-checks.sh
@@ -4432,15 +4440,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1160 directories, 3267 files
+1164 directories, 3271 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1378 |
-| Files | 4284 |
-| Python files | 660 |
+| Directories | 1382 |
+| Files | 4291 |
+| Python files | 664 |
 | XML files | 253 |
 | Markdown files | 1114 |
