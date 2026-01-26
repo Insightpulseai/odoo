@@ -1,0 +1,13 @@
+{
+  "id": "mcp-jobs",
+  "name": "MCP Jobs System",
+  "summary": "Canonical job orchestration + observability backend for all MCP-enabled apps (Odoo, n8n, Vercel, Edge Functions).",
+  "tags": ["platform", "jobs", "queue", "observability"],
+  "stage": "ga",
+  "availability": "all",
+  "links": {
+    "docs": "docs/infra/MCP_JOBS_SYSTEM.md",
+    "api": "https://v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app/api/jobs"
+  },
+  "related_assets": ["mcp-server", "n8n-workflows"]
+}

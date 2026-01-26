@@ -1,0 +1,21 @@
+{
+  "id": "github-projects-v2",
+  "name": "GitHub Projects v2 Automation",
+  "summary": "Projects v2 fields, iteration configuration, draft issues, and item field updates via GraphQL.",
+  "category": "productivity",
+  "type": "native",
+  "capabilities": ["project-templates", "iteration-fields", "draft-issues", "field-updates", "automation-rules"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_github_projects_templates.sh",
+    "scopes": ["project", "repo", "org"],
+    "env_vars": ["GITHUB_TOKEN"],
+    "auto_configure": false
+  },
+  "links": {
+    "docs": "https://docs.github.com/en/graphql",
+    "repo": "https://github.com/github/docs",
+    "api": "https://api.github.com/graphql"
+  },
+  "mcp_server": "@modelcontextprotocol/server-github",
+  "status": "active"
+}
