@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bea8152d2fcb8e81503a48fd956ca1123828bda2
+> Commit: 5b7ef4d42a4a65cc6ab6d7620bf5dd3224d4e36a
 
 ```
 .
@@ -1737,8 +1737,10 @@
 │   │   │   └── github-governance
 │   │   ├── 20260126-0457
 │   │   │   └── parity-audit
-│   │   └── 20260126-0801
-│   │       └── parity-test-runner
+│   │   ├── 20260126-0801
+│   │   │   └── parity-test-runner
+│   │   └── 20260126-0815
+│   │       └── odoo-19-migration
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -3507,6 +3509,7 @@
 │   ├── test_afc_rag.py
 │   ├── test_auth_bootstrap.sh
 │   ├── test_deploy_local.sh
+│   ├── test_ee_parity.py
 │   ├── test_email_flow.sh
 │   ├── test_ipai_install_upgrade.py
 │   ├── test_magic_link.sh
@@ -3525,6 +3528,7 @@
 │   ├── validate_m1.sh
 │   ├── validate_manifest.py
 │   ├── validate_manifests.py
+│   ├── validate_odoo19_spec.sh
 │   ├── validate_odoo_parity_plans.mjs
 │   ├── validate_production.sh
 │   ├── validate_spec_kit.py
@@ -3851,6 +3855,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── notion-finance-ppm-control-room
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── odoo-19-migration
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -4576,15 +4585,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1237 directories, 3334 files
+1240 directories, 3340 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1457 |
-| Files | 4436 |
-| Python files | 681 |
+| Directories | 1460 |
+| Files | 4443 |
+| Python files | 682 |
 | XML files | 261 |
-| Markdown files | 1128 |
+| Markdown files | 1133 |
