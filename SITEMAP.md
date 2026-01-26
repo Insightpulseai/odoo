@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3a8691bcd21dc08b85065c89aac5cdf83bc2acc5
+> Commit: b9a826946ca6497fc09d46b35e076ce5c6ca5a32
 
 ## 📚 Documentation
 
@@ -885,6 +885,7 @@
 | [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
 | [OCR Service Operations Runbook](ops/runbooks/ocr_service.md) | ops/runbooks |
 | [Sinch SMS/OTP Setup Runbook](ops/runbooks/sinch_setup.md) | ops/runbooks |
+| [Integrations & Opportunities Assessment (Automated)](out/INTEGRATIONS_OPPORTUNITIES.md) | out |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
@@ -905,6 +906,7 @@
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](sandbox/dev/docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | sandbox/dev/docs/runbooks |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
+| [Integration Audit Scripts](scripts/audit/README.md) | scripts/audit |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
 | [Mailgun Scripts](scripts/mailgun/README.md) | scripts/mailgun |
 | [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |

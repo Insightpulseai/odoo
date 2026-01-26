@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3a8691bcd21dc08b85065c89aac5cdf83bc2acc5
+> Commit: b9a826946ca6497fc09d46b35e076ce5c6ca5a32
 
 ```
 .
@@ -3057,8 +3057,11 @@
 │   ├── concur_demo_odoo_map
 │   │   ├── mapping.csv
 │   │   └── mapping.md
-│   └── copilot_index
-│       └── manifest.json
+│   ├── copilot_index
+│   │   └── manifest.json
+│   ├── .gitkeep
+│   ├── INTEGRATIONS_OPPORTUNITIES.md
+│   └── dns_audit.json
 ├── packages
 │   ├── agent-core
 │   │   ├── src
@@ -3173,6 +3176,17 @@
 │   │   ├── verify_assets.sh
 │   │   ├── verify_install.sh
 │   │   └── verify_prod_health.sh
+│   ├── audit
+│   │   ├── README.md
+│   │   ├── assess_opportunities.py
+│   │   ├── check_dns.sh
+│   │   ├── check_dns_doh.py
+│   │   ├── check_dns_py.py
+│   │   ├── check_mailgun.sh
+│   │   ├── check_supabase.sh
+│   │   ├── check_vercel.sh
+│   │   ├── dns_expected.yaml
+│   │   └── env.example
 │   ├── auth
 │   │   ├── confirm_user.py
 │   │   └── set_password.ts
@@ -4671,15 +4685,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1264 directories, 3402 files
+1265 directories, 3415 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1484 |
-| Files | 4505 |
-| Python files | 724 |
+| Directories | 1485 |
+| Files | 4518 |
+| Python files | 727 |
 | XML files | 267 |
-| Markdown files | 1140 |
+| Markdown files | 1142 |
