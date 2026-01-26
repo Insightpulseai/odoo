@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: b9a826946ca6497fc09d46b35e076ce5c6ca5a32
+> Commit: 13d1c64c37b5a1d7d73c8db8bfb17b030b4d8f1b
 
 ```
 .
@@ -158,6 +158,7 @@
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
 │   │   ├── project-automation.yml
+│   │   ├── registry-validate.yml
 │   │   ├── release-docs.yml
 │   │   ├── repo-structure.yml
 │   │   ├── reusable-pr-gate.yml
@@ -3118,6 +3119,29 @@
 │           └── auth-otp-verify
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
+├── registry
+│   ├── features
+│   │   ├── ai-agent-builder.json
+│   │   ├── approvals-workflow.json
+│   │   ├── bir-compliance.json
+│   │   ├── enterprise-parity.json
+│   │   ├── finance-ppm.json
+│   │   ├── mcp-jobs.json
+│   │   ├── mcp-server.json
+│   │   └── rag-pipeline.json
+│   └── integrations
+│       ├── apache-superset.json
+│       ├── claude-ai.json
+│       ├── digitalocean.json
+│       ├── figma.json
+│       ├── github-projects-v2.json
+│       ├── keycloak.json
+│       ├── mattermost.json
+│       ├── n8n-workflow.json
+│       ├── odoo-erp.json
+│       ├── playwright-testing.json
+│       ├── supabase.json
+│       └── vercel-observability.json
 ├── releasekit
 │   ├── fastlane
 │   │   ├── Appfile
@@ -3171,6 +3195,9 @@
 │   └── workbench
 │       ├── .env.workbench.example
 │       └── docker-compose.workbench.yml
+├── schemas
+│   ├── feature.schema.json
+│   └── integration.schema.json
 ├── scripts
 │   ├── aiux
 │   │   ├── verify_assets.sh
@@ -3343,6 +3370,8 @@
 │   ├── prod
 │   │   ├── deploy_workos.sh
 │   │   └── verify_workos.sh
+│   ├── provisioners
+│   │   └── README.md
 │   ├── seeds
 │   │   ├── convert_expense_template_to_odoo.py
 │   │   ├── generate_project_stack_csv.py
@@ -3626,6 +3655,7 @@
 │   ├── validate_odoo19_spec.sh
 │   ├── validate_odoo_parity_plans.mjs
 │   ├── validate_production.sh
+│   ├── validate_registries.py
 │   ├── validate_spec_kit.py
 │   ├── validate_spec_kit.sh
 │   ├── vercel_promote_previous.sh
@@ -4685,15 +4715,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1265 directories, 3415 files
+1270 directories, 3440 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1485 |
-| Files | 4518 |
-| Python files | 727 |
+| Directories | 1490 |
+| Files | 4543 |
+| Python files | 728 |
 | XML files | 267 |
-| Markdown files | 1142 |
+| Markdown files | 1143 |
