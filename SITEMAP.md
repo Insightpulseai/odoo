@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5b7ef4d42a4a65cc6ab6d7620bf5dd3224d4e36a
+> Commit: 3a8691bcd21dc08b85065c89aac5cdf83bc2acc5
 
 ## 📚 Documentation
 
@@ -104,6 +104,9 @@
 | [IPAI Design System (Single Source of Truth)](addons/ipai/ipai_design_system_apps_sdk/README.md) | addons/ipai/ipai_design_system_apps_sdk |
 | [IPAI Enterprise Bridge Policy](addons/ipai/ipai_enterprise_bridge/POLICY.md) | addons/ipai/ipai_enterprise_bridge |
 | [IPAI Enterprise Bridge](addons/ipai/ipai_enterprise_bridge/README.md) | addons/ipai/ipai_enterprise_bridge |
+| [IPAI AI Agent Builder](addons/ipai_ai_agent_builder/README.md) | addons/ipai_ai_agent_builder |
+| [IPAI AI RAG](addons/ipai_ai_rag/README.md) | addons/ipai_ai_rag |
+| [IPAI AI Tools](addons/ipai_ai_tools/README.md) | addons/ipai_ai_tools |
 | [AFC RAG Integration - Change Summary](addons/ipai_ask_ai/CHANGES.md) | addons/ipai_ask_ai |
 | [AFC RAG Deployment Checklist](addons/ipai_ask_ai/DEPLOYMENT_CHECKLIST.md) | addons/ipai_ask_ai |
 | [AFC RAG Integration - Deployment Complete ✅](addons/ipai_ask_ai/DEPLOYMENT_COMPLETE.md) | addons/ipai_ask_ai |
@@ -980,6 +983,10 @@
 | [InsightPulse Mobile Plan](spec/insightpulse-mobile/plan.md) | spec/insightpulse-mobile |
 | [InsightPulse Mobile App - Product Requirements](spec/insightpulse-mobile/prd.md) | spec/insightpulse-mobile |
 | [InsightPulse Mobile - Task Checklist](spec/insightpulse-mobile/tasks.md) | spec/insightpulse-mobile |
+| [Constitution: IPAI AI Agent Builder](spec/ipai-ai-agent-builder/constitution.md) | spec/ipai-ai-agent-builder |
+| [Implementation Plan: IPAI AI Agent Builder](spec/ipai-ai-agent-builder/plan.md) | spec/ipai-ai-agent-builder |
+| [PRD: IPAI AI Agent Builder](spec/ipai-ai-agent-builder/prd.md) | spec/ipai-ai-agent-builder |
+| [Tasks: IPAI AI Agent Builder](spec/ipai-ai-agent-builder/tasks.md) | spec/ipai-ai-agent-builder |
 | [Constitution — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/constitution.md) | spec/ipai-ai-platform-odoo18 |
 | [Plan — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/plan.md) | spec/ipai-ai-platform-odoo18 |
 | [PRD — IPAI AI Platform for Odoo CE/OCA 18](spec/ipai-ai-platform-odoo18/prd.md) | spec/ipai-ai-platform-odoo18 |
@@ -1181,6 +1188,9 @@
 | [ipai_web_fluent2](./addons/ipai/ipai_web_fluent2) | ✅ |  |
 | [ipai_web_icons_fluent](./addons/ipai/ipai_web_icons_fluent) | ✅ |  |
 | [ipai_web_theme_tbwa](./addons/ipai/ipai_web_theme_tbwa) | ✅ |  |
+| [ipai_ai_agent_builder](./addons/ipai_ai_agent_builder) | ✅ |  |
+| [ipai_ai_rag](./addons/ipai_ai_rag) | ✅ |  |
+| [ipai_ai_tools](./addons/ipai_ai_tools) | ✅ |  |
 | [ipai_ask_ai](./addons/ipai_ask_ai) | ✅ |  |
 | [ipai_ask_ai_chatter](./addons/ipai_ask_ai_chatter) | ✅ |  |
 | [ipai_bir_tax_compliance](./addons/ipai_bir_tax_compliance) | ✅ |  |
@@ -1224,6 +1234,7 @@
 | [ipai_ocr_expense](./archive/addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
 | [ipai_finance_ppm](./archive/compose/dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
+| [ipai_ai](./config/ipai_ai) | ⚠️ | Missing manifest |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 | [ipai_finance_okr](./docs/evidence/20260112-0358/ipai_finance_okr) | ⚠️ | Missing manifest |
 | [ipai_ask_ai](./ops-control/odoo_modules/ipai_ask_ai) | ✅ | AI Copilot assistant for Odoo - Claude/ChatGPT-grade conversational UI |

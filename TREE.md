@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5b7ef4d42a4a65cc6ab6d7620bf5dd3224d4e36a
+> Commit: 3a8691bcd21dc08b85065c89aac5cdf83bc2acc5
 
 ```
 .
@@ -376,6 +376,81 @@
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── .gitkeep
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ai_agent_builder
+│   │   ├── controllers
+│   │   │   ├── __init__.py
+│   │   │   └── main.py
+│   │   ├── data
+│   │   │   └── ai_agent_data.xml
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── ai_agent.py
+│   │   │   ├── ai_run.py
+│   │   │   ├── ai_run_event.py
+│   │   │   ├── ai_tool.py
+│   │   │   ├── ai_tool_call.py
+│   │   │   ├── ai_topic.py
+│   │   │   └── res_config_settings.py
+│   │   ├── security
+│   │   │   ├── ir.model.access.csv
+│   │   │   └── security.xml
+│   │   ├── services
+│   │   │   ├── __init__.py
+│   │   │   ├── provider_base.py
+│   │   │   ├── provider_google.py
+│   │   │   ├── provider_openai.py
+│   │   │   └── tool_executor.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_ai_agent.py
+│   │   ├── views
+│   │   │   ├── ai_agent_views.xml
+│   │   │   └── res_config_settings_views.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ai_rag
+│   │   ├── models
+│   │   │   ├── __init__.py
+│   │   │   ├── ai_chunk.py
+│   │   │   ├── ai_embedding.py
+│   │   │   └── ai_source.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── services
+│   │   │   ├── __init__.py
+│   │   │   ├── chunking_service.py
+│   │   │   ├── embedding_service.py
+│   │   │   └── retrieval_service.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   ├── test_chunking.py
+│   │   │   └── test_retrieval.py
+│   │   ├── views
+│   │   │   └── ai_source_views.xml
+│   │   ├── README.md
+│   │   ├── __init__.py
+│   │   └── __manifest__.py
+│   ├── ipai_ai_tools
+│   │   ├── data
+│   │   │   └── ai_tools_data.xml
+│   │   ├── models
+│   │   │   └── __init__.py
+│   │   ├── security
+│   │   │   └── ir.model.access.csv
+│   │   ├── services
+│   │   │   └── __init__.py
+│   │   ├── tests
+│   │   │   ├── __init__.py
+│   │   │   └── test_tool_execution.py
+│   │   ├── tools
+│   │   │   ├── __init__.py
+│   │   │   ├── calendar_tools.py
+│   │   │   ├── crm_tools.py
+│   │   │   └── sale_tools.py
 │   │   ├── README.md
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
@@ -1417,6 +1492,11 @@
 │   │   └── 90-preflight.sh
 │   ├── finance
 │   │   └── Month-end Closing Task and Tax Filing (7).xlsx
+│   ├── ipai_ai
+│   │   └── agents
+│   │       ├── default.yaml
+│   │       ├── sales_assistant.yaml
+│   │       └── support_assistant.yaml
 │   ├── oca
 │   │   ├── oca_must_have_accounting.yml
 │   │   ├── oca_must_have_all.yml
@@ -3428,6 +3508,7 @@
 │   ├── install_oca_project_modules.sh
 │   ├── introspect_project.py
 │   ├── inventory_config_keys.sh
+│   ├── ipai_ai_seed.sh
 │   ├── ipai_full_audit.py
 │   ├── ipai_install_upgrade_test.sh
 │   ├── ipai_quality_gate.sh
@@ -3775,6 +3856,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── insightpulse-mobile
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── ipai-ai-agent-builder
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -4585,15 +4671,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1240 directories, 3340 files
+1264 directories, 3402 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1460 |
-| Files | 4443 |
-| Python files | 682 |
-| XML files | 261 |
-| Markdown files | 1133 |
+| Directories | 1484 |
+| Files | 4505 |
+| Python files | 724 |
+| XML files | 267 |
+| Markdown files | 1140 |
