@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 692d63d8ab4e0aa3964991e474c750ca861e63de
+> Commit: c6a4a090e1de3956b7b652b18fac8e78186fb0d0
 
 ## 📚 Documentation
 
@@ -192,6 +192,7 @@
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
 | [Mailgun → Odoo Integration - Complete Implementation](config/MAILGUN_INTEGRATION_COMPLETE.md) | config |
 | [Mailgun Integration Deployment Guide](config/MAILGUN_INTEGRATION_DEPLOYMENT.md) | config |
+| [IPAI Secrets Inventory (Names Only)](config/secrets_inventory.md) | config |
 | [Project Constitution](constitution.md) | . |
 | [Custom Module Inventory & Status](custom_module_inventory.md) | . |
 | [Month-End Closing Tasks Import Guide](data/IMPORT_GUIDE.md) | data |
@@ -462,6 +463,7 @@
 | [Supabase Branching Integration](docs/infra/SUPABASE_BRANCHING_INTEGRATION.md) | docs/infra |
 | [Supabase Environment Management](docs/infra/SUPABASE_ENVIRONMENTS.md) | docs/infra |
 | [Supabase-Driven Odoo Seeding Pattern](docs/infra/SUPABASE_ODOO_SEED_PATTERN.md) | docs/infra |
+| [Supabase Terraform Integration](docs/infra/SUPABASE_TERRAFORM_INTEGRATION.md) | docs/infra |
 | [Vercel AI Gateway Integration Strategy](docs/infra/VERCEL_AI_GATEWAY_INTEGRATION.md) | docs/infra |
 | [Vercel Integrations](docs/infra/VERCEL_INTEGRATIONS.md) | docs/infra |
 | [IPAI Event Taxonomy - Expense, Equipment, Finance PPM](docs/integration/EVENT_TAXONOMY.md) | docs/integration |
@@ -771,6 +773,7 @@
 | [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
+| [Supabase Terraform Infrastructure](infra/supabase/README.md) | infra/supabase |
 | [Preset.io Parity Roadmap](infra/superset/PRESET_PARITY_ROADMAP.md) | infra/superset |
 | [Superset Integration](infra/superset/README.md) | infra/superset |
 | [Agent Audit Rules](kb/audit/AGENT_AUDIT_RULES.md) | kb/audit |
@@ -995,6 +998,10 @@
 | [IPAI Data Connectors — Implementation Plan](spec/ipai-data-connectors/plan.md) | spec/ipai-data-connectors |
 | [IPAI Data Connectors — Product Requirements Document](spec/ipai-data-connectors/prd.md) | spec/ipai-data-connectors |
 | [IPAI Data Connectors — Task Checklist](spec/ipai-data-connectors/tasks.md) | spec/ipai-data-connectors |
+| [IPAI Databricks – Constitution](spec/ipai-databricks/constitution.md) | spec/ipai-databricks |
+| [IPAI Databricks – Implementation Plan](spec/ipai-databricks/plan.md) | spec/ipai-databricks |
+| [IPAI Databricks – Product Requirements Document (PRD)](spec/ipai-databricks/prd.md) | spec/ipai-databricks |
+| [IPAI Databricks – Tasks](spec/ipai-databricks/tasks.md) | spec/ipai-databricks |
 | [Constitution — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/constitution.md) | spec/ipai-enterprise-workbench |
 | [Plan — IPAI Enterprise Workbench](spec/ipai-enterprise-workbench/plan.md) | spec/ipai-enterprise-workbench |
 | [PRD — IPAI Enterprise Workbench for Odoo CE (18/19)](spec/ipai-enterprise-workbench/prd.md) | spec/ipai-enterprise-workbench |
