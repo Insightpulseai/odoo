@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7cc3187fe2981d66dc48083e06507d4572a05c4d
+> Commit: d6ff83050547d6f4c20fd02b20188f16c2ad6106
 
 ## 📚 Documentation
 
@@ -162,6 +162,9 @@
 | [Agent: Odoo 18 Custom Module Auditor (Minimal 2-Module Policy)](agents/custom_module_auditor.md) | agents |
 | [🧠 System Prompt: Odoo 18 CE & OCA Architect](agents/personas/odoo_architect.md) | agents/personas |
 | [bi-architect](apps/bi-architect/APP.md) | apps/bi-architect |
+| [Billing Site Architecture](apps/billing-site/docs/ARCHITECTURE.md) | apps/billing-site/docs |
+| [Deployment Runbook](apps/billing-site/docs/RUNBOOK_DEPLOY.md) | apps/billing-site/docs |
+| [Webhook Runbook](apps/billing-site/docs/RUNBOOK_WEBHOOKS.md) | apps/billing-site/docs |
 | [IPAI AI Studio - ChatGPT App](apps/chatgpt_ipai_ai_studio/README.md) | apps/chatgpt_ipai_ai_studio |
 | [Control Plane (Supabase Management API)](apps/control-plane/README.md) | apps/control-plane |
 | [Finance Landing Page Implementation - Verification Checklist](apps/control-room/FINANCE_LANDING_CHECKLIST.md) | apps/control-room |

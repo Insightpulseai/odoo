@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 7cc3187fe2981d66dc48083e06507d4572a05c4d
+> Commit: d6ff83050547d6f4c20fd02b20188f16c2ad6106
 
 ```
 .
@@ -76,6 +76,7 @@
 │   │   ├── build-unified-image.yml
 │   │   ├── canonical-gate.yml
 │   │   ├── cd-production.yml
+│   │   ├── ci-billing-site.yml
 │   │   ├── ci-docs-only.yml
 │   │   ├── ci-green-aggregate.yml
 │   │   ├── ci-platform-gates.yml
@@ -1088,6 +1089,30 @@
 │   │   │   └── app.json
 │   │   ├── APP.md
 │   │   └── spec.yaml
+│   ├── billing-site
+│   │   ├── docs
+│   │   │   ├── ARCHITECTURE.md
+│   │   │   ├── RUNBOOK_DEPLOY.md
+│   │   │   └── RUNBOOK_WEBHOOKS.md
+│   │   ├── scripts
+│   │   │   └── smoke_odoo_partner_create.mjs
+│   │   ├── src
+│   │   │   ├── app
+│   │   │   ├── components
+│   │   │   ├── lib
+│   │   │   ├── test
+│   │   │   └── types
+│   │   ├── .env.example
+│   │   ├── .eslintrc.json
+│   │   ├── .gitignore
+│   │   ├── next-env.d.ts
+│   │   ├── next.config.js
+│   │   ├── package.json
+│   │   ├── postcss.config.js
+│   │   ├── tailwind.config.js
+│   │   ├── tsconfig.json
+│   │   ├── vercel.json
+│   │   └── vitest.config.ts
 │   ├── chatgpt_ipai_ai_studio
 │   │   ├── public
 │   │   │   └── widget.html
@@ -2918,6 +2943,7 @@
 │   │   │   ├── github-artifacts-mirror.json
 │   │   │   └── workspace-events-handler.json
 │   │   ├── .gitkeep
+│   │   ├── billing-subscription-created.json
 │   │   ├── chatops-hotfix.json
 │   │   ├── deployment-notify.json
 │   │   ├── github-deploy-trigger.json
@@ -4423,6 +4449,7 @@
 │   │   ├── 20260125_000004_app_schema_rls.sql
 │   │   ├── 20260125_100001_control_plane_vault.sql
 │   │   ├── 20260126_000001_ee_parity_tracking.sql
+│   │   ├── 20260126_billing_schema.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -4838,15 +4865,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1335 directories, 3498 files
+1344 directories, 3516 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1555 |
-| Files | 4665 |
+| Directories | 1581 |
+| Files | 4709 |
 | Python files | 794 |
 | XML files | 283 |
-| Markdown files | 1162 |
+| Markdown files | 1165 |
