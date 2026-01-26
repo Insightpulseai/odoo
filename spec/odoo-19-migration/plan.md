@@ -1,572 +1,411 @@
-# Odoo 19 Migration — Implementation Plan
-
+# Odoo 19 Migration - Implementation Plan
 ---
-
 **Status**: DRAFT
-**Created**: 2026-01-26
-**Approach**: Phased migration with parallel environments
-
+**Timeline**: Q3-Q4 2026 (12 weeks)
+**Start Date**: TBD (pending Odoo 19 CE release)
+**End Date**: TBD
 ---
 
-## Overview
-
-This plan outlines the step-by-step implementation for migrating odoo-ce from Odoo 18 CE to Odoo 19 CE.
+## 1. Timeline Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    MIGRATION ARCHITECTURE                        │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                  │
-│   PHASE 0: PREPARATION                                          │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│   │ Audit IPAI  │───▶│ Update Tests│───▶│ Document    │         │
-│   │ Modules     │    │ Suite       │    │ Baseline    │         │
-│   └─────────────┘    └─────────────┘    └─────────────┘         │
-│                                                                  │
-│   PHASE 1: SANDBOX                                              │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│   │ Odoo 19 Dev │───▶│ Port Core   │───▶│ Validate    │         │
-│   │ Environment │    │ Modules     │    │ OCA Deps    │         │
-│   └─────────────┘    └─────────────┘    └─────────────┘         │
-│                                                                  │
-│   PHASE 2: STAGING                                              │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│   │ Full Module │───▶│ Integration │───▶│ Load        │         │
-│   │ Migration   │    │ Testing     │    │ Testing     │         │
-│   └─────────────┘    └─────────────┘    └─────────────┘         │
-│                                                                  │
-│   PHASE 3: PRODUCTION                                           │
-│   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐         │
-│   │ Backup &    │───▶│ Execute     │───▶│ Verify &    │         │
-│   │ Freeze      │    │ Migration   │    │ Monitor     │         │
-│   └─────────────┘    └─────────────┘    └─────────────┘         │
-│                                                                  │
-└─────────────────────────────────────────────────────────────────┘
+2026
+     Jul         Aug         Sep         Oct         Nov         Dec
+     |-----------|-----------|-----------|-----------|-----------|
+
+Phase 1: Preparation          [████████░░░░░░░░░░░░░░░░░░░░░░░░░░]
+         Week 1-2
+
+Phase 2: Module Migration              [████████████████░░░░░░░░░░]
+         Week 3-6
+
+Phase 3: Testing                                    [████████░░░░]
+         Week 7-8
+
+Phase 4: Deployment                                         [████]
+         Week 9
+
+Phase 5: Stabilization                                      [████████]
+         Week 10-12
+
+Key Milestones:
+  ◆ M1: Sandbox ready (Week 2)
+  ◆ M2: Core modules migrated (Week 4)
+  ◆ M3: All modules migrated (Week 6)
+  ◆ M4: UAT complete (Week 8)
+  ◆ M5: Production live (Week 9)
+  ◆ M6: Project close (Week 12)
 ```
 
 ---
 
-## Phase 0: Preparation
+## 2. Phase 1: Preparation (Week 1-2)
 
-### 0.1 Module Audit
+### Week 1: Assessment & Environment Setup
 
-**Objective**: Catalog all IPAI modules and assess Odoo 19 compatibility.
+| Day | Task | Owner | Deliverable |
+|-----|------|-------|-------------|
+| Mon | Audit ipai_* modules for deprecated patterns | Dev | Audit report |
+| Tue | Document all OCA dependencies | Dev | Dependency matrix |
+| Wed | Provision Odoo 19 dev sandbox | DevOps | Sandbox URL |
+| Thu | Configure CI/CD for dual-version | DevOps | CI pipeline |
+| Fri | Team kickoff meeting | All | Meeting notes |
 
-```bash
-# Generate module inventory
-python scripts/audit_ipai_modules.py --output docs/IPAI_MODULE_AUDIT.md
+**Deliverables:**
+- [ ] Module audit report (deprecated patterns identified)
+- [ ] OCA dependency matrix with Odoo 19 availability
+- [ ] Development sandbox at dev-19.erp.insightpulseai.net
+- [ ] GitHub Actions workflow for Odoo 19 testing
 
-# Check for deprecated API usage
-python scripts/check_odoo_api_compat.py --target-version 19.0
-```
+### Week 2: Planning & Preparation
 
-**Deliverables**:
-- `docs/IPAI_MODULE_AUDIT.md` — Complete inventory with compatibility status
-- `docs/API_CHANGES_ODOO_19.md` — Breaking changes affecting IPAI modules
+| Day | Task | Owner | Deliverable |
+|-----|------|-------|-------------|
+| Mon | Prioritize modules for migration | Lead | Priority matrix |
+| Tue | Create migration branch structure | Dev | Git branches |
+| Wed | Set up test data for validation | QA | Test database |
+| Thu | Document breaking changes | Dev | BREAKING_CHANGES.md |
+| Fri | **Milestone M1: Sandbox Ready** | All | Go/No-go decision |
 
-### 0.2 OCA Dependency Check
-
-**Objective**: Verify all OCA dependencies have 19.0 branches.
-
-```bash
-# Check OCA branch availability
-./scripts/check_oca_branches.sh 19.0
-
-# Update oca.lock.json with 19.0 targets
-python scripts/update_oca_lock.py --target 19.0 --dry-run
-```
-
-**Deliverables**:
-- Updated `oca.lock.json` with 19.0 branch mappings
-- List of OCA modules without 19.0 branches (need alternatives)
-
-### 0.3 Test Suite Enhancement
-
-**Objective**: Ensure comprehensive test coverage before migration.
-
-```bash
-# Run current test coverage analysis
-./scripts/ci/run_odoo_tests.sh --coverage
-
-# Generate coverage report
-python scripts/generate_coverage_report.py
-```
-
-**Deliverables**:
-- Test coverage report (target: 80%+ for critical modules)
-- New tests for uncovered migration-critical paths
-
-### 0.4 Baseline Documentation
-
-**Objective**: Document current state for comparison.
-
-```bash
-# Capture current performance baseline
-./scripts/performance_baseline.sh --output docs/PERFORMANCE_BASELINE_18.md
-
-# Document integration endpoints
-./scripts/document_integrations.sh --output docs/INTEGRATION_BASELINE.md
-```
-
-**Deliverables**:
-- `docs/PERFORMANCE_BASELINE_18.md`
-- `docs/INTEGRATION_BASELINE.md`
-- Database schema snapshot
+**Deliverables:**
+- [ ] Module migration priority matrix
+- [ ] Branch structure: `migration/odoo19-<module>`
+- [ ] Test database with representative data
+- [ ] Breaking changes documentation
 
 ---
 
-## Phase 1: Sandbox Testing
+## 3. Phase 2: Module Migration (Week 3-6)
 
-### 1.1 Odoo 19 Development Environment
+### Week 3: Core Accounting Modules
 
-**Objective**: Set up isolated Odoo 19 development environment.
+| Module | Est. Hours | Assignee | Status |
+|--------|------------|----------|--------|
+| ipai_bir_1601c | 8 | TBD | ☐ |
+| ipai_bir_2316 | 8 | TBD | ☐ |
+| ipai_bir_alphalist | 8 | TBD | ☐ |
+| ipai_bir_vat | 4 | TBD | ☐ |
+| account (OCA updates) | 8 | TBD | ☐ |
 
-```bash
-# Create Odoo 19 development branch
-git checkout -b feat/odoo-19-migration
+**Week 3 Goal:** All BIR compliance modules migrated and tested
 
-# Update Docker configuration
-cat > docker/Dockerfile.odoo19 << 'EOF'
-FROM odoo:19.0
-# Custom configuration for IPAI stack
-COPY --chown=odoo:odoo addons/ipai /mnt/extra-addons/ipai
-COPY --chown=odoo:odoo config/odoo19.conf /etc/odoo/odoo.conf
-EOF
+### Week 4: HR & Payroll Modules
 
-# Start development environment
-docker compose -f docker-compose.odoo19.yml up -d
-```
+| Module | Est. Hours | Assignee | Status |
+|--------|------------|----------|--------|
+| ipai_hr_payroll_ph | 16 | TBD | ☐ |
+| ipai_hr_attendance | 4 | TBD | ☐ |
+| ipai_hr_leave | 4 | TBD | ☐ |
+| hr_payroll (OCA) | 8 | TBD | ☐ |
 
-**Deliverables**:
-- `docker/Dockerfile.odoo19` — Odoo 19 container definition
-- `docker-compose.odoo19.yml` — Development compose file
-- Working Odoo 19 dev environment
+**Week 4 Goal:** Payroll system fully functional on Odoo 19
+**Milestone M2:** Core modules migrated
 
-### 1.2 Core Module Porting
+### Week 5: Service Modules
 
-**Objective**: Port foundation IPAI modules to Odoo 19.
+| Module | Est. Hours | Assignee | Status |
+|--------|------------|----------|--------|
+| ipai_approvals | 8 | TBD | ☐ |
+| ipai_helpdesk | 8 | TBD | ☐ |
+| ipai_planning | 8 | TBD | ☐ |
+| ipai_timesheet | 4 | TBD | ☐ |
 
-**Priority Order**:
-1. `ipai_dev_studio_base` — Base dependencies
-2. `ipai_workspace_core` — Core workspace
-3. `ipai_ce_branding` — CE branding layer
-4. `ipai_ai_core` — AI framework
+**Week 5 Goal:** All service modules migrated
 
-```bash
-# For each module, run compatibility check and fix
-for module in ipai_dev_studio_base ipai_workspace_core ipai_ce_branding ipai_ai_core; do
-    ./scripts/migrate_module.sh $module --target 19.0
-    ./scripts/ci/run_odoo_tests.sh $module
-done
-```
+### Week 6: Integration & Utility Modules
 
-**Common Migration Patterns**:
+| Module | Est. Hours | Assignee | Status |
+|--------|------------|----------|--------|
+| ipai_connector_vercel | 4 | TBD | ☐ |
+| ipai_connector_supabase | 4 | TBD | ☐ |
+| ipai_connector_n8n | 4 | TBD | ☐ |
+| ipai_* (remaining 60+) | 48 | TBD | ☐ |
 
-```python
-# Pattern 1: API.v8 → API.v19 changes
-# Before (Odoo 18)
-from odoo import api, fields, models
-
-class MyModel(models.Model):
-    @api.multi  # Deprecated in 19
-    def my_method(self):
-        pass
-
-# After (Odoo 19)
-from odoo import api, fields, models
-
-class MyModel(models.Model):
-    def my_method(self):  # @api.multi removed
-        pass
-```
-
-```xml
-<!-- Pattern 2: View inheritance changes -->
-<!-- Before (Odoo 18) -->
-<record id="view_form_inherit" model="ir.ui.view">
-    <field name="inherit_id" ref="base.view_partner_form"/>
-    <field name="arch" type="xml">
-        <xpath expr="//field[@name='name']" position="after">
-            <field name="custom_field"/>
-        </xpath>
-    </field>
-</record>
-
-<!-- After (Odoo 19) - OWL 2.x compatible -->
-<record id="view_form_inherit" model="ir.ui.view">
-    <field name="inherit_id" ref="base.view_partner_form"/>
-    <field name="arch" type="xml">
-        <xpath expr="//field[@name='name']" position="after">
-            <field name="custom_field" widget="char"/>
-        </xpath>
-    </field>
-</record>
-```
-
-**Deliverables**:
-- 4 core modules ported and tested
-- Migration patterns documented
-- Automated migration script for common changes
-
-### 1.3 OCA Dependency Validation
-
-**Objective**: Verify OCA modules work with Odoo 19.
-
-```bash
-# Clone OCA 19.0 branches
-./scripts/clone_oca_branches.sh 19.0
-
-# Install and test each OCA module
-for repo in web account sale purchase; do
-    ./scripts/test_oca_module.sh $repo --branch 19.0
-done
-```
-
-**Deliverables**:
-- All OCA dependencies verified on 19.0
-- Forks created for modules without 19.0 branches
-- `oca.lock.json` updated with 19.0 pins
+**Week 6 Goal:** All modules migrated
+**Milestone M3:** Migration complete
 
 ---
 
-## Phase 2: Staging Migration
+## 4. Phase 3: Testing (Week 7-8)
 
-### 2.1 Full Module Migration
+### Week 7: Automated & Integration Testing
 
-**Objective**: Port all 80+ IPAI modules to Odoo 19.
+| Day | Activity | Owner | Success Criteria |
+|-----|----------|-------|------------------|
+| Mon-Tue | Run full test suite | QA | 100% pass |
+| Wed | Run EE parity tests | QA | ≥80% score |
+| Thu | Performance benchmarks | DevOps | No regression >10% |
+| Fri | Security audit | DevOps | No critical issues |
 
-```bash
-# Batch migration script
-./scripts/migrate_all_ipai_modules.sh --target 19.0
-
-# Run full test suite
-./scripts/ci/run_odoo_tests.sh --all-modules
+**Test Coverage Requirements:**
+```
+Component              Target    Actual
+─────────────────────────────────────────
+Unit Tests             80%       ____%
+Integration Tests      100%      ____%
+E2E Tests              50%       ____%
+EE Parity Score        80%       ____%
+Performance            ≤10% reg  ____%
 ```
 
-**Module Migration Checklist**:
+### Week 8: User Acceptance Testing (UAT)
 
-| Domain | Module Count | Priority |
-|--------|--------------|----------|
-| AI/Agents | 10 | P0 |
-| Finance | 15 | P0 |
-| Platform | 12 | P0 |
-| Workspace | 8 | P1 |
-| Studio | 10 | P1 |
-| Industry | 6 | P1 |
-| WorkOS | 8 | P2 |
-| Theme/UI | 5 | P2 |
-| Integrations | 6 | P0 |
+| Day | UAT Session | Participants | Focus Area |
+|-----|-------------|--------------|------------|
+| Mon | Finance workflows | CKVC, RIM | Accounting, Reports |
+| Tue | Payroll processing | BOM, LAS | Payroll, BIR forms |
+| Wed | Expense & Approvals | JAP, JPAL | Workflows |
+| Thu | Helpdesk & Planning | JLI | Service modules |
+| Fri | **Milestone M4: UAT Sign-off** | All | Go/No-go |
 
-**Deliverables**:
-- All 80+ modules ported
-- 100% unit test pass rate
-- Migration log with changes
-
-### 2.2 Data Migration Testing
-
-**Objective**: Validate data migration with production-equivalent data.
-
-```bash
-# Create anonymized production snapshot
-./scripts/create_migration_snapshot.sh
-
-# Run migration on snapshot
-./scripts/run_migration.sh --database odoo_migration_test
-
-# Validate data integrity
-./scripts/validate_data_integrity.sh --database odoo_migration_test
-```
-
-**Validation Checks**:
-- Record count comparison (pre/post)
-- Financial balance verification
-- Attachment integrity check
-- User/permission validation
-
-**Deliverables**:
-- Data migration validated
-- Integrity report generated
-- Migration time measured
-
-### 2.3 Integration Testing
-
-**Objective**: Verify all external integrations work with Odoo 19.
-
-```bash
-# Test n8n integration
-./scripts/test_n8n_integration.sh --target staging
-
-# Test Mattermost integration
-./scripts/test_mattermost_integration.sh --target staging
-
-# Test MCP server connections
-./scripts/test_mcp_connections.sh --target staging
-
-# Test Supabase sync
-./scripts/test_supabase_sync.sh --target staging
-```
-
-**Integration Test Matrix**:
-
-| Integration | Endpoint | Test |
-|-------------|----------|------|
-| n8n | XML-RPC | Create/read/update records |
-| n8n | REST API | Authentication, CRUD |
-| Mattermost | Webhooks | Slash commands, notifications |
-| MCP | JSON-RPC | Agent queries, tool calls |
-| Supabase | PostgreSQL | Sync triggers, data flow |
-
-**Deliverables**:
-- Integration test report
-- API compatibility confirmed
-- Performance benchmarks
-
-### 2.4 Load Testing
-
-**Objective**: Verify Odoo 19 meets performance requirements.
-
-```bash
-# Run load test suite
-./scripts/load_test.sh --target staging --users 50 --duration 30m
-
-# Compare with baseline
-./scripts/compare_performance.sh docs/PERFORMANCE_BASELINE_18.md
-```
-
-**Performance Targets**:
-- Page load: ≤2s (P95)
-- API response: ≤500ms (P95)
-- Concurrent users: 50+
-- Batch jobs: ≤10% regression
-
-**Deliverables**:
-- Load test report
-- Performance comparison
-- Optimization recommendations
-
-### 2.5 User Acceptance Testing
-
-**Objective**: Validate with representative users.
-
-**UAT Checklist**:
-- [ ] Login/logout flow
-- [ ] Dashboard rendering
-- [ ] Core workflows (quotes, orders, invoices)
-- [ ] Reports generation
-- [ ] Custom views/filters
-- [ ] Mobile responsiveness
-
-**Deliverables**:
-- UAT sign-off
-- Bug list (if any)
-- User feedback
+**UAT Checklist:**
+- [ ] Create customer invoice
+- [ ] Process vendor bill
+- [ ] Run bank reconciliation
+- [ ] Generate payroll
+- [ ] Export BIR 1601-C
+- [ ] Submit expense report
+- [ ] Approve purchase request
+- [ ] Create helpdesk ticket
+- [ ] Schedule employee shift
 
 ---
 
-## Phase 3: Production Migration
+## 5. Phase 4: Deployment (Week 9)
 
-### 3.1 Pre-Migration
+### Pre-Deployment (Monday-Thursday)
 
-**Objective**: Prepare production for migration.
+| Day | Task | Owner | Verification |
+|-----|------|-------|--------------|
+| Mon | Final code freeze | Dev | Branch locked |
+| Tue | Production backup | DevOps | Backup verified |
+| Wed | Staging deployment | DevOps | Smoke tests pass |
+| Thu | Rollback drill | DevOps | Recovery <2h |
 
-```bash
-# Announce maintenance window
-./scripts/notify_maintenance.sh --start "2026-MM-DD 02:00 UTC" --duration "4h"
+### Production Deployment (Friday-Saturday)
 
-# Create production backup
-./scripts/backup_production.sh --full
+```
+Timeline (PHT):
 
-# Verify backup
-./scripts/verify_backup.sh --latest
+Friday 5 PM    Communication: Maintenance window announced
+               Action: Final backup initiated
+
+Saturday 10 PM Maintenance mode enabled
+               Traffic redirected to maintenance page
+
+Saturday 10:30 PM
+               Database backup completed
+               Odoo 18 containers stopped
+
+Saturday 11 PM Odoo 19 deployment started
+               Database migration running
+
+Sunday 12 AM   DECISION POINT
+               If issues: Initiate rollback
+               If clean: Continue to validation
+
+Sunday 12:30 AM
+               Smoke tests running
+               BIR report validation
+
+Sunday 1 AM    User acceptance validation
+               Finance team spot-check
+
+Sunday 2 AM    **Milestone M5: Production Live**
+               Maintenance mode disabled
+               Monitoring intensified
 ```
 
-**Pre-Migration Checklist**:
-- [ ] Maintenance window announced (48h advance)
-- [ ] Full backup created and verified
-- [ ] Rollback procedure tested
-- [ ] On-call team assembled
-- [ ] Monitoring dashboards ready
+### Rollback Plan
 
-### 3.2 Migration Execution
-
-**Objective**: Execute production migration.
-
-```bash
-# Stop production services
-docker compose -f docker-compose.prod.yml down
-
-# Run database migration
-./scripts/run_migration.sh --database odoo_core --production
-
-# Deploy Odoo 19 containers
-docker compose -f docker-compose.prod.odoo19.yml up -d
-
-# Run post-migration scripts
-./scripts/post_migration.sh --production
 ```
+Trigger: Any of these conditions
+- Error rate >5% after 30 min
+- Critical business function failing
+- Data integrity issue detected
+- Finance team unable to work
 
-**Migration Runbook**:
+Rollback Steps:
+1. docker compose down (Odoo 19)
+2. pg_restore from pre-migration backup
+3. docker compose up (Odoo 18)
+4. Verify functionality
+5. Notify stakeholders
 
-| Step | Command | Expected Duration | Rollback |
-|------|---------|-------------------|----------|
-| 1. Stop services | `docker compose down` | 2 min | N/A |
-| 2. Backup | `pg_dump` | 30 min | N/A |
-| 3. Schema migration | `odoo -u all` | 60 min | Restore backup |
-| 4. Data migration | `./migrate_data.sh` | 45 min | Restore backup |
-| 5. Start Odoo 19 | `docker compose up` | 5 min | Start Odoo 18 |
-| 6. Verification | `./verify.sh` | 15 min | Rollback |
-
-### 3.3 Post-Migration Verification
-
-**Objective**: Verify production migration success.
-
-```bash
-# Health checks
-./scripts/health_check.sh --production
-
-# Integration verification
-./scripts/verify_integrations.sh --production
-
-# Smoke tests
-./scripts/smoke_tests.sh --production
-
-# Announce completion
-./scripts/notify_completion.sh
-```
-
-**Verification Checklist**:
-- [ ] All services healthy
-- [ ] Database accessible
-- [ ] User login working
-- [ ] Core workflows functional
-- [ ] Integrations connected
-- [ ] Performance acceptable
-
-### 3.4 Rollback Procedure
-
-**If migration fails, execute rollback**:
-
-```bash
-# Stop Odoo 19
-docker compose -f docker-compose.prod.odoo19.yml down
-
-# Restore database backup
-./scripts/restore_backup.sh --latest
-
-# Start Odoo 18
-docker compose -f docker-compose.prod.yml up -d
-
-# Verify rollback
-./scripts/health_check.sh --production
+Target: Complete rollback in <2 hours
 ```
 
 ---
 
-## Phase 4: Stabilization
+## 6. Phase 5: Stabilization (Week 10-12)
 
-### 4.1 Monitoring
+### Week 10: Hypercare
 
-**Objective**: Intensive monitoring for 30 days post-migration.
+| Focus | Activities |
+|-------|------------|
+| Monitoring | 24/7 log monitoring, alert response |
+| Support | Dedicated Slack channel for issues |
+| Fixes | Hotfix deployment within 4 hours |
 
-```bash
-# Enhanced monitoring
-./scripts/enable_enhanced_monitoring.sh
+**Daily Standup Agenda:**
+1. Issues reported (count, severity)
+2. Issues resolved
+3. Performance metrics
+4. User feedback
 
-# Daily health reports
-./scripts/daily_health_report.sh | mail -s "Odoo 19 Health Report" team@example.com
+### Week 11: Optimization
+
+| Activity | Goal |
+|----------|------|
+| Performance tuning | Achieve +20% target |
+| Bug fixes | Close all P1/P2 issues |
+| Documentation | Complete all migration docs |
+
+### Week 12: Project Close
+
+| Day | Activity |
+|-----|----------|
+| Mon-Wed | Final documentation |
+| Thu | Lessons learned session |
+| Fri | **Milestone M6: Project Close** |
+
+**Close Checklist:**
+- [ ] All issues resolved or deferred with justification
+- [ ] Documentation complete in GitHub wiki
+- [ ] Runbook published
+- [ ] Training completed
+- [ ] Odoo 18 staging decommissioned
+- [ ] Post-mortem document finalized
+
+---
+
+## 7. Resource Allocation
+
+### Team Structure
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Project Sponsor                       │
+│                         TBD                              │
+└─────────────────────────────────────────────────────────┘
+                            │
+┌─────────────────────────────────────────────────────────┐
+│                    Technical Lead                        │
+│                   Jake Tolentino                         │
+│            (Architecture, Code Review, Decisions)        │
+└─────────────────────────────────────────────────────────┘
+                            │
+        ┌───────────────────┼───────────────────┐
+        │                   │                   │
+┌───────────────┐   ┌───────────────┐   ┌───────────────┐
+│   Developer   │   │   Developer   │   │      QA       │
+│     TBD       │   │     TBD       │   │     TBD       │
+│  (Modules)    │   │  (Modules)    │   │  (Testing)    │
+└───────────────┘   └───────────────┘   └───────────────┘
 ```
 
-**Monitoring Dashboard**:
-- Error rates
-- Response times
-- Database performance
-- User activity
-- Integration health
+### Time Commitment
 
-### 4.2 Bug Fixes
-
-**Objective**: Rapid response to post-migration issues.
-
-**Severity Response Times**:
-- P0 (Critical): 1 hour
-- P1 (High): 4 hours
-- P2 (Medium): 24 hours
-- P3 (Low): 1 week
-
-### 4.3 Documentation Update
-
-**Objective**: Update all documentation for Odoo 19.
-
-```bash
-# Update CLAUDE.md
-sed -i 's/Odoo 18/Odoo 19/g' CLAUDE.md
-
-# Update architecture docs
-./scripts/update_docs.sh --version 19.0
-```
-
-**Documentation Updates**:
-- CLAUDE.md version references
-- API documentation
-- Module documentation
-- Deployment guides
-
-### 4.4 Parallel Environment Decommission
-
-**Objective**: Clean up Odoo 18 parallel environment.
-
-```bash
-# After 30 days, decommission Odoo 18
-./scripts/decommission_odoo18.sh
-
-# Archive final backup
-./scripts/archive_backup.sh --tag "odoo18-final"
-```
+| Role | Phase 1-2 | Phase 3-4 | Phase 5 |
+|------|-----------|-----------|---------|
+| Technical Lead | 50% | 75% | 25% |
+| Developer 1 | 100% | 50% | 25% |
+| Developer 2 | 100% | 50% | 25% |
+| QA | 25% | 100% | 50% |
+| Finance Team (UAT) | 0% | 25% | 10% |
 
 ---
 
-## Scripts to Create
+## 8. Risk Register
 
-| Script | Purpose |
-|--------|---------|
-| `scripts/audit_ipai_modules.py` | Module compatibility audit |
-| `scripts/check_odoo_api_compat.py` | API compatibility checker |
-| `scripts/migrate_module.sh` | Single module migration |
-| `scripts/migrate_all_ipai_modules.sh` | Batch module migration |
-| `scripts/run_migration.sh` | Database migration runner |
-| `scripts/validate_data_integrity.sh` | Data validation |
-| `scripts/test_*_integration.sh` | Integration test scripts |
-| `scripts/load_test.sh` | Performance load testing |
-| `scripts/health_check.sh` | Health verification |
-| `scripts/rollback.sh` | Rollback procedure |
+| ID | Risk | Prob | Impact | Mitigation | Owner |
+|----|------|------|--------|------------|-------|
+| R1 | OCA module not ready | M | H | Fork and maintain | Lead |
+| R2 | Odoo 19 delayed | M | H | Extend Odoo 18 support | Lead |
+| R3 | Key person unavailable | L | H | Cross-training | Lead |
+| R4 | Data migration failure | L | C | Multiple backups, dry-run | DevOps |
+| R5 | Performance regression | M | M | Early benchmarking | DevOps |
+| R6 | BIR compliance issue | L | C | Manual validation | Finance |
 
----
-
-## Risk Mitigation
-
-| Risk | Mitigation |
-|------|------------|
-| OCA module not available | Fork and maintain internally |
-| API breaking changes | Abstraction layer, early testing |
-| Data corruption | Multiple backups, checksums |
-| Extended downtime | Parallel environment, fast rollback |
-| Performance regression | Load testing, optimization sprint |
+**Risk Response:**
+- **Accept**: R5 (mitigate with monitoring)
+- **Mitigate**: R1, R2, R3
+- **Avoid**: R4, R6 (no shortcuts)
 
 ---
 
-## Success Criteria
+## 9. Budget
 
-Migration is successful when:
+### Labor Costs
 
-1. All 80+ IPAI modules passing tests on Odoo 19
-2. All OCA dependencies on 19.0 branches
-3. All integrations verified working
-4. Performance meets or exceeds baselines
-5. Zero P0/P1 bugs in first 7 days
-6. User acceptance confirmed
-7. Documentation updated
+| Role | Hours | Rate | Total |
+|------|-------|------|-------|
+| Technical Lead | 80 | $75 | $6,000 |
+| Developer 1 | 120 | $50 | $6,000 |
+| Developer 2 | 120 | $50 | $6,000 |
+| QA | 60 | $40 | $2,400 |
+| **Subtotal** | **380** | - | **$20,400** |
+
+### Infrastructure Costs
+
+| Item | Monthly | Duration | Total |
+|------|---------|----------|-------|
+| Staging environment | $100 | 3 months | $300 |
+| Extra backup storage | $20 | 3 months | $60 |
+| **Subtotal** | - | - | **$360** |
+
+### Contingency (20%)
+
+| Item | Amount |
+|------|--------|
+| Labor contingency | $4,080 |
+| Infrastructure contingency | $72 |
+| **Subtotal** | **$4,152** |
+
+### Total Budget
+
+| Category | Amount |
+|----------|--------|
+| Labor | $20,400 |
+| Infrastructure | $360 |
+| Contingency | $4,152 |
+| **Grand Total** | **$24,912** |
 
 ---
 
-*Plan Version: 1.0*
-*Last Updated: 2026-01-26*
+## 10. Communication Plan
+
+### Regular Updates
+
+| Frequency | Format | Audience | Owner |
+|-----------|--------|----------|-------|
+| Daily | Slack standup | Dev team | Rotating |
+| Weekly | Status report | Stakeholders | Lead |
+| Milestone | Email + meeting | All | Lead |
+| Ad-hoc | Slack alert | Affected parties | Anyone |
+
+### Stakeholder Matrix
+
+| Stakeholder | Interest | Influence | Strategy |
+|-------------|----------|-----------|----------|
+| Finance Team | High | High | Close engagement |
+| IT Team | High | Medium | Regular updates |
+| Management | Medium | High | Milestone briefings |
+| End Users | Low | Low | Training at launch |
+
+---
+
+## 11. Approval
+
+| Phase | Approver | Signature | Date |
+|-------|----------|-----------|------|
+| Plan Approval | Technical Lead | ☐ | |
+| Phase 1 Start | Stakeholders | ☐ | |
+| Phase 4 Go-Live | Finance Director | ☐ | |
+| Project Close | Project Sponsor | ☐ | |
+
+---
+
+**Document Version**: 1.0.0
+**Last Updated**: 2026-01-26
+**Next Review**: Phase 1 kickoff
