@@ -56,6 +56,11 @@ scaffold_module() {
     mkdir -p "${module_path}"/{models,views,security,data,static/description}
 
     # Create __manifest__.py
+    local title_underline
+    title_underline=$(printf '=%.0s' $(seq 1 ${#module_title}))
+    local depends_list
+    depends_list=$(echo "$module_deps" | sed 's/,/", "/g' | sed 's/^/"/' | sed 's/$/"/')
+
     cat > "${module_path}/__manifest__.py" << EOF
 # -*- coding: utf-8 -*-
 {
@@ -65,7 +70,7 @@ scaffold_module() {
     "summary": "${module_desc}",
     "description": """
 ${module_title}
-${'=' * ${#module_title}}
+${title_underline}
 
 ${module_desc}
 
@@ -85,7 +90,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",
     "license": "LGPL-3",
-    "depends": [$(echo "$module_deps" | sed 's/,/", "/g' | sed 's/^/"/' | sed 's/$/"/')],
+    "depends": [${depends_list}],
     "data": [
         "security/ir.model.access.csv",
         "views/menu.xml",
