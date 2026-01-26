@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9424c6ba3cf8275e33f45083b6df80023bec1ff7
+> Commit: 4d53b1aad8082949d9ef12e084b86c30b761b875
 
 ## 📚 Documentation
 
@@ -443,6 +443,7 @@
 | [AI Control Plane Implementation Evidence](docs/evidence/20260125-1500/ai-control-plane/EVIDENCE.md) | docs/evidence/20260125-1500/ai-control-plane |
 | [Azure Well-Architected + Lakehouse Hybrid Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/AZURE_WAF_LAKEHOUSE_ASSESSMENT.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
 | [Gap Analysis: Azure WAF + Lakehouse Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/gaps.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
+| [EE Parity Audit](docs/evidence/20260126-0457/parity-audit/ee_parity_audit.md) | docs/evidence/20260126-0457/parity-audit |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -881,6 +882,7 @@
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
+| [EE Parity Audit](reports/parity/ee_parity_audit.md) | reports/parity |
 | [Canonical Database Naming Conventions](sandbox/dev/CANONICAL_NAMING.md) | sandbox/dev |
 | [CLAUDE.md — odoo-dev-sandbox Project Instructions](sandbox/dev/CLAUDE.md) | sandbox/dev |
 | [Hot-Reload Development Guide](sandbox/dev/HOT_RELOAD_GUIDE.md) | sandbox/dev |
