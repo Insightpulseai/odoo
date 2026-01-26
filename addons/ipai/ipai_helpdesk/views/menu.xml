@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-Level Helpdesk Menu -->
+    <menuitem id="menu_helpdesk_root"
+              name="Helpdesk"
+              sequence="15"
+              web_icon="ipai_helpdesk,static/description/icon.png"/>
+
+    <!-- Tickets Menu -->
+    <menuitem id="menu_helpdesk_tickets"
+              name="Tickets"
+              parent="menu_helpdesk_root"
+              action="action_ipai_helpdesk_ticket"
+              sequence="10"/>
+
+    <!-- Reporting Menu -->
+    <menuitem id="menu_helpdesk_reporting"
+              name="Reporting"
+              parent="menu_helpdesk_root"
+              sequence="80"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_helpdesk_configuration"
+              name="Configuration"
+              parent="menu_helpdesk_root"
+              sequence="90"
+              groups="hr.group_hr_manager"/>
+
+    <menuitem id="menu_helpdesk_teams"
+              name="Teams"
+              parent="menu_helpdesk_configuration"
+              action="action_ipai_helpdesk_team"
+              sequence="10"/>
+</odoo>

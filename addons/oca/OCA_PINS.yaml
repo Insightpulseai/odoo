@@ -1,0 +1,148 @@
+# OCA Module Pins - Reproducible OCA dependencies
+# These pins ensure CI builds are deterministic
+# Updated: 2026-01-26
+
+version: 1
+odoo_version: "18.0"
+
+# =============================================================================
+# Agent Framework Dependencies (for Auto-Claude / Skill Runtime)
+# =============================================================================
+
+repos:
+  # Background job execution
+  queue:
+    repo: https://github.com/OCA/queue.git
+    branch: "18.0"
+    modules:
+      - queue_job
+      - queue_job_cron
+      - queue_job_batch
+
+  # REST API framework
+  rest-framework:
+    repo: https://github.com/OCA/rest-framework.git
+    branch: "18.0"
+    modules:
+      - base_rest
+      - base_rest_pydantic
+
+  # Component registry (skills as plugins)
+  connector:
+    repo: https://github.com/OCA/connector.git
+    branch: "18.0"
+    modules:
+      - component
+      - component_event
+
+  # API authentication
+  server-auth:
+    repo: https://github.com/OCA/server-auth.git
+    branch: "18.0"
+    modules:
+      - auth_jwt
+      - auth_api_key
+
+  # Environment-based config
+  server-env:
+    repo: https://github.com/OCA/server-env.git
+    branch: "18.0"
+    modules:
+      - server_environment
+
+  # Ops/maintainability
+  server-tools:
+    repo: https://github.com/OCA/server-tools.git
+    branch: "18.0"
+    modules:
+      - module_analysis
+      - module_auto_update
+      - auditlog
+
+# =============================================================================
+# Enterprise Parity Dependencies
+# =============================================================================
+
+  # Accounting & Finance
+  account-financial-reporting:
+    repo: https://github.com/OCA/account-financial-reporting.git
+    branch: "18.0"
+    modules:
+      - account_financial_report
+
+  account-financial-tools:
+    repo: https://github.com/OCA/account-financial-tools.git
+    branch: "18.0"
+    modules:
+      - account_asset_management
+      - account_reconcile_oca
+
+  mis-builder:
+    repo: https://github.com/OCA/mis-builder.git
+    branch: "18.0"
+    modules:
+      - mis_builder
+      - mis_builder_budget
+
+  # HR & Expense
+  hr:
+    repo: https://github.com/OCA/hr.git
+    branch: "18.0"
+    modules:
+      - hr_expense_tier_validation
+
+  timesheet:
+    repo: https://github.com/OCA/timesheet.git
+    branch: "18.0"
+    modules:
+      - hr_timesheet_sheet
+
+  # Procurement
+  purchase-workflow:
+    repo: https://github.com/OCA/purchase-workflow.git
+    branch: "18.0"
+    modules:
+      - purchase_requisition
+      - purchase_tier_validation
+
+  # Project Management
+  project:
+    repo: https://github.com/OCA/project.git
+    branch: "18.0"
+    modules:
+      - project_task_dependency
+      - project_task_checklist
+      - project_timeline
+
+  # Web/UI enhancements
+  web:
+    repo: https://github.com/OCA/web.git
+    branch: "18.0"
+    modules: []  # Will be populated as needed
+
+  # Helpdesk
+  helpdesk:
+    repo: https://github.com/OCA/helpdesk.git
+    branch: "18.0"
+    modules:
+      - helpdesk_mgmt
+
+  # Manufacturing
+  manufacture:
+    repo: https://github.com/OCA/manufacture.git
+    branch: "18.0"
+    modules:
+      - quality_control
+
+# =============================================================================
+# Fetch Instructions
+# =============================================================================
+# To aggregate OCA modules, use oca-aggregate:
+#
+#   pip install oca-aggregator
+#   oca-aggregate addons/oca/oca-aggregate.yml
+#
+# Or use git submodules:
+#
+#   git submodule add https://github.com/OCA/queue.git addons/oca/queue
+#   git -C addons/oca/queue checkout 18.0

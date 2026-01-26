@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Payslip Form View -->
+    <record id="hr_payslip_view_form" model="ir.ui.view">
+        <field name="name">hr.payslip.form</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <form string="Payslip">
+                <header>
+                    <button name="action_compute_sheet" type="object" string="Compute"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_verify" type="object" string="Submit for Verification"
+                            invisible="state != 'draft'"/>
+                    <button name="action_done" type="object" string="Confirm"
+                            class="btn-primary" invisible="state != 'verify'"/>
+                    <button name="action_draft" type="object" string="Set to Draft"
+                            invisible="state not in ('verify', 'cancel')"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state in ('done', 'cancel')"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,verify,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Employee Information">
+                            <field name="employee_id"/>
+                            <field name="contract_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group string="Payroll Period">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Earnings" name="earnings">
+                            <group>
+                                <group string="Basic Pay">
+                                    <field name="basic_salary"/>
+                                    <field name="overtime_pay"/>
+                                    <field name="holiday_pay"/>
+                                    <field name="night_differential"/>
+                                </group>
+                                <group string="Additional Pay">
+                                    <field name="allowances"/>
+                                    <field name="bonus"/>
+                                    <field name="other_earnings"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="gross_wage" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                        <page string="Deductions" name="deductions">
+                            <group>
+                                <group string="Mandatory Contributions (Employee Share)">
+                                    <field name="sss_ee"/>
+                                    <field name="philhealth_ee"/>
+                                    <field name="pagibig_ee"/>
+                                    <field name="withholding_tax"/>
+                                </group>
+                                <group string="Loans &amp; Other Deductions">
+                                    <field name="sss_loan"/>
+                                    <field name="pagibig_loan"/>
+                                    <field name="company_loan"/>
+                                    <field name="other_deductions"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="total_deductions" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                        <page string="Employer Contributions" name="employer">
+                            <group>
+                                <group string="Statutory Contributions">
+                                    <field name="sss_er"/>
+                                    <field name="sss_ec"/>
+                                    <field name="philhealth_er"/>
+                                    <field name="pagibig_er"/>
+                                </group>
+                                <group string="Totals">
+                                    <field name="total_employer_cost" class="oe_subtotal_footer_separator"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Tax Computation" name="tax">
+                            <group>
+                                <group string="BIR Withholding Tax">
+                                    <field name="taxable_income"/>
+                                    <field name="withholding_tax"/>
+                                </group>
+                                <group string="BIR Integration">
+                                    <field name="bir_return_id"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                    <group class="oe_subtotal_footer">
+                        <field name="net_wage" class="oe_subtotal_footer_separator"
+                               widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Payslip Tree View -->
+    <record id="hr_payslip_view_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.tree</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <tree string="Payslips" decoration-info="state == 'draft'"
+                  decoration-warning="state == 'verify'" decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancel'">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="gross_wage" sum="Total Gross"/>
+                <field name="total_deductions" sum="Total Deductions"/>
+                <field name="net_wage" sum="Total Net"/>
+                <field name="state"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Payslip Search View -->
+    <record id="hr_payslip_view_search" model="ir.ui.view">
+        <field name="name">hr.payslip.search</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <search string="Search Payslips">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="date_from"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="verify" string="Awaiting Verification" domain="[('state', '=', 'verify')]"/>
+                <filter name="done" string="Confirmed" domain="[('state', '=', 'done')]"/>
+                <separator/>
+                <filter name="current_month" string="Current Month"
+                        domain="[('date_from', '&gt;=', (context_today().strftime('%%Y-%%m-01')))]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'date_from:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Payslip Action -->
+    <record id="action_hr_payslip" model="ir.actions.act_window">
+        <field name="name">Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="hr_payslip_view_search"/>
+        <field name="context">{'search_default_current_month': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first payslip
+            </p>
+            <p>
+                Generate payslips for employees with active contracts.
+                Philippine statutory deductions (SSS, PhilHealth, Pag-IBIG, BIR)
+                are automatically computed based on 2025 contribution tables.
+            </p>
+        </field>
+    </record>
+</odoo>

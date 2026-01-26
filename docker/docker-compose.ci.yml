@@ -1,0 +1,61 @@
+# docker-compose.ci.yml - CI Module Install Testing
+# =============================================================================
+# Usage (CI):
+#   docker compose -f docker/docker-compose.ci.yml up -d postgres
+#   docker compose -f docker/docker-compose.ci.yml run --rm odoo-test
+#
+# Usage (Local):
+#   docker compose -f docker/docker-compose.ci.yml up -d
+#   docker compose -f docker/docker-compose.ci.yml exec odoo-test odoo --stop-after-init
+# =============================================================================
+
+services:
+  # Database for testing
+  postgres:
+    image: postgres:16
+    container_name: ipai-ci-postgres
+    environment:
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - ci_pgdata:/var/lib/postgresql/data
+
+  # Odoo for module install testing
+  odoo-test:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ci
+    container_name: ipai-ci-odoo
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: odoo
+      PASSWORD: odoo
+    ports:
+      - "8069:8069"
+    # Default: run install test and exit
+    command: >
+      odoo
+        --database=test_odoo
+        --db_host=postgres
+        --db_port=5432
+        --db_user=odoo
+        --db_password=odoo
+        --init=base
+        --stop-after-init
+        --log-level=warn
+
+volumes:
+  ci_pgdata:
+    name: ipai-ci-pgdata
