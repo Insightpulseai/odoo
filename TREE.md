@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 4d53b1aad8082949d9ef12e084b86c30b761b875
+> Commit: 847c902d9952fd375c811728b7b477480ade8834
 
 ```
 .
@@ -147,6 +147,7 @@
 │   │   ├── odoo-ci-gate.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
+│   │   ├── odoo-overlay-install.yml
 │   │   ├── odoo-schema-pipeline.yml
 │   │   ├── ops-ci-router.yml
 │   │   ├── ops-ssot-verify.yml
@@ -291,6 +292,20 @@
 │   │   ├── ipai_foundation
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_helpdesk
+│   │   │   ├── data
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_hr_payroll_ph
+│   │   │   ├── models
+│   │   │   ├── security
+│   │   │   ├── views
+│   │   │   ├── wizard
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_platform_theme
@@ -831,6 +846,8 @@
 │   │   └── __manifest__.py
 │   └── oca
 │       ├── .gitkeep
+│       ├── OCA_PINS.yaml
+│       ├── ODOO_PIN.txt
 │       ├── __init__.py
 │       ├── __manifest__.py
 │       ├── manifest.yaml
@@ -1553,6 +1570,10 @@
 │   │   └── 00-init.sql
 │   └── superset
 │       └── superset_config.py
+├── docker
+│   ├── Dockerfile.ci
+│   ├── Dockerfile.odoo
+│   └── docker-compose.ci.yml
 ├── docs
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
@@ -1975,6 +1996,7 @@
 │   │   └── runbooks.md
 │   ├── parity
 │   │   ├── IMPLEMENTATION_MAP.md
+│   │   ├── PARITY_MATRIX.yaml
 │   │   └── TARGET_CAPABILITIES.md
 │   ├── ppm
 │   │   ├── architecture.md
@@ -2672,7 +2694,9 @@
 │   │   ├── chatops-hotfix.json
 │   │   ├── deployment-notify.json
 │   │   ├── github-deploy-trigger.json
-│   │   └── github-router.json
+│   │   ├── github-events-handler.json
+│   │   ├── github-router.json
+│   │   └── vercel-drain-handler.json
 │   └── n8n_tenant_provisioning.json
 ├── notion-n8n-monthly-close
 │   ├── scripts
@@ -3185,7 +3209,8 @@
 │   │   ├── audit_ee_parity.sh
 │   │   ├── check_ipai_foundation.sh
 │   │   ├── create_blocker_issues.sh
-│   │   └── require_runnable_slice.sh
+│   │   ├── require_runnable_slice.sh
+│   │   └── validate_parity_matrix.sh
 │   ├── ppm
 │   │   ├── deploy-databricks.sh
 │   │   ├── run-dq-checks.sh
@@ -4463,15 +4488,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1173 directories, 3285 files
+1184 directories, 3299 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1391 |
-| Files | 4311 |
-| Python files | 664 |
-| XML files | 253 |
+| Directories | 1402 |
+| Files | 4347 |
+| Python files | 680 |
+| XML files | 261 |
 | Markdown files | 1116 |
