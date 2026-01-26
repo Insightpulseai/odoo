@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bea8152d2fcb8e81503a48fd956ca1123828bda2
+> Commit: 5b7ef4d42a4a65cc6ab6d7620bf5dd3224d4e36a
 
 ## 📚 Documentation
 
@@ -446,6 +446,7 @@
 | [Azure Well-Architected + Lakehouse Hybrid Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/AZURE_WAF_LAKEHOUSE_ASSESSMENT.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
 | [Gap Analysis: Azure WAF + Lakehouse Assessment](docs/evidence/20260125-1500/azure-waf-lakehouse/gaps.md) | docs/evidence/20260125-1500/azure-waf-lakehouse |
 | [EE Parity Audit](docs/evidence/20260126-0457/parity-audit/ee_parity_audit.md) | docs/evidence/20260126-0457/parity-audit |
+| [Odoo 19 Migration Spec Bundle - Validation Summary](docs/evidence/20260126-0815/odoo-19-migration/VALIDATION_SUMMARY.md) | docs/evidence/20260126-0815/odoo-19-migration |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
@@ -1039,6 +1040,10 @@
 | [Notion x Finance PPM Control Room — Implementation Plan](spec/notion-finance-ppm-control-room/plan.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Product Requirements Document](spec/notion-finance-ppm-control-room/prd.md) | spec/notion-finance-ppm-control-room |
 | [Notion x Finance PPM Control Room — Task Checklist](spec/notion-finance-ppm-control-room/tasks.md) | spec/notion-finance-ppm-control-room |
+| [Odoo 19 Migration - Constitution](spec/odoo-19-migration/constitution.md) | spec/odoo-19-migration |
+| [Odoo 19 Migration - Implementation Plan](spec/odoo-19-migration/plan.md) | spec/odoo-19-migration |
+| [Odoo 19 Migration - Product Requirements Document](spec/odoo-19-migration/prd.md) | spec/odoo-19-migration |
+| [Odoo 19 Migration - Task Breakdown](spec/odoo-19-migration/tasks.md) | spec/odoo-19-migration |
 | [Constitution — Odoo Alternatives (EE → CE/OCA)](spec/odoo-alternatives/constitution.md) | spec/odoo-alternatives |
 | [Plan — Odoo Alternatives (EE → CE/OCA)](spec/odoo-alternatives/plan.md) | spec/odoo-alternatives |
 | [PRD — Odoo Alternatives (EE → CE/OCA)](spec/odoo-alternatives/prd.md) | spec/odoo-alternatives |
