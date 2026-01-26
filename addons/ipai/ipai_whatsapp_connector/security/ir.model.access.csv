@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_whatsapp_connector_user,whatsapp_connector.user,model_ipai_whatsapp_connector,base.group_user,1,0,0,0
+access_whatsapp_connector_manager,whatsapp_connector.manager,model_ipai_whatsapp_connector,base.group_system,1,1,1,1
