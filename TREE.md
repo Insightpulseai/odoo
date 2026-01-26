@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9424c6ba3cf8275e33f45083b6df80023bec1ff7
+> Commit: 4d53b1aad8082949d9ef12e084b86c30b761b875
 
 ```
 .
@@ -116,6 +116,7 @@
 │   │   ├── figma-featuremap-sync.yml
 │   │   ├── fin-workspace-weekly-sync.yml
 │   │   ├── finance-ppm-health.yml
+│   │   ├── github-governance.yml
 │   │   ├── go-live-manifest-gate.yml
 │   │   ├── health-check.yml
 │   │   ├── icons-drift.yml
@@ -1700,9 +1701,13 @@
 │   │   ├── 20260124-supabase-setup
 │   │   │   ├── infra
 │   │   │   └── integrations
-│   │   └── 20260125-1500
-│   │       ├── ai-control-plane
-│   │       └── azure-waf-lakehouse
+│   │   ├── 20260125-1500
+│   │   │   ├── ai-control-plane
+│   │   │   └── azure-waf-lakehouse
+│   │   ├── 20260126-0451
+│   │   │   └── github-governance
+│   │   └── 20260126-0457
+│   │       └── parity-audit
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2751,6 +2756,12 @@
 │   │   │   └── figma_contract.schema.json
 │   │   └── README.md
 │   ├── github
+│   │   ├── custom-properties
+│   │   │   └── schema.json
+│   │   ├── rulesets
+│   │   │   └── org-repo-ruleset.json
+│   │   ├── teams
+│   │   │   └── teams.json
 │   │   ├── apply_labels.sh
 │   │   └── labels.json
 │   ├── jobs
@@ -2988,6 +2999,10 @@
 │   │   └── ios
 │   │       └── README.md
 │   └── README.md
+├── reports
+│   └── parity
+│       ├── ee_parity_audit.json
+│       └── ee_parity_audit.md
 ├── sandbox
 │   ├── dev
 │   │   ├── .claude
@@ -3090,7 +3105,13 @@
 │   ├── generate
 │   │   └── generate_platform_runbooks.mjs
 │   ├── github
-│   │   └── create_ee_replacement_issues.sh
+│   │   ├── apply_all_governance.sh
+│   │   ├── apply_custom_properties.sh
+│   │   ├── apply_org_ruleset.sh
+│   │   ├── apply_teams.sh
+│   │   ├── create_ee_replacement_issues.sh
+│   │   ├── pull_enterprise_audit.sh
+│   │   └── validate_governance.sh
 │   ├── import
 │   │   ├── import_activities.py
 │   │   ├── run_import_sequence.sh
@@ -3161,7 +3182,9 @@
 │   │   ├── build_oca_bundle.py
 │   │   └── check_ee_parity.py
 │   ├── parity
+│   │   ├── audit_ee_parity.sh
 │   │   ├── check_ipai_foundation.sh
+│   │   ├── create_blocker_issues.sh
 │   │   └── require_runnable_slice.sh
 │   ├── ppm
 │   │   ├── deploy-databricks.sh
@@ -4440,15 +4463,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1164 directories, 3271 files
+1173 directories, 3285 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1382 |
-| Files | 4291 |
+| Directories | 1391 |
+| Files | 4311 |
 | Python files | 664 |
 | XML files | 253 |
-| Markdown files | 1114 |
+| Markdown files | 1116 |
