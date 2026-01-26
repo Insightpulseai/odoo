@@ -1,0 +1,62 @@
+{
+  "timestamp": "2026-01-26T08:30:00Z",
+  "scope": "ee-parity-test-runner",
+  "git_state": {
+    "branch": "claude/odoo-parity-test-runner-zeF1c",
+    "commits": [
+      {"sha": "4abd842", "message": "feat(parity): add Odoo 19 EE parity test runner framework"},
+      {"sha": "0268d2e", "message": "chore(ci): add EE parity test runner workflow and schema migration"},
+      {"sha": "b2a55c5", "message": "docs(parity): add deployment scripts and secrets documentation"}
+    ]
+  },
+  "files_created": [
+    "tools/parity/test_ee_parity.py",
+    "tools/parity/run_ee_parity.sh",
+    "tools/parity/PARITY_TESTING.md",
+    "tools/parity/superset_parity_dashboard.sql",
+    "supabase/migrations/20260126_000001_ee_parity_tracking.sql",
+    ".github/workflows/ee-parity-test-runner.yml",
+    "scripts/deploy_parity_schema.sh",
+    "scripts/create_parity_pr.sh",
+    "docs/setup/PARITY_TEST_RUNNER_SECRETS.md"
+  ],
+  "validation": {
+    "python_syntax": "PASS",
+    "bash_syntax": "PASS",
+    "test_count": 14
+  },
+  "test_categories": [
+    {"name": "accounting", "tests": 3, "features": ["GL", "bank_reconciliation", "asset_management"]},
+    {"name": "payroll", "tests": 5, "features": ["payslip", "SSS", "PhilHealth", "withholding_tax", "BIR_1601C"]},
+    {"name": "approvals", "tests": 2, "features": ["approval_requests", "multi_level"]},
+    {"name": "helpdesk", "tests": 2, "features": ["tickets", "SLA_tracking"]},
+    {"name": "planning", "tests": 2, "features": ["shifts", "conflict_detection"]}
+  ],
+  "superset_views": [
+    "v_latest_parity_results",
+    "v_parity_scorecard",
+    "v_overall_parity",
+    "v_parity_trend",
+    "v_parity_gaps"
+  ],
+  "deployment_status": {
+    "git_push": "SUCCESS",
+    "pr_url": "https://github.com/jgtolentino/odoo-ce/pull/new/claude/odoo-parity-test-runner-zeF1c",
+    "odoo_tests": "REQUIRES_ODOO_INSTANCE",
+    "schema_deploy": "REQUIRES_SUPABASE_CREDENTIALS"
+  },
+  "required_secrets": [
+    "ODOO_URL",
+    "ODOO_DB",
+    "ODOO_USER",
+    "ODOO_PASS",
+    "SUPABASE_ACCESS_TOKEN",
+    "SUPABASE_DB_PASSWORD"
+  ],
+  "manual_steps": [
+    "1. Create PR: https://github.com/jgtolentino/odoo-ce/pull/new/claude/odoo-parity-test-runner-zeF1c",
+    "2. Set GitHub Secrets in repo settings",
+    "3. Deploy schema: ./scripts/deploy_parity_schema.sh",
+    "4. Run tests: ./tools/parity/run_ee_parity.sh"
+  ]
+}
