@@ -5,9 +5,13 @@
 meta:
   odoo_version_target: "19.0"
   enforcement: "block_custom_until_covered"
+  last_updated: "2026-01-26"
+  release_notes_source: "https://www.odoo.com/documentation/19.0/releasenotes.html"
   description: |
     All features must reach 'verified' status before ipai_enterprise_bridge
     changes are allowed. This is enforced by CI.
+
+    Updated for Odoo 19 Release Notes (September 2025) parity analysis.
 
 mapping:
   # ---- Accounting ----
@@ -176,3 +180,236 @@ mapping:
     status: "planned"
     owner: "platform"
     notes: "External company data enrichment API"
+
+  # ==== Odoo 19 New Features (2026-01-26) ====
+
+  # ---- AI Platform (CRITICAL - New in Odoo 19) ----
+  - feature_id: ai_agents
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_ai_agent_builder
+    status: "planned"
+    owner: "ai-team"
+    priority: "P0"
+    notes: "AI agents with system prompts, topics, tools - Odoo 19 flagship feature"
+
+  - feature_id: ai_rag_sources
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_ai_rag
+    status: "planned"
+    owner: "ai-team"
+    priority: "P0"
+    notes: "RAG pipeline: files, URLs, knowledge docs, model fields"
+
+  - feature_id: ai_tools
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_ai_tools
+    status: "planned"
+    owner: "ai-team"
+    priority: "P0"
+    notes: "Tool registry with audited execution"
+
+  - feature_id: ai_chatgpt5_gemini
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_ai_agent_builder
+    status: "planned"
+    owner: "ai-team"
+    priority: "P0"
+    notes: "ChatGPT 5.0 and Gemini provider support"
+
+  - feature_id: ai_fields
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_ai_fields
+    status: "planned"
+    owner: "ai-team"
+    priority: "P1"
+    notes: "AI-powered field population"
+
+  - feature_id: ai_server_actions
+    strategy: "ce"
+    ce_modules:
+      - base_automation
+    ipai_modules:
+      - ipai_ai_automations
+    status: "planned"
+    owner: "ai-team"
+    priority: "P1"
+    notes: "AI in automated actions"
+
+  - feature_id: ai_livechat
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_ai_livechat
+    status: "planned"
+    owner: "ai-team"
+    priority: "P2"
+    notes: "AI agent connected to live chat"
+
+  - feature_id: ai_voice_transcript
+    strategy: "external"
+    external_service: "Whisper API"
+    status: "planned"
+    owner: "ai-team"
+    priority: "P3"
+    notes: "Voice transcription via external service"
+
+  # ---- ESG (New App in Odoo 19) ----
+  - feature_id: esg_carbon_analytics
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_esg
+    status: "planned"
+    owner: "compliance"
+    priority: "P2"
+    notes: "Carbon footprint analytics by scope and activity"
+
+  - feature_id: esg_emission_factors
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_esg
+    status: "planned"
+    owner: "compliance"
+    priority: "P2"
+    notes: "IPCC database integration for emission factors"
+
+  - feature_id: esg_social_metrics
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_esg_social
+    status: "planned"
+    owner: "compliance"
+    priority: "P2"
+    notes: "Gender parity and pay gap tracking"
+
+  # ---- Equity (New App in Odoo 19) ----
+  - feature_id: equity_share_tracking
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_equity
+    status: "planned"
+    owner: "finance"
+    priority: "P3"
+    notes: "Share/option transactions and shareholder management"
+
+  # ---- WhatsApp Integration (Odoo 19) ----
+  - feature_id: whatsapp_integration
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_whatsapp_connector
+    status: "planned"
+    owner: "integrations"
+    priority: "P1"
+    notes: "WhatsApp for follow-ups, calendar, shipping, sign"
+
+  # ---- Tax Return (Odoo 19) ----
+  - feature_id: tax_return_workflow
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_finance_tax_return
+    status: "planned"
+    owner: "finance"
+    priority: "P0"
+    notes: "New tax return workflow with validation"
+
+  # ---- Helpdesk Enhancements (Odoo 19) ----
+  - feature_id: helpdesk_rotting_tickets
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_helpdesk
+    status: "planned"
+    owner: "services"
+    priority: "P1"
+    notes: "Inactive ticket identification in Kanban"
+
+  - feature_id: helpdesk_gift_card_refund
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_helpdesk_refund
+    status: "planned"
+    owner: "services"
+    priority: "P2"
+    notes: "Gift card/voucher reimbursements"
+
+  # ---- Project Templates (Odoo 19) ----
+  - feature_id: project_templates
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_project_templates
+    status: "planned"
+    owner: "project"
+    priority: "P1"
+    notes: "Project and task templates with roles"
+
+  # ---- Planning Enhancements (Odoo 19) ----
+  - feature_id: planning_attendance_analysis
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_planning_attendance
+    status: "planned"
+    owner: "hr"
+    priority: "P1"
+    notes: "Compare planned vs attended hours"
+
+  # ---- Payroll Enhancements (Odoo 19) ----
+  - feature_id: payroll_pay_runs
+    strategy: "oca"
+    oca_modules:
+      - payroll
+    ipai_modules:
+      - ipai_hr_payroll_ph
+    status: "planned"
+    owner: "hr"
+    priority: "P0"
+    notes: "Pay runs with guided steps (batch renamed)"
+
+  - feature_id: payroll_multiple_bank_accounts
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_hr_payroll_ph
+    status: "planned"
+    owner: "hr"
+    priority: "P1"
+    notes: "Split salary across multiple accounts"
+
+  # ---- Documents AI (Odoo 19) ----
+  - feature_id: documents_ai_management
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_documents_ai
+    status: "planned"
+    owner: "documents"
+    priority: "P2"
+    notes: "AI-driven document classification and actions"
+
+  # ---- Sign Enhancements (Odoo 19) ----
+  - feature_id: sign_document_envelopes
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_sign
+    status: "planned"
+    owner: "documents"
+    priority: "P2"
+    notes: "Multiple documents in single sign request"
+
+  # ---- Philippines Localizations (Odoo 19) ----
+  - feature_id: bir_2550q_revamp
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_bir_vat
+    status: "planned"
+    owner: "localization"
+    priority: "P0"
+    notes: "Updated 2550Q per 2025/2026 BIR format"
+
+  - feature_id: bir_dat_export
+    strategy: "ipai"
+    ipai_modules:
+      - ipai_bir_alphalist
+    status: "planned"
+    owner: "localization"
+    priority: "P0"
+    notes: "Direct .DAT export for Alphalist/ReLiEf"
