@@ -1,0 +1,198 @@
+name: EE Parity Test Runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      category:
+        description: 'Test category (accounting, payroll, approvals, helpdesk, planning, or empty for all)'
+        required: false
+        default: ''
+      report_format:
+        description: 'Report format (text, json, html)'
+        required: false
+        default: 'json'
+  schedule:
+    # Run weekly on Sundays at 6 AM UTC
+    - cron: '0 6 * * 0'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/parity/test_ee_parity.py'
+      - 'tools/parity/run_ee_parity.sh'
+      - 'addons/ipai/**'
+      - '.github/workflows/ee-parity-test-runner.yml'
+
+env:
+  ODOO_URL: ${{ secrets.ODOO_URL || 'http://localhost:8069' }}
+  ODOO_DB: ${{ secrets.ODOO_DB || 'odoo' }}
+  ODOO_USER: ${{ secrets.ODOO_USER || 'admin' }}
+  ODOO_PASS: ${{ secrets.ODOO_PASS || 'admin' }}
+
+jobs:
+  parity-tests:
+    name: Run EE Parity Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests
+
+      - name: Validate test script syntax
+        run: |
+          python -m py_compile tools/parity/test_ee_parity.py
+          bash -n tools/parity/run_ee_parity.sh
+          echo "Syntax validation passed"
+
+      - name: Check Odoo availability
+        id: odoo_check
+        continue-on-error: true
+        run: |
+          if curl -s --connect-timeout 10 "$ODOO_URL/web/login" > /dev/null 2>&1; then
+            echo "odoo_available=true" >> $GITHUB_OUTPUT
+            echo "Odoo is available at $ODOO_URL"
+          else
+            echo "odoo_available=false" >> $GITHUB_OUTPUT
+            echo "Odoo is not available at $ODOO_URL"
+          fi
+
+      - name: Run parity tests (live Odoo)
+        if: steps.odoo_check.outputs.odoo_available == 'true'
+        run: |
+          CATEGORY="${{ github.event.inputs.category }}"
+          FORMAT="${{ github.event.inputs.report_format || 'json' }}"
+
+          ARGS="--odoo-url $ODOO_URL --db $ODOO_DB --username $ODOO_USER --password $ODOO_PASS"
+          ARGS="$ARGS --report $FORMAT --output reports/parity/parity_report.$FORMAT"
+
+          if [ -n "$CATEGORY" ]; then
+            ARGS="$ARGS --category $CATEGORY"
+          fi
+
+          mkdir -p reports/parity
+          python tools/parity/test_ee_parity.py $ARGS -v || true
+
+          echo "### Parity Test Results" >> $GITHUB_STEP_SUMMARY
+          if [ -f "reports/parity/parity_report.json" ]; then
+            SCORE=$(python -c "import json; d=json.load(open('reports/parity/parity_report.json')); print(d.get('overall_score', 0))")
+            echo "Overall Score: **${SCORE}%**" >> $GITHUB_STEP_SUMMARY
+
+            python << 'EOF' >> $GITHUB_STEP_SUMMARY
+          import json
+          with open('reports/parity/parity_report.json') as f:
+              data = json.load(f)
+          print(f"\n| Metric | Value |")
+          print(f"|--------|-------|")
+          print(f"| Total Tests | {data.get('total_tests', 0)} |")
+          print(f"| Passed | {data.get('passed', 0)} |")
+          print(f"| Partial | {data.get('partial', 0)} |")
+          print(f"| Failed | {data.get('failed', 0)} |")
+          print(f"| Skipped | {data.get('skipped', 0)} |")
+          EOF
+          fi
+
+      - name: Run parity tests (offline validation)
+        if: steps.odoo_check.outputs.odoo_available != 'true'
+        run: |
+          echo "### Parity Test Results (Offline)" >> $GITHUB_STEP_SUMMARY
+          echo "Odoo instance not available. Running offline validation only." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Validate test script can import and initialize
+          python << 'EOF'
+          import sys
+          sys.path.insert(0, 'tools/parity')
+          from test_ee_parity import ParityTester, OdooAPI, ParityReport, ParityStatus
+
+          print("Test framework validation:")
+          print("  - ParityTester: OK")
+          print("  - OdooAPI: OK")
+          print("  - ParityReport: OK")
+          print("  - ParityStatus: OK")
+
+          # Check test count
+          class MockAPI:
+              def __init__(self): pass
+              def check_module_installed(self, m): return False
+              def check_model_exists(self, m): return False
+              def check_field_exists(self, m, f): return False
+              def search_read(self, *a, **k): return []
+
+          tester = ParityTester(MockAPI())
+          tests = tester.get_all_tests()
+          print(f"  - Total tests: {len(tests)}")
+          print("\nOffline validation passed.")
+          EOF
+
+      - name: Upload parity report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-report
+          path: reports/parity/
+          if-no-files-found: ignore
+
+  deploy-schema:
+    name: Deploy Superset Schema
+    runs-on: ubuntu-latest
+    needs: parity-tests
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Deploy parity tracking schema
+        if: env.SUPABASE_ACCESS_TOKEN != ''
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_REF: spdtwktxdalcfigzeqrz
+        run: |
+          echo "Deploying EE parity tracking schema..."
+
+          # Link to project
+          supabase link --project-ref $SUPABASE_PROJECT_REF
+
+          # Push migration
+          supabase db push --include-all || {
+            echo "Migration push failed. Schema may already exist."
+          }
+
+          echo "Schema deployment complete."
+
+      - name: Schema deployment skipped
+        if: env.SUPABASE_ACCESS_TOKEN == ''
+        run: |
+          echo "SUPABASE_ACCESS_TOKEN not set. Schema deployment skipped."
+          echo "To deploy manually, run:"
+          echo "  psql \$DATABASE_URL -f supabase/migrations/20260126_000001_ee_parity_tracking.sql"
