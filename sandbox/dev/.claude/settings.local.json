@@ -153,7 +153,8 @@
       "Bash(mkdocs build:*)",
       "Bash(./deploy-docker.sh)",
       "Bash(open -a Docker)",
-      "Bash(node scripts/validate_odoo_parity_plans.mjs:*)"
+      "Bash(node scripts/validate_odoo_parity_plans.mjs:*)",
+      "Bash(./scripts/scan_repos.sh:*)"
     ]
   }
 }
