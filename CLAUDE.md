@@ -1779,5 +1779,80 @@ gh pr create --title "$(jq -r .title /tmp/issue.json)" \
 
 ---
 
+<!-- IPAI_ODDO_AI_AGENT_BUILDER_PARITY:START -->
+## Odoo AI Agent Builder Parity (CE + OCA Replacement Runbook)
+
+### Canonical References (for semantics parity)
+- Odoo Studio / customization framing: https://www.odoo.com/app/studio
+- Customization vs Development slides: https://www.odoo.com/slides/slide/2-customization-vs-development-1286
+- Odoo 19 AI Agents documentation: https://www.odoo.com/documentation/19.0/applications/productivity/ai/agents.html
+- Odoo 19 AI Server Actions (tooling/action semantics): https://www.odoo.com/documentation/19.0/applications/productivity/ai/server-actions.html
+- GitHub Copilot SDK (optional provider bridge): https://github.com/github/copilot-sdk
+
+### Objective
+Implement an Odoo **CE/OCA-compatible** "AI Agent Builder" that mirrors Odoo 19's documented agent model:
+- **Agents** with system prompt + response style
+- **Topics** as instruction bundles that assign **Tools**
+- **Sources** (files/URLs/knowledge docs) used for **RAG**
+- **LLM provider flexibility** (ChatGPT + Gemini at minimum)
+- **Action execution** only through explicit audited tools
+- Integration into chat surfaces via API/hooks (Discuss/Live Chat equivalents where available)
+
+### Non-Negotiable Constraints
+- **CE-only, OCA-first**. No Odoo Enterprise code, no IAP.
+- **No parity test cheating** (no threshold/scoring edits).
+- **No manual UI requirements** for setup; all config must be reproducible via CLI/scripts/XML data/RPC.
+- **Tool execution** must be permission-gated and audited (who/what/when, inputs/outputs).
+- **RAG determinism**: fixed chunking, stable hashes, reproducible retrieval params.
+- **Secrets** via environment only.
+
+### Target Deliverables
+1) Spec-kit bundle:
+   - `spec/ipai-ai-agent-builder/{constitution,prd,plan,tasks}.md`
+2) Odoo addons (OCA-style layout):
+   - `addons/ipai_ai_agent_builder/` (agent/topic/tool/source registry; seed loader)
+   - `addons/ipai_ai_rag/` (ingestion, chunking, embeddings, retrieval)
+   - `addons/ipai_ai_tools/` (tool interface, auditing, sandboxing)
+3) Config-as-code:
+   - `config/ipai_ai/agents/*.yaml` (agents/topics/tools/sources)
+   - `scripts/ipai_ai_seed.sh` (idempotent seed/update via odoo shell)
+4) Minimal API surface:
+   - `POST /ipai/ai/agent/{agent_id}/chat` (JSON)
+   - `POST /ipai/ai/source/{source_id}/ingest` (JSON)
+   - `POST /ipai/ai/tool/{tool_id}/invoke` (restricted; internal)
+5) Tests:
+   - unit: chunking determinism, embedding cache keys, retrieval tie-break
+   - integration: YAML → agent creation → source ingest → RAG answer → tool call audit
+6) Observability tables/logging:
+   - runs, run_events, tool_calls, embeddings, source_chunks
+
+### Suggested Data Model (Odoo models / DB tables)
+- `ipai_ai_agent(id, name, system_prompt, style, provider, model, enabled)`
+- `ipai_ai_topic(id, agent_id, name, instructions)`
+- `ipai_ai_tool(id, key, name, python_entrypoint, allowed_models, rls_group_id, dry_run_supported)`
+- `ipai_ai_topic_tool_rel(topic_id, tool_id)`
+- `ipai_ai_source(id, agent_id, type[file|url|kb|model_field], locator, metadata_json, ingest_status)`
+- `ipai_ai_chunk(id, source_id, idx, content, content_hash, token_count)`
+- `ipai_ai_embedding(id, chunk_id, embedding_vector, model, dims, created_at)`
+- `ipai_ai_run(id, agent_id, user_id, input, output, provider, model, latency_ms, created_at)`
+- `ipai_ai_tool_call(id, run_id, tool_key, input_json, output_json, status, error, created_at)`
+
+### Deterministic RAG Contract
+- Chunking: fixed `chunk_size`, fixed `overlap`, stable `content_hash`
+- Retrieval: cosine similarity top-k; stable tie-break: `(score desc, chunk_id asc)`
+- Prompt assembly: `system + topic instructions + retrieved snippets + user message`
+- Tool calling: only via structured protocol; no freeform writes
+
+### Tool Execution Contract
+- Tool registry loads python entrypoints, e.g. `ipai_ai_tools.crm:create_lead`
+- Permission gate: Odoo groups + company/record rules
+- Audit every invocation; support `dry_run` for risky tools
+
+### Optional Provider Bridge
+- Add a feature-flagged provider adapter that can call out to external agent runtimes (e.g., GitHub Copilot SDK) behind a strict interface. Keep fully optional and off by default.
+<!-- IPAI_ODDO_AI_AGENT_BUILDER_PARITY:END -->
+
+---
+
 *Query `.claude/project_memory.db` for detailed configuration*
 *Last updated: 2026-01-26*
