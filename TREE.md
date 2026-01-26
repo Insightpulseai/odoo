@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c6a4a090e1de3956b7b652b18fac8e78186fb0d0
+> Commit: bea8152d2fcb8e81503a48fd956ca1123828bda2
 
 ```
 .
@@ -111,6 +111,7 @@
 │   │   ├── drive-sync-verify.yml
 │   │   ├── drive-sync.yml
 │   │   ├── ee-parity-gate.yml
+│   │   ├── ee-parity-test-runner.yml
 │   │   ├── erd-docs.yml
 │   │   ├── erd-graphviz.yml
 │   │   ├── erd-schemaspy.yml
@@ -1734,8 +1735,10 @@
 │   │   │   └── azure-waf-lakehouse
 │   │   ├── 20260126-0451
 │   │   │   └── github-governance
-│   │   └── 20260126-0457
-│   │       └── parity-audit
+│   │   ├── 20260126-0457
+│   │   │   └── parity-audit
+│   │   └── 20260126-0801
+│   │       └── parity-test-runner
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2100,6 +2103,8 @@
 │   │   └── WORKOS_MODULES.prod.csv
 │   ├── seed-data
 │   │   └── EXPORT_TEMPLATES.md
+│   ├── setup
+│   │   └── PARITY_TEST_RUNNER_SECRETS.md
 │   ├── state_machines
 │   │   ├── odoo
 │   │   │   ├── ask_ai_chat.md
@@ -3323,6 +3328,7 @@
 │   ├── count_xml_seeds.py
 │   ├── create-module-readme.sh
 │   ├── create-release.sh
+│   ├── create_parity_pr.sh
 │   ├── db_verify.sh
 │   ├── delete_user_safe.sh
 │   ├── deploy-bir-compliance.sh
@@ -3339,6 +3345,7 @@
 │   ├── deploy_notion_tasks.sh
 │   ├── deploy_odoo_smart.sh
 │   ├── deploy_odoo_upgrade.sh
+│   ├── deploy_parity_schema.sh
 │   ├── deploy_prod.sh
 │   ├── deploy_production.sh
 │   ├── deploy_vercel_prod.sh
@@ -4154,6 +4161,7 @@
 │   │   ├── 20260125_000003_odoo_bridge.sql
 │   │   ├── 20260125_000004_app_schema_rls.sql
 │   │   ├── 20260125_100001_control_plane_vault.sql
+│   │   ├── 20260126_000001_ee_parity_tracking.sql
 │   │   ├── 5001_auth_foundation.sql
 │   │   ├── 5002_auth_jwt_claims.sql
 │   │   ├── 5003_rls_policies.sql
@@ -4360,7 +4368,11 @@
 │   │   ├── requirements.txt
 │   │   └── worker.py
 │   ├── parity
+│   │   ├── PARITY_TESTING.md
 │   │   ├── parity_audit.py
+│   │   ├── run_ee_parity.sh
+│   │   ├── superset_parity_dashboard.sql
+│   │   ├── test_ee_parity.py
 │   │   └── validate_spec_kit.py
 │   ├── pr-gate
 │   │   └── enforce_gate.mjs
@@ -4564,15 +4576,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1234 directories, 3325 files
+1237 directories, 3334 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1454 |
-| Files | 4426 |
-| Python files | 680 |
+| Directories | 1457 |
+| Files | 4436 |
+| Python files | 681 |
 | XML files | 261 |
-| Markdown files | 1126 |
+| Markdown files | 1128 |

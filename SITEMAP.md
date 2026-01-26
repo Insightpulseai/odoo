@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c6a4a090e1de3956b7b652b18fac8e78186fb0d0
+> Commit: bea8152d2fcb8e81503a48fd956ca1123828bda2
 
 ## 📚 Documentation
 
@@ -721,6 +721,7 @@
 | [Runbook: superset](docs/runbooks/superset.md) | docs/runbooks |
 | [Runbook: vercel](docs/runbooks/vercel.md) | docs/runbooks |
 | [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
+| [EE Parity Test Runner - Required Secrets](docs/setup/PARITY_TEST_RUNNER_SECRETS.md) | docs/setup |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
 | [Ask AI Chat FSM](docs/state_machines/odoo/ask_ai_chat.md) | docs/state_machines/odoo |
 | [Document Upload/OCR FSM](docs/state_machines/odoo/document_upload.md) | docs/state_machines/odoo |
@@ -1136,6 +1137,7 @@
 | [Documentation Catalogue → Odoo CE/OCA Mapper](tools/docs_catalog/README.md) | tools/docs_catalog |
 | [Model Repo Scanner](tools/model-repo-scanner/README.md) | tools/model-repo-scanner |
 | [Model Repo Scanner Report](tools/model-repo-scanner/artifacts/model-repo-report.md) | tools/model-repo-scanner/artifacts |
+| [Odoo 19 Enterprise Edition Parity Testing Framework](tools/parity/PARITY_TESTING.md) | tools/parity |
 | [Walkthrough - Notion Parity Modules](walkthrough.md) | . |
 | [Shadow Enterprise Webhook & AI Stack](workflows/SHADOW_ENTERPRISE_STACK.md) | workflows |
 | [n8n Webhook Deployment Guide - TBWA Finance SSC](workflows/WEBHOOK_DEPLOYMENT_GUIDE.md) | workflows |
