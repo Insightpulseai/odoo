@@ -1,0 +1,37 @@
+# Curated Documents Manifest
+# ===========================
+# Documents selectively imported from operational repos into ipai-learn.
+# Each entry must include: source, reason, owner, last_sync.
+#
+# Rules:
+# - Prefer deep links over copying
+# - Only executive-facing, stable content qualifies
+# - Bulk imports are prohibited (see CURATION_POLICY.md)
+
+version: "1.0"
+last_updated: "2026-01-26"
+
+# Eligible documents for curation (3-10 max recommended)
+items:
+  # Example entry (uncomment and modify when adding curated docs):
+  # - name: "Architecture Overview"
+  #   source: "odoo-ce/docs/architecture/OVERVIEW.md"
+  #   target: "docs-site/docs/architecture/overview.md"
+  #   reason: "High-level architecture suitable for enterprise stakeholders"
+  #   owner: "docs-team"
+  #   last_sync: "2026-01-26"
+  #   status: "pending"  # pending | approved | synced
+
+# Currently no documents are curated.
+# Add entries above following the example format.
+
+# Exclusion list - explicitly excluded from curation
+exclusions:
+  - pattern: "docs/evidence/**"
+    reason: "CI/CD evidence files are repo-specific"
+  - pattern: "docs/data-model/**"
+    reason: "Technical schema docs not suitable for enterprise audience"
+  - pattern: "spec/**"
+    reason: "Spec kits are developer-focused"
+  - pattern: "**/*_internal.md"
+    reason: "Internal docs not for external curation"

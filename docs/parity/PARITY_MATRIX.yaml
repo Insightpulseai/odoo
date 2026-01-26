@@ -1,0 +1,347 @@
+# PARITY_MATRIX.yaml - Single Source of Truth for Enterprise Parity
+# This file is machine-readable and enforced by CI gates
+# See: scripts/parity/require_runnable_slice.sh
+# See: .github/workflows/ee-parity-gate.yml
+
+version: 1
+updated: "2026-01-26"
+odoo_version: "18.0"
+
+# =============================================================================
+# EE Parity Features - Each must ship with runnable artifacts
+# =============================================================================
+
+features:
+  # ---------------------------------------------------------------------------
+  # PHASE 1: FOUNDATION (Control Plane)
+  # ---------------------------------------------------------------------------
+  - id: EE-FOUNDATION-0001
+    name: Control Plane - Workspaces
+    phase: 1
+    owner: ipai_foundation
+    status: shipped
+    gates:
+      runnable_module: true
+      odoo_install_test: true
+      docs_updated: true
+    artifacts:
+      module: addons/ipai/ipai_foundation
+      manifest: addons/ipai/ipai_foundation/__manifest__.py
+      models:
+        - addons/ipai/ipai_foundation/models/ipai_workspace.py
+
+  - id: EE-FOUNDATION-0002
+    name: Parity Gate Enforcement
+    phase: 1
+    owner: ci
+    status: shipped
+    gates:
+      runnable_module: false  # CI script, not module
+      ci_workflow: true
+      docs_updated: true
+    artifacts:
+      scripts:
+        - scripts/parity/require_runnable_slice.sh
+        - scripts/parity/check_ipai_foundation.sh
+        - scripts/parity/audit_ee_parity.sh
+      workflows:
+        - .github/workflows/ee-parity-gate.yml
+
+  # ---------------------------------------------------------------------------
+  # PHASE 2: EXPENSE & TRAVEL (Concur Parity)
+  # ---------------------------------------------------------------------------
+  - id: EE-EXPENSE-0001
+    name: Expense Management Core
+    phase: 2
+    owner: ipai_expense
+    status: planned
+    ee_equivalent: hr_expense_extract
+    gates:
+      runnable_module: false
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_expense_management
+      oca_deps:
+        - hr_expense_tier_validation
+
+  - id: EE-EXPENSE-0002
+    name: BIR Tax Compliance (Philippines)
+    phase: 2
+    owner: ipai_finance_bir_compliance
+    status: in_progress
+    gates:
+      runnable_module: true
+      odoo_install_test: false
+      docs_updated: true
+    artifacts:
+      module: addons/ipai_bir_tax_compliance
+
+  - id: EE-PAYROLL-0001
+    name: PH Payroll & Statutory Deductions
+    phase: 2
+    owner: ipai_hr_payroll_ph
+    status: in_progress
+    ee_equivalent: hr_payroll
+    gates:
+      runnable_module: true
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_hr_payroll_ph
+      models:
+        - addons/ipai/ipai_hr_payroll_ph/models/hr_payslip.py
+        - addons/ipai/ipai_hr_payroll_ph/models/ph_contribution_table.py
+    features:
+      - 2025 SSS contribution tables
+      - 2025 PhilHealth premium rates
+      - 2025 Pag-IBIG contribution rates
+      - BIR TRAIN Law withholding tax
+
+  - id: EE-EXPENSE-0003
+    name: Expense Policy Engine
+    phase: 2
+    owner: ipai_expense_policy
+    status: planned
+    gates:
+      runnable_module: false
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_expense_policy
+
+  # ---------------------------------------------------------------------------
+  # PHASE 3: PROCUREMENT (Ariba SRM Parity)
+  # ---------------------------------------------------------------------------
+  - id: EE-PROCURE-0001
+    name: Supplier KYC Management
+    phase: 3
+    owner: ipai_procurement
+    status: planned
+    ee_equivalent: purchase_enterprise
+    gates:
+      runnable_module: false
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_supplier_kyc
+      oca_deps:
+        - partner_tier_validation
+        - partner_documents
+
+  - id: EE-PROCURE-0002
+    name: Approval Matrix
+    phase: 3
+    owner: ipai_approvals
+    status: planned
+    gates:
+      runnable_module: false
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_approval_matrix
+
+  - id: EE-PROCURE-0003
+    name: 3-Way Match Automation
+    phase: 3
+    owner: ipai_procurement
+    status: planned
+    gates:
+      runnable_module: false
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_invoice_match
+      oca_deps:
+        - purchase_stock_picking_invoice_link
+
+  # ---------------------------------------------------------------------------
+  # PHASE 4: EQUIPMENT (Cheqroom Parity)
+  # ---------------------------------------------------------------------------
+  - id: EE-EQUIP-0001
+    name: Equipment Booking System
+    phase: 4
+    owner: ipai_equipment
+    status: planned
+    ee_equivalent: industry_fsm
+    gates:
+      runnable_module: false
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_equipment_booking
+      oca_deps:
+        - maintenance
+        - stock_barcodes
+
+  # ---------------------------------------------------------------------------
+  # PHASE 5: WORK MANAGEMENT (Planner Parity)
+  # ---------------------------------------------------------------------------
+  - id: EE-PROJECT-0001
+    name: Plan Templates & Recurrence
+    phase: 5
+    owner: ipai_project
+    status: planned
+    ee_equivalent: planning
+    gates:
+      runnable_module: false
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_plan_templates
+      oca_deps:
+        - project_task_dependency
+        - project_task_checklist
+        - project_task_recurrent
+
+  # ---------------------------------------------------------------------------
+  # PHASE 5b: HELPDESK (Services)
+  # ---------------------------------------------------------------------------
+  - id: EE-HELPDESK-0001
+    name: Helpdesk Ticketing System
+    phase: 5
+    owner: ipai_helpdesk
+    status: in_progress
+    ee_equivalent: helpdesk
+    gates:
+      runnable_module: true
+      odoo_install_test: false
+      docs_updated: false
+    artifacts:
+      module: addons/ipai/ipai_helpdesk
+      models:
+        - addons/ipai/ipai_helpdesk/models/helpdesk_ticket.py
+        - addons/ipai/ipai_helpdesk/models/helpdesk_team.py
+        - addons/ipai/ipai_helpdesk/models/helpdesk_sla.py
+    features:
+      - Multi-team ticket management
+      - SLA policies with escalation
+      - Auto-assignment (balanced, round-robin)
+      - Customer portal self-service
+
+  # ---------------------------------------------------------------------------
+  # PHASE 6: COPILOT (Joule Parity)
+  # ---------------------------------------------------------------------------
+  - id: EE-COPILOT-0001
+    name: MCP Tool Layer
+    phase: 6
+    owner: ipai_ai
+    status: in_progress
+    ee_equivalent: web_studio
+    gates:
+      runnable_module: false
+      mcp_server: true
+      docs_updated: true
+    artifacts:
+      mcp_server: mcp/servers/odoo-erp-server
+      tools:
+        - odoo_search
+        - odoo_create
+        - odoo_update
+
+  - id: EE-COPILOT-0002
+    name: Agent Audit & Logging
+    phase: 6
+    owner: ipai_ai
+    status: planned
+    gates:
+      runnable_module: false
+      supabase_migration: false
+      docs_updated: false
+    artifacts:
+      migrations:
+        - supabase/migrations/ops_agent_runs.sql
+
+  # ---------------------------------------------------------------------------
+  # PHASE 7: BI & ANALYTICS (Superset)
+  # ---------------------------------------------------------------------------
+  - id: EE-BI-0001
+    name: Analytics Schema & ETL
+    phase: 7
+    owner: ipai_analytics
+    status: planned
+    ee_equivalent: reporting
+    gates:
+      runnable_module: false
+      superset_assets: false
+      docs_updated: false
+    artifacts:
+      schema: db/schema/analytics.sql
+      superset_assets: superset/assets/
+
+# =============================================================================
+# Upstream Pins - Track exact versions for reproducibility
+# =============================================================================
+
+upstreams:
+  odoo:
+    repo: https://github.com/odoo/odoo.git
+    branch: "18.0"
+    pin_file: addons/oca/ODOO_PIN.txt
+
+  oca:
+    pin_file: addons/oca/oca.lock.json
+    pins_file: addons/oca/OCA_PINS.yaml
+    repos:
+      - name: server-tools
+        repo: https://github.com/OCA/server-tools.git
+        branch: "18.0"
+      - name: account-financial-reporting
+        repo: https://github.com/OCA/account-financial-reporting.git
+        branch: "18.0"
+      - name: account-financial-tools
+        repo: https://github.com/OCA/account-financial-tools.git
+        branch: "18.0"
+      - name: hr
+        repo: https://github.com/OCA/hr.git
+        branch: "18.0"
+      - name: web
+        repo: https://github.com/OCA/web.git
+        branch: "18.0"
+      - name: project
+        repo: https://github.com/OCA/project.git
+        branch: "18.0"
+      - name: queue
+        repo: https://github.com/OCA/queue.git
+        branch: "18.0"
+      - name: rest-framework
+        repo: https://github.com/OCA/rest-framework.git
+        branch: "18.0"
+      - name: connector
+        repo: https://github.com/OCA/connector.git
+        branch: "18.0"
+      - name: server-auth
+        repo: https://github.com/OCA/server-auth.git
+        branch: "18.0"
+
+# =============================================================================
+# CI Gate Configuration
+# =============================================================================
+
+ci_gates:
+  require_runnable_slice:
+    description: "At least one shipped feature with runnable_module gate"
+    script: scripts/parity/require_runnable_slice.sh
+    fail_on: no_shipped_features
+
+  require_parity_matrix:
+    description: "PARITY_MATRIX.yaml must exist and be valid YAML"
+    script: scripts/parity/validate_parity_matrix.sh
+    fail_on: missing_or_invalid
+
+  module_install_test:
+    description: "All shipped modules must install successfully"
+    workflow: .github/workflows/odoo-overlay-install.yml
+    fail_on: install_failure
+
+# =============================================================================
+# Summary Stats (auto-updated by audit script)
+# =============================================================================
+
+summary:
+  total_features: 14
+  shipped: 2
+  in_progress: 4
+  planned: 8
+  blocked: 0
+  completion_percent: 14.3

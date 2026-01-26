@@ -120,6 +120,7 @@ temp/
 !scripts/supabase/sql/*.sql
 !infra/lakehouse/**/*.sql
 !tools/audit/*.sql
+!tools/parity/*.sql
 !scripts/sql/*.sql
 !db/migrations/*.sql
 !db/migrations/**/*.sql
@@ -212,4 +213,7 @@ sandbox/dev/oca-addons/
 **/vendor/
 **/.terraform/
 **/terraform.tfstate*
+**/terraform.tfvars
+**/.supabase-token
 .ci_artifacts/
+scripts/audit/.env

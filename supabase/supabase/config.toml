@@ -1,0 +1,144 @@
+# =============================================================================
+# Supabase Configuration for InsightPulse AI
+# =============================================================================
+# Project: spdtwktxdalcfigzeqrz (Production)
+#
+# Branching:
+#   - Preview branches are created automatically via GitHub integration
+#   - Each branch gets isolated database, Auth, Storage, and Edge Functions
+#   - Merge to main deploys to production
+#
+# Usage:
+#   supabase link --project-ref spdtwktxdalcfigzeqrz
+#   supabase db push
+#   supabase functions deploy
+#   supabase branches list
+# =============================================================================
+
+project_id = "spdtwktxdalcfigzeqrz"
+
+# =============================================================================
+# Branching Configuration
+# =============================================================================
+# When branching is enabled, config.toml syncs to all preview branches.
+# Persistent branches remain active; preview branches auto-pause after inactivity.
+
+[branching]
+# Enable Supabase branching (requires GitHub integration)
+enabled = true
+
+# Default branch behavior
+[branching.preview]
+# Preview branches pause after 7 days of inactivity
+pause_after_inactive_days = 7
+# Seed data file for preview branches
+seed_file = "seed.sql"
+
+[api]
+# Port to use for the API URL
+port = 54321
+# Schemas to expose in your API
+schemas = ["public", "graphql_public"]
+# Extra schemas to add to the search_path
+extra_search_path = ["public", "extensions"]
+# Maximum number of rows returns from a view, table, or stored procedure
+max_rows = 1000
+
+[db]
+# Port to use for the local database URL
+port = 54322
+# Major version of PostgreSQL
+major_version = 15
+
+[studio]
+# Port to use for Supabase Studio
+port = 54323
+
+[inbucket]
+# Port to use for the email testing server
+port = 54324
+
+[storage]
+# The maximum file size allowed (e.g. "5MB", "500KB")
+file_size_limit = "50MiB"
+
+# =============================================================================
+# Edge Functions
+# =============================================================================
+
+[functions.copilot-chat]
+verify_jwt = false
+
+[functions.github-mattermost-bridge]
+verify_jwt = false
+
+[functions.github-app-auth]
+verify_jwt = true
+
+[functions.infra-memory-ingest]
+verify_jwt = true
+
+[functions.schema-changed]
+verify_jwt = true
+
+[functions.tenant-invite]
+verify_jwt = true
+
+[functions.cron-processor]
+verify_jwt = true
+
+[functions.ipai-copilot]
+verify_jwt = false
+
+[functions.sync-odoo-modules]
+verify_jwt = false
+
+# =============================================================================
+# Auth Configuration
+# =============================================================================
+
+[auth]
+# Enable the auth service
+enabled = true
+# The base URL of the site
+site_url = "https://app.insightpulseai.net"
+# A list of allowed redirect URLs for OAuth
+additional_redirect_urls = [
+  "https://erp.insightpulseai.net",
+  "https://n8n.insightpulseai.net",
+  "https://bi.insightpulseai.net",
+  "http://localhost:3000"
+]
+# How long tokens are valid for (in seconds)
+jwt_expiry = 3600
+# Allow anonymous sign-ins
+enable_anonymous_sign_ins = false
+# Enable email confirmations
+enable_signup = true
+
+[auth.email]
+# Allow email signup
+enable_signup = true
+# Use a double opt-in flow for email signups
+double_confirm_changes = true
+# Enable email confirmation requirement
+enable_confirmations = true
+
+[auth.external.github]
+enabled = true
+client_id = "env(GITHUB_CLIENT_ID)"
+secret = "env(GITHUB_CLIENT_SECRET)"
+
+# =============================================================================
+# Analytics
+# =============================================================================
+
+[analytics]
+enabled = true
+port = 54327
+backend = "postgres"
+
+# =============================================================================
+# Local Development
+# =============================================================================
+# Note: Local development config managed via .supabase/config.toml after linking

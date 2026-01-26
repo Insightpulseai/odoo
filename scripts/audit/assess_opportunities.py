@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Integration opportunities assessment script.
+Reads audit outputs and generates actionable opportunity backlog.
+"""
 import json, os, sys
 from pathlib import Path
 
@@ -31,7 +35,7 @@ if dmarc_txt and " p=none" in dmarc_txt.replace(";", "; "):
         "why": "p=none is monitoring-only; staged enforcement reduces spoofing and improves alignment once SPF/DKIM are stable.",
         "evidence": dmarc_txt,
         "next_steps_cli": [
-            "Generate staged DMARC records for mg subdomain (quarantine 10% → 50% → 100%, then reject).",
+            "Generate staged DMARC records for mg subdomain (quarantine 10% -> 50% -> 100%, then reject).",
             "Validate DMARC aggregate reports already configured (rua/ruf).",
             "Run DNS audit after each change."
         ]
@@ -65,9 +69,45 @@ if vercel:
         ]
     })
 
+# DNS gap analysis
+dns_fails = [r for r in dns.get("results", []) if not r.get("pass")]
+if dns_fails:
+    opps.append({
+        "area": "DNS / Infrastructure",
+        "title": f"Remediate {len(dns_fails)} failing DNS record(s)",
+        "why": "Missing or misconfigured DNS records affect service reachability and email deliverability.",
+        "evidence": ", ".join([f"{r['fqdn']} ({r['record']['type']})" for r in dns_fails[:5]]),
+        "next_steps_cli": [
+            "Review failing records in out/dns_audit.json",
+            "Update DNS provider with correct values",
+            "Re-run check_dns.sh to verify"
+        ]
+    })
+
+# General security recommendations based on shared IP
+if dns.get("results"):
+    a_records = [r for r in dns.get("results", []) if r.get("record", {}).get("type") == "A"]
+    unique_ips = set()
+    for r in a_records:
+        for ip in r.get("got", []):
+            unique_ips.add(ip)
+    if len(unique_ips) == 1 and len(a_records) > 3:
+        opps.append({
+            "area": "Infrastructure / Security",
+            "title": "Consider blast-radius isolation for shared IPv4 services",
+            "why": f"{len(a_records)} services share single IP; consider WAF, rate limiting, or service isolation.",
+            "evidence": f"Shared IP: {list(unique_ips)[0]}, services: {len(a_records)}",
+            "next_steps_cli": [
+                "Implement nginx rate limiting per-service",
+                "Consider Cloudflare proxy for DDoS protection",
+                "Evaluate service isolation via Docker networks"
+            ]
+        })
+
 md = []
 md.append("# Integrations & Opportunities Assessment (Automated)\n")
-md.append("## Inputs Collected\n")
+md.append(f"\n_Generated: {__import__('datetime').datetime.utcnow().isoformat()}Z_\n")
+md.append("\n## Inputs Collected\n")
 md.append(f"- DNS audit: {dns.get('summary', {}).get('pass','?')}/{dns.get('summary', {}).get('total','?')} records passing\n")
 md.append(f"- Mailgun audit: {'present' if mailgun else 'not run'}\n")
 md.append(f"- Supabase audit: {'present' if supabase else 'not run'}\n")

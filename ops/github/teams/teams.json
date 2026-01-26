@@ -1,0 +1,66 @@
+{
+  "teams": [
+    {
+      "name": "platform",
+      "privacy": "closed",
+      "description": "Core platform engineering (CI/CD, infra, security)",
+      "permissions": {
+        "default_repository_permission": "push"
+      }
+    },
+    {
+      "name": "data",
+      "privacy": "closed",
+      "description": "Lakehouse + ELT + analytics (open lakehouse parity)",
+      "permissions": {
+        "default_repository_permission": "push"
+      }
+    },
+    {
+      "name": "erp",
+      "privacy": "closed",
+      "description": "Odoo 19 CE + OCA + ipai_* modules (EE parity)",
+      "permissions": {
+        "default_repository_permission": "push"
+      }
+    },
+    {
+      "name": "docs",
+      "privacy": "closed",
+      "description": "Documentation + IA + reference catalog (ipai-learn)",
+      "permissions": {
+        "default_repository_permission": "push"
+      }
+    },
+    {
+      "name": "security",
+      "privacy": "secret",
+      "description": "Security review and compliance (RLS, audit, governance)",
+      "permissions": {
+        "default_repository_permission": "admin"
+      }
+    }
+  ],
+  "team_repo_mappings": [
+    {
+      "team": "erp",
+      "repos": ["odoo-ce"],
+      "permission": "push"
+    },
+    {
+      "team": "platform",
+      "repos": ["odoo-ce", "ipai-learn"],
+      "permission": "admin"
+    },
+    {
+      "team": "data",
+      "repos": ["odoo-ce"],
+      "permission": "push"
+    },
+    {
+      "team": "docs",
+      "repos": ["ipai-learn"],
+      "permission": "push"
+    }
+  ]
+}

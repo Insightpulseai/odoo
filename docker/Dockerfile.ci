@@ -1,0 +1,46 @@
+# Dockerfile.ci - Lightweight image for CI module install tests
+# =============================================================================
+# This image is optimized for CI: smaller, faster, includes test dependencies
+# Build: docker build -t ipai-odoo-ci:latest -f docker/Dockerfile.ci .
+# =============================================================================
+
+ARG ODOO_VERSION=18.0
+FROM odoo:${ODOO_VERSION}
+
+LABEL maintainer="InsightPulse AI <team@insightpulse.ai>"
+LABEL description="Odoo 18 CE for CI testing (module install verification)"
+LABEL version="1.0.0"
+
+USER root
+
+# Minimal dependencies for CI
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create addons directories
+RUN mkdir -p /mnt/extra-addons/ipai /mnt/extra-addons/oca
+
+# Copy only IPAI addons for testing
+COPY addons/ipai /mnt/extra-addons/ipai/
+COPY addons/ipai_* /mnt/extra-addons/ipai/ 2>/dev/null || true
+
+# Configure for testing
+RUN cat > /etc/odoo/odoo.conf <<'EOF'
+[options]
+addons_path = /usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons/ipai,/mnt/extra-addons/oca
+admin_passwd = admin
+list_db = True
+log_level = warn
+without_demo = True
+test_enable = False
+EOF
+
+RUN chown -R odoo:odoo /mnt/extra-addons /etc/odoo/odoo.conf
+
+USER odoo
+
+# No healthcheck for CI (runs --stop-after-init)
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["odoo"]

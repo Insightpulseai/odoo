@@ -1,0 +1,204 @@
+# GitHub Governance Validation and Enforcement
+# Validates governance configuration files and optionally applies to org
+name: github-governance
+
+on:
+  push:
+    paths:
+      - 'ops/github/**'
+      - 'scripts/github/**'
+      - '.github/workflows/github-governance.yml'
+  pull_request:
+    paths:
+      - 'ops/github/**'
+      - 'scripts/github/**'
+      - '.github/workflows/github-governance.yml'
+  workflow_dispatch:
+    inputs:
+      apply_governance:
+        description: 'Apply governance configuration to org (requires admin permissions)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+env:
+  ORG_SLUG: ${{ vars.ORG_SLUG || 'Insightpulseai-net' }}
+  DEFAULT_BRANCH: ${{ vars.DEFAULT_BRANCH || 'main' }}
+
+jobs:
+  validate:
+    name: Validate Governance Config
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate JSON schemas
+        run: |
+          echo "==> Validating governance configuration files"
+
+          # Validate custom properties schema
+          echo "--- Custom Properties ---"
+          if jq empty ops/github/custom-properties/schema.json 2>/dev/null; then
+            prop_count=$(jq '.properties | length' ops/github/custom-properties/schema.json)
+            echo "✓ schema.json valid ($prop_count properties)"
+          else
+            echo "✗ Invalid JSON: schema.json"
+            exit 1
+          fi
+
+          # Validate rulesets
+          echo "--- Rulesets ---"
+          for f in ops/github/rulesets/*.json; do
+            if [[ -f "$f" ]]; then
+              if jq empty "$f" 2>/dev/null; then
+                name=$(jq -r '.name // "unnamed"' "$f")
+                echo "✓ $(basename "$f") valid (name: $name)"
+              else
+                echo "✗ Invalid JSON: $f"
+                exit 1
+              fi
+            fi
+          done
+
+          # Validate teams config
+          echo "--- Teams ---"
+          if jq empty ops/github/teams/teams.json 2>/dev/null; then
+            team_count=$(jq '.teams | length' ops/github/teams/teams.json)
+            echo "✓ teams.json valid ($team_count teams)"
+          else
+            echo "✗ Invalid JSON: teams.json"
+            exit 1
+          fi
+
+          echo ""
+          echo "✓ All governance configuration files are valid"
+
+      - name: Run validation script
+        run: ./scripts/github/validate_governance.sh
+
+      - name: Check script permissions
+        run: |
+          echo "==> Checking script permissions"
+          for script in scripts/github/*.sh; do
+            if [[ -x "$script" ]]; then
+              echo "✓ $script is executable"
+            else
+              echo "✗ $script is NOT executable"
+              exit 1
+            fi
+          done
+
+  apply:
+    name: Apply Governance Config
+    runs-on: ubuntu-latest
+    needs: validate
+    if: |
+      github.event_name == 'workflow_dispatch' &&
+      github.event.inputs.apply_governance == 'true'
+    environment: governance
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply custom properties
+        env:
+          GH_TOKEN: ${{ secrets.GOVERNANCE_TOKEN }}
+        run: |
+          if [[ -n "${GH_TOKEN:-}" ]]; then
+            ./scripts/github/apply_custom_properties.sh
+          else
+            echo "⚠ GOVERNANCE_TOKEN not set, skipping apply"
+            echo "To apply governance, set GOVERNANCE_TOKEN secret with org admin permissions"
+          fi
+
+      - name: Apply org rulesets
+        env:
+          GH_TOKEN: ${{ secrets.GOVERNANCE_TOKEN }}
+        run: |
+          if [[ -n "${GH_TOKEN:-}" ]]; then
+            ./scripts/github/apply_org_ruleset.sh
+          else
+            echo "⚠ GOVERNANCE_TOKEN not set, skipping apply"
+          fi
+
+      - name: Apply teams configuration
+        env:
+          GH_TOKEN: ${{ secrets.GOVERNANCE_TOKEN }}
+        run: |
+          if [[ -n "${GH_TOKEN:-}" ]]; then
+            ./scripts/github/apply_teams.sh
+          else
+            echo "⚠ GOVERNANCE_TOKEN not set, skipping apply"
+          fi
+
+      - name: Verification
+        env:
+          GH_TOKEN: ${{ secrets.GOVERNANCE_TOKEN }}
+        run: |
+          if [[ -n "${GH_TOKEN:-}" ]]; then
+            echo "==> Verifying governance state"
+
+            echo "--- Custom Properties ---"
+            gh api "orgs/$ORG_SLUG/properties/schema" -H "Accept: application/vnd.github+json" \
+              | jq -r '.[].property_name' || echo "(no properties or insufficient permissions)"
+
+            echo "--- Rulesets ---"
+            gh api "orgs/$ORG_SLUG/rulesets" -H "Accept: application/vnd.github+json" \
+              | jq -r '.[].name' || echo "(no rulesets or insufficient permissions)"
+
+            echo "--- Teams ---"
+            gh api "orgs/$ORG_SLUG/teams" -H "Accept: application/vnd.github+json" \
+              | jq -r '.[].slug' || echo "(no teams or insufficient permissions)"
+          else
+            echo "⚠ GOVERNANCE_TOKEN not set, skipping verification"
+          fi
+
+  report:
+    name: Generate Governance Report
+    runs-on: ubuntu-latest
+    needs: validate
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate report
+        run: |
+          echo "# GitHub Governance Report" > governance-report.md
+          echo "" >> governance-report.md
+          echo "**Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> governance-report.md
+          echo "**Commit:** ${{ github.sha }}" >> governance-report.md
+          echo "" >> governance-report.md
+
+          echo "## Custom Properties" >> governance-report.md
+          echo '```json' >> governance-report.md
+          jq -r '.properties[].property_name' ops/github/custom-properties/schema.json >> governance-report.md
+          echo '```' >> governance-report.md
+          echo "" >> governance-report.md
+
+          echo "## Rulesets" >> governance-report.md
+          echo '```' >> governance-report.md
+          for f in ops/github/rulesets/*.json; do
+            if [[ -f "$f" ]]; then
+              echo "- $(jq -r '.name // "unnamed"' "$f") ($(jq '.rules | length' "$f") rules)"
+            fi
+          done >> governance-report.md
+          echo '```' >> governance-report.md
+          echo "" >> governance-report.md
+
+          echo "## Teams" >> governance-report.md
+          echo '```' >> governance-report.md
+          jq -r '.teams[] | "- \(.name): \(.description)"' ops/github/teams/teams.json >> governance-report.md
+          echo '```' >> governance-report.md
+
+          cat governance-report.md
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: governance-report
+          path: governance-report.md
