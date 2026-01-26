@@ -1,0 +1,182 @@
+{
+  "domain": "insightpulseai.net",
+  "summary": {
+    "pass": 14,
+    "fail": 0,
+    "total": 14
+  },
+  "results": [
+    {
+      "record": {
+        "name": "www",
+        "type": "CNAME",
+        "value": "insightpulseai.net."
+      },
+      "fqdn": "www.insightpulseai.net",
+      "got": [
+        "insightpulseai.net."
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "@",
+        "type": "A",
+        "value": "178.128.112.214"
+      },
+      "fqdn": "insightpulseai.net",
+      "got": [
+        "178.128.112.214"
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "mcp",
+        "type": "A",
+        "value": "178.128.112.214"
+      },
+      "fqdn": "mcp.insightpulseai.net",
+      "got": [
+        "178.128.112.214"
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "n8n",
+        "type": "A",
+        "value": "178.128.112.214"
+      },
+      "fqdn": "n8n.insightpulseai.net",
+      "got": [
+        "178.128.112.214"
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "erp",
+        "type": "A",
+        "value": "178.128.112.214"
+      },
+      "fqdn": "erp.insightpulseai.net",
+      "got": [
+        "178.128.112.214"
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "auth",
+        "type": "A",
+        "value": "178.128.112.214"
+      },
+      "fqdn": "auth.insightpulseai.net",
+      "got": [
+        "178.128.112.214"
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "superset",
+        "type": "A",
+        "value": "178.128.112.214"
+      },
+      "fqdn": "superset.insightpulseai.net",
+      "got": [
+        "178.128.112.214"
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "email.mg",
+        "type": "CNAME",
+        "value": "mailgun.org."
+      },
+      "fqdn": "email.mg.insightpulseai.net",
+      "got": [
+        "mailgun.org."
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "mg",
+        "type": "MX",
+        "value": "mxa.mailgun.org.",
+        "priority": 10
+      },
+      "fqdn": "mg.insightpulseai.net",
+      "got": [
+        "10 mxa.mailgun.org.",
+        "10 mxb.mailgun.org."
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "mg",
+        "type": "MX",
+        "value": "mxb.mailgun.org.",
+        "priority": 10
+      },
+      "fqdn": "mg.insightpulseai.net",
+      "got": [
+        "10 mxb.mailgun.org.",
+        "10 mxa.mailgun.org."
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "mg",
+        "type": "TXT",
+        "value_contains": "v=spf1 include:mailgun.org"
+      },
+      "fqdn": "mg.insightpulseai.net",
+      "got": [
+        "\"v=spf1 include:mailgun.org ~all\""
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "pic._domainkey.mg",
+        "type": "TXT",
+        "value_contains": "k=rsa;"
+      },
+      "fqdn": "pic._domainkey.mg.insightpulseai.net",
+      "got": [
+        "\"k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB\""
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "_dmarc.mg",
+        "type": "TXT",
+        "value_contains": "v=DMARC1;"
+      },
+      "fqdn": "_dmarc.mg.insightpulseai.net",
+      "got": [
+        "\"Data: v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;\""
+      ],
+      "pass": true
+    },
+    {
+      "record": {
+        "name": "@",
+        "type": "CAA",
+        "value_contains": "issue \"letsencrypt.org\""
+      },
+      "fqdn": "insightpulseai.net",
+      "got": [
+        "0 issue \"letsencrypt.org\""
+      ],
+      "pass": true
+    }
+  ]
+}
