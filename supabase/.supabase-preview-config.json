@@ -7,6 +7,7 @@
     "preview_branches": {
       "enabled": true,
       "watched_directory": "supabase/",
+      "trigger_file": "supabase/.preview-trigger",
       "note": "IMPORTANT: The Supabase dashboard must be configured to watch 'supabase/' NOT 'supabase/supabase/'"
     }
   },
@@ -16,6 +17,12 @@
     "migrations_dir": "supabase/migrations/",
     "functions_dir": "supabase/functions/",
     "seeds_dir": "supabase/seeds/"
+  },
+  "path_detection_fix": {
+    "issue": "Preview branching not triggering - integration watches supabase/supabase/ not supabase/",
+    "solution": "Mirror supabase content to supabase/supabase/ for watched path compatibility",
+    "verification": "Run: git diff --name-only origin/main...HEAD | grep '^supabase/'",
+    "mirrored_path": "supabase/supabase/"
   },
   "dashboard_settings_checklist": [
     "Navigate to: https://supabase.com/dashboard/project/spdtwktxdalcfigzeqrz/settings/integrations",

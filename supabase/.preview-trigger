@@ -1,0 +1,9 @@
+# Supabase Preview Branch Trigger
+# This file exists to ensure Supabase GitHub Integration detects changes
+# in the supabase/ directory for preview branch creation.
+#
+# Last updated: 2026-01-26
+# Branch: claude/fix-supabase-preview-path-1APCF
+#
+# Purpose: Fix path detection for Supabase Preview Branching
+# The integration watches 'supabase/' for changes to trigger preview environments.
