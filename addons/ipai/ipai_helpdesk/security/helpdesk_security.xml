@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Helpdesk Security Groups -->
+    <record id="group_helpdesk_user" model="res.groups">
+        <field name="name">Helpdesk User</field>
+        <field name="category_id" ref="base.module_category_services_helpdesk"/>
+    </record>
+
+    <record id="group_helpdesk_manager" model="res.groups">
+        <field name="name">Helpdesk Manager</field>
+        <field name="category_id" ref="base.module_category_services_helpdesk"/>
+        <field name="implied_ids" eval="[(4, ref('group_helpdesk_user'))]"/>
+    </record>
+
+    <!-- Record Rules -->
+    <record id="helpdesk_ticket_company_rule" model="ir.rule">
+        <field name="name">Helpdesk Ticket: multi-company</field>
+        <field name="model_id" ref="model_ipai_helpdesk_ticket"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>
