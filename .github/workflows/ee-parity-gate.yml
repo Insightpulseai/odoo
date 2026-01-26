@@ -176,6 +176,18 @@ jobs:
             echo "The gate will become strict once all features reach 'verified' status."
           }
 
+      - name: Require runnable parity slice
+        run: |
+          set -euo pipefail
+          echo "=== Checking for Runnable Parity Slice ==="
+          bash scripts/parity/require_runnable_slice.sh
+
+      - name: Validate ipai_foundation module
+        run: |
+          set -euo pipefail
+          echo "=== Validating Phase 1 Vertical Slice ==="
+          bash scripts/parity/check_ipai_foundation.sh
+
   block-bridge-changes:
     name: Block Bridge Changes
     runs-on: ubuntu-latest

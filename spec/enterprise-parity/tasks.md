@@ -6,6 +6,11 @@
 
 ## Phase 1: Foundation
 
+### Core Control Plane
+- ✅ Create `ipai_foundation` module with `ipai.workspace` model
+- ✅ Create parity gate scripts (`require_runnable_slice.sh`, `check_ipai_foundation.sh`)
+- ✅ Add parity validation steps to `ee-parity-gate.yml` workflow
+
 ### Supabase Schema
 - ⬜ Create `ops` schema
 - ⬜ Create `agent_runs` table with indexes
@@ -48,7 +53,7 @@
 - ⬜ Create `check_project_parity.sh`
 - ⬜ Create `check_copilot_parity.sh`
 - ⬜ Create `check_bi_parity.sh`
-- ⬜ Add parity gate to CI workflow
+- ✅ Add parity gate to CI workflow (require_runnable_slice + check_ipai_foundation)
 
 ---
 
