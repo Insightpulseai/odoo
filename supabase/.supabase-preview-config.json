@@ -19,9 +19,10 @@
     "seeds_dir": "supabase/seeds/"
   },
   "path_detection_fix": {
-    "issue": "Preview branching not triggering when PR has no changes under supabase/",
-    "solution": "Add .preview-trigger file to ensure path detection works",
-    "verification": "Run: git diff --name-only origin/main...HEAD | grep '^supabase/'"
+    "issue": "Preview branching not triggering - integration watches supabase/supabase/ not supabase/",
+    "solution": "Mirror supabase content to supabase/supabase/ for watched path compatibility",
+    "verification": "Run: git diff --name-only origin/main...HEAD | grep '^supabase/'",
+    "mirrored_path": "supabase/supabase/"
   },
   "dashboard_settings_checklist": [
     "Navigate to: https://supabase.com/dashboard/project/spdtwktxdalcfigzeqrz/settings/integrations",
