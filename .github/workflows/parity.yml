@@ -1,0 +1,33 @@
+name: parity
+
+on:
+  pull_request:
+  schedule:
+    - cron: "23 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  parity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run Parity Harness
+        run: |
+          bash harness/runners/run_parity_checks.sh
+
+      - name: Upload Parity Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: parity-artifacts
+          path: artifacts/parity
