@@ -1,0 +1,91 @@
+# OCA Repositories for EE→CE+OCA Migration
+# Organized by functional domain
+
+# === Foundation / Server ===
+https://github.com/OCA/server-tools
+https://github.com/OCA/server-ux
+https://github.com/OCA/server-backend
+https://github.com/OCA/server-env
+https://github.com/OCA/server-auth
+
+# === Web / UX ===
+https://github.com/OCA/web
+https://github.com/OCA/interface-github
+
+# === Accounting / Finance ===
+https://github.com/OCA/account-financial-reporting
+https://github.com/OCA/account-financial-tools
+https://github.com/OCA/account-reconcile
+https://github.com/OCA/account-payment
+https://github.com/OCA/account-invoicing
+https://github.com/OCA/account-analytic
+https://github.com/OCA/account-closing
+https://github.com/OCA/mis-builder
+https://github.com/OCA/credit-control
+https://github.com/OCA/bank-payment
+https://github.com/OCA/bank-statement-import
+
+# === Reporting / BI ===
+https://github.com/OCA/reporting-engine
+https://github.com/OCA/spreadsheet
+
+# === Documents / Knowledge ===
+https://github.com/OCA/dms
+https://github.com/OCA/knowledge
+
+# === Sales / CRM ===
+https://github.com/OCA/sale-workflow
+https://github.com/OCA/crm
+https://github.com/OCA/partner-contact
+
+# === Purchase / Procurement ===
+https://github.com/OCA/purchase-workflow
+https://github.com/OCA/product-variant
+https://github.com/OCA/product-attribute
+
+# === Inventory / Logistics ===
+https://github.com/OCA/stock-logistics-workflow
+https://github.com/OCA/stock-logistics-warehouse
+https://github.com/OCA/stock-logistics-barcode
+https://github.com/OCA/stock-logistics-reporting
+
+# === Manufacturing ===
+https://github.com/OCA/manufacture
+https://github.com/OCA/manufacture-reporting
+
+# === HR / Workforce ===
+https://github.com/OCA/hr
+https://github.com/OCA/hr-expense
+https://github.com/OCA/hr-holidays
+https://github.com/OCA/hr-attendance
+https://github.com/OCA/timesheet
+
+# === Project / Services ===
+https://github.com/OCA/project
+https://github.com/OCA/contract
+https://github.com/OCA/field-service
+
+# === E-commerce / Website ===
+https://github.com/OCA/e-commerce
+https://github.com/OCA/website
+
+# === Integration / API ===
+https://github.com/OCA/rest-framework
+https://github.com/OCA/connector
+https://github.com/OCA/queue
+https://github.com/OCA/edi
+
+# === Storage / Cloud ===
+https://github.com/OCA/storage
+
+# === Social / Mail ===
+https://github.com/OCA/social
+
+# === Multi-company ===
+https://github.com/OCA/multi-company
+
+# === Calendar ===
+https://github.com/OCA/calendar
+
+# === AI/ML ===
+https://github.com/OCA/ai

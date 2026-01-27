@@ -1,0 +1,44 @@
+name: platform-kit-ci
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  spec_bundle_enforce:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Enforce Platform Kit spec bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          REQUIRED=(
+            "spec/platform-kit/constitution.md"
+            "spec/platform-kit/prd.md"
+            "spec/platform-kit/plan.md"
+            "spec/platform-kit/tasks.md"
+          )
+          for f in "${REQUIRED[@]}"; do
+            test -f "$f" || { echo "Missing: $f"; exit 1; }
+            test -s "$f" || { echo "Empty:   $f"; exit 1; }
+          done
+          echo "Spec bundle present and non-empty."
+
+  cli_build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform-kit/cli
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install
+        run: npm ci || npm i
+      - name: Build
+        run: npm run build
+      - name: Smoke
+        run: node dist/index.js --help >/dev/null

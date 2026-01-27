@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Integration",
+  "description": "Integration registry entry (Vercel Marketplace-style)",
+  "type": "object",
+  "required": ["id", "name", "category", "type", "summary"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9\\-]+$",
+      "description": "Unique integration identifier (kebab-case)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable integration name"
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief description of the integration"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "testing",
+        "dev-tools",
+        "productivity",
+        "cms",
+        "database",
+        "logging",
+        "security",
+        "observability",
+        "messaging",
+        "workflow",
+        "ai",
+        "analytics",
+        "finance",
+        "hr",
+        "crm"
+      ],
+      "description": "Integration category for marketplace filtering"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["native", "connectable"],
+      "description": "native = built-in, connectable = external account linking"
+    },
+    "capabilities": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "List of capabilities this integration provides"
+    },
+    "install": {
+      "type": "object",
+      "properties": {
+        "provisioner": {
+          "type": "string",
+          "description": "Path to provisioner script or edge function"
+        },
+        "scopes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Required permission scopes"
+        },
+        "env_vars": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Environment variables required"
+        },
+        "auto_configure": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether installation auto-configures the integration"
+        }
+      },
+      "additionalProperties": false
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "docs": { "type": "string", "format": "uri" },
+        "repo": { "type": "string", "format": "uri" },
+        "vendor": { "type": "string", "format": "uri" },
+        "api": { "type": "string", "format": "uri" }
+      },
+      "additionalProperties": false
+    },
+    "ipai_module": {
+      "type": "string",
+      "pattern": "^ipai_[a-z0-9_]+$",
+      "description": "Associated IPAI Odoo connector module"
+    },
+    "mcp_server": {
+      "type": "string",
+      "description": "Associated MCP server (if any)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "beta", "deprecated", "coming-soon"],
+      "default": "active"
+    }
+  },
+  "additionalProperties": false
+}
