@@ -1,0 +1,888 @@
+{
+  "version": "1.0.0",
+  "odoo_target": "19.0",
+  "generated": "2026-01-27",
+  "description": "OCA Module Inventory for EE→CE+OCA Migration - Odoo 19.0 CE Stack",
+  "maturity_criteria": {
+    "proven": "Active maintenance, >100 stars, regular commits, OCA-certified, multi-version support",
+    "stable": "Released for target version, passing CI, no critical issues",
+    "experimental": "Ported but limited testing, may have edge cases"
+  },
+  "repositories": {
+    "server-tools": {
+      "url": "https://github.com/OCA/server-tools",
+      "branch": "19.0",
+      "tier": 0,
+      "domain": "Foundation",
+      "description": "Server utilities, admin tools, cron management, exception framework",
+      "maturity": "proven",
+      "stars": 1200,
+      "modules": [
+        {
+          "name": "base_exception",
+          "purpose": "Exception management framework for validation rules",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None - widely adopted"
+        },
+        {
+          "name": "base_technical_user",
+          "purpose": "Technical user for automated actions",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "auditlog",
+          "purpose": "Audit trail for model changes",
+          "dependencies": ["base"],
+          "replaces_ee": "data_recycle (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "Performance impact on high-volume tables"
+        },
+        {
+          "name": "base_cron_exclusion",
+          "purpose": "Prevent concurrent cron execution",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "module_auto_update",
+          "purpose": "Auto-detect and update changed modules",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "Use with caution in production"
+        },
+        {
+          "name": "base_view_inheritance_extension",
+          "purpose": "Enhanced view inheritance with xpath extensions",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "base_sparse_field",
+          "purpose": "Sparse fields for efficient storage",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "server-ux": {
+      "url": "https://github.com/OCA/server-ux",
+      "branch": "19.0",
+      "tier": 0,
+      "domain": "Foundation",
+      "description": "UX improvements, tier validation, date ranges",
+      "maturity": "proven",
+      "stars": 400,
+      "modules": [
+        {
+          "name": "date_range",
+          "purpose": "Reusable date ranges for reporting periods",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None - essential for reporting"
+        },
+        {
+          "name": "date_range_account",
+          "purpose": "Date ranges for accounting periods",
+          "dependencies": ["date_range", "account"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "base_tier_validation",
+          "purpose": "Multi-level approval workflows",
+          "dependencies": ["base"],
+          "replaces_ee": "approvals (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None - recommended for approval workflows"
+        },
+        {
+          "name": "base_tier_validation_formula",
+          "purpose": "Formula-based tier validation rules",
+          "dependencies": ["base_tier_validation"],
+          "replaces_ee": "approvals",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "server_action_mass_edit",
+          "purpose": "Mass edit records via server actions",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "server-backend": {
+      "url": "https://github.com/OCA/server-backend",
+      "branch": "19.0",
+      "tier": 0,
+      "domain": "Foundation",
+      "description": "Backend primitives, user roles, navigation",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "base_user_role",
+          "purpose": "Role-based access control",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None - widely used"
+        },
+        {
+          "name": "base_user_role_company",
+          "purpose": "Company-specific user roles",
+          "dependencies": ["base_user_role"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "web": {
+      "url": "https://github.com/OCA/web",
+      "branch": "19.0",
+      "tier": 1,
+      "domain": "Platform UX",
+      "description": "Web client enhancements, responsive UI, widgets",
+      "maturity": "proven",
+      "stars": 900,
+      "modules": [
+        {
+          "name": "web_responsive",
+          "purpose": "Mobile-responsive Odoo backend",
+          "dependencies": ["web"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None - highly recommended"
+        },
+        {
+          "name": "web_refresher",
+          "purpose": "Auto-refresh views",
+          "dependencies": ["web"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "web_dialog_size",
+          "purpose": "Resizable dialogs",
+          "dependencies": ["web"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "web_advanced_search",
+          "purpose": "Advanced search operators",
+          "dependencies": ["web"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "web_m2x_options",
+          "purpose": "Many2one/Many2many field options",
+          "dependencies": ["web"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "web_widget_x2many_2d_matrix",
+          "purpose": "2D matrix widget for x2many fields",
+          "dependencies": ["web"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "web_tree_many2one_clickable",
+          "purpose": "Clickable many2one in tree views",
+          "dependencies": ["web"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "reporting-engine": {
+      "url": "https://github.com/OCA/reporting-engine",
+      "branch": "19.0",
+      "tier": 4,
+      "domain": "Reporting & BI",
+      "description": "Alternative reporting engines, XLSX, SQL editor",
+      "maturity": "proven",
+      "stars": 500,
+      "modules": [
+        {
+          "name": "report_xlsx",
+          "purpose": "XLSX report generation",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None - essential for Excel exports"
+        },
+        {
+          "name": "report_xlsx_helper",
+          "purpose": "Helper utilities for XLSX reports",
+          "dependencies": ["report_xlsx"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "bi_sql_editor",
+          "purpose": "SQL-based BI reports with pivot views",
+          "dependencies": ["base"],
+          "replaces_ee": "spreadsheet (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "SQL injection risk if misconfigured - use parameterized queries"
+        },
+        {
+          "name": "sql_export",
+          "purpose": "Export SQL query results",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "sql_export_excel",
+          "purpose": "Export SQL queries to Excel",
+          "dependencies": ["sql_export", "report_xlsx"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "kpi_dashboard",
+          "purpose": "KPI dashboard builder",
+          "dependencies": ["base"],
+          "replaces_ee": "spreadsheet (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "report_csv",
+          "purpose": "CSV report generation",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "mis-builder": {
+      "url": "https://github.com/OCA/mis-builder",
+      "branch": "19.0",
+      "tier": 4,
+      "domain": "Reporting & BI",
+      "description": "Management Information System reports builder",
+      "maturity": "proven",
+      "stars": 400,
+      "modules": [
+        {
+          "name": "mis_builder",
+          "purpose": "Fast KPI matrix reports (P&L, Balance Sheet)",
+          "dependencies": ["account", "date_range"],
+          "replaces_ee": "accounting_reports (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None - excellent for financial reporting"
+        },
+        {
+          "name": "mis_builder_budget",
+          "purpose": "Budget management with MIS Builder",
+          "dependencies": ["mis_builder"],
+          "replaces_ee": "account_budget",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "account-financial-reporting": {
+      "url": "https://github.com/OCA/account-financial-reporting",
+      "branch": "19.0",
+      "tier": 4,
+      "domain": "Accounting",
+      "description": "Financial reporting suite",
+      "maturity": "proven",
+      "stars": 600,
+      "modules": [
+        {
+          "name": "account_financial_report",
+          "purpose": "General Ledger, Trial Balance, Partner Ledger",
+          "dependencies": ["account", "date_range"],
+          "replaces_ee": "accounting_reports",
+          "license": "AGPL-3",
+          "risk_notes": "None - essential for accounting"
+        }
+      ]
+    },
+    "account-financial-tools": {
+      "url": "https://github.com/OCA/account-financial-tools",
+      "branch": "19.0",
+      "tier": 4,
+      "domain": "Accounting",
+      "description": "Financial tools, period locking, fiscal year",
+      "maturity": "proven",
+      "stars": 400,
+      "modules": [
+        {
+          "name": "account_lock_date",
+          "purpose": "Lock accounting periods",
+          "dependencies": ["account"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "account_fiscal_year",
+          "purpose": "Fiscal year management",
+          "dependencies": ["account", "date_range"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "account_move_name_sequence",
+          "purpose": "Customizable move name sequences",
+          "dependencies": ["account"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "account_journal_lock_date",
+          "purpose": "Per-journal lock dates",
+          "dependencies": ["account"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "account-reconcile": {
+      "url": "https://github.com/OCA/account-reconcile",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "Accounting",
+      "description": "Enhanced bank reconciliation",
+      "maturity": "stable",
+      "stars": 200,
+      "modules": [
+        {
+          "name": "account_reconcile_oca",
+          "purpose": "Enhanced reconciliation interface",
+          "dependencies": ["account"],
+          "replaces_ee": "account_accountant (reconciliation)",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "spreadsheet": {
+      "url": "https://github.com/OCA/spreadsheet",
+      "branch": "19.0",
+      "tier": 5,
+      "domain": "Reporting & BI",
+      "description": "CE Spreadsheet alternative",
+      "maturity": "stable",
+      "stars": 100,
+      "modules": [
+        {
+          "name": "spreadsheet_oca",
+          "purpose": "Spreadsheet integration for CE",
+          "dependencies": ["base"],
+          "replaces_ee": "spreadsheet",
+          "license": "LGPL-3",
+          "risk_notes": "May lack some EE features"
+        },
+        {
+          "name": "spreadsheet_dashboard_oca",
+          "purpose": "Spreadsheet-based dashboards",
+          "dependencies": ["spreadsheet_oca"],
+          "replaces_ee": "spreadsheet_dashboard",
+          "license": "LGPL-3",
+          "risk_notes": "May lack some EE features"
+        }
+      ]
+    },
+    "dms": {
+      "url": "https://github.com/OCA/dms",
+      "branch": "19.0",
+      "tier": 6,
+      "domain": "Documents",
+      "description": "Document Management System",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "dms",
+          "purpose": "Full document management system",
+          "dependencies": ["base"],
+          "replaces_ee": "documents",
+          "license": "LGPL-3",
+          "risk_notes": "None - excellent EE alternative"
+        },
+        {
+          "name": "dms_field",
+          "purpose": "DMS field widget",
+          "dependencies": ["dms"],
+          "replaces_ee": "documents",
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "knowledge": {
+      "url": "https://github.com/OCA/knowledge",
+      "branch": "19.0",
+      "tier": 6,
+      "domain": "Documents",
+      "description": "Knowledge base, wiki, documentation",
+      "maturity": "proven",
+      "stars": 200,
+      "modules": [
+        {
+          "name": "document_page",
+          "purpose": "Internal wiki/documentation pages",
+          "dependencies": ["base"],
+          "replaces_ee": "knowledge (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "document_page_approval",
+          "purpose": "Approval workflow for documents",
+          "dependencies": ["document_page"],
+          "replaces_ee": "knowledge",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "queue": {
+      "url": "https://github.com/OCA/queue",
+      "branch": "19.0",
+      "tier": 2,
+      "domain": "Background Processing",
+      "description": "Job queue for async processing",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "queue_job",
+          "purpose": "Background job processing framework",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "Requires jobrunner process"
+        },
+        {
+          "name": "queue_job_cron",
+          "purpose": "Cron-based job execution",
+          "dependencies": ["queue_job"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "rest-framework": {
+      "url": "https://github.com/OCA/rest-framework",
+      "branch": "19.0",
+      "tier": 7,
+      "domain": "API",
+      "description": "REST API framework with Pydantic",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "base_rest",
+          "purpose": "REST API framework",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "base_rest_pydantic",
+          "purpose": "Pydantic integration for REST APIs",
+          "dependencies": ["base_rest"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "graphql_base",
+          "purpose": "GraphQL API support",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "social": {
+      "url": "https://github.com/OCA/social",
+      "branch": "19.0",
+      "tier": 8,
+      "domain": "Communication",
+      "description": "Mail enhancements, activity board",
+      "maturity": "proven",
+      "stars": 400,
+      "modules": [
+        {
+          "name": "mail_activity_board",
+          "purpose": "Activity management board",
+          "dependencies": ["mail"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "mail_tracking",
+          "purpose": "Email open/click tracking",
+          "dependencies": ["mail"],
+          "replaces_ee": "marketing_automation (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "mail_debrand",
+          "purpose": "Remove Odoo branding from emails",
+          "dependencies": ["mail"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "purchase-workflow": {
+      "url": "https://github.com/OCA/purchase-workflow",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "Procurement",
+      "description": "Purchase workflow extensions",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "purchase_request",
+          "purpose": "Purchase request workflow",
+          "dependencies": ["purchase"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "purchase_order_approval_block",
+          "purpose": "Block PO until approved",
+          "dependencies": ["purchase"],
+          "replaces_ee": "approvals (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "purchase_order_type",
+          "purpose": "Purchase order types",
+          "dependencies": ["purchase"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "sale-workflow": {
+      "url": "https://github.com/OCA/sale-workflow",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "Sales",
+      "description": "Sales workflow extensions",
+      "maturity": "proven",
+      "stars": 400,
+      "modules": [
+        {
+          "name": "sale_order_type",
+          "purpose": "Sale order types",
+          "dependencies": ["sale"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "sale_order_line_sequence",
+          "purpose": "Sequence number on SO lines",
+          "dependencies": ["sale"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "project": {
+      "url": "https://github.com/OCA/project",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "Project",
+      "description": "Project management extensions",
+      "maturity": "proven",
+      "stars": 400,
+      "modules": [
+        {
+          "name": "project_timeline",
+          "purpose": "Gantt-like timeline view",
+          "dependencies": ["project"],
+          "replaces_ee": "project_enterprise (gantt)",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "project_task_dependency",
+          "purpose": "Task dependencies",
+          "dependencies": ["project"],
+          "replaces_ee": "project_enterprise",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "project_wbs",
+          "purpose": "Work Breakdown Structure",
+          "dependencies": ["project"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "project_template",
+          "purpose": "Project templates",
+          "dependencies": ["project"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "project_task_recurring",
+          "purpose": "Recurring tasks",
+          "dependencies": ["project"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "hr-expense": {
+      "url": "https://github.com/OCA/hr-expense",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "HR",
+      "description": "Expense management",
+      "maturity": "stable",
+      "stars": 100,
+      "modules": [
+        {
+          "name": "hr_expense_advance_clearing",
+          "purpose": "Expense advances and clearing",
+          "dependencies": ["hr_expense"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "timesheet": {
+      "url": "https://github.com/OCA/timesheet",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "HR",
+      "description": "Timesheet enhancements",
+      "maturity": "proven",
+      "stars": 200,
+      "modules": [
+        {
+          "name": "hr_timesheet_sheet",
+          "purpose": "Weekly timesheet sheets",
+          "dependencies": ["hr_timesheet"],
+          "replaces_ee": "timesheet_grid (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "contract": {
+      "url": "https://github.com/OCA/contract",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "Services",
+      "description": "Contract/subscription management",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "contract",
+          "purpose": "Recurring contracts/invoicing",
+          "dependencies": ["account"],
+          "replaces_ee": "subscription (partial)",
+          "license": "AGPL-3",
+          "risk_notes": "None - excellent subscription alternative"
+        },
+        {
+          "name": "contract_sale",
+          "purpose": "Create contracts from sales orders",
+          "dependencies": ["contract", "sale"],
+          "replaces_ee": "subscription",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "connector": {
+      "url": "https://github.com/OCA/connector",
+      "branch": "19.0",
+      "tier": 10,
+      "domain": "Integration",
+      "description": "Generic connector framework",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "connector",
+          "purpose": "Framework for external system integration",
+          "dependencies": ["queue_job"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "storage": {
+      "url": "https://github.com/OCA/storage",
+      "branch": "19.0",
+      "tier": 10,
+      "domain": "Integration",
+      "description": "External storage backends",
+      "maturity": "stable",
+      "stars": 100,
+      "modules": [
+        {
+          "name": "storage_backend",
+          "purpose": "Abstract storage backend",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "storage_backend_s3",
+          "purpose": "S3/MinIO storage backend",
+          "dependencies": ["storage_backend"],
+          "replaces_ee": null,
+          "license": "LGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "multi-company": {
+      "url": "https://github.com/OCA/multi-company",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "Multi-company",
+      "description": "Multi-company enhancements",
+      "maturity": "proven",
+      "stars": 200,
+      "modules": [
+        {
+          "name": "account_invoice_inter_company",
+          "purpose": "Inter-company invoicing",
+          "dependencies": ["account"],
+          "replaces_ee": "inter_company_rules",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "purchase_sale_inter_company",
+          "purpose": "Inter-company SO/PO",
+          "dependencies": ["sale", "purchase"],
+          "replaces_ee": "inter_company_rules",
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "bank-payment": {
+      "url": "https://github.com/OCA/bank-payment",
+      "branch": "19.0",
+      "tier": 9,
+      "domain": "Banking",
+      "description": "Bank payment processing",
+      "maturity": "proven",
+      "stars": 300,
+      "modules": [
+        {
+          "name": "account_payment_order",
+          "purpose": "Payment order management",
+          "dependencies": ["account"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        },
+        {
+          "name": "account_banking_sepa_credit_transfer",
+          "purpose": "SEPA credit transfers",
+          "dependencies": ["account_payment_order"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "None"
+        }
+      ]
+    },
+    "ai": {
+      "url": "https://github.com/OCA/ai",
+      "branch": "19.0",
+      "tier": 11,
+      "domain": "AI/ML",
+      "description": "AI/ML integration",
+      "maturity": "experimental",
+      "stars": 50,
+      "modules": [
+        {
+          "name": "ai_oca_bridge",
+          "purpose": "AI integration framework",
+          "dependencies": ["base"],
+          "replaces_ee": null,
+          "license": "AGPL-3",
+          "risk_notes": "Experimental - may change"
+        }
+      ]
+    }
+  },
+  "install_tiers": {
+    "0": {"name": "Foundation", "description": "Server tools, UX, backend primitives"},
+    "1": {"name": "Platform UX", "description": "Web responsive, widgets"},
+    "2": {"name": "Background Processing", "description": "Queue job system"},
+    "4": {"name": "Reporting & BI", "description": "MIS Builder, financial reports, XLSX"},
+    "5": {"name": "Spreadsheet", "description": "CE spreadsheet alternative"},
+    "6": {"name": "Documents", "description": "DMS, knowledge base"},
+    "7": {"name": "API", "description": "REST/GraphQL framework"},
+    "8": {"name": "Communication", "description": "Mail enhancements"},
+    "9": {"name": "Workflows", "description": "Purchase, sale, project, HR workflows"},
+    "10": {"name": "Integration", "description": "Connectors, storage"},
+    "11": {"name": "AI/ML", "description": "AI integration (experimental)"}
+  }
+}
