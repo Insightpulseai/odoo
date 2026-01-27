@@ -1,0 +1,14 @@
+{
+  "id": "mcp-server",
+  "name": "MCP Server",
+  "summary": "Standardizes how LLM tools interact with the platform; enables tool-group control to reduce attack surface.",
+  "tags": ["ai", "platform", "security", "mcp"],
+  "stage": "ga",
+  "availability": "all",
+  "links": {
+    "docs": "https://supabase.com/docs/guides/getting-started/mcp",
+    "repo": "https://github.com/jgtolentino/odoo-ce"
+  },
+  "related_assets": ["mcp-coordinator", "odoo-erp-mcp-server", "ai-agent-builder"],
+  "ipai_module": "ipai_ai_core"
+}

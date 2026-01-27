@@ -1,0 +1,14 @@
+{
+  "id": "enterprise-parity",
+  "name": "Enterprise Parity",
+  "summary": "CE + OCA + ipai_* modules achieving ≥80% Odoo Enterprise Edition feature parity without licensing EE.",
+  "tags": ["platform", "parity", "odoo", "cost-optimization"],
+  "stage": "ga",
+  "availability": "all",
+  "links": {
+    "docs": "https://github.com/jgtolentino/odoo-ce/blob/main/CLAUDE.md#enterprise-parity-strategy",
+    "runbook": "scripts/test_ee_parity.py"
+  },
+  "related_assets": ["finance-ppm", "bir-compliance", "approvals-workflow"],
+  "ipai_module": "ipai_dev_studio_base"
+}

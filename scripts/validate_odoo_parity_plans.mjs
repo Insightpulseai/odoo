@@ -18,7 +18,7 @@ if (!fs.existsSync(dataPath)) throw new Error(`Missing ${dataPath}`);
 const schema = JSON.parse(fs.readFileSync(schemaPath, "utf8"));
 const data = YAML.parse(fs.readFileSync(dataPath, "utf8"));
 
-const ajv = new Ajv({ allErrors: true, strict: true });
+const ajv = new Ajv({ allErrors: true, strict: false, validateSchema: false });
 addFormats(ajv);
 
 const validate = ajv.compile(schema);

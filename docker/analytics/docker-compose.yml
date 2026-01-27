@@ -1,0 +1,346 @@
+# Odoo CE Analytics Lakehouse Stack
+# Usage: docker compose -f docker/analytics/docker-compose.yml up -d
+#
+# Components:
+# - MinIO: S3-compatible object storage (data lake)
+# - Airbyte: CDC/ELT extraction from Odoo PostgreSQL
+# - Trino: Federated SQL query engine
+# - Superset: BI dashboards and exploration
+# - Metabase: Self-serve analytics (alternative to Superset)
+# - DataHub: Data catalog and lineage
+
+version: "3.8"
+
+services:
+  # ============================================
+  # Object Storage (Data Lake)
+  # ============================================
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Console
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - analytics
+
+  # MinIO bucket initialization
+  minio-init:
+    image: minio/mc:latest
+    container_name: minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 ${MINIO_ROOT_USER:-minioadmin} ${MINIO_ROOT_PASSWORD:-minioadmin123};
+      mc mb local/odoo-lake-bronze --ignore-existing;
+      mc mb local/odoo-lake-silver --ignore-existing;
+      mc mb local/odoo-lake-gold --ignore-existing;
+      mc mb local/odoo-lake-staging --ignore-existing;
+      echo 'Buckets created successfully';
+      "
+    networks:
+      - analytics
+
+  # ============================================
+  # CDC / ELT Extraction
+  # ============================================
+  airbyte-server:
+    image: airbyte/airbyte-server:latest
+    container_name: airbyte-server
+    ports:
+      - "8001:8001"
+    environment:
+      AIRBYTE_VERSION: 0.50.0
+      DATABASE_HOST: airbyte-db
+      DATABASE_PORT: 5432
+      DATABASE_DB: airbyte
+      DATABASE_USER: airbyte
+      DATABASE_PASSWORD: ${AIRBYTE_DB_PASSWORD:-airbyte}
+      TRACKING_STRATEGY: segment
+      WEBAPP_URL: http://localhost:8000
+    depends_on:
+      - airbyte-db
+    networks:
+      - analytics
+
+  airbyte-webapp:
+    image: airbyte/airbyte-webapp:latest
+    container_name: airbyte-webapp
+    ports:
+      - "8000:8000"
+    environment:
+      AIRBYTE_SERVER_HOST: airbyte-server
+      AIRBYTE_SERVER_PORT: 8001
+    depends_on:
+      - airbyte-server
+    networks:
+      - analytics
+
+  airbyte-db:
+    image: postgres:15-alpine
+    container_name: airbyte-db
+    environment:
+      POSTGRES_DB: airbyte
+      POSTGRES_USER: airbyte
+      POSTGRES_PASSWORD: ${AIRBYTE_DB_PASSWORD:-airbyte}
+    volumes:
+      - airbyte_db_data:/var/lib/postgresql/data
+    networks:
+      - analytics
+
+  # ============================================
+  # Query Engine
+  # ============================================
+  trino:
+    image: trinodb/trino:latest
+    container_name: trino
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./trino/catalog:/etc/trino/catalog:ro
+      - ./trino/config.properties:/etc/trino/config.properties:ro
+    environment:
+      - TRINO_ENVIRONMENT=production
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/info"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - analytics
+
+  # ============================================
+  # BI / Visualization
+  # ============================================
+  superset:
+    image: apache/superset:latest
+    container_name: superset
+    ports:
+      - "8088:8088"
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-your-secret-key-change-in-production}
+      SQLALCHEMY_DATABASE_URI: postgresql://superset:superset@superset-db:5432/superset
+    volumes:
+      - superset_home:/app/superset_home
+    depends_on:
+      - superset-db
+      - superset-init
+    networks:
+      - analytics
+
+  superset-db:
+    image: postgres:15-alpine
+    container_name: superset-db
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: ${SUPERSET_DB_PASSWORD:-superset}
+    volumes:
+      - superset_db_data:/var/lib/postgresql/data
+    networks:
+      - analytics
+
+  superset-init:
+    image: apache/superset:latest
+    container_name: superset-init
+    depends_on:
+      - superset-db
+    command: >
+      /bin/bash -c "
+      superset db upgrade &&
+      superset fab create-admin --username admin --firstname Admin --lastname User --email admin@example.com --password admin ||true &&
+      superset init
+      "
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY:-your-secret-key-change-in-production}
+      SQLALCHEMY_DATABASE_URI: postgresql://superset:superset@superset-db:5432/superset
+    networks:
+      - analytics
+
+  # Alternative: Metabase (simpler, self-serve)
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - "3030:3000"
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: metabase
+      MB_DB_PORT: 5432
+      MB_DB_USER: metabase
+      MB_DB_PASS: ${METABASE_DB_PASSWORD:-metabase}
+      MB_DB_HOST: metabase-db
+    depends_on:
+      - metabase-db
+    networks:
+      - analytics
+    profiles:
+      - metabase
+
+  metabase-db:
+    image: postgres:15-alpine
+    container_name: metabase-db
+    environment:
+      POSTGRES_DB: metabase
+      POSTGRES_USER: metabase
+      POSTGRES_PASSWORD: ${METABASE_DB_PASSWORD:-metabase}
+    volumes:
+      - metabase_db_data:/var/lib/postgresql/data
+    networks:
+      - analytics
+    profiles:
+      - metabase
+
+  # ============================================
+  # Data Catalog & Governance
+  # ============================================
+  datahub-gms:
+    image: linkedin/datahub-gms:latest
+    container_name: datahub-gms
+    ports:
+      - "8083:8080"
+    environment:
+      DATAHUB_GMS_PORT: 8080
+      EBEAN_DATASOURCE_USERNAME: datahub
+      EBEAN_DATASOURCE_PASSWORD: ${DATAHUB_DB_PASSWORD:-datahub}
+      EBEAN_DATASOURCE_HOST: datahub-db:5432
+      EBEAN_DATASOURCE_URL: jdbc:postgresql://datahub-db:5432/datahub
+      KAFKA_BOOTSTRAP_SERVER: datahub-kafka:9092
+      ELASTICSEARCH_HOST: datahub-elasticsearch
+      ELASTICSEARCH_PORT: 9200
+    depends_on:
+      - datahub-db
+      - datahub-kafka
+      - datahub-elasticsearch
+    networks:
+      - analytics
+    profiles:
+      - datahub
+
+  datahub-frontend:
+    image: linkedin/datahub-frontend-react:latest
+    container_name: datahub-frontend
+    ports:
+      - "9002:9002"
+    environment:
+      DATAHUB_GMS_HOST: datahub-gms
+      DATAHUB_GMS_PORT: 8080
+    depends_on:
+      - datahub-gms
+    networks:
+      - analytics
+    profiles:
+      - datahub
+
+  datahub-db:
+    image: postgres:15-alpine
+    container_name: datahub-db
+    environment:
+      POSTGRES_DB: datahub
+      POSTGRES_USER: datahub
+      POSTGRES_PASSWORD: ${DATAHUB_DB_PASSWORD:-datahub}
+    volumes:
+      - datahub_db_data:/var/lib/postgresql/data
+    networks:
+      - analytics
+    profiles:
+      - datahub
+
+  datahub-kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    container_name: datahub-kafka
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: datahub-zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://datahub-kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - datahub-zookeeper
+    networks:
+      - analytics
+    profiles:
+      - datahub
+
+  datahub-zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    container_name: datahub-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    networks:
+      - analytics
+    profiles:
+      - datahub
+
+  datahub-elasticsearch:
+    image: elasticsearch:7.17.9
+    container_name: datahub-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - datahub_es_data:/usr/share/elasticsearch/data
+    networks:
+      - analytics
+    profiles:
+      - datahub
+
+  # ============================================
+  # Orchestration
+  # ============================================
+  dagster-webserver:
+    image: dagster/dagster-k8s:latest
+    container_name: dagster-webserver
+    ports:
+      - "3000:3000"
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+    volumes:
+      - ./dagster/dagster.yaml:/opt/dagster/dagster_home/dagster.yaml:ro
+      - dagster_home:/opt/dagster/dagster_home
+    command: dagster-webserver -h 0.0.0.0 -p 3000
+    networks:
+      - analytics
+    profiles:
+      - orchestration
+
+  dagster-daemon:
+    image: dagster/dagster-k8s:latest
+    container_name: dagster-daemon
+    environment:
+      DAGSTER_HOME: /opt/dagster/dagster_home
+    volumes:
+      - ./dagster/dagster.yaml:/opt/dagster/dagster_home/dagster.yaml:ro
+      - dagster_home:/opt/dagster/dagster_home
+    command: dagster-daemon run
+    networks:
+      - analytics
+    profiles:
+      - orchestration
+
+networks:
+  analytics:
+    name: odoo-analytics
+    driver: bridge
+
+volumes:
+  minio_data:
+  airbyte_db_data:
+  superset_home:
+  superset_db_data:
+  metabase_db_data:
+  datahub_db_data:
+  datahub_es_data:
+  dagster_home:

@@ -1,0 +1,20 @@
+{
+  "id": "mattermost",
+  "name": "Mattermost",
+  "summary": "Self-hosted team messaging. ChatOps, AI assistant integrations, and alert notifications.",
+  "category": "messaging",
+  "type": "native",
+  "capabilities": ["chatops", "webhooks", "ai-assistant", "alerts", "slash-commands"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_mattermost.sh",
+    "scopes": [],
+    "env_vars": ["MATTERMOST_URL", "MATTERMOST_TOKEN"],
+    "auto_configure": true
+  },
+  "links": {
+    "docs": "https://docs.mattermost.com/",
+    "vendor": "https://mattermost.com"
+  },
+  "ipai_module": "ipai_mattermost_connector",
+  "status": "active"
+}
