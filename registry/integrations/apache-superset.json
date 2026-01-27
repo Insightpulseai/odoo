@@ -1,0 +1,21 @@
+{
+  "id": "apache-superset",
+  "name": "Apache Superset",
+  "summary": "Self-hosted BI platform replacing Odoo EE dashboards. Charts, datasets, and SQL Lab.",
+  "category": "analytics",
+  "type": "native",
+  "capabilities": ["dashboards", "charts", "datasets", "sql-lab", "alerts"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_superset.sh",
+    "scopes": [],
+    "env_vars": ["SUPERSET_URL", "SUPERSET_API_KEY"],
+    "auto_configure": true
+  },
+  "links": {
+    "docs": "https://superset.apache.org/docs/intro",
+    "repo": "https://github.com/apache/superset"
+  },
+  "ipai_module": "ipai_superset_connector",
+  "mcp_server": "superset-mcp-server",
+  "status": "active"
+}

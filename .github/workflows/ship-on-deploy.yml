@@ -1,0 +1,127 @@
+name: ship-on-deploy
+
+on:
+  deployment_status:
+
+permissions:
+  contents: write
+  pull-requests: read
+  issues: write
+
+jobs:
+  ship:
+    # Only act when the deployment succeeded (and optionally only for prod env)
+    if: >
+      github.event.deployment_status.state == 'success' &&
+      (github.event.deployment.environment == 'production' || github.event.deployment.environment == 'prod')
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute tag (milestone-like)
+        id: ver
+        run: |
+          set -euo pipefail
+          SHA="${{ github.event.deployment.sha }}"
+          # Default pattern: vYYYY.MM.DD-<shortsha>
+          TAG="v$(date -u +%Y.%m.%d)-${SHA:0:7}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Create git tag + GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG="${{ steps.ver.outputs.tag }}"
+          SHA="${{ steps.ver.outputs.sha }}"
+
+          # Idempotent: if tag exists, no-op
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "Tag exists: $TAG (noop)"
+            exit 0
+          fi
+
+          git tag -a "$TAG" -m "Shipped: $TAG" "$SHA"
+          git push origin "$TAG"
+
+          # Create a Release (optional but recommended)
+          gh release create "$TAG" --title "$TAG" --notes "Deployment succeeded for $SHA" || true
+
+      - name: Update GitHub Project v2 item fields to Shipped
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Set these in repo/org secrets
+          PROJECT_ID: ${{ secrets.GH_PROJECT_ID }}
+          STATUS_FIELD_ID: ${{ secrets.GH_PROJECT_STATUS_FIELD_ID }}
+          STATUS_SHIPPED_OPTION_ID: ${{ secrets.GH_PROJECT_STATUS_SHIPPED_OPTION_ID }}
+        run: |
+          set -euo pipefail
+
+          # Skip if Project secrets not configured
+          if [ -z "${PROJECT_ID:-}" ] || [ -z "${STATUS_FIELD_ID:-}" ]; then
+            echo "Project v2 secrets not configured. Skipping field update."
+            exit 0
+          fi
+
+          # Determine the PR (if any) that was deployed
+          SHA="${{ steps.ver.outputs.sha }}"
+          PR_NUMBER="$(gh pr list --search "$SHA" --state merged --json number --jq '.[0].number' || true)"
+          if [ -z "${PR_NUMBER:-}" ]; then
+            echo "No PR found for SHA=$SHA. Skipping Project update."
+            exit 0
+          fi
+
+          # Find Project item linked to PR
+          OWNER_REPO="${{ github.repository }}"
+          OWNER="${OWNER_REPO%/*}"
+          REPO="${OWNER_REPO#*/}"
+
+          QUERY=$(cat <<'GRAPHQL'
+          query($owner:String!, $repo:String!, $pr:Int!, $projectId:ID!) {
+            repository(owner:$owner, name:$repo) {
+              pullRequest(number:$pr) {
+                id
+                projectItems(first:50) {
+                  nodes {
+                    id
+                    project { id }
+                  }
+                }
+              }
+            }
+          }
+          GRAPHQL
+          )
+
+          RESP="$(gh api graphql -f query="$QUERY" -F owner="$OWNER" -F repo="$REPO" -F pr="$PR_NUMBER" -F projectId="$PROJECT_ID")"
+          ITEM_ID="$(echo "$RESP" | jq -r --arg pid "$PROJECT_ID" '.data.repository.pullRequest.projectItems.nodes[] | select(.project.id==$pid) | .id' | head -n1)"
+
+          if [ -z "${ITEM_ID:-}" ] || [ "$ITEM_ID" = "null" ]; then
+            echo "PR #$PR_NUMBER not found in Project $PROJECT_ID. Skipping field update."
+            exit 0
+          fi
+
+          MUT=$(cat <<'GRAPHQL'
+          mutation($projectId:ID!, $itemId:ID!, $fieldId:ID!, $optId:String!) {
+            updateProjectV2ItemFieldValue(input:{
+              projectId:$projectId
+              itemId:$itemId
+              fieldId:$fieldId
+              value:{ singleSelectOptionId:$optId }
+            }) { projectV2Item { id } }
+          }
+          GRAPHQL
+          )
+
+          gh api graphql -f query="$MUT" \
+            -F projectId="$PROJECT_ID" \
+            -F itemId="$ITEM_ID" \
+            -F fieldId="$STATUS_FIELD_ID" \
+            -F optId="$STATUS_SHIPPED_OPTION_ID"
+
+          echo "Updated Project item status to Shipped for PR #$PR_NUMBER"

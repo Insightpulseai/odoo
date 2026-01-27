@@ -1,0 +1,21 @@
+{
+  "id": "vercel-observability",
+  "name": "Vercel Observability Plus",
+  "summary": "30-day retention, function latency metrics, path breakdown, external API metrics, and runtime logs.",
+  "category": "observability",
+  "type": "connectable",
+  "capabilities": ["metrics", "logs", "traces", "function-latency", "error-tracking"],
+  "install": {
+    "provisioner": "scripts/provisioners/install_vercel_connector.sh",
+    "scopes": ["projects", "deployments", "logs"],
+    "env_vars": ["VERCEL_TOKEN", "VERCEL_PROJECT_ID"],
+    "auto_configure": false
+  },
+  "links": {
+    "docs": "https://vercel.com/docs/observability",
+    "vendor": "https://vercel.com"
+  },
+  "ipai_module": "ipai_connector_vercel",
+  "mcp_server": "vercel-mcp-server",
+  "status": "active"
+}

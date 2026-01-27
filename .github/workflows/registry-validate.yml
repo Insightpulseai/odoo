@@ -1,0 +1,57 @@
+name: registry-validate
+
+on:
+  pull_request:
+    paths:
+      - "registry/**"
+      - "schemas/**"
+      - "scripts/validate_registries.py"
+  push:
+    branches: ["main"]
+    paths:
+      - "registry/**"
+      - "schemas/**"
+      - "scripts/validate_registries.py"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install jsonschema
+
+      - name: Validate registries
+        run: python scripts/validate_registries.py --verbose
+
+      - name: Count entries
+        run: |
+          echo "## Registry Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Registry | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Features | $(ls -1 registry/features/*.json 2>/dev/null | wc -l) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Integrations | $(ls -1 registry/integrations/*.json 2>/dev/null | wc -l) |" >> $GITHUB_STEP_SUMMARY
+
+      - name: List categories
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Integration Categories" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          jq -r '.category' registry/integrations/*.json 2>/dev/null | sort | uniq -c | sort -rn | while read count cat; do
+            echo "- $cat: $count" >> $GITHUB_STEP_SUMMARY
+          done || true
+
+      - name: List feature tags
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Feature Tags" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          jq -r '.tags[]' registry/features/*.json 2>/dev/null | sort | uniq -c | sort -rn | while read count tag; do
+            echo "- $tag: $count" >> $GITHUB_STEP_SUMMARY
+          done || true
