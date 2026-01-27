@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d2b918afca665afddcc6057e9e07c83e2868e3d3
+> Commit: 445b296f847c347182aab869f082c62bd25ddc56
 
 ```
 .
@@ -178,6 +178,7 @@
 │   │   ├── spec-kit-enforce.yml
 │   │   ├── spec-kit-gate.yml
 │   │   ├── sql-migrations-validate.yml
+│   │   ├── stack-gates.yml
 │   │   ├── supabase-branch-sync.yml
 │   │   ├── supabase-branching.yml
 │   │   ├── supabase-db-pr-check.yml
@@ -1754,6 +1755,10 @@
 │   ├── seeds
 │   │   └── SEEDING_STRATEGY.md
 │   └── DB_TARGET_ARCHITECTURE.md
+├── dbt
+│   ├── dbt_project.yml
+│   ├── packages.yml
+│   └── profiles.yml.example
 ├── deploy
 │   ├── k8s
 │   │   ├── namespace.yaml
@@ -1801,12 +1806,19 @@
 │   └── superset
 │       └── superset_config.py
 ├── docker
+│   ├── analytics
+│   │   ├── trino
+│   │   │   ├── catalog
+│   │   │   └── config.properties
+│   │   └── docker-compose.yml
 │   ├── Dockerfile.ci
 │   ├── Dockerfile.odoo
 │   └── docker-compose.ci.yml
 ├── docs
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
+│   ├── analytics
+│   │   └── LAKEHOUSE_PLAN.md
 │   ├── api
 │   │   ├── EXTENDED_PLATFORM_API.md
 │   │   └── openapi.ipai_ai_platform.yaml
@@ -3227,9 +3239,14 @@
 │   ├── .gitkeep
 │   ├── FLAGSHIP_REPO_RECOMMENDATION.md
 │   ├── INTEGRATIONS_OPPORTUNITIES.md
+│   ├── STACK_RUNBOOK.md
 │   ├── TOP_REPOS.md
 │   ├── UPDATED_WORK_RECOMMENDATIONS.md
 │   ├── dns_audit.json
+│   ├── ee_parity_matrix.md
+│   ├── oca_inventory.json
+│   ├── oca_inventory.md
+│   ├── oca_repos_seed.txt
 │   ├── repos_files.jsonl
 │   ├── repos_inventory.json
 │   ├── repos_names.txt
@@ -3574,6 +3591,10 @@
 │   │   └── generate_project_stack_xlsx.py
 │   ├── sql
 │   │   └── update_phase_tags.sql
+│   ├── stack
+│   │   ├── install_stack.sh
+│   │   ├── pin_oca_repos.sh
+│   │   └── verify_stack.sh
 │   ├── status
 │   │   └── set_status.sh
 │   ├── supabase
@@ -4325,6 +4346,8 @@
 │       ├── __init__.py
 │       ├── config.py
 │       └── contracts.py
+├── stack
+│   └── odoo19_stack.yaml
 ├── supabase
 │   ├── .temp
 │   │   ├── cli-latest
@@ -4934,15 +4957,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1363 directories, 3566 files
+1370 directories, 3582 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1601 |
-| Files | 4770 |
+| Directories | 1608 |
+| Files | 4788 |
 | Python files | 795 |
 | XML files | 283 |
-| Markdown files | 1193 |
+| Markdown files | 1197 |
