@@ -1,0 +1,89 @@
+{
+  "name": "Platform Kit Orchestrator",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "platform-kit-trigger",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "platform-kit-webhook"
+    },
+    {
+      "parameters": {
+        "values": {
+          "string": [
+            {
+              "name": "event_type",
+              "value": "={{ $json.body.event_type }}"
+            },
+            {
+              "name": "payload",
+              "value": "={{ JSON.stringify($json.body.payload) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Extract Event",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "owner": "jgtolentino",
+        "repository": "odoo-ce",
+        "eventType": "={{ $json.event_type }}",
+        "clientPayload": "={{ $json.payload }}"
+      },
+      "name": "GitHub Dispatch",
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "channel": "platform-kit",
+        "text": "✅ Platform Kit event dispatched: {{ $json.event_type }}",
+        "otherOptions": {}
+      },
+      "name": "Mattermost Notify",
+      "type": "n8n-nodes-base.mattermost",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"ok\": true, \"event\": $json.event_type, \"dispatched_at\": new Date().toISOString() } }}"
+      },
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{"node": "Extract Event", "type": "main", "index": 0}]]
+    },
+    "Extract Event": {
+      "main": [[{"node": "GitHub Dispatch", "type": "main", "index": 0}]]
+    },
+    "GitHub Dispatch": {
+      "main": [[{"node": "Mattermost Notify", "type": "main", "index": 0}]]
+    },
+    "Mattermost Notify": {
+      "main": [[{"node": "Respond to Webhook", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {},
+  "tags": ["platform-kit", "orchestration"]
+}
