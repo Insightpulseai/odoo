@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d6ff83050547d6f4c20fd02b20188f16c2ad6106
+> Commit: d2b918afca665afddcc6057e9e07c83e2868e3d3
 
 ## 📚 Documentation
 
@@ -471,7 +471,11 @@
 | [EE Parity Audit](docs/evidence/20260126-0457/parity-audit/ee_parity_audit.md) | docs/evidence/20260126-0457/parity-audit |
 | [Odoo 19 Migration Spec Bundle - Validation Summary](docs/evidence/20260126-0815/odoo-19-migration/VALIDATION_SUMMARY.md) | docs/evidence/20260126-0815/odoo-19-migration |
 | [Evidence Pack: Odoo 19 EE Parity Analysis](docs/evidence/20260126-parity-analysis/EVIDENCE.md) | docs/evidence/20260126-parity-analysis |
+| [Platform Kit Merge Evidence](docs/evidence/20260127-0630/platform-kit-merge/MERGE_EVIDENCE.md) | docs/evidence/20260127-0630/platform-kit-merge |
+| [Platform Kit n8n Integration](docs/evidence/20260127-0630/platform-kit-merge/N8N_INTEGRATION.md) | docs/evidence/20260127-0630/platform-kit-merge |
+| [Platform Kit Kickoff Summary](docs/evidence/20260127-0630/platform-kit-merge/SUMMARY.md) | docs/evidence/20260127-0630/platform-kit-merge |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
+| [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
 | [Databricks Training Guidelines for Agent Development](docs/infra/DATABRICKS_TRAINING_GUIDELINES.md) | docs/infra |
@@ -703,6 +707,8 @@
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
 | [Implementation Map](docs/parity/IMPLEMENTATION_MAP.md) | docs/parity |
 | [Target Capability Suite](docs/parity/TARGET_CAPABILITIES.md) | docs/parity |
+| [Supabase UI Library - Prioritized Backlog](docs/parity/supabase-ui-library_backlog.md) | docs/parity |
+| [Supabase UI Library - Block Catalog](docs/parity/supabase-ui-library_block_catalog.md) | docs/parity |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
 | [Notion x Finance PPM Data Dictionary](docs/ppm/data-dictionary.md) | docs/ppm |
 | [Notion x Finance PPM Runbook](docs/ppm/runbook.md) | docs/ppm |
@@ -746,6 +752,7 @@
 | [Runbook: supabase](docs/runbooks/supabase.md) | docs/runbooks |
 | [Runbook: superset](docs/runbooks/superset.md) | docs/runbooks |
 | [Runbook: vercel](docs/runbooks/vercel.md) | docs/runbooks |
+| [Configuration & Secrets Inventory](docs/security/CONFIG_INVENTORY.md) | docs/security |
 | [Odoo Export Template System](docs/seed-data/EXPORT_TEMPLATES.md) | docs/seed-data |
 | [EE Parity Test Runner - Required Secrets](docs/setup/PARITY_TEST_RUNNER_SECRETS.md) | docs/setup |
 | [State Machine Documentation](docs/state_machines/README.md) | docs/state_machines |
@@ -907,10 +914,14 @@
 | [Mailgun Domain Verification Runbook](ops/runbooks/mailgun_domain_verification.md) | ops/runbooks |
 | [OCR Service Operations Runbook](ops/runbooks/ocr_service.md) | ops/runbooks |
 | [Sinch SMS/OTP Setup Runbook](ops/runbooks/sinch_setup.md) | ops/runbooks |
+| [Flagship Repo Recommendation](out/FLAGSHIP_REPO_RECOMMENDATION.md) | out |
 | [Integrations & Opportunities Assessment (Automated)](out/INTEGRATIONS_OPPORTUNITIES.md) | out |
+| [Top Repositories by Completeness](out/TOP_REPOS.md) | out |
+| [Updated Work Recommendations (2026-01-26)](out/UPDATED_WORK_RECOMMENDATIONS.md) | out |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
 | [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
+| [Platform Kit Kickoff - Delivery Summary](platform-kit/docs/KICKOFF_COMPLETE.md) | platform-kit/docs |
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
@@ -923,9 +934,18 @@
 | [Odoo 18 CE Dev Sandbox](sandbox/dev/README.md) | sandbox/dev |
 | [Odoo Dev Sandbox - Repository Audit Report](sandbox/dev/REPORT.md) | sandbox/dev |
 | [IPAI Design System](sandbox/dev/addons/ipai/ipai_design_system/README.md) | sandbox/dev/addons/ipai/ipai_design_system |
+| [Odoo 19 Migration Strategy for odoo-ce](sandbox/dev/docs/ODOO_19_MIGRATION_STRATEGY.md) | sandbox/dev/docs |
 | [UI/Theme Module Consolidation - Status Update](sandbox/dev/docs/UI_CONSOLIDATION_STATUS.md) | sandbox/dev/docs |
 | [Odoo 18 CE Dev Sandbox - Developer Runbook](sandbox/dev/docs/runbooks/DEV_SANDBOX.md) | sandbox/dev/docs/runbooks |
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](sandbox/dev/docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | sandbox/dev/docs/runbooks |
+| [ODOO_CE_INTEGRATION.md — Strategic Separation with Operational Integration](sandbox/dev/integration/ODOO_CE_INTEGRATION.md) | sandbox/dev/integration |
+| [Azure Databricks API Acceleration Strategy — EE Parity + Data Platform](sandbox/dev/spec/databricks-integration/ACCELERATION_STRATEGY.md) | sandbox/dev/spec/databricks-integration |
+| [Databricks API Reference for odoo-ce Integration](sandbox/dev/spec/databricks-integration/API_REFERENCE.md) | sandbox/dev/spec/databricks-integration |
+| [Databricks Developer Workflow for odoo-ce](sandbox/dev/spec/databricks-integration/DEVELOPER_WORKFLOW.md) | sandbox/dev/spec/databricks-integration |
+| [Enterprise SaaS ERP - Databricks Architecture Pattern](sandbox/dev/spec/databricks-integration/ENTERPRISE_ARCHITECTURE.md) | sandbox/dev/spec/databricks-integration |
+| [Databricks Implementation Guide for odoo-ce](sandbox/dev/spec/databricks-integration/IMPLEMENTATION_GUIDE.md) | sandbox/dev/spec/databricks-integration |
+| [Azure Databricks Training Guidelines for Odoo-CE Team](sandbox/dev/spec/databricks-integration/TRAINING_GUIDELINES.md) | sandbox/dev/spec/databricks-integration |
+| [Azure Databricks Integration - Product Requirements Document](sandbox/dev/spec/databricks-integration/prd.md) | sandbox/dev/spec/databricks-integration |
 | [Fix OwlError: pay_invoices_online Field Undefined](scripts/FIX_OWLERROR_GUIDE.md) | scripts |
 | [Scripts Directory](scripts/README.md) | scripts |
 | [Integration Audit Scripts](scripts/audit/README.md) | scripts/audit |
@@ -1118,7 +1138,15 @@
 | [Implementation Plan — Parallel Control Planes](spec/parallel-control-planes/plan.md) | spec/parallel-control-planes |
 | [Product Requirements — Parallel Control Planes](spec/parallel-control-planes/prd.md) | spec/parallel-control-planes |
 | [Tasks — Parallel Control Planes](spec/parallel-control-planes/tasks.md) | spec/parallel-control-planes |
+| [Parity Agent Constitution (non-negotiables)](spec/parity-agent/constitution.md) | spec/parity-agent |
+| [Plan](spec/parity-agent/plan.md) | spec/parity-agent |
+| [PRD: Copilot Reverse-Engineering Parity Agent](spec/parity-agent/prd.md) | spec/parity-agent |
+| [Tasks](spec/parity-agent/tasks.md) | spec/parity-agent |
 | [Odoo EE → CE/OCA SaaS Platform – Plan](spec/plan.md) | spec |
+| [Platform Kit Constitution](spec/platform-kit/constitution.md) | spec/platform-kit |
+| [Platform Kit Implementation Plan](spec/platform-kit/plan.md) | spec/platform-kit |
+| [Product Requirements Document (PRD): Platform Kit](spec/platform-kit/prd.md) | spec/platform-kit |
+| [Platform Kit Tasks](spec/platform-kit/tasks.md) | spec/platform-kit |
 | [Platform Capabilities SSOT (Template)](spec/platforms/platform-capabilities.template.md) | spec/platforms |
 | [Odoo EE → CE/OCA SaaS Platform – PRD](spec/prd.md) | spec |
 | [Constitution — Project CE Suite (Toggleable)](spec/project-ce/constitution.md) | spec/project-ce |

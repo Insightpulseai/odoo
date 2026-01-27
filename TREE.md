@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d6ff83050547d6f4c20fd02b20188f16c2ad6106
+> Commit: d2b918afca665afddcc6057e9e07c83e2868e3d3
 
 ```
 .
@@ -155,7 +155,9 @@
 │   │   ├── odoo-schema-pipeline.yml
 │   │   ├── ops-ci-router.yml
 │   │   ├── ops-ssot-verify.yml
+│   │   ├── parity.yml
 │   │   ├── patch-release.yml
+│   │   ├── platform-kit-ci.yml
 │   │   ├── pr-installability-gate.yml
 │   │   ├── prod-configure-smtp.yml
 │   │   ├── prod-odoo-modules.yml
@@ -1499,6 +1501,8 @@
 │   │   ├── ipai_workos_search__install.log
 │   │   ├── ipai_workos_templates__install.log
 │   │   └── ipai_workos_views__install.log
+│   ├── parity
+│   │   └── run.json
 │   ├── seed_export
 │   │   ├── 20260105_020943
 │   │   │   ├── CHECKSUMS.txt
@@ -1962,10 +1966,14 @@
 │   │   │   └── parity-test-runner
 │   │   ├── 20260126-0815
 │   │   │   └── odoo-19-migration
-│   │   └── 20260126-parity-analysis
-│   │       └── EVIDENCE.md
+│   │   ├── 20260126-parity-analysis
+│   │   │   └── EVIDENCE.md
+│   │   └── 20260127-0630
+│   │       └── platform-kit-merge
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
+│   ├── github
+│   │   └── PROJECTS_V2_API_CAPABILITIES.md
 │   ├── golive
 │   │   ├── TBWA_OMC_PH_GOLIVE_CHECKLIST.csv
 │   │   └── TBWA_OMC_PH_GOLIVE_GUIDE.md
@@ -2233,7 +2241,9 @@
 │   ├── parity
 │   │   ├── IMPLEMENTATION_MAP.md
 │   │   ├── PARITY_MATRIX.yaml
-│   │   └── TARGET_CAPABILITIES.md
+│   │   ├── TARGET_CAPABILITIES.md
+│   │   ├── supabase-ui-library_backlog.md
+│   │   └── supabase-ui-library_block_catalog.md
 │   ├── ppm
 │   │   ├── architecture.md
 │   │   ├── data-dictionary.md
@@ -2327,6 +2337,10 @@
 │   │   ├── ODOO_MODEL_SNAPSHOT.prod.json
 │   │   ├── WORKOS_MODELS.prod.json
 │   │   └── WORKOS_MODULES.prod.csv
+│   ├── security
+│   │   ├── CONFIG_INVENTORY.md
+│   │   ├── config_files.txt
+│   │   └── env_var_references.txt
 │   ├── seed-data
 │   │   └── EXPORT_TEMPLATES.md
 │   ├── setup
@@ -2595,6 +2609,9 @@
 │   ├── .gitbook.yaml
 │   ├── README.md
 │   └── SUMMARY.md
+├── harness
+│   └── runners
+│       └── run_parity_checks.sh
 ├── infra
 │   ├── ai
 │   │   └── provider_router
@@ -2818,7 +2835,10 @@
 │   │   └── sop.md
 │   └── parity
 │       ├── baseline.json
-│       └── rubric.json
+│       ├── capability_schema.json
+│       ├── parity_matrix.schema.json
+│       ├── rubric.json
+│       └── supabase_ui_library_sources.json
 ├── mattermost
 │   ├── runbooks
 │   │   └── .gitkeep
@@ -3205,8 +3225,15 @@
 │   ├── copilot_index
 │   │   └── manifest.json
 │   ├── .gitkeep
+│   ├── FLAGSHIP_REPO_RECOMMENDATION.md
 │   ├── INTEGRATIONS_OPPORTUNITIES.md
-│   └── dns_audit.json
+│   ├── TOP_REPOS.md
+│   ├── UPDATED_WORK_RECOMMENDATIONS.md
+│   ├── dns_audit.json
+│   ├── repos_files.jsonl
+│   ├── repos_inventory.json
+│   ├── repos_names.txt
+│   └── repos_scored.json
 ├── packages
 │   ├── agent-core
 │   │   ├── src
@@ -3263,6 +3290,17 @@
 │           └── auth-otp-verify
 ├── patches
 │   └── ipai_ce_cleaner_xmlid_fix.diff
+├── platform-kit
+│   ├── cli
+│   │   ├── src
+│   │   │   └── index.ts
+│   │   ├── package-lock.json
+│   │   ├── package.json
+│   │   └── tsconfig.json
+│   ├── docs
+│   │   └── KICKOFF_COMPLETE.md
+│   └── reports
+│       └── inventory.json
 ├── registry
 │   ├── features
 │   │   ├── ai-agent-builder.json
@@ -3312,6 +3350,14 @@
 │   │   │   └── settings.local.json
 │   │   ├── .github
 │   │   │   └── workflows
+│   │   ├── _syncfusionexamples
+│   │   │   ├── blazor.json
+│   │   │   ├── maui.json
+│   │   │   ├── react.nextjs.json
+│   │   │   ├── repos.jsonl
+│   │   │   ├── repos.source.jsonl
+│   │   │   ├── top100.latest.json
+│   │   │   └── vue.json
 │   │   ├── addons
 │   │   │   └── ipai
 │   │   ├── config
@@ -3319,10 +3365,15 @@
 │   │   │   └── odoo.conf
 │   │   ├── docs
 │   │   │   ├── runbooks
+│   │   │   ├── ODOO_19_MIGRATION_STRATEGY.md
 │   │   │   └── UI_CONSOLIDATION_STATUS.md
+│   │   ├── integration
+│   │   │   └── ODOO_CE_INTEGRATION.md
 │   │   ├── scripts
 │   │   │   ├── dev
 │   │   │   └── verify.sh
+│   │   ├── spec
+│   │   │   └── databricks-integration
 │   │   ├── .env.example
 │   │   ├── .gitignore
 │   │   ├── CANONICAL_NAMING.md
@@ -3429,6 +3480,7 @@
 │   │   ├── apply_teams.sh
 │   │   ├── create_ee_replacement_issues.sh
 │   │   ├── pull_enterprise_audit.sh
+│   │   ├── test_projects_v2_api.sh
 │   │   └── validate_governance.sh
 │   ├── import
 │   │   ├── import_activities.py
@@ -3628,6 +3680,7 @@
 │   ├── discover_docker_infra.sh
 │   ├── discover_odoo_infra.py
 │   ├── discover_supabase_infra.py
+│   ├── discover_supabase_ui_sources.sh
 │   ├── docker-desktop-audit.sh
 │   ├── docker-staging-audit.sh
 │   ├── docs_refresh.sh
@@ -3749,6 +3802,8 @@
 │   ├── scaffold_ipai_parity.py
 │   ├── scaffold_ipai_parity.sh
 │   ├── scan_ipai_modules.py
+│   ├── scan_repos.sh
+│   ├── score_repos.py
 │   ├── secret-scan.sh
 │   ├── seed_finance_close_from_xlsx.py
 │   ├── seed_finance_ppm_stages.py
@@ -3797,6 +3852,7 @@
 │   ├── validate_ee_replacements.py
 │   ├── validate_finance_ppm_data.py
 │   ├── validate_ipai_doc_module_refs.py
+│   ├── validate_json_schema.mjs
 │   ├── validate_m1.sh
 │   ├── validate_manifest.py
 │   ├── validate_manifests.py
@@ -4198,6 +4254,16 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── parity-agent
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── platform-kit
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── platforms
 │   │   └── platform-capabilities.template.md
 │   ├── project-ce
@@ -4326,6 +4392,8 @@
 │   │   │   └── index.ts
 │   │   ├── ops-summary
 │   │   │   └── index.ts
+│   │   ├── platformkit-introspect
+│   │   │   └── index.ts
 │   │   ├── realtime-sync
 │   │   │   └── index.ts
 │   │   ├── schema-changed
@@ -4448,6 +4516,7 @@
 │   │   ├── 20260125_000003_odoo_bridge.sql
 │   │   ├── 20260125_000004_app_schema_rls.sql
 │   │   ├── 20260125_100001_control_plane_vault.sql
+│   │   ├── 20260126222743_platformkit_sql_rpc.sql
 │   │   ├── 20260126_000001_ee_parity_tracking.sql
 │   │   ├── 20260126_billing_schema.sql
 │   │   ├── 5001_auth_foundation.sql
@@ -4865,15 +4934,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1344 directories, 3516 files
+1363 directories, 3566 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1581 |
-| Files | 4709 |
-| Python files | 794 |
+| Directories | 1601 |
+| Files | 4770 |
+| Python files | 795 |
 | XML files | 283 |
-| Markdown files | 1165 |
+| Markdown files | 1193 |
