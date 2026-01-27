@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 96d12e46ae3f7d7df578f9396616b9fc4c7f8db4
+> Commit: e8076e49b88c360a2a5409aff3c3e82f5b77353a
 
 ```
 .
@@ -2293,6 +2293,7 @@
 │   │   ├── modules.md
 │   │   └── runbooks.md
 │   ├── parity
+│   │   ├── ENTERPRISE_STACK_PARITY.md
 │   │   ├── IMPLEMENTATION_MAP.md
 │   │   ├── PARITY_MATRIX.yaml
 │   │   ├── TARGET_CAPABILITIES.md
@@ -5003,7 +5004,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1403 directories, 3595 files
+1403 directories, 3596 files
 ```
 
 ## 📊 Stats
@@ -5011,7 +5012,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1641 |
-| Files | 4849 |
+| Files | 4850 |
 | Python files | 828 |
 | XML files | 301 |
-| Markdown files | 1199 |
+| Markdown files | 1200 |
