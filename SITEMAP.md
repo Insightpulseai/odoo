@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d2b918afca665afddcc6057e9e07c83e2868e3d3
+> Commit: 445b296f847c347182aab869f082c62bd25ddc56
 
 ## 📚 Documentation
 
@@ -377,6 +377,7 @@
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
+| [Lakehouse/Warehouse Plan for Odoo CE](docs/analytics/LAKEHOUSE_PLAN.md) | docs/analytics |
 | [Extended Platform API Documentation](docs/api/EXTENDED_PLATFORM_API.md) | docs/api |
 | [Architectural Convergence: Agentic AI, Headless ERP, and Cloud-Native Analytics](docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md) | docs/architecture |
 | [AI Module Deprecation Manifest](docs/architecture/AI_MODULE_DEPRECATION_MANIFEST.md) | docs/architecture |
@@ -916,9 +917,12 @@
 | [Sinch SMS/OTP Setup Runbook](ops/runbooks/sinch_setup.md) | ops/runbooks |
 | [Flagship Repo Recommendation](out/FLAGSHIP_REPO_RECOMMENDATION.md) | out |
 | [Integrations & Opportunities Assessment (Automated)](out/INTEGRATIONS_OPPORTUNITIES.md) | out |
+| [Odoo 19 CE + OCA Stack Runbook](out/STACK_RUNBOOK.md) | out |
 | [Top Repositories by Completeness](out/TOP_REPOS.md) | out |
 | [Updated Work Recommendations (2026-01-26)](out/UPDATED_WORK_RECOMMENDATIONS.md) | out |
 | [Odoo CE/OCA 18 Mapping](out/concur_demo_odoo_map/mapping.md) | out/concur_demo_odoo_map |
+| [Odoo Enterprise → CE + OCA Parity Matrix](out/ee_parity_matrix.md) | out |
+| [OCA Module Inventory for EE→CE+OCA Migration](out/oca_inventory.md) | out |
 | [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Platform Kit Kickoff - Delivery Summary](platform-kit/docs/KICKOFF_COMPLETE.md) | platform-kit/docs |
