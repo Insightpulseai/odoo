@@ -1,0 +1,398 @@
+# Odoo 19.0 CE + OCA Stack Manifest (SSOT)
+# Generated: 2026-01-27
+# Purpose: Single source of truth for EE→CE+OCA migration stack
+
+version: "1.0.0"
+odoo_version: "19.0"
+target_environment: "production"
+
+# Odoo CE Source
+odoo:
+  source: "https://github.com/odoo/odoo"
+  branch: "19.0"
+  commit: null  # Pin to specific commit for production
+  edition: "community"
+
+# OCA Repository Pins
+oca_repositories:
+  # Tier 0: Foundation
+  server-tools:
+    url: "https://github.com/OCA/server-tools"
+    branch: "19.0"
+    commit: null  # Will be pinned by pin_oca_repos.sh
+    tier: 0
+    modules:
+      - base_exception
+      - base_technical_user
+      - auditlog
+      - base_cron_exclusion
+      - module_auto_update
+      - base_view_inheritance_extension
+      - base_sparse_field
+
+  server-ux:
+    url: "https://github.com/OCA/server-ux"
+    branch: "19.0"
+    commit: null
+    tier: 0
+    modules:
+      - date_range
+      - date_range_account
+      - base_tier_validation
+      - base_tier_validation_formula
+      - server_action_mass_edit
+
+  server-backend:
+    url: "https://github.com/OCA/server-backend"
+    branch: "19.0"
+    commit: null
+    tier: 0
+    modules:
+      - base_user_role
+      - base_user_role_company
+
+  # Tier 1: Platform UX
+  web:
+    url: "https://github.com/OCA/web"
+    branch: "19.0"
+    commit: null
+    tier: 1
+    modules:
+      - web_responsive
+      - web_refresher
+      - web_dialog_size
+      - web_advanced_search
+      - web_m2x_options
+      - web_widget_x2many_2d_matrix
+      - web_tree_many2one_clickable
+
+  # Tier 2: Background Processing
+  queue:
+    url: "https://github.com/OCA/queue"
+    branch: "19.0"
+    commit: null
+    tier: 2
+    modules:
+      - queue_job
+      - queue_job_cron
+      - queue_job_cron_jobrunner
+
+  # Tier 4: Reporting & BI
+  reporting-engine:
+    url: "https://github.com/OCA/reporting-engine"
+    branch: "19.0"
+    commit: null
+    tier: 4
+    modules:
+      - report_xlsx
+      - report_xlsx_helper
+      - report_csv
+      - bi_sql_editor
+      - sql_export
+      - sql_export_excel
+      - kpi_dashboard
+
+  mis-builder:
+    url: "https://github.com/OCA/mis-builder"
+    branch: "19.0"
+    commit: null
+    tier: 4
+    modules:
+      - mis_builder
+      - mis_builder_budget
+
+  account-financial-reporting:
+    url: "https://github.com/OCA/account-financial-reporting"
+    branch: "19.0"
+    commit: null
+    tier: 4
+    modules:
+      - account_financial_report
+
+  account-financial-tools:
+    url: "https://github.com/OCA/account-financial-tools"
+    branch: "19.0"
+    commit: null
+    tier: 4
+    modules:
+      - account_lock_date
+      - account_fiscal_year
+      - account_move_name_sequence
+      - account_journal_lock_date
+
+  # Tier 5: Spreadsheet
+  spreadsheet:
+    url: "https://github.com/OCA/spreadsheet"
+    branch: "19.0"
+    commit: null
+    tier: 5
+    modules:
+      - spreadsheet_oca
+      - spreadsheet_dashboard_oca
+
+  # Tier 6: Documents & Knowledge
+  dms:
+    url: "https://github.com/OCA/dms"
+    branch: "19.0"
+    commit: null
+    tier: 6
+    modules:
+      - dms
+      - dms_field
+      - dms_attachment_link
+
+  knowledge:
+    url: "https://github.com/OCA/knowledge"
+    branch: "19.0"
+    commit: null
+    tier: 6
+    modules:
+      - document_page
+      - document_page_approval
+      - document_page_tag
+
+  # Tier 7: API Layer
+  rest-framework:
+    url: "https://github.com/OCA/rest-framework"
+    branch: "19.0"
+    commit: null
+    tier: 7
+    modules:
+      - base_rest
+      - base_rest_pydantic
+      - graphql_base
+
+  # Tier 8: Communication
+  social:
+    url: "https://github.com/OCA/social"
+    branch: "19.0"
+    commit: null
+    tier: 8
+    modules:
+      - mail_activity_board
+      - mail_tracking
+      - mail_debrand
+
+  # Tier 9: Workflow Extensions
+  account-reconcile:
+    url: "https://github.com/OCA/account-reconcile"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - account_reconcile_oca
+
+  purchase-workflow:
+    url: "https://github.com/OCA/purchase-workflow"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - purchase_request
+      - purchase_order_approval_block
+      - purchase_order_type
+
+  sale-workflow:
+    url: "https://github.com/OCA/sale-workflow"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - sale_order_type
+      - sale_order_line_sequence
+
+  project:
+    url: "https://github.com/OCA/project"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - project_timeline
+      - project_task_dependency
+      - project_wbs
+      - project_template
+      - project_task_recurring
+
+  hr-expense:
+    url: "https://github.com/OCA/hr-expense"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - hr_expense_advance_clearing
+      - hr_expense_sequence
+
+  timesheet:
+    url: "https://github.com/OCA/timesheet"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - hr_timesheet_sheet
+      - hr_timesheet_task_required
+
+  contract:
+    url: "https://github.com/OCA/contract"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - contract
+      - contract_sale
+      - contract_variable_quantity
+
+  multi-company:
+    url: "https://github.com/OCA/multi-company"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - account_invoice_inter_company
+      - purchase_sale_inter_company
+
+  bank-payment:
+    url: "https://github.com/OCA/bank-payment"
+    branch: "19.0"
+    commit: null
+    tier: 9
+    modules:
+      - account_payment_order
+      - account_banking_sepa_credit_transfer
+
+  # Tier 10: Integration
+  connector:
+    url: "https://github.com/OCA/connector"
+    branch: "19.0"
+    commit: null
+    tier: 10
+    modules:
+      - connector
+
+  storage:
+    url: "https://github.com/OCA/storage"
+    branch: "19.0"
+    commit: null
+    tier: 10
+    modules:
+      - storage_backend
+      - storage_backend_s3
+
+  # Tier 11: AI/ML (Experimental)
+  ai:
+    url: "https://github.com/OCA/ai"
+    branch: "19.0"
+    commit: null
+    tier: 11
+    modules:
+      - ai_oca_bridge
+
+# IPAI Custom Modules (thin glue only)
+ipai_modules:
+  source: "local"
+  path: "addons/ipai"
+  modules:
+    # Core platform
+    - ipai_dev_studio_base
+    - ipai_workspace_core
+    - ipai_ce_branding
+    - ipai_platform_approvals
+    - ipai_platform_audit
+    - ipai_platform_permissions
+    - ipai_platform_workflow
+    # Enterprise bridge
+    - ipai_enterprise_bridge
+    - ipai_ocr_gateway
+    - ipai_sms_gateway
+    - ipai_superset_connector
+    # Finance
+    - ipai_finance_ppm_golive
+    - ipai_finance_closing
+    - ipai_month_end
+    - ipai_bir_tax_compliance
+
+# External Services (self-hosted)
+external_services:
+  docuseal:
+    purpose: "Digital signatures (Sign alternative)"
+    image: "docuseal/docuseal:latest"
+    port: 3000
+    required: false
+
+  paperless-ngx:
+    purpose: "OCR/Document digitization"
+    image: "ghcr.io/paperless-ngx/paperless-ngx:latest"
+    port: 8000
+    required: false
+
+  superset:
+    purpose: "BI/Analytics dashboards"
+    image: "apache/superset:latest"
+    port: 8088
+    required: true
+
+  mautic:
+    purpose: "Marketing automation"
+    image: "mautic/mautic:latest"
+    port: 8080
+    required: false
+
+# Installation Order (by tier)
+install_order:
+  - tier: 0
+    name: "Foundation"
+    repos: [server-tools, server-ux, server-backend]
+  - tier: 1
+    name: "Platform UX"
+    repos: [web]
+  - tier: 2
+    name: "Background Processing"
+    repos: [queue]
+  - tier: 4
+    name: "Reporting & BI"
+    repos: [reporting-engine, mis-builder, account-financial-reporting, account-financial-tools]
+  - tier: 5
+    name: "Spreadsheet"
+    repos: [spreadsheet]
+  - tier: 6
+    name: "Documents"
+    repos: [dms, knowledge]
+  - tier: 7
+    name: "API"
+    repos: [rest-framework]
+  - tier: 8
+    name: "Communication"
+    repos: [social]
+  - tier: 9
+    name: "Workflows"
+    repos: [account-reconcile, purchase-workflow, sale-workflow, project, hr-expense, timesheet, contract, multi-company, bank-payment]
+  - tier: 10
+    name: "Integration"
+    repos: [connector, storage]
+  - tier: 11
+    name: "AI/ML"
+    repos: [ai]
+
+# Verification Endpoints
+health_checks:
+  odoo:
+    endpoint: "/web/health"
+    expected_status: 200
+  superset:
+    endpoint: "/health"
+    expected_status: 200
+  postgres:
+    command: "pg_isready -h localhost -p 5432"
+    expected_exit: 0
+
+# Database Configuration
+database:
+  name: "odoo_core"
+  user: "odoo"
+  host: "postgres"
+  port: 5432
+
+# Python/Node Requirements
+requirements:
+  python: ">=3.10"
+  node: ">=18.0.0"
+  pnpm: ">=8.0.0"

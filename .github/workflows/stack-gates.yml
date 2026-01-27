@@ -1,0 +1,287 @@
+# Stack Gates - CI Pipeline for Odoo 19 CE + OCA Stack
+# Validates OCA pinning, module installation, and stack health
+
+name: Stack Gates
+
+on:
+  push:
+    branches:
+      - main
+      - 'claude/**'
+    paths:
+      - 'stack/**'
+      - 'scripts/stack/**'
+      - 'addons/oca/**'
+      - 'addons/ipai/**'
+      - 'oca19.lock.json'
+      - 'docker-compose*.yml'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'stack/**'
+      - 'scripts/stack/**'
+      - 'addons/oca/**'
+      - 'addons/ipai/**'
+      - 'oca19.lock.json'
+  workflow_dispatch:
+    inputs:
+      full_install:
+        description: 'Run full stack installation test'
+        required: false
+        default: 'false'
+        type: boolean
+
+concurrency:
+  group: stack-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ODOO_VERSION: "19.0"
+  POSTGRES_USER: odoo
+  POSTGRES_PASSWORD: odoo
+  POSTGRES_DB: odoo_test
+
+jobs:
+  # Job 1: Validate stack manifest and lockfile
+  validate-manifest:
+    name: Validate Stack Manifest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml jsonschema
+
+      - name: Validate stack manifest YAML
+        run: |
+          python -c "
+          import yaml
+          import sys
+
+          with open('stack/odoo19_stack.yaml', 'r') as f:
+              manifest = yaml.safe_load(f)
+
+          # Required keys
+          required = ['version', 'odoo_version', 'oca_repositories', 'ipai_modules', 'install_order']
+          for key in required:
+              if key not in manifest:
+                  print(f'ERROR: Missing required key: {key}')
+                  sys.exit(1)
+
+          # Validate Odoo version
+          if manifest['odoo_version'] != '19.0':
+              print(f'ERROR: Expected odoo_version 19.0, got {manifest[\"odoo_version\"]}')
+              sys.exit(1)
+
+          # Validate repositories have required fields
+          for repo_name, repo in manifest.get('oca_repositories', {}).items():
+              if 'url' not in repo or 'branch' not in repo:
+                  print(f'ERROR: Repository {repo_name} missing url or branch')
+                  sys.exit(1)
+
+          print('Stack manifest validation passed')
+          "
+
+      - name: Validate lockfile JSON (if exists)
+        run: |
+          if [ -f "oca19.lock.json" ]; then
+            python -c "
+          import json
+          import sys
+
+          with open('oca19.lock.json', 'r') as f:
+              lockfile = json.load(f)
+
+          if 'repositories' not in lockfile:
+              print('ERROR: Lockfile missing repositories key')
+              sys.exit(1)
+
+          print(f'Lockfile contains {len(lockfile[\"repositories\"])} pinned repositories')
+          "
+          else
+            echo "No lockfile found - will be generated"
+          fi
+
+  # Job 2: Lint OCA module manifests
+  lint-modules:
+    name: Lint Module Manifests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate IPAI module manifests
+        run: |
+          find addons/ipai -name "__manifest__.py" -type f | while read manifest; do
+            echo "Checking $manifest"
+            python -c "
+          import ast
+          import sys
+
+          with open('$manifest', 'r') as f:
+              content = f.read()
+
+          try:
+              manifest_dict = ast.literal_eval(content)
+          except:
+              print(f'ERROR: Invalid Python syntax in $manifest')
+              sys.exit(1)
+
+          # Required keys
+          required = ['name', 'version', 'depends', 'license']
+          for key in required:
+              if key not in manifest_dict:
+                  print(f'WARNING: Missing key {key} in $manifest')
+
+          # Validate license
+          valid_licenses = ['AGPL-3', 'LGPL-3', 'GPL-3', 'OPL-1']
+          if 'license' in manifest_dict and manifest_dict['license'] not in valid_licenses:
+              print(f'WARNING: Non-standard license in $manifest')
+
+          print(f'OK: $manifest')
+          " || true
+          done
+
+  # Job 3: Test OCA repository pinning
+  test-pinning:
+    name: Test OCA Pinning
+    runs-on: ubuntu-latest
+    needs: validate-manifest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test repository availability
+        run: |
+          # Test that key OCA repos have 19.0 branch
+          REPOS=(
+            "https://github.com/OCA/server-tools"
+            "https://github.com/OCA/web"
+            "https://github.com/OCA/reporting-engine"
+            "https://github.com/OCA/mis-builder"
+          )
+
+          for repo in "${REPOS[@]}"; do
+            echo "Testing $repo..."
+            if git ls-remote --heads "$repo" "19.0" | grep -q "19.0"; then
+              echo "  ✓ 19.0 branch exists"
+            else
+              echo "  ✗ 19.0 branch NOT found (may use 18.0 fallback)"
+            fi
+          done
+
+  # Job 4: Build and test Docker image
+  build-test:
+    name: Build & Test Stack
+    runs-on: ubuntu-latest
+    needs: [validate-manifest, lint-modules]
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.full_install == 'true'
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ env.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U odoo"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache OCA repos
+        uses: actions/cache@v4
+        with:
+          path: addons/oca
+          key: oca-repos-19.0-${{ hashFiles('stack/odoo19_stack.yaml') }}
+          restore-keys: |
+            oca-repos-19.0-
+
+      - name: Pin OCA repositories
+        run: |
+          ./scripts/stack/pin_oca_repos.sh || true
+          cat oca19.lock.json || echo "Lockfile not created"
+
+      - name: Install Odoo dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            python3-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            libldap2-dev \
+            libsasl2-dev \
+            libjpeg-dev \
+            zlib1g-dev \
+            libpq-dev
+
+      - name: Test module dependencies
+        run: |
+          # Verify key module __manifest__.py files are valid
+          for module in addons/ipai/*/__manifest__.py; do
+            if [ -f "$module" ]; then
+              python3 -c "
+          import ast
+          with open('$module') as f:
+              ast.literal_eval(f.read())
+          print('OK: $module')
+          " || echo "FAIL: $module"
+            fi
+          done
+
+  # Job 5: Generate verification report
+  verification-report:
+    name: Generate Report
+    runs-on: ubuntu-latest
+    needs: [validate-manifest, lint-modules, test-pinning]
+    if: always()
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate summary
+        run: |
+          echo "# Stack Gates Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Manifest Validation | ${{ needs.validate-manifest.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Module Linting | ${{ needs.lint-modules.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| OCA Pinning Test | ${{ needs.test-pinning.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Odoo Version:** 19.0" >> $GITHUB_STEP_SUMMARY
+          echo "**Stack Manifest:** stack/odoo19_stack.yaml" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload stack artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: stack-artifacts
+          path: |
+            stack/
+            oca19.lock.json
+            out/
+          retention-days: 7

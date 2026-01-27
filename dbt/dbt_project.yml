@@ -1,0 +1,77 @@
+# Odoo CE Analytics - dbt Project
+# Transforms Bronze → Silver → Gold layers
+
+name: 'odoo_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'odoo_analytics'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+docs-paths: ["docs"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Model configuration
+models:
+  odoo_analytics:
+    # Staging models (Bronze → cleaned)
+    staging:
+      +materialized: view
+      +schema: staging
+
+    # Intermediate models (cleaned → silver)
+    intermediate:
+      +materialized: incremental
+      +schema: silver
+
+    # Mart models (silver → gold)
+    marts:
+      +materialized: table
+      +schema: gold
+      finance:
+        +tags: ['finance', 'daily']
+      sales:
+        +tags: ['sales', 'daily']
+      operations:
+        +tags: ['operations', 'daily']
+      executive:
+        +tags: ['executive', 'weekly']
+
+# Seed configuration
+seeds:
+  odoo_analytics:
+    +schema: seeds
+
+# Snapshot configuration
+snapshots:
+  odoo_analytics:
+    +target_schema: snapshots
+    +strategy: timestamp
+    +updated_at: write_date
+
+# Variables
+vars:
+  # Odoo database name
+  odoo_database: 'odoo_core'
+  # Default company ID
+  default_company_id: 1
+  # Date spine start
+  date_spine_start: '2020-01-01'
+  # Timezone
+  timezone: 'UTC'
+
+# On-run hooks
+on-run-start:
+  - "{{ log('Starting dbt run for Odoo Analytics', info=True) }}"
+
+on-run-end:
+  - "{{ log('Completed dbt run for Odoo Analytics', info=True) }}"

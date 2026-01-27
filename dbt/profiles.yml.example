@@ -1,0 +1,33 @@
+# dbt Profiles Configuration for Odoo Analytics
+# Copy this file to ~/.dbt/profiles.yml and fill in credentials
+
+odoo_analytics:
+  target: dev
+  outputs:
+    # Development - Direct PostgreSQL (Odoo DB)
+    dev:
+      type: postgres
+      host: localhost
+      port: 5432
+      user: odoo
+      password: "{{ env_var('ODOO_DB_PASSWORD', 'odoo') }}"
+      dbname: odoo_core
+      schema: analytics
+      threads: 4
+
+    # Production - Trino (for lakehouse queries)
+    prod:
+      type: trino
+      method: none
+      host: localhost
+      port: 8082
+      user: trino
+      catalog: minio
+      schema: gold
+      threads: 8
+
+    # DuckDB - Lightweight local analytics
+    duckdb:
+      type: duckdb
+      path: target/odoo_analytics.duckdb
+      threads: 4
