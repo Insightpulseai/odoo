@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 445b296f847c347182aab869f082c62bd25ddc56
+> Commit: 96d12e46ae3f7d7df578f9396616b9fc4c7f8db4
 
 ## 📚 Documentation
 
@@ -772,6 +772,7 @@
 | [Supabase Docs UI Specification](docs/supabase-docs-patterns/docs_ui_spec.md) | docs/supabase-docs-patterns |
 | [Supabase Integration Architecture](docs/supabase-integration.md) | docs |
 | [ipai-ops-stack Template](docs/templates/ipai-ops-stack/README.md) | docs/templates/ipai-ops-stack |
+| [Enterprise Test Integration Strategy](docs/testing/ENTERPRISE_TEST_INTEGRATION.md) | docs/testing |
 | [Database Selector Issue - Troubleshooting Guide](docs/troubleshooting/DBFILTER_FIX.md) | docs/troubleshooting |
 | [Magic Link 500 Error: Complete Analysis & Fix](docs/troubleshooting/MAGIC_LINK_500_ERROR.md) | docs/troubleshooting |
 | [Jinja2 Templating Basics](docs/tutorials/jinja2-basics/README.md) | docs/tutorials/jinja2-basics |
@@ -1113,9 +1114,9 @@
 | [PRD: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/prd.md) | spec/odoo-ce-enterprise-replacement |
 | [Tasks: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/tasks.md) | spec/odoo-ce-enterprise-replacement |
 | [Odoo CE Platform Constitution](spec/odoo-ce/constitution.md) | spec/odoo-ce |
-| [Plan](spec/odoo-ce/plan.md) | spec/odoo-ce |
+| [Odoo CE Repository - Implementation Plan](spec/odoo-ce/plan.md) | spec/odoo-ce |
 | [PRD — Odoo CE (CE + OCA + IPAI)](spec/odoo-ce/prd.md) | spec/odoo-ce |
-| [Tasks](spec/odoo-ce/tasks.md) | spec/odoo-ce |
+| [Odoo CE Repository - Implementation Tasks](spec/odoo-ce/tasks.md) | spec/odoo-ce |
 | [Constitution: Odoo Copilot – Process Mining (Local-First)](spec/odoo-copilot-process-mining/constitution.md) | spec/odoo-copilot-process-mining |
 | [Plan: Odoo Copilot – Process Mining](spec/odoo-copilot-process-mining/plan.md) | spec/odoo-copilot-process-mining |
 | [PRD: Odoo Copilot – Process Mining & Process Intelligence (Mindzie-style, Local-First)](spec/odoo-copilot-process-mining/prd.md) | spec/odoo-copilot-process-mining |
@@ -1133,6 +1134,7 @@
 | [Odoo MCP Server - Constitution](spec/odoo-mcp-server/constitution.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Implementation Plan](spec/odoo-mcp-server/plan.md) | spec/odoo-mcp-server |
 | [Odoo MCP Server - Product Requirements](spec/odoo-mcp-server/prd.md) | spec/odoo-mcp-server |
+| [Odoo MCP Server - Implementation Tasks](spec/odoo-mcp-server/tasks.md) | spec/odoo-mcp-server |
 | [Ops Control Room — Deployment Integration Guide](spec/ops-control-room/DEPLOYMENT_INTEGRATION.md) | spec/ops-control-room |
 | [Ops Control Room — Constitution (Non-Negotiable Rules)](spec/ops-control-room/constitution.md) | spec/ops-control-room |
 | [Ops Control Room — Implementation Plan](spec/ops-control-room/plan.md) | spec/ops-control-room |
@@ -1236,6 +1238,7 @@
 | [ipai_equity](./addons/ipai/ipai_equity) | ✅ |  |
 | [ipai_esg](./addons/ipai/ipai_esg) | ✅ |  |
 | [ipai_esg_social](./addons/ipai/ipai_esg_social) | ✅ |  |
+| [ipai_expense_ocr](./addons/ipai/ipai_expense_ocr) | ✅ |  |
 | [ipai_finance_close_seed](./addons/ipai/ipai_finance_close_seed) | ⚠️ | Missing manifest |
 | [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ⚠️ | Missing manifest |
 | [ipai_finance_tax_return](./addons/ipai/ipai_finance_tax_return) | ✅ |  |
