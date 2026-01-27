@@ -1,0 +1,49 @@
+{
+  "version": "1.0",
+  "e2b": {
+    "template": "node-20",
+    "mcp_servers": [
+      {
+        "name": "supabase",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@supabase/mcp-server"
+        ]
+      },
+      {
+        "name": "github",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-github"
+        ]
+      },
+      {
+        "name": "vercel",
+        "command": "npx",
+        "args": [
+          "-y",
+          "vercel-mcp"
+        ]
+      },
+      {
+        "name": "digitalocean",
+        "command": "npx",
+        "args": [
+          "-y",
+          "@digitalocean/mcp",
+          "--services",
+          "apps"
+        ]
+      }
+    ],
+    "env": {
+      "SUPABASE_ACCESS_TOKEN": "$SUPABASE_ACCESS_TOKEN",
+      "SUPABASE_PROJECT_REF": "$SUPABASE_PROJECT_REF",
+      "GITHUB_TOKEN": "$GITHUB_TOKEN",
+      "VERCEL_TOKEN": "$VERCEL_TOKEN",
+      "DIGITALOCEAN_API_TOKEN": "$DIGITALOCEAN_API_TOKEN"
+    }
+  }
+}

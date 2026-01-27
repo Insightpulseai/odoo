@@ -1,0 +1,24 @@
+version: "1.0"
+
+# Allowed tool combinations
+allowed_combinations:
+  - [supabase, github]  # Safe: DB + VCS
+  - [vercel, github]    # Safe: Deploy + VCS
+  - [digitalocean, github]  # Safe: Infra + VCS
+
+# Dangerous combinations (require explicit approval)
+dangerous_combinations:
+  - [supabase, local-filesystem]  # Risk: DB + file access
+  - [github, local-filesystem]    # Risk: VCS + file access (CVE-2024-XXXXX)
+
+# Tool allowlists per context
+contexts:
+  production:
+    allowed_servers: [supabase, github, vercel, digitalocean, odoo-erp, superset]
+    forbidden_servers: [pulser]  # No agent orchestration in prod
+    
+  development:
+    allowed_servers: all
+    
+  ci:
+    allowed_servers: [github, vercel]  # Minimal set for CI

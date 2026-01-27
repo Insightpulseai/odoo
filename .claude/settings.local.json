@@ -18,7 +18,9 @@
       "Bash(find:*)",
       "Bash(ls:*)",
       "Bash(wc:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(python scripts/gen_mcp_adapters.py:*)",
+      "Bash(python3:*)"
     ],
     "deny": [],
     "ask": []

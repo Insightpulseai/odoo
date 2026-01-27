@@ -1,0 +1,44 @@
+name: MCP Capabilities Check
+on:
+  push:
+    paths:
+      - "mcp/**"
+      - "scripts/gen_mcp_adapters.py"
+      - "scripts/probe_capabilities.py"
+      - ".github/workflows/mcp-capabilities.yml"
+  workflow_dispatch: {}
+
+jobs:
+  capabilities:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          pip install pyyaml
+      
+      - name: Generate MCP adapters
+        run: python scripts/gen_mcp_adapters.py
+      
+      - name: Probe MCP capabilities
+        run: python scripts/probe_capabilities.py
+      
+      - name: Validate JSON outputs
+        run: |
+          for f in capabilities/*.json adapters/*/*.json; do
+            echo "Validating $f"
+            python -m json.tool "$f" >/dev/null
+          done
+      
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-capabilities
+          path: |
+            capabilities/
+            adapters/

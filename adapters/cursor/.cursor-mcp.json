@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "mcp": {
+    "servers": {
+      "supabase": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@supabase/mcp-server"
+        ],
+        "env": {
+          "SUPABASE_ACCESS_TOKEN": "$SUPABASE_ACCESS_TOKEN",
+          "SUPABASE_PROJECT_REF": "$SUPABASE_PROJECT_REF"
+        }
+      },
+      "github": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@modelcontextprotocol/server-github"
+        ],
+        "env": {
+          "GITHUB_TOKEN": "$GITHUB_TOKEN"
+        }
+      },
+      "vercel": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "vercel-mcp"
+        ],
+        "env": {
+          "VERCEL_TOKEN": "$VERCEL_TOKEN"
+        }
+      },
+      "digitalocean": {
+        "command": "npx",
+        "args": [
+          "-y",
+          "@digitalocean/mcp",
+          "--services",
+          "apps"
+        ],
+        "env": {
+          "DIGITALOCEAN_API_TOKEN": "$DIGITALOCEAN_API_TOKEN"
+        }
+      }
+    }
+  }
+}

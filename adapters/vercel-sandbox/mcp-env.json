@@ -1,0 +1,26 @@
+{
+  "version": "1.0",
+  "sandbox": {
+    "mcp_servers": [
+      "supabase",
+      "github",
+      "vercel",
+      "digitalocean"
+    ],
+    "env_required": [
+      "ANTHROPIC_API_KEY",
+      "DIGITALOCEAN_API_TOKEN",
+      "GITHUB_TOKEN",
+      "ODOO_DB",
+      "ODOO_PASSWORD",
+      "ODOO_URL",
+      "ODOO_USERNAME",
+      "SUPABASE_ACCESS_TOKEN",
+      "SUPABASE_PROJECT_REF",
+      "SUPERSET_BASE_URL",
+      "SUPERSET_PASSWORD",
+      "SUPERSET_USERNAME",
+      "VERCEL_TOKEN"
+    ]
+  }
+}

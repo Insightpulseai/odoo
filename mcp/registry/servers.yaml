@@ -1,0 +1,83 @@
+version: "1.0"
+last_updated: "2026-01-27"
+
+# Core MCP servers (external)
+external_servers:
+  supabase:
+    type: remote
+    transport: stdio
+    package: "@supabase/mcp-server"
+    command: "npx"
+    args: ["-y", "@supabase/mcp-server"]
+    tags: [database, schema, sql]
+    env_required: [SUPABASE_ACCESS_TOKEN, SUPABASE_PROJECT_REF]
+    documentation: "https://github.com/supabase/mcp-server"
+    
+  github:
+    type: remote
+    transport: stdio
+    package: "@modelcontextprotocol/server-github"
+    command: "npx"
+    args: ["-y", "@modelcontextprotocol/server-github"]
+    tags: [vcs, repos, prs]
+    env_required: [GITHUB_TOKEN]
+    documentation: "https://github.com/modelcontextprotocol/servers"
+    
+  vercel:
+    type: remote
+    transport: stdio
+    package: "vercel-mcp"
+    command: "npx"
+    args: ["-y", "vercel-mcp"]
+    tags: [deploy, hosting, logs]
+    env_required: [VERCEL_TOKEN]
+    documentation: "https://vercel.com/docs/mcp/vercel-mcp"
+    
+  digitalocean:
+    type: remote
+    transport: stdio
+    package: "@digitalocean/mcp"
+    command: "npx"
+    args: ["-y", "@digitalocean/mcp", "--services", "apps"]
+    tags: [infra, droplets, apps]
+    env_required: [DIGITALOCEAN_API_TOKEN]
+    documentation: "https://github.com/digitalocean/mcp"
+
+# Custom MCP servers (in-repo)
+custom_servers:
+  odoo-erp:
+    type: local
+    transport: stdio
+    path: "mcp/servers/odoo-erp-server"
+    command: "node"
+    args: ["dist/index.js"]
+    tags: [erp, accounting, bir]
+    env_required: [ODOO_URL, ODOO_DB, ODOO_USERNAME, ODOO_PASSWORD]
+    build_required: true
+    
+  superset:
+    type: local
+    transport: stdio
+    path: "mcp/servers/superset-mcp-server"
+    command: "node"
+    args: ["dist/index.js"]
+    tags: [bi, dashboards, charts]
+    env_required: [SUPERSET_BASE_URL, SUPERSET_USERNAME, SUPERSET_PASSWORD]
+    build_required: true
+    
+  pulser:
+    type: local
+    transport: stdio
+    path: "mcp/servers/pulser-mcp-server"
+    command: "node"
+    args: ["dist/index.js"]
+    tags: [orchestration, agents]
+    env_required: [ANTHROPIC_API_KEY]
+    build_required: true
+
+# Server groups for different contexts
+groups:
+  core: [supabase, github, odoo-erp]
+  infra: [digitalocean, vercel]
+  bi: [superset]
+  automation: [pulser]

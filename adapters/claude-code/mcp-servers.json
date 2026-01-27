@@ -1,0 +1,79 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@supabase/mcp-server"
+      ],
+      "env": {
+        "SUPABASE_ACCESS_TOKEN": "$SUPABASE_ACCESS_TOKEN",
+        "SUPABASE_PROJECT_REF": "$SUPABASE_PROJECT_REF"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "$GITHUB_TOKEN"
+      }
+    },
+    "vercel": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "vercel-mcp"
+      ],
+      "env": {
+        "VERCEL_TOKEN": "$VERCEL_TOKEN"
+      }
+    },
+    "digitalocean": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@digitalocean/mcp",
+        "--services",
+        "apps"
+      ],
+      "env": {
+        "DIGITALOCEAN_API_TOKEN": "$DIGITALOCEAN_API_TOKEN"
+      }
+    },
+    "odoo-erp": {
+      "command": "node",
+      "args": [
+        "/Users/tbwa/odoo-ce/mcp/servers/odoo-erp-server/dist/index.js"
+      ],
+      "env": {
+        "ODOO_URL": "$ODOO_URL",
+        "ODOO_DB": "$ODOO_DB",
+        "ODOO_USERNAME": "$ODOO_USERNAME",
+        "ODOO_PASSWORD": "$ODOO_PASSWORD"
+      }
+    },
+    "superset": {
+      "command": "node",
+      "args": [
+        "/Users/tbwa/odoo-ce/mcp/servers/superset-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "SUPERSET_BASE_URL": "$SUPERSET_BASE_URL",
+        "SUPERSET_USERNAME": "$SUPERSET_USERNAME",
+        "SUPERSET_PASSWORD": "$SUPERSET_PASSWORD"
+      }
+    },
+    "pulser": {
+      "command": "node",
+      "args": [
+        "/Users/tbwa/odoo-ce/mcp/servers/pulser-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "ANTHROPIC_API_KEY": "$ANTHROPIC_API_KEY"
+      }
+    }
+  }
+}

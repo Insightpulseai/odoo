@@ -1,0 +1,58 @@
+{
+  "generated_at": "2026-01-27T09:55:21.800263Z",
+  "version": "1.0",
+  "external_servers": {
+    "supabase": {
+      "name": "supabase",
+      "available": false,
+      "command": "npx",
+      "error": "[Errno 2] No such file or directory: 'npx'"
+    },
+    "github": {
+      "name": "github",
+      "available": false,
+      "command": "npx",
+      "error": "[Errno 2] No such file or directory: 'npx'"
+    },
+    "vercel": {
+      "name": "vercel",
+      "available": false,
+      "command": "npx",
+      "error": "[Errno 2] No such file or directory: 'npx'"
+    },
+    "digitalocean": {
+      "name": "digitalocean",
+      "available": false,
+      "command": "npx",
+      "error": "[Errno 2] No such file or directory: 'npx'"
+    }
+  },
+  "custom_servers": {
+    "odoo-erp": {
+      "name": "odoo-erp",
+      "available": false,
+      "path": "mcp/servers/odoo-erp-server",
+      "built": false,
+      "error": "Not built (run: npm run build)"
+    },
+    "superset": {
+      "name": "superset",
+      "available": false,
+      "path": "mcp/servers/superset-mcp-server",
+      "built": false,
+      "error": "Not built (run: npm run build)"
+    },
+    "pulser": {
+      "name": "pulser",
+      "available": false,
+      "path": "mcp/servers/pulser-mcp-server",
+      "built": false,
+      "error": "Not built (run: npm run build)"
+    }
+  },
+  "summary": {
+    "total": 7,
+    "available": 0,
+    "unavailable": 7
+  }
+}
