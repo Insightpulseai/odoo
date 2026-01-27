@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 445b296f847c347182aab869f082c62bd25ddc56
+> Commit: 96d12e46ae3f7d7df578f9396616b9fc4c7f8db4
 
 ```
 .
@@ -348,6 +348,14 @@
 │   │   │   ├── security
 │   │   │   ├── views
 │   │   │   ├── README.md
+│   │   │   ├── __init__.py
+│   │   │   └── __manifest__.py
+│   │   ├── ipai_expense_ocr
+│   │   │   ├── models
+│   │   │   ├── scripts
+│   │   │   ├── security
+│   │   │   ├── tests
+│   │   │   ├── views
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_finance_close_seed
@@ -1043,6 +1051,40 @@
 │   │   ├── __init__.py
 │   │   └── __manifest__.py
 │   └── oca
+│       ├── account_asset_management
+│       │   ├── data
+│       │   ├── models
+│       │   ├── security
+│       │   ├── views
+│       │   ├── wizard
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── account_financial_report
+│       │   ├── data
+│       │   ├── models
+│       │   ├── report
+│       │   ├── security
+│       │   ├── views
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── account_reconcile_oca
+│       │   ├── data
+│       │   ├── doc
+│       │   ├── models
+│       │   ├── security
+│       │   ├── views
+│       │   ├── wizard
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
+│       ├── hr_expense
+│       │   ├── data
+│       │   ├── doc
+│       │   ├── models
+│       │   ├── security
+│       │   ├── views
+│       │   ├── wizard
+│       │   ├── __init__.py
+│       │   └── __manifest__.py
 │       ├── .gitkeep
 │       ├── OCA_PINS.yaml
 │       ├── ODOO_PIN.txt
@@ -2383,6 +2425,8 @@
 │   │       ├── docker
 │   │       ├── scripts
 │   │       └── README.md
+│   ├── testing
+│   │   └── ENTERPRISE_TEST_INTEGRATION.md
 │   ├── troubleshooting
 │   │   ├── DBFILTER_FIX.md
 │   │   └── MAGIC_LINK_500_ERROR.md
@@ -3711,6 +3755,7 @@
 │   ├── erd_dot.sql
 │   ├── erp_config_cli.sh
 │   ├── execute_rationalization.sh
+│   ├── expense_ocr_ingest.sh
 │   ├── export_architecture_diagrams.sh
 │   ├── export_todo_seed.py
 │   ├── extract_openai_academy_prompt_packs.py
@@ -4259,7 +4304,8 @@
 │   │   ├── README.md
 │   │   ├── constitution.md
 │   │   ├── plan.md
-│   │   └── prd.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── ops-control-room
 │   │   ├── agents
 │   │   │   └── figma-bridge.yaml
@@ -4957,15 +5003,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1370 directories, 3582 files
+1403 directories, 3595 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1608 |
-| Files | 4788 |
-| Python files | 795 |
-| XML files | 283 |
-| Markdown files | 1197 |
+| Directories | 1641 |
+| Files | 4849 |
+| Python files | 828 |
+| XML files | 301 |
+| Markdown files | 1199 |
