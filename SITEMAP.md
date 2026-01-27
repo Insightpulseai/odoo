@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 96d12e46ae3f7d7df578f9396616b9fc4c7f8db4
+> Commit: e8076e49b88c360a2a5409aff3c3e82f5b77353a
 
 ## 📚 Documentation
 
@@ -706,6 +706,7 @@
 | [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
 | [Modules](docs/pages/modules.md) | docs/pages |
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
+| [Enterprise Stack Parity Assessment](docs/parity/ENTERPRISE_STACK_PARITY.md) | docs/parity |
 | [Implementation Map](docs/parity/IMPLEMENTATION_MAP.md) | docs/parity |
 | [Target Capability Suite](docs/parity/TARGET_CAPABILITIES.md) | docs/parity |
 | [Supabase UI Library - Prioritized Backlog](docs/parity/supabase-ui-library_backlog.md) | docs/parity |
