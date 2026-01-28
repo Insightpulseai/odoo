@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 37934743f8d9894a18a6e5e1f6cf227ad82139aa
+> Commit: e523b7b9fcab0a9cb5108c9e2b9ae6c85bac2885
 
 ## 📚 Documentation
 
@@ -219,6 +219,7 @@
 | [Receipt OCR Module for InsightPulse AI](clients/flutter_receipt_ocr/README.md) | clients/flutter_receipt_ocr |
 | [Mailgun → Odoo Integration - Complete Implementation](config/MAILGUN_INTEGRATION_COMPLETE.md) | config |
 | [Mailgun Integration Deployment Guide](config/MAILGUN_INTEGRATION_DEPLOYMENT.md) | config |
+| [Addons Manifest System](config/README_ADDONS_MANIFEST.md) | config |
 | [EE Parity Complete Installation Manifest](config/ee_parity/INSTALL_MANIFEST.md) | config/ee_parity |
 | [IPAI Secrets Inventory (Names Only)](config/secrets_inventory.md) | config |
 | [Project Constitution](constitution.md) | . |
@@ -293,6 +294,7 @@
 | [fin-workspace Automation Hardening Status](docs/FIN_WORKSPACE_HARDENING_STATUS.md) | docs |
 | [fin-workspace Setup Guide](docs/FIN_WORKSPACE_SETUP.md) | docs |
 | [Gantt Chart to Odoo CE + OCA Mapping](docs/GANTT_TO_ODOO_CE_MAPPING.md) | docs |
+| [GitHub PAT for Codespaces Setup](docs/GITHUB_PAT_CODESPACES.md) | docs |
 | [GitHub Personal Access Token (PAT) Scopes](docs/GITHUB_PAT_SCOPES.md) | docs |
 | [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
 | [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
@@ -491,6 +493,9 @@
 | [EE Parity Analysis Evidence Pack](docs/evidence/20260128-1145/ee-parity-analysis/analysis_summary.md) | docs/evidence/20260128-1145/ee-parity-analysis |
 | [Odoo 19.0 Documentation Review](docs/evidence/20260128-odoo-docs-review/ODOO_19_DOCS_REVIEW.md) | docs/evidence/20260128-odoo-docs-review |
 | [Verification Results](docs/evidence/20260128-odoo-docs-review/VERIFICATION.md) | docs/evidence/20260128-odoo-docs-review |
+| [CE+OCA Mount Validation System - Implementation Complete](docs/evidence/20260129-0110/mount-validation/IMPLEMENTATION_COMPLETE.md) | docs/evidence/20260129-0110/mount-validation |
+| [Comprehensive OCA/ipai Manifest System - Implementation Complete](docs/evidence/20260129-0110/oca-ipai-manifest/COMPREHENSIVE_MANIFEST_COMPLETE.md) | docs/evidence/20260129-0110/oca-ipai-manifest |
+| [OCA Repository Clone - Complete](docs/evidence/20260129-0130/oca-complete/ALL_REPOS_CLONED.md) | docs/evidence/20260129-0130/oca-complete |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
