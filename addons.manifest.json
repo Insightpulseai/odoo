@@ -1,0 +1,76 @@
+{
+  "$schema": "https://ipai.dev/schemas/odoo-addons-manifest-v1.json",
+  "version": "1.0.0",
+  "project": "odoo-ce",
+  "odoo_version": "18.0",
+  "source": {
+    "oca": "./addons/oca",
+    "ipai": "./addons/ipai"
+  },
+  "mounts": [
+    {
+      "name": "OCA Account Financial Tools",
+      "target": "odoo.addons",
+      "source": "./addons/oca/account-financial-tools",
+      "priority": 2,
+      "required": false
+    },
+    {
+      "name": "OCA Account Financial Reporting",
+      "target": "odoo.addons",
+      "source": "./addons/oca/account-financial-reporting",
+      "priority": 2,
+      "required": false
+    },
+    {
+      "name": "OCA Server Tools",
+      "target": "odoo.addons",
+      "source": "./addons/oca/server-tools",
+      "priority": 2,
+      "required": true
+    },
+    {
+      "name": "OCA Web Addons",
+      "target": "odoo.addons",
+      "source": "./addons/oca/web",
+      "priority": 2,
+      "required": true
+    },
+    {
+      "name": "OCA Project Agile",
+      "target": "odoo.addons",
+      "source": "./addons/oca/project-agile",
+      "priority": 2,
+      "required": false
+    },
+    {
+      "name": "OCA Queue Job",
+      "target": "odoo.addons",
+      "source": "./addons/oca/queue",
+      "priority": 2,
+      "required": false
+    },
+    {
+      "name": "IPAI Custom Addons",
+      "target": "odoo.addons",
+      "source": "./addons/ipai",
+      "priority": 3,
+      "required": true
+    }
+  ],
+  "validation": {
+    "check_paths": true,
+    "check_manifests": true,
+    "check_dependencies": true,
+    "fail_on_missing_required": true
+  },
+  "metadata": {
+    "last_validated": "2026-01-29T01:10:43+08:00",
+    "validation_tool": "scripts/verify-addons-mounts.sh",
+    "ci_validation": true,
+    "references": {
+      "oca_ipai_manifest": "config/addons_manifest.oca_ipai.json",
+      "description": "See config/addons_manifest.oca_ipai.json for complete OCA repository list and must-have modules"
+    }
+  }
+}
