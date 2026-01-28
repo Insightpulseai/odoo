@@ -1,0 +1,11 @@
+# Optional: if you want the sync script to copy from a canonical location.
+# Keep these paths outside git or in a private asset repo; DO NOT commit secrets.
+BRAND_LOGO_SRC=/absolute/path/to/logo.png
+BRAND_LOGO_WHITE_SRC=/absolute/path/to/logo-white.png
+BRAND_FAVICON_SRC=/absolute/path/to/favicon.ico
+
+# Target module (default ipai_website_shell)
+BRAND_TARGET_MODULE=ipai_website_shell
+
+# Optional: strict mode (default true in validator)
+BRAND_STRICT=true
