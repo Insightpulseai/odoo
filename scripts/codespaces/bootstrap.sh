@@ -12,6 +12,27 @@ set -euo pipefail
 echo "[codespaces] Bootstrap starting..."
 
 # ============================================================================
+# GitHub CLI Authentication (CODESPACES_PAT)
+# ============================================================================
+
+if [ -n "$CODESPACES_PAT" ]; then
+    echo "[codespaces] Authenticating GitHub CLI with CODESPACES_PAT"
+    echo "$CODESPACES_PAT" | gh auth login --with-token
+
+    if gh auth status &>/dev/null; then
+        echo "[codespaces] ✅ GitHub CLI authenticated successfully"
+        gh auth status 2>&1 | grep -E "Logged in|Token|protocol" | sed 's/^/[codespaces]    /'
+    else
+        echo "[codespaces] ⚠️  GitHub CLI authentication may have failed"
+    fi
+else
+    echo "[codespaces] ⚠️  CODESPACES_PAT not found - gh CLI authentication skipped"
+    echo "[codespaces]    Set at: https://github.com/jgtolentino/odoo-ce/settings/secrets/codespaces"
+fi
+
+echo ""
+
+# ============================================================================
 # System Dependencies
 # ============================================================================
 
@@ -92,6 +113,12 @@ fi
 echo "[codespaces] Configuring Git..."
 git config --global --add safe.directory /workspaces/odoo-ce
 git config --global pull.rebase false
+
+# Enable GPG commit signing (keys must be configured separately)
+if [ "${CODESPACES:-false}" = "true" ]; then
+    echo "[codespaces] Enabling GPG commit signing"
+    git config --global commit.gpgsign true
+fi
 
 # ============================================================================
 # Create local .env if not exists
