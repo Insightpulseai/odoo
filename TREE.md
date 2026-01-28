@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6a6069d3bdbe9e24e90554201d39cedf03c8d1c1
+> Commit: ab54f7d4dc77f40f3197b772c5ede6ac1b2d8278
 
 ```
 .
@@ -2033,8 +2033,13 @@
 │   │   │   └── odoo-19-migration
 │   │   ├── 20260126-parity-analysis
 │   │   │   └── EVIDENCE.md
-│   │   └── 20260127-0630
-│   │       └── platform-kit-merge
+│   │   ├── 20260127-0630
+│   │   │   └── platform-kit-merge
+│   │   ├── 20260128-1145
+│   │   │   └── ee-parity-analysis
+│   │   └── 20260128-odoo-docs-review
+│   │       ├── ODOO_19_DOCS_REVIEW.md
+│   │       └── VERIFICATION.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── github
@@ -2310,6 +2315,8 @@
 │   │   │   └── odoo_editions_comparison.html
 │   │   ├── CLEANUP_AND_HARDENING_CHECKLIST.md
 │   │   ├── COMPLIANCE_AND_LICENSING.md
+│   │   ├── EE_PARITY_LAYERING_ANALYSIS.md
+│   │   ├── EE_PARITY_MINIMAL_MODULE_SET.md
 │   │   ├── ENTERPRISE_STACK_PARITY.md
 │   │   ├── IMPLEMENTATION_MAP.md
 │   │   ├── OPERATIONAL_POSITIONING.md
@@ -3590,6 +3597,9 @@
 │   │   ├── compute_token_diff.ts
 │   │   ├── export_figma_contract.ts
 │   │   └── validate_contract.sh
+│   ├── dev
+│   │   ├── install-ee-parity-modules.sh
+│   │   └── list-ee-parity-modules.sh
 │   ├── docs
 │   │   ├── build_llms_full.sh
 │   │   ├── fetch_external_llms_packs.sh
@@ -5096,15 +5106,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1418 directories, 3673 files
+1422 directories, 3679 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1654 |
-| Files | 4935 |
+| Directories | 1658 |
+| Files | 4942 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1231 |
+| Markdown files | 1236 |
