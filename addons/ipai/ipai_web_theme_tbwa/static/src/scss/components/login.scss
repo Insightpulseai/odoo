@@ -1,0 +1,46 @@
+/*
+ * TBWA Login Page Styles
+ * ======================
+ * Clean login page with proper logo positioning
+ */
+
+// ============================================================================
+// LOGIN PAGE
+// ============================================================================
+.o_database_list,
+.o_database_create {
+  // Logo container
+  .o_database_list_header {
+    position: relative;
+    z-index: 100;
+    margin-bottom: 2rem;
+
+    img {
+      max-width: 200px;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+  }
+
+  // Login form
+  .o_database_list_container {
+    position: relative;
+    z-index: 50;
+    margin-top: 2rem;
+  }
+}
+
+// Ensure login box doesn't overlap logo
+.oe_login_form {
+  margin-top: 2rem;
+  position: relative;
+  z-index: 50;
+}
+
+// Database selector - prevent overlap
+.list-group.o_database_list {
+  position: relative;
+  z-index: 50;
+  margin-top: 2rem;
+}
