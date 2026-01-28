@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: aac9fa4b637434d2c7f0e61542817f833187e69c
+> Commit: e2769cd659cb7ea9260d98ef816cff8e76cb29e2
 
 ## 📚 Documentation
 
@@ -943,6 +943,7 @@
 | [CLAUDE.md](sandbox/dev/CLAUDE.md) | sandbox/dev |
 | [Disk Cleanup Report - Dev Sandbox](sandbox/dev/CLEANUP_REPORT.md) | sandbox/dev |
 | [Hot-Reload Development Guide](sandbox/dev/HOT_RELOAD_GUIDE.md) | sandbox/dev |
+| [Image Alignment Verification](sandbox/dev/IMAGE_ALIGNMENT.md) | sandbox/dev |
 | [Implementation Summary - Odoo Dev Sandbox Normalization](sandbox/dev/IMPLEMENTATION_SUMMARY.md) | sandbox/dev |
 | [Odoo CSS Error - Diagnosis Report](sandbox/dev/ODOO_CSS_DIAGNOSIS.md) | sandbox/dev |
 | [Odoo CSS Error Fix - Resolution Report](sandbox/dev/ODOO_CSS_ERROR_FIX.md) | sandbox/dev |
