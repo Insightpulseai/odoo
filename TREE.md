@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 28539c7abe1ad72a50865fa5bb35736ed07bd716
+> Commit: 5d432142b2d0e1eb8f3c7c471b93dc17f1323ba6
 
 ```
 .
@@ -2597,6 +2597,7 @@
 │   ├── README.md
 │   ├── README_MCP_STACK.md
 │   ├── RELEASE_NOTES_GO_LIVE.md
+│   ├── REPOSITORY_STRUCTURE.md
 │   ├── REPO_SNAPSHOT.json
 │   ├── REPO_TREE.contract.md
 │   ├── REPO_TREE.generated.md
@@ -5091,7 +5092,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1417 directories, 3669 files
+1417 directories, 3670 files
 ```
 
 ## 📊 Stats
@@ -5099,7 +5100,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1653 |
-| Files | 4926 |
+| Files | 4927 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1227 |
+| Markdown files | 1228 |
