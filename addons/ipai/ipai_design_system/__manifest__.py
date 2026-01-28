@@ -42,4 +42,5 @@ Usage:
     'installable': True,
     'auto_install': False,
     'application': False,
+    "installable": False,
 }

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Documents AI",
+    "name": "DEPRECATED: Documents AI",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "AI document classification",
+    "summary": "DEPRECATED - Use dms (OCA) + ipai_enterprise_bridge instead. Do not install.",
     "description": """
 Documents AI
 ============
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

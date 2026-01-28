@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "AI RAG Pipeline",
+    "name": "DEPRECATED: AI RAG Pipeline",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "RAG for document-based context retrieval",
+    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
     "description": """
 AI RAG Pipeline
 ===============
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }
