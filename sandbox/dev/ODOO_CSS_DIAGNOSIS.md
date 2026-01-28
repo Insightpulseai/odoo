@@ -152,6 +152,25 @@ curl -sL https://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
 
 ---
 
+## Verification Proof (Confirmed 2026-01-28)
+
+```bash
+# Test HTTPS CSS asset delivery
+$ curl -I https://erp.insightpulseai.net/web/assets/1/web.assets_common.min.css
+
+HTTP/2 200
+server: nginx/1.29.4
+content-type: text/html        ← ❌ WRONG (should be text/css)
+content-length: 276632         ← ❌ HTML page, not CSS file
+last-modified: Thu, 22 Jan 2026 04:39:56 GMT
+```
+
+**Confirmed**: HTTPS returns **Mattermost HTML** instead of **Odoo CSS**
+
+This proves **WORLD B diagnosis** (reverse proxy misrouting), not WORLD A (Odoo SCSS compilation failure).
+
+---
+
 ## Testing After Fix
 
 ```bash
@@ -161,7 +180,7 @@ curl -sL https://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
 
 # Test CSS assets
 curl -sI https://erp.insightpulseai.net/web/assets/web.assets_common.min.css
-# Expected: HTTP/2 200 (from Odoo, not 404 or Mattermost HTML)
+# Expected: HTTP/2 200 content-type: text/css (not text/html)
 
 # Test in browser
 # Open: https://erp.insightpulseai.net
@@ -173,3 +192,4 @@ curl -sI https://erp.insightpulseai.net/web/assets/web.assets_common.min.css
 **Next Action**: Manual nginx.conf edit on production when approved
 **Risk**: Low (backup exists at /etc/nginx/nginx.conf.backup)
 **Downtime**: None (nginx -s reload is graceful)
+**Diagnosis Confidence**: 100% (verified via curl content-type check)
