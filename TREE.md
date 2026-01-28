@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: d349645ed8f0236f851c801be6ee164aca9afd46
+> Commit: 8a87df2a9d46547b4504059ad8097927e9745656
 
 ```
 .
@@ -2047,9 +2047,11 @@
 │   │   ├── 20260129-0110
 │   │   │   ├── mount-validation
 │   │   │   └── oca-ipai-manifest
-│   │   └── 20260129-0130
-│   │       ├── oca-complete
-│   │       └── FINAL_STATUS.md
+│   │   ├── 20260129-0130
+│   │   │   ├── oca-complete
+│   │   │   └── FINAL_STATUS.md
+│   │   └── 20260129-0210
+│   │       └── OCA_IPAI_INSTALLER_COMPLETE.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── github
@@ -3696,7 +3698,8 @@
 │   ├── ocadev
 │   │   ├── README.md
 │   │   ├── install_oca_ipai_full.sh
-│   │   └── list_installed_modules.sh
+│   │   ├── list_installed_modules.sh
+│   │   └── preflight.sh
 │   ├── odoo
 │   │   ├── README_BOOTSTRAP.md
 │   │   ├── bootstrap_companies.sh
@@ -5138,15 +5141,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1429 directories, 3704 files
+1430 directories, 3706 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1665 |
-| Files | 4970 |
+| Directories | 1666 |
+| Files | 4972 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1250 |
+| Markdown files | 1251 |
