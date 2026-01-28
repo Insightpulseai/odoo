@@ -59,6 +59,9 @@ Installation Order
             "ipai_web_theme_tbwa/static/src/scss/components/form.scss",
             "ipai_web_theme_tbwa/static/src/scss/components/chatter.scss",
         ],
+        "web.assets_frontend": [
+            "ipai_web_theme_tbwa/static/src/scss/components/login.scss",
+        ],
     },
     "installable": True,
     "application": False,
