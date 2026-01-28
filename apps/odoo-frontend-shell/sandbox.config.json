@@ -1,0 +1,12 @@
+{
+  "name": "TBWA Odoo Frontend Shell",
+  "description": "Decoupled Next.js frontend for Odoo CE 18 with TBWA branding",
+  "template": "next",
+  "container": {
+    "port": 3001,
+    "node": "20"
+  },
+  "infiniteLoopProtection": true,
+  "hardReloadOnChange": false,
+  "view": "browser"
+}
