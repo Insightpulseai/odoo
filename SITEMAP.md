@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e2769cd659cb7ea9260d98ef816cff8e76cb29e2
+> Commit: df21c592af23f26530426a4a4f97bb0fd30665a2
 
 ## 📚 Documentation
 
@@ -185,6 +185,7 @@
 | [multi-agent-orchestrator](apps/multi-agent-orchestrator/APP.md) | apps/multi-agent-orchestrator |
 | [odoo-developer-agent](apps/odoo-developer-agent/APP.md) | apps/odoo-developer-agent |
 | [Deployment Guide: Vercel Sandbox](apps/odoo-frontend-shell/DEPLOY.md) | apps/odoo-frontend-shell |
+| [Quick Start: Deploy to Vercel](apps/odoo-frontend-shell/QUICKSTART.md) | apps/odoo-frontend-shell |
 | [Odoo Frontend Shell](apps/odoo-frontend-shell/README.md) | apps/odoo-frontend-shell |
 | [odoo-saas-platform](apps/odoo-saas-platform/APP.md) | apps/odoo-saas-platform |
 | [superset-analytics](apps/superset-analytics/APP.md) | apps/superset-analytics |
