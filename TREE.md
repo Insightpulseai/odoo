@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c1fd15aa19770b6a07ef0a24cbe04055dedf6706
+> Commit: 9278648c923c2febedf3d5b64b91d04b54c6ddbd
 
 ```
 .
@@ -1823,6 +1823,7 @@
 │   ├── DROPLET_DEPLOYMENT.md
 │   ├── PRODUCTION_SETUP.md
 │   ├── README.md
+│   ├── docker-compose.ce19.yml
 │   ├── docker-compose.prod.yml
 │   ├── monitoring_schema.sql
 │   ├── monitoring_views.sql
@@ -2387,6 +2388,7 @@
 │   │   ├── DOCKER_STAGING_CLEANUP.md
 │   │   ├── ODOO_LOCAL_9069_HEALTH.md
 │   │   ├── PROD_RUNBOOK_ODOO.md
+│   │   ├── SANDBOX_OPTIONS.md
 │   │   ├── digitalocean.md
 │   │   ├── figma-sites.md
 │   │   ├── supabase.md
@@ -3543,6 +3545,7 @@
 │   │   ├── module_drift_gate.sh
 │   │   ├── needs_supabase_ci_preview.sh
 │   │   ├── oca_must_have_gate.sh
+│   │   ├── run-all-gates.sh
 │   │   ├── run_all.sh
 │   │   ├── run_odoo_tests.sh
 │   │   ├── schema_drift_check.sh
@@ -3691,6 +3694,11 @@
 │   │   └── verify_workos.sh
 │   ├── provisioners
 │   │   └── README.md
+│   ├── sandbox
+│   │   ├── run-all-sandboxes.sh
+│   │   ├── start-codespace.sh
+│   │   ├── start-do-sandbox.sh
+│   │   └── start-local-sandbox.sh
 │   ├── seeds
 │   │   ├── convert_expense_template_to_odoo.py
 │   │   ├── generate_project_stack_csv.py
@@ -5072,15 +5080,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1415 directories, 3652 files
+1416 directories, 3659 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1651 |
-| Files | 4909 |
+| Directories | 1652 |
+| Files | 4916 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1219 |
+| Markdown files | 1220 |
