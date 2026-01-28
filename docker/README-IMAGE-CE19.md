@@ -20,7 +20,7 @@ docker pull ghcr.io/jgtolentino/odoo-ce:edge-19-ee-parity
 
 ```bash
 # From repo root
-docker compose -f deploy/docker-compose.ce19.yml up -d
+docker compose -f docker/docker-compose.ce19.yml up -d
 ```
 
 ### 3. Run with Docker CLI

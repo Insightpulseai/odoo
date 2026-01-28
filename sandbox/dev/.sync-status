@@ -1,0 +1,116 @@
+╔══════════════════════════════════════════════════════════════════╗
+║    ENVIRONMENT SYNCHRONIZATION STATUS                            ║
+║    Last Updated: 2026-01-28 13:20 UTC                            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+✅ SYNC INFRASTRUCTURE COMPLETE
+
+Scripts:
+  ✓ scripts/dev/sync-env.sh       - Git sync + config verification
+  ✓ scripts/dev/start-dev.sh      - Unified dev starter (auto-detect env)
+  ✓ scripts/dev/check-sync.sh     - Status verification
+
+Documentation:
+  ✓ SYNC_GUIDE.md                 - Comprehensive sync guide
+  ✓ docs/runbooks/DEV_SANDBOX.md  - Updated with sync section
+  ✓ .sync-status                  - This file
+
+Configuration:
+  ✓ .devcontainer/devcontainer.json     - Codespaces config (repo root)
+  ✓ .devcontainer/docker-compose.yml    - Shared container stack (repo root)
+  ✓ .env.example                        - Environment template
+
+╔══════════════════════════════════════════════════════════════════╗
+║    CANONICAL WORKFLOW                                            ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Daily Start (Local):
+  $ cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+  $ ./scripts/dev/sync-env.sh
+  $ ./scripts/dev/start-dev.sh
+
+Daily Start (Codespaces):
+  $ gh codespace create --repo jgtolentino/odoo-ce --branch main
+  $ cd /workspaces/odoo-ce/sandbox/dev
+  $ ./scripts/dev/sync-env.sh
+  $ ./scripts/dev/start-dev.sh
+
+Switching Local → Codespaces:
+  $ cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+  $ ./scripts/dev/sync-env.sh
+  $ git push origin main
+  # Then create codespace and run sync-env.sh + start-dev.sh
+
+Switching Codespaces → Local:
+  # Inside codespace
+  $ ./scripts/dev/sync-env.sh
+  $ git push origin main
+  # On local
+  $ cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+  $ git pull origin main
+  $ ./scripts/dev/sync-env.sh
+  $ ./scripts/dev/start-dev.sh
+
+╔══════════════════════════════════════════════════════════════════╗
+║    VERIFICATION                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Check Sync Status:
+  $ ./scripts/dev/check-sync.sh
+
+Quick Health Check (both environments):
+  $ git status                              # Clean working tree?
+  $ ./scripts/verify.sh                     # Repo health OK?
+  $ curl -I http://localhost:8069/web/login # Odoo accessible?
+
+Expected Results:
+  - Git: On main, synced with origin/main, clean working tree
+  - Containers: postgres and odoo running, healthy
+  - Odoo: HTTP 200 response on /web/login
+
+╔══════════════════════════════════════════════════════════════════╗
+║    SINGLE SOURCE OF TRUTH                                        ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Code State:          origin/main branch
+Container Stack:     .devcontainer/docker-compose.yml
+Environment Config:  .devcontainer/devcontainer.json
+Secrets (Local):     .env (git-ignored)
+Secrets (Cloud):     GitHub Codespaces Secrets
+
+Rule: Never create separate configs for local vs Codespaces.
+      Both environments use THE SAME devcontainer stack.
+
+╔══════════════════════════════════════════════════════════════════╗
+║    DEPLOYMENT (UNCHANGED)                                        ║
+╚══════════════════════════════════════════════════════════════════╝
+
+From either environment:
+  $ git add -A
+  $ git commit -m "feat: your changes"
+  $ git push origin main
+
+GitHub Actions will:
+  ✓ Run CI checks (dev-sandbox-verify.yml)
+  ✓ Build CE19 EE-parity image
+  ✓ Deploy to production (if on main branch)
+
+Rollback:
+  $ git revert <bad_commit_sha>
+  $ git push origin main
+
+╔══════════════════════════════════════════════════════════════════╗
+║    NOTES                                                         ║
+╚══════════════════════════════════════════════════════════════════╝
+
+• You DON'T have to keep environments synced if you prefer separation
+• But using sync-env.sh consistently prevents config drift
+• Never commit Codespaces-only or local-only config
+• Always push via same repo (origin/main)
+• If something feels off, run: ./scripts/dev/sync-env.sh && git status
+
+Current Commit: 9dad26b6
+Environments: ✅ Synced with origin/main
+Status: ✅ Ready for use
+
+═══════════════════════════════════════════════════════════════════

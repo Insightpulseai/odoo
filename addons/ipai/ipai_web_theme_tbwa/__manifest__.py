@@ -48,6 +48,7 @@ Installation Order
     ],
     "data": [
         "views/assets.xml",
+        "views/webclient_templates.xml",
     ],
     "assets": {
         "web.assets_backend": [
@@ -58,6 +59,11 @@ Installation Order
             "ipai_web_theme_tbwa/static/src/scss/components/list.scss",
             "ipai_web_theme_tbwa/static/src/scss/components/form.scss",
             "ipai_web_theme_tbwa/static/src/scss/components/chatter.scss",
+            "ipai_web_theme_tbwa/static/src/scss/components/footer.scss",
+        ],
+        "web.assets_frontend": [
+            "ipai_web_theme_tbwa/static/src/scss/components/login.scss",
+            "ipai_web_theme_tbwa/static/src/scss/components/footer.scss",
         ],
     },
     "installable": False,

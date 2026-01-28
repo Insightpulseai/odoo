@@ -1,8 +1,10 @@
 # ═══════════════════════════════════════════════════════════════════════════════
-# ODOO 18 CE - DEV SANDBOX (odoo-dev-sandbox)
+# ODOO CE 19 + EE PARITY - DEV SANDBOX (odoo-dev-sandbox)
 # ═══════════════════════════════════════════════════════════════════════════════
 #
 # Purpose: Isolated development environment for ipai_* custom modules
+# Image:   ghcr.io/jgtolentino/odoo-ce:19.0-ee-parity (CE19 + OCA + IPAI Enterprise Bridge)
+# SSOT:    docker/docker-compose.ce19.yml (canonical image definition)
 # Usage:   docker compose up -d
 # Access:  http://localhost:8069
 # Docs:    docs/runbooks/DEV_SANDBOX.md
@@ -35,10 +37,10 @@ services:
       - odoo-dev-net
 
   # ─────────────────────────────────────────────────────────────────────────────
-  # Odoo 18 CE - Dev Instance with Hot Reload
+  # Odoo CE 19 + EE Parity - Dev Instance with Hot Reload
   # ─────────────────────────────────────────────────────────────────────────────
   odoo:
-    image: odoo:18.0
+    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
     container_name: odoo-dev
     restart: unless-stopped
     depends_on:

@@ -6,6 +6,7 @@
 .env
 .env.local
 *.secret
+.claude/
 
 # Python
 __pycache__/
@@ -47,3 +48,7 @@ yarn.lock
 *.tmp
 *.temp
 .cache/
+
+# Example/Template Data
+_syncfusionexamples/
+*_examples/
