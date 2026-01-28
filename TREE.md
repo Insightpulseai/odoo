@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 86973bab2b3acb8e9468f19139ed0723c85db608
+> Commit: d349645ed8f0236f851c801be6ee164aca9afd46
 
 ```
 .
@@ -3693,6 +3693,10 @@
 │   │   └── verify_domain.sh
 │   ├── memory
 │   │   └── distill_packs.sh
+│   ├── ocadev
+│   │   ├── README.md
+│   │   ├── install_oca_ipai_full.sh
+│   │   └── list_installed_modules.sh
 │   ├── odoo
 │   │   ├── README_BOOTSTRAP.md
 │   │   ├── bootstrap_companies.sh
@@ -4336,6 +4340,11 @@
 │   │   ├── prd.md
 │   │   └── tasks.md
 │   ├── ipai-month-end
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
+│   ├── ipai-odoo-devops-agent
 │   │   ├── constitution.md
 │   │   ├── plan.md
 │   │   ├── prd.md
@@ -5129,15 +5138,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1427 directories, 3697 files
+1429 directories, 3704 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1663 |
-| Files | 4963 |
+| Directories | 1665 |
+| Files | 4970 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1245 |
+| Markdown files | 1250 |

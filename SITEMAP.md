@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 86973bab2b3acb8e9468f19139ed0723c85db608
+> Commit: d349645ed8f0236f851c801be6ee164aca9afd46
 
 ## 📚 Documentation
 
@@ -1002,6 +1002,7 @@
 | [Integration Audit Scripts](scripts/audit/README.md) | scripts/audit |
 | [Drive Sync](scripts/drive_sync/README.md) | scripts/drive_sync |
 | [Mailgun Scripts](scripts/mailgun/README.md) | scripts/mailgun |
+| [OCA/ipai Full Stack Installer](scripts/ocadev/README.md) | scripts/ocadev |
 | [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |
 | [Odoo Company Bootstrap Scripts](scripts/odoo/README_BOOTSTRAP.md) | scripts/odoo |
 | [Integration Provisioners](scripts/provisioners/README.md) | scripts/provisioners |
@@ -1115,6 +1116,10 @@
 | [ipai_month_end Implementation Plan](spec/ipai-month-end/plan.md) | spec/ipai-month-end |
 | [ipai_month_end - Product Requirements](spec/ipai-month-end/prd.md) | spec/ipai-month-end |
 | [ipai_month_end Implementation Tasks](spec/ipai-month-end/tasks.md) | spec/ipai-month-end |
+| [Constitution – IPAI Odoo DevOps Agent](spec/ipai-odoo-devops-agent/constitution.md) | spec/ipai-odoo-devops-agent |
+| [Implementation Plan – IPAI Odoo DevOps Agent](spec/ipai-odoo-devops-agent/plan.md) | spec/ipai-odoo-devops-agent |
+| [PRD – IPAI Odoo DevOps Agent](spec/ipai-odoo-devops-agent/prd.md) | spec/ipai-odoo-devops-agent |
+| [Tasks – IPAI Odoo DevOps Agent](spec/ipai-odoo-devops-agent/tasks.md) | spec/ipai-odoo-devops-agent |
 | [IPAI TBWA Finance - Constitution](spec/ipai-tbwa-finance/constitution.md) | spec/ipai-tbwa-finance |
 | [IPAI TBWA Finance - Implementation Plan](spec/ipai-tbwa-finance/plan.md) | spec/ipai-tbwa-finance |
 | [IPAI TBWA Finance - Product Requirements Document](spec/ipai-tbwa-finance/prd.md) | spec/ipai-tbwa-finance |
