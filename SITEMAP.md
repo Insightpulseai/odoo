@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fac1d8ff6e77dea028f3abd11827906b90051ab0
+> Commit: 6a6069d3bdbe9e24e90554201d39cedf03c8d1c1
 
 ## 📚 Documentation
 
@@ -968,9 +968,11 @@
 | [Local ↔ Codespaces Synchronization Guide](sandbox/dev/SYNC_GUIDE.md) | sandbox/dev |
 | [IPAI Design System](sandbox/dev/addons/ipai/ipai_design_system/README.md) | sandbox/dev/addons/ipai/ipai_design_system |
 | [Odoo 19 Migration Strategy for odoo-ce](sandbox/dev/docs/ODOO_19_MIGRATION_STRATEGY.md) | sandbox/dev/docs |
+| [Odoo-Fluent Design System Reference](sandbox/dev/docs/ODOO_FLUENT_DESIGN_SYSTEM_REFERENCE.md) | sandbox/dev/docs |
 | [UI/Theme Module Consolidation - Status Update](sandbox/dev/docs/UI_CONSOLIDATION_STATUS.md) | sandbox/dev/docs |
 | [GitHub Codespaces & Enterprise Features Research](sandbox/dev/docs/research/GITHUB_CODESPACES_ENTERPRISE_RESEARCH.md) | sandbox/dev/docs/research |
 | [GitHub Codespaces & Enterprise - Executive Summary](sandbox/dev/docs/research/GITHUB_EXECUTIVE_SUMMARY.md) | sandbox/dev/docs/research |
+| [Runbook: Fluent UI + Storybook Design System (IPAI)](sandbox/dev/docs/runbooks/DESIGN_SYSTEM_FLUENT_STORYBOOK.md) | sandbox/dev/docs/runbooks |
 | [Odoo 18 CE Dev Sandbox - Developer Runbook](sandbox/dev/docs/runbooks/DEV_SANDBOX.md) | sandbox/dev/docs/runbooks |
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](sandbox/dev/docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | sandbox/dev/docs/runbooks |
 | [ODOO_CE_INTEGRATION.md — Strategic Separation with Operational Integration](sandbox/dev/integration/ODOO_CE_INTEGRATION.md) | sandbox/dev/integration |
