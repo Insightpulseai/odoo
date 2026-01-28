@@ -44,3 +44,72 @@
   z-index: 50;
   margin-top: 2rem;
 }
+
+// ============================================================================
+// LOGIN FORM INPUTS
+// ============================================================================
+.oe_login_form {
+  input[type="text"],
+  input[type="password"],
+  input[type="email"] {
+    position: relative;
+    z-index: 50;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+
+    &:focus {
+      border-color: var(--tbwa-primary);
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+
+// ============================================================================
+// LOGIN BUTTON
+// ============================================================================
+.oe_login_form,
+.o_database_list {
+  .btn-primary,
+  .o_login_button,
+  button[type="submit"],
+  .btn.btn-primary {
+    background-color: var(--tbwa-primary) !important;
+    border-color: var(--tbwa-primary) !important;
+    color: var(--tbwa-text-on-primary) !important;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    z-index: 100;
+    cursor: pointer;
+    display: inline-block;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    line-height: 1.5;
+
+    &:hover,
+    &:focus {
+      background-color: #1a1a1a !important;
+      border-color: #1a1a1a !important;
+      color: var(--tbwa-text-on-primary) !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+  }
+}
