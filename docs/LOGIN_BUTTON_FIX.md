@@ -1,11 +1,26 @@
-# Login Button Fix - Production Deployment
+# Login Button Fix & Header Cleanup - Production Deployment
 
-## Issue
-Login button on https://erp.insightpulseai.net/ was not properly styled or functioning.
+## Issues Fixed
+1. Login button on https://erp.insightpulseai.net/ was not properly styled or functioning
+2. Header had too many menu items cluttering the interface
 
 ## Solution Implemented
 
-### 1. Enhanced Login Button Styling
+### 1. Header Cleanup - Remove All Menu Items
+**Files**:
+- `addons/ipai/ipai_web_theme_tbwa/views/webclient_templates.xml`
+- `addons/ipai/ipai_web_theme_tbwa/static/src/scss/components/navbar.scss`
+
+**Changes**:
+- Removed all navigation menu items (Platform, Overview, Channels, etc.)
+- Hidden breadcrumbs and search bar
+- Keep only TBWA logo (left) and user menu (right)
+- Added XPath templates to remove menu sections
+- CSS rules to hide menu elements
+
+**Result**: Clean, minimal header with only essential elements
+
+### 2. Enhanced Login Button Styling
 **File**: `addons/ipai/ipai_web_theme_tbwa/static/src/scss/components/login.scss`
 
 Added comprehensive button styling:
@@ -70,7 +85,15 @@ docker logs -f odoo-prod
 
 ### Manual Verification
 1. Open https://erp.insightpulseai.net/web/login
-2. Check button appearance:
+
+2. Check header cleanup:
+   - ✅ Only TBWA logo visible on left
+   - ✅ Only user menu visible on right
+   - ✅ No menu items (Platform, Overview, Channels, etc.)
+   - ✅ No breadcrumbs
+   - ✅ No search bar
+
+3. Check button appearance:
    - ✅ Button background is black (#000000)
    - ✅ Button text is white
    - ✅ Cursor changes to pointer on hover
@@ -78,10 +101,17 @@ docker logs -f odoo-prod
    - ✅ Subtle lift animation on hover
    - ✅ Button is clickable
 
-3. Test login flow:
+4. Test login flow:
    - ✅ Enter valid credentials
    - ✅ Click login button
    - ✅ Successful authentication
+
+### Screenshot Capture
+```bash
+./scripts/screenshot_production.sh
+```
+
+Screenshots saved to: `docs/screenshots/`
 
 ## CSS Implementation
 
@@ -111,25 +141,41 @@ button[type="submit"] {
 
 ## Files Modified
 
-1. `addons/ipai/ipai_web_theme_tbwa/static/src/scss/components/login.scss`
+1. `addons/ipai/ipai_web_theme_tbwa/views/webclient_templates.xml`
+   - Added navbar_hide_menu template
+   - XPath to remove menu sections
+   - XPath to remove breadcrumbs
+
+2. `addons/ipai/ipai_web_theme_tbwa/static/src/scss/components/navbar.scss`
+   - CSS rules to hide all menu items
+   - Keep only logo and user menu visible
+   - Hide search bar and breadcrumbs
+
+3. `addons/ipai/ipai_web_theme_tbwa/static/src/scss/components/login.scss`
    - Added login button styles
    - Added form input styles
    - Enhanced with hover/focus states
 
-2. `scripts/verify_login_button.sh` (NEW)
+4. `scripts/verify_login_button.sh` (NEW)
    - Automated verification script
    - Checks page accessibility
    - Validates theme CSS presence
 
-3. `scripts/deploy_theme_to_production.sh` (NEW)
+5. `scripts/deploy_theme_to_production.sh` (NEW)
    - Automated deployment script
    - Handles git pull and Docker restart
    - Includes health checks
+
+6. `scripts/screenshot_production.sh` (NEW)
+   - Screenshot capture script
+   - Verification checklist
+   - Manual and automated modes
 
 ## Commit History
 
 - `df21c592` - fix(theme): enhance login button visibility and styling
 - `33a10454` - chore(scripts): add login button verification and deployment scripts
+- `89fed573` - feat(theme): hide all header menu items, keep only logo and user menu
 
 ## Next Steps
 
