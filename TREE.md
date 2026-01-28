@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: efc86ae0117a55f68f234f9761b5fcf47dc8c6a5
+> Commit: 3f8c51522cc972a99cf621f3663b22eeb7f8e95c
 
 ```
 .
@@ -1276,6 +1276,18 @@
 │   │   │   └── app.json
 │   │   ├── APP.md
 │   │   └── spec.yaml
+│   ├── odoo-frontend-shell
+│   │   ├── src
+│   │   │   ├── app
+│   │   │   ├── components
+│   │   │   └── lib
+│   │   ├── .env.example
+│   │   ├── README.md
+│   │   ├── next.config.ts
+│   │   ├── package.json
+│   │   ├── postcss.config.mjs
+│   │   ├── tailwind.config.ts
+│   │   └── tsconfig.json
 │   ├── odoo-saas-platform
 │   │   ├── do
 │   │   │   └── app.json
@@ -5036,15 +5048,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1408 directories, 3623 files
+1413 directories, 3630 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1644 |
-| Files | 4873 |
+| Directories | 1649 |
+| Files | 4886 |
 | Python files | 828 |
 | XML files | 302 |
-| Markdown files | 1211 |
+| Markdown files | 1212 |
