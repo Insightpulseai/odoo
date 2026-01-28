@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: bc1819c02c39ac0c9d5de578f8ef590206453300
+> Commit: c1fd15aa19770b6a07ef0a24cbe04055dedf6706
 
 ```
 .
@@ -3497,6 +3497,7 @@
 │   │   ├── PRODUCTION_READY.md
 │   │   ├── README.md
 │   │   ├── REPORT.md
+│   │   ├── SETUP_GUIDE.md
 │   │   ├── SYNC_GUIDE.md
 │   │   ├── docker-compose.production.yml
 │   │   ├── docker-compose.yml
@@ -3832,6 +3833,7 @@
 │   ├── fix_oauth_button_odoo_core.sh
 │   ├── fix_odoo18_views.py
 │   ├── fix_pos_enterprise_error.sh
+│   ├── force_asset_regeneration.sh
 │   ├── full_deploy_sanity.sh
 │   ├── gen_addons_path.py
 │   ├── gen_repo_tree.sh
@@ -3973,6 +3975,7 @@
 │   ├── update_diagram_manifest.py
 │   ├── update_task_phase_tags.sh
 │   ├── update_tasks_after_import.py
+│   ├── upgrade_theme_module.py
 │   ├── validate-continue-config.sh
 │   ├── validate-openapi.mjs
 │   ├── validate-spec-kit.sh
@@ -5069,7 +5072,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1415 directories, 3649 files
+1415 directories, 3652 files
 ```
 
 ## 📊 Stats
@@ -5077,7 +5080,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1651 |
-| Files | 4906 |
-| Python files | 828 |
+| Files | 4909 |
+| Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1218 |
+| Markdown files | 1219 |
