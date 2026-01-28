@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: df21c592af23f26530426a4a4f97bb0fd30665a2
+> Commit: 61877054cfe7b5d1766ea97374047cff455178d8
 
 ## 📚 Documentation
 
@@ -755,6 +755,7 @@
 | [Research Sources: Figma Design Automation](docs/research/figma-design-automation/research_sources.md) | docs/research/figma-design-automation |
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | docs/runbooks |
 | [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
+| [Odoo Local 9069 Health Policy](docs/runbooks/ODOO_LOCAL_9069_HEALTH.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
 | [Runbook: digitalocean](docs/runbooks/digitalocean.md) | docs/runbooks |
 | [Runbook: figma-sites](docs/runbooks/figma-sites.md) | docs/runbooks |
