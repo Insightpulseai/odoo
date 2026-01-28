@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ab54f7d4dc77f40f3197b772c5ede6ac1b2d8278
+> Commit: 37934743f8d9894a18a6e5e1f6cf227ad82139aa
 
 ```
 .
@@ -2496,6 +2496,7 @@
 │   ├── CE_OCA_EQUIVALENTS_AUDIT.md
 │   ├── CE_OCA_PROJECT_STACK.md
 │   ├── CLAUDE_CODE_SETUP.md
+│   ├── CODESPACES_SETUP.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
 │   ├── DB_TUNING.md
 │   ├── DELIVERABLES_MANIFEST.md
@@ -2536,6 +2537,7 @@
 │   ├── FIN_WORKSPACE_HARDENING_STATUS.md
 │   ├── FIN_WORKSPACE_SETUP.md
 │   ├── GANTT_TO_ODOO_CE_MAPPING.md
+│   ├── GITHUB_PAT_SCOPES.md
 │   ├── GITHUB_SECRETS_SETUP.md
 │   ├── GIT_WORKTREE_STRATEGY.md
 │   ├── GO_LIVE_CHECKLIST.md
@@ -3970,6 +3972,7 @@
 │   ├── secret-scan.sh
 │   ├── seed_finance_close_from_xlsx.py
 │   ├── seed_finance_ppm_stages.py
+│   ├── setup-codespaces-secrets.sh
 │   ├── setup-mailgun-secrets.sh
 │   ├── setup_afc_rag.sh
 │   ├── setup_credentials.sh
@@ -5106,7 +5109,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1422 directories, 3679 files
+1422 directories, 3682 files
 ```
 
 ## 📊 Stats
@@ -5114,7 +5117,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1658 |
-| Files | 4942 |
+| Files | 4945 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1236 |
+| Markdown files | 1238 |
