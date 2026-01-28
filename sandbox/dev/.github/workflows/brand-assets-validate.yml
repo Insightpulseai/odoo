@@ -1,0 +1,28 @@
+name: brand-assets-validate
+
+on:
+  pull_request:
+    paths:
+      - "addons/ipai_website_shell/**"
+      - "scripts/brand/**"
+      - ".github/workflows/brand-assets-validate.yml"
+  push:
+    branches: [ main ]
+    paths:
+      - "addons/ipai_website_shell/**"
+      - "scripts/brand/**"
+      - ".github/workflows/brand-assets-validate.yml"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate brand assets
+        run: |
+          set -euo pipefail
+          bash scripts/brand/validate_brand_assets.sh
