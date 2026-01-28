@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 37934743f8d9894a18a6e5e1f6cf227ad82139aa
+> Commit: e523b7b9fcab0a9cb5108c9e2b9ae6c85bac2885
 
 ```
 .
@@ -83,6 +83,7 @@
 │   │   ├── ci-platform-gates.yml
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
+│   │   ├── codespaces-prebuild.yml
 │   │   ├── compose-topology-guard.yml
 │   │   ├── config-publish.yml
 │   │   ├── control-room-ci.yml
@@ -190,6 +191,7 @@
 │   │   ├── superset-bump.yml
 │   │   ├── superset-ci-cd.yml
 │   │   ├── terraform-supabase.yml
+│   │   ├── validate-addons-mounts.yml
 │   │   ├── vendor-app-deploy.yml
 │   │   ├── vendor-backlog-sync.yml
 │   │   ├── wiki-sync.yml
@@ -1706,6 +1708,8 @@
 │   ├── MAILGUN_INTEGRATION_COMPLETE.md
 │   ├── MAILGUN_INTEGRATION_DEPLOYMENT.md
 │   ├── PRODUCTION_DEPLOYMENT_SCRIPT.sh
+│   ├── README_ADDONS_MANIFEST.md
+│   ├── addons_manifest.oca_ipai.json
 │   ├── capability_map.yaml
 │   ├── extended-platform-install-order.yaml
 │   ├── mailgun_integration_implementation.json
@@ -2037,9 +2041,14 @@
 │   │   │   └── platform-kit-merge
 │   │   ├── 20260128-1145
 │   │   │   └── ee-parity-analysis
-│   │   └── 20260128-odoo-docs-review
-│   │       ├── ODOO_19_DOCS_REVIEW.md
-│   │       └── VERIFICATION.md
+│   │   ├── 20260128-odoo-docs-review
+│   │   │   ├── ODOO_19_DOCS_REVIEW.md
+│   │   │   └── VERIFICATION.md
+│   │   ├── 20260129-0110
+│   │   │   ├── mount-validation
+│   │   │   └── oca-ipai-manifest
+│   │   └── 20260129-0130
+│   │       └── oca-complete
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── github
@@ -2537,6 +2546,7 @@
 │   ├── FIN_WORKSPACE_HARDENING_STATUS.md
 │   ├── FIN_WORKSPACE_SETUP.md
 │   ├── GANTT_TO_ODOO_CE_MAPPING.md
+│   ├── GITHUB_PAT_CODESPACES.md
 │   ├── GITHUB_PAT_SCOPES.md
 │   ├── GITHUB_SECRETS_SETUP.md
 │   ├── GIT_WORKTREE_STRATEGY.md
@@ -3795,6 +3805,7 @@
 │   ├── ci_smoke_test.sh
 │   ├── clean-branches.sh
 │   ├── cleanup-branches.sh
+│   ├── clone_missing_oca_repos.sh
 │   ├── config_files_found.txt
 │   ├── configure_base_url.py
 │   ├── configure_gmail_smtp.py
@@ -3972,6 +3983,7 @@
 │   ├── secret-scan.sh
 │   ├── seed_finance_close_from_xlsx.py
 │   ├── seed_finance_ppm_stages.py
+│   ├── setup-codespaces-pat.sh
 │   ├── setup-codespaces-secrets.sh
 │   ├── setup-mailgun-secrets.sh
 │   ├── setup_afc_rag.sh
@@ -4033,6 +4045,8 @@
 │   ├── validate_spec_kit.sh
 │   ├── vercel_promote_previous.sh
 │   ├── verify-addon-permissions.sh
+│   ├── verify-addons-mounts.sh
+│   ├── verify-codespaces-auth.sh
 │   ├── verify-control-plane.sh
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
@@ -4042,6 +4056,7 @@
 │   ├── verify_email_auth.sh
 │   ├── verify_local.sh
 │   ├── verify_login_button.sh
+│   ├── verify_oca_ipai_layout.sh
 │   ├── verify_phase3.py
 │   ├── verify_smtp.py
 │   ├── verify_supabase_deploy.sh
@@ -5038,6 +5053,7 @@
 ├── TREE.md
 ├── VERIFY.md
 ├── VSCODE_CLAUDE_CONFIGURATION_SUMMARY.md
+├── addons.manifest.json
 ├── aiux_ship_manifest.yml
 ├── bir_deadlines_2026.csv
 ├── branch_protection.json
@@ -5074,6 +5090,8 @@
 ├── ipai_finance_ppm_directory.csv
 ├── ipai_open_semantics_migrations_and_functions.zip
 ├── ipai_theme_tbwa_18.0.1.0.0.zip
+├── llms-full.txt
+├── llms.txt
 ├── mkdocs.yml
 ├── n8n_automation_strategy.md
 ├── n8n_opex_cli.sh
@@ -5109,15 +5127,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1422 directories, 3682 files
+1427 directories, 3695 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1658 |
-| Files | 4945 |
+| Directories | 1663 |
+| Files | 4961 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1238 |
+| Markdown files | 1243 |

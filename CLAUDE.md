@@ -166,7 +166,7 @@ Whenever an Odoo task is requested, generate:
 
 | Item | Value |
 |------|-------|
-| **Stack** | Odoo CE 18.0 → 19.0 + OCA + n8n + Mattermost + PostgreSQL 16 |
+| **Stack** | Odoo CE 18.0 → 19.0 + OCA + n8n + Slack + PostgreSQL 16 |
 | **Node** | >= 18.0.0 (pnpm workspaces) |
 | **Python** | 3.10+ (Odoo 18), 3.12+ (Odoo 19) |
 | **Supabase** | `spdtwktxdalcfigzeqrz` (external integrations only) |
@@ -209,12 +209,12 @@ npm run dev:github-app                  # Run github-app
 │                   InsightPulse AI Stack (Self-Hosted)                │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│   Mattermost ◄──► n8n ◄──► Odoo CE 19 ◄──► PostgreSQL 16            │
-│       │           │          (8069)                                  │
-│       │           │                                                  │
-│       │           └──────────► Supabase (external integrations)      │
+│   Slack (SaaS) ◄──► n8n ◄──► Odoo CE 19 ◄──► PostgreSQL 16          │
+│       │             │          (8069)                                │
+│       │             │                                                │
+│       │             └──────────► Supabase (external integrations)    │
 │       │                                                              │
-│       └─────────────────────► AI Agents (Pulser, Claude, Codex)     │
+│       └───────────────────────► AI Agents (Pulser, Claude, Codex)   │
 │                                                                      │
 ├─────────────────────────────────────────────────────────────────────┤
 │  Superset (BI)  │  Keycloak (SSO)  │  DigitalOcean (Hosting)        │
@@ -234,7 +234,7 @@ npm run dev:github-app                  # Run github-app
 - **BI**: Apache Superset (free, self-hosted)
 - **SSO**: Keycloak (free, self-hosted)
 - **Automation**: n8n (self-hosted, not cloud)
-- **Chat**: Mattermost (self-hosted)
+- **Chat**: Slack (SaaS - replaces deprecated Mattermost)
 
 ### Docker Architecture
 
@@ -396,7 +396,7 @@ All custom modules use the `ipai_` prefix organized by domain:
 | Industry | `ipai_industry_*` | `ipai_industry_marketing_agency`, `ipai_industry_accounting_firm` |
 | WorkOS | `ipai_workos_*` | `ipai_workos_core`, `ipai_workos_blocks`, `ipai_workos_canvas` |
 | Theme/UI | `ipai_theme_*`, `ipai_web_*`, `ipai_ui_*` | `ipai_theme_tbwa_backend`, `ipai_ui_brand_tokens` |
-| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_mattermost_connector`, `ipai_superset_connector` |
+| Integrations | `ipai_*_connector` | `ipai_n8n_connector`, `ipai_slack_connector`, `ipai_superset_connector` |
 | PPM | `ipai_ppm_*` | `ipai_ppm`, `ipai_ppm_monthly_close`, `ipai_ppm_a1` |
 
 ### Key Module Hierarchy
@@ -553,6 +553,8 @@ Claude Code is restricted to these tools (see `.claude/settings.json`):
 - Supabase project `xkxyvboeubffxxbebsll`
 - Supabase project `ublqmilcjtpnflofprkr`
 - Any `odoo.com` Enterprise module references
+- **Mattermost** - Use Slack instead (2026-01-28)
+- `ipai_mattermost_connector` - Use `ipai_slack_connector` instead
 
 ### Module Philosophy
 
@@ -745,7 +747,7 @@ jobs:
 | **SSO/Auth** | Keycloak + `ipai_auth_keycloak` |
 | **BI/Analytics** | Apache Superset (self-hosted) |
 | **Scheduling** | n8n cron + `ipai_scheduler` |
-| **Notifications** | Mattermost + `ipai_notifications` |
+| **Notifications** | Slack + `ipai_notifications` |
 
 ### Testing EE Parity Claims
 
@@ -1017,9 +1019,10 @@ python scripts/generate_odoo_dbml.py
 - Deploy with: `./scripts/deploy-n8n-workflows.sh`
 - Activate with: `./scripts/activate-n8n-workflows.sh`
 
-### Mattermost ChatOps
+### Slack ChatOps
 
-- Runbooks in `mattermost/`
+- Slack workspace for team communication
+- Claude installed in Slack for AI assistance
 - Webhooks for alerts and notifications
 - AI assistant integrations
 
