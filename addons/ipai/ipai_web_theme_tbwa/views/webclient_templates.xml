@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Hide header menu items, keep only logo and user menu -->
+    <template id="navbar_hide_menu" inherit_id="web.webclient_bootstrap" name="TBWA Hide Header Menu">
+        <xpath expr="//nav[hasclass('o_main_navbar')]//ul[hasclass('o_menu_sections')]" position="replace"/>
+        <xpath expr="//nav[hasclass('o_main_navbar')]//div[hasclass('o_menu_brand')]" position="replace"/>
+    </template>
+
     <!-- Replace default Odoo footer with TBWA SMP footer -->
     <template id="webclient" inherit_id="web.webclient_bootstrap" name="TBWA Footer">
         <xpath expr="//footer" position="replace">
