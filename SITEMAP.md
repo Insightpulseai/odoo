@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5d917e74b3c84eab847e054cbc964ada7cfe0659
+> Commit: efc86ae0117a55f68f234f9761b5fcf47dc8c6a5
 
 ## 📚 Documentation
 
@@ -947,6 +947,7 @@
 | [Production Deployment Complete](sandbox/dev/PRODUCTION_READY.md) | sandbox/dev |
 | [Odoo 18 CE Dev Sandbox](sandbox/dev/README.md) | sandbox/dev |
 | [Odoo Dev Sandbox - Repository Audit Report](sandbox/dev/REPORT.md) | sandbox/dev |
+| [Local ↔ Codespaces Synchronization Guide](sandbox/dev/SYNC_GUIDE.md) | sandbox/dev |
 | [IPAI Design System](sandbox/dev/addons/ipai/ipai_design_system/README.md) | sandbox/dev/addons/ipai/ipai_design_system |
 | [Odoo 19 Migration Strategy for odoo-ce](sandbox/dev/docs/ODOO_19_MIGRATION_STRATEGY.md) | sandbox/dev/docs |
 | [UI/Theme Module Consolidation - Status Update](sandbox/dev/docs/UI_CONSOLIDATION_STATUS.md) | sandbox/dev/docs |
