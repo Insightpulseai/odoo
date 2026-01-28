@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: ab54f7d4dc77f40f3197b772c5ede6ac1b2d8278
+> Commit: 37934743f8d9894a18a6e5e1f6cf227ad82139aa
 
 ## 📚 Documentation
 
@@ -253,6 +253,7 @@
 | [CE/OCA Equivalents Audit Report](docs/CE_OCA_EQUIVALENTS_AUDIT.md) | docs |
 | [CE + OCA Project Stack Mapping (Odoo 18)](docs/CE_OCA_PROJECT_STACK.md) | docs |
 | [Claude Code Setup Guide](docs/CLAUDE_CODE_SETUP.md) | docs |
+| [GitHub Codespaces Setup Guide](docs/CODESPACES_SETUP.md) | docs |
 | [Custom Odoo Image Success Criteria Validation](docs/CUSTOM_IMAGE_SUCCESS_CRITERIA.md) | docs |
 | [Odoo CE 18 – Database & Worker Tuning](docs/DB_TUNING.md) | docs |
 | [DELIVERABLES & RELEASE CONTENTS](docs/DELIVERABLES_MANIFEST.md) | docs |
@@ -292,6 +293,7 @@
 | [fin-workspace Automation Hardening Status](docs/FIN_WORKSPACE_HARDENING_STATUS.md) | docs |
 | [fin-workspace Setup Guide](docs/FIN_WORKSPACE_SETUP.md) | docs |
 | [Gantt Chart to Odoo CE + OCA Mapping](docs/GANTT_TO_ODOO_CE_MAPPING.md) | docs |
+| [GitHub Personal Access Token (PAT) Scopes](docs/GITHUB_PAT_SCOPES.md) | docs |
 | [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
 | [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
 | [ODOO-CE GO-LIVE CHECKLIST](docs/GO_LIVE_CHECKLIST.md) | docs |
