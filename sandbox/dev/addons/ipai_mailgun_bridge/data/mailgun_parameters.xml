@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- System parameters for Mailgun + Odoo email behavior -->
+    <data noupdate="1">
+
+        <!-- Default from email -->
+        <record id="param_ipai_mailgun_default_from" model="ir.config_parameter">
+            <field name="key">ipai_mailgun.default_from</field>
+            <field name="value">admin@insightpulseai.net</field>
+        </record>
+
+        <!-- Catchall domain -->
+        <record id="param_mail_catchall_domain" model="ir.config_parameter">
+            <field name="key">mail.catchall.domain</field>
+            <field name="value">insightpulseai.net</field>
+        </record>
+
+        <!-- Mailgun webhook signing key (set via CLI after installation) -->
+        <record id="param_ipai_mailgun_webhook_signing_key" model="ir.config_parameter">
+            <field name="key">ipai_mailgun.webhook_signing_key</field>
+            <field name="value"></field>
+        </record>
+
+        <!-- Support alias -->
+        <record id="param_ipai_mailgun_support_alias" model="ir.config_parameter">
+            <field name="key">ipai_mailgun.support_alias</field>
+            <field name="value">support</field>
+        </record>
+
+        <!-- Sales alias -->
+        <record id="param_ipai_mailgun_sales_alias" model="ir.config_parameter">
+            <field name="key">ipai_mailgun.sales_alias</field>
+            <field name="value">sales</field>
+        </record>
+
+        <!-- Projects alias -->
+        <record id="param_ipai_mailgun_projects_alias" model="ir.config_parameter">
+            <field name="key">ipai_mailgun.projects_alias</field>
+            <field name="value">projects</field>
+        </record>
+
+    </data>
+</odoo>
