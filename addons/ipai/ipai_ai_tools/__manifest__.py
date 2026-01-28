@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "AI Tool Registry",
+    "name": "DEPRECATED: AI Tool Registry",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "Audited tool execution for AI agents",
+    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
     "description": """
 AI Tool Registry
 ================
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

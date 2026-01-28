@@ -1,8 +1,8 @@
 {
-    "name": "IPAI Web Fluent 2 Theme Layer",
+    "name": "DEPRECATED: IPAI Web Fluent 2 Theme Layer",
     "version": "18.0.1.0.0",
     "category": "Themes/Backend",
-    "summary": "Fluent 2 design tokens + UI styling for Odoo CE 18 backend (and optional frontend/login).",
+    "summary": "DEPRECATED - Use ipai_design_system_apps_sdk instead. Do not install.",
     "author": "InsightPulse AI",
     "website": "https://insightpulse.ai",
     "license": "LGPL-3",
@@ -23,6 +23,6 @@
             "ipai_web_fluent2/static/src/scss/frontend.scss",
         ],
     },
-    "installable": True,
+    "installable": False,
     "application": False,
 }

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Electronic Sign",
+    "name": "DEPRECATED: Electronic Sign",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "Document envelopes for signing",
+    "summary": "DEPRECATED - Use sign (OCA) instead. Do not install.",
     "description": """
 Electronic Sign
 ===============
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }
