@@ -21,6 +21,8 @@
 
 ## Quick Start
 
+### Local Development
+
 ```bash
 # Clone repo
 git clone <repo-url> odoo-dev-sandbox
@@ -29,20 +31,38 @@ cd odoo-dev-sandbox
 # Copy environment template
 cp .env.example .env
 
-# Verify setup
-./scripts/verify.sh
+# Sync with main branch (ensures consistency)
+./scripts/dev/sync-env.sh
 
-# Start services
-./scripts/dev/up.sh
+# Start unified dev environment
+./scripts/dev/start-dev.sh
 
 # Access Odoo
 open http://localhost:8069
 ```
 
+### GitHub Codespaces
+
+```bash
+# Create codespace (from local machine)
+gh codespace create --repo jgtolentino/odoo-ce --branch main
+
+# Inside codespace shell
+./scripts/dev/start-dev.sh
+
+# Access via forwarded port (automatically provided by Codespaces)
+# URL: https://<codespace-name>-8069.preview.app.github.dev
+```
+
 **Expected Output**:
-- Odoo login screen at `http://localhost:8069`
+- Odoo login screen at respective URL
 - Database creation wizard (first run)
 - Default admin credentials: `admin` / `admin_dev_password`
+
+**Environment Parity**:
+- Both local and Codespaces use `.devcontainer/docker-compose.yml`
+- Same PostgreSQL version, same Odoo image
+- Sync via Git + shared config (no manual alignment needed)
 
 ---
 
@@ -70,6 +90,93 @@ open http://localhost:8069
 - **RAM**: 4GB minimum, 8GB recommended
 - **Disk**: 10GB free space
 - **OS**: macOS, Linux, or Windows with WSL2
+
+---
+
+## Environment Synchronization (Local ↔ Codespaces)
+
+### Philosophy
+
+Local and Codespaces environments should use **the same repo + same devcontainer config** to avoid drift.
+
+**Single Source of Truth**:
+- `.devcontainer/devcontainer.json` - Codespaces configuration
+- `.devcontainer/docker-compose.yml` - Shared container stack
+- `main` branch - Canonical code state
+
+### Sync Workflow
+
+```bash
+# 1. Sync environments (run before starting work)
+./scripts/dev/sync-env.sh
+
+# This script:
+# - Pulls latest from origin/main
+# - Checks for unpushed commits
+# - Verifies devcontainer config
+# - Optionally starts containers locally
+# - Runs health checks
+```
+
+### Working Across Environments
+
+**Local → Codespaces**:
+```bash
+# 1. Commit and push from local
+git add -A
+git commit -m "feat: your changes"
+git push origin main
+
+# 2. Create or refresh codespace
+gh codespace create --repo jgtolentino/odoo-ce --branch main
+# OR
+gh codespace code --repo jgtolentino/odoo-ce
+
+# 3. Inside codespace
+git pull origin main
+./scripts/dev/start-dev.sh
+```
+
+**Codespaces → Local**:
+```bash
+# 1. Commit and push from codespace
+git add -A
+git commit -m "feat: your changes"
+git push origin main
+
+# 2. Pull to local
+cd ~/Documents/GitHub/odoo-ce/sandbox/dev
+git pull origin main
+./scripts/dev/start-dev.sh
+```
+
+### Verification Commands (Run in Both Environments)
+
+```bash
+# Container health
+docker ps --format 'table {{.Names}}\t{{.Status}}' | grep -E 'odoo|postgres'
+
+# Odoo accessibility
+curl -I http://localhost:8069/web/login
+
+# Repo health
+./scripts/verify.sh
+
+# Current state
+git status
+git log --oneline -5
+```
+
+If all checks pass in both environments on the same commit SHA, you're synchronized.
+
+### Secrets Handling
+
+| Environment | Storage | Access |
+|-------------|---------|--------|
+| Local | `.env` (git-ignored) | Loaded by docker-compose |
+| Codespaces | GitHub Codespaces Secrets | Injected at runtime |
+
+**Rule**: Same variable names, different injection surfaces. Never commit secrets to Git.
 
 ---
 
