@@ -3,8 +3,8 @@ set -euo pipefail
 
 # === Config (override via env) ================================================
 ODOO_DB="${ODOO_DB:-ipai_oca_full}"
-ODOO_COMPOSE_FILE="${ODOO_COMPOSE_FILE:-docker/docker-compose.ce19.yml}"  # ASSUMPTION
-ODOO_SERVICE="${ODOO_SERVICE:-odoo}"                                       # ASSUMPTION
+ODOO_COMPOSE_FILE="${ODOO_COMPOSE_FILE:-}"  # auto-detected via preflight if empty
+ODOO_SERVICE="${ODOO_SERVICE:-}"            # auto-detected via preflight if empty
 
 # OCA module list (seed) – safe, minimal must-haves; extend as needed.
 # You can later swap this to parse config/addons_manifest.oca_ipai.json via jq.
@@ -18,6 +18,22 @@ account_move_base_import,\
 account_bank_statement_import,account_reconcile}"
 
 # ============================================================================
+
+echo "=== [0/5] Running preflight checks ==="
+if [ -x scripts/ocadev/preflight.sh ]; then
+  eval "$(./scripts/ocadev/preflight.sh | awk -F= '/^(ODOO_COMPOSE_FILE|ODOO_SERVICE)=/ {print "export "$1"=\""$2"\""}')"
+fi
+
+if [ -z "${ODOO_COMPOSE_FILE}" ] || [ -z "${ODOO_SERVICE}" ]; then
+  echo "ERROR: Missing ODOO_COMPOSE_FILE or ODOO_SERVICE. Run scripts/ocadev/preflight.sh." >&2
+  exit 1
+fi
+
+echo "Detected configuration:"
+echo "  ODOO_COMPOSE_FILE=${ODOO_COMPOSE_FILE}"
+echo "  ODOO_SERVICE=${ODOO_SERVICE}"
+echo "  ODOO_DB=${ODOO_DB}"
+echo ""
 
 echo "=== [1/5] Starting Odoo stack (if not already running) ==="
 docker compose -f "${ODOO_COMPOSE_FILE}" up -d "${ODOO_SERVICE}"

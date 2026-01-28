@@ -15,9 +15,28 @@ Idempotent scripts to install all CE + OCA + ipai modules in one shot.
 
 ## Scripts
 
+### `preflight.sh`
+
+Auto-detects Docker Compose file and Odoo service name. Eliminates guesswork and makes installer deterministic.
+
+**What it does**:
+- Searches for compose files in standard locations
+- Detects Odoo service name from compose config
+- Validates Docker daemon is accessible
+- Outputs detected configuration for use by other scripts
+
+**Usage**:
+```bash
+# Run standalone to check detection
+./scripts/ocadev/preflight.sh
+
+# Auto-runs when calling installer/lister (no manual invocation needed)
+```
+
 ### `install_oca_ipai_full.sh`
 
 Idempotent installer that:
+0. **Runs preflight auto-detection** (if ODOO_COMPOSE_FILE/ODOO_SERVICE not set)
 1. Starts Odoo stack (if not running)
 2. Creates fresh DB with `base` module
 3. Installs all 38 ipai_* modules
@@ -26,23 +45,26 @@ Idempotent installer that:
 **Environment Variables**:
 ```bash
 ODOO_DB=ipai_oca_full              # Database name
-ODOO_COMPOSE_FILE=docker/docker-compose.ce19.yml  # Compose file path
-ODOO_SERVICE=odoo                   # Service name in compose
+ODOO_COMPOSE_FILE=""                # Auto-detected (or override explicitly)
+ODOO_SERVICE=""                     # Auto-detected (or override explicitly)
 OCA_MODULES="queue_job,mass_editing,..."  # OCA modules to install
 ```
 
 **Usage**:
 ```bash
-# Default (CE19, service 'odoo', DB 'ipai_oca_full')
+# Default (auto-detect everything, DB 'ipai_oca_full')
 ./scripts/ocadev/install_oca_ipai_full.sh
 
-# Custom DB name
+# Custom DB name (auto-detect compose/service)
 ODOO_DB=ipai_dev ./scripts/ocadev/install_oca_ipai_full.sh
 
-# Custom compose file (CE18)
+# Override compose file explicitly (CE18)
 ODOO_COMPOSE_FILE=docker/docker-compose.ce18.yml \
 ODOO_SERVICE=odoo-core \
 ./scripts/ocadev/install_oca_ipai_full.sh
+
+# Timestamped DB for rollback safety
+ODOO_DB=ipai_oca_full_$(date +%Y%m%d_%H%M) ./scripts/ocadev/install_oca_ipai_full.sh
 ```
 
 ### `list_installed_modules.sh`
