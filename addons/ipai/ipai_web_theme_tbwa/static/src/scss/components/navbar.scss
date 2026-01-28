@@ -2,6 +2,7 @@
  * TBWA Navbar / Topbar / Menu Styles
  * ===================================
  * Clean, professional navigation with TBWA branding
+ * Hide all menu items except logo and user menu
  */
 
 // ============================================================================
@@ -21,11 +22,13 @@
     position: relative;
   }
 
-  // App name / breadcrumb
-  .o_menu_brand {
-    color: var(--tbwa-text-on-primary) !important;
-    font-weight: 600;
-    margin-right: 2rem; // Add spacing to prevent overlap with menu items
+  // HIDE ALL MENU ITEMS - keep only logo and user menu
+  .o_menu_sections,
+  .o_menu_brand,
+  .o_menu_systray .o_searchview,
+  nav.o_main_navbar > .o_menu_sections,
+  .o_menu_systray > :not(.o_user_menu):not(.o_switch_company_menu) {
+    display: none !important;
   }
 
   // Navbar links - ensure proper stacking
@@ -55,22 +58,10 @@
     background-color: rgba(255, 255, 255, 0.15);
   }
 
-  // Search bar
-  .o_searchview {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: var(--tbwa-radius-md);
-
-    input {
-      color: var(--tbwa-text-on-primary);
-
-      &::placeholder {
-        color: rgba(255, 255, 255, 0.6);
-      }
-    }
-  }
-
-  // User menu
+  // User menu - keep visible
   .o_user_menu {
+    display: flex !important;
+
     .dropdown-toggle {
       img {
         border-radius: 50%;
