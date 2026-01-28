@@ -35,7 +35,7 @@ License: LGPL-3
     "category": "Themes/Backend",
     "depends": [
         "web",
-        "ipai_platform_theme",
+        "ipai_design_system_apps_sdk",
     ],
     "data": [
         "views/assets.xml",

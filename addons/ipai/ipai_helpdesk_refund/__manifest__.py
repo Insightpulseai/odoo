@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Helpdesk Refunds",
+    "name": "DEPRECATED: Helpdesk Refunds",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "Gift card reimbursements",
+    "summary": "DEPRECATED - Use ipai_helpdesk (merge) instead. Do not install.",
     "description": """
 Helpdesk Refunds
 ================
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

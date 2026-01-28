@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "IPAI UI Brand Tokens",
+    "name": "DEPRECATED: IPAI UI Brand Tokens",
     "version": "18.0.1.0.0",
     "category": "Themes",
-    "summary": "Single source of truth for brand tokens (Odoo + React)",
+    "summary": "DEPRECATED - Use ipai_design_system_apps_sdk instead. Do not install.",
     "description": """
 IPAI UI Brand Tokens
 ====================
@@ -64,7 +64,7 @@ Configure brand tokens at: Settings → Companies → Brand Tokens tab
             "ipai_ui_brand_tokens/static/src/scss/tokens_inject.scss",
         ],
     },
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "IPAI Platform Theme Tokens",
-    "summary": "Core design tokens and theme infrastructure for IPAI platform",
+    "name": "DEPRECATED: IPAI Platform Theme Tokens",
+    "summary": "DEPRECATED - Use ipai_design_system_apps_sdk instead. Do not install.",
     "description": """
 IPAI Platform Theme Tokens
 ==========================
@@ -47,7 +47,7 @@ This module is typically installed as a dependency. It provides:
             "ipai_platform_theme/static/src/css/tokens.css",
         ],
     },
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

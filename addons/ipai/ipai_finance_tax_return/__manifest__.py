@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Tax Return Workflow",
+    "name": "DEPRECATED: Tax Return Workflow",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "Tax return with validation",
+    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
     "description": """
 Tax Return Workflow
 ===================
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }
