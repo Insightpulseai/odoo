@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 89fed5733831cdfc51c23d7167aa302db22593d1
+> Commit: d904696feff737d6e7d17a8242ae048d554aa48c
 
 ## 📚 Documentation
 
@@ -308,7 +308,7 @@
 | [IPAI Module Installation Order](docs/IPAI_MODULE_INSTALLATION_ORDER.md) | docs |
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
-| [Login Button Fix - Production Deployment](docs/LOGIN_BUTTON_FIX.md) | docs |
+| [Login Button Fix & Header Cleanup - Production Deployment](docs/LOGIN_BUTTON_FIX.md) | docs |
 | [Mailgun DNS Setup for mg.insightpulseai.net](docs/MAILGUN_DNS_SETUP.md) | docs |
 | [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
 | [Mattermost ChatOps Deployment Guide](docs/MATTERMOST_CHATOPS_DEPLOYMENT.md) | docs |
