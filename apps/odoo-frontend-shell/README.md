@@ -23,14 +23,34 @@ PostgreSQL Database
 
 ## Getting Started
 
-### 1. Install Dependencies
+### Option 1: Vercel Sandbox (Recommended)
+
+**Instant deployment with zero setup:**
+
+```bash
+# From project root
+cd apps/odoo-frontend-shell
+vercel deploy --sandbox
+```
+
+Or use Vercel CLI:
+```bash
+vercel link
+vercel deploy --sandbox
+```
+
+**Vercel Sandbox URL**: Auto-generated shareable preview URL
+
+### Option 2: Local Development
+
+#### 1. Install Dependencies
 
 ```bash
 cd apps/odoo-frontend-shell
 pnpm install
 ```
 
-### 2. Configure Environment
+#### 2. Configure Environment
 
 ```bash
 cp .env.example .env.local
@@ -48,7 +68,7 @@ NEXT_PUBLIC_ODOO_DB=odoo_dev
 # NEXT_PUBLIC_ODOO_DB=odoo
 ```
 
-### 3. Start Development Server
+#### 3. Start Development Server
 
 ```bash
 pnpm dev
@@ -56,7 +76,7 @@ pnpm dev
 
 Open http://localhost:3001
 
-### 4. Login Credentials
+### Login Credentials
 
 Use your Odoo backend credentials:
 - **Username**: admin (or your Odoo username)
@@ -182,16 +202,48 @@ function MyComponent() {
 }
 ```
 
-## Production Deployment
+## Deployment Options
 
-### Build for Production
+### Vercel Sandbox (Quick Preview)
+
+**Best for**: Testing, demos, stakeholder review
 
 ```bash
-pnpm build
-pnpm start
+# One-time sandbox deployment
+vercel deploy --sandbox
+
+# View deployment
+vercel ls
+```
+
+Features:
+- ✅ Instant shareable URL
+- ✅ Automatic HTTPS
+- ✅ No infrastructure setup
+- ✅ Preview environment variables
+- ⚠️ Temporary (30 days, extendable)
+
+### Vercel Production
+
+**Best for**: Production use
+
+```bash
+# Link project
+vercel link
+
+# Deploy to production
+vercel --prod
+```
+
+Environment variables (set via Vercel dashboard):
+```env
+NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.net
+NEXT_PUBLIC_ODOO_DB=odoo
 ```
 
 ### Docker Deployment
+
+**Best for**: Self-hosted, on-premise
 
 ```dockerfile
 FROM node:20-alpine
@@ -204,12 +256,12 @@ EXPOSE 3001
 CMD ["npm", "start"]
 ```
 
-### Environment Variables (Production)
-
-```env
-NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.net
-NEXT_PUBLIC_ODOO_DB=odoo
-NODE_ENV=production
+```bash
+docker build -t odoo-frontend-shell .
+docker run -p 3001:3001 \
+  -e NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.net \
+  -e NEXT_PUBLIC_ODOO_DB=odoo \
+  odoo-frontend-shell
 ```
 
 ## CORS Configuration (Odoo Backend)
