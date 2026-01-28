@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fbc1cfb628b549a57a4005f02c2d855015b2b7ce
+> Commit: 5d917e74b3c84eab847e054cbc964ada7cfe0659
 
 ## 📚 Documentation
 
@@ -938,15 +938,20 @@
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
 | [EE Parity Audit](reports/parity/ee_parity_audit.md) | reports/parity |
 | [Canonical Database Naming Conventions](sandbox/dev/CANONICAL_NAMING.md) | sandbox/dev |
-| [CLAUDE.md — odoo-dev-sandbox Project Instructions](sandbox/dev/CLAUDE.md) | sandbox/dev |
+| [CLAUDE.md](sandbox/dev/CLAUDE.md) | sandbox/dev |
+| [Disk Cleanup Report - Dev Sandbox](sandbox/dev/CLEANUP_REPORT.md) | sandbox/dev |
 | [Hot-Reload Development Guide](sandbox/dev/HOT_RELOAD_GUIDE.md) | sandbox/dev |
 | [Implementation Summary - Odoo Dev Sandbox Normalization](sandbox/dev/IMPLEMENTATION_SUMMARY.md) | sandbox/dev |
+| [Odoo CSS Error - Diagnosis Report](sandbox/dev/ODOO_CSS_DIAGNOSIS.md) | sandbox/dev |
+| [Odoo CSS Error Fix - Resolution Report](sandbox/dev/ODOO_CSS_ERROR_FIX.md) | sandbox/dev |
 | [Production Deployment Complete](sandbox/dev/PRODUCTION_READY.md) | sandbox/dev |
 | [Odoo 18 CE Dev Sandbox](sandbox/dev/README.md) | sandbox/dev |
 | [Odoo Dev Sandbox - Repository Audit Report](sandbox/dev/REPORT.md) | sandbox/dev |
 | [IPAI Design System](sandbox/dev/addons/ipai/ipai_design_system/README.md) | sandbox/dev/addons/ipai/ipai_design_system |
 | [Odoo 19 Migration Strategy for odoo-ce](sandbox/dev/docs/ODOO_19_MIGRATION_STRATEGY.md) | sandbox/dev/docs |
 | [UI/Theme Module Consolidation - Status Update](sandbox/dev/docs/UI_CONSOLIDATION_STATUS.md) | sandbox/dev/docs |
+| [GitHub Codespaces & Enterprise Features Research](sandbox/dev/docs/research/GITHUB_CODESPACES_ENTERPRISE_RESEARCH.md) | sandbox/dev/docs/research |
+| [GitHub Codespaces & Enterprise - Executive Summary](sandbox/dev/docs/research/GITHUB_EXECUTIVE_SUMMARY.md) | sandbox/dev/docs/research |
 | [Odoo 18 CE Dev Sandbox - Developer Runbook](sandbox/dev/docs/runbooks/DEV_SANDBOX.md) | sandbox/dev/docs/runbooks |
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](sandbox/dev/docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | sandbox/dev/docs/runbooks |
 | [ODOO_CE_INTEGRATION.md — Strategic Separation with Operational Integration](sandbox/dev/integration/ODOO_CE_INTEGRATION.md) | sandbox/dev/integration |
