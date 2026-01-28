@@ -10,7 +10,12 @@ jobs:
       - name: Fail if deprecated repo URL appears
         run: |
           set -euo pipefail
-          if grep -r "https://github\.com/jgtolentino/insightpulse-odoo" .; then
+          # Exclude generated inventory files and archive
+          if grep -r "https://github\.com/jgtolentino/insightpulse-odoo" . \
+            --exclude-dir=out \
+            --exclude-dir=archive \
+            --exclude-dir=.git \
+            --exclude="no-deprecated-repo-refs.yml"; then
             echo "Found deprecated repo reference(s). Replace with https://github.com/jgtolentino/odoo-ce"
             exit 1
           fi

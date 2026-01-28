@@ -21,6 +21,7 @@ jobs:
             "sandbox/dev/docker-compose.yml"
             "sandbox/dev/docker-compose.production.yml"
             "deploy/docker-compose.prod.yml"
+            "deploy/docker-compose.ce19.yml"
             "infra/docker-compose.prod.yaml"
           )
 
