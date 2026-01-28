@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e523b7b9fcab0a9cb5108c9e2b9ae6c85bac2885
+> Commit: 86973bab2b3acb8e9468f19139ed0723c85db608
 
 ## 📚 Documentation
 
@@ -297,6 +297,7 @@
 | [GitHub PAT for Codespaces Setup](docs/GITHUB_PAT_CODESPACES.md) | docs |
 | [GitHub Personal Access Token (PAT) Scopes](docs/GITHUB_PAT_SCOPES.md) | docs |
 | [GitHub Secrets Configuration Guide](docs/GITHUB_SECRETS_SETUP.md) | docs |
+| [Git Authentication - Permanent Fix](docs/GIT_AUTH_PERMANENT_FIX.md) | docs |
 | [Git Worktree Strategy for Parallel Deployment](docs/GIT_WORKTREE_STRATEGY.md) | docs |
 | [ODOO-CE GO-LIVE CHECKLIST](docs/GO_LIVE_CHECKLIST.md) | docs |
 | [Odoo 18 CE + OCA + IPAI Go-Live Checklist (InsightPulseAI)](docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md) | docs |
@@ -495,6 +496,7 @@
 | [Verification Results](docs/evidence/20260128-odoo-docs-review/VERIFICATION.md) | docs/evidence/20260128-odoo-docs-review |
 | [CE+OCA Mount Validation System - Implementation Complete](docs/evidence/20260129-0110/mount-validation/IMPLEMENTATION_COMPLETE.md) | docs/evidence/20260129-0110/mount-validation |
 | [Comprehensive OCA/ipai Manifest System - Implementation Complete](docs/evidence/20260129-0110/oca-ipai-manifest/COMPREHENSIVE_MANIFEST_COMPLETE.md) | docs/evidence/20260129-0110/oca-ipai-manifest |
+| [Final Status - OCA/ipai Manifest System Complete](docs/evidence/20260129-0130/FINAL_STATUS.md) | docs/evidence/20260129-0130 |
 | [OCA Repository Clone - Complete](docs/evidence/20260129-0130/oca-complete/ALL_REPOS_CLONED.md) | docs/evidence/20260129-0130/oca-complete |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |

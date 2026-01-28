@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e523b7b9fcab0a9cb5108c9e2b9ae6c85bac2885
+> Commit: 86973bab2b3acb8e9468f19139ed0723c85db608
 
 ```
 .
@@ -2048,7 +2048,8 @@
 │   │   │   ├── mount-validation
 │   │   │   └── oca-ipai-manifest
 │   │   └── 20260129-0130
-│   │       └── oca-complete
+│   │       ├── oca-complete
+│   │       └── FINAL_STATUS.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── github
@@ -2549,6 +2550,7 @@
 │   ├── GITHUB_PAT_CODESPACES.md
 │   ├── GITHUB_PAT_SCOPES.md
 │   ├── GITHUB_SECRETS_SETUP.md
+│   ├── GIT_AUTH_PERMANENT_FIX.md
 │   ├── GIT_WORKTREE_STRATEGY.md
 │   ├── GO_LIVE_CHECKLIST.md
 │   ├── GO_LIVE_CHECKLIST_ODOO18_IPAI.md
@@ -5127,7 +5129,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1427 directories, 3695 files
+1427 directories, 3697 files
 ```
 
 ## 📊 Stats
@@ -5135,7 +5137,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1663 |
-| Files | 4961 |
+| Files | 4963 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1243 |
+| Markdown files | 1245 |
