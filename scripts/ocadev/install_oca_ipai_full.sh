@@ -6,16 +6,17 @@ ODOO_DB="${ODOO_DB:-ipai_oca_full}"
 ODOO_COMPOSE_FILE="${ODOO_COMPOSE_FILE:-}"  # auto-detected via preflight if empty
 ODOO_SERVICE="${ODOO_SERVICE:-}"            # auto-detected via preflight if empty
 
-# OCA module list (seed) – safe, minimal must-haves; extend as needed.
-# You can later swap this to parse config/addons_manifest.oca_ipai.json via jq.
-OCA_MODULES="${OCA_MODULES:-\
-queue_job,queue_job_cron_jobrunner,\
-mass_editing,auditlog,base_tier_validation,\
-web_responsive,web_m2x_options,web_export_view,\
-report_xlsx,report_xlsx_helper,\
-account_asset_management,account_financial_report,\
-account_move_base_import,\
-account_bank_statement_import,account_reconcile}"
+# OCA module list - parsed from manifest (single source of truth)
+# Override via env: OCA_MODULES="queue_job,mass_editing,..." ./install_oca_ipai_full.sh
+if [ -z "${OCA_MODULES:-}" ]; then
+  if [ -x scripts/ocadev/parse_manifest.sh ]; then
+    echo "Parsing OCA modules from manifest..."
+    OCA_MODULES="$(./scripts/ocadev/parse_manifest.sh)"
+  else
+    echo "ERROR: parse_manifest.sh not found or not executable" >&2
+    exit 1
+  fi
+fi
 
 # ============================================================================
 
