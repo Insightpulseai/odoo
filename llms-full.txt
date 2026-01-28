@@ -1,0 +1,711 @@
+# Odoo CE + OCA + IPAI Stack - Full Documentation
+
+> Self-hosted Odoo 19.0 Community Edition with OCA modules and custom IPAI addons for enterprise parity.
+
+---
+
+## 1. STACK OVERVIEW
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                   InsightPulse AI Stack (Self-Hosted)                │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                      │
+│   Mattermost ◄──► n8n ◄──► Odoo CE 19 ◄──► PostgreSQL 16            │
+│       │           │          (8069)                                  │
+│       │           │                                                  │
+│       │           └──────────► Supabase (external integrations)      │
+│       │                                                              │
+│       └─────────────────────► AI Agents (Pulser, Claude, Codex)     │
+│                                                                      │
+├─────────────────────────────────────────────────────────────────────┤
+│  Superset (BI)  │  Keycloak (SSO)  │  DigitalOcean (Hosting)        │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Technology Stack
+
+| Component | Version | Purpose |
+|-----------|---------|---------|
+| Odoo CE | 19.0 | Core ERP |
+| PostgreSQL | 16 | Database |
+| Python | 3.12+ | Backend |
+| Node.js | 18+ | Frontend tooling |
+| Docker | Latest | Containerization |
+| n8n | Self-hosted | Workflow automation |
+| Mattermost | Self-hosted | Team chat |
+| Superset | Self-hosted | BI/Analytics |
+| Keycloak | Self-hosted | SSO/Auth |
+
+### Philosophy
+
+```
+Config → OCA → Delta (ipai_*)
+
+1. Config: Use Odoo's built-in configuration first
+2. OCA: Use vetted OCA community modules second
+3. Delta: Only create ipai_* modules for truly custom needs
+```
+
+---
+
+## 2. ODOO 19.0 DOCUMENTATION
+
+### Developer Resources
+
+**Official Documentation:**
+- Developer Portal: https://www.odoo.com/documentation/19.0/developer.html
+- How-to Guides: https://www.odoo.com/documentation/19.0/developer/howtos.html
+- Tutorials: https://www.odoo.com/documentation/19.0/developer/tutorials.html
+- Reference: https://www.odoo.com/documentation/19.0/developer/reference.html
+
+**Backend Reference:**
+- ORM API: https://www.odoo.com/documentation/19.0/developer/reference/backend/orm.html
+- Actions: https://www.odoo.com/documentation/19.0/developer/reference/backend/actions.html
+- Views: https://www.odoo.com/documentation/19.0/developer/reference/backend/views.html
+- Security: https://www.odoo.com/documentation/19.0/developer/reference/backend/security.html
+
+**Frontend Reference:**
+- Web Framework: https://www.odoo.com/documentation/19.0/developer/reference/frontend.html
+- JavaScript Modules: https://www.odoo.com/documentation/19.0/developer/reference/frontend/javascript_modules.html
+- OWL Components: https://www.odoo.com/documentation/19.0/developer/reference/frontend/owl_components.html
+
+**Contributing:**
+- Development: https://www.odoo.com/documentation/19.0/contributing/development.html
+- Coding Guidelines: https://www.odoo.com/documentation/19.0/contributing/development/coding_guidelines.html
+- Documentation: https://www.odoo.com/documentation/19.0/contributing/documentation.html
+
+### Odoo 19.0 Breaking Changes
+
+**ORM Changes:**
+
+```python
+# DEPRECATED (Odoo 18 and earlier)
+result = self.env['model'].read_group(
+    domain, fields, groupby
+)
+
+# NEW (Odoo 19.0)
+result = self.env['model']._read_group(
+    domain, groupby, aggregates
+)
+
+# Or for public API
+result = self.env['model'].formatted_read_group(
+    domain, fields, groupby
+)
+```
+
+**New Decorators:**
+
+```python
+# Mark method as private (excluded from RPC)
+@api.private
+def _internal_method(self):
+    pass
+```
+
+**Domain API:**
+
+```python
+from odoo import Domain
+
+# New domain manipulation
+domain = Domain([('active', '=', True)])
+domain = domain & Domain([('type', '=', 'sale')])
+```
+
+### Module Structure
+
+```
+module_name/
+├── __init__.py              # Python package init
+├── __manifest__.py          # Module metadata
+│   {
+│       'name': 'Module Name',
+│       'version': '19.0.1.0.0',
+│       'category': 'Category',
+│       'summary': 'Short description',
+│       'depends': ['base', 'sale'],
+│       'data': ['security/ir.model.access.csv', 'views/views.xml'],
+│       'license': 'LGPL-3',
+│   }
+├── models/                  # Business logic
+│   ├── __init__.py
+│   └── my_model.py
+├── views/                   # UI definitions
+│   └── my_model_views.xml
+├── security/                # Access rights
+│   ├── ir.model.access.csv
+│   └── security.xml
+├── data/                    # Default/demo data
+│   └── data.xml
+├── wizard/                  # Transient models
+│   ├── __init__.py
+│   └── my_wizard.py
+├── report/                  # QWeb reports
+│   └── report_template.xml
+├── controllers/             # HTTP controllers
+│   ├── __init__.py
+│   └── main.py
+└── static/                  # Web assets
+    ├── src/
+    │   ├── js/
+    │   ├── scss/
+    │   └── xml/
+    └── description/
+        └── icon.png
+```
+
+### ORM Field Types
+
+```python
+from odoo import fields
+
+# Basic fields
+name = fields.Char(string='Name', required=True)
+description = fields.Text(string='Description')
+active = fields.Boolean(default=True)
+sequence = fields.Integer(default=10)
+amount = fields.Float(digits=(16, 2))
+price = fields.Monetary(currency_field='currency_id')
+date = fields.Date()
+datetime = fields.Datetime()
+html_content = fields.Html()
+binary_file = fields.Binary()
+image = fields.Image(max_width=1024, max_height=1024)
+
+# Selection
+state = fields.Selection([
+    ('draft', 'Draft'),
+    ('confirmed', 'Confirmed'),
+    ('done', 'Done'),
+], default='draft')
+
+# Relational fields
+partner_id = fields.Many2one('res.partner', string='Partner')
+tag_ids = fields.Many2many('res.partner.category', string='Tags')
+line_ids = fields.One2many('sale.order.line', 'order_id', string='Lines')
+
+# Computed fields
+total = fields.Float(compute='_compute_total', store=True)
+
+@api.depends('line_ids.price_subtotal')
+def _compute_total(self):
+    for record in self:
+        record.total = sum(record.line_ids.mapped('price_subtotal'))
+```
+
+### Common ORM Methods
+
+```python
+# CRUD
+record = self.env['model'].create({'name': 'New'})
+record.write({'name': 'Updated'})
+record.unlink()
+records = self.env['model'].search([('active', '=', True)])
+data = records.read(['name', 'partner_id'])
+
+# Search
+records = self.env['model'].search([
+    ('date', '>=', '2024-01-01'),
+    ('state', 'in', ['confirmed', 'done']),
+], order='date desc', limit=10)
+
+count = self.env['model'].search_count([('active', '=', True)])
+
+# Browse
+record = self.env['model'].browse(record_id)
+records = self.env['model'].browse([1, 2, 3])
+
+# Recordset operations
+filtered = records.filtered(lambda r: r.amount > 100)
+mapped_names = records.mapped('partner_id.name')
+sorted_records = records.sorted(key=lambda r: r.date, reverse=True)
+
+# Context and sudo
+record_with_context = record.with_context(lang='es_ES')
+record_as_admin = record.sudo()
+record_as_user = record.with_user(user_id)
+```
+
+---
+
+## 3. OCA MODULES - COMPLETE LIST
+
+### Must-Have Base Modules
+
+**Repository: OCA/server-tools**
+| Module | Description |
+|--------|-------------|
+| `mass_editing` | Bulk edit multiple records |
+| `auditlog` | Log user operations (create, read, write, delete) |
+| `auth_admin_passkey` | Admin can log in as any user |
+| `base_exception` | Customizable exception handling |
+| `base_technical_user` | Technical user for automated tasks |
+| `base_cron_exclusion` | Prevent concurrent cron execution |
+| `scheduler_error_mailer` | Email alerts on cron failures |
+| `module_analysis` | Analyze installed modules |
+| `base_search_fuzzy` | Fuzzy/trigram search |
+
+**Repository: OCA/server-ux**
+| Module | Description |
+|--------|-------------|
+| `base_tier_validation` | Multi-tier approval workflows |
+| `base_tier_validation_formula` | Dynamic validation rules |
+| `base_tier_validation_forward` | Forward validation |
+| `date_range` | Configurable date ranges |
+| `base_optional_quick_create` | Control quick create |
+
+**Repository: OCA/web**
+| Module | Description |
+|--------|-------------|
+| `web_m2x_options` | Enhanced many2one/many2many widgets |
+| `web_export_view` | Export tree view to CSV/XLS |
+| `web_tree_many2one_clickable` | Clickable m2o in tree |
+| `web_responsive` | Mobile-friendly UI |
+| `web_no_bubble` | Remove notification bubbles |
+| `web_refresher` | Manual refresh button |
+| `web_ir_actions_act_multi` | Execute multiple actions |
+| `web_dialog_size` | Resizable dialogs |
+| `web_advanced_search` | Advanced search features |
+
+**Repository: OCA/reporting-engine**
+| Module | Description |
+|--------|-------------|
+| `report_xlsx` | Generate Excel reports |
+| `report_xlsx_helper` | XLSX helper functions |
+| `report_qweb_pdf_watermark` | PDF watermarks |
+| `report_qweb_parameter` | Pass parameters to QWeb |
+| `report_async` | Async report generation |
+
+**Repository: OCA/queue**
+| Module | Description |
+|--------|-------------|
+| `queue_job` | Background job execution |
+| `queue_job_cron_jobrunner` | Cron-based runner |
+| `queue_job_batch` | Batch job processing |
+
+### Must-Have Accounting Modules
+
+**Repository: OCA/account-financial-reporting**
+| Module | Description |
+|--------|-------------|
+| `account_financial_report` | General Ledger, Trial Balance, Open Items, Aged Balance |
+| `account_financial_report_qweb` | QWeb templates for reports |
+
+**Repository: OCA/account-reconcile**
+| Module | Description |
+|--------|-------------|
+| `account_reconcile_oca` | Bank statement reconciliation |
+| `account_reconcile_oca_queue` | Auto-reconcile via queue |
+| `account_statement_base` | Base for bank statements |
+| `base_transaction_id` | Transaction IDs |
+
+**Repository: OCA/account-financial-tools**
+| Module | Description |
+|--------|-------------|
+| `account_asset_management` | Asset depreciation |
+| `account_fiscal_year` | Fiscal year management |
+| `account_lock_date_update` | Lock date controls |
+| `account_move_name_sequence` | Journal entry sequences |
+| `account_chart_update` | Update chart of accounts |
+
+**Repository: OCA/bank-statement-import**
+| Module | Description |
+|--------|-------------|
+| `account_statement_import` | Base import |
+| `account_statement_import_ofx` | OFX format |
+| `account_statement_import_camt` | CAMT (ISO 20022) |
+| `account_statement_import_mt940` | MT940 (SWIFT) |
+
+**Repository: OCA/account-invoicing**
+| Module | Description |
+|--------|-------------|
+| `account_invoice_refund_link` | Link invoices to refunds |
+| `account_invoice_merge` | Merge draft invoices |
+| `account_invoice_check_total` | Verify invoice totals |
+
+### Must-Have Sales Modules
+
+**Repository: OCA/sale-workflow**
+| Module | Description |
+|--------|-------------|
+| `sale_order_type` | Order types |
+| `sale_tier_validation` | Approval tiers |
+| `sale_order_line_sequence` | Line sequences |
+| `sale_fixed_discount` | Fixed discounts |
+| `sale_order_line_date` | Commitment dates |
+| `sale_elaboration` | Elaboration instructions |
+| `sale_exception` | Exception handling |
+| `sale_order_revision` | Revision tracking |
+| `sale_blanket_order` | Blanket orders |
+| `sale_order_archive` | Archive orders |
+| `sale_delivery_block` | Block delivery |
+| `sale_invoice_block` | Block invoicing |
+
+**Repository: OCA/purchase-workflow**
+| Module | Description |
+|--------|-------------|
+| `purchase_tier_validation` | Approval tiers |
+| `purchase_order_line_sequence` | Line sequences |
+| `purchase_exception` | Exception handling |
+| `purchase_request` | Purchase requests |
+| `purchase_blanket_order` | Blanket orders |
+
+**Repository: OCA/partner-contact**
+| Module | Description |
+|--------|-------------|
+| `partner_firstname` | First/last name split |
+| `partner_contact_birthdate` | Birthdate field |
+| `partner_contact_gender` | Gender field |
+| `partner_contact_job_position` | Job position |
+| `partner_company_group` | Company groups |
+
+### AI & Automation Modules
+
+**Repository: OCA/ai**
+| Module | Description |
+|--------|-------------|
+| AI/LLM integration modules | Ollama, OpenAI alternatives |
+
+**Repository: OCA/automation**
+| Module | Description |
+|--------|-------------|
+| Automation tools | Scheduled actions, triggers |
+
+**Repository: OCA/connector**
+| Module | Description |
+|--------|-------------|
+| Generic connector framework | Jobs, async, channels |
+
+**Repository: OCA/rest-framework**
+| Module | Description |
+|--------|-------------|
+| `base_rest` | REST API builder |
+| `base_rest_datamodel` | Data schema validation |
+
+---
+
+## 4. IPAI CUSTOM MODULES
+
+### Naming Convention
+
+```
+ipai_<domain>_<feature>
+
+Domains:
+- ai_*        : AI/ML features
+- finance_*   : Accounting/finance
+- platform_*  : Core platform features
+- workos_*    : WorkOS/productivity
+- theme_*     : UI themes
+- *_connector : External integrations
+```
+
+### Module Inventory
+
+**AI Domain:**
+| Module | Purpose |
+|--------|---------|
+| `ipai_ai_agents` | AI agent framework |
+| `ipai_ai_agents_ui` | Agent UI components |
+| `ipai_ai_rag` | Retrieval-augmented generation |
+| `ipai_ai_tools` | AI tool integrations |
+| `ipai_ai_automations` | AI-powered automations |
+| `ipai_ai_livechat` | AI livechat support |
+| `ipai_ai_fields` | AI-enhanced fields |
+| `ipai_ai_agent_builder` | No-code agent builder |
+| `ipai_ask_ai` | Ask AI interface |
+| `ipai_ask_ai_chatter` | AI in chatter |
+| `ipai_documents_ai` | AI document processing |
+| `ipai_expense_ocr` | OCR for expenses |
+| `ipai_ocr_gateway` | OCR gateway service |
+
+**Finance Domain:**
+| Module | Purpose |
+|--------|---------|
+| `ipai_finance_ppm` | Project portfolio management |
+| `ipai_finance_ppm_golive` | Go-live checklist |
+| `ipai_finance_ppm_umbrella` | Umbrella projects |
+| `ipai_finance_workflow` | Finance workflows |
+| `ipai_finance_closing` | Period closing |
+| `ipai_finance_close_seed` | Close seed data |
+| `ipai_finance_tax_return` | Tax return prep |
+| `ipai_month_end` | Month-end processes |
+| `ipai_month_end_closing` | Month-end closing |
+| `ipai_tbwa_finance` | TBWA-specific finance |
+| `ipai_bir_tax_compliance` | BIR (Philippines) tax |
+
+**Platform Domain:**
+| Module | Purpose |
+|--------|---------|
+| `ipai_foundation` | Base dependencies |
+| `ipai_enterprise_bridge` | EE parity bridge |
+| `ipai_platform_approvals` | Approval workflows |
+| `ipai_platform_audit` | Audit logging |
+| `ipai_platform_permissions` | Permission management |
+| `ipai_platform_workflow` | Workflow engine |
+| `ipai_platform_theme` | Platform theming |
+
+**WorkOS Domain:**
+| Module | Purpose |
+|--------|---------|
+| `ipai_workos_core` | WorkOS core |
+| `ipai_workos_blocks` | Block-based content |
+| `ipai_workos_canvas` | Canvas/whiteboard |
+| `ipai_workos_collab` | Collaboration |
+| `ipai_workos_db` | Database features |
+| `ipai_workos_search` | Search functionality |
+| `ipai_workos_templates` | Templates |
+| `ipai_workos_views` | Custom views |
+| `ipai_workos_affine` | Affine integration |
+
+**Theme/UI Domain:**
+| Module | Purpose |
+|--------|---------|
+| `ipai_theme_tbwa` | TBWA theme |
+| `ipai_theme_tbwa_backend` | Backend theme |
+| `ipai_theme_fluent2` | Fluent 2 design |
+| `ipai_theme_copilot` | Copilot-style UI |
+| `ipai_chatgpt_sdk_theme` | ChatGPT-style UI |
+| `ipai_design_system` | Design tokens |
+| `ipai_design_system_apps_sdk` | Apps SDK |
+| `ipai_ui_brand_tokens` | Brand tokens |
+| `ipai_web_fluent2` | Fluent web components |
+| `ipai_web_icons_fluent` | Fluent icons |
+| `ipai_web_theme_chatgpt` | ChatGPT web theme |
+| `ipai_web_theme_tbwa` | TBWA web theme |
+| `ipai_copilot_ui` | Copilot UI components |
+
+**Other Modules:**
+| Module | Purpose |
+|--------|---------|
+| `ipai_helpdesk` | Helpdesk (EE parity) |
+| `ipai_helpdesk_refund` | Helpdesk refunds |
+| `ipai_hr_payroll_ph` | Philippines payroll |
+| `ipai_sign` | Digital signatures |
+| `ipai_grid_view` | Grid view (EE parity) |
+| `ipai_crm_pipeline` | CRM pipeline |
+| `ipai_project_templates` | Project templates |
+| `ipai_planning_attendance` | Planning/attendance |
+| `ipai_esg` | ESG tracking |
+| `ipai_esg_social` | Social ESG |
+| `ipai_equity` | Equity management |
+| `ipai_vertical_retail` | Retail vertical |
+| `ipai_vertical_media` | Media vertical |
+| `ipai_superset_connector` | Superset BI connector |
+| `ipai_whatsapp_connector` | WhatsApp connector |
+| `ipai_sms_gateway` | SMS gateway |
+| `ipai_ops_mirror` | Operations mirror |
+
+### Module Hierarchy
+
+```
+ipai_foundation                    # Base (install first)
+    └── ipai_enterprise_bridge     # EE parity core
+        ├── ipai_platform_*        # Platform features
+        ├── ipai_ai_*              # AI features
+        ├── ipai_finance_*         # Finance features
+        ├── ipai_workos_*          # WorkOS features
+        └── ipai_theme_*           # UI themes
+```
+
+---
+
+## 5. ENTERPRISE PARITY
+
+### Parity Matrix
+
+| EE Feature | Module | Replacement | Parity % |
+|------------|--------|-------------|----------|
+| Bank Reconciliation | `account_accountant` | `account_reconcile_oca` | 95% |
+| Financial Reports | `account_reports` | `account_financial_report` | 90% |
+| Asset Management | `account_asset` | `account_asset_management` | 90% |
+| Approvals | `approvals` | `ipai_platform_approvals` + `base_tier_validation` | 95% |
+| Helpdesk | `helpdesk` | `ipai_helpdesk` | 90% |
+| Payroll | `hr_payroll` | `ipai_hr_payroll_ph` | 100% |
+| Planning | `planning` | `ipai_planning_attendance` | 85% |
+| Studio | `studio` | `ipai_dev_studio_base` | 70% |
+| Spreadsheet | `spreadsheet` | Superset + `ipai_superset_connector` | 80% |
+| Documents | `documents` | `ipai_documents_ai` | 80% |
+| Sign | `sign` | `ipai_sign` | 70% |
+
+### Parity Formula
+
+```
+CE + OCA + ipai_* = Enterprise Parity (≥80%)
+
+NEVER:
+- License Odoo Enterprise
+- Use odoo.com IAP services
+- Deploy proprietary EE modules
+```
+
+---
+
+## 6. CODING STANDARDS
+
+### Python Style (PEP8 + Odoo)
+
+```python
+# Import order (3 groups, alphabetically sorted)
+import os                              # 1. Python stdlib
+import sys
+from datetime import datetime
+
+from odoo import api, fields, models   # 2. Odoo imports
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools.translate import _
+
+from odoo.addons.base.models.res_partner import Partner  # 3. Addons
+```
+
+### Commit Message Format
+
+```
+[TAG] scope: short description
+
+Longer description explaining WHY (not what).
+
+Tags:
+- [IMP] Improvement
+- [FIX] Bug fix
+- [REF] Refactoring
+- [ADD] New feature
+- [REM] Removal
+- [MOV] Moving files
+- [REL] Release
+- [MERGE] Merge commit
+```
+
+### Security Best Practices
+
+```python
+# Always use ORM methods, never raw SQL
+records = self.env['model'].search([...])  # Good
+self.env.cr.execute("SELECT ...")          # Avoid
+
+# Check access rights
+records.check_access_rights('write')
+records.check_access_rule('write')
+
+# Use sudo() sparingly and only when necessary
+record.sudo().write(...)  # Bypasses security
+
+# Sanitize user input
+from markupsafe import Markup
+safe_html = Markup(user_input)  # Escape HTML
+```
+
+---
+
+## 7. COMMANDS & SCRIPTS
+
+### Docker Commands
+
+```bash
+# Start stack
+docker compose up -d
+
+# View logs
+docker compose logs -f odoo-core
+
+# Module operations
+docker compose exec odoo-core odoo -d odoo_core -u module_name --stop-after-init
+docker compose exec odoo-core odoo -d odoo_core -i module_name --stop-after-init
+
+# Database operations
+docker compose exec postgres psql -U odoo -d odoo_core
+docker compose exec postgres pg_dump -U odoo odoo_core > backup.sql
+```
+
+### Project Scripts
+
+```bash
+# Health checks
+./scripts/repo_health.sh
+./scripts/spec_validate.sh
+./scripts/ci_local.sh
+
+# Testing
+./scripts/ci/run_odoo_tests.sh
+./scripts/ci/run_odoo_tests.sh module_name
+
+# Deployment
+./scripts/deploy-odoo-modules.sh
+```
+
+### Git Workflow
+
+```bash
+# Branch naming
+claude/<feature>-<session-id>    # Claude Code branches
+19.0-ipai-<feature>              # Feature branches
+
+# Commit
+git add specific_files
+git commit -m "[IMP] scope: description"
+
+# Push
+git push -u origin branch-name
+```
+
+---
+
+## 8. PROJECT FILES
+
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | Complete project instructions |
+| `llms.txt` | LLM-friendly documentation index |
+| `llms-full.txt` | Full documentation for RAG |
+| `docker-compose.yml` | Stack configuration |
+| `oca.lock.json` | OCA module versions |
+| `package.json` | Node.js monorepo config |
+| `turbo.json` | Turbo CI/CD config |
+
+### Directory Structure
+
+```
+odoo-ce/
+├── addons/               # Odoo modules
+│   ├── OCA/              # OCA repositories
+│   ├── ipai/             # IPAI modules (nested)
+│   └── ipai_*/           # IPAI modules (flat)
+├── apps/                 # Applications
+├── packages/             # Shared packages
+├── spec/                 # Spec bundles
+├── scripts/              # Automation scripts
+├── docs/                 # Documentation
+├── docker/               # Docker configs
+├── deploy/               # Deployment configs
+├── infra/                # Infrastructure IaC
+├── db/                   # Database management
+├── mcp/                  # MCP servers
+├── n8n/                  # n8n workflows
+└── .claude/              # Claude Code config
+```
+
+---
+
+## 9. EXTERNAL RESOURCES
+
+### Official
+
+- Odoo Documentation: https://www.odoo.com/documentation/19.0/
+- OCA GitHub: https://github.com/OCA
+- OCA Apps: https://odoo-community.org/shop
+
+### Community
+
+- Odoo Forum: https://www.odoo.com/forum/help-1
+- OCA Contributors: https://odoo-community.org/groups/contributors-15
+
+### Third-Party LLM Integrations
+
+- apexive/odoo-llm: https://github.com/apexive/odoo-llm
+- local-llm-odoo: https://github.com/markusbegerow/local-llm-odoo
+- odoogpt: https://github.com/thespino/odoogpt
