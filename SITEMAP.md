@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 6a6069d3bdbe9e24e90554201d39cedf03c8d1c1
+> Commit: ab54f7d4dc77f40f3197b772c5ede6ac1b2d8278
 
 ## 📚 Documentation
 
@@ -486,6 +486,9 @@
 | [Platform Kit Merge Evidence](docs/evidence/20260127-0630/platform-kit-merge/MERGE_EVIDENCE.md) | docs/evidence/20260127-0630/platform-kit-merge |
 | [Platform Kit n8n Integration](docs/evidence/20260127-0630/platform-kit-merge/N8N_INTEGRATION.md) | docs/evidence/20260127-0630/platform-kit-merge |
 | [Platform Kit Kickoff Summary](docs/evidence/20260127-0630/platform-kit-merge/SUMMARY.md) | docs/evidence/20260127-0630/platform-kit-merge |
+| [EE Parity Analysis Evidence Pack](docs/evidence/20260128-1145/ee-parity-analysis/analysis_summary.md) | docs/evidence/20260128-1145/ee-parity-analysis |
+| [Odoo 19.0 Documentation Review](docs/evidence/20260128-odoo-docs-review/ODOO_19_DOCS_REVIEW.md) | docs/evidence/20260128-odoo-docs-review |
+| [Verification Results](docs/evidence/20260128-odoo-docs-review/VERIFICATION.md) | docs/evidence/20260128-odoo-docs-review |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
@@ -719,6 +722,8 @@
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
 | [Cleanup and Hardening Checklist](docs/parity/CLEANUP_AND_HARDENING_CHECKLIST.md) | docs/parity |
 | [Compliance and Licensing Report](docs/parity/COMPLIANCE_AND_LICENSING.md) | docs/parity |
+| [Odoo EE Parity Layering Analysis](docs/parity/EE_PARITY_LAYERING_ANALYSIS.md) | docs/parity |
+| [EE Parity – Minimal Installable Module Set](docs/parity/EE_PARITY_MINIMAL_MODULE_SET.md) | docs/parity |
 | [Enterprise Stack Parity Assessment](docs/parity/ENTERPRISE_STACK_PARITY.md) | docs/parity |
 | [Implementation Map](docs/parity/IMPLEMENTATION_MAP.md) | docs/parity |
 | [Operational Positioning: IPAI Odoo Stack](docs/parity/OPERATIONAL_POSITIONING.md) | docs/parity |
