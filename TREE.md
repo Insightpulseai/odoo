@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fac1d8ff6e77dea028f3abd11827906b90051ab0
+> Commit: 6a6069d3bdbe9e24e90554201d39cedf03c8d1c1
 
 ```
 .
@@ -3486,10 +3486,12 @@
 │   │   │   ├── research
 │   │   │   ├── runbooks
 │   │   │   ├── ODOO_19_MIGRATION_STRATEGY.md
+│   │   │   ├── ODOO_FLUENT_DESIGN_SYSTEM_REFERENCE.md
 │   │   │   └── UI_CONSOLIDATION_STATUS.md
 │   │   ├── integration
 │   │   │   └── ODOO_CE_INTEGRATION.md
 │   │   ├── scripts
+│   │   │   ├── brand
 │   │   │   ├── claude
 │   │   │   ├── dev
 │   │   │   └── verify.sh
@@ -5094,15 +5096,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1417 directories, 3672 files
+1418 directories, 3673 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1653 |
-| Files | 4929 |
+| Directories | 1654 |
+| Files | 4935 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1229 |
+| Markdown files | 1231 |
