@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5d432142b2d0e1eb8f3c7c471b93dc17f1323ba6
+> Commit: fac1d8ff6e77dea028f3abd11827906b90051ab0
 
 ```
 .
@@ -3972,6 +3972,7 @@
 │   ├── staging_down.sh
 │   ├── staging_restore_and_sanitize.sh
 │   ├── staging_up.sh
+│   ├── start_local_odoo.sh
 │   ├── supabase_delete_user.sh
 │   ├── supabase_local.sh
 │   ├── sync-fluent-tokens.sh
@@ -4990,6 +4991,7 @@
 ├── INFRASTRUCTURE_SUMMARY.md
 ├── INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md
 ├── KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md
+├── LOCAL_SETUP.md
 ├── MATTERMOST_OPEX_INTEGRATION.md
 ├── MCP_QUICK_START.md
 ├── Makefile
@@ -5092,7 +5094,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1417 directories, 3670 files
+1417 directories, 3672 files
 ```
 
 ## 📊 Stats
@@ -5100,7 +5102,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1653 |
-| Files | 4927 |
+| Files | 4929 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1228 |
+| Markdown files | 1229 |
