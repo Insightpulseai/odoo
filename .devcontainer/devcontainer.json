@@ -81,7 +81,7 @@
   },
 
   "postCreateCommand": "bash scripts/codespaces/bootstrap.sh",
-  "postStartCommand": "bash scripts/codespaces/start.sh",
+  "postStartCommand": "bash scripts/codespaces/start.sh && [ -f .env.local ] && set -a && source .env.local && set +a || true",
 
   "customizations": {
     "vscode": {
