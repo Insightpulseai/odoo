@@ -1,248 +1,355 @@
-# CLAUDE.md — odoo-dev-sandbox Project Instructions
+# CLAUDE.md
 
-## Purpose
-
-This repository is a **clean, reproducible Odoo 18 CE development sandbox** for custom `ipai_*` modules with OCA integration.
-
-**IMPORTANT**: All SuperClaude framework behavior (personas, wave mode, MCP servers, skills) is defined in `~/.claude/CLAUDE.md`. This file contains **only project-specific context** for routing and execution.
+> Canonical instructions for how Claude agents access secrets using **macOS Keychain** (local) and **Supabase Vault** (remote/CI).
+> All agent runs must have required secrets available via environment variables before any tools execute.
 
 ---
 
-## Quick Reference
+## 1. Scope & Responsibilities
 
-**Stack**: Odoo 18 CE + PostgreSQL 16 + OCA modules (24 dependencies)
-**Primary Modules**: `ipai` (Enterprise Bridge), `ipai_enterprise_bridge` (CE → 19/EE parity)
-**Purpose**: Local development with hot-reload, OCA compliance validation
+This document defines:
 
-**Key Documentation**:
-- **Daily Operations**: `docs/runbooks/DEV_SANDBOX.md`
-- **Audit Report**: `REPORT.md`
-- **Global Framework**: `~/.claude/CLAUDE.md` (SuperClaude)
+- **Where** secrets are stored:
+  - Local: **macOS Keychain**
+  - Remote / CI / shared envs: **Supabase Vault**
+- **How** secrets are **loaded into environment variables** before a Claude run.
+- **What** environment variables are required for agents and tools to function.
 
----
-
-## Execution Rules (This Repo Only)
-
-### What to Execute
-- Use scripts in `scripts/dev/` for all operations
-- Docker Compose for orchestration (no local Odoo install)
-- Git for version control
-- PostgreSQL via Docker (no local install)
-
-### What CLIs Are Allowed
-- `docker compose` (all operations)
-- `git` (version control)
-- `bash` (script execution)
-- `psql` (via Docker exec only)
-- `python3` (manifest validation only)
-
-### What Is Prohibited
-- Local Odoo installation (Docker only)
-- Azure services
-- Production database connections (dev sandbox only)
-- Direct modification of OCA modules (use upstream or fork)
-
-### Acceptance Gates
-All changes must pass:
-1. `./scripts/verify.sh` (local verification)
-2. `.github/workflows/dev-sandbox-verify.yml` (CI checks)
-3. `docker compose config` (valid syntax)
-4. No deprecated `<tree>` in `view_mode` declarations (Odoo 18 convention)
-5. All addon manifests valid Python syntax
+Secrets are **never committed to Git**. Only references and loading scripts live in the repo.
 
 ---
 
-## Auto-Activation Context
+## 2. Canonical Secret List
 
-**Project Type**: Odoo 18 CE development sandbox
-**Primary User**: Jake Tolentino (Finance SSC Manager / Odoo Developer)
-**Focus Areas**:
-- Odoo 18 CE module development (OCA-compliant)
-- Finance PPM (BIR compliance, logframe, month-end close)
-- Enterprise feature parity (18 CE → 19/EE)
-- OCA module integration and validation
+All Claude-compatible agents must treat this table as the **single source of truth** for required secrets.
 
-**Skill Auto-Activation**:
-- Keywords: "odoo module", "scaffold", "manifest", "view xml", "oca"
-- File patterns: `addons/*/__manifest__.py`, `addons/*/views/*.xml`
-- Context: Odoo development, BIR compliance, finance automation
+| Purpose                    | Env var name                 | Source (local)        | Source (remote/CI)     |
+|---------------------------|------------------------------|-----------------------|------------------------|
+| Claude API key            | `CLAUDE_API_KEY`             | macOS Keychain        | Supabase Vault         |
+| OpenAI API key (optional) | `OPENAI_API_KEY`             | macOS Keychain        | Supabase Vault         |
+| Supabase URL              | `SUPABASE_URL`               | macOS Keychain        | Supabase Vault         |
+| Supabase anon key         | `SUPABASE_ANON_KEY`          | macOS Keychain        | Supabase Vault         |
+| Supabase service role key | `SUPABASE_SERVICE_ROLE_KEY`  | macOS Keychain        | Supabase Vault         |
+| GitHub token (if needed)  | `GITHUB_TOKEN`               | macOS Keychain        | Supabase Vault         |
 
-**Persona Routing**:
-- `odoo_developer` → Module development, OCA compliance, view debugging
-- `finance_ssc_expert` → BIR forms, tax filing, multi-employee workflows
-- `analyzer` → Root cause analysis, dependency mapping
-- `devops_engineer` → Docker operations, deployment validation
-
-**MCP Server Usage**:
-- **Sequential**: Multi-step workflows, dependency analysis
-- **Context7**: Odoo patterns, OCA guidelines, framework docs
-- **Playwright**: (not used in this sandbox - no frontend testing)
-- **Magic**: (not used - Odoo has its own UI framework)
+> **NOTE:** If additional secrets are introduced, they must be added to this table and wired into both Keychain and Vault loading flows.
 
 ---
 
-## Repository Structure
+## 3. Local Development: macOS Keychain
 
-```
-odoo-dev-sandbox/
-├── addons/                    # Custom modules (version-controlled)
-│   ├── ipai/                  # Main module (18.0.1.0.0)
-│   └── ipai_enterprise_bridge/ # Enterprise parity module
-├── oca-addons/                # OCA dependencies (symlink/clone, git-ignored)
-├── config/
-│   └── odoo.conf              # Odoo configuration
-├── docs/
-│   └── runbooks/
-│       └── DEV_SANDBOX.md     # Complete developer guide
-├── scripts/
-│   ├── dev/                   # Daily operation scripts
-│   │   ├── up.sh              # Start services
-│   │   ├── down.sh            # Stop services
-│   │   ├── reset-db.sh        # Reset database (destructive)
-│   │   ├── health.sh          # Health check
-│   │   └── logs.sh            # View logs
-│   └── verify.sh              # Local verification
-├── .github/workflows/
-│   └── dev-sandbox-verify.yml # CI verification
-├── docker-compose.yml         # Stack definition
-├── .env.example               # Environment template
-├── .gitignore                 # Git ignore rules
-├── REPORT.md                  # Audit report (current state vs canonical)
-└── CLAUDE.md                  # This file
-```
+### 3.1 Storage Convention
 
----
+Local secrets are stored as **generic passwords** in macOS Keychain with:
 
-## Daily Workflow
+- **Service name**: `ipai_claude_secrets`
+- **Account**: matches the env var name (e.g. `CLAUDE_API_KEY`)
+- **Password**: the actual secret value
 
-### Start Development
+> If these names differ on your machine, update the `CLAUDE_SECRET_SERVICE` variable (see below) instead of editing scripts.
+
+### 3.2 Setting a Secret (one-time per machine)
+
+Run the following for each secret (example: `CLAUDE_API_KEY`):
+
 ```bash
-./scripts/dev/up.sh
+security add-generic-password \
+  -s ipai_claude_secrets \
+  -a CLAUDE_API_KEY \
+  -w "sk-********REPLACE_WITH_REAL_KEY********" \
+  -U
 ```
 
-### Make Changes
-Edit files in `addons/ipai/` or `addons/ipai_enterprise_bridge/`
-Hot-reload automatically restarts Odoo (watch logs: `./scripts/dev/logs.sh odoo`)
+Repeat for each variable (changing `-a` and `-w`):
 
-### Verify Changes
 ```bash
-./scripts/verify.sh
+# REQUIRED
+security add-generic-password -s ipai_claude_secrets -a CLAUDE_API_KEY            -w "REPLACE"
+security add-generic-password -s ipai_claude_secrets -a SUPABASE_URL             -w "REPLACE"
+security add-generic-password -s ipai_claude_secrets -a SUPABASE_ANON_KEY        -w "REPLACE"
+security add-generic-password -s ipai_claude_secrets -a SUPABASE_SERVICE_ROLE_KEY -w "REPLACE"
+
+# OPTIONAL
+security add-generic-password -s ipai_claude_secrets -a OPENAI_API_KEY           -w "REPLACE"
+security add-generic-password -s ipai_claude_secrets -a GITHUB_TOKEN             -w "REPLACE"
 ```
 
-### Stop Development
+### 3.3 Loading Secrets Into the Environment
+
+Add this helper script in the repo (path can be adjusted as needed):
+
+`./scripts/claude/load_secrets_local.sh`:
+
 ```bash
-./scripts/dev/down.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Assumptions (update if you change Keychain service name)
+: "${CLAUDE_SECRET_SERVICE:=ipai_claude_secrets}"
+
+# List of env vars we care about
+REQUIRED_SECRETS=(
+  "CLAUDE_API_KEY"
+  "SUPABASE_URL"
+  "SUPABASE_ANON_KEY"
+  "SUPABASE_SERVICE_ROLE_KEY"
+)
+
+OPTIONAL_SECRETS=(
+  "OPENAI_API_KEY"
+  "GITHUB_TOKEN"
+)
+
+fetch_secret() {
+  local name="$1"
+  security find-generic-password \
+    -s "${CLAUDE_SECRET_SERVICE}" \
+    -a "${name}" \
+    -w 2>/dev/null || true
+}
+
+export_secret() {
+  local name="$1"
+  local value
+  value="$(fetch_secret "${name}")"
+
+  if [[ -z "${value}" ]]; then
+    return 1
+  fi
+
+  export "${name}=${value}"
+  return 0
+}
+
+# Load required secrets
+for var in "${REQUIRED_SECRETS[@]}"; do
+  if ! export_secret "${var}"; then
+    echo "ERROR: Required secret ${var} not found in macOS Keychain (service=${CLAUDE_SECRET_SERVICE})." >&2
+    exit 1
+  fi
+done
+
+# Load optional secrets (best-effort)
+for var in "${OPTIONAL_SECRETS[@]}"; do
+  if export_secret "${var}"; then
+    echo "Loaded optional secret: ${var}"
+  fi
+done
+
+echo "All required Claude secrets loaded from macOS Keychain."
 ```
 
----
+Make it executable:
 
-## Odoo 18 Conventions (Enforced)
-
-**View Mode**: Use `list` instead of `tree` in action declarations
-```xml
-<!-- ✅ Correct (Odoo 18) -->
-<field name="view_mode">list,form</field>
-
-<!-- ❌ Deprecated (Odoo 17 and earlier) -->
-<field name="view_mode">tree,form</field>
-```
-
-**Note**: Inline `<tree>` tags within form fields (one2many/many2many) remain valid.
-
-**Validation**: CI automatically checks for deprecated usage:
 ```bash
-grep -r 'view_mode.*tree' addons/*/views/*.xml | grep -v '<tree'
+chmod +x ./scripts/claude/load_secrets_local.sh
 ```
 
----
+### 3.4 Using It in Local Runs
 
-## Secret Management
+Prior to running Claude Code CLI / agent scripts:
 
-**Storage**: Environment variables only (no secrets committed)
-- **Development**: `.env` (git-ignored)
-- **CI**: GitHub Secrets
-- **Production**: Referenced in `~/.claude/CLAUDE.md` (not this file)
-
-**Template**: See `.env.example` for all configurable variables
-
----
-
-## OCA Module Dependencies
-
-The `ipai` module depends on **24 OCA modules**. These must be available in `oca-addons/` directory.
-
-**Recommended Approach**: Symlink to canonical OCA location
 ```bash
-ln -s ~/Documents/GitHub/odoo-ce/addons/external/oca oca-addons
-```
+# From repo root
+source ./scripts/claude/load_secrets_local.sh
 
-**Alternative**: Git submodules or manual clones (see `docs/runbooks/DEV_SANDBOX.md`)
-
-**Required Modules**:
-```
-project_timeline, project_timeline_hr_timesheet, project_timesheet_time_control,
-project_task_dependencies, project_task_parent_completion_blocking,
-project_task_parent_due_auto, project_type, project_template, hr_timesheet_sheet,
-hr_timesheet_sheet_autodraft, hr_timesheet_sheet_policy_project_manager,
-hr_timesheet_sheet_warning, hr_timesheet_task_domain, helpdesk_mgmt,
-helpdesk_mgmt_project, helpdesk_ticket_type, base_territory, fieldservice,
-fieldservice_project, fieldservice_portal, maintenance, quality_control,
-mgmtsystem, mgmtsystem_quality, dms, knowledge, mis_builder
+# Now run whatever agent or tool you want
+claude-code run ./spec/agent_task.yaml
+# or
+python -m tools.agent_entrypoint
 ```
 
 ---
 
-## Canonical SSOT Reference
+## 4. Remote / CI / Shared Environments: Supabase Vault
 
-This repository is **derived from** but **not identical to** the canonical dev sandbox:
+> **Assumption:** Supabase Vault is configured for the project and managed via SQL/Edge functions or CLI. This section defines the contract; the exact implementation can be refined per project.
 
-**Canonical Location**: `~/Documents/GitHub/odoo-ce/sandbox/dev/`
-**SSOT Document**: `infra/docker/DOCKER_DESKTOP_SSOT.yaml`
+### 4.1 Storage Convention in Vault
 
-**Key Differences**:
-- This repo: Standalone, version-controlled, portable
-- Canonical: Integrated with full `odoo-ce` repo, shared OCA modules
+For Supabase Vault, each secret is stored under:
 
-See `REPORT.md` for detailed comparison.
+- **Name**: matches the env var name, e.g. `CLAUDE_API_KEY`
+- **Scope**: project-specific
+- **Access**: read access restricted to a dedicated **"secrets loader"** Edge Function or service role.
+
+Required keys in Vault:
+
+- `CLAUDE_API_KEY`
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- Optional: `OPENAI_API_KEY`, `GITHUB_TOKEN`, etc.
+
+> TODO: Add the exact SQL / RPC function definition for Vault reads when the Supabase project structure is finalized.
+
+### 4.2 Edge Function Loader (Conceptual Contract)
+
+All non-local runs (CI, remote agents) must obtain secrets by calling a **Supabase Edge Function** (or RPC) that returns a JSON payload:
+
+```json
+{
+  "CLAUDE_API_KEY": "*****",
+  "SUPABASE_URL": "*****",
+  "SUPABASE_ANON_KEY": "*****",
+  "SUPABASE_SERVICE_ROLE_KEY": "*****",
+  "OPENAI_API_KEY": "*****",
+  "GITHUB_TOKEN": "*****"
+}
+```
+
+**Runtime contract:**
+
+- The Edge Function **must be authenticated** (e.g., with a CI-specific JWT or service token).
+- The caller converts this JSON into environment variables before invoking Claude or any agents.
+
+### 4.3 CI Loader Script
+
+Example script to be used in CI or remote shells:
+
+`./scripts/claude/load_secrets_remote.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Assumptions / placeholders:
+# - SUPABASE_SECRETS_ENDPOINT: URL of Edge Function / RPC that returns secret JSON
+# - SUPABASE_SECRETS_TOKEN: token with permission to call this endpoint
+: "${SUPABASE_SECRETS_ENDPOINT:?SUPABASE_SECRETS_ENDPOINT is required}"
+: "${SUPABASE_SECRETS_TOKEN:?SUPABASE_SECRETS_TOKEN is required}"
+
+json="$(curl -sS -H "Authorization: Bearer ${SUPABASE_SECRETS_TOKEN}" "${SUPABASE_SECRETS_ENDPOINT}")"
+
+if [[ -z "${json}" ]]; then
+  echo "ERROR: Empty response from Supabase Vault loader endpoint." >&2
+  exit 1
+fi
+
+# Parse and export known keys. Using jq is recommended.
+required_vars=(
+  "CLAUDE_API_KEY"
+  "SUPABASE_URL"
+  "SUPABASE_ANON_KEY"
+  "SUPABASE_SERVICE_ROLE_KEY"
+)
+
+optional_vars=(
+  "OPENAI_API_KEY"
+  "GITHUB_TOKEN"
+)
+
+for var in "${required_vars[@]}"; do
+  value="$(printf '%s' "${json}" | jq -r --arg k "${var}" '.[$k] // empty')"
+  if [[ -z "${value}" ]]; then
+    echo "ERROR: Required secret ${var} missing from Vault payload." >&2
+    exit 1
+  fi
+  export "${var}=${value}"
+done
+
+for var in "${optional_vars[@]}"; do
+  value="$(printf '%s' "${json}" | jq -r --arg k "${var}" '.[$k] // empty')"
+  if [[ -n "${value}" ]]; then
+    export "${var}=${value}"
+    echo "Loaded optional secret: ${var}"
+  fi
+done
+
+echo "All required Claude secrets loaded from Supabase Vault."
+```
+
+Make executable:
+
+```bash
+chmod +x ./scripts/claude/load_secrets_remote.sh
+```
 
 ---
 
-## CI/CD Integration
+## 5. Agent Runtime Contract
 
-**GitHub Actions Workflow**: `.github/workflows/dev-sandbox-verify.yml`
+Any Claude-compatible agent or tool **must** follow this sequence:
 
-**Checks**:
-1. Docker Compose syntax validation
-2. Required files exist (config, .env.example, scripts)
-3. Script permissions (all scripts executable)
-4. Odoo config structure (has [options], addons_path)
-5. Odoo 18 conventions (no deprecated `tree` in view_mode)
-6. Addon manifest validation (Python syntax)
-7. Shellcheck linting (non-blocking warnings)
+1. **Load secrets** (local or remote):
+   - Local macOS: `source ./scripts/claude/load_secrets_local.sh`
+   - Remote/CI: `source ./scripts/claude/load_secrets_remote.sh`
 
-**Local Equivalent**: `./scripts/verify.sh`
+2. **Verify env** (example gate):
+   ```bash
+   : "${CLAUDE_API_KEY:?CLAUDE_API_KEY is required but not set}"
+   : "${SUPABASE_URL:?SUPABASE_URL is required but not set}"
+   : "${SUPABASE_ANON_KEY:?SUPABASE_ANON_KEY is required but not set}"
+   : "${SUPABASE_SERVICE_ROLE_KEY:?SUPABASE_SERVICE_ROLE_KEY is required but not set}"
+   ```
 
----
+3. **Run agent / tool** (Claude, Supabase, GitHub, etc.) only after step 2 passes.
 
-## Troubleshooting
-
-**See**: `docs/runbooks/DEV_SANDBOX.md` → Troubleshooting section
-
-**Common Issues**:
-- Database connection refused → Reset DB container
-- Module install fails → Check OCA modules present in `oca-addons/`
-- Hot-reload not working → Hard refresh (Ctrl+Shift+R) or restart container
-- Port conflicts → Change ports in `.env`
+No agent should attempt to read secrets directly from Keychain or Vault; they operate **only** on environment variables loaded by the scripts above.
 
 ---
 
-## Support & Links
+## 6. Integration with Claude Code / Agent Runners
 
-**Odoo Documentation**: https://www.odoo.com/documentation/18.0
-**OCA Guidelines**: https://github.com/OCA/odoo-community.org
-**SuperClaude Framework**: `~/.claude/CLAUDE.md`
+Example wrapper script for an agent run:
+
+`./scripts/claude/run_agent.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+MODE="${1:-local}"  # "local" or "remote"
+
+if [[ "${MODE}" == "local" ]]; then
+  # macOS development
+  source ./scripts/claude/load_secrets_local.sh
+else
+  # CI / remote
+  source ./scripts/claude/load_secrets_remote.sh
+fi
+
+# Guardrails: ensure critical vars are present
+: "${CLAUDE_API_KEY:?CLAUDE_API_KEY is required}"
+: "${SUPABASE_URL:?SUPABASE_URL is required}"
+: "${SUPABASE_ANON_KEY:?SUPABASE_ANON_KEY is required}"
+
+# Example: run a Claude task file or agent CLI
+# Replace with the actual entrypoint you use.
+claude-code run ./spec/agent_task.yaml
+```
+
+Usage:
+
+```bash
+# Local dev
+./scripts/claude/run_agent.sh local
+
+# CI / remote
+./scripts/claude/run_agent.sh remote
+```
 
 ---
 
-**Last Updated**: 2026-01-18
-**Version**: 1.0.0
+## 7. Rotation & Auditing (High-Level)
+
+- **Rotation:**
+  - Update Keychain entries via `security add-generic-password -U ...` (same commands as initial set).
+  - Update Supabase Vault via the configured process (Edge Function, SQL, or CLI).
+
+- **Audit:**
+  - Search repo to ensure secrets are **not** in Git:
+    ```bash
+    git grep -n "sk-" || true
+    git grep -n "SUPABASE_SERVICE_ROLE_KEY" || true
+    ```
+
+- **Policy:**
+  - Any new tool/agent that introduces a secret **must**:
+    1. Add it to the table in §2.
+    2. Add it to **both** loader scripts.
+    3. Document usage in its own module README if needed.
+
+---
+
+This file (`CLAUDE.md`) is the canonical reference for Claude-related secret handling. Any divergence in other docs or scripts should be treated as a bug and corrected to match this specification.
