@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: efc86ae0117a55f68f234f9761b5fcf47dc8c6a5
+> Commit: 3f8c51522cc972a99cf621f3663b22eeb7f8e95c
 
 ## 📚 Documentation
 
@@ -184,6 +184,7 @@
 | [InsightPulse Mobile](apps/mobile/README.md) | apps/mobile |
 | [multi-agent-orchestrator](apps/multi-agent-orchestrator/APP.md) | apps/multi-agent-orchestrator |
 | [odoo-developer-agent](apps/odoo-developer-agent/APP.md) | apps/odoo-developer-agent |
+| [Odoo Frontend Shell](apps/odoo-frontend-shell/README.md) | apps/odoo-frontend-shell |
 | [odoo-saas-platform](apps/odoo-saas-platform/APP.md) | apps/odoo-saas-platform |
 | [superset-analytics](apps/superset-analytics/APP.md) | apps/superset-analytics |
 | [Architecture Review Kit](architecture-review/README.md) | architecture-review |
