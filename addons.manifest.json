@@ -67,6 +67,10 @@
   "metadata": {
     "last_validated": "2026-01-29T01:10:43+08:00",
     "validation_tool": "scripts/verify-addons-mounts.sh",
-    "ci_validation": true
+    "ci_validation": true,
+    "references": {
+      "oca_ipai_manifest": "config/addons_manifest.oca_ipai.json",
+      "description": "See config/addons_manifest.oca_ipai.json for complete OCA repository list and must-have modules"
+    }
   }
 }
