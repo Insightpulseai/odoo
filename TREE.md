@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 89fed5733831cdfc51c23d7167aa302db22593d1
+> Commit: d904696feff737d6e7d17a8242ae048d554aa48c
 
 ```
 .
@@ -3931,6 +3931,7 @@
 │   ├── scan_ipai_modules.py
 │   ├── scan_repos.sh
 │   ├── score_repos.py
+│   ├── screenshot_production.sh
 │   ├── secret-scan.sh
 │   ├── seed_finance_close_from_xlsx.py
 │   ├── seed_finance_ppm_stages.py
@@ -5067,7 +5068,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1415 directories, 3647 files
+1415 directories, 3648 files
 ```
 
 ## 📊 Stats
@@ -5075,7 +5076,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1651 |
-| Files | 4904 |
+| Files | 4905 |
 | Python files | 828 |
 | XML files | 302 |
 | Markdown files | 1217 |
