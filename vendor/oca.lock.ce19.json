@@ -1,0 +1,219 @@
+{
+  "$schema": "./oca.lock.schema.json",
+  "version": "2.0",
+  "odoo_version": "19.0",
+  "generated_at": "2026-01-28T00:00:00Z",
+  "target_dir": "external-src",
+  "description": "OCA modules for Odoo CE 19 Enterprise Parity Image",
+  "notes": [
+    "This lockfile defines OCA modules for CE 19 EE parity image.",
+    "Refs use '19.0' branch where available, fallback to 'master' for newer modules.",
+    "All commits are set to HEAD for tracking; pin specific commits for production.",
+    "NO proprietary Odoo EE code is included - 100% open source."
+  ],
+  "repos": [
+    {
+      "name": "OCA/server-auth",
+      "url": "https://github.com/OCA/server-auth.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["auth_oidc", "auth_oauth", "auth_session_timeout"],
+      "ee_parity": ["SSO/Authentication"]
+    },
+    {
+      "name": "OCA/server-tools",
+      "url": "https://github.com/OCA/server-tools.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["base_technical_user", "module_auto_update", "base_cron_exclusion", "base_jsonify"],
+      "ee_parity": ["Server utilities"]
+    },
+    {
+      "name": "OCA/server-ux",
+      "url": "https://github.com/OCA/server-ux.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["date_range", "sequence_reset_period", "base_tier_validation"],
+      "ee_parity": ["Approvals workflow"]
+    },
+    {
+      "name": "OCA/web",
+      "url": "https://github.com/OCA/web.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["web_responsive", "web_advanced_search", "web_widget_domain_editor"],
+      "ee_parity": ["Web UX enhancements"]
+    },
+    {
+      "name": "OCA/project",
+      "url": "https://github.com/OCA/project.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [
+        "project_task_default_stage",
+        "project_template",
+        "project_status",
+        "project_timeline"
+      ],
+      "ee_parity": ["Project forecasting", "Planning"]
+    },
+    {
+      "name": "OCA/mis-builder",
+      "url": "https://github.com/OCA/mis-builder.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["mis_builder", "mis_builder_budget"],
+      "ee_parity": ["Budget management"]
+    },
+    {
+      "name": "OCA/reporting-engine",
+      "url": "https://github.com/OCA/reporting-engine.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["report_xlsx", "report_xlsx_helper", "report_qweb_element_page_visibility"],
+      "ee_parity": ["Advanced reporting"]
+    },
+    {
+      "name": "OCA/account-financial-tools",
+      "url": "https://github.com/OCA/account-financial-tools.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": [
+        "account_lock_date_update",
+        "account_fiscal_year",
+        "account_asset_management",
+        "account_move_budget"
+      ],
+      "ee_parity": ["Asset management", "Budget management"]
+    },
+    {
+      "name": "OCA/account-financial-reporting",
+      "url": "https://github.com/OCA/account-financial-reporting.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["account_financial_report", "account_tax_balance"],
+      "ee_parity": ["Financial reports"]
+    },
+    {
+      "name": "OCA/account-reconcile",
+      "url": "https://github.com/OCA/account-reconcile.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["account_reconcile_oca", "account_reconcile_model"],
+      "ee_parity": ["Bank reconciliation"]
+    },
+    {
+      "name": "OCA/account-closing",
+      "url": "https://github.com/OCA/account-closing.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["account_cutoff_base", "account_fiscal_year_closing"],
+      "ee_parity": ["Period closing"]
+    },
+    {
+      "name": "OCA/account-invoicing",
+      "url": "https://github.com/OCA/account-invoicing.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["account_invoice_merge"],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/purchase-workflow",
+      "url": "https://github.com/OCA/purchase-workflow.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["purchase_request", "purchase_order_approved"],
+      "ee_parity": ["Purchase approvals"]
+    },
+    {
+      "name": "OCA/hr-expense",
+      "url": "https://github.com/OCA/hr-expense.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["hr_expense_advance_clearing", "hr_expense_sequence"],
+      "ee_parity": ["Expense management"]
+    },
+    {
+      "name": "OCA/hr",
+      "url": "https://github.com/OCA/hr.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["hr_employee_calendar_planning", "hr_attendance_report_theoretical_time"],
+      "ee_parity": ["HR Planning", "Attendance"]
+    },
+    {
+      "name": "OCA/timesheet",
+      "url": "https://github.com/OCA/timesheet.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["hr_timesheet_sheet", "hr_timesheet_role"],
+      "ee_parity": ["Timesheet grid"]
+    },
+    {
+      "name": "OCA/contract",
+      "url": "https://github.com/OCA/contract.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["contract", "contract_sale_generation"],
+      "ee_parity": ["Subscription management"]
+    },
+    {
+      "name": "OCA/dms",
+      "url": "https://github.com/OCA/dms.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["dms", "dms_field"],
+      "ee_parity": ["Document management"]
+    },
+    {
+      "name": "OCA/knowledge",
+      "url": "https://github.com/OCA/knowledge.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["knowledge"],
+      "ee_parity": ["Knowledge base"]
+    },
+    {
+      "name": "OCA/helpdesk",
+      "url": "https://github.com/OCA/helpdesk.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["helpdesk_mgmt", "helpdesk_mgmt_timesheet"],
+      "ee_parity": ["Helpdesk"]
+    },
+    {
+      "name": "OCA/partner-contact",
+      "url": "https://github.com/OCA/partner-contact.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["partner_firstname", "partner_company_group"],
+      "ee_parity": []
+    },
+    {
+      "name": "OCA/rest-framework",
+      "url": "https://github.com/OCA/rest-framework.git",
+      "ref": "19.0",
+      "commit": "HEAD",
+      "modules": ["base_rest", "base_rest_datamodel"],
+      "ee_parity": ["API framework"]
+    }
+  ],
+  "ee_parity_coverage": {
+    "P0_critical": {
+      "bank_reconciliation": "account_reconcile_oca",
+      "financial_reports": "account_financial_report",
+      "asset_management": "account_asset_management",
+      "approvals": "base_tier_validation + ipai_approvals"
+    },
+    "P1_high": {
+      "helpdesk": "helpdesk_mgmt",
+      "planning": "project_timeline + ipai_planning_attendance",
+      "timesheet_grid": "hr_timesheet_sheet"
+    },
+    "P2_medium": {
+      "documents": "dms",
+      "knowledge": "knowledge"
+    }
+  }
+}

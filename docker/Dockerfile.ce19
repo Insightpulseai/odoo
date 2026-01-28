@@ -1,0 +1,173 @@
+# syntax=docker/dockerfile:1.7
+# =============================================================================
+# Odoo CE 19 + OCA + IPAI Enterprise Bridge - EE Parity Image
+# =============================================================================
+# Purpose: Custom Odoo CE 19 image with Enterprise Edition feature parity
+#          achieved through CE + OCA addons + ipai_enterprise_bridge module
+#
+# EE Parity Strategy:
+#   - Base: Odoo CE 19.0 (official image)
+#   - Community: OCA addons (v19.0 branches)
+#   - Bridge: ipai_enterprise_bridge (thin enterprise-style glue layer)
+#
+# NO proprietary Odoo EE code is used. This image is 100% open source.
+#
+# Build Examples:
+#   docker build -f docker/Dockerfile.ce19 -t odoo-ce19-ee-parity:latest .
+#   docker build -f docker/Dockerfile.ce19 --build-arg ODOO_BASE_IMAGE=odoo:19.0-20260115 -t odoo-ce19-ee-parity:v19.0.1 .
+#
+# =============================================================================
+
+# Pin exact base image (supports digest pinning for reproducibility)
+ARG ODOO_BASE_IMAGE=odoo:19.0
+
+FROM ${ODOO_BASE_IMAGE} AS base
+
+USER root
+
+# =============================================================================
+# System Dependencies
+# =============================================================================
+# Dependencies for OCA modules + IPAI enterprise bridge
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    python3-pip \
+    build-essential \
+    libxml2-dev \
+    libxslt1-dev \
+    libldap2-dev \
+    libsasl2-dev \
+    libssl-dev \
+    libpq-dev \
+    python3-pandas \
+    python3-xlrd \
+    python3-xlsxwriter \
+    python3-xmlsec \
+    && rm -rf /var/lib/apt/lists/*
+
+# =============================================================================
+# Directory Structure (OCA Monorepo)
+# =============================================================================
+RUN mkdir -p /mnt/addons/ipai \
+    && mkdir -p /mnt/addons/oca \
+    && mkdir -p /mnt/addons/ce
+
+# =============================================================================
+# Copy OCA Modules (external-src → /mnt/addons/oca - FLATTENED)
+# =============================================================================
+# Source of truth: external-src/ (OCA git submodules for v19.0)
+# Strategy: Flatten all OCA modules into single /mnt/addons/oca root
+# Benefit: Single addon path instead of multiple enumerated paths
+
+# Copy vendor source to temporary location
+COPY ./external-src /tmp/external-src
+
+# Flatten OCA modules with collision detection
+RUN set -eux; \
+  mkdir -p /mnt/addons/oca; \
+  echo "Flattening OCA modules from external-src (Odoo 19)..."; \
+  module_count=0; \
+  for repo in /tmp/external-src/*; do \
+    [ -d "$repo" ] || continue; \
+    repo_name=$(basename "$repo"); \
+    echo "Processing repo: $repo_name"; \
+    for mod in "$repo"/*; do \
+      [ -d "$mod" ] || continue; \
+      [ -f "$mod/__manifest__.py" ] || continue; \
+      mod_name=$(basename "$mod"); \
+      if [ -d "/mnt/addons/oca/$mod_name" ]; then \
+        echo "ERROR: OCA module name collision: $mod_name"; \
+        echo "  Already exists in: /mnt/addons/oca/$mod_name"; \
+        echo "  Trying to copy from: $mod"; \
+        exit 1; \
+      fi; \
+      cp -a "$mod" "/mnt/addons/oca/$mod_name"; \
+      module_count=$((module_count + 1)); \
+    done; \
+  done; \
+  echo ""; \
+  echo "========================================"; \
+  echo "OCA Module Flatten Summary (Odoo 19)"; \
+  echo "========================================"; \
+  echo "Total modules flattened: $module_count"; \
+  find /mnt/addons/oca -maxdepth 1 -type d -name "*" ! -name "oca" | sort; \
+  echo "========================================"; \
+  rm -rf /tmp/external-src
+
+# =============================================================================
+# Copy IPAI Enterprise Bridge & Production Modules
+# =============================================================================
+# Key module: ipai_enterprise_bridge - thin enterprise-style feature bridge
+# Also includes: ipai_finance_ppm, ipai_hr_payroll_ph, ipai_helpdesk, etc.
+COPY ./addons/ipai /mnt/addons/ipai
+
+# =============================================================================
+# Copy Configuration
+# =============================================================================
+COPY ./deploy/odoo.conf /etc/odoo/odoo.conf
+
+# =============================================================================
+# Install Python Dependencies
+# =============================================================================
+# IPAI Enterprise Bridge dependencies
+RUN pip3 install --no-cache-dir --break-system-packages \
+    paho-mqtt \
+    requests \
+    || true
+
+# OCA module dependencies
+RUN find /mnt/addons/oca -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+
+# IPAI module dependencies
+RUN find /mnt/addons/ipai -name "requirements.txt" -exec pip3 install --no-cache-dir --break-system-packages -r {} \; 2>/dev/null || true
+
+# =============================================================================
+# Permissions
+# =============================================================================
+RUN chown -R odoo:odoo /mnt/addons /etc/odoo/odoo.conf
+
+USER odoo
+
+# =============================================================================
+# Environment Variables
+# =============================================================================
+# Database connection (overrideable via docker-compose)
+ENV HOST=db \
+    PORT=5432 \
+    USER=odoo \
+    PASSWORD=odoo \
+    DB=odoo
+
+ENV ODOO_RC=/etc/odoo/odoo.conf
+
+# OCA Monorepo Addon Path (Aggregated)
+# Format: Odoo core → IPAI modules (enterprise bridge first) → OCA modules
+ENV ODOO_ADDONS_PATH=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca
+
+# =============================================================================
+# Health Check
+# =============================================================================
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8069/web/health || exit 1
+
+# =============================================================================
+# OCI Labels (Self-Describing Image)
+# =============================================================================
+LABEL org.opencontainers.image.title="Odoo CE 19 + OCA + IPAI Enterprise Bridge (EE Parity)" \
+      org.opencontainers.image.description="Odoo CE 19 with Enterprise Edition feature parity via OCA + ipai_enterprise_bridge. 100% open source." \
+      org.opencontainers.image.vendor="InsightPulse AI" \
+      org.opencontainers.image.version="19.0.1.0.0" \
+      org.opencontainers.image.base.name="${ODOO_BASE_IMAGE}" \
+      com.insightpulseai.odoo.version="19.0" \
+      com.insightpulseai.ee.parity="true" \
+      com.insightpulseai.ee.parity.strategy="CE+OCA+ipai_enterprise_bridge" \
+      com.insightpulseai.license="LGPL-3.0"
+
+# =============================================================================
+# Production Ready
+# =============================================================================
+# Default command: run Odoo with extra-addons path
+CMD ["odoo", "-c", "/etc/odoo/odoo.conf", "--addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/addons/ipai,/mnt/addons/oca"]
+
+EXPOSE 8069 8071 8072
