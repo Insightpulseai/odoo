@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 9dad26b61d8280f251a9d59d2083502c632ad56d
+> Commit: 9052303ff3a9077eb708452233af58a37448e175
 
 ```
 .
@@ -3472,6 +3472,7 @@
 │   │   │   └── databricks-integration
 │   │   ├── .env.example
 │   │   ├── .gitignore
+│   │   ├── .sync-status
 │   │   ├── CANONICAL_NAMING.md
 │   │   ├── CLAUDE.md
 │   │   ├── CLEANUP_REPORT.md
@@ -5048,7 +5049,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1413 directories, 3630 files
+1413 directories, 3631 files
 ```
 
 ## 📊 Stats
@@ -5056,7 +5057,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1649 |
-| Files | 4887 |
+| Files | 4888 |
 | Python files | 828 |
 | XML files | 302 |
 | Markdown files | 1212 |
