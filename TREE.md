@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: fbc1cfb628b549a57a4005f02c2d855015b2b7ce
+> Commit: 5d917e74b3c84eab847e054cbc964ada7cfe0659
 
 ```
 .
@@ -3438,30 +3438,22 @@
 │       └── ee_parity_audit.md
 ├── sandbox
 │   ├── dev
-│   │   ├── .claude
-│   │   │   └── settings.local.json
 │   │   ├── .github
 │   │   │   └── workflows
-│   │   ├── _syncfusionexamples
-│   │   │   ├── blazor.json
-│   │   │   ├── maui.json
-│   │   │   ├── react.nextjs.json
-│   │   │   ├── repos.jsonl
-│   │   │   ├── repos.source.jsonl
-│   │   │   ├── top100.latest.json
-│   │   │   └── vue.json
 │   │   ├── addons
 │   │   │   └── ipai
 │   │   ├── config
 │   │   │   ├── .env.example
 │   │   │   └── odoo.conf
 │   │   ├── docs
+│   │   │   ├── research
 │   │   │   ├── runbooks
 │   │   │   ├── ODOO_19_MIGRATION_STRATEGY.md
 │   │   │   └── UI_CONSOLIDATION_STATUS.md
 │   │   ├── integration
 │   │   │   └── ODOO_CE_INTEGRATION.md
 │   │   ├── scripts
+│   │   │   ├── claude
 │   │   │   ├── dev
 │   │   │   └── verify.sh
 │   │   ├── spec
@@ -3470,9 +3462,12 @@
 │   │   ├── .gitignore
 │   │   ├── CANONICAL_NAMING.md
 │   │   ├── CLAUDE.md
+│   │   ├── CLEANUP_REPORT.md
 │   │   ├── HOT_RELOAD_GUIDE.md
 │   │   ├── IMPLEMENTATION_SUMMARY.md
 │   │   ├── Makefile
+│   │   ├── ODOO_CSS_DIAGNOSIS.md
+│   │   ├── ODOO_CSS_ERROR_FIX.md
 │   │   ├── PRODUCTION_READY.md
 │   │   ├── README.md
 │   │   ├── REPORT.md
@@ -5040,7 +5035,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1408 directories, 3627 files
+1408 directories, 3622 files
 ```
 
 ## 📊 Stats
@@ -5048,7 +5043,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1644 |
-| Files | 4870 |
+| Files | 4872 |
 | Python files | 828 |
 | XML files | 302 |
-| Markdown files | 1205 |
+| Markdown files | 1210 |
