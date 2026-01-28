@@ -53,8 +53,8 @@ cd deploy && docker compose -f docker-compose.prod.yml up -d
 
 **Detected in repo:**
 
-- Canonical modules present: `ipai_ces_bundle, ipai_enterprise_bridge, ipai_scout_bundle`
-- Other IPAI modules (feature/legacy): 117
+- Canonical modules present: `ipai_enterprise_bridge`
+- Other IPAI modules (feature/legacy): 66
 - Non-IPAI modules at addons root: 1
 
 **Policy:**

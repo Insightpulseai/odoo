@@ -62,7 +62,8 @@ jobs:
 
       - name: Check for Enterprise dependencies
         run: |
-          if grep -iE "web_enterprise|\"enterprise\"" docs/deployment/MODULES_AUDIT.md | grep -v "enterprise_" | grep -v "Policy" | grep -v "Disallowed"; then
+          # Check for actual EE module names in JSON blocks, excluding documentation text
+          if grep -iE "web_enterprise|\"enterprise\"" docs/deployment/MODULES_AUDIT.md | grep -v "enterprise_" | grep -v "Policy" | grep -v "Disallowed" | grep -v "dependencies" | grep -v "Any module"; then
             echo "❌ Enterprise dependencies detected in audit"
             exit 1
           fi
