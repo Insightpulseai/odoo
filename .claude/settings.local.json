@@ -24,7 +24,8 @@
       "Bash(gh run list:*)",
       "Bash(./scripts/verify-addons-mounts.sh:*)",
       "Bash(./scripts/verify_oca_ipai_layout.sh:*)",
-      "Bash(./scripts/clone_missing_oca_repos.sh:*)"
+      "Bash(./scripts/clone_missing_oca_repos.sh:*)",
+      "Bash(git merge:*)"
     ],
     "deny": [],
     "ask": []
