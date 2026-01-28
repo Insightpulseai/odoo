@@ -160,6 +160,27 @@ config/odoo.conf.local
 .mcp.json
 .claude/settings.local.json
 
+# Secret files (NEVER commit)
+**/*.secret
+**/*.credentials
+**/.secrets/
+**/secrets.json
+**/credentials.json
+**/auth.json
+**/.keychain
+**/.vault
+
+# Supabase local files (may contain secrets)
+supabase/.env
+supabase/.env.*
+supabase/config.toml
+
+# Backup files that may contain credentials
+**/*.sql.bak
+**/*.sql.backup
+**/*.dump
+**/backup_*.sql
+
 # --- local compose overrides ---
 docker-compose.local.yml
 docker-compose.*.local.yml

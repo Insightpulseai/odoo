@@ -103,4 +103,53 @@ for f in "${verify_scripts[@]}"; do
 done
 echo ""
 
+# Secret management infrastructure
+echo "Secret Management:"
+secret_files=(
+  "scripts/claude/load_secrets_local.sh"
+  "scripts/claude/load_secrets_remote.sh"
+  "scripts/claude/run_agent.sh"
+  "scripts/claude/setup_keychain.sh"
+  "docs/SECRET_MANAGEMENT.md"
+)
+
+for f in "${secret_files[@]}"; do
+  if [ -f "$f" ]; then
+    echo "  OK: $f"
+  else
+    echo "  MISSING: $f"
+  fi
+done
+echo ""
+
+# Security audit (check for leaked secrets)
+echo "Security Audit:"
+echo "  Checking for leaked secrets in Git..."
+
+# Common secret patterns
+secret_patterns=(
+  "sk-ant-"                           # Claude API keys
+  "sk-proj-"                          # OpenAI API keys
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"  # JWT tokens (base64)
+  "ghp_"                              # GitHub personal access tokens
+  "gho_"                              # GitHub OAuth tokens
+  "postgres://.+:.+@"                 # Connection strings with passwords
+)
+
+leaked=0
+for pattern in "${secret_patterns[@]}"; do
+  if git grep -nE "$pattern" -- ':!*.md' ':!*.example' ':!*.sample' 2>/dev/null | grep -v "SECRET_MANAGEMENT.md" | grep -v "repo_health.sh" > /dev/null; then
+    echo "  ⚠ WARNING: Potential secret pattern found: $pattern"
+    leaked=$((leaked + 1))
+  fi
+done
+
+if [ "$leaked" -eq 0 ]; then
+  echo "  ✅ No leaked secrets detected"
+else
+  echo "  ❌ CRITICAL: $leaked potential secret leak(s) detected!"
+  echo "     Run: git grep -nE 'sk-ant-|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9|ghp_|postgres://.+:.+@' to investigate"
+fi
+echo ""
+
 echo "== Health Check Complete =="
