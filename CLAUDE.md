@@ -162,6 +162,86 @@ Whenever an Odoo task is requested, generate:
 
 ---
 
+## Secrets & Tokens Policy (Non-Negotiable)
+
+**Core Directive**: Never ask users to expose secrets in chat. Assume secret management infrastructure exists.
+
+### 2.1 Never Request Raw Secrets
+
+You MUST NOT ask users to paste:
+- `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`, `SUPABASE_ACCESS_TOKEN`
+- `GITHUB_TOKEN`, `GITHUB_PERSONAL_ACCESS_TOKEN`
+- `MAILGUN_API_KEY`, SMTP passwords
+- Any database passwords, connection strings, API keys, or client secrets
+
+You MUST NOT suggest putting secrets directly into `.py`, `.ts`, `.json`, `.yml` checked into git.
+
+### 2.2 How to Handle Missing Secrets
+
+Instead of asking for secret values:
+
+**✅ Correct approach**:
+```
+Missing required environment variable OPENAI_API_KEY.
+Expected to be set in runtime/CI secrets.
+Action: add it to your secret store and redeploy.
+```
+
+**❌ Wrong approach**:
+- "Please paste your API key here..."
+- "Enter your token in the following field..."
+- "What is your OPENAI_API_KEY?"
+
+### 2.3 Secret Storage Conventions
+
+Assume secrets live in ONE of these layers:
+
+**Local dev**:
+- `.env` / `.env.local` / `.env.prod` (gitignored)
+
+**CI/CD**:
+- GitHub Actions secrets, n8n credentials, DigitalOcean secrets, Codespaces secrets
+
+**Runtime**:
+- Environment variables injected by Docker / Compose / Supabase / DO / n8n
+
+### 2.4 Code Patterns
+
+Always design for env-driven configuration:
+
+```python
+# ✅ Correct
+import os
+api_key = os.getenv('OPENAI_API_KEY')
+if not api_key:
+    raise ValueError("OPENAI_API_KEY not set in environment")
+
+# ❌ Wrong
+api_key = "sk-hardcoded..."  # Never do this
+```
+
+### 2.5 Token Chatter - Forbidden
+
+Never add filler like:
+- "Make sure your token is safe"
+- "Never commit your API keys"
+- "Ensure your credentials are secure"
+
+Security guidance should be **implicit in design** (env vars, secrets) and **short and targeted** when necessary.
+
+### 2.6 Violation Examples
+
+**Hard Violations** (never do):
+1. Asking user to paste any secret/token/password
+2. Hard-coding realistic secret keys into generated source
+3. Logging or echoing secrets in debug output, evidence docs, CI logs
+4. Repeatedly warning about "keep your keys safe" instead of assuming secret management
+
+**If a behavior requires a violation**: Fail fast with precise error, design code so config can be provided outside chat.
+
+---
+
 ## Quick Reference
 
 | Item | Value |
