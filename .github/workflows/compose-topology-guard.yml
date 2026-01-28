@@ -18,15 +18,28 @@ jobs:
 
           # Allowed compose files (canonical set)
           allowed=(
-            "sandbox/dev/docker-compose.yml"
-            "sandbox/dev/docker-compose.production.yml"
+            # Production deployments
             "deploy/docker-compose.prod.yml"
             "deploy/docker-compose.ce19.yml"
             "infra/docker-compose.prod.yaml"
+            # Development sandboxes
+            "sandbox/dev/docker-compose.yml"
+            "sandbox/dev/docker-compose.production.yml"
+            "sandbox/workbench/docker-compose.workbench.yml"
+            "docker-compose.dev.yml"
+            # Infrastructure stacks
+            "infra/do-oca-stack/docker-compose.yml"
+            "infra/do-oca-stack/docker-compose.caddy.yml"
+            # CI/testing
+            "docker/docker-compose.ci.yml"
+            "ci/odoo/docker-compose.ci.yml"
+            # Service-specific
+            "docker/analytics/docker-compose.yml"
+            "odoo/compose/docker-compose.platform.yml"
           )
 
-          # Find all docker-compose files in repo (excluding archive/)
-          mapfile -t found < <(git ls-files | grep -E '(^|/)(docker-compose[^/]*\.ya?ml)$' | grep -v '^archive/' || true)
+          # Find all docker-compose files in repo (excluding archive/, .devcontainer/)
+          mapfile -t found < <(git ls-files | grep -E '(^|/)(docker-compose[^/]*\.ya?ml)$' | grep -v '^archive/' | grep -v '^\.devcontainer/' || true)
 
           # Report unknown compose files
           bad=0
