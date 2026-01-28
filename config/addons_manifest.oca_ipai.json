@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "description": "Canonical placement of OCA and ipai addons for ipai_* EE-parity stack",
+  "roots": {
+    "oca_root": "addons/oca",
+    "ipai_root": "addons/ipai"
+  },
+
+  "oca_repositories": [
+    {
+      "name": "ai",
+      "type": "git",
+      "url": "https://github.com/OCA/ai.git",
+      "path": "addons/oca/ai",
+      "purpose": "AI/LLM integration modules"
+    },
+    {
+      "name": "automation",
+      "type": "git",
+      "url": "https://github.com/OCA/automation.git",
+      "path": "addons/oca/automation",
+      "purpose": "Automation tools"
+    },
+    {
+      "name": "queue",
+      "type": "git",
+      "url": "https://github.com/OCA/queue.git",
+      "path": "addons/oca/queue",
+      "purpose": "Asynchronous job queue (queue_job)"
+    },
+    {
+      "name": "connector",
+      "type": "git",
+      "url": "https://github.com/OCA/connector.git",
+      "path": "addons/oca/connector",
+      "purpose": "Generic connector framework"
+    },
+    {
+      "name": "rest-framework",
+      "type": "git",
+      "url": "https://github.com/OCA/rest-framework.git",
+      "path": "addons/oca/rest-framework",
+      "purpose": "REST API framework + OpenAPI"
+    },
+    {
+      "name": "server-tools",
+      "type": "git",
+      "url": "https://github.com/OCA/server-tools.git",
+      "path": "addons/oca/server-tools",
+      "purpose": "Admin tools, exceptions, tiers, schedulers"
+    },
+    {
+      "name": "server-env",
+      "type": "git",
+      "url": "https://github.com/OCA/server-env.git",
+      "path": "addons/oca/server-env",
+      "purpose": "Environment-dependent configuration"
+    },
+    {
+      "name": "server-ux",
+      "type": "git",
+      "url": "https://github.com/OCA/server-ux.git",
+      "path": "addons/oca/server-ux",
+      "purpose": "Server UX helpers (tier validation extras, date_range)"
+    },
+    {
+      "name": "web",
+      "type": "git",
+      "url": "https://github.com/OCA/web.git",
+      "path": "addons/oca/web",
+      "purpose": "Web UI extensions"
+    },
+    {
+      "name": "reporting-engine",
+      "type": "git",
+      "url": "https://github.com/OCA/reporting-engine.git",
+      "path": "addons/oca/reporting-engine",
+      "purpose": "Reporting helpers (xlsx, qweb extras)"
+    },
+    {
+      "name": "account-financial-reporting",
+      "type": "git",
+      "url": "https://github.com/OCA/account-financial-reporting.git",
+      "path": "addons/oca/account-financial-reporting",
+      "purpose": "GL / TB / Open items reports"
+    },
+    {
+      "name": "account-financial-tools",
+      "type": "git",
+      "url": "https://github.com/OCA/account-financial-tools.git",
+      "path": "addons/oca/account-financial-tools",
+      "purpose": "Assets, fiscal year, move naming, etc"
+    },
+    {
+      "name": "account-reconcile",
+      "type": "git",
+      "url": "https://github.com/OCA/account-reconcile.git",
+      "path": "addons/oca/account-reconcile",
+      "purpose": "Bank reconciliation tools"
+    },
+    {
+      "name": "bank-statement-import",
+      "type": "git",
+      "url": "https://github.com/OCA/bank-statement-import.git",
+      "path": "addons/oca/bank-statement-import",
+      "purpose": "Bank statement import (OFX/CAMT/MT940)"
+    },
+    {
+      "name": "account-invoicing",
+      "type": "git",
+      "url": "https://github.com/OCA/account-invoicing.git",
+      "path": "addons/oca/account-invoicing",
+      "purpose": "Invoice tools (merge, refund link, total checks)"
+    },
+    {
+      "name": "sale-workflow",
+      "type": "git",
+      "url": "https://github.com/OCA/sale-workflow.git",
+      "path": "addons/oca/sale-workflow",
+      "purpose": "Advanced sales workflows"
+    },
+    {
+      "name": "purchase-workflow",
+      "type": "git",
+      "url": "https://github.com/OCA/purchase-workflow.git",
+      "path": "addons/oca/purchase-workflow",
+      "purpose": "Advanced purchase workflows"
+    },
+    {
+      "name": "partner-contact",
+      "type": "git",
+      "url": "https://github.com/OCA/partner-contact.git",
+      "path": "addons/oca/partner-contact",
+      "purpose": "Partner/contact extensions"
+    },
+    {
+      "name": "crm",
+      "type": "git",
+      "url": "https://github.com/OCA/crm.git",
+      "path": "addons/oca/crm",
+      "purpose": "CRM extensions"
+    }
+  ],
+
+  "oca_must_have_modules": {
+    "server-tools": [
+      "mass_editing",
+      "auditlog",
+      "auth_admin_passkey",
+      "base_exception",
+      "base_tier_validation",
+      "scheduler_error_mailer",
+      "base_technical_user",
+      "base_cron_exclusion"
+    ],
+    "server-ux": [
+      "base_tier_validation_formula",
+      "base_tier_validation_forward",
+      "date_range"
+    ],
+    "web": [
+      "web_m2x_options",
+      "web_export_view",
+      "web_tree_many2one_clickable",
+      "web_responsive",
+      "web_no_bubble",
+      "web_refresher",
+      "web_ir_actions_act_multi"
+    ],
+    "reporting-engine": [
+      "report_xlsx",
+      "report_xlsx_helper",
+      "report_qweb_pdf_watermark",
+      "report_qweb_parameter"
+    ],
+    "queue": [
+      "queue_job",
+      "queue_job_cron_jobrunner"
+    ],
+    "account-financial-reporting": [
+      "account_financial_report",
+      "account_financial_report_qweb"
+    ],
+    "account-reconcile": [
+      "account_reconcile_oca",
+      "account_reconcile_oca_queue",
+      "account_statement_base",
+      "base_transaction_id"
+    ],
+    "bank-statement-import": [
+      "account_statement_import",
+      "account_statement_import_ofx",
+      "account_statement_import_camt",
+      "account_statement_import_mt940"
+    ],
+    "account-invoicing": [
+      "account_invoice_refund_link",
+      "account_invoice_merge",
+      "account_invoice_check_total"
+    ],
+    "account-financial-tools": [
+      "account_asset_management",
+      "account_fiscal_year",
+      "account_lock_date_update",
+      "account_move_name_sequence"
+    ],
+    "sale-workflow": [
+      "sale_order_type",
+      "sale_tier_validation",
+      "sale_order_line_sequence",
+      "sale_fixed_discount",
+      "sale_order_line_date",
+      "sale_elaboration",
+      "sale_order_invoicing_finished_task",
+      "sale_exception",
+      "sale_order_revision",
+      "sale_blanket_order",
+      "sale_order_archive",
+      "sale_delivery_block",
+      "sale_invoice_block"
+    ],
+    "partner-contact": [
+      "partner_firstname",
+      "partner_contact_birthdate",
+      "partner_contact_gender",
+      "partner_contact_job_position",
+      "partner_company_group"
+    ],
+    "crm": [
+      "crm_stage_probability",
+      "crm_lead_firstname"
+    ],
+    "purchase-workflow": [
+      "purchase_tier_validation",
+      "purchase_order_line_sequence",
+      "purchase_exception",
+      "purchase_request",
+      "purchase_blanket_order"
+    ]
+  },
+
+  "ipai": {
+    "root": "addons/ipai",
+    "note": "All ipai_* custom modules are placed under addons/ipai/ipai_* (list discovered from repo, not hard-coded here)."
+  }
+}
