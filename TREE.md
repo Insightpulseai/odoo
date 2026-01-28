@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a9cd8cb000041f9884986464229c83e7ff7a46f2
+> Commit: 34547bb4270c42dd8f42e4faf6ba87f4ebe1a22f
 
 ```
 .
@@ -2052,8 +2052,10 @@
 │   │   │   └── erd-automation
 │   │   ├── 20260112-0358
 │   │   │   └── ipai_finance_okr
-│   │   └── 20260112-0649
-│   │       └── github-setup
+│   │   ├── 20260112-0649
+│   │   │   └── github-setup
+│   │   └── 20260128-1623
+│   │       └── secret-management
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── golive
@@ -2324,6 +2326,7 @@
 │   ├── AI_MODULE_NAMING_CONVENTION.md
 │   ├── APP_ICONS_README.md
 │   ├── AUTOMATED_TROUBLESHOOTING_GUIDE.md
+│   ├── AZURE_DEVOPS_SETUP.md
 │   ├── CANONICAL_ENFORCEMENT_REPORT.md
 │   ├── CANONICAL_LINT.md
 │   ├── CANONICAL_MAP.md
@@ -3968,15 +3971,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1278 directories, 2685 files
+1280 directories, 2686 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1498 |
-| Files | 4114 |
+| Directories | 1500 |
+| Files | 4116 |
 | Python files | 1067 |
 | XML files | 512 |
-| Markdown files | 804 |
+| Markdown files | 806 |

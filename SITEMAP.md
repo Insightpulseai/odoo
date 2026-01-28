@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a9cd8cb000041f9884986464229c83e7ff7a46f2
+> Commit: 34547bb4270c42dd8f42e4faf6ba87f4ebe1a22f
 
 ## 📚 Documentation
 
@@ -217,6 +217,7 @@
 | [AI Module Naming Convention (OCA-Aligned)](docs/AI_MODULE_NAMING_CONVENTION.md) | docs |
 | [App Icons – OCA & IPAI Modules](docs/APP_ICONS_README.md) | docs |
 | [Automated Troubleshooting & Self-Healing Guide](docs/AUTOMATED_TROUBLESHOOTING_GUIDE.md) | docs |
+| [AZURE_DEVOPS_SETUP.md](docs/AZURE_DEVOPS_SETUP.md) | docs |
 | [Canonical Structure Enforcement Report](docs/CANONICAL_ENFORCEMENT_REPORT.md) | docs |
 | [Canonical Linting Rules](docs/CANONICAL_LINT.md) | docs |
 | [Canonical Structure & Namespace Map](docs/CANONICAL_MAP.md) | docs |
@@ -395,6 +396,7 @@
 | [ERD Automation Evidence Pack](docs/evidence/20260112-0300/erd-automation/EVIDENCE.md) | docs/evidence/20260112-0300/erd-automation |
 | [IPAI Finance OKR Governance - Verification Report](docs/evidence/20260112-0358/ipai_finance_okr/verification_report.md) | docs/evidence/20260112-0358/ipai_finance_okr |
 | [GitHub Setup Verification Report](docs/evidence/20260112-0649/github-setup/verification-report.md) | docs/evidence/20260112-0649/github-setup |
+| [Secret Management Implementation Evidence](docs/evidence/20260128-1623/secret-management/IMPLEMENTATION_EVIDENCE.md) | docs/evidence/20260128-1623/secret-management |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
