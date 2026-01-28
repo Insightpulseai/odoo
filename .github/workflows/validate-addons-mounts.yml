@@ -1,0 +1,89 @@
+name: Validate Addons Mounts
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'addons/**'
+      - 'addons.manifest.json'
+      - '.devcontainer/devcontainer.json'
+      - 'docker-compose.yml'
+      - 'oca.lock.json'
+  pull_request:
+    paths:
+      - 'addons/**'
+      - 'addons.manifest.json'
+      - '.devcontainer/devcontainer.json'
+      - 'docker-compose.yml'
+      - 'oca.lock.json'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq yq
+
+      - name: Validate Addons Manifest
+        run: |
+          echo "📋 Validating addons.manifest.json..."
+          jq empty addons.manifest.json
+          echo "✅ Manifest is valid JSON"
+
+      - name: Run Mount Validation
+        run: |
+          chmod +x scripts/verify-addons-mounts.sh
+          ./scripts/verify-addons-mounts.sh --ci --verbose
+
+      - name: Check OCA Lock File
+        if: always()
+        run: |
+          if [ -f oca.lock.json ]; then
+            echo "📦 Validating oca.lock.json..."
+            jq empty oca.lock.json
+            echo "✅ OCA lock file is valid"
+          else
+            echo "⚠️ oca.lock.json not found"
+          fi
+
+      - name: Validate DevContainer Config
+        if: always()
+        run: |
+          if [ -f .devcontainer/devcontainer.json ]; then
+            echo "🐳 Validating devcontainer.json..."
+            jq empty .devcontainer/devcontainer.json
+            echo "✅ DevContainer config is valid"
+          fi
+
+      - name: Validate Docker Compose
+        if: always()
+        run: |
+          if [ -f docker-compose.yml ]; then
+            echo "🐋 Validating docker-compose.yml..."
+            docker compose config > /dev/null
+            echo "✅ Docker Compose config is valid"
+          fi
+
+      - name: Generate Validation Report
+        if: always()
+        run: |
+          echo "## 📊 Addons Mount Validation Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Repository:** ${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f addons.manifest.json ]; then
+            echo "### Configured Mounts" >> $GITHUB_STEP_SUMMARY
+            jq -r '.mounts[] | "- **\(.name)**: \(.source) (Required: \(.required))"' addons.manifest.json >> $GITHUB_STEP_SUMMARY
+          fi

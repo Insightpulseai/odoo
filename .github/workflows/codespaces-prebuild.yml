@@ -1,0 +1,29 @@
+name: Codespaces Prebuild
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  prebuild:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Dev Container CLI
+        uses: devcontainers/ci@v0.3
+        with:
+          runCmd: echo "Devcontainer CLI ready"
+
+      - name: Build devcontainer image
+        run: |
+          devcontainer build \
+            --workspace-folder . \
+            --image-name ghcr.io/jgtolentino/odoo-ce-devcontainer:latest
