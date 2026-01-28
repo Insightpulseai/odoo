@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: df21c592af23f26530426a4a4f97bb0fd30665a2
+> Commit: 61877054cfe7b5d1766ea97374047cff455178d8
 
 ```
 .
@@ -2385,6 +2385,7 @@
 │   ├── runbooks
 │   │   ├── DOCKER_DESKTOP_CLEANUP.md
 │   │   ├── DOCKER_STAGING_CLEANUP.md
+│   │   ├── ODOO_LOCAL_9069_HEALTH.md
 │   │   ├── PROD_RUNBOOK_ODOO.md
 │   │   ├── digitalocean.md
 │   │   ├── figma-sites.md
@@ -3497,7 +3498,8 @@
 │   │   ├── SYNC_GUIDE.md
 │   │   ├── docker-compose.production.yml
 │   │   ├── docker-compose.yml
-│   │   └── odoo.conf.production
+│   │   ├── odoo.conf.production
+│   │   └── upgrade-to-odoo19.sh
 │   └── workbench
 │       ├── .env.workbench.example
 │       └── docker-compose.workbench.yml
@@ -3598,6 +3600,8 @@
 │   │   ├── pull_enterprise_audit.sh
 │   │   ├── test_projects_v2_api.sh
 │   │   └── validate_governance.sh
+│   ├── health
+│   │   └── odoo_local_9069.sh
 │   ├── import
 │   │   ├── import_activities.py
 │   │   ├── run_import_sequence.sh
@@ -5060,15 +5064,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1414 directories, 3641 files
+1415 directories, 3644 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1650 |
-| Files | 4898 |
+| Directories | 1651 |
+| Files | 4901 |
 | Python files | 828 |
 | XML files | 302 |
-| Markdown files | 1215 |
+| Markdown files | 1216 |
