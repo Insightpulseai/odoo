@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 61877054cfe7b5d1766ea97374047cff455178d8
+> Commit: 18e135020fd318a0c278c4fac6c907d5c71a0e77
 
 ```
 .
@@ -3793,6 +3793,7 @@
 │   ├── deploy_parity_schema.sh
 │   ├── deploy_prod.sh
 │   ├── deploy_production.sh
+│   ├── deploy_theme_to_production.sh
 │   ├── deploy_vercel_prod.sh
 │   ├── deploy_with_credentials.sh
 │   ├── deploy_workos_prod.sh
@@ -3998,6 +3999,7 @@
 │   ├── verify_backup.sh
 │   ├── verify_email_auth.sh
 │   ├── verify_local.sh
+│   ├── verify_login_button.sh
 │   ├── verify_phase3.py
 │   ├── verify_smtp.py
 │   ├── verify_supabase_deploy.sh
@@ -5064,7 +5066,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1415 directories, 3644 files
+1415 directories, 3646 files
 ```
 
 ## 📊 Stats
@@ -5072,7 +5074,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1651 |
-| Files | 4901 |
+| Files | 4903 |
 | Python files | 828 |
 | XML files | 302 |
 | Markdown files | 1216 |
