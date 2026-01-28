@@ -209,11 +209,8 @@ npm run dev:github-app                  # Run github-app
 │                   InsightPulse AI Stack (Self-Hosted)                │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│   Mattermost ◄──► n8n ◄──► Odoo CE 18/19 ◄──► PostgreSQL 16         │
-│       │           │            │                                     │
-│       │           │            ├── Core (8069)                       │
-│       │           │            ├── Marketing (8070)                  │
-│       │           │            └── Accounting (8071)                 │
+│   Mattermost ◄──► n8n ◄──► Odoo CE 19 ◄──► PostgreSQL 16            │
+│       │           │          (8069)                                  │
 │       │           │                                                  │
 │       │           └──────────► Supabase (external integrations)      │
 │       │                                                              │
@@ -239,15 +236,14 @@ npm run dev:github-app                  # Run github-app
 - **Automation**: n8n (self-hosted, not cloud)
 - **Chat**: Mattermost (self-hosted)
 
-### Multi-Edition Docker Architecture
+### Docker Architecture
 
-The stack supports 3 Odoo editions sharing a single PostgreSQL instance:
+**Development Stack** (sandbox/dev):
+- **Odoo CE 19**: Single container with EE parity (port 8069)
+- **PostgreSQL 16**: Database backend (port 5433 external, 5432 internal)
+- **Optional Tools**: pgAdmin (5050), Mailpit (8025) via `--profile tools`
 
-| Edition | Port | Database | Module Focus |
-|---------|------|----------|--------------|
-| Core | 8069 | odoo_core | Base CE + IPAI workspace |
-| Marketing | 8070 | odoo_marketing | Marketing agency extensions |
-| Accounting | 8071 | odoo_accounting | Accounting firm extensions |
+**Production Stack** may include additional specialized containers per deployment environment.
 
 ---
 
