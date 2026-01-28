@@ -18,7 +18,13 @@
       "Bash(find:*)",
       "Bash(ls:*)",
       "Bash(wc:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh workflow run:*)",
+      "Bash(gh run list:*)",
+      "Bash(./scripts/verify-addons-mounts.sh:*)",
+      "Bash(./scripts/verify_oca_ipai_layout.sh:*)",
+      "Bash(./scripts/clone_missing_oca_repos.sh:*)"
     ],
     "deny": [],
     "ask": []
