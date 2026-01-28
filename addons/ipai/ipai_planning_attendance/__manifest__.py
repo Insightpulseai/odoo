@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Planning Attendance",
+    "name": "DEPRECATED: Planning Attendance",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "Compare planned vs attended",
+    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
     "description": """
 Planning Attendance
 ===================
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

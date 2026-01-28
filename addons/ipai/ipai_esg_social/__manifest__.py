@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "ESG Social Metrics",
+    "name": "DEPRECATED: ESG Social Metrics",
     "version": "19.0.1.0.0",
     "category": "InsightPulse AI",
-    "summary": "Gender parity and pay gap",
+    "summary": "DEPRECATED - Migrated to ipai_enterprise_bridge. Do not install.",
     "description": """
 ESG Social Metrics
 ==================
@@ -32,7 +32,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
         "views/menu.xml",
     ],
     "demo": [],
-    "installable": True,
+    "installable": False,
     "application": False,
     "auto_install": False,
 }

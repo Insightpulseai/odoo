@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "IPAI Copilot UI",
+    "name": "DEPRECATED: IPAI Copilot UI",
     "version": "18.0.1.0.0",
     "category": "Themes/Backend",
-    "summary": "M365 Copilot-inspired Fluent UI for Odoo CE 18",
+    "summary": "DEPRECATED - Use ipai_design_system_apps_sdk instead. Do not install.",
     "description": """
 IPAI Copilot UI
 ===============
@@ -56,7 +56,7 @@ License: LGPL-3
             "ipai_copilot_ui/static/src/xml/copilot_shell.xml",
         ],
     },
-    "installable": True,
+    "installable": False,
     "application": True,
     "auto_install": False,
 }

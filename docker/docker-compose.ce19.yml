@@ -1,0 +1,139 @@
+# =============================================================================
+# Docker Compose: Odoo CE 19 + OCA + IPAI Enterprise Bridge (EE Parity)
+# =============================================================================
+# Usage:
+#   docker compose -f docker/docker-compose.ce19.yml up -d
+#   docker compose -f docker/docker-compose.ce19.yml logs -f odoo
+#   docker compose -f docker/docker-compose.ce19.yml down
+#
+# Profiles:
+#   default: postgres + odoo
+#   init:    includes module initialization container
+#
+# Environment:
+#   ODOO_IMAGE_TAG: Image tag (default: 19.0-ee-parity)
+#   POSTGRES_PASSWORD: DB password (default: odoo)
+# =============================================================================
+
+name: odoo-ce19-ee-parity
+
+services:
+  # ===========================================================================
+  # PostgreSQL 16
+  # ===========================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: odoo_ce19_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-odoo_ce19}
+      POSTGRES_USER: ${POSTGRES_USER:-odoo}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    volumes:
+      - odoo_ce19_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-odoo} -d ${POSTGRES_DB:-odoo_ce19}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - odoo-ce19-network
+
+  # ===========================================================================
+  # Odoo CE 19 + OCA + IPAI Enterprise Bridge
+  # ===========================================================================
+  odoo:
+    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    container_name: odoo_ce19_ee_parity
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${ODOO_PORT:-8069}:8069"
+      - "${ODOO_LONGPOLLING_PORT:-8072}:8072"
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+      DB: ${POSTGRES_DB:-odoo_ce19}
+      # Performance tuning
+      WORKERS: ${ODOO_WORKERS:-2}
+      MAX_CRON_THREADS: ${ODOO_CRON_THREADS:-1}
+      LIMIT_MEMORY_HARD: ${ODOO_MEMORY_HARD:-2684354560}
+      LIMIT_MEMORY_SOFT: ${ODOO_MEMORY_SOFT:-2147483648}
+      LIMIT_TIME_CPU: ${ODOO_TIME_CPU:-600}
+      LIMIT_TIME_REAL: ${ODOO_TIME_REAL:-1200}
+    volumes:
+      - odoo_ce19_data:/var/lib/odoo
+      - odoo_ce19_addons:/mnt/extra-addons
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8069/web/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+    networks:
+      - odoo-ce19-network
+
+  # ===========================================================================
+  # Module Initialization (profile: init)
+  # ===========================================================================
+  odoo-init:
+    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    container_name: odoo_ce19_init
+    profiles:
+      - init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    command: >
+      odoo
+        -d ${POSTGRES_DB:-odoo_ce19}
+        --stop-after-init
+        -i base,ipai_enterprise_bridge
+    networks:
+      - odoo-ce19-network
+
+  # ===========================================================================
+  # Module Update (profile: update)
+  # ===========================================================================
+  odoo-update:
+    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    container_name: odoo_ce19_update
+    profiles:
+      - update
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      HOST: postgres
+      PORT: 5432
+      USER: ${POSTGRES_USER:-odoo}
+      PASSWORD: ${POSTGRES_PASSWORD:-odoo}
+    command: >
+      odoo
+        -d ${POSTGRES_DB:-odoo_ce19}
+        --stop-after-init
+        -u ${UPDATE_MODULES:-all}
+    networks:
+      - odoo-ce19-network
+
+networks:
+  odoo-ce19-network:
+    name: odoo-ce19-ee-net
+    driver: bridge
+
+volumes:
+  odoo_ce19_pgdata:
+    name: odoo_ce19_pgdata
+  odoo_ce19_data:
+    name: odoo_ce19_data
+  odoo_ce19_addons:
+    name: odoo_ce19_addons
