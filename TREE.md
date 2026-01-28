@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e2769cd659cb7ea9260d98ef816cff8e76cb29e2
+> Commit: df21c592af23f26530426a4a4f97bb0fd30665a2
 
 ```
 .
@@ -1285,6 +1285,7 @@
 │   │   ├── .gitignore
 │   │   ├── .vercelignore
 │   │   ├── DEPLOY.md
+│   │   ├── QUICKSTART.md
 │   │   ├── README.md
 │   │   ├── next.config.ts
 │   │   ├── package.json
@@ -2665,6 +2666,8 @@
 │   ├── tokens
 │   │   └── .gitkeep
 │   └── README.md
+├── frontend-fluent
+│   └── .env.example
 ├── handbook
 │   ├── compliance
 │   │   └── bir
@@ -2813,6 +2816,7 @@
 │   │   ├── variables.tf
 │   │   └── vault_secrets.tf
 │   ├── superset
+│   │   ├── .env.example
 │   │   ├── Dockerfile
 │   │   ├── PRESET_PARITY_ROADMAP.md
 │   │   ├── README.md
@@ -3957,6 +3961,7 @@
 │   ├── test_email_flow.sh
 │   ├── test_ipai_install_upgrade.py
 │   ├── test_magic_link.sh
+│   ├── test_theme_locally.sh
 │   ├── update_diagram_manifest.py
 │   ├── update_task_phase_tags.sh
 │   ├── update_tasks_after_import.py
@@ -5055,15 +5060,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1413 directories, 3637 files
+1414 directories, 3641 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1649 |
-| Files | 4894 |
+| Directories | 1650 |
+| Files | 4898 |
 | Python files | 828 |
 | XML files | 302 |
-| Markdown files | 1214 |
+| Markdown files | 1215 |
