@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a05c683496cbfaa8f2019379e41038114a40daf6
+> Commit: 28539c7abe1ad72a50865fa5bb35736ed07bd716
 
 ```
 .
@@ -2304,10 +2304,20 @@
 │   │   ├── modules.md
 │   │   └── runbooks.md
 │   ├── parity
+│   │   ├── odoo19
+│   │   │   ├── EE_PARITY_NOTES_19.md
+│   │   │   ├── odoo_19_release_notes.html
+│   │   │   └── odoo_editions_comparison.html
+│   │   ├── CLEANUP_AND_HARDENING_CHECKLIST.md
+│   │   ├── COMPLIANCE_AND_LICENSING.md
 │   │   ├── ENTERPRISE_STACK_PARITY.md
 │   │   ├── IMPLEMENTATION_MAP.md
+│   │   ├── OPERATIONAL_POSITIONING.md
 │   │   ├── PARITY_MATRIX.yaml
+│   │   ├── README.md
+│   │   ├── STACK_POSITIONING.md
 │   │   ├── TARGET_CAPABILITIES.md
+│   │   ├── TECHNICAL_PARITY_REPORT.md
 │   │   ├── supabase-ui-library_backlog.md
 │   │   └── supabase-ui-library_block_catalog.md
 │   ├── ppm
@@ -3680,6 +3690,7 @@
 │   ├── parity
 │   │   ├── audit_ee_parity.sh
 │   │   ├── check_ipai_foundation.sh
+│   │   ├── check_no_enterprise_code.sh
 │   │   ├── create_blocker_issues.sh
 │   │   ├── require_runnable_slice.sh
 │   │   └── validate_parity_matrix.sh
@@ -5080,15 +5091,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1416 directories, 3659 files
+1417 directories, 3669 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1652 |
-| Files | 4916 |
+| Directories | 1653 |
+| Files | 4926 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1220 |
+| Markdown files | 1227 |

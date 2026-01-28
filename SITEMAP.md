@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: a05c683496cbfaa8f2019379e41038114a40daf6
+> Commit: 28539c7abe1ad72a50865fa5bb35736ed07bd716
 
 ## 📚 Documentation
 
@@ -715,9 +715,16 @@
 | [odoo-ce Documentation](docs/pages/index.md) | docs/pages |
 | [Modules](docs/pages/modules.md) | docs/pages |
 | [Runbooks](docs/pages/runbooks.md) | docs/pages |
+| [Cleanup and Hardening Checklist](docs/parity/CLEANUP_AND_HARDENING_CHECKLIST.md) | docs/parity |
+| [Compliance and Licensing Report](docs/parity/COMPLIANCE_AND_LICENSING.md) | docs/parity |
 | [Enterprise Stack Parity Assessment](docs/parity/ENTERPRISE_STACK_PARITY.md) | docs/parity |
 | [Implementation Map](docs/parity/IMPLEMENTATION_MAP.md) | docs/parity |
+| [Operational Positioning: IPAI Odoo Stack](docs/parity/OPERATIONAL_POSITIONING.md) | docs/parity |
+| [Enterprise Parity Documentation Index](docs/parity/README.md) | docs/parity |
+| [IPAI Stack Positioning (Accurate Market Statement)](docs/parity/STACK_POSITIONING.md) | docs/parity |
 | [Target Capability Suite](docs/parity/TARGET_CAPABILITIES.md) | docs/parity |
+| [Technical Parity Report: Odoo 18 CE + OCA + IPAI](docs/parity/TECHNICAL_PARITY_REPORT.md) | docs/parity |
+| [Odoo 19 vs IPAI Stack (EE-Parity Notes)](docs/parity/odoo19/EE_PARITY_NOTES_19.md) | docs/parity/odoo19 |
 | [Supabase UI Library - Prioritized Backlog](docs/parity/supabase-ui-library_backlog.md) | docs/parity |
 | [Supabase UI Library - Block Catalog](docs/parity/supabase-ui-library_block_catalog.md) | docs/parity |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
