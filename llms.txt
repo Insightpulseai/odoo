@@ -9,7 +9,7 @@ This repository contains a self-hosted Odoo CE 19.0 deployment achieving 80%+ En
 - OCA (Odoo Community Association) modules - Community extensions
 - IPAI custom modules - InsightPulse AI proprietary addons
 
-Stack: Odoo CE 19.0 + PostgreSQL 16 + n8n + Mattermost + Superset (all self-hosted on DigitalOcean)
+Stack: Odoo CE 19.0 + PostgreSQL 16 + n8n + Slack + Superset (self-hosted on DigitalOcean, Slack is SaaS)
 
 ## Documentation
 

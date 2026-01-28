@@ -13,7 +13,7 @@
 │                   InsightPulse AI Stack (Self-Hosted)                │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                      │
-│   Mattermost ◄──► n8n ◄──► Odoo CE 19 ◄──► PostgreSQL 16            │
+│   Slack (SaaS) ◄──► n8n ◄──► Odoo CE 19 ◄──► PostgreSQL 16          │
 │       │           │          (8069)                                  │
 │       │           │                                                  │
 │       │           └──────────► Supabase (external integrations)      │
@@ -35,7 +35,7 @@
 | Node.js | 18+ | Frontend tooling |
 | Docker | Latest | Containerization |
 | n8n | Self-hosted | Workflow automation |
-| Mattermost | Self-hosted | Team chat |
+| Slack | SaaS | Team chat (replaces deprecated Mattermost) |
 | Superset | Self-hosted | BI/Analytics |
 | Keycloak | Self-hosted | SSO/Auth |
 
