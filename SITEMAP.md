@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5d432142b2d0e1eb8f3c7c471b93dc17f1323ba6
+> Commit: fac1d8ff6e77dea028f3abd11827906b90051ab0
 
 ## 📚 Documentation
 
@@ -70,6 +70,7 @@
 | [Infrastructure Summary - Odoo 18 CE + DO Managed PostgreSQL](INFRASTRUCTURE_SUMMARY.md) | . |
 | [InsightPulse ERP Configuration Guide](INSIGHTPULSE_ERP_CONFIGURATION_GUIDE.md) | . |
 | [Kapa.ai-style Self-Hosted Documentation Assistant](KAPA_STYLE_DOCS_ASSISTANT_IMPLEMENTATION.md) | . |
+| [Local Odoo Development Setup](LOCAL_SETUP.md) | . |
 | [Mattermost ↔ n8n ↔ Odoo/Supabase Integration Guide](MATTERMOST_OPEX_INTEGRATION.md) | . |
 | [MCP Quick Start Guide](MCP_QUICK_START.md) | . |
 | [November 2025 Close Timeline & Schedule](NOVEMBER_2025_CLOSE_TIMELINE.md) | . |
