@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: c1fd15aa19770b6a07ef0a24cbe04055dedf6706
+> Commit: 9278648c923c2febedf3d5b64b91d04b54c6ddbd
 
 ## 📚 Documentation
 
@@ -759,6 +759,7 @@
 | [Runbook: Docker Staging Cleanup & SSOT Alignment](docs/runbooks/DOCKER_STAGING_CLEANUP.md) | docs/runbooks |
 | [Odoo Local 9069 Health Policy](docs/runbooks/ODOO_LOCAL_9069_HEALTH.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
+| [Sandbox Options (Local CI + Codespaces + Local Docker + DigitalOcean)](docs/runbooks/SANDBOX_OPTIONS.md) | docs/runbooks |
 | [Runbook: digitalocean](docs/runbooks/digitalocean.md) | docs/runbooks |
 | [Runbook: figma-sites](docs/runbooks/figma-sites.md) | docs/runbooks |
 | [Runbook: supabase](docs/runbooks/supabase.md) | docs/runbooks |
