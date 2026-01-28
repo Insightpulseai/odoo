@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 8a87df2a9d46547b4504059ad8097927e9745656
+> Commit: e710aaf96bce93e889c3c67836f0492a0f8154b5
 
 ```
 .
@@ -3699,6 +3699,7 @@
 │   │   ├── README.md
 │   │   ├── install_oca_ipai_full.sh
 │   │   ├── list_installed_modules.sh
+│   │   ├── parse_manifest.sh
 │   │   └── preflight.sh
 │   ├── odoo
 │   │   ├── README_BOOTSTRAP.md
@@ -5141,7 +5142,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1430 directories, 3706 files
+1430 directories, 3707 files
 ```
 
 ## 📊 Stats
@@ -5149,7 +5150,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1666 |
-| Files | 4972 |
+| Files | 4973 |
 | Python files | 829 |
 | XML files | 302 |
 | Markdown files | 1251 |
