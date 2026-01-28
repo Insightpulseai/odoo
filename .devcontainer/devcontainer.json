@@ -80,6 +80,16 @@
     }
   },
 
+  "mounts": [
+    "source=${localWorkspaceFolder}/addons/oca/account-financial-tools,target=/workspace/odoo/addons/oca/account-financial-tools,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/oca/account-financial-reporting,target=/workspace/odoo/addons/oca/account-financial-reporting,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/oca/server-tools,target=/workspace/odoo/addons/oca/server-tools,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/oca/web,target=/workspace/odoo/addons/oca/web,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/oca/project-agile,target=/workspace/odoo/addons/oca/project-agile,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/oca/queue,target=/workspace/odoo/addons/oca/queue,type=bind,consistency=cached",
+    "source=${localWorkspaceFolder}/addons/ipai,target=/workspace/odoo/addons/ipai,type=bind,consistency=cached"
+  ],
+
   "postCreateCommand": "bash scripts/codespaces/bootstrap.sh",
   "postStartCommand": "bash scripts/codespaces/start.sh && [ -f .env.local ] && set -a && source .env.local && set +a || true",
 
