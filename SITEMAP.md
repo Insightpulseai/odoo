@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 621efad9098bc5567fc576ef1752a1019081e437
+> Commit: fbc1cfb628b549a57a4005f02c2d855015b2b7ce
 
 ## 📚 Documentation
 
@@ -202,6 +202,7 @@
 | [AGENTS.md - OdooForge Agent Rules](archive/compose/odooforge-sandbox/AGENTS.md) | archive/compose/odooforge-sandbox |
 | [OdooForge Sandbox](archive/compose/odooforge-sandbox/README.md) | archive/compose/odooforge-sandbox |
 | [OdooForge Sandbox - UAT Test Plan](archive/compose/odooforge-sandbox/tests/UAT_TEST_PLAN.md) | archive/compose/odooforge-sandbox/tests |
+| [Archived Deprecated Modules](archive/deprecated/README.md) | archive/deprecated |
 | [Finance Month-End Closing - n8n Automation](automations/n8n/README_FINANCE_CLOSING.md) | automations/n8n |
 | [Vendor Backlog Exports](backlog/vendors/README.md) | backlog/vendors |
 | [Finance PPM CLI Tool](bin/README.md) | bin |
@@ -230,6 +231,7 @@
 | [Deployment Guide](deploy/README.md) | deploy |
 | [Deployment Readiness Assessment: Odoo CE vs. Enterprise Targets](deployment_readiness_assessment.md) | . |
 | [IPAI Design Extraction](design/README.md) | design |
+| [Odoo CE 19 + OCA + IPAI Enterprise Bridge - Consumer Guide](docker/README-IMAGE-CE19.md) | docker |
 | [Docs Assistant - Quick Deployment Guide](docs-assistant/DEPLOYMENT_GUIDE.md) | docs-assistant |
 | [003 – Odoo CE Custom Image – Production Artifact Spec](docs/003-odoo-ce-custom-image-spec.md) | docs |
 | [InsightPulse Agentic Cloud — PRD v1.0](docs/AGENTIC_CLOUD_PRD.md) | docs |
@@ -256,6 +258,7 @@
 | [Deployment Naming Matrix - Canonical Reference](docs/DEPLOYMENT_NAMING_MATRIX.md) | docs |
 | [Multi-Tenant Platform Deployment Summary](docs/DEPLOYMENT_SUMMARY.md) | docs |
 | [Deploy Notion/Work OS Modules](docs/DEPLOY_NOTION_WORKOS.md) | docs |
+| [IPAI Module Deprecation Plan](docs/DEPRECATION_PLAN.md) | docs |
 | [Odoo Developer Tools (Debug Mode) — IPAI Usage Guide](docs/DEVELOPER_TOOLS.md) | docs |
 | [DigitalOcean Email Setup for Odoo CE 18](docs/DIGITALOCEAN_EMAIL_SETUP.md) | docs |
 | [DigitalOcean SMTP Unblock Request](docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md) | docs |
@@ -443,6 +446,7 @@
 | [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
 | [shadcn/ui Design System - Complete Analysis & Certification Framework](docs/design-system/SHADCN_UI_DESIGN_SYSTEM_ANALYSIS.md) | docs/design-system |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
+| [EE Parity Map - Odoo CE 19 + OCA + ipai_enterprise_bridge](docs/ee_parity_map.md) | docs |
 | [DNS Configuration and Mailgun Setup](docs/email/Mailgun_DNS.md) | docs/email |
 | [OdooForge Sandbox - Codex Cloud Optimization](docs/evidence/20260110-0927/odooforge-sandbox/codex-optimization.md) | docs/evidence/20260110-0927/odooforge-sandbox |
 | [OdooForge Sandbox - Verification Results](docs/evidence/20260110-0927/odooforge-sandbox/verification-results.md) | docs/evidence/20260110-0927/odooforge-sandbox |
@@ -928,6 +932,7 @@
 | [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Platform Kit Kickoff - Delivery Summary](platform-kit/docs/KICKOFF_COMPLETE.md) | platform-kit/docs |
+| [Prototype Modules](prototypes/README.md) | prototypes |
 | [ReleaseKit - Mobile App Store Deployment](releasekit/README.md) | releasekit |
 | [Google Play Store Listing](releasekit/store/android/README.md) | releasekit/store/android |
 | [iOS App Store Listing](releasekit/store/ios/README.md) | releasekit/store/ios |
@@ -1229,7 +1234,6 @@
 | [ipai_ai_livechat](./addons/ipai/ipai_ai_livechat) | ✅ |  |
 | [ipai_ai_rag](./addons/ipai/ipai_ai_rag) | ✅ |  |
 | [ipai_ai_tools](./addons/ipai/ipai_ai_tools) | ✅ |  |
-| [ipai_aiux_chat](./addons/ipai/ipai_aiux_chat) | ✅ |  |
 | [ipai_chatgpt_sdk_theme](./addons/ipai/ipai_chatgpt_sdk_theme) | ✅ |  |
 | [ipai_copilot_ui](./addons/ipai/ipai_copilot_ui) | ✅ |  |
 | [ipai_design_system](./addons/ipai/ipai_design_system) | ✅ | Unified design tokens for IPAI stack (Fluent UI v9 + Copilot) |
@@ -1244,7 +1248,6 @@
 | [ipai_finance_ppm](./addons/ipai/ipai_finance_ppm) | ⚠️ | Missing manifest |
 | [ipai_finance_tax_return](./addons/ipai/ipai_finance_tax_return) | ✅ |  |
 | [ipai_finance_workflow](./addons/ipai/ipai_finance_workflow) | ✅ |  |
-| [ipai_fluent_web_365_copilot](./addons/ipai/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_foundation](./addons/ipai/ipai_foundation) | ✅ |  |
 | [ipai_helpdesk](./addons/ipai/ipai_helpdesk) | ✅ |  |
 | [ipai_helpdesk_refund](./addons/ipai/ipai_helpdesk_refund) | ✅ |  |
@@ -1253,11 +1256,9 @@
 | [ipai_platform_theme](./addons/ipai/ipai_platform_theme) | ✅ |  |
 | [ipai_project_templates](./addons/ipai/ipai_project_templates) | ✅ |  |
 | [ipai_sign](./addons/ipai/ipai_sign) | ✅ |  |
-| [ipai_theme_aiux](./addons/ipai/ipai_theme_aiux) | ✅ |  |
 | [ipai_theme_copilot](./addons/ipai/ipai_theme_copilot) | ✅ |  |
 | [ipai_theme_fluent2](./addons/ipai/ipai_theme_fluent2) | ✅ |  |
 | [ipai_theme_tbwa](./addons/ipai/ipai_theme_tbwa) | ✅ |  |
-| [ipai_theme_tbwa_backend](./addons/ipai/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ui_brand_tokens](./addons/ipai/ipai_ui_brand_tokens) | ✅ |  |
 | [ipai_vertical_media](./addons/ipai/ipai_vertical_media) | ✅ |  |
 | [ipai_vertical_retail](./addons/ipai/ipai_vertical_retail) | ✅ |  |
@@ -1311,12 +1312,16 @@
 | [ipai_ocr_expense](./archive/addons/ipai_ocr_expense) | ✅ |  |
 | [ipai_partner_pack](./archive/addons/ipai_partner_pack) | ✅ |  |
 | [ipai_finance_ppm](./archive/compose/dev-docker/ipai_finance_ppm) | ✅ | Month-End Closing WBS and Tax Filing Management |
+| [ipai_theme_tbwa_backend](./archive/deprecated/ipai_theme_tbwa_backend) | ✅ |  |
 | [ipai_ai](./config/ipai_ai) | ⚠️ | Missing manifest |
 | [ipai_modules](./docs/audits/ipai_modules) | ⚠️ | Missing manifest |
 | [ipai_finance_okr](./docs/evidence/20260112-0358/ipai_finance_okr) | ⚠️ | Missing manifest |
 | [ipai_ask_ai](./ops-control/odoo_modules/ipai_ask_ai) | ✅ | AI Copilot assistant for Odoo - Claude/ChatGPT-grade conversational UI |
 | [ipai_ask_ai_chatter](./ops-control/odoo_modules/ipai_ask_ai_chatter) | ✅ | Context-aware AI entry points in chatter, forms, and lists |
 | [ipai_platform_theme](./ops-control/odoo_modules/ipai_platform_theme) | ✅ | Material 3 Expressive + Fluent design tokens for Odoo backend |
+| [ipai_aiux_chat](./prototypes/ipai_aiux_chat) | ✅ |  |
+| [ipai_fluent_web_365_copilot](./prototypes/ipai_fluent_web_365_copilot) | ✅ |  |
+| [ipai_theme_aiux](./prototypes/ipai_theme_aiux) | ✅ |  |
 | [ipai_design_system](./sandbox/dev/addons/ipai/ipai_design_system) | ✅ |  |
 | [ipai_enterprise_bridge](./spec/ipai_enterprise_bridge) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
