@@ -19,13 +19,17 @@ pnpm dev
 ### Use in Your React App
 ```tsx
 import { AIChatWidget } from '@ipai/design-tokens/react/AIChatWidget';
+import { ThemeProvider, ThemeSwitcher } from '@ipai/design-tokens/react/ThemeProvider';
 
 function App() {
   return (
-    <div>
-      <h1>My App</h1>
-      <AIChatWidget />
-    </div>
+    <ThemeProvider>
+      <div>
+        <ThemeSwitcher />
+        <h1>My App</h1>
+        <AIChatWidget />
+      </div>
+    </ThemeProvider>
   );
 }
 ```
@@ -34,8 +38,11 @@ function App() {
 - ✨ Floating action button (FAB)
 - 💬 Expandable chat panel
 - ⌨️ Message input with send button
+- 🎨 5 aesthetic systems (Default, Dull, Claude, ChatGPT, Gemini)
+- 🌓 Light/Dark mode for each aesthetic (10 total themes)
 - 🎨 Fluent 2-aligned design tokens
 - 📱 Responsive design
+- 💾 LocalStorage persistence
 
 ---
 
