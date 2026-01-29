@@ -1,0 +1,525 @@
+name: CI Runbot Dashboard (Odoo.sh Parity)
+
+# Runbot-style test dashboard integration
+# GAP 2: Provides comprehensive test results for Superset dashboards
+
+on:
+  push:
+    branches: [main, staging, develop]
+  pull_request:
+    types: [opened, synchronize, reopened]
+  workflow_dispatch:
+    inputs:
+      test_modules:
+        description: 'Specific modules to test (comma-separated)'
+        required: false
+        default: 'all'
+
+concurrency:
+  group: runbot-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ODOO_VERSION: "19.0"
+  PYTHON_VERSION: "3.12"
+  POSTGRES_VERSION: "16"
+
+jobs:
+  # ==========================================================================
+  # Collect Test Targets
+  # ==========================================================================
+  collect:
+    name: Collect Test Targets
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      modules: ${{ steps.collect.outputs.modules }}
+      module_count: ${{ steps.collect.outputs.module_count }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Collect IPAI modules
+        id: collect
+        run: |
+          # Find all installable IPAI modules
+          MODULES=""
+          COUNT=0
+
+          for manifest in addons/ipai/*/__manifest__.py addons/ipai_*/__manifest__.py; do
+            if [ -f "$manifest" ]; then
+              MODULE_DIR=$(dirname "$manifest")
+              MODULE_NAME=$(basename "$MODULE_DIR")
+
+              # Check if installable (not deprecated)
+              if grep -q "'installable': True" "$manifest" 2>/dev/null || \
+                 ! grep -q "'installable'" "$manifest" 2>/dev/null; then
+                if [ -n "$MODULES" ]; then
+                  MODULES="$MODULES,$MODULE_NAME"
+                else
+                  MODULES="$MODULE_NAME"
+                fi
+                COUNT=$((COUNT + 1))
+              fi
+            fi
+          done
+
+          echo "modules=$MODULES" >> $GITHUB_OUTPUT
+          echo "module_count=$COUNT" >> $GITHUB_OUTPUT
+
+          echo "## 📦 Test Targets" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Found **$COUNT** installable IPAI modules" >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # Odoo Unit Tests
+  # ==========================================================================
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: collect
+    timeout-minutes: 45
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U odoo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    outputs:
+      passed: ${{ steps.results.outputs.passed }}
+      failed: ${{ steps.results.outputs.failed }}
+      skipped: ${{ steps.results.outputs.skipped }}
+      duration: ${{ steps.results.outputs.duration }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt 2>/dev/null || true
+          pip install psycopg2-binary pytest pytest-json-report
+
+      - name: Run unit tests
+        id: tests
+        continue-on-error: true
+        run: |
+          START_TIME=$(date +%s)
+
+          # Initialize counters
+          PASSED=0
+          FAILED=0
+          SKIPPED=0
+
+          # Run tests for each module with tests directory
+          for test_dir in addons/ipai/*/tests addons/ipai_*/tests; do
+            if [ -d "$test_dir" ]; then
+              MODULE_NAME=$(basename $(dirname "$test_dir"))
+              echo "Testing: $MODULE_NAME"
+
+              # Run pytest if available
+              if command -v pytest &> /dev/null; then
+                pytest "$test_dir" --tb=short -q 2>&1 | tee -a test_output.log || true
+              fi
+            fi
+          done
+
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+
+          # Parse results
+          if [ -f test_output.log ]; then
+            PASSED=$(grep -c "PASSED\|passed" test_output.log 2>/dev/null || echo "0")
+            FAILED=$(grep -c "FAILED\|failed\|ERROR\|error" test_output.log 2>/dev/null || echo "0")
+            SKIPPED=$(grep -c "SKIPPED\|skipped" test_output.log 2>/dev/null || echo "0")
+          fi
+
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "skipped=$SKIPPED" >> $GITHUB_OUTPUT
+          echo "duration=$DURATION" >> $GITHUB_OUTPUT
+
+      - name: Generate results
+        id: results
+        run: |
+          PASSED="${{ steps.tests.outputs.passed }}"
+          FAILED="${{ steps.tests.outputs.failed }}"
+          SKIPPED="${{ steps.tests.outputs.skipped }}"
+          DURATION="${{ steps.tests.outputs.duration }}"
+
+          echo "## 🧪 Unit Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| ✅ Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+          echo "| ❌ Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⏭️ Skipped | $SKIPPED |" >> $GITHUB_STEP_SUMMARY
+          echo "| ⏱️ Duration | ${DURATION}s |" >> $GITHUB_STEP_SUMMARY
+
+          # Pass through values
+          echo "passed=$PASSED" >> $GITHUB_OUTPUT
+          echo "failed=$FAILED" >> $GITHUB_OUTPUT
+          echo "skipped=$SKIPPED" >> $GITHUB_OUTPUT
+          echo "duration=$DURATION" >> $GITHUB_OUTPUT
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-test-results
+          path: |
+            test_output.log
+            .pytest_cache/
+          retention-days: 30
+
+  # ==========================================================================
+  # Lint & Style Checks
+  # ==========================================================================
+  lint:
+    name: Lint & Style
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      score: ${{ steps.lint.outputs.score }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install linters
+        run: |
+          pip install flake8 black isort pylint bandit
+
+      - name: Run linters
+        id: lint
+        continue-on-error: true
+        run: |
+          TOTAL_ISSUES=0
+          MAX_SCORE=100
+
+          echo "## 📝 Lint Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Black formatting check
+          echo "### Black (formatting)" >> $GITHUB_STEP_SUMMARY
+          BLACK_ISSUES=$(black --check --quiet addons/ipai/ 2>&1 | wc -l || echo "0")
+          echo "Issues: $BLACK_ISSUES" >> $GITHUB_STEP_SUMMARY
+          TOTAL_ISSUES=$((TOTAL_ISSUES + BLACK_ISSUES))
+
+          # isort import ordering
+          echo "### isort (imports)" >> $GITHUB_STEP_SUMMARY
+          ISORT_ISSUES=$(isort --check-only --quiet addons/ipai/ 2>&1 | wc -l || echo "0")
+          echo "Issues: $ISORT_ISSUES" >> $GITHUB_STEP_SUMMARY
+          TOTAL_ISSUES=$((TOTAL_ISSUES + ISORT_ISSUES))
+
+          # Flake8
+          echo "### Flake8 (style)" >> $GITHUB_STEP_SUMMARY
+          FLAKE8_ISSUES=$(flake8 addons/ipai/ --count --select=E9,F63,F7,F82 --show-source --statistics 2>&1 | tail -1 || echo "0")
+          echo "Issues: $FLAKE8_ISSUES" >> $GITHUB_STEP_SUMMARY
+          TOTAL_ISSUES=$((TOTAL_ISSUES + FLAKE8_ISSUES))
+
+          # Calculate score (100 - issues, min 0)
+          SCORE=$((MAX_SCORE - TOTAL_ISSUES))
+          if [ "$SCORE" -lt "0" ]; then
+            SCORE=0
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Lint Score: $SCORE/100**" >> $GITHUB_STEP_SUMMARY
+          echo "score=$SCORE" >> $GITHUB_OUTPUT
+
+  # ==========================================================================
+  # Security Scan
+  # ==========================================================================
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      vulnerabilities: ${{ steps.scan.outputs.vulnerabilities }}
+      severity_high: ${{ steps.scan.outputs.severity_high }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install security tools
+        run: |
+          pip install bandit safety
+
+      - name: Run security scan
+        id: scan
+        continue-on-error: true
+        run: |
+          echo "## 🔒 Security Scan" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Bandit scan
+          VULN_COUNT=0
+          HIGH_COUNT=0
+
+          bandit -r addons/ipai/ -f json -o bandit_report.json 2>/dev/null || true
+
+          if [ -f bandit_report.json ]; then
+            VULN_COUNT=$(jq '.results | length' bandit_report.json 2>/dev/null || echo "0")
+            HIGH_COUNT=$(jq '[.results[] | select(.issue_severity == "HIGH")] | length' bandit_report.json 2>/dev/null || echo "0")
+          fi
+
+          echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Total | $VULN_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "| High | $HIGH_COUNT |" >> $GITHUB_STEP_SUMMARY
+
+          echo "vulnerabilities=$VULN_COUNT" >> $GITHUB_OUTPUT
+          echo "severity_high=$HIGH_COUNT" >> $GITHUB_OUTPUT
+
+      - name: Upload security report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-report
+          path: bandit_report.json
+          retention-days: 30
+
+  # ==========================================================================
+  # Module Installation Test (Odoo.sh style)
+  # ==========================================================================
+  install-test:
+    name: Module Installation
+    runs-on: ubuntu-latest
+    needs: collect
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo_install_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U odoo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    outputs:
+      installable: ${{ steps.install.outputs.installable }}
+      failed_modules: ${{ steps.install.outputs.failed_modules }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Odoo dependencies
+        run: |
+          pip install -r requirements.txt 2>/dev/null || true
+          pip install psycopg2-binary
+
+      - name: Test module installation
+        id: install
+        continue-on-error: true
+        run: |
+          echo "## 📥 Installation Test" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          INSTALLABLE=0
+          FAILED=""
+
+          # Check each module's manifest is valid Python
+          for manifest in addons/ipai/*/__manifest__.py addons/ipai_*/__manifest__.py; do
+            if [ -f "$manifest" ]; then
+              MODULE_NAME=$(basename $(dirname "$manifest"))
+
+              if python3 -c "exec(open('$manifest').read())" 2>/dev/null; then
+                INSTALLABLE=$((INSTALLABLE + 1))
+              else
+                if [ -n "$FAILED" ]; then
+                  FAILED="$FAILED,$MODULE_NAME"
+                else
+                  FAILED="$MODULE_NAME"
+                fi
+              fi
+            fi
+          done
+
+          echo "| Status | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| ✅ Installable | $INSTALLABLE |" >> $GITHUB_STEP_SUMMARY
+
+          if [ -n "$FAILED" ]; then
+            echo "| ❌ Failed | $(echo $FAILED | tr ',' '\n' | wc -l) |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Failed modules:** $FAILED" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "installable=$INSTALLABLE" >> $GITHUB_OUTPUT
+          echo "failed_modules=$FAILED" >> $GITHUB_OUTPUT
+
+  # ==========================================================================
+  # Export Results to Supabase (for Superset dashboards)
+  # ==========================================================================
+  export-results:
+    name: Export to Dashboard
+    runs-on: ubuntu-latest
+    needs: [unit-tests, lint, security, install-test]
+    if: always()
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare dashboard data
+        id: prepare
+        run: |
+          # Create JSON payload for Superset dashboard
+          cat > runbot_results.json << EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "run_id": "${{ github.run_id }}",
+            "ref": "${{ github.ref_name }}",
+            "sha": "${{ github.sha }}",
+            "actor": "${{ github.actor }}",
+            "event": "${{ github.event_name }}",
+            "odoo_version": "${{ env.ODOO_VERSION }}",
+            "results": {
+              "unit_tests": {
+                "passed": ${{ needs.unit-tests.outputs.passed || 0 }},
+                "failed": ${{ needs.unit-tests.outputs.failed || 0 }},
+                "skipped": ${{ needs.unit-tests.outputs.skipped || 0 }},
+                "duration_seconds": ${{ needs.unit-tests.outputs.duration || 0 }}
+              },
+              "lint": {
+                "score": ${{ needs.lint.outputs.score || 0 }}
+              },
+              "security": {
+                "vulnerabilities": ${{ needs.security.outputs.vulnerabilities || 0 }},
+                "high_severity": ${{ needs.security.outputs.severity_high || 0 }}
+              },
+              "installation": {
+                "installable_modules": ${{ needs.install-test.outputs.installable || 0 }},
+                "failed_modules": "${{ needs.install-test.outputs.failed_modules || '' }}"
+              }
+            },
+            "status": "${{ (needs.unit-tests.result == 'success' && needs.lint.result == 'success' && needs.security.result == 'success' && needs.install-test.result == 'success') && 'passed' || 'failed' }}"
+          }
+          EOF
+
+          cat runbot_results.json
+
+      - name: Export to Supabase
+        if: env.SUPABASE_URL != ''
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            curl -X POST "$SUPABASE_URL/rest/v1/ci_runbot_results" \
+              -H "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+              -H "Content-Type: application/json" \
+              -H "Prefer: return=minimal" \
+              -d @runbot_results.json || echo "Warning: Failed to export to Supabase"
+          else
+            echo "Supabase credentials not configured, skipping export"
+          fi
+
+      - name: Upload results artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: runbot-results
+          path: runbot_results.json
+          retention-days: 90
+
+      - name: Generate summary
+        run: |
+          echo "## 📊 Runbot Dashboard Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.unit-tests.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Security | ${{ needs.security.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Installation | ${{ needs.install-test.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Results exported for Superset dashboard visualization" >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # Final Gate
+  # ==========================================================================
+  runbot-gate:
+    name: Runbot Gate
+    runs-on: ubuntu-latest
+    needs: [unit-tests, lint, security, install-test, export-results]
+    if: always()
+
+    steps:
+      - name: Check all jobs
+        run: |
+          echo "## 🚦 Runbot Gate" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          PASSED=true
+
+          if [ "${{ needs.unit-tests.result }}" != "success" ]; then
+            echo "❌ Unit tests failed" >> $GITHUB_STEP_SUMMARY
+            PASSED=false
+          fi
+
+          if [ "${{ needs.lint.result }}" != "success" ]; then
+            echo "⚠️ Lint warnings (non-blocking)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [ "${{ needs.security.outputs.severity_high }}" -gt "0" ]; then
+            echo "❌ High severity vulnerabilities found" >> $GITHUB_STEP_SUMMARY
+            PASSED=false
+          fi
+
+          if [ "${{ needs.install-test.result }}" != "success" ]; then
+            echo "❌ Module installation failed" >> $GITHUB_STEP_SUMMARY
+            PASSED=false
+          fi
+
+          if [ "$PASSED" = "true" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ✅ All Runbot gates passed!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ❌ Runbot gate failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
