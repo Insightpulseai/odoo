@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f0e79f10998ff871a813e2ea7c5f0a842deeba35
+> Commit: 47a5bcbb1ea7c477b68a3130da31b19f31d2b611
 
 ```
 .
@@ -2057,6 +2057,10 @@
 │   │   │   └── FINAL_STATUS.md
 │   │   ├── 20260129-0210
 │   │   │   └── OCA_IPAI_INSTALLER_COMPLETE.md
+│   │   ├── 20260129-0215
+│   │   │   ├── PREFLIGHT_DETECTION_COMPLETE.md
+│   │   │   ├── odoosh-parity-analysis.md
+│   │   │   └── odoosh-parity-summary.json
 │   │   ├── 20260129-1121
 │   │   │   └── summary.json
 │   │   └── 20260129-odoo-asset-fix.md
@@ -5167,15 +5171,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1435 directories, 3727 files
+1436 directories, 3730 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1673 |
-| Files | 4994 |
+| Directories | 1674 |
+| Files | 4997 |
 | Python files | 830 |
 | XML files | 302 |
-| Markdown files | 1259 |
+| Markdown files | 1261 |
