@@ -10,6 +10,11 @@
     "data": [
         "security/ir.model.access.csv",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "ipai_foundation/static/src/js/process_shim.js",
+        ],
+    },
     "installable": True,
     "application": False,
     "auto_install": False,
