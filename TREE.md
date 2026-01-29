@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 47a5bcbb1ea7c477b68a3130da31b19f31d2b611
+> Commit: 692ccd5ac21e6808107ab66e52418867be80a0b5
 
 ```
 .
@@ -1696,6 +1696,7 @@
 │   │       ├── sales_assistant.yaml
 │   │       └── support_assistant.yaml
 │   ├── oca
+│   │   ├── module_allowlist.yml
 │   │   ├── oca_must_have_accounting.yml
 │   │   ├── oca_must_have_all.yml
 │   │   ├── oca_must_have_base.yml
@@ -2287,6 +2288,10 @@
 │   │   ├── ipai_workos_templates.md
 │   │   ├── ipai_workos_views.md
 │   │   └── ipai_workspace_core.md
+│   ├── oca
+│   │   ├── ADDON_INVENTORY.json
+│   │   ├── ADDON_NAMES.txt
+│   │   └── REPO_SUMMARY.md
 │   ├── odoo
 │   │   └── DEVELOPER_TOOLS.md
 │   ├── odoo-18-handbook
@@ -3712,6 +3717,10 @@
 │   │   └── verify_domain.sh
 │   ├── memory
 │   │   └── distill_packs.sh
+│   ├── oca
+│   │   ├── clean_install_allowlist.sh
+│   │   ├── fetch_and_pin.sh
+│   │   └── generate_inventory.sh
 │   ├── ocadev
 │   │   ├── README.md
 │   │   ├── install_oca_ipai_full.sh
@@ -5171,15 +5180,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1436 directories, 3730 files
+1438 directories, 3737 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1674 |
-| Files | 4997 |
+| Directories | 1676 |
+| Files | 5004 |
 | Python files | 830 |
 | XML files | 302 |
-| Markdown files | 1261 |
+| Markdown files | 1262 |

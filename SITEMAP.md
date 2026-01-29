@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 47a5bcbb1ea7c477b68a3130da31b19f31d2b611
+> Commit: 692ccd5ac21e6808107ab66e52418867be80a0b5
 
 ## 📚 Documentation
 
@@ -688,6 +688,7 @@
 | [ipai_workos_views](docs/modules/ipai_workos_views.md) | docs/modules |
 | [ipai_workspace_core](docs/modules/ipai_workspace_core.md) | docs/modules |
 | [Notion Business → Odoo CE 18 + OCA Complete Substitute Catalog](docs/notion-odoo-substitute-catalog.md) | docs |
+| [OCA Repository Summary](docs/oca/REPO_SUMMARY.md) | docs/oca |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/ODOO_18_CE_OCA_HANDBOOK.md) | docs/odoo-18-handbook |
 | [InsightPulseAI Odoo 18 CE/OCA Implementation Handbook](docs/odoo-18-handbook/README.md) | docs/odoo-18-handbook |
 | [Finance & Accounting Overview – InsightPulseAI Edition](docs/odoo-18-handbook/pages/01-finance-accounting.md) | docs/odoo-18-handbook/pages |
