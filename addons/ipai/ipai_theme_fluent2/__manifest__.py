@@ -3,24 +3,33 @@
     "name": "IPAI Fluent 2 Theme Tokens",
     "version": "18.0.1.1.0",
     "category": "Themes",
-    "summary": "Microsoft Fluent 2 / Microsoft 365 Copilot design tokens for Odoo backend",
+    "summary": "InsightPulse AI Multi-Aesthetic Theme System for Odoo (10 themes)",
     "description": """
-IPAI Fluent 2 Theme Tokens
-==========================
+IPAI Fluent 2 Theme System
+===========================
 
-This module injects Microsoft Fluent 2 design tokens as CSS custom properties
-into the Odoo backend. It provides a consistent design language that can be
-shared between Odoo and external applications (Next.js, Vite).
+This module provides the complete InsightPulse AI theme system with 5 aesthetic
+systems and light/dark modes for Odoo backend, matching the design system used
+in external applications (React, Next.js, Vite).
+
+Theme System:
+-------------
+- 5 Aesthetic Systems: Default, Dull, Claude, ChatGPT, Gemini
+- 2 Color Modes: Light and Dark
+- Total: 10 distinct themes
+- Live theme switcher in Odoo navbar (aesthetic dropdown + light/dark toggle)
+- LocalStorage persistence for user preferences
+- System dark mode detection and auto-switching
 
 Features:
 ---------
 - CSS custom properties from @fluentui/tokens (official)
 - IPAI-prefixed semantic tokens for Odoo components
-- Light and dark theme support via data-theme attribute
-- System preference detection via prefers-color-scheme
+- Theme variables applied via data-aesthetic and data-color-mode attributes
+- JavaScript ThemeSystemManager for programmatic theme control
+- Complete Odoo component overrides (buttons, inputs, cards, lists, kanban, etc.)
 - Shared tokens between Odoo and frontend applications
-- JavaScript ThemeManager for dark mode toggling
-- Complete Odoo component overrides (buttons, inputs, cards, lists, etc.)
+- Real-time theme switching without page reload
 
 Token Categories:
 -----------------
@@ -75,14 +84,18 @@ Documentation:
             "ipai_theme_fluent2/static/src/css/fluent2.css",
             "ipai_theme_fluent2/static/src/css/tokens.css",
             "ipai_theme_fluent2/static/src/css/theme.css",
+            "ipai_theme_fluent2/static/src/css/theme-system.css",
             "ipai_theme_fluent2/static/src/js/theme.js",
+            "ipai_theme_fluent2/static/src/js/theme-system.js",
         ],
         # Also load into frontend/website if website module is installed
         "web.assets_frontend": [
             "ipai_theme_fluent2/static/src/css/fluent2.css",
             "ipai_theme_fluent2/static/src/css/tokens.css",
             "ipai_theme_fluent2/static/src/css/theme.css",
+            "ipai_theme_fluent2/static/src/css/theme-system.css",
             "ipai_theme_fluent2/static/src/js/theme.js",
+            "ipai_theme_fluent2/static/src/js/theme-system.js",
         ],
     },
     "installable": True,
