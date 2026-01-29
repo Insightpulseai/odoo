@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 71c2fd72123b0cfbe6887d3a5fa899ddb01e1fab
+> Commit: 53330f2a22dd6af0be15e5b3366445961c41e983
 
 ```
 .
@@ -72,6 +72,7 @@
 │   │   ├── auth-email-ai-gate.yml
 │   │   ├── auto-sitemap-tree.yml
 │   │   ├── backlog-coverage.yml
+│   │   ├── branch-promotion.yml
 │   │   ├── build-odoo-ce19-ee-parity.yml
 │   │   ├── build-seeded-image.yml
 │   │   ├── build-unified-image.yml
@@ -81,6 +82,7 @@
 │   │   ├── ci-docs-only.yml
 │   │   ├── ci-green-aggregate.yml
 │   │   ├── ci-platform-gates.yml
+│   │   ├── ci-runbot.yml
 │   │   ├── ci-web.yml
 │   │   ├── ci.yml
 │   │   ├── codespaces-prebuild.yml
@@ -140,6 +142,7 @@
 │   │   ├── ipai-prod-checks.yml
 │   │   ├── lakehouse-control-room-gate.yml
 │   │   ├── lakehouse-smoke.yml
+│   │   ├── llms-txt-check.yml
 │   │   ├── memory-distill.yml
 │   │   ├── module-catalog-drift.yml
 │   │   ├── module-gating.yml
@@ -2534,6 +2537,7 @@
 │   ├── DOCKER_SSOT_ARCHITECTURE.md
 │   ├── DOCKER_VALIDATION_GUIDE.md
 │   ├── DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md
+│   ├── DR_RUNBOOK.md
 │   ├── ECOSYSTEM_GUIDE.md
 │   ├── EE_IAP_TO_OCA_IPAI_MAPPING.md
 │   ├── EE_TO_CE_OCA_MAPPING.md
@@ -3568,6 +3572,9 @@
 │   ├── auth
 │   │   ├── confirm_user.py
 │   │   └── set_password.ts
+│   ├── backup
+│   │   ├── full_backup.sh
+│   │   └── restore_test.sh
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
 │   │   ├── check_supabase_preview_config.sh
@@ -4081,6 +4088,9 @@
 │   ├── wiki_sync.sh
 │   ├── worktree-setup.sh
 │   └── xmlrpc_set_admin_password.py
+├── security
+│   ├── Caddyfile.shell
+│   └── WEB_SHELL_THREAT_MODEL.md
 ├── seed_export
 │   ├── projects.csv
 │   ├── stages.csv
@@ -5082,6 +5092,7 @@
 ├── deployment_readiness_assessment.md
 ├── devserver.config.json
 ├── docker-compose.dev.yml
+├── docker-compose.shell.yml
 ├── figma-make-dev.yaml
 ├── figma.config.json
 ├── final_verification.sh
@@ -5144,15 +5155,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1431 directories, 3708 files
+1433 directories, 3717 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1669 |
-| Files | 4975 |
+| Directories | 1671 |
+| Files | 4984 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1252 |
+| Markdown files | 1254 |
