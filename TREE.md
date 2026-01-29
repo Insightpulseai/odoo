@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 68ffa57badb1f973230a1cdd449e75bc12cbc059
+> Commit: 5f9e9fa4b795ddca54c04e81508747b3693d3bac
 
 ```
 .
@@ -2057,6 +2057,8 @@
 │   │   │   └── FINAL_STATUS.md
 │   │   ├── 20260129-0210
 │   │   │   └── OCA_IPAI_INSTALLER_COMPLETE.md
+│   │   ├── 20260129-1121
+│   │   │   └── summary.json
 │   │   └── 20260129-odoo-asset-fix.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
@@ -5097,6 +5099,7 @@
 ├── devserver.config.json
 ├── docker-compose.dev.yml
 ├── docker-compose.shell.yml
+├── docker-compose.yml
 ├── figma-make-dev.yaml
 ├── figma.config.json
 ├── final_verification.sh
@@ -5159,15 +5162,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1433 directories, 3721 files
+1434 directories, 3723 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1671 |
-| Files | 4988 |
+| Directories | 1672 |
+| Files | 4990 |
 | Python files | 830 |
 | XML files | 302 |
 | Markdown files | 1255 |

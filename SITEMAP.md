@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 68ffa57badb1f973230a1cdd449e75bc12cbc059
+> Commit: 5f9e9fa4b795ddca54c04e81508747b3693d3bac
 
 ## 📚 Documentation
 
@@ -1381,6 +1381,7 @@
 
 | File | Purpose |
 |------|---------|
+| [docker-compose.yml](docker-compose.yml) | Docker orchestration |
 | [Dockerfile](Dockerfile) | Container build |
 | [requirements.txt](requirements.txt) | Python dependencies |
 | [.github/workflows/ci.yml](.github/workflows/ci.yml) | CI/CD pipeline |
