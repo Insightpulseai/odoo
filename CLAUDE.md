@@ -202,6 +202,44 @@ npm run dev:github-app                  # Run github-app
 
 ---
 
+## Canonical Odoo 19 Setup (Agent-Proof)
+
+**Location**: `odoo19/` directory - **Recommended for all AI agent operations**
+
+**Philosophy**: Deterministic, single-database, zero-ambiguity configuration following Odoo's official on-premise deployment model.
+
+### Why Canonical?
+
+| Problem | Old Setup | Canonical Setup |
+|---------|-----------|----------------|
+| AI Agent Commands | 36 possible combinations | 1 deterministic command |
+| Database Targets | 4 databases (odoo_core, odoo_dev, odoo_db, postgres) | 1 database (odoo) |
+| Container Names | Custom (odoo-ce-core, odoo-dev) | Project-prefixed (odoo19-web-1, odoo19-db-1) |
+| Configuration | Docker volumes (not tracked) | Version-controlled (./config/odoo.conf) |
+| Database Selector | Enabled (UI confusion) | Disabled (list_db = False) |
+
+### Quick Start
+
+```bash
+cd odoo19
+docker compose up -d                              # Start stack
+docker compose exec -T web odoo -d odoo -i base   # Install module
+./scripts/backup_db.sh                            # Backup database
+```
+
+**Complete Documentation**: See `odoo19/CANONICAL_SETUP.md` and `odoo19/QUICK_REFERENCE.md`
+
+**Key Features**:
+- ✅ Single database target (`db_name = odoo`)
+- ✅ No database selector (`list_db = False`)
+- ✅ File-based secrets (no hardcoded passwords)
+- ✅ Health checks (PostgreSQL guards web startup)
+- ✅ No container_name (allows scaling/isolation)
+- ✅ Idempotent backup script
+- ✅ Version-controlled config
+
+---
+
 ## Architecture Overview
 
 ```
