@@ -233,7 +233,7 @@ console.log(`Current theme: ${aesthetic}-${colorMode}`);
 
 ## Compatibility
 
-- **Odoo Version**: 18.0+
+- **Odoo Version**: 19.0+ (also compatible with 18.0)
 - **Browser Support**: Modern browsers with CSS custom properties support
   - Chrome/Edge 49+
   - Firefox 31+

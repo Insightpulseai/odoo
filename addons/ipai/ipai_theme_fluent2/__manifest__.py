@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Fluent 2 Theme Tokens",
-    "version": "18.0.1.1.0",
+    "version": "19.0.1.0.0",
     "category": "Themes",
     "summary": "InsightPulse AI Multi-Aesthetic Theme System for Odoo (10 themes)",
     "description": """
