@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 53330f2a22dd6af0be15e5b3366445961c41e983
+> Commit: 68ffa57badb1f973230a1cdd449e75bc12cbc059
 
 ## 📚 Documentation
 
@@ -256,6 +256,7 @@
 | [Claude Code Setup Guide](docs/CLAUDE_CODE_SETUP.md) | docs |
 | [GitHub Codespaces Setup Guide](docs/CODESPACES_SETUP.md) | docs |
 | [Custom Odoo Image Success Criteria Validation](docs/CUSTOM_IMAGE_SUCCESS_CRITERIA.md) | docs |
+| [Database Initialization Runbook](docs/DB_INIT_RUNBOOK.md) | docs |
 | [Odoo CE 18 – Database & Worker Tuning](docs/DB_TUNING.md) | docs |
 | [DELIVERABLES & RELEASE CONTENTS](docs/DELIVERABLES_MANIFEST.md) | docs |
 | [Odoo CE 18 M1 Deployment Guide](docs/DEPLOYMENT.md) | docs |
