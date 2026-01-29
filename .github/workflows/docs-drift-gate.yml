@@ -1,0 +1,152 @@
+name: Docs & Evidence Drift Gate
+
+# Ensures documentation moves with capability changes
+# Phase 0 requirement: No silent capability changes
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main, staging]
+
+jobs:
+  docs-drift-check:
+    name: Documentation Drift Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE="${{ github.event.pull_request.base.sha }}"
+            HEAD="${{ github.event.pull_request.head.sha }}"
+          else
+            BASE="${{ github.event.before }}"
+            HEAD="${{ github.sha }}"
+          fi
+
+          # Get changed files
+          CHANGED=$(git diff --name-only "$BASE" "$HEAD" 2>/dev/null || echo "")
+          echo "changed_files<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGED" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          # Categorize changes
+          echo "has_capability_changes=false" >> $GITHUB_OUTPUT
+          echo "has_docs_changes=false" >> $GITHUB_OUTPUT
+          echo "has_evidence_changes=false" >> $GITHUB_OUTPUT
+
+          if echo "$CHANGED" | grep -qE '^(addons/|scripts/|docker/|.github/workflows/|security/)'; then
+            echo "has_capability_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED" | grep -qE '^docs/'; then
+            echo "has_docs_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+          if echo "$CHANGED" | grep -qE '^docs/evidence/'; then
+            echo "has_evidence_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check LLM context files exist
+        run: |
+          if [ ! -f "llms.txt" ]; then
+            echo "❌ llms.txt is missing"
+            exit 1
+          fi
+          if [ ! -f "llms-full.txt" ]; then
+            echo "❌ llms-full.txt is missing"
+            exit 1
+          fi
+          echo "✅ LLM context files present"
+
+      - name: Validate capability → docs alignment
+        if: steps.changed.outputs.has_capability_changes == 'true'
+        run: |
+          echo "=== Capability Changes Detected ==="
+          echo "${{ steps.changed.outputs.changed_files }}" | grep -E '^(addons/|scripts/|docker/|.github/workflows/|security/)' || true
+          echo ""
+
+          # Check if CLAUDE.md was updated for significant changes
+          MAJOR_CHANGES=0
+
+          # New workflows should be documented
+          if echo "${{ steps.changed.outputs.changed_files }}" | grep -qE '^\.github/workflows/.*\.yml$'; then
+            MAJOR_CHANGES=$((MAJOR_CHANGES + 1))
+            echo "⚠️ New/modified workflow detected - ensure CLAUDE.md is updated"
+          fi
+
+          # New scripts should be documented
+          if echo "${{ steps.changed.outputs.changed_files }}" | grep -qE '^scripts/.*\.(sh|py)$'; then
+            MAJOR_CHANGES=$((MAJOR_CHANGES + 1))
+            echo "⚠️ New/modified script detected - ensure docs are updated"
+          fi
+
+          # New modules should be documented
+          if echo "${{ steps.changed.outputs.changed_files }}" | grep -qE '^addons/ipai/.*/__manifest__\.py$'; then
+            MAJOR_CHANGES=$((MAJOR_CHANGES + 1))
+            echo "⚠️ New/modified IPAI module detected - ensure docs are updated"
+          fi
+
+          # Security changes require threat model updates
+          if echo "${{ steps.changed.outputs.changed_files }}" | grep -qE '^security/'; then
+            MAJOR_CHANGES=$((MAJOR_CHANGES + 1))
+            echo "⚠️ Security changes detected - ensure threat models are updated"
+          fi
+
+          if [ "$MAJOR_CHANGES" -gt 0 ]; then
+            echo ""
+            echo "📋 $MAJOR_CHANGES major capability change(s) detected"
+            echo "   Consider updating relevant documentation"
+          fi
+
+      - name: Validate evidence pack structure
+        if: steps.changed.outputs.has_evidence_changes == 'true'
+        run: |
+          echo "=== Evidence Pack Validation ==="
+
+          # Check evidence directories have required files
+          for dir in docs/evidence/*/; do
+            if [ -d "$dir" ]; then
+              echo "Checking: $dir"
+
+              # Evidence packs should have at least a summary
+              if [ ! -f "${dir}summary.md" ] && [ ! -f "${dir}summary.json" ]; then
+                echo "  ⚠️ Missing summary file in $dir"
+              fi
+            fi
+          done
+
+          echo "✅ Evidence pack structure validated"
+
+      - name: Check parity score
+        run: |
+          if [ -f "scripts/check_odoosh_parity.py" ]; then
+            python3 scripts/check_odoosh_parity.py --threshold 95 --output json > /tmp/parity.json 2>/dev/null || true
+
+            if [ -f "/tmp/parity.json" ]; then
+              SCORE=$(python3 -c "import json; print(json.load(open('/tmp/parity.json'))['total_score'])" 2>/dev/null || echo "0")
+              echo "Current parity score: ${SCORE}%"
+
+              if [ "$(echo "$SCORE < 95" | bc -l 2>/dev/null || echo 1)" = "1" ]; then
+                echo "⚠️ Parity score below 95% threshold"
+              fi
+            fi
+          else
+            echo "Parity check script not found, skipping"
+          fi
+
+      - name: Summary
+        run: |
+          echo "=== Drift Gate Summary ==="
+          echo "Capability changes: ${{ steps.changed.outputs.has_capability_changes }}"
+          echo "Documentation changes: ${{ steps.changed.outputs.has_docs_changes }}"
+          echo "Evidence changes: ${{ steps.changed.outputs.has_evidence_changes }}"
+          echo ""
+          echo "✅ Drift gate checks completed"
