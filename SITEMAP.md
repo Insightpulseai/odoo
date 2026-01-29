@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e710aaf96bce93e889c3c67836f0492a0f8154b5
+> Commit: 71c2fd72123b0cfbe6887d3a5fa899ddb01e1fab
 
 ## 📚 Documentation
 
@@ -499,6 +499,7 @@
 | [Final Status - OCA/ipai Manifest System Complete](docs/evidence/20260129-0130/FINAL_STATUS.md) | docs/evidence/20260129-0130 |
 | [OCA Repository Clone - Complete](docs/evidence/20260129-0130/oca-complete/ALL_REPOS_CLONED.md) | docs/evidence/20260129-0130/oca-complete |
 | [OCA/ipai Full Stack Installer - Complete](docs/evidence/20260129-0210/OCA_IPAI_INSTALLER_COMPLETE.md) | docs/evidence/20260129-0210 |
+| [Odoo Frontend Asset Fix - Evidence Document](docs/evidence/20260129-odoo-asset-fix.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
