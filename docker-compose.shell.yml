@@ -1,0 +1,204 @@
+# =============================================================================
+# Docker Compose: Browser Web Shell (Odoo.sh Parity - GAP 4)
+# =============================================================================
+# Provides browser-based shell access similar to Odoo.sh terminal
+# Uses Wetty (Web TTY) for secure SSH-over-HTTP access
+#
+# Usage:
+#   docker compose -f docker-compose.shell.yml up -d
+#   Access: https://your-domain/shell (or http://localhost:3000)
+#
+# Security:
+#   - SSL/TLS termination via Caddy
+#   - Basic auth or OAuth integration
+#   - Isolated container with limited capabilities
+#   - Audit logging enabled
+# =============================================================================
+
+name: odoo-web-shell
+
+services:
+  # ==========================================================================
+  # Wetty - Web TTY (SSH-over-HTTP)
+  # ==========================================================================
+  wetty:
+    image: wettyoss/wetty:latest
+    container_name: odoo-web-shell
+    restart: unless-stopped
+    environment:
+      # SSH target (connects to Odoo container or host)
+      SSHHOST: ${SSH_HOST:-odoo-core}
+      SSHPORT: ${SSH_PORT:-22}
+      SSHUSER: ${SSH_USER:-odoo}
+      SSHAUTH: ${SSH_AUTH:-password}
+
+      # Wetty configuration
+      BASE: ${WETTY_BASE:-/shell}
+      PORT: 3000
+      TITLE: "Odoo Shell"
+
+      # Security settings
+      WETTY_COMMAND: ${WETTY_COMMAND:-}
+      FORCESSH: true
+    ports:
+      - "${WETTY_PORT:-3000}:3000"
+    networks:
+      - odoo-shell-net
+      - odoo19-net  # Connect to main Odoo network
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/shell"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.wetty.rule=PathPrefix(`/shell`)"
+      - "traefik.http.services.wetty.loadbalancer.server.port=3000"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service,environment"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+
+  # ==========================================================================
+  # Alternative: ttyd - Lightweight terminal
+  # ==========================================================================
+  # Uncomment to use ttyd instead of wetty
+  # ttyd:
+  #   image: tsl0922/ttyd:latest
+  #   container_name: odoo-ttyd
+  #   restart: unless-stopped
+  #   command: >
+  #     ttyd
+  #     --port 7681
+  #     --credential ${TTYD_USER:-admin}:${TTYD_PASS:-changeme}
+  #     --readonly false
+  #     --client-option fontFamily='"Fira Code", monospace'
+  #     --client-option fontSize=14
+  #     --title-format "Odoo Shell - {{hostname}}"
+  #     /bin/bash
+  #   ports:
+  #     - "${TTYD_PORT:-7681}:7681"
+  #   networks:
+  #     - odoo-shell-net
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 128M
+
+  # ==========================================================================
+  # SSH Bastion (for Wetty to connect to)
+  # ==========================================================================
+  ssh-bastion:
+    image: linuxserver/openssh-server:latest
+    container_name: odoo-ssh-bastion
+    restart: unless-stopped
+    hostname: odoo-shell
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: ${TZ:-Asia/Manila}
+
+      # SSH configuration
+      PASSWORD_ACCESS: "true"
+      USER_PASSWORD: ${SSH_PASSWORD:-changeme}
+      USER_NAME: ${SSH_USER:-odoo}
+
+      # Security
+      SUDO_ACCESS: "false"
+      PUBLIC_KEY_FILE: ${SSH_PUBLIC_KEY_FILE:-}
+      PUBLIC_KEY_DIR: ${SSH_PUBLIC_KEY_DIR:-}
+    volumes:
+      # Mount Odoo directories (read-only by default)
+      - odoo19-data:/home/odoo/odoo-data:ro
+      - ./addons:/home/odoo/addons:ro
+      - ./scripts:/home/odoo/scripts:ro
+
+      # SSH keys (optional)
+      - ${SSH_KEYS_DIR:-./security/ssh-keys}:/config/.ssh:ro
+    networks:
+      - odoo-shell-net
+      - odoo19-net
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "22"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.25'
+          memory: 128M
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - NET_BIND_SERVICE
+
+  # ==========================================================================
+  # Caddy Reverse Proxy (SSL termination)
+  # ==========================================================================
+  caddy-shell:
+    image: caddy:2-alpine
+    container_name: odoo-shell-proxy
+    restart: unless-stopped
+    ports:
+      - "${SHELL_HTTPS_PORT:-8443}:443"
+      - "${SHELL_HTTP_PORT:-8080}:80"
+    volumes:
+      - ./security/Caddyfile.shell:/etc/caddy/Caddyfile:ro
+      - caddy-shell-data:/data
+      - caddy-shell-config:/config
+    networks:
+      - odoo-shell-net
+    depends_on:
+      - wetty
+    healthcheck:
+      test: ["CMD", "caddy", "validate", "--config", "/etc/caddy/Caddyfile"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+  # ==========================================================================
+  # Audit Logger (for compliance)
+  # ==========================================================================
+  audit-logger:
+    image: fluent/fluentd:v1.16-debian-1
+    container_name: odoo-shell-audit
+    restart: unless-stopped
+    volumes:
+      - ./security/fluentd-shell.conf:/fluentd/etc/fluent.conf:ro
+      - shell-audit-logs:/fluentd/log
+    networks:
+      - odoo-shell-net
+    depends_on:
+      - wetty
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+          memory: 64M
+
+networks:
+  odoo-shell-net:
+    driver: bridge
+  odoo19-net:
+    external: true
+
+volumes:
+  odoo19-data:
+    external: true
+  caddy-shell-data:
+  caddy-shell-config:
+  shell-audit-logs:

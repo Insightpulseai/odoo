@@ -1,0 +1,113 @@
+name: LLMs.txt Presence Gate
+
+# Ensures llms.txt and llms-full.txt files exist and are valid
+# Part of Odoo.sh parity (documentation accessibility)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+    paths:
+      - 'llms.txt'
+      - 'llms-full.txt'
+      - 'CLAUDE.md'
+      - 'addons/**'
+
+concurrency:
+  group: llms-txt-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  llms-txt-gate:
+    name: LLMs.txt Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check llms.txt exists
+        id: check-llms
+        run: |
+          echo "## LLMs.txt Presence Check" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check llms.txt
+          if [ -f "llms.txt" ]; then
+            LLMS_SIZE=$(wc -l < llms.txt)
+            echo "✅ llms.txt exists ($LLMS_SIZE lines)" >> $GITHUB_STEP_SUMMARY
+            echo "llms_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ llms.txt is MISSING" >> $GITHUB_STEP_SUMMARY
+            echo "llms_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Check llms-full.txt
+          if [ -f "llms-full.txt" ]; then
+            FULL_SIZE=$(wc -l < llms-full.txt)
+            echo "✅ llms-full.txt exists ($FULL_SIZE lines)" >> $GITHUB_STEP_SUMMARY
+            echo "full_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ llms-full.txt is MISSING" >> $GITHUB_STEP_SUMMARY
+            echo "full_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Validate llms.txt content
+        if: steps.check-llms.outputs.llms_exists == 'true'
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Content Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check for required sections
+          REQUIRED_SECTIONS=(
+            "Overview"
+            "Module Structure"
+            "ORM"
+            "OCA"
+            "IPAI"
+          )
+
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if grep -qi "$section" llms.txt; then
+              echo "✅ Found: $section" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "⚠️ Missing section: $section" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+          # Ensure minimum content
+          MIN_LINES=100
+          ACTUAL_LINES=$(wc -l < llms.txt)
+          if [ "$ACTUAL_LINES" -ge "$MIN_LINES" ]; then
+            echo "✅ Sufficient content ($ACTUAL_LINES >= $MIN_LINES lines)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Insufficient content ($ACTUAL_LINES < $MIN_LINES lines)" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: Validate llms-full.txt content
+        if: steps.check-llms.outputs.full_exists == 'true'
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Full Documentation Validation" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # llms-full.txt should be more comprehensive
+          MIN_FULL_LINES=300
+          ACTUAL_LINES=$(wc -l < llms-full.txt)
+          if [ "$ACTUAL_LINES" -ge "$MIN_FULL_LINES" ]; then
+            echo "✅ Comprehensive content ($ACTUAL_LINES >= $MIN_FULL_LINES lines)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Consider expanding llms-full.txt ($ACTUAL_LINES < $MIN_FULL_LINES lines)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Final gate check
+        run: |
+          if [ ! -f "llms.txt" ] || [ ! -f "llms-full.txt" ]; then
+            echo "❌ GATE FAILED: Required llms.txt files are missing"
+            exit 1
+          fi
+          echo "✅ LLMs.txt gate passed"

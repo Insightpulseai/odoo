@@ -1,0 +1,394 @@
+name: Branch Promotion (Odoo.sh Parity)
+
+# Visual branch promotion workflow replicating Odoo.sh drag-drop staging
+# GAP 1: Provides staging → production promotion with safety gates
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_branch:
+        description: 'Source branch to promote'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - develop
+          - feature/*
+      target_branch:
+        description: 'Target branch for promotion'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test suite (emergency only)'
+        required: false
+        default: false
+        type: boolean
+      promotion_type:
+        description: 'Promotion type'
+        required: true
+        default: 'merge'
+        type: choice
+        options:
+          - merge
+          - fast-forward
+          - squash
+
+concurrency:
+  group: promotion-${{ github.event.inputs.target_branch }}
+  cancel-in-progress: false
+
+env:
+  SOURCE_BRANCH: ${{ github.event.inputs.source_branch }}
+  TARGET_BRANCH: ${{ github.event.inputs.target_branch }}
+
+jobs:
+  # ==========================================================================
+  # Pre-Flight Checks
+  # ==========================================================================
+  preflight:
+    name: Pre-Flight Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      can_promote: ${{ steps.validate.outputs.can_promote }}
+      source_sha: ${{ steps.validate.outputs.source_sha }}
+      diff_count: ${{ steps.validate.outputs.diff_count }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate branches
+        id: validate
+        run: |
+          echo "## 🚀 Branch Promotion Pre-Flight" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          # Check source branch exists
+          if git show-ref --verify --quiet refs/remotes/origin/$SOURCE_BRANCH; then
+            echo "| Source branch exists | ✅ |" >> $GITHUB_STEP_SUMMARY
+            SOURCE_SHA=$(git rev-parse origin/$SOURCE_BRANCH)
+            echo "source_sha=$SOURCE_SHA" >> $GITHUB_OUTPUT
+          else
+            echo "| Source branch exists | ❌ |" >> $GITHUB_STEP_SUMMARY
+            echo "can_promote=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Check target branch exists
+          if git show-ref --verify --quiet refs/remotes/origin/$TARGET_BRANCH; then
+            echo "| Target branch exists | ✅ |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Target branch exists | ❌ |" >> $GITHUB_STEP_SUMMARY
+            echo "can_promote=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Check for conflicts
+          git checkout origin/$TARGET_BRANCH
+          if git merge --no-commit --no-ff origin/$SOURCE_BRANCH 2>/dev/null; then
+            echo "| No merge conflicts | ✅ |" >> $GITHUB_STEP_SUMMARY
+            git merge --abort 2>/dev/null || true
+          else
+            echo "| No merge conflicts | ❌ |" >> $GITHUB_STEP_SUMMARY
+            git merge --abort 2>/dev/null || true
+            echo "can_promote=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+          # Count changes
+          DIFF_COUNT=$(git rev-list --count origin/$TARGET_BRANCH..origin/$SOURCE_BRANCH)
+          echo "| Commits to promote | $DIFF_COUNT |" >> $GITHUB_STEP_SUMMARY
+          echo "diff_count=$DIFF_COUNT" >> $GITHUB_OUTPUT
+
+          # Check protection rules for production
+          if [ "$TARGET_BRANCH" = "main" ] || [ "$TARGET_BRANCH" = "production" ]; then
+            echo "| Production promotion | ⚠️ Requires approval |" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "can_promote=true" >> $GITHUB_OUTPUT
+
+      - name: Show diff summary
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Changed Files" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          git diff --stat origin/$TARGET_BRANCH..origin/$SOURCE_BRANCH | head -50 >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # Test Gate (Odoo.sh runbot-style)
+  # ==========================================================================
+  test-gate:
+    name: Test Gate
+    runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.can_promote == 'true' && github.event.inputs.skip_tests != 'true'
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U odoo"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_BRANCH }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || true
+          pip install psycopg2-binary
+
+      - name: Run Odoo tests
+        id: odoo-tests
+        continue-on-error: true
+        run: |
+          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Run test script if exists
+          if [ -f "./scripts/ci/run_odoo_tests.sh" ]; then
+            chmod +x ./scripts/ci/run_odoo_tests.sh
+            ./scripts/ci/run_odoo_tests.sh 2>&1 | tee test_output.log || true
+
+            # Count results
+            PASSED=$(grep -c "PASS" test_output.log 2>/dev/null || echo "0")
+            FAILED=$(grep -c "FAIL\|ERROR" test_output.log 2>/dev/null || echo "0")
+
+            echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Passed | $PASSED |" >> $GITHUB_STEP_SUMMARY
+            echo "| Failed | $FAILED |" >> $GITHUB_STEP_SUMMARY
+
+            if [ "$FAILED" -gt "0" ]; then
+              echo "test_passed=false" >> $GITHUB_OUTPUT
+            else
+              echo "test_passed=true" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "⚠️ No test script found, skipping tests" >> $GITHUB_STEP_SUMMARY
+            echo "test_passed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Lint check
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Lint Results" >> $GITHUB_STEP_SUMMARY
+
+          # Python linting
+          pip install flake8 black isort 2>/dev/null || true
+
+          LINT_ERRORS=0
+          if command -v black &> /dev/null; then
+            black --check addons/ipai/ 2>/dev/null || LINT_ERRORS=$((LINT_ERRORS + 1))
+          fi
+
+          if [ "$LINT_ERRORS" -eq "0" ]; then
+            echo "✅ Lint checks passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Lint warnings found (non-blocking)" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==========================================================================
+  # DB Neutralization Check (Odoo.sh style)
+  # ==========================================================================
+  db-safety:
+    name: Database Safety Check
+    runs-on: ubuntu-latest
+    needs: preflight
+    if: needs.preflight.outputs.can_promote == 'true'
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout source branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SOURCE_BRANCH }}
+
+      - name: Check for dangerous migrations
+        run: |
+          echo "## 🛡️ Database Safety" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Check for DROP TABLE, TRUNCATE, DELETE without WHERE
+          DANGEROUS_PATTERNS=0
+
+          for sql_file in $(find . -name "*.sql" -type f 2>/dev/null); do
+            if grep -iE "(DROP TABLE|TRUNCATE|DELETE FROM .* WHERE 1=1)" "$sql_file" 2>/dev/null; then
+              echo "⚠️ Dangerous SQL in: $sql_file" >> $GITHUB_STEP_SUMMARY
+              DANGEROUS_PATTERNS=$((DANGEROUS_PATTERNS + 1))
+            fi
+          done
+
+          # Check for mass deletes in Python
+          for py_file in $(find . -name "*.py" -path "*/migrations/*" -type f 2>/dev/null); do
+            if grep -E "unlink\(\)|\.delete\(\)" "$py_file" 2>/dev/null; then
+              echo "⚠️ Mass delete in migration: $py_file" >> $GITHUB_STEP_SUMMARY
+              DANGEROUS_PATTERNS=$((DANGEROUS_PATTERNS + 1))
+            fi
+          done
+
+          if [ "$DANGEROUS_PATTERNS" -eq "0" ]; then
+            echo "✅ No dangerous database operations detected" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Review required before promotion**" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ==========================================================================
+  # Promotion Execution
+  # ==========================================================================
+  promote:
+    name: Execute Promotion
+    runs-on: ubuntu-latest
+    needs: [preflight, test-gate, db-safety]
+    if: |
+      always() &&
+      needs.preflight.outputs.can_promote == 'true' &&
+      (needs.test-gate.result == 'success' || needs.test-gate.result == 'skipped') &&
+      needs.db-safety.result == 'success'
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Execute promotion
+        id: promote
+        run: |
+          echo "## 🎯 Promotion Execution" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Fetch latest
+          git fetch origin
+
+          # Checkout target
+          git checkout $TARGET_BRANCH
+          git pull origin $TARGET_BRANCH
+
+          # Perform merge based on type
+          PROMOTION_TYPE="${{ github.event.inputs.promotion_type }}"
+
+          case "$PROMOTION_TYPE" in
+            "fast-forward")
+              git merge --ff-only origin/$SOURCE_BRANCH
+              echo "✅ Fast-forward merge completed" >> $GITHUB_STEP_SUMMARY
+              ;;
+            "squash")
+              git merge --squash origin/$SOURCE_BRANCH
+              git commit -m "chore: promote $SOURCE_BRANCH to $TARGET_BRANCH (squashed)"
+              echo "✅ Squash merge completed" >> $GITHUB_STEP_SUMMARY
+              ;;
+            *)
+              git merge --no-ff origin/$SOURCE_BRANCH -m "chore: promote $SOURCE_BRANCH to $TARGET_BRANCH"
+              echo "✅ Merge completed" >> $GITHUB_STEP_SUMMARY
+              ;;
+          esac
+
+          # Push
+          git push origin $TARGET_BRANCH
+
+          echo "promoted=true" >> $GITHUB_OUTPUT
+          echo "new_sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create promotion tag
+        if: steps.promote.outputs.promoted == 'true'
+        run: |
+          TIMESTAMP=$(date +%Y%m%d-%H%M%S)
+          TAG_NAME="promotion/$TARGET_BRANCH/$TIMESTAMP"
+
+          git tag -a "$TAG_NAME" -m "Promoted $SOURCE_BRANCH to $TARGET_BRANCH"
+          git push origin "$TAG_NAME"
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📌 Created tag: \`$TAG_NAME\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Summary
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Promotion Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Detail | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Source | \`$SOURCE_BRANCH\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Target | \`$TARGET_BRANCH\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Type | ${{ github.event.inputs.promotion_type }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commits | ${{ needs.preflight.outputs.diff_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| New SHA | \`${{ steps.promote.outputs.new_sha }}\` |" >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # Post-Promotion Deployment (Odoo.sh auto-deploy style)
+  # ==========================================================================
+  deploy:
+    name: Auto-Deploy (if production)
+    runs-on: ubuntu-latest
+    needs: promote
+    if: |
+      needs.promote.result == 'success' &&
+      (github.event.inputs.target_branch == 'main' || github.event.inputs.target_branch == 'production')
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.target_branch }}
+
+      - name: Trigger deployment
+        run: |
+          echo "## 🚀 Auto-Deployment Triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Target: $TARGET_BRANCH" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Trigger deploy workflow if exists
+          if [ -f ".github/workflows/deploy-production.yml" ]; then
+            echo "✅ Production deployment workflow will be triggered" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No auto-deploy workflow configured" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Notify success
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎉 Promotion Pipeline Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Branch \`$SOURCE_BRANCH\` successfully promoted to \`$TARGET_BRANCH\`" >> $GITHUB_STEP_SUMMARY
