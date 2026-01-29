@@ -33,7 +33,9 @@ services:
     volumes:
       - odoo-web-data:/var/lib/odoo
       - ./config:/etc/odoo
-      - ./addons:/mnt/extra-addons
+      - ../addons/OCA:/mnt/extra-addons/OCA:ro
+      - ../addons/ipai:/mnt/extra-addons/ipai:ro
+      - ./addons:/mnt/extra-addons/local:rw
     secrets:
       - postgresql_password
     restart: unless-stopped
