@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 5f9e9fa4b795ddca54c04e81508747b3693d3bac
+> Commit: f0e79f10998ff871a813e2ea7c5f0a842deeba35
 
 ## 📚 Documentation
 
@@ -1165,6 +1165,10 @@
 | [Odoo Apps Inventory — Implementation Plan](spec/odoo-apps-inventory/plan.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Product Requirements Document](spec/odoo-apps-inventory/prd.md) | spec/odoo-apps-inventory |
 | [Odoo Apps Inventory — Task Checklist](spec/odoo-apps-inventory/tasks.md) | spec/odoo-apps-inventory |
+| [Constitution: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/constitution.md) | spec/odoo-ce-devops-master-plan |
+| [Implementation Plan: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/plan.md) | spec/odoo-ce-devops-master-plan |
+| [PRD: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/prd.md) | spec/odoo-ce-devops-master-plan |
+| [Tasks: Odoo CE DevOps Master Plan](spec/odoo-ce-devops-master-plan/tasks.md) | spec/odoo-ce-devops-master-plan |
 | [Constitution: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/constitution.md) | spec/odoo-ce-enterprise-replacement |
 | [Plan: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/plan.md) | spec/odoo-ce-enterprise-replacement |
 | [PRD: Odoo CE Enterprise Replacement](spec/odoo-ce-enterprise-replacement/prd.md) | spec/odoo-ce-enterprise-replacement |
