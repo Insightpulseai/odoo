@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InsightPulse AI - Custom Web Theme Demo</title>
+  <link rel="stylesheet" href="./insightpulse-ai.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--ipai-spacing-xxl);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--ipai-spacing-xl);
+      margin-bottom: var(--ipai-spacing-xxl);
+    }
+
+    .color-swatch {
+      display: flex;
+      flex-direction: column;
+      gap: var(--ipai-spacing-xs);
+    }
+
+    .color-box {
+      width: 100%;
+      height: 60px;
+      border-radius: var(--ipai-radius-medium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--ipai-font-size-200);
+      font-weight: var(--ipai-font-weight-semibold);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h1 class="ipai-text-900 ipai-font-bold" style="margin-bottom: var(--ipai-spacing-s);">
+        InsightPulse AI
+      </h1>
+      <p class="ipai-text-400" style="color: var(--ipai-neutral-70);">
+        Custom Web Theme - Fluent 2-aligned Design System
+      </p>
+    </header>
+
+    <!-- Typography Section -->
+    <section style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h2 class="ipai-text-700 ipai-font-semibold" style="margin-bottom: var(--ipai-spacing-l);">
+        Typography Scale
+      </h2>
+      <div class="ipai-card">
+        <p class="ipai-text-900 ipai-font-bold">Display (900)</p>
+        <p class="ipai-text-800 ipai-font-bold">Heading 1 (800)</p>
+        <p class="ipai-text-700 ipai-font-semibold">Heading 2 (700)</p>
+        <p class="ipai-text-600 ipai-font-semibold">Heading 3 (600)</p>
+        <p class="ipai-text-500 ipai-font-medium">Heading 4 (500)</p>
+        <p class="ipai-text-400">Body (400) - Default text size</p>
+        <p class="ipai-text-300">Small (300)</p>
+        <p class="ipai-text-200">Caption (200)</p>
+        <p class="ipai-text-100">Tiny (100)</p>
+      </div>
+    </section>
+
+    <!-- Buttons Section -->
+    <section style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h2 class="ipai-text-700 ipai-font-semibold" style="margin-bottom: var(--ipai-spacing-l);">
+        Button Components
+      </h2>
+      <div class="ipai-card">
+        <div style="display: flex; gap: var(--ipai-spacing-m); flex-wrap: wrap;">
+          <button class="ipai-btn ipai-btn-primary">Primary Button</button>
+          <button class="ipai-btn ipai-btn-secondary">Secondary Button</button>
+          <button class="ipai-btn ipai-btn-ai">✨ AI Action</button>
+          <button class="ipai-btn" style="background-color: var(--ipai-success); color: white;">
+            Success
+          </button>
+          <button class="ipai-btn" style="background-color: var(--ipai-error); color: white;">
+            Error
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Badges Section -->
+    <section style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h2 class="ipai-text-700 ipai-font-semibold" style="margin-bottom: var(--ipai-spacing-l);">
+        Badge Components
+      </h2>
+      <div class="ipai-card">
+        <div style="display: flex; gap: var(--ipai-spacing-s); flex-wrap: wrap;">
+          <span class="ipai-badge ipai-badge-success">✓ Success</span>
+          <span class="ipai-badge ipai-badge-warning">⚠ Warning</span>
+          <span class="ipai-badge ipai-badge-error">✕ Error</span>
+          <span class="ipai-badge ipai-badge-info">ℹ Info</span>
+          <span class="ipai-badge ipai-badge-ai">✨ AI</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Elements -->
+    <section style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h2 class="ipai-text-700 ipai-font-semibold" style="margin-bottom: var(--ipai-spacing-l);">
+        Form Elements
+      </h2>
+      <div class="ipai-card">
+        <form style="display: flex; flex-direction: column; gap: var(--ipai-spacing-m); max-width: 400px;">
+          <div>
+            <label for="name" class="ipai-text-300 ipai-font-semibold" style="display: block; margin-bottom: var(--ipai-spacing-xxs);">
+              Name
+            </label>
+            <input type="text" id="name" class="ipai-input" placeholder="Enter your name">
+          </div>
+          <div>
+            <label for="email" class="ipai-text-300 ipai-font-semibold" style="display: block; margin-bottom: var(--ipai-spacing-xxs);">
+              Email
+            </label>
+            <input type="email" id="email" class="ipai-input" placeholder="you@example.com">
+          </div>
+          <button type="submit" class="ipai-btn ipai-btn-primary">Submit</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Color Palette -->
+    <section style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h2 class="ipai-text-700 ipai-font-semibold" style="margin-bottom: var(--ipai-spacing-l);">
+        Primary Color Scale
+      </h2>
+      <div class="ipai-card">
+        <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));">
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-50); color: var(--ipai-neutral-100);">50</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-100); color: var(--ipai-neutral-100);">100</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-200); color: var(--ipai-neutral-100);">200</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-300); color: var(--ipai-neutral-0);">300</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-400); color: var(--ipai-neutral-0);">400</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-500); color: var(--ipai-neutral-0);">500</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-600); color: var(--ipai-neutral-0);">600</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-700); color: var(--ipai-neutral-0);">700</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-800); color: var(--ipai-neutral-0);">800</div>
+          </div>
+          <div class="color-swatch">
+            <div class="color-box" style="background-color: var(--ipai-primary-900); color: var(--ipai-neutral-0);">900</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Card Examples -->
+    <section style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h2 class="ipai-text-700 ipai-font-semibold" style="margin-bottom: var(--ipai-spacing-l);">
+        Card Layouts
+      </h2>
+      <div class="grid">
+        <div class="ipai-card">
+          <div class="ipai-card-header">Feature Card</div>
+          <div class="ipai-card-content">
+            This is a standard card component with header and content sections.
+            Use it for features, product displays, or information blocks.
+          </div>
+        </div>
+        <div class="ipai-card">
+          <div class="ipai-card-header">AI Feature</div>
+          <div class="ipai-card-content">
+            <span class="ipai-badge ipai-badge-ai" style="margin-bottom: var(--ipai-spacing-s); display: inline-block;">
+              ✨ AI-Powered
+            </span>
+            <p>This card showcases an AI-powered feature with the special AI accent color.</p>
+          </div>
+        </div>
+        <div class="ipai-card">
+          <div class="ipai-card-header">Stats Card</div>
+          <div class="ipai-card-content">
+            <div class="ipai-text-800 ipai-font-bold" style="color: var(--ipai-primary-500);">
+              1,234
+            </div>
+            <div class="ipai-text-200" style="color: var(--ipai-neutral-70);">
+              Active Users
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Elevation Examples -->
+    <section style="margin-bottom: var(--ipai-spacing-xxxl);">
+      <h2 class="ipai-text-700 ipai-font-semibold" style="margin-bottom: var(--ipai-spacing-l);">
+        Elevation Scale
+      </h2>
+      <div class="grid">
+        <div class="ipai-shadow-2" style="padding: var(--ipai-spacing-xl); background: white; border-radius: var(--ipai-radius-medium);">
+          <div class="ipai-font-semibold">Shadow 2</div>
+          <div class="ipai-text-200">Subtle elevation</div>
+        </div>
+        <div class="ipai-shadow-4" style="padding: var(--ipai-spacing-xl); background: white; border-radius: var(--ipai-radius-medium);">
+          <div class="ipai-font-semibold">Shadow 4</div>
+          <div class="ipai-text-200">Cards, buttons</div>
+        </div>
+        <div class="ipai-shadow-8" style="padding: var(--ipai-spacing-xl); background: white; border-radius: var(--ipai-radius-medium);">
+          <div class="ipai-font-semibold">Shadow 8</div>
+          <div class="ipai-text-200">Floating elements</div>
+        </div>
+        <div class="ipai-shadow-16" style="padding: var(--ipai-spacing-xl); background: white; border-radius: var(--ipai-radius-medium);">
+          <div class="ipai-font-semibold">Shadow 16</div>
+          <div class="ipai-text-200">Modals, dialogs</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage Instructions -->
+    <section>
+      <div class="ipai-card" style="background-color: var(--ipai-primary-50);">
+        <div class="ipai-card-header">Quick Start</div>
+        <div class="ipai-card-content">
+          <p style="margin-bottom: var(--ipai-spacing-s);">
+            To use this design system in your project:
+          </p>
+          <pre style="background: var(--ipai-neutral-0); padding: var(--ipai-spacing-m); border-radius: var(--ipai-radius-medium); overflow-x: auto; font-family: var(--ipai-font-family-mono); font-size: var(--ipai-font-size-200);">&lt;link rel="stylesheet" href="insightpulse-ai.css"&gt;</pre>
+          <p style="margin-top: var(--ipai-spacing-m);">
+            All design tokens are available as CSS custom properties with the <code style="font-family: var(--ipai-font-family-mono); background: var(--ipai-neutral-0); padding: 2px 6px; border-radius: var(--ipai-radius-small);">--ipai-</code> prefix.
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Floating AI Chat Widget (Optional) -->
+  <div class="ipai-chat-widget" id="chatWidget">
+    <button class="ipai-chat-fab" onclick="toggleChat()">✨</button>
+    <div class="ipai-chat-panel" id="chatPanel" style="display: none;">
+      <div class="ipai-chat-header">
+        <div style="display: flex; align-items: center; gap: var(--ipai-spacing-xs);">
+          <div class="ipai-chat-avatar">✨</div>
+          <div>
+            <div class="ipai-font-semibold">InsightPulse AI</div>
+            <div class="ipai-text-200" style="opacity: 0.9;">Always ready to help</div>
+          </div>
+        </div>
+        <button onclick="toggleChat()" style="background: none; border: none; color: white; font-size: var(--ipai-font-size-500); cursor: pointer;">✕</button>
+      </div>
+      <div class="ipai-chat-messages">
+        <div class="ipai-chat-message ipai-chat-message-assistant">
+          Hello! I'm InsightPulse AI. How can I help you today?
+        </div>
+      </div>
+      <div class="ipai-chat-input-container">
+        <input type="text" class="ipai-input" placeholder="Ask me anything...">
+        <button class="ipai-btn ipai-btn-primary">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleChat() {
+      const panel = document.getElementById('chatPanel');
+      panel.style.display = panel.style.display === 'none' ? 'flex' : 'none';
+    }
+  </script>
+</body>
+</html>
