@@ -50,7 +50,7 @@ License: MIT
     """,
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce",
-    "license": "MIT",
+    "license": "LGPL-3",
     "depends": [
         "web",
     ],
