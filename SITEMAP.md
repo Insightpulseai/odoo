@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 71c2fd72123b0cfbe6887d3a5fa899ddb01e1fab
+> Commit: 53330f2a22dd6af0be15e5b3366445961c41e983
 
 ## 📚 Documentation
 
@@ -278,6 +278,7 @@
 | [Docker SSOT Architecture](docs/DOCKER_SSOT_ARCHITECTURE.md) | docs |
 | [Docker Validation Guide](docs/DOCKER_VALIDATION_GUIDE.md) | docs |
 | [DOKS Deployment Success Criteria – Infra + Custom Features](docs/DOKS_DEPLOYMENT_SUCCESS_CRITERIA.md) | docs |
+| [Disaster Recovery Runbook](docs/DR_RUNBOOK.md) | docs |
 | [Odoo CE Ecosystem Guide for AI Agents](docs/ECOSYSTEM_GUIDE.md) | docs |
 | [EE/IAP to OCA/IPAI Replacement Mapping](docs/EE_IAP_TO_OCA_IPAI_MAPPING.md) | docs |
 | [Odoo Enterprise to CE+OCA Technical Mapping Guide](docs/EE_TO_CE_OCA_MAPPING.md) | docs |
@@ -1008,6 +1009,7 @@
 | [Odoo Project + Mailgun + Portal Automation](scripts/odoo-automation/README.md) | scripts/odoo-automation |
 | [Odoo Company Bootstrap Scripts](scripts/odoo/README_BOOTSTRAP.md) | scripts/odoo |
 | [Integration Provisioners](scripts/provisioners/README.md) | scripts/provisioners |
+| [Web Shell Threat Model](security/WEB_SHELL_THREAT_MODEL.md) | security |
 | [PPM Seed Data Bundle](seeds/README.md) | seeds |
 | [Notion Sync Service](services/notion-sync/README.md) | services/notion-sync |
 | [Process Mining API](services/pm_api/README.md) | services/pm_api |
