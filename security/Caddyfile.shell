@@ -1,0 +1,139 @@
+# =============================================================================
+# Caddyfile for Web Shell (Odoo.sh Parity - GAP 4)
+# =============================================================================
+# Provides secure reverse proxy for browser-based shell access
+# Features: SSL/TLS, Basic Auth, Rate Limiting, Security Headers
+# =============================================================================
+
+{
+    # Global options
+    email {$ACME_EMAIL:admin@insightpulseai.com}
+
+    # Use staging CA for testing (remove for production)
+    # acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+
+    # Security
+    servers {
+        protocols h1 h2
+    }
+
+    # Logging
+    log {
+        output file /var/log/caddy/access.log
+        format json
+        level INFO
+    }
+}
+
+# =============================================================================
+# Web Shell Endpoint
+# =============================================================================
+
+{$SHELL_DOMAIN:localhost}:{$SHELL_PORT:8443} {
+    # TLS configuration
+    tls {
+        protocols tls1.2 tls1.3
+        ciphers TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
+    }
+
+    # Security headers
+    header {
+        # HSTS
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+        # XSS Protection
+        X-XSS-Protection "1; mode=block"
+
+        # Content Type Options
+        X-Content-Type-Options "nosniff"
+
+        # Frame Options (allow for terminal iframe)
+        X-Frame-Options "SAMEORIGIN"
+
+        # CSP - permissive for terminal emulator
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' wss: ws:; img-src 'self' data:; font-src 'self' data:;"
+
+        # Referrer Policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+
+        # Permissions Policy
+        Permissions-Policy "geolocation=(), microphone=(), camera=()"
+
+        # Remove server header
+        -Server
+    }
+
+    # Rate limiting
+    rate_limit {
+        zone shell_limit {
+            key {remote_host}
+            events 30
+            window 1m
+        }
+    }
+
+    # Authentication (Basic Auth)
+    # Generate password: caddy hash-password
+    basicauth /shell/* {
+        {$SHELL_USER:admin} {$SHELL_PASSWORD_HASH:JDJhJDE0JGJlMmVlb0d4UXRyRVBNVnhYbTBYUnVvb1FTVEZkN3k4UUFvLmJOMWZKemVZTlRwT2pXZjdp}
+    }
+
+    # Health check endpoint (no auth)
+    handle /health {
+        respond "OK" 200
+    }
+
+    # Shell endpoint - proxy to Wetty
+    handle /shell* {
+        # WebSocket support
+        @websocket {
+            header Connection *Upgrade*
+            header Upgrade websocket
+        }
+
+        reverse_proxy @websocket wetty:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+
+            # WebSocket specific
+            transport http {
+                versions 1.1
+            }
+        }
+
+        # Regular HTTP
+        reverse_proxy wetty:3000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+            header_up X-Forwarded-For {remote_host}
+            header_up X-Forwarded-Proto {scheme}
+        }
+    }
+
+    # Deny everything else
+    handle {
+        respond "Forbidden" 403
+    }
+
+    # Logging
+    log {
+        output file /var/log/caddy/shell.log {
+            roll_size 10mb
+            roll_keep 5
+        }
+        format json {
+            time_format iso8601
+        }
+        level INFO
+    }
+}
+
+# =============================================================================
+# HTTP to HTTPS redirect
+# =============================================================================
+
+http://{$SHELL_DOMAIN:localhost} {
+    redir https://{host}{uri} permanent
+}
