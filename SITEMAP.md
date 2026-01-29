@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: f0e79f10998ff871a813e2ea7c5f0a842deeba35
+> Commit: 47a5bcbb1ea7c477b68a3130da31b19f31d2b611
 
 ## 📚 Documentation
 
@@ -501,6 +501,8 @@
 | [Final Status - OCA/ipai Manifest System Complete](docs/evidence/20260129-0130/FINAL_STATUS.md) | docs/evidence/20260129-0130 |
 | [OCA Repository Clone - Complete](docs/evidence/20260129-0130/oca-complete/ALL_REPOS_CLONED.md) | docs/evidence/20260129-0130/oca-complete |
 | [OCA/ipai Full Stack Installer - Complete](docs/evidence/20260129-0210/OCA_IPAI_INSTALLER_COMPLETE.md) | docs/evidence/20260129-0210 |
+| [Preflight Auto-Detection - Complete](docs/evidence/20260129-0215/PREFLIGHT_DETECTION_COMPLETE.md) | docs/evidence/20260129-0215 |
+| [Odoo.sh Feature Parity Analysis](docs/evidence/20260129-0215/odoosh-parity-analysis.md) | docs/evidence/20260129-0215 |
 | [Odoo Frontend Asset Fix - Evidence Document](docs/evidence/20260129-odoo-asset-fix.md) | docs/evidence |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
