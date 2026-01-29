@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e710aaf96bce93e889c3c67836f0492a0f8154b5
+> Commit: 71c2fd72123b0cfbe6887d3a5fa899ddb01e1fab
 
 ```
 .
@@ -378,6 +378,7 @@
 │   │   ├── ipai_foundation
 │   │   │   ├── models
 │   │   │   ├── security
+│   │   │   ├── static
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_helpdesk
@@ -2050,8 +2051,9 @@
 │   │   ├── 20260129-0130
 │   │   │   ├── oca-complete
 │   │   │   └── FINAL_STATUS.md
-│   │   └── 20260129-0210
-│   │       └── OCA_IPAI_INSTALLER_COMPLETE.md
+│   │   ├── 20260129-0210
+│   │   │   └── OCA_IPAI_INSTALLER_COMPLETE.md
+│   │   └── 20260129-odoo-asset-fix.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
 │   ├── github
@@ -5142,15 +5144,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1430 directories, 3707 files
+1431 directories, 3708 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1666 |
-| Files | 4973 |
+| Directories | 1669 |
+| Files | 4975 |
 | Python files | 829 |
 | XML files | 302 |
-| Markdown files | 1251 |
+| Markdown files | 1252 |
