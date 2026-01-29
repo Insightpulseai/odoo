@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 692ccd5ac21e6808107ab66e52418867be80a0b5
+> Commit: 3b9786c21d753f9b02dc7c199fe707ee2055993e
 
 ## 📚 Documentation
 
@@ -304,6 +304,7 @@
 | [ODOO-CE GO-LIVE CHECKLIST](docs/GO_LIVE_CHECKLIST.md) | docs |
 | [Odoo 18 CE + OCA + IPAI Go-Live Checklist (InsightPulseAI)](docs/GO_LIVE_CHECKLIST_ODOO18_IPAI.md) | docs |
 | [Go-Live & Production Checklist (Odoo 18 CE + OCA + IPAI)](docs/GO_LIVE_PRODUCTION_CHECKLIST.md) | docs |
+| [Go-Live Runbook: Odoo CE 19 + OCA Self-Hosted](docs/GO_LIVE_RUNBOOK.md) | docs |
 | [Header Cleanup & Login Fix - Deployment Summary](docs/HEADER_CLEANUP_SUMMARY.md) | docs |
 | [Finance Stack Health Check System](docs/HEALTH_CHECK.md) | docs |
 | [Target Image Documentation](docs/IMAGE_GUIDE.md) | docs |

@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 692ccd5ac21e6808107ab66e52418867be80a0b5
+> Commit: 3b9786c21d753f9b02dc7c199fe707ee2055993e
 
 ```
 .
@@ -2576,6 +2576,7 @@
 │   ├── GO_LIVE_CHECKLIST.md
 │   ├── GO_LIVE_CHECKLIST_ODOO18_IPAI.md
 │   ├── GO_LIVE_PRODUCTION_CHECKLIST.md
+│   ├── GO_LIVE_RUNBOOK.md
 │   ├── HEADER_CLEANUP_SUMMARY.md
 │   ├── HEALTH_CHECK.md
 │   ├── IMAGE_GUIDE.md
@@ -3586,7 +3587,10 @@
 │   │   ├── confirm_user.py
 │   │   └── set_password.ts
 │   ├── backup
+│   │   ├── backup_test.sh
+│   │   ├── create_backup.sh
 │   │   ├── full_backup.sh
+│   │   ├── restore_backup.sh
 │   │   └── restore_test.sh
 │   ├── ci
 │   │   ├── audit_tree_tags.sh
@@ -3938,6 +3942,7 @@
 │   ├── generate_seed_xml.py
 │   ├── generate_shadow_ddl.py
 │   ├── generate_spec_report.py
+│   ├── go_live.sh
 │   ├── go_no_go_check.sh
 │   ├── healthcheck_odoo.sh
 │   ├── hotfix_icon_crash.sh
@@ -4030,6 +4035,7 @@
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
 │   ├── skill_web_session_bridge.sh
+│   ├── smoke_test_odoo.sh
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
 │   ├── spec_validate.sh
@@ -5180,7 +5186,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1438 directories, 3737 files
+1438 directories, 3743 files
 ```
 
 ## 📊 Stats
@@ -5188,7 +5194,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1676 |
-| Files | 5004 |
+| Files | 5010 |
 | Python files | 830 |
 | XML files | 302 |
-| Markdown files | 1262 |
+| Markdown files | 1263 |
