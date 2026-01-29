@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 53330f2a22dd6af0be15e5b3366445961c41e983
+> Commit: 68ffa57badb1f973230a1cdd449e75bc12cbc059
 
 ```
 .
@@ -112,6 +112,7 @@
 │   │   ├── docs-architecture-sync.yml
 │   │   ├── docs-crawler-cron.yml
 │   │   ├── docs-current-state-gate.yml
+│   │   ├── docs-drift-gate.yml
 │   │   ├── docs-pages.yml
 │   │   ├── drive-sync-verify.yml
 │   │   ├── drive-sync.yml
@@ -2515,6 +2516,7 @@
 │   ├── CLAUDE_CODE_SETUP.md
 │   ├── CODESPACES_SETUP.md
 │   ├── CUSTOM_IMAGE_SUCCESS_CRITERIA.md
+│   ├── DB_INIT_RUNBOOK.md
 │   ├── DB_TUNING.md
 │   ├── DELIVERABLES_MANIFEST.md
 │   ├── DEPLOYMENT.md
@@ -3812,6 +3814,7 @@
 │   ├── check_addon_allowlist.py
 │   ├── check_go_live_manifest.py
 │   ├── check_module_status.sh
+│   ├── check_odoosh_parity.py
 │   ├── check_project_tasks.py
 │   ├── check_secrets.sh
 │   ├── check_undocumented_specs.py
@@ -3920,6 +3923,7 @@
 │   ├── generate_seed_xml.py
 │   ├── generate_shadow_ddl.py
 │   ├── generate_spec_report.py
+│   ├── go_no_go_check.sh
 │   ├── healthcheck_odoo.sh
 │   ├── hotfix_icon_crash.sh
 │   ├── hotfix_production.sh
@@ -5155,7 +5159,7 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1433 directories, 3717 files
+1433 directories, 3721 files
 ```
 
 ## 📊 Stats
@@ -5163,7 +5167,7 @@
 | Metric | Count |
 |--------|-------|
 | Directories | 1671 |
-| Files | 4984 |
-| Python files | 829 |
+| Files | 4988 |
+| Python files | 830 |
 | XML files | 302 |
-| Markdown files | 1254 |
+| Markdown files | 1255 |
