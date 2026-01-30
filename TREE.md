@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3b9786c21d753f9b02dc7c199fe707ee2055993e
+> Commit: 305708accf35eb468e7907aede85598dc6f0bf76
 
 ```
 .
@@ -157,6 +157,7 @@
 │   │   ├── odoo-ci-gate.yml
 │   │   ├── odoo-import-artifacts.yml
 │   │   ├── odoo-module-install-gate.yml
+│   │   ├── odoo-oca-lint.yml
 │   │   ├── odoo-overlay-install.yml
 │   │   ├── odoo-schema-pipeline.yml
 │   │   ├── ops-ci-router.yml
@@ -438,6 +439,7 @@
 │   │   ├── ipai_theme_fluent2
 │   │   │   ├── data
 │   │   │   ├── static
+│   │   │   ├── README.md
 │   │   │   ├── __init__.py
 │   │   │   └── __manifest__.py
 │   │   ├── ipai_theme_tbwa
@@ -1880,6 +1882,8 @@
 ├── docs
 │   ├── adr
 │   │   └── ADR-0001-clone-not-integrate.md
+│   ├── agents
+│   │   └── ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md
 │   ├── analytics
 │   │   └── LAKEHOUSE_PLAN.md
 │   ├── api
@@ -1987,6 +1991,7 @@
 │   │   ├── README.md
 │   │   └── WORKOS_DEPLOYMENT_PACKAGE.md
 │   ├── design-system
+│   │   ├── ODOO_FLUENT_DESIGN_SYSTEM.md
 │   │   ├── SHADCN_UI_DESIGN_SYSTEM_ANALYSIS.md
 │   │   └── shadcn-ui-skills-catalog.json
 │   ├── diagrams
@@ -2077,7 +2082,12 @@
 │   │       ├── POST_MORTEM.md
 │   │       └── error_envelope.json
 │   ├── infra
+│   │   ├── CANONICAL_DNS_INSIGHTPULSEAI.md
+│   │   ├── CANONICAL_ODOO_PACK.md
+│   │   ├── CANONICAL_ODOO_STACK_SNAPSHOT.md
 │   │   ├── DATABRICKS_TRAINING_GUIDELINES.md
+│   │   ├── DNS_ENHANCEMENT_GUIDE.md
+│   │   ├── EMAIL_INFRASTRUCTURE_STRATEGY.md
 │   │   ├── GIT_PREFLIGHT_DEPLOYMENT_REPORT.md
 │   │   ├── GIT_PREFLIGHT_INTEGRATION.md
 │   │   ├── GIT_PREFLIGHT_SUMMARY.md
@@ -2342,6 +2352,9 @@
 │   │   │   ├── EE_PARITY_NOTES_19.md
 │   │   │   ├── odoo_19_release_notes.html
 │   │   │   └── odoo_editions_comparison.html
+│   │   ├── odoo_sh
+│   │   │   ├── ODOO_SH_FEATURES_MAP.md
+│   │   │   └── PARITY_BACKLOG.md
 │   │   ├── CLEANUP_AND_HARDENING_CHECKLIST.md
 │   │   ├── COMPLIANCE_AND_LICENSING.md
 │   │   ├── EE_PARITY_LAYERING_ANALYSIS.md
@@ -2435,6 +2448,7 @@
 │   │   ├── ODOO_LOCAL_9069_HEALTH.md
 │   │   ├── PROD_RUNBOOK_ODOO.md
 │   │   ├── SANDBOX_OPTIONS.md
+│   │   ├── SUPABASE_EMAIL_EVENTS_PACK.md
 │   │   ├── digitalocean.md
 │   │   ├── figma-sites.md
 │   │   ├── supabase.md
@@ -3174,6 +3188,21 @@
 │   ├── requirements.txt
 │   ├── sync_to_supabase.py
 │   └── validate_parity.py
+├── odoo19
+│   ├── backups
+│   │   └── odoo_core.dump
+│   ├── config
+│   │   └── odoo.conf
+│   ├── docs
+│   │   └── evidence
+│   │       └── 20260129-2237
+│   ├── scripts
+│   │   └── backup_db.sh
+│   ├── CANONICAL_SETUP.md
+│   ├── MIGRATION_COMPLETE.md
+│   ├── MIGRATION_FROM_OLD_STACK.md
+│   ├── QUICK_REFERENCE.md
+│   └── compose.yaml
 ├── ops
 │   ├── alerting
 │   │   └── scoring.json
@@ -3398,6 +3427,9 @@
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   ├── ipai-design-tokens
+│   │   ├── demo
+│   │   │   ├── index.html
+│   │   │   └── main.tsx
 │   │   ├── src
 │   │   │   ├── react
 │   │   │   ├── build.ts
@@ -3405,6 +3437,10 @@
 │   │   │   ├── odooTokens.ts
 │   │   │   ├── tableauTokens.json
 │   │   │   └── tableauTokens.ts
+│   │   ├── QUICKSTART.md
+│   │   ├── README-AICHAT.md
+│   │   ├── demo-vanilla.html
+│   │   ├── insightpulse-ai.css
 │   │   ├── material3-expressive.css
 │   │   ├── package.json
 │   │   ├── tableau.css
@@ -3412,7 +3448,8 @@
 │   │   ├── tailwind-tableau.preset.js
 │   │   ├── tailwind.preset.js
 │   │   ├── tokens.css
-│   │   └── tokens.scss
+│   │   ├── tokens.scss
+│   │   └── vite.config.ts
 │   ├── saas-types
 │   │   ├── prisma
 │   │   │   └── schema.prisma
@@ -3521,14 +3558,22 @@
 │   │   ├── .github
 │   │   │   └── workflows
 │   │   ├── addons
-│   │   │   └── ipai
+│   │   │   ├── ipai
+│   │   │   ├── ipai_mailgun_bridge
+│   │   │   └── ipai_website_shell
 │   │   ├── config
 │   │   │   ├── .env.example
 │   │   │   └── odoo.conf
+│   │   ├── db
+│   │   │   ├── examples
+│   │   │   ├── functions
+│   │   │   └── types
 │   │   ├── docs
 │   │   │   ├── research
 │   │   │   ├── runbooks
+│   │   │   ├── EE_PARITY_INSTALL_PACK.md
 │   │   │   ├── ODOO_19_MIGRATION_STRATEGY.md
+│   │   │   ├── ODOO_FLUENT_DESIGN_SYSTEM.md
 │   │   │   ├── ODOO_FLUENT_DESIGN_SYSTEM_REFERENCE.md
 │   │   │   └── UI_CONSOLIDATION_STATUS.md
 │   │   ├── integration
@@ -3537,6 +3582,8 @@
 │   │   │   ├── brand
 │   │   │   ├── claude
 │   │   │   ├── dev
+│   │   │   ├── mailgun
+│   │   │   ├── supabase
 │   │   │   └── verify.sh
 │   │   ├── spec
 │   │   │   └── databricks-integration
@@ -3546,6 +3593,8 @@
 │   │   ├── CANONICAL_NAMING.md
 │   │   ├── CLAUDE.md
 │   │   ├── CLEANUP_REPORT.md
+│   │   ├── EE_PARITY_HEALTHCHECK_SUMMARY.md
+│   │   ├── EE_PARITY_PACK_SUMMARY.md
 │   │   ├── HOT_RELOAD_GUIDE.md
 │   │   ├── IMAGE_ALIGNMENT.md
 │   │   ├── IMPLEMENTATION_SUMMARY.md
@@ -3557,8 +3606,10 @@
 │   │   ├── REPORT.md
 │   │   ├── SETUP_GUIDE.md
 │   │   ├── SYNC_GUIDE.md
+│   │   ├── TESTING_READY.md
 │   │   ├── docker-compose.production.yml
 │   │   ├── docker-compose.yml
+│   │   ├── oca-addons -> /Users/tbwa/Documents/GitHub/odoo-ce/addons/external/oca
 │   │   ├── odoo.conf.production
 │   │   └── upgrade-to-odoo19.sh
 │   └── workbench
@@ -3743,6 +3794,8 @@
 │   │   ├── install-ce-apps.sh
 │   │   ├── install-oca-modules.sh
 │   │   ├── purge_assets.sh
+│   │   ├── validate_addons_path.py
+│   │   ├── validate_oca_layout.py
 │   │   ├── verify-ce-apps.sh
 │   │   ├── verify-full-parity.sh
 │   │   └── verify-oca-modules.sh
@@ -3792,6 +3845,7 @@
 │   │   │   ├── assert_exposed_schemas.sql
 │   │   │   ├── assert_policies_exist.sql
 │   │   │   └── assert_rls_enabled.sql
+│   │   ├── apply-email-events-pack.sh
 │   │   ├── checks.sh
 │   │   └── exposed_schemas.py
 │   ├── sync
@@ -3802,7 +3856,8 @@
 │   │   ├── schema-to-docs.js
 │   │   ├── schema-to-openapi.js
 │   │   ├── spec-to-prisma.js
-│   │   └── sync-all.js
+│   │   ├── sync-all.js
+│   │   └── sync_odoo_fluent_design_system.sh
 │   ├── .env.example
 │   ├── CONFIG_INVENTORY.txt
 │   ├── FIX_OWLERROR_GUIDE.md
@@ -3967,10 +4022,12 @@
 │   ├── install_oca_project_modules.sh
 │   ├── introspect_project.py
 │   ├── inventory_config_keys.sh
+│   ├── investigate-erp-domain.sh
 │   ├── ipai_ai_seed.sh
 │   ├── ipai_full_audit.py
 │   ├── ipai_install_upgrade_test.sh
 │   ├── ipai_quality_gate.sh
+│   ├── lint.sh
 │   ├── map_logframe.py
 │   ├── module_audit_agent.py
 │   ├── n8n-gitops.sh
@@ -4092,6 +4149,7 @@
 │   ├── verify-addons-mounts.sh
 │   ├── verify-codespaces-auth.sh
 │   ├── verify-control-plane.sh
+│   ├── verify-dns-enhancements.sh
 │   ├── verify-https.sh
 │   ├── verify-odoo-18-oca.sh
 │   ├── verify.sh
@@ -4603,6 +4661,8 @@
 │   │   │   └── index.ts
 │   │   ├── docs-ai-ask
 │   │   │   └── index.ts
+│   │   ├── email-events
+│   │   │   └── index.ts
 │   │   ├── executor
 │   │   │   ├── handlers
 │   │   │   ├── index.ts
@@ -4669,6 +4729,7 @@
 │   │   │   └── index.ts
 │   │   └── .env.example
 │   ├── migrations
+│   │   ├── 00000000000000_email_events_pack.sql
 │   │   ├── 20240101000001_kb_schema.sql
 │   │   ├── 20240101000002_studio_schema.sql
 │   │   ├── 20240101000003_sign_schema.sql
@@ -5186,15 +5247,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1438 directories, 3743 files
+1457 directories, 3785 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1676 |
-| Files | 5010 |
-| Python files | 830 |
-| XML files | 302 |
-| Markdown files | 1263 |
+| Directories | 1704 |
+| Files | 5087 |
+| Python files | 840 |
+| XML files | 305 |
+| Markdown files | 1289 |

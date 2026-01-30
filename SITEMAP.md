@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 3b9786c21d753f9b02dc7c199fe707ee2055993e
+> Commit: 305708accf35eb468e7907aede85598dc6f0bf76
 
 ## 📚 Documentation
 
@@ -120,6 +120,7 @@
 | [Planning Attendance](addons/ipai/ipai_planning_attendance/README.md) | addons/ipai/ipai_planning_attendance |
 | [Project Templates](addons/ipai/ipai_project_templates/README.md) | addons/ipai/ipai_project_templates |
 | [Electronic Sign](addons/ipai/ipai_sign/README.md) | addons/ipai/ipai_sign |
+| [InsightPulse AI Theme System for Odoo](addons/ipai/ipai_theme_fluent2/README.md) | addons/ipai/ipai_theme_fluent2 |
 | [WhatsApp Connector](addons/ipai/ipai_whatsapp_connector/README.md) | addons/ipai/ipai_whatsapp_connector |
 | [IPAI AI Agent Builder](addons/ipai_ai_agent_builder/README.md) | addons/ipai_ai_agent_builder |
 | [IPAI AI RAG](addons/ipai_ai_rag/README.md) | addons/ipai_ai_rag |
@@ -395,6 +396,7 @@
 | [WorkOS Production Deployment Manifest](docs/WORKOS_DEPLOYMENT_MANIFEST.md) | docs |
 | [Zoho Workplace DNS Configuration for insightpulseai.com](docs/ZOHO_DNS_SETUP.md) | docs |
 | [ADR-0001: Clone Not Integrate - Parity Module Philosophy](docs/adr/ADR-0001-clone-not-integrate.md) | docs/adr |
+| [Odoo Cloud DevOps Agent Skills](docs/agents/ODOO_CLOUD_DEVOPS_AGENT_SKILLS.md) | docs/agents |
 | [Lakehouse/Warehouse Plan for Odoo CE](docs/analytics/LAKEHOUSE_PLAN.md) | docs/analytics |
 | [Extended Platform API Documentation](docs/api/EXTENDED_PLATFORM_API.md) | docs/api |
 | [Architectural Convergence: Agentic AI, Headless ERP, and Cloud-Native Analytics](docs/architecture/AGENTIC_AI_ERP_ANALYTICS.md) | docs/architecture |
@@ -459,6 +461,7 @@
 | [WorkOS Production Deployment - Pre-Flight Checklist](docs/deployment/PRE_FLIGHT_CHECKLIST.md) | docs/deployment |
 | [Odoo CE Deployment & CI/CD Documentation](docs/deployment/README.md) | docs/deployment |
 | [WorkOS Production Deployment Package](docs/deployment/WORKOS_DEPLOYMENT_PACKAGE.md) | docs/deployment |
+| [CLAUDE.md — Odoo CE E-Commerce (Fluent Design System)](docs/design-system/ODOO_FLUENT_DESIGN_SYSTEM.md) | docs/design-system |
 | [shadcn/ui Design System - Complete Analysis & Certification Framework](docs/design-system/SHADCN_UI_DESIGN_SYSTEM_ANALYSIS.md) | docs/design-system |
 | [Architecture Diagrams](docs/diagrams/architecture/README.md) | docs/diagrams/architecture |
 | [EE Parity Map - Odoo CE 19 + OCA + ipai_enterprise_bridge](docs/ee_parity_map.md) | docs |
@@ -509,7 +512,12 @@
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
+| [Canonical DNS - insightpulseai.net](docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md) | docs/infra |
+| [Canonical Odoo Pack - Architecture & Layout](docs/infra/CANONICAL_ODOO_PACK.md) | docs/infra |
+| [CANONICAL_ODOO_STACK_SNAPSHOT.md](docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md) | docs/infra |
 | [Databricks Training Guidelines for Agent Development](docs/infra/DATABRICKS_TRAINING_GUIDELINES.md) | docs/infra |
+| [DNS Enhancement Guide - insightpulseai.net](docs/infra/DNS_ENHANCEMENT_GUIDE.md) | docs/infra |
+| [Email Infrastructure Strategy - insightpulseai.net](docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md) | docs/infra |
 | [Git Pre-Flight Integration - Deployment Report](docs/infra/GIT_PREFLIGHT_DEPLOYMENT_REPORT.md) | docs/infra |
 | [Git Pre-Flight Integration - Cross-Repository Pattern](docs/infra/GIT_PREFLIGHT_INTEGRATION.md) | docs/infra |
 | [Git Pre-Flight Integration - Implementation Summary](docs/infra/GIT_PREFLIGHT_SUMMARY.md) | docs/infra |
@@ -749,6 +757,8 @@
 | [Target Capability Suite](docs/parity/TARGET_CAPABILITIES.md) | docs/parity |
 | [Technical Parity Report: Odoo 18 CE + OCA + IPAI](docs/parity/TECHNICAL_PARITY_REPORT.md) | docs/parity |
 | [Odoo 19 vs IPAI Stack (EE-Parity Notes)](docs/parity/odoo19/EE_PARITY_NOTES_19.md) | docs/parity/odoo19 |
+| [Odoo.sh Features → Open-Stack Parity Map (SSOT)](docs/parity/odoo_sh/ODOO_SH_FEATURES_MAP.md) | docs/parity/odoo_sh |
+| [Odoo.sh Parity Backlog](docs/parity/odoo_sh/PARITY_BACKLOG.md) | docs/parity/odoo_sh |
 | [Supabase UI Library - Prioritized Backlog](docs/parity/supabase-ui-library_backlog.md) | docs/parity |
 | [Supabase UI Library - Block Catalog](docs/parity/supabase-ui-library_block_catalog.md) | docs/parity |
 | [Notion x Finance PPM Architecture](docs/ppm/architecture.md) | docs/ppm |
@@ -791,6 +801,7 @@
 | [Odoo Local 9069 Health Policy](docs/runbooks/ODOO_LOCAL_9069_HEALTH.md) | docs/runbooks |
 | [Production Runbook: Odoo on TBWA\SMP Infrastructure](docs/runbooks/PROD_RUNBOOK_ODOO.md) | docs/runbooks |
 | [Sandbox Options (Local CI + Codespaces + Local Docker + DigitalOcean)](docs/runbooks/SANDBOX_OPTIONS.md) | docs/runbooks |
+| [Supabase Email Events Pack](docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md) | docs/runbooks |
 | [Runbook: digitalocean](docs/runbooks/digitalocean.md) | docs/runbooks |
 | [Runbook: figma-sites](docs/runbooks/figma-sites.md) | docs/runbooks |
 | [Runbook: supabase](docs/runbooks/supabase.md) | docs/runbooks |
@@ -892,6 +903,10 @@
 | [InsightPulse OCR Adapter for Odoo](ocr-adapter/README.md) | ocr-adapter |
 | [Receipt OCR Test Harness](ocr-adapter/scripts/README.md) | ocr-adapter/scripts |
 | [Odoo 18 CE/OCA Integration Map](odoo/ODOO_INTEGRATION_MAP.md) | odoo |
+| [Canonical Odoo 19 Setup - Agent-Proof Configuration](odoo19/CANONICAL_SETUP.md) | odoo19 |
+| [Migration Complete: Canonical Odoo 19 Setup](odoo19/MIGRATION_COMPLETE.md) | odoo19 |
+| [Migration from Old Stack to Canonical Odoo 19 Setup](odoo19/MIGRATION_FROM_OLD_STACK.md) | odoo19 |
+| [Odoo 19 Canonical Setup - Quick Reference](odoo19/QUICK_REFERENCE.md) | odoo19 |
 | [System Prompt: The Odoo 18 CE & OCA Architect](odoo_ce_expert_prompt.md) | . |
 | [✅ Action Plan - Deploy Your Ops Control Room](ops-control/ACTION_PLAN.md) | ops-control |
 | [](ops-control/ATTRIBUTIONS.md) | ops-control |
@@ -968,6 +983,8 @@
 | [Odoo Enterprise → CE + OCA Parity Matrix](out/ee_parity_matrix.md) | out |
 | [OCA Module Inventory for EE→CE+OCA Migration](out/oca_inventory.md) | out |
 | [Agentic Codebase Crawler](packages/agentic-codebase-crawler/README.md) | packages/agentic-codebase-crawler |
+| [InsightPulse AI Design System - Quick Start](packages/ipai-design-tokens/QUICKSTART.md) | packages/ipai-design-tokens |
+| [InsightPulse AI Chat Widget & Design System](packages/ipai-design-tokens/README-AICHAT.md) | packages/ipai-design-tokens |
 | [Implementation Plan – InsightPulse Odoo CE](plan.md) | . |
 | [Platform Kit Kickoff - Delivery Summary](platform-kit/docs/KICKOFF_COMPLETE.md) | platform-kit/docs |
 | [Prototype Modules](prototypes/README.md) | prototypes |
@@ -978,6 +995,8 @@
 | [Canonical Database Naming Conventions](sandbox/dev/CANONICAL_NAMING.md) | sandbox/dev |
 | [CLAUDE.md](sandbox/dev/CLAUDE.md) | sandbox/dev |
 | [Disk Cleanup Report - Dev Sandbox](sandbox/dev/CLEANUP_REPORT.md) | sandbox/dev |
+| [EE Parity Healthcheck + CI Gate - Implementation Summary](sandbox/dev/EE_PARITY_HEALTHCHECK_SUMMARY.md) | sandbox/dev |
+| [EE Parity Installation Pack - Implementation Summary](sandbox/dev/EE_PARITY_PACK_SUMMARY.md) | sandbox/dev |
 | [Hot-Reload Development Guide](sandbox/dev/HOT_RELOAD_GUIDE.md) | sandbox/dev |
 | [Image Alignment Verification](sandbox/dev/IMAGE_ALIGNMENT.md) | sandbox/dev |
 | [Implementation Summary - Odoo Dev Sandbox Normalization](sandbox/dev/IMPLEMENTATION_SUMMARY.md) | sandbox/dev |
@@ -988,15 +1007,22 @@
 | [Odoo Dev Sandbox - Repository Audit Report](sandbox/dev/REPORT.md) | sandbox/dev |
 | [Odoo Dev Sandbox - Complete Setup Guide](sandbox/dev/SETUP_GUIDE.md) | sandbox/dev |
 | [Local ↔ Codespaces Synchronization Guide](sandbox/dev/SYNC_GUIDE.md) | sandbox/dev |
+| [EE-Parity Healthcheck + CI Gate - Ready for Testing](sandbox/dev/TESTING_READY.md) | sandbox/dev |
 | [IPAI Design System](sandbox/dev/addons/ipai/ipai_design_system/README.md) | sandbox/dev/addons/ipai/ipai_design_system |
+| [EE Parity Installation Pack](sandbox/dev/docs/EE_PARITY_INSTALL_PACK.md) | sandbox/dev/docs |
 | [Odoo 19 Migration Strategy for odoo-ce](sandbox/dev/docs/ODOO_19_MIGRATION_STRATEGY.md) | sandbox/dev/docs |
+| [Odoo-Fluent Design System (SSOT)](sandbox/dev/docs/ODOO_FLUENT_DESIGN_SYSTEM.md) | sandbox/dev/docs |
 | [Odoo-Fluent Design System Reference](sandbox/dev/docs/ODOO_FLUENT_DESIGN_SYSTEM_REFERENCE.md) | sandbox/dev/docs |
 | [UI/Theme Module Consolidation - Status Update](sandbox/dev/docs/UI_CONSOLIDATION_STATUS.md) | sandbox/dev/docs |
 | [GitHub Codespaces & Enterprise Features Research](sandbox/dev/docs/research/GITHUB_CODESPACES_ENTERPRISE_RESEARCH.md) | sandbox/dev/docs/research |
 | [GitHub Codespaces & Enterprise - Executive Summary](sandbox/dev/docs/research/GITHUB_EXECUTIVE_SUMMARY.md) | sandbox/dev/docs/research |
+| [Database Initialization - Non-Interactive Workflow](sandbox/dev/docs/runbooks/DATABASE_INIT.md) | sandbox/dev/docs/runbooks |
 | [Runbook: Fluent UI + Storybook Design System (IPAI)](sandbox/dev/docs/runbooks/DESIGN_SYSTEM_FLUENT_STORYBOOK.md) | sandbox/dev/docs/runbooks |
 | [Odoo 18 CE Dev Sandbox - Developer Runbook](sandbox/dev/docs/runbooks/DEV_SANDBOX.md) | sandbox/dev/docs/runbooks |
 | [Runbook: Docker Desktop Cleanup & SSOT Alignment](sandbox/dev/docs/runbooks/DOCKER_DESKTOP_CLEANUP.md) | sandbox/dev/docs/runbooks |
+| [Email Parity Pack - Implementation Summary](sandbox/dev/docs/runbooks/EMAIL_PARITY_IMPLEMENTATION_SUMMARY.md) | sandbox/dev/docs/runbooks |
+| [Email Parity Pack - Odoo CE 18 → EE Email Capabilities](sandbox/dev/docs/runbooks/EMAIL_PARITY_PACK.md) | sandbox/dev/docs/runbooks |
+| [Supabase Email Events Pack](sandbox/dev/docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md) | sandbox/dev/docs/runbooks |
 | [ODOO_CE_INTEGRATION.md — Strategic Separation with Operational Integration](sandbox/dev/integration/ODOO_CE_INTEGRATION.md) | sandbox/dev/integration |
 | [Azure Databricks API Acceleration Strategy — EE Parity + Data Platform](sandbox/dev/spec/databricks-integration/ACCELERATION_STRATEGY.md) | sandbox/dev/spec/databricks-integration |
 | [Databricks API Reference for odoo-ce Integration](sandbox/dev/spec/databricks-integration/API_REFERENCE.md) | sandbox/dev/spec/databricks-integration |
@@ -1381,6 +1407,8 @@
 | [ipai_fluent_web_365_copilot](./prototypes/ipai_fluent_web_365_copilot) | ✅ |  |
 | [ipai_theme_aiux](./prototypes/ipai_theme_aiux) | ✅ |  |
 | [ipai_design_system](./sandbox/dev/addons/ipai/ipai_design_system) | ✅ |  |
+| [ipai_mailgun_bridge](./sandbox/dev/addons/ipai_mailgun_bridge) | ✅ |  |
+| [ipai_website_shell](./sandbox/dev/addons/ipai_website_shell) | ✅ |  |
 | [ipai_enterprise_bridge](./spec/ipai_enterprise_bridge) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen) | ⚠️ | Missing manifest |
 | [ipai_module_gen](./tools/ipai_module_gen/ipai_module_gen) | ⚠️ | Missing manifest |
