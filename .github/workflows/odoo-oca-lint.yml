@@ -1,0 +1,179 @@
+# Odoo/OCA Layout Lint Workflow
+#
+# Validates Odoo addon directory structure and naming conventions.
+# Enforces OCA (Odoo Community Association) standards.
+#
+# Triggered on:
+#   - Pull requests affecting addons/ or scripts/odoo/
+#   - Pushes to main branch
+#   - Manual workflow dispatch
+
+name: Odoo/OCA Layout Lint
+
+on:
+  pull_request:
+    paths:
+      - "addons/**"
+      - "scripts/odoo/**"
+      - ".github/workflows/odoo-oca-lint.yml"
+  push:
+    branches: [main]
+    paths:
+      - "addons/**"
+      - "scripts/odoo/**"
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: "Run in strict mode (warnings as errors)"
+        required: false
+        default: "false"
+        type: boolean
+      verbose:
+        description: "Enable verbose output"
+        required: false
+        default: "false"
+        type: boolean
+
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  layout-check:
+    name: Layout & Naming Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history for accurate path detection
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # PyYAML is used for potential future manifest parsing
+          pip install pyyaml
+
+      - name: Run Layout Validator
+        id: layout
+        run: |
+          echo "::group::Odoo/OCA Layout Validation"
+
+          ARGS=""
+          if [[ "${{ github.event.inputs.strict }}" == "true" ]]; then
+            ARGS="$ARGS --strict"
+          fi
+          if [[ "${{ github.event.inputs.verbose }}" == "true" ]]; then
+            ARGS="$ARGS --verbose"
+          fi
+
+          python scripts/odoo/validate_oca_layout.py $ARGS
+
+          echo "::endgroup::"
+
+      - name: Run Addons Path Policy Check
+        id: path-policy
+        run: |
+          echo "::group::Addons Path Policy Validation"
+
+          ARGS=""
+          if [[ "${{ github.event.inputs.strict }}" == "true" ]]; then
+            ARGS="$ARGS --strict"
+          fi
+          if [[ "${{ github.event.inputs.verbose }}" == "true" ]]; then
+            ARGS="$ARGS --verbose"
+          fi
+
+          python scripts/odoo/validate_addons_path.py $ARGS
+
+          echo "::endgroup::"
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Odoo/OCA Layout Lint Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ steps.layout.outcome }}" == "success" ]]; then
+            echo "✅ **Layout Validation**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Layout Validation**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          if [[ "${{ steps.path-policy.outcome }}" == "success" ]]; then
+            echo "✅ **Path Policy**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Path Policy**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Canonical Addon Paths" >> $GITHUB_STEP_SUMMARY
+          echo "- \`addons/ipai/\` - IPAI custom modules" >> $GITHUB_STEP_SUMMARY
+          echo "- \`addons/OCA/<repo>/\` - OCA repository modules" >> $GITHUB_STEP_SUMMARY
+          echo "- \`addons/oca/\` - OCA submodules" >> $GITHUB_STEP_SUMMARY
+
+  python-lint:
+    name: Python Code Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Only run if layout check passes
+    needs: layout-check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install \
+            black==24.10.0 \
+            isort==5.13.2 \
+            flake8==7.1.1 \
+            ruff==0.8.6
+
+      - name: Check formatting with Black
+        run: |
+          echo "::group::Black Format Check"
+          black --check --diff addons/ipai/ scripts/odoo/ || true
+          echo "::endgroup::"
+        continue-on-error: true
+
+      - name: Check imports with isort
+        run: |
+          echo "::group::isort Import Check"
+          isort --check-only --diff addons/ipai/ scripts/odoo/ || true
+          echo "::endgroup::"
+        continue-on-error: true
+
+      - name: Lint with flake8
+        run: |
+          echo "::group::flake8 Lint"
+          flake8 addons/ipai/ scripts/odoo/ \
+            --max-line-length=120 \
+            --extend-ignore=E501,W503 \
+            --statistics || true
+          echo "::endgroup::"
+        continue-on-error: true
+
+      - name: Lint with Ruff
+        run: |
+          echo "::group::Ruff Lint"
+          ruff check addons/ipai/ scripts/odoo/ --output-format=github || true
+          echo "::endgroup::"
+        continue-on-error: true

@@ -30,7 +30,7 @@ This module is typically installed as a dependency. It provides:
 - Theme switching JavaScript utilities
 - Base SCSS mixins and functions
     """,
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Themes",
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce",

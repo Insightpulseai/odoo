@@ -1,0 +1,46 @@
+=== CONTAINERS ===
+NAMES                               IMAGE                                                   STATUS                            PORTS
+odoo19-web-1                        odoo:19.0                                               Up 41 minutes                     0.0.0.0:8069->8069/tcp, [::]:8069->8069/tcp, 8071-8072/tcp
+odoo19-db-1                         postgres:16                                             Up 42 minutes (healthy)           5432/tcp
+odoo19-db                           postgres:16-alpine                                      Up 10 hours (healthy)             5432/tcp
+plane-worker-1                      plane-worker                                            Up 10 hours                       8000/tcp
+plane-beat-worker-1                 plane-beat-worker                                       Up 10 hours                       8000/tcp
+plane-api-1                         plane-api                                               Up 10 hours                       0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp
+plane-plane-mq-1                    rabbitmq:3.13.6-management-alpine                       Up 10 hours                       4369/tcp, 5671-5672/tcp, 15671-15672/tcp, 15691-15692/tcp, 25672/tcp
+plane-plane-minio-1                 minio/minio                                             Up 10 hours                       0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp, 0.0.0.0:9090->9090/tcp, [::]:9090->9090/tcp
+plane-plane-db-1                    postgres:15.7-alpine                                    Up 10 hours                       0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+plane-plane-redis-1                 valkey/valkey:7.2.11-alpine                             Up 10 hours                       0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+supabase_studio_atomic-crm-demo     public.ecr.aws/supabase/studio:2025.12.23-sha-f3af2c3   Up 10 hours (healthy)             0.0.0.0:54323->3000/tcp, [::]:54323->3000/tcp
+supabase_pg_meta_atomic-crm-demo    public.ecr.aws/supabase/postgres-meta:v0.95.1           Up 10 hours (healthy)             8080/tcp
+supabase_rest_atomic-crm-demo       public.ecr.aws/supabase/postgrest:v14.2                 Up 10 hours                       3000/tcp
+supabase_realtime_atomic-crm-demo   public.ecr.aws/supabase/realtime:v2.69.0                Restarting (1) 4 seconds ago      
+supabase_inbucket_atomic-crm-demo   public.ecr.aws/supabase/mailpit:v1.22.3                 Up 10 hours (healthy)             1025/tcp, 1110/tcp, 0.0.0.0:54324->8025/tcp, [::]:54324->8025/tcp
+supabase_auth_atomic-crm-demo       public.ecr.aws/supabase/gotrue:v2.184.0                 Up 9 seconds (health: starting)   9999/tcp
+supabase_kong_atomic-crm-demo       public.ecr.aws/supabase/kong:2.8.1                      Up 10 hours (healthy)             8001/tcp, 8088/tcp, 8443-8444/tcp, 0.0.0.0:54321->8000/tcp, [::]:54321->8000/tcp
+supabase_db_atomic-crm-demo         public.ecr.aws/supabase/postgres:15.8.1.085             Restarting (1) 32 seconds ago     
+
+=== DB LIST (canonical odoo19-db-1) ===
+                                                                                     List of databases
+   Name    | Owner | Encoding | Locale Provider |  Collate   |   Ctype    | ICU Locale | ICU Rules | Access privileges |  Size   | Tablespace |                Description                 
+-----------+-------+----------+-----------------+------------+------------+------------+-----------+-------------------+---------+------------+--------------------------------------------
+ odoo      | odoo  | UTF8     | libc            | C          | en_US.utf8 |            |           |                   | 22 MB   | pg_default | 
+ postgres  | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |                   | 7516 kB | pg_default | default administrative connection database
+ template0 | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/odoo          +| 7361 kB | pg_default | unmodifiable empty database
+           |       |          |                 |            |            |            |           | odoo=CTc/odoo     |         |            | 
+ template1 | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/odoo          +| 7580 kB | pg_default | default template for new databases
+           |       |          |                 |            |            |            |           | odoo=CTc/odoo     |         |            | 
+(4 rows)
+
+
+=== DB LIST (old odoo19-db) ===
+                                                                                     List of databases
+   Name    | Owner | Encoding | Locale Provider |  Collate   |   Ctype    | ICU Locale | ICU Rules | Access privileges |  Size   | Tablespace |                Description                 
+-----------+-------+----------+-----------------+------------+------------+------------+-----------+-------------------+---------+------------+--------------------------------------------
+ odoo_core | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |                   | 22 MB   | pg_default | 
+ postgres  | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           |                   | 7516 kB | pg_default | default administrative connection database
+ template0 | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/odoo          +| 7361 kB | pg_default | unmodifiable empty database
+           |       |          |                 |            |            |            |           | odoo=CTc/odoo     |         |            | 
+ template1 | odoo  | UTF8     | libc            | en_US.utf8 | en_US.utf8 |            |           | =c/odoo          +| 7580 kB | pg_default | default template for new databases
+           |       |          |                 |            |            |            |           | odoo=CTc/odoo     |         |            | 
+(4 rows)
+

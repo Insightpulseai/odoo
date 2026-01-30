@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Module Namespace",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Hidden",
     "summary": "InsightPulse AI namespace for Odoo CE modules",
     "description": """

@@ -1,6 +1,6 @@
 {
     "name": "IPAI Design System (SSOT)",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Theme/Backend",
     "summary": "Single Source of Truth for all IPAI UI/UX: tokens, components, and brand styling",
     "description": """

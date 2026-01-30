@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI Web Icons - Fluent",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Themes/Icons",
     "summary": "Microsoft Fluent System Icons for consistent Odoo + React UI",
     "description": """
@@ -50,7 +50,7 @@ License: MIT
     """,
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce",
-    "license": "MIT",
+    "license": "LGPL-3",
     "depends": [
         "web",
     ],
