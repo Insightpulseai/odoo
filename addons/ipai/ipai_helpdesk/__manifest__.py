@@ -21,7 +21,7 @@
         - project (uses project.task model concepts)
         - portal (self-service access)
     """,
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Services/Helpdesk",
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",

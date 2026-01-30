@@ -26,7 +26,7 @@
         - Pag-IBIG Fund guidelines
         - BIR RR 11-2018 (TRAIN Law tax tables)
     """,
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Human Resources/Payroll",
     "author": "InsightPulse AI",
     "website": "https://insightpulseai.net",

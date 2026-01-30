@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "DEPRECATED: IPAI UI Brand Tokens",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Themes",
     "summary": "DEPRECATED - Use ipai_design_system_apps_sdk instead. Do not install.",
     "description": """

@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl-3.0.en.html).
 {
     "name": "IPAI Vertical Retail (Scout)",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "summary": "Retail/FMCG vertical layer for Scout on top of Odoo 18 CE + OCA.",
     "description": """
 IPAI Vertical Retail (Scout)

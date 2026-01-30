@@ -46,8 +46,13 @@ VALID_LICENSES = [
 # OCA-recommended licenses
 OCA_LICENSES = ["AGPL-3", "GPL-3", "LGPL-3"]
 
-# Version pattern (Odoo 18.0.x.y.z format)
-VERSION_PATTERN = re.compile(r"^1[4-9]\.0\.\d+\.\d+\.\d+$")
+# Version pattern (Odoo 19.0.x.y.z format - strict Odoo 19 only)
+VERSION_PATTERN = re.compile(r"^19\.0\.\d+\.\d+\.\d+$")
+
+# Custom namespace prefixes that should never be flagged as Enterprise dependencies
+CUSTOM_NAMESPACE_ALLOWLIST = [
+    "ipai_",
+]
 
 # Enterprise module indicators
 ENTERPRISE_INDICATORS = [
@@ -155,7 +160,7 @@ def validate_manifest(manifest_path: Path) -> List[ManifestError]:
             ManifestError(
                 path_str,
                 "warning",
-                f"Version '{version}' does not follow Odoo format (e.g., 18.0.1.0.0)",
+                f"Version '{version}' does not follow Odoo 19 format (e.g., 19.0.1.0.0)",
             )
         )
 
@@ -185,6 +190,9 @@ def validate_manifest(manifest_path: Path) -> List[ManifestError]:
     depends = manifest.get("depends", [])
     if isinstance(depends, list):
         for dep in depends:
+            # Skip custom namespace modules (ipai_* etc.)
+            if dep.startswith(tuple(CUSTOM_NAMESPACE_ALLOWLIST)):
+                continue
             for indicator in ENTERPRISE_INDICATORS:
                 if indicator in dep:
                     errors.append(

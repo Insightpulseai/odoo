@@ -23,14 +23,16 @@ Secrets are **never committed to Git**. Only references and loading scripts live
 
 All Claude-compatible agents must treat this table as the **single source of truth** for required secrets.
 
-| Purpose                    | Env var name                 | Source (local)        | Source (remote/CI)     |
-|---------------------------|------------------------------|-----------------------|------------------------|
-| Claude API key            | `CLAUDE_API_KEY`             | macOS Keychain        | Supabase Vault         |
-| OpenAI API key (optional) | `OPENAI_API_KEY`             | macOS Keychain        | Supabase Vault         |
-| Supabase URL              | `SUPABASE_URL`               | macOS Keychain        | Supabase Vault         |
-| Supabase anon key         | `SUPABASE_ANON_KEY`          | macOS Keychain        | Supabase Vault         |
-| Supabase service role key | `SUPABASE_SERVICE_ROLE_KEY`  | macOS Keychain        | Supabase Vault         |
-| GitHub token (if needed)  | `GITHUB_TOKEN`               | macOS Keychain        | Supabase Vault         |
+| Purpose                    | Env var name                   | Source (local)        | Source (remote/CI)     |
+|---------------------------|--------------------------------|-----------------------|------------------------|
+| Claude API key            | `CLAUDE_API_KEY`               | macOS Keychain        | Supabase Vault         |
+| OpenAI API key (optional) | `OPENAI_API_KEY`               | macOS Keychain        | Supabase Vault         |
+| Supabase URL              | `SUPABASE_URL`                 | macOS Keychain        | Supabase Vault         |
+| Supabase anon key         | `SUPABASE_ANON_KEY`            | macOS Keychain        | Supabase Vault         |
+| Supabase service role key | `SUPABASE_SERVICE_ROLE_KEY`    | macOS Keychain        | Supabase Vault         |
+| PostgreSQL connection URL | `POSTGRES_URL`                 | macOS Keychain        | Supabase Vault         |
+| Mailgun webhook signing   | `MAILGUN_WEBHOOK_SIGNING_KEY`  | macOS Keychain        | Supabase Vault         |
+| GitHub token (if needed)  | `GITHUB_TOKEN`                 | macOS Keychain        | Supabase Vault         |
 
 > **NOTE:** If additional secrets are introduced, they must be added to this table and wired into both Keychain and Vault loading flows.
 
@@ -68,8 +70,10 @@ security add-generic-password -s ipai_claude_secrets -a CLAUDE_API_KEY          
 security add-generic-password -s ipai_claude_secrets -a SUPABASE_URL             -w "REPLACE"
 security add-generic-password -s ipai_claude_secrets -a SUPABASE_ANON_KEY        -w "REPLACE"
 security add-generic-password -s ipai_claude_secrets -a SUPABASE_SERVICE_ROLE_KEY -w "REPLACE"
+security add-generic-password -s ipai_claude_secrets -a POSTGRES_URL             -w "REPLACE"
 
 # OPTIONAL
+security add-generic-password -s ipai_claude_secrets -a MAILGUN_WEBHOOK_SIGNING_KEY -w "REPLACE"
 security add-generic-password -s ipai_claude_secrets -a OPENAI_API_KEY           -w "REPLACE"
 security add-generic-password -s ipai_claude_secrets -a GITHUB_TOKEN             -w "REPLACE"
 ```
@@ -93,9 +97,11 @@ REQUIRED_SECRETS=(
   "SUPABASE_URL"
   "SUPABASE_ANON_KEY"
   "SUPABASE_SERVICE_ROLE_KEY"
+  "POSTGRES_URL"
 )
 
 OPTIONAL_SECRETS=(
+  "MAILGUN_WEBHOOK_SIGNING_KEY"
   "OPENAI_API_KEY"
   "GITHUB_TOKEN"
 )
@@ -179,7 +185,8 @@ Required keys in Vault:
 - `SUPABASE_URL`
 - `SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- Optional: `OPENAI_API_KEY`, `GITHUB_TOKEN`, etc.
+- `POSTGRES_URL`
+- Optional: `MAILGUN_WEBHOOK_SIGNING_KEY`, `OPENAI_API_KEY`, `GITHUB_TOKEN`, etc.
 
 > TODO: Add the exact SQL / RPC function definition for Vault reads when the Supabase project structure is finalized.
 
@@ -193,6 +200,8 @@ All non-local runs (CI, remote agents) must obtain secrets by calling a **Supaba
   "SUPABASE_URL": "*****",
   "SUPABASE_ANON_KEY": "*****",
   "SUPABASE_SERVICE_ROLE_KEY": "*****",
+  "POSTGRES_URL": "*****",
+  "MAILGUN_WEBHOOK_SIGNING_KEY": "*****",
   "OPENAI_API_KEY": "*****",
   "GITHUB_TOKEN": "*****"
 }
@@ -232,9 +241,11 @@ required_vars=(
   "SUPABASE_URL"
   "SUPABASE_ANON_KEY"
   "SUPABASE_SERVICE_ROLE_KEY"
+  "POSTGRES_URL"
 )
 
 optional_vars=(
+  "MAILGUN_WEBHOOK_SIGNING_KEY"
   "OPENAI_API_KEY"
   "GITHUB_TOKEN"
 )
@@ -281,6 +292,7 @@ Any Claude-compatible agent or tool **must** follow this sequence:
    : "${SUPABASE_URL:?SUPABASE_URL is required but not set}"
    : "${SUPABASE_ANON_KEY:?SUPABASE_ANON_KEY is required but not set}"
    : "${SUPABASE_SERVICE_ROLE_KEY:?SUPABASE_SERVICE_ROLE_KEY is required but not set}"
+   : "${POSTGRES_URL:?POSTGRES_URL is required but not set}"
    ```
 
 3. **Run agent / tool** (Claude, Supabase, GitHub, etc.) only after step 2 passes.

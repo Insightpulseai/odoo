@@ -3,7 +3,7 @@
 {
     "name": "IPAI Enterprise Bridge",
     "summary": "Replace Odoo Enterprise/IAP features with CE+OCA alternatives",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Technical",
     "author": "InsightPulseAI",
     "website": "https://github.com/jgtolentino/odoo-ce",

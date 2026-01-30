@@ -1,0 +1,16 @@
+/* IPAI minimal site shell */
+
+/* Reduce excessive vertical whitespace that makes pages feel "template-y" */
+main#wrapwrap {
+  min-height: calc(100vh - 120px);
+}
+
+/* Minimal footer */
+.ipai-footer-min {
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Optional: if your theme adds a big footer background, keep it subtle */
+.ipai-footer-min {
+  background: #0b1220;
+}

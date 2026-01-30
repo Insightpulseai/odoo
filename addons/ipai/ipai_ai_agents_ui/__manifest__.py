@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     "name": "IPAI AI Agents UI (React + Fluent)",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Productivity/AI",
     "summary": "React + Fluent UI v9 panel for AI agents (Ask AI, citations, evidence)",
     "description": """
