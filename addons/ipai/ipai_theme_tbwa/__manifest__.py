@@ -1,6 +1,6 @@
 {
     "name": "IPAI Theme TBWA (Backend)",
-    "version": "18.0.2.0.0",
+    "version": "19.0.2.0.0",
     "summary": "TBWA brand skin for Odoo backend - overrides ipai_platform_theme tokens",
     "description": """
 IPAI Theme TBWA (Backend)

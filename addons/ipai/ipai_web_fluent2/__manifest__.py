@@ -1,6 +1,6 @@
 {
     "name": "DEPRECATED: IPAI Web Fluent 2 Theme Layer",
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Themes/Backend",
     "summary": "DEPRECATED - Use ipai_design_system_apps_sdk instead. Do not install.",
     "author": "InsightPulse AI",
