@@ -40,7 +40,7 @@ services:
   # Odoo CE 19 + EE Parity - Dev Instance with Hot Reload
   # ─────────────────────────────────────────────────────────────────────────────
   odoo:
-    image: ghcr.io/jgtolentino/odoo-ce:${ODOO_IMAGE_TAG:-19.0-ee-parity}
+    image: odoo:${ODOO_IMAGE_TAG:-18.0}
     container_name: odoo-dev
     restart: unless-stopped
     depends_on:

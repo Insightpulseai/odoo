@@ -25,7 +25,7 @@ Per the minimal stack policy, this is one of 4 allowed IPAI modules:
 3. ipai_theme_copilot (this theme)
 4. ipai_ask_ai_bridge (AI launcher)
     """,
-    "version": "18.0.1.0.0",
+    "version": "19.0.1.0.0",
     "category": "Theme/Backend",
     "author": "InsightPulse AI",
     "website": "https://github.com/jgtolentino/odoo-ce",

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <!-- CRM Sales alias -->
+        <record id="ipai_mailgun_crm_alias" model="mail.alias">
+            <field name="alias_name">sales</field>
+            <field name="alias_model_id" ref="crm.model_crm_lead"/>
+            <field name="alias_contact">everyone</field>
+            <field name="alias_defaults">{}</field>
+        </record>
+
+        <!-- Project alias -->
+        <record id="ipai_mailgun_project_alias" model="mail.alias">
+            <field name="alias_name">projects</field>
+            <field name="alias_model_id" ref="project.model_project_task"/>
+            <field name="alias_contact">everyone</field>
+            <field name="alias_defaults">{}</field>
+        </record>
+
+        <!-- Support alias (generic mail.channel for support - no helpdesk dependency) -->
+        <record id="ipai_mailgun_support_alias" model="mail.alias">
+            <field name="alias_name">support</field>
+            <field name="alias_model_id" ref="mail.model_mail_channel"/>
+            <field name="alias_contact">everyone</field>
+            <field name="alias_defaults">{'name': 'Support Inbox'}</field>
+        </record>
+
+    </data>
+</odoo>

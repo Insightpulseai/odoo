@@ -1,0 +1,178 @@
+name: EE Parity Check
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/**'
+  pull_request:
+    branches:
+      - main
+      - 'release/**'
+
+jobs:
+  ee-parity-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo
+          POSTGRES_DB: odoo_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache OCA modules
+        uses: actions/cache@v4
+        with:
+          path: oca-addons
+          key: oca-addons-${{ hashFiles('oca.lock.json') }}
+          restore-keys: |
+            oca-addons-
+
+      - name: Install OCA dependencies
+        run: |
+          if [ ! -d "oca-addons" ]; then
+            echo "OCA modules not in cache, cloning required repositories..."
+            mkdir -p oca-addons
+            # Clone required OCA repositories (example - adjust based on oca.lock.json)
+            # This would normally be automated via oca-aggregate tool
+            git clone --depth 1 --branch 18.0 https://github.com/OCA/server-ux.git oca-addons/server-ux || true
+            git clone --depth 1 --branch 18.0 https://github.com/OCA/account-financial-reporting.git oca-addons/account-financial-reporting || true
+            git clone --depth 1 --branch 18.0 https://github.com/OCA/account-financial-tools.git oca-addons/account-financial-tools || true
+          fi
+
+      - name: Install Odoo dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpq-dev libxml2-dev libxslt1-dev libldap2-dev libsasl2-dev libjpeg-dev
+          pip install --upgrade pip
+          pip install wheel
+          # Install Odoo Python dependencies (adjust path to requirements.txt)
+          pip install psycopg2-binary python-dateutil pytz lxml pillow
+
+      - name: Create .env for CI
+        run: |
+          cat > .env << 'EOF'
+          ODOO_DB_NAME=odoo_test
+          ODOO_CONTAINER=odoo-ci
+          POSTGRES_USER=odoo
+          POSTGRES_PASSWORD=odoo
+          POSTGRES_HOST=localhost
+          POSTGRES_PORT=5432
+
+          # EE Parity – OCA Accounting (11 modules)
+          ODOO_EE_PARITY_OCA_MODULES_ACCOUNTING="\
+          account_usability,\
+          account_asset_management,\
+          account_chart_update,\
+          account_financial_report,\
+          account_reconcile_oca,\
+          account_reconcile_model_oca,\
+          account_statement_base,\
+          currency_rate_update,\
+          mis_builder,\
+          mis_builder_budget,\
+          partner_statement\
+          "
+
+          # EE Parity – OCA Base/UX (6 modules)
+          ODOO_EE_PARITY_OCA_MODULES_BASE="\
+          base_technical_features,\
+          disable_odoo_online,\
+          remove_odoo_enterprise,\
+          web_environment_ribbon,\
+          web_m2x_options,\
+          web_responsive\
+          "
+
+          # EE Parity – OCA Sales (4 modules)
+          ODOO_EE_PARITY_OCA_MODULES_SALES="\
+          portal_sale_order_search,\
+          sale_delivery_state,\
+          sale_fixed_discount,\
+          sale_order_archive\
+          "
+
+          # Rollup
+          ODOO_EE_PARITY_OCA_MODULES="\
+          ${ODOO_EE_PARITY_OCA_MODULES_ACCOUNTING},\
+          ${ODOO_EE_PARITY_OCA_MODULES_BASE},\
+          ${ODOO_EE_PARITY_OCA_MODULES_SALES}\
+          "
+
+          # IPAI Custom Modules
+          ODOO_EE_PARITY_IPAI_MODULES="ipai_mailgun_bridge"
+          EOF
+
+      - name: Start Odoo in CI mode
+        run: |
+          # Create minimal odoo.conf for CI
+          cat > config/odoo.conf << 'EOF'
+          [options]
+          admin_passwd = admin
+          db_host = localhost
+          db_port = 5432
+          db_user = odoo
+          db_password = odoo
+          db_name = odoo_test
+          addons_path = addons,oca-addons/server-ux,oca-addons/account-financial-reporting,oca-addons/account-financial-tools
+          log_level = info
+          EOF
+
+          # Initialize database (would normally use docker-compose, but this is CI)
+          # This step would need Odoo binary available - adjust based on your setup
+          echo "Note: This workflow template assumes Odoo binary is available"
+          echo "Adjust installation steps based on your Odoo deployment method"
+
+      - name: Install EE-parity modules
+        run: |
+          # This would run your install script
+          # For CI, you may need to adapt the script to work without Docker Compose
+          echo "Running EE-parity module installation..."
+          # ./scripts/dev/install-ee-parity-modules.sh
+          echo "Note: Adjust this step based on your CI environment setup"
+
+      - name: Run EE-parity healthcheck
+        run: |
+          echo "Running EE-parity healthcheck..."
+          ./scripts/dev/ee-parity-healthcheck.sh
+
+      - name: Upload healthcheck results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ee-parity-healthcheck-results
+          path: |
+            logs/
+            *.log
+          retention-days: 7
+
+      - name: Comment on PR (on failure)
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ **EE Parity Check Failed**\n\nSome EE-parity modules are not properly installed. Please review the [workflow logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.\n\nRun locally: `./scripts/dev/ee-parity-healthcheck.sh`'
+            })
