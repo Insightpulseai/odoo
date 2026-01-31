@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 305708accf35eb468e7907aede85598dc6f0bf76
+> Commit: e108f16b358584afd7a2db170a092d300eba45ba
 
 ```
 .
@@ -19,6 +19,7 @@
 │   │   ├── plan.md
 │   │   ├── prototype-module.md
 │   │   ├── ship.md
+│   │   ├── ssot-doctrine.md
 │   │   └── verify.md
 │   ├── hooks
 │   │   └── SessionStart.md
@@ -4590,6 +4591,12 @@
 │   │   ├── plan.md
 │   │   ├── prd.md
 │   │   └── tasks.md
+│   ├── supabase-ssot-doctrine
+│   │   ├── agent-prompt.md
+│   │   ├── constitution.md
+│   │   ├── plan.md
+│   │   ├── prd.md
+│   │   └── tasks.md
 │   ├── test-coverage-improvement
 │   │   ├── constitution.md
 │   │   ├── plan.md
@@ -5247,15 +5254,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1457 directories, 3785 files
+1458 directories, 3791 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1704 |
-| Files | 5087 |
+| Directories | 1705 |
+| Files | 5093 |
 | Python files | 840 |
 | XML files | 305 |
-| Markdown files | 1289 |
+| Markdown files | 1295 |
