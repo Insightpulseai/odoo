@@ -1,0 +1,159 @@
+name: Deploy Plane CE
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Action to perform'
+        required: true
+        default: 'deploy'
+        type: choice
+        options:
+          - deploy
+          - create-db
+          - status
+          - logs
+
+env:
+  DROPLET_IP: "188.166.237.231"
+  PLANE_DOMAIN: "plane.insightpulseai.net"
+  DB_HOST: "odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
+  DB_PORT: "25060"
+  DB_USER: "doadmin"
+  DB_NAME: "plane"
+
+jobs:
+  deploy-plane:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DROPLET_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.DROPLET_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Create Plane Database
+        if: ${{ github.event.inputs.action == 'create-db' || github.event.inputs.action == 'deploy' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} << 'SSHEOF'
+            echo "=== Creating Plane database ==="
+            PGPASSWORD="${{ secrets.PLANE_DB_PASSWORD }}" psql \
+              "host=${{ env.DB_HOST }} port=${{ env.DB_PORT }} user=${{ env.DB_USER }} dbname=defaultdb sslmode=require" \
+              -c "CREATE DATABASE ${{ env.DB_NAME }};" 2>/dev/null || echo "Database may already exist"
+
+            echo "=== Verifying database ==="
+            PGPASSWORD="${{ secrets.PLANE_DB_PASSWORD }}" psql \
+              "host=${{ env.DB_HOST }} port=${{ env.DB_PORT }} user=${{ env.DB_USER }} dbname=${{ env.DB_NAME }} sslmode=require" \
+              -c "SELECT 'Database plane connected successfully' as status;"
+          SSHEOF
+
+      - name: Deploy Plane CE
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} << 'SSHEOF'
+            set -e
+            PLANE_DIR="/opt/plane"
+
+            echo "=== Installing Docker (if needed) ==="
+            if ! command -v docker &> /dev/null; then
+              curl -fsSL https://get.docker.com | sh
+              systemctl enable docker
+              systemctl start docker
+            fi
+
+            echo "=== Setting up Plane directory ==="
+            mkdir -p ${PLANE_DIR}
+            cd ${PLANE_DIR}
+
+            echo "=== Downloading Plane CE ==="
+            if [ ! -f "docker-compose.yml" ]; then
+              curl -fsSL https://prime.plane.so/install/ -o install.sh
+              chmod +x install.sh
+              # Run in background to avoid interactive prompts blocking
+              timeout 60 ./install.sh || echo "Install script completed or timed out"
+            fi
+
+            echo "=== Creating configuration ==="
+            cat > plane.env << 'ENVEOF'
+            WEB_URL=https://${{ env.PLANE_DOMAIN }}
+            CORS_ALLOWED_ORIGINS=https://${{ env.PLANE_DOMAIN }}
+            DATABASE_URL=postgresql://${{ env.DB_USER }}:${{ secrets.PLANE_DB_PASSWORD }}@${{ env.DB_HOST }}:${{ env.DB_PORT }}/${{ env.DB_NAME }}?sslmode=require
+            REDIS_URL=redis://plane-redis:6379/
+            AMQP_URL=amqp://plane:plane@plane-mq:5672/plane
+            USE_MINIO=1
+            SECRET_KEY=${{ secrets.PLANE_SECRET_KEY }}
+            DEBUG=0
+            ENVEOF
+
+            echo "=== Starting Plane ==="
+            docker compose up -d || docker-compose up -d
+
+            echo "=== Waiting for services ==="
+            sleep 30
+
+            echo "=== Service Status ==="
+            docker compose ps || docker-compose ps
+          SSHEOF
+
+      - name: Check Status
+        if: ${{ github.event.inputs.action == 'status' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} << 'SSHEOF'
+            cd /opt/plane 2>/dev/null || echo "Plane not installed"
+            docker compose ps 2>/dev/null || docker-compose ps 2>/dev/null || echo "No containers running"
+            echo ""
+            echo "=== Health Check ==="
+            curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" http://localhost:80 || echo "Plane not responding on port 80"
+          SSHEOF
+
+      - name: Get Logs
+        if: ${{ github.event.inputs.action == 'logs' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ env.DROPLET_IP }} << 'SSHEOF'
+            cd /opt/plane
+            docker compose logs --tail 100 2>/dev/null || docker-compose logs --tail 100
+          SSHEOF
+
+      - name: Configure DNS
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: |
+          # Install doctl
+          wget -q https://github.com/digitalocean/doctl/releases/download/v1.104.0/doctl-1.104.0-linux-amd64.tar.gz
+          tar xf doctl-1.104.0-linux-amd64.tar.gz
+          chmod +x doctl
+
+          # Check/create DNS record
+          EXISTING=$(./doctl compute domain records list insightpulseai.net --format ID,Name --no-header | grep "^[0-9]*.*plane$" | awk '{print $1}' || true)
+
+          if [ -n "$EXISTING" ]; then
+            echo "Updating existing DNS record: $EXISTING"
+            ./doctl compute domain records update insightpulseai.net \
+              --record-id "$EXISTING" \
+              --record-data "${{ env.DROPLET_IP }}"
+          else
+            echo "Creating DNS A record"
+            ./doctl compute domain records create insightpulseai.net \
+              --record-type A \
+              --record-name plane \
+              --record-data "${{ env.DROPLET_IP }}" \
+              --record-ttl 300
+          fi
+
+      - name: Deployment Summary
+        if: ${{ github.event.inputs.action == 'deploy' }}
+        run: |
+          echo "=========================================="
+          echo "Plane CE Deployment Complete"
+          echo "=========================================="
+          echo "URL: https://${{ env.PLANE_DOMAIN }}"
+          echo "Direct IP: http://${{ env.DROPLET_IP }}"
+          echo "Database: ${{ env.DB_HOST }}/${{ env.DB_NAME }}"
+          echo ""
+          echo "To check status: Re-run workflow with 'status' action"
+          echo "To view logs: Re-run workflow with 'logs' action"
