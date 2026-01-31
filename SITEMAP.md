@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: 305708accf35eb468e7907aede85598dc6f0bf76
+> Commit: e108f16b358584afd7a2db170a092d300eba45ba
 
 ## 📚 Documentation
 
@@ -17,6 +17,7 @@
 | [Rules](.claude/commands/plan.md) | .claude/commands |
 | [Command: Generate OCA-Style Prototype Module](.claude/commands/prototype-module.md) | .claude/commands |
 | [Shipping Workflow](.claude/commands/ship.md) | .claude/commands |
+| [SSOT Doctrine Command](.claude/commands/ssot-doctrine.md) | .claude/commands |
 | [Primary Responsibility](.claude/commands/verify.md) | .claude/commands |
 | [SessionStart Hook - Web Session Initialization](.claude/hooks/SessionStart.md) | .claude/hooks |
 | [BIR Compliance Automation Skill](.claude/superclaude/skills/finance/bir-compliance-automation/SKILL.md) | .claude/superclaude/skills/finance/bir-compliance-automation |
@@ -417,7 +418,7 @@
 | [Production Runtime Snapshot - Odoo CE 18.0](docs/architecture/PROD_RUNTIME_SNAPSHOT.md) | docs/architecture |
 | [Architecture Documentation](docs/architecture/README.md) | docs/architecture |
 | [Odoo Runtime Identifiers - Canonical Reference](docs/architecture/RUNTIME_IDENTIFIERS.md) | docs/architecture |
-| [Source of Truth](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
+| [Source of Truth – Architectural Doctrine](docs/architecture/SOURCE_OF_TRUTH.md) | docs/architecture |
 | [Tables Browser Architecture](docs/architecture/TABLES_BROWSER.md) | docs/architecture |
 | [IPAI Copilot Tools Schema](docs/architecture/catalog/COPILOT_TOOLS_SCHEMA.md) | docs/architecture/catalog |
 | [Architecture Diagram Exports](docs/architecture/exports/README.md) | docs/architecture/exports |
@@ -1261,6 +1262,11 @@
 | [Plan: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/plan.md) | spec/supabase-platform-kit-observability |
 | [PRD: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/prd.md) | spec/supabase-platform-kit-observability |
 | [Tasks: Supabase Platform Kit Observability](spec/supabase-platform-kit-observability/tasks.md) | spec/supabase-platform-kit-observability |
+| [Supabase SSOT Doctrine – Agent Prompt](spec/supabase-ssot-doctrine/agent-prompt.md) | spec/supabase-ssot-doctrine |
+| [Supabase SSOT Doctrine – Constitution](spec/supabase-ssot-doctrine/constitution.md) | spec/supabase-ssot-doctrine |
+| [Supabase SSOT Doctrine – Implementation Plan](spec/supabase-ssot-doctrine/plan.md) | spec/supabase-ssot-doctrine |
+| [Supabase SSOT Doctrine – Product Requirements Document](spec/supabase-ssot-doctrine/prd.md) | spec/supabase-ssot-doctrine |
+| [Supabase SSOT Doctrine – Tasks](spec/supabase-ssot-doctrine/tasks.md) | spec/supabase-ssot-doctrine |
 | [Odoo EE → CE/OCA SaaS Platform – Tasks](spec/tasks.md) | spec |
 | [Test Coverage Improvement — Constitution](spec/test-coverage-improvement/constitution.md) | spec/test-coverage-improvement |
 | [Test Coverage Improvement — Implementation Plan](spec/test-coverage-improvement/plan.md) | spec/test-coverage-improvement |
