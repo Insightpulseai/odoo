@@ -1,7 +1,7 @@
 # 📁 Repository Structure
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e108f16b358584afd7a2db170a092d300eba45ba
+> Commit: 27c6d61a5abbcab62d17dda4327b870b2158cceb
 
 ```
 .
@@ -101,6 +101,7 @@
 │   │   ├── deploy-finance-ppm.yml
 │   │   ├── deploy-ipai-control-center-docs.yml
 │   │   ├── deploy-odoo-prod.yml
+│   │   ├── deploy-plane.yml
 │   │   ├── deploy-production.yml
 │   │   ├── deploy.yml
 │   │   ├── design-sync.yml
@@ -150,6 +151,7 @@
 │   │   ├── module-gating.yml
 │   │   ├── modules-audit-drift.yml
 │   │   ├── n8n-orchestrator.yml
+│   │   ├── nightly-integration-audit.yml
 │   │   ├── no-deprecated-repo-refs.yml
 │   │   ├── notify-superset.yml
 │   │   ├── notion-sync-ci.yml
@@ -1693,6 +1695,8 @@
 │   │   └── 90-preflight.sh
 │   ├── finance
 │   │   └── Month-end Closing Task and Tax Filing (7).xlsx
+│   ├── integrations
+│   │   └── integration_manifest.yaml
 │   ├── ipai_ai
 │   │   └── agents
 │   │       ├── default.yaml
@@ -1801,7 +1805,9 @@
 │   │   ├── 20260120_agent_coordination_schema.sql
 │   │   ├── 20260121_observability_schema.sql
 │   │   ├── 20260124_code_intelligence_schema.sql
-│   │   └── 20260124_ops_control_plane.sql
+│   │   ├── 20260124_ops_control_plane.sql
+│   │   ├── 20260131_vault_github_secrets.sql
+│   │   └── 20260131_vault_seed_github_secrets.sql
 │   ├── process_mining
 │   │   ├── 001_pm_schema.sql
 │   │   └── 010_p2p_etl.sql
@@ -1828,7 +1834,7 @@
 │   │   ├── postgres-service.yaml
 │   │   └── postgres-statefulset.yaml
 │   ├── nginx
-│   │   └── erp.insightpulseai.com.conf
+│   │   └── erp.insightpulseai.net.conf
 │   ├── runtime
 │   │   ├── odoo-prod.docker_inspect.json
 │   │   └── odoo-prod.image_inspect.json
@@ -2070,6 +2076,10 @@
 │   │   │   └── odoosh-parity-summary.json
 │   │   ├── 20260129-1121
 │   │   │   └── summary.json
+│   │   ├── 20260130-2014
+│   │   │   └── PLANE_PRODUCTION_DEPLOYMENT.md
+│   │   ├── 20260201-0400
+│   │   │   └── 502-gateway-fix
 │   │   └── 20260129-odoo-asset-fix.md
 │   ├── finance-ppm
 │   │   └── OCA_INSTALLATION_GUIDE.md
@@ -2995,6 +3005,8 @@
 │   │   ├── app
 │   │   │   ├── __init__.py
 │   │   │   ├── config.py
+│   │   │   ├── github_auth.py
+│   │   │   ├── github_webhooks.py
 │   │   │   ├── main.py
 │   │   │   └── routing.py
 │   │   ├── infra
@@ -3579,10 +3591,15 @@
 │   │   │   └── UI_CONSOLIDATION_STATUS.md
 │   │   ├── integration
 │   │   │   └── ODOO_CE_INTEGRATION.md
+│   │   ├── plane
+│   │   │   ├── .github
+│   │   │   ├── infra
+│   │   │   └── DEPLOY.md
 │   │   ├── scripts
 │   │   │   ├── brand
 │   │   │   ├── claude
 │   │   │   ├── dev
+│   │   │   ├── figma
 │   │   │   ├── mailgun
 │   │   │   ├── supabase
 │   │   │   └── verify.sh
@@ -3625,7 +3642,19 @@
 │   │   ├── verify_install.sh
 │   │   └── verify_prod_health.sh
 │   ├── audit
+│   │   ├── checks
+│   │   │   ├── check_digitalocean.py
+│   │   │   ├── check_domain_policy.py
+│   │   │   ├── check_github.py
+│   │   │   ├── check_mailgun.py
+│   │   │   ├── check_n8n.py
+│   │   │   ├── check_odoo.py
+│   │   │   ├── check_slack.py
+│   │   │   ├── check_supabase.py
+│   │   │   ├── check_superset.py
+│   │   │   └── check_vercel.py
 │   │   ├── README.md
+│   │   ├── aggregate_results.py
 │   │   ├── assess_opportunities.py
 │   │   ├── check_dns.sh
 │   │   ├── check_dns_doh.py
@@ -3634,7 +3663,9 @@
 │   │   ├── check_supabase.sh
 │   │   ├── check_vercel.sh
 │   │   ├── dns_expected.yaml
-│   │   └── env.example
+│   │   ├── env.example
+│   │   ├── lib.py
+│   │   └── run_integration_audit.sh
 │   ├── auth
 │   │   ├── confirm_user.py
 │   │   └── set_password.ts
@@ -3680,6 +3711,7 @@
 │   ├── deploy
 │   │   ├── bootstrap_from_tag.sh
 │   │   ├── deploy-prod-e2e.sh
+│   │   ├── diagnose_502.sh
 │   │   ├── do-bootstrap-odoo-prod.sh
 │   │   └── verify_prod.sh
 │   ├── deprecation
@@ -4093,6 +4125,7 @@
 │   ├── setup_mattermost_db.sh
 │   ├── simple_deploy.sh
 │   ├── skill_web_session_bridge.sh
+│   ├── smoke_github_app.sh
 │   ├── smoke_test_odoo.sh
 │   ├── smoketest.sh
 │   ├── spec-kit-enforce.py
@@ -5254,15 +5287,15 @@
 ├── walkthrough.md
 └── workflow_template.csv
 
-1458 directories, 3791 files
+1467 directories, 3815 files
 ```
 
 ## 📊 Stats
 
 | Metric | Count |
 |--------|-------|
-| Directories | 1705 |
-| Files | 5093 |
-| Python files | 840 |
+| Directories | 1715 |
+| Files | 5124 |
+| Python files | 854 |
 | XML files | 305 |
-| Markdown files | 1295 |
+| Markdown files | 1298 |
