@@ -29,7 +29,7 @@
     "version": "19.0.1.0.0",
     "category": "Human Resources/Payroll",
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         # Core

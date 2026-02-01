@@ -12,7 +12,7 @@
 #   ./scripts/deploy-odoo-modules.sh --all
 #
 # Requirements:
-#   - SSH access to root@erp.insightpulseai.net
+#   - SSH access to root@erp.insightpulseai.com
 #   - Git repository cloned locally
 #   - Modules in addons/ directory
 #
@@ -37,7 +37,7 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Configuration
-REMOTE_HOST="erp.insightpulseai.net"
+REMOTE_HOST="erp.insightpulseai.com"
 REMOTE_USER="root"
 REMOTE_ODOO_DIR="/opt/odoo/custom-addons"
 LOCAL_ADDONS_DIR="addons"
@@ -200,7 +200,7 @@ upgrade_module() {
 check_odoo_health() {
     log_step "Checking Odoo health endpoint..."
 
-    local health_status=$(curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.net/web/health || echo "000")
+    local health_status=$(curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.com/web/health || echo "000")
 
     if [ "${health_status}" = "200" ]; then
         log_success "Odoo health check passed (HTTP 200)"
@@ -227,7 +227,7 @@ display_summary() {
     done
     echo ""
     echo "🔗 Access Odoo:"
-    echo "   ${BLUE}https://erp.insightpulseai.net/web${NC}"
+    echo "   ${BLUE}https://erp.insightpulseai.com/web${NC}"
     echo ""
     echo "📋 Next Steps:"
     echo "   1. Log in to Odoo"
@@ -236,7 +236,7 @@ display_summary() {
     echo "   4. Install or upgrade as needed"
     echo ""
     echo "🔍 Check Logs (if issues):"
-    echo "   ${BLUE}ssh root@erp.insightpulseai.net${NC}"
+    echo "   ${BLUE}ssh root@erp.insightpulseai.com${NC}"
     echo "   ${BLUE}docker logs ${ODOO_CONTAINER} --tail 100${NC}"
     echo ""
 }

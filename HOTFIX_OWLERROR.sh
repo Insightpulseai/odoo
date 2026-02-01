@@ -1,7 +1,7 @@
 #!/bin/bash
 # HOTFIX: Remove pay_invoices_online field references causing OWL error
 # Error: "res.config.settings"."pay_invoices_online" field is undefined
-# Location: erp.insightpulseai.net
+# Location: erp.insightpulseai.com
 # Date: 2025-12-28
 
 set -e
@@ -21,7 +21,7 @@ if [ -z "$ODOO_PASSWORD" ]; then
 fi
 
 # Configuration
-ODOO_URL="${ODOO_URL:-https://erp.insightpulseai.net}"
+ODOO_URL="${ODOO_URL:-https://erp.insightpulseai.com}"
 ODOO_DB="${ODOO_DB:-production}"
 ODOO_USERNAME="${ODOO_USERNAME:-admin}"
 PRODUCTION_SERVER="${PRODUCTION_SERVER:-159.223.75.148}"

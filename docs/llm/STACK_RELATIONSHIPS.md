@@ -42,7 +42,7 @@ module.ipai_ces_bundle INCLUDES module.hr_timesheet
 ```
 service.odoo-core RUNS_ON droplet.odoo-erp-prod
 service.odoo-core CONNECTS_TO cluster.odoo-db-sgp1
-service.odoo-core EXPOSES_API endpoint.erp.insightpulseai.net
+service.odoo-core EXPOSES_API endpoint.erp.insightpulseai.com
 service.odoo-core USES_SMTP provider.mailgun
 ```
 

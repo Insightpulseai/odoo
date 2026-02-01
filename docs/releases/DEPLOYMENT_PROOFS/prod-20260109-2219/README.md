@@ -69,7 +69,7 @@
 
 | Endpoint | Status |
 |----------|--------|
-| `https://erp.insightpulseai.net/web/health` | UNVERIFIED |
+| `https://erp.insightpulseai.com/web/health` | UNVERIFIED |
 | `http://localhost:8069/web/health` (internal) | UNVERIFIED |
 
 ---
@@ -120,10 +120,10 @@ git log --oneline prod-20260109-2217..prod-20260109-2219
 gh run list --workflow=deploy-production.yml --limit=5
 
 # 4. Check production health (requires access)
-curl -sf https://erp.insightpulseai.net/web/health
+curl -sf https://erp.insightpulseai.com/web/health
 
 # 5. Check container status (requires SSH access)
-ssh user@erp.insightpulseai.net 'docker compose ps'
+ssh user@erp.insightpulseai.com 'docker compose ps'
 ```
 
 ---

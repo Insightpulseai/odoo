@@ -362,7 +362,7 @@ WHERE status = 'processing'
 
 ### n8n Monitoring
 
-**Executions Dashboard**: https://n8n.insightpulseai.net/executions
+**Executions Dashboard**: https://n8n.insightpulseai.com/executions
 
 **Key Metrics**:
 - Event router execution frequency (should be every 30s)
@@ -387,9 +387,9 @@ WHERE status = 'processing'
 1. Configure n8n environment variables:
    ```bash
    SUPABASE_URL=https://spdtwktxdalcfigzeqrz.supabase.co
-   N8N_WEBHOOK_BASE_URL=https://n8n.insightpulseai.net
-   MATTERMOST_WEBHOOK_URL=https://mattermost.insightpulseai.net/hooks/<YOUR_HOOK_ID>
-   ODOO_BASE_URL=https://odoo.insightpulseai.net
+   N8N_WEBHOOK_BASE_URL=https://n8n.insightpulseai.com
+   MATTERMOST_WEBHOOK_URL=https://mattermost.insightpulseai.com/hooks/<YOUR_HOOK_ID>
+   ODOO_BASE_URL=https://odoo.insightpulseai.com
    ```
 
 2. Create Supabase API credential:
@@ -407,7 +407,7 @@ WHERE status = 'processing'
 
 5. Test webhooks:
    ```bash
-   curl -X POST https://n8n.insightpulseai.net/webhook/expense-handler \
+   curl -X POST https://n8n.insightpulseai.com/webhook/expense-handler \
      -H "Content-Type: application/json" \
      -d '{"event_type":"expense.submitted","payload":{"employee_name":"Test"}}'
    ```

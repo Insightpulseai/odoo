@@ -10,7 +10,7 @@
 
 | Item | Value |
 |------|-------|
-| **Odoo URL** | https://erp.insightpulseai.net/ |
+| **Odoo URL** | https://erp.insightpulseai.com/ |
 | **Finance PPM App** | Finance Ops menu |
 | **Superset Dashboard** | Embedded in Finance Ops workspace |
 | **Support Email** | business@insightpulseai.com |
@@ -107,7 +107,7 @@ git push origin odoo-ce-finops-v1
 
 ### Odoo
 ```bash
-curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.net/web/login
+curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.com/web/login
 # Expected: 200
 ```
 
@@ -120,7 +120,7 @@ docker exec postgres psql -U odoo -d odoo_core -c "SELECT 1;"
 ### Superset Embed
 ```bash
 # Verify guest token endpoint responds
-curl -s https://erp.insightpulseai.net/superset/guest_token
+curl -s https://erp.insightpulseai.com/superset/guest_token
 # Expected: 200 or 401 (auth required)
 ```
 

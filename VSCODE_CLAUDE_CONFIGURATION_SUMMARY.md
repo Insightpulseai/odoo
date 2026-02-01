@@ -107,7 +107,7 @@ claude
 ./scripts/erp_config_cli.sh test-db
 
 # Update system parameter
-./scripts/erp_config_cli.sh update-param web.base.url https://erp.insightpulseai.net
+./scripts/erp_config_cli.sh update-param web.base.url https://erp.insightpulseai.com
 
 # Emergency password reset
 ./scripts/erp_config_cli.sh reset-password new_secure_password

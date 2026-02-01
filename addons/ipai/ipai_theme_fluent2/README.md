@@ -309,7 +309,7 @@ AGPL-3
 
 ## Author
 
-InsightPulse AI - https://insightpulseai.net
+InsightPulse AI - https://insightpulseai.com
 
 ## Support
 

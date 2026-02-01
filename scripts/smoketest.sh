@@ -68,7 +68,7 @@ fi
 
 # Test for HTTPS if on production VPS
 if [[ -f "/etc/hostname" ]] && [[ "$(cat /etc/hostname)" == "odoo-erp-prod" ]]; then
-    HTTPS_CODE=$(curl -sk -o /dev/null -w "%{http_code}" https://erp.insightpulseai.net/web 2>/dev/null || echo "000")
+    HTTPS_CODE=$(curl -sk -o /dev/null -w "%{http_code}" https://erp.insightpulseai.com/web 2>/dev/null || echo "000")
     if [[ "$HTTPS_CODE" == "200" || "$HTTPS_CODE" == "302" ]]; then
         echo -e "3.2. HTTPS endpoint... ${GREEN}✅ PASS${NC} (HTTP $HTTPS_CODE)"
         ((PASSED++))
@@ -209,7 +209,7 @@ if [[ $FAILED -eq 0 ]]; then
     echo "System Status: OPERATIONAL"
     echo ""
     echo "Next Steps:"
-    echo "  1. Test in browser: https://erp.insightpulseai.net"
+    echo "  1. Test in browser: https://erp.insightpulseai.com"
     echo "  2. Login and verify custom modules visible"
     echo "  3. Create a test record to verify database writes"
     echo "  4. Monitor logs: docker logs -f odoo-ce"

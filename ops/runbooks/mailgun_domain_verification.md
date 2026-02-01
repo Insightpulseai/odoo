@@ -23,7 +23,7 @@ This runbook covers the operational steps to verify a domain with Mailgun for em
 1. Log in to [Mailgun Dashboard](https://app.mailgun.com)
 2. Navigate to **Sending** > **Domains**
 3. Click **Add New Domain**
-4. Enter your domain (e.g., `mail.insightpulseai.net`)
+4. Enter your domain (e.g., `mail.insightpulseai.com`)
 5. Select region (US or EU)
 
 ### 1.2 Via API
@@ -128,8 +128,8 @@ Set in Odoo via Settings > Technical > Parameters > System Parameters:
 
 | Key | Value |
 |-----|-------|
-| `mail.catchall.domain` | `insightpulseai.net` |
-| `mail.default.from` | `notifications@insightpulseai.net` |
+| `mail.catchall.domain` | `insightpulseai.com` |
+| `mail.default.from` | `notifications@insightpulseai.com` |
 
 ### 5.2 Outgoing Mail Server
 

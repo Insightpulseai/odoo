@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Complete Mailgun Verification Suite for InsightPulse AI
-# Domain: mg.insightpulseai.net
+# Domain: mg.insightpulseai.com
 #
 # Usage:
 #   # DNS verification only (no credentials needed)
@@ -149,7 +149,7 @@ echo ""
 cat > "${EVIDENCE_DIR}/verification_summary.json" << EOF
 {
   "timestamp": "$(date -Iseconds)",
-  "domain": "${MAILGUN_DOMAIN:-mg.insightpulseai.net}",
+  "domain": "${MAILGUN_DOMAIN:-mg.insightpulseai.com}",
   "steps": {
     "dns": "${step_status["dns"]:-unknown}",
     "smtp": "${step_status["smtp"]:-unknown}",

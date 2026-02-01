@@ -42,7 +42,7 @@
 |--------|---------|---------------|
 | `SUPABASE_URL` | Supabase API URL | `https://xxx.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Service role for RLS bypass | `eyJ...` |
-| `ODOO_URL` | Odoo instance URL | `https://erp.insightpulseai.net` |
+| `ODOO_URL` | Odoo instance URL | `https://erp.insightpulseai.com` |
 | `ODOO_DB` | Odoo database name | `production` |
 | `ODOO_USER` | Odoo API user login | `seed_bot@insightpulseai.com` |
 | `ODOO_PASSWORD` | Odoo API password | `<secret>` |
@@ -55,7 +55,7 @@
 supabase functions secrets set \
   SUPABASE_URL="https://spdtwktxdalcfigzeqrz.supabase.co" \
   SUPABASE_SERVICE_ROLE_KEY="<service-role-key>" \
-  ODOO_URL="https://erp.insightpulseai.net" \
+  ODOO_URL="https://erp.insightpulseai.com" \
   ODOO_DB="production" \
   ODOO_USER="seed_bot@insightpulseai.com" \
   ODOO_PASSWORD="<super-secret-password>" \
@@ -75,7 +75,7 @@ SUPABASE_URL="https://spdtwktxdalcfigzeqrz.supabase.co"
 SUPABASE_ANON_KEY="<anon-key>"
 SUPABASE_SERVICE_ROLE_KEY="<service-role-key>"
 
-ODOO_URL="https://erp.insightpulseai.net"
+ODOO_URL="https://erp.insightpulseai.com"
 ODOO_DB="production"
 ODOO_USER="seed_bot@insightpulseai.com"
 ODOO_PASSWORD="<super-secret-password>"
@@ -117,7 +117,7 @@ For centralized secrets management across multiple platforms.
 ```bash
 # Store Odoo credentials in Vault KV
 vault kv put secret/odoo \
-  url="https://erp.insightpulseai.net" \
+  url="https://erp.insightpulseai.com" \
   db="production" \
   user="seed_bot@insightpulseai.com" \
   password="<super-secret-password>"
@@ -140,7 +140,7 @@ vault token create -policy=odoo-seed-policy -ttl=24h
 ```bash
 # Store only Vault connection info in Supabase
 supabase functions secrets set \
-  VAULT_ADDR="https://vault.insightpulseai.net" \
+  VAULT_ADDR="https://vault.insightpulseai.com" \
   VAULT_TOKEN="<short-lived-vault-token>"
 ```
 

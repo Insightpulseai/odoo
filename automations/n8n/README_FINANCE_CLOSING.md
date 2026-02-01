@@ -60,7 +60,7 @@ Automated workflows for Finance Month-End Closing based on `ipai_finance_closing
 
 ### Prerequisites
 
-1. **n8n Server**: https://ipa.insightpulseai.net
+1. **n8n Server**: https://ipa.insightpulseai.com
 2. **Credentials**:
    - n8n API Key (JWT token)
    - Odoo admin password
@@ -69,14 +69,14 @@ Automated workflows for Finance Month-End Closing based on `ipai_finance_closing
 3. **Environment Variables** (set in n8n):
    ```bash
    ODOO_ADMIN_PASSWORD=<odoo_admin_password>
-   MATTERMOST_WEBHOOK_URL=https://mattermost.insightpulseai.net/hooks/...
+   MATTERMOST_WEBHOOK_URL=https://mattermost.insightpulseai.com/hooks/...
    ```
 
 ### Import Workflows
 
 **Option 1: n8n UI (Recommended)**
 
-1. **Login** to n8n: https://ipa.insightpulseai.net
+1. **Login** to n8n: https://ipa.insightpulseai.com
 2. **Navigate**: Workflows → Import from File
 3. **Upload**: `finance_closing_automation.json`
 4. **Configure**:
@@ -88,7 +88,7 @@ Automated workflows for Finance Month-End Closing based on `ipai_finance_closing
 
 ```bash
 # Set n8n API credentials
-export N8N_BASE_URL="https://ipa.insightpulseai.net"
+export N8N_BASE_URL="https://ipa.insightpulseai.com"
 export N8N_API_KEY="<jwt_token>"
 
 # Import workflow

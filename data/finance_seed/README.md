@@ -58,7 +58,7 @@ After importing, run the update script to assign users:
 
 ```bash
 python3 update_tasks_after_import.py \
-  --url https://erp.insightpulseai.net \
+  --url https://erp.insightpulseai.com \
   --db odoo \
   --user admin \
   --password YOUR_PASSWORD
@@ -68,7 +68,7 @@ Or use `--dry-run` to preview changes:
 
 ```bash
 python3 update_tasks_after_import.py \
-  --url https://erp.insightpulseai.net \
+  --url https://erp.insightpulseai.com \
   --db odoo \
   --user admin \
   --password YOUR_PASSWORD \

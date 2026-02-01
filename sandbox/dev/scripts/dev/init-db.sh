@@ -42,7 +42,7 @@ CONTAINER_NAME="odoo-dev"
 DB_HOST="db"
 DB_NAME="${ODOO_DB_NAME:-odoo_dev}"
 ADMIN_PASSWORD="${ODOO_ADMIN_PASSWORD:-admin}"
-ADMIN_EMAIL="${ODOO_ADMIN_EMAIL:-admin@insightpulseai.net}"
+ADMIN_EMAIL="${ODOO_ADMIN_EMAIL:-admin@insightpulseai.com}"
 
 echo "════════════════════════════════════════════════════════════════"
 echo "Odoo Dev Sandbox - Database Initialization"

@@ -418,10 +418,10 @@ psql "$POSTGRES_URL" -c "SELECT name, nextcall FROM ir_cron WHERE model='finance
 # Expected output: 4 cron jobs (RIM, CKVC, BOM, JPAL) with nextcall = tomorrow 1:00 AM UTC
 
 # 2. Access dashboard
-curl -s "https://odoo.insightpulseai.net/ipai/finance/controller/dashboard?employee_code=RIM" | grep -q "TBWA Finance Controller Dashboard"
+curl -s "https://odoo.insightpulseai.com/ipai/finance/controller/dashboard?employee_code=RIM" | grep -q "TBWA Finance Controller Dashboard"
 
 # 3. Test API endpoints
-curl -X POST "https://odoo.insightpulseai.net/ipai/finance/controller/api/kpi_gauges" \
+curl -X POST "https://odoo.insightpulseai.com/ipai/finance/controller/api/kpi_gauges" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc": "2.0", "method": "call", "params": {"employee_code": "RIM"}}'
 
@@ -578,7 +578,7 @@ npx playwright test tests/playwright/controller_dashboard.spec.js --headed
 
 ## 📞 Support
 
-**Module Author**: Jake Tolentino <jgtolentino@insightpulseai.net>
+**Module Author**: Jake Tolentino <jgtolentino@insightpulseai.com>
 **Organization**: InsightPulse AI
 **License**: AGPL-3
 **Repository**: https://github.com/jgtolentino/odoo-ce

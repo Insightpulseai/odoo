@@ -78,11 +78,11 @@ echo ">>> [Criterion 3] OAuth/HTTPS Loop Test (System Parameters)"
 BASE_URL=$(docker exec -i "$CONTAINER_NAME" psql -U odoo -d "$DB_NAME" -t -c \
   "SELECT value FROM ir_config_parameter WHERE key='web.base.url';" | xargs)
 
-if [[ "$BASE_URL" == "https://erp.insightpulseai.net" ]]; then
-    echo "✓ PASS: web.base.url = https://erp.insightpulseai.net"
+if [[ "$BASE_URL" == "https://erp.insightpulseai.com" ]]; then
+    echo "✓ PASS: web.base.url = https://erp.insightpulseai.com"
     ((PASSED_TESTS++))
 else
-    echo "❌ FAIL: web.base.url = $BASE_URL (expected https://erp.insightpulseai.net)"
+    echo "❌ FAIL: web.base.url = $BASE_URL (expected https://erp.insightpulseai.com)"
     ((FAILED_TESTS++))
 fi
 
@@ -179,12 +179,12 @@ if [[ "$FAILED_TESTS" -eq 0 ]]; then
     echo ""
     echo "Expected End State Achieved:"
     echo "  ✓ XML State: No 'pay_invoices_online' in database views"
-    echo "  ✓ JSON/DB State: web.base.url = https://erp.insightpulseai.net"
+    echo "  ✓ JSON/DB State: web.base.url = https://erp.insightpulseai.com"
     echo "  ✓ Config State: proxy_mode = True, X-Forwarded-Proto = https"
     echo "  ✓ Assets State: Web assets generated and cached"
     echo ""
     echo "User Acceptance Testing:"
-    echo "  1. Open Chrome Incognito: https://erp.insightpulseai.net"
+    echo "  1. Open Chrome Incognito: https://erp.insightpulseai.com"
     echo "  2. Login screen should render (no white screen)"
     echo "  3. Press F12 → Console → No red 'OwlError' messages"
     echo "  4. Click Gmail SSO login button"

@@ -4,7 +4,7 @@
 
 **Status**: Not currently configured (Odoo sending-only)
 
-**When to use**: If TBWA\SMP needs to receive emails at `@mg.insightpulseai.net` and process them automatically
+**When to use**: If TBWA\SMP needs to receive emails at `@mg.insightpulseai.com` and process them automatically
 
 ---
 
@@ -27,8 +27,8 @@ Mailgun Routes allow you to:
 | Expression | Description | Example |
 |------------|-------------|---------|
 | `match_recipient(".*")` | Match all recipients | Catch-all route |
-| `match_recipient("support@.*")` | Match specific mailbox | `support@mg.insightpulseai.net` |
-| `match_recipient(".*@mg.insightpulseai.net")` | Match domain | All `@mg.insightpulseai.net` emails |
+| `match_recipient("support@.*")` | Match specific mailbox | `support@mg.insightpulseai.com` |
+| `match_recipient(".*@mg.insightpulseai.com")` | Match domain | All `@mg.insightpulseai.com` emails |
 | `match_header("subject", ".*urgent.*")` | Match subject line | Emails with "urgent" in subject |
 | `match_header("from", ".*@example.com")` | Match sender domain | Emails from `@example.com` |
 
@@ -62,7 +62,7 @@ forward("https://your-server.com/webhooks/mailgun")
 ```json
 {
   "From": "sender@example.com",
-  "To": "support@mg.insightpulseai.net",
+  "To": "support@mg.insightpulseai.com",
   "Subject": "Expense Receipt - Invoice #12345",
   "body-plain": "Email body text...",
   "body-html": "<html>Email HTML...</html>",
@@ -108,12 +108,12 @@ stop()
 
 **Expression**:
 ```python
-match_recipient("expenses@mg.insightpulseai.net") and match_header("subject", ".*receipt.*")
+match_recipient("expenses@mg.insightpulseai.com") and match_header("subject", ".*receipt.*")
 ```
 
 **Action**:
 ```python
-forward("https://ipa.insightpulseai.net/webhooks/mailgun/expense-receipt")
+forward("https://ipa.insightpulseai.com/webhooks/mailgun/expense-receipt")
 ```
 
 **Purpose**: Forward expense receipts to n8n for OCR processing
@@ -129,12 +129,12 @@ forward("https://ipa.insightpulseai.net/webhooks/mailgun/expense-receipt")
 
 **Expression**:
 ```python
-match_recipient("support@mg.insightpulseai.net")
+match_recipient("support@mg.insightpulseai.com")
 ```
 
 **Action**:
 ```python
-forward("https://ipa.insightpulseai.net/webhooks/mailgun/support-ticket")
+forward("https://ipa.insightpulseai.com/webhooks/mailgun/support-ticket")
 ```
 
 **Purpose**: Convert support emails to Odoo helpdesk tickets
@@ -143,7 +143,7 @@ forward("https://ipa.insightpulseai.net/webhooks/mailgun/support-ticket")
 
 **Expression**:
 ```python
-match_recipient("finance@mg.insightpulseai.net")
+match_recipient("finance@mg.insightpulseai.com")
 ```
 
 **Action**:
@@ -157,14 +157,14 @@ forward("jake.tolentino@insightpulseai.com")
 
 **Expression**:
 ```python
-match_recipient(".*@mg.insightpulseai.net")
+match_recipient(".*@mg.insightpulseai.com")
 ```
 
 **Priority**: `0` (lowest)
 
 **Action**:
 ```python
-store(notify="https://ipa.insightpulseai.net/webhooks/mailgun/catchall")
+store(notify="https://ipa.insightpulseai.com/webhooks/mailgun/catchall")
 ```
 
 **Purpose**: Store unmatched emails for manual review
@@ -183,16 +183,16 @@ store(notify="https://ipa.insightpulseai.net/webhooks/mailgun/catchall")
 | Field | Value |
 |-------|-------|
 | **Expression Type** | `Match Recipient` |
-| **Recipient** | `expenses@mg.insightpulseai.net` |
+| **Recipient** | `expenses@mg.insightpulseai.com` |
 | **Actions** | `Forward` |
-| **Destination** | `https://ipa.insightpulseai.net/webhooks/mailgun/expense-receipt` |
+| **Destination** | `https://ipa.insightpulseai.com/webhooks/mailgun/expense-receipt` |
 | **Priority** | `10` (higher = processed first) |
 | **Description** | `Expense Receipt Processing` |
 
 ### Step 3: Save and Test
 
 1. Click **"Create Route"**
-2. Send test email to `expenses@mg.insightpulseai.net`
+2. Send test email to `expenses@mg.insightpulseai.com`
 3. Check webhook logs in n8n
 4. Verify email data received
 
@@ -207,8 +207,8 @@ curl -X POST --user "api:$MAILGUN_API_KEY" \
   https://api.mailgun.net/v3/routes \
   -F "priority=10" \
   -F "description=Expense Receipt Processing" \
-  -F "expression=match_recipient('expenses@mg.insightpulseai.net')" \
-  -F "action=forward('https://ipa.insightpulseai.net/webhooks/mailgun/expense-receipt')"
+  -F "expression=match_recipient('expenses@mg.insightpulseai.com')" \
+  -F "action=forward('https://ipa.insightpulseai.com/webhooks/mailgun/expense-receipt')"
 ```
 
 ### List Routes
@@ -303,9 +303,9 @@ return $json; // Continue processing
 ```bash
 # Send test email via Mailgun API
 curl -X POST --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/mg.insightpulseai.net/messages \
-  -F "from=test@mg.insightpulseai.net" \
-  -F "to=expenses@mg.insightpulseai.net" \
+  https://api.mailgun.net/v3/mg.insightpulseai.com/messages \
+  -F "from=test@mg.insightpulseai.com" \
+  -F "to=expenses@mg.insightpulseai.com" \
   -F "subject=Test Expense Receipt" \
   -F "text=This is a test email to verify route processing."
 ```
@@ -313,7 +313,7 @@ curl -X POST --user "api:$MAILGUN_API_KEY" \
 ### Test 2: Check Mailgun Logs
 
 1. Go to: https://app.mailgun.com/mg/logs
-2. Filter by recipient: `expenses@mg.insightpulseai.net`
+2. Filter by recipient: `expenses@mg.insightpulseai.com`
 3. **Expected**: Event shows "accepted" + "route matched"
 4. Click event → View "Routes" tab → Verify correct route applied
 

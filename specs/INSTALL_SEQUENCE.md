@@ -1,6 +1,6 @@
 # InsightPulse ERP – Production Module Installation Sequence
 
-**Target Server**: `erp.insightpulseai.net` (odoo-erp-prod droplet)
+**Target Server**: `erp.insightpulseai.com` (odoo-erp-prod droplet)
 **Odoo Version**: 18.0-20251106
 **Database**: `odoo`
 **Baseline**: v0.2.1-quality (CE-only, 0 Enterprise modules)
@@ -12,7 +12,7 @@
 ### 1. Verify Current State
 ```bash
 # SSH to production server
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 
 # Check installed modules count
 docker exec odoo-db-1 psql -U odoo -d odoo -c \
@@ -106,7 +106,7 @@ docker exec odoo-db-1 psql -U odoo -d odoo -c \
 
 **Rollback** (if needed):
 ```bash
-ssh root@erp.insightpulseai.net \
+ssh root@erp.insightpulseai.com \
   "docker exec odoo-odoo-1 odoo -d odoo -u ipai_ce_cleaner --workers=0 --stop-after-init"
 ```
 
@@ -143,15 +143,15 @@ docker exec odoo-db-1 psql -U odoo -d odoo -c \
 **Pre-Installation Check**:
 ```bash
 # Verify module directory exists
-ssh root@erp.insightpulseai.net "ls -la /opt/odoo-ce/addons/ipai_expense/"
+ssh root@erp.insightpulseai.com "ls -la /opt/odoo-ce/addons/ipai_expense/"
 
 # Verify __manifest__.py is valid
-ssh root@erp.insightpulseai.net "python3 -m py_compile /opt/odoo-ce/addons/ipai_expense/__manifest__.py"
+ssh root@erp.insightpulseai.com "python3 -m py_compile /opt/odoo-ce/addons/ipai_expense/__manifest__.py"
 ```
 
 **Installation Command**:
 ```bash
-ssh root@erp.insightpulseai.net \
+ssh root@erp.insightpulseai.com \
   "docker exec odoo-odoo-1 odoo -d odoo -i ipai_expense --workers=0 --stop-after-init 2>&1 | tail -50"
 ```
 
@@ -169,13 +169,13 @@ docker exec odoo-db-1 psql -U odoo -d odoo -c \
 
 **Restart Odoo**:
 ```bash
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1"
+ssh root@erp.insightpulseai.com "docker restart odoo-odoo-1"
 
 # Wait 10 seconds for startup
 sleep 10
 
 # Check logs
-ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 30"
+ssh root@erp.insightpulseai.com "docker logs odoo-odoo-1 --tail 30"
 ```
 
 ---
@@ -189,15 +189,15 @@ ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 30"
 **Pre-Installation Check**:
 ```bash
 # Verify module directory exists
-ssh root@erp.insightpulseai.net "ls -la /opt/odoo-ce/addons/ipai_equipment/"
+ssh root@erp.insightpulseai.com "ls -la /opt/odoo-ce/addons/ipai_equipment/"
 
 # Verify __manifest__.py is valid
-ssh root@erp.insightpulseai.net "python3 -m py_compile /opt/odoo-ce/addons/ipai_equipment/__manifest__.py"
+ssh root@erp.insightpulseai.com "python3 -m py_compile /opt/odoo-ce/addons/ipai_equipment/__manifest__.py"
 ```
 
 **Installation Command**:
 ```bash
-ssh root@erp.insightpulseai.net \
+ssh root@erp.insightpulseai.com \
   "docker exec odoo-odoo-1 odoo -d odoo -i ipai_equipment --workers=0 --stop-after-init 2>&1 | tail -50"
 ```
 
@@ -216,8 +216,8 @@ docker exec odoo-db-1 psql -U odoo -d odoo -c \
 
 **Restart Odoo**:
 ```bash
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1 && sleep 10"
-ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 30"
+ssh root@erp.insightpulseai.com "docker restart odoo-odoo-1 && sleep 10"
+ssh root@erp.insightpulseai.com "docker logs odoo-odoo-1 --tail 30"
 ```
 
 ---
@@ -231,16 +231,16 @@ ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 30"
 **Pre-Installation Check**:
 ```bash
 # Verify module directory exists
-ssh root@erp.insightpulseai.net "ls -la /opt/odoo-ce/addons/ipai_finance_monthly_closing/"
+ssh root@erp.insightpulseai.com "ls -la /opt/odoo-ce/addons/ipai_finance_monthly_closing/"
 
 # Verify __manifest__.py is valid
-ssh root@erp.insightpulseai.net \
+ssh root@erp.insightpulseai.com \
   "python3 -m py_compile /opt/odoo-ce/addons/ipai_finance_monthly_closing/__manifest__.py"
 ```
 
 **Installation Command**:
 ```bash
-ssh root@erp.insightpulseai.net \
+ssh root@erp.insightpulseai.com \
   "docker exec odoo-odoo-1 odoo -d odoo -i ipai_finance_monthly_closing --workers=0 --stop-after-init 2>&1 | tail -50"
 ```
 
@@ -260,8 +260,8 @@ docker exec odoo-db-1 psql -U odoo -d odoo -c \
 
 **Restart Odoo**:
 ```bash
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1 && sleep 10"
-ssh root@erp.insightpulseai.net "docker logs odoo-odoo-1 --tail 30"
+ssh root@erp.insightpulseai.com "docker restart odoo-odoo-1 && sleep 10"
+ssh root@erp.insightpulseai.com "docker logs odoo-odoo-1 --tail 30"
 ```
 
 ---
@@ -342,10 +342,10 @@ docker logs odoo-odoo-1 --tail 50 | grep "Worker.*alive"
 **Verification**:
 ```bash
 # Test OCR adapter endpoint
-curl -s https://ocr.insightpulseai.net/health | jq
+curl -s https://ocr.insightpulseai.com/health | jq
 
 # Test Odoo System Parameter
-ssh root@erp.insightpulseai.net \
+ssh root@erp.insightpulseai.com \
   "docker exec odoo-db-1 psql -U odoo -d odoo -c \
    \"SELECT key, value FROM ir_config_parameter WHERE key LIKE '%ocr%';\""
 ```
@@ -358,7 +358,7 @@ ssh root@erp.insightpulseai.net \
 3. BIR deadline alerts (7 days before)
 4. Equipment booking → calendar sync
 
-**Deployment Location**: n8n at `https://ipa.insightpulseai.net`
+**Deployment Location**: n8n at `https://ipa.insightpulseai.com`
 
 **Deployment Commands**:
 ```bash

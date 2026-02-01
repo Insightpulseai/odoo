@@ -209,7 +209,7 @@ from .hooks import post_init_hook
 **Status**: Executable, ready to run on production server
 
 ```bash
-# On production server (erp.insightpulseai.net)
+# On production server (erp.insightpulseai.com)
 cd /opt/odoo-ce
 bash config/PRODUCTION_DEPLOYMENT_SCRIPT.sh
 ```
@@ -235,7 +235,7 @@ bash config/PRODUCTION_DEPLOYMENT_SCRIPT.sh
 
 **Step 1: Update Code**
 ```bash
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 cd /opt/odoo-ce
 git pull origin main
 ```
@@ -253,9 +253,9 @@ sudo systemctl restart odoo
 
 **Step 3: Test Endpoint**
 ```bash
-curl -X POST https://erp.insightpulseai.net/mailgate/mailgun \
+curl -X POST https://erp.insightpulseai.com/mailgate/mailgun \
   -d "sender=test@example.com" \
-  -d "recipient=test@mg.insightpulseai.net" \
+  -d "recipient=test@mg.insightpulseai.com" \
   -d "subject=Test" \
   -d "body-plain=Testing mailgate"
 
@@ -293,9 +293,9 @@ All 6 criteria must pass for integration to be considered operational:
 
 #### Test 1: Direct Endpoint Test (Development)
 ```bash
-curl -X POST https://erp.insightpulseai.net/mailgate/mailgun \
+curl -X POST https://erp.insightpulseai.com/mailgate/mailgun \
   -d "sender=deploy-test@example.com" \
-  -d "recipient=test@mg.insightpulseai.net" \
+  -d "recipient=test@mg.insightpulseai.com" \
   -d "subject=Development Test $(date +%s)" \
   -d "body-plain=Testing mailgate endpoint" \
   -w "\nHTTP_CODE: %{http_code}\n"
@@ -310,11 +310,11 @@ curl -X POST https://erp.insightpulseai.net/mailgate/mailgun \
 **Send test emails via Mailgun API**:
 ```bash
 MAILGUN_API_KEY="key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxx-xxxxxxxx"
-MAILGUN_DOMAIN="mg.insightpulseai.net"
+MAILGUN_DOMAIN="mg.insightpulseai.com"
 TIMESTAMP=$(date +%s)
 
 # Test each route
-for ROUTE in "deploy@insightpulseai.net" "support@insightpulseai.net" "invoices@insightpulseai.net" "test@mg.insightpulseai.net"; do
+for ROUTE in "deploy@insightpulseai.com" "support@insightpulseai.com" "invoices@insightpulseai.com" "test@mg.insightpulseai.com"; do
   echo "Testing route: $ROUTE"
   curl -s --user "api:$MAILGUN_API_KEY" \
     https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages \
@@ -334,7 +334,7 @@ curl -s --user "api:$MAILGUN_API_KEY" \
 
 # Expected for each route:
 # {
-#   "recipient": "deploy@insightpulseai.net",
+#   "recipient": "deploy@insightpulseai.com",
 #   "http-code": 200
 # }
 ```
@@ -360,20 +360,20 @@ docker exec odoo-postgres-prod psql -U odoo -d production -c \
 - ✅ SPF: `v=spf1 include:mailgun.org ~all`
 - ✅ DKIM: `k=rsa; p=MIGfMA0GCSqGS...` (full key verified)
 - ✅ MX: `mxa.mailgun.org` (priority 10), `mxb.mailgun.org` (priority 10)
-- ✅ CNAME: `email.mg.insightpulseai.net` → `mailgun.org`
+- ✅ CNAME: `email.mg.insightpulseai.com` → `mailgun.org`
 - ✅ DMARC: `v=DMARC1; p=none;`
 
 ### Routes (4 configured, all forwarding to mailgate)
 
 | Route | Expression | Forward URL | Priority | Status |
 |-------|------------|-------------|----------|--------|
-| Deploy | `match_recipient("deploy@insightpulseai.net")` | `https://erp.insightpulseai.net/mailgate/mailgun` | 0 | ✅ OK |
-| Support | `match_recipient("support@insightpulseai.net")` | `https://erp.insightpulseai.net/mailgate/mailgun` | 1 | ✅ OK |
-| Invoices | `match_recipient("invoices@insightpulseai.net")` | `https://erp.insightpulseai.net/mailgate/mailgun` | 2 | ✅ OK |
-| Catch-all | `match_recipient(".*@mg.insightpulseai.net")` | `https://erp.insightpulseai.net/mailgate/mailgun` | 10 | ✅ OK |
+| Deploy | `match_recipient("deploy@insightpulseai.com")` | `https://erp.insightpulseai.com/mailgate/mailgun` | 0 | ✅ OK |
+| Support | `match_recipient("support@insightpulseai.com")` | `https://erp.insightpulseai.com/mailgate/mailgun` | 1 | ✅ OK |
+| Invoices | `match_recipient("invoices@insightpulseai.com")` | `https://erp.insightpulseai.com/mailgate/mailgun` | 2 | ✅ OK |
+| Catch-all | `match_recipient(".*@mg.insightpulseai.com")` | `https://erp.insightpulseai.com/mailgate/mailgun` | 10 | ✅ OK |
 
 ### API Credentials
-- **Domain**: mg.insightpulseai.net
+- **Domain**: mg.insightpulseai.com
 - **API Key**: key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxx-xxxxxxxx (stored in `config/mailgun.json`, `.env`, `~/.zshrc`)
 
 ---
@@ -448,7 +448,7 @@ docker compose exec odoo-core odoo -d production -u ipai_enterprise_bridge --sto
 docker compose restart odoo-core
 
 # Verify rollback
-curl -I https://erp.insightpulseai.net/mailgate/mailgun
+curl -I https://erp.insightpulseai.com/mailgate/mailgun
 # Should return: HTTP 404 (controller removed)
 ```
 
@@ -551,7 +551,7 @@ curl -I https://erp.insightpulseai.net/mailgate/mailgun
 ## References
 
 ### Mailgun Documentation
-- **Events API**: https://api.mailgun.net/v3/mg.insightpulseai.net/events
+- **Events API**: https://api.mailgun.net/v3/mg.insightpulseai.com/events
 - **Webhook Format**: https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#tracking-webhooks
 - **Route Forwarding**: https://documentation.mailgun.com/docs/mailgun/user-manual/routes/
 
@@ -578,7 +578,7 @@ curl -I https://erp.insightpulseai.net/mailgate/mailgun
 For issues or questions:
 1. Check Odoo logs: `docker logs odoo-core | grep "Mailgun"`
 2. Review validation report: `/var/log/odoo/mailgun_mailgate_validation_*.txt`
-3. Query Mailgun events: `curl -s --user "api:$MAILGUN_API_KEY" "https://api.mailgun.net/v3/mg.insightpulseai.net/events"`
+3. Query Mailgun events: `curl -s --user "api:$MAILGUN_API_KEY" "https://api.mailgun.net/v3/mg.insightpulseai.com/events"`
 4. Check database: `psql -d production -c "SELECT * FROM mail_message ORDER BY id DESC LIMIT 10;"`
 
 ---

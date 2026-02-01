@@ -83,9 +83,9 @@ Created 11 finance users via XML-RPC:
 | 26 | BIR Overdue Daily Nudge | 2025-12-29 10:00 | Daily |
 
 ### Webhooks: 3/3 ✅
-- `bir.reminder.n8n.webhook` → https://ipa.insightpulseai.net/webhook/bir-reminder
-- `bir.overdue.n8n.webhook` → https://ipa.insightpulseai.net/webhook/bir-overdue-nudge
-- `bir.reminder.mattermost.webhook` → https://mattermost.insightpulseai.net/hooks/bir-compliance-alerts
+- `bir.reminder.n8n.webhook` → https://ipa.insightpulseai.com/webhook/bir-reminder
+- `bir.overdue.n8n.webhook` → https://ipa.insightpulseai.com/webhook/bir-overdue-nudge
+- `bir.reminder.mattermost.webhook` → https://mattermost.insightpulseai.com/hooks/bir-compliance-alerts
 
 ---
 

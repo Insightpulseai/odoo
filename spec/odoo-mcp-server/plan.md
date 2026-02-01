@@ -837,7 +837,7 @@ ODOO_USERNAME=<from vault>
 ODOO_PASSWORD=<from vault>
 
 # MCP coordinator (remote deployment)
-MCP_COORDINATOR_URL=https://mcp.insightpulseai.net
+MCP_COORDINATOR_URL=https://mcp.insightpulseai.com
 
 # Redis cache (optional)
 REDIS_URL=redis://localhost:6379

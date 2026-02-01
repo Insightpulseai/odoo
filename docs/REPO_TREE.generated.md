@@ -3865,7 +3865,7 @@ Commit: 678b8cc9182d6ace4608961e4d238d5fa2c10e5d
 │   ├── monitoring_schema.sql
 │   ├── monitoring_views.sql
 │   ├── nginx
-│   │   └── erp.insightpulseai.net.conf
+│   │   └── erp.insightpulseai.com.conf
 │   ├── odoo-auto-heal.service
 │   ├── odoo.conf
 │   └── README.md

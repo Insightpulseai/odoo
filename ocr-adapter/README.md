@@ -7,7 +7,7 @@ FastAPI adapter service that bridges your existing OCR service with Odoo's expen
 ```
 Odoo Expense Form
     ↓ POST multipart/form-data
-https://ocr.insightpulseai.net/api/expense/ocr
+https://ocr.insightpulseai.com/api/expense/ocr
     ↓ (This Adapter)
 Your Existing OCR Service (PaddleOCR-VL + OpenAI)
     ↓ JSON response
@@ -20,7 +20,7 @@ Odoo populates expense fields
 
 **Request:**
 - Method: `POST`
-- URL: `https://ocr.insightpulseai.net/api/expense/ocr`
+- URL: `https://ocr.insightpulseai.com/api/expense/ocr`
 - Auth: `X-API-Key: your-key` (optional)
 - Body: `multipart/form-data` with `file` field
 
@@ -69,7 +69,7 @@ def normalize_ocr_response(raw: dict) -> dict:
 ### 3. Deploy on OCR Droplet
 
 ```bash
-# On ocr.insightpulseai.net (188.166.237.231)
+# On ocr.insightpulseai.com (188.166.237.231)
 cd /opt
 git clone <your-repo> ocr-adapter
 cd ocr-adapter
@@ -106,7 +106,7 @@ sudo systemctl reload nginx
 # From any machine
 curl -v -F "file=@receipt.jpg" \
   -H "X-API-Key: your-api-key" \
-  https://ocr.insightpulseai.net/api/expense/ocr
+  https://ocr.insightpulseai.com/api/expense/ocr
 
 # Expected response:
 # {
@@ -123,7 +123,7 @@ In Odoo web UI:
 
 1. Navigate to: **Expenses → Configuration → InsightPulse OCR**
 2. Enable: **☑ Enable InsightPulse OCR**
-3. Set **OCR API URL**: `https://ocr.insightpulseai.net/api/expense/ocr`
+3. Set **OCR API URL**: `https://ocr.insightpulseai.com/api/expense/ocr`
 4. Set **API Key**: `your-api-key` (same as in docker-compose.yml)
 5. Click **Save**
 
@@ -218,7 +218,7 @@ sudo tail -f /var/log/nginx/ocr-adapter.error.log
 ### Odoo Logs
 
 ```bash
-# On erp.insightpulseai.net
+# On erp.insightpulseai.com
 docker logs -f odoo-odoo-1 | grep -i "InsightPulse OCR"
 ```
 
@@ -255,12 +255,12 @@ sudo ln -s /etc/nginx/sites-available/ocr-adapter.conf /etc/nginx/sites-enabled/
 sudo nginx -t && sudo systemctl reload nginx
 
 # 6. Verify SSL certificate exists or generate with Certbot
-sudo certbot --nginx -d ocr.insightpulseai.net
+sudo certbot --nginx -d ocr.insightpulseai.com
 
 # 7. Test end-to-end
 curl -F "file=@sample-receipt.jpg" \
   -H "X-API-Key: your-generated-key" \
-  https://ocr.insightpulseai.net/api/expense/ocr
+  https://ocr.insightpulseai.com/api/expense/ocr
 
 # 8. Configure Odoo settings with same API key
 ```
@@ -271,7 +271,7 @@ curl -F "file=@sample-receipt.jpg" \
 
 ```bash
 # Adapter health
-curl https://ocr.insightpulseai.net/health
+curl https://ocr.insightpulseai.com/health
 
 # Expected:
 # {

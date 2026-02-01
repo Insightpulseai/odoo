@@ -14,7 +14,7 @@ The system is designed to:
 - Replace **Cheqroom** for equipment catalog, bookings, and incident tracking.
 - Run **only** on Odoo Community Edition + OCA modules and custom `ipai_*` addons.
 - Avoid all Odoo Enterprise codepaths, IAP services, and odoo.com upsell links.
-- Serve exclusively under InsightPulse domains (e.g. `erp.insightpulseai.net`).
+- Serve exclusively under InsightPulse domains (e.g. `erp.insightpulseai.com`).
 
 ## 2. Repository Structure
 
@@ -861,7 +861,7 @@ The system is designed to:
 - Equipment booking lifecycle (reserve → checkout → check-in → incident) works end-to-end.
 - UI does **not** display any Enterprise or IAP banners, menus, or upsells.
 - Grep across the repo for `odoo.com` returns **no user-facing** links.
-- `erp.insightpulseai.net` is the canonical entry point for all users.
+- `erp.insightpulseai.com` is the canonical entry point for all users.
 - CI/CD fails if Enterprise/IAP traces are introduced.
 
 ## 7. Dependencies & Integrations

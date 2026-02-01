@@ -29,7 +29,7 @@ echo "4. Waiting for Odoo to come back online..."
 sleep 15
 
 for i in {1..12}; do
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://erp.insightpulseai.net/web/health" || echo "000")
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://erp.insightpulseai.com/web/health" || echo "000")
     if [ "$HTTP_CODE" = "200" ]; then
         echo "✅ Odoo is online (attempt $i/12)"
         break
@@ -45,7 +45,7 @@ echo "Asset Regeneration Complete"
 echo "==========================================="
 echo ""
 echo "Next steps:"
-echo "1. Open: https://erp.insightpulseai.net/web/login"
+echo "1. Open: https://erp.insightpulseai.com/web/login"
 echo "2. Hard refresh your browser (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows)"
 echo "3. Login and verify changes"
 echo ""

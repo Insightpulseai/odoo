@@ -54,7 +54,7 @@ Key Milestones:
 **Deliverables:**
 - [ ] Module audit report (deprecated patterns identified)
 - [ ] OCA dependency matrix with Odoo 19 availability
-- [ ] Development sandbox at dev-19.erp.insightpulseai.net
+- [ ] Development sandbox at dev-19.erp.insightpulseai.com
 - [ ] GitHub Actions workflow for Odoo 19 testing
 
 ### Week 2: Planning & Preparation

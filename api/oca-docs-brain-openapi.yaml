@@ -25,15 +25,15 @@ info:
   version: 1.0.0
   contact:
     name: InsightPulseAI
-    url: https://insightpulseai.net
+    url: https://insightpulseai.com
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://api.insightpulseai.net/v1
+  - url: https://api.insightpulseai.com/v1
     description: Production
-  - url: https://api-staging.insightpulseai.net/v1
+  - url: https://api-staging.insightpulseai.com/v1
     description: Staging
   - url: http://localhost:3000/v1
     description: Local Development

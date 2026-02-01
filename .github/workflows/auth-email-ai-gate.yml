@@ -25,7 +25,7 @@ on:
         default: 'false'
 
 env:
-  MAILGUN_DOMAIN: mg.insightpulseai.net
+  MAILGUN_DOMAIN: mg.insightpulseai.com
 
 jobs:
   # Job 1: Validate .env.example completeness
@@ -92,8 +92,8 @@ jobs:
 
           # Check Mailgun domain matches expected
           MAILGUN_DOMAIN_VAR=$(grep "^MAILGUN_DOMAIN=" infra/env/.env.example | cut -d= -f2)
-          if [ "$MAILGUN_DOMAIN_VAR" != "mg.insightpulseai.net" ]; then
-            echo "⚠️  MAILGUN_DOMAIN mismatch (expected: mg.insightpulseai.net, found: $MAILGUN_DOMAIN_VAR)"
+          if [ "$MAILGUN_DOMAIN_VAR" != "mg.insightpulseai.com" ]; then
+            echo "⚠️  MAILGUN_DOMAIN mismatch (expected: mg.insightpulseai.com, found: $MAILGUN_DOMAIN_VAR)"
           fi
 
           echo "✅ Email configuration format valid"
@@ -237,7 +237,7 @@ jobs:
           MAIL_PORT: 2525
           MAIL_USER: ${{ secrets.MAILGUN_SMTP_USER }}
           MAIL_PASSWORD: ${{ secrets.MAILGUN_SMTP_PASSWORD }}
-          MAIL_DEFAULT_FROM: noreply@mg.insightpulseai.net
+          MAIL_DEFAULT_FROM: noreply@mg.insightpulseai.com
           TEST_EMAIL_TO: ${{ secrets.TEST_EMAIL_TO }}
         run: |
           echo "Sending test email..."

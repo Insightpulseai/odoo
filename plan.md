@@ -43,12 +43,12 @@ Aligned PRD: specs/002-odoo-expense-equipment-mvp.prd.md
   - `dbfilter` for the intended DB(s).
   - Logging config.
 - Configure Nginx reverse proxy:
-  - `erp.insightpulseai.net` → Odoo container.
+  - `erp.insightpulseai.com` → Odoo container.
   - Let's Encrypt SSL via certbot or managed certificate.
 
 **Exit criteria:**
 
-- Odoo CE 18 admin reachable via `https://erp.insightpulseai.net/web`.
+- Odoo CE 18 admin reachable via `https://erp.insightpulseai.com/web`.
 - No Enterprise modules present in `addons_path` or installed.
 
 ---
@@ -125,4 +125,4 @@ Aligned PRD: specs/002-odoo-expense-equipment-mvp.prd.md
 **Exit criteria:**
 
 - UAT sign-off for both Expense and Equipment modules.
-- Production database created and connected to `erp.insightpulseai.net`.
+- Production database created and connected to `erp.insightpulseai.com`.

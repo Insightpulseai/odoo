@@ -260,7 +260,7 @@ export async function notifyDeployment(status: 'success' | 'failure', message: s
 |---------|---------|-----|
 | `control-room` | Admin dashboard | control-room.vercel.app |
 | `mcp-jobs` | Job orchestration UI | v0-open-in-v0-aw4uzb0sw-tbwa.vercel.app |
-| `ipai-docs` | Documentation site | docs.insightpulseai.net |
+| `ipai-docs` | Documentation site | docs.insightpulseai.com |
 
 ---
 

@@ -34,20 +34,20 @@ declare -a CHECKLIST_ITEMS=(
     "1:knowledge_embeddings:Create knowledge_embeddings table:psql \$POSTGRES_URL -c 'SELECT COUNT(*) FROM public.knowledge_embeddings;'"
 
     # Phase 2: Server Deployment (30 minutes)
-    "2:server_directories:Create server directories:ssh root@erp.insightpulseai.net 'test -d /opt/odoo-ce/scripts'"
-    "2:copy_scripts:Copy scripts to server:ssh root@erp.insightpulseai.net 'test -f /opt/odoo-ce/scripts/check_project_tasks.py'"
-    "2:script_permissions:Set script permissions:ssh root@erp.insightpulseai.net 'test -x /opt/odoo-ce/scripts/check_project_tasks.py'"
-    "2:test_project_tasks:Test check_project_tasks.py:ssh root@erp.insightpulseai.net 'cd /opt/odoo-ce && python3 scripts/check_project_tasks.py'"
-    "2:test_finance_stack:Test verify_finance_stack.sh:ssh root@erp.insightpulseai.net 'cd /opt/odoo-ce/notion-n8n-monthly-close && ./scripts/verify_finance_stack.sh --env ${ENV}'"
+    "2:server_directories:Create server directories:ssh root@erp.insightpulseai.com 'test -d /opt/odoo-ce/scripts'"
+    "2:copy_scripts:Copy scripts to server:ssh root@erp.insightpulseai.com 'test -f /opt/odoo-ce/scripts/check_project_tasks.py'"
+    "2:script_permissions:Set script permissions:ssh root@erp.insightpulseai.com 'test -x /opt/odoo-ce/scripts/check_project_tasks.py'"
+    "2:test_project_tasks:Test check_project_tasks.py:ssh root@erp.insightpulseai.com 'cd /opt/odoo-ce && python3 scripts/check_project_tasks.py'"
+    "2:test_finance_stack:Test verify_finance_stack.sh:ssh root@erp.insightpulseai.com 'cd /opt/odoo-ce/notion-n8n-monthly-close && ./scripts/verify_finance_stack.sh --env ${ENV}'"
 
     # Phase 3: n8n Configuration (45 minutes)
-    "3:n8n_odoo_creds:Create Odoo credentials in n8n:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.net/api/v1/credentials"
-    "3:n8n_openai_creds:Create OpenAI credentials:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.net/api/v1/credentials"
-    "3:n8n_supabase_creds:Create Supabase credentials:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.net/api/v1/credentials"
-    "3:import_w150:Import W150 workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.net/api/v1/workflows | grep -q W150"
-    "3:import_expense_ocr:Import ODOO_EXPENSE_OCR workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.net/api/v1/workflows | grep -q EXPENSE_OCR"
-    "3:import_bir_prep:Import ODOO_BIR_PREP workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.net/api/v1/workflows | grep -q BIR_PREP"
-    "3:import_knowledge:Import ODOO_KNOWLEDGE_GOV workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.net/api/v1/workflows | grep -q KNOWLEDGE_GOV"
+    "3:n8n_odoo_creds:Create Odoo credentials in n8n:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.com/api/v1/credentials"
+    "3:n8n_openai_creds:Create OpenAI credentials:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.com/api/v1/credentials"
+    "3:n8n_supabase_creds:Create Supabase credentials:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.com/api/v1/credentials"
+    "3:import_w150:Import W150 workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.com/api/v1/workflows | grep -q W150"
+    "3:import_expense_ocr:Import ODOO_EXPENSE_OCR workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.com/api/v1/workflows | grep -q EXPENSE_OCR"
+    "3:import_bir_prep:Import ODOO_BIR_PREP workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.com/api/v1/workflows | grep -q BIR_PREP"
+    "3:import_knowledge:Import ODOO_KNOWLEDGE_GOV workflow:curl -s -H 'X-N8N-API-KEY: \$N8N_API_KEY' https://ipa.insightpulseai.com/api/v1/workflows | grep -q KNOWLEDGE_GOV"
     "3:test_w150:Test W150 workflow:echo 'Manual test required'"
 
     # Phase 4: GitHub Actions Setup (20 minutes)

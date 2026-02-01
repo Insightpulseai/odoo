@@ -306,7 +306,7 @@ Configure in Odoo via `base_automation` or custom module:
     'name': 'Sync Expense Sheet to Supabase',
     'model_id': 'hr.expense.sheet',
     'trigger': 'on_write',
-    'url': 'https://n8n.insightpulseai.net/webhook/odoo-expense-sheet',
+    'url': 'https://n8n.insightpulseai.com/webhook/odoo-expense-sheet',
     'fields': ['state', 'total_amount', 'approval_date'],
 }
 ```

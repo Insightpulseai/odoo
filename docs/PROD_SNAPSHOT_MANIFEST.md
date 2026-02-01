@@ -5,7 +5,7 @@
 ## Quick Start (On Production)
 
 ```bash
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 cd /opt/odoo-ce
 git pull origin claude/notion-clone-odoo-module-LSFan
 ./tools/audit/gen_prod_snapshot.sh
@@ -50,7 +50,7 @@ export DB_SERVICE=db
 export DB_NAME=odoo
 export DB_USER=odoo
 export ODOO_SERVICE=odoo
-export BASE_URL=https://erp.insightpulseai.net
+export BASE_URL=https://erp.insightpulseai.com
 ```
 
 ## Verification Checklist
@@ -75,5 +75,5 @@ After running on production, verify:
 ./tools/audit/gen_runtime_sitemap.sh
 
 # HTTP only
-python3 tools/audit/http_crawler.py https://erp.insightpulseai.net docs/runtime/HTTP_SITEMAP.prod.json
+python3 tools/audit/http_crawler.py https://erp.insightpulseai.com docs/runtime/HTTP_SITEMAP.prod.json
 ```

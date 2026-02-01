@@ -84,8 +84,8 @@ HOST_UID=0
 
 ```bash
 # Public access
-PUBLIC_URL="https://erp.insightpulseai.net"
-LOGIN_URL="https://erp.insightpulseai.net/web/login"
+PUBLIC_URL="https://erp.insightpulseai.com"
+LOGIN_URL="https://erp.insightpulseai.com/web/login"
 
 # Direct IP access (behind nginx)
 DIRECT_URL="http://178.128.112.214:8069"
@@ -93,7 +93,7 @@ LONGPOLLING_URL="http://178.128.112.214:8072"
 
 # Health checks
 # Note: version_info requires authentication, use login endpoint for health
-curl -sI https://erp.insightpulseai.net/web/login
+curl -sI https://erp.insightpulseai.com/web/login
 ```
 
 ---

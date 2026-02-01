@@ -1,6 +1,6 @@
 # WorkOS Production Deployment Package
 
-**Complete deployment automation for WorkOS (Notion Clone) to erp.insightpulseai.net**
+**Complete deployment automation for WorkOS (Notion Clone) to erp.insightpulseai.com**
 
 ---
 
@@ -159,7 +159,7 @@ Phase 7: Commit & Push
 
 ```bash
 # SSH to production
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 
 # Execute rollback
 cd /opt/odoo-ce

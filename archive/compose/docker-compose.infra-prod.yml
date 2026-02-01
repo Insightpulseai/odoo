@@ -1,7 +1,7 @@
 # TBWA\SMP Production Odoo Stack
 # Managed PostgreSQL: odoo-db-sgp1 (DigitalOcean)
 # Droplet: 178.128.112.214 (odoo-erp-prod)
-# Domains: erp.insightpulseai.net, superset.insightpulseai.net, mcp.insightpulseai.net
+# Domains: erp.insightpulseai.com, superset.insightpulseai.com, mcp.insightpulseai.com
 
 services:
   odoo:

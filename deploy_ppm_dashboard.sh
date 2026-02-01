@@ -28,7 +28,7 @@ echo "🚀 Deploying to live server..."
 echo ""
 
 # SSH to server and deploy
-ssh root@erp.insightpulseai.net << 'EOF'
+ssh root@erp.insightpulseai.com << 'EOF'
 cd /opt/odoo-ce
 git pull origin feature/add-expense-equipment-prd
 ./scripts/deploy-odoo-modules.sh ipai_finance_ppm_dashboard
@@ -39,7 +39,7 @@ echo ""
 echo "✅ Deployment complete!"
 echo ""
 echo "📋 Next steps:"
-echo "1. Navigate to: https://erp.insightpulseai.net"
+echo "1. Navigate to: https://erp.insightpulseai.com"
 echo "2. Login with admin credentials"
 echo "3. Go to Apps menu"
 echo "4. Click 'Update Apps List' (⟳ icon top-right)"

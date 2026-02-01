@@ -37,13 +37,13 @@
     },
     {
       "parameters": {
-        "url": "https://mattermost.insightpulseai.net/hooks/ap-aging-alert",
+        "url": "https://mattermost.insightpulseai.com/hooks/ap-aging-alert",
         "options": {
           "bodyContentType": "json"
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \"📊 **AP Aging Heatmap Ready** (@{{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\\n\\n**Snapshot Date**: {{ $node['Webhook - AP Aging Trigger'].json.body.snapshot_date }}\\n**Total Payables**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_payables).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n**Vendor Count**: {{ $node['Webhook - AP Aging Trigger'].json.body.vendor_count }}\\n**Overdue (90+)**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_overdue_90plus).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n\\n🔗 [View Heatmap](https://odoo.insightpulseai.net/ipai/finance/ap_aging/heatmap?employee_code={{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\",\n  \"username\": \"AP Aging Bot\",\n  \"icon_emoji\": \":chart_with_upwards_trend:\"\n}"
+        "jsonBody": "={\n  \"text\": \"📊 **AP Aging Heatmap Ready** (@{{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\\n\\n**Snapshot Date**: {{ $node['Webhook - AP Aging Trigger'].json.body.snapshot_date }}\\n**Total Payables**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_payables).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n**Vendor Count**: {{ $node['Webhook - AP Aging Trigger'].json.body.vendor_count }}\\n**Overdue (90+)**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_overdue_90plus).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n\\n🔗 [View Heatmap](https://odoo.insightpulseai.com/ipai/finance/ap_aging/heatmap?employee_code={{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\",\n  \"username\": \"AP Aging Bot\",\n  \"icon_emoji\": \":chart_with_upwards_trend:\"\n}"
       },
       "id": "notify-mattermost",
       "name": "Notify Mattermost (CKVC)",
@@ -82,13 +82,13 @@
     },
     {
       "parameters": {
-        "url": "https://mattermost.insightpulseai.net/hooks/ap-aging-alert",
+        "url": "https://mattermost.insightpulseai.com/hooks/ap-aging-alert",
         "options": {
           "bodyContentType": "json"
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"text\": \"🚨 **URGENT: High Overdue AP Balance** (@channel)\\n\\n**Employee**: {{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }}\\n**Overdue (90+ days)**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_overdue_90plus).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n\\n⚠️ **Action Required**: Overdue balance exceeds ₱100,000 threshold.\\n\\n🔗 [Review Heatmap](https://odoo.insightpulseai.net/ipai/finance/ap_aging/heatmap?employee_code={{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\",\n  \"username\": \"AP Aging Alert\",\n  \"icon_emoji\": \":rotating_light:\"\n}"
+        "jsonBody": "={\n  \"text\": \"🚨 **URGENT: High Overdue AP Balance** (@channel)\\n\\n**Employee**: {{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }}\\n**Overdue (90+ days)**: ₱{{ Number($node['Webhook - AP Aging Trigger'].json.body.total_overdue_90plus).toLocaleString('en-PH', {maximumFractionDigits: 2}) }}\\n\\n⚠️ **Action Required**: Overdue balance exceeds ₱100,000 threshold.\\n\\n🔗 [Review Heatmap](https://odoo.insightpulseai.com/ipai/finance/ap_aging/heatmap?employee_code={{ $node['Webhook - AP Aging Trigger'].json.body.employee_code }})\",\n  \"username\": \"AP Aging Alert\",\n  \"icon_emoji\": \":rotating_light:\"\n}"
       },
       "id": "escalate-overdue",
       "name": "Escalate Overdue (Finance Director)",

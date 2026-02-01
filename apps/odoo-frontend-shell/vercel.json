@@ -7,7 +7,7 @@
   "outputDirectory": ".next",
   "regions": ["sin1"],
   "env": {
-    "NEXT_PUBLIC_ODOO_URL": "https://erp.insightpulseai.net",
+    "NEXT_PUBLIC_ODOO_URL": "https://erp.insightpulseai.com",
     "NEXT_PUBLIC_ODOO_DB": "odoo"
   },
   "headers": [

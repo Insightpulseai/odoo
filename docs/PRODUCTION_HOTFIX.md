@@ -42,9 +42,9 @@ Login fails with "redirect_uri_mismatch"
 - OAuth provider rejects HTTP redirect URIs
 
 **Fix Applied**:
-- **File**: `deploy/nginx/erp.insightpulseai.net.conf`
+- **File**: `deploy/nginx/erp.insightpulseai.com.conf`
 - **Change**: `X-Forwarded-Proto $scheme` → `X-Forwarded-Proto https`
-- **Database**: Force `web.base.url = https://erp.insightpulseai.net` and freeze parameter
+- **Database**: Force `web.base.url = https://erp.insightpulseai.com` and freeze parameter
 
 ---
 
@@ -66,10 +66,10 @@ git pull origin main
 
 ```bash
 # Backup current nginx config
-cp deploy/nginx/erp.insightpulseai.net.conf deploy/nginx/erp.insightpulseai.net.conf.backup
+cp deploy/nginx/erp.insightpulseai.com.conf deploy/nginx/erp.insightpulseai.com.conf.backup
 
 # Copy updated config to nginx container
-docker cp deploy/nginx/erp.insightpulseai.net.conf nginx:/etc/nginx/conf.d/erp.insightpulseai.net.conf
+docker cp deploy/nginx/erp.insightpulseai.com.conf nginx:/etc/nginx/conf.d/erp.insightpulseai.com.conf
 
 # Test nginx configuration
 docker exec nginx nginx -t
@@ -111,7 +111,7 @@ Found 1 view(s) to patch:
 >>> [2/4] Fixing OAuth HTTPS loop...
             key            |              value
 ---------------------------+----------------------------------
- web.base.url              | https://erp.insightpulseai.net
+ web.base.url              | https://erp.insightpulseai.com
  web.base.url.freeze       | True
 ✓ HTTPS system parameters enforced
 
@@ -133,7 +133,7 @@ Waiting for Odoo to restart ✓
 docker ps | grep odoo
 
 # 2. Test HTTPS endpoint
-curl -I https://erp.insightpulseai.net
+curl -I https://erp.insightpulseai.com
 
 # Expected: HTTP/2 200 (or 303 for login redirect)
 
@@ -153,7 +153,7 @@ docker exec nginx nginx -T | grep X-Forwarded-Proto
 - Safari: `Cmd + Option + R`
 
 **Test OAuth Login**:
-1. Navigate to `https://erp.insightpulseai.net`
+1. Navigate to `https://erp.insightpulseai.com`
 2. Click "Login with Google" (or other OAuth provider)
 3. Verify redirect works without loops
 4. Confirm successful login
@@ -171,7 +171,7 @@ If issues occur, rollback using these commands:
 
 ```bash
 # Rollback nginx config
-docker cp deploy/nginx/erp.insightpulseai.net.conf.backup nginx:/etc/nginx/conf.d/erp.insightpulseai.net.conf
+docker cp deploy/nginx/erp.insightpulseai.com.conf.backup nginx:/etc/nginx/conf.d/erp.insightpulseai.com.conf
 docker exec nginx nginx -s reload
 
 # Restore database from backup (if available)
@@ -193,7 +193,7 @@ docker restart odoo-erp-prod
 docker logs -f odoo-erp-prod | grep -i error
 
 # Monitor nginx access logs
-docker logs -f nginx | grep erp.insightpulseai.net
+docker logs -f nginx | grep erp.insightpulseai.com
 
 # Check OAuth success rate
 docker exec postgres psql -U odoo -d prod -c "
@@ -207,7 +207,7 @@ docker exec postgres psql -U odoo -d prod -c "
 
 ```bash
 # Endpoint health
-curl -sf https://erp.insightpulseai.net/web/health || echo "FAILED"
+curl -sf https://erp.insightpulseai.com/web/health || echo "FAILED"
 
 # Database connectivity
 docker exec odoo-erp-prod odoo shell -d prod -c "
@@ -257,7 +257,7 @@ Deployment considered successful when:
 ## Emergency Contacts
 
 - **DevOps Engineer**: jgtolentino (Mattermost)
-- **System Admin**: admin@insightpulseai.net
+- **System Admin**: admin@insightpulseai.com
 - **Escalation**: Finance Director (for business impact)
 
 ---

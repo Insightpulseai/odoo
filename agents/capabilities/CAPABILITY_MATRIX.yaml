@@ -16,7 +16,7 @@ capabilities:
     description: "Scaffold, develop, test, and deploy Odoo module with Supabase integration"
 
     preconditions:
-      - odoo_ce_instance_running: "Odoo CE 18 accessible at erp.insightpulseai.net"
+      - odoo_ce_instance_running: "Odoo CE 18 accessible at erp.insightpulseai.com"
       - supabase_project_configured: "Supabase project spdtwktxdalcfigzeqrz available"
       - ci_pipeline_active: "GitHub Actions configured for CE/OCA checks"
 
@@ -57,7 +57,7 @@ capabilities:
         action: "deploy_odoo_module"
         inputs:
           - module_path
-          - target: "erp.insightpulseai.net"
+          - target: "erp.insightpulseai.com"
         outputs:
           - deployment_status
 
@@ -75,7 +75,7 @@ capabilities:
     description: "Analyze OCR failures, add normalization rules, validate improvements"
 
     preconditions:
-      - ocr_adapter_deployed: "OCR adapter at ocr.insightpulseai.net"
+      - ocr_adapter_deployed: "OCR adapter at ocr.insightpulseai.com"
       - test_harness_available: "ocr-adapter/scripts/test-harness.py"
       - ground_truth_data: "test_receipts/ground_truth.csv exists"
 
@@ -180,7 +180,7 @@ capabilities:
     preconditions:
       - flutter_module_exists: "addons/flutter_receipt_ocr/"
       - supabase_configured: "parsed_receipts table + receipt-images bucket"
-      - ocr_api_ready: "ocr.insightpulseai.net/ocr endpoint"
+      - ocr_api_ready: "ocr.insightpulseai.com/ocr endpoint"
 
     skills_required:
       - build_flutter_module
@@ -255,7 +255,7 @@ capabilities:
       - step: 3
         action: "setup_nginx_proxy"
         inputs:
-          - domain: "erp.insightpulseai.net | ocr.insightpulseai.net"
+          - domain: "erp.insightpulseai.com | ocr.insightpulseai.com"
           - backend_port: 8069
 
       - step: 4
@@ -315,7 +315,7 @@ capabilities:
         schedule: "Daily at 09:00 PH time"
         alert_channels:
           - mattermost: "ops-channel"
-          - email: "finance@insightpulseai.net"
+          - email: "finance@insightpulseai.com"
 
     success_criteria:
       - tasks_imported: true

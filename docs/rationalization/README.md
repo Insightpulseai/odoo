@@ -400,7 +400,7 @@ ssh root@178.128.112.214 "docker exec odoo-erp-prod bash -c \"
 ssh root@178.128.112.214 "docker exec odoo-erp-prod odoo -d odoo --stop-after-init"
 
 # 4. UI accessibility test
-curl -I https://erp.insightpulseai.net
+curl -I https://erp.insightpulseai.com
 ```
 
 ---

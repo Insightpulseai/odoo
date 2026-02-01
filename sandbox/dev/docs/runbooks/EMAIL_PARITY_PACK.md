@@ -22,18 +22,18 @@ This implementation provides:
 
 All required DNS records are already configured:
 
-### Root Domain (`insightpulseai.net`)
+### Root Domain (`insightpulseai.com`)
 - SPF: `v=spf1 include:mailgun.org ~all` ✅
 - DMARC: `v=DMARC1; p=none; rua=mailto:3651085@dmarc.mailgun.org` ✅
 - MX: ❌ Not configured (using Mailgun subdomain instead)
 
-### Mailgun Subdomain (`mg.insightpulseai.net`)
+### Mailgun Subdomain (`mg.insightpulseai.com`)
 - MX: `10 mxa.mailgun.org`, `10 mxb.mailgun.org` ✅
 - SPF: `v=spf1 include:mailgun.org ~all` ✅
 - DKIM: Configured ✅
 - DMARC: Configured ✅
 
-**Result**: Can send from `*@insightpulseai.net`, receive at `*@mg.insightpulseai.net`
+**Result**: Can send from `*@insightpulseai.com`, receive at `*@mg.insightpulseai.com`
 
 ---
 
@@ -48,12 +48,12 @@ All required DNS records are already configured:
 │  Odoo → Mailgun SMTP (smtp.mailgun.org:587) → Recipients        │
 │                                                                  │
 │  Inbound Flow:                                                   │
-│  Sender → Mailgun Routes → https://erp.insightpulseai.net       │
+│  Sender → Mailgun Routes → https://erp.insightpulseai.com       │
 │           /mailgun/inbound → ipai_mailgun_bridge                │
 │           → CRM / Projects / Support Channel                     │
 │                                                                  │
 │  Event Tracking:                                                 │
-│  Mailgun Events → https://erp.insightpulseai.net                │
+│  Mailgun Events → https://erp.insightpulseai.com                │
 │           /mailgun/events → ipai_mailgun_bridge                 │
 │           → mail.mail.ipai_mailgun_last_event                   │
 │                                                                  │
@@ -96,7 +96,7 @@ This script:
 ```bash
 # Set environment variables
 export MAILGUN_API_KEY="your_mailgun_api_key"
-export MAILGUN_DOMAIN="mg.insightpulseai.net"
+export MAILGUN_DOMAIN="mg.insightpulseai.com"
 
 ./scripts/mailgun/configure-routes.sh
 ```
@@ -141,9 +141,9 @@ ipai_mailgun_bridge/
 
 | Address | Creates | Model | Notes |
 |---------|---------|-------|-------|
-| `sales@insightpulseai.net` | CRM Lead | `crm.lead` | Automatic lead creation |
-| `projects@insightpulseai.net` | Project Task | `project.task` | Creates task in first project |
-| `support@insightpulseai.net` | Channel Message | `mail.channel` | Support inbox (no helpdesk) |
+| `sales@insightpulseai.com` | CRM Lead | `crm.lead` | Automatic lead creation |
+| `projects@insightpulseai.com` | Project Task | `project.task` | Creates task in first project |
+| `support@insightpulseai.com` | Channel Message | `mail.channel` | Support inbox (no helpdesk) |
 
 ### Webhook Endpoints
 
@@ -156,7 +156,7 @@ ipai_mailgun_bridge/
 
 ## Nginx Configuration (Production)
 
-**File**: `/etc/nginx/sites-available/erp.insightpulseai.net.conf`
+**File**: `/etc/nginx/sites-available/erp.insightpulseai.com.conf`
 
 Add these locations to existing server block:
 
@@ -194,15 +194,15 @@ Configure Mailgun to forward emails to Odoo:
 
 ```bash
 export MAILGUN_API_KEY="your_key"
-export MAILGUN_DOMAIN="mg.insightpulseai.net"
+export MAILGUN_DOMAIN="mg.insightpulseai.com"
 
-# Catchall route (all @insightpulseai.net)
+# Catchall route (all @insightpulseai.com)
 curl -s -u "api:${MAILGUN_API_KEY}" \
   https://api.mailgun.net/v3/routes \
   -F priority=1 \
   -F description='Odoo catchall' \
-  -F expression='match_recipient(".*@insightpulseai.net")' \
-  -F action='forward("https://erp.insightpulseai.net/mailgun/inbound")' \
+  -F expression='match_recipient(".*@insightpulseai.com")' \
+  -F action='forward("https://erp.insightpulseai.com/mailgun/inbound")' \
   -F action='stop()'
 ```
 
@@ -214,7 +214,7 @@ Track email delivery events:
 curl -s -u "api:${MAILGUN_API_KEY}" \
   https://api.mailgun.net/v3/domains/${MAILGUN_DOMAIN}/webhooks \
   -F id=tracking \
-  -F url='https://erp.insightpulseai.net/mailgun/events'
+  -F url='https://erp.insightpulseai.com/mailgun/events'
 ```
 
 ### 3. Webhook Signing Key
@@ -244,8 +244,8 @@ EOF
 
 ```bash
 # Check endpoints are accessible (expect 200 or 405, not 404/5xx)
-curl -I https://erp.insightpulseai.net/mailgun/inbound
-curl -I https://erp.insightpulseai.net/mailgun/events
+curl -I https://erp.insightpulseai.com/mailgun/inbound
+curl -I https://erp.insightpulseai.com/mailgun/events
 ```
 
 ### 2. Outbound Email Test
@@ -263,7 +263,7 @@ This script:
 
 ```bash
 # Send test email
-echo "Test support request" | mail -s "Test Subject" support@insightpulseai.net
+echo "Test support request" | mail -s "Test Subject" support@insightpulseai.com
 
 # Verify in Odoo
 docker exec -it odoo-dev odoo \
@@ -334,7 +334,7 @@ docker exec -it odoo18-prod-app odoo \
 
 ```bash
 # Set production environment variables
-export MAILGUN_SMTP_LOGIN="postmaster@mg.insightpulseai.net"
+export MAILGUN_SMTP_LOGIN="postmaster@mg.insightpulseai.com"
 export MAILGUN_SMTP_PASSWORD="your_production_password"
 export MAILGUN_WEBHOOK_SIGNING_KEY="your_production_signing_key"
 
@@ -346,7 +346,7 @@ export MAILGUN_WEBHOOK_SIGNING_KEY="your_production_signing_key"
 
 ```bash
 export MAILGUN_API_KEY="your_production_api_key"
-export MAILGUN_DOMAIN="mg.insightpulseai.net"
+export MAILGUN_DOMAIN="mg.insightpulseai.com"
 
 ./scripts/mailgun/configure-routes.sh
 ```
@@ -355,7 +355,7 @@ export MAILGUN_DOMAIN="mg.insightpulseai.net"
 
 ```bash
 # Add webhook locations to nginx config
-sudo nano /etc/nginx/sites-available/erp.insightpulseai.net.conf
+sudo nano /etc/nginx/sites-available/erp.insightpulseai.com.conf
 # (Add locations from "Nginx Configuration" section above)
 
 sudo nginx -t && sudo systemctl reload nginx
@@ -410,7 +410,7 @@ curl -s -u "api:${MAILGUN_API_KEY}" \
 ### Issue: Inbound emails not creating records
 
 **Check**:
-1. Webhook endpoint accessible: `curl -I https://erp.insightpulseai.net/mailgun/inbound`
+1. Webhook endpoint accessible: `curl -I https://erp.insightpulseai.com/mailgun/inbound`
 2. Mailgun routes configured: View in Mailgun dashboard
 3. Signature verification: Check `ipai_mailgun.webhook_signing_key` in Odoo
 4. Odoo logs: `docker logs odoo-dev -f | grep mailgun`
@@ -442,7 +442,7 @@ EOF
 **Check**:
 1. Event webhook configured in Mailgun: Settings → Webhooks
 2. Message ID matching: Verify `Message-Id` header in sent emails
-3. Event endpoint accessible: `curl -I https://erp.insightpulseai.net/mailgun/events`
+3. Event endpoint accessible: `curl -I https://erp.insightpulseai.com/mailgun/events`
 
 **Debug**: Check recent events in Odoo:
 ```bash

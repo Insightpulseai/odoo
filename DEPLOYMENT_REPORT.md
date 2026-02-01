@@ -1,7 +1,7 @@
 # WorkOS Production Deployment Report
 
 **Generated**: 2024-12-25T10:30:00Z
-**Target**: https://erp.insightpulseai.net
+**Target**: https://erp.insightpulseai.com
 **Repository**: https://github.com/jgtolentino/odoo-ce
 **Operator**: Claude Code (automated deployment assessment)
 
@@ -116,7 +116,7 @@ Platform Suite (5 modules):
 - Outputs: Module installation log
 
 **Phase 4: Runtime Verification**
-- HTTP check: `curl https://erp.insightpulseai.net/web/login` (expect 200/303)
+- HTTP check: `curl https://erp.insightpulseai.com/web/login` (expect 200/303)
 - Log check: Grep last 200 lines for critical errors (threshold: <5)
 - Module state check: Query `ir_module_module` for installed count (expect ≥11)
 - Model check: Query `ir_model` for WorkOS/Platform models (expect >0)
@@ -152,7 +152,7 @@ Platform Suite (5 modules):
 **Single Copy/Paste Block**: 350+ lines of bash implementing all 7 phases
 
 **Prerequisites**:
-- SSH access to production server: `deploy@erp.insightpulseai.net`
+- SSH access to production server: `deploy@erp.insightpulseai.com`
 - Server state: Odoo already running with database `odoo`
 - Repo location: `/opt/odoo-ce`
 - Docker compose accessible
@@ -160,7 +160,7 @@ Platform Suite (5 modules):
 
 **Execution**:
 ```bash
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 cd /opt/odoo-ce
 # Paste entire "RUN ON PROD" block from DEPLOYMENT_RUNBOOK.md
 ```
@@ -271,7 +271,7 @@ docker compose -f deploy/docker-compose.prod.yml exec -T db \
 **Post-Deployment**:
 - Monitor Odoo logs for 24 hours: `docker compose logs -f odoo`
 - Check HTTP endpoint every 5 minutes
-- Verify menu access: https://erp.insightpulseai.net/web#menu_id=XXX
+- Verify menu access: https://erp.insightpulseai.com/web#menu_id=XXX
 - User acceptance testing for WorkOS features
 
 ---
@@ -286,7 +286,7 @@ docker compose -f deploy/docker-compose.prod.yml exec -T db \
    - Confirm backup directory exists: `/var/backups/odoo`
 
 2. **Production Server Preparation**
-   - SSH to `deploy@erp.insightpulseai.net`
+   - SSH to `deploy@erp.insightpulseai.com`
    - Verify Docker compose accessible
    - Check disk space for database backup
    - Confirm current Odoo version
@@ -298,7 +298,7 @@ docker compose -f deploy/docker-compose.prod.yml exec -T db \
    - Check exit code (should be 0)
 
 4. **Post-Deployment Verification**
-   - Access https://erp.insightpulseai.net/web/login
+   - Access https://erp.insightpulseai.com/web/login
    - Check installed modules via Odoo UI
    - Verify WorkOS menu items appear
    - Test basic WorkOS functionality
@@ -385,8 +385,8 @@ This ensures compatibility with different compose configurations.
 - Latest commit: `196d95aa` (deployment runbook added)
 
 **Production**:
-- Odoo instance: https://erp.insightpulseai.net
-- Login endpoint: https://erp.insightpulseai.net/web/login
+- Odoo instance: https://erp.insightpulseai.com
+- Login endpoint: https://erp.insightpulseai.com/web/login
 - Database: odoo_accounting (PostgreSQL 15)
 
 ---

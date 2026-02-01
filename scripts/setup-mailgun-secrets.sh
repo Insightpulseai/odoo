@@ -23,10 +23,10 @@ read -sp "Enter MAILGUN_SMTP_PASSWORD: " MAILGUN_SMTP_PASSWORD
 echo
 
 # Non-sensitive config (can be set directly)
-MAILGUN_DOMAIN="mg.insightpulseai.net"
+MAILGUN_DOMAIN="mg.insightpulseai.com"
 MAILGUN_SMTP_SERVER="smtp.mailgun.org"
 MAILGUN_SMTP_PORT="587"
-MAILGUN_SMTP_USER="postmaster@mg.insightpulseai.net"
+MAILGUN_SMTP_USER="postmaster@mg.insightpulseai.com"
 
 echo "Setting GitHub secrets..."
 

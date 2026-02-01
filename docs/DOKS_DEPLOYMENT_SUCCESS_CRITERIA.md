@@ -56,8 +56,8 @@ For a DigitalOcean Kubernetes (DOKS) deployment to be considered successful, **a
     * Ingress resources have an `ADDRESS` and expected `HOSTS`
   * External checks:
     ```bash
-    curl -k -I https://erp.insightpulseai.net
-    curl -k -I https://auth.insightpulseai.net
+    curl -k -I https://erp.insightpulseai.com
+    curl -k -I https://auth.insightpulseai.com
     ```
     * Return HTTP `200` or `302` status codes
 
@@ -181,7 +181,7 @@ Exit code must be `0`.
 * **Pass Criteria**
   * `auth_oidc` module is installed and configured with the correct Keycloak realm and client
   * From browser:
-    * Navigating to `https://erp.insightpulseai.net/web` redirects to Keycloak (or shows SSO option)
+    * Navigating to `https://erp.insightpulseai.com/web` redirects to Keycloak (or shows SSO option)
     * Logging in via Keycloak successfully creates / maps Odoo user and returns to Odoo home
   * There must be **no** requirement to use local Odoo passwords for SSO users
 

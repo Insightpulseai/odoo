@@ -86,7 +86,7 @@ SSH_HOST=${SSH_HOST:-}
 SSH_USER=${SSH_USER:-root}
 
 # ----- Odoo -----
-ODOO_URL=https://erp.insightpulseai.net
+ODOO_URL=https://erp.insightpulseai.com
 ODOO_DB=production
 
 # =============================================================================

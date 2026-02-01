@@ -118,7 +118,7 @@ odoo-ce/deploy/
 │   ├── Database backup settings
 │   └── Email SMTP configuration
 ├── nginx/
-│   ├── erp.insightpulseai.net.conf   # Nginx vhost config
+│   ├── erp.insightpulseai.com.conf   # Nginx vhost config
 │   ├── ssl.conf                       # SSL/TLS settings
 │   ├── security-headers.conf          # Security headers
 │   └── gzip.conf                      # Compression config
@@ -563,9 +563,9 @@ artifacts/
 - [Any known limitations]
 
 ### Support
-- Email: support@insightpulseai.net
+- Email: support@insightpulseai.com
 - Hotline: [Phone]
-- Documentation: https://docs.insightpulseai.net
+- Documentation: https://docs.insightpulseai.com
 
 ### Credits
 - Development: InsightPulseAI Team

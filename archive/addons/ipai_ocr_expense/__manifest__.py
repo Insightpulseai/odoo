@@ -5,7 +5,7 @@
     "version": "18.0.1.0.0",
     "category": "Human Resources/Expenses",
     "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "hr_expense",

@@ -266,7 +266,7 @@ We use a single script to manage everything via CLI:
 ### 4.2 Environment Variables
 
 * `N8N_CONTAINER` – default `odoo-ipa-1`; override for other hosts/containers.
-* `N8N_HOST` – default `root@erp.insightpulseai.net`; SSH host for production.
+* `N8N_HOST` – default `root@erp.insightpulseai.com`; SSH host for production.
 * `BACKUP_DIR` – default `workflows/backups`.
 
 Example:
@@ -294,7 +294,7 @@ Pattern:
 
 * Use **Odoo node** for CRUD into CE.
 * Use **Supabase node** if you need staging tables before Odoo.
-* Use **OCR adapter** at `ocr.insightpulseai.net` for receipt parsing.
+* Use **OCR adapter** at `ocr.insightpulseai.com` for receipt parsing.
 
 ### 5.2 Cheqroom-Equivalent (EQ*)
 
@@ -435,18 +435,18 @@ Before deploying to production:
    ```
 3. Check n8n logs:
    ```bash
-   ssh root@erp.insightpulseai.net "docker logs odoo-ipa-1 --tail 100"
+   ssh root@erp.insightpulseai.com "docker logs odoo-ipa-1 --tail 100"
    ```
 
 ### Import/Export Failures
 
 1. Verify SSH connectivity:
    ```bash
-   ssh root@erp.insightpulseai.net "echo 'Connection OK'"
+   ssh root@erp.insightpulseai.com "echo 'Connection OK'"
    ```
 2. Check n8n container status:
    ```bash
-   ssh root@erp.insightpulseai.net "docker ps | grep odoo-ipa-1"
+   ssh root@erp.insightpulseai.com "docker ps | grep odoo-ipa-1"
    ```
 3. Verify file paths in `index.yaml`
 
@@ -460,4 +460,4 @@ Before deploying to production:
 
 **Last Updated**: 2025-11-21
 **Maintained By**: Finance SSC Team - InsightPulse AI
-**Production Instance**: `odoo-ipa-1` on `erp.insightpulseai.net`
+**Production Instance**: `odoo-ipa-1` on `erp.insightpulseai.com`

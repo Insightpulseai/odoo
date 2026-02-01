@@ -53,7 +53,7 @@ Replace: director@company.com
 ### 3. Import via JSON-RPC
 
 ```bash
-export ODOO_URL="https://erp.insightpulseai.net"
+export ODOO_URL="https://erp.insightpulseai.com"
 export ODOO_DB="odoo"
 export ODOO_LOGIN="YOUR_LOGIN"
 export ODOO_PASSWORD="YOUR_PASSWORD"

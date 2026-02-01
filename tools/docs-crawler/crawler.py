@@ -23,7 +23,7 @@ import yaml
 from bs4 import BeautifulSoup
 
 
-UA = "odoo-docs-crawler/1.0 (+https://insightpulseai.net)"
+UA = "odoo-docs-crawler/1.0 (+https://insightpulseai.com)"
 SKIP_EXT = (".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".pdf",
             ".zip", ".gz", ".tar", ".tgz", ".mp4", ".mov", ".avi", ".webm")
 

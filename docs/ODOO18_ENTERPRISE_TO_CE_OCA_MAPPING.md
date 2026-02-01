@@ -1,6 +1,6 @@
 # Odoo 18 Enterprise → CE + OCA Mapping (Smart Delta)
 
-**System:** InsightPulse ERP (`erp.insightpulseai.net`)
+**System:** InsightPulse ERP (`erp.insightpulseai.com`)
 **Target Stack:** Odoo 18 CE + OCA 18.0 + ipai_* delta modules
 **Policy:** No Enterprise, no IAP. Always prefer **Config → OCA → Delta → New**.
 

@@ -575,7 +575,7 @@ class IpaiAskAIService(models.TransientModel):
                 .create(
                     {
                         "name": "Ask AI",
-                        "email": "ai@insightpulseai.net",
+                        "email": "ai@insightpulseai.com",
                         "is_company": False,
                         "type": "contact",
                         "active": True,

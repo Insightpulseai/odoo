@@ -273,7 +273,7 @@
 | [DigitalOcean SMTP Unblock Request](docs/DIGITALOCEAN_SMTP_UNBLOCK_REQUEST.md) | docs |
 | [DigitalOcean Validation Framework](docs/DIGITALOCEAN_VALIDATION_FRAMEWORK.md) | docs |
 | [Directional Sync System](docs/DIRECTIONAL_SYNC.md) | docs |
-| [DNS Settings Reference — insightpulseai.net](docs/DNS_SETTINGS.md) | docs |
+| [DNS Settings Reference — insightpulseai.com](docs/DNS_SETTINGS.md) | docs |
 | [Dockerfile Changes: v0.9.0 → v0.9.1](docs/DOCKERFILE_COMPARISON.md) | docs |
 | [Docker Canonical Setup - Official vs Current](docs/DOCKER_CANONICAL_DIFF.md) | docs |
 | [Docker Image-Based CD Migration Guide](docs/DOCKER_CD_MIGRATION_GUIDE.md) | docs |
@@ -321,7 +321,7 @@
 | [Keycloak Identity Provider Deployment Guide](docs/KEYCLOAK_IDENTITY_PROVIDER_DEPLOYMENT.md) | docs |
 | [Kubernetes Migration Specification](docs/KUBERNETES_MIGRATION_SPECIFICATION.md) | docs |
 | [Login Button Fix & Header Cleanup - Production Deployment](docs/LOGIN_BUTTON_FIX.md) | docs |
-| [Mailgun DNS Setup for mg.insightpulseai.net](docs/MAILGUN_DNS_SETUP.md) | docs |
+| [Mailgun DNS Setup for mg.insightpulseai.com](docs/MAILGUN_DNS_SETUP.md) | docs |
 | [Mattermost Alerting Setup – Finance & CI](docs/MATTERMOST_ALERTING_SETUP.md) | docs |
 | [Mattermost ChatOps Deployment Guide](docs/MATTERMOST_CHATOPS_DEPLOYMENT.md) | docs |
 | [MCP Multi-Tier Architecture - Implementation Status](docs/MCP_IMPLEMENTATION_STATUS.md) | docs |
@@ -513,12 +513,12 @@
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
 | [Incident: <Brief Description>](docs/incidents/templates/POST_MORTEM.md) | docs/incidents/templates |
-| [Canonical DNS - insightpulseai.net](docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md) | docs/infra |
+| [Canonical DNS - insightpulseai.com](docs/infra/CANONICAL_DNS_INSIGHTPULSEAI.md) | docs/infra |
 | [Canonical Odoo Pack - Architecture & Layout](docs/infra/CANONICAL_ODOO_PACK.md) | docs/infra |
 | [CANONICAL_ODOO_STACK_SNAPSHOT.md](docs/infra/CANONICAL_ODOO_STACK_SNAPSHOT.md) | docs/infra |
 | [Databricks Training Guidelines for Agent Development](docs/infra/DATABRICKS_TRAINING_GUIDELINES.md) | docs/infra |
-| [DNS Enhancement Guide - insightpulseai.net](docs/infra/DNS_ENHANCEMENT_GUIDE.md) | docs/infra |
-| [Email Infrastructure Strategy - insightpulseai.net](docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md) | docs/infra |
+| [DNS Enhancement Guide - insightpulseai.com](docs/infra/DNS_ENHANCEMENT_GUIDE.md) | docs/infra |
+| [Email Infrastructure Strategy - insightpulseai.com](docs/infra/EMAIL_INFRASTRUCTURE_STRATEGY.md) | docs/infra |
 | [Git Pre-Flight Integration - Deployment Report](docs/infra/GIT_PREFLIGHT_DEPLOYMENT_REPORT.md) | docs/infra |
 | [Git Pre-Flight Integration - Cross-Repository Pattern](docs/infra/GIT_PREFLIGHT_INTEGRATION.md) | docs/infra |
 | [Git Pre-Flight Integration - Implementation Summary](docs/infra/GIT_PREFLIGHT_SUMMARY.md) | docs/infra |
@@ -860,7 +860,7 @@
 | [Feedback Classifier Prompt Template](infra/databricks/agent_systems/feedback_intel/src/prompts/feedback_classifier.md) | infra/databricks/agent_systems/feedback_intel/src/prompts |
 | [Databricks Agent Training](infra/databricks/training/README.md) | infra/databricks/training |
 | [DigitalOcean PR Sandbox (Ephemeral)](infra/digitalocean/pr-sandbox/README.md) | infra/digitalocean/pr-sandbox |
-| [Mailgun DNS Configuration for insightpulseai.net](infra/dns/mailgun_dns_records.md) | infra/dns |
+| [Mailgun DNS Configuration for insightpulseai.com](infra/dns/mailgun_dns_records.md) | infra/dns |
 | [OCA Pinned Stack for DigitalOcean](infra/do-oca-stack/README.md) | infra/do-oca-stack |
 | [OSS Lakehouse Stack](infra/lakehouse/README.md) | infra/lakehouse |
 | [Collaboration Stack Links](infra/links/collab-stack.md) | infra/links |
@@ -1430,7 +1430,7 @@
 
 ## 🔗 Quick Links
 
-- **Production**: https://erp.insightpulseai.net
+- **Production**: https://erp.insightpulseai.com
 - **Repository**: https://github.com/jgtolentino/odoo-ce
 - **OCA Modules**: https://github.com/OCA
 

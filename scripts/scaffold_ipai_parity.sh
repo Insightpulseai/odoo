@@ -88,7 +88,7 @@ This module provides Odoo 19 Enterprise Edition parity for CE deployments.
 - InsightPulse AI Team
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "LGPL-3",
     "depends": [${depends_list}],
     "data": [

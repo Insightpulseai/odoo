@@ -1,7 +1,7 @@
 # Platform Kit n8n Integration
 
 **Date:** 2026-01-27 07:00 UTC
-**n8n Instance:** https://n8n.insightpulseai.net
+**n8n Instance:** https://n8n.insightpulseai.com
 **Status:** ✅ API Key Verified, Ready for Workflow Deployment
 
 ---
@@ -9,8 +9,8 @@
 ## Current Setup
 
 **Stack:**
-- **Mattermost:** `chat.insightpulseai.net` (self-hosted, no tier limits)
-- **n8n:** `n8n.insightpulseai.net` (self-hosted Community Edition)
+- **Mattermost:** `chat.insightpulseai.com` (self-hosted, no tier limits)
+- **n8n:** `n8n.insightpulseai.com` (self-hosted Community Edition)
 - **GitHub:** jgtolentino/odoo-ce
 - **Supabase:** spdtwktxdalcfigzeqrz
 
@@ -31,7 +31,7 @@
 export N8N_API_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzNjQ1M2ZhNS0zM2ZiLTQ5MjAtOTIxOS00M2FhYTJiYTg2Y2MiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5NDc1MTE0LCJleHAiOjE3NzcyMTkyMDB9.lg1vYem-vyNJex69h1wYoDe-qmtGz_zA11roUU98C78"
 
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "https://n8n.insightpulseai.net/api/v1/workflows" | jq '.'
+  "https://n8n.insightpulseai.com/api/v1/workflows" | jq '.'
 ```
 
 **Expected:** `{"data": [], "nextCursor": null}` (0 workflows currently)
@@ -66,7 +66,7 @@ Webhook → Extract Event → GitHub Dispatch → Mattermost Notify → Respond
 ### Deployment Options
 
 #### Option 1: Import via n8n UI (Recommended)
-1. Navigate to: https://n8n.insightpulseai.net
+1. Navigate to: https://n8n.insightpulseai.com
 2. Click "..." menu → "Import from File"
 3. Select `platform-kit-orchestrator.json`
 4. Configure credentials:
@@ -80,13 +80,13 @@ Webhook → Extract Event → GitHub Dispatch → Mattermost Notify → Respond
 jq 'del(.active, .id, .createdAt, .updatedAt)' platform-kit-orchestrator.json > workflow-create.json
 
 # Create workflow
-curl -X POST "https://n8n.insightpulseai.net/api/v1/workflows" \
+curl -X POST "https://n8n.insightpulseai.com/api/v1/workflows" \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d @workflow-create.json
 
 # Activate workflow (use returned ID)
-curl -X PATCH "https://n8n.insightpulseai.net/api/v1/workflows/{workflow_id}" \
+curl -X PATCH "https://n8n.insightpulseai.com/api/v1/workflows/{workflow_id}" \
   -H "X-N8N-API-KEY: $N8N_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"active": true}'
@@ -118,7 +118,7 @@ Claude reads Mattermost confirmation
 **Implementation:**
 ```bash
 # Claude sends
-curl -X POST "https://n8n.insightpulseai.net/webhook/platform-kit-trigger" \
+curl -X POST "https://n8n.insightpulseai.com/webhook/platform-kit-trigger" \
   -H "Content-Type: application/json" \
   -d '{
     "event_type": "deploy-platform-kit",
@@ -217,13 +217,13 @@ Post formatted message to Mattermost
 1. Go to: https://github.com/settings/developers
 2. New OAuth App:
    - Name: "n8n Platform Kit Orchestrator"
-   - Homepage: https://n8n.insightpulseai.net
-   - Callback: https://n8n.insightpulseai.net/rest/oauth2-credential/callback
+   - Homepage: https://n8n.insightpulseai.com
+   - Callback: https://n8n.insightpulseai.com/rest/oauth2-credential/callback
 3. Generate client secret
 4. Add to n8n credentials
 
 ### Mattermost Webhook
-1. Go to: https://chat.insightpulseai.net/admin_console/integrations/incoming_webhooks
+1. Go to: https://chat.insightpulseai.com/admin_console/integrations/incoming_webhooks
 2. Create webhook for `platform-kit` channel
 3. Copy webhook URL
 4. Add to n8n credentials
@@ -242,17 +242,17 @@ echo $SUPABASE_SERVICE_ROLE_KEY
 ```bash
 # List current workflows (should be 0)
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "https://n8n.insightpulseai.net/api/v1/workflows" | jq '.data | length'
+  "https://n8n.insightpulseai.com/api/v1/workflows" | jq '.data | length'
 
 # After import, verify
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  "https://n8n.insightpulseai.net/api/v1/workflows" | jq '.data[] | {id, name, active}'
+  "https://n8n.insightpulseai.com/api/v1/workflows" | jq '.data[] | {id, name, active}'
 ```
 
 ### Test Webhook Endpoint
 ```bash
 # Get webhook URL from n8n UI or API
-WEBHOOK_URL="https://n8n.insightpulseai.net/webhook/platform-kit-trigger"
+WEBHOOK_URL="https://n8n.insightpulseai.com/webhook/platform-kit-trigger"
 
 # Send test event
 curl -X POST "$WEBHOOK_URL" \

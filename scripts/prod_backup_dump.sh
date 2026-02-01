@@ -8,7 +8,7 @@ set -e
 # Usage:   Run this from a machine with SSH access to Prod (or on Prod itself).
 # -----------------------------------------------------------------------------
 
-PROD_HOST="${PROD_HOST:-erp.insightpulseai.net}"
+PROD_HOST="${PROD_HOST:-erp.insightpulseai.com}"
 PROD_DB="${PROD_DB:-odoo}"
 PROD_USER="${PROD_USER:-odoo}"
 BACKUP_DIR="${BACKUP_DIR:-./backups}"

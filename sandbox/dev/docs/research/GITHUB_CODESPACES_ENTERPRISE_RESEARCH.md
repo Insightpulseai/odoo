@@ -463,7 +463,7 @@ services:
 ```bash
 # GitHub Team supports SAML SSO via Keycloak
 # Configure in Organization Settings → Security → SAML single sign-on
-# Use Keycloak SAML metadata URL: https://keycloak.insightpulseai.net/realms/github/protocol/saml/descriptor
+# Use Keycloak SAML metadata URL: https://keycloak.insightpulseai.com/realms/github/protocol/saml/descriptor
 ```
 
 ---
@@ -478,9 +478,9 @@ services:
 ├─────────────────────────────────────────────────────────────────────┤
 │  DigitalOcean ($50-100/mo)                                           │
 │  ├── odoo-erp-prod (159.223.75.148) - 4GB RAM                       │
-│  │   ├── Mattermost (chat.insightpulseai.net)                       │
-│  │   ├── n8n (n8n.insightpulseai.net)                               │
-│  │   └── Keycloak (auth.insightpulseai.net)                         │
+│  │   ├── Mattermost (chat.insightpulseai.com)                       │
+│  │   ├── n8n (n8n.insightpulseai.com)                               │
+│  │   └── Keycloak (auth.insightpulseai.com)                         │
 │  ├── ocr-service-droplet (188.166.237.231) - 8GB RAM                │
 │  │   ├── Agent Service (Claude 3.5 Sonnet)                          │
 │  │   └── OCR Service (PaddleOCR-VL + OpenAI)                        │
@@ -580,7 +580,7 @@ sudo ./svc.sh install && sudo ./svc.sh start
 
 #### 4. SSO: Keycloak (Already Deployed)
 
-**Current**: Keycloak on odoo-erp-prod (auth.insightpulseai.net)
+**Current**: Keycloak on odoo-erp-prod (auth.insightpulseai.com)
 **Recommended**: Integrate GitHub Team with Keycloak SAML
 
 **Benefits**:
@@ -593,7 +593,7 @@ sudo ./svc.sh install && sudo ./svc.sh start
 ```bash
 # GitHub Team SSO setup
 # Organization Settings → Security → SAML single sign-on
-# Keycloak SAML metadata: https://auth.insightpulseai.net/realms/github/protocol/saml/descriptor
+# Keycloak SAML metadata: https://auth.insightpulseai.com/realms/github/protocol/saml/descriptor
 ```
 
 **Cost Comparison**:

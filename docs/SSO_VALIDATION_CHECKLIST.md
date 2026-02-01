@@ -41,13 +41,13 @@
    - ❌ **REMOVE** this URI if present (IP-based authentication is insecure)
    - ✅ **KEEP** only domain-based URIs:
      ```
-     https://erp.insightpulseai.net/auth_oauth/signin
-     https://erp.insightpulseai.net/*
+     https://erp.insightpulseai.com/auth_oauth/signin
+     https://erp.insightpulseai.com/*
      ```
 
 4. **Web Origins**: Should match redirect URIs domain:
    ```
-   https://erp.insightpulseai.net
+   https://erp.insightpulseai.com
    ```
 
 ### Why This Matters
@@ -64,7 +64,7 @@ After module installation, SSO users will have **no Finance PPM permissions by d
 ### Initial User Setup (Jake Tolentino)
 
 **Steps**:
-1. Log in to Odoo as **Admin** (https://erp.insightpulseai.net)
+1. Log in to Odoo as **Admin** (https://erp.insightpulseai.com)
 2. Navigate to: **Settings** → **Users & Companies** → **Users**
 3. Search for: `Jake Tolentino` or `jake.tolentino@insightpulseai.com`
 4. Click to open user record
@@ -114,7 +114,7 @@ After module installation, SSO users will have **no Finance PPM permissions by d
 After Keycloak configuration is validated:
 
 ### Test 1: Domain-Based Login
-1. Navigate to: https://erp.insightpulseai.net
+1. Navigate to: https://erp.insightpulseai.com
 2. Click **Log in with SSO** (or Keycloak button)
 3. Enter credentials: `jake.tolentino@insightpulseai.com` / [password]
 4. **Expected**: Successful redirect to Odoo dashboard
@@ -151,7 +151,7 @@ docker exec odoo-ce ls -la /mnt/extra-addons/ | grep ipai_finance_ppm_tdi
 ```
 
 ### Installation Steps
-1. Navigate to: https://erp.insightpulseai.net
+1. Navigate to: https://erp.insightpulseai.com
 2. **Settings** → **Apps** → **Update Apps List**
 3. Remove "Apps" filter in search
 4. Search: `Finance PPM TDI`

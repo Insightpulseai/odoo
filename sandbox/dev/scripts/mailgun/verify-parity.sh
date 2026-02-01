@@ -173,9 +173,9 @@ EOF
 )
 
         if echo "$ALIAS_EXISTS" | grep -q "exists"; then
-            check_result "Alias exists: $alias@${ODOO_CATCHALL_DOMAIN:-insightpulseai.net}" 0
+            check_result "Alias exists: $alias@${ODOO_CATCHALL_DOMAIN:-insightpulseai.com}" 0
         else
-            check_result "Alias exists: $alias@${ODOO_CATCHALL_DOMAIN:-insightpulseai.net}" 1
+            check_result "Alias exists: $alias@${ODOO_CATCHALL_DOMAIN:-insightpulseai.com}" 1
         fi
     done
 fi
@@ -207,7 +207,7 @@ if [ $FAILED -eq 0 ]; then
     echo "Next steps:"
     echo "  1. Test outbound email: ./scripts/mailgun/test-outbound-email.sh"
     echo "  2. Configure Mailgun routes (production only): ./scripts/mailgun/configure-routes.sh"
-    echo "  3. Verify webhooks accessible (production): curl -I https://erp.insightpulseai.net/mailgun/inbound"
+    echo "  3. Verify webhooks accessible (production): curl -I https://erp.insightpulseai.com/mailgun/inbound"
     exit 0
 else
     echo "⚠️  Some checks failed. Please review and fix before proceeding."

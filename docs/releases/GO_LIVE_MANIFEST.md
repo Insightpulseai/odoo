@@ -1,7 +1,7 @@
 # Go-Live Manifest
 
 > **Release:** prod-20260106-1741
-> **Environment:** Production (erp.insightpulseai.net)
+> **Environment:** Production (erp.insightpulseai.com)
 > **Generated:** 2026-01-06T18:07:00Z
 
 ---
@@ -14,7 +14,7 @@
 | **Commit SHA** | `782fea9a7a4656d6ba225fcbea132908978d1522` |
 | **Deploy Workflow** | Deploy to Production #166 |
 | **Deploy Time** | 2026-01-06T17:40:17Z |
-| **Environment URL** | https://erp.insightpulseai.net |
+| **Environment URL** | https://erp.insightpulseai.com |
 | **Docker Image** | `ghcr.io/jgtolentino/odoo-ce:edge-standard` |
 | **Previous Tag** | `prod-20260106-1643` |
 | **Previous SHA** | `a42fc69f418ecb5744607749c5d544f88aae8a9d` |
@@ -124,7 +124,7 @@ The following items could not be verified from available evidence:
 
 ```bash
 # SSH to production server
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 
 # Rollback to previous tag
 cd /opt/odoo-ce
@@ -163,7 +163,7 @@ If data corruption suspected:
 
 ### Manual Checks Required
 
-- [ ] Verify Odoo login works at https://erp.insightpulseai.net/web/login
+- [ ] Verify Odoo login works at https://erp.insightpulseai.com/web/login
 - [ ] Check installed modules list matches expected
 - [ ] Verify AI Platform features accessible (if any UI changes)
 - [ ] Run manual smoke test on key workflows

@@ -6,7 +6,7 @@ import xmlrpc.client
 import sys
 
 # Production Odoo credentials
-url = 'https://erp.insightpulseai.net'
+url = 'https://erp.insightpulseai.com'
 db = 'odoo'
 username = input("Enter Odoo username (default: admin): ") or 'admin'
 password = input("Enter Odoo password: ")
@@ -55,7 +55,7 @@ try:
         [[module_id]])
     print("✅ Module upgrade initiated successfully!")
     print("\nNote: Assets will be regenerated on next page load.")
-    print("Clear your browser cache and refresh: https://erp.insightpulseai.net/web/login")
+    print("Clear your browser cache and refresh: https://erp.insightpulseai.com/web/login")
 except Exception as e:
     print(f"❌ Upgrade failed: {e}")
     sys.exit(1)

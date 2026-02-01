@@ -4,14 +4,14 @@ set -euo pipefail
 # =============================================================================
 # ERP Domain Investigation Script
 # =============================================================================
-# Purpose: Investigate what's serving erp.insightpulseai.net and locate nginx config
+# Purpose: Investigate what's serving erp.insightpulseai.com and locate nginx config
 # Server: nginx-prod-v2 (178.128.112.214)
 # Issue: Currently serving Mattermost/TBWA content instead of Odoo
 # =============================================================================
 
 SERVER="178.128.112.214"
 USER="${SSH_USER:-root}"
-DOMAIN="erp.insightpulseai.net"
+DOMAIN="erp.insightpulseai.com"
 
 echo "=== ERP Domain Investigation ==="
 echo "Server: $USER@$SERVER"
@@ -46,11 +46,11 @@ ssh "$USER@$SERVER" << 'EOF'
 echo "Checking for proxy_pass or root directives:"
 if [ -f /etc/nginx/sites-enabled/erp.conf ]; then
     grep -nE "root|proxy_pass|upstream" /etc/nginx/sites-enabled/erp.conf | head -20
-elif [ -f /etc/nginx/conf.d/erp.insightpulseai.net.conf ]; then
-    grep -nE "root|proxy_pass|upstream" /etc/nginx/conf.d/erp.insightpulseai.net.conf | head -20
+elif [ -f /etc/nginx/conf.d/erp.insightpulseai.com.conf ]; then
+    grep -nE "root|proxy_pass|upstream" /etc/nginx/conf.d/erp.insightpulseai.com.conf | head -20
 else
     echo "⚠️  Could not find vhost config - checking nginx -T dump:"
-    nginx -T 2>/dev/null | grep -A 30 "server_name.*erp.insightpulseai.net" | head -40
+    nginx -T 2>/dev/null | grep -A 30 "server_name.*erp.insightpulseai.com" | head -40
 fi
 EOF
 echo
@@ -61,7 +61,7 @@ echo
 echo "--- Step 4: Test if Odoo is running locally ---"
 ssh "$USER@$SERVER" << 'EOF'
 echo "Testing Odoo on port 8069:"
-curl -v -H "Host: erp.insightpulseai.net" http://127.0.0.1:8069/web/login 2>&1 | head -20 || echo "❌ Odoo not accessible at 127.0.0.1:8069"
+curl -v -H "Host: erp.insightpulseai.com" http://127.0.0.1:8069/web/login 2>&1 | head -20 || echo "❌ Odoo not accessible at 127.0.0.1:8069"
 EOF
 echo
 
@@ -71,7 +71,7 @@ echo
 echo "--- Step 5: Check what HTTPS is currently serving ---"
 ssh "$USER@$SERVER" << 'EOF'
 echo "Current HTTPS response (local check):"
-curl -vk https://erp.insightpulseai.net/ 2>&1 | head -30
+curl -vk https://erp.insightpulseai.com/ 2>&1 | head -30
 EOF
 echo
 
@@ -100,5 +100,5 @@ echo "3. Verify Odoo is running (Step 4, Step 6)"
 echo "4. If needed, update nginx config to proxy to Odoo"
 echo
 echo "To deploy the correct nginx config:"
-echo "  scp deploy/nginx/erp.insightpulseai.net.conf $USER@$SERVER:/etc/nginx/sites-available/"
-echo "  ssh $USER@$SERVER 'ln -sf /etc/nginx/sites-available/erp.insightpulseai.net.conf /etc/nginx/sites-enabled/ && nginx -t && systemctl reload nginx'"
+echo "  scp deploy/nginx/erp.insightpulseai.com.conf $USER@$SERVER:/etc/nginx/sites-available/"
+echo "  ssh $USER@$SERVER 'ln -sf /etc/nginx/sites-available/erp.insightpulseai.com.conf /etc/nginx/sites-enabled/ && nginx -t && systemctl reload nginx'"

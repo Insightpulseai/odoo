@@ -4,7 +4,7 @@
 
 Focalboard is our Kanban-style project tracking tool, providing visual task management that syncs with Odoo projects.
 
-**Production URL:** https://boards.insightpulseai.net
+**Production URL:** https://boards.insightpulseai.com
 
 ## Architecture
 
@@ -54,7 +54,7 @@ Set these in Odoo (Settings > Technical > Parameters > System Parameters):
 
 | Key | Description |
 |-----|-------------|
-| `ipai_integrations.focalboard_url` | Base URL (default: https://boards.insightpulseai.net) |
+| `ipai_integrations.focalboard_url` | Base URL (default: https://boards.insightpulseai.com) |
 | `ipai_focalboard.token_{connector_id}` | Personal access token |
 
 ### 2. Create Connector
@@ -63,7 +63,7 @@ Set these in Odoo (Settings > Technical > Parameters > System Parameters):
 2. Create new connector:
    - Name: Focalboard (InsightPulse AI)
    - Type: Focalboard
-   - Base URL: https://boards.insightpulseai.net
+   - Base URL: https://boards.insightpulseai.com
    - Auth Type: Personal Access Token
 3. Click **Test Connection**
 4. If successful, click **Activate**
@@ -171,7 +171,7 @@ task.action_sync_to_focalboard()
 
 ### Connection Failed
 
-1. Verify Focalboard is running: `curl https://boards.insightpulseai.net/api/v2/ping`
+1. Verify Focalboard is running: `curl https://boards.insightpulseai.com/api/v2/ping`
 2. Check token is valid
 3. Review audit logs
 
@@ -192,4 +192,4 @@ When the same item is modified in both systems:
 
 - **Runtime Deployment:** `ipai-ops-stack` repository
 - **Focalboard Docs:** https://www.focalboard.com/docs/
-- **Channel:** #project-management on chat.insightpulseai.net
+- **Channel:** #project-management on chat.insightpulseai.com

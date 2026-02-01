@@ -1,6 +1,6 @@
 # Infrastructure
 
-Production infrastructure configuration for `erp.insightpulseai.net`.
+Production infrastructure configuration for `erp.insightpulseai.com`.
 
 ---
 
@@ -8,7 +8,7 @@ Production infrastructure configuration for `erp.insightpulseai.net`.
 
 | Component | Value |
 |-----------|-------|
-| **Production URL** | https://erp.insightpulseai.net |
+| **Production URL** | https://erp.insightpulseai.com |
 | **Server** | DigitalOcean Droplet (178.128.112.214) |
 | **Odoo Version** | 18.0 CE |
 | **Database** | PostgreSQL 15 |
@@ -22,10 +22,10 @@ Production infrastructure configuration for `erp.insightpulseai.net`.
 
 | Setting | Value |
 |---------|-------|
-| **Mail Domain** | `mg.insightpulseai.net` |
+| **Mail Domain** | `mg.insightpulseai.com` |
 | **SMTP Server** | `smtp.mailgun.org` |
 | **SMTP Ports** | 25, 587, 2525, 465 (SSL/TLS) |
-| **SMTP Login** | `postmaster@mg.insightpulseai.net` |
+| **SMTP Login** | `postmaster@mg.insightpulseai.com` |
 
 ### DNS Records Required
 
@@ -33,27 +33,27 @@ Production infrastructure configuration for `erp.insightpulseai.net`.
 
 | Type | Host | Value |
 |------|------|-------|
-| TXT | `mg.insightpulseai.net` | `v=spf1 include:mailgun.org ~all` |
-| TXT | `pic._domainkey.mg.insightpulseai.net` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB` |
+| TXT | `mg.insightpulseai.com` | `v=spf1 include:mailgun.org ~all` |
+| TXT | `pic._domainkey.mg.insightpulseai.com` | `k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDcYB3DG10ylI4z6PWaiwyiByMrjwr9kfgJK8ccsZYT4guxi8+Emyf/nUs7IqR/LTZwwymeTZDaS/vQ6pjDhIaF2J9M9XsdgP+nv3wx99BqQ7dA+aa5sNwJKI3WRhr1YMK6IJQJIWSLERPBr74eMBAVa/Zmrfui1BOCgUFvQN9GBQIDAQAB` |
 
 #### Receiving Records (MX)
 
 | Type | Host | Value | Priority |
 |------|------|-------|----------|
-| MX | `mg.insightpulseai.net` | `mxa.mailgun.org` | 10 |
-| MX | `mg.insightpulseai.net` | `mxb.mailgun.org` | 10 |
+| MX | `mg.insightpulseai.com` | `mxa.mailgun.org` | 10 |
+| MX | `mg.insightpulseai.com` | `mxb.mailgun.org` | 10 |
 
 #### Tracking Records (CNAME)
 
 | Type | Host | Value |
 |------|------|-------|
-| CNAME | `email.mg.insightpulseai.net` | `mailgun.org` |
+| CNAME | `email.mg.insightpulseai.com` | `mailgun.org` |
 
 #### Authentication Records (DMARC)
 
 | Type | Host | Value |
 |------|------|-------|
-| TXT | `_dmarc.mg.insightpulseai.net` | `v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;` |
+| TXT | `_dmarc.mg.insightpulseai.com` | `v=DMARC1; p=none; pct=100; fo=1; ri=3600; rua=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com; ruf=mailto:3651085@dmarc.mailgun.org,mailto:682ce2a3@inbox.ondmarc.com;` |
 
 ### Mailgun Preferences
 
@@ -81,7 +81,7 @@ Configure in **Settings > Technical > Outgoing Mail Servers**:
 | SMTP Server | `smtp.mailgun.org` |
 | SMTP Port | `587` |
 | Connection Security | TLS (STARTTLS) |
-| Username | `postmaster@mg.insightpulseai.net` |
+| Username | `postmaster@mg.insightpulseai.com` |
 | Password | *(Mailgun SMTP password)* |
 
 ### System Parameters
@@ -89,7 +89,7 @@ Configure in **Settings > Technical > Outgoing Mail Servers**:
 ```
 mail.smtp.host = smtp.mailgun.org
 mail.smtp.port = 587
-mail.smtp.user = postmaster@mg.insightpulseai.net
+mail.smtp.user = postmaster@mg.insightpulseai.com
 mail.smtp.encryption = starttls
 ```
 
@@ -118,5 +118,5 @@ mail.smtp.encryption = starttls
 
 ## Related Documentation
 
-- [Mailgun Domain Settings](https://app.mailgun.com/app/sending/domains/mg.insightpulseai.net)
+- [Mailgun Domain Settings](https://app.mailgun.com/app/sending/domains/mg.insightpulseai.com)
 - [Odoo Email Configuration](https://www.odoo.com/documentation/18.0/applications/general/email_communication.html)

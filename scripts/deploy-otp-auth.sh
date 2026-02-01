@@ -127,8 +127,8 @@ if [ -n "$MAILGUN_DOMAIN" ]; then
     echo "$MAILGUN_DOMAIN" | supabase secrets set MAILGUN_DOMAIN --project-ref "$SUPABASE_PROJECT_REF" --from-stdin
     echo "✅ MAILGUN_DOMAIN set"
 else
-    echo "Using default MAILGUN_DOMAIN: mg.insightpulseai.net"
-    echo "mg.insightpulseai.net" | supabase secrets set MAILGUN_DOMAIN --project-ref "$SUPABASE_PROJECT_REF" --from-stdin
+    echo "Using default MAILGUN_DOMAIN: mg.insightpulseai.com"
+    echo "mg.insightpulseai.com" | supabase secrets set MAILGUN_DOMAIN --project-ref "$SUPABASE_PROJECT_REF" --from-stdin
 fi
 
 echo ""

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Odoo CE v0.9.1 - Production Deployment Script
-# Target: VPS at 159.223.75.148 (erp.insightpulseai.net)
+# Target: VPS at 159.223.75.148 (erp.insightpulseai.com)
 # Date: 2025-11-25
 
 # Colors
@@ -210,14 +210,14 @@ echo "  Health: $(docker inspect odoo-ce --format='{{.State.Health.Status}}' 2>/
 echo ""
 echo "Access Points:"
 echo "  Local: http://127.0.0.1:8069"
-echo "  Public: https://erp.insightpulseai.net (via nginx)"
+echo "  Public: https://erp.insightpulseai.com (via nginx)"
 echo ""
 echo "Backup Location:"
 echo "  ${BACKUP_DIR}/"
 echo ""
 echo "Next Steps:"
 echo "  1. Run smoke tests: ./scripts/smoketest.sh"
-echo "  2. Test in browser: https://erp.insightpulseai.net"
+echo "  2. Test in browser: https://erp.insightpulseai.com"
 echo "  3. Monitor logs: docker compose -f ${COMPOSE_FILE} logs -f odoo"
 echo "  4. Check metrics: docker stats odoo-ce"
 echo ""

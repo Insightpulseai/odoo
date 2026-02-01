@@ -84,7 +84,7 @@ docker compose exec odoo curl -I http://localhost:8069/web/login
 **Detection:**
 ```bash
 # Test longpolling route
-curl -I https://erp.insightpulseai.net/longpolling/poll
+curl -I https://erp.insightpulseai.com/longpolling/poll
 
 # Check nginx config
 grep -A5 "longpolling" /etc/nginx/sites-enabled/odoo.conf
@@ -290,7 +290,7 @@ echo "All health gates passed"
 #!/bin/bash
 set -e
 
-BASE_URL="${1:-https://erp.insightpulseai.net}"
+BASE_URL="${1:-https://erp.insightpulseai.com}"
 
 # External checks
 curl -fsS -o /dev/null -w '%{http_code}' "$BASE_URL/web/login"
@@ -382,11 +382,11 @@ upstream odoo-longpolling {
 
 server {
     listen 443 ssl http2;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
     # SSL
-    ssl_certificate     /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
 
     # Timeouts (CRITICAL)
     proxy_read_timeout    720s;

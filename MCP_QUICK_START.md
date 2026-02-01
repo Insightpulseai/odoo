@@ -101,7 +101,7 @@ curl -X POST http://localhost:8765/conversations \
   -H "Content-Type: application/json" \
   -d '{
     "session_id": "test-session-001",
-    "user_id": "tbwa@insightpulseai.net",
+    "user_id": "tbwa@insightpulseai.com",
     "messages": [
       {
         "role": "user",
@@ -208,4 +208,4 @@ curl -X GET http://localhost:8765/commits -H "X-API-Key: dev-only-insecure-key"
 
 ⚠️ The default API key `dev-only-insecure-key` is for development only. The service binds to `127.0.0.1:8765` (localhost only) to prevent external access.
 
-For production MCP, use the remote coordinator at `mcp.insightpulseai.net` with proper authentication.
+For production MCP, use the remote coordinator at `mcp.insightpulseai.com` with proper authentication.

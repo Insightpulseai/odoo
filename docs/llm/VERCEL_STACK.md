@@ -11,9 +11,9 @@
 
 | Project | Repository | Domain | Purpose |
 |---------|------------|--------|---------|
-| `shelf-nu` | `jgtolentino/shelf.nu` | shelf.insightpulseai.net | Asset management |
-| `scout-dashboard` | `jgtolentino/scout-dashboard` | scout.insightpulseai.net | Retail analytics |
-| `tbwa-agency-dash` | `jgtolentino/tbwa-agency-dash` | agency.insightpulseai.net | Agency dashboard |
+| `shelf-nu` | `jgtolentino/shelf.nu` | shelf.insightpulseai.com | Asset management |
+| `scout-dashboard` | `jgtolentino/scout-dashboard` | scout.insightpulseai.com | Retail analytics |
+| `tbwa-agency-dash` | `jgtolentino/tbwa-agency-dash` | agency.insightpulseai.com | Agency dashboard |
 
 ### Project Configuration Pattern
 
@@ -67,13 +67,13 @@ Vercel Edge → Supabase PostgREST API
 **shelf-nu**:
 ```env
 NEXT_PUBLIC_APP_NAME=Shelf
-NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.net
+NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.com
 ```
 
 **scout-dashboard**:
 ```env
 NEXT_PUBLIC_APP_NAME=Scout
-NEXT_PUBLIC_SUPERSET_URL=https://bi.insightpulseai.net
+NEXT_PUBLIC_SUPERSET_URL=https://bi.insightpulseai.com
 ```
 
 **tbwa-agency-dash**:
@@ -99,9 +99,9 @@ NEXT_PUBLIC_TENANT_ID=tbwa
 
 | Project | Production Domain | Preview Pattern |
 |---------|-------------------|-----------------|
-| shelf-nu | shelf.insightpulseai.net | shelf-*-team.vercel.app |
-| scout-dashboard | scout.insightpulseai.net | scout-*-team.vercel.app |
-| tbwa-agency-dash | agency.insightpulseai.net | agency-*-team.vercel.app |
+| shelf-nu | shelf.insightpulseai.com | shelf-*-team.vercel.app |
+| scout-dashboard | scout.insightpulseai.com | scout-*-team.vercel.app |
+| tbwa-agency-dash | agency.insightpulseai.com | agency-*-team.vercel.app |
 
 ---
 
@@ -276,13 +276,13 @@ vercel inspect <deployment-url>
 
 ```bash
 # Verify DNS
-dig shelf.insightpulseai.net
+dig shelf.insightpulseai.com
 
 # Check SSL cert
-openssl s_client -connect shelf.insightpulseai.net:443 -servername shelf.insightpulseai.net
+openssl s_client -connect shelf.insightpulseai.com:443 -servername shelf.insightpulseai.com
 
 # Force SSL renewal
-vercel certs issue shelf.insightpulseai.net
+vercel certs issue shelf.insightpulseai.com
 ```
 
 ---

@@ -12,9 +12,9 @@ This runbook provides step-by-step procedures for deploying Odoo 18 CE to produc
 |-----------|-------|
 | Ship Version | v1.1.0 |
 | Droplet | insightpulse-odoo |
-| Domain | erp.insightpulseai.net |
+| Domain | erp.insightpulseai.com |
 | Compose File | `deploy/docker-compose.prod.yml` |
-| Nginx Config | `deploy/nginx/erp.insightpulseai.net.conf` |
+| Nginx Config | `deploy/nginx/erp.insightpulseai.com.conf` |
 
 ---
 
@@ -54,7 +54,7 @@ nano .env
 
 ```bash
 # Copy nginx config
-sudo cp deploy/nginx/erp.insightpulseai.net.conf /etc/nginx/sites-available/odoo.conf
+sudo cp deploy/nginx/erp.insightpulseai.com.conf /etc/nginx/sites-available/odoo.conf
 sudo ln -sf /etc/nginx/sites-available/odoo.conf /etc/nginx/sites-enabled/
 
 # Test config
@@ -103,8 +103,8 @@ sleep 15
 ./scripts/deploy/verify_prod.sh
 
 # Or manual checks
-curl -sS -o /dev/null -w '%{http_code}' https://erp.insightpulseai.net/web/login
-curl -sS -o /dev/null -w '%{http_code}' https://erp.insightpulseai.net/web/health
+curl -sS -o /dev/null -w '%{http_code}' https://erp.insightpulseai.com/web/login
+curl -sS -o /dev/null -w '%{http_code}' https://erp.insightpulseai.com/web/health
 ```
 
 ---

@@ -110,7 +110,7 @@ Finance PPM Module
 Comprehensive project portfolio management for finance operations.
     """,
     'author': 'InsightPulse AI',
-    'website': 'https://insightpulseai.net',
+    'website': 'https://insightpulseai.com',
     'license': 'AGPL-3',                           # OCA standard (or LGPL-3)
     'depends': [
         'base',
@@ -365,7 +365,7 @@ done
 1. rsync /addons/ipai/* to /opt/odoo-ce/repo/addons/ipai/
 2. chown -R 100:101 /opt/odoo-ce/repo/addons/ipai/
 3. docker restart odoo-prod
-4. Verify: curl https://erp.insightpulseai.net/web/login
+4. Verify: curl https://erp.insightpulseai.com/web/login
 ```
 
 ### Permission Requirements

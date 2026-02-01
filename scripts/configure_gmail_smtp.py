@@ -25,7 +25,7 @@ SMTP_CONFIG = {
 }
 
 SYSTEM_PARAMS = {
-    "mail.catchall.domain": "insightpulseai.net",
+    "mail.catchall.domain": "insightpulseai.com",
     "mail.default.from": "notifications",
     "mail.catchall.alias": "catchall",
     "mail.bounce.alias": "bounce",

@@ -56,7 +56,7 @@
       "credentials": {
         "odooApi": {
           "id": "1",
-          "name": "Odoo Production (erp.insightpulseai.net)"
+          "name": "Odoo Production (erp.insightpulseai.com)"
         }
       }
     },
@@ -107,7 +107,7 @@
       "credentials": {
         "mattermostApi": {
           "id": "1",
-          "name": "Mattermost (ipa.insightpulseai.net)"
+          "name": "Mattermost (ipa.insightpulseai.com)"
         }
       }
     },
@@ -183,6 +183,6 @@
   "staticData": null,
   "tags": ["finance", "ocr", "expenses"],
   "meta": {
-    "instanceId": "ipa.insightpulseai.net"
+    "instanceId": "ipa.insightpulseai.com"
   }
 }

@@ -2,7 +2,7 @@
 
 > **Branch:** `claude/erp-system-development-dLTcw`
 > **Created:** 2026-01-22T12:00:00Z
-> **Target:** erp.insightpulseai.net (DigitalOcean Droplet)
+> **Target:** erp.insightpulseai.com (DigitalOcean Droplet)
 
 ---
 
@@ -31,7 +31,7 @@
 1. **Build** - Docker image pushed to GHCR
 2. **Smoke Test** - `odoo --version` verification
 3. **Deploy** - DigitalOcean API (doctl) deployment
-4. **Verify** - Health check at https://erp.insightpulseai.net/web/health
+4. **Verify** - Health check at https://erp.insightpulseai.com/web/health
 5. **Release** - Auto-tag and GitHub release
 
 ---
@@ -62,7 +62,7 @@ All credentials in `.env.local`:
 | Supabase (spdtwktxdalcfigzeqrz) | Configured |
 | DigitalOcean DB (odoo-db-sgp1) | Configured |
 | DigitalOcean API | Configured |
-| Mailgun (mg.insightpulseai.net) | Configured |
+| Mailgun (mg.insightpulseai.com) | Configured |
 
 ---
 
@@ -88,8 +88,8 @@ All credentials in `.env.local`:
 
 ```bash
 # After merge, verify deployment
-curl -sf https://erp.insightpulseai.net/web/health
-curl -sf https://erp.insightpulseai.net/web/login
+curl -sf https://erp.insightpulseai.com/web/health
+curl -sf https://erp.insightpulseai.com/web/login
 
 # Check workflow status
 # https://github.com/jgtolentino/odoo-ce/actions/workflows/cd-production.yml

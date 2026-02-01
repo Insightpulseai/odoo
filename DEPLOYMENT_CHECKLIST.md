@@ -18,10 +18,10 @@ git pull origin main
 ### 2. Update Nginx (1 min)
 ```bash
 # Backup current config
-cp deploy/nginx/erp.insightpulseai.net.conf deploy/nginx/erp.insightpulseai.net.conf.backup
+cp deploy/nginx/erp.insightpulseai.com.conf deploy/nginx/erp.insightpulseai.com.conf.backup
 
 # Apply updated config
-docker cp deploy/nginx/erp.insightpulseai.net.conf nginx:/etc/nginx/conf.d/erp.insightpulseai.net.conf
+docker cp deploy/nginx/erp.insightpulseai.com.conf nginx:/etc/nginx/conf.d/erp.insightpulseai.com.conf
 
 # Test and reload
 docker exec nginx nginx -t && docker exec nginx nginx -s reload
@@ -52,9 +52,9 @@ After deployment, verify these in order:
 
 - [ ] **Nginx header**: `docker exec nginx nginx -T | grep "X-Forwarded-Proto https"`
 - [ ] **Database clean**: `docker exec odoo-erp-prod psql -U odoo -d prod -c "SELECT COUNT(*) FROM ir_ui_view WHERE arch_db ILIKE '%pay_invoices_online%';"` → Returns `0`
-- [ ] **HTTPS base URL**: `docker exec odoo-erp-prod psql -U odoo -d prod -c "SELECT value FROM ir_config_parameter WHERE key='web.base.url';"` → Returns `https://erp.insightpulseai.net`
+- [ ] **HTTPS base URL**: `docker exec odoo-erp-prod psql -U odoo -d prod -c "SELECT value FROM ir_config_parameter WHERE key='web.base.url';"` → Returns `https://erp.insightpulseai.com`
 - [ ] **Odoo running**: `docker ps | grep odoo` → Shows running container
-- [ ] **Login page loads**: `curl -I https://erp.insightpulseai.net` → Returns `200 OK`
+- [ ] **Login page loads**: `curl -I https://erp.insightpulseai.com` → Returns `200 OK`
 - [ ] **No recent errors**: `docker logs odoo-erp-prod --tail 20` → No `OwlError` or `pay_invoices_online`
 
 ---
@@ -66,7 +66,7 @@ Share this with end users:
 ### Quick Test Steps:
 1. **Clear browser cache**: Press `Ctrl+Shift+R` (Windows) or `Cmd+Shift+R` (Mac)
 2. **Open incognito**: Chrome → New Incognito Window
-3. **Visit**: `https://erp.insightpulseai.net`
+3. **Visit**: `https://erp.insightpulseai.com`
 4. **Verify login page loads** (no white screen)
 5. **Press F12** → Console tab → **No red errors**
 6. **Click "Sign in with Gmail"**
@@ -85,7 +85,7 @@ If validation fails:
 
 ```bash
 # Restore nginx
-docker cp deploy/nginx/erp.insightpulseai.net.conf.backup nginx:/etc/nginx/conf.d/erp.insightpulseai.net.conf
+docker cp deploy/nginx/erp.insightpulseai.com.conf.backup nginx:/etc/nginx/conf.d/erp.insightpulseai.com.conf
 docker exec nginx nginx -s reload
 
 # Restore database (if backup exists)
@@ -122,7 +122,7 @@ docker logs nginx --tail 50 | grep "auth_oauth" | grep "Location"
 ## 📞 Emergency Contacts
 
 - **DevOps**: jgtolentino (Mattermost)
-- **Admin**: admin@insightpulseai.net
+- **Admin**: admin@insightpulseai.com
 - **Escalation**: Finance Director
 
 ---

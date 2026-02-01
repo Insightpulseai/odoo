@@ -3,7 +3,7 @@
 Receipt Test Harness - Automated OCR Quality Testing
 
 Usage:
-    python test-harness.py --images ./test_receipts --ground-truth ground_truth.csv --api-url https://ocr.insightpulseai.net/api/expense/ocr --api-key YOUR_KEY
+    python test-harness.py --images ./test_receipts --ground-truth ground_truth.csv --api-url https://ocr.insightpulseai.com/api/expense/ocr --api-key YOUR_KEY
 
 Ground truth CSV format:
     file_name,vendor,date,total,currency

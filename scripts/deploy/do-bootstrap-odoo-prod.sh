@@ -19,8 +19,8 @@ set -euo pipefail
 #   curl -fsSL https://raw.githubusercontent.com/jgtolentino/odoo-ce/main/scripts/deploy/do-bootstrap-odoo-prod.sh | bash
 #
 #   # Or with custom parameters:
-#   export DOMAIN="erp.insightpulseai.net"
-#   export EMAIL="admin@insightpulseai.net"
+#   export DOMAIN="erp.insightpulseai.com"
+#   export EMAIL="admin@insightpulseai.com"
 #   export DB_HOST="odoo-db-do-user-12345-0.db.ondigitalocean.com"
 #   export DB_PORT="25060"
 #   bash do-bootstrap-odoo-prod.sh
@@ -41,8 +41,8 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 # Configuration (Override via environment variables)
 # ============================================================================
 
-DOMAIN="${DOMAIN:-erp.insightpulseai.net}"
-EMAIL="${EMAIL:-admin@insightpulseai.net}"
+DOMAIN="${DOMAIN:-erp.insightpulseai.com}"
+EMAIL="${EMAIL:-admin@insightpulseai.com}"
 
 # Database (DO Managed PostgreSQL or local)
 DB_HOST="${DB_HOST:-localhost}"

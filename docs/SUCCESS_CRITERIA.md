@@ -2,7 +2,7 @@
 
 **Version**: 1.0
 **Date**: 2025-01-05
-**Deployment**: Production (erp.insightpulseai.net)
+**Deployment**: Production (erp.insightpulseai.com)
 
 ---
 
@@ -55,7 +55,7 @@ You can verify this by querying the database or checking `Settings > Technical >
 
 ```json
 {
-  "web.base.url": "https://erp.insightpulseai.net",
+  "web.base.url": "https://erp.insightpulseai.com",
   "web.base.url.freeze": "True",
   "report.url": "http://127.0.0.1:8069"
 }
@@ -75,7 +75,7 @@ docker exec odoo-erp-prod psql -U odoo -d prod -c "
 ```
             key            |              value
 ---------------------------+----------------------------------
- web.base.url              | https://erp.insightpulseai.net
+ web.base.url              | https://erp.insightpulseai.com
  web.base.url.freeze       | True
  report.url                | http://127.0.0.1:8069
 ```
@@ -105,8 +105,8 @@ When Odoo receives a request, the headers **MUST** look like this (verified via 
 
 ```json
 {
-  "Host": "erp.insightpulseai.net",
-  "X-Forwarded-Host": "erp.insightpulseai.net",
+  "Host": "erp.insightpulseai.com",
+  "X-Forwarded-Host": "erp.insightpulseai.com",
   "X-Forwarded-Proto": "https",
   "X-Real-IP": "<Client_IP>"
 }
@@ -126,7 +126,7 @@ You have successfully fixed the system if **ALL** of the following conditions pa
 
 ### Criterion 1: The "OwlError" Smoke Test (Frontend)
 
-**Action**: Open Chrome Incognito, clear cache, navigate to `https://erp.insightpulseai.net/web/login`.
+**Action**: Open Chrome Incognito, clear cache, navigate to `https://erp.insightpulseai.com/web/login`.
 
 **Expected Result**:
 - ✅ **PASS**: The login screen renders fully with Gmail SSO button visible
@@ -134,7 +134,7 @@ You have successfully fixed the system if **ALL** of the following conditions pa
 
 **Verification Command**:
 ```bash
-curl -s https://erp.insightpulseai.net/web/login | grep -q "Login" && echo "PASS" || echo "FAIL"
+curl -s https://erp.insightpulseai.com/web/login | grep -q "Login" && echo "PASS" || echo "FAIL"
 ```
 
 ---
@@ -173,27 +173,27 @@ Uncaught (in promise) Error: Field pay_invoices_online does not exist
 
 **Expected Result**:
 - ✅ **PASS**: The browser stays on `https://`. The URL **never** changes to `http://`
-- ❌ **FAIL**: The browser redirects to `http://erp.insightpulseai.net` (dropping the 's') or enters an infinite redirect loop
+- ❌ **FAIL**: The browser redirects to `http://erp.insightpulseai.com` (dropping the 's') or enters an infinite redirect loop
 
 **Verification Command**:
 ```bash
 # Test OAuth redirect (should return 303 with https:// location)
-curl -sI "https://erp.insightpulseai.net/auth_oauth/signin" | grep -i location
+curl -sI "https://erp.insightpulseai.com/auth_oauth/signin" | grep -i location
 # Expected: Location: https://... (NOT http://)
 ```
 
 **Browser Network Tab Expected**:
 ```
-Request URL: https://erp.insightpulseai.net/auth_oauth/signin
+Request URL: https://erp.insightpulseai.com/auth_oauth/signin
 Status Code: 303 See Other
 Location: https://accounts.google.com/o/oauth2/auth?...
 ```
 
 **Browser Network Tab Failure Example**:
 ```
-Request URL: https://erp.insightpulseai.net/auth_oauth/signin
+Request URL: https://erp.insightpulseai.com/auth_oauth/signin
 Status Code: 301 Moved Permanently
-Location: http://erp.insightpulseai.net/auth_oauth/signin  ❌ (infinite loop)
+Location: http://erp.insightpulseai.com/auth_oauth/signin  ❌ (infinite loop)
 ```
 
 ---
@@ -255,7 +255,7 @@ Failed:       0
 
 Expected End State Achieved:
   ✓ XML State: No 'pay_invoices_online' in database views
-  ✓ JSON/DB State: web.base.url = https://erp.insightpulseai.net
+  ✓ JSON/DB State: web.base.url = https://erp.insightpulseai.com
   ✓ Config State: proxy_mode = True, X-Forwarded-Proto = https
   ✓ Assets State: Web assets generated and cached
 ```
@@ -269,7 +269,7 @@ Expected End State Achieved:
 #### Test 1: Login Page Rendering
 
 - [ ] Open Chrome Incognito window
-- [ ] Navigate to `https://erp.insightpulseai.net`
+- [ ] Navigate to `https://erp.insightpulseai.com`
 - [ ] Verify login page renders (no white screen)
 - [ ] Verify "Sign in with Gmail" button is visible
 - [ ] Press F12 → Console tab
@@ -280,7 +280,7 @@ Expected End State Achieved:
 - [ ] Click "Sign in with Gmail" button
 - [ ] Verify redirect to `https://accounts.google.com/...`
 - [ ] Complete Google authentication
-- [ ] Verify redirect back to `https://erp.insightpulseai.net` (NOT `http://`)
+- [ ] Verify redirect back to `https://erp.insightpulseai.com` (NOT `http://`)
 - [ ] Verify successful login to Odoo dashboard
 
 #### Test 3: Settings Page (OwlError Test)
@@ -322,8 +322,8 @@ Rollback deployment if **ANY** of these conditions occur:
 **Rollback Command**:
 ```bash
 # See docs/PRODUCTION_HOTFIX.md for complete rollback procedure
-git checkout deploy/nginx/erp.insightpulseai.net.conf.backup
-docker cp deploy/nginx/erp.insightpulseai.net.conf nginx:/etc/nginx/conf.d/
+git checkout deploy/nginx/erp.insightpulseai.com.conf.backup
+docker cp deploy/nginx/erp.insightpulseai.com.conf nginx:/etc/nginx/conf.d/
 docker exec nginx nginx -s reload
 docker exec postgres psql -U odoo -d postgres < /backups/prod_latest.sql
 docker restart odoo-erp-prod

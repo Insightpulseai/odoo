@@ -195,9 +195,9 @@ Response
 **Location**: Odoo → Settings → Technical → Parameters → System Parameters
 
 ```
-bir.reminder.n8n.webhook         = https://ipa.insightpulseai.net/webhook/bir-reminder
-bir.overdue.n8n.webhook          = https://ipa.insightpulseai.net/webhook/bir-overdue-nudge
-bir.reminder.mattermost.webhook  = https://mattermost.insightpulseai.net/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
+bir.reminder.n8n.webhook         = https://ipa.insightpulseai.com/webhook/bir-reminder
+bir.overdue.n8n.webhook          = https://ipa.insightpulseai.com/webhook/bir-overdue-nudge
+bir.reminder.mattermost.webhook  = https://mattermost.insightpulseai.com/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
 ```
 
 **Action Required**: Replace `REPLACE_WITH_ACTUAL_WEBHOOK_ID` with actual Mattermost webhook
@@ -385,7 +385,7 @@ SELECT
 ---
 
 ### 2. **n8n Workflow Import** ⏳
-**Location**: `https://ipa.insightpulseai.net`
+**Location**: `https://ipa.insightpulseai.com`
 
 **Steps**:
 1. Login to n8n
@@ -404,7 +404,7 @@ SELECT
 ### 3. **Mattermost Webhook Configuration** ⏳
 
 **Steps**:
-1. Go to Mattermost: `https://mattermost.insightpulseai.net`
+1. Go to Mattermost: `https://mattermost.insightpulseai.com`
 2. Navigate to: Integrations → Incoming Webhooks
 3. Create new webhook for "BIR Compliance Alerts" channel
 4. Copy webhook URL
@@ -412,7 +412,7 @@ SELECT
 
 **Current Value** (placeholder):
 ```
-https://mattermost.insightpulseai.net/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
+https://mattermost.insightpulseai.com/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
 ```
 
 ---
@@ -457,7 +457,7 @@ ssh root@159.223.75.148 "docker exec odoo-postgres psql -U odoo -d postgres -c \
 ```
 
 ### Finance PPM Projects Verification ✅
-**URL**: `https://erp.insightpulseai.net/web#action=project.act_project_project&model=project.project`
+**URL**: `https://erp.insightpulseai.com/web#action=project.act_project_project&model=project.project`
 
 **Confirmed Projects**:
 - ✅ BIR Tax Filing (5/6 tasks)
@@ -473,9 +473,9 @@ ssh root@159.223.75.148 "docker exec odoo-postgres psql -U odoo -d odoo_core -c 
 ```
               key               |                         value
 --------------------------------+-------------------------------------------------------
- bir.reminder.n8n.webhook       | https://ipa.insightpulseai.net/webhook/bir-reminder
- bir.overdue.n8n.webhook        | https://ipa.insightpulseai.net/webhook/bir-overdue-nudge
- bir.reminder.mattermost.webhook| https://mattermost.insightpulseai.net/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
+ bir.reminder.n8n.webhook       | https://ipa.insightpulseai.com/webhook/bir-reminder
+ bir.overdue.n8n.webhook        | https://ipa.insightpulseai.com/webhook/bir-overdue-nudge
+ bir.reminder.mattermost.webhook| https://mattermost.insightpulseai.com/hooks/REPLACE_WITH_ACTUAL_WEBHOOK_ID
 (3 rows)
 ```
 
@@ -569,7 +569,7 @@ ssh root@159.223.75.148 "docker exec odoo-postgres psql -U odoo -d odoo_core -c 
 **Issue 3: n8n workflows not triggering**
 - **Cause**: Workflows not imported or not activated
 - **Fix**: Import JSON files and activate in n8n UI
-- **Verification**: `https://ipa.insightpulseai.net` → Check workflow status
+- **Verification**: `https://ipa.insightpulseai.com` → Check workflow status
 
 ### Rollback Procedure
 

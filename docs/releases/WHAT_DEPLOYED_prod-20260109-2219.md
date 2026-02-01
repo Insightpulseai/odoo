@@ -88,7 +88,7 @@ These commits exist on `main` but are **NOT** part of this release:
 | Run URL | - | UNVERIFIED - GitHub API not accessible |
 | Run ID | - | UNVERIFIED |
 | Environment | `production` | Per workflow |
-| Target URL | `https://erp.insightpulseai.net` | Per workflow |
+| Target URL | `https://erp.insightpulseai.com` | Per workflow |
 | Conclusion | - | UNVERIFIED |
 
 ### Deployment Steps (Expected per Workflow)
@@ -144,7 +144,7 @@ The deployment workflow runs `docker compose up -d --force-recreate` which resta
 |------|--------|------------------|
 | Workflow run URL | UNVERIFIED | GitHub API not accessible to retrieve run ID |
 | Docker image digest | UNVERIFIED | Cannot access container registry to verify sha256 |
-| Production health check | UNVERIFIED | Cannot access `erp.insightpulseai.net/web/health` |
+| Production health check | UNVERIFIED | Cannot access `erp.insightpulseai.com/web/health` |
 | Odoo service restart | UNVERIFIED | No logs from production deployment |
 | Supabase verification results | PENDING | `verify_supabase_deploy.sh` has not been executed |
 

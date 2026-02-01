@@ -87,7 +87,7 @@ odoo-ce/
 - Mode: `MCP_MODE=dev`
 
 **✅ Production Workspace** (`.vscode/mcp-prod.code-workspace`):
-- Remote MCP priority 1 (`wss://mcp.insightpulseai.net`)
+- Remote MCP priority 1 (`wss://mcp.insightpulseai.com`)
 - Local MCP priority 2 (fallback)
 - Environment: `ODOO_INSTANCE=odoo_erp`
 - Mode: `MCP_MODE=prod`
@@ -157,7 +157,7 @@ def route_request(self, request_data):
 - Container running with ipai_backend network
 - Health endpoint: http://188.166.237.231:8766/health ✅ Working
 - Environment: Production with Supabase connection
-- Next: Configure DNS `mcp.insightpulseai.net` → 188.166.237.231
+- Next: Configure DNS `mcp.insightpulseai.com` → 188.166.237.231
 
 ### 2.2 Supabase MCP Schema ✅
 
@@ -285,7 +285,7 @@ name: odoo-erp
 description: Odoo CE 18.0 production ERP for Finance SSC operations
 connection:
   type: http
-  url: https://mcp.insightpulseai.net
+  url: https://mcp.insightpulseai.com
   api_key: ${MCP_REMOTE_TOKEN}
   coordinator: true
 priority: 1  # Primary production server
@@ -421,7 +421,7 @@ apps/do-advisor-ui/
 
 1. Implement `mcp/coordinator/` FastAPI service
 2. Deploy to DigitalOcean App Platform
-3. Setup `mcp.insightpulseai.net` domain
+3. Setup `mcp.insightpulseai.com` domain
 4. Create Supabase MCP schema
 5. Test remote MCP from `mcp-prod` workspace
 
@@ -459,7 +459,7 @@ apps/do-advisor-ui/
 - [x] Context-based routing working (tested locally)
 - [x] MCP server YAML configs created
 - [ ] MCP coordinator deployed to DO App Platform (awaiting DO token)
-- [ ] Remote MCP accessible via `wss://mcp.insightpulseai.net`
+- [ ] Remote MCP accessible via `wss://mcp.insightpulseai.com`
 
 ### Phase 3 (PENDING)
 
@@ -496,7 +496,7 @@ apps/do-advisor-ui/
 - MCP Coordinator: http://188.166.237.231:8766
 - Health: ✅ Operational
 - Network: ipai_backend (Docker bridge)
-- Next: DNS configuration for mcp.insightpulseai.net
+- Next: DNS configuration for mcp.insightpulseai.com
 
 ---
 
@@ -554,6 +554,6 @@ doctl apps create --spec mcp/coordinator/infra/do/mcp-coordinator.yaml
 
 # Configure DNS (after deployment):
 # 1. Get app URL from DO dashboard
-# 2. Add CNAME: mcp.insightpulseai.net → [app-url]
+# 2. Add CNAME: mcp.insightpulseai.com → [app-url]
 # 3. Update MCP server configs with production URL
 ```

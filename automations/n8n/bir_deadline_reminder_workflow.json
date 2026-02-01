@@ -73,7 +73,7 @@
     },
     {
       "parameters": {
-        "fromEmail": "bir-reminders@insightpulseai.net",
+        "fromEmail": "bir-reminders@insightpulseai.com",
         "toEmail": "={{ $json.responsible_email }}",
         "subject": "=BIR Filing Reminder: {{ $json.bir_form }} - Due Today",
         "emailType": "html",

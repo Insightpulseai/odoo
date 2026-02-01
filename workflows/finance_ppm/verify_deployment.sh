@@ -39,9 +39,9 @@ info() {
 # Environment variables
 SUPABASE_URL="${SUPABASE_URL:-https://ublqmilcjtpnflofprkr.supabase.co}"
 POSTGRES_URL="${POSTGRES_URL:-postgresql://postgres.ublqmilcjtpnflofprkr:1G8TRd5wE7b9szBH@aws-1-us-east-1.pooler.supabase.com:6543/postgres}"
-N8N_URL="${N8N_URL:-https://n8n.insightpulseai.net}"
-ODOO_URL="${ODOO_URL:-https://erp.insightpulseai.net}"
-MATTERMOST_URL="${MATTERMOST_URL:-https://mattermost.insightpulseai.net}"
+N8N_URL="${N8N_URL:-https://n8n.insightpulseai.com}"
+ODOO_URL="${ODOO_URL:-https://erp.insightpulseai.com}"
+MATTERMOST_URL="${MATTERMOST_URL:-https://mattermost.insightpulseai.com}"
 
 echo "========================================="
 echo "Finance PPM Workflow Deployment Verification"
@@ -171,7 +171,7 @@ fi
 info "Checking Odoo module ipai_finance_ppm..."
 # This would require Odoo XML-RPC authentication, skip for now
 warn "Odoo Module Check: Skipped (requires Odoo credentials)"
-info "Verify manually: https://odoo.insightpulseai.net/web#menu_id=XXX"
+info "Verify manually: https://odoo.insightpulseai.com/web#menu_id=XXX"
 
 # 9. Validate workflow JSON structure
 info "Validating workflow JSON structure..."

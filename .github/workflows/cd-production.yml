@@ -7,7 +7,7 @@
 #   - Push to main branch (auto-deploy)
 #   - Manual workflow dispatch
 #
-# Target: erp.insightpulseai.net (DigitalOcean Droplet)
+# Target: erp.insightpulseai.com (DigitalOcean Droplet)
 # =============================================================================
 
 name: CD Production
@@ -177,7 +177,7 @@ jobs:
 
     environment:
       name: production
-      url: https://erp.insightpulseai.net
+      url: https://erp.insightpulseai.com
 
     outputs:
       deployed_tag: ${{ steps.deploy.outputs.tag }}
@@ -298,7 +298,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Target | erp.insightpulseai.net |" >> $GITHUB_STEP_SUMMARY
+          echo "| Target | erp.insightpulseai.com |" >> $GITHUB_STEP_SUMMARY
           echo "| Image Tag | \`${{ steps.image.outputs.tag }}\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Status | ${{ steps.deploy.outputs.status }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Triggered By | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
@@ -324,7 +324,7 @@ jobs:
             HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
               --connect-timeout 10 \
               --max-time 30 \
-              "https://erp.insightpulseai.net/web/health" || echo "000")
+              "https://erp.insightpulseai.com/web/health" || echo "000")
 
             echo "Attempt $i: HTTP $HTTP_CODE"
 
@@ -344,7 +344,7 @@ jobs:
         run: |
           HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
             --connect-timeout 10 \
-            "https://erp.insightpulseai.net/web/login" || echo "000")
+            "https://erp.insightpulseai.com/web/login" || echo "000")
 
           echo "Login page: HTTP $HTTP_CODE"
 

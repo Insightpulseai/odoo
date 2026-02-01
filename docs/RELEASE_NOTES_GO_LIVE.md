@@ -1,6 +1,6 @@
 # GO-LIVE RELEASE MANIFEST (Odoo 18 CE + IPAI)
 Date: 2026-01-05
-Environment: Production (erp.insightpulseai.net)
+Environment: Production (erp.insightpulseai.com)
 Scope: Close + Tax Command Center + Invite-only onboarding + Ask AI provider wiring
 
 ---

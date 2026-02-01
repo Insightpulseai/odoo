@@ -211,7 +211,7 @@ show_help() {
     echo ""
     echo "Examples:"
     echo "  $0 test-db"
-    echo "  $0 update-param web.base.url https://erp.insightpulseai.net"
+    echo "  $0 update-param web.base.url https://erp.insightpulseai.com"
     echo "  $0 reset-password mynewpassword123"
     echo ""
 }

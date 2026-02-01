@@ -11,9 +11,9 @@ DEPLOYMENT CONTEXT:
 - Project: WorkOS (Notion Clone for Odoo)
 - Repository: https://github.com/jgtolentino/odoo-ce
 - Branch: claude/notion-clone-odoo-module-LSFan (PR #89)
-- Target Environment: erp.insightpulseai.net (Production)
+- Target Environment: erp.insightpulseai.com (Production)
 - Deployment Path: /opt/odoo-ce
-- SSH User: deploy@erp.insightpulseai.net
+- SSH User: deploy@erp.insightpulseai.com
 
 DEPLOYMENT OBJECTIVES:
 1. Pull latest code from remote branch (git fetch + pull)
@@ -203,7 +203,7 @@ bash scripts/prod/deploy_workos_full.sh
 ```
 =========================================
 WorkOS Production Deployment
-Target: erp.insightpulseai.net
+Target: erp.insightpulseai.com
 Branch: claude/notion-clone-odoo-module-LSFan
 Time: 2025-01-24 14:30:00
 =========================================

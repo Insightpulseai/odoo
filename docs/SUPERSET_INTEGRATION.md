@@ -141,11 +141,11 @@ class SupersetDashboard(models.Model):
 <data>
     <record id="superset_domain" model="ir.config_parameter">
         <field name="key">superset.domain</field>
-        <field name="value">https://superset.insightpulseai.net</field>
+        <field name="value">https://superset.insightpulseai.com</field>
     </record>
     <record id="superset_api_url" model="ir.config_parameter">
         <field name="key">superset.api_url</field>
-        <field name="value">https://superset.insightpulseai.net/api/v1</field>
+        <field name="value">https://superset.insightpulseai.com/api/v1</field>
     </record>
 </data>
 ```
@@ -172,7 +172,7 @@ git push origin feature/scout-new-metrics
 #   - Superset rebuilds with new view available
 
 # 4. Verify in Superset
-curl -sf https://superset.insightpulseai.net/api/v1/dataset/ | jq '.result[] | select(.table_name=="scout_performance_view")'
+curl -sf https://superset.insightpulseai.com/api/v1/dataset/ | jq '.result[] | select(.table_name=="scout_performance_view")'
 ```
 
 ### Manual Superset Rebuild
@@ -200,7 +200,7 @@ curl -X POST \
 
 - ✅ Docker image built and pushed to registry
 - ✅ DigitalOcean App Platform deployment succeeded
-- ✅ Superset health check: `curl -sf https://superset.insightpulseai.net/health`
+- ✅ Superset health check: `curl -sf https://superset.insightpulseai.com/health`
 - ✅ Scout datasets visible in Superset UI
 - ✅ Guest token API responding: `POST /api/v1/security/guest_token`
 
@@ -269,7 +269,7 @@ doctl apps create-deployment <SUPERSET_APP_ID> \
   --deployment-id <LAST_GOOD_DEPLOYMENT_ID>
 
 # 3. Verify rollback
-curl -sf https://superset.insightpulseai.net/health
+curl -sf https://superset.insightpulseai.com/health
 ```
 
 ---

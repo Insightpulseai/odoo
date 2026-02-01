@@ -24,7 +24,7 @@ Self-hosted **Odoo 18 Community Edition** + **OCA** stack with InsightPulse AI (
 - **Finance Month-End Close** — PH tax filing automation (BIR compliance)
 - **Canonical Data Model** — Versioned DBML/ERD/ORM maps with CI drift gates
 
-**Production URL**: https://erp.insightpulseai.net
+**Production URL**: https://erp.insightpulseai.com
 
 ### Key Constraints (Non-negotiable)
 

@@ -9,7 +9,7 @@ Usage:
     python server.py
 
 Environment Variables:
-    N8N_URL: n8n instance URL (default: https://n8n.insightpulseai.net)
+    N8N_URL: n8n instance URL (default: https://n8n.insightpulseai.com)
     N8N_API_KEY: API key for authentication
 """
 
@@ -112,7 +112,7 @@ def get_n8n_client() -> N8nClient:
     global _n8n_client
     if _n8n_client is None:
         config = N8nConfig(
-            url=os.environ.get('N8N_URL', 'https://n8n.insightpulseai.net'),
+            url=os.environ.get('N8N_URL', 'https://n8n.insightpulseai.com'),
             api_key=os.environ.get('N8N_API_KEY', ''),
         )
         if not config.api_key:

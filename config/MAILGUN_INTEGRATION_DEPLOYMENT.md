@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-The Mailgun → Odoo integration endpoint has been implemented in the `ipai_enterprise_bridge` module. All code changes are complete and ready for deployment to the production Odoo server at `erp.insightpulseai.net`.
+The Mailgun → Odoo integration endpoint has been implemented in the `ipai_enterprise_bridge` module. All code changes are complete and ready for deployment to the production Odoo server at `erp.insightpulseai.com`.
 
 **Root Cause (Resolved in Code)**:
 - Odoo was returning HTTP 404 for `/mailgate/mailgun`
@@ -50,7 +50,7 @@ from . import mailgun_mailgate
 ## Deployment Steps
 
 ### Prerequisites
-- SSH access to erp.insightpulseai.net (159.223.75.148)
+- SSH access to erp.insightpulseai.com (159.223.75.148)
 - Odoo installed at `/opt/odoo-ce` (or known path)
 - Database name: `production` (or known database name)
 
@@ -94,9 +94,9 @@ systemctl restart odoo
 
 ```bash
 # Test mailgate endpoint (should return HTTP 200, not 404)
-curl -X POST https://erp.insightpulseai.net/mailgate/mailgun \
+curl -X POST https://erp.insightpulseai.com/mailgate/mailgun \
   -d "sender=test@example.com" \
-  -d "recipient=test@mg.insightpulseai.net" \
+  -d "recipient=test@mg.insightpulseai.com" \
   -d "subject=Deployment Test $(date +%s)" \
   -d "body-plain=Testing mailgate endpoint after deployment." \
   -d "Message-Id=<test-$(date +%s)@example.com>" \
@@ -117,7 +117,7 @@ docker compose logs -f odoo-core | grep "Mailgun inbound"
 tail -f /var/log/odoo/odoo-server.log | grep "Mailgun inbound"
 
 # Expected log entry:
-# INFO production odoo.addons.ipai_enterprise_bridge.controllers.mailgun_mailgate: Mailgun inbound received: sender=test@example.com recipient=test@mg.insightpulseai.net subject=Deployment Test... message_id=<test-...@example.com>
+# INFO production odoo.addons.ipai_enterprise_bridge.controllers.mailgun_mailgate: Mailgun inbound received: sender=test@example.com recipient=test@mg.insightpulseai.com subject=Deployment Test... message_id=<test-...@example.com>
 ```
 
 ### Step 5: Verify Database Record
@@ -150,14 +150,14 @@ Once the endpoint is deployed and verified, run the full integration test:
 ```bash
 # Load API key
 MAILGUN_API_KEY="key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx-xxxxxxxx-xxxxxxxx"
-MAILGUN_DOMAIN="mg.insightpulseai.net"
+MAILGUN_DOMAIN="mg.insightpulseai.com"
 TIMESTAMP=$(date +%s)
 
 # Test deploy@ route
 curl -s --user "api:$MAILGUN_API_KEY" \
   https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages \
   -F from="postmaster@$MAILGUN_DOMAIN" \
-  -F to="deploy@insightpulseai.net" \
+  -F to="deploy@insightpulseai.com" \
   -F subject="Mailgun Integration Test: Deploy Route $TIMESTAMP" \
   -F text="Testing Mailgun → Odoo integration for deploy route"
 
@@ -165,7 +165,7 @@ curl -s --user "api:$MAILGUN_API_KEY" \
 curl -s --user "api:$MAILGUN_API_KEY" \
   https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages \
   -F from="postmaster@$MAILGUN_DOMAIN" \
-  -F to="support@insightpulseai.net" \
+  -F to="support@insightpulseai.com" \
   -F subject="Mailgun Integration Test: Support Route $TIMESTAMP" \
   -F text="Testing Mailgun → Odoo integration for support route"
 
@@ -173,7 +173,7 @@ curl -s --user "api:$MAILGUN_API_KEY" \
 curl -s --user "api:$MAILGUN_API_KEY" \
   https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages \
   -F from="postmaster@$MAILGUN_DOMAIN" \
-  -F to="invoices@insightpulseai.net" \
+  -F to="invoices@insightpulseai.com" \
   -F subject="Mailgun Integration Test: Invoices Route $TIMESTAMP" \
   -F text="Testing Mailgun → Odoo integration for invoices route"
 
@@ -181,7 +181,7 @@ curl -s --user "api:$MAILGUN_API_KEY" \
 curl -s --user "api:$MAILGUN_API_KEY" \
   https://api.mailgun.net/v3/$MAILGUN_DOMAIN/messages \
   -F from="postmaster@$MAILGUN_DOMAIN" \
-  -F to="test-archive@mg.insightpulseai.net" \
+  -F to="test-archive@mg.insightpulseai.com" \
   -F subject="Mailgun Integration Test: Catch-all Route $TIMESTAMP" \
   -F text="Testing Mailgun → Odoo integration for catch-all route"
 ```
@@ -192,7 +192,7 @@ curl -s --user "api:$MAILGUN_API_KEY" \
 # Query Mailgun events for delivery status
 curl -s --user "api:$MAILGUN_API_KEY" \
   "https://api.mailgun.net/v3/$MAILGUN_DOMAIN/events?limit=20" | \
-  jq '.items[] | select(.recipient | contains("insightpulseai.net")) | {
+  jq '.items[] | select(.recipient | contains("insightpulseai.com")) | {
     event,
     recipient,
     timestamp: (.timestamp | tonumber | strftime("%Y-%m-%d %H:%M:%S")),
@@ -379,7 +379,7 @@ docker compose exec odoo-core odoo shell -d production
 
 ## References
 
-- **Mailgun Events API**: https://api.mailgun.net/v3/mg.insightpulseai.net/events
+- **Mailgun Events API**: https://api.mailgun.net/v3/mg.insightpulseai.com/events
 - **Odoo Mail Documentation**: https://www.odoo.com/documentation/18.0/developer/reference/backend/orm.html#mail
 - **Mailgun Webhook Format**: https://documentation.mailgun.com/docs/mailgun/user-manual/tracking-messages/#tracking-webhooks
 - **Diagnosis Report**: `./config/mailgun_odoo_diagnosis.json`

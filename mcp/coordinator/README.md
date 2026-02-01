@@ -188,7 +188,7 @@ curl -H "X-API-Key: your-api-key" http://localhost:8766/status
 
 ## Next Steps
 
-1. Deploy to DigitalOcean App Platform at `mcp.insightpulseai.net`
+1. Deploy to DigitalOcean App Platform at `mcp.insightpulseai.com`
 2. Configure DNS and SSL
 3. Setup Redis for caching
 4. Implement usage analytics dashboard

@@ -33,9 +33,9 @@ Successfully implemented comprehensive Email Parity Pack to achieve Odoo Enterpr
 - Event tracking webhook: `/mailgun/events` (JSON)
 - HMAC-SHA256 signature verification for security
 - Automatic record creation from inbound emails:
-  - `sales@insightpulseai.net` → CRM leads
-  - `projects@insightpulseai.net` → Project tasks
-  - `support@insightpulseai.net` → Mail channel messages
+  - `sales@insightpulseai.com` → CRM leads
+  - `projects@insightpulseai.com` → Project tasks
+  - `support@insightpulseai.com` → Mail channel messages
 - Event tracking: delivered, opened, clicked, bounced
 
 **Design Decision**: Used `mail.channel` for support emails instead of OCA helpdesk to avoid external dependencies and ensure out-of-the-box compatibility with vanilla Odoo CE 18.
@@ -49,12 +49,12 @@ Successfully implemented comprehensive Email Parity Pack to achieve Odoo Enterpr
 **Variables Added**:
 ```bash
 # Mailgun Domain
-MAILGUN_DOMAIN=mg.insightpulseai.net
-MAILGUN_ROOT_DOMAIN=insightpulseai.net
+MAILGUN_DOMAIN=mg.insightpulseai.com
+MAILGUN_ROOT_DOMAIN=insightpulseai.com
 MAILGUN_API_KEY=your_mailgun_api_key_here
 
 # SMTP Credentials
-MAILGUN_SMTP_LOGIN=postmaster@mg.insightpulseai.net
+MAILGUN_SMTP_LOGIN=postmaster@mg.insightpulseai.com
 SMTP_HOST=smtp.mailgun.org
 SMTP_PORT=587
 SMTP_PASSWORD=your_mailgun_smtp_password_here
@@ -63,15 +63,15 @@ SMTP_PASSWORD=your_mailgun_smtp_password_here
 MAILGUN_WEBHOOK_SIGNING_KEY=your_webhook_signing_key_here
 
 # Odoo Email Config
-ODOO_DEFAULT_FROM_EMAIL=admin@insightpulseai.net
-ODOO_CATCHALL_DOMAIN=insightpulseai.net
+ODOO_DEFAULT_FROM_EMAIL=admin@insightpulseai.com
+ODOO_CATCHALL_DOMAIN=insightpulseai.com
 ODOO_SUPPORT_ALIAS=support
 ODOO_SALES_ALIAS=sales
 ODOO_PROJECTS_ALIAS=projects
 
 # Test Config
 TEST_EMAIL_TO=jgtolentino.rn@gmail.com
-WEB_BASE_URL=https://erp.insightpulseai.net
+WEB_BASE_URL=https://erp.insightpulseai.com
 
 # Container Config
 ODOO_CONTAINER_NAME=odoo-dev
@@ -98,7 +98,7 @@ ODOO_CONF=/etc/odoo/odoo.conf
 **Purpose**: Automate Mailgun route configuration via API
 
 **Actions**:
-- Creates catchall route for all `@insightpulseai.net` emails
+- Creates catchall route for all `@insightpulseai.com` emails
 - Configures event tracking webhook
 - Uses curl to interact with Mailgun API
 - Provides verification URLs
@@ -106,7 +106,7 @@ ODOO_CONF=/etc/odoo/odoo.conf
 **Usage**:
 ```bash
 export MAILGUN_API_KEY="your_key"
-export MAILGUN_DOMAIN="mg.insightpulseai.net"
+export MAILGUN_DOMAIN="mg.insightpulseai.com"
 ./scripts/mailgun/configure-routes.sh
 ```
 
@@ -193,12 +193,12 @@ export MAILGUN_DOMAIN="mg.insightpulseai.net"
 │  Odoo → Mailgun SMTP (smtp.mailgun.org:587) → Recipients        │
 │                                                                  │
 │  Inbound Flow:                                                   │
-│  Sender → Mailgun Routes → https://erp.insightpulseai.net       │
+│  Sender → Mailgun Routes → https://erp.insightpulseai.com       │
 │           /mailgun/inbound → ipai_mailgun_bridge                │
 │           → CRM / Projects / Support Channel                     │
 │                                                                  │
 │  Event Tracking:                                                 │
-│  Mailgun Events → https://erp.insightpulseai.net                │
+│  Mailgun Events → https://erp.insightpulseai.com                │
 │           /mailgun/events → ipai_mailgun_bridge                 │
 │           → mail.mail.ipai_mailgun_last_event                   │
 │                                                                  │
@@ -270,11 +270,11 @@ export MAILGUN_API_KEY="your_production_key"
 ./scripts/mailgun/configure-routes.sh
 
 # 6. Update nginx config (add webhook locations)
-sudo nano /etc/nginx/sites-available/erp.insightpulseai.net.conf
+sudo nano /etc/nginx/sites-available/erp.insightpulseai.com.conf
 sudo nginx -t && sudo systemctl reload nginx
 
 # 7. Verify webhooks accessible
-curl -I https://erp.insightpulseai.net/mailgun/inbound
+curl -I https://erp.insightpulseai.com/mailgun/inbound
 ```
 
 ---
@@ -358,13 +358,13 @@ docs/runbooks/
 **Mailgun Resources**:
 - Dashboard: https://app.mailgun.com/mg/
 - Routes: https://app.mailgun.com/mg/routes
-- Webhooks: https://app.mailgun.com/mg/sending/domains/mg.insightpulseai.net/webhooks
+- Webhooks: https://app.mailgun.com/mg/sending/domains/mg.insightpulseai.com/webhooks
 - Logs: https://app.mailgun.com/mg/logs
 
 **Verification**:
-- DNS: `dig MX mg.insightpulseai.net`
-- SPF: `dig TXT insightpulseai.net`
-- DKIM: `dig TXT smtp._domainkey.mg.insightpulseai.net`
+- DNS: `dig MX mg.insightpulseai.com`
+- SPF: `dig TXT insightpulseai.com`
+- DKIM: `dig TXT smtp._domainkey.mg.insightpulseai.com`
 
 **Odoo Admin**:
 - Settings → Technical → System Parameters (ipai_mailgun.*)

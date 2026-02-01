@@ -8,7 +8,7 @@ echo "=============================="
 # Check Docker availability
 if ! command -v docker &> /dev/null; then
     echo "❌ Docker not available"
-    echo "📝 Manual testing required on production: https://erp.insightpulseai.net"
+    echo "📝 Manual testing required on production: https://erp.insightpulseai.com"
     exit 1
 fi
 

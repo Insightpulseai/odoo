@@ -186,7 +186,7 @@ outputs = await generator.generate_all(dsn, "acme-corp")
 ### Create Tenant via n8n Webhook
 
 ```bash
-curl -X POST https://n8n.insightpulseai.net/webhook/tenant/create \
+curl -X POST https://n8n.insightpulseai.com/webhook/tenant/create \
   -H "Authorization: Bearer $API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -250,7 +250,7 @@ SUPERSET_PASSWORD=admin
 
 # Mailgun (for welcome emails)
 MAILGUN_API_URL=https://api.mailgun.net
-MAILGUN_DOMAIN=mg.insightpulseai.net
+MAILGUN_DOMAIN=mg.insightpulseai.com
 MAILGUN_API_KEY=key-xxx
 
 # Slack (for notifications)

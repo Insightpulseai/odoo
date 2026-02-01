@@ -28,7 +28,7 @@ This skill handles the complete expense management workflow from receipt capture
 
 **Input Methods**:
 - Mobile app upload
-- Email forwarding (receipts@insightpulseai.net)
+- Email forwarding (receipts@insightpulseai.com)
 - Telegram bot
 - Manual upload via Odoo
 
@@ -39,7 +39,7 @@ This skill handles the complete expense management workflow from receipt capture
 
 ### Step 2: OCR Extraction
 
-**PaddleOCR Endpoint**: `https://ocr.insightpulseai.net/api/ocr/receipt`
+**PaddleOCR Endpoint**: `https://ocr.insightpulseai.com/api/ocr/receipt`
 
 **Request**:
 ```json

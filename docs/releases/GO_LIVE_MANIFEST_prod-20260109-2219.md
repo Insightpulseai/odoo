@@ -33,8 +33,8 @@
 
 | Endpoint | Expected | Actual | Status |
 |----------|----------|--------|--------|
-| `https://erp.insightpulseai.net/web/health` | 200 OK | - | UNVERIFIED |
-| `https://erp.insightpulseai.net/web/login` | 200 OK | - | UNVERIFIED |
+| `https://erp.insightpulseai.com/web/health` | 200 OK | - | UNVERIFIED |
+| `https://erp.insightpulseai.com/web/login` | 200 OK | - | UNVERIFIED |
 
 ---
 
@@ -98,7 +98,7 @@ docker compose up -d --force-recreate
 ## Post-Deployment Tasks
 
 - [ ] Run `./scripts/verify_supabase_deploy.sh` to populate verification results (requires Supabase credentials)
-- [ ] Verify production health at `https://erp.insightpulseai.net/web/health`
+- [ ] Verify production health at `https://erp.insightpulseai.com/web/health`
 - [ ] Update status in this manifest after verification
 
 ---

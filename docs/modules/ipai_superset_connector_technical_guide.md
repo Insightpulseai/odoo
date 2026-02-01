@@ -51,7 +51,7 @@ The `ipai_superset_connector` module integrates Apache Superset BI dashboards in
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                        ODOO 18 CE (erp.insightpulseai.net)              │
+│                        ODOO 18 CE (erp.insightpulseai.com)              │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │   User Browser                                                          │
@@ -75,7 +75,7 @@ The `ipai_superset_connector` module integrates Apache Superset BI dashboards in
                │ (Option A: Direct Superset API)
                ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                   SUPERSET API (superset.insightpulseai.net)            │
+│                   SUPERSET API (superset.insightpulseai.com)            │
 ├─────────────────────────────────────────────────────────────────────────┤
 │   1. POST /api/v1/security/login         → access_token                 │
 │   2. GET  /api/v1/security/csrf_token/   → csrf_token                   │
@@ -85,7 +85,7 @@ The `ipai_superset_connector` module integrates Apache Superset BI dashboards in
                │ (Option B: Self-Signed JWT - Recommended)
                ▼
 ┌─────────────────────────────────────────────────────────────────────────┐
-│              TOKEN API (superset-embed-api.insightpulseai.net)          │
+│              TOKEN API (superset-embed-api.insightpulseai.com)          │
 ├─────────────────────────────────────────────────────────────────────────┤
 │   GET /api/superset-token?dashboard_id=<uuid>                           │
 │   - Signs JWT with shared SUPERSET_GUEST_TOKEN_SECRET                   │
@@ -128,7 +128,7 @@ GUEST_ROLE_NAME = "Public"
 ENABLE_CORS = True
 CORS_OPTIONS = {
     "supports_credentials": True,
-    "origins": ["https://erp.insightpulseai.net"],
+    "origins": ["https://erp.insightpulseai.com"],
     "methods": ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     "allow_headers": "*",
 }
@@ -137,7 +137,7 @@ CORS_OPTIONS = {
 TALISMAN_ENABLED = True
 TALISMAN_CONFIG = {
     "content_security_policy": {
-        "frame-ancestors": ["https://erp.insightpulseai.net"],
+        "frame-ancestors": ["https://erp.insightpulseai.com"],
     },
 }
 
@@ -152,9 +152,9 @@ FEATURE_FLAGS = {
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| Superset | https://superset.insightpulseai.net | BI dashboards |
-| Token API | https://superset-embed-api.insightpulseai.net | Self-signed JWT service |
-| Odoo | https://erp.insightpulseai.net | ERP host |
+| Superset | https://superset.insightpulseai.com | BI dashboards |
+| Token API | https://superset-embed-api.insightpulseai.com | Self-signed JWT service |
+| Odoo | https://erp.insightpulseai.com | ERP host |
 
 ---
 
@@ -202,11 +202,11 @@ Set these in Settings → Technical → System Parameters:
 
 | Key | Value | Required |
 |-----|-------|----------|
-| `ipai_superset.base_url` | `https://superset.insightpulseai.net` | Yes |
-| `ipai_superset.token_api_url` | `https://superset-embed-api.insightpulseai.net/api/superset-token` | Yes (for self-signed JWT) |
+| `ipai_superset.base_url` | `https://superset.insightpulseai.com` | Yes |
+| `ipai_superset.token_api_url` | `https://superset-embed-api.insightpulseai.com/api/superset-token` | Yes (for self-signed JWT) |
 | `ipai_superset.username` | Service account username | No (legacy API mode) |
 | `ipai_superset.password` | Service account password | No (legacy API mode) |
-| `ipai_superset.embed_domain` | `https://erp.insightpulseai.net` | Yes |
+| `ipai_superset.embed_domain` | `https://erp.insightpulseai.com` | Yes |
 
 ### Via Shell
 
@@ -214,11 +214,11 @@ Set these in Settings → Technical → System Parameters:
 # Odoo shell
 env['ir.config_parameter'].sudo().set_param(
     'ipai_superset.base_url',
-    'https://superset.insightpulseai.net'
+    'https://superset.insightpulseai.com'
 )
 env['ir.config_parameter'].sudo().set_param(
     'ipai_superset.token_api_url',
-    'https://superset-embed-api.insightpulseai.net/api/superset-token'
+    'https://superset-embed-api.insightpulseai.com/api/superset-token'
 )
 env.cr.commit()
 ```
@@ -301,7 +301,7 @@ Get a guest token for embedding a dashboard.
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIs...",
-  "superset_url": "https://superset.insightpulseai.net",
+  "superset_url": "https://superset.insightpulseai.com",
   "dashboard_id": 123
 }
 ```
@@ -427,7 +427,7 @@ Odoo Controller
 ```
 Odoo Controller
     │
-    └──► GET https://superset-embed-api.insightpulseai.net/api/superset-token
+    └──► GET https://superset-embed-api.insightpulseai.com/api/superset-token
             Query: ?dashboard_id={uuid}
             Response: { token, embedUrl, expiresAt }
 ```
@@ -489,7 +489,7 @@ region IN (SELECT region FROM user_regions WHERE user_id = ${user_id})
 
 ```bash
 # Check Superset config
-curl -I https://superset.insightpulseai.net/health
+curl -I https://superset.insightpulseai.com/health
 ```
 
 ### Token API Errors
@@ -497,7 +497,7 @@ curl -I https://superset.insightpulseai.net/health
 **Symptom**: "Failed to get dashboard token"
 
 **Check**:
-1. Token API is running: `curl https://superset-embed-api.insightpulseai.net/health`
+1. Token API is running: `curl https://superset-embed-api.insightpulseai.com/health`
 2. JWT secrets match between Token API and Superset
 3. Config parameter `ipai_superset.token_api_url` is set
 
@@ -540,8 +540,8 @@ docker compose logs odoo-core 2>&1 | grep -i superset
 ```env
 SUPERSET_GUEST_TOKEN_SECRET=your-shared-secret-here
 SUPERSET_GUEST_TOKEN_AUDIENCE=superset
-SUPERSET_DOMAIN=https://superset.insightpulseai.net
-ALLOWED_ORIGINS=https://erp.insightpulseai.net
+SUPERSET_DOMAIN=https://superset.insightpulseai.com
+ALLOWED_ORIGINS=https://erp.insightpulseai.com
 NODE_ENV=production
 ```
 
@@ -549,7 +549,7 @@ NODE_ENV=production
 ```env
 SUPERSET_GUEST_TOKEN_SECRET=your-shared-secret-here  # MUST MATCH TOKEN API
 SUPERSET_GUEST_TOKEN_AUDIENCE=superset
-SUPERSET_ALLOWED_EMBEDDED_DOMAINS=https://erp.insightpulseai.net
+SUPERSET_ALLOWED_EMBEDDED_DOMAINS=https://erp.insightpulseai.com
 ```
 
 ### Deployment Checklist
@@ -568,13 +568,13 @@ SUPERSET_ALLOWED_EMBEDDED_DOMAINS=https://erp.insightpulseai.net
 
 ```bash
 # Superset
-curl -f https://superset.insightpulseai.net/health
+curl -f https://superset.insightpulseai.com/health
 
 # Token API
-curl -f https://superset-embed-api.insightpulseai.net/health
+curl -f https://superset-embed-api.insightpulseai.com/health
 
 # Token generation test
-curl "https://superset-embed-api.insightpulseai.net/api/superset-token?dashboard_id=test-uuid"
+curl "https://superset-embed-api.insightpulseai.com/api/superset-token?dashboard_id=test-uuid"
 ```
 
 ---

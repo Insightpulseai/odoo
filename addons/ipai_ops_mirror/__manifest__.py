@@ -33,7 +33,7 @@ Set these environment variables in the Odoo container:
 * IPAI_OPS_SUMMARY_HMAC_SECRET: HMAC secret for signing requests
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "depends": ["base"],
     "data": [
         "security/ir.model.access.csv",

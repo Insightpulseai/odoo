@@ -46,7 +46,7 @@
 
 ### 1. Install PPM Monthly Close Module
 ```bash
-# Navigate to: https://erp.insightpulseai.net
+# Navigate to: https://erp.insightpulseai.com
 # Login with admin credentials
 # Apps → Update Apps List → Search "PPM Monthly Close" → Install
 ```

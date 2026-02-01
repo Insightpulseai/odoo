@@ -197,7 +197,7 @@ python -m pytest addons/ipai_* -v --cov
 
 - [ ] Production server provisioned (DigitalOcean droplet)
 - [ ] DNS records created and verified:
-  - [ ] A record: `erp.insightpulseai.net` → IP
+  - [ ] A record: `erp.insightpulseai.com` → IP
   - [ ] MX records (if mail needed)
   - [ ] TXT records (SPF, DKIM if applicable)
 - [ ] SSL/TLS certificates obtained and installed (Let's Encrypt)
@@ -237,7 +237,7 @@ python -m pytest addons/ipai_* -v --cov
 
 #### Nginx Reverse Proxy
 
-- [ ] Nginx configuration for `erp.insightpulseai.net` validated
+- [ ] Nginx configuration for `erp.insightpulseai.com` validated
 - [ ] SSL/TLS ciphers optimized (A+ rating recommended)
 - [ ] HTTP/2 enabled
 - [ ] HSTS headers configured

@@ -161,16 +161,16 @@ When restoring workflows, you must manually recreate credentials in the n8n UI:
 
 **n8n Instance**:
 - Container: `odoo-ipa-1`
-- Host: `erp.insightpulseai.net`
+- Host: `erp.insightpulseai.com`
 - Database: PostgreSQL 15 (`odoo-n8n-postgres-1`)
 - Cache: Redis 7 (`odoo-n8n-redis-1`)
 
 **Integration Endpoints**:
-- Odoo: `https://erp.insightpulseai.net`
-- OCR: `https://ocr.insightpulseai.net`
+- Odoo: `https://erp.insightpulseai.com`
+- OCR: `https://ocr.insightpulseai.com`
 - Supabase: `https://xkxyvboeubffxxbebsll.supabase.co`
-- Superset: `https://superset.insightpulseai.net`
-- Mattermost: `https://mattermost.insightpulseai.net`
+- Superset: `https://superset.insightpulseai.com`
+- Mattermost: `https://mattermost.insightpulseai.com`
 
 ## Troubleshooting
 
@@ -180,7 +180,7 @@ When restoring workflows, you must manually recreate credentials in the n8n UI:
 3. Check n8n logs: `docker logs odoo-ipa-1 --tail 100`
 
 ### Import/Export failures
-1. Verify SSH connectivity: `ssh root@erp.insightpulseai.net "echo OK"`
+1. Verify SSH connectivity: `ssh root@erp.insightpulseai.com "echo OK"`
 2. Check container status: `docker ps | grep odoo-ipa-1`
 3. Verify file paths in `index.yaml`
 

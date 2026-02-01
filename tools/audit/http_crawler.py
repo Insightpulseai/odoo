@@ -8,7 +8,7 @@ Usage:
     python3 tools/audit/http_crawler.py [base_url] [output_file]
 
 Defaults:
-    base_url: https://erp.insightpulseai.net
+    base_url: https://erp.insightpulseai.com
     output_file: docs/runtime/HTTP_SITEMAP.prod.json
 """
 
@@ -117,7 +117,7 @@ def crawl(base_url, max_depth=3, max_pages=100):
 
 
 def main():
-    base_url = sys.argv[1] if len(sys.argv) > 1 else 'https://erp.insightpulseai.net'
+    base_url = sys.argv[1] if len(sys.argv) > 1 else 'https://erp.insightpulseai.com'
     output_file = sys.argv[2] if len(sys.argv) > 2 else 'docs/runtime/HTTP_SITEMAP.prod.json'
 
     print(f"=== HTTP Sitemap Crawler ===")

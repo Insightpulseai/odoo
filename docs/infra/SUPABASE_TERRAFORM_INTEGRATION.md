@@ -135,9 +135,9 @@ resource "supabase_settings" "auth" {
   project_ref = var.production_project_ref
 
   auth = jsonencode({
-    site_url                  = "https://erp.insightpulseai.net"
+    site_url                  = "https://erp.insightpulseai.com"
     additional_redirect_urls  = [
-      "https://control.insightpulseai.net/**",
+      "https://control.insightpulseai.com/**",
       "http://localhost:3000/**"
     ]
     jwt_expiry               = 3600

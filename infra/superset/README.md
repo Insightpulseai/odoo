@@ -100,7 +100,7 @@ Required secrets in DigitalOcean App Platform:
 ## Health Check
 
 ```bash
-curl https://superset.insightpulseai.net/health
+curl https://superset.insightpulseai.com/health
 ```
 
 Expected response:

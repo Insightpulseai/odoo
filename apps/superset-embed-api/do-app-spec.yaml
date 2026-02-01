@@ -48,7 +48,7 @@ services:
 
       - key: SUPERSET_DOMAIN
         scope: RUN_TIME
-        value: "https://superset.insightpulseai.net"
+        value: "https://superset.insightpulseai.com"
 
       - key: TOKEN_EXPIRY_SECONDS
         scope: RUN_TIME
@@ -56,7 +56,7 @@ services:
 
       - key: ALLOWED_ORIGINS
         scope: RUN_TIME
-        value: "https://erp.insightpulseai.net,https://scout-mvp.vercel.app"
+        value: "https://erp.insightpulseai.com,https://scout-mvp.vercel.app"
 
       - key: NODE_ENV
         scope: RUN_TIME

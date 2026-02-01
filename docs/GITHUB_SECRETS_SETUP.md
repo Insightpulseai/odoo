@@ -43,10 +43,10 @@ docker exec odoo-accounting odoo-bin shell -d odoo_accounting
 
 ### 3. N8N_API_KEY
 **Purpose**: n8n API key for workflow import
-**Location**: n8n instance at https://ipa.insightpulseai.net
+**Location**: n8n instance at https://ipa.insightpulseai.com
 **How to Obtain**:
 
-1. Login to n8n: https://ipa.insightpulseai.net
+1. Login to n8n: https://ipa.insightpulseai.com
 2. Navigate to: Settings → API Keys
 3. Create new API key with name "GitHub Actions Finance PPM"
 4. Copy the generated API key
@@ -77,7 +77,7 @@ docker exec odoo-accounting odoo-bin shell -d odoo_accounting
    - Channel: #finance-ppm or #deployments
 4. Copy the generated webhook URL
 
-**GitHub Secret Value**: Complete webhook URL (e.g., `https://mattermost.insightpulseai.net/hooks/xxxxxxxxxxxxxx`)
+**GitHub Secret Value**: Complete webhook URL (e.g., `https://mattermost.insightpulseai.com/hooks/xxxxxxxxxxxxxx`)
 
 ## Setting GitHub Secrets
 
@@ -107,7 +107,7 @@ gh secret set DROPLET_SSH_KEY < ~/.ssh/finance_ppm_deploy
 gh secret set ODOO_ADMIN_PASSWORD --body "your_admin_password"
 gh secret set N8N_API_KEY --body "your_n8n_api_key"
 gh secret set SUPABASE_SERVICE_ROLE_KEY --body "your_supabase_service_role_key"
-gh secret set MATTERMOST_WEBHOOK_URL --body "https://mattermost.insightpulseai.net/hooks/xxx"
+gh secret set MATTERMOST_WEBHOOK_URL --body "https://mattermost.insightpulseai.com/hooks/xxx"
 ```
 
 ## Validation
@@ -165,7 +165,7 @@ EOF
 # Test n8n API connectivity
 curl -sf \
   -H "X-N8N-API-KEY: YOUR_N8N_API_KEY" \
-  "https://ipa.insightpulseai.net/api/v1/workflows" | jq '.data | length'
+  "https://ipa.insightpulseai.com/api/v1/workflows" | jq '.data | length'
 ```
 
 ### Test Supabase Service Role
@@ -232,7 +232,7 @@ curl -sf -X POST \
 **Solution**:
 1. Regenerate n8n API key and update secret
 2. Check API key has "Workflows: Read & Write" permissions
-3. Verify n8n URL is correct: https://ipa.insightpulseai.net
+3. Verify n8n URL is correct: https://ipa.insightpulseai.com
 
 ### Supabase Schema Not Found
 

@@ -2,7 +2,7 @@
 ## Integration with Odoo ERP and AI Agents
 
 **Target Environment**: Production Droplet (159.223.75.148)
-**DNS**: `chat.insightpulseai.net` → 159.223.75.148
+**DNS**: `chat.insightpulseai.com` → 159.223.75.148
 
 ---
 
@@ -47,7 +47,7 @@
    ```
 
 4. **Access Mattermost**
-   - URL: https://chat.insightpulseai.net
+   - URL: https://chat.insightpulseai.com
    - Create admin account on first access
 
 ---
@@ -59,7 +59,7 @@
 1. **Create Incoming Webhook**
    - Go to **System Console > Integrations > Incoming Webhooks**
    - Create webhook for `Finance` channel
-   - Copy webhook URL: `https://chat.insightpulseai.net/hooks/xyz...`
+   - Copy webhook URL: `https://chat.insightpulseai.com/hooks/xyz...`
 
 2. **Create Outgoing Webhook for AI Agent**
    - Go to **System Console > Integrations > Outgoing Webhooks**
@@ -110,7 +110,7 @@
 Ensure your Traefik configuration includes:
 ```yaml
 labels:
-  - "traefik.http.routers.mattermost.rule=Host(`chat.insightpulseai.net`)"
+  - "traefik.http.routers.mattermost.rule=Host(`chat.insightpulseai.com`)"
   - "traefik.http.routers.mattermost.entrypoints=websecure"
   - "traefik.http.routers.mattermost.tls.certresolver=myresolver"
 ```
@@ -157,13 +157,13 @@ docker exec odoo_prod_db_1 pg_dump -U odoo mattermost > mattermost_backup.sql
 ### Health Checks
 ```bash
 # Mattermost health
-curl -s https://chat.insightpulseai.net/api/v4/system/ping | jq .
+curl -s https://chat.insightpulseai.com/api/v4/system/ping | jq .
 
 # Database connectivity
 docker exec odoo_prod_db_1 pg_isready -U mmuser -d mattermost
 
 # Traefik routing
-curl -H "Host: chat.insightpulseai.net" http://localhost
+curl -H "Host: chat.insightpulseai.com" http://localhost
 ```
 
 ---
@@ -208,7 +208,7 @@ tail -f /var/log/odoo/odoo-server.log | grep mattermost
 
 ## ✅ Success Criteria
 
-- [ ] Mattermost accessible at https://chat.insightpulseai.net
+- [ ] Mattermost accessible at https://chat.insightpulseai.com
 - [ ] Purchase order approvals trigger Mattermost notifications
 - [ ] Expense submissions notify finance team in Mattermost
 - [ ] AI agent responds to @agent queries

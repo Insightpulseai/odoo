@@ -6,8 +6,8 @@ Complete deployment guide for the InsightPulse finance automation infrastructure
 
 ### Access Requirements
 
-- [x] SSH access to `erp.insightpulseai.net`
-- [x] Admin access to n8n (`https://ipa.insightpulseai.net`)
+- [x] SSH access to `erp.insightpulseai.com`
+- [x] Admin access to n8n (`https://ipa.insightpulseai.com`)
 - [x] Supabase project access (`xkxyvboeubffxxbebsll`)
 - [x] GitHub repository admin access
 - [x] Mattermost webhook access
@@ -16,7 +16,7 @@ Complete deployment guide for the InsightPulse finance automation infrastructure
 
 ```bash
 # Odoo
-ODOO_URL=https://erp.insightpulseai.net
+ODOO_URL=https://erp.insightpulseai.com
 ODOO_DB=odoo
 ODOO_LOGIN=jgtolentino_rn@yahoo.com
 ODOO_PASSWORD=<from_1password>
@@ -81,11 +81,11 @@ CREATE POLICY "Allow authenticated read"
 
 ## Phase 2: Server Deployment (30 minutes)
 
-### Step 2.1: Deploy Scripts to erp.insightpulseai.net
+### Step 2.1: Deploy Scripts to erp.insightpulseai.com
 
 ```bash
 # SSH to server
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 
 # Create directory structure
 mkdir -p /opt/odoo-ce/notion-n8n-monthly-close/scripts
@@ -103,25 +103,25 @@ exit
 cd /Users/tbwa/Documents/GitHub/odoo-ce
 
 # Copy scripts
-scp scripts/check_project_tasks.py root@erp.insightpulseai.net:/opt/odoo-ce/scripts/
-scp notion-n8n-monthly-close/scripts/verify_finance_stack.sh root@erp.insightpulseai.net:/opt/odoo-ce/notion-n8n-monthly-close/scripts/
+scp scripts/check_project_tasks.py root@erp.insightpulseai.com:/opt/odoo-ce/scripts/
+scp notion-n8n-monthly-close/scripts/verify_finance_stack.sh root@erp.insightpulseai.com:/opt/odoo-ce/notion-n8n-monthly-close/scripts/
 
 # Copy SQL schema
-scp packages/db/sql/02_health_check_table.sql root@erp.insightpulseai.net:/opt/odoo-ce/packages/db/sql/
+scp packages/db/sql/02_health_check_table.sql root@erp.insightpulseai.com:/opt/odoo-ce/packages/db/sql/
 
 # Set permissions
-ssh root@erp.insightpulseai.net "chmod +x /opt/odoo-ce/scripts/check_project_tasks.py"
-ssh root@erp.insightpulseai.net "chmod +x /opt/odoo-ce/notion-n8n-monthly-close/scripts/verify_finance_stack.sh"
+ssh root@erp.insightpulseai.com "chmod +x /opt/odoo-ce/scripts/check_project_tasks.py"
+ssh root@erp.insightpulseai.com "chmod +x /opt/odoo-ce/notion-n8n-monthly-close/scripts/verify_finance_stack.sh"
 ```
 
 ### Step 2.3: Configure Environment Variables on Server
 
 ```bash
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 
 # Create .env file for health checks
 cat > /opt/odoo-ce/.env.health << 'EOF'
-ODOO_URL=https://erp.insightpulseai.net
+ODOO_URL=https://erp.insightpulseai.com
 ODOO_DB=odoo
 ODOO_LOGIN=jgtolentino_rn@yahoo.com
 ODOO_PASSWORD=<actual_password>
@@ -156,17 +156,17 @@ cd /opt/odoo-ce/notion-n8n-monthly-close
 
 ### Step 3.1: Create Odoo Credentials
 
-1. Go to `https://ipa.insightpulseai.net` → Settings → Credentials
+1. Go to `https://ipa.insightpulseai.com` → Settings → Credentials
 2. Click "+ Add Credential" → Search "Odoo"
 3. Create credential: `odoo-prod-main`
-   - Base URL: `https://erp.insightpulseai.net`
+   - Base URL: `https://erp.insightpulseai.com`
    - Database: `odoo`
    - Username: `jgtolentino_rn@yahoo.com`
    - Password/API Key: `<from_1password>`
 4. Test connection → Save
 
 5. Repeat for `odoo-staging`:
-   - Base URL: `https://staging.insightpulseai.net`
+   - Base URL: `https://staging.insightpulseai.com`
    - Database: `odoo`
    - Username: `jgtolentino_rn@yahoo.com`
    - Password/API Key: `<from_1password>`
@@ -191,7 +191,7 @@ cd /opt/odoo-ce/notion-n8n-monthly-close
 
 ### Step 3.3: Import Workflows
 
-1. Navigate to n8n: `https://ipa.insightpulseai.net`
+1. Navigate to n8n: `https://ipa.insightpulseai.com`
 2. Click "+" → "Import from File"
 3. Import workflows in order:
    - `W150_FINANCE_HEALTH_CHECK.json`
@@ -253,7 +253,7 @@ Navigate to: `https://github.com/jgtolentino/odoo-ce/settings/secrets/actions`
 Add secrets:
 ```
 SSH_PRIVATE_KEY          <private_key_for_erp_server>
-SSH_KNOWN_HOSTS          <output_of: ssh-keyscan erp.insightpulseai.net>
+SSH_KNOWN_HOSTS          <output_of: ssh-keyscan erp.insightpulseai.com>
 SUPABASE_SERVICE_ROLE_KEY <from_supabase_dashboard>
 N8N_API_KEY              <from_n8n_user_settings>
 ODOO_PASSWORD            <from_1password>
@@ -291,7 +291,7 @@ In Odoo (as admin):
    import requests
    import json
 
-   url = "https://ipa.insightpulseai.net/webhook/odoo/expense/created"
+   url = "https://ipa.insightpulseai.com/webhook/odoo/expense/created"
    payload = {
        "id": record.id,
        "employee_id": record.employee_id.id,
@@ -312,7 +312,7 @@ In Odoo (as admin):
    import requests
    import json
 
-   url = "https://ipa.insightpulseai.net/webhook/odoo/knowledge/page-updated"
+   url = "https://ipa.insightpulseai.com/webhook/odoo/knowledge/page-updated"
    payload = {
        "id": record.id,
        "name": record.name,
@@ -353,9 +353,9 @@ SELECT * FROM public.health_check_recent_failures LIMIT 20;
 ### Step 6.3: Bookmark Important Links
 
 - Supabase Health Checks: `https://supabase.com/dashboard/project/xkxyvboeubffxxbebsll/editor/29274?sort=created_at%3Adesc`
-- n8n Workflows: `https://ipa.insightpulseai.net/workflows`
+- n8n Workflows: `https://ipa.insightpulseai.com/workflows`
 - GitHub Actions: `https://github.com/jgtolentino/odoo-ce/actions/workflows/health-check.yml`
-- Mattermost Alerts: `https://mattermost.insightpulseai.net/finance-alerts`
+- Mattermost Alerts: `https://mattermost.insightpulseai.com/finance-alerts`
 
 ## Verification Checklist
 

@@ -11,7 +11,7 @@
 
 ### 0.1 Domain + TLS
 
-- [ ] Domain + TLS ok: https://erp.insightpulseai.net loads without mixed-content errors
+- [ ] Domain + TLS ok: https://erp.insightpulseai.com loads without mixed-content errors
 - [ ] Certificate valid and not expiring within 30 days
 - [ ] HSTS headers configured
 
@@ -116,7 +116,7 @@ sed -i 's/<tree /<list /g; s/<\/tree>/<\/list>/g' <file>
 
 - [ ] Outgoing SMTP configured (Mailgun 2525 / TLS STARTTLS)
 - [ ] Odoo test connection successful
-- [ ] From filtering set (e.g. *@insightpulseai.net)
+- [ ] From filtering set (e.g. *@insightpulseai.com)
 
 ### 2.2 Email Delivery Tests
 
@@ -182,7 +182,7 @@ sed -i 's/<tree /<list /g; s/<\/tree>/<\/list>/g' <file>
 
 ### 4.3 Incoming Email Expenses (optional)
 
-- [ ] Alias configured (expense@insightpulseai.net)
+- [ ] Alias configured (expense@insightpulseai.com)
 - [ ] Email gateway routes to Odoo (inbound)
 - [ ] OR mark as "disabled/out-of-scope"
 

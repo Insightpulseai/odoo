@@ -1,7 +1,7 @@
 # Odoo CE v0.9.1 - Production Deployment Workflow
 
 **Date**: 2025-11-25
-**Target**: erp.insightpulseai.net (159.223.75.148)
+**Target**: erp.insightpulseai.com (159.223.75.148)
 **Status**: ✅ Ready for Deployment
 
 ---
@@ -275,7 +275,7 @@ docker stats odoo-ce --no-stream
 
 **Open in browser:**
 
-1. Navigate to: https://erp.insightpulseai.net
+1. Navigate to: https://erp.insightpulseai.com
    - Expected: ✅ Odoo login page (no errors)
 
 2. Login with admin credentials
@@ -458,7 +458,7 @@ curl http://127.0.0.1:8069/web
 - [x] Image v0.9.1 built and pushed to GHCR
 - [x] Production deployment completed without errors
 - [x] All smoke tests passing
-- [x] Web interface accessible at https://erp.insightpulseai.net
+- [x] Web interface accessible at https://erp.insightpulseai.com
 - [x] All 5 custom modules visible and functional
 - [x] No critical errors in logs
 - [x] Resource usage within acceptable limits (MEM < 80%, CPU < 90%)

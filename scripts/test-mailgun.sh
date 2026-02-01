@@ -6,7 +6,7 @@
 #
 # Environment variables required:
 #   MAILGUN_API_KEY - Your Mailgun API key
-#   MAILGUN_DOMAIN  - Your sending domain (default: mg.insightpulseai.net)
+#   MAILGUN_DOMAIN  - Your sending domain (default: mg.insightpulseai.com)
 #
 # Example:
 #   MAILGUN_API_KEY=key-xxx ./scripts/test-mailgun.sh you@example.com
@@ -14,7 +14,7 @@
 set -euo pipefail
 
 # Configuration
-MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.net}"
+MAILGUN_DOMAIN="${MAILGUN_DOMAIN:-mg.insightpulseai.com}"
 MAILGUN_API_URL="https://api.mailgun.net/v3/${MAILGUN_DOMAIN}/messages"
 
 # Check required vars
@@ -57,7 +57,7 @@ If you received this email, your Mailgun configuration is working correctly.
 
 --
 InsightPulse AI Platform
-https://insightpulseai.net")
+https://insightpulseai.com")
 
 # Parse response
 HTTP_CODE=$(echo "$RESPONSE" | tail -1)

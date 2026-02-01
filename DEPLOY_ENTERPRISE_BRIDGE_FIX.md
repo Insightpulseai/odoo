@@ -9,7 +9,7 @@
 ## Problem
 
 **Error**: `"res.config.settings"."pos_self_ordering_mode" field is undefined`
-**Location**: erp.insightpulseai.net (production Odoo instance)
+**Location**: erp.insightpulseai.com (production Odoo instance)
 **Cause**: Enterprise POS self-ordering fields don't exist in CE 18.0
 **Impact**: Settings page crashes with OwlError
 
@@ -92,13 +92,13 @@ docker logs odoo-erp-prod --tail 20
 
 **Test Settings page**:
 ```bash
-curl -sf https://erp.insightpulseai.net/web/login
+curl -sf https://erp.insightpulseai.com/web/login
 ```
 
 **Expected**: HTTP 200, no OwlError
 
 **Test in browser**:
-1. Navigate to https://erp.insightpulseai.net
+1. Navigate to https://erp.insightpulseai.com
 2. Login as admin
 3. Go to Settings → Point of Sale
 4. Page should load without errors

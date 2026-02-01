@@ -3,7 +3,7 @@
 ## Error Summary
 
 **Error**: `res.config.settings.pay_invoices_online field is undefined`
-**Location**: erp.insightpulseai.net
+**Location**: erp.insightpulseai.com
 **Impact**: OWL lifecycle crash when accessing certain views
 **Root Cause**: View references a field that doesn't exist (CE vs Enterprise mismatch)
 
@@ -13,7 +13,7 @@
 
 ```bash
 # 1. Set environment variables
-export ODOO_URL="https://erp.insightpulseai.net"
+export ODOO_URL="https://erp.insightpulseai.com"
 export ODOO_DB="production"
 export ODOO_USERNAME="admin"  # or your admin user
 export ODOO_PASSWORD="your_password"
@@ -29,7 +29,7 @@ ssh root@159.223.75.148
 docker compose -f /opt/odoo/docker-compose.yml restart odoo-ce
 
 # 5. Clear browser cache and test
-# Visit: https://erp.insightpulseai.net
+# Visit: https://erp.insightpulseai.com
 ```
 
 ### Option 2: Direct SQL Cleanup (If script fails)
@@ -84,7 +84,7 @@ After applying fix:
 1. **Clear browser cache** (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows)
 
 2. **Visit Settings page**:
-   - Navigate to: https://erp.insightpulseai.net/web#action=base.action_res_config_settings
+   - Navigate to: https://erp.insightpulseai.com/web#action=base.action_res_config_settings
    - Should load without OWL errors
 
 3. **Check browser console**:

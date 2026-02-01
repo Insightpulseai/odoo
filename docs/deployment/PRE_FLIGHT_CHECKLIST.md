@@ -1,6 +1,6 @@
 # WorkOS Production Deployment - Pre-Flight Checklist
 
-**Target**: erp.insightpulseai.net
+**Target**: erp.insightpulseai.com
 **Module**: WorkOS (Notion Clone for Odoo)
 **Branch**: claude/notion-clone-odoo-module-LSFan (PR #89)
 
@@ -10,7 +10,7 @@
 
 ### Infrastructure Readiness
 
-- [ ] SSH access to production server verified (`ssh deploy@erp.insightpulseai.net`)
+- [ ] SSH access to production server verified (`ssh deploy@erp.insightpulseai.com`)
 - [ ] Sufficient disk space (>10% free on /opt/odoo-ce)
 - [ ] Database backup directory exists (`/var/backups/odoo`)
 - [ ] Log directory exists (`/var/log/odoo-deployment`)
@@ -33,7 +33,7 @@
 
 ### Network & Services
 
-- [ ] Odoo web interface accessible (`https://erp.insightpulseai.net/web/login`)
+- [ ] Odoo web interface accessible (`https://erp.insightpulseai.com/web/login`)
 - [ ] No active user sessions (or maintenance window scheduled)
 - [ ] Reverse proxy / load balancer configured correctly
 - [ ] SSL certificates valid (check expiry date)

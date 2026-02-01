@@ -187,7 +187,7 @@ cat > "$RELEASE_DIR/GO_LIVE_MANIFEST.md" << EOF
 |-----------|-------|
 | **Release Tag** | \`$RELEASE_TAG\` |
 | **Commit SHA** | \`$COMMIT_SHA\` |
-| **Production URL** | https://erp.insightpulseai.net |
+| **Production URL** | https://erp.insightpulseai.com |
 | **Database** | \`odoo_core\` |
 | **Docker Image** | \`ghcr.io/jgtolentino/odoo-ce:$RELEASE_TAG\` |
 
@@ -225,7 +225,7 @@ $(if [[ -n "$SUPABASE_FUNCTIONS" ]]; then echo "$SUPABASE_FUNCTIONS" | sed 's/^/
 
 \`\`\`bash
 # Check Odoo health
-curl -sI https://erp.insightpulseai.net/web/health | head -5
+curl -sI https://erp.insightpulseai.com/web/health | head -5
 
 # Check Docker image
 docker inspect ghcr.io/jgtolentino/odoo-ce:$RELEASE_TAG --format='{{.Id}}'
@@ -250,7 +250,7 @@ docker pull ghcr.io/jgtolentino/odoo-ce:${PREV_TAG:-"latest"}
 docker compose up -d
 
 # 5. Verify
-curl -sI https://erp.insightpulseai.net/web | head -3
+curl -sI https://erp.insightpulseai.com/web | head -3
 \`\`\`
 EOF
 
@@ -270,7 +270,7 @@ echo "# Odoo stop-after-init log for $RELEASE_TAG
 LOG_PENDING" > "$PROOFS_DIR/odoo_stop_after_init.log"
 
 echo "# Health check headers for $RELEASE_TAG
-# Run: curl -sI https://erp.insightpulseai.net/web | head -10
+# Run: curl -sI https://erp.insightpulseai.com/web | head -10
 # Paste output below:
 HEADERS_PENDING" > "$PROOFS_DIR/curl_health_headers.txt"
 

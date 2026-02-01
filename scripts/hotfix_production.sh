@@ -83,7 +83,7 @@ echo ">>> [2/4] Fixing OAuth HTTPS loop..."
 docker exec -i "$CONTAINER_NAME" psql -U odoo -d "$DB_NAME" <<'SQL_EOF'
 -- Update web.base.url to use HTTPS
 UPDATE ir_config_parameter
-SET value = 'https://erp.insightpulseai.net'
+SET value = 'https://erp.insightpulseai.com'
 WHERE key = 'web.base.url';
 
 -- Freeze base URL to prevent OAuth overrides
@@ -152,10 +152,10 @@ BASE_URL=$(docker exec -i "$CONTAINER_NAME" psql -U odoo -d "$DB_NAME" -t -c \
   "SELECT value FROM ir_config_parameter WHERE key='web.base.url';")
 BASE_URL=$(echo $BASE_URL | xargs)
 
-if [[ "$BASE_URL" == "https://erp.insightpulseai.net" ]]; then
-    echo "✓ PASS: web.base.url = https://erp.insightpulseai.net"
+if [[ "$BASE_URL" == "https://erp.insightpulseai.com" ]]; then
+    echo "✓ PASS: web.base.url = https://erp.insightpulseai.com"
 else
-    echo "❌ FAIL: web.base.url = $BASE_URL (expected https://erp.insightpulseai.net)"
+    echo "❌ FAIL: web.base.url = $BASE_URL (expected https://erp.insightpulseai.com)"
     VALIDATION_PASSED=false
 fi
 
@@ -208,7 +208,7 @@ echo ""
 # === User Action Items ===
 echo "Next Steps:"
 echo "  1. Clear browser cache (Ctrl+Shift+R / Cmd+Shift+R)"
-echo "  2. Open Chrome Incognito: https://erp.insightpulseai.net"
+echo "  2. Open Chrome Incognito: https://erp.insightpulseai.com"
 echo "  3. Press F12 → Console tab → Verify no red errors"
 echo "  4. Test OAuth login (should stay on https://)"
 echo "  5. Check browser source code: <link href='/web/assets/...css'/>"
@@ -218,7 +218,7 @@ echo "  # Check nginx headers"
 echo "  docker exec nginx nginx -T | grep X-Forwarded-Proto"
 echo ""
 echo "  # Test HTTPS endpoint"
-echo "  curl -I https://erp.insightpulseai.net"
+echo "  curl -I https://erp.insightpulseai.com"
 echo ""
 echo "  # View recent Odoo logs"
 echo "  docker logs $CONTAINER_NAME --tail 50"

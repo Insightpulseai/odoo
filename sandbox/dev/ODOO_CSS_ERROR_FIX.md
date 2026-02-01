@@ -11,18 +11,18 @@
 The CSS error banner was **NOT caused by SCSS compilation errors** in Odoo, but by **incorrect Nginx routing**.
 
 **Actual Problem**:
-- `erp.insightpulseai.net` was serving **static Mattermost HTML dump** instead of proxying to Odoo
-- Nginx `default.conf` contained a server block for `erp.insightpulseai.net` pointing to `/usr/share/nginx/html/mattermost.com/`
-- Users accessing `erp.insightpulseai.net` were seeing Mattermost content, which lacked proper Odoo CSS assets
+- `erp.insightpulseai.com` was serving **static Mattermost HTML dump** instead of proxying to Odoo
+- Nginx `default.conf` contained a server block for `erp.insightpulseai.com` pointing to `/usr/share/nginx/html/mattermost.com/`
+- Users accessing `erp.insightpulseai.com` were seeing Mattermost content, which lacked proper Odoo CSS assets
 
 **Evidence**:
 ```bash
 # Before fix - served Mattermost HTML
-$ curl -s https://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
+$ curl -s https://erp.insightpulseai.com/web/login | grep -o '<title>.*</title>'
 <title>Communicate, collaborate & operate with confidence</title>
 
 # After fix - serves Odoo
-$ curl -s http://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
+$ curl -s http://erp.insightpulseai.com/web/login | grep -o '<title>.*</title>'
 <title>Build Ops Control Room</title>
 ```
 
@@ -51,7 +51,7 @@ map $http_upgrade $connection_upgrade {
 server {
     listen 80;
     listen [::]:80;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
     
     # Proxy settings
     proxy_read_timeout 720s;
@@ -102,13 +102,13 @@ docker exec nginx-prod-v2 nginx -s reload
 
 ```bash
 # Test Odoo accessibility
-curl -I http://erp.insightpulseai.net/web/login
+curl -I http://erp.insightpulseai.com/web/login
 
 # Check page title
-curl -s http://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
+curl -s http://erp.insightpulseai.com/web/login | grep -o '<title>.*</title>'
 
 # Verify no CSS errors
-curl -s http://erp.insightpulseai.net/web/login | grep -i "css error"
+curl -s http://erp.insightpulseai.com/web/login | grep -i "css error"
 ```
 
 ---
@@ -138,30 +138,30 @@ c9a694592239   odoo      Up 5 days   8069/tcp, 8071-8072/tcp
 
 The Odoo proxy is currently HTTP-only. For production HTTPS access:
 
-1. **Obtain SSL certificates** for `erp.insightpulseai.net`:
+1. **Obtain SSL certificates** for `erp.insightpulseai.com`:
    ```bash
    # Option 1: Let's Encrypt (recommended)
-   certbot certonly --webroot -w /var/www/html -d erp.insightpulseai.net
+   certbot certonly --webroot -w /var/www/html -d erp.insightpulseai.com
    
    # Option 2: DigitalOcean managed certificates (if using DO Load Balancer)
-   doctl compute certificate create --name erp-cert --dns-names erp.insightpulseai.net
+   doctl compute certificate create --name erp-cert --dns-names erp.insightpulseai.com
    ```
 
 2. **Update Nginx configuration** to enable HTTPS:
    ```nginx
    server {
        listen 443 ssl http2;
-       server_name erp.insightpulseai.net;
+       server_name erp.insightpulseai.com;
        
-       ssl_certificate /etc/nginx/ssl/erp.insightpulseai.net.crt;
-       ssl_certificate_key /etc/nginx/ssl/erp.insightpulseai.net.key;
+       ssl_certificate /etc/nginx/ssl/erp.insightpulseai.com.crt;
+       ssl_certificate_key /etc/nginx/ssl/erp.insightpulseai.com.key;
        
        # ... rest of proxy config
    }
    
    server {
        listen 80;
-       server_name erp.insightpulseai.net;
+       server_name erp.insightpulseai.com;
        return 301 https://$server_name$request_uri;
    }
    ```
@@ -177,19 +177,19 @@ The Odoo proxy is currently HTTP-only. For production HTTPS access:
 
 | Metric | Before | After |
 |--------|--------|-------|
-| **URL** | erp.insightpulseai.net | erp.insightpulseai.net |
+| **URL** | erp.insightpulseai.com | erp.insightpulseai.com |
 | **Content** | Mattermost static HTML | Odoo ERP (proxied) |
 | **CSS Error** | ❌ Red banner | ✅ No errors |
 | **Assets** | Missing (wrong site) | ✅ Loading correctly |
 | **Root Cause** | Nginx misconfiguration | ✅ Fixed |
 
-**Resolution**: Nginx now correctly proxies `erp.insightpulseai.net` to Odoo container on port 8069. CSS assets load normally, no error banner.
+**Resolution**: Nginx now correctly proxies `erp.insightpulseai.com` to Odoo container on port 8069. CSS assets load normally, no error banner.
 
 **Files Changed**:
 - Created: `/etc/nginx/conf.d/odoo.conf` (nginx-prod-v2 container)
 - Disabled: `/etc/nginx/conf.d/default.conf` → `default.conf.disabled`
 
-**Verification**: ✅ Odoo accessible via HTTP at `http://erp.insightpulseai.net`
+**Verification**: ✅ Odoo accessible via HTTP at `http://erp.insightpulseai.com`
 
 ---
 

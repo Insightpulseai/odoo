@@ -58,7 +58,7 @@
 - [ ] Add CI branch workflow for Odoo 19 install validation
 
 ## Global Documentation & Canonical URLs
-- [ ] Replace docs base references to `https://docs.insightpulseai.net/erp` with `https://jgtolentino.github.io/odoo-ce/`
+- [ ] Replace docs base references to `https://docs.insightpulseai.com/erp` with `https://jgtolentino.github.io/odoo-ce/`
 - [ ] Ensure README and docs index pages point to GitHub Pages canonical base
 - [ ] Add `DEPLOYMENT_STATE_CURRENT.md` update step into release process
 

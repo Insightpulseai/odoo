@@ -120,7 +120,7 @@ jobs:
           mkdir -p "$PROOFS_DIR"
 
           # Try to get health headers (may fail if not deployed yet)
-          curl -sI https://erp.insightpulseai.net/web 2>&1 | head -15 > "$PROOFS_DIR/curl_health_headers.txt" || echo "HEALTH_CHECK_PENDING" > "$PROOFS_DIR/curl_health_headers.txt"
+          curl -sI https://erp.insightpulseai.com/web 2>&1 | head -15 > "$PROOFS_DIR/curl_health_headers.txt" || echo "HEALTH_CHECK_PENDING" > "$PROOFS_DIR/curl_health_headers.txt"
 
           echo "Health check completed"
 

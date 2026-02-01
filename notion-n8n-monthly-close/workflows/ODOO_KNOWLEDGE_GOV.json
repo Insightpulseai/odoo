@@ -226,7 +226,7 @@
           "parameters": [
             {
               "name": "text",
-              "value": "=📚 **Knowledge Page Processed**\n\n**Page:** {{ $('Function: Validate Page Structure').first().json.page_name }}\n**Status:** {{ $('Function: Validate Page Structure').first().json.has_issues ? '⚠️ Issues Found' : '✅ Validated' }}\n{{ $('Function: Validate Page Structure').first().json.has_issues ? '**Issues:**\\n- ' + $('Function: Validate Page Structure').first().json.issues.join('\\n- ') : '' }}\n{{ $('Function: Validate Page Structure').first().json.should_auto_fix ? '**Auto-Fixed:** Yes ✅' : '' }}\n\n**Indexed:** RAG embedding created\n\n[View in Odoo](https://tbwa-main.insightpulseai.net/web#id={{ $('Function: Validate Page Structure').first().json.page_id }}&model=insightpulse_knowledge.page)"
+              "value": "=📚 **Knowledge Page Processed**\n\n**Page:** {{ $('Function: Validate Page Structure').first().json.page_name }}\n**Status:** {{ $('Function: Validate Page Structure').first().json.has_issues ? '⚠️ Issues Found' : '✅ Validated' }}\n{{ $('Function: Validate Page Structure').first().json.has_issues ? '**Issues:**\\n- ' + $('Function: Validate Page Structure').first().json.issues.join('\\n- ') : '' }}\n{{ $('Function: Validate Page Structure').first().json.should_auto_fix ? '**Auto-Fixed:** Yes ✅' : '' }}\n\n**Indexed:** RAG embedding created\n\n[View in Odoo](https://tbwa-main.insightpulseai.com/web#id={{ $('Function: Validate Page Structure').first().json.page_id }}&model=insightpulse_knowledge.page)"
             },
             {
               "name": "channel",

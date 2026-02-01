@@ -9,16 +9,16 @@ Usage:
     python create_project_alias.py --project "SAMPLE" --alias "sample" --company "TBWA\\SMP"
 
 Environment Variables:
-    ODOO_URL       - Odoo instance URL (default: https://erp.insightpulseai.net/odoo)
+    ODOO_URL       - Odoo instance URL (default: https://erp.insightpulseai.com/odoo)
     ODOO_DB        - Database name (default: odoo)
     ODOO_USER      - Admin email
     ODOO_PASSWORD  - Admin password
-    ALIAS_DOMAIN   - Email domain (default: insightpulseai.net)
+    ALIAS_DOMAIN   - Email domain (default: insightpulseai.com)
 
 Example:
-    export ODOO_URL="https://erp.insightpulseai.net/odoo"
+    export ODOO_URL="https://erp.insightpulseai.com/odoo"
     export ODOO_DB="odoo"
-    export ODOO_USER="admin@insightpulseai.net"
+    export ODOO_USER="admin@insightpulseai.com"
     export ODOO_PASSWORD="your-password"
     python create_project_alias.py --project "SAMPLE" --alias "sample"
 """
@@ -59,11 +59,11 @@ def create_project_with_alias(
         dict with project_id, alias_id, and status
     """
     # Configuration from environment
-    url = get_env("ODOO_URL", "https://erp.insightpulseai.net/odoo")
+    url = get_env("ODOO_URL", "https://erp.insightpulseai.com/odoo")
     db = get_env("ODOO_DB", "odoo")
     user = get_env("ODOO_USER")
     password = get_env("ODOO_PASSWORD")
-    domain_name = get_env("ALIAS_DOMAIN", "insightpulseai.net")
+    domain_name = get_env("ALIAS_DOMAIN", "insightpulseai.com")
 
     print(f"Connecting to {url}...")
 

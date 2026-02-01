@@ -24,7 +24,7 @@ from urllib.parse import urljoin, urlparse, urldefrag
 import requests
 from bs4 import BeautifulSoup
 
-UA = "docs-catalog-bot/1.0 (+https://insightpulseai.net)"
+UA = "docs-catalog-bot/1.0 (+https://insightpulseai.com)"
 SKIP_EXT = (".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp", ".pdf", ".zip", ".gz", ".tar", ".tgz", ".mp4", ".mov", ".avi", ".webm")
 
 

@@ -80,7 +80,7 @@ python scripts/validate_finance_ppm_data.py
 
 ```bash
 # Health check
-curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.net/web/health
+curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.com/web/health
 # Expected: 200
 
 # Container status

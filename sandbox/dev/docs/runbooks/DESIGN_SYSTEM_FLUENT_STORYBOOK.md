@@ -337,7 +337,7 @@ npm list storybook
 1. **Odoo → Storybook reference** (documentation links)
    ```xml
    <!-- Odoo view comment -->
-   <!-- UI spec: https://storybook.insightpulseai.net/?path=/story/button -->
+   <!-- UI spec: https://storybook.insightpulseai.com/?path=/story/button -->
    ```
 
 2. **Shared design tokens** (manual sync)

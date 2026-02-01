@@ -77,7 +77,7 @@ Description: |
 
 Acceptance Criteria:
   - [ ] Docker Compose file for Odoo 19 created
-  - [ ] Sandbox accessible at dev-19.erp.insightpulseai.net
+  - [ ] Sandbox accessible at dev-19.erp.insightpulseai.com
   - [ ] PostgreSQL 16 configured
   - [ ] Volume mounts for addon development
   - [ ] Test data seeded
@@ -638,7 +638,7 @@ Description: |
 
 Command:
   python scripts/test_ee_parity.py \
-    --odoo-url https://staging-19.erp.insightpulseai.net \
+    --odoo-url https://staging-19.erp.insightpulseai.com \
     --db odoo_staging \
     --report html \
     --output parity_report_odoo19.html
@@ -925,7 +925,7 @@ Description: |
   Odoo 19 live in production.
 
 Verification:
-  - [ ] erp.insightpulseai.net responding
+  - [ ] erp.insightpulseai.com responding
   - [ ] Version shows 19.0
   - [ ] Finance team can work
   - [ ] No critical errors in 2 hours

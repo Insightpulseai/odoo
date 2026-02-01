@@ -10,7 +10,7 @@
 |-----------|-------|
 | **Release Tag** | `prod-20260109-1642` |
 | **Commit SHA** | `0b1e86b078b9a2c6562d437f9957577ac3246d04` |
-| **Production URL** | https://erp.insightpulseai.net |
+| **Production URL** | https://erp.insightpulseai.com |
 | **Database** | `odoo_core` |
 | **Docker Image** | `ghcr.io/jgtolentino/odoo-ce:prod-20260109-1642` |
 
@@ -62,7 +62,7 @@
 
 ```bash
 # Check Odoo health
-curl -sI https://erp.insightpulseai.net/web/health | head -5
+curl -sI https://erp.insightpulseai.com/web/health | head -5
 
 # Check Docker image
 docker inspect ghcr.io/jgtolentino/odoo-ce:prod-20260109-1642 --format='{{.Id}}'
@@ -87,5 +87,5 @@ docker pull ghcr.io/jgtolentino/odoo-ce:latest
 docker compose up -d
 
 # 5. Verify
-curl -sI https://erp.insightpulseai.net/web | head -3
+curl -sI https://erp.insightpulseai.com/web | head -3
 ```
