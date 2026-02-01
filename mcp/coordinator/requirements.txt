@@ -15,3 +15,7 @@ python-dotenv==1.0.1
 
 # Redis for caching
 redis==5.0.1
+
+# GitHub App authentication (JWT signing)
+PyJWT>=2.8.0
+cryptography>=42.0.0
