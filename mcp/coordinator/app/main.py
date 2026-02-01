@@ -7,12 +7,14 @@ from pydantic import BaseModel
 
 from .config import settings
 from .routing import router, MCPTarget, RoutingDecision
+from .github_auth import router as github_router, oauth_router
+from .github_webhooks import router as webhook_router
 from . import __version__
 
 
 app = FastAPI(
     title="MCP Coordinator",
-    description="Context-aware routing for multiple MCP servers",
+    description="Context-aware routing for multiple MCP servers with GitHub App integration",
     version=__version__,
 )
 
@@ -196,6 +198,17 @@ async def list_conversations(
 
     result = await router.forward_request(target_enum, "/conversations", method="GET")
     return result
+
+
+# Include GitHub integration routers
+# OAuth routes (public - no API key)
+app.include_router(oauth_router)
+
+# GitHub App routes (protected by API key)
+app.include_router(github_router, dependencies=[Depends(verify_api_key)])
+
+# Webhook routes (protected by HMAC signature verification)
+app.include_router(webhook_router)
 
 
 if __name__ == "__main__":

@@ -278,6 +278,96 @@ If CI fails, reproduce locally by running the same generator commands + `git dif
 
 ---
 
+## Email Integration
+
+Complete CLI-only email integration using **Mailgun** for SMTP delivery with settings-as-code deployment.
+
+**Production Architecture** (Direct Pattern):
+```
+Odoo 19 CE → Mailgun SMTP (port 2525, STARTTLS) → Email delivery
+Mailgun Routes → Odoo /mailgate/mailgun → Inbound mail (4 active routes)
+```
+
+**DNS Status**: ✅ All records verified (MX, SPF, DKIM, DMARC)
+
+**Production Status**: ✅ **DEPLOYED** (2026-01-31)
+- Mail server ID: 2
+- SMTP host: smtp.mailgun.org:2525
+- Configuration: insightpulseai.net domain
+
+**Settings-as-Code Deployment:**
+
+```bash
+# 1. Create secrets file on production
+ssh root@178.128.112.214
+sudo mkdir -p /opt/odoo-ce/secrets
+sudo bash -c 'cat > /opt/odoo-ce/secrets/mailgun.env <<EOF
+MAILGUN_SMTP_HOST=smtp.mailgun.org
+MAILGUN_SMTP_PORT=2525
+MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.net
+MAILGUN_SMTP_PASS=__REPLACE__
+EOF'
+sudo chmod 600 /opt/odoo-ce/secrets/mailgun.env
+
+# 2. Apply settings to database
+set -a; source /opt/odoo-ce/secrets/mailgun.env; set +a
+export ODOO_DB=odoo
+export PGHOST="odoo-db-sgp1-do-user-27714628-0.g.db.ondigitalocean.com"
+export PGPORT="25060"
+export PGUSER="doadmin"
+export PGPASSWORD="__REPLACE__"
+cd /opt/odoo-ce
+python3 scripts/odoo/apply_settings_as_code.py
+
+# 3. Verify deployment
+psql "host=$PGHOST port=$PGPORT user=$PGUSER dbname=$ODOO_DB sslmode=require" -c "
+SELECT id, name, smtp_host, smtp_user, smtp_port
+FROM ir_mail_server
+WHERE name='Mailgun SMTP (mg.insightpulseai.net)';"
+```
+
+**Documentation:**
+- **Settings-as-Code Guide**: [docs/MAILGUN_DEPLOYMENT.md](docs/MAILGUN_DEPLOYMENT.md) (idempotent, zero-secret-in-git)
+- **Complete Integration Guide**: [docs/EMAIL_INTEGRATION.md](docs/EMAIL_INTEGRATION.md) (includes n8n relay pattern)
+
+---
+
+## Plane Project Management
+
+**Plane** is an open-source project management platform (Jira alternative) deployed to production with Mailgun email integration.
+
+**Production Architecture**:
+```
+Plane Backend (Django/PostgreSQL) → Mailgun SMTP (port 2525) → Email delivery
+Users → https://plane.insightpulseai.net → Nginx → Plane API (port 8002)
+```
+
+**Production Status**: ✅ **DEPLOYED** (Backend Only, 2026-01-30)
+- **API**: http://178.128.112.214:8002 (verified with `{"status": "OK"}`)
+- **Domain**: plane.insightpulseai.net (DNS verified)
+- **Database**: PostgreSQL 15.7-alpine (88 migrations applied)
+- **Workers**: Background tasks + scheduled tasks running
+- **SMTP**: Mailgun configured (smtp.mailgun.org:2525)
+- **Nginx**: Reverse proxy via nginx-prod-v2 container
+
+**Services Running**:
+- `plane-api-1` - Django REST API (port 8002)
+- `plane-worker-1` - Background task processor
+- `plane-beat-worker-1` - Scheduled task processor
+- `plane-plane-db-1` - PostgreSQL database (port 5433)
+- `plane-plane-redis-1` - Valkey/Redis cache (port 6379)
+- `plane-plane-mq-1` - RabbitMQ message broker
+- `plane-plane-minio-1` - MinIO object storage
+
+**Pending Items**:
+- Web frontend build (pnpm error, needs Dockerfile fix)
+- SSL certificate (HTTPS via Let's Encrypt)
+- Admin user registration and promotion
+
+**Documentation**: [docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md](docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md)
+
+---
+
 ## Docs
 
 - `spec.md` — Project spec / repo snapshot
@@ -285,6 +375,7 @@ If CI fails, reproduce locally by running the same generator commands + `git dif
 - `tasks.md` — Task checklist
 - `docs/` — Architecture + deployment docs
 - `docs/data-model/` — Canonical schema outputs
+- `docs/EMAIL_INTEGRATION.md` — Complete email integration guide
 
 ---
 

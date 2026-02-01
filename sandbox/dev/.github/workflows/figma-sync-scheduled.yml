@@ -1,0 +1,174 @@
+# Figma Design Token Sync (Scheduled + Hardened)
+# Deterministic polling with PR-driven workflow
+# Runs every 6 hours and on manual trigger
+
+name: Figma Sync (Scheduled)
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Every 6 hours
+  workflow_dispatch:
+    inputs:
+      force_sync:
+        description: 'Force sync even if no changes detected'
+        required: false
+        default: 'false'
+        type: boolean
+
+env:
+  FIGMA_FILE_KEY: ${{ vars.FIGMA_FILE_KEY }}
+
+jobs:
+  sync-figma-tokens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # ========================================
+      # STEP 1: Deterministic Figma Change Detection
+      # ========================================
+      - name: Poll Figma file version
+        id: poll
+        env:
+          FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+          FIGMA_FILE_KEY: ${{ vars.FIGMA_FILE_KEY }}
+        run: |
+          ./scripts/figma/poll_file_version.sh
+
+      - name: Upload Figma poll artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: figma-poll-${{ github.run_number }}
+          path: artifacts/figma
+          retention-days: 30
+
+      # ========================================
+      # STEP 2: Early Exit if No Changes
+      # ========================================
+      - name: Check for changes
+        id: check
+        run: |
+          if [[ "${{ steps.poll.outputs.FIGMA_CHANGED }}" == "false" ]] && [[ "${{ inputs.force_sync }}" != "true" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "No Figma changes detected; will skip sync steps."
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+            echo "Changes detected or force_sync enabled; proceeding with sync."
+          fi
+
+      # ========================================
+      # STEP 3: Export Figma Artifacts (if changed)
+      # ========================================
+      - name: Export Figma Styles
+        if: steps.check.outputs.skip != 'true'
+        env:
+          FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+        run: |
+          mkdir -p design-tokens
+          curl -sS "https://api.figma.com/v1/files/${FIGMA_FILE_KEY}/styles" \
+            -H "X-Figma-Token: ${FIGMA_ACCESS_TOKEN}" \
+            -o design-tokens/figma-styles.json
+          echo "Styles exported to design-tokens/figma-styles.json"
+
+      - name: Export Figma Variables (Enterprise only)
+        if: steps.check.outputs.skip != 'true'
+        env:
+          FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+        continue-on-error: true
+        run: |
+          curl -sS "https://api.figma.com/v1/files/${FIGMA_FILE_KEY}/variables/local" \
+            -H "X-Figma-Token: ${FIGMA_ACCESS_TOKEN}" \
+            -o design-tokens/figma-variables.json || echo "{}" > design-tokens/figma-variables.json
+          echo "Variables export attempted"
+
+      - name: Export Figma Components
+        if: steps.check.outputs.skip != 'true'
+        env:
+          FIGMA_ACCESS_TOKEN: ${{ secrets.FIGMA_ACCESS_TOKEN }}
+        run: |
+          curl -sS "https://api.figma.com/v1/files/${FIGMA_FILE_KEY}/components" \
+            -H "X-Figma-Token: ${FIGMA_ACCESS_TOKEN}" \
+            -o design-tokens/figma-components.json
+          echo "Components exported to design-tokens/figma-components.json"
+
+      - name: Save Version Cache
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          mkdir -p design-tokens
+          echo "${{ steps.poll.outputs.FIGMA_VERSION }}" > design-tokens/.figma-version
+          echo "${{ steps.poll.outputs.FIGMA_LAST_MODIFIED }}" > design-tokens/.figma-last-modified
+
+      # ========================================
+      # STEP 4: Create PR with Changes
+      # ========================================
+      - name: Create PR with Figma sync changes
+        if: steps.check.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # Configure git
+          git config user.name "ipai-bot"
+          git config user.email "no-reply@insightpulseai.com"
+
+          # Check if there are actual file changes
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No file diffs after generation; skipping PR."
+            exit 0
+          fi
+
+          # Create branch and commit
+          branch="bot/figma-sync-${{ steps.poll.outputs.FIGMA_VERSION }}"
+          git checkout -b "$branch"
+          git commit -m "chore(figma): sync tokens @ ${{ steps.poll.outputs.FIGMA_VERSION }}"
+          git push -u origin "$branch"
+
+          # Create PR
+          gh pr create \
+            --title "Figma sync: ${{ steps.poll.outputs.FIGMA_FILE_NAME }} @ ${{ steps.poll.outputs.FIGMA_VERSION }}" \
+            --body "## Automated Figma Design Token Sync
+
+**File**: \`${{ steps.poll.outputs.FIGMA_FILE_NAME }}\`
+**Previous Version**: \`${{ steps.poll.outputs.FIGMA_PREV_VERSION }}\`
+**Current Version**: \`${{ steps.poll.outputs.FIGMA_VERSION }}\`
+**Last Modified**: \`${{ steps.poll.outputs.FIGMA_LAST_MODIFIED }}\`
+
+### Exported Artifacts
+- \`design-tokens/figma-styles.json\`
+- \`design-tokens/figma-components.json\`
+- \`design-tokens/figma-variables.json\` (if available)
+
+---
+*Auto-generated by figma-sync-scheduled.yml*" \
+            --label "figma-sync,automation,design-tokens"
+
+      # ========================================
+      # STEP 5: Summary
+      # ========================================
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Figma Sync Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| File | ${{ steps.poll.outputs.FIGMA_FILE_NAME }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Previous Version | ${{ steps.poll.outputs.FIGMA_PREV_VERSION }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Current Version | ${{ steps.poll.outputs.FIGMA_VERSION }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Last Modified | ${{ steps.poll.outputs.FIGMA_LAST_MODIFIED }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Changes Detected | ${{ steps.poll.outputs.FIGMA_CHANGED }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Skipped Sync | ${{ steps.check.outputs.skip }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Force Sync | ${{ inputs.force_sync }} |" >> $GITHUB_STEP_SUMMARY

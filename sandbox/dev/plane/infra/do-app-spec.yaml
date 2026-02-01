@@ -1,0 +1,177 @@
+name: plane-ppm
+region: sgp
+domains:
+  - domain: plane.insightpulseai.net
+    type: PRIMARY
+
+# Plane Community Edition on DigitalOcean App Platform
+# Requires external: PostgreSQL, Redis, RabbitMQ, S3
+
+services:
+  # API Backend (Django)
+  - name: plane-api
+    image:
+      registry_type: DOCKER_HUB
+      registry: makeplane
+      repository: plane-backend
+      tag: stable
+    instance_count: 1
+    instance_size_slug: professional-xs
+    http_port: 8000
+    routes:
+      - path: /api
+      - path: /auth
+    run_command: ./bin/docker-entrypoint-api.sh
+    envs:
+      - key: DEBUG
+        value: "0"
+      - key: DJANGO_SETTINGS_MODULE
+        value: plane.settings.production
+      - key: WEB_URL
+        value: https://plane.insightpulseai.net
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://plane.insightpulseai.net
+      - key: GUNICORN_WORKERS
+        value: "2"
+      - key: DATABASE_URL
+        type: SECRET
+        value: "${plane.DATABASE_URL}"
+      - key: REDIS_URL
+        type: SECRET
+        value: "${plane.REDIS_URL}"
+      - key: AMQP_URL
+        type: SECRET
+        value: "${plane.AMQP_URL}"
+      - key: SECRET_KEY
+        type: SECRET
+        value: "${plane.SECRET_KEY}"
+      - key: USE_MINIO
+        value: "0"
+      - key: AWS_REGION
+        value: sgp1
+      - key: AWS_ACCESS_KEY_ID
+        type: SECRET
+        value: "${plane.AWS_ACCESS_KEY_ID}"
+      - key: AWS_SECRET_ACCESS_KEY
+        type: SECRET
+        value: "${plane.AWS_SECRET_ACCESS_KEY}"
+      - key: AWS_S3_BUCKET_NAME
+        value: plane-uploads-ipai
+      - key: AWS_S3_ENDPOINT_URL
+        value: https://sgp1.digitaloceanspaces.com
+    health_check:
+      http_path: /api/v1/
+
+  # Web Frontend (Next.js)
+  - name: plane-web
+    image:
+      registry_type: DOCKER_HUB
+      registry: makeplane
+      repository: plane-frontend
+      tag: stable
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 3000
+    routes:
+      - path: /
+    envs:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://plane.insightpulseai.net
+      - key: NEXT_PUBLIC_DEPLOY_URL
+        value: https://plane.insightpulseai.net
+
+  # Space App (Public project sharing)
+  - name: plane-space
+    image:
+      registry_type: DOCKER_HUB
+      registry: makeplane
+      repository: plane-space
+      tag: stable
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 3000
+    routes:
+      - path: /spaces
+    envs:
+      - key: NEXT_PUBLIC_API_BASE_URL
+        value: https://plane.insightpulseai.net
+
+# Background Workers (separate from web-facing services)
+workers:
+  # Celery Worker for async tasks
+  - name: plane-worker
+    image:
+      registry_type: DOCKER_HUB
+      registry: makeplane
+      repository: plane-backend
+      tag: stable
+    instance_count: 1
+    instance_size_slug: professional-xs
+    run_command: ./bin/docker-entrypoint-worker.sh
+    envs:
+      - key: DEBUG
+        value: "0"
+      - key: DJANGO_SETTINGS_MODULE
+        value: plane.settings.production
+      - key: DATABASE_URL
+        type: SECRET
+        value: "${plane.DATABASE_URL}"
+      - key: REDIS_URL
+        type: SECRET
+        value: "${plane.REDIS_URL}"
+      - key: AMQP_URL
+        type: SECRET
+        value: "${plane.AMQP_URL}"
+      - key: SECRET_KEY
+        type: SECRET
+        value: "${plane.SECRET_KEY}"
+      - key: USE_MINIO
+        value: "0"
+      - key: AWS_REGION
+        value: sgp1
+      - key: AWS_ACCESS_KEY_ID
+        type: SECRET
+        value: "${plane.AWS_ACCESS_KEY_ID}"
+      - key: AWS_SECRET_ACCESS_KEY
+        type: SECRET
+        value: "${plane.AWS_SECRET_ACCESS_KEY}"
+      - key: AWS_S3_BUCKET_NAME
+        value: plane-uploads-ipai
+      - key: AWS_S3_ENDPOINT_URL
+        value: https://sgp1.digitaloceanspaces.com
+
+  # Celery Beat for scheduled tasks
+  - name: plane-beat
+    image:
+      registry_type: DOCKER_HUB
+      registry: makeplane
+      repository: plane-backend
+      tag: stable
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    run_command: ./bin/docker-entrypoint-beat.sh
+    envs:
+      - key: DEBUG
+        value: "0"
+      - key: DJANGO_SETTINGS_MODULE
+        value: plane.settings.production
+      - key: DATABASE_URL
+        type: SECRET
+        value: "${plane.DATABASE_URL}"
+      - key: REDIS_URL
+        type: SECRET
+        value: "${plane.REDIS_URL}"
+      - key: AMQP_URL
+        type: SECRET
+        value: "${plane.AMQP_URL}"
+      - key: SECRET_KEY
+        type: SECRET
+        value: "${plane.SECRET_KEY}"
+
+# Database managed externally on odoo-db-sgp1
+# Redis managed externally (DO Managed Redis or self-hosted)
+# RabbitMQ needs to be provisioned separately
+
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
