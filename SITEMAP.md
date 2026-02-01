@@ -1,7 +1,7 @@
 # 🗺️ Sitemap - InsightPulse ERP
 
 > Auto-generated on every commit. Last update: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-> Commit: e108f16b358584afd7a2db170a092d300eba45ba
+> Commit: 27c6d61a5abbcab62d17dda4327b870b2158cceb
 
 ## 📚 Documentation
 
@@ -509,6 +509,8 @@
 | [Preflight Auto-Detection - Complete](docs/evidence/20260129-0215/PREFLIGHT_DETECTION_COMPLETE.md) | docs/evidence/20260129-0215 |
 | [Odoo.sh Feature Parity Analysis](docs/evidence/20260129-0215/odoosh-parity-analysis.md) | docs/evidence/20260129-0215 |
 | [Odoo Frontend Asset Fix - Evidence Document](docs/evidence/20260129-odoo-asset-fix.md) | docs/evidence |
+| [Plane Production Deployment Evidence](docs/evidence/20260130-2014/PLANE_PRODUCTION_DEPLOYMENT.md) | docs/evidence/20260130-2014 |
+| [Incident Report: 502 Bad Gateway - erp.insightpulseai.com](docs/evidence/20260201-0400/502-gateway-fix/INCIDENT_REPORT.md) | docs/evidence/20260201-0400/502-gateway-fix |
 | [OCA Module Installation Guide for Finance PPM](docs/finance-ppm/OCA_INSTALLATION_GUIDE.md) | docs/finance-ppm |
 | [GitHub Projects v2 API Capabilities (Verified 2026-01-26)](docs/github/PROJECTS_V2_API_CAPABILITIES.md) | docs/github |
 | [TBWA/OMC PH Go-Live Guide (Odoo 18 CE + IPAI)](docs/golive/TBWA_OMC_PH_GOLIVE_GUIDE.md) | docs/golive |
@@ -1025,6 +1027,7 @@
 | [Email Parity Pack - Odoo CE 18 → EE Email Capabilities](sandbox/dev/docs/runbooks/EMAIL_PARITY_PACK.md) | sandbox/dev/docs/runbooks |
 | [Supabase Email Events Pack](sandbox/dev/docs/runbooks/SUPABASE_EMAIL_EVENTS_PACK.md) | sandbox/dev/docs/runbooks |
 | [ODOO_CE_INTEGRATION.md — Strategic Separation with Operational Integration](sandbox/dev/integration/ODOO_CE_INTEGRATION.md) | sandbox/dev/integration |
+| [Plane Deployment Guide](sandbox/dev/plane/DEPLOY.md) | sandbox/dev/plane |
 | [Azure Databricks API Acceleration Strategy — EE Parity + Data Platform](sandbox/dev/spec/databricks-integration/ACCELERATION_STRATEGY.md) | sandbox/dev/spec/databricks-integration |
 | [Databricks API Reference for odoo-ce Integration](sandbox/dev/spec/databricks-integration/API_REFERENCE.md) | sandbox/dev/spec/databricks-integration |
 | [Databricks Developer Workflow for odoo-ce](sandbox/dev/spec/databricks-integration/DEVELOPER_WORKFLOW.md) | sandbox/dev/spec/databricks-integration |
