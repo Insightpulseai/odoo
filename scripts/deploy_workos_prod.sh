@@ -2,14 +2,14 @@
 # =============================================================================
 # WORKOS PRODUCTION DEPLOYMENT SCRIPT
 # =============================================================================
-# Target: erp.insightpulseai.net
+# Target: erp.insightpulseai.com
 # Branch: claude/notion-clone-odoo-module-LSFan
 #
 # IMPORTANT: This script must be run ON THE PRODUCTION SERVER.
 # It is NOT designed to be run remotely or in a dev environment.
 #
 # Usage:
-#   ssh deploy@erp.insightpulseai.net
+#   ssh deploy@erp.insightpulseai.com
 #   cd /opt/odoo-ce
 #   sudo ./scripts/deploy_workos_prod.sh
 #
@@ -299,7 +299,7 @@ verify_deployment() {
 
     # External HTTP check
     log_info "Checking HTTP (external)..."
-    http_code=$(curl -s -o /dev/null -w "%{http_code}" -I https://erp.insightpulseai.net/web/login 2>/dev/null) || true
+    http_code=$(curl -s -o /dev/null -w "%{http_code}" -I https://erp.insightpulseai.com/web/login 2>/dev/null) || true
 
     if [[ "$http_code" == "200" ]] || [[ "$http_code" == "303" ]]; then
         log_ok "HTTP external: $http_code"
@@ -415,7 +415,7 @@ rollback() {
     log_info "Starting Odoo (original config)..."
     docker compose -f "$COMPOSE_FILE" up -d "$ODOO_SERVICE"
 
-    log_ok "Rollback complete - verify at https://erp.insightpulseai.net/web/login"
+    log_ok "Rollback complete - verify at https://erp.insightpulseai.com/web/login"
 }
 
 # =============================================================================
@@ -425,7 +425,7 @@ main() {
     echo ""
     echo "=========================================="
     echo "  WORKOS PRODUCTION DEPLOYMENT"
-    echo "  Target: erp.insightpulseai.net"
+    echo "  Target: erp.insightpulseai.com"
     echo "  Branch: $DEPLOY_BRANCH"
     echo "=========================================="
     echo ""

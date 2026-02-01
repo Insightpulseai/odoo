@@ -510,9 +510,9 @@ All IPAI custom modules live in `addons/ipai/` namespace:
 ### Dependencies
 1. **OCA Modules**: `project_portfolio`, `project_risk`, `resource_allocation` (version pinning required)
 2. **Supabase Project**: `xkxyvboeubffxxbebsll` (ops_advisor schema)
-3. **n8n Instance**: `https://ipa.insightpulseai.net` (workflow orchestration)
-4. **Mattermost Instance**: `https://mattermost.insightpulseai.net` (notifications)
-5. **Superset Instance**: `https://superset.insightpulseai.net` (workbooks)
+3. **n8n Instance**: `https://ipa.insightpulseai.com` (workflow orchestration)
+4. **Mattermost Instance**: `https://mattermost.insightpulseai.com` (notifications)
+5. **Superset Instance**: `https://superset.insightpulseai.com` (workbooks)
 
 ### Risks
 1. **OCA Module Compatibility**: OCA modules may have breaking changes in future versions

@@ -33,7 +33,7 @@ print("✅ Deployment Status:")
 print("  - Container: odoo-odoo-1 restarted successfully")
 print("  - Registry: Loaded 193 modules (including ipai_finance_ppm)")
 print("  - Database: production")
-print("  - Server: https://odoo.insightpulseai.net\n")
+print("  - Server: https://odoo.insightpulseai.com\n")
 
 # Expected features
 print("📋 Expected Features:")
@@ -53,7 +53,7 @@ print("  - Forms: 1601-C, 0619-E, 2550Q (Q4 2025), 2550Q (Q1 2026), etc.\n")
 
 # Access instructions
 print("🔑 Access Instructions:")
-print("  1. Navigate to https://odoo.insightpulseai.net")
+print("  1. Navigate to https://odoo.insightpulseai.com")
 print("  2. Login with admin credentials")
 print("  3. Look for 'Finance PPM' in main menu")
 print("  4. Access dashboard at: Finance PPM → PPM Dashboard")

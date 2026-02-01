@@ -3,7 +3,7 @@
 # Description: Schema for Lakehouse Control Room pipeline specifications
 
 $schema: "https://json-schema.org/draft/2020-12/schema"
-$id: "https://insightpulseai.net/schemas/pipeline/v1"
+$id: "https://insightpulseai.com/schemas/pipeline/v1"
 title: Pipeline Specification
 type: object
 

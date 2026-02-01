@@ -64,7 +64,7 @@ NEXT_PUBLIC_ODOO_URL=http://localhost:8069
 NEXT_PUBLIC_ODOO_DB=odoo_dev
 
 # Production
-# NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.net
+# NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.com
 # NEXT_PUBLIC_ODOO_DB=odoo
 ```
 
@@ -237,7 +237,7 @@ vercel --prod
 
 Environment variables (set via Vercel dashboard):
 ```env
-NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.net
+NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.com
 NEXT_PUBLIC_ODOO_DB=odoo
 ```
 
@@ -259,7 +259,7 @@ CMD ["npm", "start"]
 ```bash
 docker build -t odoo-frontend-shell .
 docker run -p 3001:3001 \
-  -e NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.net \
+  -e NEXT_PUBLIC_ODOO_URL=https://erp.insightpulseai.com \
   -e NEXT_PUBLIC_ODOO_DB=odoo \
   odoo-frontend-shell
 ```

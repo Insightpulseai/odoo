@@ -19,7 +19,7 @@ def main():
     output_file = sys.argv[1] if len(sys.argv) > 1 else "superset_audit.json"
 
     # Superset base URL with default
-    superset_url = os.environ.get("SUPERSET_BASE_URL", "https://superset.insightpulseai.net").rstrip("/")
+    superset_url = os.environ.get("SUPERSET_BASE_URL", "https://superset.insightpulseai.com").rstrip("/")
     token = os.environ.get("SUPERSET_TOKEN")
     username = os.environ.get("SUPERSET_USERNAME")
     password = os.environ.get("SUPERSET_PASSWORD")

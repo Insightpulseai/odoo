@@ -123,7 +123,7 @@ supabase db query "SELECT event_type, aggregate_id, status FROM integration.outb
 - `n8n/workflows/integration/finance-handler.json` - Finance PPM dashboard updates
 
 **Import Steps**:
-1. Open n8n: https://n8n.insightpulseai.net
+1. Open n8n: https://n8n.insightpulseai.com
 2. Workflows → Import from File → Select JSON
 3. Configure credentials:
    - Supabase API (service role key)

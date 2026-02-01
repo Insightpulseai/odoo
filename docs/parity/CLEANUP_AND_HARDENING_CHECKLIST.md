@@ -337,7 +337,7 @@ session_timeout = 3600  # 1 hour instead of default 7 days
 
 **Configuration**:
 ```nginx
-# /etc/nginx/sites-enabled/erp.insightpulseai.net.conf
+# /etc/nginx/sites-enabled/erp.insightpulseai.com.conf
 limit_req_zone $binary_remote_addr zone=odoo:10m rate=10r/s;
 limit_req zone=odoo burst=20 nodelay;
 ```

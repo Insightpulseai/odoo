@@ -119,13 +119,13 @@ docker compose run --rm odoo-web \
 docker compose restart
 ```
 
-## Production Deployment for erp.insightpulseai.net
+## Production Deployment for erp.insightpulseai.com
 
 ### Full Deploy Command Sequence
 
 ```bash
 # 1. SSH into production server
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 
 # 2. Navigate to Odoo directory
 cd /opt/odoo-ce
@@ -149,7 +149,7 @@ docker compose up -d
 
 # 7. Verify health
 sleep 10
-curl -s https://erp.insightpulseai.net/web/health
+curl -s https://erp.insightpulseai.com/web/health
 
 # 8. Monitor logs
 docker compose logs -f --tail=100 odoo-web
@@ -157,8 +157,8 @@ docker compose logs -f --tail=100 odoo-web
 
 ### Health Checks
 
-- **Web UI**: https://erp.insightpulseai.net/web
-- **Health endpoint**: https://erp.insightpulseai.net/web/health
+- **Web UI**: https://erp.insightpulseai.com/web
+- **Health endpoint**: https://erp.insightpulseai.com/web/health
 - **Metrics**: Check `docker stats` for resource usage
 
 ## Troubleshooting

@@ -9,7 +9,7 @@ Complete infrastructure alignment: Local sandbox → Production deployment.
 ### DigitalOcean Production Stack
 
 ```
-Internet (erp.insightpulseai.net)
+Internet (erp.insightpulseai.com)
     ↓ HTTPS (Caddy automatic SSL)
 Droplet 178.128.112.214
     ├─ Caddy (80/443) → Reverse proxy
@@ -118,7 +118,7 @@ cd /opt/odoo-ce/deploy
 docker compose up -d
 ```
 
-**Access:** `https://erp.insightpulseai.net`
+**Access:** `https://erp.insightpulseai.com`
 
 **Documentation:**
 - `deploy/PRODUCTION_SETUP.md` - Complete runbook
@@ -252,7 +252,7 @@ docker compose restart odoo
 docker compose down
 ```
 
-**Access:** https://erp.insightpulseai.net
+**Access:** https://erp.insightpulseai.com
 
 ---
 
@@ -289,7 +289,7 @@ docker compose down
 - [x] DO Managed PostgreSQL accessible
 - [x] stunnel SSL tunnel configured
 - [x] Caddy reverse proxy with automatic HTTPS
-- [x] DNS configured (erp.insightpulseai.net)
+- [x] DNS configured (erp.insightpulseai.com)
 - [x] Systemd auto-start service
 - [x] Complete runbook documentation
 
@@ -356,7 +356,7 @@ docker compose down
 
 4. **Verify:**
    ```bash
-   curl -I https://erp.insightpulseai.net/web/login
+   curl -I https://erp.insightpulseai.com/web/login
    ```
 
 ---
@@ -391,7 +391,7 @@ docker compose down
 |-----------|-------------|
 | **DO Managed PostgreSQL** | $30.45 |
 | **Droplet (178.128.112.214)** | Variable (based on size) |
-| **Domain (erp.insightpulseai.net)** | Variable |
+| **Domain (erp.insightpulseai.com)** | Variable |
 | **SSL Certificate** | $0 (Let's Encrypt via Caddy) |
 | **Local Sandbox** | $0 (runs locally) |
 
@@ -410,5 +410,5 @@ docker compose down
 
 **Last Updated:** 2026-01-14
 **Infrastructure Version:** Odoo 18 CE + PostgreSQL 16
-**Production URL:** https://erp.insightpulseai.net
+**Production URL:** https://erp.insightpulseai.com
 **Repository:** https://github.com/jgtolentino/odoo-ce

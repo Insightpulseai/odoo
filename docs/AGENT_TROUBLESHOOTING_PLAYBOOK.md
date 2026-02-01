@@ -12,7 +12,7 @@
 
 **Step 1.1**: Reproduce in browser with debug mode
 ```bash
-URL="https://erp.insightpulseai.net/web?debug=assets"
+URL="https://erp.insightpulseai.com/web?debug=assets"
 ```
 
 **Step 1.2**: Capture from Chrome DevTools
@@ -23,7 +23,7 @@ URL="https://erp.insightpulseai.net/web?debug=assets"
 
 **Step 1.3**: Check for error banner in HTML
 ```bash
-curl -fsS "https://erp.insightpulseai.net/web?debug=assets" | grep -i "style compilation failed"
+curl -fsS "https://erp.insightpulseai.com/web?debug=assets" | grep -i "style compilation failed"
 ```
 
 ### Phase 2: Evidence Collection (Server)
@@ -111,7 +111,7 @@ PASS
 ```
 
 **Step 5.2**: Manual browser verification
-1. Open `https://erp.insightpulseai.net/web?debug=assets`
+1. Open `https://erp.insightpulseai.com/web?debug=assets`
 2. Check Console for errors
 3. Check Network for failed asset requests
 4. Verify UI renders properly (no "style compilation failed" banner)

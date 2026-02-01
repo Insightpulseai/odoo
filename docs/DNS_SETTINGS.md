@@ -1,15 +1,15 @@
-# DNS Settings Reference — insightpulseai.net
+# DNS Settings Reference — insightpulseai.com
 
 > **Last Updated:** 2026-01-13
 > **Registrar:** Namecheap
-> **Email Provider:** Mailgun (mg.insightpulseai.net subdomain)
+> **Email Provider:** Mailgun (mg.insightpulseai.com subdomain)
 > **Hosting:** DigitalOcean (178.128.112.214)
 
 ---
 
 ## Overview
 
-This document captures the canonical DNS configuration for `insightpulseai.net` and its subdomains. All services are hosted on a single DigitalOcean droplet with nginx reverse proxy routing.
+This document captures the canonical DNS configuration for `insightpulseai.com` and its subdomains. All services are hosted on a single DigitalOcean droplet with nginx reverse proxy routing.
 
 ---
 
@@ -30,7 +30,7 @@ This document captures the canonical DNS configuration for `insightpulseai.net` 
 
 | Host | TTL | Points To | Purpose |
 |------|-----|-----------|---------|
-| `www` | 1 hr | insightpulseai.net | WWW redirect |
+| `www` | 1 hr | insightpulseai.com | WWW redirect |
 | `email.mg` | 1 hr | mailgun.org | Mailgun tracking |
 
 ---
@@ -82,8 +82,8 @@ This document captures the canonical DNS configuration for `insightpulseai.net` 
 
 ### Domain
 
-- **Sending Domain:** `mg.insightpulseai.net`
-- **Postmaster:** `postmaster@mg.insightpulseai.net`
+- **Sending Domain:** `mg.insightpulseai.com`
+- **Postmaster:** `postmaster@mg.insightpulseai.com`
 - **Created:** 2026-01-06
 
 ### SMTP Settings
@@ -92,7 +92,7 @@ This document captures the canonical DNS configuration for `insightpulseai.net` 
 |---------|-------|
 | **Server** | smtp.mailgun.org |
 | **Ports** | 25, 587, 2525, 465 (SSL/TLS) |
-| **Username** | `<user>@mg.insightpulseai.net` |
+| **Username** | `<user>@mg.insightpulseai.com` |
 | **Authentication** | Required |
 
 ### API Keys
@@ -138,7 +138,7 @@ Mailgun can send webhook events for email tracking. Configure via API or dashboa
 **Webhook URL (n8n):**
 
 ```
-https://n8n.insightpulseai.net/webhook/mailgun
+https://n8n.insightpulseai.com/webhook/mailgun
 ```
 
 **Verifying Webhook Signatures:**
@@ -152,33 +152,33 @@ Use the HTTP Webhook Signing Key to verify payload authenticity. See [Mailgun We
 ### Check SPF
 
 ```bash
-dig TXT mg.insightpulseai.net +short
+dig TXT mg.insightpulseai.com +short
 ```
 
 ### Check DKIM
 
 ```bash
-dig TXT pic._domainkey.mg.insightpulseai.net +short
+dig TXT pic._domainkey.mg.insightpulseai.com +short
 ```
 
 ### Check MX
 
 ```bash
-dig MX mg.insightpulseai.net +short
+dig MX mg.insightpulseai.com +short
 ```
 
 ### Check DMARC
 
 ```bash
-dig TXT _dmarc.mg.insightpulseai.net +short
+dig TXT _dmarc.mg.insightpulseai.com +short
 ```
 
 ### Check A Records
 
 ```bash
-dig A insightpulseai.net +short
-dig A erp.insightpulseai.net +short
-dig A n8n.insightpulseai.net +short
+dig A insightpulseai.com +short
+dig A erp.insightpulseai.com +short
+dig A n8n.insightpulseai.com +short
 ```
 
 ---
@@ -187,12 +187,12 @@ dig A n8n.insightpulseai.net +short
 
 | Subdomain | URL | Service | Port (Internal) |
 |-----------|-----|---------|-----------------|
-| Root | https://insightpulseai.net | Main site | 80/443 |
-| erp | https://erp.insightpulseai.net | Odoo ERP | 8069 |
-| n8n | https://n8n.insightpulseai.net | n8n Automation | 5678 |
-| auth | https://auth.insightpulseai.net | Keycloak SSO | 8080 |
-| superset | https://superset.insightpulseai.net | Apache Superset | 8088 |
-| mcp | https://mcp.insightpulseai.net | MCP Coordinator | 8766 |
+| Root | https://insightpulseai.com | Main site | 80/443 |
+| erp | https://erp.insightpulseai.com | Odoo ERP | 8069 |
+| n8n | https://n8n.insightpulseai.com | n8n Automation | 5678 |
+| auth | https://auth.insightpulseai.com | Keycloak SSO | 8080 |
+| superset | https://superset.insightpulseai.com | Apache Superset | 8088 |
+| mcp | https://mcp.insightpulseai.com | MCP Coordinator | 8766 |
 
 ---
 
@@ -202,11 +202,11 @@ All subdomains are routed through nginx on the DigitalOcean droplet. Configurati
 
 ```
 /etc/nginx/sites-available/
-├── erp.insightpulseai.net
-├── n8n.insightpulseai.net
-├── auth.insightpulseai.net
-├── superset.insightpulseai.net
-└── mcp.insightpulseai.net
+├── erp.insightpulseai.com
+├── n8n.insightpulseai.com
+├── auth.insightpulseai.com
+├── superset.insightpulseai.com
+└── mcp.insightpulseai.com
 ```
 
 SSL certificates are managed by Certbot (Let's Encrypt).
@@ -220,10 +220,10 @@ SSL certificates are managed by Certbot (Let's Encrypt).
 ```bash
 # .env
 MAILGUN_API_KEY=key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-MAILGUN_DOMAIN=mg.insightpulseai.net
+MAILGUN_DOMAIN=mg.insightpulseai.com
 MAILGUN_SMTP_SERVER=smtp.mailgun.org
 MAILGUN_SMTP_PORT=587
-MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.net
+MAILGUN_SMTP_USER=postmaster@mg.insightpulseai.com
 MAILGUN_SMTP_PASSWORD=<smtp-password>
 ```
 
@@ -235,7 +235,7 @@ MAILGUN_SMTP_PASSWORD=<smtp-password>
 | SMTP Server | smtp.mailgun.org |
 | SMTP Port | 587 |
 | Connection Security | TLS (STARTTLS) |
-| Username | postmaster@mg.insightpulseai.net |
+| Username | postmaster@mg.insightpulseai.com |
 | Password | (from Mailgun SMTP credentials) |
 
 ---

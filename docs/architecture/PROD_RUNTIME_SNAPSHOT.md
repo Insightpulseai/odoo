@@ -326,7 +326,7 @@ drwxr-x---  6 odoo odoo 4096 /var/lib/odoo
 **Commands**:
 ```bash
 curl -fsS http://178.128.112.214:8069/web/webclient/version_info
-curl -sI https://erp.insightpulseai.net/web/login
+curl -sI https://erp.insightpulseai.com/web/login
 ```
 
 **Output**:
@@ -367,7 +367,7 @@ HTTP/2 200                                         # login endpoint OK
 - **Standalone**: Root level (31 modules)
 
 ### URLs
-- **Public**: https://erp.insightpulseai.net
+- **Public**: https://erp.insightpulseai.com
 - **Direct**: http://178.128.112.214:8069
 
 ---
@@ -411,7 +411,7 @@ docker exec odoo-prod bash -lc 'odoo -d odoo --stop-after-init --help >/dev/null
 
 ### Verify Web Access
 ```bash
-curl -sI https://erp.insightpulseai.net/web/login | head -1
+curl -sI https://erp.insightpulseai.com/web/login | head -1
 # Expected: HTTP/2 200
 ```
 

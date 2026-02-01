@@ -7,7 +7,7 @@
 #   ./scripts/update_task_phase_tags.sh --dry-run          # Show SQL without executing
 #
 # Environment:
-#   ODOO_HOST      - Remote server hostname (default: erp.insightpulseai.net)
+#   ODOO_HOST      - Remote server hostname (default: erp.insightpulseai.com)
 #   POSTGRES_DB    - Database name (default: odoo)
 #   POSTGRES_USER  - Database user (default: odoo)
 
@@ -21,7 +21,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 # Defaults
-ODOO_HOST="${ODOO_HOST:-erp.insightpulseai.net}"
+ODOO_HOST="${ODOO_HOST:-erp.insightpulseai.com}"
 POSTGRES_DB="${POSTGRES_DB:-odoo}"
 POSTGRES_USER="${POSTGRES_USER:-odoo}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -40,7 +40,7 @@ usage() {
     echo "  --help       Show this help message"
     echo ""
     echo "Environment variables:"
-    echo "  ODOO_HOST      Remote server hostname (default: erp.insightpulseai.net)"
+    echo "  ODOO_HOST      Remote server hostname (default: erp.insightpulseai.com)"
     echo "  POSTGRES_DB    Database name (default: odoo)"
     echo "  POSTGRES_USER  Database user (default: odoo)"
 }

@@ -145,6 +145,9 @@ echo ""
 # Run all integration checks
 # =============================================================================
 
+# Domain Policy (GATE CHECK - runs first, fails audit if .net found)
+run_check "policy" "$SCRIPT_DIR/checks/check_domain_policy.py"
+
 # Supabase
 run_check "supabase" "$SCRIPT_DIR/checks/check_supabase.py"
 

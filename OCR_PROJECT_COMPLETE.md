@@ -44,7 +44,7 @@ Flutter Mobile App
     ↓
 Supabase Storage (receipt-images bucket)
     ↓
-OCR Backend (https://ocr.insightpulseai.net/ocr)
+OCR Backend (https://ocr.insightpulseai.com/ocr)
     ↓
 PaddleOCR-VL-900M + OpenAI GPT-4o-mini
     ↓
@@ -60,7 +60,7 @@ Offline Access (cached receipts)
 ## Infrastructure Details
 
 ### OCR Backend
-- **Server**: ocr.insightpulseai.net (188.166.237.231)
+- **Server**: ocr.insightpulseai.com (188.166.237.231)
 - **Service**: ai-inference-hub.service (systemd)
 - **Model**: PaddleOCR-VL 900M (document understanding)
 - **LLM**: OpenAI GPT-4o-mini (structured extraction)
@@ -435,8 +435,8 @@ Flutter App → Supabase (parsed_receipts)
 ## Support & Contact
 
 **Primary Contact**: jgtolentino_rn@yahoo.com
-**Backend Server**: ocr.insightpulseai.net (188.166.237.231)
-**Odoo Server**: erp.insightpulseai.net (159.223.75.148)
+**Backend Server**: ocr.insightpulseai.com (188.166.237.231)
+**Odoo Server**: erp.insightpulseai.com (159.223.75.148)
 **Supabase Project**: spdtwktxdalcfigzeqrz
 **Repository**: /opt/odoo-ce/addons/flutter_receipt_ocr/
 

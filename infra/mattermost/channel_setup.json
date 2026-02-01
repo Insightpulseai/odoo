@@ -2,7 +2,7 @@
   "workspace": {
     "name": "TBWA Finance",
     "description": "Finance SSC Operations Hub",
-    "site_url": "https://chat.insightpulseai.net"
+    "site_url": "https://chat.insightpulseai.com"
   },
   "channels": [
     {
@@ -73,7 +73,7 @@
       "display_name": "Odoo Alerts",
       "type": "O",
       "purpose": "Odoo ERP system alerts and notifications",
-      "header": "System alerts from https://erp.insightpulseai.net"
+      "header": "System alerts from https://erp.insightpulseai.com"
     },
     {
       "name": "system-health",

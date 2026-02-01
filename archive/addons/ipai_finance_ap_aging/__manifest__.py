@@ -19,7 +19,7 @@ Features:
 * Print Report functionality with visual parity validation
     """,
     "author": "InsightPulse AI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "base",

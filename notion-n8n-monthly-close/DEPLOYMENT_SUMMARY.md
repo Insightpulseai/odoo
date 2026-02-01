@@ -4,7 +4,7 @@
 
 ### Phase 1: URL Canonicalization ✅
 - **Updated files**: `N8N_CLI_README.md`, `DEPLOYMENT_STATUS.md`
-- **Change**: Migrated from `ipa.insightpulseai.net` to `n8n.insightpulseai.net`
+- **Change**: Migrated from `ipa.insightpulseai.com` to `n8n.insightpulseai.com`
 - **Commit**: f1534a5
 
 ### Phase 2: Supabase Integration ✅
@@ -58,7 +58,7 @@
       write_date = NOW()
   WHERE id = 1288;
   ```
-- **Status**: ✅ Applied to Odoo database (erp.insightpulseai.net)
+- **Status**: ✅ Applied to Odoo database (erp.insightpulseai.com)
 - **Verification**: View arch_db updated successfully
 
 ### Documentation ✅
@@ -139,7 +139,7 @@ supabase secrets set \
   SUPABASE_SERVICE_ROLE_KEY="<your_service_role_key>"
 ```
 
-### n8n Workflows (Server: n8n.insightpulseai.net)
+### n8n Workflows (Server: n8n.insightpulseai.com)
 
 #### Step 1: Import W101 Updated Workflow
 **File**: `workflows/supabase/W101_SB_CLOSE_SNAPSHOT.json`
@@ -151,7 +151,7 @@ cd /Users/tbwa/odoo-ce/notion-n8n-monthly-close
 ```
 
 Or manually:
-1. Login to https://n8n.insightpulseai.net
+1. Login to https://n8n.insightpulseai.com
 2. Navigate to workflow ID 30 (supabase_close_state_snapshot)
 3. Import from `workflows/supabase/W101_SB_CLOSE_SNAPSHOT.json`
 
@@ -164,7 +164,7 @@ Required credentials in n8n UI:
 #### Step 3: Test W101 Manually
 ```bash
 # SSH to n8n server
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 
 # Execute workflow manually
 docker exec -u node odoo-ipa-1 n8n execute --id 30
@@ -194,7 +194,7 @@ Required credentials in n8n UI:
 
 #### Step 6: Test W902 Manually
 ```bash
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 docker exec -u node odoo-ipa-1 n8n execute --id 902
 ```
 
@@ -208,7 +208,7 @@ docker exec -u node odoo-ipa-1 n8n execute --id 902
 
 ```bash
 # Via CLI
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 docker exec -u node odoo-ipa-1 n8n update:workflow --id=30 --active=true
 docker exec -u node odoo-ipa-1 n8n update:workflow --id=902 --active=true
 ```
@@ -300,7 +300,7 @@ Or via n8n UI:
 - `workflows/index.yaml` - Added W902 entry
 
 ### Committed Changes ✅
-- Commit 1: URL migration (ipa → n8n.insightpulseai.net)
+- Commit 1: URL migration (ipa → n8n.insightpulseai.com)
 - Commit 2: W902 workflow creation
 
 ---

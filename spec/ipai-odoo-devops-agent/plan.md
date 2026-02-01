@@ -336,7 +336,7 @@ class StagingPromoter:
 ```python
 def run_health_checks():
     checks = {
-        'http': requests.get('http://staging.insightpulseai.net:8070/web/health'),
+        'http': requests.get('http://staging.insightpulseai.com:8070/web/health'),
         'db': psycopg2.connect(STAGING_DB_URL),
         'workers': docker_ps('odoo-staging-worker'),
     }
@@ -409,7 +409,7 @@ backups:
 # src/skills/mail_catcher.py
 class MailCatcher:
     def list_mails(env, filter=None):
-        # 1. Query Mailgun API for devtest@mg.insightpulseai.net
+        # 1. Query Mailgun API for devtest@mg.insightpulseai.com
         # 2. Filter by recipient or subject
         # 3. Return recent mails (last 100)
         return {
@@ -433,9 +433,9 @@ class MailCatcher:
 [options]
 smtp_server = smtp.mailgun.org
 smtp_port = 587
-smtp_user = postmaster@mg.insightpulseai.net
+smtp_user = postmaster@mg.insightpulseai.com
 smtp_password = ${MAILGUN_SMTP_PASSWORD}
-email_from = devtest@mg.insightpulseai.net
+email_from = devtest@mg.insightpulseai.com
 ```
 
 **Acceptance Criteria**:

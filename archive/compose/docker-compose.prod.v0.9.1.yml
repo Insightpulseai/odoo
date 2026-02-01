@@ -3,7 +3,7 @@ version: "3.9"
 # Production Docker Compose for Odoo CE v0.9.1
 # Date: 2025-11-25
 # Target: VPS at 159.223.75.148 (8GB RAM after upgrade)
-# Domain: erp.insightpulseai.net
+# Domain: erp.insightpulseai.com
 
 services:
   db:

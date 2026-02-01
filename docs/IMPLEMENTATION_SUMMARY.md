@@ -282,7 +282,7 @@ cd ~/odoo-prod
 
 3. **Web Interface** (2 tests)
    - Local HTTP interface (127.0.0.1:8069)
-   - Public HTTPS interface (erp.insightpulseai.net)
+   - Public HTTPS interface (erp.insightpulseai.com)
 
 4. **Custom Modules** (2 tests)
    - Module count (5 ipai_* modules)
@@ -567,7 +567,7 @@ chmod +x scripts/smoketest.sh
 
 ### Step 6: Browser Testing
 
-1. Open: https://erp.insightpulseai.net
+1. Open: https://erp.insightpulseai.com
 2. Login with admin credentials
 3. Go to: Apps → Search "ipai"
 4. Verify all 5 modules visible
@@ -681,7 +681,7 @@ Print this checklist and mark off as you complete each step:
 - [ ] Upload deployment files to VPS
 - [ ] Run deployment script: `./scripts/deploy_prod.sh`
 - [ ] Run smoke tests: `./scripts/smoketest.sh`
-- [ ] Test in browser: https://erp.insightpulseai.net
+- [ ] Test in browser: https://erp.insightpulseai.com
 - [ ] Verify custom modules visible in Apps
 - [ ] Configure monitoring alerts
 - [ ] Notify team of deployment
@@ -700,7 +700,7 @@ All critical issues identified in the v0.9.0 security audit have been successful
 - ✅ Comprehensive testing suite
 - ✅ Detailed documentation
 
-**The image is now ready for deployment to production at erp.insightpulseai.net (159.223.75.148).**
+**The image is now ready for deployment to production at erp.insightpulseai.com (159.223.75.148).**
 
 ---
 

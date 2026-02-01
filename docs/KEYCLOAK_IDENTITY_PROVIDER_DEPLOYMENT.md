@@ -2,7 +2,7 @@
 ## Unified Authentication for InsightPulse AI Ecosystem
 
 **Target Environment**: Production Droplet (159.223.75.148)
-**DNS**: `auth.insightpulseai.net` → 159.223.75.148
+**DNS**: `auth.insightpulseai.com` → 159.223.75.148
 
 ---
 
@@ -54,7 +54,7 @@
    ```
 
 5. **Access Keycloak**
-   - URL: https://auth.insightpulseai.net
+   - URL: https://auth.insightpulseai.com
    - Username: `admin`
    - Password: Your secure password
 
@@ -65,7 +65,7 @@
 ### A. Create InsightPulse Realm
 
 1. **Log in to Keycloak Admin Console**
-   - Access: https://auth.insightpulseai.net
+   - Access: https://auth.insightpulseai.com
    - Use admin credentials
 
 2. **Create New Realm**
@@ -76,7 +76,7 @@
 
 3. **Configure Realm Settings**
    - **Display Name**: InsightPulse AI
-   - **Frontend URL**: https://auth.insightpulseai.net
+   - **Frontend URL**: https://auth.insightpulseai.com
    - **Enabled**: ON
    - **User registration**: OFF (for now)
    - **Login with email**: ON
@@ -114,9 +114,9 @@
    - **Name**: Odoo ERP
    - **Enabled**: ON
    - **Access Type**: `confidential`
-   - **Valid Redirect URIs**: `https://erp.insightpulseai.net/*`
-   - **Web Origins**: `https://erp.insightpulseai.net`
-   - **Admin URL**: `https://erp.insightpulseai.net`
+   - **Valid Redirect URIs**: `https://erp.insightpulseai.com/*`
+   - **Web Origins**: `https://erp.insightpulseai.com`
+   - **Admin URL**: `https://erp.insightpulseai.com`
 
 3. **Get Client Secret**
    - Go to **Credentials** tab
@@ -136,8 +136,8 @@
    - **Name**: Mattermost Chat
    - **Enabled**: ON
    - **Access Type**: `confidential`
-   - **Valid Redirect URIs**: `https://chat.insightpulseai.net/signup/gitlab/complete`
-   - **Web Origins**: `https://chat.insightpulseai.net`
+   - **Valid Redirect URIs**: `https://chat.insightpulseai.com/signup/gitlab/complete`
+   - **Web Origins**: `https://chat.insightpulseai.com`
 
 3. **Get Client Secret**
    - Go to **Credentials** tab
@@ -162,9 +162,9 @@
      - **Name**: Keycloak
      - **Client ID**: `odoo`
      - **Client Secret**: [From Keycloak]
-     - **Auth URL**: `https://auth.insightpulseai.net/realms/insightpulse/protocol/openid-connect/auth`
-     - **Token URL**: `https://auth.insightpulseai.net/realms/insightpulse/protocol/openid-connect/token`
-     - **UserInfo URL**: `https://auth.insightpulseai.net/realms/insightpulse/protocol/openid-connect/userinfo`
+     - **Auth URL**: `https://auth.insightpulseai.com/realms/insightpulse/protocol/openid-connect/auth`
+     - **Token URL**: `https://auth.insightpulseai.com/realms/insightpulse/protocol/openid-connect/token`
+     - **UserInfo URL**: `https://auth.insightpulseai.com/realms/insightpulse/protocol/openid-connect/userinfo`
      - **Scope**: `openid profile email`
 
 ### B. Mattermost Integration (GitLab Hack)
@@ -174,16 +174,16 @@
    - **Enable GitLab**: `true`
    - **Application ID**: `mattermost`
    - **Application Secret**: [From Keycloak]
-   - **GitLab Site URL**: `https://auth.insightpulseai.net/realms/insightpulse`
-   - **Token Endpoint**: `https://auth.insightpulseai.net/realms/insightpulse/protocol/openid-connect/token`
-   - **User API Endpoint**: `https://auth.insightpulseai.net/realms/insightpulse/protocol/openid-connect/userinfo`
+   - **GitLab Site URL**: `https://auth.insightpulseai.com/realms/insightpulse`
+   - **Token Endpoint**: `https://auth.insightpulseai.com/realms/insightpulse/protocol/openid-connect/token`
+   - **User API Endpoint**: `https://auth.insightpulseai.com/realms/insightpulse/protocol/openid-connect/userinfo`
 
 ### C. Superset Integration
 
 1. **Create Superset Client**
    - Follow similar steps as Odoo
    - Client ID: `superset`
-   - Redirect URI: `https://superset.insightpulseai.net/*`
+   - Redirect URI: `https://superset.insightpulseai.com/*`
 
 2. **Configure superset_config.py**
    ```python
@@ -220,7 +220,7 @@
 Ensure your Traefik configuration includes:
 ```yaml
 labels:
-  - "traefik.http.routers.keycloak.rule=Host(`auth.insightpulseai.net`)"
+  - "traefik.http.routers.keycloak.rule=Host(`auth.insightpulseai.com`)"
   - "traefik.http.routers.keycloak.entrypoints=websecure"
   - "traefik.http.routers.keycloak.tls.certresolver=myresolver"
 ```
@@ -270,13 +270,13 @@ docker exec keycloak /opt/keycloak/bin/kc.sh export --realm insightpulse --file 
 ### Health Checks
 ```bash
 # Keycloak health
-curl -s https://auth.insightpulseai.net/realms/insightpulse/.well-known/openid-configuration | jq .
+curl -s https://auth.insightpulseai.com/realms/insightpulse/.well-known/openid-configuration | jq .
 
 # Database connectivity
 docker exec odoo_prod_db_1 pg_isready -U keycloak -d keycloak
 
 # Traefik routing
-curl -H "Host: auth.insightpulseai.net" http://localhost
+curl -H "Host: auth.insightpulseai.com" http://localhost
 ```
 
 ---
@@ -323,7 +323,7 @@ tail -f /var/log/odoo/odoo-server.log | grep oauth
 
 ## ✅ Success Criteria
 
-- [ ] Keycloak accessible at https://auth.insightpulseai.net
+- [ ] Keycloak accessible at https://auth.insightpulseai.com
 - [ ] InsightPulse realm created and configured
 - [ ] Users can authenticate via Keycloak
 - [ ] Odoo integrated with Keycloak OAuth

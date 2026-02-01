@@ -13,7 +13,7 @@
 **Action**: Removes `pay_invoices_online` field references from `ir.ui.view` table
 
 ### 2. OAuth HTTPS Loop Fix (Nginx Configuration)
-**File**: `deploy/nginx/erp.insightpulseai.net.conf`
+**File**: `deploy/nginx/erp.insightpulseai.com.conf`
 **Change**: Line 31
 
 ```diff
@@ -33,7 +33,7 @@ ssh root@159.223.75.148
 cd /root/odoo-ce && git pull origin main
 
 # 3. Update nginx config
-docker cp deploy/nginx/erp.insightpulseai.net.conf nginx:/etc/nginx/conf.d/erp.insightpulseai.net.conf
+docker cp deploy/nginx/erp.insightpulseai.com.conf nginx:/etc/nginx/conf.d/erp.insightpulseai.com.conf
 docker exec nginx nginx -t && docker exec nginx nginx -s reload
 
 # 4. Run database hotfix
@@ -41,7 +41,7 @@ chmod +x scripts/hotfix_production.sh
 ./scripts/hotfix_production.sh prod
 
 # 5. Verify
-curl -I https://erp.insightpulseai.net
+curl -I https://erp.insightpulseai.com
 docker logs odoo-erp-prod --tail 20
 ```
 
@@ -75,14 +75,14 @@ docker exec nginx nginx -T | grep "X-Forwarded-Proto https"
 # 2. Database parameter set
 docker exec postgres psql -U odoo -d prod -c \
   "SELECT value FROM ir_config_parameter WHERE key='web.base.url';"
-# Expected: https://erp.insightpulseai.net
+# Expected: https://erp.insightpulseai.com
 
 # 3. No view errors
 docker logs odoo-erp-prod --tail 50 | grep -i "pay_invoices_online"
 # Expected: No output
 
 # 4. OAuth works
-curl -Ls https://erp.insightpulseai.net/auth_oauth/signin | grep -q "oauth"
+curl -Ls https://erp.insightpulseai.com/auth_oauth/signin | grep -q "oauth"
 # Expected: Exit code 0
 ```
 
@@ -92,8 +92,8 @@ curl -Ls https://erp.insightpulseai.net/auth_oauth/signin | grep -q "oauth"
 
 ```bash
 # Restore nginx config
-docker cp deploy/nginx/erp.insightpulseai.net.conf.backup \
-  nginx:/etc/nginx/conf.d/erp.insightpulseai.net.conf
+docker cp deploy/nginx/erp.insightpulseai.com.conf.backup \
+  nginx:/etc/nginx/conf.d/erp.insightpulseai.com.conf
 docker exec nginx nginx -s reload
 
 # Restore database from backup
@@ -105,7 +105,7 @@ docker restart odoo-erp-prod
 
 ## Files Changed
 
-1. `deploy/nginx/erp.insightpulseai.net.conf` - OAuth HTTPS fix
+1. `deploy/nginx/erp.insightpulseai.com.conf` - OAuth HTTPS fix
 2. `scripts/hotfix_production.sh` - Database cleanup script (new)
 3. `docs/PRODUCTION_HOTFIX.md` - Complete deployment guide (new)
 

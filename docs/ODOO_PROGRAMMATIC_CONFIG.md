@@ -139,10 +139,10 @@ docker exec -it odoo /usr/bin/odoo shell -d odoo
 env['ir.config_parameter'].sudo().get_param('web.base.url')
 
 # Set parameter
-env['ir.config_parameter'].sudo().set_param('web.base.url', 'https://erp.insightpulseai.net')
+env['ir.config_parameter'].sudo().set_param('web.base.url', 'https://erp.insightpulseai.com')
 
 # Common system parameters
-env['ir.config_parameter'].sudo().set_param('mail.catchall.domain', 'insightpulseai.net')
+env['ir.config_parameter'].sudo().set_param('mail.catchall.domain', 'insightpulseai.com')
 env['ir.config_parameter'].sudo().set_param('mail.default.from', 'notifications')
 env['ir.config_parameter'].sudo().set_param('mail.catchall.alias', 'catchall')
 env['ir.config_parameter'].sudo().set_param('mail.bounce.alias', 'bounce')
@@ -232,8 +232,8 @@ env.cr.commit()
 # Create user
 env['res.users'].sudo().create({
     'name': 'Jake Tolentino',
-    'login': 'jt@insightpulseai.net',
-    'email': 'jt@insightpulseai.net',
+    'login': 'jt@insightpulseai.com',
+    'email': 'jt@insightpulseai.com',
     'groups_id': [(6, 0, [
         env.ref('base.group_user').id,
         env.ref('project.group_project_manager').id,
@@ -265,7 +265,7 @@ env.cr.commit()
 ```bash
 # Execute Python code via shell
 docker exec -i odoo odoo shell -d odoo --no-http << 'EOF'
-env['ir.config_parameter'].sudo().set_param('web.base.url', 'https://erp.insightpulseai.net')
+env['ir.config_parameter'].sudo().set_param('web.base.url', 'https://erp.insightpulseai.com')
 env.cr.commit()
 print("Done!")
 EOF
@@ -322,7 +322,7 @@ EOF
 ```bash
 # Set system parameter
 docker exec odoo odoo shell -d odoo --no-http << 'EOF'
-env['ir.config_parameter'].sudo().set_param('web.base.url', 'https://erp.insightpulseai.net')
+env['ir.config_parameter'].sudo().set_param('web.base.url', 'https://erp.insightpulseai.com')
 env.cr.commit()
 EOF
 
@@ -347,7 +347,7 @@ docker exec odoo odoo -d odoo -u module_name --stop-after-init
 docker exec odoo odoo -d odoo -i module_name --stop-after-init
 
 # Direct SQL
-docker exec odoo-db psql -U odoo -d odoo -c "UPDATE ir_config_parameter SET value='https://erp.insightpulseai.net' WHERE key='web.base.url';"
+docker exec odoo-db psql -U odoo -d odoo -c "UPDATE ir_config_parameter SET value='https://erp.insightpulseai.com' WHERE key='web.base.url';"
 ```
 
 ---

@@ -25,7 +25,7 @@ UI-domain health validator that verifies finance projects are accessible via Odo
 
 **Usage:**
 ```bash
-export ODOO_URL=https://erp.insightpulseai.net
+export ODOO_URL=https://erp.insightpulseai.com
 export ODOO_DB=odoo
 export ODOO_LOGIN=jgtolentino_rn@yahoo.com
 export ODOO_PASSWORD=your_password
@@ -198,7 +198,7 @@ CI/CD integration for automated health checks.
 - Comments on PRs if health check fails
 
 **Required Secrets:**
-- `SSH_PRIVATE_KEY` - SSH key for erp.insightpulseai.net
+- `SSH_PRIVATE_KEY` - SSH key for erp.insightpulseai.com
 - `SSH_KNOWN_HOSTS` - Known hosts entry
 - `SUPABASE_SERVICE_ROLE_KEY` - Supabase service role key
 - `N8N_API_KEY` - n8n API key
@@ -225,13 +225,13 @@ gh workflow run health-check.yml \
 **Fix:**
 ```bash
 # Test SSH connection
-ssh -v root@erp.insightpulseai.net echo "test"
+ssh -v root@erp.insightpulseai.com echo "test"
 
 # Verify SSH key permissions
 chmod 600 ~/.ssh/id_rsa
 
 # Add host to known_hosts
-ssh-keyscan erp.insightpulseai.net >> ~/.ssh/known_hosts
+ssh-keyscan erp.insightpulseai.com >> ~/.ssh/known_hosts
 ```
 
 #### 2. "Odoo container not running"
@@ -241,10 +241,10 @@ ssh-keyscan erp.insightpulseai.net >> ~/.ssh/known_hosts
 **Fix:**
 ```bash
 # Check container status
-ssh root@erp.insightpulseai.net "docker ps | grep odoo"
+ssh root@erp.insightpulseai.com "docker ps | grep odoo"
 
 # Restart if needed
-ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1"
+ssh root@erp.insightpulseai.com "docker restart odoo-odoo-1"
 
 # Or run with --fix flag
 ./verify_finance_stack.sh --env prod --fix
@@ -257,7 +257,7 @@ ssh root@erp.insightpulseai.net "docker restart odoo-odoo-1"
 **Fix:**
 1. Check Odoo logs:
    ```bash
-   ssh root@erp.insightpulseai.net "docker logs --tail 100 odoo-odoo-1"
+   ssh root@erp.insightpulseai.com "docker logs --tail 100 odoo-odoo-1"
    ```
 
 2. Run check_project_tasks.py with verbose output:
@@ -292,10 +292,10 @@ echo ${SUPABASE_SERVICE_ROLE_KEY:0:15}
 ```bash
 # Test n8n API
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  https://ipa.insightpulseai.net/api/v1/workflows
+  https://ipa.insightpulseai.com/api/v1/workflows
 
 # Check n8n service status
-ssh root@ipa.insightpulseai.net "docker ps | grep n8n"
+ssh root@ipa.insightpulseai.com "docker ps | grep n8n"
 ```
 
 ### Monitoring Best Practices

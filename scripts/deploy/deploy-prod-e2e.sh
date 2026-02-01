@@ -34,7 +34,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
 DROPLET_IP="178.128.112.214"
 DB_ID="3bbd7e2a-d9ce-4253-a9ae-96ef55e24908"
 DO_TOKEN="${DIGITALOCEAN_ACCESS_TOKEN:-}"
-DOMAIN="${DOMAIN:-erp.insightpulseai.net}"
+DOMAIN="${DOMAIN:-erp.insightpulseai.com}"
 
 log_info "============================================================================"
 log_info "End-to-End Production Deployment"

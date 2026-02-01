@@ -10,9 +10,45 @@ version: "1.0"
 generated_at: "2026-02-01T00:00:00Z"
 
 # =============================================================================
+# DOMAIN POLICY (ENFORCED)
+# =============================================================================
+domain_policy:
+  canonical_domain: "insightpulseai.com"
+  forbidden_patterns:
+    - "insightpulseai.net"
+  enforcement: "strict"  # FAIL audit if any forbidden pattern found
+
+  canonical_subdomains:
+    erp: "erp.insightpulseai.com"
+    n8n: "n8n.insightpulseai.com"
+    superset: "superset.insightpulseai.com"
+    mcp: "mcp.insightpulseai.com"
+    mailgun: "mg.insightpulseai.com"
+    auth: "auth.insightpulseai.com"
+    ocr: "ocr.insightpulseai.com"
+
+# =============================================================================
 # INTEGRATION DEFINITIONS
 # =============================================================================
 integrations:
+
+  # ---------------------------------------------------------------------------
+  # DOMAIN POLICY (GATE CHECK)
+  # ---------------------------------------------------------------------------
+  policy:
+    name: "Domain Policy"
+    type: "policy/compliance"
+    enabled: true
+    risk_tier: "critical"
+    owner: "platform-team"
+
+    test_suite:
+      - name: "forbidden_domain"
+        description: "No insightpulseai.net references allowed"
+        expected_status: "PASS"
+      - name: "canonical_domains"
+        description: "Verify canonical .com domains are used"
+        expected_status: "PASS"
 
   # ---------------------------------------------------------------------------
   # SUPABASE
@@ -131,7 +167,7 @@ integrations:
         expected_status: [200]
         description: "List recent deployments"
       - name: "production_health"
-        endpoint: "https://erp.insightpulseai.net/web/health"
+        endpoint: "https://erp.insightpulseai.com/web/health"
         method: "GET"
         auth: "none"
         expected_status: [200]
@@ -213,13 +249,13 @@ integrations:
 
     endpoints:
       web:
-        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.net}"
+        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.com}"
         auth_method: "session"
       jsonrpc:
-        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.net}/jsonrpc"
+        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.com}/jsonrpc"
         auth_method: "session"
       health:
-        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.net}/web/health"
+        url: "${ODOO_BASE_URL:-https://erp.insightpulseai.com}/web/health"
         auth_method: "none"
 
     env_vars:
@@ -366,6 +402,15 @@ integrations:
     owner: "platform-team"
     rotation_policy: "365 days"
 
+    # IMPORTANT: Zoho + Mailgun coexistence architecture
+    # - Root domain (insightpulseai.com): MX → Zoho (inbound mail)
+    # - Subdomain (mg.insightpulseai.com): Mailgun (outbound transactional)
+    coexistence:
+      root_domain: "insightpulseai.com"
+      mailgun_subdomain: "mg.insightpulseai.com"
+      inbound_provider: "zoho"
+      outbound_provider: "mailgun"
+
     endpoints:
       api:
         url: "https://api.mailgun.net/v3"
@@ -379,8 +424,27 @@ integrations:
       optional:
         - MAILGUN_WEBHOOK_SIGNING_KEY
         - MAILGUN_TEST_TO
+        - ROOT_DOMAIN
+        - EXPECTED_MG_DOMAIN
 
     test_suite:
+      # Coexistence DNS assertions
+      - name: "domain_policy"
+        description: "Verify MAILGUN_DOMAIN is mg.insightpulseai.com"
+        expected_status: "PASS"
+      - name: "root_mx_zoho"
+        description: "Verify root MX points to Zoho"
+        expected_status: "PASS"
+      - name: "root_spf_includes"
+        description: "Verify root SPF includes Zoho and Mailgun"
+        expected_status: "PASS"
+      - name: "dmarc_exists"
+        description: "Verify DMARC record exists"
+        expected_status: "PASS"
+      - name: "mg_subdomain_spf"
+        description: "Verify Mailgun subdomain has SPF"
+        expected_status: "PASS"
+      # Mailgun API checks
       - name: "domain_info"
         endpoint: "/domains/${MAILGUN_DOMAIN}"
         method: "GET"
@@ -408,6 +472,7 @@ integrations:
       - "receiving_dns_status"
       - "accepted_count_7d"
       - "failed_count_7d"
+      - "zoho_coexistence"
 
   # ---------------------------------------------------------------------------
   # PLANE CE
@@ -422,11 +487,11 @@ integrations:
 
     endpoints:
       api:
-        url: "${PLANE_BASE_URL:-https://plane.insightpulseai.net}/api/v1"
+        url: "${PLANE_BASE_URL:-https://plane.insightpulseai.com}/api/v1"
         auth_method: "bearer"
         auth_env: "PLANE_API_TOKEN"
       web:
-        url: "${PLANE_BASE_URL:-https://plane.insightpulseai.net}"
+        url: "${PLANE_BASE_URL:-https://plane.insightpulseai.com}"
         auth_method: "none"
 
     env_vars:
@@ -471,11 +536,11 @@ integrations:
 
     endpoints:
       api:
-        url: "${SUPERSET_BASE_URL:-https://superset.insightpulseai.net}/api/v1"
+        url: "${SUPERSET_BASE_URL:-https://superset.insightpulseai.com}/api/v1"
         auth_method: "jwt"
         auth_env: "SUPERSET_TOKEN"
       web:
-        url: "${SUPERSET_BASE_URL:-https://superset.insightpulseai.net}"
+        url: "${SUPERSET_BASE_URL:-https://superset.insightpulseai.com}"
         auth_method: "none"
 
     env_vars:
@@ -522,12 +587,12 @@ integrations:
 
     endpoints:
       api:
-        url: "${N8N_BASE_URL:-https://n8n.insightpulseai.net}/api/v1"
+        url: "${N8N_BASE_URL:-https://n8n.insightpulseai.com}/api/v1"
         auth_method: "header"
         auth_header: "X-N8N-API-KEY"
         auth_env: "N8N_API_KEY"
       web:
-        url: "${N8N_BASE_URL:-https://n8n.insightpulseai.net}"
+        url: "${N8N_BASE_URL:-https://n8n.insightpulseai.com}"
         auth_method: "none"
 
     env_vars:

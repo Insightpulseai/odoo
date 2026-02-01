@@ -95,7 +95,7 @@
       "command": "node",
       "args": ["mcp/servers/odoo-erp-server/dist/index.js"],
       "env": {
-        "ODOO_URL": "${ODOO_URL:-https://erp.insightpulseai.net}",
+        "ODOO_URL": "${ODOO_URL:-https://erp.insightpulseai.com}",
         "ODOO_DB": "${ODOO_DB:-production}",
         "ODOO_USERNAME": "${ODOO_USERNAME}",
         "ODOO_PASSWORD": "${ODOO_PASSWORD}"
@@ -116,7 +116,7 @@
       "command": "node",
       "args": ["mcp/servers/superset-mcp-server/dist/index.js"],
       "env": {
-        "SUPERSET_URL": "${SUPERSET_URL:-https://superset.insightpulseai.net}",
+        "SUPERSET_URL": "${SUPERSET_URL:-https://superset.insightpulseai.com}",
         "SUPERSET_USERNAME": "${SUPERSET_USERNAME}",
         "SUPERSET_PASSWORD": "${SUPERSET_PASSWORD}"
       },

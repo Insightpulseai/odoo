@@ -11,7 +11,7 @@
 
 1. **OCR Droplet Disk at 97%** - Service will crash when disk fills. Need immediate cleanup (30 min).
 2. **3 Unhealthy Containers** - `tax-rules-service`, `ocr-adapter`, `agent-service` may be degraded/broken (1-2 hours).
-3. **Broken DNS for ipa.insightpulseai.net** - Orphaned domain pointing nowhere, likely meant for n8n/IPA service (30 min).
+3. **Broken DNS for ipa.insightpulseai.com** - Orphaned domain pointing nowhere, likely meant for n8n/IPA service (30 min).
 
 ### 🎯 3 Most Important Medium-Term Restructures (This Month)
 
@@ -40,8 +40,8 @@
 
 | App ID (Inferred) | App Name | Domain | Backend URL | Status | Notes |
 |-------------------|----------|--------|-------------|--------|-------|
-| `an645` | `pulse-hub-web` | mcp.insightpulseai.net | pulse-hub-web-an645.ondigitalocean.app | ✅ Active | MCP Coordinator |
-| `nlavf` | `superset` | superset.insightpulseai.net | superset-nlavf.ondigitalocean.app | ✅ Active | Apache Superset BI |
+| `an645` | `pulse-hub-web` | mcp.insightpulseai.com | pulse-hub-web-an645.ondigitalocean.app | ✅ Active | MCP Coordinator |
+| `nlavf` | `superset` | superset.insightpulseai.com | superset-nlavf.ondigitalocean.app | ✅ Active | Apache Superset BI |
 
 **Limitations**: Cannot retrieve full app details (build settings, env vars, scaling config, resource limits) without valid API token.
 
@@ -49,27 +49,27 @@
 
 | Domain | Record Type | Value | Backend Service | Status | TLS | Criticality |
 |--------|-------------|-------|-----------------|--------|-----|-------------|
-| `erp.insightpulseai.net` | A | 159.223.75.148 | Odoo ERP v18 (port 8069) | ✅ Resolving | ✅ Let's Encrypt | **CRITICAL** |
-| `n8n.insightpulseai.net` | A | 159.223.75.148 | n8n Workflows (port 5678) | ✅ Resolving | ✅ Let's Encrypt | **HIGH** |
-| `auth.insightpulseai.net` | A | 159.223.75.148 | Auth Service (port 8080) | ✅ Resolving | ✅ Let's Encrypt | **MEDIUM** |
-| `ocr.insightpulseai.net` | A | 188.166.237.231 | OCR Adapter (port 8100) | ✅ Resolving | ✅ Let's Encrypt | **HIGH** |
-| `mcp.insightpulseai.net` | CNAME | pulse-hub-web-an645.ondigitalocean.app | MCP Coordinator (App Platform) | ✅ Resolving | ✅ DO Managed | **MEDIUM** |
-| `superset.insightpulseai.net` | CNAME | superset-nlavf.ondigitalocean.app | Apache Superset BI (App Platform) | ✅ Resolving | ✅ DO Managed | **MEDIUM** |
-| `ipa.insightpulseai.net` | A | **NONE** | **ORPHANED** | 🚨 **BROKEN** | ❌ | **UNKNOWN** |
+| `erp.insightpulseai.com` | A | 159.223.75.148 | Odoo ERP v18 (port 8069) | ✅ Resolving | ✅ Let's Encrypt | **CRITICAL** |
+| `n8n.insightpulseai.com` | A | 159.223.75.148 | n8n Workflows (port 5678) | ✅ Resolving | ✅ Let's Encrypt | **HIGH** |
+| `auth.insightpulseai.com` | A | 159.223.75.148 | Auth Service (port 8080) | ✅ Resolving | ✅ Let's Encrypt | **MEDIUM** |
+| `ocr.insightpulseai.com` | A | 188.166.237.231 | OCR Adapter (port 8100) | ✅ Resolving | ✅ Let's Encrypt | **HIGH** |
+| `mcp.insightpulseai.com` | CNAME | pulse-hub-web-an645.ondigitalocean.app | MCP Coordinator (App Platform) | ✅ Resolving | ✅ DO Managed | **MEDIUM** |
+| `superset.insightpulseai.com` | CNAME | superset-nlavf.ondigitalocean.app | Apache Superset BI (App Platform) | ✅ Resolving | ✅ DO Managed | **MEDIUM** |
+| `ipa.insightpulseai.com` | A | **NONE** | **ORPHANED** | 🚨 **BROKEN** | ❌ | **UNKNOWN** |
 
-**Mystery Service**: `ipa.insightpulseai.net` has no DNS record. Likely intended for n8n IPA (Intelligent Process Automation) or similar. Needs investigation.
+**Mystery Service**: `ipa.insightpulseai.com` has no DNS record. Likely intended for n8n IPA (Intelligent Process Automation) or similar. Needs investigation.
 
 ### 1.4 Docker Services (Primary Droplet: 159.223.75.148)
 
 | Container Name | Image | Version | Status | Health | Ports | Purpose | Product Link | Criticality |
 |----------------|-------|---------|--------|--------|-------|---------|--------------|-------------|
-| `odoo-ce-odoo-1` | odoo | 18.0 | Up 4d | ✅ Healthy | 0.0.0.0:8069→8069 | Odoo ERP v18 | erp.insightpulseai.net | **CRITICAL** |
+| `odoo-ce-odoo-1` | odoo | 18.0 | Up 4d | ✅ Healthy | 0.0.0.0:8069→8069 | Odoo ERP v18 | erp.insightpulseai.com | **CRITICAL** |
 | `odoo-ce-db-1` | postgres | 16 | Up 4d | ✅ Healthy | 127.0.0.1:5432→5432 | Odoo PostgreSQL DB | (backend) | **CRITICAL** |
-| `n8n-n8n-1` | n8nio/n8n | latest | Up 4d | ✅ Healthy | 0.0.0.0:5678→5678 | Workflow Automation | n8n.insightpulseai.net | **HIGH** |
+| `n8n-n8n-1` | n8nio/n8n | latest | Up 4d | ✅ Healthy | 0.0.0.0:5678→5678 | Workflow Automation | n8n.insightpulseai.com | **HIGH** |
 | `n8n-postgres-1` | postgres | 16 | Up 4d | ✅ Healthy | - | n8n Database | (backend) | **HIGH** |
 | `n8n-redis-1` | redis | 7-alpine | Up 4d | ✅ Healthy | - | n8n Cache/Queue | (backend) | **MEDIUM** |
 | `tax-rules-service` | node | 20-alpine | Up 4d | 🚨 **Unhealthy** | 127.0.0.1:9000→3000 | Tax Rules API | (internal) | **MEDIUM** |
-| `ocr-adapter` | node | 20-alpine | Up 4d | 🚨 **Unhealthy** | 127.0.0.1:8100→8100 | OCR API Adapter | erp.insightpulseai.net/n8n/ | **HIGH** |
+| `ocr-adapter` | node | 20-alpine | Up 4d | 🚨 **Unhealthy** | 127.0.0.1:8100→8100 | OCR API Adapter | erp.insightpulseai.com/n8n/ | **HIGH** |
 | `agent-service` | node | 20-alpine | Up 4d | 🚨 **Unhealthy** | 127.0.0.1:8200→8200 | AI Agent Service | (internal) | **MEDIUM** |
 | `fin-workspace-db-1` | postgres | 15-alpine | Up 4d | ✅ Healthy | - | Finance Workspace DB | (backend) | **MEDIUM** |
 
@@ -81,7 +81,7 @@
 
 | Container Name | Image | Version | Status | Health | Ports | Purpose | Product Link | Legacy/Active |
 |----------------|-------|---------|--------|--------|-------|---------|--------------|---------------|
-| `odoobo-ocr-service-1` | paddleocr/paddleocr-vl | 900m | Up 11d | ✅ Healthy | 0.0.0.0:8090→8090 | PaddleOCR Inference | ocr.insightpulseai.net | **ACTIVE** |
+| `odoobo-ocr-service-1` | paddleocr/paddleocr-vl | 900m | Up 11d | ✅ Healthy | 0.0.0.0:8090→8090 | PaddleOCR Inference | ocr.insightpulseai.com | **ACTIVE** |
 | `odoo-bundle` | custom | - | Up 11d | Unknown | 0.0.0.0:8069, 5432, 6379, 5678 | Legacy Odoo Multi-Service | (none) | **LEGACY** |
 | `odoo-pgadmin-1` | dpage/pgadmin4 | latest | Up 11d | ✅ Healthy | 5050→80 | Database Admin UI | (internal) | **ACTIVE** |
 | `odoo-odoo-1` | odoo | 17.0 | Up 11d | 🚨 **Unhealthy** | - | **Legacy Odoo v17** | (none) | **DEPRECATED** |
@@ -125,7 +125,7 @@
 
 ### 2.1 Complete Routing Flow (Internet → Service)
 
-#### Route 1: https://erp.insightpulseai.net
+#### Route 1: https://erp.insightpulseai.com
 
 ```
 Internet (HTTPS/443)
@@ -134,7 +134,7 @@ DNS A Record: 159.223.75.148
   ↓
 nginx (159.223.75.148:443)
   ├─ TLS Termination: Let's Encrypt Certificate
-  ├─ Config: /etc/nginx/sites-enabled/erp.insightpulseai.net.conf
+  ├─ Config: /etc/nginx/sites-enabled/erp.insightpulseai.com.conf
   ├─ Proxy Settings:
   │    - client_max_body_size: 64m
   │    - proxy_read_timeout: 600s
@@ -152,7 +152,7 @@ nginx (159.223.75.148:443)
 
 ---
 
-#### Route 2: https://n8n.insightpulseai.net
+#### Route 2: https://n8n.insightpulseai.com
 
 ```
 Internet (HTTPS/443)
@@ -161,7 +161,7 @@ DNS A Record: 159.223.75.148
   ↓
 nginx (159.223.75.148:443)
   ├─ TLS Termination: Let's Encrypt Certificate
-  ├─ Config: /etc/nginx/sites-enabled/n8n.insightpulseai.net.conf
+  ├─ Config: /etc/nginx/sites-enabled/n8n.insightpulseai.com.conf
   ├─ WebSocket Support: Upgrade, Connection "upgrade" headers
   ├─ Proxy Buffering: 128k/256k
   └─ Upstream: / → http://127.0.0.1:5678 (n8n-n8n-1 container)
@@ -174,7 +174,7 @@ nginx (159.223.75.148:443)
 
 ---
 
-#### Route 3: https://auth.insightpulseai.net
+#### Route 3: https://auth.insightpulseai.com
 
 ```
 Internet (HTTPS/443)
@@ -183,7 +183,7 @@ DNS A Record: 159.223.75.148
   ↓
 nginx (159.223.75.148:443)
   ├─ TLS Termination: Let's Encrypt Certificate
-  ├─ Config: /etc/nginx/sites-enabled/auth.insightpulseai.net.conf
+  ├─ Config: /etc/nginx/sites-enabled/auth.insightpulseai.com.conf
   └─ Upstream: / → http://127.0.0.1:8080 (auth-service container - NOT IN AUDIT)
 ```
 
@@ -194,7 +194,7 @@ nginx (159.223.75.148:443)
 
 ---
 
-#### Route 4: https://ocr.insightpulseai.net
+#### Route 4: https://ocr.insightpulseai.com
 
 ```
 Internet (HTTPS/443)
@@ -203,7 +203,7 @@ DNS A Record: 188.166.237.231
   ↓
 nginx (188.166.237.231:443)
   ├─ TLS Termination: Let's Encrypt Certificate
-  ├─ Config: /etc/nginx/sites-enabled/ocr.insightpulseai.net
+  ├─ Config: /etc/nginx/sites-enabled/ocr.insightpulseai.com
   └─ Upstream Routes:
        ├─ /health → http://127.0.0.1:8100/health (ocr-adapter health check)
        ├─ /ocr → http://127.0.0.1:8100/v1/parse (redirects to /v1/parse)
@@ -221,7 +221,7 @@ nginx (188.166.237.231:443)
 
 ---
 
-#### Route 5: https://mcp.insightpulseai.net
+#### Route 5: https://mcp.insightpulseai.com
 
 ```
 Internet (HTTPS/443)
@@ -242,7 +242,7 @@ DigitalOcean App Platform (Managed Service)
 
 ---
 
-#### Route 6: https://superset.insightpulseai.net
+#### Route 6: https://superset.insightpulseai.com
 
 ```
 Internet (HTTPS/443)
@@ -263,12 +263,12 @@ DigitalOcean App Platform (Managed Service)
 
 ---
 
-#### Route 7: ❌ https://ipa.insightpulseai.net (BROKEN)
+#### Route 7: ❌ https://ipa.insightpulseai.com (BROKEN)
 
 ```
 Internet (HTTPS/443)
   ↓
-DNS Query: ipa.insightpulseai.net
+DNS Query: ipa.insightpulseai.com
   ↓
 🚨 DNS Resolution FAILED: No A/CNAME record found
   ↓
@@ -280,18 +280,18 @@ DNS Query: ipa.insightpulseai.net
 **Health**: ❌ **Service does not exist**
 **Investigation Needed**:
 - Check if this was intended for n8n "IPA" (Intelligent Process Automation) workflows
-- Check if this should point to App Platform app (similar to mcp.insightpulseai.net)
+- Check if this should point to App Platform app (similar to mcp.insightpulseai.com)
 - Check if this is a legacy/deprecated domain that should be removed from documentation
 
 **Recommended Action**:
 ```bash
 # Option 1: If IPA service should exist (likely n8n-related)
-# Add DNS A record: ipa.insightpulseai.net → 159.223.75.148
-# Add nginx config: /etc/nginx/sites-enabled/ipa.insightpulseai.net.conf
+# Add DNS A record: ipa.insightpulseai.com → 159.223.75.148
+# Add nginx config: /etc/nginx/sites-enabled/ipa.insightpulseai.com.conf
 # Point to n8n or dedicated IPA service
 
 # Option 2: If legacy/deprecated
-# Remove all references to ipa.insightpulseai.net from:
+# Remove all references to ipa.insightpulseai.com from:
 # - Documentation
 # - Code comments
 # - Environment variables
@@ -304,15 +304,15 @@ DNS Query: ipa.insightpulseai.net
 
 | Hostname | Protocol | TLS Status | Reverse Proxy | Upstream Container | Port | Health | Issues |
 |----------|----------|------------|---------------|-------------------|------|--------|--------|
-| erp.insightpulseai.net | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | odoo-ce-odoo-1 | 8069 | ✅ Healthy | None |
-| erp.insightpulseai.net/n8n/ | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | n8n-n8n-1 | 5678 | ✅ Healthy | None |
-| erp.insightpulseai.net/mcp/ | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | (not verified) | 8766 | ⚠️ Unknown | MCP service existence unclear |
-| n8n.insightpulseai.net | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | n8n-n8n-1 | 5678 | ✅ Healthy | None |
-| auth.insightpulseai.net | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | (not found in audit) | 8080 | ⚠️ Unknown | Container not listed in docker ps |
-| ocr.insightpulseai.net | HTTPS | ✅ Let's Encrypt | nginx @ 188.166.237.231 | ocr-adapter → odoobo-ocr-service-1 | 8100→8090 | 🚨 Unhealthy | ocr-adapter container unhealthy, disk 97% |
-| mcp.insightpulseai.net | HTTPS | ✅ DO Managed | DO App Platform | pulse-hub-web | - | ✅ (assumed) | API unavailable for verification |
-| superset.insightpulseai.net | HTTPS | ✅ DO Managed | DO App Platform | superset | - | ✅ (assumed) | API unavailable for verification |
-| ipa.insightpulseai.net | - | ❌ None | **NONE** | **NONE** | - | 🚨 **BROKEN** | **DNS record missing entirely** |
+| erp.insightpulseai.com | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | odoo-ce-odoo-1 | 8069 | ✅ Healthy | None |
+| erp.insightpulseai.com/n8n/ | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | n8n-n8n-1 | 5678 | ✅ Healthy | None |
+| erp.insightpulseai.com/mcp/ | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | (not verified) | 8766 | ⚠️ Unknown | MCP service existence unclear |
+| n8n.insightpulseai.com | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | n8n-n8n-1 | 5678 | ✅ Healthy | None |
+| auth.insightpulseai.com | HTTPS | ✅ Let's Encrypt | nginx @ 159.223.75.148 | (not found in audit) | 8080 | ⚠️ Unknown | Container not listed in docker ps |
+| ocr.insightpulseai.com | HTTPS | ✅ Let's Encrypt | nginx @ 188.166.237.231 | ocr-adapter → odoobo-ocr-service-1 | 8100→8090 | 🚨 Unhealthy | ocr-adapter container unhealthy, disk 97% |
+| mcp.insightpulseai.com | HTTPS | ✅ DO Managed | DO App Platform | pulse-hub-web | - | ✅ (assumed) | API unavailable for verification |
+| superset.insightpulseai.com | HTTPS | ✅ DO Managed | DO App Platform | superset | - | ✅ (assumed) | API unavailable for verification |
+| ipa.insightpulseai.com | - | ❌ None | **NONE** | **NONE** | - | 🚨 **BROKEN** | **DNS record missing entirely** |
 
 ---
 
@@ -320,13 +320,13 @@ DNS Query: ipa.insightpulseai.net
 
 | Droplet | Config File | Hostnames Served | Status |
 |---------|------------|------------------|--------|
-| 159.223.75.148 | `/etc/nginx/sites-enabled/erp.insightpulseai.net.conf` | erp.insightpulseai.net | ✅ Active |
-| 159.223.75.148 | `/etc/nginx/sites-enabled/n8n.insightpulseai.net.conf` | n8n.insightpulseai.net | ✅ Active |
-| 159.223.75.148 | `/etc/nginx/sites-enabled/auth.insightpulseai.net.conf` | auth.insightpulseai.net | ⚠️ Active (backend unclear) |
-| 188.166.237.231 | `/etc/nginx/sites-enabled/ocr.insightpulseai.net` | ocr.insightpulseai.net | ✅ Active |
+| 159.223.75.148 | `/etc/nginx/sites-enabled/erp.insightpulseai.com.conf` | erp.insightpulseai.com | ✅ Active |
+| 159.223.75.148 | `/etc/nginx/sites-enabled/n8n.insightpulseai.com.conf` | n8n.insightpulseai.com | ✅ Active |
+| 159.223.75.148 | `/etc/nginx/sites-enabled/auth.insightpulseai.com.conf` | auth.insightpulseai.com | ⚠️ Active (backend unclear) |
+| 188.166.237.231 | `/etc/nginx/sites-enabled/ocr.insightpulseai.com` | ocr.insightpulseai.com | ✅ Active |
 
 **Potential Issues**:
-- `auth.insightpulseai.net` config exists but no matching container found in docker ps output
+- `auth.insightpulseai.com` config exists but no matching container found in docker ps output
 - Possible orphaned config or service running under different name
 - Need manual verification: `ssh root@159.223.75.148 "docker ps | grep -i auth"`
 
@@ -450,7 +450,7 @@ ssh root@159.223.75.148 "cd /opt/odoo-ce && docker compose stop <service-name>"
 
 ---
 
-#### P0-3: 🚨 Resolve ipa.insightpulseai.net DNS Failure
+#### P0-3: 🚨 Resolve ipa.insightpulseai.com DNS Failure
 
 **Goal State**: Either DNS record points to valid service OR domain is deprecated and removed from all references
 
@@ -458,7 +458,7 @@ ssh root@159.223.75.148 "cd /opt/odoo-ce && docker compose stop <service-name>"
 
 ```bash
 # Step 1: Search codebase for references (5 min)
-grep -r "ipa.insightpulseai.net" /Users/tbwa/Documents/GitHub/odoo-ce/
+grep -r "ipa.insightpulseai.com" /Users/tbwa/Documents/GitHub/odoo-ce/
 grep -r "ipa\.insightpulseai" /Users/tbwa/Documents/GitHub/odoo-ce/
 
 # Step 2: Check environment variables (2 min)
@@ -466,26 +466,26 @@ ssh root@159.223.75.148 "env | grep -i ipa"
 ssh root@188.166.237.231 "env | grep -i ipa"
 
 # Step 3: Check nginx configs (2 min)
-ssh root@159.223.75.148 "grep -r 'ipa.insightpulseai.net' /etc/nginx/"
-ssh root@188.166.237.231 "grep -r 'ipa.insightpulseai.net' /etc/nginx/"
+ssh root@159.223.75.148 "grep -r 'ipa.insightpulseai.com' /etc/nginx/"
+ssh root@188.166.237.231 "grep -r 'ipa.insightpulseai.com' /etc/nginx/"
 
 # Step 4: Check Docker containers/compose files (5 min)
-ssh root@159.223.75.148 "cd /opt && find . -name 'docker-compose*.yml' -exec grep -l 'ipa.insightpulseai.net' {} \;"
+ssh root@159.223.75.148 "cd /opt && find . -name 'docker-compose*.yml' -exec grep -l 'ipa.insightpulseai.com' {} \;"
 ```
 
 **Execution Plan - Option A** (If IPA service should exist):
 
 ```bash
-# Assumption: ipa.insightpulseai.net should point to n8n IPA workflows or dedicated service
+# Assumption: ipa.insightpulseai.com should point to n8n IPA workflows or dedicated service
 
 # Step 1: Add DNS A record (via DigitalOcean dashboard or API when token fixed)
-# ipa.insightpulseai.net → 159.223.75.148
+# ipa.insightpulseai.com → 159.223.75.148
 
 # Step 2: Create nginx config
-ssh root@159.223.75.148 "cat > /etc/nginx/sites-available/ipa.insightpulseai.net.conf << 'EOF'
+ssh root@159.223.75.148 "cat > /etc/nginx/sites-available/ipa.insightpulseai.com.conf << 'EOF'
 server {
     listen 80;
-    server_name ipa.insightpulseai.net;
+    server_name ipa.insightpulseai.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/letsencrypt;
@@ -498,10 +498,10 @@ server {
 
 server {
     listen 443 ssl http2;
-    server_name ipa.insightpulseai.net;
+    server_name ipa.insightpulseai.com;
 
-    ssl_certificate     /etc/letsencrypt/live/ipa.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/ipa.insightpulseai.net/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/ipa.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ipa.insightpulseai.com/privkey.pem;
     ssl_protocols       TLSv1.2 TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5;
 
@@ -517,18 +517,18 @@ server {
 EOF"
 
 # Step 3: Enable site and test config
-ssh root@159.223.75.148 "ln -s /etc/nginx/sites-available/ipa.insightpulseai.net.conf /etc/nginx/sites-enabled/"
+ssh root@159.223.75.148 "ln -s /etc/nginx/sites-available/ipa.insightpulseai.com.conf /etc/nginx/sites-enabled/"
 ssh root@159.223.75.148 "nginx -t"
 
 # Step 4: Get Let's Encrypt certificate
-ssh root@159.223.75.148 "certbot certonly --webroot -w /var/www/letsencrypt -d ipa.insightpulseai.net"
+ssh root@159.223.75.148 "certbot certonly --webroot -w /var/www/letsencrypt -d ipa.insightpulseai.com"
 
 # Step 5: Reload nginx
 ssh root@159.223.75.148 "systemctl reload nginx"
 
 # Step 6: Verify
-dig +short ipa.insightpulseai.net  # Should return 159.223.75.148
-curl -I https://ipa.insightpulseai.net  # Should return 200 OK
+dig +short ipa.insightpulseai.com  # Should return 159.223.75.148
+curl -I https://ipa.insightpulseai.com  # Should return 200 OK
 ```
 
 **Execution Plan - Option B** (If IPA domain is deprecated):
@@ -540,7 +540,7 @@ curl -I https://ipa.insightpulseai.net  # Should return 200 OK
 # Step 2: Document as deprecated in infrastructure docs
 echo "## Deprecated Domains
 
-- ipa.insightpulseai.net - Removed $(date +%Y-%m-%d), was never configured
+- ipa.insightpulseai.com - Removed $(date +%Y-%m-%d), was never configured
 " >> /Users/tbwa/Documents/GitHub/odoo-ce/docs/INFRASTRUCTURE.md
 
 # Step 3: No DNS cleanup needed (record never existed)
@@ -549,11 +549,11 @@ echo "## Deprecated Domains
 **Verification**:
 ```bash
 # Option A verification:
-dig +short ipa.insightpulseai.net  # Should return IP
-curl -I https://ipa.insightpulseai.net  # Should return 200 OK or 404 (depending on service)
+dig +short ipa.insightpulseai.com  # Should return IP
+curl -I https://ipa.insightpulseai.com  # Should return 200 OK or 404 (depending on service)
 
 # Option B verification:
-grep -r "ipa.insightpulseai.net" /Users/tbwa/Documents/GitHub/odoo-ce/  # Should return empty
+grep -r "ipa.insightpulseai.com" /Users/tbwa/Documents/GitHub/odoo-ce/  # Should return empty
 ```
 
 **Success Criteria**: Domain either resolves correctly OR is documented as deprecated with no remaining references
@@ -748,11 +748,11 @@ ssh root@188.166.237.231 "/usr/local/bin/health-monitor.sh"
 # Step 6: Set up external uptime monitoring (10 min)
 # Use UptimeRobot (free tier) or DigitalOcean Uptime Checks (once API working)
 # Monitor:
-# - https://erp.insightpulseai.net
-# - https://n8n.insightpulseai.net
-# - https://ocr.insightpulseai.net
-# - https://mcp.insightpulseai.net
-# - https://superset.insightpulseai.net
+# - https://erp.insightpulseai.com
+# - https://n8n.insightpulseai.com
+# - https://ocr.insightpulseai.com
+# - https://mcp.insightpulseai.com
+# - https://superset.insightpulseai.com
 ```
 
 **Verification**:
@@ -802,7 +802,7 @@ doctl compute firewall get $FIREWALL_ID
 ssh root@159.223.75.148 "echo 'SSH working'"
 
 # HTTPS should work
-curl -I https://erp.insightpulseai.net
+curl -I https://erp.insightpulseai.com
 
 # Test that non-allowed ports are blocked (from external network)
 # Example: Direct access to Odoo port 8069 should fail
@@ -866,37 +866,37 @@ ssh root@159.223.75.148 "cd /opt/ocr && docker compose up -d"
 ssh root@159.223.75.148 "docker ps | grep ocr"
 
 # Step 5: Update nginx config on primary (10 min)
-ssh root@159.223.75.148 "cat > /etc/nginx/sites-available/ocr.insightpulseai.net.conf << 'EOF'
+ssh root@159.223.75.148 "cat > /etc/nginx/sites-available/ocr.insightpulseai.com.conf << 'EOF'
 server {
     listen 80;
-    server_name ocr.insightpulseai.net;
+    server_name ocr.insightpulseai.com;
     location / { return 301 https://\$host\$request_uri; }
 }
 
 server {
     listen 443 ssl http2;
-    server_name ocr.insightpulseai.net;
+    server_name ocr.insightpulseai.com;
 
-    ssl_certificate     /etc/letsencrypt/live/ocr.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/ocr.insightpulseai.net/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/ocr.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ocr.insightpulseai.com/privkey.pem;
 
     location /health { proxy_pass http://127.0.0.1:8100/health; }
     location /v1/parse { proxy_pass http://127.0.0.1:8100/v1/parse; }
 }
 EOF"
 
-ssh root@159.223.75.148 "ln -s /etc/nginx/sites-available/ocr.insightpulseai.net.conf /etc/nginx/sites-enabled/"
-ssh root@159.223.75.148 "certbot certonly --webroot -w /var/www/letsencrypt -d ocr.insightpulseai.net"
+ssh root@159.223.75.148 "ln -s /etc/nginx/sites-available/ocr.insightpulseai.com.conf /etc/nginx/sites-enabled/"
+ssh root@159.223.75.148 "certbot certonly --webroot -w /var/www/letsencrypt -d ocr.insightpulseai.com"
 ssh root@159.223.75.148 "nginx -t && systemctl reload nginx"
 
 # Step 6: Update DNS (via DO dashboard or API) (5 min)
-# Change: ocr.insightpulseai.net A record 188.166.237.231 → 159.223.75.148
+# Change: ocr.insightpulseai.com A record 188.166.237.231 → 159.223.75.148
 
 # Step 7: Wait for DNS propagation (5-60 min)
-dig +short ocr.insightpulseai.net  # Should return 159.223.75.148
+dig +short ocr.insightpulseai.com  # Should return 159.223.75.148
 
 # Step 8: Test OCR service on new host (5 min)
-curl -I https://ocr.insightpulseai.net/health
+curl -I https://ocr.insightpulseai.com/health
 # Expected: 200 OK from primary droplet
 
 # Step 9: Stop OCR services on old droplet (5 min)
@@ -912,7 +912,7 @@ doctl compute droplet delete $OCR_ID  # Requires confirmation
 
 **Verification**:
 ```bash
-curl -I https://ocr.insightpulseai.net/health
+curl -I https://ocr.insightpulseai.com/health
 # Expected: 200 OK from 159.223.75.148
 
 ssh root@159.223.75.148 "docker ps | grep ocr | wc -l"
@@ -1062,8 +1062,8 @@ echo "Load Balancer IP: $LB_IP"
 
 # Step 5: Update DNS records to point to LB (5 min)
 # Change A records:
-# erp.insightpulseai.net: 159.223.75.148 → $LB_IP
-# n8n.insightpulseai.net: 159.223.75.148 → $LB_IP
+# erp.insightpulseai.com: 159.223.75.148 → $LB_IP
+# n8n.insightpulseai.com: 159.223.75.148 → $LB_IP
 
 # Step 6: Monitor LB health (ongoing)
 doctl compute load-balancer get <lb-id> --format "Status,HealthCheck"
@@ -1074,7 +1074,7 @@ doctl compute load-balancer get <lb-id> --format "Status,HealthCheck"
 doctl compute load-balancer list
 # Expected: 1 LB "production-lb" with 2 droplets
 
-curl -I https://erp.insightpulseai.net
+curl -I https://erp.insightpulseai.com
 # Expected: 200 OK via load balancer
 ```
 
@@ -1185,7 +1185,7 @@ curl -I https://erp.insightpulseai.net
 4. **MLflow Tracking Server** (optional, on GPU droplet):
    - Port: 5000
    - Storage: Spaces backend for artifacts
-   - UI: `https://mlflow.insightpulseai.net` (via nginx proxy)
+   - UI: `https://mlflow.insightpulseai.com` (via nginx proxy)
 
 5. **n8n Deployment Workflow**:
    - Trigger: New checkpoint uploaded to Spaces
@@ -1440,13 +1440,13 @@ variable "region" {
 variable "domain" {
   description = "Base domain for DNS records"
   type        = string
-  default     = "insightpulseai.net"
+  default     = "insightpulseai.com"
 }
 
 variable "alert_email" {
   description = "Email for monitoring alerts"
   type        = string
-  default     = "devops@insightpulseai.net"
+  default     = "devops@insightpulseai.com"
 }
 ```
 
@@ -1686,7 +1686,7 @@ resource "digitalocean_firewall" "production" {
 # dns.tf
 
 # Import existing domain (must be added to DO first)
-# Run: doctl compute domain create insightpulseai.net
+# Run: doctl compute domain create insightpulseai.com
 data "digitalocean_domain" "main" {
   name = var.domain
 }
@@ -1747,7 +1747,7 @@ resource "digitalocean_record" "superset" {
   ttl    = 300
 }
 
-# Fix for ipa.insightpulseai.net (P0-3 resolution)
+# Fix for ipa.insightpulseai.com (P0-3 resolution)
 # Option A: Point to n8n/primary if IPA service needed
 resource "digitalocean_record" "ipa" {
   count = var.enable_ipa_service ? 1 : 0
@@ -2078,11 +2078,11 @@ OCR_ID=$(doctl compute droplet list --format "ID,Name" | grep "ocr-service-dropl
 terraform import digitalocean_droplet.ocr[0] $OCR_ID
 
 # Import domain
-terraform import digitalocean_domain.main insightpulseai.net
+terraform import digitalocean_domain.main insightpulseai.com
 
 # Import DNS records (repeat for each record)
-terraform import digitalocean_record.erp insightpulseai.net,<record-id>
-# Get record IDs: doctl compute domain records list insightpulseai.net
+terraform import digitalocean_record.erp insightpulseai.com,<record-id>
+# Get record IDs: doctl compute domain records list insightpulseai.com
 
 # Import App Platform apps
 MCP_APP_ID=$(doctl apps list --format "ID,Spec.Name" | grep "pulse-hub-web" | awk '{print $1}')
@@ -2117,8 +2117,8 @@ terraform plan  # Should show "No changes" if all resources imported correctly
   - [ ] Restart containers or fix application errors
   - [ ] Verify all 3 containers show `(healthy)` status
 
-- [ ] **P0-3: Resolve ipa.insightpulseai.net DNS** (30 min)
-  - [ ] Search codebase for references to `ipa.insightpulseai.net`
+- [ ] **P0-3: Resolve ipa.insightpulseai.com DNS** (30 min)
+  - [ ] Search codebase for references to `ipa.insightpulseai.com`
   - [ ] Determine if service should exist or is deprecated
   - [ ] Option A: Add DNS A record + nginx config if service needed
   - [ ] Option B: Document as deprecated and remove all references
@@ -2162,8 +2162,8 @@ terraform plan  # Should show "No changes" if all resources imported correctly
   - [ ] Copy docker-compose to primary droplet
   - [ ] Start OCR service on primary droplet
   - [ ] Update nginx config on primary
-  - [ ] Get Let's Encrypt certificate for ocr.insightpulseai.net
-  - [ ] Update DNS: ocr.insightpulseai.net → 159.223.75.148
+  - [ ] Get Let's Encrypt certificate for ocr.insightpulseai.com
+  - [ ] Update DNS: ocr.insightpulseai.com → 159.223.75.148
   - [ ] Wait for DNS propagation
   - [ ] Test OCR service on new host
   - [ ] Stop OCR services on old droplet
@@ -2236,7 +2236,7 @@ dig @8.8.8.8 +short <hostname>  # Google DNS
 dig @1.1.1.1 +short <hostname>  # Cloudflare DNS
 
 # List all DNS records (requires DO API token)
-doctl compute domain records list insightpulseai.net
+doctl compute domain records list insightpulseai.com
 ```
 
 ### DigitalOcean CLI

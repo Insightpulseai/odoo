@@ -213,20 +213,20 @@ def run_production_health_check(client):
     check = CheckResult(
         name="production_health",
         integration="vercel",
-        description="Check production domain health (erp.insightpulseai.net)",
+        description="Check production domain health (erp.insightpulseai.com)",
         status="FAIL"
     )
 
     try:
         # This checks the Odoo domain which may be on DO, not Vercel
         # But it's part of the overall deployment verification
-        resp = client.request("GET", "https://erp.insightpulseai.net/web/health")
+        resp = client.request("GET", "https://erp.insightpulseai.com/web/health")
         check.http_status = resp["status_code"]
         check.latency_ms = resp["latency_ms"]
 
         if resp["status_code"] == 200:
             check.status = "PASS"
-            check.evidence = {"domain": "erp.insightpulseai.net", "healthy": True}
+            check.evidence = {"domain": "erp.insightpulseai.com", "healthy": True}
         else:
             check.error = f"Production health check returned: {resp['status_code']}"
 

@@ -318,8 +318,8 @@ The IPAI module suite implements a **five-layer architecture** designed for ente
 **n8n Environment Variables** (required):
 ```bash
 N8N_API_KEY=<n8n-api-key>
-N8N_BASE_URL=https://ipa.insightpulseai.net
-ODOO_URL=https://odoo.insightpulseai.net
+N8N_BASE_URL=https://ipa.insightpulseai.com
+ODOO_URL=https://odoo.insightpulseai.com
 ODOO_DB=odoo
 ODOO_USERNAME=admin
 ODOO_PASSWORD=<odoo-admin-password>
@@ -369,7 +369,7 @@ CREATE POLICY "Allow authenticated users" ON finance_ppm.task_queue
 
 **Communication Pattern**: n8n → Mattermost Webhook
 
-**Webhook URL**: `https://mattermost.insightpulseai.net/hooks/<webhook-id>`
+**Webhook URL**: `https://mattermost.insightpulseai.com/hooks/<webhook-id>`
 
 **Message Formats**:
 ```json
@@ -377,7 +377,7 @@ CREATE POLICY "Allow authenticated users" ON finance_ppm.task_queue
 {
   "text": "⚠️ **BIR 1601-C (Dec 2025)** due in 7 days",
   "username": "Finance PPM Bot",
-  "icon_url": "https://insightpulseai.net/logo.png",
+  "icon_url": "https://insightpulseai.com/logo.png",
   "attachments": [{
     "color": "#ff9900",
     "fields": [

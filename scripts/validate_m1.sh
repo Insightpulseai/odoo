@@ -7,7 +7,7 @@
 
 set -euo pipefail
 
-DOMAIN="erp.insightpulseai.net"
+DOMAIN="erp.insightpulseai.com"
 INSTALL_DIR="/opt/odoo-ce"
 
 echo "========================================="

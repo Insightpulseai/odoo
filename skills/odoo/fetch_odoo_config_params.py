@@ -61,7 +61,7 @@ def handle(keys: List[str]) -> Dict[str, Any]:
     if not isinstance(keys, list):
         raise ValueError("keys must be a list of strings")
 
-    odoo_url = os.getenv("ODOO_URL", "https://erp.insightpulseai.net")
+    odoo_url = os.getenv("ODOO_URL", "https://erp.insightpulseai.com")
     odoo_db = os.getenv("ODOO_DB")
     odoo_user = os.getenv("ODOO_USER")
     odoo_password = os.getenv("ODOO_PASSWORD")

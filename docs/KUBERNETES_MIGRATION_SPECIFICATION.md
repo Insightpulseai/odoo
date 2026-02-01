@@ -37,8 +37,8 @@
 **File:** `kubernetes/ingress.yaml`
 - **Ingress.yaml**: Public routing replacing Traefik labels
 - **Domains**:
-  - `erp.insightpulseai.net` → Odoo service
-  - `auth.insightpulseai.net` → Keycloak service
+  - `erp.insightpulseai.com` → Odoo service
+  - `auth.insightpulseai.com` → Keycloak service
 
 ### 5. Configuration Management
 **File:** `kubernetes/config.yaml`

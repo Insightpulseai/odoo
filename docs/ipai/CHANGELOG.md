@@ -480,7 +480,7 @@ psql "$POSTGRES_URL" -c "SELECT name, active FROM ir_cron WHERE name ILIKE '%tbw
 **Mitigation**:
 ```bash
 # 1. Capture new baselines after Odoo 18 upgrade
-node scripts/snap.js --routes="/expenses,/tasks,/finance/ppm" --base-url="https://odoo.insightpulseai.net"
+node scripts/snap.js --routes="/expenses,/tasks,/finance/ppm" --base-url="https://odoo.insightpulseai.com"
 
 # 2. Update baselines in Supabase
 node scripts/update_baselines.js --odoo-version="18.0"

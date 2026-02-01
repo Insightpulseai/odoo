@@ -35,7 +35,7 @@ git push origin main
 
 **GitHub Actions will execute:**
 - `build_and_push` job → Creates `ghcr.io/jgtolentino/odoo-ce:latest`
-- `deploy_to_prod` job → Deploys to `erp.insightpulseai.net`
+- `deploy_to_prod` job → Deploys to `erp.insightpulseai.com`
 
 ## 📋 Deployment Sequence (What Happens)
 
@@ -142,7 +142,7 @@ This will trigger the complete CD pipeline, creating your custom Odoo image and 
 | **Build Time** | 2025-11-25 09:19 UTC |
 | **Image Digest** | `sha256:c1031faa81ed610ccee641791240c96f769f3738255e4c7c1b9a6160f0c7e31d` |
 | **VPS** | 159.223.75.148 (2 CPUs, 8GB RAM) |
-| **Domain** | erp.insightpulseai.net |
+| **Domain** | erp.insightpulseai.com |
 | **Container Status** | Running |
 | **Health Check** | Pass |
 | **Architecture Warnings** | None ✅ |
@@ -235,7 +235,7 @@ curl http://127.0.0.1:8069/web/health
 
 | Metric | Value |
 |--------|-------|
-| **Domain** | erp.insightpulseai.net |
+| **Domain** | erp.insightpulseai.com |
 | **Certificate Authority** | Let's Encrypt |
 | **Certificate Expiry** | 2026-02-23 (90 days, auto-renewal enabled) |
 | **Protocol** | HTTP/2 + TLS 1.2/1.3 |
@@ -256,7 +256,7 @@ mkdir -p /var/www/letsencrypt
 cat > /etc/nginx/sites-available/erp-temp.conf << 'EOF'
 server {
     listen 80;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/letsencrypt;
@@ -278,27 +278,27 @@ systemctl reload nginx
 # 5. Obtain Let's Encrypt certificate
 certbot certonly --webroot \
   -w /var/www/letsencrypt \
-  -d erp.insightpulseai.net \
+  -d erp.insightpulseai.com \
   --non-interactive \
   --agree-tos \
-  --email jake@insightpulseai.net
+  --email jake@insightpulseai.com
 
 # 6. Enable full HTTPS configuration
 rm /etc/nginx/sites-enabled/erp-temp.conf
-ln -sf /etc/nginx/sites-available/erp.insightpulseai.net.conf \
-       /etc/nginx/sites-enabled/erp.insightpulseai.net.conf
+ln -sf /etc/nginx/sites-available/erp.insightpulseai.com.conf \
+       /etc/nginx/sites-enabled/erp.insightpulseai.com.conf
 systemctl reload nginx
 ```
 
 ### Nginx HTTPS Configuration
 
-**File**: `/etc/nginx/sites-available/erp.insightpulseai.net.conf`
+**File**: `/etc/nginx/sites-available/erp.insightpulseai.com.conf`
 
 ```nginx
 # HTTP → HTTPS redirect
 server {
     listen 80;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
     location /.well-known/acme-challenge/ {
         root /var/www/letsencrypt;
@@ -312,10 +312,10 @@ server {
 # HTTPS with Odoo proxy
 server {
     listen 443 ssl http2;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
-    ssl_certificate     /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
     ssl_protocols       TLSv1.2 TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5;
 
@@ -338,11 +338,11 @@ server {
 
 ```bash
 # Test HTTP → HTTPS redirect
-curl -I http://erp.insightpulseai.net
-# Expected: HTTP 301 → https://erp.insightpulseai.net/
+curl -I http://erp.insightpulseai.com
+# Expected: HTTP 301 → https://erp.insightpulseai.com/
 
 # Test HTTPS response
-curl -I https://erp.insightpulseai.net
+curl -I https://erp.insightpulseai.com
 # Expected: HTTP/2 303 (Odoo redirect to /odoo)
 
 # Verify certificate
@@ -370,7 +370,7 @@ systemctl reload nginx
 
 ### Production URLs
 
-- **HTTPS**: https://erp.insightpulseai.net
-- **HTTP** (redirects): http://erp.insightpulseai.net
+- **HTTPS**: https://erp.insightpulseai.com
+- **HTTP** (redirects): http://erp.insightpulseai.com
 
 All HTTP traffic automatically redirects to HTTPS for secure communication.

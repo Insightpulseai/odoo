@@ -54,7 +54,7 @@ procedures:
         phase: "Deployment"
         actions:
           - "Use deploy_odoo_module skill"
-          - "Rsync to erp.insightpulseai.net"
+          - "Rsync to erp.insightpulseai.com"
           - "Upgrade module: odoo -u module_name"
           - "Restart Odoo container"
           - "Check health endpoint"
@@ -97,7 +97,7 @@ procedures:
         phase: "Gather Logs"
         actions:
           - "Odoo logs: docker logs odoo-odoo-1 --tail 100"
-          - "OCR logs: ssh ocr.insightpulseai.net 'journalctl -u ai-inference-hub -n 100'"
+          - "OCR logs: ssh ocr.insightpulseai.com 'journalctl -u ai-inference-hub -n 100'"
           - "n8n logs: check n8n execution history"
           - "Odoo OCR quality: analyze_odoo_logs from ocr.expense.log"
 
@@ -186,7 +186,7 @@ procedures:
       - step: 5
         phase: "Deploy Adapter Update"
         actions:
-          - "Deploy adapter to ocr.insightpulseai.net"
+          - "Deploy adapter to ocr.insightpulseai.com"
           - "Method: git push → DigitalOcean App Platform auto-deploy"
           - "Or: rsync + restart service"
           - "Monitor logs: check first 10 OCR calls"

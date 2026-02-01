@@ -20,7 +20,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/xmlrpc/2/object",
+        "url": "https://erp.insightpulseai.com/xmlrpc/2/object",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "sendBody": true,
@@ -50,7 +50,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Build Mattermost message\nconst clusters = $input.all().map(item => item.json);\n\nlet message = '## 🚨 Daily Closing Digest\\n\\n';\nmessage += `**Date**: ${new Date().toLocaleDateString('en-PH', {timeZone: 'Asia/Manila'})}\\n\\n`;\n\nfor (const cluster of clusters) {\n  message += `### ${cluster.cluster}\\n`;\n  message += `- **In Progress**: ${cluster.in_progress}\\n`;\n  message += `- **Blocked**: ${cluster.blocked} ⚠️\\n`;\n  message += `- **Ready to Post**: ${cluster.ready_to_post}\\n`;\n  message += `- **Total**: ${cluster.total}\\n\\n`;\n  \n  if (cluster.blocked > 0) {\n    message += `**Blocked Tasks**:\\n`;\n    for (const task of cluster.tasks.filter(t => t.stage === 'Blocked')) {\n      message += `  - ${task.name} (${task.owner}) - Deadline: ${task.deadline}\\n`;\n    }\n    message += '\\n';\n  }\n}\n\nmessage += '\\n[View in Odoo](https://erp.insightpulseai.net/web#action=project.action_view_task)';\n\nreturn {json: {text: message}};"
+        "jsCode": "// Build Mattermost message\nconst clusters = $input.all().map(item => item.json);\n\nlet message = '## 🚨 Daily Closing Digest\\n\\n';\nmessage += `**Date**: ${new Date().toLocaleDateString('en-PH', {timeZone: 'Asia/Manila'})}\\n\\n`;\n\nfor (const cluster of clusters) {\n  message += `### ${cluster.cluster}\\n`;\n  message += `- **In Progress**: ${cluster.in_progress}\\n`;\n  message += `- **Blocked**: ${cluster.blocked} ⚠️\\n`;\n  message += `- **Ready to Post**: ${cluster.ready_to_post}\\n`;\n  message += `- **Total**: ${cluster.total}\\n\\n`;\n  \n  if (cluster.blocked > 0) {\n    message += `**Blocked Tasks**:\\n`;\n    for (const task of cluster.tasks.filter(t => t.stage === 'Blocked')) {\n      message += `  - ${task.name} (${task.owner}) - Deadline: ${task.deadline}\\n`;\n    }\n    message += '\\n';\n  }\n}\n\nmessage += '\\n[View in Odoo](https://erp.insightpulseai.com/web#action=project.action_view_task)';\n\nreturn {json: {text: message}};"
       },
       "name": "Function - Build Message",
       "type": "n8n-nodes-base.code",

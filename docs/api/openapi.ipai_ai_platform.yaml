@@ -28,7 +28,7 @@ info:
     url: https://github.com/jgtolentino/odoo-ce
 
 servers:
-  - url: https://erp.insightpulseai.net
+  - url: https://erp.insightpulseai.com
     description: Production Odoo server
   - url: https://spdtwktxdalcfigzeqrz.supabase.co
     description: Supabase (KB vector store)

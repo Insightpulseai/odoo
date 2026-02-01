@@ -10,7 +10,7 @@ This guide covers production deployment of InsightPulse Odoo CE 18 (M1 milestone
 
 - **Droplet**: Ubuntu 22.04 or 24.04 LTS
 - **Resources**: Minimum 2 CPU, 4GB RAM, 80GB SSD
-- **DNS**: A record pointing `erp.insightpulseai.net` to droplet IP
+- **DNS**: A record pointing `erp.insightpulseai.com` to droplet IP
 - **Network**: Ports 22, 80, 443 accessible
 
 ### Access Requirements
@@ -39,10 +39,10 @@ cat /etc/os-release | grep VERSION=
 
 ```bash
 # Check DNS resolution
-host erp.insightpulseai.net
+host erp.insightpulseai.com
 
 # Expected output:
-# erp.insightpulseai.net has address YOUR_DROPLET_IP
+# erp.insightpulseai.com has address YOUR_DROPLET_IP
 ```
 
 If DNS not resolving, wait for propagation (can take up to 48 hours, typically 5-15 minutes).
@@ -125,7 +125,7 @@ After deployment completes, you'll see:
 ✅ Deployment Complete!
 =========================================
 
-Odoo URL: https://erp.insightpulseai.net
+Odoo URL: https://erp.insightpulseai.com
 Admin Email: admin
 Master Password: AbC123XyZ...32chars...
 
@@ -143,7 +143,7 @@ Backups: /opt/odoo-backups (daily at 2 AM)
 
 ### Create Database
 
-1. Navigate to `https://erp.insightpulseai.net/web`
+1. Navigate to `https://erp.insightpulseai.com/web`
 2. Click "Manage Databases"
 3. Click "Create Database"
 4. Fill in:
@@ -273,7 +273,7 @@ docker compose up -d
 docker ps
 
 # Check Odoo health endpoint
-curl -sf https://erp.insightpulseai.net/web/health | jq
+curl -sf https://erp.insightpulseai.com/web/health | jq
 
 # Check PostgreSQL
 docker exec odoo-db pg_isready -U odoo
@@ -371,7 +371,7 @@ curl -v http://127.0.0.1:8069/web/health
 nginx -t
 
 # Check SSL certificate
-openssl s_client -connect erp.insightpulseai.net:443 -servername erp.insightpulseai.net
+openssl s_client -connect erp.insightpulseai.com:443 -servername erp.insightpulseai.com
 
 # Check UFW firewall
 sudo ufw status

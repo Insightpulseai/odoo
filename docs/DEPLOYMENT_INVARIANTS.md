@@ -94,10 +94,10 @@ docker exec odoo-ce ls -la /mnt/extra-addons  # MUST exist
 
 ### HTTP Health
 ```bash
-GET https://erp.insightpulseai.net/web/login → 200
-GET https://erp.insightpulseai.net/web → 200 or 303
-GET https://erp.insightpulseai.net/web/assets/*/web.assets_frontend.min.css → 200 or 303
-GET https://erp.insightpulseai.net/web/assets/*/web.assets_frontend_minimal.min.js → 200 or 303
+GET https://erp.insightpulseai.com/web/login → 200
+GET https://erp.insightpulseai.com/web → 200 or 303
+GET https://erp.insightpulseai.com/web/assets/*/web.assets_frontend.min.css → 200 or 303
+GET https://erp.insightpulseai.com/web/assets/*/web.assets_frontend_minimal.min.js → 200 or 303
 ```
 
 ### Database Health
@@ -176,7 +176,7 @@ echo "✓ Production health OK"
 - ✅ Health check verifies container is up
 - ✅ Compose topology gate validates depends_on
 
-**Detection**: `curl -I https://erp.insightpulseai.net/web/login | head -1`
+**Detection**: `curl -I https://erp.insightpulseai.com/web/login | head -1`
 
 ### 500 Asset Errors Prevention
 **Root Cause**: Asset compilation/serving failure
@@ -187,7 +187,7 @@ echo "✓ Production health OK"
 - ✅ Database selection invariant (no hard-pin to uninitialized DB)
 - ✅ Asset build gate in CI
 
-**Detection**: `curl -I https://erp.insightpulseai.net/web/assets/1/0/web.assets_frontend.min.css`
+**Detection**: `curl -I https://erp.insightpulseai.com/web/assets/1/0/web.assets_frontend.min.css`
 
 ### OWL Error Prevention (Client-Side)
 **Root Cause**: JavaScript bundle contains view with undefined field
@@ -253,7 +253,7 @@ docker compose -f deploy/docker-compose.prod.v0.10.0.yml restart odoo
 sleep 40
 
 # 4. Test assets
-curl -I https://erp.insightpulseai.net/web/assets/1/0/web.assets_frontend.min.css
+curl -I https://erp.insightpulseai.com/web/assets/1/0/web.assets_frontend.min.css
 ```
 
 ### If OWL errors occur:

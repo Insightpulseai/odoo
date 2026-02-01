@@ -1,6 +1,6 @@
 # n8n Credentials Bootstrap – Finance Stack
 
-Scope: `n8n.insightpulseai.net` – Finance PPM, OCR, CI telemetry workflows
+Scope: `n8n.insightpulseai.com` – Finance PPM, OCR, CI telemetry workflows
 
 ---
 
@@ -10,8 +10,8 @@ Scope: `n8n.insightpulseai.net` – Finance PPM, OCR, CI telemetry workflows
 - Channels:
   - Mattermost: `#finance-alerts`, `#ci-health`
 - Systems:
-  - Odoo CE 18 (`erp.insightpulseai.net`)
-  - n8n (`https://n8n.insightpulseai.net/`)
+  - Odoo CE 18 (`erp.insightpulseai.com`)
+  - n8n (`https://n8n.insightpulseai.com/`)
   - Supabase (finance analytics DB)
 
 ---
@@ -28,7 +28,7 @@ Export template (for local testing only):
 
 ```bash
 export N8N_API_KEY="YOUR_N8N_API_KEY"
-export N8N_BASE_URL="https://n8n.insightpulseai.net"
+export N8N_BASE_URL="https://n8n.insightpulseai.com"
 ```
 
 ---
@@ -41,7 +41,7 @@ export N8N_BASE_URL="https://n8n.insightpulseai.net"
 * Type: HTTP Request credentials
 * Fields:
 
-  * Base URL: `https://erp.insightpulseai.net`
+  * Base URL: `https://erp.insightpulseai.com`
   * Auth: API key / header
   * Header: `X-ODOO-API-KEY: ****`
 

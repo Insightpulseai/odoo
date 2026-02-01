@@ -1,8 +1,8 @@
-domain: insightpulseai.net
+domain: insightpulseai.com
 
 # Records you pasted (normalized):
 records:
-  - { name: "www", type: "CNAME", value: "insightpulseai.net." }
+  - { name: "www", type: "CNAME", value: "insightpulseai.com." }
   - { name: "@", type: "A", value: "178.128.112.214" }
   - { name: "mcp", type: "A", value: "178.128.112.214" }
   - { name: "n8n", type: "A", value: "178.128.112.214" }
@@ -10,7 +10,7 @@ records:
   - { name: "auth", type: "A", value: "178.128.112.214" }
   - { name: "superset", type: "A", value: "178.128.112.214" }
 
-  # Mailgun subdomain: mg.insightpulseai.net
+  # Mailgun subdomain: mg.insightpulseai.com
   - { name: "email.mg", type: "CNAME", value: "mailgun.org." }
   - { name: "mg", type: "MX", value: "mxa.mailgun.org.", priority: 10 }
   - { name: "mg", type: "MX", value: "mxb.mailgun.org.", priority: 10 }

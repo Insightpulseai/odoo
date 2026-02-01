@@ -1,6 +1,6 @@
 # Database Selector Issue - Troubleshooting Guide
 
-**Problem**: `https://erp.insightpulseai.net/web/login` redirects to `/web/database/selector`
+**Problem**: `https://erp.insightpulseai.com/web/login` redirects to `/web/database/selector`
 
 **Root Cause**: Database connection failures cause Odoo to show database selector
 
@@ -10,7 +10,7 @@
 
 ```bash
 # Check if login redirects to selector
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 # If you see: location: /web/database/selector → PROBLEM
 
 # Check Odoo logs for database connection failures
@@ -75,7 +75,7 @@ ssh root@178.128.112.214 "docker exec odoo-prod grep dbfilter /etc/odoo/odoo.con
 # Expected: dbfilter = ^odoo$
 
 # Test that login goes directly to login page (not selector)
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 # Expected: HTTP/2 200 (not 303 redirect to /web/database/selector)
 ```
 
@@ -125,7 +125,7 @@ ssh root@178.128.112.214 "docker logs odoo-prod 2>&1 | tail -20"
 After applying fixes:
 
 1. ✅ No database connection errors in logs
-2. ✅ `https://erp.insightpulseai.net/web/login` returns HTTP 200 (not 303 redirect)
+2. ✅ `https://erp.insightpulseai.com/web/login` returns HTTP 200 (not 303 redirect)
 3. ✅ Login page shows Odoo login form (not database selector)
 4. ✅ Can log in with admin credentials
 5. ✅ No database dropdown in UI (only one database available)
@@ -206,6 +206,6 @@ ssh root@178.128.112.214 "docker logs odoo-prod -f"
 ---
 
 **Last Updated**: 2026-01-14
-**Applies To**: Production Odoo CE 18.0 (`erp.insightpulseai.net`)
+**Applies To**: Production Odoo CE 18.0 (`erp.insightpulseai.com`)
 **Container**: `odoo-prod`
 **Database**: `odoo` on managed PostgreSQL

@@ -1,9 +1,9 @@
-# Incident Report: 502 Bad Gateway - erp.insightpulseai.net
+# Incident Report: 502 Bad Gateway - erp.insightpulseai.com
 
 ## Summary
 - **Date**: 2026-02-01 04:09 UTC
 - **Symptom**: 502 Bad Gateway returned by nginx/1.29.4
-- **Affected Service**: erp.insightpulseai.net (Odoo ERP production)
+- **Affected Service**: erp.insightpulseai.com (Odoo ERP production)
 - **Status**: FIX COMMITTED - Requires deployment
 
 ## Root Cause Analysis
@@ -37,7 +37,7 @@ upstream odoo {
 
 ### 1. Updated nginx upstream configuration
 
-**File**: `deploy/nginx/erp.insightpulseai.net.conf`
+**File**: `deploy/nginx/erp.insightpulseai.com.conf`
 
 ```diff
 -upstream odoo {
@@ -89,8 +89,8 @@ cd /opt/odoo-ce/repo
 git pull origin claude/erp-odoo-implementation-M3RDD
 
 # 2. Copy updated nginx config
-sudo cp deploy/nginx/erp.insightpulseai.net.conf /etc/nginx/sites-available/
-sudo ln -sf /etc/nginx/sites-available/erp.insightpulseai.net.conf /etc/nginx/sites-enabled/
+sudo cp deploy/nginx/erp.insightpulseai.com.conf /etc/nginx/sites-available/
+sudo ln -sf /etc/nginx/sites-available/erp.insightpulseai.com.conf /etc/nginx/sites-enabled/
 
 # 3. Test nginx config
 sudo nginx -t
@@ -103,7 +103,7 @@ cd /opt/odoo-ce/deploy
 docker compose -f docker-compose.prod.yml up -d
 
 # 6. Verify
-curl -I https://erp.insightpulseai.net/web/health
+curl -I https://erp.insightpulseai.com/web/health
 ```
 
 ## Verification Checklist
@@ -112,7 +112,7 @@ curl -I https://erp.insightpulseai.net/web/health
 - [ ] nginx reload successful
 - [ ] Odoo container running (`docker ps | grep odoo`)
 - [ ] Health check returns 200 (`curl http://127.0.0.1:8069/web/health`)
-- [ ] External access works (`curl -I https://erp.insightpulseai.net`)
+- [ ] External access works (`curl -I https://erp.insightpulseai.com`)
 
 ## Prevention
 
@@ -124,6 +124,6 @@ curl -I https://erp.insightpulseai.net/web/health
 
 | File | Change |
 |------|--------|
-| `deploy/nginx/erp.insightpulseai.net.conf` | Fixed upstream to use localhost |
+| `deploy/nginx/erp.insightpulseai.com.conf` | Fixed upstream to use localhost |
 | `deploy/docker-compose.prod.yml` | Added port 8072 for longpolling |
 | `scripts/deploy/diagnose_502.sh` | New diagnostic/recovery script |

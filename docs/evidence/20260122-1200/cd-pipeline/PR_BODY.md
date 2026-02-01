@@ -31,4 +31,4 @@ https://github.com/jgtolentino/odoo-ce/settings/secrets/actions
 - [ ] Add `DIGITALOCEAN_TOKEN` secret to GitHub
 - [ ] Merge to main
 - [ ] Verify CD pipeline runs successfully
-- [ ] Check https://erp.insightpulseai.net/web/health returns 200
+- [ ] Check https://erp.insightpulseai.com/web/health returns 200

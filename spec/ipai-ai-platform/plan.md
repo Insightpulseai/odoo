@@ -347,7 +347,7 @@ IPAI_CONNECTORS_TOKEN=<secure_random_token>
 
 # Exporter
 IPAI_KB_EXPORT_LOOKBACK_HOURS=24
-IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.net
+IPAI_PUBLIC_BASE_URL=https://erp.insightpulseai.com
 ```
 
 ---

@@ -21,7 +21,7 @@
     },
     {
       "parameters": {
-        "url": "https://odoo.insightpulseai.net/xmlrpc/2/common",
+        "url": "https://odoo.insightpulseai.com/xmlrpc/2/common",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "requestMethod": "POST",
@@ -48,7 +48,7 @@
     },
     {
       "parameters": {
-        "url": "https://odoo.insightpulseai.net/xmlrpc/2/object",
+        "url": "https://odoo.insightpulseai.com/xmlrpc/2/object",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpBasicAuth",
         "requestMethod": "POST",
@@ -94,7 +94,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const record = $input.item.json;\nconst urgencyEmoji = {\n  'critical': '🚨',\n  'high': '⚠️',\n  'normal': 'ℹ️'\n};\n\nconst statusEmoji = {\n  'not_started': '❌',\n  'in_progress': '🔄',\n  'submitted': '✅',\n  'filed': '✅'\n};\n\nconst message = `${urgencyEmoji[record.urgency]} **BIR Deadline Alert**\n\n**Form:** ${record.name}\n**Deadline:** ${record.filing_deadline} (${record.days_remaining} days remaining)\n**Status:** ${statusEmoji[record.status]} ${record.status}\n**Completion:** ${record.completion_pct}%\n\n${record.urgency === 'critical' ? '⚠️ **URGENT: Deadline in 3 days or less!**' : ''}\n${record.completion_pct < 50 ? '⚠️ **Warning: Less than 50% complete**' : ''}\n\n[View in Odoo](https://odoo.insightpulseai.net/web#model=ipai.finance.bir_schedule)`;\n\nreturn {\n  json: {\n    text: message,\n    channel: record.urgency === 'critical' ? 'finance-urgent' : 'finance-alerts',\n    username: 'BIR Alert Bot',\n    icon_emoji: urgencyEmoji[record.urgency]\n  }\n};"
+        "jsCode": "const record = $input.item.json;\nconst urgencyEmoji = {\n  'critical': '🚨',\n  'high': '⚠️',\n  'normal': 'ℹ️'\n};\n\nconst statusEmoji = {\n  'not_started': '❌',\n  'in_progress': '🔄',\n  'submitted': '✅',\n  'filed': '✅'\n};\n\nconst message = `${urgencyEmoji[record.urgency]} **BIR Deadline Alert**\n\n**Form:** ${record.name}\n**Deadline:** ${record.filing_deadline} (${record.days_remaining} days remaining)\n**Status:** ${statusEmoji[record.status]} ${record.status}\n**Completion:** ${record.completion_pct}%\n\n${record.urgency === 'critical' ? '⚠️ **URGENT: Deadline in 3 days or less!**' : ''}\n${record.completion_pct < 50 ? '⚠️ **Warning: Less than 50% complete**' : ''}\n\n[View in Odoo](https://odoo.insightpulseai.com/web#model=ipai.finance.bir_schedule)`;\n\nreturn {\n  json: {\n    text: message,\n    channel: record.urgency === 'critical' ? 'finance-urgent' : 'finance-alerts',\n    username: 'BIR Alert Bot',\n    icon_emoji: urgencyEmoji[record.urgency]\n  }\n};"
       },
       "name": "Format Mattermost Message",
       "type": "n8n-nodes-base.code",
@@ -232,7 +232,7 @@
   "versionId": "1.0.0",
   "id": "bir-deadline-alert",
   "meta": {
-    "instanceId": "n8n.insightpulseai.net"
+    "instanceId": "n8n.insightpulseai.com"
   },
   "tags": [
     {

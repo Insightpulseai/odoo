@@ -23,7 +23,7 @@ The image demonstrates strong security fundamentals but has **3 critical gaps** 
 2. ❌ **Missing health check configuration** (Spec violation)
 3. ❌ **Missing environment variable defaults** (Spec violation)
 
-**Recommendation:** Apply fixes from remediation section before deploying to `erp.insightpulseai.net` (159.223.75.148).
+**Recommendation:** Apply fixes from remediation section before deploying to `erp.insightpulseai.com` (159.223.75.148).
 
 ---
 
@@ -34,18 +34,18 @@ The image demonstrates strong security fundamentals but has **3 critical gaps** 
 Based on your DigitalOcean infrastructure:
 
 **Primary Odoo Deployment:**
-- **Hostname:** `erp.insightpulseai.net`
+- **Hostname:** `erp.insightpulseai.com`
 - **Droplet:** `odoo-erp-prod` (SGP1, 4GB RAM, 80GB Disk)
 - **IP:** `159.223.75.148`
 - **DNS:** A record pointing to VPS
 - **SSL:** Let's Encrypt via CAA record
 
 **Related Services:**
-- **Auth:** `auth.insightpulseai.net` → 159.223.75.148 (same VPS)
-- **n8n:** `n8n.insightpulseai.net` → 159.223.75.148 (same VPS)
-- **OCR Service:** `ocr.insightpulseai.net` → 188.166.237.231 (separate droplet, 8GB)
-- **Superset BI:** `superset.insightpulseai.net` → App Platform
-- **MCP Coordinator:** `mcp.insightpulseai.net` → App Platform
+- **Auth:** `auth.insightpulseai.com` → 159.223.75.148 (same VPS)
+- **n8n:** `n8n.insightpulseai.com` → 159.223.75.148 (same VPS)
+- **OCR Service:** `ocr.insightpulseai.com` → 188.166.237.231 (separate droplet, 8GB)
+- **Superset BI:** `superset.insightpulseai.com` → App Platform
+- **MCP Coordinator:** `mcp.insightpulseai.com` → App Platform
 
 **Concern:** The VPS at 159.223.75.148 is hosting multiple services (Odoo + Auth + n8n) on 4GB RAM. This audit includes resource optimization recommendations.
 
@@ -264,7 +264,7 @@ ENV HOST=db \
 **Purpose:** Receipt OCR processing
 
 **Security Review:**
-- ✅ Connects to separate OCR service at `ocr.insightpulseai.net` (188.166.237.231)
+- ✅ Connects to separate OCR service at `ocr.insightpulseai.com` (188.166.237.231)
 - ✅ No embedded OCR libraries (reduces attack surface)
 - ⚠️ **Recommendation:** Ensure OCR service URL is configurable (not hardcoded)
 
@@ -369,20 +369,20 @@ doctl compute droplet resize odoo-erp-prod --size s-2vcpu-8gb --wait
 ```
 ┌─────────────────────────────────────────┐
 │  VPS: 159.223.75.148 (4GB RAM)         │
-│  ├── Odoo (erp.insightpulseai.net)     │
-│  ├── Auth (auth.insightpulseai.net)    │
-│  └── n8n (n8n.insightpulseai.net)      │
+│  ├── Odoo (erp.insightpulseai.com)     │
+│  ├── Auth (auth.insightpulseai.com)    │
+│  └── n8n (n8n.insightpulseai.com)      │
 └─────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────┐
 │  Separate VPS: 188.166.237.231 (8GB)   │
-│  └── OCR Service (ocr.insightpulseai.net)│
+│  └── OCR Service (ocr.insightpulseai.com)│
 └─────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────┐
 │  App Platform (Managed)                 │
-│  ├── Superset (superset.insightpulseai.net)│
-│  └── MCP (mcp.insightpulseai.net)      │
+│  ├── Superset (superset.insightpulseai.com)│
+│  └── MCP (mcp.insightpulseai.com)      │
 └─────────────────────────────────────────┘
 ```
 
@@ -593,7 +593,7 @@ curl -f http://127.0.0.1:8069/web/health
 
 **3. Web Interface Test**
 ```bash
-curl -I https://erp.insightpulseai.net/web
+curl -I https://erp.insightpulseai.com/web
 # Expected: HTTP/2 200 or 302 (redirect to login)
 ```
 
@@ -702,7 +702,7 @@ echo -e "${GREEN}✅ Smoke test complete - System operational${NC}"
 echo ""
 echo "Next steps:"
 echo "1. Monitor logs: docker compose logs -f odoo"
-echo "2. Test in browser: https://erp.insightpulseai.net"
+echo "2. Test in browser: https://erp.insightpulseai.com"
 echo "3. Verify custom modules: Login as admin → Apps → Search 'ipai'"
 ```
 
@@ -762,7 +762,7 @@ ufw enable
 
 Add to nginx/traefik config:
 ```nginx
-# For erp.insightpulseai.net
+# For erp.insightpulseai.com
 add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 add_header X-Frame-Options "SAMEORIGIN" always;
 add_header X-Content-Type-Options "nosniff" always;
@@ -932,7 +932,7 @@ doctl monitoring alert-policy create \
 
 ### 13.3 Approval Conditions
 
-**I approve deployment to `erp.insightpulseai.net` (159.223.75.148) IF:**
+**I approve deployment to `erp.insightpulseai.com` (159.223.75.148) IF:**
 
 - [x] Dockerfile updated with all fixes from Section 8.1
 - [x] Image built as v0.9.1 and pushed to GHCR

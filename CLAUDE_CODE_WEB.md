@@ -76,7 +76,7 @@ SUPABASE_SERVICE_ROLE_KEY=<set-in-session>
 ```
 N8N_HOST=n8n
 N8N_PORT=5678
-MATTERMOST_URL=https://mattermost.insightpulseai.net
+MATTERMOST_URL=https://mattermost.insightpulseai.com
 ```
 
 > **CRITICAL**: Never print secret values. Only print variable names.

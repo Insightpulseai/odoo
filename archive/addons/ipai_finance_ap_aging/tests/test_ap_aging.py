@@ -51,7 +51,7 @@ class TestAPAging(TransactionCase):
         self.user = self.env["res.users"].create(
             {
                 "name": "Test User RIM",
-                "login": "test.rim@insightpulseai.net",
+                "login": "test.rim@insightpulseai.com",
                 "employee_ids": [(4, self.employee.id)],
             }
         )
@@ -175,7 +175,7 @@ class TestAPAging(TransactionCase):
         # Set webhook URL in config parameters
         self.env["ir.config_parameter"].sudo().set_param(
             "ipai_finance_ap_aging.n8n_webhook_url",
-            "https://ipa.insightpulseai.net/webhook/test",
+            "https://ipa.insightpulseai.com/webhook/test",
         )
 
         # Generate snapshot (should trigger webhook)

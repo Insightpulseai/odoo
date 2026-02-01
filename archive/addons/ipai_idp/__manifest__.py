@@ -28,7 +28,7 @@ Compliant with OCA guidelines. No Odoo Enterprise dependencies.
     "version": "18.0.1.0.0",
     "category": "Document Management",
     "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "depends": [
         "base",

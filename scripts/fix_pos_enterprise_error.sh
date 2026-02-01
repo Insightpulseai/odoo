@@ -83,7 +83,7 @@ echo ""
 
 # Step 7: Test HTTP endpoint
 echo -e "${YELLOW}Step 7: Testing HTTP endpoint...${NC}"
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.net/web/login)
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://erp.insightpulseai.com/web/login)
 
 if [ "$HTTP_CODE" = "200" ]; then
     echo -e "${GREEN}✅ HTTP endpoint responding (HTTP $HTTP_CODE)${NC}"
@@ -116,7 +116,7 @@ echo "  ✅ Odoo restarted"
 echo "  ✅ Service health verified"
 echo ""
 echo "Next steps:"
-echo "  1. Test Settings page: https://erp.insightpulseai.net/web#action=base.action_res_config_settings"
+echo "  1. Test Settings page: https://erp.insightpulseai.com/web#action=base.action_res_config_settings"
 echo "  2. Navigate to Point of Sale settings"
 echo "  3. Verify no OwlError occurs"
 echo "  4. Check browser console for errors (F12)"

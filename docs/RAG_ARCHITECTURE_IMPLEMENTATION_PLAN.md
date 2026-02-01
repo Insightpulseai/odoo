@@ -442,16 +442,16 @@ WHERE table_schema = 'runtime' ORDER BY table_name;
 
 ```bash
 # Health check
-curl https://erp.insightpulseai.net/api/v1/health
+curl https://erp.insightpulseai.com/api/v1/health
 
 # Capability lookup
-curl "https://erp.insightpulseai.net/api/v1/capabilities?framework=sap_concur"
+curl "https://erp.insightpulseai.com/api/v1/capabilities?framework=sap_concur"
 
 # Error code lookup
-curl "https://erp.insightpulseai.net/api/v1/error-codes/lookup?pattern=CRAWL"
+curl "https://erp.insightpulseai.com/api/v1/error-codes/lookup?pattern=CRAWL"
 
 # Hybrid search
-curl -X POST "https://erp.insightpulseai.net/api/v1/answer" \
+curl -X POST "https://erp.insightpulseai.com/api/v1/answer" \
   -H "Content-Type: application/json" \
   -d '{"query": "expense approval workflow"}'
 ```

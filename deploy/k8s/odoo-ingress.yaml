@@ -15,10 +15,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - erp.insightpulseai.net
+    - erp.insightpulseai.com
     secretName: odoo-tls
   rules:
-  - host: erp.insightpulseai.net
+  - host: erp.insightpulseai.com
     http:
       paths:
       - path: /

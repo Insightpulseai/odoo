@@ -27,7 +27,7 @@ resources:
 
       notifications:
         - email_recipients:
-            - platform-alerts@insightpulseai.net
+            - platform-alerts@insightpulseai.com
           alerts:
             - on_failure
             - on_flow_failure

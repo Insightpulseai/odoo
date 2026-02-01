@@ -99,7 +99,7 @@ SUPABASE_FUNC="https://spdtwktxdalcfigzeqrz.supabase.co/functions/v1/github-app-
 check_url "$SUPABASE_FUNC" "Supabase Edge Function" || true
 
 # Check n8n webhooks
-N8N_BASE="https://n8n.insightpulseai.net"
+N8N_BASE="https://n8n.insightpulseai.com"
 check_url "$N8N_BASE" "n8n Base URL" || true
 
 echo ""

@@ -7,9 +7,9 @@ This document defines the canonical naming scheme for all resources across the I
 
 | Logical Component | Docker / Compose Name | Kubernetes Name(s) | DNS Record(s) | Image/Tag |
 |-------------------|----------------------|-------------------|---------------|-----------|
-| **Odoo Application** | `ipai-ce` | `odoo-deployment`, `odoo-service`, `odoo-ingress` | `erp.insightpulseai.net` | `ghcr.io/jgtolentino/odoo-ce:latest` |
+| **Odoo Application** | `ipai-ce` | `odoo-deployment`, `odoo-service`, `odoo-ingress` | `erp.insightpulseai.com` | `ghcr.io/jgtolentino/odoo-ce:latest` |
 | **PostgreSQL Database** | `ipai-db` | `postgres-statefulset`, `postgres-service` | - | `postgres:16` |
-| **Keycloak (SSO)** | `keycloak` | `keycloak-deployment`, `keycloak-service`, `keycloak-ingress` | `auth.insightpulseai.net` | `quay.io/keycloak/keycloak:latest` |
+| **Keycloak (SSO)** | `keycloak` | `keycloak-deployment`, `keycloak-service`, `keycloak-ingress` | `auth.insightpulseai.com` | `quay.io/keycloak/keycloak:latest` |
 | **Network** | `odoo-ce_ipai_backend` | `odoo-prod` (namespace) | - | - |
 
 ## Detailed Resource Specifications
@@ -52,7 +52,7 @@ This document defines the canonical naming scheme for all resources across the I
   - Type: `ClusterIP`
   - Port: `8069`
 - **Ingress**: `odoo-ingress`
-  - Host: `erp.insightpulseai.net`
+  - Host: `erp.insightpulseai.com`
   - TLS: Enabled
 
 #### PostgreSQL Resources
@@ -67,19 +67,19 @@ This document defines the canonical naming scheme for all resources across the I
   - Type: `ClusterIP`
   - Port: `8080`
 - **Ingress**: `keycloak-ingress`
-  - Host: `auth.insightpulseai.net`
+  - Host: `auth.insightpulseai.com`
   - TLS: Enabled
 
 ### DNS Records
 
 #### Primary Domain
-- **Base**: `insightpulseai.net`
+- **Base**: `insightpulseai.com`
 
 #### Subdomains
-- **ERP Application**: `erp.insightpulseai.net` → Odoo CE
-- **Authentication**: `auth.insightpulseai.net` → Keycloak SSO
-- **Documentation**: `docs.insightpulseai.net` → Documentation site
-- **API**: `api.insightpulseai.net` → API gateway (future)
+- **ERP Application**: `erp.insightpulseai.com` → Odoo CE
+- **Authentication**: `auth.insightpulseai.com` → Keycloak SSO
+- **Documentation**: `docs.insightpulseai.com` → Documentation site
+- **API**: `api.insightpulseai.com` → API gateway (future)
 
 ### File Paths and Locations
 
@@ -89,7 +89,7 @@ This document defines the canonical naming scheme for all resources across the I
 
 #### Odoo Configuration
 - **Main Config**: `deploy/odoo.conf`
-- **Nginx Config**: `deploy/nginx/erp.insightpulseai.net.conf`
+- **Nginx Config**: `deploy/nginx/erp.insightpulseai.com.conf`
 
 #### Kubernetes Manifests
 - **Namespace**: `deploy/k8s/namespace.yaml`

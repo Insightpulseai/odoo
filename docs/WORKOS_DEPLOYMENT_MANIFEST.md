@@ -62,7 +62,7 @@
 ## Verification Results
 
 ### HTTP Health Check
-- **URL**: https://erp.insightpulseai.net/web/login
+- **URL**: https://erp.insightpulseai.com/web/login
 - **Status**: ✅ 200 OK
 - **Timestamp**: 2025-12-25 16:48 UTC
 
@@ -141,7 +141,7 @@ docker exec -i odoo-postgres pg_restore \
 
 ## Access Information
 
-**Production URL**: https://erp.insightpulseai.net
+**Production URL**: https://erp.insightpulseai.com
 **WorkOS Modules**: Available in Apps menu
 **Test Credentials**: Use existing Odoo admin credentials
 

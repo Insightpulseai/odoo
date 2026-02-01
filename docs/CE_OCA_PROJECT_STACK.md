@@ -1,7 +1,7 @@
 # CE + OCA Project Stack Mapping (Odoo 18)
 
 **Document:** Odoo Enterprise Project App → CE + OCA Parity Matrix
-**Target:** InsightPulse ERP (`erp.insightpulseai.net`)
+**Target:** InsightPulse ERP (`erp.insightpulseai.com`)
 **Stack:** Odoo 18 CE + OCA 18.0 + ipai_* delta modules
 **Policy:** No Enterprise, no IAP. Always prefer **Config → OCA → Delta**.
 

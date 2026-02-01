@@ -8,10 +8,10 @@ The InsightPulse AI operations stack (`ipai-ops-stack`) hosts all runtime collab
 
 | Service | URL | Purpose |
 |---------|-----|---------|
-| Mattermost | https://chat.insightpulseai.net | Team chat & messaging |
-| Focalboard | https://boards.insightpulseai.net | Kanban project boards |
-| n8n | https://n8n.insightpulseai.net | Workflow automation |
-| Superset | https://superset.insightpulseai.net | Business intelligence |
+| Mattermost | https://chat.insightpulseai.com | Team chat & messaging |
+| Focalboard | https://boards.insightpulseai.com | Kanban project boards |
+| n8n | https://n8n.insightpulseai.com | Workflow automation |
+| Superset | https://superset.insightpulseai.com | Business intelligence |
 
 ## Architecture
 
@@ -43,10 +43,10 @@ The InsightPulse AI operations stack (`ipai-ops-stack`) hosts all runtime collab
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                        Internet                                  │
-│   chat.insightpulseai.net                                       │
-│   boards.insightpulseai.net                                     │
-│   n8n.insightpulseai.net                                        │
-│   superset.insightpulseai.net                                   │
+│   chat.insightpulseai.com                                       │
+│   boards.insightpulseai.com                                     │
+│   n8n.insightpulseai.com                                        │
+│   superset.insightpulseai.com                                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
@@ -131,10 +131,10 @@ Each connector provides a `Test Connection` button that verifies:
 ./scripts/healthcheck.sh
 
 # Individual checks
-curl https://chat.insightpulseai.net/api/v4/system/ping
-curl https://boards.insightpulseai.net/api/v2/ping
-curl https://n8n.insightpulseai.net/healthz
-curl https://superset.insightpulseai.net/health
+curl https://chat.insightpulseai.com/api/v4/system/ping
+curl https://boards.insightpulseai.com/api/v2/ping
+curl https://n8n.insightpulseai.com/healthz
+curl https://superset.insightpulseai.com/health
 ```
 
 ## Deployment

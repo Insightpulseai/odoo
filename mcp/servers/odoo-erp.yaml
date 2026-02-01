@@ -9,7 +9,7 @@ version: "0.1.0"
 # Connection settings (via coordinator)
 connection:
   type: http
-  url: https://mcp.insightpulseai.net
+  url: https://mcp.insightpulseai.com
   api_key: ${MCP_REMOTE_TOKEN}
   timeout: 60
   coordinator: true
@@ -23,7 +23,7 @@ capabilities:
 
 # Odoo instance configuration
 odoo:
-  url: https://odoo.insightpulseai.net
+  url: https://odoo.insightpulseai.com
   database: production
   username: admin
   password: ${ODOO_ADMIN_PASSWORD}

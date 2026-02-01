@@ -167,13 +167,13 @@ sleep 60
 **Step 11: Functional Smoke Tests**
 ```bash
 # Test critical workflows
-curl -sf https://odoo.insightpulseai.net/web/login | grep -q "Database Manager" && echo "✓ Login page accessible"
+curl -sf https://odoo.insightpulseai.com/web/login | grep -q "Database Manager" && echo "✓ Login page accessible"
 
 # Test Finance PPM dashboard
-curl -sf https://odoo.insightpulseai.net/ipai/finance/ppm | grep -q "TBWA Finance PPM Dashboard" && echo "✓ PPM Dashboard accessible"
+curl -sf https://odoo.insightpulseai.com/ipai/finance/ppm | grep -q "TBWA Finance PPM Dashboard" && echo "✓ PPM Dashboard accessible"
 
 # Test n8n webhook (BIR deadline alert)
-curl -X POST https://ipa.insightpulseai.net/webhook/bir-deadline-alert \
+curl -X POST https://ipa.insightpulseai.com/webhook/bir-deadline-alert \
   -H "Content-Type: application/json" \
   -d '{"test": true}' && echo "✓ n8n webhook responsive"
 ```
@@ -304,7 +304,7 @@ cd /opt/odoo-ce
 ```bash
 # Query n8n API
 curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
-  https://ipa.insightpulseai.net/api/v1/workflows | jq '.[] | {name, active}'
+  https://ipa.insightpulseai.com/api/v1/workflows | jq '.[] | {name, active}'
 
 # Expected: 3 workflows with active=true
 ```
@@ -312,7 +312,7 @@ curl -H "X-N8N-API-KEY: $N8N_API_KEY" \
 **Manual Trigger Test**:
 ```bash
 # Trigger BIR deadline alert workflow
-curl -X POST https://ipa.insightpulseai.net/webhook/bir-deadline-alert \
+curl -X POST https://ipa.insightpulseai.com/webhook/bir-deadline-alert \
   -H "Content-Type: application/json" \
   -d '{"test": true, "form": "1601-C", "days_until_deadline": 7}'
 
@@ -928,7 +928,7 @@ curl -X POST "$MATTERMOST_WEBHOOK_URL" \
 3. ✅ Clone `odoo-ce` repository
 4. ✅ Restore database from latest backup
 5. ✅ Deploy Docker Compose stack
-6. ✅ Update DNS (`erp.insightpulseai.net` → new IP)
+6. ✅ Update DNS (`erp.insightpulseai.com` → new IP)
 7. ✅ Run health checks
 8. ✅ Notify users
 

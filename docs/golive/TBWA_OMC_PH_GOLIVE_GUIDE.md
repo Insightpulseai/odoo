@@ -13,7 +13,7 @@
 |----------|----------|
 | **Checklist CSV** | `docs/golive/TBWA_OMC_PH_GOLIVE_CHECKLIST.csv` |
 | **Prod Server** | `159.223.75.148` |
-| **Prod URL** | `https://erp.insightpulseai.net` |
+| **Prod URL** | `https://erp.insightpulseai.com` |
 | **Database** | `odoo` |
 
 ---
@@ -24,7 +24,7 @@
 
 | Check | Command/Action |
 |-------|----------------|
-| Prod URL OK | `curl -I https://erp.insightpulseai.net` returns 200 |
+| Prod URL OK | `curl -I https://erp.insightpulseai.com` returns 200 |
 | Workers running | `docker ps \| grep odoo-erp-prod` shows healthy |
 | Mail queue cron | See automated check below |
 

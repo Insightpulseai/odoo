@@ -21,7 +21,7 @@ def main():
     output_file = sys.argv[1] if len(sys.argv) > 1 else "odoo_audit.json"
 
     # Default to production URL
-    odoo_url = os.environ.get("ODOO_BASE_URL", "https://erp.insightpulseai.net").rstrip("/")
+    odoo_url = os.environ.get("ODOO_BASE_URL", "https://erp.insightpulseai.com").rstrip("/")
 
     result = IntegrationResult(
         name="Odoo CE 19",

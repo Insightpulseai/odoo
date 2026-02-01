@@ -1,6 +1,6 @@
 # DNS Configuration and Mailgun Setup
 
-**Domain**: `insightpulseai.net`
+**Domain**: `insightpulseai.com`
 **Droplet IP**: `178.128.112.214`
 **Last Updated**: 2026-01-08
 
@@ -12,14 +12,14 @@ All subdomains point to the single production droplet for host-based nginx routi
 
 | Subdomain | Type | Value | Status | Purpose |
 |-----------|------|-------|--------|---------|
-| `erp.insightpulseai.net` | A | `178.128.112.214` | ✅ Active | Odoo CE 18.0 ERP |
-| `n8n.insightpulseai.net` | A | `178.128.112.214` | ✅ Active | n8n Workflow Automation |
-| `superset.insightpulseai.net` | A | `178.128.112.214` | ✅ Active | Apache Superset BI |
-| `mcp.insightpulseai.net` | A | `178.128.112.214` | 🟡 Placeholder | MCP Coordinator |
-| `ocr.insightpulseai.net` | A | `178.128.112.214` | 🟡 Placeholder | OCR Service (PaddleOCR-VL) |
-| `auth.insightpulseai.net` | A | `178.128.112.214` | 🟡 Placeholder | Authentication Service |
-| `chat.insightpulseai.net` | A | `178.128.112.214` | 🟡 Placeholder | Mattermost Chat |
-| `affine.insightpulseai.net` | A | `178.128.112.214` | 🟡 Placeholder | Affine Knowledge Base |
+| `erp.insightpulseai.com` | A | `178.128.112.214` | ✅ Active | Odoo CE 18.0 ERP |
+| `n8n.insightpulseai.com` | A | `178.128.112.214` | ✅ Active | n8n Workflow Automation |
+| `superset.insightpulseai.com` | A | `178.128.112.214` | ✅ Active | Apache Superset BI |
+| `mcp.insightpulseai.com` | A | `178.128.112.214` | 🟡 Placeholder | MCP Coordinator |
+| `ocr.insightpulseai.com` | A | `178.128.112.214` | 🟡 Placeholder | OCR Service (PaddleOCR-VL) |
+| `auth.insightpulseai.com` | A | `178.128.112.214` | 🟡 Placeholder | Authentication Service |
+| `chat.insightpulseai.com` | A | `178.128.112.214` | 🟡 Placeholder | Mattermost Chat |
+| `affine.insightpulseai.com` | A | `178.128.112.214` | 🟡 Placeholder | Affine Knowledge Base |
 
 **Status Legend**:
 - ✅ Active: Service deployed and accessible
@@ -42,7 +42,7 @@ upstream superset { server superset:8088; }
 # HTTP → HTTPS redirect
 server {
     listen 80;
-    server_name insightpulseai.net *.insightpulseai.net;
+    server_name insightpulseai.com *.insightpulseai.com;
     location /.well-known/acme-challenge/ { root /var/www/html; }
     location / { return 301 https://$host$request_uri; }
 }
@@ -50,9 +50,9 @@ server {
 # Active service routing (example: Odoo)
 server {
     listen 443 ssl http2;
-    server_name erp.insightpulseai.net;
-    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    server_name erp.insightpulseai.com;
+    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
 
     location / {
         proxy_pass http://odoo;
@@ -66,9 +66,9 @@ server {
 # Placeholder service routing (example: MCP)
 server {
     listen 443 ssl http2;
-    server_name mcp.insightpulseai.net;
-    ssl_certificate /etc/letsencrypt/live/mcp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/mcp.insightpulseai.net/privkey.pem;
+    server_name mcp.insightpulseai.com;
+    ssl_certificate /etc/letsencrypt/live/mcp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/mcp.insightpulseai.com/privkey.pem;
 
     location / {
         return 503 "MCP service not yet deployed";
@@ -94,14 +94,14 @@ apt-get update && apt-get install -y certbot
 # Obtain certificates (standalone mode, nginx stopped)
 systemctl stop nginx
 certbot certonly --standalone \
-    -d erp.insightpulseai.net \
-    -d n8n.insightpulseai.net \
-    -d superset.insightpulseai.net \
-    -d mcp.insightpulseai.net \
-    -d ocr.insightpulseai.net \
-    -d auth.insightpulseai.net \
-    -d chat.insightpulseai.net \
-    -d affine.insightpulseai.net \
+    -d erp.insightpulseai.com \
+    -d n8n.insightpulseai.com \
+    -d superset.insightpulseai.com \
+    -d mcp.insightpulseai.com \
+    -d ocr.insightpulseai.com \
+    -d auth.insightpulseai.com \
+    -d chat.insightpulseai.com \
+    -d affine.insightpulseai.com \
     --non-interactive --agree-tos --email business@insightpulseai.com
 
 # Restart nginx
@@ -125,7 +125,7 @@ systemctl status certbot.timer
 
 ## Mailgun Email Configuration
 
-**Domain**: `email.insightpulseai.net`
+**Domain**: `email.insightpulseai.com`
 **Region**: US
 **Purpose**: Transactional emails from Odoo, n8n, Mattermost
 
@@ -135,12 +135,12 @@ Add these records in DigitalOcean DNS:
 
 | Type | Name | Value | TTL | Purpose |
 |------|------|-------|-----|---------|
-| CNAME | `email.insightpulseai.net` | `mailgun.org` | 3600 | Mailgun routing |
-| TXT | `insightpulseai.net` | `v=spf1 include:mailgun.org ~all` | 3600 | SPF (Sender Policy Framework) |
-| TXT | `k1._domainkey.insightpulseai.net` | `k=rsa; p=MIGfMA0...` | 3600 | DKIM public key |
-| TXT | `_dmarc.insightpulseai.net` | `v=DMARC1; p=none; rua=mailto:postmaster@insightpulseai.net` | 3600 | DMARC policy |
-| MX | `insightpulseai.net` | `mxa.mailgun.org` (priority 10) | 3600 | Inbound mail |
-| MX | `insightpulseai.net` | `mxb.mailgun.org` (priority 10) | 3600 | Inbound mail backup |
+| CNAME | `email.insightpulseai.com` | `mailgun.org` | 3600 | Mailgun routing |
+| TXT | `insightpulseai.com` | `v=spf1 include:mailgun.org ~all` | 3600 | SPF (Sender Policy Framework) |
+| TXT | `k1._domainkey.insightpulseai.com` | `k=rsa; p=MIGfMA0...` | 3600 | DKIM public key |
+| TXT | `_dmarc.insightpulseai.com` | `v=DMARC1; p=none; rua=mailto:postmaster@insightpulseai.com` | 3600 | DMARC policy |
+| MX | `insightpulseai.com` | `mxa.mailgun.org` (priority 10) | 3600 | Inbound mail |
+| MX | `insightpulseai.com` | `mxb.mailgun.org` (priority 10) | 3600 | Inbound mail backup |
 
 **Note**: The actual DKIM public key (`p=MIGfMA0...`) is provided by Mailgun after domain verification. Retrieve from Mailgun dashboard under Domain Settings → DNS Records.
 
@@ -151,14 +151,14 @@ Add these records in DigitalOcean DNS:
 ```bash
 # Mailgun API credentials
 MAILGUN_API_KEY="key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-MAILGUN_DOMAIN="email.insightpulseai.net"
+MAILGUN_DOMAIN="email.insightpulseai.com"
 MAILGUN_API_BASE_URL="https://api.mailgun.net/v3"
 
 # Odoo email configuration
 EMAIL_HOST="smtp.mailgun.org"
 EMAIL_PORT="587"
 EMAIL_USE_TLS="True"
-EMAIL_HOST_USER="postmaster@email.insightpulseai.net"
+EMAIL_HOST_USER="postmaster@email.insightpulseai.com"
 EMAIL_HOST_PASSWORD="$MAILGUN_SMTP_PASSWORD"
 ```
 
@@ -171,14 +171,14 @@ EMAIL_HOST_PASSWORD="$MAILGUN_SMTP_PASSWORD"
 # Outgoing mail server (Mailgun SMTP)
 smtp_server = smtp.mailgun.org
 smtp_port = 587
-smtp_user = postmaster@email.insightpulseai.net
+smtp_user = postmaster@email.insightpulseai.com
 smtp_password = <MAILGUN_SMTP_PASSWORD>
 smtp_ssl = False
 smtp_ssl_starttls = True
 
 # Email settings
-email_from = InsightPulse AI <noreply@insightpulseai.net>
-bounce_email = bounce@insightpulseai.net
+email_from = InsightPulse AI <noreply@insightpulseai.com>
+bounce_email = bounce@insightpulseai.com
 ```
 
 ---
@@ -190,8 +190,8 @@ bounce_email = bounce@insightpulseai.net
 ```bash
 # Verify A records resolve to droplet IP
 for subdomain in erp n8n superset mcp ocr auth chat affine; do
-  echo "$subdomain.insightpulseai.net:"
-  dig +short $subdomain.insightpulseai.net
+  echo "$subdomain.insightpulseai.com:"
+  dig +short $subdomain.insightpulseai.com
   echo ""
 done
 
@@ -203,8 +203,8 @@ done
 ```bash
 # Verify SSL certificates and HTTP → HTTPS redirect
 for subdomain in erp n8n superset mcp ocr auth chat affine; do
-  echo "$subdomain.insightpulseai.net:"
-  curl -I https://$subdomain.insightpulseai.net 2>&1 | head -1
+  echo "$subdomain.insightpulseai.com:"
+  curl -I https://$subdomain.insightpulseai.com 2>&1 | head -1
   echo ""
 done
 
@@ -215,16 +215,16 @@ done
 
 ```bash
 # Verify SPF record
-dig +short TXT insightpulseai.net | grep "v=spf1"
+dig +short TXT insightpulseai.com | grep "v=spf1"
 
 # Verify DKIM record
-dig +short TXT k1._domainkey.insightpulseai.net
+dig +short TXT k1._domainkey.insightpulseai.com
 
 # Verify DMARC record
-dig +short TXT _dmarc.insightpulseai.net
+dig +short TXT _dmarc.insightpulseai.com
 
 # Verify MX records
-dig +short MX insightpulseai.net
+dig +short MX insightpulseai.com
 ```
 
 ### 4. Email Send Test
@@ -232,8 +232,8 @@ dig +short MX insightpulseai.net
 ```bash
 # Test with Mailgun API
 curl -s --user "api:$MAILGUN_API_KEY" \
-    https://api.mailgun.net/v3/email.insightpulseai.net/messages \
-    -F from="test@insightpulseai.net" \
+    https://api.mailgun.net/v3/email.insightpulseai.com/messages \
+    -F from="test@insightpulseai.com" \
     -F to="your-email@example.com" \
     -F subject="Mailgun DNS Test" \
     -F text="This is a test email to verify Mailgun configuration."
@@ -241,7 +241,7 @@ curl -s --user "api:$MAILGUN_API_KEY" \
 # Test with Odoo (from Odoo shell)
 docker exec -it odoo-core odoo shell -d odoo_core <<EOF
 env['mail.mail'].create({
-    'email_from': 'noreply@insightpulseai.net',
+    'email_from': 'noreply@insightpulseai.com',
     'email_to': 'your-email@example.com',
     'subject': 'Odoo Email Test',
     'body_html': '<p>Test email from Odoo</p>'
@@ -260,15 +260,15 @@ EOF
 **Diagnosis**:
 ```bash
 # Check DigitalOcean DNS settings
-doctl compute domain records list insightpulseai.net
+doctl compute domain records list insightpulseai.com
 
 # Verify DNS propagation
-nslookup erp.insightpulseai.net 8.8.8.8
+nslookup erp.insightpulseai.com 8.8.8.8
 ```
 
 **Resolution**:
 1. Log into DigitalOcean dashboard
-2. Navigate to Networking → Domains → insightpulseai.net
+2. Navigate to Networking → Domains → insightpulseai.com
 3. Verify A records point to correct droplet IP
 4. Wait 5-10 minutes for DNS propagation
 
@@ -322,13 +322,13 @@ ssh root@178.128.112.214 "curl -I http://localhost:8069"
 **Diagnosis**:
 ```bash
 # Check Mailgun DNS records
-dig +short TXT insightpulseai.net | grep spf
-dig +short TXT k1._domainkey.insightpulseai.net
-dig +short MX insightpulseai.net
+dig +short TXT insightpulseai.com | grep spf
+dig +short TXT k1._domainkey.insightpulseai.com
+dig +short MX insightpulseai.com
 
 # Check Mailgun domain status
 curl -s --user "api:$MAILGUN_API_KEY" \
-    https://api.mailgun.net/v3/domains/email.insightpulseai.net | jq .
+    https://api.mailgun.net/v3/domains/email.insightpulseai.com | jq .
 
 # Check Odoo mail queue
 docker exec -it odoo-core odoo shell -d odoo_core <<EOF
@@ -367,8 +367,8 @@ ssh root@178.128.112.214 "certbot renew --dry-run"
 
 When adding new subdomains:
 
-1. Add A record in DigitalOcean DNS → `insightpulseai.net`
-2. Obtain SSL certificate: `certbot certonly --standalone -d newservice.insightpulseai.net`
+1. Add A record in DigitalOcean DNS → `insightpulseai.com`
+2. Obtain SSL certificate: `certbot certonly --standalone -d newservice.insightpulseai.com`
 3. Add nginx server block in `/opt/odoo-ce/repo/deploy/nginx-complete.conf`
 4. Restart nginx: `systemctl restart nginx` or `docker-compose restart nginx`
 
@@ -377,7 +377,7 @@ When adding new subdomains:
 ```bash
 # Check Mailgun domain health monthly
 curl -s --user "api:$MAILGUN_API_KEY" \
-    https://api.mailgun.net/v3/domains/email.insightpulseai.net/verify \
+    https://api.mailgun.net/v3/domains/email.insightpulseai.com/verify \
     | jq .
 ```
 

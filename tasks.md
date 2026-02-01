@@ -24,7 +24,7 @@ Status: Draft checklist aligned with plan.md
   - [ ] PostgreSQL service.
   - [ ] Volumes for `addons/` and `oca/`.
 - [ ] Add `deploy/odoo.conf` with correct `addons_path` and `dbfilter`.
-- [ ] Add `deploy/nginx.conf` (or equivalent) for `erp.insightpulseai.net`.
+- [ ] Add `deploy/nginx.conf` (or equivalent) for `erp.insightpulseai.com`.
 - [ ] Set up SSL (Let's Encrypt or DO-managed cert).
 - [ ] Smoke test Odoo CE:
   - [ ] Login works.
@@ -90,5 +90,5 @@ Status: Draft checklist aligned with plan.md
 - [ ] Document:
   - [ ] Admin runbook.
   - [ ] User quick-start guides.
-- [ ] Create production DB and point `erp.insightpulseai.net` at it.
+- [ ] Create production DB and point `erp.insightpulseai.com` at it.
 - [ ] Final sign-off on MVP readiness.

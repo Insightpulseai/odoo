@@ -209,13 +209,13 @@ Phase 4: Continuous Integration (P1)
 ```bash
 # DNS resolution
 for subdomain in erp n8n superset mcp ocr auth chat affine; do
-  dig +short $subdomain.insightpulseai.net
+  dig +short $subdomain.insightpulseai.com
 done
 
 # Service health
-curl -I https://erp.insightpulseai.net
-curl -I https://n8n.insightpulseai.net
-curl -I https://superset.insightpulseai.net
+curl -I https://erp.insightpulseai.com
+curl -I https://n8n.insightpulseai.com
+curl -I https://superset.insightpulseai.com
 ```
 
 ### Supabase

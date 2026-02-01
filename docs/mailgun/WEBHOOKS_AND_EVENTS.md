@@ -51,7 +51,7 @@ Mailgun sends HTTP POST requests to configured webhook URLs when email events oc
 
 ### Step 1: Navigate to Webhooks
 
-1. Go to: https://app.mailgun.com/mg/sending/domains/mg.insightpulseai.net/webhooks
+1. Go to: https://app.mailgun.com/mg/sending/domains/mg.insightpulseai.com/webhooks
 2. Click **"Add Webhook"**
 
 ### Step 2: Configure Webhook
@@ -61,7 +61,7 @@ Mailgun sends HTTP POST requests to configured webhook URLs when email events oc
 | Field | Value |
 |-------|-------|
 | **Event Type** | `delivered` |
-| **URL** | `https://ipa.insightpulseai.net/webhooks/mailgun/delivered` |
+| **URL** | `https://ipa.insightpulseai.com/webhooks/mailgun/delivered` |
 
 **Repeat for additional event types** (failed, opened, clicked, etc.)
 
@@ -91,8 +91,8 @@ Mailgun sends HTTP POST requests to configured webhook URLs when email events oc
     "id": "Ase7i2zsRYeDXztHGENqRA",
     "message": {
       "headers": {
-        "message-id": "20260114120000.1.ABCD1234@mg.insightpulseai.net",
-        "from": "noreply@mg.insightpulseai.net",
+        "message-id": "20260114120000.1.ABCD1234@mg.insightpulseai.com",
+        "from": "noreply@mg.insightpulseai.com",
         "to": "recipient@example.com",
         "subject": "Expense Approval Required - EXP-2026-001"
       }
@@ -241,7 +241,7 @@ return $json['event-data'];
 4. **Edit**: Update expense status field (email_sent_at, email_status)
 5. **Mattermost**: Notify if delivery failed
 
-**Webhook URL**: `https://ipa.insightpulseai.net/webhooks/mailgun/delivery-status`
+**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/delivery-status`
 
 ### Use Case 2: Bounce Handling
 
@@ -253,7 +253,7 @@ return $json['event-data'];
 3. **HTTP Request**: Update Odoo user record (mark email as bounced)
 4. **Mattermost**: Alert admin to update user's email
 
-**Webhook URL**: `https://ipa.insightpulseai.net/webhooks/mailgun/bounces`
+**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/bounces`
 
 ### Use Case 3: Spam Complaint Handling
 
@@ -266,7 +266,7 @@ return $json['event-data'];
 4. **Odoo XML-RPC**: Update user preferences (opt-out from emails)
 5. **Log**: Record complaint in compliance log
 
-**Webhook URL**: `https://ipa.insightpulseai.net/webhooks/mailgun/complaints`
+**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/complaints`
 
 ### Use Case 4: Email Engagement Analytics
 
@@ -280,7 +280,7 @@ return $json['event-data'];
 3. **Supabase**: Insert analytics record
 4. **Dashboard**: Visualize engagement metrics in Superset
 
-**Webhook URL**: `https://ipa.insightpulseai.net/webhooks/mailgun/engagement`
+**Webhook URL**: `https://ipa.insightpulseai.com/webhooks/mailgun/engagement`
 
 ---
 
@@ -290,31 +290,31 @@ return $json['event-data'];
 
 ```bash
 curl -X POST --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/domains/mg.insightpulseai.net/webhooks \
+  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks \
   -F "id=delivered" \
-  -F "url=https://ipa.insightpulseai.net/webhooks/mailgun/delivered"
+  -F "url=https://ipa.insightpulseai.com/webhooks/mailgun/delivered"
 ```
 
 ### List Webhooks
 
 ```bash
 curl --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/domains/mg.insightpulseai.net/webhooks
+  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks
 ```
 
 ### Update Webhook
 
 ```bash
 curl -X PUT --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/domains/mg.insightpulseai.net/webhooks/delivered \
-  -F "url=https://ipa.insightpulseai.net/webhooks/mailgun/delivery-status"
+  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks/delivered \
+  -F "url=https://ipa.insightpulseai.com/webhooks/mailgun/delivery-status"
 ```
 
 ### Delete Webhook
 
 ```bash
 curl -X DELETE --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/domains/mg.insightpulseai.net/webhooks/delivered
+  https://api.mailgun.net/v3/domains/mg.insightpulseai.com/webhooks/delivered
 ```
 
 ---
@@ -333,8 +333,8 @@ curl -X DELETE --user "api:$MAILGUN_API_KEY" \
 ```bash
 # Send test email via Mailgun API
 curl -X POST --user "api:$MAILGUN_API_KEY" \
-  https://api.mailgun.net/v3/mg.insightpulseai.net/messages \
-  -F "from=test@mg.insightpulseai.net" \
+  https://api.mailgun.net/v3/mg.insightpulseai.com/messages \
+  -F "from=test@mg.insightpulseai.com" \
   -F "to=recipient@example.com" \
   -F "subject=Webhook Test" \
   -F "text=This email will trigger delivery webhook." \

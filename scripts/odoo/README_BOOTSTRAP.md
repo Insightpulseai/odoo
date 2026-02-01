@@ -69,7 +69,7 @@ ODOO_TARGET_USER_LOGIN="admin" \
 **What it does**:
 - Everything from minimal bootstrap, PLUS:
 - Sets company emails to `business@insightpulseai.com`
-- Sets website to `https://insightpulseai.net`
+- Sets website to `https://insightpulseai.com`
 - Sets currency to PHP (Philippine Peso)
 - Sets country to PH (Philippines)
 - Updates partner records to match
@@ -98,7 +98,7 @@ ODOO_DB=odoo                          # Database name
 ODOO_OLD_COMPANY_NAME=YourCompany     # Existing company to rename
 ODOO_NEW_COMPANY_NAME=InsightPulseAI  # New company name
 ODOO_NEW_COMPANY_EMAIL=business@insightpulseai.com
-ODOO_NEW_COMPANY_WEBSITE=https://insightpulseai.net
+ODOO_NEW_COMPANY_WEBSITE=https://insightpulseai.com
 ODOO_TBWA_COMPANY_NAME=TBWA\SMP       # Second company name
 ODOO_TBWA_COMPANY_EMAIL=business@insightpulseai.com
 ODOO_TBWA_COMPANY_WEBSITE=            # Leave empty for no website
@@ -126,7 +126,7 @@ ODOO_CURRENCY_CODE=PHP                # Currency code (ISO 4217)
 **Usage**:
 ```bash
 # Set credentials
-export ODOO_URL="http://localhost:8069"  # or https://erp.insightpulseai.net
+export ODOO_URL="http://localhost:8069"  # or https://erp.insightpulseai.com
 export ODOO_DB="odoo"
 export ODOO_USER="admin"
 export ODOO_PASS="your-admin-password"
@@ -144,7 +144,7 @@ ODOO_PASS=                            # Admin password (REQUIRED)
 ODOO_OLD_COMPANY_NAME=YourCompany
 ODOO_NEW_COMPANY_NAME=InsightPulseAI
 ODOO_NEW_COMPANY_EMAIL=business@insightpulseai.com
-ODOO_NEW_COMPANY_WEBSITE=https://insightpulseai.net
+ODOO_NEW_COMPANY_WEBSITE=https://insightpulseai.com
 ODOO_TBWA_COMPANY_NAME=TBWA\SMP
 ODOO_TBWA_COMPANY_EMAIL=business@insightpulseai.com
 ODOO_TARGET_USER_LOGIN=admin

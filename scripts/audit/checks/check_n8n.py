@@ -19,7 +19,7 @@ def main():
     output_file = sys.argv[1] if len(sys.argv) > 1 else "n8n_audit.json"
 
     # n8n base URL with default
-    n8n_url = os.environ.get("N8N_BASE_URL", "https://n8n.insightpulseai.net").rstrip("/")
+    n8n_url = os.environ.get("N8N_BASE_URL", "https://n8n.insightpulseai.com").rstrip("/")
     api_key = os.environ.get("N8N_API_KEY")
 
     result = IntegrationResult(

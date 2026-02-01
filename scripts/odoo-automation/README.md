@@ -9,7 +9,7 @@ This automation creates:
 - Email alias for task creation
 - Portal access for external users
 
-When TBWA sends email to e.g. `sample@insightpulseai.net`:
+When TBWA sends email to e.g. `sample@insightpulseai.com`:
 1. Mailgun receives email
 2. Mailgun POSTs to Odoo `/mailgate/mailgun`
 3. Odoo matches alias and creates task in project
@@ -19,11 +19,11 @@ When TBWA sends email to e.g. `sample@insightpulseai.net`:
 
 ```bash
 # Set environment variables
-export ODOO_URL="https://erp.insightpulseai.net/odoo"
+export ODOO_URL="https://erp.insightpulseai.com/odoo"
 export ODOO_DB="odoo"
-export ODOO_USER="admin@insightpulseai.net"
+export ODOO_USER="admin@insightpulseai.com"
 export ODOO_PASSWORD="your-password"
-export ALIAS_DOMAIN="insightpulseai.net"
+export ALIAS_DOMAIN="insightpulseai.com"
 
 # Create project with alias
 python create_project_alias.py \
@@ -42,8 +42,8 @@ After running the script, configure Mailgun:
 
 | Field | Value |
 |-------|-------|
-| **Expression** | `match_recipient("sample@insightpulseai.net")` |
-| **Action 1** | `forward("https://erp.insightpulseai.net/mailgate/mailgun")` |
+| **Expression** | `match_recipient("sample@insightpulseai.com")` |
+| **Action 1** | `forward("https://erp.insightpulseai.com/mailgate/mailgun")` |
 | **Action 2** | `stop()` |
 | **Priority** | `10` |
 
@@ -54,8 +54,8 @@ curl -s --user 'api:YOUR_MAILGUN_API_KEY' \
   https://api.mailgun.net/v3/routes \
   -F priority='10' \
   -F description='SAMPLE project tasks' \
-  -F expression='match_recipient("sample@insightpulseai.net")' \
-  -F action='forward("https://erp.insightpulseai.net/mailgate/mailgun")' \
+  -F expression='match_recipient("sample@insightpulseai.com")' \
+  -F action='forward("https://erp.insightpulseai.com/mailgate/mailgun")' \
   -F action='stop()'
 ```
 
@@ -75,7 +75,7 @@ curl -s --user 'api:YOUR_MAILGUN_API_KEY' \
 TBWA Producer
     |
     v
-sample@insightpulseai.net
+sample@insightpulseai.com
     |
     v
 Mailgun (receives email)
@@ -128,11 +128,11 @@ Options:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `ODOO_URL` | `https://erp.insightpulseai.net/odoo` | Odoo instance URL |
+| `ODOO_URL` | `https://erp.insightpulseai.com/odoo` | Odoo instance URL |
 | `ODOO_DB` | `odoo` | Database name |
 | `ODOO_USER` | (required) | Admin email |
 | `ODOO_PASSWORD` | (required) | Admin password |
-| `ALIAS_DOMAIN` | `insightpulseai.net` | Email domain |
+| `ALIAS_DOMAIN` | `insightpulseai.com` | Email domain |
 
 ## Troubleshooting
 

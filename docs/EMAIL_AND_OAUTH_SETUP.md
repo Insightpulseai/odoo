@@ -37,7 +37,7 @@ This guide covers complete configuration of:
 **For OAuth SSO (Sign in with Google)**:
 - Google Cloud Project created
 - OAuth 2.0 credentials configured
-- Authorized redirect URI: `https://erp.insightpulseai.net/auth_oauth/signin`
+- Authorized redirect URI: `https://erp.insightpulseai.com/auth_oauth/signin`
 
 **Current Configuration**:
 ```json
@@ -55,7 +55,7 @@ This guide covers complete configuration of:
 2. Select project: "cba-ai"
 3. Edit OAuth 2.0 Client ID
 4. Verify "Authorized redirect URIs" includes:
-   - `https://erp.insightpulseai.net/auth_oauth/signin`
+   - `https://erp.insightpulseai.com/auth_oauth/signin`
 5. If not present, add it and wait 5-10 minutes for propagation
 
 ---
@@ -178,7 +178,7 @@ If you prefer granular control or troubleshooting:
 **System Parameters** (`ir.config_parameter`):
 ```python
 {
-    'web.base.url': 'https://erp.insightpulseai.net',
+    'web.base.url': 'https://erp.insightpulseai.com',
     'web.base.url.freeze': 'True'
 }
 ```
@@ -187,7 +187,7 @@ If you prefer granular control or troubleshooting:
 1. User clicks "Sign in with Google" button
 2. Browser redirects to: `https://accounts.google.com/o/oauth2/auth?...`
 3. User selects Google account and grants permissions
-4. Google redirects back to: `https://erp.insightpulseai.net/auth_oauth/signin?code=...`
+4. Google redirects back to: `https://erp.insightpulseai.com/auth_oauth/signin?code=...`
 5. Odoo exchanges code for access token
 6. Odoo fetches user info from: `https://www.googleapis.com/oauth2/v3/userinfo`
 7. User logged in or account created if first time
@@ -199,7 +199,7 @@ If you prefer granular control or troubleshooting:
 ### Test 1: Gmail SMTP Connection
 
 **UI Method**:
-1. Login to Odoo: `https://erp.insightpulseai.net`
+1. Login to Odoo: `https://erp.insightpulseai.com`
 2. Navigate to: Settings → Technical → Email → Outgoing Mail Servers
 3. Click "Gmail SMTP" server record
 4. Click "Test Connection" button
@@ -276,7 +276,7 @@ EOF
 
 **Browser Test**:
 1. Open Chrome Incognito window
-2. Navigate to: `https://erp.insightpulseai.net`
+2. Navigate to: `https://erp.insightpulseai.com`
 3. **Expected**: Login page shows "Sign in with Google" button
 4. Click "Sign in with Google"
 5. **Expected**: Redirect to Google account selection
@@ -291,7 +291,7 @@ EOF
 
 **Issue 2**: `redirect_uri_mismatch` error
 - **Cause**: Google Cloud Console redirect URI not configured
-- **Fix**: Add `https://erp.insightpulseai.net/auth_oauth/signin` to Authorized redirect URIs
+- **Fix**: Add `https://erp.insightpulseai.com/auth_oauth/signin` to Authorized redirect URIs
 
 **Issue 3**: Infinite redirect loop (http:// ↔ https://)
 - **Cause**: nginx X-Forwarded-Proto not set to `https`
@@ -420,7 +420,7 @@ docker exec odoo-erp-prod psql -U odoo -d prod -c "
 **Error Message**:
 ```
 Error 400: redirect_uri_mismatch
-The redirect URI in the request, https://erp.insightpulseai.net/auth_oauth/signin,
+The redirect URI in the request, https://erp.insightpulseai.com/auth_oauth/signin,
 does not match the ones authorized for the OAuth client.
 ```
 
@@ -430,7 +430,7 @@ does not match the ones authorized for the OAuth client.
 3. Edit OAuth 2.0 Client ID
 4. Under "Authorized redirect URIs", add:
    ```
-   https://erp.insightpulseai.net/auth_oauth/signin
+   https://erp.insightpulseai.com/auth_oauth/signin
    ```
 5. Click "Save"
 6. Wait 5-10 minutes for propagation

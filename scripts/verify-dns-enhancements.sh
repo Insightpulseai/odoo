@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # DNS Enhancement Verification Script
-# Purpose: Verify recommended DNS changes for insightpulseai.net
+# Purpose: Verify recommended DNS changes for insightpulseai.com
 # Usage: ./scripts/verify-dns-enhancements.sh
 
 echo "════════════════════════════════════════════════════════════════"
-echo "DNS Enhancement Verification - insightpulseai.net"
+echo "DNS Enhancement Verification - insightpulseai.com"
 echo "════════════════════════════════════════════════════════════════"
 echo
 
@@ -47,17 +47,17 @@ echo
 
 verify_record \
     "1. Staging ERP DNS" \
-    "dig erp.staging.insightpulseai.net A +short" \
+    "dig erp.staging.insightpulseai.com A +short" \
     "178.128.112.214"
 
 verify_record \
     "2. Root SPF" \
-    "dig insightpulseai.net TXT +short | grep spf | sed 's/\"//g'" \
+    "dig insightpulseai.com TXT +short | grep spf | sed 's/\"//g'" \
     "include:mailgun.org"
 
 verify_record \
     "3. Root DMARC" \
-    "dig _dmarc.insightpulseai.net TXT +short | sed 's/\"//g'" \
+    "dig _dmarc.insightpulseai.com TXT +short | sed 's/\"//g'" \
     "v=DMARC1"
 
 echo "═══ EXISTING RECORDS (Sanity Check - DO NOT CHANGE) ═══"
@@ -65,27 +65,27 @@ echo
 
 verify_record \
     "4. Mailgun mg SPF (existing)" \
-    "dig mg.insightpulseai.net TXT +short | grep spf | sed 's/\"//g'" \
+    "dig mg.insightpulseai.com TXT +short | grep spf | sed 's/\"//g'" \
     "include:mailgun.org"
 
 verify_record \
     "5. Mailgun mg DMARC (existing)" \
-    "dig _dmarc.mg.insightpulseai.net TXT +short | sed 's/\"//g'" \
+    "dig _dmarc.mg.insightpulseai.com TXT +short | sed 's/\"//g'" \
     "v=DMARC1"
 
 verify_record \
     "6. Mailgun mg MX Records (existing)" \
-    "dig mg.insightpulseai.net MX +short" \
+    "dig mg.insightpulseai.com MX +short" \
     "mxa.mailgun.org"
 
 verify_record \
     "7. Root A Record (existing)" \
-    "dig insightpulseai.net A +short" \
+    "dig insightpulseai.com A +short" \
     "178.128.112.214"
 
 verify_record \
     "8. Production ERP DNS (existing)" \
-    "dig erp.insightpulseai.net A +short" \
+    "dig erp.insightpulseai.com A +short" \
     "178.128.112.214"
 
 echo "════════════════════════════════════════════════════════════════"

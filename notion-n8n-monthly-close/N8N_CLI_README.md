@@ -1,6 +1,6 @@
 # n8n CLI Management for InsightPulse ERP Finance Automation
 
-**n8n Instance**: `odoo-ipa-1` on `erp.insightpulseai.net`
+**n8n Instance**: `odoo-ipa-1` on `erp.insightpulseai.com`
 **Database**: PostgreSQL (odoo-n8n-postgres-1)
 **Cache**: Redis (odoo-n8n-redis-1)
 
@@ -10,7 +10,7 @@
 
 ### Base CLI Pattern
 ```bash
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 docker exec -u node -it odoo-ipa-1 n8n <command> [flags]
 ```
 
@@ -54,19 +54,19 @@ docker exec -u node -it odoo-ipa-1 n8n update:workflow --all --active=true
 
 **Export all workflows**:
 ```bash
-ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
+ssh root@erp.insightpulseai.com "docker exec -u node -it odoo-ipa-1 \
   n8n export:workflow --all --output=/files/backups/workflows-$(date +%Y%m%d).json"
 ```
 
 **Export all credentials** (sensitive!):
 ```bash
-ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
+ssh root@erp.insightpulseai.com "docker exec -u node -it odoo-ipa-1 \
   n8n export:credentials --all --output=/files/backups/credentials.json"
 ```
 
 **Download to local repo**:
 ```bash
-scp root@erp.insightpulseai.net:/files/backups/workflows-*.json \
+scp root@erp.insightpulseai.com:/files/backups/workflows-*.json \
   backups/
 ```
 
@@ -77,16 +77,16 @@ scp root@erp.insightpulseai.net:/files/backups/workflows-*.json \
 **Import workflows from repo**:
 ```bash
 # First upload JSON to server
-scp backups/odoo-workflows.json root@erp.insightpulseai.net:/tmp/
+scp backups/odoo-workflows.json root@erp.insightpulseai.com:/tmp/
 
 # Then import
-ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
+ssh root@erp.insightpulseai.com "docker exec -u node -it odoo-ipa-1 \
   n8n import:workflow --input=/tmp/odoo-workflows.json --separate"
 ```
 
 **Import credentials**:
 ```bash
-ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
+ssh root@erp.insightpulseai.com "docker exec -u node -it odoo-ipa-1 \
   n8n import:credentials --input=/tmp/credentials.json"
 ```
 
@@ -96,7 +96,7 @@ ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
 
 **Export all entities** (workflows + credentials + executions + users):
 ```bash
-ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
+ssh root@erp.insightpulseai.com "docker exec -u node -it odoo-ipa-1 \
   n8n export:entities --outputDir /files/entities-export \
   --includeExecutionHistoryDataTables=true"
 ```
@@ -166,7 +166,7 @@ This script:
 ### Morning Check (9 AM PHT)
 ```bash
 # Check if workflows ran successfully
-ssh root@erp.insightpulseai.net "docker logs odoo-ipa-1 --tail 50 | grep -E '(closing_daily_digest|bir_calendar_alerts)'"
+ssh root@erp.insightpulseai.com "docker logs odoo-ipa-1 --tail 50 | grep -E '(closing_daily_digest|bir_calendar_alerts)'"
 ```
 
 ### Manual Trigger (If Needed)
@@ -180,7 +180,7 @@ docker exec -u node -it odoo-ipa-1 n8n execute --id 26
 
 ### Weekly Backup (Automated via Cron)
 ```bash
-# /etc/cron.d/n8n-backup on erp.insightpulseai.net
+# /etc/cron.d/n8n-backup on erp.insightpulseai.com
 5 3 * * * root docker exec -u node odoo-ipa-1 n8n export:workflow --all --output=/files/backups/workflows-$(date +\%F).json
 ```
 
@@ -209,9 +209,9 @@ docker exec -u node -it odoo-ipa-1 n8n execute --id 26
 ### Connection Errors
 
 **Odoo connection failed**:
-- Verify URL: `https://erp.insightpulseai.net`
+- Verify URL: `https://erp.insightpulseai.com`
 - Verify API key: Check Odoo user settings
-- Test: `curl https://erp.insightpulseai.net/web/database/selector`
+- Test: `curl https://erp.insightpulseai.com/web/database/selector`
 
 **Supabase connection failed**:
 - Verify project URL: `https://xkxyvboeubffxxbebsll.supabase.co`
@@ -224,8 +224,8 @@ docker exec -u node -it odoo-ipa-1 n8n execute --id 26
 ### Credentials Not Found
 ```bash
 # Re-import credentials
-scp backups/credentials.json root@erp.insightpulseai.net:/tmp/
-ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
+scp backups/credentials.json root@erp.insightpulseai.com:/tmp/
+ssh root@erp.insightpulseai.com "docker exec -u node -it odoo-ipa-1 \
   n8n import:credentials --input=/tmp/credentials.json"
 ```
 
@@ -254,7 +254,7 @@ ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
 ## Development Workflow
 
 ### 1. Create/Edit Workflow in UI
-1. Login to n8n UI at https://ipa.insightpulseai.net
+1. Login to n8n UI at https://ipa.insightpulseai.com
 2. Create/edit workflow with visual editor
 3. Test with sample data
 4. Save and activate
@@ -262,11 +262,11 @@ ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
 ### 2. Export to Repo
 ```bash
 # Export single workflow by ID
-ssh root@erp.insightpulseai.net "docker exec -u node -it odoo-ipa-1 \
+ssh root@erp.insightpulseai.com "docker exec -u node -it odoo-ipa-1 \
   n8n export:workflow --id=25 --output=/files/backups/closing_daily_digest.json"
 
 # Download to local repo
-scp root@erp.insightpulseai.net:/files/backups/closing_daily_digest.json \
+scp root@erp.insightpulseai.com:/files/backups/closing_daily_digest.json \
   workflows/
 ```
 
@@ -292,7 +292,7 @@ ssh root@PROD_SERVER "docker exec -u node -it odoo-ipa-1 \
 - **n8n CLI Reference**: https://docs.n8n.io/hosting/cli-commands/
 - **Odoo XML-RPC**: https://www.odoo.com/documentation/18.0/developer/reference/external_api.html
 - **Supabase API**: https://supabase.com/docs/reference/javascript/introduction
-- **InsightPulse ERP**: https://erp.insightpulseai.net
+- **InsightPulse ERP**: https://erp.insightpulseai.com
 
 ---
 

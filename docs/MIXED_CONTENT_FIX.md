@@ -1,7 +1,7 @@
 # Mixed Content Fix - HTTPS Asset Loading
 
 **Date**: 2025-11-26
-**Issue**: Mixed Content errors causing broken CSS/JS on https://erp.insightpulseai.net
+**Issue**: Mixed Content errors causing broken CSS/JS on https://erp.insightpulseai.com
 **Status**: ✅ RESOLVED
 
 ## Problem Description
@@ -9,7 +9,7 @@
 After deploying Odoo CE v0.10.0 behind Nginx HTTPS proxy, the login page displayed without styling (plain white page). Browser console showed "Mixed Content" errors:
 
 ```
-Mixed Content: The page at 'https://erp.insightpulseai.net/web' was loaded over HTTPS,
+Mixed Content: The page at 'https://erp.insightpulseai.com/web' was loaded over HTTPS,
 but requested an insecure resource 'http://159.223.75.148:8069/web/assets/...'.
 This request has been blocked; the content must be served over HTTPS.
 ```
@@ -35,7 +35,7 @@ Used Odoo shell to set base URL and freeze it:
 
 ```bash
 docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON_SHELL'
-env['ir.config_parameter'].set_param('web.base.url', 'https://erp.insightpulseai.net')
+env['ir.config_parameter'].set_param('web.base.url', 'https://erp.insightpulseai.com')
 env['ir.config_parameter'].set_param('web.base.url.freeze', 'True')
 env.cr.commit()
 PYTHON_SHELL
@@ -71,7 +71,7 @@ docker restart odoo-ce
 ```bash
 docker exec -i odoo-ce odoo shell -d odoo --no-http <<'PYTHON_SHELL'
 print(env['ir.config_parameter'].get_param('web.base.url'))
-# Output: https://erp.insightpulseai.net
+# Output: https://erp.insightpulseai.com
 
 print(env['ir.config_parameter'].get_param('web.base.url.freeze'))
 # Output: True
@@ -80,18 +80,18 @@ PYTHON_SHELL
 
 ### HTML Assets
 ```bash
-curl -sL "https://erp.insightpulseai.net/web" | grep -E "(link|script)"
+curl -sL "https://erp.insightpulseai.com/web" | grep -E "(link|script)"
 ```
 
 **Expected**: Relative URLs like `/web/assets/...` (not absolute `http://` URLs)
 
 ### Browser Test
-1. Open: https://erp.insightpulseai.net/web
+1. Open: https://erp.insightpulseai.com/web
 2. Expected: Blue Odoo login background with proper styling
 3. Console (F12): No "Mixed Content" errors
 
 ### Debug Mode
-If issues persist, test with: https://erp.insightpulseai.net/web?debug=assets
+If issues persist, test with: https://erp.insightpulseai.com/web?debug=assets
 
 ## Technical Explanation
 
@@ -174,7 +174,7 @@ If HTTPS assets break again:
 
 3. **Verify Nginx headers**:
    ```bash
-   curl -I https://erp.insightpulseai.net/web | grep -i "x-forwarded"
+   curl -I https://erp.insightpulseai.com/web | grep -i "x-forwarded"
    ```
 
 ## References
@@ -185,14 +185,14 @@ If HTTPS assets break again:
   - PR #143: "Fix HTTPS asset loading"
 - **Deployment Version**: v0.10.0
 - **Server**: 159.223.75.148 (8GB RAM VPS)
-- **Domain**: erp.insightpulseai.net
+- **Domain**: erp.insightpulseai.com
 
 ## Acceptance Gates
 
 - ✅ Login page displays with blue background
 - ✅ CSS and JS assets load without errors
 - ✅ Browser console shows no "Mixed Content" warnings
-- ✅ `web.base.url` = `https://erp.insightpulseai.net`
+- ✅ `web.base.url` = `https://erp.insightpulseai.com`
 - ✅ `web.base.url.freeze` = `True`
 - ✅ Container remains healthy after restart
 - ✅ All assets use relative URLs or HTTPS absolute URLs

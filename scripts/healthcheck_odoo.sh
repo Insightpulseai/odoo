@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ODOO_URL="${ODOO_URL:-https://erp.insightpulseai.net/web/login}"
+ODOO_URL="${ODOO_URL:-https://erp.insightpulseai.com/web/login}"
 MM_WEBHOOK_URL="${MM_WEBHOOK_URL:-}"
 SERVICE_NAME="${SERVICE_NAME:-odoo-ce-prod}"
 N8N_WEBHOOK_URL="${N8N_WEBHOOK_URL:-}"

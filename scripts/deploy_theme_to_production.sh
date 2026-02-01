@@ -31,7 +31,7 @@ echo "4. Waiting for Odoo to come back online..."
 sleep 10
 
 for i in {1..12}; do
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://erp.insightpulseai.net/web/health" || echo "000")
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://erp.insightpulseai.com/web/health" || echo "000")
     if [ "$HTTP_CODE" = "200" ]; then
         echo "✅ Odoo is online (attempt $i/12)"
         break
@@ -47,7 +47,7 @@ echo "Deployment Complete"
 echo "==========================================="
 echo ""
 echo "Theme module: $MODULE_NAME"
-echo "Production URL: https://erp.insightpulseai.net/web/login"
+echo "Production URL: https://erp.insightpulseai.com/web/login"
 echo ""
 echo "✅ Login button should now be fixed:"
 echo "   - Black button (#000000)"

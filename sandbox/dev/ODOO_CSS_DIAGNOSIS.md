@@ -22,10 +22,10 @@ The "CSS error" banner is caused by **Nginx serving wrong content on HTTPS**:
   ```nginx
   server {
       listen 443 ssl;
-      server_name erp.insightpulseai.net;
+      server_name erp.insightpulseai.com;
       
-      ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-      ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+      ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+      ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
       
       root /usr/share/nginx/html/mattermost.com/solutions/industries/financial-services;
       index index.html;
@@ -38,8 +38,8 @@ The "CSS error" banner is caused by **Nginx serving wrong content on HTTPS**:
 
 ## Why Users See CSS Error
 
-1. User accesses `http://erp.insightpulseai.net`
-2. HTTP redirects to `https://erp.insightpulseai.net` (301)
+1. User accesses `http://erp.insightpulseai.com`
+2. HTTP redirects to `https://erp.insightpulseai.com` (301)
 3. HTTPS server block serves **Mattermost static HTML**
 4. Browser expects Odoo CSS assets
 5. Assets missing → **Red "CSS error" banner**
@@ -56,10 +56,10 @@ The "CSS error" banner is caused by **Nginx serving wrong content on HTTPS**:
 # BEFORE (current - WRONG)
 server {
     listen 443 ssl;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
     
-    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
     
     root /usr/share/nginx/html/mattermost.com/solutions/industries/financial-services;
     index index.html;
@@ -69,10 +69,10 @@ server {
 server {
     listen 443 ssl;
     http2 on;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
     
-    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
     
@@ -121,7 +121,7 @@ ssh root@178.128.112.214
 # 2. Edit nginx.conf (use vi or nano inside container)
 docker exec -it nginx-prod-v2 vi /etc/nginx/nginx.conf
 
-# 3. Find the "server_name erp.insightpulseai.net" HTTPS block
+# 3. Find the "server_name erp.insightpulseai.com" HTTPS block
 # 4. Replace "root /usr/share/nginx/html/mattermost..." block with proxy config above
 
 # 5. Test configuration
@@ -131,7 +131,7 @@ docker exec nginx-prod-v2 nginx -t
 docker exec nginx-prod-v2 nginx -s reload
 
 # 7. Verify
-curl -sL https://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
+curl -sL https://erp.insightpulseai.com/web/login | grep -o '<title>.*</title>'
 # Should show: <title>Build Ops Control Room</title> (Odoo)
 # NOT: <title>Communicate, collaborate...</title> (Mattermost)
 ```
@@ -156,7 +156,7 @@ curl -sL https://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
 
 ```bash
 # Test HTTPS CSS asset delivery
-$ curl -I https://erp.insightpulseai.net/web/assets/1/web.assets_common.min.css
+$ curl -I https://erp.insightpulseai.com/web/assets/1/web.assets_common.min.css
 
 HTTP/2 200
 server: nginx/1.29.4
@@ -175,15 +175,15 @@ This proves **WORLD B diagnosis** (reverse proxy misrouting), not WORLD A (Odoo 
 
 ```bash
 # Test HTTPS access
-curl -sL https://erp.insightpulseai.net/web/login | grep -o '<title>.*</title>'
+curl -sL https://erp.insightpulseai.com/web/login | grep -o '<title>.*</title>'
 # Expected: <title>Build Ops Control Room</title>
 
 # Test CSS assets
-curl -sI https://erp.insightpulseai.net/web/assets/web.assets_common.min.css
+curl -sI https://erp.insightpulseai.com/web/assets/web.assets_common.min.css
 # Expected: HTTP/2 200 content-type: text/css (not text/html)
 
 # Test in browser
-# Open: https://erp.insightpulseai.net
+# Open: https://erp.insightpulseai.com
 # Expected: Odoo login page, no red CSS error banner
 ```
 

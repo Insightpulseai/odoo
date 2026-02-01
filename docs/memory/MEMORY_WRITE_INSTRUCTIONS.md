@@ -19,7 +19,7 @@ If your environment supports a memory tool API call, use the following payload:
       "repo_url": "https://github.com/jgtolentino/odoo-ce",
       "wiki_url": "https://github.com/jgtolentino/odoo-ce/wiki",
       "owner": "jgtolentino",
-      "production_url": "https://erp.insightpulseai.net"
+      "production_url": "https://erp.insightpulseai.com"
     },
     "purpose": "Self-hosted Odoo 18 Community Edition + OCA stack with InsightPulse AI (IPAI) custom modules for PH expense/travel, equipment booking, finance month-end close, and BIR tax compliance.",
     "stack": {
@@ -58,7 +58,7 @@ VALUES (
       "repo_url": "https://github.com/jgtolentino/odoo-ce",
       "wiki_url": "https://github.com/jgtolentino/odoo-ce/wiki",
       "owner": "jgtolentino",
-      "production_url": "https://erp.insightpulseai.net"
+      "production_url": "https://erp.insightpulseai.com"
     },
     "purpose": "Self-hosted Odoo 18 Community Edition + OCA stack with InsightPulse AI (IPAI) custom modules for PH expense/travel, equipment booking, finance month-end close, and BIR tax compliance.",
     "stack": {

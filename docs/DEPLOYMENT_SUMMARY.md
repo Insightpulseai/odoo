@@ -182,9 +182,9 @@ git push origin main
 **Test TBWA Tenant Access**:
 ```bash
 # Access TBWA Odoo
-open https://tbwa.erp.insightpulseai.net
+open https://tbwa.erp.insightpulseai.com
 # OR
-open https://erp.insightpulseai.net?db=odoo_tbwa
+open https://erp.insightpulseai.com?db=odoo_tbwa
 
 # Login: admin / $ODOO_ADMIN_PASSWORD
 ```
@@ -193,7 +193,7 @@ open https://erp.insightpulseai.net?db=odoo_tbwa
 
 ```bash
 # 1. Access Superset
-open https://superset.insightpulseai.net
+open https://superset.insightpulseai.com
 
 # 2. Create TBWA workspace folder
 # - Go to Dashboards > Create folder: "tbwa"

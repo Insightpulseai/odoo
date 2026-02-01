@@ -18,7 +18,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://ocr.insightpulseai.net/api/ocr/receipt",
+        "url": "https://ocr.insightpulseai.com/api/ocr/receipt",
         "sendBody": true,
         "bodyParameters": {
           "parameters": [
@@ -108,7 +108,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://erp.insightpulseai.net/jsonrpc",
+        "url": "https://erp.insightpulseai.com/jsonrpc",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"call\",\n  \"params\": {\n    \"service\": \"object\",\n    \"method\": \"execute_kw\",\n    \"args\": [\n      \"{{ $env.ODOO_DB }}\",\n      {{ $env.ODOO_UID }},\n      \"{{ $env.ODOO_PASSWORD }}\",\n      \"hr.expense\",\n      \"create\",\n      [{{ JSON.stringify($json.expense) }}]\n    ]\n  },\n  \"id\": 1\n}",
@@ -123,7 +123,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://chat.insightpulseai.net/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
+        "url": "https://chat.insightpulseai.com/hooks/{{ $env.MATTERMOST_WEBHOOK_ID }}",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={\n  \"channel\": \"finance-general\",\n  \"username\": \"Expense Bot\",\n  \"icon_emoji\": \":receipt:\",\n  \"text\": \"#### :warning: Policy Violation Alert\\n| Field | Value |\\n|:--|:--|\\n| **Amount** | PHP {{ $json.raw.total_amount }} |\\n| **Threshold** | PHP 5,000 |\\n| **Merchant** | {{ $json.raw.merchant_name }} |\\n| **Category** | {{ $json.raw.expense_category }} |\\n\\n**Action Required:** Manager approval needed for expenses > PHP 5,000\"\n}",

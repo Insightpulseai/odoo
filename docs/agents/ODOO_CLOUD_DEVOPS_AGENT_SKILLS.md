@@ -30,7 +30,7 @@
 docker compose up -d new-service
 
 # Update nginx configuration
-cp deploy/nginx/erp.insightpulseai.net.conf /etc/nginx/conf.d/
+cp deploy/nginx/erp.insightpulseai.com.conf /etc/nginx/conf.d/
 nginx -t && systemctl reload nginx
 
 # Renew TLS certificates
@@ -144,7 +144,7 @@ docker compose exec odoo odoo -d odoo -u ipai_finance_ppm --stop-after-init
 **Example Operations**:
 ```bash
 # Check service health
-curl -f https://erp.insightpulseai.net/web/health || echo "Health check failed"
+curl -f https://erp.insightpulseai.com/web/health || echo "Health check failed"
 
 # View Odoo logs
 docker compose logs -f --tail=100 odoo
@@ -163,7 +163,7 @@ df -h | grep /opt/odoo-ce
 ### 2.1. Preview Environments (Ephemeral Instances)
 
 **Knowledge Required**:
-- Dynamic subdomain routing (`pr-123.dev.insightpulseai.net`)
+- Dynamic subdomain routing (`pr-123.dev.insightpulseai.com`)
 - Docker Compose templating for per-PR stacks
 - TTL-based cleanup mechanisms
 - GitHub Actions integration
@@ -193,7 +193,7 @@ jobs:
           ./scripts/deploy/create_preview_env.sh $PR_NUM
       - name: Comment PR
         run: |
-          gh pr comment $PR_NUM --body "Preview: https://pr-$PR_NUM.dev.insightpulseai.net"
+          gh pr comment $PR_NUM --body "Preview: https://pr-$PR_NUM.dev.insightpulseai.com"
 ```
 
 ---
@@ -311,7 +311,7 @@ set -e
 
 SUBDOMAIN=$1
 DROPLET_IP="178.128.112.214"
-DOMAIN="insightpulseai.net"
+DOMAIN="insightpulseai.com"
 
 # Create A record via DigitalOcean API
 curl -X POST "https://api.digitalocean.com/v2/domains/$DOMAIN/records" \

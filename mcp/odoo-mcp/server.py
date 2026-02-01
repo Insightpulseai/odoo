@@ -9,7 +9,7 @@ Usage:
     python server.py
 
 Environment Variables:
-    ODOO_URL: Odoo instance URL (default: https://erp.insightpulseai.net)
+    ODOO_URL: Odoo instance URL (default: https://erp.insightpulseai.com)
     ODOO_DB: Database name (default: odoo)
     ODOO_USER: Username for authentication
     ODOO_PASSWORD: Password for authentication
@@ -122,7 +122,7 @@ def get_odoo_client() -> OdooClient:
     global _odoo_client
     if _odoo_client is None:
         config = OdooConfig(
-            url=os.environ.get('ODOO_URL', 'https://erp.insightpulseai.net'),
+            url=os.environ.get('ODOO_URL', 'https://erp.insightpulseai.com'),
             db=os.environ.get('ODOO_DB', 'odoo'),
             username=os.environ.get('ODOO_USER', 'admin'),
             password=os.environ.get('ODOO_PASSWORD', ''),

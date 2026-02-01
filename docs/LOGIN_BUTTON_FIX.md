@@ -1,7 +1,7 @@
 # Login Button Fix & Header Cleanup - Production Deployment
 
 ## Issues Fixed
-1. Login button on https://erp.insightpulseai.net/ was not properly styled or functioning
+1. Login button on https://erp.insightpulseai.com/ was not properly styled or functioning
 2. Header had too many menu items cluttering the interface
 
 ## Solution Implemented
@@ -84,7 +84,7 @@ docker logs -f odoo-prod
 ```
 
 ### Manual Verification
-1. Open https://erp.insightpulseai.net/web/login
+1. Open https://erp.insightpulseai.com/web/login
 
 2. Check header cleanup:
    - ✅ Only TBWA logo visible on left
@@ -191,14 +191,14 @@ To apply this fix to production:
    ./scripts/verify_login_button.sh
    ```
 
-3. Manual test at https://erp.insightpulseai.net/web/login
+3. Manual test at https://erp.insightpulseai.com/web/login
 
 ## Production Server Details
 
 - **Server**: 178.128.112.214
 - **Container**: odoo-prod
 - **Repo Path**: /opt/odoo-ce/repo
-- **URL**: https://erp.insightpulseai.net
+- **URL**: https://erp.insightpulseai.com
 
 ---
 *Last Updated*: 2026-01-28

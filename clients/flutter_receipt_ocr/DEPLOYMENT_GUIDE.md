@@ -20,7 +20,7 @@ Flutter Mobile App
     ↓
 Supabase Storage (receipt-images bucket)
     ↓
-OCR Backend (https://ocr.insightpulseai.net/ocr)
+OCR Backend (https://ocr.insightpulseai.com/ocr)
     ↓
 PaddleOCR-VL-900M + OpenAI GPT-4o-mini
     ↓
@@ -35,7 +35,7 @@ Supabase PostgreSQL (parsed_receipts table)
 
 ### Backend (COMPLETED ✅)
 
-- [x] PaddleOCR-VL-900M running on ocr.insightpulseai.net (188.166.237.231)
+- [x] PaddleOCR-VL-900M running on ocr.insightpulseai.com (188.166.237.231)
 - [x] OpenAI GPT-4o-mini integration for post-processing
 - [x] X-API-KEY authentication (3 keys configured: flutter_client_key_001, 002, test)
 - [x] Rate limiting: 100 requests/hour per API key
@@ -156,7 +156,7 @@ Edit `lib/receipt_ocr/config.dart`:
 
 ```dart
 class OcrConfig {
-  static const String ocrEndpoint = 'https://ocr.insightpulseai.net/ocr';
+  static const String ocrEndpoint = 'https://ocr.insightpulseai.com/ocr';
   static const String apiKey = 'flutter_client_key_001';  // Change if needed
 
   static const String supabaseUrl = 'https://spdtwktxdalcfigzeqrz.supabase.co';
@@ -265,7 +265,7 @@ flutter run
 
 ```bash
 # Check service status
-curl -sf https://ocr.insightpulseai.net/health | jq
+curl -sf https://ocr.insightpulseai.com/health | jq
 
 # Expected response:
 {
@@ -282,7 +282,7 @@ curl -sf https://ocr.insightpulseai.net/health | jq
 
 ```bash
 # Test with X-API-KEY authentication
-curl -X POST https://ocr.insightpulseai.net/ocr \
+curl -X POST https://ocr.insightpulseai.com/ocr \
   -H "X-API-KEY: flutter_client_key_001" \
   -F "file=@test_receipt.jpg" \
   -F "doc_type_hint=receipt" | jq
@@ -295,7 +295,7 @@ curl -X POST https://ocr.insightpulseai.net/ocr \
 ```bash
 # Send 101 requests in succession (last one should fail with 429)
 for i in {1..101}; do
-  curl -X POST https://ocr.insightpulseai.net/ocr \
+  curl -X POST https://ocr.insightpulseai.com/ocr \
     -H "X-API-KEY: flutter_client_key_001" \
     -F "file=@test_receipt.jpg" -w "\n%{http_code}\n"
 done
@@ -423,7 +423,7 @@ Error: Invalid or missing API key. Include X-API-KEY header.
 **Solution**:
 1. Verify `OcrConfig.apiKey` matches one of the configured keys
 2. Check backend logs: `ssh root@188.166.237.231 "journalctl -u ai-inference-hub -n 100"`
-3. Test key validity: `curl -H "X-API-KEY: flutter_client_key_001" https://ocr.insightpulseai.net/health`
+3. Test key validity: `curl -H "X-API-KEY: flutter_client_key_001" https://ocr.insightpulseai.com/health`
 
 ### Issue: Rate Limit Exceeded (429)
 
@@ -569,7 +569,7 @@ for (var batch in receipts.chunks(5)) {
 ## Support
 
 **Primary Contact**: jgtolentino_rn@yahoo.com
-**Backend Server**: ocr.insightpulseai.net (188.166.237.231)
+**Backend Server**: ocr.insightpulseai.com (188.166.237.231)
 **Supabase Project**: spdtwktxdalcfigzeqrz
 **Repository**: odoo-ce/addons/flutter_receipt_ocr/
 

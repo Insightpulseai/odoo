@@ -122,14 +122,14 @@ This script will:
 **Summary**: Point all subdomains to 178.128.112.214 with nginx host-based routing
 
 **Subdomains**:
-- ✅ erp.insightpulseai.net → Odoo (8069)
-- ✅ n8n.insightpulseai.net → n8n (5678)
-- ✅ superset.insightpulseai.net → Superset (8088)
-- 🟡 mcp.insightpulseai.net → MCP Coordinator (placeholder)
-- 🟡 ocr.insightpulseai.net → OCR Service (placeholder)
-- 🟡 auth.insightpulseai.net → Keycloak (placeholder)
-- 🟡 chat.insightpulseai.net → Mattermost (placeholder)
-- 🟡 affine.insightpulseai.net → Affine (placeholder)
+- ✅ erp.insightpulseai.com → Odoo (8069)
+- ✅ n8n.insightpulseai.com → n8n (5678)
+- ✅ superset.insightpulseai.com → Superset (8088)
+- 🟡 mcp.insightpulseai.com → MCP Coordinator (placeholder)
+- 🟡 ocr.insightpulseai.com → OCR Service (placeholder)
+- 🟡 auth.insightpulseai.com → Keycloak (placeholder)
+- 🟡 chat.insightpulseai.com → Mattermost (placeholder)
+- 🟡 affine.insightpulseai.com → Affine (placeholder)
 
 **Files**: `deploy/nginx-complete.conf`, `docs/email/Mailgun_DNS.md`
 
@@ -401,14 +401,14 @@ gh label list --repo jgtolentino/odoo-ce | grep -E "ops:|kg:|spec-kit:|supabase:
 ```bash
 # DNS resolution
 for subdomain in erp n8n superset mcp ocr auth chat affine; do
-  echo "$subdomain.insightpulseai.net:"
-  dig +short $subdomain.insightpulseai.net
+  echo "$subdomain.insightpulseai.com:"
+  dig +short $subdomain.insightpulseai.com
 done
 
 # Service accessibility
 for subdomain in erp n8n superset; do
-  echo "$subdomain.insightpulseai.net:"
-  curl -I https://$subdomain.insightpulseai.net 2>&1 | head -1
+  echo "$subdomain.insightpulseai.com:"
+  curl -I https://$subdomain.insightpulseai.com 2>&1 | head -1
 done
 
 # Supabase schema verification

@@ -5,10 +5,10 @@ This directory contains reference templates for the `ipai-ops-stack` repository.
 ## Overview
 
 The ops stack is a separate repository that hosts runtime collaboration and automation services:
-- Mattermost (chat.insightpulseai.net)
-- Focalboard (boards.insightpulseai.net)
-- n8n (n8n.insightpulseai.net)
-- Superset (superset.insightpulseai.net)
+- Mattermost (chat.insightpulseai.com)
+- Focalboard (boards.insightpulseai.com)
+- n8n (n8n.insightpulseai.com)
+- Superset (superset.insightpulseai.com)
 
 ## Usage
 
@@ -59,7 +59,7 @@ ipai-ops-stack/
 ## DNS Requirements
 
 Configure these A records pointing to your server IP:
-- chat.insightpulseai.net
-- boards.insightpulseai.net
-- n8n.insightpulseai.net
-- superset.insightpulseai.net
+- chat.insightpulseai.com
+- boards.insightpulseai.com
+- n8n.insightpulseai.com
+- superset.insightpulseai.com

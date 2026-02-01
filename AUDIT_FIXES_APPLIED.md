@@ -150,7 +150,7 @@ doctl compute droplet-action resize odoo-erp-prod \
 - ✅ DigitalOcean App Platform access
 - ✅ GitHub Container Registry (GHCR) access
 - ✅ Supabase PostgreSQL (project: xkxyvboeubffxxbebsll)
-- ✅ Valid SSL certificate (erp.insightpulseai.net)
+- ✅ Valid SSL certificate (erp.insightpulseai.com)
 - ✅ Domain DNS configured
 
 ---
@@ -172,7 +172,7 @@ Deployment succeeds when ALL criteria pass:
 - ✅ Custom modules loaded (5 expected)
 
 ### 3. Smoke Tests (40+ Tests)
-- ✅ Web interface loads (https://erp.insightpulseai.net)
+- ✅ Web interface loads (https://erp.insightpulseai.com)
 - ✅ Authentication works (login/logout)
 - ✅ Custom modules visible in apps list
 - ✅ Database queries successful
@@ -307,7 +307,7 @@ Deployment succeeds when ALL criteria pass:
 
 6. **Monitor (24 Hours)**
    - Check logs: `docker logs odoo-ce --tail 100 -f`
-   - Verify health: `curl https://erp.insightpulseai.net/web/health`
+   - Verify health: `curl https://erp.insightpulseai.com/web/health`
    - Monitor resources: `docker stats odoo-ce`
 
 ---

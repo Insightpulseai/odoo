@@ -6,7 +6,7 @@ set -euo pipefail
 
 ODOO_URL="http://localhost:8071"
 ODOO_DB="odoo_accounting"
-N8N_API_URL="${N8N_BASE_URL:-https://ipa.insightpulseai.net}/api/v1"
+N8N_API_URL="${N8N_BASE_URL:-https://ipa.insightpulseai.com}/api/v1"
 SUPABASE_URL="https://xkxyvboeubffxxbebsll.supabase.co"
 
 echo "=== Finance PPM: Deployment Verification ==="

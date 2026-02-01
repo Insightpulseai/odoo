@@ -41,7 +41,7 @@ Output:
 **Via Vercel CLI:**
 ```bash
 vercel env add NEXT_PUBLIC_ODOO_URL
-# Enter: https://erp.insightpulseai.net
+# Enter: https://erp.insightpulseai.com
 
 vercel env add NEXT_PUBLIC_ODOO_DB
 # Enter: odoo
@@ -52,7 +52,7 @@ vercel env add NEXT_PUBLIC_ODOO_DB
 2. Select project: `odoo-frontend-shell`
 3. Settings → Environment Variables
 4. Add:
-   - `NEXT_PUBLIC_ODOO_URL` = `https://erp.insightpulseai.net`
+   - `NEXT_PUBLIC_ODOO_URL` = `https://erp.insightpulseai.com`
    - `NEXT_PUBLIC_ODOO_DB` = `odoo`
 
 ### 5. Redeploy with Environment Variables

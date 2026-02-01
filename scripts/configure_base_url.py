@@ -4,7 +4,7 @@ import xmlrpc.client
 import ssl
 import argparse
 
-# Usage: python3 scripts/configure_base_url.py https://erp.insightpulseai.net
+# Usage: python3 scripts/configure_base_url.py https://erp.insightpulseai.com
 
 
 def set_base_url(target_url):
@@ -57,7 +57,7 @@ def set_base_url(target_url):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "url", help="The base URL (e.g., https://erp.insightpulseai.net)"
+        "url", help="The base URL (e.g., https://erp.insightpulseai.com)"
     )
     args = parser.parse_args()
 

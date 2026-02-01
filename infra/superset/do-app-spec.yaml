@@ -71,7 +71,7 @@ services:
       # Allowed domains for embedding (comma-separated)
       - key: SUPERSET_ALLOWED_EMBEDDED_DOMAINS
         scope: RUN_TIME
-        value: "https://erp.insightpulseai.net,https://scout-mvp.vercel.app"
+        value: "https://erp.insightpulseai.com,https://scout-mvp.vercel.app"
 
       - key: SUPERSET_WEBSERVER_TIMEOUT
         scope: RUN_TIME

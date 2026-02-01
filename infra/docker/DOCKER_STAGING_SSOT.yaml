@@ -11,7 +11,7 @@ docker_staging_ssot:
     repo_root: "/opt/odoo-ce"
     working_directory: "/opt/odoo-ce"
     source_of_truth: "sandbox/staging/docker-compose.yml"
-    http_url: "https://staging.insightpulseai.net"
+    http_url: "https://staging.insightpulseai.com"
 
   # Containers that are allowed to exist (running or stopped)
   allowed_containers:
@@ -113,7 +113,7 @@ docker_staging_ssot:
 
   healthchecks:
     odoo_staging:
-      url: "https://staging.insightpulseai.net/web/health"
+      url: "https://staging.insightpulseai.com/web/health"
       expected_status: 200
       timeout_seconds: 30
 

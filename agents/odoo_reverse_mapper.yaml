@@ -174,7 +174,7 @@ capabilities:
 # ============================================================================
 integrations:
   n8n:
-    url: "https://ipa.insightpulseai.net"
+    url: "https://ipa.insightpulseai.com"
     api_key: "$N8N_API_KEY"
     workflows:
       - odoo_reverse_mapper
@@ -319,7 +319,7 @@ example_usage:
     "Map Clarity PPM features to Odoo CE and generate ipai_ppm_* modules"
 
   n8n_workflow: |
-    POST https://ipa.insightpulseai.net/api/v1/workflows/<workflow_id>/execute
+    POST https://ipa.insightpulseai.com/api/v1/workflows/<workflow_id>/execute
     Headers: X-N8N-API-KEY: $N8N_API_KEY
     Body: {"saas_product": "clarity_ppm", "criticality_threshold": 4}
 

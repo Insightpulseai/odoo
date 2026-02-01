@@ -146,7 +146,7 @@ cd /opt/odoo-ce/repo
 
 ```bash
 # 5. Health check
-curl -f https://erp.insightpulseai.net/web/health
+curl -f https://erp.insightpulseai.com/web/health
 
 # 6. Test critical workflows
 # - Login as admin

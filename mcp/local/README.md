@@ -77,7 +77,7 @@ code .vscode/mcp-dev.code-workspace
 
 This workspace:
 - Connects to local MCP (port 8765) with priority 1
-- Connects to remote MCP (mcp.insightpulseai.net) as fallback
+- Connects to remote MCP (mcp.insightpulseai.com) as fallback
 - Sets `ODOO_INSTANCE=odoo_lab` for development
 
 ## Development
@@ -173,4 +173,4 @@ Odoo Lab Instance (http://odoo:8069)
 - Default API key is insecure
 - Binds to localhost only (127.0.0.1:8765)
 - Conversation history is local-only (never synced to production)
-- For production MCP, use the remote coordinator at `mcp.insightpulseai.net`
+- For production MCP, use the remote coordinator at `mcp.insightpulseai.com`

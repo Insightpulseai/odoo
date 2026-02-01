@@ -3,7 +3,7 @@
 # Fix Odoo Email Configuration
 # =============================================================================
 # Problem: Emails failing to admin@yourcompany.example.com (placeholder domain)
-# Solution: Update system parameters to use insightpulseai.net
+# Solution: Update system parameters to use insightpulseai.com
 # =============================================================================
 
 set -euo pipefail
@@ -13,8 +13,8 @@ ODOO_CONTAINER="${ODOO_CONTAINER:-odoo}"
 DB_CONTAINER="${DB_CONTAINER:-odoo-db}"
 DB_NAME="${DB_NAME:-odoo}"
 DB_USER="${DB_USER:-odoo}"
-DOMAIN="${DOMAIN:-insightpulseai.net}"
-ERP_URL="${ERP_URL:-https://erp.insightpulseai.net}"
+DOMAIN="${DOMAIN:-insightpulseai.com}"
+ERP_URL="${ERP_URL:-https://erp.insightpulseai.com}"
 
 echo "=========================================="
 echo "Odoo Email Configuration Fix"

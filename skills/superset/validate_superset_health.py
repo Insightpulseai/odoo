@@ -52,7 +52,7 @@ def handle(check_token_api: bool, check_superset: bool) -> Dict[str, Any]:
     if check_token_api:
         token_api_url = os.getenv(
             "SUPERSET_TOKEN_API_HEALTH_URL",
-            "https://superset-embed-api.insightpulseai.net/health",
+            "https://superset-embed-api.insightpulseai.com/health",
         )
         token_result = _check_health(token_api_url)
         details["token_api"] = token_result
@@ -60,7 +60,7 @@ def handle(check_token_api: bool, check_superset: bool) -> Dict[str, Any]:
 
     if check_superset:
         superset_base = os.getenv(
-            "SUPERSET_DOMAIN", "https://superset.insightpulseai.net"
+            "SUPERSET_DOMAIN", "https://superset.insightpulseai.com"
         ).rstrip("/")
         superset_health_url = os.getenv(
             "SUPERSET_HEALTH_URL", f"{superset_base}/health"

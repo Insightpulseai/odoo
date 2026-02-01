@@ -29,7 +29,7 @@ The n8n connector enables Claude to:
 **Setup Steps:**
 1. In Claude.ai, go to Settings → Connectors
 2. Search for "n8n" or use custom webhook
-3. Configure with your n8n instance URL: `https://n8n.insightpulseai.net`
+3. Configure with your n8n instance URL: `https://n8n.insightpulseai.com`
 4. Authenticate with n8n API key
 
 **API Key Generation (n8n):**
@@ -47,7 +47,7 @@ Enables:
 
 **Setup Steps:**
 1. Settings → Connectors → Gmail
-2. Sign in with finance@insightpulseai.net (or designated inbox)
+2. Sign in with finance@insightpulseai.com (or designated inbox)
 3. Grant read permissions
 4. Configure folder filters for Finance-related emails
 
@@ -120,7 +120,7 @@ Enables:
 
 ```bash
 # Test n8n connectivity
-curl -s https://n8n.insightpulseai.net/api/v1/workflows \
+curl -s https://n8n.insightpulseai.com/api/v1/workflows \
   -H "X-N8N-API-KEY: $N8N_API_KEY" | jq '.data | length'
 
 # Should return number of workflows

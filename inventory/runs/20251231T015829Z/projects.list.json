@@ -4,7 +4,7 @@
     "owner_uuid": "ee77a9b3-6275-410f-91cf-cf875d537748",
     "owner_id": 27714628,
     "name": "fin-workspace",
-    "description": "Production AI Services on insightpulseai.net: Agent Service (Claude 3.5 Sonnet with 13 tools), OCR Service (PaddleOCR-VL + OpenAI), deployed on Singapore droplet with nginx reverse proxy",
+    "description": "Production AI Services on insightpulseai.com: Agent Service (Claude 3.5 Sonnet with 13 tools), OCR Service (PaddleOCR-VL + OpenAI), deployed on Singapore droplet with nginx reverse proxy",
     "purpose": "Service or API",
     "environment": "Production",
     "is_default": true,

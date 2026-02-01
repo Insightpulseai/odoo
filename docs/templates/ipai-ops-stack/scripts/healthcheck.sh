@@ -28,10 +28,10 @@ check_service() {
 }
 
 # Check each service
-check_service "Mattermost" "https://chat.insightpulseai.net/api/v4/system/ping"
-check_service "Focalboard" "https://boards.insightpulseai.net/api/v2/ping"
-check_service "n8n" "https://n8n.insightpulseai.net/healthz"
-check_service "Superset" "https://superset.insightpulseai.net/health"
+check_service "Mattermost" "https://chat.insightpulseai.com/api/v4/system/ping"
+check_service "Focalboard" "https://boards.insightpulseai.com/api/v2/ping"
+check_service "n8n" "https://n8n.insightpulseai.com/healthz"
+check_service "Superset" "https://superset.insightpulseai.com/health"
 
 echo ""
 echo "=== Summary ==="

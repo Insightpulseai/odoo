@@ -59,7 +59,7 @@
 ### Prerequisites
 - Odoo CE 18.0 running (Docker: `odoo-ce` container)
 - PostgreSQL database: `odoo`
-- Web access: http://localhost:8069 or https://erp.insightpulseai.net
+- Web access: http://localhost:8069 or https://erp.insightpulseai.com
 
 ### Step 1: Update Module List (Web UI)
 

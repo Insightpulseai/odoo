@@ -19,7 +19,7 @@ cd docs/incidents/<timestamp>/
 grep -E "ERROR|CRITICAL|Traceback" odoo_docker_logs.txt
 
 # 3. If frontend error, reproduce with debug assets
-open "https://erp.insightpulseai.net/web?debug=assets"
+open "https://erp.insightpulseai.com/web?debug=assets"
 
 # 4. Create Error Envelope JSON (see template below)
 # 5. Apply minimal fix (OCA-style)
@@ -104,7 +104,7 @@ Every incident must produce an Error Envelope JSON for AI agent processing:
 {
   "timestamp_utc": "2026-01-11T03:45:22Z",
   "db": "odoo",
-  "url": "https://erp.insightpulseai.net/web/expenses?debug=assets",
+  "url": "https://erp.insightpulseai.com/web/expenses?debug=assets",
   "request_id": "550e8400-e29b-41d4-a716-446655440000",
   "symptom": "UI style compilation failed",
   "server_error_signature": "Undefined variable $o-brand-primary",
@@ -120,7 +120,7 @@ Every incident must produce an Error Envelope JSON for AI agent processing:
     "verify /web/login"
   ],
   "verification": [
-    "curl https://erp.insightpulseai.net/web/login returns 200",
+    "curl https://erp.insightpulseai.com/web/login returns 200",
     "no scss errors in logs for 10 minutes",
     "visual parity check passes"
   ]
@@ -163,7 +163,7 @@ DEBUG odoo.addons.base.models.ir_asset: Undefined variable $o-brand-primary
 **DevTools Signature**:
 ```
 Failed to load resource: the server responded with a status of 500 (INTERNAL SERVER ERROR)
-Request URL: https://erp.insightpulseai.net/web/assets/...web.assets_backend...
+Request URL: https://erp.insightpulseai.com/web/assets/...web.assets_backend...
 ```
 
 **Matcher Rule**:
@@ -265,7 +265,7 @@ ImportError: cannot import name 'WorkspaceNode' from 'models'
 **Always** reproduce errors with:
 
 ```
-https://erp.insightpulseai.net/web?debug=assets
+https://erp.insightpulseai.com/web?debug=assets
 ```
 
 **Why?** - Odoo serves individual JS/CSS files instead of a single bundle, so DevTools shows **real file paths**.
@@ -287,11 +287,11 @@ https://erp.insightpulseai.net/web?debug=assets
 ### Example: SCSS Compilation Error
 
 ```
-1. Navigate to: https://erp.insightpulseai.net/web?debug=assets
+1. Navigate to: https://erp.insightpulseai.com/web?debug=assets
 2. See error: "Style compilation failed"
 3. DevTools Console: Error loading stylesheet
 4. Network tab:
-   Request URL: https://erp.insightpulseai.net/web/assets/.../web.assets_backend.min.css
+   Request URL: https://erp.insightpulseai.com/web/assets/.../web.assets_backend.min.css
    Status: 500 (INTERNAL SERVER ERROR)
    X-Request-ID: 550e8400-e29b-41d4-a716-446655440000
 5. Server logs:
@@ -326,7 +326,7 @@ Steps:
    - X-Request-ID if available
 
 2) If frontend error:
-   - Reproduce with https://erp.insightpulseai.net/web?debug=assets
+   - Reproduce with https://erp.insightpulseai.com/web?debug=assets
    - Capture console + network failing request
    - Copy X-Request-ID from response headers
 
@@ -343,7 +343,7 @@ Steps:
    - Restart: docker restart odoo-prod
 
 6) Verify:
-   - curl https://erp.insightpulseai.net/web/login returns 200
+   - curl https://erp.insightpulseai.com/web/login returns 200
    - No SCSS/Traceback in logs for 5 minutes
    - Visual parity check passes (if UI change)
 
@@ -451,7 +451,7 @@ DEBUG odoo.addons.base.models.ir_asset: Undefined variable $o-brand-primary in i
 
 **Verification**:
 ```bash
-curl -sI https://erp.insightpulseai.net/web/login | head -1
+curl -sI https://erp.insightpulseai.com/web/login | head -1
 # Should return: HTTP/2 200
 ```
 
@@ -570,7 +570,7 @@ After every fix, run this checklist:
 
 ```bash
 # 1. Web endpoint health check
-curl -sI https://erp.insightpulseai.net/web/login | head -1
+curl -sI https://erp.insightpulseai.com/web/login | head -1
 # Expected: HTTP/2 200
 
 # 2. No errors in recent logs (5 minutes)
@@ -581,7 +581,7 @@ docker logs --since 5m odoo-prod 2>&1 | grep -E "ERROR|CRITICAL|Traceback" || ec
 docker logs --since 5m odoo-prod 2>&1 | grep "<ERROR_SIGNATURE>" || echo "Error signature not found (good)"
 
 # 4. Visual parity (if UI change)
-node scripts/snap.js --routes="/expenses,/tasks" --base-url="https://erp.insightpulseai.net"
+node scripts/snap.js --routes="/expenses,/tasks" --base-url="https://erp.insightpulseai.com"
 node scripts/ssim.js --routes="/expenses,/tasks" --odoo-version="18.0"
 # Expected: SSIM ≥ 0.97 (mobile), ≥ 0.98 (desktop)
 
@@ -651,8 +651,8 @@ docker exec odoo-prod odoo -d odoo -u <module_name> --stop-after-init
 - **Container**: odoo-prod
 - **Database**: odoo (external DigitalOcean Managed PostgreSQL)
 - **Odoo user**: UID 100, GID 101
-- **Public URL**: https://erp.insightpulseai.net
-- **Debug URL**: https://erp.insightpulseai.net/web?debug=assets
+- **Public URL**: https://erp.insightpulseai.com
+- **Debug URL**: https://erp.insightpulseai.com/web?debug=assets
 
 ---
 

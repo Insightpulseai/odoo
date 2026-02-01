@@ -115,9 +115,9 @@ docker compose -f docker-compose.prod.yml ps
 docker compose -f docker-compose.prod.yml logs -n 200 odoo-erp-prod || true
 
 # public endpoints (server-local)
-curl -I https://erp.insightpulseai.net/web/login | head -n 1
-curl -I https://erp.insightpulseai.net/web/assets/debug/web.assets_backend.js | head -n 1
-curl -I https://erp.insightpulseai.net/web/assets/debug/web.assets_frontend.js | head -n 1
+curl -I https://erp.insightpulseai.com/web/login | head -n 1
+curl -I https://erp.insightpulseai.com/web/assets/debug/web.assets_backend.js | head -n 1
+curl -I https://erp.insightpulseai.com/web/assets/debug/web.assets_frontend.js | head -n 1
 SSH
 ```
 

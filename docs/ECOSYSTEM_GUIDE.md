@@ -1,7 +1,7 @@
 # Odoo CE Ecosystem Guide for AI Agents
 
 **Production Server**: 159.223.75.148 (odoo-erp-prod)
-**Primary Domain**: https://erp.insightpulseai.net
+**Primary Domain**: https://erp.insightpulseai.com
 **Last Updated**: 2025-12-17
 
 ---
@@ -15,7 +15,7 @@
 
 **Q: I need to access Odoo via XML-RPC**
 → Use: `python3 scripts/YOUR_SCRIPT.py` (see `scripts/fix_home_to_dashboard.py` for example)
-→ URL: `https://erp.insightpulseai.net/xmlrpc/2/common` (common) or `/xmlrpc/2/object` (object)
+→ URL: `https://erp.insightpulseai.com/xmlrpc/2/common` (common) or `/xmlrpc/2/object` (object)
 
 **Q: I need to install/upgrade an Odoo module**
 → Use: `ssh root@159.223.75.148 "docker exec odoo-ce /usr/bin/odoo -c /etc/odoo/odoo.conf -d production --init MODULE_NAME --stop-after-init --http-port=8070"`
@@ -68,7 +68,7 @@
 | Service | Location | Role | Access |
 |---------|----------|------|--------|
 | PaddleOCR-VL | 188.166.237.231 (ocr-service-droplet) | OCR processing | https://ade-ocr-backend-*.ondigitalocean.app |
-| n8n | 159.223.75.148 (odoo-erp-prod) | Workflow automation | https://ipa.insightpulseai.net |
+| n8n | 159.223.75.148 (odoo-erp-prod) | Workflow automation | https://ipa.insightpulseai.com |
 
 ---
 
@@ -133,49 +133,49 @@
 
 ### Nginx/Traefik Proxy Configuration
 
-**Primary Domain**: `erp.insightpulseai.net`
+**Primary Domain**: `erp.insightpulseai.com`
 
 **Proxy Rules**:
 ```
-https://erp.insightpulseai.net/* → odoo-ce:8069 (Odoo CE 18.0)
+https://erp.insightpulseai.com/* → odoo-ce:8069 (Odoo CE 18.0)
 ```
 
 ### Odoo URL Structure
 
 **Authentication**:
-- `https://erp.insightpulseai.net/web/login?db=production` - Login page
-- `https://erp.insightpulseai.net/web/database/selector` - Database selector
+- `https://erp.insightpulseai.com/web/login?db=production` - Login page
+- `https://erp.insightpulseai.com/web/database/selector` - Database selector
 
 **Main Application** (requires authentication):
-- `https://erp.insightpulseai.net/odoo` - Apps Dashboard (icon grid)
-- `https://erp.insightpulseai.net/odoo/apps` - Apps menu
-- `https://erp.insightpulseai.net/web/webclient` - Full web client
+- `https://erp.insightpulseai.com/odoo` - Apps Dashboard (icon grid)
+- `https://erp.insightpulseai.com/odoo/apps` - Apps menu
+- `https://erp.insightpulseai.com/web/webclient` - Full web client
 
 **Custom Routes** (via `ipai_custom_routes` module):
-- `https://erp.insightpulseai.net/odoo/discuss` → Discuss app
-- `https://erp.insightpulseai.net/odoo/calendar` → Calendar app
-- `https://erp.insightpulseai.net/odoo/project` → Project app
-- `https://erp.insightpulseai.net/odoo/expenses` → Expenses app
+- `https://erp.insightpulseai.com/odoo/discuss` → Discuss app
+- `https://erp.insightpulseai.com/odoo/calendar` → Calendar app
+- `https://erp.insightpulseai.com/odoo/project` → Project app
+- `https://erp.insightpulseai.com/odoo/expenses` → Expenses app
 
 **Model Access Patterns**:
 ```
-https://erp.insightpulseai.net/odoo/MODEL_NAME                    # List view
-https://erp.insightpulseai.net/odoo/MODEL_NAME/RECORD_ID          # Form view
-https://erp.insightpulseai.net/odoo/apps/MODULE_ID/MODEL/RECORD_ID # Module detail
+https://erp.insightpulseai.com/odoo/MODEL_NAME                    # List view
+https://erp.insightpulseai.com/odoo/MODEL_NAME/RECORD_ID          # Form view
+https://erp.insightpulseai.com/odoo/apps/MODULE_ID/MODEL/RECORD_ID # Module detail
 ```
 
 **Examples**:
-- `https://erp.insightpulseai.net/odoo/res.users` - Users list
-- `https://erp.insightpulseai.net/odoo/project.task` - Tasks list
-- `https://erp.insightpulseai.net/odoo/hr.expense` - Expenses list
-- `https://erp.insightpulseai.net/odoo/apps/118/ir.module.module/118` - ipai_custom_routes module detail
+- `https://erp.insightpulseai.com/odoo/res.users` - Users list
+- `https://erp.insightpulseai.com/odoo/project.task` - Tasks list
+- `https://erp.insightpulseai.com/odoo/hr.expense` - Expenses list
+- `https://erp.insightpulseai.com/odoo/apps/118/ir.module.module/118` - ipai_custom_routes module detail
 
 **API Endpoints**:
-- `https://erp.insightpulseai.net/xmlrpc/2/common` - XML-RPC authentication
-- `https://erp.insightpulseai.net/xmlrpc/2/object` - XML-RPC object operations
-- `https://erp.insightpulseai.net/jsonrpc` - JSON-RPC API
-- `https://erp.insightpulseai.net/ipai/finance/ppm` - Finance PPM dashboard
-- `https://erp.insightpulseai.net/ipai/finance/ppm/api/*` - Finance PPM API
+- `https://erp.insightpulseai.com/xmlrpc/2/common` - XML-RPC authentication
+- `https://erp.insightpulseai.com/xmlrpc/2/object` - XML-RPC object operations
+- `https://erp.insightpulseai.com/jsonrpc` - JSON-RPC API
+- `https://erp.insightpulseai.com/ipai/finance/ppm` - Finance PPM dashboard
+- `https://erp.insightpulseai.com/ipai/finance/ppm/api/*` - Finance PPM API
 
 ### Integration Service Endpoints
 
@@ -188,7 +188,7 @@ https://erp.insightpulseai.net/odoo/apps/MODULE_ID/MODEL/RECORD_ID # Module deta
 - Internal: `http://odoo-mattermost-1:8065`
 
 **n8n (Workflows)**:
-- `https://ipa.insightpulseai.net` - n8n web UI
+- `https://ipa.insightpulseai.com` - n8n web UI
 - Internal: Varies by n8n container setup
 
 **OCR Service**:
@@ -346,9 +346,9 @@ ssh root@159.223.75.148 "docker restart odoo-ce odoo-db odoo-webhook-1"
 # Via XML-RPC
 python3 -c "
 import xmlrpc.client
-common = xmlrpc.client.ServerProxy('https://erp.insightpulseai.net/xmlrpc/2/common')
+common = xmlrpc.client.ServerProxy('https://erp.insightpulseai.com/xmlrpc/2/common')
 uid = common.authenticate('production', 'admin', 'PASSWORD', {})
-models = xmlrpc.client.ServerProxy('https://erp.insightpulseai.net/xmlrpc/2/object')
+models = xmlrpc.client.ServerProxy('https://erp.insightpulseai.com/xmlrpc/2/object')
 models.execute_kw('production', uid, 'PASSWORD', 'ir.module.module', 'update_list', [[]])
 print('Module list updated')
 "
@@ -395,7 +395,7 @@ print('Module list updated')
 **If XML-RPC fails with 404**:
 1. Try alternative URL: `/odoo/xmlrpc/2/common` instead of `/xmlrpc/2/common`
 2. Verify proxy_mode in odoo.conf: `proxy_mode = True`
-3. Check Odoo is running: `curl https://erp.insightpulseai.net`
+3. Check Odoo is running: `curl https://erp.insightpulseai.com`
 
 ---
 
@@ -426,8 +426,8 @@ print('Module list updated')
 - finance-ssc-expert
 - odoo-developer-agent
 - multi-agent-orchestrator
-- superset-analytics (superset.insightpulseai.net)
-- mcp-coordinator (mcp.insightpulseai.net)
+- superset-analytics (superset.insightpulseai.com)
+- mcp-coordinator (mcp.insightpulseai.com)
 
 **Droplets**:
 - odoo-erp-prod (159.223.75.148) - Main Odoo server

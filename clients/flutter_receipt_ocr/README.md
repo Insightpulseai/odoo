@@ -16,7 +16,7 @@ Embeddable Flutter module for OCR-powered receipt scanning with Supabase caching
 
 ```
 Flutter App → Supabase Storage (image upload)
-           → OCR Backend (https://ocr.insightpulseai.net/ocr)
+           → OCR Backend (https://ocr.insightpulseai.com/ocr)
            → OpenAI GPT-4o-mini (structured extraction)
            → Supabase PostgreSQL (caching)
 ```
@@ -120,7 +120,7 @@ Edit `lib/receipt_ocr/config.dart`:
 
 ```dart
 class OcrConfig {
-  static const String ocrEndpoint = 'https://ocr.insightpulseai.net/ocr';
+  static const String ocrEndpoint = 'https://ocr.insightpulseai.com/ocr';
   static const String apiKey = 'your_api_key_here';  // Get from backend admin
 
   static const String supabaseUrl = 'https://your-project.supabase.co';
@@ -172,7 +172,7 @@ class ReceiptLineItem {
 
 ### OCR Endpoint
 
-**URL**: `https://ocr.insightpulseai.net/ocr`
+**URL**: `https://ocr.insightpulseai.com/ocr`
 
 **Headers**:
 - `X-API-KEY`: Your mobile API key (required)

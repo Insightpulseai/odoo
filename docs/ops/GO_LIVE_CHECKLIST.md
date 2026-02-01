@@ -64,8 +64,8 @@ Pick one architecture:
 
 | Task | Status | Verification Command |
 |------|--------|----------------------|
-| DNS records set (A/AAAA/CNAME) | [ ] | `dig erp.insightpulseai.net` |
-| TLS termination defined (nginx + Certbot) | [ ] | `curl -I https://erp.insightpulseai.net` |
+| DNS records set (A/AAAA/CNAME) | [ ] | `dig erp.insightpulseai.com` |
+| TLS termination defined (nginx + Certbot) | [ ] | `curl -I https://erp.insightpulseai.com` |
 | WebSocket support verified (`/websocket`, `/longpolling`) | [ ] | See PREVENT_502.md |
 | `proxy_mode = True` configured | [ ] | Check `odoo.conf` |
 

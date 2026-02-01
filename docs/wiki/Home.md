@@ -14,7 +14,7 @@ This wiki is the human-readable front door for the `odoo-ce` monorepo.
 ## Quick Links
 
 - Repo: https://github.com/jgtolentino/odoo-ce
-- Production: https://erp.insightpulseai.net
+- Production: https://erp.insightpulseai.com
 - Deployments: https://github.com/jgtolentino/odoo-ce/deployments
 
 See **Releases & Changelog** for the authoritative list of production cutovers.

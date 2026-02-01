@@ -95,7 +95,7 @@ rm .git/hooks/pre-commit
 
 ### 1. `deploy-to-server.sh`
 
-Deploys health check scripts to the production server (`erp.insightpulseai.net`).
+Deploys health check scripts to the production server (`erp.insightpulseai.com`).
 
 **Usage:**
 ```bash
@@ -110,7 +110,7 @@ Deploys health check scripts to the production server (`erp.insightpulseai.net`)
 - Displays next steps
 
 **Prerequisites:**
-- SSH access to `root@erp.insightpulseai.net`
+- SSH access to `root@erp.insightpulseai.com`
 - SSH key configured
 
 **Example:**
@@ -210,7 +210,7 @@ UI domain health validator for Odoo finance projects.
 
 **Usage:**
 ```bash
-export ODOO_URL=https://erp.insightpulseai.net
+export ODOO_URL=https://erp.insightpulseai.com
 export ODOO_DB=odoo
 export ODOO_LOGIN=jgtolentino_rn@yahoo.com
 export ODOO_PASSWORD=<your_password>
@@ -352,7 +352,7 @@ python3 scripts/import_month_end_tasks.py \
 4. **Test Health Checks:**
    ```bash
    # SSH to server
-   ssh root@erp.insightpulseai.net
+   ssh root@erp.insightpulseai.com
 
    # Test scripts
    cd /opt/odoo-ce
@@ -372,13 +372,13 @@ python3 scripts/import_month_end_tasks.py \
 ### SSH Connection Issues
 ```bash
 # Test SSH connection
-ssh -v root@erp.insightpulseai.net echo "test"
+ssh -v root@erp.insightpulseai.com echo "test"
 
 # Configure SSH key
-ssh-copy-id root@erp.insightpulseai.net
+ssh-copy-id root@erp.insightpulseai.com
 
 # Add host to known_hosts
-ssh-keyscan erp.insightpulseai.net >> ~/.ssh/known_hosts
+ssh-keyscan erp.insightpulseai.com >> ~/.ssh/known_hosts
 ```
 
 ### Supabase Connection Issues
@@ -417,7 +417,7 @@ Required environment variables for deployment scripts:
 
 ```bash
 # Odoo
-export ODOO_URL=https://erp.insightpulseai.net
+export ODOO_URL=https://erp.insightpulseai.com
 export ODOO_DB=odoo
 export ODOO_LOGIN=jgtolentino_rn@yahoo.com
 export ODOO_PASSWORD=<your_password>

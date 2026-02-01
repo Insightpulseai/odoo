@@ -493,7 +493,7 @@ kubectl rollout status deployment/odoo
 ✅ Pass if:
 - `kubectl rollout status deployment/odoo` exits with code 0
 - `kubectl get pods -l app=odoo` shows all pods `STATUS=Running, READY=1/1`
-- Ingress/Service path returns HTTP 200/302 at `https://erp.insightpulseai.net/web`
+- Ingress/Service path returns HTTP 200/302 at `https://erp.insightpulseai.com/web`
 - Pod health checks pass
 
 ### 8.4 Feature-Level (Modules Present)

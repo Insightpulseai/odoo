@@ -84,7 +84,7 @@ pip install requests
 
 | Setting | Example | Description |
 |---------|---------|-------------|
-| API URL | `https://ocr.insightpulseai.net/api/expense/ocr` | OCR service endpoint |
+| API URL | `https://ocr.insightpulseai.com/api/expense/ocr` | OCR service endpoint |
 | API Key | `sk-xxxx...` | X-API-Key header value |
 
 ### InsightPulse OCR Service
@@ -285,7 +285,7 @@ ipai_ocr_expense/
 ## Support
 
 - **Author**: InsightPulseAI
-- **Website**: https://insightpulseai.net
+- **Website**: https://insightpulseai.com
 - **License**: AGPL-3
 
 ---

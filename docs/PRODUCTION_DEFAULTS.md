@@ -2,7 +2,7 @@
 
 **Last Updated**: 2026-01-08
 **Status**: ✅ Working
-**Instance**: https://erp.insightpulseai.net/
+**Instance**: https://erp.insightpulseai.com/
 
 ---
 
@@ -35,7 +35,7 @@
 
 ### DNS
 ```
-erp.insightpulseai.net → 159.223.75.148 (TTL: 60)
+erp.insightpulseai.com → 159.223.75.148 (TTL: 60)
 ```
 
 ### Container Stack
@@ -46,7 +46,7 @@ nginx (host) :443 → odoo-ce :8069 → odoo-postgres :5432
 ### Key Files
 - **Config**: `/root/odoo-ce/deploy/odoo.conf`
 - **Compose**: `/root/odoo-ce/deploy/docker-compose.prod.v0.10.0.yml`
-- **Nginx**: `/etc/nginx/sites-available/erp.insightpulseai.net.conf`
+- **Nginx**: `/etc/nginx/sites-available/erp.insightpulseai.com.conf`
 
 ### Working odoo.conf
 ```ini
@@ -91,16 +91,16 @@ db_maxconn = 64
 ```nginx
 server {
     listen 80;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
     return 301 https://$server_name$request_uri;
 }
 
 server {
     listen 443 ssl http2;
-    server_name erp.insightpulseai.net;
+    server_name erp.insightpulseai.com;
 
-    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
 
     # Odoo proxy
     location / {
@@ -276,7 +276,7 @@ conn.close()
 
 ### Public Endpoint
 ```bash
-curl -sS -I https://erp.insightpulseai.net/ | head -5
+curl -sS -I https://erp.insightpulseai.com/ | head -5
 ```
 
 ---
@@ -305,10 +305,10 @@ curl -sS -I https://erp.insightpulseai.net/ | head -5
 
 Before considering deployment complete, verify:
 
-1. ✅ DNS resolves to correct IP: `dig +short erp.insightpulseai.net` returns `159.223.75.148`
+1. ✅ DNS resolves to correct IP: `dig +short erp.insightpulseai.com` returns `159.223.75.148`
 2. ✅ Container healthy: `docker ps --filter name=odoo-erp-prod` shows `(healthy)`
 3. ✅ Database connected: Python connection test succeeds
-4. ✅ Nginx proxying: `curl -I https://erp.insightpulseai.net/` returns 200-series status
+4. ✅ Nginx proxying: `curl -I https://erp.insightpulseai.com/` returns 200-series status
 5. ✅ Odoo UI loads: Browser shows Odoo login or database selector
 6. ✅ No authentication errors in logs: `docker logs odoo-erp-prod | grep -i "authentication failed"` returns empty
 
@@ -329,7 +329,7 @@ git checkout HEAD~1 -- deploy/odoo.conf deploy/docker-compose.prod.v0.10.0.yml
 docker compose -f docker-compose.prod.v0.10.0.yml up -d
 
 # 4. Verify health
-curl -I https://erp.insightpulseai.net/
+curl -I https://erp.insightpulseai.com/
 ```
 
 ---

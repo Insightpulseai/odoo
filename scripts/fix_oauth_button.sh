@@ -138,9 +138,9 @@ with registry.cursor() as cr:
 
     # Verify base URL is correct
     base_url = env['ir.config_parameter'].get_param('web.base.url')
-    if base_url != 'https://erp.insightpulseai.net':
-        print(f"Updating web.base.url: {base_url} → https://erp.insightpulseai.net")
-        env['ir.config_parameter'].set_param('web.base.url', 'https://erp.insightpulseai.net')
+    if base_url != 'https://erp.insightpulseai.com':
+        print(f"Updating web.base.url: {base_url} → https://erp.insightpulseai.com")
+        env['ir.config_parameter'].set_param('web.base.url', 'https://erp.insightpulseai.com')
         env['ir.config_parameter'].set_param('web.base.url.freeze', 'True')
     else:
         print("✓ web.base.url already correct")
@@ -198,7 +198,7 @@ echo "✅ GOOGLE OAUTH BUTTON FIX COMPLETED"
 echo "=================================================="
 echo ""
 echo "Next Steps:"
-echo "  1. Open Chrome Incognito: https://erp.insightpulseai.net"
+echo "  1. Open Chrome Incognito: https://erp.insightpulseai.com"
 echo "  2. Clear browser cache: Ctrl+Shift+R (Windows) / Cmd+Shift+R (Mac)"
 echo "  3. Verify 'Sign in with Google' button appears"
 echo "  4. Click button and test login"

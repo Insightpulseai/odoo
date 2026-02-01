@@ -1,7 +1,7 @@
 # WorkOS Production Deployment Report
 
 **Deployment Date**: 2025-12-25 16:48 UTC
-**Target**: https://erp.insightpulseai.net
+**Target**: https://erp.insightpulseai.com
 **Server**: odoo-erp-prod (159.223.75.148)
 **Database**: odoo_accounting (PostgreSQL 15)
 

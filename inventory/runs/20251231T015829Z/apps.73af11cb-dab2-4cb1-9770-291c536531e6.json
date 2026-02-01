@@ -71,7 +71,7 @@
       ],
       "domains": [
         {
-          "domain": "superset.insightpulseai.net",
+          "domain": "superset.insightpulseai.com",
           "type": "PRIMARY"
         }
       ],
@@ -155,7 +155,7 @@
         ],
         "domains": [
           {
-            "domain": "superset.insightpulseai.net",
+            "domain": "superset.insightpulseai.com",
             "type": "PRIMARY"
           }
         ],
@@ -292,7 +292,7 @@
       }
     },
     "last_deployment_created_at": "2025-12-18T21:54:12Z",
-    "live_url": "https://superset.insightpulseai.net",
+    "live_url": "https://superset.insightpulseai.com",
     "region": {
       "slug": "nyc",
       "label": "New York",
@@ -304,13 +304,13 @@
       ]
     },
     "tier_slug": "professional",
-    "live_url_base": "https://superset.insightpulseai.net",
-    "live_domain": "superset.insightpulseai.net",
+    "live_url_base": "https://superset.insightpulseai.com",
+    "live_domain": "superset.insightpulseai.com",
     "domains": [
       {
         "id": "a7d180e8-849a-40e2-8448-3063315ff4f7",
         "spec": {
-          "domain": "superset.insightpulseai.net",
+          "domain": "superset.insightpulseai.com",
           "type": "PRIMARY"
         },
         "phase": "ACTIVE",

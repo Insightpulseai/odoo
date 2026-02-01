@@ -28,7 +28,7 @@
             },
             {
               "key": "ODOO_URL",
-              "value": "https://erp.insightpulseai.net",
+              "value": "https://erp.insightpulseai.com",
               "scope": "RUN_AND_BUILD_TIME"
             },
             {
@@ -50,7 +50,7 @@
             },
             {
               "key": "SUPERSET_URL",
-              "value": "https://superset.insightpulseai.net",
+              "value": "https://superset.insightpulseai.com",
               "scope": "RUN_AND_BUILD_TIME"
             },
             {
@@ -77,7 +77,7 @@
       ],
       "domains": [
         {
-          "domain": "mcp.insightpulseai.net",
+          "domain": "mcp.insightpulseai.com",
           "type": "PRIMARY"
         }
       ],
@@ -129,7 +129,7 @@
               },
               {
                 "key": "ODOO_URL",
-                "value": "https://erp.insightpulseai.net",
+                "value": "https://erp.insightpulseai.com",
                 "scope": "RUN_AND_BUILD_TIME"
               },
               {
@@ -151,7 +151,7 @@
               },
               {
                 "key": "SUPERSET_URL",
-                "value": "https://superset.insightpulseai.net",
+                "value": "https://superset.insightpulseai.com",
                 "scope": "RUN_AND_BUILD_TIME"
               },
               {
@@ -178,7 +178,7 @@
         ],
         "domains": [
           {
-            "domain": "mcp.insightpulseai.net",
+            "domain": "mcp.insightpulseai.com",
             "type": "PRIMARY"
           }
         ],
@@ -325,7 +325,7 @@
       }
     },
     "last_deployment_created_at": "2025-12-30T03:35:13Z",
-    "live_url": "https://mcp.insightpulseai.net",
+    "live_url": "https://mcp.insightpulseai.com",
     "region": {
       "slug": "sgp",
       "label": "Singapore",
@@ -336,13 +336,13 @@
       ]
     },
     "tier_slug": "professional",
-    "live_url_base": "https://mcp.insightpulseai.net",
-    "live_domain": "mcp.insightpulseai.net",
+    "live_url_base": "https://mcp.insightpulseai.com",
+    "live_domain": "mcp.insightpulseai.com",
     "domains": [
       {
         "id": "c81f06cf-eca4-4c95-a55b-356f20c142e9",
         "spec": {
-          "domain": "mcp.insightpulseai.net",
+          "domain": "mcp.insightpulseai.com",
           "type": "PRIMARY"
         },
         "phase": "ACTIVE",

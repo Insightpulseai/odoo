@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Mailgun SMTP Connection Test for InsightPulse AI
-# Domain: mg.insightpulseai.net
+# Domain: mg.insightpulseai.com
 #
 # Usage: ./scripts/mailgun/test_smtp.sh
 
@@ -20,7 +20,7 @@ mkdir -p "${EVIDENCE_DIR}"
 
 # Test SSL connection
 echo "Testing SSL/TLS connection..."
-smtp_result=$(timeout 10 openssl s_client -connect "${SMTP_HOST}:${SMTP_PORT}" -quiet 2>&1 <<< "EHLO insightpulseai.net
+smtp_result=$(timeout 10 openssl s_client -connect "${SMTP_HOST}:${SMTP_PORT}" -quiet 2>&1 <<< "EHLO insightpulseai.com
 QUIT" || echo "CONNECTION_FAILED")
 
 if echo "$smtp_result" | grep -q "250"; then
@@ -41,7 +41,7 @@ fi
 # Also test port 587 (STARTTLS)
 echo ""
 echo "Testing STARTTLS on port 587..."
-starttls_result=$(timeout 10 openssl s_client -connect "${SMTP_HOST}:587" -starttls smtp -quiet 2>&1 <<< "EHLO insightpulseai.net
+starttls_result=$(timeout 10 openssl s_client -connect "${SMTP_HOST}:587" -starttls smtp -quiet 2>&1 <<< "EHLO insightpulseai.com
 QUIT" || echo "CONNECTION_FAILED")
 
 if echo "$starttls_result" | grep -q "250"; then

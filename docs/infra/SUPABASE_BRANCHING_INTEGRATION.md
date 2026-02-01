@@ -280,7 +280,7 @@ verify_jwt = false
 
 [auth]
 enabled = true
-site_url = "https://erp.insightpulseai.net"
+site_url = "https://erp.insightpulseai.com"
 
 [auth.email]
 enable_signup = true

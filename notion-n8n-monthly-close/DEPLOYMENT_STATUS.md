@@ -2,7 +2,7 @@
 
 **Date**: 2025-11-21
 **Status**: ✅ Workflows deployed to production n8n
-**Environment**: https://ipa.insightpulseai.net
+**Environment**: https://ipa.insightpulseai.com
 **Container**: odoo-ipa-1
 
 ---
@@ -52,7 +52,7 @@ Mattermost Post (#finance-alerts)
 **Blocked Tasks**:
   - AR aging reconciliation (CKVC) - Deadline: 2025-11-22
 
-[View in Odoo](https://erp.insightpulseai.net/web#action=project.action_view_task)
+[View in Odoo](https://erp.insightpulseai.com/web#action=project.action_view_task)
 ```
 
 #### W002_OD_BIR_ALERTS (ID: 26)
@@ -85,12 +85,12 @@ If (Has Upcoming Deadlines?)
 ### 1601-C
 - **CKVC** (CKVC)
   Deadline: 2025-11-28
-  [View Task](https://erp.insightpulseai.net/web#id=123&model=project.task)
+  [View Task](https://erp.insightpulseai.com/web#id=123&model=project.task)
 
 ### 2550Q
 - **RIM** (RIM)
   Deadline: 2025-11-28
-  [View Task](https://erp.insightpulseai.net/web#id=124&model=project.task)
+  [View Task](https://erp.insightpulseai.com/web#id=124&model=project.task)
 
 ---
 **Action Required**: Please review and file before deadline.
@@ -133,7 +133,7 @@ Source: n8n automation
 
 ### Step 1: Configure Credentials in n8n UI
 
-Login to https://ipa.insightpulseai.net and configure these credentials:
+Login to https://ipa.insightpulseai.com and configure these credentials:
 
 #### 1.1 Odoo Basic Auth (ID: 1)
 ```yaml
@@ -149,14 +149,14 @@ Password: <odoo_api_key>
 ```yaml
 Type: Mattermost Webhook
 Name: "Mattermost Finance Alerts"
-Webhook URL: https://mattermost.insightpulseai.net/hooks/<webhook-id>
+Webhook URL: https://mattermost.insightpulseai.com/hooks/<webhook-id>
 ```
 
 **BIR Alerts (ID: 3)**:
 ```yaml
 Type: Mattermost Webhook
 Name: "Mattermost BIR Alerts"
-Webhook URL: https://mattermost.insightpulseai.net/hooks/<webhook-id>
+Webhook URL: https://mattermost.insightpulseai.com/hooks/<webhook-id>
 ```
 
 #### 1.3 Supabase Service Role (ID: 4)
@@ -180,13 +180,13 @@ For each workflow, in the n8n UI:
 **Test Commands (CLI alternative)**:
 ```bash
 # W001 - Daily closing digest
-ssh root@erp.insightpulseai.net "docker exec -u node odoo-ipa-1 n8n execute --id 25"
+ssh root@erp.insightpulseai.com "docker exec -u node odoo-ipa-1 n8n execute --id 25"
 
 # W002 - BIR alerts
-ssh root@erp.insightpulseai.net "docker exec -u node odoo-ipa-1 n8n execute --id 26"
+ssh root@erp.insightpulseai.com "docker exec -u node odoo-ipa-1 n8n execute --id 26"
 
 # W101 - Closing snapshot
-ssh root@erp.insightpulseai.net "docker exec -u node odoo-ipa-1 n8n execute --id 30"
+ssh root@erp.insightpulseai.com "docker exec -u node odoo-ipa-1 n8n execute --id 30"
 ```
 
 ### Step 3: Activate Workflows
@@ -198,9 +198,9 @@ After successful testing, activate workflows:
 
 **Via CLI**:
 ```bash
-ssh root@erp.insightpulseai.net "docker exec -u node odoo-ipa-1 n8n update:workflow --id=25 --active=true"
-ssh root@erp.insightpulseai.net "docker exec -u node odoo-ipa-1 n8n update:workflow --id=26 --active=true"
-ssh root@erp.insightpulseai.net "docker exec -u node odoo-ipa-1 n8n update:workflow --id=30 --active=true"
+ssh root@erp.insightpulseai.com "docker exec -u node odoo-ipa-1 n8n update:workflow --id=25 --active=true"
+ssh root@erp.insightpulseai.com "docker exec -u node odoo-ipa-1 n8n update:workflow --id=26 --active=true"
+ssh root@erp.insightpulseai.com "docker exec -u node odoo-ipa-1 n8n update:workflow --id=30 --active=true"
 ```
 
 ### Step 4: Implement Supabase Edge Function
@@ -301,7 +301,7 @@ SELECT cron.schedule(
 ### View Execution Logs
 ```bash
 # SSH into server
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 
 # View n8n container logs
 docker logs -f odoo-ipa-1
@@ -318,15 +318,15 @@ docker logs -f odoo-ipa-1
 1. Verify webhook URL is correct
 2. Test webhook with curl:
    ```bash
-   curl -X POST https://mattermost.insightpulseai.net/hooks/<webhook-id> \
+   curl -X POST https://mattermost.insightpulseai.com/hooks/<webhook-id> \
      -H "Content-Type: application/json" \
      -d '{"text": "Test message"}'
    ```
 
 **Odoo XML-RPC errors**:
 1. Verify Odoo credentials (uid, password)
-2. Check Odoo server is accessible: `curl https://erp.insightpulseai.net`
-3. Verify XML-RPC endpoint: `curl https://erp.insightpulseai.net/xmlrpc/2/common`
+2. Check Odoo server is accessible: `curl https://erp.insightpulseai.com`
+3. Verify XML-RPC endpoint: `curl https://erp.insightpulseai.com/xmlrpc/2/common`
 
 ---
 

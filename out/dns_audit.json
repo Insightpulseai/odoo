@@ -1,103 +1,103 @@
 {
-  "domain": "insightpulseai.net",
+  "domain": "insightpulseai.com",
   "summary": {"pass": 0, "fail": 14, "total": 14},
   "note": "SIMULATED - Run in environment with network access for actual DNS validation",
   "execution_environment": "sandbox_no_network",
   "results": [
     {
-      "record": {"name": "www", "type": "CNAME", "value": "insightpulseai.net."},
-      "fqdn": "www.insightpulseai.net",
+      "record": {"name": "www", "type": "CNAME", "value": "insightpulseai.com."},
+      "fqdn": "www.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "@", "type": "A", "value": "178.128.112.214"},
-      "fqdn": "insightpulseai.net",
+      "fqdn": "insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "mcp", "type": "A", "value": "178.128.112.214"},
-      "fqdn": "mcp.insightpulseai.net",
+      "fqdn": "mcp.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "n8n", "type": "A", "value": "178.128.112.214"},
-      "fqdn": "n8n.insightpulseai.net",
+      "fqdn": "n8n.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "erp", "type": "A", "value": "178.128.112.214"},
-      "fqdn": "erp.insightpulseai.net",
+      "fqdn": "erp.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "auth", "type": "A", "value": "178.128.112.214"},
-      "fqdn": "auth.insightpulseai.net",
+      "fqdn": "auth.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "superset", "type": "A", "value": "178.128.112.214"},
-      "fqdn": "superset.insightpulseai.net",
+      "fqdn": "superset.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "email.mg", "type": "CNAME", "value": "mailgun.org."},
-      "fqdn": "email.mg.insightpulseai.net",
+      "fqdn": "email.mg.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "mg", "type": "MX", "value": "mxa.mailgun.org.", "priority": 10},
-      "fqdn": "mg.insightpulseai.net",
+      "fqdn": "mg.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "mg", "type": "MX", "value": "mxb.mailgun.org.", "priority": 10},
-      "fqdn": "mg.insightpulseai.net",
+      "fqdn": "mg.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "mg", "type": "TXT", "value_contains": "v=spf1 include:mailgun.org"},
-      "fqdn": "mg.insightpulseai.net",
+      "fqdn": "mg.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "pic._domainkey.mg", "type": "TXT", "value_contains": "k=rsa;"},
-      "fqdn": "pic._domainkey.mg.insightpulseai.net",
+      "fqdn": "pic._domainkey.mg.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "_dmarc.mg", "type": "TXT", "value_contains": "v=DMARC1;"},
-      "fqdn": "_dmarc.mg.insightpulseai.net",
+      "fqdn": "_dmarc.mg.insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true
     },
     {
       "record": {"name": "@", "type": "CAA", "value_contains": "issue \"letsencrypt.org\""},
-      "fqdn": "insightpulseai.net",
+      "fqdn": "insightpulseai.com",
       "got": [],
       "pass": false,
       "requires_verification": true

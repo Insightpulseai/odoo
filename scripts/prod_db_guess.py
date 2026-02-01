@@ -1,7 +1,7 @@
 import xmlrpc.client
 import ssl
 
-url = "https://erp.insightpulseai.net"
+url = "https://erp.insightpulseai.com"
 username = "admin"
 password = "UbQbX75Wi+P3R+bItzO/NapptGbL4n/9MvIDVw71Oww="
 context = ssl._create_unverified_context()

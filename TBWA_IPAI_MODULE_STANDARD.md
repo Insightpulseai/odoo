@@ -40,7 +40,7 @@ ipai_module_name/
     "version": "18.0.1.0.0",
     "category": "Domain/Subdomain",
     "author": "InsightPulseAI",
-    "website": "https://insightpulseai.net",
+    "website": "https://insightpulseai.com",
     "license": "AGPL-3",
     "application": True,
     "installable": True,

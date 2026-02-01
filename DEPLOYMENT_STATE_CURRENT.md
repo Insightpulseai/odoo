@@ -72,7 +72,7 @@ Based on `docs/evidence/` and deployment logs:
 
 | Service | URL/Endpoint | Status |
 |---------|--------------|--------|
-| Odoo Core | `https://odoo.insightpulseai.net` | Active |
+| Odoo Core | `https://odoo.insightpulseai.com` | Active |
 | Odoo Core (internal) | `localhost:8069` | Active |
 | PostgreSQL | `db:5432` | Active |
 

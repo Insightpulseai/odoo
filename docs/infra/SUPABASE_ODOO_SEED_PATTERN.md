@@ -364,7 +364,7 @@ UPDATE project_task SET x_external_ref = NULL WHERE x_external_ref IS NOT NULL;
 ```bash
 # Set all required secrets
 supabase functions secrets set \
-  ODOO_URL="https://erp.insightpulseai.net" \
+  ODOO_URL="https://erp.insightpulseai.com" \
   ODOO_DB="production" \
   ODOO_USER="seed_bot@insightpulseai.com" \
   ODOO_PASSWORD="<password>" \

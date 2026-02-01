@@ -4,7 +4,7 @@
 
 **Deployed to Production**: 2026-01-28 05:55 UTC
 **Server**: root@178.128.112.214 (odoo-prod container)
-**URL**: https://erp.insightpulseai.net/
+**URL**: https://erp.insightpulseai.com/
 
 ---
 
@@ -160,9 +160,9 @@ button[type="submit"] {
 
 ## Production URLs
 
-- **Login Page**: https://erp.insightpulseai.net/web/login
-- **Main Portal**: https://erp.insightpulseai.net/
-- **Health Check**: https://erp.insightpulseai.net/web/health
+- **Login Page**: https://erp.insightpulseai.com/web/login
+- **Main Portal**: https://erp.insightpulseai.com/
+- **Health Check**: https://erp.insightpulseai.com/web/health
 
 ---
 

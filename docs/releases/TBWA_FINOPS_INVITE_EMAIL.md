@@ -18,7 +18,7 @@ You've been granted access as part of the **"TBWA Finance Ops"** user group.
 
 ## How to log in
 
-1. Open: **https://erp.insightpulseai.net/**
+1. Open: **https://erp.insightpulseai.com/**
 2. Sign in with:
    - Email: **[your TBWA email]**
    - Password: **[temporary password or SSO note]**

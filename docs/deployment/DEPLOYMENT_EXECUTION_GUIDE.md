@@ -1,6 +1,6 @@
 # WorkOS Production Deployment - Execution Guide
 
-**Target Environment**: erp.insightpulseai.net (Production)
+**Target Environment**: erp.insightpulseai.com (Production)
 **Module**: WorkOS (Notion Clone for Odoo)
 **Branch**: claude/notion-clone-odoo-module-LSFan (PR #89)
 **Repository**: https://github.com/jgtolentino/odoo-ce
@@ -12,7 +12,7 @@
 ### Prerequisites
 
 1. **CLI Tool Ready**: Claude Code CLI or standard terminal
-2. **SSH Access**: Key-based authentication to `deploy@erp.insightpulseai.net`
+2. **SSH Access**: Key-based authentication to `deploy@erp.insightpulseai.com`
 3. **Git Access**: Authenticated to GitHub repository
 4. **Permissions**: Sudo access on production server
 
@@ -70,7 +70,7 @@ cat docs/deployment/PRE_FLIGHT_CHECKLIST.md
 
 ```bash
 # SSH to production
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 
 # Verify current state
 cd /opt/odoo-ce
@@ -82,7 +82,7 @@ docker ps | grep odoo
 df -h /opt/odoo-ce
 
 # Check Odoo health
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 ```
 
 ### Step 2: Database Backup
@@ -91,7 +91,7 @@ curl -I https://erp.insightpulseai.net/web/login
 
 ```bash
 # SSH to production
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 
 # Create backup directory
 sudo mkdir -p /var/backups/odoo
@@ -172,7 +172,7 @@ docker exec odoo-postgres psql -U odoo -d odoo_accounting -c "SELECT name, state
 # Expected: workos | installed
 
 # Check HTTP endpoint
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 
 # Expected: HTTP/2 200
 ```
@@ -223,7 +223,7 @@ git push origin claude/notion-clone-odoo-module-LSFan
 
 ```bash
 # SSH to production
-ssh deploy@erp.insightpulseai.net
+ssh deploy@erp.insightpulseai.com
 
 # Execute rollback script
 cd /opt/odoo-ce
@@ -263,7 +263,7 @@ git reset --hard HEAD~1
 docker start odoo-accounting
 
 # Verify
-curl -I https://erp.insightpulseai.net/web/login
+curl -I https://erp.insightpulseai.com/web/login
 ```
 
 ---

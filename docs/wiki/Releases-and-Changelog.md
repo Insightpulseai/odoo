@@ -1,6 +1,6 @@
 # Releases & Changelog
 
-This page summarizes **what is running in production** on https://erp.insightpulseai.net.
+This page summarizes **what is running in production** on https://erp.insightpulseai.com.
 
 Source of truth:
 

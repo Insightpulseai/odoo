@@ -57,7 +57,7 @@ def run(dry_run=False):
         dry_run = True
 
     # Auth Config
-    url = os.environ.get("ODOO_URL", "https://erp.insightpulseai.net").rstrip("/")
+    url = os.environ.get("ODOO_URL", "https://erp.insightpulseai.com").rstrip("/")
     db = os.environ.get("ODOO_DB", DEFAULT_DB)
 
     if dry_run:

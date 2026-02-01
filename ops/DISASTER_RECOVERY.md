@@ -31,7 +31,7 @@ This document provides step-by-step procedures for recovering InsightPulse ERP f
 
 ```bash
 # SSH into server
-ssh root@erp.insightpulseai.net
+ssh root@erp.insightpulseai.com
 
 # Check container status
 cd /opt/odoo-ce
@@ -114,7 +114,7 @@ curl http://localhost:8069/web/health
 docker compose logs --tail=50 odoo | grep -i error
 
 # Test login
-curl -s https://erp.insightpulseai.net/web/login | grep -q "Login"
+curl -s https://erp.insightpulseai.com/web/login | grep -q "Login"
 ```
 
 ### Filestore Restore
@@ -220,7 +220,7 @@ curl http://localhost:8069/web/health
 #### Step 7: Update DNS
 
 ```bash
-# Point erp.insightpulseai.net to new server IP
+# Point erp.insightpulseai.com to new server IP
 # Wait for DNS propagation (up to 48 hours, usually faster)
 ```
 
@@ -231,7 +231,7 @@ curl http://localhost:8069/web/health
 apt-get install -y certbot python3-certbot-nginx
 
 # Get certificate
-certbot --nginx -d erp.insightpulseai.net
+certbot --nginx -d erp.insightpulseai.com
 ```
 
 ### Security Incident

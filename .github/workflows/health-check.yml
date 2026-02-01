@@ -63,7 +63,7 @@ jobs:
           ENV="${{ inputs.environment || 'prod' }}"
           FIX_FLAG="${{ inputs.fix_mode == true && '--fix' || '' }}"
 
-          ssh root@erp.insightpulseai.net \
+          ssh root@erp.insightpulseai.com \
             "cd /opt/odoo-ce/notion-n8n-monthly-close && \
              SUPABASE_SERVICE_ROLE_KEY='$SUPABASE_SERVICE_ROLE_KEY' \
              N8N_API_KEY='$N8N_API_KEY' \
@@ -78,9 +78,9 @@ jobs:
         env:
           ODOO_PASSWORD: ${{ secrets.ODOO_PASSWORD }}
         run: |
-          ssh root@erp.insightpulseai.net \
+          ssh root@erp.insightpulseai.com \
             "cd /opt/odoo-ce && \
-             ODOO_URL='https://erp.insightpulseai.net' \
+             ODOO_URL='https://erp.insightpulseai.com' \
              ODOO_DB='odoo' \
              ODOO_LOGIN='jgtolentino_rn@yahoo.com' \
              ODOO_PASSWORD='$ODOO_PASSWORD' \

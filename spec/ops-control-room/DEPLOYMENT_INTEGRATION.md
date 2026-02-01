@@ -138,11 +138,11 @@ upstream ops-ui {
 
 server {
     listen 443 ssl http2;
-    server_name ops.insightpulseai.net;
+    server_name ops.insightpulseai.com;
 
     # SSL (Let's Encrypt - same cert as Odoo)
-    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.net/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.net/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/erp.insightpulseai.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/erp.insightpulseai.com/privkey.pem;
     ssl_session_timeout 30m;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
@@ -585,7 +585,7 @@ WHERE status IN ('claimed', 'running')
 
 - [ ] Deploy Ops Control Room UI to Vercel
 - [ ] Configure nginx reverse proxy (optional, if internal access needed)
-- [ ] Configure Let's Encrypt SSL for ops.insightpulseai.net
+- [ ] Configure Let's Encrypt SSL for ops.insightpulseai.com
 - [ ] Test end-to-end: Create session → Enqueue run → Execute → Complete
 
 ### Day 4: Templates + Runbooks
